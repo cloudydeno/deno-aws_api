@@ -36,12 +36,10 @@ export default class MediaStoreData {
       method: "DELETE",
       requestUri: cmnP.encodePath`/${params["Path"].split("/")}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async describeObject(
@@ -54,17 +52,17 @@ export default class MediaStoreData {
       method: "HEAD",
       requestUri: cmnP.encodePath`/${params["Path"].split("/")}`,
     });
-  return {
-    ETag: resp.headers.get("ETag"),
-    ContentType: resp.headers.get("Content-Type"),
-    ContentLength: cmnP.readNum(resp.headers.get("Content-Length")),
-    CacheControl: resp.headers.get("Cache-Control"),
-    LastModified: cmnP.readTimestamp(resp.headers.get("Last-Modified")),
-    ...jsonP.readObj({
+    return {
+      ETag: resp.headers.get("ETag"),
+      ContentType: resp.headers.get("Content-Type"),
+      ContentLength: cmnP.readNum(resp.headers.get("Content-Length")),
+      CacheControl: resp.headers.get("Cache-Control"),
+      LastModified: cmnP.readTimestamp(resp.headers.get("Last-Modified")),
+      ...jsonP.readObj({
         required: {},
         optional: {},
       }, await resp.json()),
-  };
+    };
   }
 
   async getObject(
@@ -102,42 +100,38 @@ export default class MediaStoreData {
       action: "ListItems",
       method: "GET",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Items": [toItem],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Items": [toItem],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async putObject(
     {abortSignal, ...params}: RequestConfig & PutObjectRequest,
   ): Promise<PutObjectResponse> {
+    const body = typeof params["Body"] === 'string' ? new TextEncoder().encode(params["Body"]) : params["Body"];
     const headers = new Headers;
     if (params["ContentType"] != null) headers.append("Content-Type", params["ContentType"]);
     if (params["CacheControl"] != null) headers.append("Cache-Control", params["CacheControl"]);
     if (params["StorageClass"] != null) headers.append("x-amz-storage-class", params["StorageClass"]);
     if (params["UploadAvailability"] != null) headers.append("x-amz-upload-availability", params["UploadAvailability"]);
-    const body = typeof params["Body"] === 'string' ? new TextEncoder().encode(params["Body"]) : params["Body"];
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "PutObject",
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Path"].split("/")}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ContentSHA256": "s",
-          "ETag": "s",
-          "StorageClass": (x: jsonP.JSONValue) => cmnP.readEnum<StorageClass>(x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ContentSHA256": "s",
+        "ETag": "s",
+        "StorageClass": (x: jsonP.JSONValue) => cmnP.readEnum<StorageClass>(x),
+      },
+    }, await resp.json());
   }
 
 }

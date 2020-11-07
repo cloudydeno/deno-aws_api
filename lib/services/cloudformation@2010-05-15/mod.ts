@@ -1167,7 +1167,7 @@ export default class CloudFormation {
         const resp = await this.describeStacks(params);
         return resp; // for status 200
       } catch (err) {
-        if (!["ValidationError"].includes(err.code)) throw err;
+        if (!["ValidationError"].includes(err.shortCode)) throw err;
       }
       await new Promise(r => setTimeout(r, 5000));
     }
@@ -1193,7 +1193,7 @@ export default class CloudFormation {
         if (field?.some(x => x === "ROLLBACK_FAILED")) throw new Error(errMessage);
         if (field?.some(x => x === "ROLLBACK_COMPLETE")) throw new Error(errMessage);
       } catch (err) {
-        if (["ValidationError"].includes(err.code)) throw err;
+        if (["ValidationError"].includes(err.shortCode)) throw err;
         throw err;
       }
       await new Promise(r => setTimeout(r, 30000));
@@ -1221,7 +1221,7 @@ export default class CloudFormation {
         if (field?.some(x => x === "UPDATE_ROLLBACK_FAILED")) throw new Error(errMessage);
         if (field?.some(x => x === "UPDATE_ROLLBACK_COMPLETE")) throw new Error(errMessage);
       } catch (err) {
-        if (["ValidationError"].includes(err.code)) return err;
+        if (["ValidationError"].includes(err.shortCode)) return err;
         throw err;
       }
       await new Promise(r => setTimeout(r, 30000));
@@ -1246,7 +1246,7 @@ export default class CloudFormation {
         if (field?.some(x => x === "UPDATE_ROLLBACK_FAILED")) throw new Error(errMessage);
         if (field?.some(x => x === "UPDATE_ROLLBACK_COMPLETE")) throw new Error(errMessage);
       } catch (err) {
-        if (["ValidationError"].includes(err.code)) throw err;
+        if (["ValidationError"].includes(err.shortCode)) throw err;
         throw err;
       }
       await new Promise(r => setTimeout(r, 30000));
@@ -1273,7 +1273,7 @@ export default class CloudFormation {
         if (field?.some(x => x === "IMPORT_ROLLBACK_FAILED")) throw new Error(errMessage);
         if (field?.some(x => x === "IMPORT_ROLLBACK_COMPLETE")) throw new Error(errMessage);
       } catch (err) {
-        if (["ValidationError"].includes(err.code)) throw err;
+        if (["ValidationError"].includes(err.shortCode)) throw err;
         throw err;
       }
       await new Promise(r => setTimeout(r, 30000));
@@ -1298,7 +1298,7 @@ export default class CloudFormation {
         if (field?.some(x => x === "UPDATE_ROLLBACK_FAILED")) throw new Error(errMessage);
         if (field?.some(x => x === "DELETE_FAILED")) throw new Error(errMessage);
       } catch (err) {
-        if (["ValidationError"].includes(err.code)) throw err;
+        if (["ValidationError"].includes(err.shortCode)) throw err;
         throw err;
       }
       await new Promise(r => setTimeout(r, 30000));
@@ -1321,7 +1321,7 @@ export default class CloudFormation {
         if (field === "CREATE_COMPLETE") return resp;
         if (field === "FAILED") throw new Error(errMessage);
       } catch (err) {
-        if (["ValidationError"].includes(err.code)) throw err;
+        if (["ValidationError"].includes(err.shortCode)) throw err;
         throw err;
       }
       await new Promise(r => setTimeout(r, 30000));

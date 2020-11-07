@@ -37,69 +37,63 @@ export default class GroundStation {
       requestUri: cmnP.encodePath`/contact/${params["contactId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "contactId": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "contactId": "s",
+      },
+    }, await resp.json());
   }
 
   async createConfig(
     {abortSignal, ...params}: RequestConfig & CreateConfigRequest,
   ): Promise<ConfigIdResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       configData: fromConfigTypeData(params["configData"]),
       name: params["name"],
       tags: params["tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateConfig",
       requestUri: "/config",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "configArn": "s",
-          "configId": "s",
-          "configType": (x: jsonP.JSONValue) => cmnP.readEnum<ConfigCapabilityType>(x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "configArn": "s",
+        "configId": "s",
+        "configType": (x: jsonP.JSONValue) => cmnP.readEnum<ConfigCapabilityType>(x),
+      },
+    }, await resp.json());
   }
 
   async createDataflowEndpointGroup(
     {abortSignal, ...params}: RequestConfig & CreateDataflowEndpointGroupRequest,
   ): Promise<DataflowEndpointGroupIdResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       endpointDetails: params["endpointDetails"]?.map(x => fromEndpointDetails(x)),
       tags: params["tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDataflowEndpointGroup",
       requestUri: "/dataflowEndpointGroup",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "dataflowEndpointGroupId": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "dataflowEndpointGroupId": "s",
+      },
+    }, await resp.json());
   }
 
   async createMissionProfile(
     {abortSignal, ...params}: RequestConfig & CreateMissionProfileRequest,
   ): Promise<MissionProfileIdResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       contactPostPassDurationSeconds: params["contactPostPassDurationSeconds"],
       contactPrePassDurationSeconds: params["contactPrePassDurationSeconds"],
       dataflowEdges: params["dataflowEdges"],
@@ -107,21 +101,19 @@ export default class GroundStation {
       name: params["name"],
       tags: params["tags"],
       trackingConfigArn: params["trackingConfigArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateMissionProfile",
       requestUri: "/missionprofile",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "missionProfileId": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "missionProfileId": "s",
+      },
+    }, await resp.json());
   }
 
   async deleteConfig(
@@ -135,16 +127,14 @@ export default class GroundStation {
       requestUri: cmnP.encodePath`/config/${params["configType"]}/${params["configId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "configArn": "s",
-          "configId": "s",
-          "configType": (x: jsonP.JSONValue) => cmnP.readEnum<ConfigCapabilityType>(x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "configArn": "s",
+        "configId": "s",
+        "configType": (x: jsonP.JSONValue) => cmnP.readEnum<ConfigCapabilityType>(x),
+      },
+    }, await resp.json());
   }
 
   async deleteDataflowEndpointGroup(
@@ -158,14 +148,12 @@ export default class GroundStation {
       requestUri: cmnP.encodePath`/dataflowEndpointGroup/${params["dataflowEndpointGroupId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "dataflowEndpointGroupId": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "dataflowEndpointGroupId": "s",
+      },
+    }, await resp.json());
   }
 
   async deleteMissionProfile(
@@ -179,14 +167,12 @@ export default class GroundStation {
       requestUri: cmnP.encodePath`/missionprofile/${params["missionProfileId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "missionProfileId": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "missionProfileId": "s",
+      },
+    }, await resp.json());
   }
 
   async describeContact(
@@ -200,27 +186,25 @@ export default class GroundStation {
       requestUri: cmnP.encodePath`/contact/${params["contactId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "contactId": "s",
-          "contactStatus": (x: jsonP.JSONValue) => cmnP.readEnum<ContactStatus>(x),
-          "dataflowList": [toDataflowDetail],
-          "endTime": "d",
-          "errorMessage": "s",
-          "groundStation": "s",
-          "maximumElevation": toElevation,
-          "missionProfileArn": "s",
-          "postPassEndTime": "d",
-          "prePassStartTime": "d",
-          "region": "s",
-          "satelliteArn": "s",
-          "startTime": "d",
-          "tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "contactId": "s",
+        "contactStatus": (x: jsonP.JSONValue) => cmnP.readEnum<ContactStatus>(x),
+        "dataflowList": [toDataflowDetail],
+        "endTime": "d",
+        "errorMessage": "s",
+        "groundStation": "s",
+        "maximumElevation": toElevation,
+        "missionProfileArn": "s",
+        "postPassEndTime": "d",
+        "prePassStartTime": "d",
+        "region": "s",
+        "satelliteArn": "s",
+        "startTime": "d",
+        "tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async getConfig(
@@ -234,20 +218,18 @@ export default class GroundStation {
       requestUri: cmnP.encodePath`/config/${params["configType"]}/${params["configId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "configArn": "s",
-          "configData": toConfigTypeData,
-          "configId": "s",
-          "name": "s",
-        },
-        optional: {
-          "configType": (x: jsonP.JSONValue) => cmnP.readEnum<ConfigCapabilityType>(x),
-          "tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "configArn": "s",
+        "configData": toConfigTypeData,
+        "configId": "s",
+        "name": "s",
+      },
+      optional: {
+        "configType": (x: jsonP.JSONValue) => cmnP.readEnum<ConfigCapabilityType>(x),
+        "tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async getDataflowEndpointGroup(
@@ -261,44 +243,40 @@ export default class GroundStation {
       requestUri: cmnP.encodePath`/dataflowEndpointGroup/${params["dataflowEndpointGroupId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "dataflowEndpointGroupArn": "s",
-          "dataflowEndpointGroupId": "s",
-          "endpointsDetails": [toEndpointDetails],
-          "tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "dataflowEndpointGroupArn": "s",
+        "dataflowEndpointGroupId": "s",
+        "endpointsDetails": [toEndpointDetails],
+        "tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async getMinuteUsage(
     {abortSignal, ...params}: RequestConfig & GetMinuteUsageRequest,
   ): Promise<GetMinuteUsageResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       month: params["month"],
       year: params["year"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetMinuteUsage",
       requestUri: "/minute-usage",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "estimatedMinutesRemaining": "n",
-          "isReservedMinutesCustomer": "b",
-          "totalReservedMinuteAllocation": "n",
-          "totalScheduledMinutes": "n",
-          "upcomingMinutesScheduled": "n",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "estimatedMinutesRemaining": "n",
+        "isReservedMinutesCustomer": "b",
+        "totalReservedMinuteAllocation": "n",
+        "totalScheduledMinutes": "n",
+        "upcomingMinutesScheduled": "n",
+      },
+    }, await resp.json());
   }
 
   async getMissionProfile(
@@ -312,23 +290,21 @@ export default class GroundStation {
       requestUri: cmnP.encodePath`/missionprofile/${params["missionProfileId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "contactPostPassDurationSeconds": "n",
-          "contactPrePassDurationSeconds": "n",
-          "dataflowEdges": [x => jsonP.readList(String, x)],
-          "minimumViableContactDurationSeconds": "n",
-          "missionProfileArn": "s",
-          "missionProfileId": "s",
-          "name": "s",
-          "region": "s",
-          "tags": x => jsonP.readMap(String, String, x),
-          "trackingConfigArn": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "contactPostPassDurationSeconds": "n",
+        "contactPrePassDurationSeconds": "n",
+        "dataflowEdges": [x => jsonP.readList(String, x)],
+        "minimumViableContactDurationSeconds": "n",
+        "missionProfileArn": "s",
+        "missionProfileId": "s",
+        "name": "s",
+        "region": "s",
+        "tags": x => jsonP.readMap(String, String, x),
+        "trackingConfigArn": "s",
+      },
+    }, await resp.json());
   }
 
   async getSatellite(
@@ -342,17 +318,15 @@ export default class GroundStation {
       requestUri: cmnP.encodePath`/satellite/${params["satelliteId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "groundStations": ["s"],
-          "noradSatelliteID": "n",
-          "satelliteArn": "s",
-          "satelliteId": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "groundStations": ["s"],
+        "noradSatelliteID": "n",
+        "satelliteArn": "s",
+        "satelliteId": "s",
+      },
+    }, await resp.json());
   }
 
   async listConfigs(
@@ -368,21 +342,19 @@ export default class GroundStation {
       requestUri: "/config",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "configList": [toConfigListItem],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "configList": [toConfigListItem],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listContacts(
     {abortSignal, ...params}: RequestConfig & ListContactsRequest,
   ): Promise<ListContactsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       endTime: jsonP.serializeDate_unixTimestamp(params["endTime"]),
       groundStation: params["groundStation"],
       maxResults: params["maxResults"],
@@ -391,22 +363,20 @@ export default class GroundStation {
       satelliteArn: params["satelliteArn"],
       startTime: jsonP.serializeDate_unixTimestamp(params["startTime"]),
       statusList: params["statusList"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListContacts",
       requestUri: "/contacts",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "contactList": [toContactData],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "contactList": [toContactData],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listDataflowEndpointGroups(
@@ -422,15 +392,13 @@ export default class GroundStation {
       requestUri: "/dataflowEndpointGroup",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "dataflowEndpointGroupList": [toDataflowEndpointListItem],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "dataflowEndpointGroupList": [toDataflowEndpointListItem],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listGroundStations(
@@ -447,15 +415,13 @@ export default class GroundStation {
       requestUri: "/groundstation",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "groundStationList": [toGroundStationData],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "groundStationList": [toGroundStationData],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listMissionProfiles(
@@ -471,15 +437,13 @@ export default class GroundStation {
       requestUri: "/missionprofile",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "missionProfileList": [toMissionProfileListItem],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "missionProfileList": [toMissionProfileListItem],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listSatellites(
@@ -495,15 +459,13 @@ export default class GroundStation {
       requestUri: "/satellite",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "nextToken": "s",
-          "satellites": [toSatelliteListItem],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "nextToken": "s",
+        "satellites": [toSatelliteListItem],
+      },
+    }, await resp.json());
   }
 
   async listTagsForResource(
@@ -517,61 +479,55 @@ export default class GroundStation {
       requestUri: cmnP.encodePath`/tags/${params["resourceArn"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async reserveContact(
     {abortSignal, ...params}: RequestConfig & ReserveContactRequest,
   ): Promise<ContactIdResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       endTime: jsonP.serializeDate_unixTimestamp(params["endTime"]),
       groundStation: params["groundStation"],
       missionProfileArn: params["missionProfileArn"],
       satelliteArn: params["satelliteArn"],
       startTime: jsonP.serializeDate_unixTimestamp(params["startTime"]),
       tags: params["tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ReserveContact",
       requestUri: "/contact",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "contactId": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "contactId": "s",
+      },
+    }, await resp.json());
   }
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       tags: params["tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
       requestUri: cmnP.encodePath`/tags/${params["resourceArn"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async untagResource(
@@ -588,21 +544,19 @@ export default class GroundStation {
       requestUri: cmnP.encodePath`/tags/${params["resourceArn"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async updateConfig(
     {abortSignal, ...params}: RequestConfig & UpdateConfigRequest,
   ): Promise<ConfigIdResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       configData: fromConfigTypeData(params["configData"]),
       name: params["name"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateConfig",
@@ -610,29 +564,27 @@ export default class GroundStation {
       requestUri: cmnP.encodePath`/config/${params["configType"]}/${params["configId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "configArn": "s",
-          "configId": "s",
-          "configType": (x: jsonP.JSONValue) => cmnP.readEnum<ConfigCapabilityType>(x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "configArn": "s",
+        "configId": "s",
+        "configType": (x: jsonP.JSONValue) => cmnP.readEnum<ConfigCapabilityType>(x),
+      },
+    }, await resp.json());
   }
 
   async updateMissionProfile(
     {abortSignal, ...params}: RequestConfig & UpdateMissionProfileRequest,
   ): Promise<MissionProfileIdResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       contactPostPassDurationSeconds: params["contactPostPassDurationSeconds"],
       contactPrePassDurationSeconds: params["contactPrePassDurationSeconds"],
       dataflowEdges: params["dataflowEdges"],
       minimumViableContactDurationSeconds: params["minimumViableContactDurationSeconds"],
       name: params["name"],
       trackingConfigArn: params["trackingConfigArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateMissionProfile",
@@ -640,14 +592,12 @@ export default class GroundStation {
       requestUri: cmnP.encodePath`/missionprofile/${params["missionProfileId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "missionProfileId": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "missionProfileId": "s",
+      },
+    }, await resp.json());
   }
 
 }

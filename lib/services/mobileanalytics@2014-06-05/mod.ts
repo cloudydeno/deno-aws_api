@@ -28,11 +28,11 @@ export default class MobileAnalytics {
     {abortSignal, ...params}: RequestConfig & PutEventsInput,
   ): Promise<void> {
     const headers = new Headers;
+    const body: jsonP.JSONObject = {
+      events: params["events"]?.map(x => fromEvent(x)),
+    };
     headers.append("x-amz-Client-Context", params["clientContext"]);
     if (params["clientContextEncoding"] != null) headers.append("x-amz-Client-Context-Encoding", params["clientContextEncoding"]);
-    const body: jsonP.JSONObject = params ? {
-      events: params["events"]?.map(x => fromEvent(x)),
-    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "PutEvents",

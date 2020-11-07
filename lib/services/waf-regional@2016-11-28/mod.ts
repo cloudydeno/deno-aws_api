@@ -30,10 +30,10 @@ export default class WAFRegional {
   async associateWebACL(
     {abortSignal, ...params}: RequestConfig & AssociateWebACLRequest,
   ): Promise<AssociateWebACLResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       WebACLId: params["WebACLId"],
       ResourceArn: params["ResourceArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AssociateWebACL",
@@ -47,10 +47,10 @@ export default class WAFRegional {
   async createByteMatchSet(
     {abortSignal, ...params}: RequestConfig & CreateByteMatchSetRequest,
   ): Promise<CreateByteMatchSetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       ChangeToken: params["ChangeToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateByteMatchSet",
@@ -67,10 +67,10 @@ export default class WAFRegional {
   async createGeoMatchSet(
     {abortSignal, ...params}: RequestConfig & CreateGeoMatchSetRequest,
   ): Promise<CreateGeoMatchSetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       ChangeToken: params["ChangeToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateGeoMatchSet",
@@ -87,10 +87,10 @@ export default class WAFRegional {
   async createIPSet(
     {abortSignal, ...params}: RequestConfig & CreateIPSetRequest,
   ): Promise<CreateIPSetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       ChangeToken: params["ChangeToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateIPSet",
@@ -107,14 +107,14 @@ export default class WAFRegional {
   async createRateBasedRule(
     {abortSignal, ...params}: RequestConfig & CreateRateBasedRuleRequest,
   ): Promise<CreateRateBasedRuleResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       MetricName: params["MetricName"],
       RateKey: params["RateKey"],
       RateLimit: params["RateLimit"],
       ChangeToken: params["ChangeToken"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateRateBasedRule",
@@ -131,10 +131,10 @@ export default class WAFRegional {
   async createRegexMatchSet(
     {abortSignal, ...params}: RequestConfig & CreateRegexMatchSetRequest,
   ): Promise<CreateRegexMatchSetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       ChangeToken: params["ChangeToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateRegexMatchSet",
@@ -151,10 +151,10 @@ export default class WAFRegional {
   async createRegexPatternSet(
     {abortSignal, ...params}: RequestConfig & CreateRegexPatternSetRequest,
   ): Promise<CreateRegexPatternSetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       ChangeToken: params["ChangeToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateRegexPatternSet",
@@ -171,12 +171,12 @@ export default class WAFRegional {
   async createRule(
     {abortSignal, ...params}: RequestConfig & CreateRuleRequest,
   ): Promise<CreateRuleResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       MetricName: params["MetricName"],
       ChangeToken: params["ChangeToken"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateRule",
@@ -193,12 +193,12 @@ export default class WAFRegional {
   async createRuleGroup(
     {abortSignal, ...params}: RequestConfig & CreateRuleGroupRequest,
   ): Promise<CreateRuleGroupResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       MetricName: params["MetricName"],
       ChangeToken: params["ChangeToken"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateRuleGroup",
@@ -215,10 +215,10 @@ export default class WAFRegional {
   async createSizeConstraintSet(
     {abortSignal, ...params}: RequestConfig & CreateSizeConstraintSetRequest,
   ): Promise<CreateSizeConstraintSetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       ChangeToken: params["ChangeToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateSizeConstraintSet",
@@ -235,10 +235,10 @@ export default class WAFRegional {
   async createSqlInjectionMatchSet(
     {abortSignal, ...params}: RequestConfig & CreateSqlInjectionMatchSetRequest,
   ): Promise<CreateSqlInjectionMatchSetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       ChangeToken: params["ChangeToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateSqlInjectionMatchSet",
@@ -255,13 +255,13 @@ export default class WAFRegional {
   async createWebACL(
     {abortSignal, ...params}: RequestConfig & CreateWebACLRequest,
   ): Promise<CreateWebACLResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       MetricName: params["MetricName"],
       DefaultAction: fromWafAction(params["DefaultAction"]),
       ChangeToken: params["ChangeToken"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateWebACL",
@@ -278,11 +278,11 @@ export default class WAFRegional {
   async createWebACLMigrationStack(
     {abortSignal, ...params}: RequestConfig & CreateWebACLMigrationStackRequest,
   ): Promise<CreateWebACLMigrationStackResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       WebACLId: params["WebACLId"],
       S3BucketName: params["S3BucketName"],
       IgnoreUnsupportedType: params["IgnoreUnsupportedType"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateWebACLMigrationStack",
@@ -298,10 +298,10 @@ export default class WAFRegional {
   async createXssMatchSet(
     {abortSignal, ...params}: RequestConfig & CreateXssMatchSetRequest,
   ): Promise<CreateXssMatchSetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       ChangeToken: params["ChangeToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateXssMatchSet",
@@ -318,10 +318,10 @@ export default class WAFRegional {
   async deleteByteMatchSet(
     {abortSignal, ...params}: RequestConfig & DeleteByteMatchSetRequest,
   ): Promise<DeleteByteMatchSetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ByteMatchSetId: params["ByteMatchSetId"],
       ChangeToken: params["ChangeToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteByteMatchSet",
@@ -337,10 +337,10 @@ export default class WAFRegional {
   async deleteGeoMatchSet(
     {abortSignal, ...params}: RequestConfig & DeleteGeoMatchSetRequest,
   ): Promise<DeleteGeoMatchSetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       GeoMatchSetId: params["GeoMatchSetId"],
       ChangeToken: params["ChangeToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteGeoMatchSet",
@@ -356,10 +356,10 @@ export default class WAFRegional {
   async deleteIPSet(
     {abortSignal, ...params}: RequestConfig & DeleteIPSetRequest,
   ): Promise<DeleteIPSetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       IPSetId: params["IPSetId"],
       ChangeToken: params["ChangeToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteIPSet",
@@ -375,9 +375,9 @@ export default class WAFRegional {
   async deleteLoggingConfiguration(
     {abortSignal, ...params}: RequestConfig & DeleteLoggingConfigurationRequest,
   ): Promise<DeleteLoggingConfigurationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteLoggingConfiguration",
@@ -391,9 +391,9 @@ export default class WAFRegional {
   async deletePermissionPolicy(
     {abortSignal, ...params}: RequestConfig & DeletePermissionPolicyRequest,
   ): Promise<DeletePermissionPolicyResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeletePermissionPolicy",
@@ -407,10 +407,10 @@ export default class WAFRegional {
   async deleteRateBasedRule(
     {abortSignal, ...params}: RequestConfig & DeleteRateBasedRuleRequest,
   ): Promise<DeleteRateBasedRuleResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       RuleId: params["RuleId"],
       ChangeToken: params["ChangeToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteRateBasedRule",
@@ -426,10 +426,10 @@ export default class WAFRegional {
   async deleteRegexMatchSet(
     {abortSignal, ...params}: RequestConfig & DeleteRegexMatchSetRequest,
   ): Promise<DeleteRegexMatchSetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       RegexMatchSetId: params["RegexMatchSetId"],
       ChangeToken: params["ChangeToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteRegexMatchSet",
@@ -445,10 +445,10 @@ export default class WAFRegional {
   async deleteRegexPatternSet(
     {abortSignal, ...params}: RequestConfig & DeleteRegexPatternSetRequest,
   ): Promise<DeleteRegexPatternSetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       RegexPatternSetId: params["RegexPatternSetId"],
       ChangeToken: params["ChangeToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteRegexPatternSet",
@@ -464,10 +464,10 @@ export default class WAFRegional {
   async deleteRule(
     {abortSignal, ...params}: RequestConfig & DeleteRuleRequest,
   ): Promise<DeleteRuleResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       RuleId: params["RuleId"],
       ChangeToken: params["ChangeToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteRule",
@@ -483,10 +483,10 @@ export default class WAFRegional {
   async deleteRuleGroup(
     {abortSignal, ...params}: RequestConfig & DeleteRuleGroupRequest,
   ): Promise<DeleteRuleGroupResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       RuleGroupId: params["RuleGroupId"],
       ChangeToken: params["ChangeToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteRuleGroup",
@@ -502,10 +502,10 @@ export default class WAFRegional {
   async deleteSizeConstraintSet(
     {abortSignal, ...params}: RequestConfig & DeleteSizeConstraintSetRequest,
   ): Promise<DeleteSizeConstraintSetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       SizeConstraintSetId: params["SizeConstraintSetId"],
       ChangeToken: params["ChangeToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteSizeConstraintSet",
@@ -521,10 +521,10 @@ export default class WAFRegional {
   async deleteSqlInjectionMatchSet(
     {abortSignal, ...params}: RequestConfig & DeleteSqlInjectionMatchSetRequest,
   ): Promise<DeleteSqlInjectionMatchSetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       SqlInjectionMatchSetId: params["SqlInjectionMatchSetId"],
       ChangeToken: params["ChangeToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteSqlInjectionMatchSet",
@@ -540,10 +540,10 @@ export default class WAFRegional {
   async deleteWebACL(
     {abortSignal, ...params}: RequestConfig & DeleteWebACLRequest,
   ): Promise<DeleteWebACLResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       WebACLId: params["WebACLId"],
       ChangeToken: params["ChangeToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteWebACL",
@@ -559,10 +559,10 @@ export default class WAFRegional {
   async deleteXssMatchSet(
     {abortSignal, ...params}: RequestConfig & DeleteXssMatchSetRequest,
   ): Promise<DeleteXssMatchSetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       XssMatchSetId: params["XssMatchSetId"],
       ChangeToken: params["ChangeToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteXssMatchSet",
@@ -578,9 +578,9 @@ export default class WAFRegional {
   async disassociateWebACL(
     {abortSignal, ...params}: RequestConfig & DisassociateWebACLRequest,
   ): Promise<DisassociateWebACLResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisassociateWebACL",
@@ -594,9 +594,9 @@ export default class WAFRegional {
   async getByteMatchSet(
     {abortSignal, ...params}: RequestConfig & GetByteMatchSetRequest,
   ): Promise<GetByteMatchSetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ByteMatchSetId: params["ByteMatchSetId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetByteMatchSet",
@@ -612,8 +612,8 @@ export default class WAFRegional {
   async getChangeToken(
     {abortSignal, ...params}: RequestConfig & GetChangeTokenRequest = {},
   ): Promise<GetChangeTokenResponse> {
-    const body: jsonP.JSONObject = params ? {
-    } : {};
+    const body: jsonP.JSONObject = {
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetChangeToken",
@@ -629,9 +629,9 @@ export default class WAFRegional {
   async getChangeTokenStatus(
     {abortSignal, ...params}: RequestConfig & GetChangeTokenStatusRequest,
   ): Promise<GetChangeTokenStatusResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ChangeToken: params["ChangeToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetChangeTokenStatus",
@@ -647,9 +647,9 @@ export default class WAFRegional {
   async getGeoMatchSet(
     {abortSignal, ...params}: RequestConfig & GetGeoMatchSetRequest,
   ): Promise<GetGeoMatchSetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       GeoMatchSetId: params["GeoMatchSetId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetGeoMatchSet",
@@ -665,9 +665,9 @@ export default class WAFRegional {
   async getIPSet(
     {abortSignal, ...params}: RequestConfig & GetIPSetRequest,
   ): Promise<GetIPSetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       IPSetId: params["IPSetId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetIPSet",
@@ -683,9 +683,9 @@ export default class WAFRegional {
   async getLoggingConfiguration(
     {abortSignal, ...params}: RequestConfig & GetLoggingConfigurationRequest,
   ): Promise<GetLoggingConfigurationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetLoggingConfiguration",
@@ -701,9 +701,9 @@ export default class WAFRegional {
   async getPermissionPolicy(
     {abortSignal, ...params}: RequestConfig & GetPermissionPolicyRequest,
   ): Promise<GetPermissionPolicyResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetPermissionPolicy",
@@ -719,9 +719,9 @@ export default class WAFRegional {
   async getRateBasedRule(
     {abortSignal, ...params}: RequestConfig & GetRateBasedRuleRequest,
   ): Promise<GetRateBasedRuleResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       RuleId: params["RuleId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetRateBasedRule",
@@ -737,10 +737,10 @@ export default class WAFRegional {
   async getRateBasedRuleManagedKeys(
     {abortSignal, ...params}: RequestConfig & GetRateBasedRuleManagedKeysRequest,
   ): Promise<GetRateBasedRuleManagedKeysResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       RuleId: params["RuleId"],
       NextMarker: params["NextMarker"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetRateBasedRuleManagedKeys",
@@ -757,9 +757,9 @@ export default class WAFRegional {
   async getRegexMatchSet(
     {abortSignal, ...params}: RequestConfig & GetRegexMatchSetRequest,
   ): Promise<GetRegexMatchSetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       RegexMatchSetId: params["RegexMatchSetId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetRegexMatchSet",
@@ -775,9 +775,9 @@ export default class WAFRegional {
   async getRegexPatternSet(
     {abortSignal, ...params}: RequestConfig & GetRegexPatternSetRequest,
   ): Promise<GetRegexPatternSetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       RegexPatternSetId: params["RegexPatternSetId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetRegexPatternSet",
@@ -793,9 +793,9 @@ export default class WAFRegional {
   async getRule(
     {abortSignal, ...params}: RequestConfig & GetRuleRequest,
   ): Promise<GetRuleResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       RuleId: params["RuleId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetRule",
@@ -811,9 +811,9 @@ export default class WAFRegional {
   async getRuleGroup(
     {abortSignal, ...params}: RequestConfig & GetRuleGroupRequest,
   ): Promise<GetRuleGroupResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       RuleGroupId: params["RuleGroupId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetRuleGroup",
@@ -829,12 +829,12 @@ export default class WAFRegional {
   async getSampledRequests(
     {abortSignal, ...params}: RequestConfig & GetSampledRequestsRequest,
   ): Promise<GetSampledRequestsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       WebAclId: params["WebAclId"],
       RuleId: params["RuleId"],
       TimeWindow: fromTimeWindow(params["TimeWindow"]),
       MaxItems: params["MaxItems"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetSampledRequests",
@@ -852,9 +852,9 @@ export default class WAFRegional {
   async getSizeConstraintSet(
     {abortSignal, ...params}: RequestConfig & GetSizeConstraintSetRequest,
   ): Promise<GetSizeConstraintSetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       SizeConstraintSetId: params["SizeConstraintSetId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetSizeConstraintSet",
@@ -870,9 +870,9 @@ export default class WAFRegional {
   async getSqlInjectionMatchSet(
     {abortSignal, ...params}: RequestConfig & GetSqlInjectionMatchSetRequest,
   ): Promise<GetSqlInjectionMatchSetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       SqlInjectionMatchSetId: params["SqlInjectionMatchSetId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetSqlInjectionMatchSet",
@@ -888,9 +888,9 @@ export default class WAFRegional {
   async getWebACL(
     {abortSignal, ...params}: RequestConfig & GetWebACLRequest,
   ): Promise<GetWebACLResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       WebACLId: params["WebACLId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetWebACL",
@@ -906,9 +906,9 @@ export default class WAFRegional {
   async getWebACLForResource(
     {abortSignal, ...params}: RequestConfig & GetWebACLForResourceRequest,
   ): Promise<GetWebACLForResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetWebACLForResource",
@@ -924,9 +924,9 @@ export default class WAFRegional {
   async getXssMatchSet(
     {abortSignal, ...params}: RequestConfig & GetXssMatchSetRequest,
   ): Promise<GetXssMatchSetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       XssMatchSetId: params["XssMatchSetId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetXssMatchSet",
@@ -942,11 +942,11 @@ export default class WAFRegional {
   async listActivatedRulesInRuleGroup(
     {abortSignal, ...params}: RequestConfig & ListActivatedRulesInRuleGroupRequest = {},
   ): Promise<ListActivatedRulesInRuleGroupResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       RuleGroupId: params["RuleGroupId"],
       NextMarker: params["NextMarker"],
       Limit: params["Limit"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListActivatedRulesInRuleGroup",
@@ -963,10 +963,10 @@ export default class WAFRegional {
   async listByteMatchSets(
     {abortSignal, ...params}: RequestConfig & ListByteMatchSetsRequest = {},
   ): Promise<ListByteMatchSetsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NextMarker: params["NextMarker"],
       Limit: params["Limit"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListByteMatchSets",
@@ -983,10 +983,10 @@ export default class WAFRegional {
   async listGeoMatchSets(
     {abortSignal, ...params}: RequestConfig & ListGeoMatchSetsRequest = {},
   ): Promise<ListGeoMatchSetsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NextMarker: params["NextMarker"],
       Limit: params["Limit"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListGeoMatchSets",
@@ -1003,10 +1003,10 @@ export default class WAFRegional {
   async listIPSets(
     {abortSignal, ...params}: RequestConfig & ListIPSetsRequest = {},
   ): Promise<ListIPSetsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NextMarker: params["NextMarker"],
       Limit: params["Limit"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListIPSets",
@@ -1023,10 +1023,10 @@ export default class WAFRegional {
   async listLoggingConfigurations(
     {abortSignal, ...params}: RequestConfig & ListLoggingConfigurationsRequest = {},
   ): Promise<ListLoggingConfigurationsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NextMarker: params["NextMarker"],
       Limit: params["Limit"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListLoggingConfigurations",
@@ -1043,10 +1043,10 @@ export default class WAFRegional {
   async listRateBasedRules(
     {abortSignal, ...params}: RequestConfig & ListRateBasedRulesRequest = {},
   ): Promise<ListRateBasedRulesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NextMarker: params["NextMarker"],
       Limit: params["Limit"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListRateBasedRules",
@@ -1063,10 +1063,10 @@ export default class WAFRegional {
   async listRegexMatchSets(
     {abortSignal, ...params}: RequestConfig & ListRegexMatchSetsRequest = {},
   ): Promise<ListRegexMatchSetsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NextMarker: params["NextMarker"],
       Limit: params["Limit"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListRegexMatchSets",
@@ -1083,10 +1083,10 @@ export default class WAFRegional {
   async listRegexPatternSets(
     {abortSignal, ...params}: RequestConfig & ListRegexPatternSetsRequest = {},
   ): Promise<ListRegexPatternSetsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NextMarker: params["NextMarker"],
       Limit: params["Limit"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListRegexPatternSets",
@@ -1103,10 +1103,10 @@ export default class WAFRegional {
   async listResourcesForWebACL(
     {abortSignal, ...params}: RequestConfig & ListResourcesForWebACLRequest,
   ): Promise<ListResourcesForWebACLResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       WebACLId: params["WebACLId"],
       ResourceType: params["ResourceType"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListResourcesForWebACL",
@@ -1122,10 +1122,10 @@ export default class WAFRegional {
   async listRuleGroups(
     {abortSignal, ...params}: RequestConfig & ListRuleGroupsRequest = {},
   ): Promise<ListRuleGroupsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NextMarker: params["NextMarker"],
       Limit: params["Limit"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListRuleGroups",
@@ -1142,10 +1142,10 @@ export default class WAFRegional {
   async listRules(
     {abortSignal, ...params}: RequestConfig & ListRulesRequest = {},
   ): Promise<ListRulesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NextMarker: params["NextMarker"],
       Limit: params["Limit"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListRules",
@@ -1162,10 +1162,10 @@ export default class WAFRegional {
   async listSizeConstraintSets(
     {abortSignal, ...params}: RequestConfig & ListSizeConstraintSetsRequest = {},
   ): Promise<ListSizeConstraintSetsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NextMarker: params["NextMarker"],
       Limit: params["Limit"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListSizeConstraintSets",
@@ -1182,10 +1182,10 @@ export default class WAFRegional {
   async listSqlInjectionMatchSets(
     {abortSignal, ...params}: RequestConfig & ListSqlInjectionMatchSetsRequest = {},
   ): Promise<ListSqlInjectionMatchSetsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NextMarker: params["NextMarker"],
       Limit: params["Limit"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListSqlInjectionMatchSets",
@@ -1202,10 +1202,10 @@ export default class WAFRegional {
   async listSubscribedRuleGroups(
     {abortSignal, ...params}: RequestConfig & ListSubscribedRuleGroupsRequest = {},
   ): Promise<ListSubscribedRuleGroupsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NextMarker: params["NextMarker"],
       Limit: params["Limit"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListSubscribedRuleGroups",
@@ -1222,11 +1222,11 @@ export default class WAFRegional {
   async listTagsForResource(
     {abortSignal, ...params}: RequestConfig & ListTagsForResourceRequest,
   ): Promise<ListTagsForResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NextMarker: params["NextMarker"],
       Limit: params["Limit"],
       ResourceARN: params["ResourceARN"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForResource",
@@ -1243,10 +1243,10 @@ export default class WAFRegional {
   async listWebACLs(
     {abortSignal, ...params}: RequestConfig & ListWebACLsRequest = {},
   ): Promise<ListWebACLsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NextMarker: params["NextMarker"],
       Limit: params["Limit"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListWebACLs",
@@ -1263,10 +1263,10 @@ export default class WAFRegional {
   async listXssMatchSets(
     {abortSignal, ...params}: RequestConfig & ListXssMatchSetsRequest = {},
   ): Promise<ListXssMatchSetsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NextMarker: params["NextMarker"],
       Limit: params["Limit"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListXssMatchSets",
@@ -1283,9 +1283,9 @@ export default class WAFRegional {
   async putLoggingConfiguration(
     {abortSignal, ...params}: RequestConfig & PutLoggingConfigurationRequest,
   ): Promise<PutLoggingConfigurationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       LoggingConfiguration: fromLoggingConfiguration(params["LoggingConfiguration"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutLoggingConfiguration",
@@ -1301,10 +1301,10 @@ export default class WAFRegional {
   async putPermissionPolicy(
     {abortSignal, ...params}: RequestConfig & PutPermissionPolicyRequest,
   ): Promise<PutPermissionPolicyResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
       Policy: params["Policy"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutPermissionPolicy",
@@ -1318,10 +1318,10 @@ export default class WAFRegional {
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceARN: params["ResourceARN"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
@@ -1335,10 +1335,10 @@ export default class WAFRegional {
   async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceRequest,
   ): Promise<UntagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceARN: params["ResourceARN"],
       TagKeys: params["TagKeys"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResource",
@@ -1352,11 +1352,11 @@ export default class WAFRegional {
   async updateByteMatchSet(
     {abortSignal, ...params}: RequestConfig & UpdateByteMatchSetRequest,
   ): Promise<UpdateByteMatchSetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ByteMatchSetId: params["ByteMatchSetId"],
       ChangeToken: params["ChangeToken"],
       Updates: params["Updates"]?.map(x => fromByteMatchSetUpdate(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateByteMatchSet",
@@ -1372,11 +1372,11 @@ export default class WAFRegional {
   async updateGeoMatchSet(
     {abortSignal, ...params}: RequestConfig & UpdateGeoMatchSetRequest,
   ): Promise<UpdateGeoMatchSetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       GeoMatchSetId: params["GeoMatchSetId"],
       ChangeToken: params["ChangeToken"],
       Updates: params["Updates"]?.map(x => fromGeoMatchSetUpdate(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateGeoMatchSet",
@@ -1392,11 +1392,11 @@ export default class WAFRegional {
   async updateIPSet(
     {abortSignal, ...params}: RequestConfig & UpdateIPSetRequest,
   ): Promise<UpdateIPSetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       IPSetId: params["IPSetId"],
       ChangeToken: params["ChangeToken"],
       Updates: params["Updates"]?.map(x => fromIPSetUpdate(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateIPSet",
@@ -1412,12 +1412,12 @@ export default class WAFRegional {
   async updateRateBasedRule(
     {abortSignal, ...params}: RequestConfig & UpdateRateBasedRuleRequest,
   ): Promise<UpdateRateBasedRuleResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       RuleId: params["RuleId"],
       ChangeToken: params["ChangeToken"],
       Updates: params["Updates"]?.map(x => fromRuleUpdate(x)),
       RateLimit: params["RateLimit"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateRateBasedRule",
@@ -1433,11 +1433,11 @@ export default class WAFRegional {
   async updateRegexMatchSet(
     {abortSignal, ...params}: RequestConfig & UpdateRegexMatchSetRequest,
   ): Promise<UpdateRegexMatchSetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       RegexMatchSetId: params["RegexMatchSetId"],
       Updates: params["Updates"]?.map(x => fromRegexMatchSetUpdate(x)),
       ChangeToken: params["ChangeToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateRegexMatchSet",
@@ -1453,11 +1453,11 @@ export default class WAFRegional {
   async updateRegexPatternSet(
     {abortSignal, ...params}: RequestConfig & UpdateRegexPatternSetRequest,
   ): Promise<UpdateRegexPatternSetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       RegexPatternSetId: params["RegexPatternSetId"],
       Updates: params["Updates"]?.map(x => fromRegexPatternSetUpdate(x)),
       ChangeToken: params["ChangeToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateRegexPatternSet",
@@ -1473,11 +1473,11 @@ export default class WAFRegional {
   async updateRule(
     {abortSignal, ...params}: RequestConfig & UpdateRuleRequest,
   ): Promise<UpdateRuleResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       RuleId: params["RuleId"],
       ChangeToken: params["ChangeToken"],
       Updates: params["Updates"]?.map(x => fromRuleUpdate(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateRule",
@@ -1493,11 +1493,11 @@ export default class WAFRegional {
   async updateRuleGroup(
     {abortSignal, ...params}: RequestConfig & UpdateRuleGroupRequest,
   ): Promise<UpdateRuleGroupResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       RuleGroupId: params["RuleGroupId"],
       Updates: params["Updates"]?.map(x => fromRuleGroupUpdate(x)),
       ChangeToken: params["ChangeToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateRuleGroup",
@@ -1513,11 +1513,11 @@ export default class WAFRegional {
   async updateSizeConstraintSet(
     {abortSignal, ...params}: RequestConfig & UpdateSizeConstraintSetRequest,
   ): Promise<UpdateSizeConstraintSetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       SizeConstraintSetId: params["SizeConstraintSetId"],
       ChangeToken: params["ChangeToken"],
       Updates: params["Updates"]?.map(x => fromSizeConstraintSetUpdate(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateSizeConstraintSet",
@@ -1533,11 +1533,11 @@ export default class WAFRegional {
   async updateSqlInjectionMatchSet(
     {abortSignal, ...params}: RequestConfig & UpdateSqlInjectionMatchSetRequest,
   ): Promise<UpdateSqlInjectionMatchSetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       SqlInjectionMatchSetId: params["SqlInjectionMatchSetId"],
       ChangeToken: params["ChangeToken"],
       Updates: params["Updates"]?.map(x => fromSqlInjectionMatchSetUpdate(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateSqlInjectionMatchSet",
@@ -1553,12 +1553,12 @@ export default class WAFRegional {
   async updateWebACL(
     {abortSignal, ...params}: RequestConfig & UpdateWebACLRequest,
   ): Promise<UpdateWebACLResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       WebACLId: params["WebACLId"],
       ChangeToken: params["ChangeToken"],
       Updates: params["Updates"]?.map(x => fromWebACLUpdate(x)),
       DefaultAction: fromWafAction(params["DefaultAction"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateWebACL",
@@ -1574,11 +1574,11 @@ export default class WAFRegional {
   async updateXssMatchSet(
     {abortSignal, ...params}: RequestConfig & UpdateXssMatchSetRequest,
   ): Promise<UpdateXssMatchSetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       XssMatchSetId: params["XssMatchSetId"],
       ChangeToken: params["ChangeToken"],
       Updates: params["Updates"]?.map(x => fromXssMatchSetUpdate(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateXssMatchSet",

@@ -30,11 +30,11 @@ export default class AutoScalingPlans {
   async createScalingPlan(
     {abortSignal, ...params}: RequestConfig & CreateScalingPlanRequest,
   ): Promise<CreateScalingPlanResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ScalingPlanName: params["ScalingPlanName"],
       ApplicationSource: fromApplicationSource(params["ApplicationSource"]),
       ScalingInstructions: params["ScalingInstructions"]?.map(x => fromScalingInstruction(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateScalingPlan",
@@ -50,10 +50,10 @@ export default class AutoScalingPlans {
   async deleteScalingPlan(
     {abortSignal, ...params}: RequestConfig & DeleteScalingPlanRequest,
   ): Promise<DeleteScalingPlanResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ScalingPlanName: params["ScalingPlanName"],
       ScalingPlanVersion: params["ScalingPlanVersion"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteScalingPlan",
@@ -67,12 +67,12 @@ export default class AutoScalingPlans {
   async describeScalingPlanResources(
     {abortSignal, ...params}: RequestConfig & DescribeScalingPlanResourcesRequest,
   ): Promise<DescribeScalingPlanResourcesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ScalingPlanName: params["ScalingPlanName"],
       ScalingPlanVersion: params["ScalingPlanVersion"],
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeScalingPlanResources",
@@ -89,13 +89,13 @@ export default class AutoScalingPlans {
   async describeScalingPlans(
     {abortSignal, ...params}: RequestConfig & DescribeScalingPlansRequest = {},
   ): Promise<DescribeScalingPlansResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ScalingPlanNames: params["ScalingPlanNames"],
       ScalingPlanVersion: params["ScalingPlanVersion"],
       ApplicationSources: params["ApplicationSources"]?.map(x => fromApplicationSource(x)),
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeScalingPlans",
@@ -112,7 +112,7 @@ export default class AutoScalingPlans {
   async getScalingPlanResourceForecastData(
     {abortSignal, ...params}: RequestConfig & GetScalingPlanResourceForecastDataRequest,
   ): Promise<GetScalingPlanResourceForecastDataResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ScalingPlanName: params["ScalingPlanName"],
       ScalingPlanVersion: params["ScalingPlanVersion"],
       ServiceNamespace: params["ServiceNamespace"],
@@ -121,7 +121,7 @@ export default class AutoScalingPlans {
       ForecastDataType: params["ForecastDataType"],
       StartTime: jsonP.serializeDate_unixTimestamp(params["StartTime"]),
       EndTime: jsonP.serializeDate_unixTimestamp(params["EndTime"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetScalingPlanResourceForecastData",
@@ -137,12 +137,12 @@ export default class AutoScalingPlans {
   async updateScalingPlan(
     {abortSignal, ...params}: RequestConfig & UpdateScalingPlanRequest,
   ): Promise<UpdateScalingPlanResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ScalingPlanName: params["ScalingPlanName"],
       ScalingPlanVersion: params["ScalingPlanVersion"],
       ApplicationSource: fromApplicationSource(params["ApplicationSource"]),
       ScalingInstructions: params["ScalingInstructions"]?.map(x => fromScalingInstruction(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateScalingPlan",

@@ -29,8 +29,8 @@ export default class ResourceGroupsTaggingAPI {
   async describeReportCreation(
     {abortSignal, ...params}: RequestConfig & DescribeReportCreationInput = {},
   ): Promise<DescribeReportCreationOutput> {
-    const body: jsonP.JSONObject = params ? {
-    } : {};
+    const body: jsonP.JSONObject = {
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeReportCreation",
@@ -48,7 +48,7 @@ export default class ResourceGroupsTaggingAPI {
   async getComplianceSummary(
     {abortSignal, ...params}: RequestConfig & GetComplianceSummaryInput = {},
   ): Promise<GetComplianceSummaryOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TargetIdFilters: params["TargetIdFilters"],
       RegionFilters: params["RegionFilters"],
       ResourceTypeFilters: params["ResourceTypeFilters"],
@@ -56,7 +56,7 @@ export default class ResourceGroupsTaggingAPI {
       GroupBy: params["GroupBy"],
       MaxResults: params["MaxResults"],
       PaginationToken: params["PaginationToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetComplianceSummary",
@@ -73,7 +73,7 @@ export default class ResourceGroupsTaggingAPI {
   async getResources(
     {abortSignal, ...params}: RequestConfig & GetResourcesInput = {},
   ): Promise<GetResourcesOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       PaginationToken: params["PaginationToken"],
       TagFilters: params["TagFilters"]?.map(x => fromTagFilter(x)),
       ResourcesPerPage: params["ResourcesPerPage"],
@@ -81,7 +81,7 @@ export default class ResourceGroupsTaggingAPI {
       ResourceTypeFilters: params["ResourceTypeFilters"],
       IncludeComplianceDetails: params["IncludeComplianceDetails"],
       ExcludeCompliantResources: params["ExcludeCompliantResources"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetResources",
@@ -98,9 +98,9 @@ export default class ResourceGroupsTaggingAPI {
   async getTagKeys(
     {abortSignal, ...params}: RequestConfig & GetTagKeysInput = {},
   ): Promise<GetTagKeysOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       PaginationToken: params["PaginationToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetTagKeys",
@@ -117,10 +117,10 @@ export default class ResourceGroupsTaggingAPI {
   async getTagValues(
     {abortSignal, ...params}: RequestConfig & GetTagValuesInput,
   ): Promise<GetTagValuesOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       PaginationToken: params["PaginationToken"],
       Key: params["Key"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetTagValues",
@@ -137,9 +137,9 @@ export default class ResourceGroupsTaggingAPI {
   async startReportCreation(
     {abortSignal, ...params}: RequestConfig & StartReportCreationInput,
   ): Promise<StartReportCreationOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       S3Bucket: params["S3Bucket"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartReportCreation",
@@ -153,10 +153,10 @@ export default class ResourceGroupsTaggingAPI {
   async tagResources(
     {abortSignal, ...params}: RequestConfig & TagResourcesInput,
   ): Promise<TagResourcesOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceARNList: params["ResourceARNList"],
       Tags: params["Tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResources",
@@ -172,10 +172,10 @@ export default class ResourceGroupsTaggingAPI {
   async untagResources(
     {abortSignal, ...params}: RequestConfig & UntagResourcesInput,
   ): Promise<UntagResourcesOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceARNList: params["ResourceARNList"],
       TagKeys: params["TagKeys"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResources",

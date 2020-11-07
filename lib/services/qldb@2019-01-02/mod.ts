@@ -37,42 +37,38 @@ export default class QLDB {
       method: "DELETE",
       requestUri: cmnP.encodePath`/ledgers/${params["LedgerName"]}/journal-kinesis-streams/${params["StreamId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "StreamId": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "StreamId": "s",
+      },
+    }, await resp.json());
   }
 
   async createLedger(
     {abortSignal, ...params}: RequestConfig & CreateLedgerRequest,
   ): Promise<CreateLedgerResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       Tags: params["Tags"],
       PermissionsMode: params["PermissionsMode"],
       DeletionProtection: params["DeletionProtection"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateLedger",
       requestUri: "/ledgers",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Name": "s",
-          "Arn": "s",
-          "State": (x: jsonP.JSONValue) => cmnP.readEnum<LedgerState>(x),
-          "CreationDateTime": "d",
-          "DeletionProtection": "b",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Name": "s",
+        "Arn": "s",
+        "State": (x: jsonP.JSONValue) => cmnP.readEnum<LedgerState>(x),
+        "CreationDateTime": "d",
+        "DeletionProtection": "b",
+      },
+    }, await resp.json());
   }
 
   async deleteLedger(
@@ -97,14 +93,12 @@ export default class QLDB {
       method: "GET",
       requestUri: cmnP.encodePath`/ledgers/${params["LedgerName"]}/journal-kinesis-streams/${params["StreamId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Stream": toJournalKinesisStreamDescription,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Stream": toJournalKinesisStreamDescription,
+      },
+    }, await resp.json());
   }
 
   async describeJournalS3Export(
@@ -117,14 +111,12 @@ export default class QLDB {
       method: "GET",
       requestUri: cmnP.encodePath`/ledgers/${params["Name"]}/journal-s3-exports/${params["ExportId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "ExportDescription": toJournalS3ExportDescription,
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "ExportDescription": toJournalS3ExportDescription,
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async describeLedger(
@@ -137,66 +129,60 @@ export default class QLDB {
       method: "GET",
       requestUri: cmnP.encodePath`/ledgers/${params["Name"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Name": "s",
-          "Arn": "s",
-          "State": (x: jsonP.JSONValue) => cmnP.readEnum<LedgerState>(x),
-          "CreationDateTime": "d",
-          "DeletionProtection": "b",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Name": "s",
+        "Arn": "s",
+        "State": (x: jsonP.JSONValue) => cmnP.readEnum<LedgerState>(x),
+        "CreationDateTime": "d",
+        "DeletionProtection": "b",
+      },
+    }, await resp.json());
   }
 
   async exportJournalToS3(
     {abortSignal, ...params}: RequestConfig & ExportJournalToS3Request,
   ): Promise<ExportJournalToS3Response> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       InclusiveStartTime: jsonP.serializeDate_unixTimestamp(params["InclusiveStartTime"]),
       ExclusiveEndTime: jsonP.serializeDate_unixTimestamp(params["ExclusiveEndTime"]),
       S3ExportConfiguration: fromS3ExportConfiguration(params["S3ExportConfiguration"]),
       RoleArn: params["RoleArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ExportJournalToS3",
       requestUri: cmnP.encodePath`/ledgers/${params["Name"]}/journal-s3-exports`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "ExportId": "s",
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "ExportId": "s",
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async getBlock(
     {abortSignal, ...params}: RequestConfig & GetBlockRequest,
   ): Promise<GetBlockResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       BlockAddress: fromValueHolder(params["BlockAddress"]),
       DigestTipAddress: fromValueHolder(params["DigestTipAddress"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetBlock",
       requestUri: cmnP.encodePath`/ledgers/${params["Name"]}/block`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "Block": toValueHolder,
-        },
-        optional: {
-          "Proof": toValueHolder,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "Block": toValueHolder,
+      },
+      optional: {
+        "Proof": toValueHolder,
+      },
+    }, await resp.json());
   }
 
   async getDigest(
@@ -208,40 +194,36 @@ export default class QLDB {
       action: "GetDigest",
       requestUri: cmnP.encodePath`/ledgers/${params["Name"]}/digest`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "Digest": "a",
-          "DigestTipAddress": toValueHolder,
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "Digest": "a",
+        "DigestTipAddress": toValueHolder,
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async getRevision(
     {abortSignal, ...params}: RequestConfig & GetRevisionRequest,
   ): Promise<GetRevisionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       BlockAddress: fromValueHolder(params["BlockAddress"]),
       DocumentId: params["DocumentId"],
       DigestTipAddress: fromValueHolder(params["DigestTipAddress"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetRevision",
       requestUri: cmnP.encodePath`/ledgers/${params["Name"]}/revision`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "Revision": toValueHolder,
-        },
-        optional: {
-          "Proof": toValueHolder,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "Revision": toValueHolder,
+      },
+      optional: {
+        "Proof": toValueHolder,
+      },
+    }, await resp.json());
   }
 
   async listJournalKinesisStreamsForLedger(
@@ -256,15 +238,13 @@ export default class QLDB {
       method: "GET",
       requestUri: cmnP.encodePath`/ledgers/${params["LedgerName"]}/journal-kinesis-streams`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Streams": [toJournalKinesisStreamDescription],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Streams": [toJournalKinesisStreamDescription],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listJournalS3Exports(
@@ -279,15 +259,13 @@ export default class QLDB {
       method: "GET",
       requestUri: "/journal-s3-exports",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "JournalS3Exports": [toJournalS3ExportDescription],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "JournalS3Exports": [toJournalS3ExportDescription],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listJournalS3ExportsForLedger(
@@ -302,15 +280,13 @@ export default class QLDB {
       method: "GET",
       requestUri: cmnP.encodePath`/ledgers/${params["Name"]}/journal-s3-exports`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "JournalS3Exports": [toJournalS3ExportDescription],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "JournalS3Exports": [toJournalS3ExportDescription],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listLedgers(
@@ -325,15 +301,13 @@ export default class QLDB {
       method: "GET",
       requestUri: "/ledgers",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Ledgers": [toLedgerSummary],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Ledgers": [toLedgerSummary],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listTagsForResource(
@@ -346,59 +320,53 @@ export default class QLDB {
       method: "GET",
       requestUri: cmnP.encodePath`/tags/${params["ResourceArn"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async streamJournalToKinesis(
     {abortSignal, ...params}: RequestConfig & StreamJournalToKinesisRequest,
   ): Promise<StreamJournalToKinesisResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       RoleArn: params["RoleArn"],
       Tags: params["Tags"],
       InclusiveStartTime: jsonP.serializeDate_unixTimestamp(params["InclusiveStartTime"]),
       ExclusiveEndTime: jsonP.serializeDate_unixTimestamp(params["ExclusiveEndTime"]),
       KinesisConfiguration: fromKinesisConfiguration(params["KinesisConfiguration"]),
       StreamName: params["StreamName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StreamJournalToKinesis",
       requestUri: cmnP.encodePath`/ledgers/${params["LedgerName"]}/journal-kinesis-streams`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "StreamId": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "StreamId": "s",
+      },
+    }, await resp.json());
   }
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Tags: params["Tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
       requestUri: cmnP.encodePath`/tags/${params["ResourceArn"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async untagResource(
@@ -414,38 +382,34 @@ export default class QLDB {
       method: "DELETE",
       requestUri: cmnP.encodePath`/tags/${params["ResourceArn"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async updateLedger(
     {abortSignal, ...params}: RequestConfig & UpdateLedgerRequest,
   ): Promise<UpdateLedgerResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DeletionProtection: params["DeletionProtection"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateLedger",
       method: "PATCH",
       requestUri: cmnP.encodePath`/ledgers/${params["Name"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Name": "s",
-          "Arn": "s",
-          "State": (x: jsonP.JSONValue) => cmnP.readEnum<LedgerState>(x),
-          "CreationDateTime": "d",
-          "DeletionProtection": "b",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Name": "s",
+        "Arn": "s",
+        "State": (x: jsonP.JSONValue) => cmnP.readEnum<LedgerState>(x),
+        "CreationDateTime": "d",
+        "DeletionProtection": "b",
+      },
+    }, await resp.json());
   }
 
 }

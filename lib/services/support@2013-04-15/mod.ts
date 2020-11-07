@@ -29,10 +29,10 @@ export default class Support {
   async addAttachmentsToSet(
     {abortSignal, ...params}: RequestConfig & AddAttachmentsToSetRequest,
   ): Promise<AddAttachmentsToSetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       attachmentSetId: params["attachmentSetId"],
       attachments: params["attachments"]?.map(x => fromAttachment(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AddAttachmentsToSet",
@@ -49,12 +49,12 @@ export default class Support {
   async addCommunicationToCase(
     {abortSignal, ...params}: RequestConfig & AddCommunicationToCaseRequest,
   ): Promise<AddCommunicationToCaseResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       caseId: params["caseId"],
       communicationBody: params["communicationBody"],
       ccEmailAddresses: params["ccEmailAddresses"],
       attachmentSetId: params["attachmentSetId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AddCommunicationToCase",
@@ -70,7 +70,7 @@ export default class Support {
   async createCase(
     {abortSignal, ...params}: RequestConfig & CreateCaseRequest,
   ): Promise<CreateCaseResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       subject: params["subject"],
       serviceCode: params["serviceCode"],
       severityCode: params["severityCode"],
@@ -80,7 +80,7 @@ export default class Support {
       language: params["language"],
       issueType: params["issueType"],
       attachmentSetId: params["attachmentSetId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateCase",
@@ -96,9 +96,9 @@ export default class Support {
   async describeAttachment(
     {abortSignal, ...params}: RequestConfig & DescribeAttachmentRequest,
   ): Promise<DescribeAttachmentResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       attachmentId: params["attachmentId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeAttachment",
@@ -114,7 +114,7 @@ export default class Support {
   async describeCases(
     {abortSignal, ...params}: RequestConfig & DescribeCasesRequest = {},
   ): Promise<DescribeCasesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       caseIdList: params["caseIdList"],
       displayId: params["displayId"],
       afterTime: params["afterTime"],
@@ -124,7 +124,7 @@ export default class Support {
       maxResults: params["maxResults"],
       language: params["language"],
       includeCommunications: params["includeCommunications"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeCases",
@@ -141,13 +141,13 @@ export default class Support {
   async describeCommunications(
     {abortSignal, ...params}: RequestConfig & DescribeCommunicationsRequest,
   ): Promise<DescribeCommunicationsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       caseId: params["caseId"],
       beforeTime: params["beforeTime"],
       afterTime: params["afterTime"],
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeCommunications",
@@ -164,10 +164,10 @@ export default class Support {
   async describeServices(
     {abortSignal, ...params}: RequestConfig & DescribeServicesRequest = {},
   ): Promise<DescribeServicesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       serviceCodeList: params["serviceCodeList"],
       language: params["language"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeServices",
@@ -183,9 +183,9 @@ export default class Support {
   async describeSeverityLevels(
     {abortSignal, ...params}: RequestConfig & DescribeSeverityLevelsRequest = {},
   ): Promise<DescribeSeverityLevelsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       language: params["language"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeSeverityLevels",
@@ -201,9 +201,9 @@ export default class Support {
   async describeTrustedAdvisorCheckRefreshStatuses(
     {abortSignal, ...params}: RequestConfig & DescribeTrustedAdvisorCheckRefreshStatusesRequest,
   ): Promise<DescribeTrustedAdvisorCheckRefreshStatusesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       checkIds: params["checkIds"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeTrustedAdvisorCheckRefreshStatuses",
@@ -219,10 +219,10 @@ export default class Support {
   async describeTrustedAdvisorCheckResult(
     {abortSignal, ...params}: RequestConfig & DescribeTrustedAdvisorCheckResultRequest,
   ): Promise<DescribeTrustedAdvisorCheckResultResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       checkId: params["checkId"],
       language: params["language"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeTrustedAdvisorCheckResult",
@@ -238,9 +238,9 @@ export default class Support {
   async describeTrustedAdvisorCheckSummaries(
     {abortSignal, ...params}: RequestConfig & DescribeTrustedAdvisorCheckSummariesRequest,
   ): Promise<DescribeTrustedAdvisorCheckSummariesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       checkIds: params["checkIds"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeTrustedAdvisorCheckSummaries",
@@ -256,9 +256,9 @@ export default class Support {
   async describeTrustedAdvisorChecks(
     {abortSignal, ...params}: RequestConfig & DescribeTrustedAdvisorChecksRequest,
   ): Promise<DescribeTrustedAdvisorChecksResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       language: params["language"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeTrustedAdvisorChecks",
@@ -274,9 +274,9 @@ export default class Support {
   async refreshTrustedAdvisorCheck(
     {abortSignal, ...params}: RequestConfig & RefreshTrustedAdvisorCheckRequest,
   ): Promise<RefreshTrustedAdvisorCheckResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       checkId: params["checkId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RefreshTrustedAdvisorCheck",
@@ -292,9 +292,9 @@ export default class Support {
   async resolveCase(
     {abortSignal, ...params}: RequestConfig & ResolveCaseRequest = {},
   ): Promise<ResolveCaseResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       caseId: params["caseId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ResolveCase",

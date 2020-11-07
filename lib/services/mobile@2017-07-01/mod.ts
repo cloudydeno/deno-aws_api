@@ -29,24 +29,22 @@ export default class Mobile {
   async createProject(
     {abortSignal, ...params}: RequestConfig & CreateProjectRequest = {},
   ): Promise<CreateProjectResult> {
+    const body = typeof params["contents"] === 'string' ? new TextEncoder().encode(params["contents"]) : params["contents"];
     const query = new URLSearchParams;
     if (params["name"] != null) query.set("name", params["name"]?.toString() ?? "");
     if (params["region"] != null) query.set("region", params["region"]?.toString() ?? "");
     if (params["snapshotId"] != null) query.set("snapshotId", params["snapshotId"]?.toString() ?? "");
-    const body = typeof params["contents"] === 'string' ? new TextEncoder().encode(params["contents"]) : params["contents"];
     const resp = await this.#client.performRequest({
       abortSignal, query, body,
       action: "CreateProject",
       requestUri: "/projects",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "details": toProjectDetails,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "details": toProjectDetails,
+      },
+    }, await resp.json());
   }
 
   async deleteProject(
@@ -59,15 +57,13 @@ export default class Mobile {
       method: "DELETE",
       requestUri: cmnP.encodePath`/projects/${params["projectId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "deletedResources": [toResource],
-          "orphanedResources": [toResource],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "deletedResources": [toResource],
+        "orphanedResources": [toResource],
+      },
+    }, await resp.json());
   }
 
   async describeBundle(
@@ -80,14 +76,12 @@ export default class Mobile {
       method: "GET",
       requestUri: cmnP.encodePath`/bundles/${params["bundleId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "details": toBundleDetails,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "details": toBundleDetails,
+      },
+    }, await resp.json());
   }
 
   async describeProject(
@@ -102,14 +96,12 @@ export default class Mobile {
       method: "GET",
       requestUri: "/project",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "details": toProjectDetails,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "details": toProjectDetails,
+      },
+    }, await resp.json());
   }
 
   async exportBundle(
@@ -123,14 +115,12 @@ export default class Mobile {
       action: "ExportBundle",
       requestUri: cmnP.encodePath`/bundles/${params["bundleId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "downloadUrl": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "downloadUrl": "s",
+      },
+    }, await resp.json());
   }
 
   async exportProject(
@@ -142,16 +132,14 @@ export default class Mobile {
       action: "ExportProject",
       requestUri: cmnP.encodePath`/exports/${params["projectId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "downloadUrl": "s",
-          "shareUrl": "s",
-          "snapshotId": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "downloadUrl": "s",
+        "shareUrl": "s",
+        "snapshotId": "s",
+      },
+    }, await resp.json());
   }
 
   async listBundles(
@@ -166,15 +154,13 @@ export default class Mobile {
       method: "GET",
       requestUri: "/bundles",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "bundleList": [toBundleDetails],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "bundleList": [toBundleDetails],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listProjects(
@@ -189,36 +175,32 @@ export default class Mobile {
       method: "GET",
       requestUri: "/projects",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "projects": [toProjectSummary],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "projects": [toProjectSummary],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async updateProject(
     {abortSignal, ...params}: RequestConfig & UpdateProjectRequest,
   ): Promise<UpdateProjectResult> {
+    const body = typeof params["contents"] === 'string' ? new TextEncoder().encode(params["contents"]) : params["contents"];
     const query = new URLSearchParams;
     query.set("projectId", params["projectId"]?.toString() ?? "");
-    const body = typeof params["contents"] === 'string' ? new TextEncoder().encode(params["contents"]) : params["contents"];
     const resp = await this.#client.performRequest({
       abortSignal, query, body,
       action: "UpdateProject",
       requestUri: "/update",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "details": toProjectDetails,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "details": toProjectDetails,
+      },
+    }, await resp.json());
   }
 
 }

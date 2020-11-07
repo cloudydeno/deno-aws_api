@@ -30,11 +30,11 @@ export default class DynamoDBStreams {
   async describeStream(
     {abortSignal, ...params}: RequestConfig & DescribeStreamInput,
   ): Promise<DescribeStreamOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       StreamArn: params["StreamArn"],
       Limit: params["Limit"],
       ExclusiveStartShardId: params["ExclusiveStartShardId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeStream",
@@ -50,10 +50,10 @@ export default class DynamoDBStreams {
   async getRecords(
     {abortSignal, ...params}: RequestConfig & GetRecordsInput,
   ): Promise<GetRecordsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ShardIterator: params["ShardIterator"],
       Limit: params["Limit"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetRecords",
@@ -70,12 +70,12 @@ export default class DynamoDBStreams {
   async getShardIterator(
     {abortSignal, ...params}: RequestConfig & GetShardIteratorInput,
   ): Promise<GetShardIteratorOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       StreamArn: params["StreamArn"],
       ShardId: params["ShardId"],
       ShardIteratorType: params["ShardIteratorType"],
       SequenceNumber: params["SequenceNumber"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetShardIterator",
@@ -91,11 +91,11 @@ export default class DynamoDBStreams {
   async listStreams(
     {abortSignal, ...params}: RequestConfig & ListStreamsInput = {},
   ): Promise<ListStreamsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TableName: params["TableName"],
       Limit: params["Limit"],
       ExclusiveStartStreamArn: params["ExclusiveStartStreamArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListStreams",

@@ -34,13 +34,13 @@ export default class AppMesh {
     {abortSignal, ...params}: RequestConfig & CreateGatewayRouteInput,
   ): Promise<CreateGatewayRouteOutput> {
     const query = new URLSearchParams;
-    if (params["meshOwner"] != null) query.set("meshOwner", params["meshOwner"]?.toString() ?? "");
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       clientToken: params["clientToken"] ?? generateIdemptToken(),
       gatewayRouteName: params["gatewayRouteName"],
       spec: fromGatewayRouteSpec(params["spec"]),
       tags: params["tags"]?.map(x => fromTagRef(x)),
-    } : {};
+    };
+    if (params["meshOwner"] != null) query.set("meshOwner", params["meshOwner"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
       abortSignal, query, body,
       action: "CreateGatewayRoute",
@@ -56,12 +56,12 @@ export default class AppMesh {
   async createMesh(
     {abortSignal, ...params}: RequestConfig & CreateMeshInput,
   ): Promise<CreateMeshOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       clientToken: params["clientToken"] ?? generateIdemptToken(),
       meshName: params["meshName"],
       spec: fromMeshSpec(params["spec"]),
       tags: params["tags"]?.map(x => fromTagRef(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateMesh",
@@ -78,13 +78,13 @@ export default class AppMesh {
     {abortSignal, ...params}: RequestConfig & CreateRouteInput,
   ): Promise<CreateRouteOutput> {
     const query = new URLSearchParams;
-    if (params["meshOwner"] != null) query.set("meshOwner", params["meshOwner"]?.toString() ?? "");
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       clientToken: params["clientToken"] ?? generateIdemptToken(),
       routeName: params["routeName"],
       spec: fromRouteSpec(params["spec"]),
       tags: params["tags"]?.map(x => fromTagRef(x)),
-    } : {};
+    };
+    if (params["meshOwner"] != null) query.set("meshOwner", params["meshOwner"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
       abortSignal, query, body,
       action: "CreateRoute",
@@ -101,13 +101,13 @@ export default class AppMesh {
     {abortSignal, ...params}: RequestConfig & CreateVirtualGatewayInput,
   ): Promise<CreateVirtualGatewayOutput> {
     const query = new URLSearchParams;
-    if (params["meshOwner"] != null) query.set("meshOwner", params["meshOwner"]?.toString() ?? "");
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       clientToken: params["clientToken"] ?? generateIdemptToken(),
       spec: fromVirtualGatewaySpec(params["spec"]),
       tags: params["tags"]?.map(x => fromTagRef(x)),
       virtualGatewayName: params["virtualGatewayName"],
-    } : {};
+    };
+    if (params["meshOwner"] != null) query.set("meshOwner", params["meshOwner"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
       abortSignal, query, body,
       action: "CreateVirtualGateway",
@@ -124,13 +124,13 @@ export default class AppMesh {
     {abortSignal, ...params}: RequestConfig & CreateVirtualNodeInput,
   ): Promise<CreateVirtualNodeOutput> {
     const query = new URLSearchParams;
-    if (params["meshOwner"] != null) query.set("meshOwner", params["meshOwner"]?.toString() ?? "");
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       clientToken: params["clientToken"] ?? generateIdemptToken(),
       spec: fromVirtualNodeSpec(params["spec"]),
       tags: params["tags"]?.map(x => fromTagRef(x)),
       virtualNodeName: params["virtualNodeName"],
-    } : {};
+    };
+    if (params["meshOwner"] != null) query.set("meshOwner", params["meshOwner"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
       abortSignal, query, body,
       action: "CreateVirtualNode",
@@ -147,13 +147,13 @@ export default class AppMesh {
     {abortSignal, ...params}: RequestConfig & CreateVirtualRouterInput,
   ): Promise<CreateVirtualRouterOutput> {
     const query = new URLSearchParams;
-    if (params["meshOwner"] != null) query.set("meshOwner", params["meshOwner"]?.toString() ?? "");
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       clientToken: params["clientToken"] ?? generateIdemptToken(),
       spec: fromVirtualRouterSpec(params["spec"]),
       tags: params["tags"]?.map(x => fromTagRef(x)),
       virtualRouterName: params["virtualRouterName"],
-    } : {};
+    };
+    if (params["meshOwner"] != null) query.set("meshOwner", params["meshOwner"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
       abortSignal, query, body,
       action: "CreateVirtualRouter",
@@ -170,13 +170,13 @@ export default class AppMesh {
     {abortSignal, ...params}: RequestConfig & CreateVirtualServiceInput,
   ): Promise<CreateVirtualServiceOutput> {
     const query = new URLSearchParams;
-    if (params["meshOwner"] != null) query.set("meshOwner", params["meshOwner"]?.toString() ?? "");
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       clientToken: params["clientToken"] ?? generateIdemptToken(),
       spec: fromVirtualServiceSpec(params["spec"]),
       tags: params["tags"]?.map(x => fromTagRef(x)),
       virtualServiceName: params["virtualServiceName"],
-    } : {};
+    };
+    if (params["meshOwner"] != null) query.set("meshOwner", params["meshOwner"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
       abortSignal, query, body,
       action: "CreateVirtualService",
@@ -440,16 +440,14 @@ export default class AppMesh {
       requestUri: cmnP.encodePath`/v20190125/meshes/${params["meshName"]}/virtualGateway/${params["virtualGatewayName"]}/gatewayRoutes`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "gatewayRoutes": [toGatewayRouteRef],
-        },
-        optional: {
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "gatewayRoutes": [toGatewayRouteRef],
+      },
+      optional: {
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listMeshes(
@@ -465,16 +463,14 @@ export default class AppMesh {
       requestUri: "/v20190125/meshes",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "meshes": [toMeshRef],
-        },
-        optional: {
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "meshes": [toMeshRef],
+      },
+      optional: {
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listRoutes(
@@ -491,16 +487,14 @@ export default class AppMesh {
       requestUri: cmnP.encodePath`/v20190125/meshes/${params["meshName"]}/virtualRouter/${params["virtualRouterName"]}/routes`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "routes": [toRouteRef],
-        },
-        optional: {
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "routes": [toRouteRef],
+      },
+      optional: {
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listTagsForResource(
@@ -517,16 +511,14 @@ export default class AppMesh {
       requestUri: "/v20190125/tags",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "tags": [toTagRef],
-        },
-        optional: {
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "tags": [toTagRef],
+      },
+      optional: {
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listVirtualGateways(
@@ -543,16 +535,14 @@ export default class AppMesh {
       requestUri: cmnP.encodePath`/v20190125/meshes/${params["meshName"]}/virtualGateways`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "virtualGateways": [toVirtualGatewayRef],
-        },
-        optional: {
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "virtualGateways": [toVirtualGatewayRef],
+      },
+      optional: {
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listVirtualNodes(
@@ -569,16 +559,14 @@ export default class AppMesh {
       requestUri: cmnP.encodePath`/v20190125/meshes/${params["meshName"]}/virtualNodes`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "virtualNodes": [toVirtualNodeRef],
-        },
-        optional: {
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "virtualNodes": [toVirtualNodeRef],
+      },
+      optional: {
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listVirtualRouters(
@@ -595,16 +583,14 @@ export default class AppMesh {
       requestUri: cmnP.encodePath`/v20190125/meshes/${params["meshName"]}/virtualRouters`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "virtualRouters": [toVirtualRouterRef],
-        },
-        optional: {
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "virtualRouters": [toVirtualRouterRef],
+      },
+      optional: {
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listVirtualServices(
@@ -621,26 +607,24 @@ export default class AppMesh {
       requestUri: cmnP.encodePath`/v20190125/meshes/${params["meshName"]}/virtualServices`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "virtualServices": [toVirtualServiceRef],
-        },
-        optional: {
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "virtualServices": [toVirtualServiceRef],
+      },
+      optional: {
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceInput,
   ): Promise<TagResourceOutput> {
     const query = new URLSearchParams;
-    query.set("resourceArn", params["resourceArn"]?.toString() ?? "");
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       tags: params["tags"]?.map(x => fromTagRef(x)),
-    } : {};
+    };
+    query.set("resourceArn", params["resourceArn"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
       abortSignal, query, body,
       action: "TagResource",
@@ -648,22 +632,20 @@ export default class AppMesh {
       requestUri: "/v20190125/tag",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceInput,
   ): Promise<UntagResourceOutput> {
     const query = new URLSearchParams;
-    query.set("resourceArn", params["resourceArn"]?.toString() ?? "");
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       tagKeys: params["tagKeys"],
-    } : {};
+    };
+    query.set("resourceArn", params["resourceArn"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
       abortSignal, query, body,
       action: "UntagResource",
@@ -671,23 +653,21 @@ export default class AppMesh {
       requestUri: "/v20190125/untag",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async updateGatewayRoute(
     {abortSignal, ...params}: RequestConfig & UpdateGatewayRouteInput,
   ): Promise<UpdateGatewayRouteOutput> {
     const query = new URLSearchParams;
-    if (params["meshOwner"] != null) query.set("meshOwner", params["meshOwner"]?.toString() ?? "");
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       clientToken: params["clientToken"] ?? generateIdemptToken(),
       spec: fromGatewayRouteSpec(params["spec"]),
-    } : {};
+    };
+    if (params["meshOwner"] != null) query.set("meshOwner", params["meshOwner"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
       abortSignal, query, body,
       action: "UpdateGatewayRoute",
@@ -703,10 +683,10 @@ export default class AppMesh {
   async updateMesh(
     {abortSignal, ...params}: RequestConfig & UpdateMeshInput,
   ): Promise<UpdateMeshOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       clientToken: params["clientToken"] ?? generateIdemptToken(),
       spec: fromMeshSpec(params["spec"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateMesh",
@@ -723,11 +703,11 @@ export default class AppMesh {
     {abortSignal, ...params}: RequestConfig & UpdateRouteInput,
   ): Promise<UpdateRouteOutput> {
     const query = new URLSearchParams;
-    if (params["meshOwner"] != null) query.set("meshOwner", params["meshOwner"]?.toString() ?? "");
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       clientToken: params["clientToken"] ?? generateIdemptToken(),
       spec: fromRouteSpec(params["spec"]),
-    } : {};
+    };
+    if (params["meshOwner"] != null) query.set("meshOwner", params["meshOwner"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
       abortSignal, query, body,
       action: "UpdateRoute",
@@ -744,11 +724,11 @@ export default class AppMesh {
     {abortSignal, ...params}: RequestConfig & UpdateVirtualGatewayInput,
   ): Promise<UpdateVirtualGatewayOutput> {
     const query = new URLSearchParams;
-    if (params["meshOwner"] != null) query.set("meshOwner", params["meshOwner"]?.toString() ?? "");
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       clientToken: params["clientToken"] ?? generateIdemptToken(),
       spec: fromVirtualGatewaySpec(params["spec"]),
-    } : {};
+    };
+    if (params["meshOwner"] != null) query.set("meshOwner", params["meshOwner"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
       abortSignal, query, body,
       action: "UpdateVirtualGateway",
@@ -765,11 +745,11 @@ export default class AppMesh {
     {abortSignal, ...params}: RequestConfig & UpdateVirtualNodeInput,
   ): Promise<UpdateVirtualNodeOutput> {
     const query = new URLSearchParams;
-    if (params["meshOwner"] != null) query.set("meshOwner", params["meshOwner"]?.toString() ?? "");
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       clientToken: params["clientToken"] ?? generateIdemptToken(),
       spec: fromVirtualNodeSpec(params["spec"]),
-    } : {};
+    };
+    if (params["meshOwner"] != null) query.set("meshOwner", params["meshOwner"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
       abortSignal, query, body,
       action: "UpdateVirtualNode",
@@ -786,11 +766,11 @@ export default class AppMesh {
     {abortSignal, ...params}: RequestConfig & UpdateVirtualRouterInput,
   ): Promise<UpdateVirtualRouterOutput> {
     const query = new URLSearchParams;
-    if (params["meshOwner"] != null) query.set("meshOwner", params["meshOwner"]?.toString() ?? "");
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       clientToken: params["clientToken"] ?? generateIdemptToken(),
       spec: fromVirtualRouterSpec(params["spec"]),
-    } : {};
+    };
+    if (params["meshOwner"] != null) query.set("meshOwner", params["meshOwner"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
       abortSignal, query, body,
       action: "UpdateVirtualRouter",
@@ -807,11 +787,11 @@ export default class AppMesh {
     {abortSignal, ...params}: RequestConfig & UpdateVirtualServiceInput,
   ): Promise<UpdateVirtualServiceOutput> {
     const query = new URLSearchParams;
-    if (params["meshOwner"] != null) query.set("meshOwner", params["meshOwner"]?.toString() ?? "");
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       clientToken: params["clientToken"] ?? generateIdemptToken(),
       spec: fromVirtualServiceSpec(params["spec"]),
-    } : {};
+    };
+    if (params["meshOwner"] != null) query.set("meshOwner", params["meshOwner"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
       abortSignal, query, body,
       action: "UpdateVirtualService",

@@ -27,113 +27,103 @@ export default class XRay {
   async batchGetTraces(
     {abortSignal, ...params}: RequestConfig & BatchGetTracesRequest,
   ): Promise<BatchGetTracesResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TraceIds: params["TraceIds"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchGetTraces",
       requestUri: "/Traces",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Traces": [toTrace],
-          "UnprocessedTraceIds": ["s"],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Traces": [toTrace],
+        "UnprocessedTraceIds": ["s"],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async createGroup(
     {abortSignal, ...params}: RequestConfig & CreateGroupRequest,
   ): Promise<CreateGroupResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       GroupName: params["GroupName"],
       FilterExpression: params["FilterExpression"],
       InsightsConfiguration: fromInsightsConfiguration(params["InsightsConfiguration"]),
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateGroup",
       requestUri: "/CreateGroup",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Group": toGroup,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Group": toGroup,
+      },
+    }, await resp.json());
   }
 
   async createSamplingRule(
     {abortSignal, ...params}: RequestConfig & CreateSamplingRuleRequest,
   ): Promise<CreateSamplingRuleResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       SamplingRule: fromSamplingRule(params["SamplingRule"]),
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateSamplingRule",
       requestUri: "/CreateSamplingRule",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "SamplingRuleRecord": toSamplingRuleRecord,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "SamplingRuleRecord": toSamplingRuleRecord,
+      },
+    }, await resp.json());
   }
 
   async deleteGroup(
     {abortSignal, ...params}: RequestConfig & DeleteGroupRequest = {},
   ): Promise<DeleteGroupResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       GroupName: params["GroupName"],
       GroupARN: params["GroupARN"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteGroup",
       requestUri: "/DeleteGroup",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async deleteSamplingRule(
     {abortSignal, ...params}: RequestConfig & DeleteSamplingRuleRequest = {},
   ): Promise<DeleteSamplingRuleResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       RuleName: params["RuleName"],
       RuleARN: params["RuleARN"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteSamplingRule",
       requestUri: "/DeleteSamplingRule",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "SamplingRuleRecord": toSamplingRuleRecord,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "SamplingRuleRecord": toSamplingRuleRecord,
+      },
+    }, await resp.json());
   }
 
   async getEncryptionConfig(
@@ -145,160 +135,146 @@ export default class XRay {
       action: "GetEncryptionConfig",
       requestUri: "/EncryptionConfig",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "EncryptionConfig": toEncryptionConfig,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "EncryptionConfig": toEncryptionConfig,
+      },
+    }, await resp.json());
   }
 
   async getGroup(
     {abortSignal, ...params}: RequestConfig & GetGroupRequest = {},
   ): Promise<GetGroupResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       GroupName: params["GroupName"],
       GroupARN: params["GroupARN"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetGroup",
       requestUri: "/GetGroup",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Group": toGroup,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Group": toGroup,
+      },
+    }, await resp.json());
   }
 
   async getGroups(
     {abortSignal, ...params}: RequestConfig & GetGroupsRequest = {},
   ): Promise<GetGroupsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetGroups",
       requestUri: "/Groups",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Groups": [toGroupSummary],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Groups": [toGroupSummary],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async getSamplingRules(
     {abortSignal, ...params}: RequestConfig & GetSamplingRulesRequest = {},
   ): Promise<GetSamplingRulesResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetSamplingRules",
       requestUri: "/GetSamplingRules",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "SamplingRuleRecords": [toSamplingRuleRecord],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "SamplingRuleRecords": [toSamplingRuleRecord],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async getSamplingStatisticSummaries(
     {abortSignal, ...params}: RequestConfig & GetSamplingStatisticSummariesRequest = {},
   ): Promise<GetSamplingStatisticSummariesResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetSamplingStatisticSummaries",
       requestUri: "/SamplingStatisticSummaries",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "SamplingStatisticSummaries": [toSamplingStatisticSummary],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "SamplingStatisticSummaries": [toSamplingStatisticSummary],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async getSamplingTargets(
     {abortSignal, ...params}: RequestConfig & GetSamplingTargetsRequest,
   ): Promise<GetSamplingTargetsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       SamplingStatisticsDocuments: params["SamplingStatisticsDocuments"]?.map(x => fromSamplingStatisticsDocument(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetSamplingTargets",
       requestUri: "/SamplingTargets",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "SamplingTargetDocuments": [toSamplingTargetDocument],
-          "LastRuleModification": "d",
-          "UnprocessedStatistics": [toUnprocessedStatistics],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "SamplingTargetDocuments": [toSamplingTargetDocument],
+        "LastRuleModification": "d",
+        "UnprocessedStatistics": [toUnprocessedStatistics],
+      },
+    }, await resp.json());
   }
 
   async getServiceGraph(
     {abortSignal, ...params}: RequestConfig & GetServiceGraphRequest,
   ): Promise<GetServiceGraphResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       StartTime: jsonP.serializeDate_unixTimestamp(params["StartTime"]),
       EndTime: jsonP.serializeDate_unixTimestamp(params["EndTime"]),
       GroupName: params["GroupName"],
       GroupARN: params["GroupARN"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetServiceGraph",
       requestUri: "/ServiceGraph",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "StartTime": "d",
-          "EndTime": "d",
-          "Services": [toService],
-          "ContainsOldGroupVersions": "b",
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "StartTime": "d",
+        "EndTime": "d",
+        "Services": [toService],
+        "ContainsOldGroupVersions": "b",
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async getTimeSeriesServiceStatistics(
     {abortSignal, ...params}: RequestConfig & GetTimeSeriesServiceStatisticsRequest,
   ): Promise<GetTimeSeriesServiceStatisticsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       StartTime: jsonP.serializeDate_unixTimestamp(params["StartTime"]),
       EndTime: jsonP.serializeDate_unixTimestamp(params["EndTime"]),
       GroupName: params["GroupName"],
@@ -306,51 +282,47 @@ export default class XRay {
       EntitySelectorExpression: params["EntitySelectorExpression"],
       Period: params["Period"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetTimeSeriesServiceStatistics",
       requestUri: "/TimeSeriesServiceStatistics",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "TimeSeriesServiceStatistics": [toTimeSeriesServiceStatistics],
-          "ContainsOldGroupVersions": "b",
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "TimeSeriesServiceStatistics": [toTimeSeriesServiceStatistics],
+        "ContainsOldGroupVersions": "b",
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async getTraceGraph(
     {abortSignal, ...params}: RequestConfig & GetTraceGraphRequest,
   ): Promise<GetTraceGraphResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TraceIds: params["TraceIds"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetTraceGraph",
       requestUri: "/TraceGraph",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Services": [toService],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Services": [toService],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async getTraceSummaries(
     {abortSignal, ...params}: RequestConfig & GetTraceSummariesRequest,
   ): Promise<GetTraceSummariesResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       StartTime: jsonP.serializeDate_unixTimestamp(params["StartTime"]),
       EndTime: jsonP.serializeDate_unixTimestamp(params["EndTime"]),
       TimeRangeType: params["TimeRangeType"],
@@ -358,196 +330,178 @@ export default class XRay {
       SamplingStrategy: fromSamplingStrategy(params["SamplingStrategy"]),
       FilterExpression: params["FilterExpression"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetTraceSummaries",
       requestUri: "/TraceSummaries",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "TraceSummaries": [toTraceSummary],
-          "ApproximateTime": "d",
-          "TracesProcessedCount": "n",
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "TraceSummaries": [toTraceSummary],
+        "ApproximateTime": "d",
+        "TracesProcessedCount": "n",
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listTagsForResource(
     {abortSignal, ...params}: RequestConfig & ListTagsForResourceRequest,
   ): Promise<ListTagsForResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceARN: params["ResourceARN"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForResource",
       requestUri: "/ListTagsForResource",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Tags": [toTag],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Tags": [toTag],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async putEncryptionConfig(
     {abortSignal, ...params}: RequestConfig & PutEncryptionConfigRequest,
   ): Promise<PutEncryptionConfigResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       KeyId: params["KeyId"],
       Type: params["Type"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutEncryptionConfig",
       requestUri: "/PutEncryptionConfig",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "EncryptionConfig": toEncryptionConfig,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "EncryptionConfig": toEncryptionConfig,
+      },
+    }, await resp.json());
   }
 
   async putTelemetryRecords(
     {abortSignal, ...params}: RequestConfig & PutTelemetryRecordsRequest,
   ): Promise<PutTelemetryRecordsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TelemetryRecords: params["TelemetryRecords"]?.map(x => fromTelemetryRecord(x)),
       EC2InstanceId: params["EC2InstanceId"],
       Hostname: params["Hostname"],
       ResourceARN: params["ResourceARN"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutTelemetryRecords",
       requestUri: "/TelemetryRecords",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async putTraceSegments(
     {abortSignal, ...params}: RequestConfig & PutTraceSegmentsRequest,
   ): Promise<PutTraceSegmentsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TraceSegmentDocuments: params["TraceSegmentDocuments"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutTraceSegments",
       requestUri: "/TraceSegments",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "UnprocessedTraceSegments": [toUnprocessedTraceSegment],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "UnprocessedTraceSegments": [toUnprocessedTraceSegment],
+      },
+    }, await resp.json());
   }
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceARN: params["ResourceARN"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
       requestUri: "/TagResource",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceRequest,
   ): Promise<UntagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceARN: params["ResourceARN"],
       TagKeys: params["TagKeys"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResource",
       requestUri: "/UntagResource",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async updateGroup(
     {abortSignal, ...params}: RequestConfig & UpdateGroupRequest = {},
   ): Promise<UpdateGroupResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       GroupName: params["GroupName"],
       GroupARN: params["GroupARN"],
       FilterExpression: params["FilterExpression"],
       InsightsConfiguration: fromInsightsConfiguration(params["InsightsConfiguration"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateGroup",
       requestUri: "/UpdateGroup",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Group": toGroup,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Group": toGroup,
+      },
+    }, await resp.json());
   }
 
   async updateSamplingRule(
     {abortSignal, ...params}: RequestConfig & UpdateSamplingRuleRequest,
   ): Promise<UpdateSamplingRuleResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       SamplingRuleUpdate: fromSamplingRuleUpdate(params["SamplingRuleUpdate"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateSamplingRule",
       requestUri: "/UpdateSamplingRule",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "SamplingRuleRecord": toSamplingRuleRecord,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "SamplingRuleRecord": toSamplingRuleRecord,
+      },
+    }, await resp.json());
   }
 
 }

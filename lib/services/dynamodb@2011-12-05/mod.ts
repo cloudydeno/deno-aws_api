@@ -30,9 +30,9 @@ export default class DynamoDB {
   async batchGetItem(
     {abortSignal, ...params}: RequestConfig & BatchGetItemInput,
   ): Promise<BatchGetItemOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       RequestItems: jsonP.serializeMap(params["RequestItems"], x => fromKeysAndAttributes(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchGetItem",
@@ -49,9 +49,9 @@ export default class DynamoDB {
   async batchWriteItem(
     {abortSignal, ...params}: RequestConfig & BatchWriteItemInput,
   ): Promise<BatchWriteItemOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       RequestItems: jsonP.serializeMap(params["RequestItems"], x => x?.map(fromWriteRequest)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchWriteItem",
@@ -68,11 +68,11 @@ export default class DynamoDB {
   async createTable(
     {abortSignal, ...params}: RequestConfig & CreateTableInput,
   ): Promise<CreateTableOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TableName: params["TableName"],
       KeySchema: fromKeySchema(params["KeySchema"]),
       ProvisionedThroughput: fromProvisionedThroughput(params["ProvisionedThroughput"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateTable",
@@ -88,12 +88,12 @@ export default class DynamoDB {
   async deleteItem(
     {abortSignal, ...params}: RequestConfig & DeleteItemInput,
   ): Promise<DeleteItemOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TableName: params["TableName"],
       Key: fromKey(params["Key"]),
       Expected: jsonP.serializeMap(params["Expected"], x => fromExpectedAttributeValue(x)),
       ReturnValues: params["ReturnValues"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteItem",
@@ -110,9 +110,9 @@ export default class DynamoDB {
   async deleteTable(
     {abortSignal, ...params}: RequestConfig & DeleteTableInput,
   ): Promise<DeleteTableOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TableName: params["TableName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteTable",
@@ -128,9 +128,9 @@ export default class DynamoDB {
   async describeTable(
     {abortSignal, ...params}: RequestConfig & DescribeTableInput,
   ): Promise<DescribeTableOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TableName: params["TableName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeTable",
@@ -146,12 +146,12 @@ export default class DynamoDB {
   async getItem(
     {abortSignal, ...params}: RequestConfig & GetItemInput,
   ): Promise<GetItemOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TableName: params["TableName"],
       Key: fromKey(params["Key"]),
       AttributesToGet: params["AttributesToGet"],
       ConsistentRead: params["ConsistentRead"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetItem",
@@ -168,10 +168,10 @@ export default class DynamoDB {
   async listTables(
     {abortSignal, ...params}: RequestConfig & ListTablesInput = {},
   ): Promise<ListTablesOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ExclusiveStartTableName: params["ExclusiveStartTableName"],
       Limit: params["Limit"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTables",
@@ -188,12 +188,12 @@ export default class DynamoDB {
   async putItem(
     {abortSignal, ...params}: RequestConfig & PutItemInput,
   ): Promise<PutItemOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TableName: params["TableName"],
       Item: jsonP.serializeMap(params["Item"], x => fromAttributeValue(x)),
       Expected: jsonP.serializeMap(params["Expected"], x => fromExpectedAttributeValue(x)),
       ReturnValues: params["ReturnValues"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutItem",
@@ -210,7 +210,7 @@ export default class DynamoDB {
   async query(
     {abortSignal, ...params}: RequestConfig & QueryInput,
   ): Promise<QueryOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TableName: params["TableName"],
       AttributesToGet: params["AttributesToGet"],
       Limit: params["Limit"],
@@ -220,7 +220,7 @@ export default class DynamoDB {
       RangeKeyCondition: fromCondition(params["RangeKeyCondition"]),
       ScanIndexForward: params["ScanIndexForward"],
       ExclusiveStartKey: fromKey(params["ExclusiveStartKey"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "Query",
@@ -239,14 +239,14 @@ export default class DynamoDB {
   async scan(
     {abortSignal, ...params}: RequestConfig & ScanInput,
   ): Promise<ScanOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TableName: params["TableName"],
       AttributesToGet: params["AttributesToGet"],
       Limit: params["Limit"],
       Count: params["Count"],
       ScanFilter: jsonP.serializeMap(params["ScanFilter"], x => fromCondition(x)),
       ExclusiveStartKey: fromKey(params["ExclusiveStartKey"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "Scan",
@@ -266,13 +266,13 @@ export default class DynamoDB {
   async updateItem(
     {abortSignal, ...params}: RequestConfig & UpdateItemInput,
   ): Promise<UpdateItemOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TableName: params["TableName"],
       Key: fromKey(params["Key"]),
       AttributeUpdates: jsonP.serializeMap(params["AttributeUpdates"], x => fromAttributeValueUpdate(x)),
       Expected: jsonP.serializeMap(params["Expected"], x => fromExpectedAttributeValue(x)),
       ReturnValues: params["ReturnValues"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateItem",
@@ -289,10 +289,10 @@ export default class DynamoDB {
   async updateTable(
     {abortSignal, ...params}: RequestConfig & UpdateTableInput,
   ): Promise<UpdateTableOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TableName: params["TableName"],
       ProvisionedThroughput: fromProvisionedThroughput(params["ProvisionedThroughput"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateTable",
@@ -317,7 +317,7 @@ export default class DynamoDB {
         const resp = await this.describeTable(params);
         if (resp?.Table?.TableStatus === "ACTIVE") return resp;
       } catch (err) {
-        if (!["ResourceNotFoundException"].includes(err.code)) throw err;
+        if (!["ResourceNotFoundException"].includes(err.shortCode)) throw err;
       }
       await new Promise(r => setTimeout(r, 20000));
     }
@@ -333,7 +333,7 @@ export default class DynamoDB {
       try {
         const resp = await this.describeTable(params);
       } catch (err) {
-        if (["ResourceNotFoundException"].includes(err.code)) return err;
+        if (["ResourceNotFoundException"].includes(err.shortCode)) return err;
         throw err;
       }
       await new Promise(r => setTimeout(r, 20000));

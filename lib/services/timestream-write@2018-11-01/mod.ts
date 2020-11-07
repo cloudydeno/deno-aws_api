@@ -31,11 +31,11 @@ export default class TimestreamWrite {
   async createDatabase(
     {abortSignal, ...params}: RequestConfig & CreateDatabaseRequest,
   ): Promise<CreateDatabaseResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DatabaseName: params["DatabaseName"],
       KmsKeyId: params["KmsKeyId"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDatabase",
@@ -51,12 +51,12 @@ export default class TimestreamWrite {
   async createTable(
     {abortSignal, ...params}: RequestConfig & CreateTableRequest,
   ): Promise<CreateTableResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DatabaseName: params["DatabaseName"],
       TableName: params["TableName"],
       RetentionProperties: fromRetentionProperties(params["RetentionProperties"]),
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateTable",
@@ -72,9 +72,9 @@ export default class TimestreamWrite {
   async deleteDatabase(
     {abortSignal, ...params}: RequestConfig & DeleteDatabaseRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DatabaseName: params["DatabaseName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteDatabase",
@@ -84,10 +84,10 @@ export default class TimestreamWrite {
   async deleteTable(
     {abortSignal, ...params}: RequestConfig & DeleteTableRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DatabaseName: params["DatabaseName"],
       TableName: params["TableName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteTable",
@@ -97,9 +97,9 @@ export default class TimestreamWrite {
   async describeDatabase(
     {abortSignal, ...params}: RequestConfig & DescribeDatabaseRequest,
   ): Promise<DescribeDatabaseResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DatabaseName: params["DatabaseName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeDatabase",
@@ -115,8 +115,8 @@ export default class TimestreamWrite {
   async describeEndpoints(
     {abortSignal, ...params}: RequestConfig & DescribeEndpointsRequest = {},
   ): Promise<DescribeEndpointsResponse> {
-    const body: jsonP.JSONObject = params ? {
-    } : {};
+    const body: jsonP.JSONObject = {
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeEndpoints",
@@ -132,10 +132,10 @@ export default class TimestreamWrite {
   async describeTable(
     {abortSignal, ...params}: RequestConfig & DescribeTableRequest,
   ): Promise<DescribeTableResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DatabaseName: params["DatabaseName"],
       TableName: params["TableName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeTable",
@@ -151,10 +151,10 @@ export default class TimestreamWrite {
   async listDatabases(
     {abortSignal, ...params}: RequestConfig & ListDatabasesRequest = {},
   ): Promise<ListDatabasesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListDatabases",
@@ -171,11 +171,11 @@ export default class TimestreamWrite {
   async listTables(
     {abortSignal, ...params}: RequestConfig & ListTablesRequest = {},
   ): Promise<ListTablesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DatabaseName: params["DatabaseName"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTables",
@@ -192,9 +192,9 @@ export default class TimestreamWrite {
   async listTagsForResource(
     {abortSignal, ...params}: RequestConfig & ListTagsForResourceRequest,
   ): Promise<ListTagsForResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceARN: params["ResourceARN"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForResource",
@@ -210,10 +210,10 @@ export default class TimestreamWrite {
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceARN: params["ResourceARN"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
@@ -227,10 +227,10 @@ export default class TimestreamWrite {
   async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceRequest,
   ): Promise<UntagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceARN: params["ResourceARN"],
       TagKeys: params["TagKeys"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResource",
@@ -244,10 +244,10 @@ export default class TimestreamWrite {
   async updateDatabase(
     {abortSignal, ...params}: RequestConfig & UpdateDatabaseRequest,
   ): Promise<UpdateDatabaseResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DatabaseName: params["DatabaseName"],
       KmsKeyId: params["KmsKeyId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateDatabase",
@@ -263,11 +263,11 @@ export default class TimestreamWrite {
   async updateTable(
     {abortSignal, ...params}: RequestConfig & UpdateTableRequest,
   ): Promise<UpdateTableResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DatabaseName: params["DatabaseName"],
       TableName: params["TableName"],
       RetentionProperties: fromRetentionProperties(params["RetentionProperties"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateTable",
@@ -283,12 +283,12 @@ export default class TimestreamWrite {
   async writeRecords(
     {abortSignal, ...params}: RequestConfig & WriteRecordsRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DatabaseName: params["DatabaseName"],
       TableName: params["TableName"],
       CommonAttributes: fromRecord(params["CommonAttributes"]),
       Records: params["Records"]?.map(x => fromRecord(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "WriteRecords",

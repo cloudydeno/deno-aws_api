@@ -33,7 +33,7 @@ export default class MQ {
   async createBroker(
     {abortSignal, ...params}: RequestConfig & CreateBrokerRequest = {},
   ): Promise<CreateBrokerResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       authenticationStrategy: params["AuthenticationStrategy"],
       autoMinorVersionUpgrade: params["AutoMinorVersionUpgrade"],
       brokerName: params["BrokerName"],
@@ -53,61 +53,57 @@ export default class MQ {
       subnetIds: params["SubnetIds"],
       tags: params["Tags"],
       users: params["Users"]?.map(x => fromUser(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateBroker",
       requestUri: "/v1/brokers",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "BrokerArn": "s",
-          "BrokerId": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "BrokerArn": "s",
+        "BrokerId": "s",
+      },
+    }, await resp.json());
   }
 
   async createConfiguration(
     {abortSignal, ...params}: RequestConfig & CreateConfigurationRequest = {},
   ): Promise<CreateConfigurationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       authenticationStrategy: params["AuthenticationStrategy"],
       engineType: params["EngineType"],
       engineVersion: params["EngineVersion"],
       name: params["Name"],
       tags: params["Tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateConfiguration",
       requestUri: "/v1/configurations",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Arn": "s",
-          "AuthenticationStrategy": (x: jsonP.JSONValue) => cmnP.readEnum<AuthenticationStrategy>(x),
-          "Created": "d",
-          "Id": "s",
-          "LatestRevision": toConfigurationRevision,
-          "Name": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+        "AuthenticationStrategy": (x: jsonP.JSONValue) => cmnP.readEnum<AuthenticationStrategy>(x),
+        "Created": "d",
+        "Id": "s",
+        "LatestRevision": toConfigurationRevision,
+        "Name": "s",
+      },
+    }, await resp.json());
   }
 
   async createTags(
     {abortSignal, ...params}: RequestConfig & CreateTagsRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       tags: params["Tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateTags",
@@ -119,23 +115,21 @@ export default class MQ {
   async createUser(
     {abortSignal, ...params}: RequestConfig & CreateUserRequest,
   ): Promise<CreateUserResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       consoleAccess: params["ConsoleAccess"],
       groups: params["Groups"],
       password: params["Password"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateUser",
       requestUri: cmnP.encodePath`/v1/brokers/${params["BrokerId"]}/users/${params["Username"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async deleteBroker(
@@ -149,14 +143,12 @@ export default class MQ {
       requestUri: cmnP.encodePath`/v1/brokers/${params["BrokerId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "BrokerId": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "BrokerId": "s",
+      },
+    }, await resp.json());
   }
 
   async deleteTags(
@@ -186,12 +178,10 @@ export default class MQ {
       requestUri: cmnP.encodePath`/v1/brokers/${params["BrokerId"]}/users/${params["Username"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async describeBroker(
@@ -205,41 +195,39 @@ export default class MQ {
       requestUri: cmnP.encodePath`/v1/brokers/${params["BrokerId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "AuthenticationStrategy": (x: jsonP.JSONValue) => cmnP.readEnum<AuthenticationStrategy>(x),
-          "AutoMinorVersionUpgrade": "b",
-          "BrokerArn": "s",
-          "BrokerId": "s",
-          "BrokerInstances": [toBrokerInstance],
-          "BrokerName": "s",
-          "BrokerState": (x: jsonP.JSONValue) => cmnP.readEnum<BrokerState>(x),
-          "Configurations": toConfigurations,
-          "Created": "d",
-          "DeploymentMode": (x: jsonP.JSONValue) => cmnP.readEnum<DeploymentMode>(x),
-          "EncryptionOptions": toEncryptionOptions,
-          "EngineType": (x: jsonP.JSONValue) => cmnP.readEnum<EngineType>(x),
-          "EngineVersion": "s",
-          "HostInstanceType": "s",
-          "LdapServerMetadata": toLdapServerMetadataOutput,
-          "Logs": toLogsSummary,
-          "MaintenanceWindowStartTime": toWeeklyStartTime,
-          "PendingAuthenticationStrategy": (x: jsonP.JSONValue) => cmnP.readEnum<AuthenticationStrategy>(x),
-          "PendingEngineVersion": "s",
-          "PendingHostInstanceType": "s",
-          "PendingLdapServerMetadata": toLdapServerMetadataOutput,
-          "PendingSecurityGroups": ["s"],
-          "PubliclyAccessible": "b",
-          "SecurityGroups": ["s"],
-          "StorageType": (x: jsonP.JSONValue) => cmnP.readEnum<BrokerStorageType>(x),
-          "SubnetIds": ["s"],
-          "Tags": x => jsonP.readMap(String, String, x),
-          "Users": [toUserSummary],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "AuthenticationStrategy": (x: jsonP.JSONValue) => cmnP.readEnum<AuthenticationStrategy>(x),
+        "AutoMinorVersionUpgrade": "b",
+        "BrokerArn": "s",
+        "BrokerId": "s",
+        "BrokerInstances": [toBrokerInstance],
+        "BrokerName": "s",
+        "BrokerState": (x: jsonP.JSONValue) => cmnP.readEnum<BrokerState>(x),
+        "Configurations": toConfigurations,
+        "Created": "d",
+        "DeploymentMode": (x: jsonP.JSONValue) => cmnP.readEnum<DeploymentMode>(x),
+        "EncryptionOptions": toEncryptionOptions,
+        "EngineType": (x: jsonP.JSONValue) => cmnP.readEnum<EngineType>(x),
+        "EngineVersion": "s",
+        "HostInstanceType": "s",
+        "LdapServerMetadata": toLdapServerMetadataOutput,
+        "Logs": toLogsSummary,
+        "MaintenanceWindowStartTime": toWeeklyStartTime,
+        "PendingAuthenticationStrategy": (x: jsonP.JSONValue) => cmnP.readEnum<AuthenticationStrategy>(x),
+        "PendingEngineVersion": "s",
+        "PendingHostInstanceType": "s",
+        "PendingLdapServerMetadata": toLdapServerMetadataOutput,
+        "PendingSecurityGroups": ["s"],
+        "PubliclyAccessible": "b",
+        "SecurityGroups": ["s"],
+        "StorageType": (x: jsonP.JSONValue) => cmnP.readEnum<BrokerStorageType>(x),
+        "SubnetIds": ["s"],
+        "Tags": x => jsonP.readMap(String, String, x),
+        "Users": [toUserSummary],
+      },
+    }, await resp.json());
   }
 
   async describeBrokerEngineTypes(
@@ -256,16 +244,14 @@ export default class MQ {
       requestUri: "/v1/broker-engine-types",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "BrokerEngineTypes": [toBrokerEngineType],
-          "MaxResults": "n",
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "BrokerEngineTypes": [toBrokerEngineType],
+        "MaxResults": "n",
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async describeBrokerInstanceOptions(
@@ -284,16 +270,14 @@ export default class MQ {
       requestUri: "/v1/broker-instance-options",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "BrokerInstanceOptions": [toBrokerInstanceOption],
-          "MaxResults": "n",
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "BrokerInstanceOptions": [toBrokerInstanceOption],
+        "MaxResults": "n",
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async describeConfiguration(
@@ -307,23 +291,21 @@ export default class MQ {
       requestUri: cmnP.encodePath`/v1/configurations/${params["ConfigurationId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Arn": "s",
-          "AuthenticationStrategy": (x: jsonP.JSONValue) => cmnP.readEnum<AuthenticationStrategy>(x),
-          "Created": "d",
-          "Description": "s",
-          "EngineType": (x: jsonP.JSONValue) => cmnP.readEnum<EngineType>(x),
-          "EngineVersion": "s",
-          "Id": "s",
-          "LatestRevision": toConfigurationRevision,
-          "Name": "s",
-          "Tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+        "AuthenticationStrategy": (x: jsonP.JSONValue) => cmnP.readEnum<AuthenticationStrategy>(x),
+        "Created": "d",
+        "Description": "s",
+        "EngineType": (x: jsonP.JSONValue) => cmnP.readEnum<EngineType>(x),
+        "EngineVersion": "s",
+        "Id": "s",
+        "LatestRevision": toConfigurationRevision,
+        "Name": "s",
+        "Tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async describeConfigurationRevision(
@@ -337,17 +319,15 @@ export default class MQ {
       requestUri: cmnP.encodePath`/v1/configurations/${params["ConfigurationId"]}/revisions/${params["ConfigurationRevision"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ConfigurationId": "s",
-          "Created": "d",
-          "Data": "s",
-          "Description": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ConfigurationId": "s",
+        "Created": "d",
+        "Data": "s",
+        "Description": "s",
+      },
+    }, await resp.json());
   }
 
   async describeUser(
@@ -361,18 +341,16 @@ export default class MQ {
       requestUri: cmnP.encodePath`/v1/brokers/${params["BrokerId"]}/users/${params["Username"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "BrokerId": "s",
-          "ConsoleAccess": "b",
-          "Groups": ["s"],
-          "Pending": toUserPendingChanges,
-          "Username": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "BrokerId": "s",
+        "ConsoleAccess": "b",
+        "Groups": ["s"],
+        "Pending": toUserPendingChanges,
+        "Username": "s",
+      },
+    }, await resp.json());
   }
 
   async listBrokers(
@@ -388,15 +366,13 @@ export default class MQ {
       requestUri: "/v1/brokers",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "BrokerSummaries": [toBrokerSummary],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "BrokerSummaries": [toBrokerSummary],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listConfigurationRevisions(
@@ -412,17 +388,15 @@ export default class MQ {
       requestUri: cmnP.encodePath`/v1/configurations/${params["ConfigurationId"]}/revisions`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ConfigurationId": "s",
-          "MaxResults": "n",
-          "NextToken": "s",
-          "Revisions": [toConfigurationRevision],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ConfigurationId": "s",
+        "MaxResults": "n",
+        "NextToken": "s",
+        "Revisions": [toConfigurationRevision],
+      },
+    }, await resp.json());
   }
 
   async listConfigurations(
@@ -438,16 +412,14 @@ export default class MQ {
       requestUri: "/v1/configurations",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Configurations": [toConfiguration],
-          "MaxResults": "n",
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Configurations": [toConfiguration],
+        "MaxResults": "n",
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listTags(
@@ -461,14 +433,12 @@ export default class MQ {
       requestUri: cmnP.encodePath`/v1/tags/${params["ResourceArn"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async listUsers(
@@ -484,17 +454,15 @@ export default class MQ {
       requestUri: cmnP.encodePath`/v1/brokers/${params["BrokerId"]}/users`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "BrokerId": "s",
-          "MaxResults": "n",
-          "NextToken": "s",
-          "Users": [toUserSummary],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "BrokerId": "s",
+        "MaxResults": "n",
+        "NextToken": "s",
+        "Users": [toUserSummary],
+      },
+    }, await resp.json());
   }
 
   async rebootBroker(
@@ -507,18 +475,16 @@ export default class MQ {
       requestUri: cmnP.encodePath`/v1/brokers/${params["BrokerId"]}/reboot`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async updateBroker(
     {abortSignal, ...params}: RequestConfig & UpdateBrokerRequest,
   ): Promise<UpdateBrokerResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       authenticationStrategy: params["AuthenticationStrategy"],
       autoMinorVersionUpgrade: params["AutoMinorVersionUpgrade"],
       configuration: fromConfigurationId(params["Configuration"]),
@@ -527,7 +493,7 @@ export default class MQ {
       ldapServerMetadata: fromLdapServerMetadataInput(params["LdapServerMetadata"]),
       logs: fromLogs(params["Logs"]),
       securityGroups: params["SecurityGroups"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateBroker",
@@ -535,31 +501,29 @@ export default class MQ {
       requestUri: cmnP.encodePath`/v1/brokers/${params["BrokerId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "AuthenticationStrategy": (x: jsonP.JSONValue) => cmnP.readEnum<AuthenticationStrategy>(x),
-          "AutoMinorVersionUpgrade": "b",
-          "BrokerId": "s",
-          "Configuration": toConfigurationId,
-          "EngineVersion": "s",
-          "HostInstanceType": "s",
-          "LdapServerMetadata": toLdapServerMetadataOutput,
-          "Logs": toLogs,
-          "SecurityGroups": ["s"],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "AuthenticationStrategy": (x: jsonP.JSONValue) => cmnP.readEnum<AuthenticationStrategy>(x),
+        "AutoMinorVersionUpgrade": "b",
+        "BrokerId": "s",
+        "Configuration": toConfigurationId,
+        "EngineVersion": "s",
+        "HostInstanceType": "s",
+        "LdapServerMetadata": toLdapServerMetadataOutput,
+        "Logs": toLogs,
+        "SecurityGroups": ["s"],
+      },
+    }, await resp.json());
   }
 
   async updateConfiguration(
     {abortSignal, ...params}: RequestConfig & UpdateConfigurationRequest,
   ): Promise<UpdateConfigurationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       data: params["Data"],
       description: params["Description"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateConfiguration",
@@ -567,29 +531,27 @@ export default class MQ {
       requestUri: cmnP.encodePath`/v1/configurations/${params["ConfigurationId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Arn": "s",
-          "Created": "d",
-          "Id": "s",
-          "LatestRevision": toConfigurationRevision,
-          "Name": "s",
-          "Warnings": [toSanitizationWarning],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+        "Created": "d",
+        "Id": "s",
+        "LatestRevision": toConfigurationRevision,
+        "Name": "s",
+        "Warnings": [toSanitizationWarning],
+      },
+    }, await resp.json());
   }
 
   async updateUser(
     {abortSignal, ...params}: RequestConfig & UpdateUserRequest,
   ): Promise<UpdateUserResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       consoleAccess: params["ConsoleAccess"],
       groups: params["Groups"],
       password: params["Password"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateUser",
@@ -597,12 +559,10 @@ export default class MQ {
       requestUri: cmnP.encodePath`/v1/brokers/${params["BrokerId"]}/users/${params["Username"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
 }

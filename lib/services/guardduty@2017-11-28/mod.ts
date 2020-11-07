@@ -33,74 +33,68 @@ export default class GuardDuty {
   async acceptInvitation(
     {abortSignal, ...params}: RequestConfig & AcceptInvitationRequest,
   ): Promise<AcceptInvitationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       masterId: params["MasterId"],
       invitationId: params["InvitationId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AcceptInvitation",
       requestUri: cmnP.encodePath`/detector/${params["DetectorId"]}/master`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async archiveFindings(
     {abortSignal, ...params}: RequestConfig & ArchiveFindingsRequest,
   ): Promise<ArchiveFindingsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       findingIds: params["FindingIds"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ArchiveFindings",
       requestUri: cmnP.encodePath`/detector/${params["DetectorId"]}/findings/archive`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async createDetector(
     {abortSignal, ...params}: RequestConfig & CreateDetectorRequest,
   ): Promise<CreateDetectorResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       enable: params["Enable"],
       clientToken: params["ClientToken"] ?? generateIdemptToken(),
       findingPublishingFrequency: params["FindingPublishingFrequency"],
       dataSources: fromDataSourceConfigurations(params["DataSources"]),
       tags: params["Tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDetector",
       requestUri: "/detector",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "DetectorId": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "DetectorId": "s",
+      },
+    }, await resp.json());
   }
 
   async createFilter(
     {abortSignal, ...params}: RequestConfig & CreateFilterRequest,
   ): Promise<CreateFilterResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       name: params["Name"],
       description: params["Description"],
       action: params["Action"],
@@ -108,163 +102,149 @@ export default class GuardDuty {
       findingCriteria: fromFindingCriteria(params["FindingCriteria"]),
       clientToken: params["ClientToken"] ?? generateIdemptToken(),
       tags: params["Tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateFilter",
       requestUri: cmnP.encodePath`/detector/${params["DetectorId"]}/filter`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "Name": "s",
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "Name": "s",
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async createIPSet(
     {abortSignal, ...params}: RequestConfig & CreateIPSetRequest,
   ): Promise<CreateIPSetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       name: params["Name"],
       format: params["Format"],
       location: params["Location"],
       activate: params["Activate"],
       clientToken: params["ClientToken"] ?? generateIdemptToken(),
       tags: params["Tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateIPSet",
       requestUri: cmnP.encodePath`/detector/${params["DetectorId"]}/ipset`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "IpSetId": "s",
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "IpSetId": "s",
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async createMembers(
     {abortSignal, ...params}: RequestConfig & CreateMembersRequest,
   ): Promise<CreateMembersResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       accountDetails: params["AccountDetails"]?.map(x => fromAccountDetail(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateMembers",
       requestUri: cmnP.encodePath`/detector/${params["DetectorId"]}/member`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "UnprocessedAccounts": [toUnprocessedAccount],
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "UnprocessedAccounts": [toUnprocessedAccount],
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async createPublishingDestination(
     {abortSignal, ...params}: RequestConfig & CreatePublishingDestinationRequest,
   ): Promise<CreatePublishingDestinationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       destinationType: params["DestinationType"],
       destinationProperties: fromDestinationProperties(params["DestinationProperties"]),
       clientToken: params["ClientToken"] ?? generateIdemptToken(),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreatePublishingDestination",
       requestUri: cmnP.encodePath`/detector/${params["DetectorId"]}/publishingDestination`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "DestinationId": "s",
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "DestinationId": "s",
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async createSampleFindings(
     {abortSignal, ...params}: RequestConfig & CreateSampleFindingsRequest,
   ): Promise<CreateSampleFindingsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       findingTypes: params["FindingTypes"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateSampleFindings",
       requestUri: cmnP.encodePath`/detector/${params["DetectorId"]}/findings/create`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async createThreatIntelSet(
     {abortSignal, ...params}: RequestConfig & CreateThreatIntelSetRequest,
   ): Promise<CreateThreatIntelSetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       name: params["Name"],
       format: params["Format"],
       location: params["Location"],
       activate: params["Activate"],
       clientToken: params["ClientToken"] ?? generateIdemptToken(),
       tags: params["Tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateThreatIntelSet",
       requestUri: cmnP.encodePath`/detector/${params["DetectorId"]}/threatintelset`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "ThreatIntelSetId": "s",
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "ThreatIntelSetId": "s",
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async declineInvitations(
     {abortSignal, ...params}: RequestConfig & DeclineInvitationsRequest,
   ): Promise<DeclineInvitationsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       accountIds: params["AccountIds"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeclineInvitations",
       requestUri: "/invitation/decline",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "UnprocessedAccounts": [toUnprocessedAccount],
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "UnprocessedAccounts": [toUnprocessedAccount],
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async deleteDetector(
@@ -278,12 +258,10 @@ export default class GuardDuty {
       requestUri: cmnP.encodePath`/detector/${params["DetectorId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async deleteFilter(
@@ -297,12 +275,10 @@ export default class GuardDuty {
       requestUri: cmnP.encodePath`/detector/${params["DetectorId"]}/filter/${params["FilterName"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async deleteIPSet(
@@ -316,56 +292,50 @@ export default class GuardDuty {
       requestUri: cmnP.encodePath`/detector/${params["DetectorId"]}/ipset/${params["IpSetId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async deleteInvitations(
     {abortSignal, ...params}: RequestConfig & DeleteInvitationsRequest,
   ): Promise<DeleteInvitationsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       accountIds: params["AccountIds"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteInvitations",
       requestUri: "/invitation/delete",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "UnprocessedAccounts": [toUnprocessedAccount],
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "UnprocessedAccounts": [toUnprocessedAccount],
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async deleteMembers(
     {abortSignal, ...params}: RequestConfig & DeleteMembersRequest,
   ): Promise<DeleteMembersResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       accountIds: params["AccountIds"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteMembers",
       requestUri: cmnP.encodePath`/detector/${params["DetectorId"]}/member/delete`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "UnprocessedAccounts": [toUnprocessedAccount],
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "UnprocessedAccounts": [toUnprocessedAccount],
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async deletePublishingDestination(
@@ -379,12 +349,10 @@ export default class GuardDuty {
       requestUri: cmnP.encodePath`/detector/${params["DetectorId"]}/publishingDestination/${params["DestinationId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async deleteThreatIntelSet(
@@ -398,12 +366,10 @@ export default class GuardDuty {
       requestUri: cmnP.encodePath`/detector/${params["DetectorId"]}/threatintelset/${params["ThreatIntelSetId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async describeOrganizationConfiguration(
@@ -417,17 +383,15 @@ export default class GuardDuty {
       requestUri: cmnP.encodePath`/detector/${params["DetectorId"]}/admin`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "AutoEnable": "b",
-          "MemberAccountLimitReached": "b",
-        },
-        optional: {
-          "DataSources": toOrganizationDataSourceConfigurationsResult,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "AutoEnable": "b",
+        "MemberAccountLimitReached": "b",
+      },
+      optional: {
+        "DataSources": toOrganizationDataSourceConfigurationsResult,
+      },
+    }, await resp.json());
   }
 
   async describePublishingDestination(
@@ -441,38 +405,34 @@ export default class GuardDuty {
       requestUri: cmnP.encodePath`/detector/${params["DetectorId"]}/publishingDestination/${params["DestinationId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "DestinationId": "s",
-          "DestinationType": (x: jsonP.JSONValue) => cmnP.readEnum<DestinationType>(x),
-          "Status": (x: jsonP.JSONValue) => cmnP.readEnum<PublishingStatus>(x),
-          "PublishingFailureStartTimestamp": "n",
-          "DestinationProperties": toDestinationProperties,
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "DestinationId": "s",
+        "DestinationType": (x: jsonP.JSONValue) => cmnP.readEnum<DestinationType>(x),
+        "Status": (x: jsonP.JSONValue) => cmnP.readEnum<PublishingStatus>(x),
+        "PublishingFailureStartTimestamp": "n",
+        "DestinationProperties": toDestinationProperties,
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async disableOrganizationAdminAccount(
     {abortSignal, ...params}: RequestConfig & DisableOrganizationAdminAccountRequest,
   ): Promise<DisableOrganizationAdminAccountResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       adminAccountId: params["AdminAccountId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisableOrganizationAdminAccount",
       requestUri: "/admin/disable",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async disassociateFromMasterAccount(
@@ -485,54 +445,48 @@ export default class GuardDuty {
       requestUri: cmnP.encodePath`/detector/${params["DetectorId"]}/master/disassociate`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async disassociateMembers(
     {abortSignal, ...params}: RequestConfig & DisassociateMembersRequest,
   ): Promise<DisassociateMembersResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       accountIds: params["AccountIds"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisassociateMembers",
       requestUri: cmnP.encodePath`/detector/${params["DetectorId"]}/member/disassociate`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "UnprocessedAccounts": [toUnprocessedAccount],
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "UnprocessedAccounts": [toUnprocessedAccount],
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async enableOrganizationAdminAccount(
     {abortSignal, ...params}: RequestConfig & EnableOrganizationAdminAccountRequest,
   ): Promise<EnableOrganizationAdminAccountResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       adminAccountId: params["AdminAccountId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "EnableOrganizationAdminAccount",
       requestUri: "/admin/enable",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async getDetector(
@@ -546,21 +500,19 @@ export default class GuardDuty {
       requestUri: cmnP.encodePath`/detector/${params["DetectorId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "ServiceRole": "s",
-          "Status": (x: jsonP.JSONValue) => cmnP.readEnum<DetectorStatus>(x),
-        },
-        optional: {
-          "CreatedAt": "s",
-          "FindingPublishingFrequency": (x: jsonP.JSONValue) => cmnP.readEnum<FindingPublishingFrequency>(x),
-          "UpdatedAt": "s",
-          "DataSources": toDataSourceConfigurationsResult,
-          "Tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "ServiceRole": "s",
+        "Status": (x: jsonP.JSONValue) => cmnP.readEnum<DetectorStatus>(x),
+      },
+      optional: {
+        "CreatedAt": "s",
+        "FindingPublishingFrequency": (x: jsonP.JSONValue) => cmnP.readEnum<FindingPublishingFrequency>(x),
+        "UpdatedAt": "s",
+        "DataSources": toDataSourceConfigurationsResult,
+        "Tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async getFilter(
@@ -574,66 +526,60 @@ export default class GuardDuty {
       requestUri: cmnP.encodePath`/detector/${params["DetectorId"]}/filter/${params["FilterName"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "Name": "s",
-          "Action": (x: jsonP.JSONValue) => cmnP.readEnum<FilterAction>(x),
-          "FindingCriteria": toFindingCriteria,
-        },
-        optional: {
-          "Description": "s",
-          "Rank": "n",
-          "Tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "Name": "s",
+        "Action": (x: jsonP.JSONValue) => cmnP.readEnum<FilterAction>(x),
+        "FindingCriteria": toFindingCriteria,
+      },
+      optional: {
+        "Description": "s",
+        "Rank": "n",
+        "Tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async getFindings(
     {abortSignal, ...params}: RequestConfig & GetFindingsRequest,
   ): Promise<GetFindingsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       findingIds: params["FindingIds"],
       sortCriteria: fromSortCriteria(params["SortCriteria"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetFindings",
       requestUri: cmnP.encodePath`/detector/${params["DetectorId"]}/findings/get`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "Findings": [toFinding],
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "Findings": [toFinding],
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async getFindingsStatistics(
     {abortSignal, ...params}: RequestConfig & GetFindingsStatisticsRequest,
   ): Promise<GetFindingsStatisticsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       findingStatisticTypes: params["FindingStatisticTypes"],
       findingCriteria: fromFindingCriteria(params["FindingCriteria"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetFindingsStatistics",
       requestUri: cmnP.encodePath`/detector/${params["DetectorId"]}/findings/statistics`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "FindingStatistics": toFindingStatistics,
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "FindingStatistics": toFindingStatistics,
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async getIPSet(
@@ -647,19 +593,17 @@ export default class GuardDuty {
       requestUri: cmnP.encodePath`/detector/${params["DetectorId"]}/ipset/${params["IpSetId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "Name": "s",
-          "Format": (x: jsonP.JSONValue) => cmnP.readEnum<IpSetFormat>(x),
-          "Location": "s",
-          "Status": (x: jsonP.JSONValue) => cmnP.readEnum<IpSetStatus>(x),
-        },
-        optional: {
-          "Tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "Name": "s",
+        "Format": (x: jsonP.JSONValue) => cmnP.readEnum<IpSetFormat>(x),
+        "Location": "s",
+        "Status": (x: jsonP.JSONValue) => cmnP.readEnum<IpSetStatus>(x),
+      },
+      optional: {
+        "Tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async getInvitationsCount(
@@ -673,14 +617,12 @@ export default class GuardDuty {
       requestUri: "/invitation/count",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "InvitationsCount": "n",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "InvitationsCount": "n",
+      },
+    }, await resp.json());
   }
 
   async getMasterAccount(
@@ -694,60 +636,54 @@ export default class GuardDuty {
       requestUri: cmnP.encodePath`/detector/${params["DetectorId"]}/master`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "Master": toMaster,
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "Master": toMaster,
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async getMemberDetectors(
     {abortSignal, ...params}: RequestConfig & GetMemberDetectorsRequest,
   ): Promise<GetMemberDetectorsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       accountIds: params["AccountIds"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetMemberDetectors",
       requestUri: cmnP.encodePath`/detector/${params["DetectorId"]}/member/detector/get`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "MemberDataSourceConfigurations": [toMemberDataSourceConfiguration],
-          "UnprocessedAccounts": [toUnprocessedAccount],
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "MemberDataSourceConfigurations": [toMemberDataSourceConfiguration],
+        "UnprocessedAccounts": [toUnprocessedAccount],
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async getMembers(
     {abortSignal, ...params}: RequestConfig & GetMembersRequest,
   ): Promise<GetMembersResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       accountIds: params["AccountIds"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetMembers",
       requestUri: cmnP.encodePath`/detector/${params["DetectorId"]}/member/get`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "Members": [toMember],
-          "UnprocessedAccounts": [toUnprocessedAccount],
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "Members": [toMember],
+        "UnprocessedAccounts": [toUnprocessedAccount],
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async getThreatIntelSet(
@@ -761,70 +697,64 @@ export default class GuardDuty {
       requestUri: cmnP.encodePath`/detector/${params["DetectorId"]}/threatintelset/${params["ThreatIntelSetId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "Name": "s",
-          "Format": (x: jsonP.JSONValue) => cmnP.readEnum<ThreatIntelSetFormat>(x),
-          "Location": "s",
-          "Status": (x: jsonP.JSONValue) => cmnP.readEnum<ThreatIntelSetStatus>(x),
-        },
-        optional: {
-          "Tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "Name": "s",
+        "Format": (x: jsonP.JSONValue) => cmnP.readEnum<ThreatIntelSetFormat>(x),
+        "Location": "s",
+        "Status": (x: jsonP.JSONValue) => cmnP.readEnum<ThreatIntelSetStatus>(x),
+      },
+      optional: {
+        "Tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async getUsageStatistics(
     {abortSignal, ...params}: RequestConfig & GetUsageStatisticsRequest,
   ): Promise<GetUsageStatisticsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       usageStatisticsType: params["UsageStatisticType"],
       usageCriteria: fromUsageCriteria(params["UsageCriteria"]),
       unit: params["Unit"],
       maxResults: params["MaxResults"],
       nextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetUsageStatistics",
       requestUri: cmnP.encodePath`/detector/${params["DetectorId"]}/usage/statistics`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "UsageStatistics": toUsageStatistics,
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "UsageStatistics": toUsageStatistics,
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async inviteMembers(
     {abortSignal, ...params}: RequestConfig & InviteMembersRequest,
   ): Promise<InviteMembersResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       accountIds: params["AccountIds"],
       disableEmailNotification: params["DisableEmailNotification"],
       message: params["Message"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "InviteMembers",
       requestUri: cmnP.encodePath`/detector/${params["DetectorId"]}/member/invite`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "UnprocessedAccounts": [toUnprocessedAccount],
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "UnprocessedAccounts": [toUnprocessedAccount],
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async listDetectors(
@@ -840,16 +770,14 @@ export default class GuardDuty {
       requestUri: "/detector",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "DetectorIds": ["s"],
-        },
-        optional: {
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "DetectorIds": ["s"],
+      },
+      optional: {
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listFilters(
@@ -865,43 +793,39 @@ export default class GuardDuty {
       requestUri: cmnP.encodePath`/detector/${params["DetectorId"]}/filter`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "FilterNames": ["s"],
-        },
-        optional: {
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "FilterNames": ["s"],
+      },
+      optional: {
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listFindings(
     {abortSignal, ...params}: RequestConfig & ListFindingsRequest,
   ): Promise<ListFindingsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       findingCriteria: fromFindingCriteria(params["FindingCriteria"]),
       sortCriteria: fromSortCriteria(params["SortCriteria"]),
       maxResults: params["MaxResults"],
       nextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListFindings",
       requestUri: cmnP.encodePath`/detector/${params["DetectorId"]}/findings`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "FindingIds": ["s"],
-        },
-        optional: {
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "FindingIds": ["s"],
+      },
+      optional: {
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listIPSets(
@@ -917,16 +841,14 @@ export default class GuardDuty {
       requestUri: cmnP.encodePath`/detector/${params["DetectorId"]}/ipset`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "IpSetIds": ["s"],
-        },
-        optional: {
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "IpSetIds": ["s"],
+      },
+      optional: {
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listInvitations(
@@ -942,15 +864,13 @@ export default class GuardDuty {
       requestUri: "/invitation",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Invitations": [toInvitation],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Invitations": [toInvitation],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listMembers(
@@ -967,15 +887,13 @@ export default class GuardDuty {
       requestUri: cmnP.encodePath`/detector/${params["DetectorId"]}/member`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Members": [toMember],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Members": [toMember],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listOrganizationAdminAccounts(
@@ -991,15 +909,13 @@ export default class GuardDuty {
       requestUri: "/admin",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "AdminAccounts": [toAdminAccount],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "AdminAccounts": [toAdminAccount],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listPublishingDestinations(
@@ -1015,16 +931,14 @@ export default class GuardDuty {
       requestUri: cmnP.encodePath`/detector/${params["DetectorId"]}/publishingDestination`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "Destinations": [toDestination],
-        },
-        optional: {
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "Destinations": [toDestination],
+      },
+      optional: {
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listTagsForResource(
@@ -1038,14 +952,12 @@ export default class GuardDuty {
       requestUri: cmnP.encodePath`/tags/${params["ResourceArn"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async listThreatIntelSets(
@@ -1061,100 +973,90 @@ export default class GuardDuty {
       requestUri: cmnP.encodePath`/detector/${params["DetectorId"]}/threatintelset`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "ThreatIntelSetIds": ["s"],
-        },
-        optional: {
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "ThreatIntelSetIds": ["s"],
+      },
+      optional: {
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async startMonitoringMembers(
     {abortSignal, ...params}: RequestConfig & StartMonitoringMembersRequest,
   ): Promise<StartMonitoringMembersResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       accountIds: params["AccountIds"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartMonitoringMembers",
       requestUri: cmnP.encodePath`/detector/${params["DetectorId"]}/member/start`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "UnprocessedAccounts": [toUnprocessedAccount],
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "UnprocessedAccounts": [toUnprocessedAccount],
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async stopMonitoringMembers(
     {abortSignal, ...params}: RequestConfig & StopMonitoringMembersRequest,
   ): Promise<StopMonitoringMembersResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       accountIds: params["AccountIds"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopMonitoringMembers",
       requestUri: cmnP.encodePath`/detector/${params["DetectorId"]}/member/stop`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "UnprocessedAccounts": [toUnprocessedAccount],
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "UnprocessedAccounts": [toUnprocessedAccount],
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       tags: params["Tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
       requestUri: cmnP.encodePath`/tags/${params["ResourceArn"]}`,
       responseCode: 204,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async unarchiveFindings(
     {abortSignal, ...params}: RequestConfig & UnarchiveFindingsRequest,
   ): Promise<UnarchiveFindingsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       findingIds: params["FindingIds"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UnarchiveFindings",
       requestUri: cmnP.encodePath`/detector/${params["DetectorId"]}/findings/unarchive`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async untagResource(
@@ -1171,189 +1073,171 @@ export default class GuardDuty {
       requestUri: cmnP.encodePath`/tags/${params["ResourceArn"]}`,
       responseCode: 204,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async updateDetector(
     {abortSignal, ...params}: RequestConfig & UpdateDetectorRequest,
   ): Promise<UpdateDetectorResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       enable: params["Enable"],
       findingPublishingFrequency: params["FindingPublishingFrequency"],
       dataSources: fromDataSourceConfigurations(params["DataSources"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateDetector",
       requestUri: cmnP.encodePath`/detector/${params["DetectorId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async updateFilter(
     {abortSignal, ...params}: RequestConfig & UpdateFilterRequest,
   ): Promise<UpdateFilterResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       description: params["Description"],
       action: params["Action"],
       rank: params["Rank"],
       findingCriteria: fromFindingCriteria(params["FindingCriteria"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateFilter",
       requestUri: cmnP.encodePath`/detector/${params["DetectorId"]}/filter/${params["FilterName"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "Name": "s",
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "Name": "s",
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async updateFindingsFeedback(
     {abortSignal, ...params}: RequestConfig & UpdateFindingsFeedbackRequest,
   ): Promise<UpdateFindingsFeedbackResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       findingIds: params["FindingIds"],
       feedback: params["Feedback"],
       comments: params["Comments"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateFindingsFeedback",
       requestUri: cmnP.encodePath`/detector/${params["DetectorId"]}/findings/feedback`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async updateIPSet(
     {abortSignal, ...params}: RequestConfig & UpdateIPSetRequest,
   ): Promise<UpdateIPSetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       name: params["Name"],
       location: params["Location"],
       activate: params["Activate"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateIPSet",
       requestUri: cmnP.encodePath`/detector/${params["DetectorId"]}/ipset/${params["IpSetId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async updateMemberDetectors(
     {abortSignal, ...params}: RequestConfig & UpdateMemberDetectorsRequest,
   ): Promise<UpdateMemberDetectorsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       accountIds: params["AccountIds"],
       dataSources: fromDataSourceConfigurations(params["DataSources"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateMemberDetectors",
       requestUri: cmnP.encodePath`/detector/${params["DetectorId"]}/member/detector/update`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "UnprocessedAccounts": [toUnprocessedAccount],
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "UnprocessedAccounts": [toUnprocessedAccount],
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async updateOrganizationConfiguration(
     {abortSignal, ...params}: RequestConfig & UpdateOrganizationConfigurationRequest,
   ): Promise<UpdateOrganizationConfigurationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       autoEnable: params["AutoEnable"],
       dataSources: fromOrganizationDataSourceConfigurations(params["DataSources"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateOrganizationConfiguration",
       requestUri: cmnP.encodePath`/detector/${params["DetectorId"]}/admin`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async updatePublishingDestination(
     {abortSignal, ...params}: RequestConfig & UpdatePublishingDestinationRequest,
   ): Promise<UpdatePublishingDestinationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       destinationProperties: fromDestinationProperties(params["DestinationProperties"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdatePublishingDestination",
       requestUri: cmnP.encodePath`/detector/${params["DetectorId"]}/publishingDestination/${params["DestinationId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async updateThreatIntelSet(
     {abortSignal, ...params}: RequestConfig & UpdateThreatIntelSetRequest,
   ): Promise<UpdateThreatIntelSetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       name: params["Name"],
       location: params["Location"],
       activate: params["Activate"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateThreatIntelSet",
       requestUri: cmnP.encodePath`/detector/${params["DetectorId"]}/threatintelset/${params["ThreatIntelSetId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
 }

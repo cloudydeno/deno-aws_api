@@ -31,9 +31,9 @@ export default class CostExplorer {
   async createAnomalyMonitor(
     {abortSignal, ...params}: RequestConfig & CreateAnomalyMonitorRequest,
   ): Promise<CreateAnomalyMonitorResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AnomalyMonitor: fromAnomalyMonitor(params["AnomalyMonitor"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateAnomalyMonitor",
@@ -49,9 +49,9 @@ export default class CostExplorer {
   async createAnomalySubscription(
     {abortSignal, ...params}: RequestConfig & CreateAnomalySubscriptionRequest,
   ): Promise<CreateAnomalySubscriptionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AnomalySubscription: fromAnomalySubscription(params["AnomalySubscription"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateAnomalySubscription",
@@ -67,11 +67,11 @@ export default class CostExplorer {
   async createCostCategoryDefinition(
     {abortSignal, ...params}: RequestConfig & CreateCostCategoryDefinitionRequest,
   ): Promise<CreateCostCategoryDefinitionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       RuleVersion: params["RuleVersion"],
       Rules: params["Rules"]?.map(x => fromCostCategoryRule(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateCostCategoryDefinition",
@@ -88,9 +88,9 @@ export default class CostExplorer {
   async deleteAnomalyMonitor(
     {abortSignal, ...params}: RequestConfig & DeleteAnomalyMonitorRequest,
   ): Promise<DeleteAnomalyMonitorResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       MonitorArn: params["MonitorArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteAnomalyMonitor",
@@ -104,9 +104,9 @@ export default class CostExplorer {
   async deleteAnomalySubscription(
     {abortSignal, ...params}: RequestConfig & DeleteAnomalySubscriptionRequest,
   ): Promise<DeleteAnomalySubscriptionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       SubscriptionArn: params["SubscriptionArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteAnomalySubscription",
@@ -120,9 +120,9 @@ export default class CostExplorer {
   async deleteCostCategoryDefinition(
     {abortSignal, ...params}: RequestConfig & DeleteCostCategoryDefinitionRequest,
   ): Promise<DeleteCostCategoryDefinitionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CostCategoryArn: params["CostCategoryArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteCostCategoryDefinition",
@@ -139,10 +139,10 @@ export default class CostExplorer {
   async describeCostCategoryDefinition(
     {abortSignal, ...params}: RequestConfig & DescribeCostCategoryDefinitionRequest,
   ): Promise<DescribeCostCategoryDefinitionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CostCategoryArn: params["CostCategoryArn"],
       EffectiveOn: params["EffectiveOn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeCostCategoryDefinition",
@@ -158,14 +158,14 @@ export default class CostExplorer {
   async getAnomalies(
     {abortSignal, ...params}: RequestConfig & GetAnomaliesRequest,
   ): Promise<GetAnomaliesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       MonitorArn: params["MonitorArn"],
       DateInterval: fromAnomalyDateInterval(params["DateInterval"]),
       Feedback: params["Feedback"],
       TotalImpact: fromTotalImpactFilter(params["TotalImpact"]),
       NextPageToken: params["NextPageToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetAnomalies",
@@ -183,11 +183,11 @@ export default class CostExplorer {
   async getAnomalyMonitors(
     {abortSignal, ...params}: RequestConfig & GetAnomalyMonitorsRequest = {},
   ): Promise<GetAnomalyMonitorsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       MonitorArnList: params["MonitorArnList"],
       NextPageToken: params["NextPageToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetAnomalyMonitors",
@@ -205,12 +205,12 @@ export default class CostExplorer {
   async getAnomalySubscriptions(
     {abortSignal, ...params}: RequestConfig & GetAnomalySubscriptionsRequest = {},
   ): Promise<GetAnomalySubscriptionsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       SubscriptionArnList: params["SubscriptionArnList"],
       MonitorArn: params["MonitorArn"],
       NextPageToken: params["NextPageToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetAnomalySubscriptions",
@@ -228,14 +228,14 @@ export default class CostExplorer {
   async getCostAndUsage(
     {abortSignal, ...params}: RequestConfig & GetCostAndUsageRequest,
   ): Promise<GetCostAndUsageResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TimePeriod: fromDateInterval(params["TimePeriod"]),
       Granularity: params["Granularity"],
       Filter: fromExpression(params["Filter"]),
       Metrics: params["Metrics"],
       GroupBy: params["GroupBy"]?.map(x => fromGroupDefinition(x)),
       NextPageToken: params["NextPageToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetCostAndUsage",
@@ -253,14 +253,14 @@ export default class CostExplorer {
   async getCostAndUsageWithResources(
     {abortSignal, ...params}: RequestConfig & GetCostAndUsageWithResourcesRequest,
   ): Promise<GetCostAndUsageWithResourcesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TimePeriod: fromDateInterval(params["TimePeriod"]),
       Granularity: params["Granularity"],
       Filter: fromExpression(params["Filter"]),
       Metrics: params["Metrics"],
       GroupBy: params["GroupBy"]?.map(x => fromGroupDefinition(x)),
       NextPageToken: params["NextPageToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetCostAndUsageWithResources",
@@ -278,13 +278,13 @@ export default class CostExplorer {
   async getCostForecast(
     {abortSignal, ...params}: RequestConfig & GetCostForecastRequest,
   ): Promise<GetCostForecastResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TimePeriod: fromDateInterval(params["TimePeriod"]),
       Metric: params["Metric"],
       Granularity: params["Granularity"],
       Filter: fromExpression(params["Filter"]),
       PredictionIntervalLevel: params["PredictionIntervalLevel"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetCostForecast",
@@ -301,13 +301,13 @@ export default class CostExplorer {
   async getDimensionValues(
     {abortSignal, ...params}: RequestConfig & GetDimensionValuesRequest,
   ): Promise<GetDimensionValuesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       SearchString: params["SearchString"],
       TimePeriod: fromDateInterval(params["TimePeriod"]),
       Dimension: params["Dimension"],
       Context: params["Context"],
       NextPageToken: params["NextPageToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetDimensionValues",
@@ -327,14 +327,14 @@ export default class CostExplorer {
   async getReservationCoverage(
     {abortSignal, ...params}: RequestConfig & GetReservationCoverageRequest,
   ): Promise<GetReservationCoverageResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TimePeriod: fromDateInterval(params["TimePeriod"]),
       GroupBy: params["GroupBy"]?.map(x => fromGroupDefinition(x)),
       Granularity: params["Granularity"],
       Filter: fromExpression(params["Filter"]),
       Metrics: params["Metrics"],
       NextPageToken: params["NextPageToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetReservationCoverage",
@@ -353,7 +353,7 @@ export default class CostExplorer {
   async getReservationPurchaseRecommendation(
     {abortSignal, ...params}: RequestConfig & GetReservationPurchaseRecommendationRequest,
   ): Promise<GetReservationPurchaseRecommendationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AccountId: params["AccountId"],
       Service: params["Service"],
       AccountScope: params["AccountScope"],
@@ -363,7 +363,7 @@ export default class CostExplorer {
       ServiceSpecification: fromServiceSpecification(params["ServiceSpecification"]),
       PageSize: params["PageSize"],
       NextPageToken: params["NextPageToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetReservationPurchaseRecommendation",
@@ -381,13 +381,13 @@ export default class CostExplorer {
   async getReservationUtilization(
     {abortSignal, ...params}: RequestConfig & GetReservationUtilizationRequest,
   ): Promise<GetReservationUtilizationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TimePeriod: fromDateInterval(params["TimePeriod"]),
       GroupBy: params["GroupBy"]?.map(x => fromGroupDefinition(x)),
       Granularity: params["Granularity"],
       Filter: fromExpression(params["Filter"]),
       NextPageToken: params["NextPageToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetReservationUtilization",
@@ -406,13 +406,13 @@ export default class CostExplorer {
   async getRightsizingRecommendation(
     {abortSignal, ...params}: RequestConfig & GetRightsizingRecommendationRequest,
   ): Promise<GetRightsizingRecommendationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Filter: fromExpression(params["Filter"]),
       Configuration: fromRightsizingRecommendationConfiguration(params["Configuration"]),
       Service: params["Service"],
       PageSize: params["PageSize"],
       NextPageToken: params["NextPageToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetRightsizingRecommendation",
@@ -432,7 +432,7 @@ export default class CostExplorer {
   async getSavingsPlansCoverage(
     {abortSignal, ...params}: RequestConfig & GetSavingsPlansCoverageRequest,
   ): Promise<GetSavingsPlansCoverageResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TimePeriod: fromDateInterval(params["TimePeriod"]),
       GroupBy: params["GroupBy"]?.map(x => fromGroupDefinition(x)),
       Granularity: params["Granularity"],
@@ -440,7 +440,7 @@ export default class CostExplorer {
       Metrics: params["Metrics"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetSavingsPlansCoverage",
@@ -458,7 +458,7 @@ export default class CostExplorer {
   async getSavingsPlansPurchaseRecommendation(
     {abortSignal, ...params}: RequestConfig & GetSavingsPlansPurchaseRecommendationRequest,
   ): Promise<GetSavingsPlansPurchaseRecommendationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       SavingsPlansType: params["SavingsPlansType"],
       TermInYears: params["TermInYears"],
       PaymentOption: params["PaymentOption"],
@@ -467,7 +467,7 @@ export default class CostExplorer {
       PageSize: params["PageSize"],
       LookbackPeriodInDays: params["LookbackPeriodInDays"],
       Filter: fromExpression(params["Filter"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetSavingsPlansPurchaseRecommendation",
@@ -485,11 +485,11 @@ export default class CostExplorer {
   async getSavingsPlansUtilization(
     {abortSignal, ...params}: RequestConfig & GetSavingsPlansUtilizationRequest,
   ): Promise<GetSavingsPlansUtilizationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TimePeriod: fromDateInterval(params["TimePeriod"]),
       Granularity: params["Granularity"],
       Filter: fromExpression(params["Filter"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetSavingsPlansUtilization",
@@ -507,12 +507,12 @@ export default class CostExplorer {
   async getSavingsPlansUtilizationDetails(
     {abortSignal, ...params}: RequestConfig & GetSavingsPlansUtilizationDetailsRequest,
   ): Promise<GetSavingsPlansUtilizationDetailsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TimePeriod: fromDateInterval(params["TimePeriod"]),
       Filter: fromExpression(params["Filter"]),
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetSavingsPlansUtilizationDetails",
@@ -532,12 +532,12 @@ export default class CostExplorer {
   async getTags(
     {abortSignal, ...params}: RequestConfig & GetTagsRequest,
   ): Promise<GetTagsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       SearchString: params["SearchString"],
       TimePeriod: fromDateInterval(params["TimePeriod"]),
       TagKey: params["TagKey"],
       NextPageToken: params["NextPageToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetTags",
@@ -557,13 +557,13 @@ export default class CostExplorer {
   async getUsageForecast(
     {abortSignal, ...params}: RequestConfig & GetUsageForecastRequest,
   ): Promise<GetUsageForecastResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TimePeriod: fromDateInterval(params["TimePeriod"]),
       Metric: params["Metric"],
       Granularity: params["Granularity"],
       Filter: fromExpression(params["Filter"]),
       PredictionIntervalLevel: params["PredictionIntervalLevel"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetUsageForecast",
@@ -580,11 +580,11 @@ export default class CostExplorer {
   async listCostCategoryDefinitions(
     {abortSignal, ...params}: RequestConfig & ListCostCategoryDefinitionsRequest = {},
   ): Promise<ListCostCategoryDefinitionsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       EffectiveOn: params["EffectiveOn"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListCostCategoryDefinitions",
@@ -601,10 +601,10 @@ export default class CostExplorer {
   async provideAnomalyFeedback(
     {abortSignal, ...params}: RequestConfig & ProvideAnomalyFeedbackRequest,
   ): Promise<ProvideAnomalyFeedbackResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AnomalyId: params["AnomalyId"],
       Feedback: params["Feedback"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ProvideAnomalyFeedback",
@@ -620,10 +620,10 @@ export default class CostExplorer {
   async updateAnomalyMonitor(
     {abortSignal, ...params}: RequestConfig & UpdateAnomalyMonitorRequest,
   ): Promise<UpdateAnomalyMonitorResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       MonitorArn: params["MonitorArn"],
       MonitorName: params["MonitorName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateAnomalyMonitor",
@@ -639,14 +639,14 @@ export default class CostExplorer {
   async updateAnomalySubscription(
     {abortSignal, ...params}: RequestConfig & UpdateAnomalySubscriptionRequest,
   ): Promise<UpdateAnomalySubscriptionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       SubscriptionArn: params["SubscriptionArn"],
       Threshold: params["Threshold"],
       Frequency: params["Frequency"],
       MonitorArnList: params["MonitorArnList"],
       Subscribers: params["Subscribers"]?.map(x => fromSubscriber(x)),
       SubscriptionName: params["SubscriptionName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateAnomalySubscription",
@@ -662,11 +662,11 @@ export default class CostExplorer {
   async updateCostCategoryDefinition(
     {abortSignal, ...params}: RequestConfig & UpdateCostCategoryDefinitionRequest,
   ): Promise<UpdateCostCategoryDefinitionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CostCategoryArn: params["CostCategoryArn"],
       RuleVersion: params["RuleVersion"],
       Rules: params["Rules"]?.map(x => fromCostCategoryRule(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateCostCategoryDefinition",

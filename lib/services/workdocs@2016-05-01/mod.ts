@@ -50,79 +50,73 @@ export default class WorkDocs {
       requestUri: cmnP.encodePath`/api/v1/users/${params["UserId"]}/activation`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "User": toUser,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "User": toUser,
+      },
+    }, await resp.json());
   }
 
   async addResourcePermissions(
     {abortSignal, ...params}: RequestConfig & AddResourcePermissionsRequest,
   ): Promise<AddResourcePermissionsResponse> {
     const headers = new Headers;
-    if (params["AuthenticationToken"] != null) headers.append("Authentication", params["AuthenticationToken"]);
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Principals: params["Principals"]?.map(x => fromSharePrincipal(x)),
       NotificationOptions: fromNotificationOptions(params["NotificationOptions"]),
-    } : {};
+    };
+    if (params["AuthenticationToken"] != null) headers.append("Authentication", params["AuthenticationToken"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "AddResourcePermissions",
       requestUri: cmnP.encodePath`/api/v1/resources/${params["ResourceId"]}/permissions`,
       responseCode: 201,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ShareResults": [toShareResult],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ShareResults": [toShareResult],
+      },
+    }, await resp.json());
   }
 
   async createComment(
     {abortSignal, ...params}: RequestConfig & CreateCommentRequest,
   ): Promise<CreateCommentResponse> {
     const headers = new Headers;
-    if (params["AuthenticationToken"] != null) headers.append("Authentication", params["AuthenticationToken"]);
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ParentId: params["ParentId"],
       ThreadId: params["ThreadId"],
       Text: params["Text"],
       Visibility: params["Visibility"],
       NotifyCollaborators: params["NotifyCollaborators"],
-    } : {};
+    };
+    if (params["AuthenticationToken"] != null) headers.append("Authentication", params["AuthenticationToken"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "CreateComment",
       requestUri: cmnP.encodePath`/api/v1/documents/${params["DocumentId"]}/versions/${params["VersionId"]}/comment`,
       responseCode: 201,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Comment": toComment,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Comment": toComment,
+      },
+    }, await resp.json());
   }
 
   async createCustomMetadata(
     {abortSignal, ...params}: RequestConfig & CreateCustomMetadataRequest,
   ): Promise<CreateCustomMetadataResponse> {
     const headers = new Headers;
+    const body: jsonP.JSONObject = {
+      CustomMetadata: params["CustomMetadata"],
+    };
     const query = new URLSearchParams;
     if (params["AuthenticationToken"] != null) headers.append("Authentication", params["AuthenticationToken"]);
     if (params["VersionId"] != null) query.set("versionid", params["VersionId"]?.toString() ?? "");
-    const body: jsonP.JSONObject = params ? {
-      CustomMetadata: params["CustomMetadata"],
-    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, headers, query, body,
       action: "CreateCustomMetadata",
@@ -130,47 +124,43 @@ export default class WorkDocs {
       requestUri: cmnP.encodePath`/api/v1/resources/${params["ResourceId"]}/customMetadata`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async createFolder(
     {abortSignal, ...params}: RequestConfig & CreateFolderRequest,
   ): Promise<CreateFolderResponse> {
     const headers = new Headers;
-    if (params["AuthenticationToken"] != null) headers.append("Authentication", params["AuthenticationToken"]);
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       ParentFolderId: params["ParentFolderId"],
-    } : {};
+    };
+    if (params["AuthenticationToken"] != null) headers.append("Authentication", params["AuthenticationToken"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "CreateFolder",
       requestUri: "/api/v1/folders",
       responseCode: 201,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Metadata": toFolderMetadata,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Metadata": toFolderMetadata,
+      },
+    }, await resp.json());
   }
 
   async createLabels(
     {abortSignal, ...params}: RequestConfig & CreateLabelsRequest,
   ): Promise<CreateLabelsResponse> {
     const headers = new Headers;
-    if (params["AuthenticationToken"] != null) headers.append("Authentication", params["AuthenticationToken"]);
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Labels: params["Labels"],
-    } : {};
+    };
+    if (params["AuthenticationToken"] != null) headers.append("Authentication", params["AuthenticationToken"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "CreateLabels",
@@ -178,44 +168,39 @@ export default class WorkDocs {
       requestUri: cmnP.encodePath`/api/v1/resources/${params["ResourceId"]}/labels`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async createNotificationSubscription(
     {abortSignal, ...params}: RequestConfig & CreateNotificationSubscriptionRequest,
   ): Promise<CreateNotificationSubscriptionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Endpoint: params["Endpoint"],
       Protocol: params["Protocol"],
       SubscriptionType: params["SubscriptionType"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateNotificationSubscription",
       requestUri: cmnP.encodePath`/api/v1/organizations/${params["OrganizationId"]}/subscriptions`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Subscription": toSubscription,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Subscription": toSubscription,
+      },
+    }, await resp.json());
   }
 
   async createUser(
     {abortSignal, ...params}: RequestConfig & CreateUserRequest,
   ): Promise<CreateUserResponse> {
     const headers = new Headers;
-    if (params["AuthenticationToken"] != null) headers.append("Authentication", params["AuthenticationToken"]);
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       OrganizationId: params["OrganizationId"],
       Username: params["Username"],
       EmailAddress: params["EmailAddress"],
@@ -224,21 +209,20 @@ export default class WorkDocs {
       Password: params["Password"],
       TimeZoneId: params["TimeZoneId"],
       StorageRule: fromStorageRuleType(params["StorageRule"]),
-    } : {};
+    };
+    if (params["AuthenticationToken"] != null) headers.append("Authentication", params["AuthenticationToken"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "CreateUser",
       requestUri: "/api/v1/users",
       responseCode: 201,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "User": toUser,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "User": toUser,
+      },
+    }, await resp.json());
   }
 
   async deactivateUser(
@@ -287,12 +271,10 @@ export default class WorkDocs {
       requestUri: cmnP.encodePath`/api/v1/resources/${params["ResourceId"]}/customMetadata`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async deleteDocument(
@@ -354,12 +336,10 @@ export default class WorkDocs {
       requestUri: cmnP.encodePath`/api/v1/resources/${params["ResourceId"]}/labels`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async deleteNotificationSubscription(
@@ -411,15 +391,13 @@ export default class WorkDocs {
       requestUri: "/api/v1/activities",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "UserActivities": [toActivity],
-          "Marker": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "UserActivities": [toActivity],
+        "Marker": "s",
+      },
+    }, await resp.json());
   }
 
   async describeComments(
@@ -437,15 +415,13 @@ export default class WorkDocs {
       requestUri: cmnP.encodePath`/api/v1/documents/${params["DocumentId"]}/versions/${params["VersionId"]}/comments`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Comments": [toComment],
-          "Marker": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Comments": [toComment],
+        "Marker": "s",
+      },
+    }, await resp.json());
   }
 
   async describeDocumentVersions(
@@ -465,15 +441,13 @@ export default class WorkDocs {
       requestUri: cmnP.encodePath`/api/v1/documents/${params["DocumentId"]}/versions`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "DocumentVersions": [toDocumentVersionMetadata],
-          "Marker": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "DocumentVersions": [toDocumentVersionMetadata],
+        "Marker": "s",
+      },
+    }, await resp.json());
   }
 
   async describeFolderContents(
@@ -495,16 +469,14 @@ export default class WorkDocs {
       requestUri: cmnP.encodePath`/api/v1/folders/${params["FolderId"]}/contents`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Folders": [toFolderMetadata],
-          "Documents": [toDocumentMetadata],
-          "Marker": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Folders": [toFolderMetadata],
+        "Documents": [toDocumentMetadata],
+        "Marker": "s",
+      },
+    }, await resp.json());
   }
 
   async describeGroups(
@@ -524,15 +496,13 @@ export default class WorkDocs {
       requestUri: "/api/v1/groups",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Groups": [toGroupMetadata],
-          "Marker": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Groups": [toGroupMetadata],
+        "Marker": "s",
+      },
+    }, await resp.json());
   }
 
   async describeNotificationSubscriptions(
@@ -548,15 +518,13 @@ export default class WorkDocs {
       requestUri: cmnP.encodePath`/api/v1/organizations/${params["OrganizationId"]}/subscriptions`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Subscriptions": [toSubscription],
-          "Marker": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Subscriptions": [toSubscription],
+        "Marker": "s",
+      },
+    }, await resp.json());
   }
 
   async describeResourcePermissions(
@@ -575,15 +543,13 @@ export default class WorkDocs {
       requestUri: cmnP.encodePath`/api/v1/resources/${params["ResourceId"]}/permissions`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Principals": [toPrincipal],
-          "Marker": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Principals": [toPrincipal],
+        "Marker": "s",
+      },
+    }, await resp.json());
   }
 
   async describeRootFolders(
@@ -601,15 +567,13 @@ export default class WorkDocs {
       requestUri: "/api/v1/me/root",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Folders": [toFolderMetadata],
-          "Marker": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Folders": [toFolderMetadata],
+        "Marker": "s",
+      },
+    }, await resp.json());
   }
 
   async describeUsers(
@@ -634,16 +598,14 @@ export default class WorkDocs {
       requestUri: "/api/v1/users",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Users": [toUser],
-          "TotalNumberOfUsers": "n",
-          "Marker": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Users": [toUser],
+        "TotalNumberOfUsers": "n",
+        "Marker": "s",
+      },
+    }, await resp.json());
   }
 
   async getCurrentUser(
@@ -658,14 +620,12 @@ export default class WorkDocs {
       requestUri: "/api/v1/me",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "User": toUser,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "User": toUser,
+      },
+    }, await resp.json());
   }
 
   async getDocument(
@@ -682,15 +642,13 @@ export default class WorkDocs {
       requestUri: cmnP.encodePath`/api/v1/documents/${params["DocumentId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Metadata": toDocumentMetadata,
-          "CustomMetadata": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Metadata": toDocumentMetadata,
+        "CustomMetadata": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async getDocumentPath(
@@ -709,14 +667,12 @@ export default class WorkDocs {
       requestUri: cmnP.encodePath`/api/v1/documents/${params["DocumentId"]}/path`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Path": toResourcePath,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Path": toResourcePath,
+      },
+    }, await resp.json());
   }
 
   async getDocumentVersion(
@@ -734,15 +690,13 @@ export default class WorkDocs {
       requestUri: cmnP.encodePath`/api/v1/documents/${params["DocumentId"]}/versions/${params["VersionId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Metadata": toDocumentVersionMetadata,
-          "CustomMetadata": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Metadata": toDocumentVersionMetadata,
+        "CustomMetadata": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async getFolder(
@@ -759,15 +713,13 @@ export default class WorkDocs {
       requestUri: cmnP.encodePath`/api/v1/folders/${params["FolderId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Metadata": toFolderMetadata,
-          "CustomMetadata": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Metadata": toFolderMetadata,
+        "CustomMetadata": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async getFolderPath(
@@ -786,14 +738,12 @@ export default class WorkDocs {
       requestUri: cmnP.encodePath`/api/v1/folders/${params["FolderId"]}/path`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Path": toResourcePath,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Path": toResourcePath,
+      },
+    }, await resp.json());
   }
 
   async getResources(
@@ -813,24 +763,21 @@ export default class WorkDocs {
       requestUri: "/api/v1/resources",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Folders": [toFolderMetadata],
-          "Documents": [toDocumentMetadata],
-          "Marker": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Folders": [toFolderMetadata],
+        "Documents": [toDocumentMetadata],
+        "Marker": "s",
+      },
+    }, await resp.json());
   }
 
   async initiateDocumentVersionUpload(
     {abortSignal, ...params}: RequestConfig & InitiateDocumentVersionUploadRequest,
   ): Promise<InitiateDocumentVersionUploadResponse> {
     const headers = new Headers;
-    if (params["AuthenticationToken"] != null) headers.append("Authentication", params["AuthenticationToken"]);
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Id: params["Id"],
       Name: params["Name"],
       ContentCreatedTimestamp: jsonP.serializeDate_unixTimestamp(params["ContentCreatedTimestamp"]),
@@ -838,22 +785,21 @@ export default class WorkDocs {
       ContentType: params["ContentType"],
       DocumentSizeInBytes: params["DocumentSizeInBytes"],
       ParentFolderId: params["ParentFolderId"],
-    } : {};
+    };
+    if (params["AuthenticationToken"] != null) headers.append("Authentication", params["AuthenticationToken"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "InitiateDocumentVersionUpload",
       requestUri: "/api/v1/documents",
       responseCode: 201,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Metadata": toDocumentMetadata,
-          "UploadMetadata": toUploadMetadata,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Metadata": toDocumentMetadata,
+        "UploadMetadata": toUploadMetadata,
+      },
+    }, await resp.json());
   }
 
   async removeAllResourcePermissions(
@@ -890,12 +836,12 @@ export default class WorkDocs {
     {abortSignal, ...params}: RequestConfig & UpdateDocumentRequest,
   ): Promise<void> {
     const headers = new Headers;
-    if (params["AuthenticationToken"] != null) headers.append("Authentication", params["AuthenticationToken"]);
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       ParentFolderId: params["ParentFolderId"],
       ResourceState: params["ResourceState"],
-    } : {};
+    };
+    if (params["AuthenticationToken"] != null) headers.append("Authentication", params["AuthenticationToken"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "UpdateDocument",
@@ -909,10 +855,10 @@ export default class WorkDocs {
     {abortSignal, ...params}: RequestConfig & UpdateDocumentVersionRequest,
   ): Promise<void> {
     const headers = new Headers;
-    if (params["AuthenticationToken"] != null) headers.append("Authentication", params["AuthenticationToken"]);
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       VersionStatus: params["VersionStatus"],
-    } : {};
+    };
+    if (params["AuthenticationToken"] != null) headers.append("Authentication", params["AuthenticationToken"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "UpdateDocumentVersion",
@@ -926,12 +872,12 @@ export default class WorkDocs {
     {abortSignal, ...params}: RequestConfig & UpdateFolderRequest,
   ): Promise<void> {
     const headers = new Headers;
-    if (params["AuthenticationToken"] != null) headers.append("Authentication", params["AuthenticationToken"]);
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       ParentFolderId: params["ParentFolderId"],
       ResourceState: params["ResourceState"],
-    } : {};
+    };
+    if (params["AuthenticationToken"] != null) headers.append("Authentication", params["AuthenticationToken"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "UpdateFolder",
@@ -945,8 +891,7 @@ export default class WorkDocs {
     {abortSignal, ...params}: RequestConfig & UpdateUserRequest,
   ): Promise<UpdateUserResponse> {
     const headers = new Headers;
-    if (params["AuthenticationToken"] != null) headers.append("Authentication", params["AuthenticationToken"]);
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       GivenName: params["GivenName"],
       Surname: params["Surname"],
       Type: params["Type"],
@@ -954,7 +899,8 @@ export default class WorkDocs {
       TimeZoneId: params["TimeZoneId"],
       Locale: params["Locale"],
       GrantPoweruserPrivileges: params["GrantPoweruserPrivileges"],
-    } : {};
+    };
+    if (params["AuthenticationToken"] != null) headers.append("Authentication", params["AuthenticationToken"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "UpdateUser",
@@ -962,14 +908,12 @@ export default class WorkDocs {
       requestUri: cmnP.encodePath`/api/v1/users/${params["UserId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "User": toUser,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "User": toUser,
+      },
+    }, await resp.json());
   }
 
 }

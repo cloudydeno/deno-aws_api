@@ -30,7 +30,7 @@ export default class ForecastService {
   async createDataset(
     {abortSignal, ...params}: RequestConfig & CreateDatasetRequest,
   ): Promise<CreateDatasetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DatasetName: params["DatasetName"],
       Domain: params["Domain"],
       DatasetType: params["DatasetType"],
@@ -38,7 +38,7 @@ export default class ForecastService {
       Schema: fromSchema(params["Schema"]),
       EncryptionConfig: fromEncryptionConfig(params["EncryptionConfig"]),
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDataset",
@@ -54,12 +54,12 @@ export default class ForecastService {
   async createDatasetGroup(
     {abortSignal, ...params}: RequestConfig & CreateDatasetGroupRequest,
   ): Promise<CreateDatasetGroupResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DatasetGroupName: params["DatasetGroupName"],
       Domain: params["Domain"],
       DatasetArns: params["DatasetArns"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDatasetGroup",
@@ -75,13 +75,13 @@ export default class ForecastService {
   async createDatasetImportJob(
     {abortSignal, ...params}: RequestConfig & CreateDatasetImportJobRequest,
   ): Promise<CreateDatasetImportJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DatasetImportJobName: params["DatasetImportJobName"],
       DatasetArn: params["DatasetArn"],
       DataSource: fromDataSource(params["DataSource"]),
       TimestampFormat: params["TimestampFormat"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDatasetImportJob",
@@ -97,12 +97,12 @@ export default class ForecastService {
   async createForecast(
     {abortSignal, ...params}: RequestConfig & CreateForecastRequest,
   ): Promise<CreateForecastResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ForecastName: params["ForecastName"],
       PredictorArn: params["PredictorArn"],
       ForecastTypes: params["ForecastTypes"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateForecast",
@@ -118,12 +118,12 @@ export default class ForecastService {
   async createForecastExportJob(
     {abortSignal, ...params}: RequestConfig & CreateForecastExportJobRequest,
   ): Promise<CreateForecastExportJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ForecastExportJobName: params["ForecastExportJobName"],
       ForecastArn: params["ForecastArn"],
       Destination: fromDataDestination(params["Destination"]),
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateForecastExportJob",
@@ -139,7 +139,7 @@ export default class ForecastService {
   async createPredictor(
     {abortSignal, ...params}: RequestConfig & CreatePredictorRequest,
   ): Promise<CreatePredictorResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       PredictorName: params["PredictorName"],
       AlgorithmArn: params["AlgorithmArn"],
       ForecastHorizon: params["ForecastHorizon"],
@@ -152,7 +152,7 @@ export default class ForecastService {
       FeaturizationConfig: fromFeaturizationConfig(params["FeaturizationConfig"]),
       EncryptionConfig: fromEncryptionConfig(params["EncryptionConfig"]),
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreatePredictor",
@@ -168,9 +168,9 @@ export default class ForecastService {
   async deleteDataset(
     {abortSignal, ...params}: RequestConfig & DeleteDatasetRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DatasetArn: params["DatasetArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteDataset",
@@ -180,9 +180,9 @@ export default class ForecastService {
   async deleteDatasetGroup(
     {abortSignal, ...params}: RequestConfig & DeleteDatasetGroupRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DatasetGroupArn: params["DatasetGroupArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteDatasetGroup",
@@ -192,9 +192,9 @@ export default class ForecastService {
   async deleteDatasetImportJob(
     {abortSignal, ...params}: RequestConfig & DeleteDatasetImportJobRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DatasetImportJobArn: params["DatasetImportJobArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteDatasetImportJob",
@@ -204,9 +204,9 @@ export default class ForecastService {
   async deleteForecast(
     {abortSignal, ...params}: RequestConfig & DeleteForecastRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ForecastArn: params["ForecastArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteForecast",
@@ -216,9 +216,9 @@ export default class ForecastService {
   async deleteForecastExportJob(
     {abortSignal, ...params}: RequestConfig & DeleteForecastExportJobRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ForecastExportJobArn: params["ForecastExportJobArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteForecastExportJob",
@@ -228,9 +228,9 @@ export default class ForecastService {
   async deletePredictor(
     {abortSignal, ...params}: RequestConfig & DeletePredictorRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       PredictorArn: params["PredictorArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeletePredictor",
@@ -240,9 +240,9 @@ export default class ForecastService {
   async describeDataset(
     {abortSignal, ...params}: RequestConfig & DescribeDatasetRequest,
   ): Promise<DescribeDatasetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DatasetArn: params["DatasetArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeDataset",
@@ -267,9 +267,9 @@ export default class ForecastService {
   async describeDatasetGroup(
     {abortSignal, ...params}: RequestConfig & DescribeDatasetGroupRequest,
   ): Promise<DescribeDatasetGroupResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DatasetGroupArn: params["DatasetGroupArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeDatasetGroup",
@@ -291,9 +291,9 @@ export default class ForecastService {
   async describeDatasetImportJob(
     {abortSignal, ...params}: RequestConfig & DescribeDatasetImportJobRequest,
   ): Promise<DescribeDatasetImportJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DatasetImportJobArn: params["DatasetImportJobArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeDatasetImportJob",
@@ -319,9 +319,9 @@ export default class ForecastService {
   async describeForecast(
     {abortSignal, ...params}: RequestConfig & DescribeForecastRequest,
   ): Promise<DescribeForecastResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ForecastArn: params["ForecastArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeForecast",
@@ -345,9 +345,9 @@ export default class ForecastService {
   async describeForecastExportJob(
     {abortSignal, ...params}: RequestConfig & DescribeForecastExportJobRequest,
   ): Promise<DescribeForecastExportJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ForecastExportJobArn: params["ForecastExportJobArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeForecastExportJob",
@@ -370,9 +370,9 @@ export default class ForecastService {
   async describePredictor(
     {abortSignal, ...params}: RequestConfig & DescribePredictorRequest,
   ): Promise<DescribePredictorResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       PredictorArn: params["PredictorArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribePredictor",
@@ -406,9 +406,9 @@ export default class ForecastService {
   async getAccuracyMetrics(
     {abortSignal, ...params}: RequestConfig & GetAccuracyMetricsRequest,
   ): Promise<GetAccuracyMetricsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       PredictorArn: params["PredictorArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetAccuracyMetrics",
@@ -424,10 +424,10 @@ export default class ForecastService {
   async listDatasetGroups(
     {abortSignal, ...params}: RequestConfig & ListDatasetGroupsRequest = {},
   ): Promise<ListDatasetGroupsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListDatasetGroups",
@@ -444,11 +444,11 @@ export default class ForecastService {
   async listDatasetImportJobs(
     {abortSignal, ...params}: RequestConfig & ListDatasetImportJobsRequest = {},
   ): Promise<ListDatasetImportJobsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
       Filters: params["Filters"]?.map(x => fromFilter(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListDatasetImportJobs",
@@ -465,10 +465,10 @@ export default class ForecastService {
   async listDatasets(
     {abortSignal, ...params}: RequestConfig & ListDatasetsRequest = {},
   ): Promise<ListDatasetsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListDatasets",
@@ -485,11 +485,11 @@ export default class ForecastService {
   async listForecastExportJobs(
     {abortSignal, ...params}: RequestConfig & ListForecastExportJobsRequest = {},
   ): Promise<ListForecastExportJobsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
       Filters: params["Filters"]?.map(x => fromFilter(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListForecastExportJobs",
@@ -506,11 +506,11 @@ export default class ForecastService {
   async listForecasts(
     {abortSignal, ...params}: RequestConfig & ListForecastsRequest = {},
   ): Promise<ListForecastsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
       Filters: params["Filters"]?.map(x => fromFilter(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListForecasts",
@@ -527,11 +527,11 @@ export default class ForecastService {
   async listPredictors(
     {abortSignal, ...params}: RequestConfig & ListPredictorsRequest = {},
   ): Promise<ListPredictorsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
       Filters: params["Filters"]?.map(x => fromFilter(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListPredictors",
@@ -548,9 +548,9 @@ export default class ForecastService {
   async listTagsForResource(
     {abortSignal, ...params}: RequestConfig & ListTagsForResourceRequest,
   ): Promise<ListTagsForResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForResource",
@@ -566,10 +566,10 @@ export default class ForecastService {
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
@@ -583,10 +583,10 @@ export default class ForecastService {
   async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceRequest,
   ): Promise<UntagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
       TagKeys: params["TagKeys"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResource",
@@ -600,10 +600,10 @@ export default class ForecastService {
   async updateDatasetGroup(
     {abortSignal, ...params}: RequestConfig & UpdateDatasetGroupRequest,
   ): Promise<UpdateDatasetGroupResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DatasetGroupArn: params["DatasetGroupArn"],
       DatasetArns: params["DatasetArns"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateDatasetGroup",

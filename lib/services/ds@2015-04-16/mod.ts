@@ -30,9 +30,9 @@ export default class DirectoryService {
   async acceptSharedDirectory(
     {abortSignal, ...params}: RequestConfig & AcceptSharedDirectoryRequest,
   ): Promise<AcceptSharedDirectoryResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       SharedDirectoryId: params["SharedDirectoryId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AcceptSharedDirectory",
@@ -48,11 +48,11 @@ export default class DirectoryService {
   async addIpRoutes(
     {abortSignal, ...params}: RequestConfig & AddIpRoutesRequest,
   ): Promise<AddIpRoutesResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DirectoryId: params["DirectoryId"],
       IpRoutes: params["IpRoutes"]?.map(x => fromIpRoute(x)),
       UpdateSecurityGroupForDirectoryControllers: params["UpdateSecurityGroupForDirectoryControllers"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AddIpRoutes",
@@ -66,10 +66,10 @@ export default class DirectoryService {
   async addTagsToResource(
     {abortSignal, ...params}: RequestConfig & AddTagsToResourceRequest,
   ): Promise<AddTagsToResourceResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceId: params["ResourceId"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AddTagsToResource",
@@ -83,10 +83,10 @@ export default class DirectoryService {
   async cancelSchemaExtension(
     {abortSignal, ...params}: RequestConfig & CancelSchemaExtensionRequest,
   ): Promise<CancelSchemaExtensionResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DirectoryId: params["DirectoryId"],
       SchemaExtensionId: params["SchemaExtensionId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CancelSchemaExtension",
@@ -100,7 +100,7 @@ export default class DirectoryService {
   async connectDirectory(
     {abortSignal, ...params}: RequestConfig & ConnectDirectoryRequest,
   ): Promise<ConnectDirectoryResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       ShortName: params["ShortName"],
       Password: params["Password"],
@@ -108,7 +108,7 @@ export default class DirectoryService {
       Size: params["Size"],
       ConnectSettings: fromDirectoryConnectSettings(params["ConnectSettings"]),
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ConnectDirectory",
@@ -124,10 +124,10 @@ export default class DirectoryService {
   async createAlias(
     {abortSignal, ...params}: RequestConfig & CreateAliasRequest,
   ): Promise<CreateAliasResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DirectoryId: params["DirectoryId"],
       Alias: params["Alias"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateAlias",
@@ -144,13 +144,13 @@ export default class DirectoryService {
   async createComputer(
     {abortSignal, ...params}: RequestConfig & CreateComputerRequest,
   ): Promise<CreateComputerResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DirectoryId: params["DirectoryId"],
       ComputerName: params["ComputerName"],
       Password: params["Password"],
       OrganizationalUnitDistinguishedName: params["OrganizationalUnitDistinguishedName"],
       ComputerAttributes: params["ComputerAttributes"]?.map(x => fromAttribute(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateComputer",
@@ -166,11 +166,11 @@ export default class DirectoryService {
   async createConditionalForwarder(
     {abortSignal, ...params}: RequestConfig & CreateConditionalForwarderRequest,
   ): Promise<CreateConditionalForwarderResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DirectoryId: params["DirectoryId"],
       RemoteDomainName: params["RemoteDomainName"],
       DnsIpAddrs: params["DnsIpAddrs"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateConditionalForwarder",
@@ -184,7 +184,7 @@ export default class DirectoryService {
   async createDirectory(
     {abortSignal, ...params}: RequestConfig & CreateDirectoryRequest,
   ): Promise<CreateDirectoryResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       ShortName: params["ShortName"],
       Password: params["Password"],
@@ -192,7 +192,7 @@ export default class DirectoryService {
       Size: params["Size"],
       VpcSettings: fromDirectoryVpcSettings(params["VpcSettings"]),
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDirectory",
@@ -208,10 +208,10 @@ export default class DirectoryService {
   async createLogSubscription(
     {abortSignal, ...params}: RequestConfig & CreateLogSubscriptionRequest,
   ): Promise<CreateLogSubscriptionResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DirectoryId: params["DirectoryId"],
       LogGroupName: params["LogGroupName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateLogSubscription",
@@ -225,7 +225,7 @@ export default class DirectoryService {
   async createMicrosoftAD(
     {abortSignal, ...params}: RequestConfig & CreateMicrosoftADRequest,
   ): Promise<CreateMicrosoftADResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       ShortName: params["ShortName"],
       Password: params["Password"],
@@ -233,7 +233,7 @@ export default class DirectoryService {
       VpcSettings: fromDirectoryVpcSettings(params["VpcSettings"]),
       Edition: params["Edition"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateMicrosoftAD",
@@ -249,10 +249,10 @@ export default class DirectoryService {
   async createSnapshot(
     {abortSignal, ...params}: RequestConfig & CreateSnapshotRequest,
   ): Promise<CreateSnapshotResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DirectoryId: params["DirectoryId"],
       Name: params["Name"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateSnapshot",
@@ -268,7 +268,7 @@ export default class DirectoryService {
   async createTrust(
     {abortSignal, ...params}: RequestConfig & CreateTrustRequest,
   ): Promise<CreateTrustResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DirectoryId: params["DirectoryId"],
       RemoteDomainName: params["RemoteDomainName"],
       TrustPassword: params["TrustPassword"],
@@ -276,7 +276,7 @@ export default class DirectoryService {
       TrustType: params["TrustType"],
       ConditionalForwarderIpAddrs: params["ConditionalForwarderIpAddrs"],
       SelectiveAuth: params["SelectiveAuth"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateTrust",
@@ -292,10 +292,10 @@ export default class DirectoryService {
   async deleteConditionalForwarder(
     {abortSignal, ...params}: RequestConfig & DeleteConditionalForwarderRequest,
   ): Promise<DeleteConditionalForwarderResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DirectoryId: params["DirectoryId"],
       RemoteDomainName: params["RemoteDomainName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteConditionalForwarder",
@@ -309,9 +309,9 @@ export default class DirectoryService {
   async deleteDirectory(
     {abortSignal, ...params}: RequestConfig & DeleteDirectoryRequest,
   ): Promise<DeleteDirectoryResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DirectoryId: params["DirectoryId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteDirectory",
@@ -327,9 +327,9 @@ export default class DirectoryService {
   async deleteLogSubscription(
     {abortSignal, ...params}: RequestConfig & DeleteLogSubscriptionRequest,
   ): Promise<DeleteLogSubscriptionResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DirectoryId: params["DirectoryId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteLogSubscription",
@@ -343,9 +343,9 @@ export default class DirectoryService {
   async deleteSnapshot(
     {abortSignal, ...params}: RequestConfig & DeleteSnapshotRequest,
   ): Promise<DeleteSnapshotResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       SnapshotId: params["SnapshotId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteSnapshot",
@@ -361,10 +361,10 @@ export default class DirectoryService {
   async deleteTrust(
     {abortSignal, ...params}: RequestConfig & DeleteTrustRequest,
   ): Promise<DeleteTrustResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TrustId: params["TrustId"],
       DeleteAssociatedConditionalForwarder: params["DeleteAssociatedConditionalForwarder"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteTrust",
@@ -380,10 +380,10 @@ export default class DirectoryService {
   async deregisterCertificate(
     {abortSignal, ...params}: RequestConfig & DeregisterCertificateRequest,
   ): Promise<DeregisterCertificateResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DirectoryId: params["DirectoryId"],
       CertificateId: params["CertificateId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeregisterCertificate",
@@ -397,10 +397,10 @@ export default class DirectoryService {
   async deregisterEventTopic(
     {abortSignal, ...params}: RequestConfig & DeregisterEventTopicRequest,
   ): Promise<DeregisterEventTopicResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DirectoryId: params["DirectoryId"],
       TopicName: params["TopicName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeregisterEventTopic",
@@ -414,10 +414,10 @@ export default class DirectoryService {
   async describeCertificate(
     {abortSignal, ...params}: RequestConfig & DescribeCertificateRequest,
   ): Promise<DescribeCertificateResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DirectoryId: params["DirectoryId"],
       CertificateId: params["CertificateId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeCertificate",
@@ -433,10 +433,10 @@ export default class DirectoryService {
   async describeConditionalForwarders(
     {abortSignal, ...params}: RequestConfig & DescribeConditionalForwardersRequest,
   ): Promise<DescribeConditionalForwardersResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DirectoryId: params["DirectoryId"],
       RemoteDomainNames: params["RemoteDomainNames"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeConditionalForwarders",
@@ -452,11 +452,11 @@ export default class DirectoryService {
   async describeDirectories(
     {abortSignal, ...params}: RequestConfig & DescribeDirectoriesRequest = {},
   ): Promise<DescribeDirectoriesResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DirectoryIds: params["DirectoryIds"],
       NextToken: params["NextToken"],
       Limit: params["Limit"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeDirectories",
@@ -473,12 +473,12 @@ export default class DirectoryService {
   async describeDomainControllers(
     {abortSignal, ...params}: RequestConfig & DescribeDomainControllersRequest,
   ): Promise<DescribeDomainControllersResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DirectoryId: params["DirectoryId"],
       DomainControllerIds: params["DomainControllerIds"],
       NextToken: params["NextToken"],
       Limit: params["Limit"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeDomainControllers",
@@ -495,10 +495,10 @@ export default class DirectoryService {
   async describeEventTopics(
     {abortSignal, ...params}: RequestConfig & DescribeEventTopicsRequest = {},
   ): Promise<DescribeEventTopicsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DirectoryId: params["DirectoryId"],
       TopicNames: params["TopicNames"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeEventTopics",
@@ -514,12 +514,12 @@ export default class DirectoryService {
   async describeLDAPSSettings(
     {abortSignal, ...params}: RequestConfig & DescribeLDAPSSettingsRequest,
   ): Promise<DescribeLDAPSSettingsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DirectoryId: params["DirectoryId"],
       Type: params["Type"],
       NextToken: params["NextToken"],
       Limit: params["Limit"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeLDAPSSettings",
@@ -536,12 +536,12 @@ export default class DirectoryService {
   async describeSharedDirectories(
     {abortSignal, ...params}: RequestConfig & DescribeSharedDirectoriesRequest,
   ): Promise<DescribeSharedDirectoriesResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       OwnerDirectoryId: params["OwnerDirectoryId"],
       SharedDirectoryIds: params["SharedDirectoryIds"],
       NextToken: params["NextToken"],
       Limit: params["Limit"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeSharedDirectories",
@@ -558,12 +558,12 @@ export default class DirectoryService {
   async describeSnapshots(
     {abortSignal, ...params}: RequestConfig & DescribeSnapshotsRequest = {},
   ): Promise<DescribeSnapshotsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DirectoryId: params["DirectoryId"],
       SnapshotIds: params["SnapshotIds"],
       NextToken: params["NextToken"],
       Limit: params["Limit"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeSnapshots",
@@ -580,12 +580,12 @@ export default class DirectoryService {
   async describeTrusts(
     {abortSignal, ...params}: RequestConfig & DescribeTrustsRequest = {},
   ): Promise<DescribeTrustsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DirectoryId: params["DirectoryId"],
       TrustIds: params["TrustIds"],
       NextToken: params["NextToken"],
       Limit: params["Limit"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeTrusts",
@@ -602,10 +602,10 @@ export default class DirectoryService {
   async disableLDAPS(
     {abortSignal, ...params}: RequestConfig & DisableLDAPSRequest,
   ): Promise<DisableLDAPSResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DirectoryId: params["DirectoryId"],
       Type: params["Type"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisableLDAPS",
@@ -619,9 +619,9 @@ export default class DirectoryService {
   async disableRadius(
     {abortSignal, ...params}: RequestConfig & DisableRadiusRequest,
   ): Promise<DisableRadiusResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DirectoryId: params["DirectoryId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisableRadius",
@@ -635,11 +635,11 @@ export default class DirectoryService {
   async disableSso(
     {abortSignal, ...params}: RequestConfig & DisableSsoRequest,
   ): Promise<DisableSsoResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DirectoryId: params["DirectoryId"],
       UserName: params["UserName"],
       Password: params["Password"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisableSso",
@@ -653,10 +653,10 @@ export default class DirectoryService {
   async enableLDAPS(
     {abortSignal, ...params}: RequestConfig & EnableLDAPSRequest,
   ): Promise<EnableLDAPSResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DirectoryId: params["DirectoryId"],
       Type: params["Type"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "EnableLDAPS",
@@ -670,10 +670,10 @@ export default class DirectoryService {
   async enableRadius(
     {abortSignal, ...params}: RequestConfig & EnableRadiusRequest,
   ): Promise<EnableRadiusResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DirectoryId: params["DirectoryId"],
       RadiusSettings: fromRadiusSettings(params["RadiusSettings"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "EnableRadius",
@@ -687,11 +687,11 @@ export default class DirectoryService {
   async enableSso(
     {abortSignal, ...params}: RequestConfig & EnableSsoRequest,
   ): Promise<EnableSsoResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DirectoryId: params["DirectoryId"],
       UserName: params["UserName"],
       Password: params["Password"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "EnableSso",
@@ -705,8 +705,8 @@ export default class DirectoryService {
   async getDirectoryLimits(
     {abortSignal, ...params}: RequestConfig & GetDirectoryLimitsRequest = {},
   ): Promise<GetDirectoryLimitsResult> {
-    const body: jsonP.JSONObject = params ? {
-    } : {};
+    const body: jsonP.JSONObject = {
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetDirectoryLimits",
@@ -722,9 +722,9 @@ export default class DirectoryService {
   async getSnapshotLimits(
     {abortSignal, ...params}: RequestConfig & GetSnapshotLimitsRequest,
   ): Promise<GetSnapshotLimitsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DirectoryId: params["DirectoryId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetSnapshotLimits",
@@ -740,11 +740,11 @@ export default class DirectoryService {
   async listCertificates(
     {abortSignal, ...params}: RequestConfig & ListCertificatesRequest,
   ): Promise<ListCertificatesResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DirectoryId: params["DirectoryId"],
       NextToken: params["NextToken"],
       Limit: params["Limit"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListCertificates",
@@ -761,11 +761,11 @@ export default class DirectoryService {
   async listIpRoutes(
     {abortSignal, ...params}: RequestConfig & ListIpRoutesRequest,
   ): Promise<ListIpRoutesResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DirectoryId: params["DirectoryId"],
       NextToken: params["NextToken"],
       Limit: params["Limit"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListIpRoutes",
@@ -782,11 +782,11 @@ export default class DirectoryService {
   async listLogSubscriptions(
     {abortSignal, ...params}: RequestConfig & ListLogSubscriptionsRequest = {},
   ): Promise<ListLogSubscriptionsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DirectoryId: params["DirectoryId"],
       NextToken: params["NextToken"],
       Limit: params["Limit"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListLogSubscriptions",
@@ -803,11 +803,11 @@ export default class DirectoryService {
   async listSchemaExtensions(
     {abortSignal, ...params}: RequestConfig & ListSchemaExtensionsRequest,
   ): Promise<ListSchemaExtensionsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DirectoryId: params["DirectoryId"],
       NextToken: params["NextToken"],
       Limit: params["Limit"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListSchemaExtensions",
@@ -824,11 +824,11 @@ export default class DirectoryService {
   async listTagsForResource(
     {abortSignal, ...params}: RequestConfig & ListTagsForResourceRequest,
   ): Promise<ListTagsForResourceResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceId: params["ResourceId"],
       NextToken: params["NextToken"],
       Limit: params["Limit"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForResource",
@@ -845,10 +845,10 @@ export default class DirectoryService {
   async registerCertificate(
     {abortSignal, ...params}: RequestConfig & RegisterCertificateRequest,
   ): Promise<RegisterCertificateResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DirectoryId: params["DirectoryId"],
       CertificateData: params["CertificateData"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RegisterCertificate",
@@ -864,10 +864,10 @@ export default class DirectoryService {
   async registerEventTopic(
     {abortSignal, ...params}: RequestConfig & RegisterEventTopicRequest,
   ): Promise<RegisterEventTopicResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DirectoryId: params["DirectoryId"],
       TopicName: params["TopicName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RegisterEventTopic",
@@ -881,9 +881,9 @@ export default class DirectoryService {
   async rejectSharedDirectory(
     {abortSignal, ...params}: RequestConfig & RejectSharedDirectoryRequest,
   ): Promise<RejectSharedDirectoryResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       SharedDirectoryId: params["SharedDirectoryId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RejectSharedDirectory",
@@ -899,10 +899,10 @@ export default class DirectoryService {
   async removeIpRoutes(
     {abortSignal, ...params}: RequestConfig & RemoveIpRoutesRequest,
   ): Promise<RemoveIpRoutesResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DirectoryId: params["DirectoryId"],
       CidrIps: params["CidrIps"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RemoveIpRoutes",
@@ -916,10 +916,10 @@ export default class DirectoryService {
   async removeTagsFromResource(
     {abortSignal, ...params}: RequestConfig & RemoveTagsFromResourceRequest,
   ): Promise<RemoveTagsFromResourceResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceId: params["ResourceId"],
       TagKeys: params["TagKeys"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RemoveTagsFromResource",
@@ -933,11 +933,11 @@ export default class DirectoryService {
   async resetUserPassword(
     {abortSignal, ...params}: RequestConfig & ResetUserPasswordRequest,
   ): Promise<ResetUserPasswordResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DirectoryId: params["DirectoryId"],
       UserName: params["UserName"],
       NewPassword: params["NewPassword"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ResetUserPassword",
@@ -951,9 +951,9 @@ export default class DirectoryService {
   async restoreFromSnapshot(
     {abortSignal, ...params}: RequestConfig & RestoreFromSnapshotRequest,
   ): Promise<RestoreFromSnapshotResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       SnapshotId: params["SnapshotId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RestoreFromSnapshot",
@@ -967,12 +967,12 @@ export default class DirectoryService {
   async shareDirectory(
     {abortSignal, ...params}: RequestConfig & ShareDirectoryRequest,
   ): Promise<ShareDirectoryResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DirectoryId: params["DirectoryId"],
       ShareNotes: params["ShareNotes"],
       ShareTarget: fromShareTarget(params["ShareTarget"]),
       ShareMethod: params["ShareMethod"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ShareDirectory",
@@ -988,12 +988,12 @@ export default class DirectoryService {
   async startSchemaExtension(
     {abortSignal, ...params}: RequestConfig & StartSchemaExtensionRequest,
   ): Promise<StartSchemaExtensionResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DirectoryId: params["DirectoryId"],
       CreateSnapshotBeforeSchemaExtension: params["CreateSnapshotBeforeSchemaExtension"],
       LdifContent: params["LdifContent"],
       Description: params["Description"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartSchemaExtension",
@@ -1009,10 +1009,10 @@ export default class DirectoryService {
   async unshareDirectory(
     {abortSignal, ...params}: RequestConfig & UnshareDirectoryRequest,
   ): Promise<UnshareDirectoryResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DirectoryId: params["DirectoryId"],
       UnshareTarget: fromUnshareTarget(params["UnshareTarget"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UnshareDirectory",
@@ -1028,11 +1028,11 @@ export default class DirectoryService {
   async updateConditionalForwarder(
     {abortSignal, ...params}: RequestConfig & UpdateConditionalForwarderRequest,
   ): Promise<UpdateConditionalForwarderResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DirectoryId: params["DirectoryId"],
       RemoteDomainName: params["RemoteDomainName"],
       DnsIpAddrs: params["DnsIpAddrs"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateConditionalForwarder",
@@ -1046,10 +1046,10 @@ export default class DirectoryService {
   async updateNumberOfDomainControllers(
     {abortSignal, ...params}: RequestConfig & UpdateNumberOfDomainControllersRequest,
   ): Promise<UpdateNumberOfDomainControllersResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DirectoryId: params["DirectoryId"],
       DesiredNumber: params["DesiredNumber"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateNumberOfDomainControllers",
@@ -1063,10 +1063,10 @@ export default class DirectoryService {
   async updateRadius(
     {abortSignal, ...params}: RequestConfig & UpdateRadiusRequest,
   ): Promise<UpdateRadiusResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DirectoryId: params["DirectoryId"],
       RadiusSettings: fromRadiusSettings(params["RadiusSettings"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateRadius",
@@ -1080,10 +1080,10 @@ export default class DirectoryService {
   async updateTrust(
     {abortSignal, ...params}: RequestConfig & UpdateTrustRequest,
   ): Promise<UpdateTrustResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TrustId: params["TrustId"],
       SelectiveAuth: params["SelectiveAuth"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateTrust",
@@ -1100,9 +1100,9 @@ export default class DirectoryService {
   async verifyTrust(
     {abortSignal, ...params}: RequestConfig & VerifyTrustRequest,
   ): Promise<VerifyTrustResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TrustId: params["TrustId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "VerifyTrust",

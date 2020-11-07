@@ -30,9 +30,9 @@ export default class Organizations {
   async acceptHandshake(
     {abortSignal, ...params}: RequestConfig & AcceptHandshakeRequest,
   ): Promise<AcceptHandshakeResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       HandshakeId: params["HandshakeId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AcceptHandshake",
@@ -48,10 +48,10 @@ export default class Organizations {
   async attachPolicy(
     {abortSignal, ...params}: RequestConfig & AttachPolicyRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       PolicyId: params["PolicyId"],
       TargetId: params["TargetId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AttachPolicy",
@@ -61,9 +61,9 @@ export default class Organizations {
   async cancelHandshake(
     {abortSignal, ...params}: RequestConfig & CancelHandshakeRequest,
   ): Promise<CancelHandshakeResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       HandshakeId: params["HandshakeId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CancelHandshake",
@@ -79,13 +79,13 @@ export default class Organizations {
   async createAccount(
     {abortSignal, ...params}: RequestConfig & CreateAccountRequest,
   ): Promise<CreateAccountResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Email: params["Email"],
       AccountName: params["AccountName"],
       RoleName: params["RoleName"],
       IamUserAccessToBilling: params["IamUserAccessToBilling"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateAccount",
@@ -101,13 +101,13 @@ export default class Organizations {
   async createGovCloudAccount(
     {abortSignal, ...params}: RequestConfig & CreateGovCloudAccountRequest,
   ): Promise<CreateGovCloudAccountResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Email: params["Email"],
       AccountName: params["AccountName"],
       RoleName: params["RoleName"],
       IamUserAccessToBilling: params["IamUserAccessToBilling"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateGovCloudAccount",
@@ -123,9 +123,9 @@ export default class Organizations {
   async createOrganization(
     {abortSignal, ...params}: RequestConfig & CreateOrganizationRequest = {},
   ): Promise<CreateOrganizationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       FeatureSet: params["FeatureSet"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateOrganization",
@@ -141,11 +141,11 @@ export default class Organizations {
   async createOrganizationalUnit(
     {abortSignal, ...params}: RequestConfig & CreateOrganizationalUnitRequest,
   ): Promise<CreateOrganizationalUnitResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ParentId: params["ParentId"],
       Name: params["Name"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateOrganizationalUnit",
@@ -161,13 +161,13 @@ export default class Organizations {
   async createPolicy(
     {abortSignal, ...params}: RequestConfig & CreatePolicyRequest,
   ): Promise<CreatePolicyResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Content: params["Content"],
       Description: params["Description"],
       Name: params["Name"],
       Type: params["Type"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreatePolicy",
@@ -183,9 +183,9 @@ export default class Organizations {
   async declineHandshake(
     {abortSignal, ...params}: RequestConfig & DeclineHandshakeRequest,
   ): Promise<DeclineHandshakeResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       HandshakeId: params["HandshakeId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeclineHandshake",
@@ -210,9 +210,9 @@ export default class Organizations {
   async deleteOrganizationalUnit(
     {abortSignal, ...params}: RequestConfig & DeleteOrganizationalUnitRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       OrganizationalUnitId: params["OrganizationalUnitId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteOrganizationalUnit",
@@ -222,9 +222,9 @@ export default class Organizations {
   async deletePolicy(
     {abortSignal, ...params}: RequestConfig & DeletePolicyRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       PolicyId: params["PolicyId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeletePolicy",
@@ -234,10 +234,10 @@ export default class Organizations {
   async deregisterDelegatedAdministrator(
     {abortSignal, ...params}: RequestConfig & DeregisterDelegatedAdministratorRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AccountId: params["AccountId"],
       ServicePrincipal: params["ServicePrincipal"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeregisterDelegatedAdministrator",
@@ -247,9 +247,9 @@ export default class Organizations {
   async describeAccount(
     {abortSignal, ...params}: RequestConfig & DescribeAccountRequest,
   ): Promise<DescribeAccountResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AccountId: params["AccountId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeAccount",
@@ -265,9 +265,9 @@ export default class Organizations {
   async describeCreateAccountStatus(
     {abortSignal, ...params}: RequestConfig & DescribeCreateAccountStatusRequest,
   ): Promise<DescribeCreateAccountStatusResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CreateAccountRequestId: params["CreateAccountRequestId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeCreateAccountStatus",
@@ -283,10 +283,10 @@ export default class Organizations {
   async describeEffectivePolicy(
     {abortSignal, ...params}: RequestConfig & DescribeEffectivePolicyRequest,
   ): Promise<DescribeEffectivePolicyResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       PolicyType: params["PolicyType"],
       TargetId: params["TargetId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeEffectivePolicy",
@@ -302,9 +302,9 @@ export default class Organizations {
   async describeHandshake(
     {abortSignal, ...params}: RequestConfig & DescribeHandshakeRequest,
   ): Promise<DescribeHandshakeResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       HandshakeId: params["HandshakeId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeHandshake",
@@ -335,9 +335,9 @@ export default class Organizations {
   async describeOrganizationalUnit(
     {abortSignal, ...params}: RequestConfig & DescribeOrganizationalUnitRequest,
   ): Promise<DescribeOrganizationalUnitResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       OrganizationalUnitId: params["OrganizationalUnitId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeOrganizationalUnit",
@@ -353,9 +353,9 @@ export default class Organizations {
   async describePolicy(
     {abortSignal, ...params}: RequestConfig & DescribePolicyRequest,
   ): Promise<DescribePolicyResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       PolicyId: params["PolicyId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribePolicy",
@@ -371,10 +371,10 @@ export default class Organizations {
   async detachPolicy(
     {abortSignal, ...params}: RequestConfig & DetachPolicyRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       PolicyId: params["PolicyId"],
       TargetId: params["TargetId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DetachPolicy",
@@ -384,9 +384,9 @@ export default class Organizations {
   async disableAWSServiceAccess(
     {abortSignal, ...params}: RequestConfig & DisableAWSServiceAccessRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ServicePrincipal: params["ServicePrincipal"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisableAWSServiceAccess",
@@ -396,10 +396,10 @@ export default class Organizations {
   async disablePolicyType(
     {abortSignal, ...params}: RequestConfig & DisablePolicyTypeRequest,
   ): Promise<DisablePolicyTypeResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       RootId: params["RootId"],
       PolicyType: params["PolicyType"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisablePolicyType",
@@ -415,9 +415,9 @@ export default class Organizations {
   async enableAWSServiceAccess(
     {abortSignal, ...params}: RequestConfig & EnableAWSServiceAccessRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ServicePrincipal: params["ServicePrincipal"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "EnableAWSServiceAccess",
@@ -427,8 +427,8 @@ export default class Organizations {
   async enableAllFeatures(
     {abortSignal, ...params}: RequestConfig & EnableAllFeaturesRequest = {},
   ): Promise<EnableAllFeaturesResponse> {
-    const body: jsonP.JSONObject = params ? {
-    } : {};
+    const body: jsonP.JSONObject = {
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "EnableAllFeatures",
@@ -444,10 +444,10 @@ export default class Organizations {
   async enablePolicyType(
     {abortSignal, ...params}: RequestConfig & EnablePolicyTypeRequest,
   ): Promise<EnablePolicyTypeResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       RootId: params["RootId"],
       PolicyType: params["PolicyType"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "EnablePolicyType",
@@ -463,11 +463,11 @@ export default class Organizations {
   async inviteAccountToOrganization(
     {abortSignal, ...params}: RequestConfig & InviteAccountToOrganizationRequest,
   ): Promise<InviteAccountToOrganizationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Target: fromHandshakeParty(params["Target"]),
       Notes: params["Notes"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "InviteAccountToOrganization",
@@ -492,10 +492,10 @@ export default class Organizations {
   async listAWSServiceAccessForOrganization(
     {abortSignal, ...params}: RequestConfig & ListAWSServiceAccessForOrganizationRequest = {},
   ): Promise<ListAWSServiceAccessForOrganizationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListAWSServiceAccessForOrganization",
@@ -512,10 +512,10 @@ export default class Organizations {
   async listAccounts(
     {abortSignal, ...params}: RequestConfig & ListAccountsRequest = {},
   ): Promise<ListAccountsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListAccounts",
@@ -532,11 +532,11 @@ export default class Organizations {
   async listAccountsForParent(
     {abortSignal, ...params}: RequestConfig & ListAccountsForParentRequest,
   ): Promise<ListAccountsForParentResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ParentId: params["ParentId"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListAccountsForParent",
@@ -553,12 +553,12 @@ export default class Organizations {
   async listChildren(
     {abortSignal, ...params}: RequestConfig & ListChildrenRequest,
   ): Promise<ListChildrenResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ParentId: params["ParentId"],
       ChildType: params["ChildType"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListChildren",
@@ -575,11 +575,11 @@ export default class Organizations {
   async listCreateAccountStatus(
     {abortSignal, ...params}: RequestConfig & ListCreateAccountStatusRequest = {},
   ): Promise<ListCreateAccountStatusResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       States: params["States"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListCreateAccountStatus",
@@ -596,11 +596,11 @@ export default class Organizations {
   async listDelegatedAdministrators(
     {abortSignal, ...params}: RequestConfig & ListDelegatedAdministratorsRequest = {},
   ): Promise<ListDelegatedAdministratorsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ServicePrincipal: params["ServicePrincipal"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListDelegatedAdministrators",
@@ -617,11 +617,11 @@ export default class Organizations {
   async listDelegatedServicesForAccount(
     {abortSignal, ...params}: RequestConfig & ListDelegatedServicesForAccountRequest,
   ): Promise<ListDelegatedServicesForAccountResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AccountId: params["AccountId"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListDelegatedServicesForAccount",
@@ -638,11 +638,11 @@ export default class Organizations {
   async listHandshakesForAccount(
     {abortSignal, ...params}: RequestConfig & ListHandshakesForAccountRequest = {},
   ): Promise<ListHandshakesForAccountResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Filter: fromHandshakeFilter(params["Filter"]),
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListHandshakesForAccount",
@@ -659,11 +659,11 @@ export default class Organizations {
   async listHandshakesForOrganization(
     {abortSignal, ...params}: RequestConfig & ListHandshakesForOrganizationRequest = {},
   ): Promise<ListHandshakesForOrganizationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Filter: fromHandshakeFilter(params["Filter"]),
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListHandshakesForOrganization",
@@ -680,11 +680,11 @@ export default class Organizations {
   async listOrganizationalUnitsForParent(
     {abortSignal, ...params}: RequestConfig & ListOrganizationalUnitsForParentRequest,
   ): Promise<ListOrganizationalUnitsForParentResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ParentId: params["ParentId"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListOrganizationalUnitsForParent",
@@ -701,11 +701,11 @@ export default class Organizations {
   async listParents(
     {abortSignal, ...params}: RequestConfig & ListParentsRequest,
   ): Promise<ListParentsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ChildId: params["ChildId"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListParents",
@@ -722,11 +722,11 @@ export default class Organizations {
   async listPolicies(
     {abortSignal, ...params}: RequestConfig & ListPoliciesRequest,
   ): Promise<ListPoliciesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Filter: params["Filter"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListPolicies",
@@ -743,12 +743,12 @@ export default class Organizations {
   async listPoliciesForTarget(
     {abortSignal, ...params}: RequestConfig & ListPoliciesForTargetRequest,
   ): Promise<ListPoliciesForTargetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TargetId: params["TargetId"],
       Filter: params["Filter"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListPoliciesForTarget",
@@ -765,10 +765,10 @@ export default class Organizations {
   async listRoots(
     {abortSignal, ...params}: RequestConfig & ListRootsRequest = {},
   ): Promise<ListRootsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListRoots",
@@ -785,10 +785,10 @@ export default class Organizations {
   async listTagsForResource(
     {abortSignal, ...params}: RequestConfig & ListTagsForResourceRequest,
   ): Promise<ListTagsForResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceId: params["ResourceId"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForResource",
@@ -805,11 +805,11 @@ export default class Organizations {
   async listTargetsForPolicy(
     {abortSignal, ...params}: RequestConfig & ListTargetsForPolicyRequest,
   ): Promise<ListTargetsForPolicyResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       PolicyId: params["PolicyId"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTargetsForPolicy",
@@ -826,11 +826,11 @@ export default class Organizations {
   async moveAccount(
     {abortSignal, ...params}: RequestConfig & MoveAccountRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AccountId: params["AccountId"],
       SourceParentId: params["SourceParentId"],
       DestinationParentId: params["DestinationParentId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "MoveAccount",
@@ -840,10 +840,10 @@ export default class Organizations {
   async registerDelegatedAdministrator(
     {abortSignal, ...params}: RequestConfig & RegisterDelegatedAdministratorRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AccountId: params["AccountId"],
       ServicePrincipal: params["ServicePrincipal"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RegisterDelegatedAdministrator",
@@ -853,9 +853,9 @@ export default class Organizations {
   async removeAccountFromOrganization(
     {abortSignal, ...params}: RequestConfig & RemoveAccountFromOrganizationRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AccountId: params["AccountId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RemoveAccountFromOrganization",
@@ -865,10 +865,10 @@ export default class Organizations {
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceId: params["ResourceId"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
@@ -878,10 +878,10 @@ export default class Organizations {
   async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceId: params["ResourceId"],
       TagKeys: params["TagKeys"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResource",
@@ -891,10 +891,10 @@ export default class Organizations {
   async updateOrganizationalUnit(
     {abortSignal, ...params}: RequestConfig & UpdateOrganizationalUnitRequest,
   ): Promise<UpdateOrganizationalUnitResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       OrganizationalUnitId: params["OrganizationalUnitId"],
       Name: params["Name"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateOrganizationalUnit",
@@ -910,12 +910,12 @@ export default class Organizations {
   async updatePolicy(
     {abortSignal, ...params}: RequestConfig & UpdatePolicyRequest,
   ): Promise<UpdatePolicyResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       PolicyId: params["PolicyId"],
       Name: params["Name"],
       Description: params["Description"],
       Content: params["Content"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdatePolicy",

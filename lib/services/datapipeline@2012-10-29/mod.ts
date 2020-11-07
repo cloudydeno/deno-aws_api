@@ -29,11 +29,11 @@ export default class DataPipeline {
   async activatePipeline(
     {abortSignal, ...params}: RequestConfig & ActivatePipelineInput,
   ): Promise<ActivatePipelineOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       pipelineId: params["pipelineId"],
       parameterValues: params["parameterValues"]?.map(x => fromParameterValue(x)),
       startTimestamp: jsonP.serializeDate_unixTimestamp(params["startTimestamp"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ActivatePipeline",
@@ -47,10 +47,10 @@ export default class DataPipeline {
   async addTags(
     {abortSignal, ...params}: RequestConfig & AddTagsInput,
   ): Promise<AddTagsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       pipelineId: params["pipelineId"],
       tags: params["tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AddTags",
@@ -64,12 +64,12 @@ export default class DataPipeline {
   async createPipeline(
     {abortSignal, ...params}: RequestConfig & CreatePipelineInput,
   ): Promise<CreatePipelineOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       name: params["name"],
       uniqueId: params["uniqueId"],
       description: params["description"],
       tags: params["tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreatePipeline",
@@ -85,10 +85,10 @@ export default class DataPipeline {
   async deactivatePipeline(
     {abortSignal, ...params}: RequestConfig & DeactivatePipelineInput,
   ): Promise<DeactivatePipelineOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       pipelineId: params["pipelineId"],
       cancelActive: params["cancelActive"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeactivatePipeline",
@@ -102,9 +102,9 @@ export default class DataPipeline {
   async deletePipeline(
     {abortSignal, ...params}: RequestConfig & DeletePipelineInput,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       pipelineId: params["pipelineId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeletePipeline",
@@ -114,12 +114,12 @@ export default class DataPipeline {
   async describeObjects(
     {abortSignal, ...params}: RequestConfig & DescribeObjectsInput,
   ): Promise<DescribeObjectsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       pipelineId: params["pipelineId"],
       objectIds: params["objectIds"],
       evaluateExpressions: params["evaluateExpressions"],
       marker: params["marker"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeObjects",
@@ -138,9 +138,9 @@ export default class DataPipeline {
   async describePipelines(
     {abortSignal, ...params}: RequestConfig & DescribePipelinesInput,
   ): Promise<DescribePipelinesOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       pipelineIds: params["pipelineIds"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribePipelines",
@@ -156,11 +156,11 @@ export default class DataPipeline {
   async evaluateExpression(
     {abortSignal, ...params}: RequestConfig & EvaluateExpressionInput,
   ): Promise<EvaluateExpressionOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       pipelineId: params["pipelineId"],
       objectId: params["objectId"],
       expression: params["expression"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "EvaluateExpression",
@@ -176,10 +176,10 @@ export default class DataPipeline {
   async getPipelineDefinition(
     {abortSignal, ...params}: RequestConfig & GetPipelineDefinitionInput,
   ): Promise<GetPipelineDefinitionOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       pipelineId: params["pipelineId"],
       version: params["version"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetPipelineDefinition",
@@ -197,9 +197,9 @@ export default class DataPipeline {
   async listPipelines(
     {abortSignal, ...params}: RequestConfig & ListPipelinesInput = {},
   ): Promise<ListPipelinesOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       marker: params["marker"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListPipelines",
@@ -218,11 +218,11 @@ export default class DataPipeline {
   async pollForTask(
     {abortSignal, ...params}: RequestConfig & PollForTaskInput,
   ): Promise<PollForTaskOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       workerGroup: params["workerGroup"],
       hostname: params["hostname"],
       instanceIdentity: fromInstanceIdentity(params["instanceIdentity"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PollForTask",
@@ -238,12 +238,12 @@ export default class DataPipeline {
   async putPipelineDefinition(
     {abortSignal, ...params}: RequestConfig & PutPipelineDefinitionInput,
   ): Promise<PutPipelineDefinitionOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       pipelineId: params["pipelineId"],
       pipelineObjects: params["pipelineObjects"]?.map(x => fromPipelineObject(x)),
       parameterObjects: params["parameterObjects"]?.map(x => fromParameterObject(x)),
       parameterValues: params["parameterValues"]?.map(x => fromParameterValue(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutPipelineDefinition",
@@ -262,13 +262,13 @@ export default class DataPipeline {
   async queryObjects(
     {abortSignal, ...params}: RequestConfig & QueryObjectsInput,
   ): Promise<QueryObjectsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       pipelineId: params["pipelineId"],
       query: fromQuery(params["query"]),
       sphere: params["sphere"],
       marker: params["marker"],
       limit: params["limit"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "QueryObjects",
@@ -286,10 +286,10 @@ export default class DataPipeline {
   async removeTags(
     {abortSignal, ...params}: RequestConfig & RemoveTagsInput,
   ): Promise<RemoveTagsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       pipelineId: params["pipelineId"],
       tagKeys: params["tagKeys"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RemoveTags",
@@ -303,10 +303,10 @@ export default class DataPipeline {
   async reportTaskProgress(
     {abortSignal, ...params}: RequestConfig & ReportTaskProgressInput,
   ): Promise<ReportTaskProgressOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       taskId: params["taskId"],
       fields: params["fields"]?.map(x => fromField(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ReportTaskProgress",
@@ -322,11 +322,11 @@ export default class DataPipeline {
   async reportTaskRunnerHeartbeat(
     {abortSignal, ...params}: RequestConfig & ReportTaskRunnerHeartbeatInput,
   ): Promise<ReportTaskRunnerHeartbeatOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       taskrunnerId: params["taskrunnerId"],
       workerGroup: params["workerGroup"],
       hostname: params["hostname"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ReportTaskRunnerHeartbeat",
@@ -342,11 +342,11 @@ export default class DataPipeline {
   async setStatus(
     {abortSignal, ...params}: RequestConfig & SetStatusInput,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       pipelineId: params["pipelineId"],
       objectIds: params["objectIds"],
       status: params["status"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SetStatus",
@@ -356,13 +356,13 @@ export default class DataPipeline {
   async setTaskStatus(
     {abortSignal, ...params}: RequestConfig & SetTaskStatusInput,
   ): Promise<SetTaskStatusOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       taskId: params["taskId"],
       taskStatus: params["taskStatus"],
       errorId: params["errorId"],
       errorMessage: params["errorMessage"],
       errorStackTrace: params["errorStackTrace"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SetTaskStatus",
@@ -376,12 +376,12 @@ export default class DataPipeline {
   async validatePipelineDefinition(
     {abortSignal, ...params}: RequestConfig & ValidatePipelineDefinitionInput,
   ): Promise<ValidatePipelineDefinitionOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       pipelineId: params["pipelineId"],
       pipelineObjects: params["pipelineObjects"]?.map(x => fromPipelineObject(x)),
       parameterObjects: params["parameterObjects"]?.map(x => fromParameterObject(x)),
       parameterValues: params["parameterValues"]?.map(x => fromParameterValue(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ValidatePipelineDefinition",

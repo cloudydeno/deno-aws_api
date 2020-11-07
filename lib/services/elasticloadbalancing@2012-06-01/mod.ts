@@ -525,7 +525,7 @@ export default class ELB {
         const resp = await this.describeInstanceHealth(params);
         if (resp?.InstanceStates?.flatMap(x => x?.State)?.every(x => x === "OutOfService")) return resp;
       } catch (err) {
-        if (["InvalidInstance"].includes(err.code)) return err;
+        if (["InvalidInstance"].includes(err.shortCode)) return err;
         throw err;
       }
       await new Promise(r => setTimeout(r, 15000));
@@ -556,7 +556,7 @@ export default class ELB {
         const resp = await this.describeInstanceHealth(params);
         if (resp?.InstanceStates?.flatMap(x => x?.State)?.every(x => x === "InService")) return resp;
       } catch (err) {
-        if (!["InvalidInstance"].includes(err.code)) throw err;
+        if (!["InvalidInstance"].includes(err.shortCode)) throw err;
       }
       await new Promise(r => setTimeout(r, 15000));
     }

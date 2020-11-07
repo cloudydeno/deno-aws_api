@@ -29,9 +29,9 @@ export default class Macie {
   async associateMemberAccount(
     {abortSignal, ...params}: RequestConfig & AssociateMemberAccountRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       memberAccountId: params["memberAccountId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AssociateMemberAccount",
@@ -41,10 +41,10 @@ export default class Macie {
   async associateS3Resources(
     {abortSignal, ...params}: RequestConfig & AssociateS3ResourcesRequest,
   ): Promise<AssociateS3ResourcesResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       memberAccountId: params["memberAccountId"],
       s3Resources: params["s3Resources"]?.map(x => fromS3ResourceClassification(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AssociateS3Resources",
@@ -60,9 +60,9 @@ export default class Macie {
   async disassociateMemberAccount(
     {abortSignal, ...params}: RequestConfig & DisassociateMemberAccountRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       memberAccountId: params["memberAccountId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisassociateMemberAccount",
@@ -72,10 +72,10 @@ export default class Macie {
   async disassociateS3Resources(
     {abortSignal, ...params}: RequestConfig & DisassociateS3ResourcesRequest,
   ): Promise<DisassociateS3ResourcesResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       memberAccountId: params["memberAccountId"],
       associatedS3Resources: params["associatedS3Resources"]?.map(x => fromS3Resource(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisassociateS3Resources",
@@ -91,10 +91,10 @@ export default class Macie {
   async listMemberAccounts(
     {abortSignal, ...params}: RequestConfig & ListMemberAccountsRequest = {},
   ): Promise<ListMemberAccountsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListMemberAccounts",
@@ -111,11 +111,11 @@ export default class Macie {
   async listS3Resources(
     {abortSignal, ...params}: RequestConfig & ListS3ResourcesRequest = {},
   ): Promise<ListS3ResourcesResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       memberAccountId: params["memberAccountId"],
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListS3Resources",
@@ -132,10 +132,10 @@ export default class Macie {
   async updateS3Resources(
     {abortSignal, ...params}: RequestConfig & UpdateS3ResourcesRequest,
   ): Promise<UpdateS3ResourcesResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       memberAccountId: params["memberAccountId"],
       s3ResourcesUpdate: params["s3ResourcesUpdate"]?.map(x => fromS3ResourceClassificationUpdate(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateS3Resources",

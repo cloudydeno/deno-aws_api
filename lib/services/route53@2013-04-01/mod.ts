@@ -42,11 +42,9 @@ export default class Route53 {
       requestUri: cmnP.encodePath`/2013-04-01/hostedzone/${params["HostedZoneId"]}/associatevpc`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    ...{
-        ChangeInfo: xml.first("ChangeInfo", true, ChangeInfo_Parse),
-      },
-  };
+    return {
+      ChangeInfo: xml.first("ChangeInfo", true, ChangeInfo_Parse),
+    };
   }
 
   async changeResourceRecordSets(
@@ -64,11 +62,9 @@ export default class Route53 {
       requestUri: cmnP.encodePath`/2013-04-01/hostedzone/${params["HostedZoneId"]}/rrset/`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    ...{
-        ChangeInfo: xml.first("ChangeInfo", true, ChangeInfo_Parse),
-      },
-  };
+    return {
+      ChangeInfo: xml.first("ChangeInfo", true, ChangeInfo_Parse),
+    };
   }
 
   async changeTagsForResource(
@@ -86,8 +82,8 @@ export default class Route53 {
       action: "ChangeTagsForResource",
       requestUri: cmnP.encodePath`/2013-04-01/tags/${params["ResourceType"]}/${params["ResourceId"]}`,
     });
-  return {
-  };
+    return {
+    };
   }
 
   async createHealthCheck(
@@ -107,12 +103,12 @@ export default class Route53 {
       responseCode: 201,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    Location: resp.headers.get("Location") ?? "",
-    ...{
+    return {
+      Location: resp.headers.get("Location") ?? "",
+      ...{
         HealthCheck: xml.first("HealthCheck", true, HealthCheck_Parse),
       },
-  };
+    };
   }
 
   async createHostedZone(
@@ -135,15 +131,15 @@ export default class Route53 {
       responseCode: 201,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    Location: resp.headers.get("Location") ?? "",
-    ...{
+    return {
+      Location: resp.headers.get("Location") ?? "",
+      ...{
         HostedZone: xml.first("HostedZone", true, HostedZone_Parse),
         ChangeInfo: xml.first("ChangeInfo", true, ChangeInfo_Parse),
         DelegationSet: xml.first("DelegationSet", true, DelegationSet_Parse),
         VPC: xml.first("VPC", false, VPC_Parse),
       },
-  };
+    };
   }
 
   async createQueryLoggingConfig(
@@ -163,12 +159,12 @@ export default class Route53 {
       responseCode: 201,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    Location: resp.headers.get("Location") ?? "",
-    ...{
+    return {
+      Location: resp.headers.get("Location") ?? "",
+      ...{
         QueryLoggingConfig: xml.first("QueryLoggingConfig", true, QueryLoggingConfig_Parse),
       },
-  };
+    };
   }
 
   async createReusableDelegationSet(
@@ -188,12 +184,12 @@ export default class Route53 {
       responseCode: 201,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    Location: resp.headers.get("Location") ?? "",
-    ...{
+    return {
+      Location: resp.headers.get("Location") ?? "",
+      ...{
         DelegationSet: xml.first("DelegationSet", true, DelegationSet_Parse),
       },
-  };
+    };
   }
 
   async createTrafficPolicy(
@@ -214,12 +210,12 @@ export default class Route53 {
       responseCode: 201,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    Location: resp.headers.get("Location") ?? "",
-    ...{
+    return {
+      Location: resp.headers.get("Location") ?? "",
+      ...{
         TrafficPolicy: xml.first("TrafficPolicy", true, TrafficPolicy_Parse),
       },
-  };
+    };
   }
 
   async createTrafficPolicyInstance(
@@ -242,12 +238,12 @@ export default class Route53 {
       responseCode: 201,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    Location: resp.headers.get("Location") ?? "",
-    ...{
+    return {
+      Location: resp.headers.get("Location") ?? "",
+      ...{
         TrafficPolicyInstance: xml.first("TrafficPolicyInstance", true, TrafficPolicyInstance_Parse),
       },
-  };
+    };
   }
 
   async createTrafficPolicyVersion(
@@ -267,12 +263,12 @@ export default class Route53 {
       responseCode: 201,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    Location: resp.headers.get("Location") ?? "",
-    ...{
+    return {
+      Location: resp.headers.get("Location") ?? "",
+      ...{
         TrafficPolicy: xml.first("TrafficPolicy", true, TrafficPolicy_Parse),
       },
-  };
+    };
   }
 
   async createVPCAssociationAuthorization(
@@ -290,14 +286,12 @@ export default class Route53 {
       requestUri: cmnP.encodePath`/2013-04-01/hostedzone/${params["HostedZoneId"]}/authorizevpcassociation`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    ...{
-        ...xml.strings({
-          required: {"HostedZoneId":true},
-        }),
-        VPC: xml.first("VPC", true, VPC_Parse),
-      },
-  };
+    return {
+      ...xml.strings({
+        required: {"HostedZoneId":true},
+      }),
+      VPC: xml.first("VPC", true, VPC_Parse),
+    };
   }
 
   async deleteHealthCheck(
@@ -310,8 +304,8 @@ export default class Route53 {
       method: "DELETE",
       requestUri: cmnP.encodePath`/2013-04-01/healthcheck/${params["HealthCheckId"]}`,
     });
-  return {
-  };
+    return {
+    };
   }
 
   async deleteHostedZone(
@@ -325,11 +319,9 @@ export default class Route53 {
       requestUri: cmnP.encodePath`/2013-04-01/hostedzone/${params["Id"]}`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    ...{
-        ChangeInfo: xml.first("ChangeInfo", true, ChangeInfo_Parse),
-      },
-  };
+    return {
+      ChangeInfo: xml.first("ChangeInfo", true, ChangeInfo_Parse),
+    };
   }
 
   async deleteQueryLoggingConfig(
@@ -342,8 +334,8 @@ export default class Route53 {
       method: "DELETE",
       requestUri: cmnP.encodePath`/2013-04-01/queryloggingconfig/${params["Id"]}`,
     });
-  return {
-  };
+    return {
+    };
   }
 
   async deleteReusableDelegationSet(
@@ -356,8 +348,8 @@ export default class Route53 {
       method: "DELETE",
       requestUri: cmnP.encodePath`/2013-04-01/delegationset/${params["Id"]}`,
     });
-  return {
-  };
+    return {
+    };
   }
 
   async deleteTrafficPolicy(
@@ -370,8 +362,8 @@ export default class Route53 {
       method: "DELETE",
       requestUri: cmnP.encodePath`/2013-04-01/trafficpolicy/${params["Id"]}/${params["Version"].toString()}`,
     });
-  return {
-  };
+    return {
+    };
   }
 
   async deleteTrafficPolicyInstance(
@@ -384,8 +376,8 @@ export default class Route53 {
       method: "DELETE",
       requestUri: cmnP.encodePath`/2013-04-01/trafficpolicyinstance/${params["Id"]}`,
     });
-  return {
-  };
+    return {
+    };
   }
 
   async deleteVPCAssociationAuthorization(
@@ -402,8 +394,8 @@ export default class Route53 {
       action: "DeleteVPCAssociationAuthorization",
       requestUri: cmnP.encodePath`/2013-04-01/hostedzone/${params["HostedZoneId"]}/deauthorizevpcassociation`,
     });
-  return {
-  };
+    return {
+    };
   }
 
   async disassociateVPCFromHostedZone(
@@ -422,11 +414,9 @@ export default class Route53 {
       requestUri: cmnP.encodePath`/2013-04-01/hostedzone/${params["HostedZoneId"]}/disassociatevpc`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    ...{
-        ChangeInfo: xml.first("ChangeInfo", true, ChangeInfo_Parse),
-      },
-  };
+    return {
+      ChangeInfo: xml.first("ChangeInfo", true, ChangeInfo_Parse),
+    };
   }
 
   async getAccountLimit(
@@ -440,12 +430,10 @@ export default class Route53 {
       requestUri: cmnP.encodePath`/2013-04-01/accountlimit/${params["Type"]}`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    ...{
-        Limit: xml.first("Limit", true, AccountLimit_Parse),
-        Count: xml.first("Count", true, x => parseInt(x.content ?? '0')),
-      },
-  };
+    return {
+      Limit: xml.first("Limit", true, AccountLimit_Parse),
+      Count: xml.first("Count", true, x => parseInt(x.content ?? '0')),
+    };
   }
 
   async getChange(
@@ -459,11 +447,9 @@ export default class Route53 {
       requestUri: cmnP.encodePath`/2013-04-01/change/${params["Id"]}`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    ...{
-        ChangeInfo: xml.first("ChangeInfo", true, ChangeInfo_Parse),
-      },
-  };
+    return {
+      ChangeInfo: xml.first("ChangeInfo", true, ChangeInfo_Parse),
+    };
   }
 
   async getCheckerIpRanges(
@@ -477,11 +463,9 @@ export default class Route53 {
       requestUri: "/2013-04-01/checkeripranges",
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    ...{
-        CheckerIpRanges: xml.getList("CheckerIpRanges", "member").map(x => x.content ?? ''),
-      },
-  };
+    return {
+      CheckerIpRanges: xml.getList("CheckerIpRanges", "member").map(x => x.content ?? ''),
+    };
   }
 
   async getGeoLocation(
@@ -498,11 +482,9 @@ export default class Route53 {
       requestUri: "/2013-04-01/geolocation",
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    ...{
-        GeoLocationDetails: xml.first("GeoLocationDetails", true, GeoLocationDetails_Parse),
-      },
-  };
+    return {
+      GeoLocationDetails: xml.first("GeoLocationDetails", true, GeoLocationDetails_Parse),
+    };
   }
 
   async getHealthCheck(
@@ -516,11 +498,9 @@ export default class Route53 {
       requestUri: cmnP.encodePath`/2013-04-01/healthcheck/${params["HealthCheckId"]}`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    ...{
-        HealthCheck: xml.first("HealthCheck", true, HealthCheck_Parse),
-      },
-  };
+    return {
+      HealthCheck: xml.first("HealthCheck", true, HealthCheck_Parse),
+    };
   }
 
   async getHealthCheckCount(
@@ -534,11 +514,9 @@ export default class Route53 {
       requestUri: "/2013-04-01/healthcheckcount",
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    ...{
-        HealthCheckCount: xml.first("HealthCheckCount", true, x => parseInt(x.content ?? '0')),
-      },
-  };
+    return {
+      HealthCheckCount: xml.first("HealthCheckCount", true, x => parseInt(x.content ?? '0')),
+    };
   }
 
   async getHealthCheckLastFailureReason(
@@ -552,11 +530,9 @@ export default class Route53 {
       requestUri: cmnP.encodePath`/2013-04-01/healthcheck/${params["HealthCheckId"]}/lastfailurereason`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    ...{
-        HealthCheckObservations: xml.getList("HealthCheckObservations", "HealthCheckObservation").map(HealthCheckObservation_Parse),
-      },
-  };
+    return {
+      HealthCheckObservations: xml.getList("HealthCheckObservations", "HealthCheckObservation").map(HealthCheckObservation_Parse),
+    };
   }
 
   async getHealthCheckStatus(
@@ -570,11 +546,9 @@ export default class Route53 {
       requestUri: cmnP.encodePath`/2013-04-01/healthcheck/${params["HealthCheckId"]}/status`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    ...{
-        HealthCheckObservations: xml.getList("HealthCheckObservations", "HealthCheckObservation").map(HealthCheckObservation_Parse),
-      },
-  };
+    return {
+      HealthCheckObservations: xml.getList("HealthCheckObservations", "HealthCheckObservation").map(HealthCheckObservation_Parse),
+    };
   }
 
   async getHostedZone(
@@ -588,13 +562,11 @@ export default class Route53 {
       requestUri: cmnP.encodePath`/2013-04-01/hostedzone/${params["Id"]}`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    ...{
-        HostedZone: xml.first("HostedZone", true, HostedZone_Parse),
-        DelegationSet: xml.first("DelegationSet", false, DelegationSet_Parse),
-        VPCs: xml.getList("VPCs", "VPC").map(VPC_Parse),
-      },
-  };
+    return {
+      HostedZone: xml.first("HostedZone", true, HostedZone_Parse),
+      DelegationSet: xml.first("DelegationSet", false, DelegationSet_Parse),
+      VPCs: xml.getList("VPCs", "VPC").map(VPC_Parse),
+    };
   }
 
   async getHostedZoneCount(
@@ -608,11 +580,9 @@ export default class Route53 {
       requestUri: "/2013-04-01/hostedzonecount",
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    ...{
-        HostedZoneCount: xml.first("HostedZoneCount", true, x => parseInt(x.content ?? '0')),
-      },
-  };
+    return {
+      HostedZoneCount: xml.first("HostedZoneCount", true, x => parseInt(x.content ?? '0')),
+    };
   }
 
   async getHostedZoneLimit(
@@ -626,12 +596,10 @@ export default class Route53 {
       requestUri: cmnP.encodePath`/2013-04-01/hostedzonelimit/${params["HostedZoneId"]}/${params["Type"]}`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    ...{
-        Limit: xml.first("Limit", true, HostedZoneLimit_Parse),
-        Count: xml.first("Count", true, x => parseInt(x.content ?? '0')),
-      },
-  };
+    return {
+      Limit: xml.first("Limit", true, HostedZoneLimit_Parse),
+      Count: xml.first("Count", true, x => parseInt(x.content ?? '0')),
+    };
   }
 
   async getQueryLoggingConfig(
@@ -645,11 +613,9 @@ export default class Route53 {
       requestUri: cmnP.encodePath`/2013-04-01/queryloggingconfig/${params["Id"]}`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    ...{
-        QueryLoggingConfig: xml.first("QueryLoggingConfig", true, QueryLoggingConfig_Parse),
-      },
-  };
+    return {
+      QueryLoggingConfig: xml.first("QueryLoggingConfig", true, QueryLoggingConfig_Parse),
+    };
   }
 
   async getReusableDelegationSet(
@@ -663,11 +629,9 @@ export default class Route53 {
       requestUri: cmnP.encodePath`/2013-04-01/delegationset/${params["Id"]}`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    ...{
-        DelegationSet: xml.first("DelegationSet", true, DelegationSet_Parse),
-      },
-  };
+    return {
+      DelegationSet: xml.first("DelegationSet", true, DelegationSet_Parse),
+    };
   }
 
   async getReusableDelegationSetLimit(
@@ -681,12 +645,10 @@ export default class Route53 {
       requestUri: cmnP.encodePath`/2013-04-01/reusabledelegationsetlimit/${params["DelegationSetId"]}/${params["Type"]}`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    ...{
-        Limit: xml.first("Limit", true, ReusableDelegationSetLimit_Parse),
-        Count: xml.first("Count", true, x => parseInt(x.content ?? '0')),
-      },
-  };
+    return {
+      Limit: xml.first("Limit", true, ReusableDelegationSetLimit_Parse),
+      Count: xml.first("Count", true, x => parseInt(x.content ?? '0')),
+    };
   }
 
   async getTrafficPolicy(
@@ -700,11 +662,9 @@ export default class Route53 {
       requestUri: cmnP.encodePath`/2013-04-01/trafficpolicy/${params["Id"]}/${params["Version"].toString()}`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    ...{
-        TrafficPolicy: xml.first("TrafficPolicy", true, TrafficPolicy_Parse),
-      },
-  };
+    return {
+      TrafficPolicy: xml.first("TrafficPolicy", true, TrafficPolicy_Parse),
+    };
   }
 
   async getTrafficPolicyInstance(
@@ -718,11 +678,9 @@ export default class Route53 {
       requestUri: cmnP.encodePath`/2013-04-01/trafficpolicyinstance/${params["Id"]}`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    ...{
-        TrafficPolicyInstance: xml.first("TrafficPolicyInstance", true, TrafficPolicyInstance_Parse),
-      },
-  };
+    return {
+      TrafficPolicyInstance: xml.first("TrafficPolicyInstance", true, TrafficPolicyInstance_Parse),
+    };
   }
 
   async getTrafficPolicyInstanceCount(
@@ -736,11 +694,9 @@ export default class Route53 {
       requestUri: "/2013-04-01/trafficpolicyinstancecount",
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    ...{
-        TrafficPolicyInstanceCount: xml.first("TrafficPolicyInstanceCount", true, x => parseInt(x.content ?? '0')),
-      },
-  };
+    return {
+      TrafficPolicyInstanceCount: xml.first("TrafficPolicyInstanceCount", true, x => parseInt(x.content ?? '0')),
+    };
   }
 
   async listGeoLocations(
@@ -758,16 +714,14 @@ export default class Route53 {
       requestUri: "/2013-04-01/geolocations",
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    ...{
-        ...xml.strings({
-          required: {"MaxItems":true},
-          optional: {"NextContinentCode":true,"NextCountryCode":true,"NextSubdivisionCode":true},
-        }),
-        GeoLocationDetailsList: xml.getList("GeoLocationDetailsList", "GeoLocationDetails").map(GeoLocationDetails_Parse),
-        IsTruncated: xml.first("IsTruncated", true, x => x.content === 'true'),
-      },
-  };
+    return {
+      ...xml.strings({
+        required: {"MaxItems":true},
+        optional: {"NextContinentCode":true,"NextCountryCode":true,"NextSubdivisionCode":true},
+      }),
+      GeoLocationDetailsList: xml.getList("GeoLocationDetailsList", "GeoLocationDetails").map(GeoLocationDetails_Parse),
+      IsTruncated: xml.first("IsTruncated", true, x => x.content === 'true'),
+    };
   }
 
   async listHealthChecks(
@@ -783,16 +737,14 @@ export default class Route53 {
       requestUri: "/2013-04-01/healthcheck",
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    ...{
-        ...xml.strings({
-          required: {"Marker":true,"MaxItems":true},
-          optional: {"NextMarker":true},
-        }),
-        HealthChecks: xml.getList("HealthChecks", "HealthCheck").map(HealthCheck_Parse),
-        IsTruncated: xml.first("IsTruncated", true, x => x.content === 'true'),
-      },
-  };
+    return {
+      ...xml.strings({
+        required: {"Marker":true,"MaxItems":true},
+        optional: {"NextMarker":true},
+      }),
+      HealthChecks: xml.getList("HealthChecks", "HealthCheck").map(HealthCheck_Parse),
+      IsTruncated: xml.first("IsTruncated", true, x => x.content === 'true'),
+    };
   }
 
   async listHostedZones(
@@ -809,16 +761,14 @@ export default class Route53 {
       requestUri: "/2013-04-01/hostedzone",
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    ...{
-        ...xml.strings({
-          required: {"Marker":true,"MaxItems":true},
-          optional: {"NextMarker":true},
-        }),
-        HostedZones: xml.getList("HostedZones", "HostedZone").map(HostedZone_Parse),
-        IsTruncated: xml.first("IsTruncated", true, x => x.content === 'true'),
-      },
-  };
+    return {
+      ...xml.strings({
+        required: {"MaxItems":true},
+        optional: {"Marker":true,"NextMarker":true},
+      }),
+      HostedZones: xml.getList("HostedZones", "HostedZone").map(HostedZone_Parse),
+      IsTruncated: xml.first("IsTruncated", true, x => x.content === 'true'),
+    };
   }
 
   async listHostedZonesByName(
@@ -835,16 +785,14 @@ export default class Route53 {
       requestUri: "/2013-04-01/hostedzonesbyname",
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    ...{
-        ...xml.strings({
-          required: {"MaxItems":true},
-          optional: {"DNSName":true,"HostedZoneId":true,"NextDNSName":true,"NextHostedZoneId":true},
-        }),
-        HostedZones: xml.getList("HostedZones", "HostedZone").map(HostedZone_Parse),
-        IsTruncated: xml.first("IsTruncated", true, x => x.content === 'true'),
-      },
-  };
+    return {
+      ...xml.strings({
+        required: {"MaxItems":true},
+        optional: {"DNSName":true,"HostedZoneId":true,"NextDNSName":true,"NextHostedZoneId":true},
+      }),
+      HostedZones: xml.getList("HostedZones", "HostedZone").map(HostedZone_Parse),
+      IsTruncated: xml.first("IsTruncated", true, x => x.content === 'true'),
+    };
   }
 
   async listHostedZonesByVPC(
@@ -862,15 +810,13 @@ export default class Route53 {
       requestUri: "/2013-04-01/hostedzonesbyvpc",
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    ...{
-        ...xml.strings({
-          required: {"MaxItems":true},
-          optional: {"NextToken":true},
-        }),
-        HostedZoneSummaries: xml.getList("HostedZoneSummaries", "HostedZoneSummary").map(HostedZoneSummary_Parse),
-      },
-  };
+    return {
+      ...xml.strings({
+        required: {"MaxItems":true},
+        optional: {"NextToken":true},
+      }),
+      HostedZoneSummaries: xml.getList("HostedZoneSummaries", "HostedZoneSummary").map(HostedZoneSummary_Parse),
+    };
   }
 
   async listQueryLoggingConfigs(
@@ -887,14 +833,12 @@ export default class Route53 {
       requestUri: "/2013-04-01/queryloggingconfig",
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    ...{
-        ...xml.strings({
-          optional: {"NextToken":true},
-        }),
-        QueryLoggingConfigs: xml.getList("QueryLoggingConfigs", "QueryLoggingConfig").map(QueryLoggingConfig_Parse),
-      },
-  };
+    return {
+      ...xml.strings({
+        optional: {"NextToken":true},
+      }),
+      QueryLoggingConfigs: xml.getList("QueryLoggingConfigs", "QueryLoggingConfig").map(QueryLoggingConfig_Parse),
+    };
   }
 
   async listResourceRecordSets(
@@ -912,17 +856,15 @@ export default class Route53 {
       requestUri: cmnP.encodePath`/2013-04-01/hostedzone/${params["HostedZoneId"]}/rrset`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    ...{
-        ...xml.strings({
-          required: {"MaxItems":true},
-          optional: {"NextRecordName":true,"NextRecordIdentifier":true},
-        }),
-        ResourceRecordSets: xml.getList("ResourceRecordSets", "ResourceRecordSet").map(ResourceRecordSet_Parse),
-        IsTruncated: xml.first("IsTruncated", true, x => x.content === 'true'),
-        NextRecordType: xml.first("NextRecordType", false, x => (x.content ?? '') as RRType),
-      },
-  };
+    return {
+      ...xml.strings({
+        required: {"MaxItems":true},
+        optional: {"NextRecordName":true,"NextRecordIdentifier":true},
+      }),
+      ResourceRecordSets: xml.getList("ResourceRecordSets", "ResourceRecordSet").map(ResourceRecordSet_Parse),
+      IsTruncated: xml.first("IsTruncated", true, x => x.content === 'true'),
+      NextRecordType: xml.first("NextRecordType", false, x => (x.content ?? '') as RRType),
+    };
   }
 
   async listReusableDelegationSets(
@@ -938,16 +880,14 @@ export default class Route53 {
       requestUri: "/2013-04-01/delegationset",
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    ...{
-        ...xml.strings({
-          required: {"Marker":true,"MaxItems":true},
-          optional: {"NextMarker":true},
-        }),
-        DelegationSets: xml.getList("DelegationSets", "DelegationSet").map(DelegationSet_Parse),
-        IsTruncated: xml.first("IsTruncated", true, x => x.content === 'true'),
-      },
-  };
+    return {
+      ...xml.strings({
+        required: {"Marker":true,"MaxItems":true},
+        optional: {"NextMarker":true},
+      }),
+      DelegationSets: xml.getList("DelegationSets", "DelegationSet").map(DelegationSet_Parse),
+      IsTruncated: xml.first("IsTruncated", true, x => x.content === 'true'),
+    };
   }
 
   async listTagsForResource(
@@ -961,11 +901,9 @@ export default class Route53 {
       requestUri: cmnP.encodePath`/2013-04-01/tags/${params["ResourceType"]}/${params["ResourceId"]}`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    ...{
-        ResourceTagSet: xml.first("ResourceTagSet", true, ResourceTagSet_Parse),
-      },
-  };
+    return {
+      ResourceTagSet: xml.first("ResourceTagSet", true, ResourceTagSet_Parse),
+    };
   }
 
   async listTagsForResources(
@@ -983,11 +921,9 @@ export default class Route53 {
       requestUri: cmnP.encodePath`/2013-04-01/tags/${params["ResourceType"]}`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    ...{
-        ResourceTagSets: xml.getList("ResourceTagSets", "ResourceTagSet").map(ResourceTagSet_Parse),
-      },
-  };
+    return {
+      ResourceTagSets: xml.getList("ResourceTagSets", "ResourceTagSet").map(ResourceTagSet_Parse),
+    };
   }
 
   async listTrafficPolicies(
@@ -1003,15 +939,13 @@ export default class Route53 {
       requestUri: "/2013-04-01/trafficpolicies",
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    ...{
-        ...xml.strings({
-          required: {"TrafficPolicyIdMarker":true,"MaxItems":true},
-        }),
-        TrafficPolicySummaries: xml.getList("TrafficPolicySummaries", "TrafficPolicySummary").map(TrafficPolicySummary_Parse),
-        IsTruncated: xml.first("IsTruncated", true, x => x.content === 'true'),
-      },
-  };
+    return {
+      ...xml.strings({
+        required: {"TrafficPolicyIdMarker":true,"MaxItems":true},
+      }),
+      TrafficPolicySummaries: xml.getList("TrafficPolicySummaries", "TrafficPolicySummary").map(TrafficPolicySummary_Parse),
+      IsTruncated: xml.first("IsTruncated", true, x => x.content === 'true'),
+    };
   }
 
   async listTrafficPolicyInstances(
@@ -1029,17 +963,15 @@ export default class Route53 {
       requestUri: "/2013-04-01/trafficpolicyinstances",
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    ...{
-        ...xml.strings({
-          required: {"MaxItems":true},
-          optional: {"HostedZoneIdMarker":true,"TrafficPolicyInstanceNameMarker":true},
-        }),
-        TrafficPolicyInstances: xml.getList("TrafficPolicyInstances", "TrafficPolicyInstance").map(TrafficPolicyInstance_Parse),
-        TrafficPolicyInstanceTypeMarker: xml.first("TrafficPolicyInstanceTypeMarker", false, x => (x.content ?? '') as RRType),
-        IsTruncated: xml.first("IsTruncated", true, x => x.content === 'true'),
-      },
-  };
+    return {
+      ...xml.strings({
+        required: {"MaxItems":true},
+        optional: {"HostedZoneIdMarker":true,"TrafficPolicyInstanceNameMarker":true},
+      }),
+      TrafficPolicyInstances: xml.getList("TrafficPolicyInstances", "TrafficPolicyInstance").map(TrafficPolicyInstance_Parse),
+      TrafficPolicyInstanceTypeMarker: xml.first("TrafficPolicyInstanceTypeMarker", false, x => (x.content ?? '') as RRType),
+      IsTruncated: xml.first("IsTruncated", true, x => x.content === 'true'),
+    };
   }
 
   async listTrafficPolicyInstancesByHostedZone(
@@ -1057,17 +989,15 @@ export default class Route53 {
       requestUri: "/2013-04-01/trafficpolicyinstances/hostedzone",
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    ...{
-        ...xml.strings({
-          required: {"MaxItems":true},
-          optional: {"TrafficPolicyInstanceNameMarker":true},
-        }),
-        TrafficPolicyInstances: xml.getList("TrafficPolicyInstances", "TrafficPolicyInstance").map(TrafficPolicyInstance_Parse),
-        TrafficPolicyInstanceTypeMarker: xml.first("TrafficPolicyInstanceTypeMarker", false, x => (x.content ?? '') as RRType),
-        IsTruncated: xml.first("IsTruncated", true, x => x.content === 'true'),
-      },
-  };
+    return {
+      ...xml.strings({
+        required: {"MaxItems":true},
+        optional: {"TrafficPolicyInstanceNameMarker":true},
+      }),
+      TrafficPolicyInstances: xml.getList("TrafficPolicyInstances", "TrafficPolicyInstance").map(TrafficPolicyInstance_Parse),
+      TrafficPolicyInstanceTypeMarker: xml.first("TrafficPolicyInstanceTypeMarker", false, x => (x.content ?? '') as RRType),
+      IsTruncated: xml.first("IsTruncated", true, x => x.content === 'true'),
+    };
   }
 
   async listTrafficPolicyInstancesByPolicy(
@@ -1087,17 +1017,15 @@ export default class Route53 {
       requestUri: "/2013-04-01/trafficpolicyinstances/trafficpolicy",
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    ...{
-        ...xml.strings({
-          required: {"MaxItems":true},
-          optional: {"HostedZoneIdMarker":true,"TrafficPolicyInstanceNameMarker":true},
-        }),
-        TrafficPolicyInstances: xml.getList("TrafficPolicyInstances", "TrafficPolicyInstance").map(TrafficPolicyInstance_Parse),
-        TrafficPolicyInstanceTypeMarker: xml.first("TrafficPolicyInstanceTypeMarker", false, x => (x.content ?? '') as RRType),
-        IsTruncated: xml.first("IsTruncated", true, x => x.content === 'true'),
-      },
-  };
+    return {
+      ...xml.strings({
+        required: {"MaxItems":true},
+        optional: {"HostedZoneIdMarker":true,"TrafficPolicyInstanceNameMarker":true},
+      }),
+      TrafficPolicyInstances: xml.getList("TrafficPolicyInstances", "TrafficPolicyInstance").map(TrafficPolicyInstance_Parse),
+      TrafficPolicyInstanceTypeMarker: xml.first("TrafficPolicyInstanceTypeMarker", false, x => (x.content ?? '') as RRType),
+      IsTruncated: xml.first("IsTruncated", true, x => x.content === 'true'),
+    };
   }
 
   async listTrafficPolicyVersions(
@@ -1113,15 +1041,13 @@ export default class Route53 {
       requestUri: cmnP.encodePath`/2013-04-01/trafficpolicies/${params["Id"]}/versions`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    ...{
-        ...xml.strings({
-          required: {"TrafficPolicyVersionMarker":true,"MaxItems":true},
-        }),
-        TrafficPolicies: xml.getList("TrafficPolicies", "TrafficPolicy").map(TrafficPolicy_Parse),
-        IsTruncated: xml.first("IsTruncated", true, x => x.content === 'true'),
-      },
-  };
+    return {
+      ...xml.strings({
+        required: {"TrafficPolicyVersionMarker":true,"MaxItems":true},
+      }),
+      TrafficPolicies: xml.getList("TrafficPolicies", "TrafficPolicy").map(TrafficPolicy_Parse),
+      IsTruncated: xml.first("IsTruncated", true, x => x.content === 'true'),
+    };
   }
 
   async listVPCAssociationAuthorizations(
@@ -1137,15 +1063,13 @@ export default class Route53 {
       requestUri: cmnP.encodePath`/2013-04-01/hostedzone/${params["HostedZoneId"]}/authorizevpcassociation`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    ...{
-        ...xml.strings({
-          required: {"HostedZoneId":true},
-          optional: {"NextToken":true},
-        }),
-        VPCs: xml.getList("VPCs", "VPC").map(VPC_Parse),
-      },
-  };
+    return {
+      ...xml.strings({
+        required: {"HostedZoneId":true},
+        optional: {"NextToken":true},
+      }),
+      VPCs: xml.getList("VPCs", "VPC").map(VPC_Parse),
+    };
   }
 
   async testDNSAnswer(
@@ -1165,15 +1089,13 @@ export default class Route53 {
       requestUri: "/2013-04-01/testdnsanswer",
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    ...{
-        ...xml.strings({
-          required: {"Nameserver":true,"RecordName":true,"ResponseCode":true,"Protocol":true},
-        }),
-        RecordType: xml.first("RecordType", true, x => (x.content ?? '') as RRType),
-        RecordData: xml.getList("RecordData", "RecordDataEntry").map(x => x.content ?? ''),
-      },
-  };
+    return {
+      ...xml.strings({
+        required: {"Nameserver":true,"RecordName":true,"ResponseCode":true,"Protocol":true},
+      }),
+      RecordType: xml.first("RecordType", true, x => (x.content ?? '') as RRType),
+      RecordData: xml.getList("RecordData", "RecordDataEntry").map(x => x.content ?? ''),
+    };
   }
 
   async updateHealthCheck(
@@ -1206,11 +1128,9 @@ export default class Route53 {
       requestUri: cmnP.encodePath`/2013-04-01/healthcheck/${params["HealthCheckId"]}`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    ...{
-        HealthCheck: xml.first("HealthCheck", true, HealthCheck_Parse),
-      },
-  };
+    return {
+      HealthCheck: xml.first("HealthCheck", true, HealthCheck_Parse),
+    };
   }
 
   async updateHostedZoneComment(
@@ -1228,11 +1148,9 @@ export default class Route53 {
       requestUri: cmnP.encodePath`/2013-04-01/hostedzone/${params["Id"]}`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    ...{
-        HostedZone: xml.first("HostedZone", true, HostedZone_Parse),
-      },
-  };
+    return {
+      HostedZone: xml.first("HostedZone", true, HostedZone_Parse),
+    };
   }
 
   async updateTrafficPolicyComment(
@@ -1250,11 +1168,9 @@ export default class Route53 {
       requestUri: cmnP.encodePath`/2013-04-01/trafficpolicy/${params["Id"]}/${params["Version"].toString()}`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    ...{
-        TrafficPolicy: xml.first("TrafficPolicy", true, TrafficPolicy_Parse),
-      },
-  };
+    return {
+      TrafficPolicy: xml.first("TrafficPolicy", true, TrafficPolicy_Parse),
+    };
   }
 
   async updateTrafficPolicyInstance(
@@ -1274,11 +1190,9 @@ export default class Route53 {
       requestUri: cmnP.encodePath`/2013-04-01/trafficpolicyinstance/${params["Id"]}`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    ...{
-        TrafficPolicyInstance: xml.first("TrafficPolicyInstance", true, TrafficPolicyInstance_Parse),
-      },
-  };
+    return {
+      TrafficPolicyInstance: xml.first("TrafficPolicyInstance", true, TrafficPolicyInstance_Parse),
+    };
   }
 
   // Resource State Waiters
@@ -1884,7 +1798,7 @@ export interface ListHealthChecksResponse {
 // refs: 1 - tags: named, output
 export interface ListHostedZonesResponse {
   HostedZones: HostedZone[];
-  Marker: string;
+  Marker?: string | null;
   IsTruncated: boolean;
   NextMarker?: string | null;
   MaxItems: string;

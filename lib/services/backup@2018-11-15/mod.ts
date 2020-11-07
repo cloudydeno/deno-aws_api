@@ -28,80 +28,74 @@ export default class Backup {
   async createBackupPlan(
     {abortSignal, ...params}: RequestConfig & CreateBackupPlanInput,
   ): Promise<CreateBackupPlanOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       BackupPlan: fromBackupPlanInput(params["BackupPlan"]),
       BackupPlanTags: params["BackupPlanTags"],
       CreatorRequestId: params["CreatorRequestId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateBackupPlan",
       method: "PUT",
       requestUri: "/backup/plans/",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "BackupPlanId": "s",
-          "BackupPlanArn": "s",
-          "CreationDate": "d",
-          "VersionId": "s",
-          "AdvancedBackupSettings": [toAdvancedBackupSetting],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "BackupPlanId": "s",
+        "BackupPlanArn": "s",
+        "CreationDate": "d",
+        "VersionId": "s",
+        "AdvancedBackupSettings": [toAdvancedBackupSetting],
+      },
+    }, await resp.json());
   }
 
   async createBackupSelection(
     {abortSignal, ...params}: RequestConfig & CreateBackupSelectionInput,
   ): Promise<CreateBackupSelectionOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       BackupSelection: fromBackupSelection(params["BackupSelection"]),
       CreatorRequestId: params["CreatorRequestId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateBackupSelection",
       method: "PUT",
       requestUri: cmnP.encodePath`/backup/plans/${params["BackupPlanId"]}/selections/`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "SelectionId": "s",
-          "BackupPlanId": "s",
-          "CreationDate": "d",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "SelectionId": "s",
+        "BackupPlanId": "s",
+        "CreationDate": "d",
+      },
+    }, await resp.json());
   }
 
   async createBackupVault(
     {abortSignal, ...params}: RequestConfig & CreateBackupVaultInput,
   ): Promise<CreateBackupVaultOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       BackupVaultTags: params["BackupVaultTags"],
       EncryptionKeyArn: params["EncryptionKeyArn"],
       CreatorRequestId: params["CreatorRequestId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateBackupVault",
       method: "PUT",
       requestUri: cmnP.encodePath`/backup-vaults/${params["BackupVaultName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "BackupVaultName": "s",
-          "BackupVaultArn": "s",
-          "CreationDate": "d",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "BackupVaultName": "s",
+        "BackupVaultArn": "s",
+        "CreationDate": "d",
+      },
+    }, await resp.json());
   }
 
   async deleteBackupPlan(
@@ -114,17 +108,15 @@ export default class Backup {
       method: "DELETE",
       requestUri: cmnP.encodePath`/backup/plans/${params["BackupPlanId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "BackupPlanId": "s",
-          "BackupPlanArn": "s",
-          "DeletionDate": "d",
-          "VersionId": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "BackupPlanId": "s",
+        "BackupPlanArn": "s",
+        "DeletionDate": "d",
+        "VersionId": "s",
+      },
+    }, await resp.json());
   }
 
   async deleteBackupSelection(
@@ -197,33 +189,31 @@ export default class Backup {
       method: "GET",
       requestUri: cmnP.encodePath`/backup-jobs/${params["BackupJobId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "AccountId": "s",
-          "BackupJobId": "s",
-          "BackupVaultName": "s",
-          "BackupVaultArn": "s",
-          "RecoveryPointArn": "s",
-          "ResourceArn": "s",
-          "CreationDate": "d",
-          "CompletionDate": "d",
-          "State": (x: jsonP.JSONValue) => cmnP.readEnum<BackupJobState>(x),
-          "StatusMessage": "s",
-          "PercentDone": "s",
-          "BackupSizeInBytes": "n",
-          "IamRoleArn": "s",
-          "CreatedBy": toRecoveryPointCreator,
-          "ResourceType": "s",
-          "BytesTransferred": "n",
-          "ExpectedCompletionDate": "d",
-          "StartBy": "d",
-          "BackupOptions": x => jsonP.readMap(String, String, x),
-          "BackupType": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "AccountId": "s",
+        "BackupJobId": "s",
+        "BackupVaultName": "s",
+        "BackupVaultArn": "s",
+        "RecoveryPointArn": "s",
+        "ResourceArn": "s",
+        "CreationDate": "d",
+        "CompletionDate": "d",
+        "State": (x: jsonP.JSONValue) => cmnP.readEnum<BackupJobState>(x),
+        "StatusMessage": "s",
+        "PercentDone": "s",
+        "BackupSizeInBytes": "n",
+        "IamRoleArn": "s",
+        "CreatedBy": toRecoveryPointCreator,
+        "ResourceType": "s",
+        "BytesTransferred": "n",
+        "ExpectedCompletionDate": "d",
+        "StartBy": "d",
+        "BackupOptions": x => jsonP.readMap(String, String, x),
+        "BackupType": "s",
+      },
+    }, await resp.json());
   }
 
   async describeBackupVault(
@@ -236,19 +226,17 @@ export default class Backup {
       method: "GET",
       requestUri: cmnP.encodePath`/backup-vaults/${params["BackupVaultName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "BackupVaultName": "s",
-          "BackupVaultArn": "s",
-          "EncryptionKeyArn": "s",
-          "CreationDate": "d",
-          "CreatorRequestId": "s",
-          "NumberOfRecoveryPoints": "n",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "BackupVaultName": "s",
+        "BackupVaultArn": "s",
+        "EncryptionKeyArn": "s",
+        "CreationDate": "d",
+        "CreatorRequestId": "s",
+        "NumberOfRecoveryPoints": "n",
+      },
+    }, await resp.json());
   }
 
   async describeCopyJob(
@@ -261,14 +249,12 @@ export default class Backup {
       method: "GET",
       requestUri: cmnP.encodePath`/copy-jobs/${params["CopyJobId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "CopyJob": toCopyJob,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "CopyJob": toCopyJob,
+      },
+    }, await resp.json());
   }
 
   async describeProtectedResource(
@@ -281,16 +267,14 @@ export default class Backup {
       method: "GET",
       requestUri: cmnP.encodePath`/resources/${params["ResourceArn"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ResourceArn": "s",
-          "ResourceType": "s",
-          "LastBackupTime": "d",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ResourceArn": "s",
+        "ResourceType": "s",
+        "LastBackupTime": "d",
+      },
+    }, await resp.json());
   }
 
   async describeRecoveryPoint(
@@ -303,30 +287,28 @@ export default class Backup {
       method: "GET",
       requestUri: cmnP.encodePath`/backup-vaults/${params["BackupVaultName"]}/recovery-points/${params["RecoveryPointArn"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "RecoveryPointArn": "s",
-          "BackupVaultName": "s",
-          "BackupVaultArn": "s",
-          "ResourceArn": "s",
-          "ResourceType": "s",
-          "CreatedBy": toRecoveryPointCreator,
-          "IamRoleArn": "s",
-          "Status": (x: jsonP.JSONValue) => cmnP.readEnum<RecoveryPointStatus>(x),
-          "CreationDate": "d",
-          "CompletionDate": "d",
-          "BackupSizeInBytes": "n",
-          "CalculatedLifecycle": toCalculatedLifecycle,
-          "Lifecycle": toLifecycle,
-          "EncryptionKeyArn": "s",
-          "IsEncrypted": "b",
-          "StorageClass": (x: jsonP.JSONValue) => cmnP.readEnum<StorageClass>(x),
-          "LastRestoreTime": "d",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "RecoveryPointArn": "s",
+        "BackupVaultName": "s",
+        "BackupVaultArn": "s",
+        "ResourceArn": "s",
+        "ResourceType": "s",
+        "CreatedBy": toRecoveryPointCreator,
+        "IamRoleArn": "s",
+        "Status": (x: jsonP.JSONValue) => cmnP.readEnum<RecoveryPointStatus>(x),
+        "CreationDate": "d",
+        "CompletionDate": "d",
+        "BackupSizeInBytes": "n",
+        "CalculatedLifecycle": toCalculatedLifecycle,
+        "Lifecycle": toLifecycle,
+        "EncryptionKeyArn": "s",
+        "IsEncrypted": "b",
+        "StorageClass": (x: jsonP.JSONValue) => cmnP.readEnum<StorageClass>(x),
+        "LastRestoreTime": "d",
+      },
+    }, await resp.json());
   }
 
   async describeRegionSettings(
@@ -339,14 +321,12 @@ export default class Backup {
       method: "GET",
       requestUri: "/account-settings",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ResourceTypeOptInPreference": x => jsonP.readMap(String, y => typeof y === "boolean" ? y : null, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ResourceTypeOptInPreference": x => jsonP.readMap(String, y => typeof y === "boolean" ? y : null, x),
+      },
+    }, await resp.json());
   }
 
   async describeRestoreJob(
@@ -359,26 +339,24 @@ export default class Backup {
       method: "GET",
       requestUri: cmnP.encodePath`/restore-jobs/${params["RestoreJobId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "AccountId": "s",
-          "RestoreJobId": "s",
-          "RecoveryPointArn": "s",
-          "CreationDate": "d",
-          "CompletionDate": "d",
-          "Status": (x: jsonP.JSONValue) => cmnP.readEnum<RestoreJobStatus>(x),
-          "StatusMessage": "s",
-          "PercentDone": "s",
-          "BackupSizeInBytes": "n",
-          "IamRoleArn": "s",
-          "ExpectedCompletionTimeMinutes": "n",
-          "CreatedResourceArn": "s",
-          "ResourceType": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "AccountId": "s",
+        "RestoreJobId": "s",
+        "RecoveryPointArn": "s",
+        "CreationDate": "d",
+        "CompletionDate": "d",
+        "Status": (x: jsonP.JSONValue) => cmnP.readEnum<RestoreJobStatus>(x),
+        "StatusMessage": "s",
+        "PercentDone": "s",
+        "BackupSizeInBytes": "n",
+        "IamRoleArn": "s",
+        "ExpectedCompletionTimeMinutes": "n",
+        "CreatedResourceArn": "s",
+        "ResourceType": "s",
+      },
+    }, await resp.json());
   }
 
   async exportBackupPlanTemplate(
@@ -391,14 +369,12 @@ export default class Backup {
       method: "GET",
       requestUri: cmnP.encodePath`/backup/plans/${params["BackupPlanId"]}/toTemplate/`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "BackupPlanTemplateJson": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "BackupPlanTemplateJson": "s",
+      },
+    }, await resp.json());
   }
 
   async getBackupPlan(
@@ -412,43 +388,39 @@ export default class Backup {
       method: "GET",
       requestUri: cmnP.encodePath`/backup/plans/${params["BackupPlanId"]}/`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "BackupPlan": toBackupPlan,
-          "BackupPlanId": "s",
-          "BackupPlanArn": "s",
-          "VersionId": "s",
-          "CreatorRequestId": "s",
-          "CreationDate": "d",
-          "DeletionDate": "d",
-          "LastExecutionDate": "d",
-          "AdvancedBackupSettings": [toAdvancedBackupSetting],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "BackupPlan": toBackupPlan,
+        "BackupPlanId": "s",
+        "BackupPlanArn": "s",
+        "VersionId": "s",
+        "CreatorRequestId": "s",
+        "CreationDate": "d",
+        "DeletionDate": "d",
+        "LastExecutionDate": "d",
+        "AdvancedBackupSettings": [toAdvancedBackupSetting],
+      },
+    }, await resp.json());
   }
 
   async getBackupPlanFromJSON(
     {abortSignal, ...params}: RequestConfig & GetBackupPlanFromJSONInput,
   ): Promise<GetBackupPlanFromJSONOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       BackupPlanTemplateJson: params["BackupPlanTemplateJson"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetBackupPlanFromJSON",
       requestUri: "/backup/template/json/toPlan",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "BackupPlan": toBackupPlan,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "BackupPlan": toBackupPlan,
+      },
+    }, await resp.json());
   }
 
   async getBackupPlanFromTemplate(
@@ -461,14 +433,12 @@ export default class Backup {
       method: "GET",
       requestUri: cmnP.encodePath`/backup/template/plans/${params["BackupPlanTemplateId"]}/toPlan`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "BackupPlanDocument": toBackupPlan,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "BackupPlanDocument": toBackupPlan,
+      },
+    }, await resp.json());
   }
 
   async getBackupSelection(
@@ -481,18 +451,16 @@ export default class Backup {
       method: "GET",
       requestUri: cmnP.encodePath`/backup/plans/${params["BackupPlanId"]}/selections/${params["SelectionId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "BackupSelection": toBackupSelection,
-          "SelectionId": "s",
-          "BackupPlanId": "s",
-          "CreationDate": "d",
-          "CreatorRequestId": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "BackupSelection": toBackupSelection,
+        "SelectionId": "s",
+        "BackupPlanId": "s",
+        "CreationDate": "d",
+        "CreatorRequestId": "s",
+      },
+    }, await resp.json());
   }
 
   async getBackupVaultAccessPolicy(
@@ -505,16 +473,14 @@ export default class Backup {
       method: "GET",
       requestUri: cmnP.encodePath`/backup-vaults/${params["BackupVaultName"]}/access-policy`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "BackupVaultName": "s",
-          "BackupVaultArn": "s",
-          "Policy": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "BackupVaultName": "s",
+        "BackupVaultArn": "s",
+        "Policy": "s",
+      },
+    }, await resp.json());
   }
 
   async getBackupVaultNotifications(
@@ -527,17 +493,15 @@ export default class Backup {
       method: "GET",
       requestUri: cmnP.encodePath`/backup-vaults/${params["BackupVaultName"]}/notification-configuration`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "BackupVaultName": "s",
-          "BackupVaultArn": "s",
-          "SNSTopicArn": "s",
-          "BackupVaultEvents": [(x: jsonP.JSONValue) => cmnP.readEnum<BackupVaultEvent>(x)],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "BackupVaultName": "s",
+        "BackupVaultArn": "s",
+        "SNSTopicArn": "s",
+        "BackupVaultEvents": [(x: jsonP.JSONValue) => cmnP.readEnum<BackupVaultEvent>(x)],
+      },
+    }, await resp.json());
   }
 
   async getRecoveryPointRestoreMetadata(
@@ -550,16 +514,14 @@ export default class Backup {
       method: "GET",
       requestUri: cmnP.encodePath`/backup-vaults/${params["BackupVaultName"]}/recovery-points/${params["RecoveryPointArn"]}/restore-metadata`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "BackupVaultArn": "s",
-          "RecoveryPointArn": "s",
-          "RestoreMetadata": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "BackupVaultArn": "s",
+        "RecoveryPointArn": "s",
+        "RestoreMetadata": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async getSupportedResourceTypes(
@@ -571,14 +533,12 @@ export default class Backup {
       method: "GET",
       requestUri: "/supported-resource-types",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ResourceTypes": ["s"],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ResourceTypes": ["s"],
+      },
+    }, await resp.json());
   }
 
   async listBackupJobs(
@@ -600,15 +560,13 @@ export default class Backup {
       method: "GET",
       requestUri: "/backup-jobs/",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "BackupJobs": [toBackupJob],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "BackupJobs": [toBackupJob],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listBackupPlanTemplates(
@@ -623,15 +581,13 @@ export default class Backup {
       method: "GET",
       requestUri: "/backup/template/plans",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "NextToken": "s",
-          "BackupPlanTemplatesList": [toBackupPlanTemplatesListMember],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "NextToken": "s",
+        "BackupPlanTemplatesList": [toBackupPlanTemplatesListMember],
+      },
+    }, await resp.json());
   }
 
   async listBackupPlanVersions(
@@ -646,15 +602,13 @@ export default class Backup {
       method: "GET",
       requestUri: cmnP.encodePath`/backup/plans/${params["BackupPlanId"]}/versions/`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "NextToken": "s",
-          "BackupPlanVersionsList": [toBackupPlansListMember],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "NextToken": "s",
+        "BackupPlanVersionsList": [toBackupPlansListMember],
+      },
+    }, await resp.json());
   }
 
   async listBackupPlans(
@@ -670,15 +624,13 @@ export default class Backup {
       method: "GET",
       requestUri: "/backup/plans/",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "NextToken": "s",
-          "BackupPlansList": [toBackupPlansListMember],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "NextToken": "s",
+        "BackupPlansList": [toBackupPlansListMember],
+      },
+    }, await resp.json());
   }
 
   async listBackupSelections(
@@ -693,15 +645,13 @@ export default class Backup {
       method: "GET",
       requestUri: cmnP.encodePath`/backup/plans/${params["BackupPlanId"]}/selections/`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "NextToken": "s",
-          "BackupSelectionsList": [toBackupSelectionsListMember],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "NextToken": "s",
+        "BackupSelectionsList": [toBackupSelectionsListMember],
+      },
+    }, await resp.json());
   }
 
   async listBackupVaults(
@@ -716,15 +666,13 @@ export default class Backup {
       method: "GET",
       requestUri: "/backup-vaults/",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "BackupVaultList": [toBackupVaultListMember],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "BackupVaultList": [toBackupVaultListMember],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listCopyJobs(
@@ -746,15 +694,13 @@ export default class Backup {
       method: "GET",
       requestUri: "/copy-jobs/",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "CopyJobs": [toCopyJob],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "CopyJobs": [toCopyJob],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listProtectedResources(
@@ -769,15 +715,13 @@ export default class Backup {
       method: "GET",
       requestUri: "/resources/",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Results": [toProtectedResource],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Results": [toProtectedResource],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listRecoveryPointsByBackupVault(
@@ -797,15 +741,13 @@ export default class Backup {
       method: "GET",
       requestUri: cmnP.encodePath`/backup-vaults/${params["BackupVaultName"]}/recovery-points/`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "NextToken": "s",
-          "RecoveryPoints": [toRecoveryPointByBackupVault],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "NextToken": "s",
+        "RecoveryPoints": [toRecoveryPointByBackupVault],
+      },
+    }, await resp.json());
   }
 
   async listRecoveryPointsByResource(
@@ -820,15 +762,13 @@ export default class Backup {
       method: "GET",
       requestUri: cmnP.encodePath`/resources/${params["ResourceArn"]}/recovery-points/`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "NextToken": "s",
-          "RecoveryPoints": [toRecoveryPointByResource],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "NextToken": "s",
+        "RecoveryPoints": [toRecoveryPointByResource],
+      },
+    }, await resp.json());
   }
 
   async listRestoreJobs(
@@ -847,15 +787,13 @@ export default class Backup {
       method: "GET",
       requestUri: "/restore-jobs/",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "RestoreJobs": [toRestoreJobsListMember],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "RestoreJobs": [toRestoreJobsListMember],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listTags(
@@ -870,23 +808,21 @@ export default class Backup {
       method: "GET",
       requestUri: cmnP.encodePath`/tags/${params["ResourceArn"]}/`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "NextToken": "s",
-          "Tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "NextToken": "s",
+        "Tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async putBackupVaultAccessPolicy(
     {abortSignal, ...params}: RequestConfig & PutBackupVaultAccessPolicyInput,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Policy: params["Policy"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutBackupVaultAccessPolicy",
@@ -898,10 +834,10 @@ export default class Backup {
   async putBackupVaultNotifications(
     {abortSignal, ...params}: RequestConfig & PutBackupVaultNotificationsInput,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       SNSTopicArn: params["SNSTopicArn"],
       BackupVaultEvents: params["BackupVaultEvents"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutBackupVaultNotifications",
@@ -913,7 +849,7 @@ export default class Backup {
   async startBackupJob(
     {abortSignal, ...params}: RequestConfig & StartBackupJobInput,
   ): Promise<StartBackupJobOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       BackupVaultName: params["BackupVaultName"],
       ResourceArn: params["ResourceArn"],
       IamRoleArn: params["IamRoleArn"],
@@ -923,77 +859,71 @@ export default class Backup {
       Lifecycle: fromLifecycle(params["Lifecycle"]),
       RecoveryPointTags: params["RecoveryPointTags"],
       BackupOptions: params["BackupOptions"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartBackupJob",
       method: "PUT",
       requestUri: "/backup-jobs",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "BackupJobId": "s",
-          "RecoveryPointArn": "s",
-          "CreationDate": "d",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "BackupJobId": "s",
+        "RecoveryPointArn": "s",
+        "CreationDate": "d",
+      },
+    }, await resp.json());
   }
 
   async startCopyJob(
     {abortSignal, ...params}: RequestConfig & StartCopyJobInput,
   ): Promise<StartCopyJobOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       RecoveryPointArn: params["RecoveryPointArn"],
       SourceBackupVaultName: params["SourceBackupVaultName"],
       DestinationBackupVaultArn: params["DestinationBackupVaultArn"],
       IamRoleArn: params["IamRoleArn"],
       IdempotencyToken: params["IdempotencyToken"],
       Lifecycle: fromLifecycle(params["Lifecycle"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartCopyJob",
       method: "PUT",
       requestUri: "/copy-jobs",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "CopyJobId": "s",
-          "CreationDate": "d",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "CopyJobId": "s",
+        "CreationDate": "d",
+      },
+    }, await resp.json());
   }
 
   async startRestoreJob(
     {abortSignal, ...params}: RequestConfig & StartRestoreJobInput,
   ): Promise<StartRestoreJobOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       RecoveryPointArn: params["RecoveryPointArn"],
       Metadata: params["Metadata"],
       IamRoleArn: params["IamRoleArn"],
       IdempotencyToken: params["IdempotencyToken"],
       ResourceType: params["ResourceType"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartRestoreJob",
       method: "PUT",
       requestUri: "/restore-jobs",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "RestoreJobId": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "RestoreJobId": "s",
+      },
+    }, await resp.json());
   }
 
   async stopBackupJob(
@@ -1010,9 +940,9 @@ export default class Backup {
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceInput,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Tags: params["Tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
@@ -1023,9 +953,9 @@ export default class Backup {
   async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceInput,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TagKeyList: params["TagKeyList"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResource",
@@ -1036,58 +966,54 @@ export default class Backup {
   async updateBackupPlan(
     {abortSignal, ...params}: RequestConfig & UpdateBackupPlanInput,
   ): Promise<UpdateBackupPlanOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       BackupPlan: fromBackupPlanInput(params["BackupPlan"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateBackupPlan",
       requestUri: cmnP.encodePath`/backup/plans/${params["BackupPlanId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "BackupPlanId": "s",
-          "BackupPlanArn": "s",
-          "CreationDate": "d",
-          "VersionId": "s",
-          "AdvancedBackupSettings": [toAdvancedBackupSetting],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "BackupPlanId": "s",
+        "BackupPlanArn": "s",
+        "CreationDate": "d",
+        "VersionId": "s",
+        "AdvancedBackupSettings": [toAdvancedBackupSetting],
+      },
+    }, await resp.json());
   }
 
   async updateRecoveryPointLifecycle(
     {abortSignal, ...params}: RequestConfig & UpdateRecoveryPointLifecycleInput,
   ): Promise<UpdateRecoveryPointLifecycleOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Lifecycle: fromLifecycle(params["Lifecycle"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateRecoveryPointLifecycle",
       requestUri: cmnP.encodePath`/backup-vaults/${params["BackupVaultName"]}/recovery-points/${params["RecoveryPointArn"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "BackupVaultArn": "s",
-          "RecoveryPointArn": "s",
-          "Lifecycle": toLifecycle,
-          "CalculatedLifecycle": toCalculatedLifecycle,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "BackupVaultArn": "s",
+        "RecoveryPointArn": "s",
+        "Lifecycle": toLifecycle,
+        "CalculatedLifecycle": toCalculatedLifecycle,
+      },
+    }, await resp.json());
   }
 
   async updateRegionSettings(
     {abortSignal, ...params}: RequestConfig & UpdateRegionSettingsInput = {},
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceTypeOptInPreference: params["ResourceTypeOptInPreference"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateRegionSettings",

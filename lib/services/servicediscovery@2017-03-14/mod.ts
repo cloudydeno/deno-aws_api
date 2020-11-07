@@ -34,12 +34,12 @@ export default class ServiceDiscovery {
   async createHttpNamespace(
     {abortSignal, ...params}: RequestConfig & CreateHttpNamespaceRequest,
   ): Promise<CreateHttpNamespaceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       CreatorRequestId: params["CreatorRequestId"] ?? generateIdemptToken(),
       Description: params["Description"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateHttpNamespace",
@@ -55,13 +55,13 @@ export default class ServiceDiscovery {
   async createPrivateDnsNamespace(
     {abortSignal, ...params}: RequestConfig & CreatePrivateDnsNamespaceRequest,
   ): Promise<CreatePrivateDnsNamespaceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       CreatorRequestId: params["CreatorRequestId"] ?? generateIdemptToken(),
       Description: params["Description"],
       Vpc: params["Vpc"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreatePrivateDnsNamespace",
@@ -77,12 +77,12 @@ export default class ServiceDiscovery {
   async createPublicDnsNamespace(
     {abortSignal, ...params}: RequestConfig & CreatePublicDnsNamespaceRequest,
   ): Promise<CreatePublicDnsNamespaceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       CreatorRequestId: params["CreatorRequestId"] ?? generateIdemptToken(),
       Description: params["Description"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreatePublicDnsNamespace",
@@ -98,7 +98,7 @@ export default class ServiceDiscovery {
   async createService(
     {abortSignal, ...params}: RequestConfig & CreateServiceRequest,
   ): Promise<CreateServiceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       NamespaceId: params["NamespaceId"],
       CreatorRequestId: params["CreatorRequestId"] ?? generateIdemptToken(),
@@ -107,7 +107,7 @@ export default class ServiceDiscovery {
       HealthCheckConfig: fromHealthCheckConfig(params["HealthCheckConfig"]),
       HealthCheckCustomConfig: fromHealthCheckCustomConfig(params["HealthCheckCustomConfig"]),
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateService",
@@ -123,9 +123,9 @@ export default class ServiceDiscovery {
   async deleteNamespace(
     {abortSignal, ...params}: RequestConfig & DeleteNamespaceRequest,
   ): Promise<DeleteNamespaceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Id: params["Id"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteNamespace",
@@ -141,9 +141,9 @@ export default class ServiceDiscovery {
   async deleteService(
     {abortSignal, ...params}: RequestConfig & DeleteServiceRequest,
   ): Promise<DeleteServiceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Id: params["Id"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteService",
@@ -157,10 +157,10 @@ export default class ServiceDiscovery {
   async deregisterInstance(
     {abortSignal, ...params}: RequestConfig & DeregisterInstanceRequest,
   ): Promise<DeregisterInstanceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ServiceId: params["ServiceId"],
       InstanceId: params["InstanceId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeregisterInstance",
@@ -176,14 +176,14 @@ export default class ServiceDiscovery {
   async discoverInstances(
     {abortSignal, ...params}: RequestConfig & DiscoverInstancesRequest,
   ): Promise<DiscoverInstancesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NamespaceName: params["NamespaceName"],
       ServiceName: params["ServiceName"],
       MaxResults: params["MaxResults"],
       QueryParameters: params["QueryParameters"],
       OptionalParameters: params["OptionalParameters"],
       HealthStatus: params["HealthStatus"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DiscoverInstances",
@@ -200,10 +200,10 @@ export default class ServiceDiscovery {
   async getInstance(
     {abortSignal, ...params}: RequestConfig & GetInstanceRequest,
   ): Promise<GetInstanceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ServiceId: params["ServiceId"],
       InstanceId: params["InstanceId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetInstance",
@@ -219,12 +219,12 @@ export default class ServiceDiscovery {
   async getInstancesHealthStatus(
     {abortSignal, ...params}: RequestConfig & GetInstancesHealthStatusRequest,
   ): Promise<GetInstancesHealthStatusResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ServiceId: params["ServiceId"],
       Instances: params["Instances"],
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetInstancesHealthStatus",
@@ -241,9 +241,9 @@ export default class ServiceDiscovery {
   async getNamespace(
     {abortSignal, ...params}: RequestConfig & GetNamespaceRequest,
   ): Promise<GetNamespaceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Id: params["Id"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetNamespace",
@@ -259,9 +259,9 @@ export default class ServiceDiscovery {
   async getOperation(
     {abortSignal, ...params}: RequestConfig & GetOperationRequest,
   ): Promise<GetOperationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       OperationId: params["OperationId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetOperation",
@@ -277,9 +277,9 @@ export default class ServiceDiscovery {
   async getService(
     {abortSignal, ...params}: RequestConfig & GetServiceRequest,
   ): Promise<GetServiceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Id: params["Id"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetService",
@@ -295,11 +295,11 @@ export default class ServiceDiscovery {
   async listInstances(
     {abortSignal, ...params}: RequestConfig & ListInstancesRequest,
   ): Promise<ListInstancesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ServiceId: params["ServiceId"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListInstances",
@@ -316,11 +316,11 @@ export default class ServiceDiscovery {
   async listNamespaces(
     {abortSignal, ...params}: RequestConfig & ListNamespacesRequest = {},
   ): Promise<ListNamespacesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
       Filters: params["Filters"]?.map(x => fromNamespaceFilter(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListNamespaces",
@@ -337,11 +337,11 @@ export default class ServiceDiscovery {
   async listOperations(
     {abortSignal, ...params}: RequestConfig & ListOperationsRequest = {},
   ): Promise<ListOperationsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
       Filters: params["Filters"]?.map(x => fromOperationFilter(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListOperations",
@@ -358,11 +358,11 @@ export default class ServiceDiscovery {
   async listServices(
     {abortSignal, ...params}: RequestConfig & ListServicesRequest = {},
   ): Promise<ListServicesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
       Filters: params["Filters"]?.map(x => fromServiceFilter(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListServices",
@@ -379,9 +379,9 @@ export default class ServiceDiscovery {
   async listTagsForResource(
     {abortSignal, ...params}: RequestConfig & ListTagsForResourceRequest,
   ): Promise<ListTagsForResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceARN: params["ResourceARN"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForResource",
@@ -397,12 +397,12 @@ export default class ServiceDiscovery {
   async registerInstance(
     {abortSignal, ...params}: RequestConfig & RegisterInstanceRequest,
   ): Promise<RegisterInstanceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ServiceId: params["ServiceId"],
       InstanceId: params["InstanceId"],
       CreatorRequestId: params["CreatorRequestId"] ?? generateIdemptToken(),
       Attributes: params["Attributes"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RegisterInstance",
@@ -418,10 +418,10 @@ export default class ServiceDiscovery {
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceARN: params["ResourceARN"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
@@ -435,10 +435,10 @@ export default class ServiceDiscovery {
   async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceRequest,
   ): Promise<UntagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceARN: params["ResourceARN"],
       TagKeys: params["TagKeys"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResource",
@@ -452,11 +452,11 @@ export default class ServiceDiscovery {
   async updateInstanceCustomHealthStatus(
     {abortSignal, ...params}: RequestConfig & UpdateInstanceCustomHealthStatusRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ServiceId: params["ServiceId"],
       InstanceId: params["InstanceId"],
       Status: params["Status"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateInstanceCustomHealthStatus",
@@ -466,10 +466,10 @@ export default class ServiceDiscovery {
   async updateService(
     {abortSignal, ...params}: RequestConfig & UpdateServiceRequest,
   ): Promise<UpdateServiceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Id: params["Id"],
       Service: fromServiceChange(params["Service"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateService",

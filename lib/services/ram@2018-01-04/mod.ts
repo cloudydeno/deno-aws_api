@@ -29,80 +29,74 @@ export default class RAM {
   async acceptResourceShareInvitation(
     {abortSignal, ...params}: RequestConfig & AcceptResourceShareInvitationRequest,
   ): Promise<AcceptResourceShareInvitationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       resourceShareInvitationArn: params["resourceShareInvitationArn"],
       clientToken: params["clientToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AcceptResourceShareInvitation",
       requestUri: "/acceptresourceshareinvitation",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "resourceShareInvitation": toResourceShareInvitation,
-          "clientToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "resourceShareInvitation": toResourceShareInvitation,
+        "clientToken": "s",
+      },
+    }, await resp.json());
   }
 
   async associateResourceShare(
     {abortSignal, ...params}: RequestConfig & AssociateResourceShareRequest,
   ): Promise<AssociateResourceShareResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       resourceShareArn: params["resourceShareArn"],
       resourceArns: params["resourceArns"],
       principals: params["principals"],
       clientToken: params["clientToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AssociateResourceShare",
       requestUri: "/associateresourceshare",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "resourceShareAssociations": [toResourceShareAssociation],
-          "clientToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "resourceShareAssociations": [toResourceShareAssociation],
+        "clientToken": "s",
+      },
+    }, await resp.json());
   }
 
   async associateResourceSharePermission(
     {abortSignal, ...params}: RequestConfig & AssociateResourceSharePermissionRequest,
   ): Promise<AssociateResourceSharePermissionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       resourceShareArn: params["resourceShareArn"],
       permissionArn: params["permissionArn"],
       replace: params["replace"],
       clientToken: params["clientToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AssociateResourceSharePermission",
       requestUri: "/associateresourcesharepermission",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "returnValue": "b",
-          "clientToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "returnValue": "b",
+        "clientToken": "s",
+      },
+    }, await resp.json());
   }
 
   async createResourceShare(
     {abortSignal, ...params}: RequestConfig & CreateResourceShareRequest,
   ): Promise<CreateResourceShareResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       name: params["name"],
       resourceArns: params["resourceArns"],
       principals: params["principals"],
@@ -110,21 +104,19 @@ export default class RAM {
       allowExternalPrincipals: params["allowExternalPrincipals"],
       clientToken: params["clientToken"],
       permissionArns: params["permissionArns"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateResourceShare",
       requestUri: "/createresourceshare",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "resourceShare": toResourceShare,
-          "clientToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "resourceShare": toResourceShare,
+        "clientToken": "s",
+      },
+    }, await resp.json());
   }
 
   async deleteResourceShare(
@@ -139,64 +131,58 @@ export default class RAM {
       method: "DELETE",
       requestUri: "/deleteresourceshare",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "returnValue": "b",
-          "clientToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "returnValue": "b",
+        "clientToken": "s",
+      },
+    }, await resp.json());
   }
 
   async disassociateResourceShare(
     {abortSignal, ...params}: RequestConfig & DisassociateResourceShareRequest,
   ): Promise<DisassociateResourceShareResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       resourceShareArn: params["resourceShareArn"],
       resourceArns: params["resourceArns"],
       principals: params["principals"],
       clientToken: params["clientToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisassociateResourceShare",
       requestUri: "/disassociateresourceshare",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "resourceShareAssociations": [toResourceShareAssociation],
-          "clientToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "resourceShareAssociations": [toResourceShareAssociation],
+        "clientToken": "s",
+      },
+    }, await resp.json());
   }
 
   async disassociateResourceSharePermission(
     {abortSignal, ...params}: RequestConfig & DisassociateResourceSharePermissionRequest,
   ): Promise<DisassociateResourceSharePermissionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       resourceShareArn: params["resourceShareArn"],
       permissionArn: params["permissionArn"],
       clientToken: params["clientToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisassociateResourceSharePermission",
       requestUri: "/disassociateresourcesharepermission",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "returnValue": "b",
-          "clientToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "returnValue": "b",
+        "clientToken": "s",
+      },
+    }, await resp.json());
   }
 
   async enableSharingWithAwsOrganization(
@@ -208,67 +194,61 @@ export default class RAM {
       action: "EnableSharingWithAwsOrganization",
       requestUri: "/enablesharingwithawsorganization",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "returnValue": "b",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "returnValue": "b",
+      },
+    }, await resp.json());
   }
 
   async getPermission(
     {abortSignal, ...params}: RequestConfig & GetPermissionRequest,
   ): Promise<GetPermissionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       permissionArn: params["permissionArn"],
       permissionVersion: params["permissionVersion"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetPermission",
       requestUri: "/getpermission",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "permission": toResourceSharePermissionDetail,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "permission": toResourceSharePermissionDetail,
+      },
+    }, await resp.json());
   }
 
   async getResourcePolicies(
     {abortSignal, ...params}: RequestConfig & GetResourcePoliciesRequest,
   ): Promise<GetResourcePoliciesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       resourceArns: params["resourceArns"],
       principal: params["principal"],
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetResourcePolicies",
       requestUri: "/getresourcepolicies",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "policies": ["s"],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "policies": ["s"],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async getResourceShareAssociations(
     {abortSignal, ...params}: RequestConfig & GetResourceShareAssociationsRequest,
   ): Promise<GetResourceShareAssociationsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       associationType: params["associationType"],
       resourceShareArns: params["resourceShareArns"],
       resourceArn: params["resourceArn"],
@@ -276,52 +256,48 @@ export default class RAM {
       associationStatus: params["associationStatus"],
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetResourceShareAssociations",
       requestUri: "/getresourceshareassociations",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "resourceShareAssociations": [toResourceShareAssociation],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "resourceShareAssociations": [toResourceShareAssociation],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async getResourceShareInvitations(
     {abortSignal, ...params}: RequestConfig & GetResourceShareInvitationsRequest = {},
   ): Promise<GetResourceShareInvitationsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       resourceShareInvitationArns: params["resourceShareInvitationArns"],
       resourceShareArns: params["resourceShareArns"],
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetResourceShareInvitations",
       requestUri: "/getresourceshareinvitations",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "resourceShareInvitations": [toResourceShareInvitation],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "resourceShareInvitations": [toResourceShareInvitation],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async getResourceShares(
     {abortSignal, ...params}: RequestConfig & GetResourceSharesRequest,
   ): Promise<GetResourceSharesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       resourceShareArns: params["resourceShareArns"],
       resourceShareStatus: params["resourceShareStatus"],
       resourceOwner: params["resourceOwner"],
@@ -329,75 +305,69 @@ export default class RAM {
       tagFilters: params["tagFilters"]?.map(x => fromTagFilter(x)),
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetResourceShares",
       requestUri: "/getresourceshares",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "resourceShares": [toResourceShare],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "resourceShares": [toResourceShare],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listPendingInvitationResources(
     {abortSignal, ...params}: RequestConfig & ListPendingInvitationResourcesRequest,
   ): Promise<ListPendingInvitationResourcesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       resourceShareInvitationArn: params["resourceShareInvitationArn"],
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListPendingInvitationResources",
       requestUri: "/listpendinginvitationresources",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "resources": [toResource],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "resources": [toResource],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listPermissions(
     {abortSignal, ...params}: RequestConfig & ListPermissionsRequest = {},
   ): Promise<ListPermissionsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       resourceType: params["resourceType"],
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListPermissions",
       requestUri: "/listpermissions",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "permissions": [toResourceSharePermissionSummary],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "permissions": [toResourceSharePermissionSummary],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listPrincipals(
     {abortSignal, ...params}: RequestConfig & ListPrincipalsRequest,
   ): Promise<ListPrincipalsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       resourceOwner: params["resourceOwner"],
       resourceArn: params["resourceArn"],
       principals: params["principals"],
@@ -405,74 +375,68 @@ export default class RAM {
       resourceShareArns: params["resourceShareArns"],
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListPrincipals",
       requestUri: "/listprincipals",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "principals": [toPrincipal],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "principals": [toPrincipal],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listResourceSharePermissions(
     {abortSignal, ...params}: RequestConfig & ListResourceSharePermissionsRequest,
   ): Promise<ListResourceSharePermissionsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       resourceShareArn: params["resourceShareArn"],
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListResourceSharePermissions",
       requestUri: "/listresourcesharepermissions",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "permissions": [toResourceSharePermissionSummary],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "permissions": [toResourceSharePermissionSummary],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listResourceTypes(
     {abortSignal, ...params}: RequestConfig & ListResourceTypesRequest = {},
   ): Promise<ListResourceTypesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListResourceTypes",
       requestUri: "/listresourcetypes",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "resourceTypes": [toServiceNameAndResourceType],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "resourceTypes": [toServiceNameAndResourceType],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listResources(
     {abortSignal, ...params}: RequestConfig & ListResourcesRequest,
   ): Promise<ListResourcesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       resourceOwner: params["resourceOwner"],
       principal: params["principal"],
       resourceType: params["resourceType"],
@@ -480,21 +444,19 @@ export default class RAM {
       resourceShareArns: params["resourceShareArns"],
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListResources",
       requestUri: "/listresources",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "resources": [toResource],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "resources": [toResource],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async promoteResourceShareCreatedFromPolicy(
@@ -507,102 +469,92 @@ export default class RAM {
       action: "PromoteResourceShareCreatedFromPolicy",
       requestUri: "/promoteresourcesharecreatedfrompolicy",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "returnValue": "b",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "returnValue": "b",
+      },
+    }, await resp.json());
   }
 
   async rejectResourceShareInvitation(
     {abortSignal, ...params}: RequestConfig & RejectResourceShareInvitationRequest,
   ): Promise<RejectResourceShareInvitationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       resourceShareInvitationArn: params["resourceShareInvitationArn"],
       clientToken: params["clientToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RejectResourceShareInvitation",
       requestUri: "/rejectresourceshareinvitation",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "resourceShareInvitation": toResourceShareInvitation,
-          "clientToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "resourceShareInvitation": toResourceShareInvitation,
+        "clientToken": "s",
+      },
+    }, await resp.json());
   }
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       resourceShareArn: params["resourceShareArn"],
       tags: params["tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
       requestUri: "/tagresource",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceRequest,
   ): Promise<UntagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       resourceShareArn: params["resourceShareArn"],
       tagKeys: params["tagKeys"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResource",
       requestUri: "/untagresource",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async updateResourceShare(
     {abortSignal, ...params}: RequestConfig & UpdateResourceShareRequest,
   ): Promise<UpdateResourceShareResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       resourceShareArn: params["resourceShareArn"],
       name: params["name"],
       allowExternalPrincipals: params["allowExternalPrincipals"],
       clientToken: params["clientToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateResourceShare",
       requestUri: "/updateresourceshare",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "resourceShare": toResourceShare,
-          "clientToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "resourceShare": toResourceShare,
+        "clientToken": "s",
+      },
+    }, await resp.json());
   }
 
 }

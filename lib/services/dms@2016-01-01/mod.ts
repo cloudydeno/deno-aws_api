@@ -29,10 +29,10 @@ export default class DMS {
   async addTagsToResource(
     {abortSignal, ...params}: RequestConfig & AddTagsToResourceMessage,
   ): Promise<AddTagsToResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AddTagsToResource",
@@ -46,11 +46,11 @@ export default class DMS {
   async applyPendingMaintenanceAction(
     {abortSignal, ...params}: RequestConfig & ApplyPendingMaintenanceActionMessage,
   ): Promise<ApplyPendingMaintenanceActionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ReplicationInstanceArn: params["ReplicationInstanceArn"],
       ApplyAction: params["ApplyAction"],
       OptInType: params["OptInType"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ApplyPendingMaintenanceAction",
@@ -66,9 +66,9 @@ export default class DMS {
   async cancelReplicationTaskAssessmentRun(
     {abortSignal, ...params}: RequestConfig & CancelReplicationTaskAssessmentRunMessage,
   ): Promise<CancelReplicationTaskAssessmentRunResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ReplicationTaskAssessmentRunArn: params["ReplicationTaskAssessmentRunArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CancelReplicationTaskAssessmentRun",
@@ -84,7 +84,7 @@ export default class DMS {
   async createEndpoint(
     {abortSignal, ...params}: RequestConfig & CreateEndpointMessage,
   ): Promise<CreateEndpointResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       EndpointIdentifier: params["EndpointIdentifier"],
       EndpointType: params["EndpointType"],
       EngineName: params["EngineName"],
@@ -117,7 +117,7 @@ export default class DMS {
       IBMDb2Settings: fromIBMDb2Settings(params["IBMDb2Settings"]),
       ResourceIdentifier: params["ResourceIdentifier"],
       DocDbSettings: fromDocDbSettings(params["DocDbSettings"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateEndpoint",
@@ -133,7 +133,7 @@ export default class DMS {
   async createEventSubscription(
     {abortSignal, ...params}: RequestConfig & CreateEventSubscriptionMessage,
   ): Promise<CreateEventSubscriptionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       SubscriptionName: params["SubscriptionName"],
       SnsTopicArn: params["SnsTopicArn"],
       SourceType: params["SourceType"],
@@ -141,7 +141,7 @@ export default class DMS {
       SourceIds: params["SourceIds"],
       Enabled: params["Enabled"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateEventSubscription",
@@ -157,7 +157,7 @@ export default class DMS {
   async createReplicationInstance(
     {abortSignal, ...params}: RequestConfig & CreateReplicationInstanceMessage,
   ): Promise<CreateReplicationInstanceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ReplicationInstanceIdentifier: params["ReplicationInstanceIdentifier"],
       AllocatedStorage: params["AllocatedStorage"],
       ReplicationInstanceClass: params["ReplicationInstanceClass"],
@@ -173,7 +173,7 @@ export default class DMS {
       PubliclyAccessible: params["PubliclyAccessible"],
       DnsNameServers: params["DnsNameServers"],
       ResourceIdentifier: params["ResourceIdentifier"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateReplicationInstance",
@@ -189,12 +189,12 @@ export default class DMS {
   async createReplicationSubnetGroup(
     {abortSignal, ...params}: RequestConfig & CreateReplicationSubnetGroupMessage,
   ): Promise<CreateReplicationSubnetGroupResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ReplicationSubnetGroupIdentifier: params["ReplicationSubnetGroupIdentifier"],
       ReplicationSubnetGroupDescription: params["ReplicationSubnetGroupDescription"],
       SubnetIds: params["SubnetIds"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateReplicationSubnetGroup",
@@ -210,7 +210,7 @@ export default class DMS {
   async createReplicationTask(
     {abortSignal, ...params}: RequestConfig & CreateReplicationTaskMessage,
   ): Promise<CreateReplicationTaskResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ReplicationTaskIdentifier: params["ReplicationTaskIdentifier"],
       SourceEndpointArn: params["SourceEndpointArn"],
       TargetEndpointArn: params["TargetEndpointArn"],
@@ -224,7 +224,7 @@ export default class DMS {
       Tags: params["Tags"]?.map(x => fromTag(x)),
       TaskData: params["TaskData"],
       ResourceIdentifier: params["ResourceIdentifier"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateReplicationTask",
@@ -240,9 +240,9 @@ export default class DMS {
   async deleteCertificate(
     {abortSignal, ...params}: RequestConfig & DeleteCertificateMessage,
   ): Promise<DeleteCertificateResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CertificateArn: params["CertificateArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteCertificate",
@@ -258,10 +258,10 @@ export default class DMS {
   async deleteConnection(
     {abortSignal, ...params}: RequestConfig & DeleteConnectionMessage,
   ): Promise<DeleteConnectionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       EndpointArn: params["EndpointArn"],
       ReplicationInstanceArn: params["ReplicationInstanceArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteConnection",
@@ -277,9 +277,9 @@ export default class DMS {
   async deleteEndpoint(
     {abortSignal, ...params}: RequestConfig & DeleteEndpointMessage,
   ): Promise<DeleteEndpointResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       EndpointArn: params["EndpointArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteEndpoint",
@@ -295,9 +295,9 @@ export default class DMS {
   async deleteEventSubscription(
     {abortSignal, ...params}: RequestConfig & DeleteEventSubscriptionMessage,
   ): Promise<DeleteEventSubscriptionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       SubscriptionName: params["SubscriptionName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteEventSubscription",
@@ -313,9 +313,9 @@ export default class DMS {
   async deleteReplicationInstance(
     {abortSignal, ...params}: RequestConfig & DeleteReplicationInstanceMessage,
   ): Promise<DeleteReplicationInstanceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ReplicationInstanceArn: params["ReplicationInstanceArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteReplicationInstance",
@@ -331,9 +331,9 @@ export default class DMS {
   async deleteReplicationSubnetGroup(
     {abortSignal, ...params}: RequestConfig & DeleteReplicationSubnetGroupMessage,
   ): Promise<DeleteReplicationSubnetGroupResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ReplicationSubnetGroupIdentifier: params["ReplicationSubnetGroupIdentifier"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteReplicationSubnetGroup",
@@ -347,9 +347,9 @@ export default class DMS {
   async deleteReplicationTask(
     {abortSignal, ...params}: RequestConfig & DeleteReplicationTaskMessage,
   ): Promise<DeleteReplicationTaskResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ReplicationTaskArn: params["ReplicationTaskArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteReplicationTask",
@@ -365,9 +365,9 @@ export default class DMS {
   async deleteReplicationTaskAssessmentRun(
     {abortSignal, ...params}: RequestConfig & DeleteReplicationTaskAssessmentRunMessage,
   ): Promise<DeleteReplicationTaskAssessmentRunResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ReplicationTaskAssessmentRunArn: params["ReplicationTaskAssessmentRunArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteReplicationTaskAssessmentRun",
@@ -383,8 +383,8 @@ export default class DMS {
   async describeAccountAttributes(
     {abortSignal, ...params}: RequestConfig & DescribeAccountAttributesMessage = {},
   ): Promise<DescribeAccountAttributesResponse> {
-    const body: jsonP.JSONObject = params ? {
-    } : {};
+    const body: jsonP.JSONObject = {
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeAccountAttributes",
@@ -401,7 +401,7 @@ export default class DMS {
   async describeApplicableIndividualAssessments(
     {abortSignal, ...params}: RequestConfig & DescribeApplicableIndividualAssessmentsMessage = {},
   ): Promise<DescribeApplicableIndividualAssessmentsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ReplicationTaskArn: params["ReplicationTaskArn"],
       ReplicationInstanceArn: params["ReplicationInstanceArn"],
       SourceEngineName: params["SourceEngineName"],
@@ -409,7 +409,7 @@ export default class DMS {
       MigrationType: params["MigrationType"],
       MaxRecords: params["MaxRecords"],
       Marker: params["Marker"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeApplicableIndividualAssessments",
@@ -426,11 +426,11 @@ export default class DMS {
   async describeCertificates(
     {abortSignal, ...params}: RequestConfig & DescribeCertificatesMessage = {},
   ): Promise<DescribeCertificatesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Filters: params["Filters"]?.map(x => fromFilter(x)),
       MaxRecords: params["MaxRecords"],
       Marker: params["Marker"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeCertificates",
@@ -447,11 +447,11 @@ export default class DMS {
   async describeConnections(
     {abortSignal, ...params}: RequestConfig & DescribeConnectionsMessage = {},
   ): Promise<DescribeConnectionsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Filters: params["Filters"]?.map(x => fromFilter(x)),
       MaxRecords: params["MaxRecords"],
       Marker: params["Marker"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeConnections",
@@ -468,11 +468,11 @@ export default class DMS {
   async describeEndpointTypes(
     {abortSignal, ...params}: RequestConfig & DescribeEndpointTypesMessage = {},
   ): Promise<DescribeEndpointTypesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Filters: params["Filters"]?.map(x => fromFilter(x)),
       MaxRecords: params["MaxRecords"],
       Marker: params["Marker"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeEndpointTypes",
@@ -489,11 +489,11 @@ export default class DMS {
   async describeEndpoints(
     {abortSignal, ...params}: RequestConfig & DescribeEndpointsMessage = {},
   ): Promise<DescribeEndpointsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Filters: params["Filters"]?.map(x => fromFilter(x)),
       MaxRecords: params["MaxRecords"],
       Marker: params["Marker"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeEndpoints",
@@ -510,10 +510,10 @@ export default class DMS {
   async describeEventCategories(
     {abortSignal, ...params}: RequestConfig & DescribeEventCategoriesMessage = {},
   ): Promise<DescribeEventCategoriesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       SourceType: params["SourceType"],
       Filters: params["Filters"]?.map(x => fromFilter(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeEventCategories",
@@ -529,12 +529,12 @@ export default class DMS {
   async describeEventSubscriptions(
     {abortSignal, ...params}: RequestConfig & DescribeEventSubscriptionsMessage = {},
   ): Promise<DescribeEventSubscriptionsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       SubscriptionName: params["SubscriptionName"],
       Filters: params["Filters"]?.map(x => fromFilter(x)),
       MaxRecords: params["MaxRecords"],
       Marker: params["Marker"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeEventSubscriptions",
@@ -551,7 +551,7 @@ export default class DMS {
   async describeEvents(
     {abortSignal, ...params}: RequestConfig & DescribeEventsMessage = {},
   ): Promise<DescribeEventsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       SourceIdentifier: params["SourceIdentifier"],
       SourceType: params["SourceType"],
       StartTime: jsonP.serializeDate_unixTimestamp(params["StartTime"]),
@@ -561,7 +561,7 @@ export default class DMS {
       Filters: params["Filters"]?.map(x => fromFilter(x)),
       MaxRecords: params["MaxRecords"],
       Marker: params["Marker"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeEvents",
@@ -578,10 +578,10 @@ export default class DMS {
   async describeOrderableReplicationInstances(
     {abortSignal, ...params}: RequestConfig & DescribeOrderableReplicationInstancesMessage = {},
   ): Promise<DescribeOrderableReplicationInstancesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       MaxRecords: params["MaxRecords"],
       Marker: params["Marker"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeOrderableReplicationInstances",
@@ -598,12 +598,12 @@ export default class DMS {
   async describePendingMaintenanceActions(
     {abortSignal, ...params}: RequestConfig & DescribePendingMaintenanceActionsMessage = {},
   ): Promise<DescribePendingMaintenanceActionsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ReplicationInstanceArn: params["ReplicationInstanceArn"],
       Filters: params["Filters"]?.map(x => fromFilter(x)),
       Marker: params["Marker"],
       MaxRecords: params["MaxRecords"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribePendingMaintenanceActions",
@@ -620,9 +620,9 @@ export default class DMS {
   async describeRefreshSchemasStatus(
     {abortSignal, ...params}: RequestConfig & DescribeRefreshSchemasStatusMessage,
   ): Promise<DescribeRefreshSchemasStatusResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       EndpointArn: params["EndpointArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeRefreshSchemasStatus",
@@ -638,11 +638,11 @@ export default class DMS {
   async describeReplicationInstanceTaskLogs(
     {abortSignal, ...params}: RequestConfig & DescribeReplicationInstanceTaskLogsMessage,
   ): Promise<DescribeReplicationInstanceTaskLogsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ReplicationInstanceArn: params["ReplicationInstanceArn"],
       MaxRecords: params["MaxRecords"],
       Marker: params["Marker"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeReplicationInstanceTaskLogs",
@@ -660,11 +660,11 @@ export default class DMS {
   async describeReplicationInstances(
     {abortSignal, ...params}: RequestConfig & DescribeReplicationInstancesMessage = {},
   ): Promise<DescribeReplicationInstancesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Filters: params["Filters"]?.map(x => fromFilter(x)),
       MaxRecords: params["MaxRecords"],
       Marker: params["Marker"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeReplicationInstances",
@@ -681,11 +681,11 @@ export default class DMS {
   async describeReplicationSubnetGroups(
     {abortSignal, ...params}: RequestConfig & DescribeReplicationSubnetGroupsMessage = {},
   ): Promise<DescribeReplicationSubnetGroupsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Filters: params["Filters"]?.map(x => fromFilter(x)),
       MaxRecords: params["MaxRecords"],
       Marker: params["Marker"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeReplicationSubnetGroups",
@@ -702,11 +702,11 @@ export default class DMS {
   async describeReplicationTaskAssessmentResults(
     {abortSignal, ...params}: RequestConfig & DescribeReplicationTaskAssessmentResultsMessage = {},
   ): Promise<DescribeReplicationTaskAssessmentResultsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ReplicationTaskArn: params["ReplicationTaskArn"],
       MaxRecords: params["MaxRecords"],
       Marker: params["Marker"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeReplicationTaskAssessmentResults",
@@ -724,11 +724,11 @@ export default class DMS {
   async describeReplicationTaskAssessmentRuns(
     {abortSignal, ...params}: RequestConfig & DescribeReplicationTaskAssessmentRunsMessage = {},
   ): Promise<DescribeReplicationTaskAssessmentRunsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Filters: params["Filters"]?.map(x => fromFilter(x)),
       MaxRecords: params["MaxRecords"],
       Marker: params["Marker"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeReplicationTaskAssessmentRuns",
@@ -745,11 +745,11 @@ export default class DMS {
   async describeReplicationTaskIndividualAssessments(
     {abortSignal, ...params}: RequestConfig & DescribeReplicationTaskIndividualAssessmentsMessage = {},
   ): Promise<DescribeReplicationTaskIndividualAssessmentsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Filters: params["Filters"]?.map(x => fromFilter(x)),
       MaxRecords: params["MaxRecords"],
       Marker: params["Marker"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeReplicationTaskIndividualAssessments",
@@ -766,12 +766,12 @@ export default class DMS {
   async describeReplicationTasks(
     {abortSignal, ...params}: RequestConfig & DescribeReplicationTasksMessage = {},
   ): Promise<DescribeReplicationTasksResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Filters: params["Filters"]?.map(x => fromFilter(x)),
       MaxRecords: params["MaxRecords"],
       Marker: params["Marker"],
       WithoutSettings: params["WithoutSettings"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeReplicationTasks",
@@ -788,11 +788,11 @@ export default class DMS {
   async describeSchemas(
     {abortSignal, ...params}: RequestConfig & DescribeSchemasMessage,
   ): Promise<DescribeSchemasResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       EndpointArn: params["EndpointArn"],
       MaxRecords: params["MaxRecords"],
       Marker: params["Marker"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeSchemas",
@@ -809,12 +809,12 @@ export default class DMS {
   async describeTableStatistics(
     {abortSignal, ...params}: RequestConfig & DescribeTableStatisticsMessage,
   ): Promise<DescribeTableStatisticsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ReplicationTaskArn: params["ReplicationTaskArn"],
       MaxRecords: params["MaxRecords"],
       Marker: params["Marker"],
       Filters: params["Filters"]?.map(x => fromFilter(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeTableStatistics",
@@ -832,12 +832,12 @@ export default class DMS {
   async importCertificate(
     {abortSignal, ...params}: RequestConfig & ImportCertificateMessage,
   ): Promise<ImportCertificateResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CertificateIdentifier: params["CertificateIdentifier"],
       CertificatePem: params["CertificatePem"],
       CertificateWallet: jsonP.serializeBlob(params["CertificateWallet"]),
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ImportCertificate",
@@ -853,9 +853,9 @@ export default class DMS {
   async listTagsForResource(
     {abortSignal, ...params}: RequestConfig & ListTagsForResourceMessage,
   ): Promise<ListTagsForResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForResource",
@@ -871,7 +871,7 @@ export default class DMS {
   async modifyEndpoint(
     {abortSignal, ...params}: RequestConfig & ModifyEndpointMessage,
   ): Promise<ModifyEndpointResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       EndpointArn: params["EndpointArn"],
       EndpointIdentifier: params["EndpointIdentifier"],
       EndpointType: params["EndpointType"],
@@ -902,7 +902,7 @@ export default class DMS {
       MicrosoftSQLServerSettings: fromMicrosoftSQLServerSettings(params["MicrosoftSQLServerSettings"]),
       IBMDb2Settings: fromIBMDb2Settings(params["IBMDb2Settings"]),
       DocDbSettings: fromDocDbSettings(params["DocDbSettings"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ModifyEndpoint",
@@ -918,13 +918,13 @@ export default class DMS {
   async modifyEventSubscription(
     {abortSignal, ...params}: RequestConfig & ModifyEventSubscriptionMessage,
   ): Promise<ModifyEventSubscriptionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       SubscriptionName: params["SubscriptionName"],
       SnsTopicArn: params["SnsTopicArn"],
       SourceType: params["SourceType"],
       EventCategories: params["EventCategories"],
       Enabled: params["Enabled"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ModifyEventSubscription",
@@ -940,7 +940,7 @@ export default class DMS {
   async modifyReplicationInstance(
     {abortSignal, ...params}: RequestConfig & ModifyReplicationInstanceMessage,
   ): Promise<ModifyReplicationInstanceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ReplicationInstanceArn: params["ReplicationInstanceArn"],
       AllocatedStorage: params["AllocatedStorage"],
       ApplyImmediately: params["ApplyImmediately"],
@@ -952,7 +952,7 @@ export default class DMS {
       AllowMajorVersionUpgrade: params["AllowMajorVersionUpgrade"],
       AutoMinorVersionUpgrade: params["AutoMinorVersionUpgrade"],
       ReplicationInstanceIdentifier: params["ReplicationInstanceIdentifier"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ModifyReplicationInstance",
@@ -968,11 +968,11 @@ export default class DMS {
   async modifyReplicationSubnetGroup(
     {abortSignal, ...params}: RequestConfig & ModifyReplicationSubnetGroupMessage,
   ): Promise<ModifyReplicationSubnetGroupResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ReplicationSubnetGroupIdentifier: params["ReplicationSubnetGroupIdentifier"],
       ReplicationSubnetGroupDescription: params["ReplicationSubnetGroupDescription"],
       SubnetIds: params["SubnetIds"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ModifyReplicationSubnetGroup",
@@ -988,7 +988,7 @@ export default class DMS {
   async modifyReplicationTask(
     {abortSignal, ...params}: RequestConfig & ModifyReplicationTaskMessage,
   ): Promise<ModifyReplicationTaskResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ReplicationTaskArn: params["ReplicationTaskArn"],
       ReplicationTaskIdentifier: params["ReplicationTaskIdentifier"],
       MigrationType: params["MigrationType"],
@@ -998,7 +998,7 @@ export default class DMS {
       CdcStartPosition: params["CdcStartPosition"],
       CdcStopPosition: params["CdcStopPosition"],
       TaskData: params["TaskData"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ModifyReplicationTask",
@@ -1014,10 +1014,10 @@ export default class DMS {
   async rebootReplicationInstance(
     {abortSignal, ...params}: RequestConfig & RebootReplicationInstanceMessage,
   ): Promise<RebootReplicationInstanceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ReplicationInstanceArn: params["ReplicationInstanceArn"],
       ForceFailover: params["ForceFailover"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RebootReplicationInstance",
@@ -1033,10 +1033,10 @@ export default class DMS {
   async refreshSchemas(
     {abortSignal, ...params}: RequestConfig & RefreshSchemasMessage,
   ): Promise<RefreshSchemasResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       EndpointArn: params["EndpointArn"],
       ReplicationInstanceArn: params["ReplicationInstanceArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RefreshSchemas",
@@ -1052,11 +1052,11 @@ export default class DMS {
   async reloadTables(
     {abortSignal, ...params}: RequestConfig & ReloadTablesMessage,
   ): Promise<ReloadTablesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ReplicationTaskArn: params["ReplicationTaskArn"],
       TablesToReload: params["TablesToReload"]?.map(x => fromTableToReload(x)),
       ReloadOption: params["ReloadOption"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ReloadTables",
@@ -1072,10 +1072,10 @@ export default class DMS {
   async removeTagsFromResource(
     {abortSignal, ...params}: RequestConfig & RemoveTagsFromResourceMessage,
   ): Promise<RemoveTagsFromResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
       TagKeys: params["TagKeys"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RemoveTagsFromResource",
@@ -1089,13 +1089,13 @@ export default class DMS {
   async startReplicationTask(
     {abortSignal, ...params}: RequestConfig & StartReplicationTaskMessage,
   ): Promise<StartReplicationTaskResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ReplicationTaskArn: params["ReplicationTaskArn"],
       StartReplicationTaskType: params["StartReplicationTaskType"],
       CdcStartTime: jsonP.serializeDate_unixTimestamp(params["CdcStartTime"]),
       CdcStartPosition: params["CdcStartPosition"],
       CdcStopPosition: params["CdcStopPosition"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartReplicationTask",
@@ -1111,9 +1111,9 @@ export default class DMS {
   async startReplicationTaskAssessment(
     {abortSignal, ...params}: RequestConfig & StartReplicationTaskAssessmentMessage,
   ): Promise<StartReplicationTaskAssessmentResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ReplicationTaskArn: params["ReplicationTaskArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartReplicationTaskAssessment",
@@ -1129,7 +1129,7 @@ export default class DMS {
   async startReplicationTaskAssessmentRun(
     {abortSignal, ...params}: RequestConfig & StartReplicationTaskAssessmentRunMessage,
   ): Promise<StartReplicationTaskAssessmentRunResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ReplicationTaskArn: params["ReplicationTaskArn"],
       ServiceAccessRoleArn: params["ServiceAccessRoleArn"],
       ResultLocationBucket: params["ResultLocationBucket"],
@@ -1139,7 +1139,7 @@ export default class DMS {
       AssessmentRunName: params["AssessmentRunName"],
       IncludeOnly: params["IncludeOnly"],
       Exclude: params["Exclude"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartReplicationTaskAssessmentRun",
@@ -1155,9 +1155,9 @@ export default class DMS {
   async stopReplicationTask(
     {abortSignal, ...params}: RequestConfig & StopReplicationTaskMessage,
   ): Promise<StopReplicationTaskResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ReplicationTaskArn: params["ReplicationTaskArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopReplicationTask",
@@ -1173,10 +1173,10 @@ export default class DMS {
   async testConnection(
     {abortSignal, ...params}: RequestConfig & TestConnectionMessage,
   ): Promise<TestConnectionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ReplicationInstanceArn: params["ReplicationInstanceArn"],
       EndpointArn: params["EndpointArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TestConnection",
@@ -1224,7 +1224,7 @@ export default class DMS {
         if (field?.some(x => x === "active")) throw new Error(errMessage);
         if (field?.some(x => x === "creating")) throw new Error(errMessage);
       } catch (err) {
-        if (["ResourceNotFoundFault"].includes(err.code)) return err;
+        if (["ResourceNotFoundFault"].includes(err.shortCode)) return err;
         throw err;
       }
       await new Promise(r => setTimeout(r, 5000));
@@ -1266,7 +1266,7 @@ export default class DMS {
         const resp = await this.describeReplicationInstances(params);
         if (resp?.ReplicationInstances?.flatMap(x => x?.ReplicationInstanceStatus)?.some(x => x === "available")) throw new Error(errMessage);
       } catch (err) {
-        if (["ResourceNotFoundFault"].includes(err.code)) return err;
+        if (["ResourceNotFoundFault"].includes(err.shortCode)) return err;
         throw err;
       }
       await new Promise(r => setTimeout(r, 15000));
@@ -1367,7 +1367,7 @@ export default class DMS {
         if (field?.some(x => x === "running")) throw new Error(errMessage);
         if (field?.some(x => x === "failed")) throw new Error(errMessage);
       } catch (err) {
-        if (["ResourceNotFoundFault"].includes(err.code)) return err;
+        if (["ResourceNotFoundFault"].includes(err.shortCode)) return err;
         throw err;
       }
       await new Promise(r => setTimeout(r, 15000));

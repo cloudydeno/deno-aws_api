@@ -34,30 +34,28 @@ export default class ManagedBlockchain {
   async createMember(
     {abortSignal, ...params}: RequestConfig & CreateMemberInput,
   ): Promise<CreateMemberOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
       InvitationId: params["InvitationId"],
       MemberConfiguration: fromMemberConfiguration(params["MemberConfiguration"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateMember",
       requestUri: cmnP.encodePath`/networks/${params["NetworkId"]}/members`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "MemberId": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "MemberId": "s",
+      },
+    }, await resp.json());
   }
 
   async createNetwork(
     {abortSignal, ...params}: RequestConfig & CreateNetworkInput,
   ): Promise<CreateNetworkOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
       Name: params["Name"],
       Description: params["Description"],
@@ -66,67 +64,61 @@ export default class ManagedBlockchain {
       FrameworkConfiguration: fromNetworkFrameworkConfiguration(params["FrameworkConfiguration"]),
       VotingPolicy: fromVotingPolicy(params["VotingPolicy"]),
       MemberConfiguration: fromMemberConfiguration(params["MemberConfiguration"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateNetwork",
       requestUri: "/networks",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "NetworkId": "s",
-          "MemberId": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "NetworkId": "s",
+        "MemberId": "s",
+      },
+    }, await resp.json());
   }
 
   async createNode(
     {abortSignal, ...params}: RequestConfig & CreateNodeInput,
   ): Promise<CreateNodeOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
       NodeConfiguration: fromNodeConfiguration(params["NodeConfiguration"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateNode",
       requestUri: cmnP.encodePath`/networks/${params["NetworkId"]}/members/${params["MemberId"]}/nodes`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "NodeId": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "NodeId": "s",
+      },
+    }, await resp.json());
   }
 
   async createProposal(
     {abortSignal, ...params}: RequestConfig & CreateProposalInput,
   ): Promise<CreateProposalOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
       MemberId: params["MemberId"],
       Actions: fromProposalActions(params["Actions"]),
       Description: params["Description"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateProposal",
       requestUri: cmnP.encodePath`/networks/${params["NetworkId"]}/proposals`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ProposalId": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ProposalId": "s",
+      },
+    }, await resp.json());
   }
 
   async deleteMember(
@@ -139,12 +131,10 @@ export default class ManagedBlockchain {
       method: "DELETE",
       requestUri: cmnP.encodePath`/networks/${params["NetworkId"]}/members/${params["MemberId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async deleteNode(
@@ -157,12 +147,10 @@ export default class ManagedBlockchain {
       method: "DELETE",
       requestUri: cmnP.encodePath`/networks/${params["NetworkId"]}/members/${params["MemberId"]}/nodes/${params["NodeId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async getMember(
@@ -175,14 +163,12 @@ export default class ManagedBlockchain {
       method: "GET",
       requestUri: cmnP.encodePath`/networks/${params["NetworkId"]}/members/${params["MemberId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Member": toMember,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Member": toMember,
+      },
+    }, await resp.json());
   }
 
   async getNetwork(
@@ -195,14 +181,12 @@ export default class ManagedBlockchain {
       method: "GET",
       requestUri: cmnP.encodePath`/networks/${params["NetworkId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Network": toNetwork,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Network": toNetwork,
+      },
+    }, await resp.json());
   }
 
   async getNode(
@@ -215,14 +199,12 @@ export default class ManagedBlockchain {
       method: "GET",
       requestUri: cmnP.encodePath`/networks/${params["NetworkId"]}/members/${params["MemberId"]}/nodes/${params["NodeId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Node": toNode,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Node": toNode,
+      },
+    }, await resp.json());
   }
 
   async getProposal(
@@ -235,14 +217,12 @@ export default class ManagedBlockchain {
       method: "GET",
       requestUri: cmnP.encodePath`/networks/${params["NetworkId"]}/proposals/${params["ProposalId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Proposal": toProposal,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Proposal": toProposal,
+      },
+    }, await resp.json());
   }
 
   async listInvitations(
@@ -257,15 +237,13 @@ export default class ManagedBlockchain {
       method: "GET",
       requestUri: "/invitations",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Invitations": [toInvitation],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Invitations": [toInvitation],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listMembers(
@@ -283,15 +261,13 @@ export default class ManagedBlockchain {
       method: "GET",
       requestUri: cmnP.encodePath`/networks/${params["NetworkId"]}/members`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Members": [toMemberSummary],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Members": [toMemberSummary],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listNetworks(
@@ -309,15 +285,13 @@ export default class ManagedBlockchain {
       method: "GET",
       requestUri: "/networks",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Networks": [toNetworkSummary],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Networks": [toNetworkSummary],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listNodes(
@@ -333,15 +307,13 @@ export default class ManagedBlockchain {
       method: "GET",
       requestUri: cmnP.encodePath`/networks/${params["NetworkId"]}/members/${params["MemberId"]}/nodes`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Nodes": [toNodeSummary],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Nodes": [toNodeSummary],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listProposalVotes(
@@ -356,15 +328,13 @@ export default class ManagedBlockchain {
       method: "GET",
       requestUri: cmnP.encodePath`/networks/${params["NetworkId"]}/proposals/${params["ProposalId"]}/votes`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ProposalVotes": [toVoteSummary],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ProposalVotes": [toVoteSummary],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listProposals(
@@ -379,15 +349,13 @@ export default class ManagedBlockchain {
       method: "GET",
       requestUri: cmnP.encodePath`/networks/${params["NetworkId"]}/proposals`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Proposals": [toProposalSummary],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Proposals": [toProposalSummary],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async rejectInvitation(
@@ -400,72 +368,64 @@ export default class ManagedBlockchain {
       method: "DELETE",
       requestUri: cmnP.encodePath`/invitations/${params["InvitationId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async updateMember(
     {abortSignal, ...params}: RequestConfig & UpdateMemberInput,
   ): Promise<UpdateMemberOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       LogPublishingConfiguration: fromMemberLogPublishingConfiguration(params["LogPublishingConfiguration"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateMember",
       method: "PATCH",
       requestUri: cmnP.encodePath`/networks/${params["NetworkId"]}/members/${params["MemberId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async updateNode(
     {abortSignal, ...params}: RequestConfig & UpdateNodeInput,
   ): Promise<UpdateNodeOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       LogPublishingConfiguration: fromNodeLogPublishingConfiguration(params["LogPublishingConfiguration"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateNode",
       method: "PATCH",
       requestUri: cmnP.encodePath`/networks/${params["NetworkId"]}/members/${params["MemberId"]}/nodes/${params["NodeId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async voteOnProposal(
     {abortSignal, ...params}: RequestConfig & VoteOnProposalInput,
   ): Promise<VoteOnProposalOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       VoterMemberId: params["VoterMemberId"],
       Vote: params["Vote"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "VoteOnProposal",
       requestUri: cmnP.encodePath`/networks/${params["NetworkId"]}/proposals/${params["ProposalId"]}/votes`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
 }

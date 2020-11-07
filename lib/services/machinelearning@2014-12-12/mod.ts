@@ -29,11 +29,11 @@ export default class MachineLearning {
   async addTags(
     {abortSignal, ...params}: RequestConfig & AddTagsInput,
   ): Promise<AddTagsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Tags: params["Tags"]?.map(x => fromTag(x)),
       ResourceId: params["ResourceId"],
       ResourceType: params["ResourceType"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AddTags",
@@ -50,13 +50,13 @@ export default class MachineLearning {
   async createBatchPrediction(
     {abortSignal, ...params}: RequestConfig & CreateBatchPredictionInput,
   ): Promise<CreateBatchPredictionOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       BatchPredictionId: params["BatchPredictionId"],
       BatchPredictionName: params["BatchPredictionName"],
       MLModelId: params["MLModelId"],
       BatchPredictionDataSourceId: params["BatchPredictionDataSourceId"],
       OutputUri: params["OutputUri"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateBatchPrediction",
@@ -72,13 +72,13 @@ export default class MachineLearning {
   async createDataSourceFromRDS(
     {abortSignal, ...params}: RequestConfig & CreateDataSourceFromRDSInput,
   ): Promise<CreateDataSourceFromRDSOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DataSourceId: params["DataSourceId"],
       DataSourceName: params["DataSourceName"],
       RDSData: fromRDSDataSpec(params["RDSData"]),
       RoleARN: params["RoleARN"],
       ComputeStatistics: params["ComputeStatistics"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDataSourceFromRDS",
@@ -94,13 +94,13 @@ export default class MachineLearning {
   async createDataSourceFromRedshift(
     {abortSignal, ...params}: RequestConfig & CreateDataSourceFromRedshiftInput,
   ): Promise<CreateDataSourceFromRedshiftOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DataSourceId: params["DataSourceId"],
       DataSourceName: params["DataSourceName"],
       DataSpec: fromRedshiftDataSpec(params["DataSpec"]),
       RoleARN: params["RoleARN"],
       ComputeStatistics: params["ComputeStatistics"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDataSourceFromRedshift",
@@ -116,12 +116,12 @@ export default class MachineLearning {
   async createDataSourceFromS3(
     {abortSignal, ...params}: RequestConfig & CreateDataSourceFromS3Input,
   ): Promise<CreateDataSourceFromS3Output> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DataSourceId: params["DataSourceId"],
       DataSourceName: params["DataSourceName"],
       DataSpec: fromS3DataSpec(params["DataSpec"]),
       ComputeStatistics: params["ComputeStatistics"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDataSourceFromS3",
@@ -137,12 +137,12 @@ export default class MachineLearning {
   async createEvaluation(
     {abortSignal, ...params}: RequestConfig & CreateEvaluationInput,
   ): Promise<CreateEvaluationOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       EvaluationId: params["EvaluationId"],
       EvaluationName: params["EvaluationName"],
       MLModelId: params["MLModelId"],
       EvaluationDataSourceId: params["EvaluationDataSourceId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateEvaluation",
@@ -158,7 +158,7 @@ export default class MachineLearning {
   async createMLModel(
     {abortSignal, ...params}: RequestConfig & CreateMLModelInput,
   ): Promise<CreateMLModelOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       MLModelId: params["MLModelId"],
       MLModelName: params["MLModelName"],
       MLModelType: params["MLModelType"],
@@ -166,7 +166,7 @@ export default class MachineLearning {
       TrainingDataSourceId: params["TrainingDataSourceId"],
       Recipe: params["Recipe"],
       RecipeUri: params["RecipeUri"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateMLModel",
@@ -182,9 +182,9 @@ export default class MachineLearning {
   async createRealtimeEndpoint(
     {abortSignal, ...params}: RequestConfig & CreateRealtimeEndpointInput,
   ): Promise<CreateRealtimeEndpointOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       MLModelId: params["MLModelId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateRealtimeEndpoint",
@@ -201,9 +201,9 @@ export default class MachineLearning {
   async deleteBatchPrediction(
     {abortSignal, ...params}: RequestConfig & DeleteBatchPredictionInput,
   ): Promise<DeleteBatchPredictionOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       BatchPredictionId: params["BatchPredictionId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteBatchPrediction",
@@ -219,9 +219,9 @@ export default class MachineLearning {
   async deleteDataSource(
     {abortSignal, ...params}: RequestConfig & DeleteDataSourceInput,
   ): Promise<DeleteDataSourceOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DataSourceId: params["DataSourceId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteDataSource",
@@ -237,9 +237,9 @@ export default class MachineLearning {
   async deleteEvaluation(
     {abortSignal, ...params}: RequestConfig & DeleteEvaluationInput,
   ): Promise<DeleteEvaluationOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       EvaluationId: params["EvaluationId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteEvaluation",
@@ -255,9 +255,9 @@ export default class MachineLearning {
   async deleteMLModel(
     {abortSignal, ...params}: RequestConfig & DeleteMLModelInput,
   ): Promise<DeleteMLModelOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       MLModelId: params["MLModelId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteMLModel",
@@ -273,9 +273,9 @@ export default class MachineLearning {
   async deleteRealtimeEndpoint(
     {abortSignal, ...params}: RequestConfig & DeleteRealtimeEndpointInput,
   ): Promise<DeleteRealtimeEndpointOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       MLModelId: params["MLModelId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteRealtimeEndpoint",
@@ -292,11 +292,11 @@ export default class MachineLearning {
   async deleteTags(
     {abortSignal, ...params}: RequestConfig & DeleteTagsInput,
   ): Promise<DeleteTagsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TagKeys: params["TagKeys"],
       ResourceId: params["ResourceId"],
       ResourceType: params["ResourceType"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteTags",
@@ -313,7 +313,7 @@ export default class MachineLearning {
   async describeBatchPredictions(
     {abortSignal, ...params}: RequestConfig & DescribeBatchPredictionsInput = {},
   ): Promise<DescribeBatchPredictionsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       FilterVariable: params["FilterVariable"],
       EQ: params["EQ"],
       GT: params["GT"],
@@ -325,7 +325,7 @@ export default class MachineLearning {
       SortOrder: params["SortOrder"],
       NextToken: params["NextToken"],
       Limit: params["Limit"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeBatchPredictions",
@@ -342,7 +342,7 @@ export default class MachineLearning {
   async describeDataSources(
     {abortSignal, ...params}: RequestConfig & DescribeDataSourcesInput = {},
   ): Promise<DescribeDataSourcesOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       FilterVariable: params["FilterVariable"],
       EQ: params["EQ"],
       GT: params["GT"],
@@ -354,7 +354,7 @@ export default class MachineLearning {
       SortOrder: params["SortOrder"],
       NextToken: params["NextToken"],
       Limit: params["Limit"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeDataSources",
@@ -371,7 +371,7 @@ export default class MachineLearning {
   async describeEvaluations(
     {abortSignal, ...params}: RequestConfig & DescribeEvaluationsInput = {},
   ): Promise<DescribeEvaluationsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       FilterVariable: params["FilterVariable"],
       EQ: params["EQ"],
       GT: params["GT"],
@@ -383,7 +383,7 @@ export default class MachineLearning {
       SortOrder: params["SortOrder"],
       NextToken: params["NextToken"],
       Limit: params["Limit"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeEvaluations",
@@ -400,7 +400,7 @@ export default class MachineLearning {
   async describeMLModels(
     {abortSignal, ...params}: RequestConfig & DescribeMLModelsInput = {},
   ): Promise<DescribeMLModelsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       FilterVariable: params["FilterVariable"],
       EQ: params["EQ"],
       GT: params["GT"],
@@ -412,7 +412,7 @@ export default class MachineLearning {
       SortOrder: params["SortOrder"],
       NextToken: params["NextToken"],
       Limit: params["Limit"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeMLModels",
@@ -429,10 +429,10 @@ export default class MachineLearning {
   async describeTags(
     {abortSignal, ...params}: RequestConfig & DescribeTagsInput,
   ): Promise<DescribeTagsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceId: params["ResourceId"],
       ResourceType: params["ResourceType"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeTags",
@@ -450,9 +450,9 @@ export default class MachineLearning {
   async getBatchPrediction(
     {abortSignal, ...params}: RequestConfig & GetBatchPredictionInput,
   ): Promise<GetBatchPredictionOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       BatchPredictionId: params["BatchPredictionId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetBatchPrediction",
@@ -484,10 +484,10 @@ export default class MachineLearning {
   async getDataSource(
     {abortSignal, ...params}: RequestConfig & GetDataSourceInput,
   ): Promise<GetDataSourceOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DataSourceId: params["DataSourceId"],
       Verbose: params["Verbose"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetDataSource",
@@ -522,9 +522,9 @@ export default class MachineLearning {
   async getEvaluation(
     {abortSignal, ...params}: RequestConfig & GetEvaluationInput,
   ): Promise<GetEvaluationOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       EvaluationId: params["EvaluationId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetEvaluation",
@@ -554,10 +554,10 @@ export default class MachineLearning {
   async getMLModel(
     {abortSignal, ...params}: RequestConfig & GetMLModelInput,
   ): Promise<GetMLModelOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       MLModelId: params["MLModelId"],
       Verbose: params["Verbose"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetMLModel",
@@ -593,11 +593,11 @@ export default class MachineLearning {
   async predict(
     {abortSignal, ...params}: RequestConfig & PredictInput,
   ): Promise<PredictOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       MLModelId: params["MLModelId"],
       Record: params["Record"],
       PredictEndpoint: params["PredictEndpoint"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "Predict",
@@ -613,10 +613,10 @@ export default class MachineLearning {
   async updateBatchPrediction(
     {abortSignal, ...params}: RequestConfig & UpdateBatchPredictionInput,
   ): Promise<UpdateBatchPredictionOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       BatchPredictionId: params["BatchPredictionId"],
       BatchPredictionName: params["BatchPredictionName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateBatchPrediction",
@@ -632,10 +632,10 @@ export default class MachineLearning {
   async updateDataSource(
     {abortSignal, ...params}: RequestConfig & UpdateDataSourceInput,
   ): Promise<UpdateDataSourceOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DataSourceId: params["DataSourceId"],
       DataSourceName: params["DataSourceName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateDataSource",
@@ -651,10 +651,10 @@ export default class MachineLearning {
   async updateEvaluation(
     {abortSignal, ...params}: RequestConfig & UpdateEvaluationInput,
   ): Promise<UpdateEvaluationOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       EvaluationId: params["EvaluationId"],
       EvaluationName: params["EvaluationName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateEvaluation",
@@ -670,11 +670,11 @@ export default class MachineLearning {
   async updateMLModel(
     {abortSignal, ...params}: RequestConfig & UpdateMLModelInput,
   ): Promise<UpdateMLModelOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       MLModelId: params["MLModelId"],
       MLModelName: params["MLModelName"],
       ScoreThreshold: params["ScoreThreshold"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateMLModel",

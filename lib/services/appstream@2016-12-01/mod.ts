@@ -30,10 +30,10 @@ export default class AppStream {
   async associateFleet(
     {abortSignal, ...params}: RequestConfig & AssociateFleetRequest,
   ): Promise<AssociateFleetResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       FleetName: params["FleetName"],
       StackName: params["StackName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AssociateFleet",
@@ -47,9 +47,9 @@ export default class AppStream {
   async batchAssociateUserStack(
     {abortSignal, ...params}: RequestConfig & BatchAssociateUserStackRequest,
   ): Promise<BatchAssociateUserStackResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       UserStackAssociations: params["UserStackAssociations"]?.map(x => fromUserStackAssociation(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchAssociateUserStack",
@@ -65,9 +65,9 @@ export default class AppStream {
   async batchDisassociateUserStack(
     {abortSignal, ...params}: RequestConfig & BatchDisassociateUserStackRequest,
   ): Promise<BatchDisassociateUserStackResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       UserStackAssociations: params["UserStackAssociations"]?.map(x => fromUserStackAssociation(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchDisassociateUserStack",
@@ -83,12 +83,12 @@ export default class AppStream {
   async copyImage(
     {abortSignal, ...params}: RequestConfig & CopyImageRequest,
   ): Promise<CopyImageResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       SourceImageName: params["SourceImageName"],
       DestinationImageName: params["DestinationImageName"],
       DestinationRegion: params["DestinationRegion"],
       DestinationImageDescription: params["DestinationImageDescription"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CopyImage",
@@ -104,11 +104,11 @@ export default class AppStream {
   async createDirectoryConfig(
     {abortSignal, ...params}: RequestConfig & CreateDirectoryConfigRequest,
   ): Promise<CreateDirectoryConfigResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DirectoryName: params["DirectoryName"],
       OrganizationalUnitDistinguishedNames: params["OrganizationalUnitDistinguishedNames"],
       ServiceAccountCredentials: fromServiceAccountCredentials(params["ServiceAccountCredentials"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDirectoryConfig",
@@ -124,7 +124,7 @@ export default class AppStream {
   async createFleet(
     {abortSignal, ...params}: RequestConfig & CreateFleetRequest,
   ): Promise<CreateFleetResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       ImageName: params["ImageName"],
       ImageArn: params["ImageArn"],
@@ -142,7 +142,7 @@ export default class AppStream {
       IdleDisconnectTimeoutInSeconds: params["IdleDisconnectTimeoutInSeconds"],
       IamRoleArn: params["IamRoleArn"],
       StreamView: params["StreamView"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateFleet",
@@ -158,7 +158,7 @@ export default class AppStream {
   async createImageBuilder(
     {abortSignal, ...params}: RequestConfig & CreateImageBuilderRequest,
   ): Promise<CreateImageBuilderResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       ImageName: params["ImageName"],
       ImageArn: params["ImageArn"],
@@ -172,7 +172,7 @@ export default class AppStream {
       AppstreamAgentVersion: params["AppstreamAgentVersion"],
       Tags: params["Tags"],
       AccessEndpoints: params["AccessEndpoints"]?.map(x => fromAccessEndpoint(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateImageBuilder",
@@ -188,10 +188,10 @@ export default class AppStream {
   async createImageBuilderStreamingURL(
     {abortSignal, ...params}: RequestConfig & CreateImageBuilderStreamingURLRequest,
   ): Promise<CreateImageBuilderStreamingURLResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       Validity: params["Validity"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateImageBuilderStreamingURL",
@@ -208,7 +208,7 @@ export default class AppStream {
   async createStack(
     {abortSignal, ...params}: RequestConfig & CreateStackRequest,
   ): Promise<CreateStackResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       Description: params["Description"],
       DisplayName: params["DisplayName"],
@@ -220,7 +220,7 @@ export default class AppStream {
       Tags: params["Tags"],
       AccessEndpoints: params["AccessEndpoints"]?.map(x => fromAccessEndpoint(x)),
       EmbedHostDomains: params["EmbedHostDomains"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateStack",
@@ -236,14 +236,14 @@ export default class AppStream {
   async createStreamingURL(
     {abortSignal, ...params}: RequestConfig & CreateStreamingURLRequest,
   ): Promise<CreateStreamingURLResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       StackName: params["StackName"],
       FleetName: params["FleetName"],
       UserId: params["UserId"],
       ApplicationId: params["ApplicationId"],
       Validity: params["Validity"],
       SessionContext: params["SessionContext"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateStreamingURL",
@@ -260,8 +260,8 @@ export default class AppStream {
   async createUsageReportSubscription(
     {abortSignal, ...params}: RequestConfig & CreateUsageReportSubscriptionRequest = {},
   ): Promise<CreateUsageReportSubscriptionResult> {
-    const body: jsonP.JSONObject = params ? {
-    } : {};
+    const body: jsonP.JSONObject = {
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateUsageReportSubscription",
@@ -278,13 +278,13 @@ export default class AppStream {
   async createUser(
     {abortSignal, ...params}: RequestConfig & CreateUserRequest,
   ): Promise<CreateUserResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       UserName: params["UserName"],
       MessageAction: params["MessageAction"],
       FirstName: params["FirstName"],
       LastName: params["LastName"],
       AuthenticationType: params["AuthenticationType"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateUser",
@@ -298,9 +298,9 @@ export default class AppStream {
   async deleteDirectoryConfig(
     {abortSignal, ...params}: RequestConfig & DeleteDirectoryConfigRequest,
   ): Promise<DeleteDirectoryConfigResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DirectoryName: params["DirectoryName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteDirectoryConfig",
@@ -314,9 +314,9 @@ export default class AppStream {
   async deleteFleet(
     {abortSignal, ...params}: RequestConfig & DeleteFleetRequest,
   ): Promise<DeleteFleetResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteFleet",
@@ -330,9 +330,9 @@ export default class AppStream {
   async deleteImage(
     {abortSignal, ...params}: RequestConfig & DeleteImageRequest,
   ): Promise<DeleteImageResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteImage",
@@ -348,9 +348,9 @@ export default class AppStream {
   async deleteImageBuilder(
     {abortSignal, ...params}: RequestConfig & DeleteImageBuilderRequest,
   ): Promise<DeleteImageBuilderResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteImageBuilder",
@@ -366,10 +366,10 @@ export default class AppStream {
   async deleteImagePermissions(
     {abortSignal, ...params}: RequestConfig & DeleteImagePermissionsRequest,
   ): Promise<DeleteImagePermissionsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       SharedAccountId: params["SharedAccountId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteImagePermissions",
@@ -383,9 +383,9 @@ export default class AppStream {
   async deleteStack(
     {abortSignal, ...params}: RequestConfig & DeleteStackRequest,
   ): Promise<DeleteStackResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteStack",
@@ -399,8 +399,8 @@ export default class AppStream {
   async deleteUsageReportSubscription(
     {abortSignal, ...params}: RequestConfig & DeleteUsageReportSubscriptionRequest = {},
   ): Promise<DeleteUsageReportSubscriptionResult> {
-    const body: jsonP.JSONObject = params ? {
-    } : {};
+    const body: jsonP.JSONObject = {
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteUsageReportSubscription",
@@ -414,10 +414,10 @@ export default class AppStream {
   async deleteUser(
     {abortSignal, ...params}: RequestConfig & DeleteUserRequest,
   ): Promise<DeleteUserResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       UserName: params["UserName"],
       AuthenticationType: params["AuthenticationType"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteUser",
@@ -431,11 +431,11 @@ export default class AppStream {
   async describeDirectoryConfigs(
     {abortSignal, ...params}: RequestConfig & DescribeDirectoryConfigsRequest = {},
   ): Promise<DescribeDirectoryConfigsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DirectoryNames: params["DirectoryNames"],
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeDirectoryConfigs",
@@ -452,10 +452,10 @@ export default class AppStream {
   async describeFleets(
     {abortSignal, ...params}: RequestConfig & DescribeFleetsRequest = {},
   ): Promise<DescribeFleetsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Names: params["Names"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeFleets",
@@ -472,11 +472,11 @@ export default class AppStream {
   async describeImageBuilders(
     {abortSignal, ...params}: RequestConfig & DescribeImageBuildersRequest = {},
   ): Promise<DescribeImageBuildersResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Names: params["Names"],
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeImageBuilders",
@@ -493,12 +493,12 @@ export default class AppStream {
   async describeImagePermissions(
     {abortSignal, ...params}: RequestConfig & DescribeImagePermissionsRequest,
   ): Promise<DescribeImagePermissionsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       MaxResults: params["MaxResults"],
       SharedAwsAccountIds: params["SharedAwsAccountIds"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeImagePermissions",
@@ -516,13 +516,13 @@ export default class AppStream {
   async describeImages(
     {abortSignal, ...params}: RequestConfig & DescribeImagesRequest = {},
   ): Promise<DescribeImagesResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Names: params["Names"],
       Arns: params["Arns"],
       Type: params["Type"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeImages",
@@ -539,14 +539,14 @@ export default class AppStream {
   async describeSessions(
     {abortSignal, ...params}: RequestConfig & DescribeSessionsRequest,
   ): Promise<DescribeSessionsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       StackName: params["StackName"],
       FleetName: params["FleetName"],
       UserId: params["UserId"],
       NextToken: params["NextToken"],
       Limit: params["Limit"],
       AuthenticationType: params["AuthenticationType"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeSessions",
@@ -563,10 +563,10 @@ export default class AppStream {
   async describeStacks(
     {abortSignal, ...params}: RequestConfig & DescribeStacksRequest = {},
   ): Promise<DescribeStacksResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Names: params["Names"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeStacks",
@@ -583,10 +583,10 @@ export default class AppStream {
   async describeUsageReportSubscriptions(
     {abortSignal, ...params}: RequestConfig & DescribeUsageReportSubscriptionsRequest = {},
   ): Promise<DescribeUsageReportSubscriptionsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeUsageReportSubscriptions",
@@ -603,13 +603,13 @@ export default class AppStream {
   async describeUserStackAssociations(
     {abortSignal, ...params}: RequestConfig & DescribeUserStackAssociationsRequest = {},
   ): Promise<DescribeUserStackAssociationsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       StackName: params["StackName"],
       UserName: params["UserName"],
       AuthenticationType: params["AuthenticationType"],
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeUserStackAssociations",
@@ -626,11 +626,11 @@ export default class AppStream {
   async describeUsers(
     {abortSignal, ...params}: RequestConfig & DescribeUsersRequest,
   ): Promise<DescribeUsersResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AuthenticationType: params["AuthenticationType"],
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeUsers",
@@ -647,10 +647,10 @@ export default class AppStream {
   async disableUser(
     {abortSignal, ...params}: RequestConfig & DisableUserRequest,
   ): Promise<DisableUserResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       UserName: params["UserName"],
       AuthenticationType: params["AuthenticationType"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisableUser",
@@ -664,10 +664,10 @@ export default class AppStream {
   async disassociateFleet(
     {abortSignal, ...params}: RequestConfig & DisassociateFleetRequest,
   ): Promise<DisassociateFleetResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       FleetName: params["FleetName"],
       StackName: params["StackName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisassociateFleet",
@@ -681,10 +681,10 @@ export default class AppStream {
   async enableUser(
     {abortSignal, ...params}: RequestConfig & EnableUserRequest,
   ): Promise<EnableUserResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       UserName: params["UserName"],
       AuthenticationType: params["AuthenticationType"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "EnableUser",
@@ -698,9 +698,9 @@ export default class AppStream {
   async expireSession(
     {abortSignal, ...params}: RequestConfig & ExpireSessionRequest,
   ): Promise<ExpireSessionResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       SessionId: params["SessionId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ExpireSession",
@@ -714,10 +714,10 @@ export default class AppStream {
   async listAssociatedFleets(
     {abortSignal, ...params}: RequestConfig & ListAssociatedFleetsRequest,
   ): Promise<ListAssociatedFleetsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       StackName: params["StackName"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListAssociatedFleets",
@@ -734,10 +734,10 @@ export default class AppStream {
   async listAssociatedStacks(
     {abortSignal, ...params}: RequestConfig & ListAssociatedStacksRequest,
   ): Promise<ListAssociatedStacksResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       FleetName: params["FleetName"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListAssociatedStacks",
@@ -754,9 +754,9 @@ export default class AppStream {
   async listTagsForResource(
     {abortSignal, ...params}: RequestConfig & ListTagsForResourceRequest,
   ): Promise<ListTagsForResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForResource",
@@ -772,9 +772,9 @@ export default class AppStream {
   async startFleet(
     {abortSignal, ...params}: RequestConfig & StartFleetRequest,
   ): Promise<StartFleetResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartFleet",
@@ -788,10 +788,10 @@ export default class AppStream {
   async startImageBuilder(
     {abortSignal, ...params}: RequestConfig & StartImageBuilderRequest,
   ): Promise<StartImageBuilderResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       AppstreamAgentVersion: params["AppstreamAgentVersion"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartImageBuilder",
@@ -807,9 +807,9 @@ export default class AppStream {
   async stopFleet(
     {abortSignal, ...params}: RequestConfig & StopFleetRequest,
   ): Promise<StopFleetResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopFleet",
@@ -823,9 +823,9 @@ export default class AppStream {
   async stopImageBuilder(
     {abortSignal, ...params}: RequestConfig & StopImageBuilderRequest,
   ): Promise<StopImageBuilderResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopImageBuilder",
@@ -841,10 +841,10 @@ export default class AppStream {
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
       Tags: params["Tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
@@ -858,10 +858,10 @@ export default class AppStream {
   async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceRequest,
   ): Promise<UntagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
       TagKeys: params["TagKeys"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResource",
@@ -875,11 +875,11 @@ export default class AppStream {
   async updateDirectoryConfig(
     {abortSignal, ...params}: RequestConfig & UpdateDirectoryConfigRequest,
   ): Promise<UpdateDirectoryConfigResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DirectoryName: params["DirectoryName"],
       OrganizationalUnitDistinguishedNames: params["OrganizationalUnitDistinguishedNames"],
       ServiceAccountCredentials: fromServiceAccountCredentials(params["ServiceAccountCredentials"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateDirectoryConfig",
@@ -895,7 +895,7 @@ export default class AppStream {
   async updateFleet(
     {abortSignal, ...params}: RequestConfig & UpdateFleetRequest = {},
   ): Promise<UpdateFleetResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ImageName: params["ImageName"],
       ImageArn: params["ImageArn"],
       Name: params["Name"],
@@ -913,7 +913,7 @@ export default class AppStream {
       AttributesToDelete: params["AttributesToDelete"],
       IamRoleArn: params["IamRoleArn"],
       StreamView: params["StreamView"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateFleet",
@@ -929,11 +929,11 @@ export default class AppStream {
   async updateImagePermissions(
     {abortSignal, ...params}: RequestConfig & UpdateImagePermissionsRequest,
   ): Promise<UpdateImagePermissionsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       SharedAccountId: params["SharedAccountId"],
       ImagePermissions: fromImagePermissions(params["ImagePermissions"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateImagePermissions",
@@ -947,7 +947,7 @@ export default class AppStream {
   async updateStack(
     {abortSignal, ...params}: RequestConfig & UpdateStackRequest,
   ): Promise<UpdateStackResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DisplayName: params["DisplayName"],
       Description: params["Description"],
       Name: params["Name"],
@@ -960,7 +960,7 @@ export default class AppStream {
       ApplicationSettings: fromApplicationSettings(params["ApplicationSettings"]),
       AccessEndpoints: params["AccessEndpoints"]?.map(x => fromAccessEndpoint(x)),
       EmbedHostDomains: params["EmbedHostDomains"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateStack",

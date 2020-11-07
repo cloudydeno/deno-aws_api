@@ -33,11 +33,11 @@ export default class ServiceCatalog {
   async acceptPortfolioShare(
     {abortSignal, ...params}: RequestConfig & AcceptPortfolioShareInput,
   ): Promise<AcceptPortfolioShareOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AcceptLanguage: params["AcceptLanguage"],
       PortfolioId: params["PortfolioId"],
       PortfolioShareType: params["PortfolioShareType"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AcceptPortfolioShare",
@@ -51,10 +51,10 @@ export default class ServiceCatalog {
   async associateBudgetWithResource(
     {abortSignal, ...params}: RequestConfig & AssociateBudgetWithResourceInput,
   ): Promise<AssociateBudgetWithResourceOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       BudgetName: params["BudgetName"],
       ResourceId: params["ResourceId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AssociateBudgetWithResource",
@@ -68,12 +68,12 @@ export default class ServiceCatalog {
   async associatePrincipalWithPortfolio(
     {abortSignal, ...params}: RequestConfig & AssociatePrincipalWithPortfolioInput,
   ): Promise<AssociatePrincipalWithPortfolioOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AcceptLanguage: params["AcceptLanguage"],
       PortfolioId: params["PortfolioId"],
       PrincipalARN: params["PrincipalARN"],
       PrincipalType: params["PrincipalType"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AssociatePrincipalWithPortfolio",
@@ -87,12 +87,12 @@ export default class ServiceCatalog {
   async associateProductWithPortfolio(
     {abortSignal, ...params}: RequestConfig & AssociateProductWithPortfolioInput,
   ): Promise<AssociateProductWithPortfolioOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AcceptLanguage: params["AcceptLanguage"],
       ProductId: params["ProductId"],
       PortfolioId: params["PortfolioId"],
       SourcePortfolioId: params["SourcePortfolioId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AssociateProductWithPortfolio",
@@ -106,12 +106,12 @@ export default class ServiceCatalog {
   async associateServiceActionWithProvisioningArtifact(
     {abortSignal, ...params}: RequestConfig & AssociateServiceActionWithProvisioningArtifactInput,
   ): Promise<AssociateServiceActionWithProvisioningArtifactOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ProductId: params["ProductId"],
       ProvisioningArtifactId: params["ProvisioningArtifactId"],
       ServiceActionId: params["ServiceActionId"],
       AcceptLanguage: params["AcceptLanguage"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AssociateServiceActionWithProvisioningArtifact",
@@ -125,10 +125,10 @@ export default class ServiceCatalog {
   async associateTagOptionWithResource(
     {abortSignal, ...params}: RequestConfig & AssociateTagOptionWithResourceInput,
   ): Promise<AssociateTagOptionWithResourceOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceId: params["ResourceId"],
       TagOptionId: params["TagOptionId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AssociateTagOptionWithResource",
@@ -142,10 +142,10 @@ export default class ServiceCatalog {
   async batchAssociateServiceActionWithProvisioningArtifact(
     {abortSignal, ...params}: RequestConfig & BatchAssociateServiceActionWithProvisioningArtifactInput,
   ): Promise<BatchAssociateServiceActionWithProvisioningArtifactOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ServiceActionAssociations: params["ServiceActionAssociations"]?.map(x => fromServiceActionAssociation(x)),
       AcceptLanguage: params["AcceptLanguage"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchAssociateServiceActionWithProvisioningArtifact",
@@ -161,10 +161,10 @@ export default class ServiceCatalog {
   async batchDisassociateServiceActionFromProvisioningArtifact(
     {abortSignal, ...params}: RequestConfig & BatchDisassociateServiceActionFromProvisioningArtifactInput,
   ): Promise<BatchDisassociateServiceActionFromProvisioningArtifactOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ServiceActionAssociations: params["ServiceActionAssociations"]?.map(x => fromServiceActionAssociation(x)),
       AcceptLanguage: params["AcceptLanguage"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchDisassociateServiceActionFromProvisioningArtifact",
@@ -180,7 +180,7 @@ export default class ServiceCatalog {
   async copyProduct(
     {abortSignal, ...params}: RequestConfig & CopyProductInput,
   ): Promise<CopyProductOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AcceptLanguage: params["AcceptLanguage"],
       SourceProductArn: params["SourceProductArn"],
       TargetProductId: params["TargetProductId"],
@@ -188,7 +188,7 @@ export default class ServiceCatalog {
       SourceProvisioningArtifactIdentifiers: params["SourceProvisioningArtifactIdentifiers"],
       CopyOptions: params["CopyOptions"],
       IdempotencyToken: params["IdempotencyToken"] ?? generateIdemptToken(),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CopyProduct",
@@ -204,7 +204,7 @@ export default class ServiceCatalog {
   async createConstraint(
     {abortSignal, ...params}: RequestConfig & CreateConstraintInput,
   ): Promise<CreateConstraintOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AcceptLanguage: params["AcceptLanguage"],
       PortfolioId: params["PortfolioId"],
       ProductId: params["ProductId"],
@@ -212,7 +212,7 @@ export default class ServiceCatalog {
       Type: params["Type"],
       Description: params["Description"],
       IdempotencyToken: params["IdempotencyToken"] ?? generateIdemptToken(),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateConstraint",
@@ -230,14 +230,14 @@ export default class ServiceCatalog {
   async createPortfolio(
     {abortSignal, ...params}: RequestConfig & CreatePortfolioInput,
   ): Promise<CreatePortfolioOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AcceptLanguage: params["AcceptLanguage"],
       DisplayName: params["DisplayName"],
       Description: params["Description"],
       ProviderName: params["ProviderName"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
       IdempotencyToken: params["IdempotencyToken"] ?? generateIdemptToken(),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreatePortfolio",
@@ -254,12 +254,12 @@ export default class ServiceCatalog {
   async createPortfolioShare(
     {abortSignal, ...params}: RequestConfig & CreatePortfolioShareInput,
   ): Promise<CreatePortfolioShareOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AcceptLanguage: params["AcceptLanguage"],
       PortfolioId: params["PortfolioId"],
       AccountId: params["AccountId"],
       OrganizationNode: fromOrganizationNode(params["OrganizationNode"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreatePortfolioShare",
@@ -275,7 +275,7 @@ export default class ServiceCatalog {
   async createProduct(
     {abortSignal, ...params}: RequestConfig & CreateProductInput,
   ): Promise<CreateProductOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AcceptLanguage: params["AcceptLanguage"],
       Name: params["Name"],
       Owner: params["Owner"],
@@ -288,7 +288,7 @@ export default class ServiceCatalog {
       Tags: params["Tags"]?.map(x => fromTag(x)),
       ProvisioningArtifactParameters: fromProvisioningArtifactProperties(params["ProvisioningArtifactParameters"]),
       IdempotencyToken: params["IdempotencyToken"] ?? generateIdemptToken(),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateProduct",
@@ -306,7 +306,7 @@ export default class ServiceCatalog {
   async createProvisionedProductPlan(
     {abortSignal, ...params}: RequestConfig & CreateProvisionedProductPlanInput,
   ): Promise<CreateProvisionedProductPlanOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AcceptLanguage: params["AcceptLanguage"],
       PlanName: params["PlanName"],
       PlanType: params["PlanType"],
@@ -318,7 +318,7 @@ export default class ServiceCatalog {
       ProvisioningParameters: params["ProvisioningParameters"]?.map(x => fromUpdateProvisioningParameter(x)),
       IdempotencyToken: params["IdempotencyToken"] ?? generateIdemptToken(),
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateProvisionedProductPlan",
@@ -338,12 +338,12 @@ export default class ServiceCatalog {
   async createProvisioningArtifact(
     {abortSignal, ...params}: RequestConfig & CreateProvisioningArtifactInput,
   ): Promise<CreateProvisioningArtifactOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AcceptLanguage: params["AcceptLanguage"],
       ProductId: params["ProductId"],
       Parameters: fromProvisioningArtifactProperties(params["Parameters"]),
       IdempotencyToken: params["IdempotencyToken"] ?? generateIdemptToken(),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateProvisioningArtifact",
@@ -361,14 +361,14 @@ export default class ServiceCatalog {
   async createServiceAction(
     {abortSignal, ...params}: RequestConfig & CreateServiceActionInput,
   ): Promise<CreateServiceActionOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       DefinitionType: params["DefinitionType"],
       Definition: params["Definition"],
       Description: params["Description"],
       AcceptLanguage: params["AcceptLanguage"],
       IdempotencyToken: params["IdempotencyToken"] ?? generateIdemptToken(),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateServiceAction",
@@ -384,10 +384,10 @@ export default class ServiceCatalog {
   async createTagOption(
     {abortSignal, ...params}: RequestConfig & CreateTagOptionInput,
   ): Promise<CreateTagOptionOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Key: params["Key"],
       Value: params["Value"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateTagOption",
@@ -403,10 +403,10 @@ export default class ServiceCatalog {
   async deleteConstraint(
     {abortSignal, ...params}: RequestConfig & DeleteConstraintInput,
   ): Promise<DeleteConstraintOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AcceptLanguage: params["AcceptLanguage"],
       Id: params["Id"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteConstraint",
@@ -420,10 +420,10 @@ export default class ServiceCatalog {
   async deletePortfolio(
     {abortSignal, ...params}: RequestConfig & DeletePortfolioInput,
   ): Promise<DeletePortfolioOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AcceptLanguage: params["AcceptLanguage"],
       Id: params["Id"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeletePortfolio",
@@ -437,12 +437,12 @@ export default class ServiceCatalog {
   async deletePortfolioShare(
     {abortSignal, ...params}: RequestConfig & DeletePortfolioShareInput,
   ): Promise<DeletePortfolioShareOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AcceptLanguage: params["AcceptLanguage"],
       PortfolioId: params["PortfolioId"],
       AccountId: params["AccountId"],
       OrganizationNode: fromOrganizationNode(params["OrganizationNode"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeletePortfolioShare",
@@ -458,10 +458,10 @@ export default class ServiceCatalog {
   async deleteProduct(
     {abortSignal, ...params}: RequestConfig & DeleteProductInput,
   ): Promise<DeleteProductOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AcceptLanguage: params["AcceptLanguage"],
       Id: params["Id"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteProduct",
@@ -475,11 +475,11 @@ export default class ServiceCatalog {
   async deleteProvisionedProductPlan(
     {abortSignal, ...params}: RequestConfig & DeleteProvisionedProductPlanInput,
   ): Promise<DeleteProvisionedProductPlanOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AcceptLanguage: params["AcceptLanguage"],
       PlanId: params["PlanId"],
       IgnoreErrors: params["IgnoreErrors"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteProvisionedProductPlan",
@@ -493,11 +493,11 @@ export default class ServiceCatalog {
   async deleteProvisioningArtifact(
     {abortSignal, ...params}: RequestConfig & DeleteProvisioningArtifactInput,
   ): Promise<DeleteProvisioningArtifactOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AcceptLanguage: params["AcceptLanguage"],
       ProductId: params["ProductId"],
       ProvisioningArtifactId: params["ProvisioningArtifactId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteProvisioningArtifact",
@@ -511,10 +511,10 @@ export default class ServiceCatalog {
   async deleteServiceAction(
     {abortSignal, ...params}: RequestConfig & DeleteServiceActionInput,
   ): Promise<DeleteServiceActionOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Id: params["Id"],
       AcceptLanguage: params["AcceptLanguage"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteServiceAction",
@@ -528,9 +528,9 @@ export default class ServiceCatalog {
   async deleteTagOption(
     {abortSignal, ...params}: RequestConfig & DeleteTagOptionInput,
   ): Promise<DeleteTagOptionOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Id: params["Id"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteTagOption",
@@ -544,10 +544,10 @@ export default class ServiceCatalog {
   async describeConstraint(
     {abortSignal, ...params}: RequestConfig & DescribeConstraintInput,
   ): Promise<DescribeConstraintOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AcceptLanguage: params["AcceptLanguage"],
       Id: params["Id"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeConstraint",
@@ -565,10 +565,10 @@ export default class ServiceCatalog {
   async describeCopyProductStatus(
     {abortSignal, ...params}: RequestConfig & DescribeCopyProductStatusInput,
   ): Promise<DescribeCopyProductStatusOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AcceptLanguage: params["AcceptLanguage"],
       CopyProductToken: params["CopyProductToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeCopyProductStatus",
@@ -586,10 +586,10 @@ export default class ServiceCatalog {
   async describePortfolio(
     {abortSignal, ...params}: RequestConfig & DescribePortfolioInput,
   ): Promise<DescribePortfolioOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AcceptLanguage: params["AcceptLanguage"],
       Id: params["Id"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribePortfolio",
@@ -608,9 +608,9 @@ export default class ServiceCatalog {
   async describePortfolioShareStatus(
     {abortSignal, ...params}: RequestConfig & DescribePortfolioShareStatusInput,
   ): Promise<DescribePortfolioShareStatusOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       PortfolioShareToken: params["PortfolioShareToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribePortfolioShareStatus",
@@ -630,11 +630,11 @@ export default class ServiceCatalog {
   async describeProduct(
     {abortSignal, ...params}: RequestConfig & DescribeProductInput = {},
   ): Promise<DescribeProductOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AcceptLanguage: params["AcceptLanguage"],
       Id: params["Id"],
       Name: params["Name"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeProduct",
@@ -653,11 +653,11 @@ export default class ServiceCatalog {
   async describeProductAsAdmin(
     {abortSignal, ...params}: RequestConfig & DescribeProductAsAdminInput = {},
   ): Promise<DescribeProductAsAdminOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AcceptLanguage: params["AcceptLanguage"],
       Id: params["Id"],
       Name: params["Name"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeProductAsAdmin",
@@ -677,10 +677,10 @@ export default class ServiceCatalog {
   async describeProductView(
     {abortSignal, ...params}: RequestConfig & DescribeProductViewInput,
   ): Promise<DescribeProductViewOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AcceptLanguage: params["AcceptLanguage"],
       Id: params["Id"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeProductView",
@@ -697,11 +697,11 @@ export default class ServiceCatalog {
   async describeProvisionedProduct(
     {abortSignal, ...params}: RequestConfig & DescribeProvisionedProductInput = {},
   ): Promise<DescribeProvisionedProductOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AcceptLanguage: params["AcceptLanguage"],
       Id: params["Id"],
       Name: params["Name"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeProvisionedProduct",
@@ -718,12 +718,12 @@ export default class ServiceCatalog {
   async describeProvisionedProductPlan(
     {abortSignal, ...params}: RequestConfig & DescribeProvisionedProductPlanInput,
   ): Promise<DescribeProvisionedProductPlanOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AcceptLanguage: params["AcceptLanguage"],
       PlanId: params["PlanId"],
       PageSize: params["PageSize"],
       PageToken: params["PageToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeProvisionedProductPlan",
@@ -741,14 +741,14 @@ export default class ServiceCatalog {
   async describeProvisioningArtifact(
     {abortSignal, ...params}: RequestConfig & DescribeProvisioningArtifactInput = {},
   ): Promise<DescribeProvisioningArtifactOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AcceptLanguage: params["AcceptLanguage"],
       ProvisioningArtifactId: params["ProvisioningArtifactId"],
       ProductId: params["ProductId"],
       ProvisioningArtifactName: params["ProvisioningArtifactName"],
       ProductName: params["ProductName"],
       Verbose: params["Verbose"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeProvisioningArtifact",
@@ -766,7 +766,7 @@ export default class ServiceCatalog {
   async describeProvisioningParameters(
     {abortSignal, ...params}: RequestConfig & DescribeProvisioningParametersInput = {},
   ): Promise<DescribeProvisioningParametersOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AcceptLanguage: params["AcceptLanguage"],
       ProductId: params["ProductId"],
       ProductName: params["ProductName"],
@@ -774,7 +774,7 @@ export default class ServiceCatalog {
       ProvisioningArtifactName: params["ProvisioningArtifactName"],
       PathId: params["PathId"],
       PathName: params["PathName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeProvisioningParameters",
@@ -795,12 +795,12 @@ export default class ServiceCatalog {
   async describeRecord(
     {abortSignal, ...params}: RequestConfig & DescribeRecordInput,
   ): Promise<DescribeRecordOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AcceptLanguage: params["AcceptLanguage"],
       Id: params["Id"],
       PageToken: params["PageToken"],
       PageSize: params["PageSize"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeRecord",
@@ -818,10 +818,10 @@ export default class ServiceCatalog {
   async describeServiceAction(
     {abortSignal, ...params}: RequestConfig & DescribeServiceActionInput,
   ): Promise<DescribeServiceActionOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Id: params["Id"],
       AcceptLanguage: params["AcceptLanguage"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeServiceAction",
@@ -837,11 +837,11 @@ export default class ServiceCatalog {
   async describeServiceActionExecutionParameters(
     {abortSignal, ...params}: RequestConfig & DescribeServiceActionExecutionParametersInput,
   ): Promise<DescribeServiceActionExecutionParametersOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ProvisionedProductId: params["ProvisionedProductId"],
       ServiceActionId: params["ServiceActionId"],
       AcceptLanguage: params["AcceptLanguage"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeServiceActionExecutionParameters",
@@ -857,9 +857,9 @@ export default class ServiceCatalog {
   async describeTagOption(
     {abortSignal, ...params}: RequestConfig & DescribeTagOptionInput,
   ): Promise<DescribeTagOptionOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Id: params["Id"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeTagOption",
@@ -875,8 +875,8 @@ export default class ServiceCatalog {
   async disableAWSOrganizationsAccess(
     {abortSignal, ...params}: RequestConfig & DisableAWSOrganizationsAccessInput = {},
   ): Promise<DisableAWSOrganizationsAccessOutput> {
-    const body: jsonP.JSONObject = params ? {
-    } : {};
+    const body: jsonP.JSONObject = {
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisableAWSOrganizationsAccess",
@@ -890,10 +890,10 @@ export default class ServiceCatalog {
   async disassociateBudgetFromResource(
     {abortSignal, ...params}: RequestConfig & DisassociateBudgetFromResourceInput,
   ): Promise<DisassociateBudgetFromResourceOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       BudgetName: params["BudgetName"],
       ResourceId: params["ResourceId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisassociateBudgetFromResource",
@@ -907,11 +907,11 @@ export default class ServiceCatalog {
   async disassociatePrincipalFromPortfolio(
     {abortSignal, ...params}: RequestConfig & DisassociatePrincipalFromPortfolioInput,
   ): Promise<DisassociatePrincipalFromPortfolioOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AcceptLanguage: params["AcceptLanguage"],
       PortfolioId: params["PortfolioId"],
       PrincipalARN: params["PrincipalARN"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisassociatePrincipalFromPortfolio",
@@ -925,11 +925,11 @@ export default class ServiceCatalog {
   async disassociateProductFromPortfolio(
     {abortSignal, ...params}: RequestConfig & DisassociateProductFromPortfolioInput,
   ): Promise<DisassociateProductFromPortfolioOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AcceptLanguage: params["AcceptLanguage"],
       ProductId: params["ProductId"],
       PortfolioId: params["PortfolioId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisassociateProductFromPortfolio",
@@ -943,12 +943,12 @@ export default class ServiceCatalog {
   async disassociateServiceActionFromProvisioningArtifact(
     {abortSignal, ...params}: RequestConfig & DisassociateServiceActionFromProvisioningArtifactInput,
   ): Promise<DisassociateServiceActionFromProvisioningArtifactOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ProductId: params["ProductId"],
       ProvisioningArtifactId: params["ProvisioningArtifactId"],
       ServiceActionId: params["ServiceActionId"],
       AcceptLanguage: params["AcceptLanguage"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisassociateServiceActionFromProvisioningArtifact",
@@ -962,10 +962,10 @@ export default class ServiceCatalog {
   async disassociateTagOptionFromResource(
     {abortSignal, ...params}: RequestConfig & DisassociateTagOptionFromResourceInput,
   ): Promise<DisassociateTagOptionFromResourceOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceId: params["ResourceId"],
       TagOptionId: params["TagOptionId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisassociateTagOptionFromResource",
@@ -979,8 +979,8 @@ export default class ServiceCatalog {
   async enableAWSOrganizationsAccess(
     {abortSignal, ...params}: RequestConfig & EnableAWSOrganizationsAccessInput = {},
   ): Promise<EnableAWSOrganizationsAccessOutput> {
-    const body: jsonP.JSONObject = params ? {
-    } : {};
+    const body: jsonP.JSONObject = {
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "EnableAWSOrganizationsAccess",
@@ -994,11 +994,11 @@ export default class ServiceCatalog {
   async executeProvisionedProductPlan(
     {abortSignal, ...params}: RequestConfig & ExecuteProvisionedProductPlanInput,
   ): Promise<ExecuteProvisionedProductPlanOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AcceptLanguage: params["AcceptLanguage"],
       PlanId: params["PlanId"],
       IdempotencyToken: params["IdempotencyToken"] ?? generateIdemptToken(),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ExecuteProvisionedProductPlan",
@@ -1014,13 +1014,13 @@ export default class ServiceCatalog {
   async executeProvisionedProductServiceAction(
     {abortSignal, ...params}: RequestConfig & ExecuteProvisionedProductServiceActionInput,
   ): Promise<ExecuteProvisionedProductServiceActionOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ProvisionedProductId: params["ProvisionedProductId"],
       ServiceActionId: params["ServiceActionId"],
       ExecuteToken: params["ExecuteToken"] ?? generateIdemptToken(),
       AcceptLanguage: params["AcceptLanguage"],
       Parameters: params["Parameters"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ExecuteProvisionedProductServiceAction",
@@ -1036,8 +1036,8 @@ export default class ServiceCatalog {
   async getAWSOrganizationsAccessStatus(
     {abortSignal, ...params}: RequestConfig & GetAWSOrganizationsAccessStatusInput = {},
   ): Promise<GetAWSOrganizationsAccessStatusOutput> {
-    const body: jsonP.JSONObject = params ? {
-    } : {};
+    const body: jsonP.JSONObject = {
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetAWSOrganizationsAccessStatus",
@@ -1053,14 +1053,14 @@ export default class ServiceCatalog {
   async getProvisionedProductOutputs(
     {abortSignal, ...params}: RequestConfig & GetProvisionedProductOutputsInput = {},
   ): Promise<GetProvisionedProductOutputsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AcceptLanguage: params["AcceptLanguage"],
       ProvisionedProductId: params["ProvisionedProductId"],
       ProvisionedProductName: params["ProvisionedProductName"],
       OutputKeys: params["OutputKeys"],
       PageSize: params["PageSize"],
       PageToken: params["PageToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetProvisionedProductOutputs",
@@ -1077,12 +1077,12 @@ export default class ServiceCatalog {
   async listAcceptedPortfolioShares(
     {abortSignal, ...params}: RequestConfig & ListAcceptedPortfolioSharesInput = {},
   ): Promise<ListAcceptedPortfolioSharesOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AcceptLanguage: params["AcceptLanguage"],
       PageToken: params["PageToken"],
       PageSize: params["PageSize"],
       PortfolioShareType: params["PortfolioShareType"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListAcceptedPortfolioShares",
@@ -1099,12 +1099,12 @@ export default class ServiceCatalog {
   async listBudgetsForResource(
     {abortSignal, ...params}: RequestConfig & ListBudgetsForResourceInput,
   ): Promise<ListBudgetsForResourceOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AcceptLanguage: params["AcceptLanguage"],
       ResourceId: params["ResourceId"],
       PageSize: params["PageSize"],
       PageToken: params["PageToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListBudgetsForResource",
@@ -1121,13 +1121,13 @@ export default class ServiceCatalog {
   async listConstraintsForPortfolio(
     {abortSignal, ...params}: RequestConfig & ListConstraintsForPortfolioInput,
   ): Promise<ListConstraintsForPortfolioOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AcceptLanguage: params["AcceptLanguage"],
       PortfolioId: params["PortfolioId"],
       ProductId: params["ProductId"],
       PageSize: params["PageSize"],
       PageToken: params["PageToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListConstraintsForPortfolio",
@@ -1144,12 +1144,12 @@ export default class ServiceCatalog {
   async listLaunchPaths(
     {abortSignal, ...params}: RequestConfig & ListLaunchPathsInput,
   ): Promise<ListLaunchPathsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AcceptLanguage: params["AcceptLanguage"],
       ProductId: params["ProductId"],
       PageSize: params["PageSize"],
       PageToken: params["PageToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListLaunchPaths",
@@ -1166,13 +1166,13 @@ export default class ServiceCatalog {
   async listOrganizationPortfolioAccess(
     {abortSignal, ...params}: RequestConfig & ListOrganizationPortfolioAccessInput,
   ): Promise<ListOrganizationPortfolioAccessOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AcceptLanguage: params["AcceptLanguage"],
       PortfolioId: params["PortfolioId"],
       OrganizationNodeType: params["OrganizationNodeType"],
       PageToken: params["PageToken"],
       PageSize: params["PageSize"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListOrganizationPortfolioAccess",
@@ -1189,13 +1189,13 @@ export default class ServiceCatalog {
   async listPortfolioAccess(
     {abortSignal, ...params}: RequestConfig & ListPortfolioAccessInput,
   ): Promise<ListPortfolioAccessOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AcceptLanguage: params["AcceptLanguage"],
       PortfolioId: params["PortfolioId"],
       OrganizationParentId: params["OrganizationParentId"],
       PageToken: params["PageToken"],
       PageSize: params["PageSize"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListPortfolioAccess",
@@ -1212,11 +1212,11 @@ export default class ServiceCatalog {
   async listPortfolios(
     {abortSignal, ...params}: RequestConfig & ListPortfoliosInput = {},
   ): Promise<ListPortfoliosOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AcceptLanguage: params["AcceptLanguage"],
       PageToken: params["PageToken"],
       PageSize: params["PageSize"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListPortfolios",
@@ -1233,12 +1233,12 @@ export default class ServiceCatalog {
   async listPortfoliosForProduct(
     {abortSignal, ...params}: RequestConfig & ListPortfoliosForProductInput,
   ): Promise<ListPortfoliosForProductOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AcceptLanguage: params["AcceptLanguage"],
       ProductId: params["ProductId"],
       PageToken: params["PageToken"],
       PageSize: params["PageSize"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListPortfoliosForProduct",
@@ -1255,12 +1255,12 @@ export default class ServiceCatalog {
   async listPrincipalsForPortfolio(
     {abortSignal, ...params}: RequestConfig & ListPrincipalsForPortfolioInput,
   ): Promise<ListPrincipalsForPortfolioOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AcceptLanguage: params["AcceptLanguage"],
       PortfolioId: params["PortfolioId"],
       PageSize: params["PageSize"],
       PageToken: params["PageToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListPrincipalsForPortfolio",
@@ -1277,13 +1277,13 @@ export default class ServiceCatalog {
   async listProvisionedProductPlans(
     {abortSignal, ...params}: RequestConfig & ListProvisionedProductPlansInput = {},
   ): Promise<ListProvisionedProductPlansOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AcceptLanguage: params["AcceptLanguage"],
       ProvisionProductId: params["ProvisionProductId"],
       PageSize: params["PageSize"],
       PageToken: params["PageToken"],
       AccessLevelFilter: fromAccessLevelFilter(params["AccessLevelFilter"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListProvisionedProductPlans",
@@ -1300,10 +1300,10 @@ export default class ServiceCatalog {
   async listProvisioningArtifacts(
     {abortSignal, ...params}: RequestConfig & ListProvisioningArtifactsInput,
   ): Promise<ListProvisioningArtifactsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AcceptLanguage: params["AcceptLanguage"],
       ProductId: params["ProductId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListProvisioningArtifacts",
@@ -1320,12 +1320,12 @@ export default class ServiceCatalog {
   async listProvisioningArtifactsForServiceAction(
     {abortSignal, ...params}: RequestConfig & ListProvisioningArtifactsForServiceActionInput,
   ): Promise<ListProvisioningArtifactsForServiceActionOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ServiceActionId: params["ServiceActionId"],
       PageSize: params["PageSize"],
       PageToken: params["PageToken"],
       AcceptLanguage: params["AcceptLanguage"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListProvisioningArtifactsForServiceAction",
@@ -1342,13 +1342,13 @@ export default class ServiceCatalog {
   async listRecordHistory(
     {abortSignal, ...params}: RequestConfig & ListRecordHistoryInput = {},
   ): Promise<ListRecordHistoryOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AcceptLanguage: params["AcceptLanguage"],
       AccessLevelFilter: fromAccessLevelFilter(params["AccessLevelFilter"]),
       SearchFilter: fromListRecordHistorySearchFilter(params["SearchFilter"]),
       PageSize: params["PageSize"],
       PageToken: params["PageToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListRecordHistory",
@@ -1365,12 +1365,12 @@ export default class ServiceCatalog {
   async listResourcesForTagOption(
     {abortSignal, ...params}: RequestConfig & ListResourcesForTagOptionInput,
   ): Promise<ListResourcesForTagOptionOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TagOptionId: params["TagOptionId"],
       ResourceType: params["ResourceType"],
       PageSize: params["PageSize"],
       PageToken: params["PageToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListResourcesForTagOption",
@@ -1387,11 +1387,11 @@ export default class ServiceCatalog {
   async listServiceActions(
     {abortSignal, ...params}: RequestConfig & ListServiceActionsInput = {},
   ): Promise<ListServiceActionsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AcceptLanguage: params["AcceptLanguage"],
       PageSize: params["PageSize"],
       PageToken: params["PageToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListServiceActions",
@@ -1408,13 +1408,13 @@ export default class ServiceCatalog {
   async listServiceActionsForProvisioningArtifact(
     {abortSignal, ...params}: RequestConfig & ListServiceActionsForProvisioningArtifactInput,
   ): Promise<ListServiceActionsForProvisioningArtifactOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ProductId: params["ProductId"],
       ProvisioningArtifactId: params["ProvisioningArtifactId"],
       PageSize: params["PageSize"],
       PageToken: params["PageToken"],
       AcceptLanguage: params["AcceptLanguage"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListServiceActionsForProvisioningArtifact",
@@ -1431,12 +1431,12 @@ export default class ServiceCatalog {
   async listStackInstancesForProvisionedProduct(
     {abortSignal, ...params}: RequestConfig & ListStackInstancesForProvisionedProductInput,
   ): Promise<ListStackInstancesForProvisionedProductOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AcceptLanguage: params["AcceptLanguage"],
       ProvisionedProductId: params["ProvisionedProductId"],
       PageToken: params["PageToken"],
       PageSize: params["PageSize"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListStackInstancesForProvisionedProduct",
@@ -1453,11 +1453,11 @@ export default class ServiceCatalog {
   async listTagOptions(
     {abortSignal, ...params}: RequestConfig & ListTagOptionsInput = {},
   ): Promise<ListTagOptionsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Filters: fromListTagOptionsFilters(params["Filters"]),
       PageSize: params["PageSize"],
       PageToken: params["PageToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagOptions",
@@ -1474,7 +1474,7 @@ export default class ServiceCatalog {
   async provisionProduct(
     {abortSignal, ...params}: RequestConfig & ProvisionProductInput,
   ): Promise<ProvisionProductOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AcceptLanguage: params["AcceptLanguage"],
       ProductId: params["ProductId"],
       ProductName: params["ProductName"],
@@ -1488,7 +1488,7 @@ export default class ServiceCatalog {
       Tags: params["Tags"]?.map(x => fromTag(x)),
       NotificationArns: params["NotificationArns"],
       ProvisionToken: params["ProvisionToken"] ?? generateIdemptToken(),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ProvisionProduct",
@@ -1504,11 +1504,11 @@ export default class ServiceCatalog {
   async rejectPortfolioShare(
     {abortSignal, ...params}: RequestConfig & RejectPortfolioShareInput,
   ): Promise<RejectPortfolioShareOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AcceptLanguage: params["AcceptLanguage"],
       PortfolioId: params["PortfolioId"],
       PortfolioShareType: params["PortfolioShareType"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RejectPortfolioShare",
@@ -1522,12 +1522,12 @@ export default class ServiceCatalog {
   async scanProvisionedProducts(
     {abortSignal, ...params}: RequestConfig & ScanProvisionedProductsInput = {},
   ): Promise<ScanProvisionedProductsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AcceptLanguage: params["AcceptLanguage"],
       AccessLevelFilter: fromAccessLevelFilter(params["AccessLevelFilter"]),
       PageSize: params["PageSize"],
       PageToken: params["PageToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ScanProvisionedProducts",
@@ -1544,14 +1544,14 @@ export default class ServiceCatalog {
   async searchProducts(
     {abortSignal, ...params}: RequestConfig & SearchProductsInput = {},
   ): Promise<SearchProductsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AcceptLanguage: params["AcceptLanguage"],
       Filters: params["Filters"],
       PageSize: params["PageSize"],
       SortBy: params["SortBy"],
       SortOrder: params["SortOrder"],
       PageToken: params["PageToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SearchProducts",
@@ -1569,7 +1569,7 @@ export default class ServiceCatalog {
   async searchProductsAsAdmin(
     {abortSignal, ...params}: RequestConfig & SearchProductsAsAdminInput = {},
   ): Promise<SearchProductsAsAdminOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AcceptLanguage: params["AcceptLanguage"],
       PortfolioId: params["PortfolioId"],
       Filters: params["Filters"],
@@ -1578,7 +1578,7 @@ export default class ServiceCatalog {
       PageToken: params["PageToken"],
       PageSize: params["PageSize"],
       ProductSource: params["ProductSource"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SearchProductsAsAdmin",
@@ -1595,7 +1595,7 @@ export default class ServiceCatalog {
   async searchProvisionedProducts(
     {abortSignal, ...params}: RequestConfig & SearchProvisionedProductsInput = {},
   ): Promise<SearchProvisionedProductsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AcceptLanguage: params["AcceptLanguage"],
       AccessLevelFilter: fromAccessLevelFilter(params["AccessLevelFilter"]),
       Filters: params["Filters"],
@@ -1603,7 +1603,7 @@ export default class ServiceCatalog {
       SortOrder: params["SortOrder"],
       PageSize: params["PageSize"],
       PageToken: params["PageToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SearchProvisionedProducts",
@@ -1621,13 +1621,13 @@ export default class ServiceCatalog {
   async terminateProvisionedProduct(
     {abortSignal, ...params}: RequestConfig & TerminateProvisionedProductInput,
   ): Promise<TerminateProvisionedProductOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ProvisionedProductName: params["ProvisionedProductName"],
       ProvisionedProductId: params["ProvisionedProductId"],
       TerminateToken: params["TerminateToken"] ?? generateIdemptToken(),
       IgnoreErrors: params["IgnoreErrors"],
       AcceptLanguage: params["AcceptLanguage"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TerminateProvisionedProduct",
@@ -1643,12 +1643,12 @@ export default class ServiceCatalog {
   async updateConstraint(
     {abortSignal, ...params}: RequestConfig & UpdateConstraintInput,
   ): Promise<UpdateConstraintOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AcceptLanguage: params["AcceptLanguage"],
       Id: params["Id"],
       Description: params["Description"],
       Parameters: params["Parameters"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateConstraint",
@@ -1666,7 +1666,7 @@ export default class ServiceCatalog {
   async updatePortfolio(
     {abortSignal, ...params}: RequestConfig & UpdatePortfolioInput,
   ): Promise<UpdatePortfolioOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AcceptLanguage: params["AcceptLanguage"],
       Id: params["Id"],
       DisplayName: params["DisplayName"],
@@ -1674,7 +1674,7 @@ export default class ServiceCatalog {
       ProviderName: params["ProviderName"],
       AddTags: params["AddTags"]?.map(x => fromTag(x)),
       RemoveTags: params["RemoveTags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdatePortfolio",
@@ -1691,7 +1691,7 @@ export default class ServiceCatalog {
   async updateProduct(
     {abortSignal, ...params}: RequestConfig & UpdateProductInput,
   ): Promise<UpdateProductOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AcceptLanguage: params["AcceptLanguage"],
       Id: params["Id"],
       Name: params["Name"],
@@ -1703,7 +1703,7 @@ export default class ServiceCatalog {
       SupportUrl: params["SupportUrl"],
       AddTags: params["AddTags"]?.map(x => fromTag(x)),
       RemoveTags: params["RemoveTags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateProduct",
@@ -1720,7 +1720,7 @@ export default class ServiceCatalog {
   async updateProvisionedProduct(
     {abortSignal, ...params}: RequestConfig & UpdateProvisionedProductInput,
   ): Promise<UpdateProvisionedProductOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AcceptLanguage: params["AcceptLanguage"],
       ProvisionedProductName: params["ProvisionedProductName"],
       ProvisionedProductId: params["ProvisionedProductId"],
@@ -1734,7 +1734,7 @@ export default class ServiceCatalog {
       ProvisioningPreferences: fromUpdateProvisioningPreferences(params["ProvisioningPreferences"]),
       Tags: params["Tags"]?.map(x => fromTag(x)),
       UpdateToken: params["UpdateToken"] ?? generateIdemptToken(),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateProvisionedProduct",
@@ -1750,12 +1750,12 @@ export default class ServiceCatalog {
   async updateProvisionedProductProperties(
     {abortSignal, ...params}: RequestConfig & UpdateProvisionedProductPropertiesInput,
   ): Promise<UpdateProvisionedProductPropertiesOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AcceptLanguage: params["AcceptLanguage"],
       ProvisionedProductId: params["ProvisionedProductId"],
       ProvisionedProductProperties: params["ProvisionedProductProperties"],
       IdempotencyToken: params["IdempotencyToken"] ?? generateIdemptToken(),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateProvisionedProductProperties",
@@ -1774,7 +1774,7 @@ export default class ServiceCatalog {
   async updateProvisioningArtifact(
     {abortSignal, ...params}: RequestConfig & UpdateProvisioningArtifactInput,
   ): Promise<UpdateProvisioningArtifactOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AcceptLanguage: params["AcceptLanguage"],
       ProductId: params["ProductId"],
       ProvisioningArtifactId: params["ProvisioningArtifactId"],
@@ -1782,7 +1782,7 @@ export default class ServiceCatalog {
       Description: params["Description"],
       Active: params["Active"],
       Guidance: params["Guidance"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateProvisioningArtifact",
@@ -1800,13 +1800,13 @@ export default class ServiceCatalog {
   async updateServiceAction(
     {abortSignal, ...params}: RequestConfig & UpdateServiceActionInput,
   ): Promise<UpdateServiceActionOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Id: params["Id"],
       Name: params["Name"],
       Definition: params["Definition"],
       Description: params["Description"],
       AcceptLanguage: params["AcceptLanguage"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateServiceAction",
@@ -1822,11 +1822,11 @@ export default class ServiceCatalog {
   async updateTagOption(
     {abortSignal, ...params}: RequestConfig & UpdateTagOptionInput,
   ): Promise<UpdateTagOptionOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Id: params["Id"],
       Value: params["Value"],
       Active: params["Active"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateTagOption",

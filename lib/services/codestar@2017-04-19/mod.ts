@@ -30,13 +30,13 @@ export default class CodeStar {
   async associateTeamMember(
     {abortSignal, ...params}: RequestConfig & AssociateTeamMemberRequest,
   ): Promise<AssociateTeamMemberResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       projectId: params["projectId"],
       clientRequestToken: params["clientRequestToken"],
       userArn: params["userArn"],
       projectRole: params["projectRole"],
       remoteAccessAllowed: params["remoteAccessAllowed"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AssociateTeamMember",
@@ -52,7 +52,7 @@ export default class CodeStar {
   async createProject(
     {abortSignal, ...params}: RequestConfig & CreateProjectRequest,
   ): Promise<CreateProjectResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       name: params["name"],
       id: params["id"],
       description: params["description"],
@@ -60,7 +60,7 @@ export default class CodeStar {
       sourceCode: params["sourceCode"]?.map(x => fromCode(x)),
       toolchain: fromToolchain(params["toolchain"]),
       tags: params["tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateProject",
@@ -80,12 +80,12 @@ export default class CodeStar {
   async createUserProfile(
     {abortSignal, ...params}: RequestConfig & CreateUserProfileRequest,
   ): Promise<CreateUserProfileResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       userArn: params["userArn"],
       displayName: params["displayName"],
       emailAddress: params["emailAddress"],
       sshPublicKey: params["sshPublicKey"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateUserProfile",
@@ -107,11 +107,11 @@ export default class CodeStar {
   async deleteProject(
     {abortSignal, ...params}: RequestConfig & DeleteProjectRequest,
   ): Promise<DeleteProjectResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       id: params["id"],
       clientRequestToken: params["clientRequestToken"],
       deleteStack: params["deleteStack"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteProject",
@@ -128,9 +128,9 @@ export default class CodeStar {
   async deleteUserProfile(
     {abortSignal, ...params}: RequestConfig & DeleteUserProfileRequest,
   ): Promise<DeleteUserProfileResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       userArn: params["userArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteUserProfile",
@@ -146,9 +146,9 @@ export default class CodeStar {
   async describeProject(
     {abortSignal, ...params}: RequestConfig & DescribeProjectRequest,
   ): Promise<DescribeProjectResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       id: params["id"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeProject",
@@ -172,9 +172,9 @@ export default class CodeStar {
   async describeUserProfile(
     {abortSignal, ...params}: RequestConfig & DescribeUserProfileRequest,
   ): Promise<DescribeUserProfileResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       userArn: params["userArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeUserProfile",
@@ -196,10 +196,10 @@ export default class CodeStar {
   async disassociateTeamMember(
     {abortSignal, ...params}: RequestConfig & DisassociateTeamMemberRequest,
   ): Promise<DisassociateTeamMemberResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       projectId: params["projectId"],
       userArn: params["userArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisassociateTeamMember",
@@ -213,10 +213,10 @@ export default class CodeStar {
   async listProjects(
     {abortSignal, ...params}: RequestConfig & ListProjectsRequest = {},
   ): Promise<ListProjectsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListProjects",
@@ -234,11 +234,11 @@ export default class CodeStar {
   async listResources(
     {abortSignal, ...params}: RequestConfig & ListResourcesRequest,
   ): Promise<ListResourcesResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       projectId: params["projectId"],
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListResources",
@@ -255,11 +255,11 @@ export default class CodeStar {
   async listTagsForProject(
     {abortSignal, ...params}: RequestConfig & ListTagsForProjectRequest,
   ): Promise<ListTagsForProjectResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       id: params["id"],
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForProject",
@@ -276,11 +276,11 @@ export default class CodeStar {
   async listTeamMembers(
     {abortSignal, ...params}: RequestConfig & ListTeamMembersRequest,
   ): Promise<ListTeamMembersResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       projectId: params["projectId"],
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTeamMembers",
@@ -298,10 +298,10 @@ export default class CodeStar {
   async listUserProfiles(
     {abortSignal, ...params}: RequestConfig & ListUserProfilesRequest = {},
   ): Promise<ListUserProfilesResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListUserProfiles",
@@ -319,10 +319,10 @@ export default class CodeStar {
   async tagProject(
     {abortSignal, ...params}: RequestConfig & TagProjectRequest,
   ): Promise<TagProjectResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       id: params["id"],
       tags: params["tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagProject",
@@ -338,10 +338,10 @@ export default class CodeStar {
   async untagProject(
     {abortSignal, ...params}: RequestConfig & UntagProjectRequest,
   ): Promise<UntagProjectResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       id: params["id"],
       tags: params["tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagProject",
@@ -355,11 +355,11 @@ export default class CodeStar {
   async updateProject(
     {abortSignal, ...params}: RequestConfig & UpdateProjectRequest,
   ): Promise<UpdateProjectResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       id: params["id"],
       name: params["name"],
       description: params["description"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateProject",
@@ -373,12 +373,12 @@ export default class CodeStar {
   async updateTeamMember(
     {abortSignal, ...params}: RequestConfig & UpdateTeamMemberRequest,
   ): Promise<UpdateTeamMemberResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       projectId: params["projectId"],
       userArn: params["userArn"],
       projectRole: params["projectRole"],
       remoteAccessAllowed: params["remoteAccessAllowed"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateTeamMember",
@@ -396,12 +396,12 @@ export default class CodeStar {
   async updateUserProfile(
     {abortSignal, ...params}: RequestConfig & UpdateUserProfileRequest,
   ): Promise<UpdateUserProfileResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       userArn: params["userArn"],
       displayName: params["displayName"],
       emailAddress: params["emailAddress"],
       sshPublicKey: params["sshPublicKey"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateUserProfile",

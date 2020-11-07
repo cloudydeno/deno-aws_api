@@ -30,26 +30,24 @@ export default class DLM {
   async createLifecyclePolicy(
     {abortSignal, ...params}: RequestConfig & CreateLifecyclePolicyRequest,
   ): Promise<CreateLifecyclePolicyResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ExecutionRoleArn: params["ExecutionRoleArn"],
       Description: params["Description"],
       State: params["State"],
       PolicyDetails: fromPolicyDetails(params["PolicyDetails"]),
       Tags: params["Tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateLifecyclePolicy",
       requestUri: "/policies",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "PolicyId": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "PolicyId": "s",
+      },
+    }, await resp.json());
   }
 
   async deleteLifecyclePolicy(
@@ -62,12 +60,10 @@ export default class DLM {
       method: "DELETE",
       requestUri: cmnP.encodePath`/policies/${params["PolicyId"]}/`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async getLifecyclePolicies(
@@ -93,14 +89,12 @@ export default class DLM {
       method: "GET",
       requestUri: "/policies",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Policies": [toLifecyclePolicySummary],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Policies": [toLifecyclePolicySummary],
+      },
+    }, await resp.json());
   }
 
   async getLifecyclePolicy(
@@ -113,14 +107,12 @@ export default class DLM {
       method: "GET",
       requestUri: cmnP.encodePath`/policies/${params["PolicyId"]}/`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Policy": toLifecyclePolicy,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Policy": toLifecyclePolicy,
+      },
+    }, await resp.json());
   }
 
   async listTagsForResource(
@@ -133,33 +125,29 @@ export default class DLM {
       method: "GET",
       requestUri: cmnP.encodePath`/tags/${params["ResourceArn"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Tags: params["Tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
       requestUri: cmnP.encodePath`/tags/${params["ResourceArn"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async untagResource(
@@ -175,35 +163,31 @@ export default class DLM {
       method: "DELETE",
       requestUri: cmnP.encodePath`/tags/${params["ResourceArn"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async updateLifecyclePolicy(
     {abortSignal, ...params}: RequestConfig & UpdateLifecyclePolicyRequest,
   ): Promise<UpdateLifecyclePolicyResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ExecutionRoleArn: params["ExecutionRoleArn"],
       State: params["State"],
       Description: params["Description"],
       PolicyDetails: fromPolicyDetails(params["PolicyDetails"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateLifecyclePolicy",
       method: "PATCH",
       requestUri: cmnP.encodePath`/policies/${params["PolicyId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
 }

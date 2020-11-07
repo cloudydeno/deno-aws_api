@@ -30,7 +30,7 @@ export default class SESV2 {
   async createConfigurationSet(
     {abortSignal, ...params}: RequestConfig & CreateConfigurationSetRequest,
   ): Promise<CreateConfigurationSetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ConfigurationSetName: params["ConfigurationSetName"],
       TrackingOptions: fromTrackingOptions(params["TrackingOptions"]),
       DeliveryOptions: fromDeliveryOptions(params["DeliveryOptions"]),
@@ -38,237 +38,215 @@ export default class SESV2 {
       SendingOptions: fromSendingOptions(params["SendingOptions"]),
       Tags: params["Tags"]?.map(x => fromTag(x)),
       SuppressionOptions: fromSuppressionOptions(params["SuppressionOptions"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateConfigurationSet",
       requestUri: "/v2/email/configuration-sets",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async createConfigurationSetEventDestination(
     {abortSignal, ...params}: RequestConfig & CreateConfigurationSetEventDestinationRequest,
   ): Promise<CreateConfigurationSetEventDestinationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       EventDestinationName: params["EventDestinationName"],
       EventDestination: fromEventDestinationDefinition(params["EventDestination"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateConfigurationSetEventDestination",
       requestUri: cmnP.encodePath`/v2/email/configuration-sets/${params["ConfigurationSetName"]}/event-destinations`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async createContact(
     {abortSignal, ...params}: RequestConfig & CreateContactRequest,
   ): Promise<CreateContactResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       EmailAddress: params["EmailAddress"],
       TopicPreferences: params["TopicPreferences"]?.map(x => fromTopicPreference(x)),
       UnsubscribeAll: params["UnsubscribeAll"],
       AttributesData: params["AttributesData"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateContact",
       requestUri: cmnP.encodePath`/v2/email/contact-lists/${params["ContactListName"]}/contacts`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async createContactList(
     {abortSignal, ...params}: RequestConfig & CreateContactListRequest,
   ): Promise<CreateContactListResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ContactListName: params["ContactListName"],
       Topics: params["Topics"]?.map(x => fromTopic(x)),
       Description: params["Description"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateContactList",
       requestUri: "/v2/email/contact-lists",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async createCustomVerificationEmailTemplate(
     {abortSignal, ...params}: RequestConfig & CreateCustomVerificationEmailTemplateRequest,
   ): Promise<CreateCustomVerificationEmailTemplateResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TemplateName: params["TemplateName"],
       FromEmailAddress: params["FromEmailAddress"],
       TemplateSubject: params["TemplateSubject"],
       TemplateContent: params["TemplateContent"],
       SuccessRedirectionURL: params["SuccessRedirectionURL"],
       FailureRedirectionURL: params["FailureRedirectionURL"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateCustomVerificationEmailTemplate",
       requestUri: "/v2/email/custom-verification-email-templates",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async createDedicatedIpPool(
     {abortSignal, ...params}: RequestConfig & CreateDedicatedIpPoolRequest,
   ): Promise<CreateDedicatedIpPoolResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       PoolName: params["PoolName"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDedicatedIpPool",
       requestUri: "/v2/email/dedicated-ip-pools",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async createDeliverabilityTestReport(
     {abortSignal, ...params}: RequestConfig & CreateDeliverabilityTestReportRequest,
   ): Promise<CreateDeliverabilityTestReportResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ReportName: params["ReportName"],
       FromEmailAddress: params["FromEmailAddress"],
       Content: fromEmailContent(params["Content"]),
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDeliverabilityTestReport",
       requestUri: "/v2/email/deliverability-dashboard/test",
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "ReportId": "s",
-          "DeliverabilityTestStatus": (x: jsonP.JSONValue) => cmnP.readEnum<DeliverabilityTestStatus>(x),
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "ReportId": "s",
+        "DeliverabilityTestStatus": (x: jsonP.JSONValue) => cmnP.readEnum<DeliverabilityTestStatus>(x),
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async createEmailIdentity(
     {abortSignal, ...params}: RequestConfig & CreateEmailIdentityRequest,
   ): Promise<CreateEmailIdentityResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       EmailIdentity: params["EmailIdentity"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
       DkimSigningAttributes: fromDkimSigningAttributes(params["DkimSigningAttributes"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateEmailIdentity",
       requestUri: "/v2/email/identities",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "IdentityType": (x: jsonP.JSONValue) => cmnP.readEnum<IdentityType>(x),
-          "VerifiedForSendingStatus": "b",
-          "DkimAttributes": toDkimAttributes,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "IdentityType": (x: jsonP.JSONValue) => cmnP.readEnum<IdentityType>(x),
+        "VerifiedForSendingStatus": "b",
+        "DkimAttributes": toDkimAttributes,
+      },
+    }, await resp.json());
   }
 
   async createEmailIdentityPolicy(
     {abortSignal, ...params}: RequestConfig & CreateEmailIdentityPolicyRequest,
   ): Promise<CreateEmailIdentityPolicyResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Policy: params["Policy"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateEmailIdentityPolicy",
       requestUri: cmnP.encodePath`/v2/email/identities/${params["EmailIdentity"]}/policies/${params["PolicyName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async createEmailTemplate(
     {abortSignal, ...params}: RequestConfig & CreateEmailTemplateRequest,
   ): Promise<CreateEmailTemplateResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TemplateName: params["TemplateName"],
       TemplateContent: fromEmailTemplateContent(params["TemplateContent"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateEmailTemplate",
       requestUri: "/v2/email/templates",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async createImportJob(
     {abortSignal, ...params}: RequestConfig & CreateImportJobRequest,
   ): Promise<CreateImportJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ImportDestination: fromImportDestination(params["ImportDestination"]),
       ImportDataSource: fromImportDataSource(params["ImportDataSource"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateImportJob",
       requestUri: "/v2/email/import-jobs",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "JobId": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "JobId": "s",
+      },
+    }, await resp.json());
   }
 
   async deleteConfigurationSet(
@@ -281,12 +259,10 @@ export default class SESV2 {
       method: "DELETE",
       requestUri: cmnP.encodePath`/v2/email/configuration-sets/${params["ConfigurationSetName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async deleteConfigurationSetEventDestination(
@@ -299,12 +275,10 @@ export default class SESV2 {
       method: "DELETE",
       requestUri: cmnP.encodePath`/v2/email/configuration-sets/${params["ConfigurationSetName"]}/event-destinations/${params["EventDestinationName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async deleteContact(
@@ -317,12 +291,10 @@ export default class SESV2 {
       method: "DELETE",
       requestUri: cmnP.encodePath`/v2/email/contact-lists/${params["ContactListName"]}/contacts/${params["EmailAddress"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async deleteContactList(
@@ -335,12 +307,10 @@ export default class SESV2 {
       method: "DELETE",
       requestUri: cmnP.encodePath`/v2/email/contact-lists/${params["ContactListName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async deleteCustomVerificationEmailTemplate(
@@ -353,12 +323,10 @@ export default class SESV2 {
       method: "DELETE",
       requestUri: cmnP.encodePath`/v2/email/custom-verification-email-templates/${params["TemplateName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async deleteDedicatedIpPool(
@@ -371,12 +339,10 @@ export default class SESV2 {
       method: "DELETE",
       requestUri: cmnP.encodePath`/v2/email/dedicated-ip-pools/${params["PoolName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async deleteEmailIdentity(
@@ -389,12 +355,10 @@ export default class SESV2 {
       method: "DELETE",
       requestUri: cmnP.encodePath`/v2/email/identities/${params["EmailIdentity"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async deleteEmailIdentityPolicy(
@@ -407,12 +371,10 @@ export default class SESV2 {
       method: "DELETE",
       requestUri: cmnP.encodePath`/v2/email/identities/${params["EmailIdentity"]}/policies/${params["PolicyName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async deleteEmailTemplate(
@@ -425,12 +387,10 @@ export default class SESV2 {
       method: "DELETE",
       requestUri: cmnP.encodePath`/v2/email/templates/${params["TemplateName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async deleteSuppressedDestination(
@@ -443,12 +403,10 @@ export default class SESV2 {
       method: "DELETE",
       requestUri: cmnP.encodePath`/v2/email/suppression/addresses/${params["EmailAddress"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async getAccount(
@@ -461,20 +419,18 @@ export default class SESV2 {
       method: "GET",
       requestUri: "/v2/email/account",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "DedicatedIpAutoWarmupEnabled": "b",
-          "EnforcementStatus": "s",
-          "ProductionAccessEnabled": "b",
-          "SendQuota": toSendQuota,
-          "SendingEnabled": "b",
-          "SuppressionAttributes": toSuppressionAttributes,
-          "Details": toAccountDetails,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "DedicatedIpAutoWarmupEnabled": "b",
+        "EnforcementStatus": "s",
+        "ProductionAccessEnabled": "b",
+        "SendQuota": toSendQuota,
+        "SendingEnabled": "b",
+        "SuppressionAttributes": toSuppressionAttributes,
+        "Details": toAccountDetails,
+      },
+    }, await resp.json());
   }
 
   async getBlacklistReports(
@@ -490,14 +446,12 @@ export default class SESV2 {
       method: "GET",
       requestUri: "/v2/email/deliverability-dashboard/blacklist-report",
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "BlacklistReport": x => jsonP.readMap(String, l => Array.isArray(l) ? l.map(toBlacklistEntry) : [], x),
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "BlacklistReport": x => jsonP.readMap(String, l => Array.isArray(l) ? l.map(toBlacklistEntry) : [], x),
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async getConfigurationSet(
@@ -510,20 +464,18 @@ export default class SESV2 {
       method: "GET",
       requestUri: cmnP.encodePath`/v2/email/configuration-sets/${params["ConfigurationSetName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ConfigurationSetName": "s",
-          "TrackingOptions": toTrackingOptions,
-          "DeliveryOptions": toDeliveryOptions,
-          "ReputationOptions": toReputationOptions,
-          "SendingOptions": toSendingOptions,
-          "Tags": [toTag],
-          "SuppressionOptions": toSuppressionOptions,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ConfigurationSetName": "s",
+        "TrackingOptions": toTrackingOptions,
+        "DeliveryOptions": toDeliveryOptions,
+        "ReputationOptions": toReputationOptions,
+        "SendingOptions": toSendingOptions,
+        "Tags": [toTag],
+        "SuppressionOptions": toSuppressionOptions,
+      },
+    }, await resp.json());
   }
 
   async getConfigurationSetEventDestinations(
@@ -536,14 +488,12 @@ export default class SESV2 {
       method: "GET",
       requestUri: cmnP.encodePath`/v2/email/configuration-sets/${params["ConfigurationSetName"]}/event-destinations`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "EventDestinations": [toEventDestination],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "EventDestinations": [toEventDestination],
+      },
+    }, await resp.json());
   }
 
   async getContact(
@@ -556,21 +506,19 @@ export default class SESV2 {
       method: "GET",
       requestUri: cmnP.encodePath`/v2/email/contact-lists/${params["ContactListName"]}/contacts/${params["EmailAddress"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ContactListName": "s",
-          "EmailAddress": "s",
-          "TopicPreferences": [toTopicPreference],
-          "TopicDefaultPreferences": [toTopicPreference],
-          "UnsubscribeAll": "b",
-          "AttributesData": "s",
-          "CreatedTimestamp": "d",
-          "LastUpdatedTimestamp": "d",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ContactListName": "s",
+        "EmailAddress": "s",
+        "TopicPreferences": [toTopicPreference],
+        "TopicDefaultPreferences": [toTopicPreference],
+        "UnsubscribeAll": "b",
+        "AttributesData": "s",
+        "CreatedTimestamp": "d",
+        "LastUpdatedTimestamp": "d",
+      },
+    }, await resp.json());
   }
 
   async getContactList(
@@ -583,19 +531,17 @@ export default class SESV2 {
       method: "GET",
       requestUri: cmnP.encodePath`/v2/email/contact-lists/${params["ContactListName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ContactListName": "s",
-          "Topics": [toTopic],
-          "Description": "s",
-          "CreatedTimestamp": "d",
-          "LastUpdatedTimestamp": "d",
-          "Tags": [toTag],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ContactListName": "s",
+        "Topics": [toTopic],
+        "Description": "s",
+        "CreatedTimestamp": "d",
+        "LastUpdatedTimestamp": "d",
+        "Tags": [toTag],
+      },
+    }, await resp.json());
   }
 
   async getCustomVerificationEmailTemplate(
@@ -608,19 +554,17 @@ export default class SESV2 {
       method: "GET",
       requestUri: cmnP.encodePath`/v2/email/custom-verification-email-templates/${params["TemplateName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "TemplateName": "s",
-          "FromEmailAddress": "s",
-          "TemplateSubject": "s",
-          "TemplateContent": "s",
-          "SuccessRedirectionURL": "s",
-          "FailureRedirectionURL": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "TemplateName": "s",
+        "FromEmailAddress": "s",
+        "TemplateSubject": "s",
+        "TemplateContent": "s",
+        "SuccessRedirectionURL": "s",
+        "FailureRedirectionURL": "s",
+      },
+    }, await resp.json());
   }
 
   async getDedicatedIp(
@@ -633,14 +577,12 @@ export default class SESV2 {
       method: "GET",
       requestUri: cmnP.encodePath`/v2/email/dedicated-ips/${params["Ip"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "DedicatedIp": toDedicatedIp,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "DedicatedIp": toDedicatedIp,
+      },
+    }, await resp.json());
   }
 
   async getDedicatedIps(
@@ -656,15 +598,13 @@ export default class SESV2 {
       method: "GET",
       requestUri: "/v2/email/dedicated-ips",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "DedicatedIps": [toDedicatedIp],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "DedicatedIps": [toDedicatedIp],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async getDeliverabilityDashboardOptions(
@@ -677,19 +617,17 @@ export default class SESV2 {
       method: "GET",
       requestUri: "/v2/email/deliverability-dashboard",
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "DashboardEnabled": "b",
-        },
-        optional: {
-          "SubscriptionExpiryDate": "d",
-          "AccountStatus": (x: jsonP.JSONValue) => cmnP.readEnum<DeliverabilityDashboardAccountStatus>(x),
-          "ActiveSubscribedDomains": [toDomainDeliverabilityTrackingOption],
-          "PendingExpirationSubscribedDomains": [toDomainDeliverabilityTrackingOption],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "DashboardEnabled": "b",
+      },
+      optional: {
+        "SubscriptionExpiryDate": "d",
+        "AccountStatus": (x: jsonP.JSONValue) => cmnP.readEnum<DeliverabilityDashboardAccountStatus>(x),
+        "ActiveSubscribedDomains": [toDomainDeliverabilityTrackingOption],
+        "PendingExpirationSubscribedDomains": [toDomainDeliverabilityTrackingOption],
+      },
+    }, await resp.json());
   }
 
   async getDeliverabilityTestReport(
@@ -702,19 +640,17 @@ export default class SESV2 {
       method: "GET",
       requestUri: cmnP.encodePath`/v2/email/deliverability-dashboard/test-reports/${params["ReportId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "DeliverabilityTestReport": toDeliverabilityTestReport,
-          "OverallPlacement": toPlacementStatistics,
-          "IspPlacements": [toIspPlacement],
-        },
-        optional: {
-          "Message": "s",
-          "Tags": [toTag],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "DeliverabilityTestReport": toDeliverabilityTestReport,
+        "OverallPlacement": toPlacementStatistics,
+        "IspPlacements": [toIspPlacement],
+      },
+      optional: {
+        "Message": "s",
+        "Tags": [toTag],
+      },
+    }, await resp.json());
   }
 
   async getDomainDeliverabilityCampaign(
@@ -727,14 +663,12 @@ export default class SESV2 {
       method: "GET",
       requestUri: cmnP.encodePath`/v2/email/deliverability-dashboard/campaigns/${params["CampaignId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "DomainDeliverabilityCampaign": toDomainDeliverabilityCampaign,
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "DomainDeliverabilityCampaign": toDomainDeliverabilityCampaign,
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async getDomainStatisticsReport(
@@ -749,15 +683,13 @@ export default class SESV2 {
       method: "GET",
       requestUri: cmnP.encodePath`/v2/email/deliverability-dashboard/statistics-report/${params["Domain"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "OverallVolume": toOverallVolume,
-          "DailyVolumes": [toDailyVolume],
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "OverallVolume": toOverallVolume,
+        "DailyVolumes": [toDailyVolume],
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async getEmailIdentity(
@@ -770,20 +702,18 @@ export default class SESV2 {
       method: "GET",
       requestUri: cmnP.encodePath`/v2/email/identities/${params["EmailIdentity"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "IdentityType": (x: jsonP.JSONValue) => cmnP.readEnum<IdentityType>(x),
-          "FeedbackForwardingStatus": "b",
-          "VerifiedForSendingStatus": "b",
-          "DkimAttributes": toDkimAttributes,
-          "MailFromAttributes": toMailFromAttributes,
-          "Policies": x => jsonP.readMap(String, String, x),
-          "Tags": [toTag],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "IdentityType": (x: jsonP.JSONValue) => cmnP.readEnum<IdentityType>(x),
+        "FeedbackForwardingStatus": "b",
+        "VerifiedForSendingStatus": "b",
+        "DkimAttributes": toDkimAttributes,
+        "MailFromAttributes": toMailFromAttributes,
+        "Policies": x => jsonP.readMap(String, String, x),
+        "Tags": [toTag],
+      },
+    }, await resp.json());
   }
 
   async getEmailIdentityPolicies(
@@ -796,14 +726,12 @@ export default class SESV2 {
       method: "GET",
       requestUri: cmnP.encodePath`/v2/email/identities/${params["EmailIdentity"]}/policies`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Policies": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Policies": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async getEmailTemplate(
@@ -816,15 +744,13 @@ export default class SESV2 {
       method: "GET",
       requestUri: cmnP.encodePath`/v2/email/templates/${params["TemplateName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "TemplateName": "s",
-          "TemplateContent": toEmailTemplateContent,
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "TemplateName": "s",
+        "TemplateContent": toEmailTemplateContent,
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async getImportJob(
@@ -837,22 +763,20 @@ export default class SESV2 {
       method: "GET",
       requestUri: cmnP.encodePath`/v2/email/import-jobs/${params["JobId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "JobId": "s",
-          "ImportDestination": toImportDestination,
-          "ImportDataSource": toImportDataSource,
-          "FailureInfo": toFailureInfo,
-          "JobStatus": (x: jsonP.JSONValue) => cmnP.readEnum<JobStatus>(x),
-          "CreatedTimestamp": "d",
-          "CompletedTimestamp": "d",
-          "ProcessedRecordsCount": "n",
-          "FailedRecordsCount": "n",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "JobId": "s",
+        "ImportDestination": toImportDestination,
+        "ImportDataSource": toImportDataSource,
+        "FailureInfo": toFailureInfo,
+        "JobStatus": (x: jsonP.JSONValue) => cmnP.readEnum<JobStatus>(x),
+        "CreatedTimestamp": "d",
+        "CompletedTimestamp": "d",
+        "ProcessedRecordsCount": "n",
+        "FailedRecordsCount": "n",
+      },
+    }, await resp.json());
   }
 
   async getSuppressedDestination(
@@ -865,14 +789,12 @@ export default class SESV2 {
       method: "GET",
       requestUri: cmnP.encodePath`/v2/email/suppression/addresses/${params["EmailAddress"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "SuppressedDestination": toSuppressedDestination,
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "SuppressedDestination": toSuppressedDestination,
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async listConfigurationSets(
@@ -887,15 +809,13 @@ export default class SESV2 {
       method: "GET",
       requestUri: "/v2/email/configuration-sets",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ConfigurationSets": ["s"],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ConfigurationSets": ["s"],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listContactLists(
@@ -910,41 +830,37 @@ export default class SESV2 {
       method: "GET",
       requestUri: "/v2/email/contact-lists",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ContactLists": [toContactList],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ContactLists": [toContactList],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listContacts(
     {abortSignal, ...params}: RequestConfig & ListContactsRequest,
   ): Promise<ListContactsResponse> {
     const query = new URLSearchParams;
+    const body: jsonP.JSONObject = {
+      Filter: fromListContactsFilter(params["Filter"]),
+    };
     if (params["PageSize"] != null) query.set("PageSize", params["PageSize"]?.toString() ?? "");
     if (params["NextToken"] != null) query.set("NextToken", params["NextToken"]?.toString() ?? "");
-    const body: jsonP.JSONObject = params ? {
-      Filter: fromListContactsFilter(params["Filter"]),
-    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, query, body,
       action: "ListContacts",
       method: "GET",
       requestUri: cmnP.encodePath`/v2/email/contact-lists/${params["ContactListName"]}/contacts`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Contacts": [toContact],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Contacts": [toContact],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listCustomVerificationEmailTemplates(
@@ -959,15 +875,13 @@ export default class SESV2 {
       method: "GET",
       requestUri: "/v2/email/custom-verification-email-templates",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "CustomVerificationEmailTemplates": [toCustomVerificationEmailTemplateMetadata],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "CustomVerificationEmailTemplates": [toCustomVerificationEmailTemplateMetadata],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listDedicatedIpPools(
@@ -982,15 +896,13 @@ export default class SESV2 {
       method: "GET",
       requestUri: "/v2/email/dedicated-ip-pools",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "DedicatedIpPools": ["s"],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "DedicatedIpPools": ["s"],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listDeliverabilityTestReports(
@@ -1005,16 +917,14 @@ export default class SESV2 {
       method: "GET",
       requestUri: "/v2/email/deliverability-dashboard/test-reports",
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "DeliverabilityTestReports": [toDeliverabilityTestReport],
-        },
-        optional: {
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "DeliverabilityTestReports": [toDeliverabilityTestReport],
+      },
+      optional: {
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listDomainDeliverabilityCampaigns(
@@ -1031,16 +941,14 @@ export default class SESV2 {
       method: "GET",
       requestUri: cmnP.encodePath`/v2/email/deliverability-dashboard/domains/${params["SubscribedDomain"]}/campaigns`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "DomainDeliverabilityCampaigns": [toDomainDeliverabilityCampaign],
-        },
-        optional: {
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "DomainDeliverabilityCampaigns": [toDomainDeliverabilityCampaign],
+      },
+      optional: {
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listEmailIdentities(
@@ -1055,15 +963,13 @@ export default class SESV2 {
       method: "GET",
       requestUri: "/v2/email/identities",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "EmailIdentities": [toIdentityInfo],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "EmailIdentities": [toIdentityInfo],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listEmailTemplates(
@@ -1078,41 +984,37 @@ export default class SESV2 {
       method: "GET",
       requestUri: "/v2/email/templates",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "TemplatesMetadata": [toEmailTemplateMetadata],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "TemplatesMetadata": [toEmailTemplateMetadata],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listImportJobs(
     {abortSignal, ...params}: RequestConfig & ListImportJobsRequest = {},
   ): Promise<ListImportJobsResponse> {
     const query = new URLSearchParams;
+    const body: jsonP.JSONObject = {
+      ImportDestinationType: params["ImportDestinationType"],
+    };
     if (params["NextToken"] != null) query.set("NextToken", params["NextToken"]?.toString() ?? "");
     if (params["PageSize"] != null) query.set("PageSize", params["PageSize"]?.toString() ?? "");
-    const body: jsonP.JSONObject = params ? {
-      ImportDestinationType: params["ImportDestinationType"],
-    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, query, body,
       action: "ListImportJobs",
       method: "GET",
       requestUri: "/v2/email/import-jobs",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ImportJobs": [toImportJobSummary],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ImportJobs": [toImportJobSummary],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listSuppressedDestinations(
@@ -1132,15 +1034,13 @@ export default class SESV2 {
       method: "GET",
       requestUri: "/v2/email/suppression/addresses",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "SuppressedDestinationSummaries": [toSuppressedDestinationSummary],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "SuppressedDestinationSummaries": [toSuppressedDestinationSummary],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listTagsForResource(
@@ -1154,372 +1054,336 @@ export default class SESV2 {
       method: "GET",
       requestUri: "/v2/email/tags",
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "Tags": [toTag],
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "Tags": [toTag],
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async putAccountDedicatedIpWarmupAttributes(
     {abortSignal, ...params}: RequestConfig & PutAccountDedicatedIpWarmupAttributesRequest = {},
   ): Promise<PutAccountDedicatedIpWarmupAttributesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AutoWarmupEnabled: params["AutoWarmupEnabled"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutAccountDedicatedIpWarmupAttributes",
       method: "PUT",
       requestUri: "/v2/email/account/dedicated-ips/warmup",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async putAccountDetails(
     {abortSignal, ...params}: RequestConfig & PutAccountDetailsRequest,
   ): Promise<PutAccountDetailsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       MailType: params["MailType"],
       WebsiteURL: params["WebsiteURL"],
       ContactLanguage: params["ContactLanguage"],
       UseCaseDescription: params["UseCaseDescription"],
       AdditionalContactEmailAddresses: params["AdditionalContactEmailAddresses"],
       ProductionAccessEnabled: params["ProductionAccessEnabled"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutAccountDetails",
       requestUri: "/v2/email/account/details",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async putAccountSendingAttributes(
     {abortSignal, ...params}: RequestConfig & PutAccountSendingAttributesRequest = {},
   ): Promise<PutAccountSendingAttributesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       SendingEnabled: params["SendingEnabled"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutAccountSendingAttributes",
       method: "PUT",
       requestUri: "/v2/email/account/sending",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async putAccountSuppressionAttributes(
     {abortSignal, ...params}: RequestConfig & PutAccountSuppressionAttributesRequest = {},
   ): Promise<PutAccountSuppressionAttributesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       SuppressedReasons: params["SuppressedReasons"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutAccountSuppressionAttributes",
       method: "PUT",
       requestUri: "/v2/email/account/suppression",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async putConfigurationSetDeliveryOptions(
     {abortSignal, ...params}: RequestConfig & PutConfigurationSetDeliveryOptionsRequest,
   ): Promise<PutConfigurationSetDeliveryOptionsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TlsPolicy: params["TlsPolicy"],
       SendingPoolName: params["SendingPoolName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutConfigurationSetDeliveryOptions",
       method: "PUT",
       requestUri: cmnP.encodePath`/v2/email/configuration-sets/${params["ConfigurationSetName"]}/delivery-options`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async putConfigurationSetReputationOptions(
     {abortSignal, ...params}: RequestConfig & PutConfigurationSetReputationOptionsRequest,
   ): Promise<PutConfigurationSetReputationOptionsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ReputationMetricsEnabled: params["ReputationMetricsEnabled"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutConfigurationSetReputationOptions",
       method: "PUT",
       requestUri: cmnP.encodePath`/v2/email/configuration-sets/${params["ConfigurationSetName"]}/reputation-options`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async putConfigurationSetSendingOptions(
     {abortSignal, ...params}: RequestConfig & PutConfigurationSetSendingOptionsRequest,
   ): Promise<PutConfigurationSetSendingOptionsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       SendingEnabled: params["SendingEnabled"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutConfigurationSetSendingOptions",
       method: "PUT",
       requestUri: cmnP.encodePath`/v2/email/configuration-sets/${params["ConfigurationSetName"]}/sending`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async putConfigurationSetSuppressionOptions(
     {abortSignal, ...params}: RequestConfig & PutConfigurationSetSuppressionOptionsRequest,
   ): Promise<PutConfigurationSetSuppressionOptionsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       SuppressedReasons: params["SuppressedReasons"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutConfigurationSetSuppressionOptions",
       method: "PUT",
       requestUri: cmnP.encodePath`/v2/email/configuration-sets/${params["ConfigurationSetName"]}/suppression-options`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async putConfigurationSetTrackingOptions(
     {abortSignal, ...params}: RequestConfig & PutConfigurationSetTrackingOptionsRequest,
   ): Promise<PutConfigurationSetTrackingOptionsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CustomRedirectDomain: params["CustomRedirectDomain"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutConfigurationSetTrackingOptions",
       method: "PUT",
       requestUri: cmnP.encodePath`/v2/email/configuration-sets/${params["ConfigurationSetName"]}/tracking-options`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async putDedicatedIpInPool(
     {abortSignal, ...params}: RequestConfig & PutDedicatedIpInPoolRequest,
   ): Promise<PutDedicatedIpInPoolResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DestinationPoolName: params["DestinationPoolName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutDedicatedIpInPool",
       method: "PUT",
       requestUri: cmnP.encodePath`/v2/email/dedicated-ips/${params["Ip"]}/pool`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async putDedicatedIpWarmupAttributes(
     {abortSignal, ...params}: RequestConfig & PutDedicatedIpWarmupAttributesRequest,
   ): Promise<PutDedicatedIpWarmupAttributesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       WarmupPercentage: params["WarmupPercentage"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutDedicatedIpWarmupAttributes",
       method: "PUT",
       requestUri: cmnP.encodePath`/v2/email/dedicated-ips/${params["Ip"]}/warmup`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async putDeliverabilityDashboardOption(
     {abortSignal, ...params}: RequestConfig & PutDeliverabilityDashboardOptionRequest,
   ): Promise<PutDeliverabilityDashboardOptionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DashboardEnabled: params["DashboardEnabled"],
       SubscribedDomains: params["SubscribedDomains"]?.map(x => fromDomainDeliverabilityTrackingOption(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutDeliverabilityDashboardOption",
       method: "PUT",
       requestUri: "/v2/email/deliverability-dashboard",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async putEmailIdentityDkimAttributes(
     {abortSignal, ...params}: RequestConfig & PutEmailIdentityDkimAttributesRequest,
   ): Promise<PutEmailIdentityDkimAttributesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       SigningEnabled: params["SigningEnabled"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutEmailIdentityDkimAttributes",
       method: "PUT",
       requestUri: cmnP.encodePath`/v2/email/identities/${params["EmailIdentity"]}/dkim`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async putEmailIdentityDkimSigningAttributes(
     {abortSignal, ...params}: RequestConfig & PutEmailIdentityDkimSigningAttributesRequest,
   ): Promise<PutEmailIdentityDkimSigningAttributesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       SigningAttributesOrigin: params["SigningAttributesOrigin"],
       SigningAttributes: fromDkimSigningAttributes(params["SigningAttributes"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutEmailIdentityDkimSigningAttributes",
       method: "PUT",
       requestUri: cmnP.encodePath`/v1/email/identities/${params["EmailIdentity"]}/dkim/signing`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "DkimStatus": (x: jsonP.JSONValue) => cmnP.readEnum<DkimStatus>(x),
-          "DkimTokens": ["s"],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "DkimStatus": (x: jsonP.JSONValue) => cmnP.readEnum<DkimStatus>(x),
+        "DkimTokens": ["s"],
+      },
+    }, await resp.json());
   }
 
   async putEmailIdentityFeedbackAttributes(
     {abortSignal, ...params}: RequestConfig & PutEmailIdentityFeedbackAttributesRequest,
   ): Promise<PutEmailIdentityFeedbackAttributesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       EmailForwardingEnabled: params["EmailForwardingEnabled"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutEmailIdentityFeedbackAttributes",
       method: "PUT",
       requestUri: cmnP.encodePath`/v2/email/identities/${params["EmailIdentity"]}/feedback`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async putEmailIdentityMailFromAttributes(
     {abortSignal, ...params}: RequestConfig & PutEmailIdentityMailFromAttributesRequest,
   ): Promise<PutEmailIdentityMailFromAttributesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       MailFromDomain: params["MailFromDomain"],
       BehaviorOnMxFailure: params["BehaviorOnMxFailure"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutEmailIdentityMailFromAttributes",
       method: "PUT",
       requestUri: cmnP.encodePath`/v2/email/identities/${params["EmailIdentity"]}/mail-from`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async putSuppressedDestination(
     {abortSignal, ...params}: RequestConfig & PutSuppressedDestinationRequest,
   ): Promise<PutSuppressedDestinationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       EmailAddress: params["EmailAddress"],
       Reason: params["Reason"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutSuppressedDestination",
       method: "PUT",
       requestUri: "/v2/email/suppression/addresses",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async sendBulkEmail(
     {abortSignal, ...params}: RequestConfig & SendBulkEmailRequest,
   ): Promise<SendBulkEmailResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       FromEmailAddress: params["FromEmailAddress"],
       FromEmailAddressIdentityArn: params["FromEmailAddressIdentityArn"],
       ReplyToAddresses: params["ReplyToAddresses"],
@@ -1529,49 +1393,45 @@ export default class SESV2 {
       DefaultContent: fromBulkEmailContent(params["DefaultContent"]),
       BulkEmailEntries: params["BulkEmailEntries"]?.map(x => fromBulkEmailEntry(x)),
       ConfigurationSetName: params["ConfigurationSetName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SendBulkEmail",
       requestUri: "/v2/email/outbound-bulk-emails",
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "BulkEmailEntryResults": [toBulkEmailEntryResult],
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "BulkEmailEntryResults": [toBulkEmailEntryResult],
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async sendCustomVerificationEmail(
     {abortSignal, ...params}: RequestConfig & SendCustomVerificationEmailRequest,
   ): Promise<SendCustomVerificationEmailResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       EmailAddress: params["EmailAddress"],
       TemplateName: params["TemplateName"],
       ConfigurationSetName: params["ConfigurationSetName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SendCustomVerificationEmail",
       requestUri: "/v2/email/outbound-custom-verification-emails",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "MessageId": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "MessageId": "s",
+      },
+    }, await resp.json());
   }
 
   async sendEmail(
     {abortSignal, ...params}: RequestConfig & SendEmailRequest,
   ): Promise<SendEmailResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       FromEmailAddress: params["FromEmailAddress"],
       FromEmailAddressIdentityArn: params["FromEmailAddressIdentityArn"],
       Destination: fromDestination(params["Destination"]),
@@ -1582,61 +1442,55 @@ export default class SESV2 {
       EmailTags: params["EmailTags"]?.map(x => fromMessageTag(x)),
       ConfigurationSetName: params["ConfigurationSetName"],
       ListManagementOptions: fromListManagementOptions(params["ListManagementOptions"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SendEmail",
       requestUri: "/v2/email/outbound-emails",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "MessageId": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "MessageId": "s",
+      },
+    }, await resp.json());
   }
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
       requestUri: "/v2/email/tags",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async testRenderEmailTemplate(
     {abortSignal, ...params}: RequestConfig & TestRenderEmailTemplateRequest,
   ): Promise<TestRenderEmailTemplateResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TemplateData: params["TemplateData"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TestRenderEmailTemplate",
       requestUri: cmnP.encodePath`/v2/email/templates/${params["TemplateName"]}/render`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "RenderedTemplate": "s",
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "RenderedTemplate": "s",
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async untagResource(
@@ -1653,139 +1507,125 @@ export default class SESV2 {
       method: "DELETE",
       requestUri: "/v2/email/tags",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async updateConfigurationSetEventDestination(
     {abortSignal, ...params}: RequestConfig & UpdateConfigurationSetEventDestinationRequest,
   ): Promise<UpdateConfigurationSetEventDestinationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       EventDestination: fromEventDestinationDefinition(params["EventDestination"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateConfigurationSetEventDestination",
       method: "PUT",
       requestUri: cmnP.encodePath`/v2/email/configuration-sets/${params["ConfigurationSetName"]}/event-destinations/${params["EventDestinationName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async updateContact(
     {abortSignal, ...params}: RequestConfig & UpdateContactRequest,
   ): Promise<UpdateContactResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TopicPreferences: params["TopicPreferences"]?.map(x => fromTopicPreference(x)),
       UnsubscribeAll: params["UnsubscribeAll"],
       AttributesData: params["AttributesData"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateContact",
       method: "PUT",
       requestUri: cmnP.encodePath`/v2/email/contact-lists/${params["ContactListName"]}/contacts/${params["EmailAddress"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async updateContactList(
     {abortSignal, ...params}: RequestConfig & UpdateContactListRequest,
   ): Promise<UpdateContactListResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Topics: params["Topics"]?.map(x => fromTopic(x)),
       Description: params["Description"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateContactList",
       method: "PUT",
       requestUri: cmnP.encodePath`/v2/email/contact-lists/${params["ContactListName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async updateCustomVerificationEmailTemplate(
     {abortSignal, ...params}: RequestConfig & UpdateCustomVerificationEmailTemplateRequest,
   ): Promise<UpdateCustomVerificationEmailTemplateResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       FromEmailAddress: params["FromEmailAddress"],
       TemplateSubject: params["TemplateSubject"],
       TemplateContent: params["TemplateContent"],
       SuccessRedirectionURL: params["SuccessRedirectionURL"],
       FailureRedirectionURL: params["FailureRedirectionURL"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateCustomVerificationEmailTemplate",
       method: "PUT",
       requestUri: cmnP.encodePath`/v2/email/custom-verification-email-templates/${params["TemplateName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async updateEmailIdentityPolicy(
     {abortSignal, ...params}: RequestConfig & UpdateEmailIdentityPolicyRequest,
   ): Promise<UpdateEmailIdentityPolicyResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Policy: params["Policy"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateEmailIdentityPolicy",
       method: "PUT",
       requestUri: cmnP.encodePath`/v2/email/identities/${params["EmailIdentity"]}/policies/${params["PolicyName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async updateEmailTemplate(
     {abortSignal, ...params}: RequestConfig & UpdateEmailTemplateRequest,
   ): Promise<UpdateEmailTemplateResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TemplateContent: fromEmailTemplateContent(params["TemplateContent"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateEmailTemplate",
       method: "PUT",
       requestUri: cmnP.encodePath`/v2/email/templates/${params["TemplateName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
 }

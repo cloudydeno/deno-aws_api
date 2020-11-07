@@ -53,26 +53,24 @@ export default class Signer {
       method: "GET",
       requestUri: cmnP.encodePath`/signing-jobs/${params["jobId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "jobId": "s",
-          "source": toSource,
-          "signingMaterial": toSigningMaterial,
-          "platformId": "s",
-          "profileName": "s",
-          "overrides": toSigningPlatformOverrides,
-          "signingParameters": x => jsonP.readMap(String, String, x),
-          "createdAt": "d",
-          "completedAt": "d",
-          "requestedBy": "s",
-          "status": (x: jsonP.JSONValue) => cmnP.readEnum<SigningStatus>(x),
-          "statusReason": "s",
-          "signedObject": toSignedObject,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "jobId": "s",
+        "source": toSource,
+        "signingMaterial": toSigningMaterial,
+        "platformId": "s",
+        "profileName": "s",
+        "overrides": toSigningPlatformOverrides,
+        "signingParameters": x => jsonP.readMap(String, String, x),
+        "createdAt": "d",
+        "completedAt": "d",
+        "requestedBy": "s",
+        "status": (x: jsonP.JSONValue) => cmnP.readEnum<SigningStatus>(x),
+        "statusReason": "s",
+        "signedObject": toSignedObject,
+      },
+    }, await resp.json());
   }
 
   async getSigningPlatform(
@@ -85,21 +83,19 @@ export default class Signer {
       method: "GET",
       requestUri: cmnP.encodePath`/signing-platforms/${params["platformId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "platformId": "s",
-          "displayName": "s",
-          "partner": "s",
-          "target": "s",
-          "category": (x: jsonP.JSONValue) => cmnP.readEnum<Category>(x),
-          "signingConfiguration": toSigningConfiguration,
-          "signingImageFormat": toSigningImageFormat,
-          "maxSizeInMB": "n",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "platformId": "s",
+        "displayName": "s",
+        "partner": "s",
+        "target": "s",
+        "category": (x: jsonP.JSONValue) => cmnP.readEnum<Category>(x),
+        "signingConfiguration": toSigningConfiguration,
+        "signingImageFormat": toSigningImageFormat,
+        "maxSizeInMB": "n",
+      },
+    }, await resp.json());
   }
 
   async getSigningProfile(
@@ -112,21 +108,19 @@ export default class Signer {
       method: "GET",
       requestUri: cmnP.encodePath`/signing-profiles/${params["profileName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "profileName": "s",
-          "signingMaterial": toSigningMaterial,
-          "platformId": "s",
-          "overrides": toSigningPlatformOverrides,
-          "signingParameters": x => jsonP.readMap(String, String, x),
-          "status": (x: jsonP.JSONValue) => cmnP.readEnum<SigningProfileStatus>(x),
-          "arn": "s",
-          "tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "profileName": "s",
+        "signingMaterial": toSigningMaterial,
+        "platformId": "s",
+        "overrides": toSigningPlatformOverrides,
+        "signingParameters": x => jsonP.readMap(String, String, x),
+        "status": (x: jsonP.JSONValue) => cmnP.readEnum<SigningProfileStatus>(x),
+        "arn": "s",
+        "tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async listSigningJobs(
@@ -144,15 +138,13 @@ export default class Signer {
       method: "GET",
       requestUri: "/signing-jobs",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "jobs": [toSigningJob],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "jobs": [toSigningJob],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listSigningPlatforms(
@@ -170,15 +162,13 @@ export default class Signer {
       method: "GET",
       requestUri: "/signing-platforms",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "platforms": [toSigningPlatform],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "platforms": [toSigningPlatform],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listSigningProfiles(
@@ -194,15 +184,13 @@ export default class Signer {
       method: "GET",
       requestUri: "/signing-profiles",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "profiles": [toSigningProfile],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "profiles": [toSigningProfile],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listTagsForResource(
@@ -215,83 +203,75 @@ export default class Signer {
       method: "GET",
       requestUri: cmnP.encodePath`/tags/${params["resourceArn"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async putSigningProfile(
     {abortSignal, ...params}: RequestConfig & PutSigningProfileRequest,
   ): Promise<PutSigningProfileResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       signingMaterial: fromSigningMaterial(params["signingMaterial"]),
       platformId: params["platformId"],
       overrides: fromSigningPlatformOverrides(params["overrides"]),
       signingParameters: params["signingParameters"],
       tags: params["tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutSigningProfile",
       method: "PUT",
       requestUri: cmnP.encodePath`/signing-profiles/${params["profileName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "arn": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "arn": "s",
+      },
+    }, await resp.json());
   }
 
   async startSigningJob(
     {abortSignal, ...params}: RequestConfig & StartSigningJobRequest,
   ): Promise<StartSigningJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       source: fromSource(params["source"]),
       destination: fromDestination(params["destination"]),
       profileName: params["profileName"],
       clientRequestToken: params["clientRequestToken"] ?? generateIdemptToken(),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartSigningJob",
       requestUri: "/signing-jobs",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "jobId": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "jobId": "s",
+      },
+    }, await resp.json());
   }
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       tags: params["tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
       requestUri: cmnP.encodePath`/tags/${params["resourceArn"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async untagResource(
@@ -307,12 +287,10 @@ export default class Signer {
       method: "DELETE",
       requestUri: cmnP.encodePath`/tags/${params["resourceArn"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   // Resource State Waiters
@@ -329,7 +307,7 @@ export default class Signer {
         if (field === "Succeeded") return resp;
         if (field === "Failed") throw new Error(errMessage);
       } catch (err) {
-        if (["ResourceNotFoundException"].includes(err.code)) throw err;
+        if (["ResourceNotFoundException"].includes(err.shortCode)) throw err;
         throw err;
       }
       await new Promise(r => setTimeout(r, 20000));

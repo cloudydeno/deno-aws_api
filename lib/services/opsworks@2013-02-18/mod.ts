@@ -29,10 +29,10 @@ export default class OpsWorks {
   async assignInstance(
     {abortSignal, ...params}: RequestConfig & AssignInstanceRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       InstanceId: params["InstanceId"],
       LayerIds: params["LayerIds"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AssignInstance",
@@ -42,10 +42,10 @@ export default class OpsWorks {
   async assignVolume(
     {abortSignal, ...params}: RequestConfig & AssignVolumeRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       VolumeId: params["VolumeId"],
       InstanceId: params["InstanceId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AssignVolume",
@@ -55,10 +55,10 @@ export default class OpsWorks {
   async associateElasticIp(
     {abortSignal, ...params}: RequestConfig & AssociateElasticIpRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ElasticIp: params["ElasticIp"],
       InstanceId: params["InstanceId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AssociateElasticIp",
@@ -68,10 +68,10 @@ export default class OpsWorks {
   async attachElasticLoadBalancer(
     {abortSignal, ...params}: RequestConfig & AttachElasticLoadBalancerRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ElasticLoadBalancerName: params["ElasticLoadBalancerName"],
       LayerId: params["LayerId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AttachElasticLoadBalancer",
@@ -81,7 +81,7 @@ export default class OpsWorks {
   async cloneStack(
     {abortSignal, ...params}: RequestConfig & CloneStackRequest,
   ): Promise<CloneStackResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       SourceStackId: params["SourceStackId"],
       Name: params["Name"],
       Region: params["Region"],
@@ -104,7 +104,7 @@ export default class OpsWorks {
       CloneAppIds: params["CloneAppIds"],
       DefaultRootDeviceType: params["DefaultRootDeviceType"],
       AgentVersion: params["AgentVersion"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CloneStack",
@@ -120,7 +120,7 @@ export default class OpsWorks {
   async createApp(
     {abortSignal, ...params}: RequestConfig & CreateAppRequest,
   ): Promise<CreateAppResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       StackId: params["StackId"],
       Shortname: params["Shortname"],
       Name: params["Name"],
@@ -133,7 +133,7 @@ export default class OpsWorks {
       SslConfiguration: fromSslConfiguration(params["SslConfiguration"]),
       Attributes: params["Attributes"],
       Environment: params["Environment"]?.map(x => fromEnvironmentVariable(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateApp",
@@ -149,7 +149,7 @@ export default class OpsWorks {
   async createDeployment(
     {abortSignal, ...params}: RequestConfig & CreateDeploymentRequest,
   ): Promise<CreateDeploymentResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       StackId: params["StackId"],
       AppId: params["AppId"],
       InstanceIds: params["InstanceIds"],
@@ -157,7 +157,7 @@ export default class OpsWorks {
       Command: fromDeploymentCommand(params["Command"]),
       Comment: params["Comment"],
       CustomJson: params["CustomJson"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDeployment",
@@ -173,7 +173,7 @@ export default class OpsWorks {
   async createInstance(
     {abortSignal, ...params}: RequestConfig & CreateInstanceRequest,
   ): Promise<CreateInstanceResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       StackId: params["StackId"],
       LayerIds: params["LayerIds"],
       InstanceType: params["InstanceType"],
@@ -192,7 +192,7 @@ export default class OpsWorks {
       EbsOptimized: params["EbsOptimized"],
       AgentVersion: params["AgentVersion"],
       Tenancy: params["Tenancy"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateInstance",
@@ -208,7 +208,7 @@ export default class OpsWorks {
   async createLayer(
     {abortSignal, ...params}: RequestConfig & CreateLayerRequest,
   ): Promise<CreateLayerResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       StackId: params["StackId"],
       Type: params["Type"],
       Name: params["Name"],
@@ -227,7 +227,7 @@ export default class OpsWorks {
       InstallUpdatesOnBoot: params["InstallUpdatesOnBoot"],
       UseEbsOptimizedInstances: params["UseEbsOptimizedInstances"],
       LifecycleEventConfiguration: fromLifecycleEventConfiguration(params["LifecycleEventConfiguration"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateLayer",
@@ -243,7 +243,7 @@ export default class OpsWorks {
   async createStack(
     {abortSignal, ...params}: RequestConfig & CreateStackRequest,
   ): Promise<CreateStackResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       Region: params["Region"],
       VpcId: params["VpcId"],
@@ -263,7 +263,7 @@ export default class OpsWorks {
       DefaultSshKeyName: params["DefaultSshKeyName"],
       DefaultRootDeviceType: params["DefaultRootDeviceType"],
       AgentVersion: params["AgentVersion"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateStack",
@@ -279,12 +279,12 @@ export default class OpsWorks {
   async createUserProfile(
     {abortSignal, ...params}: RequestConfig & CreateUserProfileRequest,
   ): Promise<CreateUserProfileResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       IamUserArn: params["IamUserArn"],
       SshUsername: params["SshUsername"],
       SshPublicKey: params["SshPublicKey"],
       AllowSelfManagement: params["AllowSelfManagement"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateUserProfile",
@@ -300,9 +300,9 @@ export default class OpsWorks {
   async deleteApp(
     {abortSignal, ...params}: RequestConfig & DeleteAppRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AppId: params["AppId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteApp",
@@ -312,11 +312,11 @@ export default class OpsWorks {
   async deleteInstance(
     {abortSignal, ...params}: RequestConfig & DeleteInstanceRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       InstanceId: params["InstanceId"],
       DeleteElasticIp: params["DeleteElasticIp"],
       DeleteVolumes: params["DeleteVolumes"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteInstance",
@@ -326,9 +326,9 @@ export default class OpsWorks {
   async deleteLayer(
     {abortSignal, ...params}: RequestConfig & DeleteLayerRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       LayerId: params["LayerId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteLayer",
@@ -338,9 +338,9 @@ export default class OpsWorks {
   async deleteStack(
     {abortSignal, ...params}: RequestConfig & DeleteStackRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       StackId: params["StackId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteStack",
@@ -350,9 +350,9 @@ export default class OpsWorks {
   async deleteUserProfile(
     {abortSignal, ...params}: RequestConfig & DeleteUserProfileRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       IamUserArn: params["IamUserArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteUserProfile",
@@ -362,9 +362,9 @@ export default class OpsWorks {
   async deregisterEcsCluster(
     {abortSignal, ...params}: RequestConfig & DeregisterEcsClusterRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       EcsClusterArn: params["EcsClusterArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeregisterEcsCluster",
@@ -374,9 +374,9 @@ export default class OpsWorks {
   async deregisterElasticIp(
     {abortSignal, ...params}: RequestConfig & DeregisterElasticIpRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ElasticIp: params["ElasticIp"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeregisterElasticIp",
@@ -386,9 +386,9 @@ export default class OpsWorks {
   async deregisterInstance(
     {abortSignal, ...params}: RequestConfig & DeregisterInstanceRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       InstanceId: params["InstanceId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeregisterInstance",
@@ -398,9 +398,9 @@ export default class OpsWorks {
   async deregisterRdsDbInstance(
     {abortSignal, ...params}: RequestConfig & DeregisterRdsDbInstanceRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       RdsDbInstanceArn: params["RdsDbInstanceArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeregisterRdsDbInstance",
@@ -410,9 +410,9 @@ export default class OpsWorks {
   async deregisterVolume(
     {abortSignal, ...params}: RequestConfig & DeregisterVolumeRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       VolumeId: params["VolumeId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeregisterVolume",
@@ -422,10 +422,10 @@ export default class OpsWorks {
   async describeAgentVersions(
     {abortSignal, ...params}: RequestConfig & DescribeAgentVersionsRequest = {},
   ): Promise<DescribeAgentVersionsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       StackId: params["StackId"],
       ConfigurationManager: fromStackConfigurationManager(params["ConfigurationManager"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeAgentVersions",
@@ -441,10 +441,10 @@ export default class OpsWorks {
   async describeApps(
     {abortSignal, ...params}: RequestConfig & DescribeAppsRequest = {},
   ): Promise<DescribeAppsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       StackId: params["StackId"],
       AppIds: params["AppIds"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeApps",
@@ -460,11 +460,11 @@ export default class OpsWorks {
   async describeCommands(
     {abortSignal, ...params}: RequestConfig & DescribeCommandsRequest = {},
   ): Promise<DescribeCommandsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DeploymentId: params["DeploymentId"],
       InstanceId: params["InstanceId"],
       CommandIds: params["CommandIds"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeCommands",
@@ -480,11 +480,11 @@ export default class OpsWorks {
   async describeDeployments(
     {abortSignal, ...params}: RequestConfig & DescribeDeploymentsRequest = {},
   ): Promise<DescribeDeploymentsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       StackId: params["StackId"],
       AppId: params["AppId"],
       DeploymentIds: params["DeploymentIds"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeDeployments",
@@ -500,12 +500,12 @@ export default class OpsWorks {
   async describeEcsClusters(
     {abortSignal, ...params}: RequestConfig & DescribeEcsClustersRequest = {},
   ): Promise<DescribeEcsClustersResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       EcsClusterArns: params["EcsClusterArns"],
       StackId: params["StackId"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeEcsClusters",
@@ -522,11 +522,11 @@ export default class OpsWorks {
   async describeElasticIps(
     {abortSignal, ...params}: RequestConfig & DescribeElasticIpsRequest = {},
   ): Promise<DescribeElasticIpsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       InstanceId: params["InstanceId"],
       StackId: params["StackId"],
       Ips: params["Ips"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeElasticIps",
@@ -542,10 +542,10 @@ export default class OpsWorks {
   async describeElasticLoadBalancers(
     {abortSignal, ...params}: RequestConfig & DescribeElasticLoadBalancersRequest = {},
   ): Promise<DescribeElasticLoadBalancersResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       StackId: params["StackId"],
       LayerIds: params["LayerIds"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeElasticLoadBalancers",
@@ -561,11 +561,11 @@ export default class OpsWorks {
   async describeInstances(
     {abortSignal, ...params}: RequestConfig & DescribeInstancesRequest = {},
   ): Promise<DescribeInstancesResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       StackId: params["StackId"],
       LayerId: params["LayerId"],
       InstanceIds: params["InstanceIds"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeInstances",
@@ -581,10 +581,10 @@ export default class OpsWorks {
   async describeLayers(
     {abortSignal, ...params}: RequestConfig & DescribeLayersRequest = {},
   ): Promise<DescribeLayersResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       StackId: params["StackId"],
       LayerIds: params["LayerIds"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeLayers",
@@ -600,9 +600,9 @@ export default class OpsWorks {
   async describeLoadBasedAutoScaling(
     {abortSignal, ...params}: RequestConfig & DescribeLoadBasedAutoScalingRequest,
   ): Promise<DescribeLoadBasedAutoScalingResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       LayerIds: params["LayerIds"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeLoadBasedAutoScaling",
@@ -648,10 +648,10 @@ export default class OpsWorks {
   async describePermissions(
     {abortSignal, ...params}: RequestConfig & DescribePermissionsRequest = {},
   ): Promise<DescribePermissionsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       IamUserArn: params["IamUserArn"],
       StackId: params["StackId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribePermissions",
@@ -667,11 +667,11 @@ export default class OpsWorks {
   async describeRaidArrays(
     {abortSignal, ...params}: RequestConfig & DescribeRaidArraysRequest = {},
   ): Promise<DescribeRaidArraysResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       InstanceId: params["InstanceId"],
       StackId: params["StackId"],
       RaidArrayIds: params["RaidArrayIds"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeRaidArrays",
@@ -687,10 +687,10 @@ export default class OpsWorks {
   async describeRdsDbInstances(
     {abortSignal, ...params}: RequestConfig & DescribeRdsDbInstancesRequest,
   ): Promise<DescribeRdsDbInstancesResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       StackId: params["StackId"],
       RdsDbInstanceArns: params["RdsDbInstanceArns"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeRdsDbInstances",
@@ -706,11 +706,11 @@ export default class OpsWorks {
   async describeServiceErrors(
     {abortSignal, ...params}: RequestConfig & DescribeServiceErrorsRequest = {},
   ): Promise<DescribeServiceErrorsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       StackId: params["StackId"],
       InstanceId: params["InstanceId"],
       ServiceErrorIds: params["ServiceErrorIds"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeServiceErrors",
@@ -726,9 +726,9 @@ export default class OpsWorks {
   async describeStackProvisioningParameters(
     {abortSignal, ...params}: RequestConfig & DescribeStackProvisioningParametersRequest,
   ): Promise<DescribeStackProvisioningParametersResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       StackId: params["StackId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeStackProvisioningParameters",
@@ -745,9 +745,9 @@ export default class OpsWorks {
   async describeStackSummary(
     {abortSignal, ...params}: RequestConfig & DescribeStackSummaryRequest,
   ): Promise<DescribeStackSummaryResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       StackId: params["StackId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeStackSummary",
@@ -763,9 +763,9 @@ export default class OpsWorks {
   async describeStacks(
     {abortSignal, ...params}: RequestConfig & DescribeStacksRequest = {},
   ): Promise<DescribeStacksResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       StackIds: params["StackIds"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeStacks",
@@ -781,9 +781,9 @@ export default class OpsWorks {
   async describeTimeBasedAutoScaling(
     {abortSignal, ...params}: RequestConfig & DescribeTimeBasedAutoScalingRequest,
   ): Promise<DescribeTimeBasedAutoScalingResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       InstanceIds: params["InstanceIds"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeTimeBasedAutoScaling",
@@ -799,9 +799,9 @@ export default class OpsWorks {
   async describeUserProfiles(
     {abortSignal, ...params}: RequestConfig & DescribeUserProfilesRequest = {},
   ): Promise<DescribeUserProfilesResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       IamUserArns: params["IamUserArns"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeUserProfiles",
@@ -817,12 +817,12 @@ export default class OpsWorks {
   async describeVolumes(
     {abortSignal, ...params}: RequestConfig & DescribeVolumesRequest = {},
   ): Promise<DescribeVolumesResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       InstanceId: params["InstanceId"],
       StackId: params["StackId"],
       RaidArrayId: params["RaidArrayId"],
       VolumeIds: params["VolumeIds"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeVolumes",
@@ -838,10 +838,10 @@ export default class OpsWorks {
   async detachElasticLoadBalancer(
     {abortSignal, ...params}: RequestConfig & DetachElasticLoadBalancerRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ElasticLoadBalancerName: params["ElasticLoadBalancerName"],
       LayerId: params["LayerId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DetachElasticLoadBalancer",
@@ -851,9 +851,9 @@ export default class OpsWorks {
   async disassociateElasticIp(
     {abortSignal, ...params}: RequestConfig & DisassociateElasticIpRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ElasticIp: params["ElasticIp"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisassociateElasticIp",
@@ -863,9 +863,9 @@ export default class OpsWorks {
   async getHostnameSuggestion(
     {abortSignal, ...params}: RequestConfig & GetHostnameSuggestionRequest,
   ): Promise<GetHostnameSuggestionResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       LayerId: params["LayerId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetHostnameSuggestion",
@@ -882,10 +882,10 @@ export default class OpsWorks {
   async grantAccess(
     {abortSignal, ...params}: RequestConfig & GrantAccessRequest,
   ): Promise<GrantAccessResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       InstanceId: params["InstanceId"],
       ValidForInMinutes: params["ValidForInMinutes"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GrantAccess",
@@ -901,11 +901,11 @@ export default class OpsWorks {
   async listTags(
     {abortSignal, ...params}: RequestConfig & ListTagsRequest,
   ): Promise<ListTagsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTags",
@@ -922,9 +922,9 @@ export default class OpsWorks {
   async rebootInstance(
     {abortSignal, ...params}: RequestConfig & RebootInstanceRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       InstanceId: params["InstanceId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RebootInstance",
@@ -934,10 +934,10 @@ export default class OpsWorks {
   async registerEcsCluster(
     {abortSignal, ...params}: RequestConfig & RegisterEcsClusterRequest,
   ): Promise<RegisterEcsClusterResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       EcsClusterArn: params["EcsClusterArn"],
       StackId: params["StackId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RegisterEcsCluster",
@@ -953,10 +953,10 @@ export default class OpsWorks {
   async registerElasticIp(
     {abortSignal, ...params}: RequestConfig & RegisterElasticIpRequest,
   ): Promise<RegisterElasticIpResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ElasticIp: params["ElasticIp"],
       StackId: params["StackId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RegisterElasticIp",
@@ -972,7 +972,7 @@ export default class OpsWorks {
   async registerInstance(
     {abortSignal, ...params}: RequestConfig & RegisterInstanceRequest,
   ): Promise<RegisterInstanceResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       StackId: params["StackId"],
       Hostname: params["Hostname"],
       PublicIp: params["PublicIp"],
@@ -980,7 +980,7 @@ export default class OpsWorks {
       RsaPublicKey: params["RsaPublicKey"],
       RsaPublicKeyFingerprint: params["RsaPublicKeyFingerprint"],
       InstanceIdentity: fromInstanceIdentity(params["InstanceIdentity"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RegisterInstance",
@@ -996,12 +996,12 @@ export default class OpsWorks {
   async registerRdsDbInstance(
     {abortSignal, ...params}: RequestConfig & RegisterRdsDbInstanceRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       StackId: params["StackId"],
       RdsDbInstanceArn: params["RdsDbInstanceArn"],
       DbUser: params["DbUser"],
       DbPassword: params["DbPassword"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RegisterRdsDbInstance",
@@ -1011,10 +1011,10 @@ export default class OpsWorks {
   async registerVolume(
     {abortSignal, ...params}: RequestConfig & RegisterVolumeRequest,
   ): Promise<RegisterVolumeResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Ec2VolumeId: params["Ec2VolumeId"],
       StackId: params["StackId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RegisterVolume",
@@ -1030,12 +1030,12 @@ export default class OpsWorks {
   async setLoadBasedAutoScaling(
     {abortSignal, ...params}: RequestConfig & SetLoadBasedAutoScalingRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       LayerId: params["LayerId"],
       Enable: params["Enable"],
       UpScaling: fromAutoScalingThresholds(params["UpScaling"]),
       DownScaling: fromAutoScalingThresholds(params["DownScaling"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SetLoadBasedAutoScaling",
@@ -1045,13 +1045,13 @@ export default class OpsWorks {
   async setPermission(
     {abortSignal, ...params}: RequestConfig & SetPermissionRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       StackId: params["StackId"],
       IamUserArn: params["IamUserArn"],
       AllowSsh: params["AllowSsh"],
       AllowSudo: params["AllowSudo"],
       Level: params["Level"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SetPermission",
@@ -1061,10 +1061,10 @@ export default class OpsWorks {
   async setTimeBasedAutoScaling(
     {abortSignal, ...params}: RequestConfig & SetTimeBasedAutoScalingRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       InstanceId: params["InstanceId"],
       AutoScalingSchedule: fromWeeklyAutoScalingSchedule(params["AutoScalingSchedule"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SetTimeBasedAutoScaling",
@@ -1074,9 +1074,9 @@ export default class OpsWorks {
   async startInstance(
     {abortSignal, ...params}: RequestConfig & StartInstanceRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       InstanceId: params["InstanceId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartInstance",
@@ -1086,9 +1086,9 @@ export default class OpsWorks {
   async startStack(
     {abortSignal, ...params}: RequestConfig & StartStackRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       StackId: params["StackId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartStack",
@@ -1098,10 +1098,10 @@ export default class OpsWorks {
   async stopInstance(
     {abortSignal, ...params}: RequestConfig & StopInstanceRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       InstanceId: params["InstanceId"],
       Force: params["Force"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopInstance",
@@ -1111,9 +1111,9 @@ export default class OpsWorks {
   async stopStack(
     {abortSignal, ...params}: RequestConfig & StopStackRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       StackId: params["StackId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopStack",
@@ -1123,10 +1123,10 @@ export default class OpsWorks {
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
       Tags: params["Tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
@@ -1136,9 +1136,9 @@ export default class OpsWorks {
   async unassignInstance(
     {abortSignal, ...params}: RequestConfig & UnassignInstanceRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       InstanceId: params["InstanceId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UnassignInstance",
@@ -1148,9 +1148,9 @@ export default class OpsWorks {
   async unassignVolume(
     {abortSignal, ...params}: RequestConfig & UnassignVolumeRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       VolumeId: params["VolumeId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UnassignVolume",
@@ -1160,10 +1160,10 @@ export default class OpsWorks {
   async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
       TagKeys: params["TagKeys"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResource",
@@ -1173,7 +1173,7 @@ export default class OpsWorks {
   async updateApp(
     {abortSignal, ...params}: RequestConfig & UpdateAppRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AppId: params["AppId"],
       Name: params["Name"],
       Description: params["Description"],
@@ -1185,7 +1185,7 @@ export default class OpsWorks {
       SslConfiguration: fromSslConfiguration(params["SslConfiguration"]),
       Attributes: params["Attributes"],
       Environment: params["Environment"]?.map(x => fromEnvironmentVariable(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateApp",
@@ -1195,10 +1195,10 @@ export default class OpsWorks {
   async updateElasticIp(
     {abortSignal, ...params}: RequestConfig & UpdateElasticIpRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ElasticIp: params["ElasticIp"],
       Name: params["Name"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateElasticIp",
@@ -1208,7 +1208,7 @@ export default class OpsWorks {
   async updateInstance(
     {abortSignal, ...params}: RequestConfig & UpdateInstanceRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       InstanceId: params["InstanceId"],
       LayerIds: params["LayerIds"],
       InstanceType: params["InstanceType"],
@@ -1221,7 +1221,7 @@ export default class OpsWorks {
       InstallUpdatesOnBoot: params["InstallUpdatesOnBoot"],
       EbsOptimized: params["EbsOptimized"],
       AgentVersion: params["AgentVersion"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateInstance",
@@ -1231,7 +1231,7 @@ export default class OpsWorks {
   async updateLayer(
     {abortSignal, ...params}: RequestConfig & UpdateLayerRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       LayerId: params["LayerId"],
       Name: params["Name"],
       Shortname: params["Shortname"],
@@ -1249,7 +1249,7 @@ export default class OpsWorks {
       InstallUpdatesOnBoot: params["InstallUpdatesOnBoot"],
       UseEbsOptimizedInstances: params["UseEbsOptimizedInstances"],
       LifecycleEventConfiguration: fromLifecycleEventConfiguration(params["LifecycleEventConfiguration"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateLayer",
@@ -1259,9 +1259,9 @@ export default class OpsWorks {
   async updateMyUserProfile(
     {abortSignal, ...params}: RequestConfig & UpdateMyUserProfileRequest = {},
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       SshPublicKey: params["SshPublicKey"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateMyUserProfile",
@@ -1271,11 +1271,11 @@ export default class OpsWorks {
   async updateRdsDbInstance(
     {abortSignal, ...params}: RequestConfig & UpdateRdsDbInstanceRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       RdsDbInstanceArn: params["RdsDbInstanceArn"],
       DbUser: params["DbUser"],
       DbPassword: params["DbPassword"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateRdsDbInstance",
@@ -1285,7 +1285,7 @@ export default class OpsWorks {
   async updateStack(
     {abortSignal, ...params}: RequestConfig & UpdateStackRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       StackId: params["StackId"],
       Name: params["Name"],
       Attributes: params["Attributes"],
@@ -1304,7 +1304,7 @@ export default class OpsWorks {
       DefaultRootDeviceType: params["DefaultRootDeviceType"],
       UseOpsworksSecurityGroups: params["UseOpsworksSecurityGroups"],
       AgentVersion: params["AgentVersion"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateStack",
@@ -1314,12 +1314,12 @@ export default class OpsWorks {
   async updateUserProfile(
     {abortSignal, ...params}: RequestConfig & UpdateUserProfileRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       IamUserArn: params["IamUserArn"],
       SshUsername: params["SshUsername"],
       SshPublicKey: params["SshPublicKey"],
       AllowSelfManagement: params["AllowSelfManagement"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateUserProfile",
@@ -1329,11 +1329,11 @@ export default class OpsWorks {
   async updateVolume(
     {abortSignal, ...params}: RequestConfig & UpdateVolumeRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       VolumeId: params["VolumeId"],
       Name: params["Name"],
       MountPoint: params["MountPoint"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateVolume",
@@ -1348,9 +1348,13 @@ export default class OpsWorks {
   ): Promise<DescribeAppsResult> {
     const errMessage = 'ResourceNotReady: Resource is not in the state AppExists';
     for (let i = 0; i < 40; i++) {
-      const resp = await this.describeApps(params);
-      return resp; // for status 200
-      // TODO: if (statusCode == 400) throw new Error(errMessage);
+      try {
+        const resp = await this.describeApps(params);
+        return resp; // for status 200
+      } catch (err) {
+        if (["Http400"].includes(err.shortCode)) throw err;
+        throw err;
+      }
       await new Promise(r => setTimeout(r, 1000));
     }
     throw new Error(errMessage);
@@ -1470,7 +1474,7 @@ export default class OpsWorks {
         if (field?.some(x => x === "setup_failed")) throw new Error(errMessage);
         if (field?.some(x => x === "start_failed")) throw new Error(errMessage);
       } catch (err) {
-        if (["ResourceNotFoundException"].includes(err.code)) return err;
+        if (["ResourceNotFoundException"].includes(err.shortCode)) return err;
         throw err;
       }
       await new Promise(r => setTimeout(r, 15000));

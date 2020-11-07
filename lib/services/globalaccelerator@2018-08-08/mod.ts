@@ -34,9 +34,9 @@ export default class GlobalAccelerator {
   async advertiseByoipCidr(
     {abortSignal, ...params}: RequestConfig & AdvertiseByoipCidrRequest,
   ): Promise<AdvertiseByoipCidrResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Cidr: params["Cidr"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AdvertiseByoipCidr",
@@ -52,14 +52,14 @@ export default class GlobalAccelerator {
   async createAccelerator(
     {abortSignal, ...params}: RequestConfig & CreateAcceleratorRequest,
   ): Promise<CreateAcceleratorResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       IpAddressType: params["IpAddressType"],
       IpAddresses: params["IpAddresses"],
       Enabled: params["Enabled"],
       IdempotencyToken: params["IdempotencyToken"] ?? generateIdemptToken(),
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateAccelerator",
@@ -75,7 +75,7 @@ export default class GlobalAccelerator {
   async createEndpointGroup(
     {abortSignal, ...params}: RequestConfig & CreateEndpointGroupRequest,
   ): Promise<CreateEndpointGroupResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ListenerArn: params["ListenerArn"],
       EndpointGroupRegion: params["EndpointGroupRegion"],
       EndpointConfigurations: params["EndpointConfigurations"]?.map(x => fromEndpointConfiguration(x)),
@@ -87,7 +87,7 @@ export default class GlobalAccelerator {
       ThresholdCount: params["ThresholdCount"],
       IdempotencyToken: params["IdempotencyToken"] ?? generateIdemptToken(),
       PortOverrides: params["PortOverrides"]?.map(x => fromPortOverride(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateEndpointGroup",
@@ -103,13 +103,13 @@ export default class GlobalAccelerator {
   async createListener(
     {abortSignal, ...params}: RequestConfig & CreateListenerRequest,
   ): Promise<CreateListenerResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AcceleratorArn: params["AcceleratorArn"],
       PortRanges: params["PortRanges"]?.map(x => fromPortRange(x)),
       Protocol: params["Protocol"],
       ClientAffinity: params["ClientAffinity"],
       IdempotencyToken: params["IdempotencyToken"] ?? generateIdemptToken(),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateListener",
@@ -125,9 +125,9 @@ export default class GlobalAccelerator {
   async deleteAccelerator(
     {abortSignal, ...params}: RequestConfig & DeleteAcceleratorRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AcceleratorArn: params["AcceleratorArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteAccelerator",
@@ -137,9 +137,9 @@ export default class GlobalAccelerator {
   async deleteEndpointGroup(
     {abortSignal, ...params}: RequestConfig & DeleteEndpointGroupRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       EndpointGroupArn: params["EndpointGroupArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteEndpointGroup",
@@ -149,9 +149,9 @@ export default class GlobalAccelerator {
   async deleteListener(
     {abortSignal, ...params}: RequestConfig & DeleteListenerRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ListenerArn: params["ListenerArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteListener",
@@ -161,9 +161,9 @@ export default class GlobalAccelerator {
   async deprovisionByoipCidr(
     {abortSignal, ...params}: RequestConfig & DeprovisionByoipCidrRequest,
   ): Promise<DeprovisionByoipCidrResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Cidr: params["Cidr"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeprovisionByoipCidr",
@@ -179,9 +179,9 @@ export default class GlobalAccelerator {
   async describeAccelerator(
     {abortSignal, ...params}: RequestConfig & DescribeAcceleratorRequest,
   ): Promise<DescribeAcceleratorResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AcceleratorArn: params["AcceleratorArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeAccelerator",
@@ -197,9 +197,9 @@ export default class GlobalAccelerator {
   async describeAcceleratorAttributes(
     {abortSignal, ...params}: RequestConfig & DescribeAcceleratorAttributesRequest,
   ): Promise<DescribeAcceleratorAttributesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AcceleratorArn: params["AcceleratorArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeAcceleratorAttributes",
@@ -215,9 +215,9 @@ export default class GlobalAccelerator {
   async describeEndpointGroup(
     {abortSignal, ...params}: RequestConfig & DescribeEndpointGroupRequest,
   ): Promise<DescribeEndpointGroupResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       EndpointGroupArn: params["EndpointGroupArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeEndpointGroup",
@@ -233,9 +233,9 @@ export default class GlobalAccelerator {
   async describeListener(
     {abortSignal, ...params}: RequestConfig & DescribeListenerRequest,
   ): Promise<DescribeListenerResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ListenerArn: params["ListenerArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeListener",
@@ -251,10 +251,10 @@ export default class GlobalAccelerator {
   async listAccelerators(
     {abortSignal, ...params}: RequestConfig & ListAcceleratorsRequest = {},
   ): Promise<ListAcceleratorsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListAccelerators",
@@ -271,10 +271,10 @@ export default class GlobalAccelerator {
   async listByoipCidrs(
     {abortSignal, ...params}: RequestConfig & ListByoipCidrsRequest = {},
   ): Promise<ListByoipCidrsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListByoipCidrs",
@@ -291,11 +291,11 @@ export default class GlobalAccelerator {
   async listEndpointGroups(
     {abortSignal, ...params}: RequestConfig & ListEndpointGroupsRequest,
   ): Promise<ListEndpointGroupsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ListenerArn: params["ListenerArn"],
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListEndpointGroups",
@@ -312,11 +312,11 @@ export default class GlobalAccelerator {
   async listListeners(
     {abortSignal, ...params}: RequestConfig & ListListenersRequest,
   ): Promise<ListListenersResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AcceleratorArn: params["AcceleratorArn"],
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListListeners",
@@ -333,9 +333,9 @@ export default class GlobalAccelerator {
   async listTagsForResource(
     {abortSignal, ...params}: RequestConfig & ListTagsForResourceRequest,
   ): Promise<ListTagsForResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForResource",
@@ -351,10 +351,10 @@ export default class GlobalAccelerator {
   async provisionByoipCidr(
     {abortSignal, ...params}: RequestConfig & ProvisionByoipCidrRequest,
   ): Promise<ProvisionByoipCidrResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Cidr: params["Cidr"],
       CidrAuthorizationContext: fromCidrAuthorizationContext(params["CidrAuthorizationContext"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ProvisionByoipCidr",
@@ -370,10 +370,10 @@ export default class GlobalAccelerator {
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
@@ -387,10 +387,10 @@ export default class GlobalAccelerator {
   async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceRequest,
   ): Promise<UntagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
       TagKeys: params["TagKeys"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResource",
@@ -404,12 +404,12 @@ export default class GlobalAccelerator {
   async updateAccelerator(
     {abortSignal, ...params}: RequestConfig & UpdateAcceleratorRequest,
   ): Promise<UpdateAcceleratorResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AcceleratorArn: params["AcceleratorArn"],
       Name: params["Name"],
       IpAddressType: params["IpAddressType"],
       Enabled: params["Enabled"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateAccelerator",
@@ -425,12 +425,12 @@ export default class GlobalAccelerator {
   async updateAcceleratorAttributes(
     {abortSignal, ...params}: RequestConfig & UpdateAcceleratorAttributesRequest,
   ): Promise<UpdateAcceleratorAttributesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AcceleratorArn: params["AcceleratorArn"],
       FlowLogsEnabled: params["FlowLogsEnabled"],
       FlowLogsS3Bucket: params["FlowLogsS3Bucket"],
       FlowLogsS3Prefix: params["FlowLogsS3Prefix"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateAcceleratorAttributes",
@@ -446,7 +446,7 @@ export default class GlobalAccelerator {
   async updateEndpointGroup(
     {abortSignal, ...params}: RequestConfig & UpdateEndpointGroupRequest,
   ): Promise<UpdateEndpointGroupResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       EndpointGroupArn: params["EndpointGroupArn"],
       EndpointConfigurations: params["EndpointConfigurations"]?.map(x => fromEndpointConfiguration(x)),
       TrafficDialPercentage: params["TrafficDialPercentage"],
@@ -456,7 +456,7 @@ export default class GlobalAccelerator {
       HealthCheckIntervalSeconds: params["HealthCheckIntervalSeconds"],
       ThresholdCount: params["ThresholdCount"],
       PortOverrides: params["PortOverrides"]?.map(x => fromPortOverride(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateEndpointGroup",
@@ -472,12 +472,12 @@ export default class GlobalAccelerator {
   async updateListener(
     {abortSignal, ...params}: RequestConfig & UpdateListenerRequest,
   ): Promise<UpdateListenerResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ListenerArn: params["ListenerArn"],
       PortRanges: params["PortRanges"]?.map(x => fromPortRange(x)),
       Protocol: params["Protocol"],
       ClientAffinity: params["ClientAffinity"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateListener",
@@ -493,9 +493,9 @@ export default class GlobalAccelerator {
   async withdrawByoipCidr(
     {abortSignal, ...params}: RequestConfig & WithdrawByoipCidrRequest,
   ): Promise<WithdrawByoipCidrResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Cidr: params["Cidr"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "WithdrawByoipCidr",

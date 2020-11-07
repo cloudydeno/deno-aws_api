@@ -29,9 +29,9 @@ export default class CodeBuild {
   async batchDeleteBuilds(
     {abortSignal, ...params}: RequestConfig & BatchDeleteBuildsInput,
   ): Promise<BatchDeleteBuildsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ids: params["ids"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchDeleteBuilds",
@@ -48,9 +48,9 @@ export default class CodeBuild {
   async batchGetBuildBatches(
     {abortSignal, ...params}: RequestConfig & BatchGetBuildBatchesInput,
   ): Promise<BatchGetBuildBatchesOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ids: params["ids"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchGetBuildBatches",
@@ -67,9 +67,9 @@ export default class CodeBuild {
   async batchGetBuilds(
     {abortSignal, ...params}: RequestConfig & BatchGetBuildsInput,
   ): Promise<BatchGetBuildsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ids: params["ids"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchGetBuilds",
@@ -86,9 +86,9 @@ export default class CodeBuild {
   async batchGetProjects(
     {abortSignal, ...params}: RequestConfig & BatchGetProjectsInput,
   ): Promise<BatchGetProjectsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       names: params["names"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchGetProjects",
@@ -105,9 +105,9 @@ export default class CodeBuild {
   async batchGetReportGroups(
     {abortSignal, ...params}: RequestConfig & BatchGetReportGroupsInput,
   ): Promise<BatchGetReportGroupsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       reportGroupArns: params["reportGroupArns"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchGetReportGroups",
@@ -124,9 +124,9 @@ export default class CodeBuild {
   async batchGetReports(
     {abortSignal, ...params}: RequestConfig & BatchGetReportsInput,
   ): Promise<BatchGetReportsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       reportArns: params["reportArns"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchGetReports",
@@ -143,7 +143,7 @@ export default class CodeBuild {
   async createProject(
     {abortSignal, ...params}: RequestConfig & CreateProjectInput,
   ): Promise<CreateProjectOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       name: params["name"],
       description: params["description"],
       source: fromProjectSource(params["source"]),
@@ -164,7 +164,7 @@ export default class CodeBuild {
       logsConfig: fromLogsConfig(params["logsConfig"]),
       fileSystemLocations: params["fileSystemLocations"]?.map(x => fromProjectFileSystemLocation(x)),
       buildBatchConfig: fromProjectBuildBatchConfig(params["buildBatchConfig"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateProject",
@@ -180,12 +180,12 @@ export default class CodeBuild {
   async createReportGroup(
     {abortSignal, ...params}: RequestConfig & CreateReportGroupInput,
   ): Promise<CreateReportGroupOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       name: params["name"],
       type: params["type"],
       exportConfig: fromReportExportConfig(params["exportConfig"]),
       tags: params["tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateReportGroup",
@@ -201,12 +201,12 @@ export default class CodeBuild {
   async createWebhook(
     {abortSignal, ...params}: RequestConfig & CreateWebhookInput,
   ): Promise<CreateWebhookOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       projectName: params["projectName"],
       branchFilter: params["branchFilter"],
       filterGroups: params["filterGroups"]?.map(x => x?.map(fromWebhookFilter)),
       buildType: params["buildType"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateWebhook",
@@ -222,9 +222,9 @@ export default class CodeBuild {
   async deleteBuildBatch(
     {abortSignal, ...params}: RequestConfig & DeleteBuildBatchInput,
   ): Promise<DeleteBuildBatchOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       id: params["id"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteBuildBatch",
@@ -242,9 +242,9 @@ export default class CodeBuild {
   async deleteProject(
     {abortSignal, ...params}: RequestConfig & DeleteProjectInput,
   ): Promise<DeleteProjectOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       name: params["name"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteProject",
@@ -258,9 +258,9 @@ export default class CodeBuild {
   async deleteReport(
     {abortSignal, ...params}: RequestConfig & DeleteReportInput,
   ): Promise<DeleteReportOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       arn: params["arn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteReport",
@@ -274,10 +274,10 @@ export default class CodeBuild {
   async deleteReportGroup(
     {abortSignal, ...params}: RequestConfig & DeleteReportGroupInput,
   ): Promise<DeleteReportGroupOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       arn: params["arn"],
       deleteReports: params["deleteReports"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteReportGroup",
@@ -291,9 +291,9 @@ export default class CodeBuild {
   async deleteResourcePolicy(
     {abortSignal, ...params}: RequestConfig & DeleteResourcePolicyInput,
   ): Promise<DeleteResourcePolicyOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       resourceArn: params["resourceArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteResourcePolicy",
@@ -307,9 +307,9 @@ export default class CodeBuild {
   async deleteSourceCredentials(
     {abortSignal, ...params}: RequestConfig & DeleteSourceCredentialsInput,
   ): Promise<DeleteSourceCredentialsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       arn: params["arn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteSourceCredentials",
@@ -325,9 +325,9 @@ export default class CodeBuild {
   async deleteWebhook(
     {abortSignal, ...params}: RequestConfig & DeleteWebhookInput,
   ): Promise<DeleteWebhookOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       projectName: params["projectName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteWebhook",
@@ -341,7 +341,7 @@ export default class CodeBuild {
   async describeCodeCoverages(
     {abortSignal, ...params}: RequestConfig & DescribeCodeCoveragesInput,
   ): Promise<DescribeCodeCoveragesOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       reportArn: params["reportArn"],
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
@@ -349,7 +349,7 @@ export default class CodeBuild {
       sortBy: params["sortBy"],
       minLineCoveragePercentage: params["minLineCoveragePercentage"],
       maxLineCoveragePercentage: params["maxLineCoveragePercentage"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeCodeCoverages",
@@ -366,12 +366,12 @@ export default class CodeBuild {
   async describeTestCases(
     {abortSignal, ...params}: RequestConfig & DescribeTestCasesInput,
   ): Promise<DescribeTestCasesOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       reportArn: params["reportArn"],
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
       filter: fromTestCaseFilter(params["filter"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeTestCases",
@@ -388,9 +388,9 @@ export default class CodeBuild {
   async getResourcePolicy(
     {abortSignal, ...params}: RequestConfig & GetResourcePolicyInput,
   ): Promise<GetResourcePolicyOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       resourceArn: params["resourceArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetResourcePolicy",
@@ -406,13 +406,13 @@ export default class CodeBuild {
   async importSourceCredentials(
     {abortSignal, ...params}: RequestConfig & ImportSourceCredentialsInput,
   ): Promise<ImportSourceCredentialsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       username: params["username"],
       token: params["token"],
       serverType: params["serverType"],
       authType: params["authType"],
       shouldOverwrite: params["shouldOverwrite"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ImportSourceCredentials",
@@ -428,9 +428,9 @@ export default class CodeBuild {
   async invalidateProjectCache(
     {abortSignal, ...params}: RequestConfig & InvalidateProjectCacheInput,
   ): Promise<InvalidateProjectCacheOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       projectName: params["projectName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "InvalidateProjectCache",
@@ -444,12 +444,12 @@ export default class CodeBuild {
   async listBuildBatches(
     {abortSignal, ...params}: RequestConfig & ListBuildBatchesInput = {},
   ): Promise<ListBuildBatchesOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       filter: fromBuildBatchFilter(params["filter"]),
       maxResults: params["maxResults"],
       sortOrder: params["sortOrder"],
       nextToken: params["nextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListBuildBatches",
@@ -466,13 +466,13 @@ export default class CodeBuild {
   async listBuildBatchesForProject(
     {abortSignal, ...params}: RequestConfig & ListBuildBatchesForProjectInput = {},
   ): Promise<ListBuildBatchesForProjectOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       projectName: params["projectName"],
       filter: fromBuildBatchFilter(params["filter"]),
       maxResults: params["maxResults"],
       sortOrder: params["sortOrder"],
       nextToken: params["nextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListBuildBatchesForProject",
@@ -489,10 +489,10 @@ export default class CodeBuild {
   async listBuilds(
     {abortSignal, ...params}: RequestConfig & ListBuildsInput = {},
   ): Promise<ListBuildsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       sortOrder: params["sortOrder"],
       nextToken: params["nextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListBuilds",
@@ -509,11 +509,11 @@ export default class CodeBuild {
   async listBuildsForProject(
     {abortSignal, ...params}: RequestConfig & ListBuildsForProjectInput,
   ): Promise<ListBuildsForProjectOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       projectName: params["projectName"],
       sortOrder: params["sortOrder"],
       nextToken: params["nextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListBuildsForProject",
@@ -530,8 +530,8 @@ export default class CodeBuild {
   async listCuratedEnvironmentImages(
     {abortSignal, ...params}: RequestConfig & ListCuratedEnvironmentImagesInput = {},
   ): Promise<ListCuratedEnvironmentImagesOutput> {
-    const body: jsonP.JSONObject = params ? {
-    } : {};
+    const body: jsonP.JSONObject = {
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListCuratedEnvironmentImages",
@@ -547,11 +547,11 @@ export default class CodeBuild {
   async listProjects(
     {abortSignal, ...params}: RequestConfig & ListProjectsInput = {},
   ): Promise<ListProjectsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       sortBy: params["sortBy"],
       sortOrder: params["sortOrder"],
       nextToken: params["nextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListProjects",
@@ -568,12 +568,12 @@ export default class CodeBuild {
   async listReportGroups(
     {abortSignal, ...params}: RequestConfig & ListReportGroupsInput = {},
   ): Promise<ListReportGroupsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       sortOrder: params["sortOrder"],
       sortBy: params["sortBy"],
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListReportGroups",
@@ -590,12 +590,12 @@ export default class CodeBuild {
   async listReports(
     {abortSignal, ...params}: RequestConfig & ListReportsInput = {},
   ): Promise<ListReportsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       sortOrder: params["sortOrder"],
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
       filter: fromReportFilter(params["filter"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListReports",
@@ -612,13 +612,13 @@ export default class CodeBuild {
   async listReportsForReportGroup(
     {abortSignal, ...params}: RequestConfig & ListReportsForReportGroupInput,
   ): Promise<ListReportsForReportGroupOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       reportGroupArn: params["reportGroupArn"],
       nextToken: params["nextToken"],
       sortOrder: params["sortOrder"],
       maxResults: params["maxResults"],
       filter: fromReportFilter(params["filter"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListReportsForReportGroup",
@@ -635,12 +635,12 @@ export default class CodeBuild {
   async listSharedProjects(
     {abortSignal, ...params}: RequestConfig & ListSharedProjectsInput = {},
   ): Promise<ListSharedProjectsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       sortBy: params["sortBy"],
       sortOrder: params["sortOrder"],
       maxResults: params["maxResults"],
       nextToken: params["nextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListSharedProjects",
@@ -657,12 +657,12 @@ export default class CodeBuild {
   async listSharedReportGroups(
     {abortSignal, ...params}: RequestConfig & ListSharedReportGroupsInput = {},
   ): Promise<ListSharedReportGroupsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       sortOrder: params["sortOrder"],
       sortBy: params["sortBy"],
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListSharedReportGroups",
@@ -679,8 +679,8 @@ export default class CodeBuild {
   async listSourceCredentials(
     {abortSignal, ...params}: RequestConfig & ListSourceCredentialsInput = {},
   ): Promise<ListSourceCredentialsOutput> {
-    const body: jsonP.JSONObject = params ? {
-    } : {};
+    const body: jsonP.JSONObject = {
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListSourceCredentials",
@@ -696,10 +696,10 @@ export default class CodeBuild {
   async putResourcePolicy(
     {abortSignal, ...params}: RequestConfig & PutResourcePolicyInput,
   ): Promise<PutResourcePolicyOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       policy: params["policy"],
       resourceArn: params["resourceArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutResourcePolicy",
@@ -715,10 +715,10 @@ export default class CodeBuild {
   async retryBuild(
     {abortSignal, ...params}: RequestConfig & RetryBuildInput = {},
   ): Promise<RetryBuildOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       id: params["id"],
       idempotencyToken: params["idempotencyToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RetryBuild",
@@ -734,11 +734,11 @@ export default class CodeBuild {
   async retryBuildBatch(
     {abortSignal, ...params}: RequestConfig & RetryBuildBatchInput = {},
   ): Promise<RetryBuildBatchOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       id: params["id"],
       idempotencyToken: params["idempotencyToken"],
       retryType: params["retryType"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RetryBuildBatch",
@@ -754,7 +754,7 @@ export default class CodeBuild {
   async startBuild(
     {abortSignal, ...params}: RequestConfig & StartBuildInput,
   ): Promise<StartBuildOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       projectName: params["projectName"],
       secondarySourcesOverride: params["secondarySourcesOverride"]?.map(x => fromProjectSource(x)),
       secondarySourcesVersionOverride: params["secondarySourcesVersionOverride"]?.map(x => fromProjectSourceVersion(x)),
@@ -786,7 +786,7 @@ export default class CodeBuild {
       registryCredentialOverride: fromRegistryCredential(params["registryCredentialOverride"]),
       imagePullCredentialsTypeOverride: params["imagePullCredentialsTypeOverride"],
       debugSessionEnabled: params["debugSessionEnabled"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartBuild",
@@ -802,7 +802,7 @@ export default class CodeBuild {
   async startBuildBatch(
     {abortSignal, ...params}: RequestConfig & StartBuildBatchInput,
   ): Promise<StartBuildBatchOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       projectName: params["projectName"],
       secondarySourcesOverride: params["secondarySourcesOverride"]?.map(x => fromProjectSource(x)),
       secondarySourcesVersionOverride: params["secondarySourcesVersionOverride"]?.map(x => fromProjectSourceVersion(x)),
@@ -833,7 +833,7 @@ export default class CodeBuild {
       registryCredentialOverride: fromRegistryCredential(params["registryCredentialOverride"]),
       imagePullCredentialsTypeOverride: params["imagePullCredentialsTypeOverride"],
       buildBatchConfigOverride: fromProjectBuildBatchConfig(params["buildBatchConfigOverride"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartBuildBatch",
@@ -849,9 +849,9 @@ export default class CodeBuild {
   async stopBuild(
     {abortSignal, ...params}: RequestConfig & StopBuildInput,
   ): Promise<StopBuildOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       id: params["id"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopBuild",
@@ -867,9 +867,9 @@ export default class CodeBuild {
   async stopBuildBatch(
     {abortSignal, ...params}: RequestConfig & StopBuildBatchInput,
   ): Promise<StopBuildBatchOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       id: params["id"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopBuildBatch",
@@ -885,7 +885,7 @@ export default class CodeBuild {
   async updateProject(
     {abortSignal, ...params}: RequestConfig & UpdateProjectInput,
   ): Promise<UpdateProjectOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       name: params["name"],
       description: params["description"],
       source: fromProjectSource(params["source"]),
@@ -906,7 +906,7 @@ export default class CodeBuild {
       logsConfig: fromLogsConfig(params["logsConfig"]),
       fileSystemLocations: params["fileSystemLocations"]?.map(x => fromProjectFileSystemLocation(x)),
       buildBatchConfig: fromProjectBuildBatchConfig(params["buildBatchConfig"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateProject",
@@ -922,11 +922,11 @@ export default class CodeBuild {
   async updateReportGroup(
     {abortSignal, ...params}: RequestConfig & UpdateReportGroupInput,
   ): Promise<UpdateReportGroupOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       arn: params["arn"],
       exportConfig: fromReportExportConfig(params["exportConfig"]),
       tags: params["tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateReportGroup",
@@ -942,13 +942,13 @@ export default class CodeBuild {
   async updateWebhook(
     {abortSignal, ...params}: RequestConfig & UpdateWebhookInput,
   ): Promise<UpdateWebhookOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       projectName: params["projectName"],
       branchFilter: params["branchFilter"],
       rotateSecret: params["rotateSecret"],
       filterGroups: params["filterGroups"]?.map(x => x?.map(fromWebhookFilter)),
       buildType: params["buildType"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateWebhook",

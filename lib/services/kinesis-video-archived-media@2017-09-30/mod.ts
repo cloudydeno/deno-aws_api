@@ -28,11 +28,11 @@ export default class KinesisVideoArchivedMedia {
   async getClip(
     {abortSignal, ...params}: RequestConfig & GetClipInput,
   ): Promise<GetClipOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       StreamName: params["StreamName"],
       StreamARN: params["StreamARN"],
       ClipFragmentSelector: fromClipFragmentSelector(params["ClipFragmentSelector"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetClip",
@@ -47,7 +47,7 @@ export default class KinesisVideoArchivedMedia {
   async getDASHStreamingSessionURL(
     {abortSignal, ...params}: RequestConfig & GetDASHStreamingSessionURLInput = {},
   ): Promise<GetDASHStreamingSessionURLOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       StreamName: params["StreamName"],
       StreamARN: params["StreamARN"],
       PlaybackMode: params["PlaybackMode"],
@@ -56,26 +56,24 @@ export default class KinesisVideoArchivedMedia {
       DASHFragmentSelector: fromDASHFragmentSelector(params["DASHFragmentSelector"]),
       Expires: params["Expires"],
       MaxManifestFragmentResults: params["MaxManifestFragmentResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetDASHStreamingSessionURL",
       requestUri: "/getDASHStreamingSessionURL",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "DASHStreamingSessionURL": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "DASHStreamingSessionURL": "s",
+      },
+    }, await resp.json());
   }
 
   async getHLSStreamingSessionURL(
     {abortSignal, ...params}: RequestConfig & GetHLSStreamingSessionURLInput = {},
   ): Promise<GetHLSStreamingSessionURLOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       StreamName: params["StreamName"],
       StreamARN: params["StreamARN"],
       PlaybackMode: params["PlaybackMode"],
@@ -85,29 +83,27 @@ export default class KinesisVideoArchivedMedia {
       DisplayFragmentTimestamp: params["DisplayFragmentTimestamp"],
       Expires: params["Expires"],
       MaxMediaPlaylistFragmentResults: params["MaxMediaPlaylistFragmentResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetHLSStreamingSessionURL",
       requestUri: "/getHLSStreamingSessionURL",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "HLSStreamingSessionURL": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "HLSStreamingSessionURL": "s",
+      },
+    }, await resp.json());
   }
 
   async getMediaForFragmentList(
     {abortSignal, ...params}: RequestConfig & GetMediaForFragmentListInput,
   ): Promise<GetMediaForFragmentListOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       StreamName: params["StreamName"],
       Fragments: params["Fragments"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetMediaForFragmentList",
@@ -122,26 +118,24 @@ export default class KinesisVideoArchivedMedia {
   async listFragments(
     {abortSignal, ...params}: RequestConfig & ListFragmentsInput,
   ): Promise<ListFragmentsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       StreamName: params["StreamName"],
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
       FragmentSelector: fromFragmentSelector(params["FragmentSelector"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListFragments",
       requestUri: "/listFragments",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Fragments": [toFragment],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Fragments": [toFragment],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
 }

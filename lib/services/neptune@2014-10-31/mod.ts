@@ -1380,7 +1380,7 @@ export default class Neptune {
         if (field?.some(x => x === "rebooting")) throw new Error(errMessage);
         if (field?.some(x => x === "resetting-master-credentials")) throw new Error(errMessage);
       } catch (err) {
-        if (["DBInstanceNotFound"].includes(err.code)) return err;
+        if (["DBInstanceNotFound"].includes(err.shortCode)) return err;
         throw err;
       }
       await new Promise(r => setTimeout(r, 30000));

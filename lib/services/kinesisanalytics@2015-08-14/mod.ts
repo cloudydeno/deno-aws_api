@@ -30,11 +30,11 @@ export default class KinesisAnalytics {
   async addApplicationCloudWatchLoggingOption(
     {abortSignal, ...params}: RequestConfig & AddApplicationCloudWatchLoggingOptionRequest,
   ): Promise<AddApplicationCloudWatchLoggingOptionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ApplicationName: params["ApplicationName"],
       CurrentApplicationVersionId: params["CurrentApplicationVersionId"],
       CloudWatchLoggingOption: fromCloudWatchLoggingOption(params["CloudWatchLoggingOption"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AddApplicationCloudWatchLoggingOption",
@@ -48,11 +48,11 @@ export default class KinesisAnalytics {
   async addApplicationInput(
     {abortSignal, ...params}: RequestConfig & AddApplicationInputRequest,
   ): Promise<AddApplicationInputResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ApplicationName: params["ApplicationName"],
       CurrentApplicationVersionId: params["CurrentApplicationVersionId"],
       Input: fromInput(params["Input"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AddApplicationInput",
@@ -66,12 +66,12 @@ export default class KinesisAnalytics {
   async addApplicationInputProcessingConfiguration(
     {abortSignal, ...params}: RequestConfig & AddApplicationInputProcessingConfigurationRequest,
   ): Promise<AddApplicationInputProcessingConfigurationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ApplicationName: params["ApplicationName"],
       CurrentApplicationVersionId: params["CurrentApplicationVersionId"],
       InputId: params["InputId"],
       InputProcessingConfiguration: fromInputProcessingConfiguration(params["InputProcessingConfiguration"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AddApplicationInputProcessingConfiguration",
@@ -85,11 +85,11 @@ export default class KinesisAnalytics {
   async addApplicationOutput(
     {abortSignal, ...params}: RequestConfig & AddApplicationOutputRequest,
   ): Promise<AddApplicationOutputResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ApplicationName: params["ApplicationName"],
       CurrentApplicationVersionId: params["CurrentApplicationVersionId"],
       Output: fromOutput(params["Output"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AddApplicationOutput",
@@ -103,11 +103,11 @@ export default class KinesisAnalytics {
   async addApplicationReferenceDataSource(
     {abortSignal, ...params}: RequestConfig & AddApplicationReferenceDataSourceRequest,
   ): Promise<AddApplicationReferenceDataSourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ApplicationName: params["ApplicationName"],
       CurrentApplicationVersionId: params["CurrentApplicationVersionId"],
       ReferenceDataSource: fromReferenceDataSource(params["ReferenceDataSource"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AddApplicationReferenceDataSource",
@@ -121,7 +121,7 @@ export default class KinesisAnalytics {
   async createApplication(
     {abortSignal, ...params}: RequestConfig & CreateApplicationRequest,
   ): Promise<CreateApplicationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ApplicationName: params["ApplicationName"],
       ApplicationDescription: params["ApplicationDescription"],
       Inputs: params["Inputs"]?.map(x => fromInput(x)),
@@ -129,7 +129,7 @@ export default class KinesisAnalytics {
       CloudWatchLoggingOptions: params["CloudWatchLoggingOptions"]?.map(x => fromCloudWatchLoggingOption(x)),
       ApplicationCode: params["ApplicationCode"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateApplication",
@@ -145,10 +145,10 @@ export default class KinesisAnalytics {
   async deleteApplication(
     {abortSignal, ...params}: RequestConfig & DeleteApplicationRequest,
   ): Promise<DeleteApplicationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ApplicationName: params["ApplicationName"],
       CreateTimestamp: jsonP.serializeDate_unixTimestamp(params["CreateTimestamp"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteApplication",
@@ -162,11 +162,11 @@ export default class KinesisAnalytics {
   async deleteApplicationCloudWatchLoggingOption(
     {abortSignal, ...params}: RequestConfig & DeleteApplicationCloudWatchLoggingOptionRequest,
   ): Promise<DeleteApplicationCloudWatchLoggingOptionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ApplicationName: params["ApplicationName"],
       CurrentApplicationVersionId: params["CurrentApplicationVersionId"],
       CloudWatchLoggingOptionId: params["CloudWatchLoggingOptionId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteApplicationCloudWatchLoggingOption",
@@ -180,11 +180,11 @@ export default class KinesisAnalytics {
   async deleteApplicationInputProcessingConfiguration(
     {abortSignal, ...params}: RequestConfig & DeleteApplicationInputProcessingConfigurationRequest,
   ): Promise<DeleteApplicationInputProcessingConfigurationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ApplicationName: params["ApplicationName"],
       CurrentApplicationVersionId: params["CurrentApplicationVersionId"],
       InputId: params["InputId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteApplicationInputProcessingConfiguration",
@@ -198,11 +198,11 @@ export default class KinesisAnalytics {
   async deleteApplicationOutput(
     {abortSignal, ...params}: RequestConfig & DeleteApplicationOutputRequest,
   ): Promise<DeleteApplicationOutputResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ApplicationName: params["ApplicationName"],
       CurrentApplicationVersionId: params["CurrentApplicationVersionId"],
       OutputId: params["OutputId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteApplicationOutput",
@@ -216,11 +216,11 @@ export default class KinesisAnalytics {
   async deleteApplicationReferenceDataSource(
     {abortSignal, ...params}: RequestConfig & DeleteApplicationReferenceDataSourceRequest,
   ): Promise<DeleteApplicationReferenceDataSourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ApplicationName: params["ApplicationName"],
       CurrentApplicationVersionId: params["CurrentApplicationVersionId"],
       ReferenceId: params["ReferenceId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteApplicationReferenceDataSource",
@@ -234,9 +234,9 @@ export default class KinesisAnalytics {
   async describeApplication(
     {abortSignal, ...params}: RequestConfig & DescribeApplicationRequest,
   ): Promise<DescribeApplicationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ApplicationName: params["ApplicationName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeApplication",
@@ -252,13 +252,13 @@ export default class KinesisAnalytics {
   async discoverInputSchema(
     {abortSignal, ...params}: RequestConfig & DiscoverInputSchemaRequest = {},
   ): Promise<DiscoverInputSchemaResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceARN: params["ResourceARN"],
       RoleARN: params["RoleARN"],
       InputStartingPositionConfiguration: fromInputStartingPositionConfiguration(params["InputStartingPositionConfiguration"]),
       S3Configuration: fromS3Configuration(params["S3Configuration"]),
       InputProcessingConfiguration: fromInputProcessingConfiguration(params["InputProcessingConfiguration"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DiscoverInputSchema",
@@ -277,10 +277,10 @@ export default class KinesisAnalytics {
   async listApplications(
     {abortSignal, ...params}: RequestConfig & ListApplicationsRequest = {},
   ): Promise<ListApplicationsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Limit: params["Limit"],
       ExclusiveStartApplicationName: params["ExclusiveStartApplicationName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListApplications",
@@ -297,9 +297,9 @@ export default class KinesisAnalytics {
   async listTagsForResource(
     {abortSignal, ...params}: RequestConfig & ListTagsForResourceRequest,
   ): Promise<ListTagsForResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceARN: params["ResourceARN"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForResource",
@@ -315,10 +315,10 @@ export default class KinesisAnalytics {
   async startApplication(
     {abortSignal, ...params}: RequestConfig & StartApplicationRequest,
   ): Promise<StartApplicationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ApplicationName: params["ApplicationName"],
       InputConfigurations: params["InputConfigurations"]?.map(x => fromInputConfiguration(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartApplication",
@@ -332,9 +332,9 @@ export default class KinesisAnalytics {
   async stopApplication(
     {abortSignal, ...params}: RequestConfig & StopApplicationRequest,
   ): Promise<StopApplicationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ApplicationName: params["ApplicationName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopApplication",
@@ -348,10 +348,10 @@ export default class KinesisAnalytics {
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceARN: params["ResourceARN"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
@@ -365,10 +365,10 @@ export default class KinesisAnalytics {
   async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceRequest,
   ): Promise<UntagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceARN: params["ResourceARN"],
       TagKeys: params["TagKeys"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResource",
@@ -382,11 +382,11 @@ export default class KinesisAnalytics {
   async updateApplication(
     {abortSignal, ...params}: RequestConfig & UpdateApplicationRequest,
   ): Promise<UpdateApplicationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ApplicationName: params["ApplicationName"],
       CurrentApplicationVersionId: params["CurrentApplicationVersionId"],
       ApplicationUpdate: fromApplicationUpdate(params["ApplicationUpdate"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateApplication",

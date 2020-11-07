@@ -30,10 +30,10 @@ export default class IoTSecureTunneling {
   async closeTunnel(
     {abortSignal, ...params}: RequestConfig & CloseTunnelRequest,
   ): Promise<CloseTunnelResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       tunnelId: params["tunnelId"],
       delete: params["delete"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CloseTunnel",
@@ -47,9 +47,9 @@ export default class IoTSecureTunneling {
   async describeTunnel(
     {abortSignal, ...params}: RequestConfig & DescribeTunnelRequest,
   ): Promise<DescribeTunnelResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       tunnelId: params["tunnelId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeTunnel",
@@ -65,9 +65,9 @@ export default class IoTSecureTunneling {
   async listTagsForResource(
     {abortSignal, ...params}: RequestConfig & ListTagsForResourceRequest,
   ): Promise<ListTagsForResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       resourceArn: params["resourceArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForResource",
@@ -83,11 +83,11 @@ export default class IoTSecureTunneling {
   async listTunnels(
     {abortSignal, ...params}: RequestConfig & ListTunnelsRequest = {},
   ): Promise<ListTunnelsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       thingName: params["thingName"],
       maxResults: params["maxResults"],
       nextToken: params["nextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTunnels",
@@ -104,12 +104,12 @@ export default class IoTSecureTunneling {
   async openTunnel(
     {abortSignal, ...params}: RequestConfig & OpenTunnelRequest = {},
   ): Promise<OpenTunnelResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       description: params["description"],
       tags: params["tags"]?.map(x => fromTag(x)),
       destinationConfig: fromDestinationConfig(params["destinationConfig"]),
       timeoutConfig: fromTimeoutConfig(params["timeoutConfig"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "OpenTunnel",
@@ -128,10 +128,10 @@ export default class IoTSecureTunneling {
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       resourceArn: params["resourceArn"],
       tags: params["tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
@@ -145,10 +145,10 @@ export default class IoTSecureTunneling {
   async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceRequest,
   ): Promise<UntagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       resourceArn: params["resourceArn"],
       tagKeys: params["tagKeys"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResource",

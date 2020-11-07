@@ -29,10 +29,10 @@ export default class CloudWatchLogs {
   async associateKmsKey(
     {abortSignal, ...params}: RequestConfig & AssociateKmsKeyRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       logGroupName: params["logGroupName"],
       kmsKeyId: params["kmsKeyId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AssociateKmsKey",
@@ -42,9 +42,9 @@ export default class CloudWatchLogs {
   async cancelExportTask(
     {abortSignal, ...params}: RequestConfig & CancelExportTaskRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       taskId: params["taskId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CancelExportTask",
@@ -54,7 +54,7 @@ export default class CloudWatchLogs {
   async createExportTask(
     {abortSignal, ...params}: RequestConfig & CreateExportTaskRequest,
   ): Promise<CreateExportTaskResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       taskName: params["taskName"],
       logGroupName: params["logGroupName"],
       logStreamNamePrefix: params["logStreamNamePrefix"],
@@ -62,7 +62,7 @@ export default class CloudWatchLogs {
       to: params["to"],
       destination: params["destination"],
       destinationPrefix: params["destinationPrefix"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateExportTask",
@@ -78,11 +78,11 @@ export default class CloudWatchLogs {
   async createLogGroup(
     {abortSignal, ...params}: RequestConfig & CreateLogGroupRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       logGroupName: params["logGroupName"],
       kmsKeyId: params["kmsKeyId"],
       tags: params["tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateLogGroup",
@@ -92,10 +92,10 @@ export default class CloudWatchLogs {
   async createLogStream(
     {abortSignal, ...params}: RequestConfig & CreateLogStreamRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       logGroupName: params["logGroupName"],
       logStreamName: params["logStreamName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateLogStream",
@@ -105,9 +105,9 @@ export default class CloudWatchLogs {
   async deleteDestination(
     {abortSignal, ...params}: RequestConfig & DeleteDestinationRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       destinationName: params["destinationName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteDestination",
@@ -117,9 +117,9 @@ export default class CloudWatchLogs {
   async deleteLogGroup(
     {abortSignal, ...params}: RequestConfig & DeleteLogGroupRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       logGroupName: params["logGroupName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteLogGroup",
@@ -129,10 +129,10 @@ export default class CloudWatchLogs {
   async deleteLogStream(
     {abortSignal, ...params}: RequestConfig & DeleteLogStreamRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       logGroupName: params["logGroupName"],
       logStreamName: params["logStreamName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteLogStream",
@@ -142,10 +142,10 @@ export default class CloudWatchLogs {
   async deleteMetricFilter(
     {abortSignal, ...params}: RequestConfig & DeleteMetricFilterRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       logGroupName: params["logGroupName"],
       filterName: params["filterName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteMetricFilter",
@@ -155,9 +155,9 @@ export default class CloudWatchLogs {
   async deleteQueryDefinition(
     {abortSignal, ...params}: RequestConfig & DeleteQueryDefinitionRequest,
   ): Promise<DeleteQueryDefinitionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       queryDefinitionId: params["queryDefinitionId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteQueryDefinition",
@@ -173,9 +173,9 @@ export default class CloudWatchLogs {
   async deleteResourcePolicy(
     {abortSignal, ...params}: RequestConfig & DeleteResourcePolicyRequest = {},
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       policyName: params["policyName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteResourcePolicy",
@@ -185,9 +185,9 @@ export default class CloudWatchLogs {
   async deleteRetentionPolicy(
     {abortSignal, ...params}: RequestConfig & DeleteRetentionPolicyRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       logGroupName: params["logGroupName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteRetentionPolicy",
@@ -197,10 +197,10 @@ export default class CloudWatchLogs {
   async deleteSubscriptionFilter(
     {abortSignal, ...params}: RequestConfig & DeleteSubscriptionFilterRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       logGroupName: params["logGroupName"],
       filterName: params["filterName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteSubscriptionFilter",
@@ -210,11 +210,11 @@ export default class CloudWatchLogs {
   async describeDestinations(
     {abortSignal, ...params}: RequestConfig & DescribeDestinationsRequest = {},
   ): Promise<DescribeDestinationsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DestinationNamePrefix: params["DestinationNamePrefix"],
       nextToken: params["nextToken"],
       limit: params["limit"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeDestinations",
@@ -231,12 +231,12 @@ export default class CloudWatchLogs {
   async describeExportTasks(
     {abortSignal, ...params}: RequestConfig & DescribeExportTasksRequest = {},
   ): Promise<DescribeExportTasksResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       taskId: params["taskId"],
       statusCode: params["statusCode"],
       nextToken: params["nextToken"],
       limit: params["limit"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeExportTasks",
@@ -253,11 +253,11 @@ export default class CloudWatchLogs {
   async describeLogGroups(
     {abortSignal, ...params}: RequestConfig & DescribeLogGroupsRequest = {},
   ): Promise<DescribeLogGroupsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       logGroupNamePrefix: params["logGroupNamePrefix"],
       nextToken: params["nextToken"],
       limit: params["limit"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeLogGroups",
@@ -274,14 +274,14 @@ export default class CloudWatchLogs {
   async describeLogStreams(
     {abortSignal, ...params}: RequestConfig & DescribeLogStreamsRequest,
   ): Promise<DescribeLogStreamsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       logGroupName: params["logGroupName"],
       logStreamNamePrefix: params["logStreamNamePrefix"],
       orderBy: params["orderBy"],
       descending: params["descending"],
       nextToken: params["nextToken"],
       limit: params["limit"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeLogStreams",
@@ -298,14 +298,14 @@ export default class CloudWatchLogs {
   async describeMetricFilters(
     {abortSignal, ...params}: RequestConfig & DescribeMetricFiltersRequest = {},
   ): Promise<DescribeMetricFiltersResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       logGroupName: params["logGroupName"],
       filterNamePrefix: params["filterNamePrefix"],
       nextToken: params["nextToken"],
       limit: params["limit"],
       metricName: params["metricName"],
       metricNamespace: params["metricNamespace"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeMetricFilters",
@@ -322,12 +322,12 @@ export default class CloudWatchLogs {
   async describeQueries(
     {abortSignal, ...params}: RequestConfig & DescribeQueriesRequest = {},
   ): Promise<DescribeQueriesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       logGroupName: params["logGroupName"],
       status: params["status"],
       maxResults: params["maxResults"],
       nextToken: params["nextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeQueries",
@@ -344,11 +344,11 @@ export default class CloudWatchLogs {
   async describeQueryDefinitions(
     {abortSignal, ...params}: RequestConfig & DescribeQueryDefinitionsRequest = {},
   ): Promise<DescribeQueryDefinitionsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       queryDefinitionNamePrefix: params["queryDefinitionNamePrefix"],
       maxResults: params["maxResults"],
       nextToken: params["nextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeQueryDefinitions",
@@ -365,10 +365,10 @@ export default class CloudWatchLogs {
   async describeResourcePolicies(
     {abortSignal, ...params}: RequestConfig & DescribeResourcePoliciesRequest = {},
   ): Promise<DescribeResourcePoliciesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       nextToken: params["nextToken"],
       limit: params["limit"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeResourcePolicies",
@@ -385,12 +385,12 @@ export default class CloudWatchLogs {
   async describeSubscriptionFilters(
     {abortSignal, ...params}: RequestConfig & DescribeSubscriptionFiltersRequest,
   ): Promise<DescribeSubscriptionFiltersResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       logGroupName: params["logGroupName"],
       filterNamePrefix: params["filterNamePrefix"],
       nextToken: params["nextToken"],
       limit: params["limit"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeSubscriptionFilters",
@@ -407,9 +407,9 @@ export default class CloudWatchLogs {
   async disassociateKmsKey(
     {abortSignal, ...params}: RequestConfig & DisassociateKmsKeyRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       logGroupName: params["logGroupName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisassociateKmsKey",
@@ -419,7 +419,7 @@ export default class CloudWatchLogs {
   async filterLogEvents(
     {abortSignal, ...params}: RequestConfig & FilterLogEventsRequest,
   ): Promise<FilterLogEventsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       logGroupName: params["logGroupName"],
       logStreamNames: params["logStreamNames"],
       logStreamNamePrefix: params["logStreamNamePrefix"],
@@ -429,7 +429,7 @@ export default class CloudWatchLogs {
       nextToken: params["nextToken"],
       limit: params["limit"],
       interleaved: params["interleaved"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "FilterLogEvents",
@@ -447,7 +447,7 @@ export default class CloudWatchLogs {
   async getLogEvents(
     {abortSignal, ...params}: RequestConfig & GetLogEventsRequest,
   ): Promise<GetLogEventsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       logGroupName: params["logGroupName"],
       logStreamName: params["logStreamName"],
       startTime: params["startTime"],
@@ -455,7 +455,7 @@ export default class CloudWatchLogs {
       nextToken: params["nextToken"],
       limit: params["limit"],
       startFromHead: params["startFromHead"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetLogEvents",
@@ -473,10 +473,10 @@ export default class CloudWatchLogs {
   async getLogGroupFields(
     {abortSignal, ...params}: RequestConfig & GetLogGroupFieldsRequest,
   ): Promise<GetLogGroupFieldsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       logGroupName: params["logGroupName"],
       time: params["time"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetLogGroupFields",
@@ -492,9 +492,9 @@ export default class CloudWatchLogs {
   async getLogRecord(
     {abortSignal, ...params}: RequestConfig & GetLogRecordRequest,
   ): Promise<GetLogRecordResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       logRecordPointer: params["logRecordPointer"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetLogRecord",
@@ -510,9 +510,9 @@ export default class CloudWatchLogs {
   async getQueryResults(
     {abortSignal, ...params}: RequestConfig & GetQueryResultsRequest,
   ): Promise<GetQueryResultsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       queryId: params["queryId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetQueryResults",
@@ -530,9 +530,9 @@ export default class CloudWatchLogs {
   async listTagsLogGroup(
     {abortSignal, ...params}: RequestConfig & ListTagsLogGroupRequest,
   ): Promise<ListTagsLogGroupResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       logGroupName: params["logGroupName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsLogGroup",
@@ -548,11 +548,11 @@ export default class CloudWatchLogs {
   async putDestination(
     {abortSignal, ...params}: RequestConfig & PutDestinationRequest,
   ): Promise<PutDestinationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       destinationName: params["destinationName"],
       targetArn: params["targetArn"],
       roleArn: params["roleArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutDestination",
@@ -568,10 +568,10 @@ export default class CloudWatchLogs {
   async putDestinationPolicy(
     {abortSignal, ...params}: RequestConfig & PutDestinationPolicyRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       destinationName: params["destinationName"],
       accessPolicy: params["accessPolicy"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutDestinationPolicy",
@@ -581,12 +581,12 @@ export default class CloudWatchLogs {
   async putLogEvents(
     {abortSignal, ...params}: RequestConfig & PutLogEventsRequest,
   ): Promise<PutLogEventsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       logGroupName: params["logGroupName"],
       logStreamName: params["logStreamName"],
       logEvents: params["logEvents"]?.map(x => fromInputLogEvent(x)),
       sequenceToken: params["sequenceToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutLogEvents",
@@ -603,12 +603,12 @@ export default class CloudWatchLogs {
   async putMetricFilter(
     {abortSignal, ...params}: RequestConfig & PutMetricFilterRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       logGroupName: params["logGroupName"],
       filterName: params["filterName"],
       filterPattern: params["filterPattern"],
       metricTransformations: params["metricTransformations"]?.map(x => fromMetricTransformation(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutMetricFilter",
@@ -618,12 +618,12 @@ export default class CloudWatchLogs {
   async putQueryDefinition(
     {abortSignal, ...params}: RequestConfig & PutQueryDefinitionRequest,
   ): Promise<PutQueryDefinitionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       name: params["name"],
       queryDefinitionId: params["queryDefinitionId"],
       logGroupNames: params["logGroupNames"],
       queryString: params["queryString"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutQueryDefinition",
@@ -639,10 +639,10 @@ export default class CloudWatchLogs {
   async putResourcePolicy(
     {abortSignal, ...params}: RequestConfig & PutResourcePolicyRequest = {},
   ): Promise<PutResourcePolicyResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       policyName: params["policyName"],
       policyDocument: params["policyDocument"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutResourcePolicy",
@@ -658,10 +658,10 @@ export default class CloudWatchLogs {
   async putRetentionPolicy(
     {abortSignal, ...params}: RequestConfig & PutRetentionPolicyRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       logGroupName: params["logGroupName"],
       retentionInDays: params["retentionInDays"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutRetentionPolicy",
@@ -671,14 +671,14 @@ export default class CloudWatchLogs {
   async putSubscriptionFilter(
     {abortSignal, ...params}: RequestConfig & PutSubscriptionFilterRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       logGroupName: params["logGroupName"],
       filterName: params["filterName"],
       filterPattern: params["filterPattern"],
       destinationArn: params["destinationArn"],
       roleArn: params["roleArn"],
       distribution: params["distribution"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutSubscriptionFilter",
@@ -688,14 +688,14 @@ export default class CloudWatchLogs {
   async startQuery(
     {abortSignal, ...params}: RequestConfig & StartQueryRequest,
   ): Promise<StartQueryResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       logGroupName: params["logGroupName"],
       logGroupNames: params["logGroupNames"],
       startTime: params["startTime"],
       endTime: params["endTime"],
       queryString: params["queryString"],
       limit: params["limit"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartQuery",
@@ -711,9 +711,9 @@ export default class CloudWatchLogs {
   async stopQuery(
     {abortSignal, ...params}: RequestConfig & StopQueryRequest,
   ): Promise<StopQueryResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       queryId: params["queryId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopQuery",
@@ -729,10 +729,10 @@ export default class CloudWatchLogs {
   async tagLogGroup(
     {abortSignal, ...params}: RequestConfig & TagLogGroupRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       logGroupName: params["logGroupName"],
       tags: params["tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagLogGroup",
@@ -742,10 +742,10 @@ export default class CloudWatchLogs {
   async testMetricFilter(
     {abortSignal, ...params}: RequestConfig & TestMetricFilterRequest,
   ): Promise<TestMetricFilterResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       filterPattern: params["filterPattern"],
       logEventMessages: params["logEventMessages"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TestMetricFilter",
@@ -761,10 +761,10 @@ export default class CloudWatchLogs {
   async untagLogGroup(
     {abortSignal, ...params}: RequestConfig & UntagLogGroupRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       logGroupName: params["logGroupName"],
       tags: params["tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagLogGroup",

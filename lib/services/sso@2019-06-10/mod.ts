@@ -41,14 +41,12 @@ export default class SSO {
       method: "GET",
       requestUri: "/federation/credentials",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "roleCredentials": toRoleCredentials,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "roleCredentials": toRoleCredentials,
+      },
+    }, await resp.json());
   }
 
   async listAccountRoles(
@@ -66,15 +64,13 @@ export default class SSO {
       method: "GET",
       requestUri: "/assignment/roles",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "nextToken": "s",
-          "roleList": [toRoleInfo],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "nextToken": "s",
+        "roleList": [toRoleInfo],
+      },
+    }, await resp.json());
   }
 
   async listAccounts(
@@ -91,15 +87,13 @@ export default class SSO {
       method: "GET",
       requestUri: "/assignment/accounts",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "nextToken": "s",
-          "accountList": [toAccountInfo],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "nextToken": "s",
+        "accountList": [toAccountInfo],
+      },
+    }, await resp.json());
   }
 
   async logout(

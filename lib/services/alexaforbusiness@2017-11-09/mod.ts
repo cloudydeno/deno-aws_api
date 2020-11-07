@@ -33,9 +33,9 @@ export default class AlexaForBusiness {
   async approveSkill(
     {abortSignal, ...params}: RequestConfig & ApproveSkillRequest,
   ): Promise<ApproveSkillResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       SkillId: params["SkillId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ApproveSkill",
@@ -49,10 +49,10 @@ export default class AlexaForBusiness {
   async associateContactWithAddressBook(
     {abortSignal, ...params}: RequestConfig & AssociateContactWithAddressBookRequest,
   ): Promise<AssociateContactWithAddressBookResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ContactArn: params["ContactArn"],
       AddressBookArn: params["AddressBookArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AssociateContactWithAddressBook",
@@ -66,10 +66,10 @@ export default class AlexaForBusiness {
   async associateDeviceWithNetworkProfile(
     {abortSignal, ...params}: RequestConfig & AssociateDeviceWithNetworkProfileRequest,
   ): Promise<AssociateDeviceWithNetworkProfileResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DeviceArn: params["DeviceArn"],
       NetworkProfileArn: params["NetworkProfileArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AssociateDeviceWithNetworkProfile",
@@ -83,10 +83,10 @@ export default class AlexaForBusiness {
   async associateDeviceWithRoom(
     {abortSignal, ...params}: RequestConfig & AssociateDeviceWithRoomRequest = {},
   ): Promise<AssociateDeviceWithRoomResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DeviceArn: params["DeviceArn"],
       RoomArn: params["RoomArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AssociateDeviceWithRoom",
@@ -100,10 +100,10 @@ export default class AlexaForBusiness {
   async associateSkillGroupWithRoom(
     {abortSignal, ...params}: RequestConfig & AssociateSkillGroupWithRoomRequest = {},
   ): Promise<AssociateSkillGroupWithRoomResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       SkillGroupArn: params["SkillGroupArn"],
       RoomArn: params["RoomArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AssociateSkillGroupWithRoom",
@@ -117,10 +117,10 @@ export default class AlexaForBusiness {
   async associateSkillWithSkillGroup(
     {abortSignal, ...params}: RequestConfig & AssociateSkillWithSkillGroupRequest,
   ): Promise<AssociateSkillWithSkillGroupResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       SkillGroupArn: params["SkillGroupArn"],
       SkillId: params["SkillId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AssociateSkillWithSkillGroup",
@@ -134,9 +134,9 @@ export default class AlexaForBusiness {
   async associateSkillWithUsers(
     {abortSignal, ...params}: RequestConfig & AssociateSkillWithUsersRequest,
   ): Promise<AssociateSkillWithUsersResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       SkillId: params["SkillId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AssociateSkillWithUsers",
@@ -150,11 +150,11 @@ export default class AlexaForBusiness {
   async createAddressBook(
     {abortSignal, ...params}: RequestConfig & CreateAddressBookRequest,
   ): Promise<CreateAddressBookResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       Description: params["Description"],
       ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateAddressBook",
@@ -170,7 +170,7 @@ export default class AlexaForBusiness {
   async createBusinessReportSchedule(
     {abortSignal, ...params}: RequestConfig & CreateBusinessReportScheduleRequest,
   ): Promise<CreateBusinessReportScheduleResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ScheduleName: params["ScheduleName"],
       S3BucketName: params["S3BucketName"],
       S3KeyPrefix: params["S3KeyPrefix"],
@@ -179,7 +179,7 @@ export default class AlexaForBusiness {
       Recurrence: fromBusinessReportRecurrence(params["Recurrence"]),
       ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateBusinessReportSchedule",
@@ -195,14 +195,14 @@ export default class AlexaForBusiness {
   async createConferenceProvider(
     {abortSignal, ...params}: RequestConfig & CreateConferenceProviderRequest,
   ): Promise<CreateConferenceProviderResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ConferenceProviderName: params["ConferenceProviderName"],
       ConferenceProviderType: params["ConferenceProviderType"],
       IPDialIn: fromIPDialIn(params["IPDialIn"]),
       PSTNDialIn: fromPSTNDialIn(params["PSTNDialIn"]),
       MeetingSetting: fromMeetingSetting(params["MeetingSetting"]),
       ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateConferenceProvider",
@@ -218,7 +218,7 @@ export default class AlexaForBusiness {
   async createContact(
     {abortSignal, ...params}: RequestConfig & CreateContactRequest,
   ): Promise<CreateContactResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DisplayName: params["DisplayName"],
       FirstName: params["FirstName"],
       LastName: params["LastName"],
@@ -226,7 +226,7 @@ export default class AlexaForBusiness {
       PhoneNumbers: params["PhoneNumbers"]?.map(x => fromPhoneNumber(x)),
       SipAddresses: params["SipAddresses"]?.map(x => fromSipAddress(x)),
       ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateContact",
@@ -242,11 +242,11 @@ export default class AlexaForBusiness {
   async createGatewayGroup(
     {abortSignal, ...params}: RequestConfig & CreateGatewayGroupRequest,
   ): Promise<CreateGatewayGroupResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       Description: params["Description"],
       ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateGatewayGroup",
@@ -262,7 +262,7 @@ export default class AlexaForBusiness {
   async createNetworkProfile(
     {abortSignal, ...params}: RequestConfig & CreateNetworkProfileRequest,
   ): Promise<CreateNetworkProfileResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NetworkProfileName: params["NetworkProfileName"],
       Description: params["Description"],
       Ssid: params["Ssid"],
@@ -273,7 +273,7 @@ export default class AlexaForBusiness {
       CertificateAuthorityArn: params["CertificateAuthorityArn"],
       TrustAnchors: params["TrustAnchors"],
       ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateNetworkProfile",
@@ -289,7 +289,7 @@ export default class AlexaForBusiness {
   async createProfile(
     {abortSignal, ...params}: RequestConfig & CreateProfileRequest,
   ): Promise<CreateProfileResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ProfileName: params["ProfileName"],
       Timezone: params["Timezone"],
       Address: params["Address"],
@@ -303,7 +303,7 @@ export default class AlexaForBusiness {
       PSTNEnabled: params["PSTNEnabled"],
       MeetingRoomConfiguration: fromCreateMeetingRoomConfiguration(params["MeetingRoomConfiguration"]),
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateProfile",
@@ -319,14 +319,14 @@ export default class AlexaForBusiness {
   async createRoom(
     {abortSignal, ...params}: RequestConfig & CreateRoomRequest,
   ): Promise<CreateRoomResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       RoomName: params["RoomName"],
       Description: params["Description"],
       ProfileArn: params["ProfileArn"],
       ProviderCalendarId: params["ProviderCalendarId"],
       ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateRoom",
@@ -342,12 +342,12 @@ export default class AlexaForBusiness {
   async createSkillGroup(
     {abortSignal, ...params}: RequestConfig & CreateSkillGroupRequest,
   ): Promise<CreateSkillGroupResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       SkillGroupName: params["SkillGroupName"],
       Description: params["Description"],
       ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateSkillGroup",
@@ -363,14 +363,14 @@ export default class AlexaForBusiness {
   async createUser(
     {abortSignal, ...params}: RequestConfig & CreateUserRequest,
   ): Promise<CreateUserResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       UserId: params["UserId"],
       FirstName: params["FirstName"],
       LastName: params["LastName"],
       Email: params["Email"],
       ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateUser",
@@ -386,9 +386,9 @@ export default class AlexaForBusiness {
   async deleteAddressBook(
     {abortSignal, ...params}: RequestConfig & DeleteAddressBookRequest,
   ): Promise<DeleteAddressBookResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AddressBookArn: params["AddressBookArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteAddressBook",
@@ -402,9 +402,9 @@ export default class AlexaForBusiness {
   async deleteBusinessReportSchedule(
     {abortSignal, ...params}: RequestConfig & DeleteBusinessReportScheduleRequest,
   ): Promise<DeleteBusinessReportScheduleResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ScheduleArn: params["ScheduleArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteBusinessReportSchedule",
@@ -418,9 +418,9 @@ export default class AlexaForBusiness {
   async deleteConferenceProvider(
     {abortSignal, ...params}: RequestConfig & DeleteConferenceProviderRequest,
   ): Promise<DeleteConferenceProviderResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ConferenceProviderArn: params["ConferenceProviderArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteConferenceProvider",
@@ -434,9 +434,9 @@ export default class AlexaForBusiness {
   async deleteContact(
     {abortSignal, ...params}: RequestConfig & DeleteContactRequest,
   ): Promise<DeleteContactResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ContactArn: params["ContactArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteContact",
@@ -450,9 +450,9 @@ export default class AlexaForBusiness {
   async deleteDevice(
     {abortSignal, ...params}: RequestConfig & DeleteDeviceRequest,
   ): Promise<DeleteDeviceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DeviceArn: params["DeviceArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteDevice",
@@ -466,10 +466,10 @@ export default class AlexaForBusiness {
   async deleteDeviceUsageData(
     {abortSignal, ...params}: RequestConfig & DeleteDeviceUsageDataRequest,
   ): Promise<DeleteDeviceUsageDataResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DeviceArn: params["DeviceArn"],
       DeviceUsageType: params["DeviceUsageType"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteDeviceUsageData",
@@ -483,9 +483,9 @@ export default class AlexaForBusiness {
   async deleteGatewayGroup(
     {abortSignal, ...params}: RequestConfig & DeleteGatewayGroupRequest,
   ): Promise<DeleteGatewayGroupResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       GatewayGroupArn: params["GatewayGroupArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteGatewayGroup",
@@ -499,9 +499,9 @@ export default class AlexaForBusiness {
   async deleteNetworkProfile(
     {abortSignal, ...params}: RequestConfig & DeleteNetworkProfileRequest,
   ): Promise<DeleteNetworkProfileResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NetworkProfileArn: params["NetworkProfileArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteNetworkProfile",
@@ -515,9 +515,9 @@ export default class AlexaForBusiness {
   async deleteProfile(
     {abortSignal, ...params}: RequestConfig & DeleteProfileRequest = {},
   ): Promise<DeleteProfileResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ProfileArn: params["ProfileArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteProfile",
@@ -531,9 +531,9 @@ export default class AlexaForBusiness {
   async deleteRoom(
     {abortSignal, ...params}: RequestConfig & DeleteRoomRequest = {},
   ): Promise<DeleteRoomResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       RoomArn: params["RoomArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteRoom",
@@ -547,11 +547,11 @@ export default class AlexaForBusiness {
   async deleteRoomSkillParameter(
     {abortSignal, ...params}: RequestConfig & DeleteRoomSkillParameterRequest,
   ): Promise<DeleteRoomSkillParameterResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       RoomArn: params["RoomArn"],
       SkillId: params["SkillId"],
       ParameterKey: params["ParameterKey"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteRoomSkillParameter",
@@ -565,10 +565,10 @@ export default class AlexaForBusiness {
   async deleteSkillAuthorization(
     {abortSignal, ...params}: RequestConfig & DeleteSkillAuthorizationRequest,
   ): Promise<DeleteSkillAuthorizationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       SkillId: params["SkillId"],
       RoomArn: params["RoomArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteSkillAuthorization",
@@ -582,9 +582,9 @@ export default class AlexaForBusiness {
   async deleteSkillGroup(
     {abortSignal, ...params}: RequestConfig & DeleteSkillGroupRequest = {},
   ): Promise<DeleteSkillGroupResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       SkillGroupArn: params["SkillGroupArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteSkillGroup",
@@ -598,10 +598,10 @@ export default class AlexaForBusiness {
   async deleteUser(
     {abortSignal, ...params}: RequestConfig & DeleteUserRequest,
   ): Promise<DeleteUserResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       UserArn: params["UserArn"],
       EnrollmentId: params["EnrollmentId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteUser",
@@ -615,10 +615,10 @@ export default class AlexaForBusiness {
   async disassociateContactFromAddressBook(
     {abortSignal, ...params}: RequestConfig & DisassociateContactFromAddressBookRequest,
   ): Promise<DisassociateContactFromAddressBookResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ContactArn: params["ContactArn"],
       AddressBookArn: params["AddressBookArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisassociateContactFromAddressBook",
@@ -632,9 +632,9 @@ export default class AlexaForBusiness {
   async disassociateDeviceFromRoom(
     {abortSignal, ...params}: RequestConfig & DisassociateDeviceFromRoomRequest = {},
   ): Promise<DisassociateDeviceFromRoomResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DeviceArn: params["DeviceArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisassociateDeviceFromRoom",
@@ -648,10 +648,10 @@ export default class AlexaForBusiness {
   async disassociateSkillFromSkillGroup(
     {abortSignal, ...params}: RequestConfig & DisassociateSkillFromSkillGroupRequest,
   ): Promise<DisassociateSkillFromSkillGroupResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       SkillGroupArn: params["SkillGroupArn"],
       SkillId: params["SkillId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisassociateSkillFromSkillGroup",
@@ -665,9 +665,9 @@ export default class AlexaForBusiness {
   async disassociateSkillFromUsers(
     {abortSignal, ...params}: RequestConfig & DisassociateSkillFromUsersRequest,
   ): Promise<DisassociateSkillFromUsersResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       SkillId: params["SkillId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisassociateSkillFromUsers",
@@ -681,10 +681,10 @@ export default class AlexaForBusiness {
   async disassociateSkillGroupFromRoom(
     {abortSignal, ...params}: RequestConfig & DisassociateSkillGroupFromRoomRequest = {},
   ): Promise<DisassociateSkillGroupFromRoomResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       SkillGroupArn: params["SkillGroupArn"],
       RoomArn: params["RoomArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisassociateSkillGroupFromRoom",
@@ -698,9 +698,9 @@ export default class AlexaForBusiness {
   async forgetSmartHomeAppliances(
     {abortSignal, ...params}: RequestConfig & ForgetSmartHomeAppliancesRequest,
   ): Promise<ForgetSmartHomeAppliancesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       RoomArn: params["RoomArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ForgetSmartHomeAppliances",
@@ -714,9 +714,9 @@ export default class AlexaForBusiness {
   async getAddressBook(
     {abortSignal, ...params}: RequestConfig & GetAddressBookRequest,
   ): Promise<GetAddressBookResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AddressBookArn: params["AddressBookArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetAddressBook",
@@ -732,8 +732,8 @@ export default class AlexaForBusiness {
   async getConferencePreference(
     {abortSignal, ...params}: RequestConfig & GetConferencePreferenceRequest = {},
   ): Promise<GetConferencePreferenceResponse> {
-    const body: jsonP.JSONObject = params ? {
-    } : {};
+    const body: jsonP.JSONObject = {
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetConferencePreference",
@@ -749,9 +749,9 @@ export default class AlexaForBusiness {
   async getConferenceProvider(
     {abortSignal, ...params}: RequestConfig & GetConferenceProviderRequest,
   ): Promise<GetConferenceProviderResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ConferenceProviderArn: params["ConferenceProviderArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetConferenceProvider",
@@ -767,9 +767,9 @@ export default class AlexaForBusiness {
   async getContact(
     {abortSignal, ...params}: RequestConfig & GetContactRequest,
   ): Promise<GetContactResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ContactArn: params["ContactArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetContact",
@@ -785,9 +785,9 @@ export default class AlexaForBusiness {
   async getDevice(
     {abortSignal, ...params}: RequestConfig & GetDeviceRequest = {},
   ): Promise<GetDeviceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DeviceArn: params["DeviceArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetDevice",
@@ -803,9 +803,9 @@ export default class AlexaForBusiness {
   async getGateway(
     {abortSignal, ...params}: RequestConfig & GetGatewayRequest,
   ): Promise<GetGatewayResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       GatewayArn: params["GatewayArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetGateway",
@@ -821,9 +821,9 @@ export default class AlexaForBusiness {
   async getGatewayGroup(
     {abortSignal, ...params}: RequestConfig & GetGatewayGroupRequest,
   ): Promise<GetGatewayGroupResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       GatewayGroupArn: params["GatewayGroupArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetGatewayGroup",
@@ -839,8 +839,8 @@ export default class AlexaForBusiness {
   async getInvitationConfiguration(
     {abortSignal, ...params}: RequestConfig & GetInvitationConfigurationRequest = {},
   ): Promise<GetInvitationConfigurationResponse> {
-    const body: jsonP.JSONObject = params ? {
-    } : {};
+    const body: jsonP.JSONObject = {
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetInvitationConfiguration",
@@ -858,9 +858,9 @@ export default class AlexaForBusiness {
   async getNetworkProfile(
     {abortSignal, ...params}: RequestConfig & GetNetworkProfileRequest,
   ): Promise<GetNetworkProfileResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NetworkProfileArn: params["NetworkProfileArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetNetworkProfile",
@@ -876,9 +876,9 @@ export default class AlexaForBusiness {
   async getProfile(
     {abortSignal, ...params}: RequestConfig & GetProfileRequest = {},
   ): Promise<GetProfileResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ProfileArn: params["ProfileArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetProfile",
@@ -894,9 +894,9 @@ export default class AlexaForBusiness {
   async getRoom(
     {abortSignal, ...params}: RequestConfig & GetRoomRequest = {},
   ): Promise<GetRoomResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       RoomArn: params["RoomArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetRoom",
@@ -912,11 +912,11 @@ export default class AlexaForBusiness {
   async getRoomSkillParameter(
     {abortSignal, ...params}: RequestConfig & GetRoomSkillParameterRequest,
   ): Promise<GetRoomSkillParameterResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       RoomArn: params["RoomArn"],
       SkillId: params["SkillId"],
       ParameterKey: params["ParameterKey"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetRoomSkillParameter",
@@ -932,9 +932,9 @@ export default class AlexaForBusiness {
   async getSkillGroup(
     {abortSignal, ...params}: RequestConfig & GetSkillGroupRequest = {},
   ): Promise<GetSkillGroupResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       SkillGroupArn: params["SkillGroupArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetSkillGroup",
@@ -950,10 +950,10 @@ export default class AlexaForBusiness {
   async listBusinessReportSchedules(
     {abortSignal, ...params}: RequestConfig & ListBusinessReportSchedulesRequest = {},
   ): Promise<ListBusinessReportSchedulesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListBusinessReportSchedules",
@@ -970,10 +970,10 @@ export default class AlexaForBusiness {
   async listConferenceProviders(
     {abortSignal, ...params}: RequestConfig & ListConferenceProvidersRequest = {},
   ): Promise<ListConferenceProvidersResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListConferenceProviders",
@@ -990,12 +990,12 @@ export default class AlexaForBusiness {
   async listDeviceEvents(
     {abortSignal, ...params}: RequestConfig & ListDeviceEventsRequest,
   ): Promise<ListDeviceEventsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DeviceArn: params["DeviceArn"],
       EventType: params["EventType"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListDeviceEvents",
@@ -1012,10 +1012,10 @@ export default class AlexaForBusiness {
   async listGatewayGroups(
     {abortSignal, ...params}: RequestConfig & ListGatewayGroupsRequest = {},
   ): Promise<ListGatewayGroupsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListGatewayGroups",
@@ -1032,11 +1032,11 @@ export default class AlexaForBusiness {
   async listGateways(
     {abortSignal, ...params}: RequestConfig & ListGatewaysRequest = {},
   ): Promise<ListGatewaysResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       GatewayGroupArn: params["GatewayGroupArn"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListGateways",
@@ -1053,13 +1053,13 @@ export default class AlexaForBusiness {
   async listSkills(
     {abortSignal, ...params}: RequestConfig & ListSkillsRequest = {},
   ): Promise<ListSkillsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       SkillGroupArn: params["SkillGroupArn"],
       EnablementType: params["EnablementType"],
       SkillType: params["SkillType"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListSkills",
@@ -1076,10 +1076,10 @@ export default class AlexaForBusiness {
   async listSkillsStoreCategories(
     {abortSignal, ...params}: RequestConfig & ListSkillsStoreCategoriesRequest = {},
   ): Promise<ListSkillsStoreCategoriesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListSkillsStoreCategories",
@@ -1096,11 +1096,11 @@ export default class AlexaForBusiness {
   async listSkillsStoreSkillsByCategory(
     {abortSignal, ...params}: RequestConfig & ListSkillsStoreSkillsByCategoryRequest,
   ): Promise<ListSkillsStoreSkillsByCategoryResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CategoryId: params["CategoryId"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListSkillsStoreSkillsByCategory",
@@ -1117,11 +1117,11 @@ export default class AlexaForBusiness {
   async listSmartHomeAppliances(
     {abortSignal, ...params}: RequestConfig & ListSmartHomeAppliancesRequest,
   ): Promise<ListSmartHomeAppliancesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       RoomArn: params["RoomArn"],
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListSmartHomeAppliances",
@@ -1138,11 +1138,11 @@ export default class AlexaForBusiness {
   async listTags(
     {abortSignal, ...params}: RequestConfig & ListTagsRequest,
   ): Promise<ListTagsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Arn: params["Arn"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTags",
@@ -1159,9 +1159,9 @@ export default class AlexaForBusiness {
   async putConferencePreference(
     {abortSignal, ...params}: RequestConfig & PutConferencePreferenceRequest,
   ): Promise<PutConferencePreferenceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ConferencePreference: fromConferencePreference(params["ConferencePreference"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutConferencePreference",
@@ -1175,11 +1175,11 @@ export default class AlexaForBusiness {
   async putInvitationConfiguration(
     {abortSignal, ...params}: RequestConfig & PutInvitationConfigurationRequest,
   ): Promise<PutInvitationConfigurationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       OrganizationName: params["OrganizationName"],
       ContactEmail: params["ContactEmail"],
       PrivateSkillIds: params["PrivateSkillIds"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutInvitationConfiguration",
@@ -1193,11 +1193,11 @@ export default class AlexaForBusiness {
   async putRoomSkillParameter(
     {abortSignal, ...params}: RequestConfig & PutRoomSkillParameterRequest,
   ): Promise<PutRoomSkillParameterResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       RoomArn: params["RoomArn"],
       SkillId: params["SkillId"],
       RoomSkillParameter: fromRoomSkillParameter(params["RoomSkillParameter"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutRoomSkillParameter",
@@ -1211,11 +1211,11 @@ export default class AlexaForBusiness {
   async putSkillAuthorization(
     {abortSignal, ...params}: RequestConfig & PutSkillAuthorizationRequest,
   ): Promise<PutSkillAuthorizationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AuthorizationResult: params["AuthorizationResult"],
       SkillId: params["SkillId"],
       RoomArn: params["RoomArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutSkillAuthorization",
@@ -1229,14 +1229,14 @@ export default class AlexaForBusiness {
   async registerAVSDevice(
     {abortSignal, ...params}: RequestConfig & RegisterAVSDeviceRequest,
   ): Promise<RegisterAVSDeviceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ClientId: params["ClientId"],
       UserCode: params["UserCode"],
       ProductId: params["ProductId"],
       DeviceSerialNumber: params["DeviceSerialNumber"],
       AmazonId: params["AmazonId"],
       RoomArn: params["RoomArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RegisterAVSDevice",
@@ -1252,9 +1252,9 @@ export default class AlexaForBusiness {
   async rejectSkill(
     {abortSignal, ...params}: RequestConfig & RejectSkillRequest,
   ): Promise<RejectSkillResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       SkillId: params["SkillId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RejectSkill",
@@ -1268,10 +1268,10 @@ export default class AlexaForBusiness {
   async resolveRoom(
     {abortSignal, ...params}: RequestConfig & ResolveRoomRequest,
   ): Promise<ResolveRoomResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       UserId: params["UserId"],
       SkillId: params["SkillId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ResolveRoom",
@@ -1289,10 +1289,10 @@ export default class AlexaForBusiness {
   async revokeInvitation(
     {abortSignal, ...params}: RequestConfig & RevokeInvitationRequest = {},
   ): Promise<RevokeInvitationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       UserArn: params["UserArn"],
       EnrollmentId: params["EnrollmentId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RevokeInvitation",
@@ -1306,12 +1306,12 @@ export default class AlexaForBusiness {
   async searchAddressBooks(
     {abortSignal, ...params}: RequestConfig & SearchAddressBooksRequest = {},
   ): Promise<SearchAddressBooksResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Filters: params["Filters"]?.map(x => fromFilter(x)),
       SortCriteria: params["SortCriteria"]?.map(x => fromSort(x)),
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SearchAddressBooks",
@@ -1329,12 +1329,12 @@ export default class AlexaForBusiness {
   async searchContacts(
     {abortSignal, ...params}: RequestConfig & SearchContactsRequest = {},
   ): Promise<SearchContactsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Filters: params["Filters"]?.map(x => fromFilter(x)),
       SortCriteria: params["SortCriteria"]?.map(x => fromSort(x)),
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SearchContacts",
@@ -1352,12 +1352,12 @@ export default class AlexaForBusiness {
   async searchDevices(
     {abortSignal, ...params}: RequestConfig & SearchDevicesRequest = {},
   ): Promise<SearchDevicesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
       Filters: params["Filters"]?.map(x => fromFilter(x)),
       SortCriteria: params["SortCriteria"]?.map(x => fromSort(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SearchDevices",
@@ -1375,12 +1375,12 @@ export default class AlexaForBusiness {
   async searchNetworkProfiles(
     {abortSignal, ...params}: RequestConfig & SearchNetworkProfilesRequest = {},
   ): Promise<SearchNetworkProfilesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
       Filters: params["Filters"]?.map(x => fromFilter(x)),
       SortCriteria: params["SortCriteria"]?.map(x => fromSort(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SearchNetworkProfiles",
@@ -1398,12 +1398,12 @@ export default class AlexaForBusiness {
   async searchProfiles(
     {abortSignal, ...params}: RequestConfig & SearchProfilesRequest = {},
   ): Promise<SearchProfilesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
       Filters: params["Filters"]?.map(x => fromFilter(x)),
       SortCriteria: params["SortCriteria"]?.map(x => fromSort(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SearchProfiles",
@@ -1421,12 +1421,12 @@ export default class AlexaForBusiness {
   async searchRooms(
     {abortSignal, ...params}: RequestConfig & SearchRoomsRequest = {},
   ): Promise<SearchRoomsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
       Filters: params["Filters"]?.map(x => fromFilter(x)),
       SortCriteria: params["SortCriteria"]?.map(x => fromSort(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SearchRooms",
@@ -1444,12 +1444,12 @@ export default class AlexaForBusiness {
   async searchSkillGroups(
     {abortSignal, ...params}: RequestConfig & SearchSkillGroupsRequest = {},
   ): Promise<SearchSkillGroupsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
       Filters: params["Filters"]?.map(x => fromFilter(x)),
       SortCriteria: params["SortCriteria"]?.map(x => fromSort(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SearchSkillGroups",
@@ -1467,12 +1467,12 @@ export default class AlexaForBusiness {
   async searchUsers(
     {abortSignal, ...params}: RequestConfig & SearchUsersRequest = {},
   ): Promise<SearchUsersResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
       Filters: params["Filters"]?.map(x => fromFilter(x)),
       SortCriteria: params["SortCriteria"]?.map(x => fromSort(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SearchUsers",
@@ -1490,12 +1490,12 @@ export default class AlexaForBusiness {
   async sendAnnouncement(
     {abortSignal, ...params}: RequestConfig & SendAnnouncementRequest,
   ): Promise<SendAnnouncementResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       RoomFilters: params["RoomFilters"]?.map(x => fromFilter(x)),
       Content: fromContent(params["Content"]),
       TimeToLiveInSeconds: params["TimeToLiveInSeconds"],
       ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SendAnnouncement",
@@ -1511,9 +1511,9 @@ export default class AlexaForBusiness {
   async sendInvitation(
     {abortSignal, ...params}: RequestConfig & SendInvitationRequest = {},
   ): Promise<SendInvitationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       UserArn: params["UserArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SendInvitation",
@@ -1527,11 +1527,11 @@ export default class AlexaForBusiness {
   async startDeviceSync(
     {abortSignal, ...params}: RequestConfig & StartDeviceSyncRequest,
   ): Promise<StartDeviceSyncResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       RoomArn: params["RoomArn"],
       DeviceArn: params["DeviceArn"],
       Features: params["Features"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartDeviceSync",
@@ -1545,9 +1545,9 @@ export default class AlexaForBusiness {
   async startSmartHomeApplianceDiscovery(
     {abortSignal, ...params}: RequestConfig & StartSmartHomeApplianceDiscoveryRequest,
   ): Promise<StartSmartHomeApplianceDiscoveryResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       RoomArn: params["RoomArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartSmartHomeApplianceDiscovery",
@@ -1561,10 +1561,10 @@ export default class AlexaForBusiness {
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Arn: params["Arn"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
@@ -1578,10 +1578,10 @@ export default class AlexaForBusiness {
   async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceRequest,
   ): Promise<UntagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Arn: params["Arn"],
       TagKeys: params["TagKeys"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResource",
@@ -1595,11 +1595,11 @@ export default class AlexaForBusiness {
   async updateAddressBook(
     {abortSignal, ...params}: RequestConfig & UpdateAddressBookRequest,
   ): Promise<UpdateAddressBookResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AddressBookArn: params["AddressBookArn"],
       Name: params["Name"],
       Description: params["Description"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateAddressBook",
@@ -1613,14 +1613,14 @@ export default class AlexaForBusiness {
   async updateBusinessReportSchedule(
     {abortSignal, ...params}: RequestConfig & UpdateBusinessReportScheduleRequest,
   ): Promise<UpdateBusinessReportScheduleResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ScheduleArn: params["ScheduleArn"],
       S3BucketName: params["S3BucketName"],
       S3KeyPrefix: params["S3KeyPrefix"],
       Format: params["Format"],
       ScheduleName: params["ScheduleName"],
       Recurrence: fromBusinessReportRecurrence(params["Recurrence"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateBusinessReportSchedule",
@@ -1634,13 +1634,13 @@ export default class AlexaForBusiness {
   async updateConferenceProvider(
     {abortSignal, ...params}: RequestConfig & UpdateConferenceProviderRequest,
   ): Promise<UpdateConferenceProviderResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ConferenceProviderArn: params["ConferenceProviderArn"],
       ConferenceProviderType: params["ConferenceProviderType"],
       IPDialIn: fromIPDialIn(params["IPDialIn"]),
       PSTNDialIn: fromPSTNDialIn(params["PSTNDialIn"]),
       MeetingSetting: fromMeetingSetting(params["MeetingSetting"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateConferenceProvider",
@@ -1654,7 +1654,7 @@ export default class AlexaForBusiness {
   async updateContact(
     {abortSignal, ...params}: RequestConfig & UpdateContactRequest,
   ): Promise<UpdateContactResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ContactArn: params["ContactArn"],
       DisplayName: params["DisplayName"],
       FirstName: params["FirstName"],
@@ -1662,7 +1662,7 @@ export default class AlexaForBusiness {
       PhoneNumber: params["PhoneNumber"],
       PhoneNumbers: params["PhoneNumbers"]?.map(x => fromPhoneNumber(x)),
       SipAddresses: params["SipAddresses"]?.map(x => fromSipAddress(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateContact",
@@ -1676,10 +1676,10 @@ export default class AlexaForBusiness {
   async updateDevice(
     {abortSignal, ...params}: RequestConfig & UpdateDeviceRequest = {},
   ): Promise<UpdateDeviceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DeviceArn: params["DeviceArn"],
       DeviceName: params["DeviceName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateDevice",
@@ -1693,12 +1693,12 @@ export default class AlexaForBusiness {
   async updateGateway(
     {abortSignal, ...params}: RequestConfig & UpdateGatewayRequest,
   ): Promise<UpdateGatewayResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       GatewayArn: params["GatewayArn"],
       Name: params["Name"],
       Description: params["Description"],
       SoftwareVersion: params["SoftwareVersion"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateGateway",
@@ -1712,11 +1712,11 @@ export default class AlexaForBusiness {
   async updateGatewayGroup(
     {abortSignal, ...params}: RequestConfig & UpdateGatewayGroupRequest,
   ): Promise<UpdateGatewayGroupResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       GatewayGroupArn: params["GatewayGroupArn"],
       Name: params["Name"],
       Description: params["Description"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateGatewayGroup",
@@ -1730,7 +1730,7 @@ export default class AlexaForBusiness {
   async updateNetworkProfile(
     {abortSignal, ...params}: RequestConfig & UpdateNetworkProfileRequest,
   ): Promise<UpdateNetworkProfileResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NetworkProfileArn: params["NetworkProfileArn"],
       NetworkProfileName: params["NetworkProfileName"],
       Description: params["Description"],
@@ -1738,7 +1738,7 @@ export default class AlexaForBusiness {
       NextPassword: params["NextPassword"],
       CertificateAuthorityArn: params["CertificateAuthorityArn"],
       TrustAnchors: params["TrustAnchors"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateNetworkProfile",
@@ -1752,7 +1752,7 @@ export default class AlexaForBusiness {
   async updateProfile(
     {abortSignal, ...params}: RequestConfig & UpdateProfileRequest = {},
   ): Promise<UpdateProfileResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ProfileArn: params["ProfileArn"],
       ProfileName: params["ProfileName"],
       IsDefault: params["IsDefault"],
@@ -1766,7 +1766,7 @@ export default class AlexaForBusiness {
       MaxVolumeLimit: params["MaxVolumeLimit"],
       PSTNEnabled: params["PSTNEnabled"],
       MeetingRoomConfiguration: fromUpdateMeetingRoomConfiguration(params["MeetingRoomConfiguration"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateProfile",
@@ -1780,13 +1780,13 @@ export default class AlexaForBusiness {
   async updateRoom(
     {abortSignal, ...params}: RequestConfig & UpdateRoomRequest = {},
   ): Promise<UpdateRoomResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       RoomArn: params["RoomArn"],
       RoomName: params["RoomName"],
       Description: params["Description"],
       ProviderCalendarId: params["ProviderCalendarId"],
       ProfileArn: params["ProfileArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateRoom",
@@ -1800,11 +1800,11 @@ export default class AlexaForBusiness {
   async updateSkillGroup(
     {abortSignal, ...params}: RequestConfig & UpdateSkillGroupRequest = {},
   ): Promise<UpdateSkillGroupResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       SkillGroupArn: params["SkillGroupArn"],
       SkillGroupName: params["SkillGroupName"],
       Description: params["Description"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateSkillGroup",

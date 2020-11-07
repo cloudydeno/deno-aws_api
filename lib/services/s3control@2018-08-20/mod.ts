@@ -33,7 +33,6 @@ export default class S3Control {
     {abortSignal, ...params}: RequestConfig & CreateAccessPointRequest,
   ): Promise<CreateAccessPointResult> {
     const headers = new Headers;
-    headers.append("x-amz-account-id", params["AccountId"]);
     const body = xmlP.stringify({
       name: "CreateAccessPointRequest",
       attributes: {"xmlns":"http://awss3control.amazonaws.com/doc/2018-08-20/"},
@@ -42,6 +41,7 @@ export default class S3Control {
         {name: "VpcConfiguration", ...VpcConfiguration_Serialize(params["VpcConfiguration"])},
         {name: "PublicAccessBlockConfiguration", ...PublicAccessBlockConfiguration_Serialize(params["PublicAccessBlockConfiguration"])},
       ]});
+    headers.append("x-amz-account-id", params["AccountId"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "CreateAccessPoint",
@@ -50,16 +50,21 @@ export default class S3Control {
       hostPrefix: `${params.AccountId}.`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    ...xml.strings({
-        optional: {"AccessPointArn":true},
-      }),
-  };
+    return xml.strings({
+      optional: {"AccessPointArn":true},
+    });
   }
 
   async createBucket(
     {abortSignal, ...params}: RequestConfig & CreateBucketRequest,
   ): Promise<CreateBucketResult> {
+    const inner = params["CreateBucketConfiguration"];
+    const body = inner ? xmlP.stringify({
+      name: "CreateBucketConfiguration",
+      attributes: {"xmlns":"http://awss3control.amazonaws.com/doc/2018-08-20/"},
+      children: [
+        {name: "LocationConstraint", content: inner["LocationConstraint"]?.toString()},
+      ]}) : "";
     const headers = new Headers;
     if (params["ACL"] != null) headers.append("x-amz-acl", params["ACL"]);
     if (params["GrantFullControl"] != null) headers.append("x-amz-grant-full-control", params["GrantFullControl"]);
@@ -69,13 +74,6 @@ export default class S3Control {
     if (params["GrantWriteACP"] != null) headers.append("x-amz-grant-write-acp", params["GrantWriteACP"]);
     if (params["ObjectLockEnabledForBucket"] != null) headers.append("x-amz-bucket-object-lock-enabled", params["ObjectLockEnabledForBucket"]?.toString() ?? '');
     if (params["OutpostId"] != null) headers.append("x-amz-outpost-id", params["OutpostId"]);
-    const inner = params["CreateBucketConfiguration"];
-    const body = xmlP.stringify({
-      name: "CreateBucketConfiguration",
-      attributes: {"xmlns":"http://awss3control.amazonaws.com/doc/2018-08-20/"},
-      children: inner ? [
-        {name: "LocationConstraint", content: inner["LocationConstraint"]?.toString()},
-      ] : []});
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "CreateBucket",
@@ -83,19 +81,18 @@ export default class S3Control {
       requestUri: cmnP.encodePath`/v20180820/bucket/${params["Bucket"]}`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    Location: resp.headers.get("Location"),
-    ...xml.strings({
+    return {
+      Location: resp.headers.get("Location"),
+      ...xml.strings({
         optional: {"BucketArn":true},
       }),
-  };
+    };
   }
 
   async createJob(
     {abortSignal, ...params}: RequestConfig & CreateJobRequest,
   ): Promise<CreateJobResult> {
     const headers = new Headers;
-    headers.append("x-amz-account-id", params["AccountId"]);
     const body = xmlP.stringify({
       name: "CreateJobRequest",
       attributes: {"xmlns":"http://awss3control.amazonaws.com/doc/2018-08-20/"},
@@ -110,6 +107,7 @@ export default class S3Control {
         {name: "RoleArn", content: params["RoleArn"]?.toString()},
         {name: "Tags", children: params["Tags"]?.map(x => ({name: "member", ...S3Tag_Serialize(x)}))},
       ]});
+    headers.append("x-amz-account-id", params["AccountId"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "CreateJob",
@@ -117,11 +115,9 @@ export default class S3Control {
       hostPrefix: `${params.AccountId}.`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    ...xml.strings({
-        optional: {"JobId":true},
-      }),
-  };
+    return xml.strings({
+      optional: {"JobId":true},
+    });
   }
 
   async deleteAccessPoint(
@@ -221,8 +217,8 @@ export default class S3Control {
       requestUri: cmnP.encodePath`/v20180820/jobs/${params["JobId"]}/tagging`,
       hostPrefix: `${params.AccountId}.`,
     });
-  return {
-  };
+    return {
+    };
   }
 
   async deletePublicAccessBlock(
@@ -252,11 +248,9 @@ export default class S3Control {
       hostPrefix: `${params.AccountId}.`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    ...{
-        Job: xml.first("Job", false, JobDescriptor_Parse),
-      },
-  };
+    return {
+      Job: xml.first("Job", false, JobDescriptor_Parse),
+    };
   }
 
   async getAccessPoint(
@@ -272,17 +266,15 @@ export default class S3Control {
       hostPrefix: `${params.AccountId}.`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    ...{
-        ...xml.strings({
-          optional: {"Name":true,"Bucket":true},
-        }),
-        NetworkOrigin: xml.first("NetworkOrigin", false, x => (x.content ?? '') as NetworkOrigin),
-        VpcConfiguration: xml.first("VpcConfiguration", false, VpcConfiguration_Parse),
-        PublicAccessBlockConfiguration: xml.first("PublicAccessBlockConfiguration", false, PublicAccessBlockConfiguration_Parse),
-        CreationDate: xml.first("CreationDate", false, x => xmlP.parseTimestamp(x.content)),
-      },
-  };
+    return {
+      ...xml.strings({
+        optional: {"Name":true,"Bucket":true},
+      }),
+      NetworkOrigin: xml.first("NetworkOrigin", false, x => (x.content ?? '') as NetworkOrigin),
+      VpcConfiguration: xml.first("VpcConfiguration", false, VpcConfiguration_Parse),
+      PublicAccessBlockConfiguration: xml.first("PublicAccessBlockConfiguration", false, PublicAccessBlockConfiguration_Parse),
+      CreationDate: xml.first("CreationDate", false, x => xmlP.parseTimestamp(x.content)),
+    };
   }
 
   async getAccessPointPolicy(
@@ -298,11 +290,9 @@ export default class S3Control {
       hostPrefix: `${params.AccountId}.`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    ...xml.strings({
-        optional: {"Policy":true},
-      }),
-  };
+    return xml.strings({
+      optional: {"Policy":true},
+    });
   }
 
   async getAccessPointPolicyStatus(
@@ -318,11 +308,9 @@ export default class S3Control {
       hostPrefix: `${params.AccountId}.`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    ...{
-        PolicyStatus: xml.first("PolicyStatus", false, PolicyStatus_Parse),
-      },
-  };
+    return {
+      PolicyStatus: xml.first("PolicyStatus", false, PolicyStatus_Parse),
+    };
   }
 
   async getBucket(
@@ -338,15 +326,13 @@ export default class S3Control {
       hostPrefix: `${params.AccountId}.`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    ...{
-        ...xml.strings({
-          optional: {"Bucket":true},
-        }),
-        PublicAccessBlockEnabled: xml.first("PublicAccessBlockEnabled", false, x => x.content === 'true'),
-        CreationDate: xml.first("CreationDate", false, x => xmlP.parseTimestamp(x.content)),
-      },
-  };
+    return {
+      ...xml.strings({
+        optional: {"Bucket":true},
+      }),
+      PublicAccessBlockEnabled: xml.first("PublicAccessBlockEnabled", false, x => x.content === 'true'),
+      CreationDate: xml.first("CreationDate", false, x => xmlP.parseTimestamp(x.content)),
+    };
   }
 
   async getBucketLifecycleConfiguration(
@@ -362,11 +348,9 @@ export default class S3Control {
       hostPrefix: `${params.AccountId}.`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    ...{
-        Rules: xml.getList("Rules", "Rule").map(LifecycleRule_Parse),
-      },
-  };
+    return {
+      Rules: xml.getList("Rules", "Rule").map(LifecycleRule_Parse),
+    };
   }
 
   async getBucketPolicy(
@@ -382,11 +366,9 @@ export default class S3Control {
       hostPrefix: `${params.AccountId}.`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    ...xml.strings({
-        optional: {"Policy":true},
-      }),
-  };
+    return xml.strings({
+      optional: {"Policy":true},
+    });
   }
 
   async getBucketTagging(
@@ -402,11 +384,9 @@ export default class S3Control {
       hostPrefix: `${params.AccountId}.`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    ...{
-        TagSet: xml.getList("TagSet", "member").map(S3Tag_Parse),
-      },
-  };
+    return {
+      TagSet: xml.getList("TagSet", "member").map(S3Tag_Parse),
+    };
   }
 
   async getJobTagging(
@@ -422,11 +402,9 @@ export default class S3Control {
       hostPrefix: `${params.AccountId}.`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    ...{
-        Tags: xml.getList("Tags", "member").map(S3Tag_Parse),
-      },
-  };
+    return {
+      Tags: xml.getList("Tags", "member").map(S3Tag_Parse),
+    };
   }
 
   async getPublicAccessBlock(
@@ -464,14 +442,12 @@ export default class S3Control {
       hostPrefix: `${params.AccountId}.`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    ...{
-        ...xml.strings({
-          optional: {"NextToken":true},
-        }),
-        AccessPointList: xml.getList("AccessPointList", "AccessPoint").map(AccessPoint_Parse),
-      },
-  };
+    return {
+      ...xml.strings({
+        optional: {"NextToken":true},
+      }),
+      AccessPointList: xml.getList("AccessPointList", "AccessPoint").map(AccessPoint_Parse),
+    };
   }
 
   async listJobs(
@@ -493,14 +469,12 @@ export default class S3Control {
       hostPrefix: `${params.AccountId}.`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    ...{
-        ...xml.strings({
-          optional: {"NextToken":true},
-        }),
-        Jobs: xml.getList("Jobs", "member").map(JobListDescriptor_Parse),
-      },
-  };
+    return {
+      ...xml.strings({
+        optional: {"NextToken":true},
+      }),
+      Jobs: xml.getList("Jobs", "member").map(JobListDescriptor_Parse),
+    };
   }
 
   async listRegionalBuckets(
@@ -520,27 +494,25 @@ export default class S3Control {
       hostPrefix: `${params.AccountId}.`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    ...{
-        ...xml.strings({
-          optional: {"NextToken":true},
-        }),
-        RegionalBucketList: xml.getList("RegionalBucketList", "RegionalBucket").map(RegionalBucket_Parse),
-      },
-  };
+    return {
+      ...xml.strings({
+        optional: {"NextToken":true},
+      }),
+      RegionalBucketList: xml.getList("RegionalBucketList", "RegionalBucket").map(RegionalBucket_Parse),
+    };
   }
 
   async putAccessPointPolicy(
     {abortSignal, ...params}: RequestConfig & PutAccessPointPolicyRequest,
   ): Promise<void> {
     const headers = new Headers;
-    headers.append("x-amz-account-id", params["AccountId"]);
     const body = xmlP.stringify({
       name: "PutAccessPointPolicyRequest",
       attributes: {"xmlns":"http://awss3control.amazonaws.com/doc/2018-08-20/"},
       children: [
         {name: "Policy", content: params["Policy"]?.toString()},
       ]});
+    headers.append("x-amz-account-id", params["AccountId"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "PutAccessPointPolicy",
@@ -553,15 +525,15 @@ export default class S3Control {
   async putBucketLifecycleConfiguration(
     {abortSignal, ...params}: RequestConfig & PutBucketLifecycleConfigurationRequest,
   ): Promise<void> {
-    const headers = new Headers;
-    headers.append("x-amz-account-id", params["AccountId"]);
     const inner = params["LifecycleConfiguration"];
-    const body = xmlP.stringify({
+    const body = inner ? xmlP.stringify({
       name: "LifecycleConfiguration",
       attributes: {"xmlns":"http://awss3control.amazonaws.com/doc/2018-08-20/"},
-      children: inner ? [
+      children: [
         {name: "Rules", children: inner["Rules"]?.map(x => ({name: "Rule", ...LifecycleRule_Serialize(x)}))},
-      ] : []});
+      ]}) : "";
+    const headers = new Headers;
+    headers.append("x-amz-account-id", params["AccountId"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "PutBucketLifecycleConfiguration",
@@ -575,14 +547,14 @@ export default class S3Control {
     {abortSignal, ...params}: RequestConfig & PutBucketPolicyRequest,
   ): Promise<void> {
     const headers = new Headers;
-    headers.append("x-amz-account-id", params["AccountId"]);
-    if (params["ConfirmRemoveSelfBucketAccess"] != null) headers.append("x-amz-confirm-remove-self-bucket-access", params["ConfirmRemoveSelfBucketAccess"]?.toString() ?? '');
     const body = xmlP.stringify({
       name: "PutBucketPolicyRequest",
       attributes: {"xmlns":"http://awss3control.amazonaws.com/doc/2018-08-20/"},
       children: [
         {name: "Policy", content: params["Policy"]?.toString()},
       ]});
+    headers.append("x-amz-account-id", params["AccountId"]);
+    if (params["ConfirmRemoveSelfBucketAccess"] != null) headers.append("x-amz-confirm-remove-self-bucket-access", params["ConfirmRemoveSelfBucketAccess"]?.toString() ?? '');
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "PutBucketPolicy",
@@ -595,15 +567,15 @@ export default class S3Control {
   async putBucketTagging(
     {abortSignal, ...params}: RequestConfig & PutBucketTaggingRequest,
   ): Promise<void> {
-    const headers = new Headers;
-    headers.append("x-amz-account-id", params["AccountId"]);
     const inner = params["Tagging"];
-    const body = xmlP.stringify({
+    const body = inner ? xmlP.stringify({
       name: "Tagging",
       attributes: {"xmlns":"http://awss3control.amazonaws.com/doc/2018-08-20/"},
-      children: inner ? [
+      children: [
         {name: "TagSet", children: inner["TagSet"]?.map(x => ({name: "member", ...S3Tag_Serialize(x)}))},
-      ] : []});
+      ]}) : "";
+    const headers = new Headers;
+    headers.append("x-amz-account-id", params["AccountId"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "PutBucketTagging",
@@ -617,13 +589,13 @@ export default class S3Control {
     {abortSignal, ...params}: RequestConfig & PutJobTaggingRequest,
   ): Promise<PutJobTaggingResult> {
     const headers = new Headers;
-    headers.append("x-amz-account-id", params["AccountId"]);
     const body = xmlP.stringify({
       name: "PutJobTaggingRequest",
       attributes: {"xmlns":"http://awss3control.amazonaws.com/doc/2018-08-20/"},
       children: [
         {name: "Tags", children: params["Tags"]?.map(x => ({name: "member", ...S3Tag_Serialize(x)}))},
       ]});
+    headers.append("x-amz-account-id", params["AccountId"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "PutJobTagging",
@@ -631,25 +603,25 @@ export default class S3Control {
       requestUri: cmnP.encodePath`/v20180820/jobs/${params["JobId"]}/tagging`,
       hostPrefix: `${params.AccountId}.`,
     });
-  return {
-  };
+    return {
+    };
   }
 
   async putPublicAccessBlock(
     {abortSignal, ...params}: RequestConfig & PutPublicAccessBlockRequest,
   ): Promise<void> {
-    const headers = new Headers;
-    headers.append("x-amz-account-id", params["AccountId"]);
     const inner = params["PublicAccessBlockConfiguration"];
-    const body = xmlP.stringify({
+    const body = inner ? xmlP.stringify({
       name: "PublicAccessBlockConfiguration",
       attributes: {"xmlns":"http://awss3control.amazonaws.com/doc/2018-08-20/"},
-      children: inner ? [
+      children: [
         {name: "BlockPublicAcls", content: inner["BlockPublicAcls"]?.toString()},
         {name: "IgnorePublicAcls", content: inner["IgnorePublicAcls"]?.toString()},
         {name: "BlockPublicPolicy", content: inner["BlockPublicPolicy"]?.toString()},
         {name: "RestrictPublicBuckets", content: inner["RestrictPublicBuckets"]?.toString()},
-      ] : []});
+      ]}) : "";
+    const headers = new Headers;
+    headers.append("x-amz-account-id", params["AccountId"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "PutPublicAccessBlock",
@@ -673,14 +645,12 @@ export default class S3Control {
       hostPrefix: `${params.AccountId}.`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    ...{
-        ...xml.strings({
-          required: {"JobId":true},
-        }),
-        Priority: xml.first("Priority", true, x => parseInt(x.content ?? '0')),
-      },
-  };
+    return {
+      ...xml.strings({
+        required: {"JobId":true},
+      }),
+      Priority: xml.first("Priority", true, x => parseInt(x.content ?? '0')),
+    };
   }
 
   async updateJobStatus(
@@ -698,14 +668,12 @@ export default class S3Control {
       hostPrefix: `${params.AccountId}.`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    ...{
-        ...xml.strings({
-          optional: {"JobId":true,"StatusUpdateReason":true},
-        }),
-        Status: xml.first("Status", false, x => (x.content ?? '') as JobStatus),
-      },
-  };
+    return {
+      ...xml.strings({
+        optional: {"JobId":true,"StatusUpdateReason":true},
+      }),
+      Status: xml.first("Status", false, x => (x.content ?? '') as JobStatus),
+    };
   }
 
 }

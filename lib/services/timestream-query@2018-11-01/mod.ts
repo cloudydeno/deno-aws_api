@@ -35,9 +35,9 @@ export default class TimestreamQuery {
   async cancelQuery(
     {abortSignal, ...params}: RequestConfig & CancelQueryRequest,
   ): Promise<CancelQueryResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       QueryId: params["QueryId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CancelQuery",
@@ -53,8 +53,8 @@ export default class TimestreamQuery {
   async describeEndpoints(
     {abortSignal, ...params}: RequestConfig & DescribeEndpointsRequest = {},
   ): Promise<DescribeEndpointsResponse> {
-    const body: jsonP.JSONObject = params ? {
-    } : {};
+    const body: jsonP.JSONObject = {
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeEndpoints",
@@ -70,12 +70,12 @@ export default class TimestreamQuery {
   async query(
     {abortSignal, ...params}: RequestConfig & QueryRequest,
   ): Promise<QueryResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       QueryString: params["QueryString"],
       ClientToken: params["ClientToken"] ?? generateIdemptToken(),
       NextToken: params["NextToken"],
       MaxRows: params["MaxRows"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "Query",

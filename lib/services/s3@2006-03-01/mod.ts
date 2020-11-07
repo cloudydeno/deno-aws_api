@@ -5,9 +5,15 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
+import * as HashMd5 from "https://deno.land/std@0.71.0/hash/md5.ts";
 import * as cmnP from "../../encoding/common.ts";
 import * as xmlP from "../../encoding/xml.ts";
 import * as Base64 from "https://deno.land/x/base64@v0.2.1/mod.ts";
+function hashMD5(data: HashMd5.Message): string {
+  const hasher = new HashMd5.Md5();
+  hasher.update(data);
+  return hasher.toString('base64');
+}
 
 export default class S3 {
   #client: ServiceClient;
@@ -43,42 +49,42 @@ export default class S3 {
       requestUri: cmnP.encodePath`/${params["Bucket"]}/${params["Key"].split("/")}`,
       responseCode: 204,
     });
-  return {
-    RequestCharged: cmnP.readEnum<RequestCharged>(resp.headers.get("x-amz-request-charged")),
-  };
+    return {
+      RequestCharged: cmnP.readEnum<RequestCharged>(resp.headers.get("x-amz-request-charged")),
+    };
   }
 
   async completeMultipartUpload(
     {abortSignal, ...params}: RequestConfig & CompleteMultipartUploadRequest,
   ): Promise<CompleteMultipartUploadOutput> {
+    const inner = params["MultipartUpload"];
+    const body = inner ? xmlP.stringify({
+      name: "CompleteMultipartUpload",
+      attributes: {"xmlns":"http://s3.amazonaws.com/doc/2006-03-01/"},
+      children: [
+        ...(inner["Parts"]?.map(x => ({name: "Part", ...CompletedPart_Serialize(x)})) ?? []),
+      ]}) : "";
     const headers = new Headers;
     const query = new URLSearchParams;
     query.set("uploadId", params["UploadId"]?.toString() ?? "");
     if (params["RequestPayer"] != null) headers.append("x-amz-request-payer", params["RequestPayer"]);
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
-    const inner = params["MultipartUpload"];
-    const body = xmlP.stringify({
-      name: "CompleteMultipartUpload",
-      attributes: {"xmlns":"http://s3.amazonaws.com/doc/2006-03-01/"},
-      children: inner ? [
-        ...(inner["Parts"]?.map(x => ({name: "Part", ...CompletedPart_Serialize(x)})) ?? []),
-      ] : []});
     const resp = await this.#client.performRequest({
       abortSignal, headers, query, body,
       action: "CompleteMultipartUpload",
       requestUri: cmnP.encodePath`/${params["Bucket"]}/${params["Key"].split("/")}`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    Expiration: resp.headers.get("x-amz-expiration"),
-    ServerSideEncryption: cmnP.readEnum<ServerSideEncryption>(resp.headers.get("x-amz-server-side-encryption")),
-    VersionId: resp.headers.get("x-amz-version-id"),
-    SSEKMSKeyId: resp.headers.get("x-amz-server-side-encryption-aws-kms-key-id"),
-    RequestCharged: cmnP.readEnum<RequestCharged>(resp.headers.get("x-amz-request-charged")),
-    ...xml.strings({
+    return {
+      Expiration: resp.headers.get("x-amz-expiration"),
+      ServerSideEncryption: cmnP.readEnum<ServerSideEncryption>(resp.headers.get("x-amz-server-side-encryption")),
+      VersionId: resp.headers.get("x-amz-version-id"),
+      SSEKMSKeyId: resp.headers.get("x-amz-server-side-encryption-aws-kms-key-id"),
+      RequestCharged: cmnP.readEnum<RequestCharged>(resp.headers.get("x-amz-request-charged")),
+      ...xml.strings({
         optional: {"Location":true,"Bucket":true,"Key":true,"ETag":true},
       }),
-  };
+    };
   }
 
   async copyObject(
@@ -153,6 +159,13 @@ export default class S3 {
   async createBucket(
     {abortSignal, ...params}: RequestConfig & CreateBucketRequest,
   ): Promise<CreateBucketOutput> {
+    const inner = params["CreateBucketConfiguration"];
+    const body = inner ? xmlP.stringify({
+      name: "CreateBucketConfiguration",
+      attributes: {"xmlns":"http://s3.amazonaws.com/doc/2006-03-01/"},
+      children: [
+        {name: "LocationConstraint", content: inner["LocationConstraint"]?.toString()},
+      ]}) : "";
     const headers = new Headers;
     if (params["ACL"] != null) headers.append("x-amz-acl", params["ACL"]);
     if (params["GrantFullControl"] != null) headers.append("x-amz-grant-full-control", params["GrantFullControl"]);
@@ -161,22 +174,15 @@ export default class S3 {
     if (params["GrantWrite"] != null) headers.append("x-amz-grant-write", params["GrantWrite"]);
     if (params["GrantWriteACP"] != null) headers.append("x-amz-grant-write-acp", params["GrantWriteACP"]);
     if (params["ObjectLockEnabledForBucket"] != null) headers.append("x-amz-bucket-object-lock-enabled", params["ObjectLockEnabledForBucket"]?.toString() ?? '');
-    const inner = params["CreateBucketConfiguration"];
-    const body = xmlP.stringify({
-      name: "CreateBucketConfiguration",
-      attributes: {"xmlns":"http://s3.amazonaws.com/doc/2006-03-01/"},
-      children: inner ? [
-        {name: "LocationConstraint", content: inner["LocationConstraint"]?.toString()},
-      ] : []});
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "CreateBucket",
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}`,
     });
-  return {
-    Location: resp.headers.get("Location"),
-  };
+    return {
+      Location: resp.headers.get("Location"),
+    };
   }
 
   async createMultipartUpload(
@@ -217,19 +223,19 @@ export default class S3 {
       requestUri: cmnP.encodePath`/${params["Bucket"]}/${params["Key"].split("/")}?uploads`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    AbortDate: cmnP.readTimestamp(resp.headers.get("x-amz-abort-date")),
-    AbortRuleId: resp.headers.get("x-amz-abort-rule-id"),
-    ServerSideEncryption: cmnP.readEnum<ServerSideEncryption>(resp.headers.get("x-amz-server-side-encryption")),
-    SSECustomerAlgorithm: resp.headers.get("x-amz-server-side-encryption-customer-algorithm"),
-    SSECustomerKeyMD5: resp.headers.get("x-amz-server-side-encryption-customer-key-MD5"),
-    SSEKMSKeyId: resp.headers.get("x-amz-server-side-encryption-aws-kms-key-id"),
-    SSEKMSEncryptionContext: resp.headers.get("x-amz-server-side-encryption-context"),
-    RequestCharged: cmnP.readEnum<RequestCharged>(resp.headers.get("x-amz-request-charged")),
-    ...xml.strings({
+    return {
+      AbortDate: cmnP.readTimestamp(resp.headers.get("x-amz-abort-date")),
+      AbortRuleId: resp.headers.get("x-amz-abort-rule-id"),
+      ServerSideEncryption: cmnP.readEnum<ServerSideEncryption>(resp.headers.get("x-amz-server-side-encryption")),
+      SSECustomerAlgorithm: resp.headers.get("x-amz-server-side-encryption-customer-algorithm"),
+      SSECustomerKeyMD5: resp.headers.get("x-amz-server-side-encryption-customer-key-MD5"),
+      SSEKMSKeyId: resp.headers.get("x-amz-server-side-encryption-aws-kms-key-id"),
+      SSEKMSEncryptionContext: resp.headers.get("x-amz-server-side-encryption-context"),
+      RequestCharged: cmnP.readEnum<RequestCharged>(resp.headers.get("x-amz-request-charged")),
+      ...xml.strings({
         optional: {"Bucket":true,"Key":true,"UploadId":true},
       }),
-  };
+    };
   }
 
   async deleteBucket(
@@ -423,11 +429,11 @@ export default class S3 {
       requestUri: cmnP.encodePath`/${params["Bucket"]}/${params["Key"].split("/")}`,
       responseCode: 204,
     });
-  return {
-    DeleteMarker: cmnP.readBool(resp.headers.get("x-amz-delete-marker")),
-    VersionId: resp.headers.get("x-amz-version-id"),
-    RequestCharged: cmnP.readEnum<RequestCharged>(resp.headers.get("x-amz-request-charged")),
-  };
+    return {
+      DeleteMarker: cmnP.readBool(resp.headers.get("x-amz-delete-marker")),
+      VersionId: resp.headers.get("x-amz-version-id"),
+      RequestCharged: cmnP.readEnum<RequestCharged>(resp.headers.get("x-amz-request-charged")),
+    };
   }
 
   async deleteObjectTagging(
@@ -444,40 +450,40 @@ export default class S3 {
       requestUri: cmnP.encodePath`/${params["Bucket"]}/${params["Key"].split("/")}?tagging`,
       responseCode: 204,
     });
-  return {
-    VersionId: resp.headers.get("x-amz-version-id"),
-  };
+    return {
+      VersionId: resp.headers.get("x-amz-version-id"),
+    };
   }
 
   async deleteObjects(
     {abortSignal, ...params}: RequestConfig & DeleteObjectsRequest,
   ): Promise<DeleteObjectsOutput> {
+    const inner = params["Delete"];
+    const body = inner ? xmlP.stringify({
+      name: "Delete",
+      attributes: {"xmlns":"http://s3.amazonaws.com/doc/2006-03-01/"},
+      children: [
+        ...(inner["Objects"]?.map(x => ({name: "Object", ...ObjectIdentifier_Serialize(x)})) ?? []),
+        {name: "Quiet", content: inner["Quiet"]?.toString()},
+      ]}) : "";
     const headers = new Headers;
     if (params["MFA"] != null) headers.append("x-amz-mfa", params["MFA"]);
     if (params["RequestPayer"] != null) headers.append("x-amz-request-payer", params["RequestPayer"]);
     if (params["BypassGovernanceRetention"] != null) headers.append("x-amz-bypass-governance-retention", params["BypassGovernanceRetention"]?.toString() ?? '');
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
-    const inner = params["Delete"];
-    const body = xmlP.stringify({
-      name: "Delete",
-      attributes: {"xmlns":"http://s3.amazonaws.com/doc/2006-03-01/"},
-      children: inner ? [
-        ...(inner["Objects"]?.map(x => ({name: "Object", ...ObjectIdentifier_Serialize(x)})) ?? []),
-        {name: "Quiet", content: inner["Quiet"]?.toString()},
-      ] : []});
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "DeleteObjects",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?delete`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    RequestCharged: cmnP.readEnum<RequestCharged>(resp.headers.get("x-amz-request-charged")),
-    ...{
+    return {
+      RequestCharged: cmnP.readEnum<RequestCharged>(resp.headers.get("x-amz-request-charged")),
+      ...{
         Deleted: xml.getList("Deleted").map(DeletedObject_Parse),
         Errors: xml.getList("Error").map(Error_Parse),
       },
-  };
+    };
   }
 
   async deletePublicAccessBlock(
@@ -506,11 +512,9 @@ export default class S3 {
       requestUri: cmnP.encodePath`/${params["Bucket"]}?accelerate`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    ...{
-        Status: xml.first("Status", false, x => (x.content ?? '') as BucketAccelerateStatus),
-      },
-  };
+    return {
+      Status: xml.first("Status", false, x => (x.content ?? '') as BucketAccelerateStatus),
+    };
   }
 
   async getBucketAcl(
@@ -525,12 +529,10 @@ export default class S3 {
       requestUri: cmnP.encodePath`/${params["Bucket"]}?acl`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    ...{
-        Owner: xml.first("Owner", false, Owner_Parse),
-        Grants: xml.getList("AccessControlList", "Grant").map(Grant_Parse),
-      },
-  };
+    return {
+      Owner: xml.first("Owner", false, Owner_Parse),
+      Grants: xml.getList("AccessControlList", "Grant").map(Grant_Parse),
+    };
   }
 
   async getBucketAnalyticsConfiguration(
@@ -564,11 +566,9 @@ export default class S3 {
       requestUri: cmnP.encodePath`/${params["Bucket"]}?cors`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    ...{
-        CORSRules: xml.getList("CORSRule").map(CORSRule_Parse),
-      },
-  };
+    return {
+      CORSRules: xml.getList("CORSRule").map(CORSRule_Parse),
+    };
   }
 
   async getBucketEncryption(
@@ -619,11 +619,9 @@ export default class S3 {
       requestUri: cmnP.encodePath`/${params["Bucket"]}?lifecycle`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    ...{
-        Rules: xml.getList("Rule").map(Rule_Parse),
-      },
-  };
+    return {
+      Rules: xml.getList("Rule").map(Rule_Parse),
+    };
   }
 
   async getBucketLifecycleConfiguration(
@@ -638,11 +636,9 @@ export default class S3 {
       requestUri: cmnP.encodePath`/${params["Bucket"]}?lifecycle`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    ...{
-        Rules: xml.getList("Rule").map(LifecycleRule_Parse),
-      },
-  };
+    return {
+      Rules: xml.getList("Rule").map(LifecycleRule_Parse),
+    };
   }
 
   async getBucketLocation(
@@ -657,11 +653,9 @@ export default class S3 {
       requestUri: cmnP.encodePath`/${params["Bucket"]}?location`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    ...{
-        LocationConstraint: xml.first("LocationConstraint", false, x => (x.content ?? '') as BucketLocationConstraint),
-      },
-  };
+    return {
+      LocationConstraint: xml.first("LocationConstraint", false, x => (x.content ?? '') as BucketLocationConstraint),
+    };
   }
 
   async getBucketLogging(
@@ -676,11 +670,9 @@ export default class S3 {
       requestUri: cmnP.encodePath`/${params["Bucket"]}?logging`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    ...{
-        LoggingEnabled: xml.first("LoggingEnabled", false, LoggingEnabled_Parse),
-      },
-  };
+    return {
+      LoggingEnabled: xml.first("LoggingEnabled", false, LoggingEnabled_Parse),
+    };
   }
 
   async getBucketMetricsConfiguration(
@@ -714,13 +706,11 @@ export default class S3 {
       requestUri: cmnP.encodePath`/${params["Bucket"]}?notification`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    ...{
-        TopicConfiguration: xml.first("TopicConfiguration", false, TopicConfigurationDeprecated_Parse),
-        QueueConfiguration: xml.first("QueueConfiguration", false, QueueConfigurationDeprecated_Parse),
-        CloudFunctionConfiguration: xml.first("CloudFunctionConfiguration", false, CloudFunctionConfiguration_Parse),
-      },
-  };
+    return {
+      TopicConfiguration: xml.first("TopicConfiguration", false, TopicConfigurationDeprecated_Parse),
+      QueueConfiguration: xml.first("QueueConfiguration", false, QueueConfigurationDeprecated_Parse),
+      CloudFunctionConfiguration: xml.first("CloudFunctionConfiguration", false, CloudFunctionConfiguration_Parse),
+    };
   }
 
   async getBucketNotificationConfiguration(
@@ -735,13 +725,11 @@ export default class S3 {
       requestUri: cmnP.encodePath`/${params["Bucket"]}?notification`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    ...{
-        TopicConfigurations: xml.getList("TopicConfiguration").map(TopicConfiguration_Parse),
-        QueueConfigurations: xml.getList("QueueConfiguration").map(QueueConfiguration_Parse),
-        LambdaFunctionConfigurations: xml.getList("CloudFunctionConfiguration").map(LambdaFunctionConfiguration_Parse),
-      },
-  };
+    return {
+      TopicConfigurations: xml.getList("TopicConfiguration").map(TopicConfiguration_Parse),
+      QueueConfigurations: xml.getList("QueueConfiguration").map(QueueConfiguration_Parse),
+      LambdaFunctionConfigurations: xml.getList("CloudFunctionConfiguration").map(LambdaFunctionConfiguration_Parse),
+    };
   }
 
   async getBucketOwnershipControls(
@@ -824,11 +812,9 @@ export default class S3 {
       requestUri: cmnP.encodePath`/${params["Bucket"]}?requestPayment`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    ...{
-        Payer: xml.first("Payer", false, x => (x.content ?? '') as Payer),
-      },
-  };
+    return {
+      Payer: xml.first("Payer", false, x => (x.content ?? '') as Payer),
+    };
   }
 
   async getBucketTagging(
@@ -843,11 +829,9 @@ export default class S3 {
       requestUri: cmnP.encodePath`/${params["Bucket"]}?tagging`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    ...{
-        TagSet: xml.getList("TagSet", "Tag").map(Tag_Parse),
-      },
-  };
+    return {
+      TagSet: xml.getList("TagSet", "Tag").map(Tag_Parse),
+    };
   }
 
   async getBucketVersioning(
@@ -862,12 +846,10 @@ export default class S3 {
       requestUri: cmnP.encodePath`/${params["Bucket"]}?versioning`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    ...{
-        Status: xml.first("Status", false, x => (x.content ?? '') as BucketVersioningStatus),
-        MFADelete: xml.first("MfaDelete", false, x => (x.content ?? '') as MFADeleteStatus),
-      },
-  };
+    return {
+      Status: xml.first("Status", false, x => (x.content ?? '') as BucketVersioningStatus),
+      MFADelete: xml.first("MfaDelete", false, x => (x.content ?? '') as MFADeleteStatus),
+    };
   }
 
   async getBucketWebsite(
@@ -882,14 +864,12 @@ export default class S3 {
       requestUri: cmnP.encodePath`/${params["Bucket"]}?website`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    ...{
-        RedirectAllRequestsTo: xml.first("RedirectAllRequestsTo", false, RedirectAllRequestsTo_Parse),
-        IndexDocument: xml.first("IndexDocument", false, IndexDocument_Parse),
-        ErrorDocument: xml.first("ErrorDocument", false, ErrorDocument_Parse),
-        RoutingRules: xml.getList("RoutingRules", "RoutingRule").map(RoutingRule_Parse),
-      },
-  };
+    return {
+      RedirectAllRequestsTo: xml.first("RedirectAllRequestsTo", false, RedirectAllRequestsTo_Parse),
+      IndexDocument: xml.first("IndexDocument", false, IndexDocument_Parse),
+      ErrorDocument: xml.first("ErrorDocument", false, ErrorDocument_Parse),
+      RoutingRules: xml.getList("RoutingRules", "RoutingRule").map(RoutingRule_Parse),
+    };
   }
 
   async getObject(
@@ -971,13 +951,13 @@ export default class S3 {
       requestUri: cmnP.encodePath`/${params["Bucket"]}/${params["Key"].split("/")}?acl`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    RequestCharged: cmnP.readEnum<RequestCharged>(resp.headers.get("x-amz-request-charged")),
-    ...{
+    return {
+      RequestCharged: cmnP.readEnum<RequestCharged>(resp.headers.get("x-amz-request-charged")),
+      ...{
         Owner: xml.first("Owner", false, Owner_Parse),
         Grants: xml.getList("AccessControlList", "Grant").map(Grant_Parse),
       },
-  };
+    };
   }
 
   async getObjectLegalHold(
@@ -1051,12 +1031,12 @@ export default class S3 {
       requestUri: cmnP.encodePath`/${params["Bucket"]}/${params["Key"].split("/")}?tagging`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    VersionId: resp.headers.get("x-amz-version-id"),
-    ...{
+    return {
+      VersionId: resp.headers.get("x-amz-version-id"),
+      ...{
         TagSet: xml.getList("TagSet", "Tag").map(Tag_Parse),
       },
-  };
+    };
   }
 
   async getObjectTorrent(
@@ -1130,36 +1110,36 @@ export default class S3 {
       method: "HEAD",
       requestUri: cmnP.encodePath`/${params["Bucket"]}/${params["Key"].split("/")}`,
     });
-  return {
-    DeleteMarker: cmnP.readBool(resp.headers.get("x-amz-delete-marker")),
-    AcceptRanges: resp.headers.get("accept-ranges"),
-    Expiration: resp.headers.get("x-amz-expiration"),
-    Restore: resp.headers.get("x-amz-restore"),
-    LastModified: cmnP.readTimestamp(resp.headers.get("Last-Modified")),
-    ContentLength: cmnP.readNum(resp.headers.get("Content-Length")),
-    ETag: resp.headers.get("ETag"),
-    MissingMeta: cmnP.readNum(resp.headers.get("x-amz-missing-meta")),
-    VersionId: resp.headers.get("x-amz-version-id"),
-    CacheControl: resp.headers.get("Cache-Control"),
-    ContentDisposition: resp.headers.get("Content-Disposition"),
-    ContentEncoding: resp.headers.get("Content-Encoding"),
-    ContentLanguage: resp.headers.get("Content-Language"),
-    ContentType: resp.headers.get("Content-Type"),
-    Expires: cmnP.readTimestamp(resp.headers.get("Expires")),
-    WebsiteRedirectLocation: resp.headers.get("x-amz-website-redirect-location"),
-    ServerSideEncryption: cmnP.readEnum<ServerSideEncryption>(resp.headers.get("x-amz-server-side-encryption")),
-    Metadata: cmnP.toJsObj(resp.headers, "x-amz-meta-", v => v),
-    SSECustomerAlgorithm: resp.headers.get("x-amz-server-side-encryption-customer-algorithm"),
-    SSECustomerKeyMD5: resp.headers.get("x-amz-server-side-encryption-customer-key-MD5"),
-    SSEKMSKeyId: resp.headers.get("x-amz-server-side-encryption-aws-kms-key-id"),
-    StorageClass: cmnP.readEnum<StorageClass>(resp.headers.get("x-amz-storage-class")),
-    RequestCharged: cmnP.readEnum<RequestCharged>(resp.headers.get("x-amz-request-charged")),
-    ReplicationStatus: cmnP.readEnum<ReplicationStatus>(resp.headers.get("x-amz-replication-status")),
-    PartsCount: cmnP.readNum(resp.headers.get("x-amz-mp-parts-count")),
-    ObjectLockMode: cmnP.readEnum<ObjectLockMode>(resp.headers.get("x-amz-object-lock-mode")),
-    ObjectLockRetainUntilDate: cmnP.readTimestamp(resp.headers.get("x-amz-object-lock-retain-until-date")),
-    ObjectLockLegalHoldStatus: cmnP.readEnum<ObjectLockLegalHoldStatus>(resp.headers.get("x-amz-object-lock-legal-hold")),
-  };
+    return {
+      DeleteMarker: cmnP.readBool(resp.headers.get("x-amz-delete-marker")),
+      AcceptRanges: resp.headers.get("accept-ranges"),
+      Expiration: resp.headers.get("x-amz-expiration"),
+      Restore: resp.headers.get("x-amz-restore"),
+      LastModified: cmnP.readTimestamp(resp.headers.get("Last-Modified")),
+      ContentLength: cmnP.readNum(resp.headers.get("Content-Length")),
+      ETag: resp.headers.get("ETag"),
+      MissingMeta: cmnP.readNum(resp.headers.get("x-amz-missing-meta")),
+      VersionId: resp.headers.get("x-amz-version-id"),
+      CacheControl: resp.headers.get("Cache-Control"),
+      ContentDisposition: resp.headers.get("Content-Disposition"),
+      ContentEncoding: resp.headers.get("Content-Encoding"),
+      ContentLanguage: resp.headers.get("Content-Language"),
+      ContentType: resp.headers.get("Content-Type"),
+      Expires: cmnP.readTimestamp(resp.headers.get("Expires")),
+      WebsiteRedirectLocation: resp.headers.get("x-amz-website-redirect-location"),
+      ServerSideEncryption: cmnP.readEnum<ServerSideEncryption>(resp.headers.get("x-amz-server-side-encryption")),
+      Metadata: cmnP.toJsObj(resp.headers, "x-amz-meta-", v => v),
+      SSECustomerAlgorithm: resp.headers.get("x-amz-server-side-encryption-customer-algorithm"),
+      SSECustomerKeyMD5: resp.headers.get("x-amz-server-side-encryption-customer-key-MD5"),
+      SSEKMSKeyId: resp.headers.get("x-amz-server-side-encryption-aws-kms-key-id"),
+      StorageClass: cmnP.readEnum<StorageClass>(resp.headers.get("x-amz-storage-class")),
+      RequestCharged: cmnP.readEnum<RequestCharged>(resp.headers.get("x-amz-request-charged")),
+      ReplicationStatus: cmnP.readEnum<ReplicationStatus>(resp.headers.get("x-amz-replication-status")),
+      PartsCount: cmnP.readNum(resp.headers.get("x-amz-mp-parts-count")),
+      ObjectLockMode: cmnP.readEnum<ObjectLockMode>(resp.headers.get("x-amz-object-lock-mode")),
+      ObjectLockRetainUntilDate: cmnP.readTimestamp(resp.headers.get("x-amz-object-lock-retain-until-date")),
+      ObjectLockLegalHoldStatus: cmnP.readEnum<ObjectLockLegalHoldStatus>(resp.headers.get("x-amz-object-lock-legal-hold")),
+    };
   }
 
   async listBucketAnalyticsConfigurations(
@@ -1176,15 +1156,13 @@ export default class S3 {
       requestUri: cmnP.encodePath`/${params["Bucket"]}?analytics`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    ...{
-        ...xml.strings({
-          optional: {"ContinuationToken":true,"NextContinuationToken":true},
-        }),
-        IsTruncated: xml.first("IsTruncated", false, x => x.content === 'true'),
-        AnalyticsConfigurationList: xml.getList("AnalyticsConfiguration").map(AnalyticsConfiguration_Parse),
-      },
-  };
+    return {
+      ...xml.strings({
+        optional: {"ContinuationToken":true,"NextContinuationToken":true},
+      }),
+      IsTruncated: xml.first("IsTruncated", false, x => x.content === 'true'),
+      AnalyticsConfigurationList: xml.getList("AnalyticsConfiguration").map(AnalyticsConfiguration_Parse),
+    };
   }
 
   async listBucketInventoryConfigurations(
@@ -1201,15 +1179,13 @@ export default class S3 {
       requestUri: cmnP.encodePath`/${params["Bucket"]}?inventory`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    ...{
-        ...xml.strings({
-          optional: {"ContinuationToken":true,"NextContinuationToken":true},
-        }),
-        InventoryConfigurationList: xml.getList("InventoryConfiguration").map(InventoryConfiguration_Parse),
-        IsTruncated: xml.first("IsTruncated", false, x => x.content === 'true'),
-      },
-  };
+    return {
+      ...xml.strings({
+        optional: {"ContinuationToken":true,"NextContinuationToken":true},
+      }),
+      InventoryConfigurationList: xml.getList("InventoryConfiguration").map(InventoryConfiguration_Parse),
+      IsTruncated: xml.first("IsTruncated", false, x => x.content === 'true'),
+    };
   }
 
   async listBucketMetricsConfigurations(
@@ -1226,15 +1202,13 @@ export default class S3 {
       requestUri: cmnP.encodePath`/${params["Bucket"]}?metrics`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    ...{
-        ...xml.strings({
-          optional: {"ContinuationToken":true,"NextContinuationToken":true},
-        }),
-        IsTruncated: xml.first("IsTruncated", false, x => x.content === 'true'),
-        MetricsConfigurationList: xml.getList("MetricsConfiguration").map(MetricsConfiguration_Parse),
-      },
-  };
+    return {
+      ...xml.strings({
+        optional: {"ContinuationToken":true,"NextContinuationToken":true},
+      }),
+      IsTruncated: xml.first("IsTruncated", false, x => x.content === 'true'),
+      MetricsConfigurationList: xml.getList("MetricsConfiguration").map(MetricsConfiguration_Parse),
+    };
   }
 
   async listBuckets(
@@ -1246,12 +1220,10 @@ export default class S3 {
       method: "GET",
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    ...{
-        Buckets: xml.getList("Buckets", "Bucket").map(Bucket_Parse),
-        Owner: xml.first("Owner", false, Owner_Parse),
-      },
-  };
+    return {
+      Buckets: xml.getList("Buckets", "Bucket").map(Bucket_Parse),
+      Owner: xml.first("Owner", false, Owner_Parse),
+    };
   }
 
   async listMultipartUploads(
@@ -1273,18 +1245,16 @@ export default class S3 {
       requestUri: cmnP.encodePath`/${params["Bucket"]}?uploads`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    ...{
-        ...xml.strings({
-          optional: {"Bucket":true,"KeyMarker":true,"UploadIdMarker":true,"NextKeyMarker":true,"Prefix":true,"Delimiter":true,"NextUploadIdMarker":true},
-        }),
-        MaxUploads: xml.first("MaxUploads", false, x => parseInt(x.content ?? '0')),
-        IsTruncated: xml.first("IsTruncated", false, x => x.content === 'true'),
-        Uploads: xml.getList("Upload").map(MultipartUpload_Parse),
-        CommonPrefixes: xml.getList("CommonPrefixes").map(CommonPrefix_Parse),
-        EncodingType: xml.first("EncodingType", false, x => (x.content ?? '') as EncodingType),
-      },
-  };
+    return {
+      ...xml.strings({
+        optional: {"Bucket":true,"KeyMarker":true,"UploadIdMarker":true,"NextKeyMarker":true,"Prefix":true,"Delimiter":true,"NextUploadIdMarker":true},
+      }),
+      MaxUploads: xml.first("MaxUploads", false, x => parseInt(x.content ?? '0')),
+      IsTruncated: xml.first("IsTruncated", false, x => x.content === 'true'),
+      Uploads: xml.getList("Upload").map(MultipartUpload_Parse),
+      CommonPrefixes: xml.getList("CommonPrefixes").map(CommonPrefix_Parse),
+      EncodingType: xml.first("EncodingType", false, x => (x.content ?? '') as EncodingType),
+    };
   }
 
   async listObjectVersions(
@@ -1306,19 +1276,17 @@ export default class S3 {
       requestUri: cmnP.encodePath`/${params["Bucket"]}?versions`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    ...{
-        ...xml.strings({
-          optional: {"KeyMarker":true,"VersionIdMarker":true,"NextKeyMarker":true,"NextVersionIdMarker":true,"Name":true,"Prefix":true,"Delimiter":true},
-        }),
-        IsTruncated: xml.first("IsTruncated", false, x => x.content === 'true'),
-        Versions: xml.getList("Version").map(ObjectVersion_Parse),
-        DeleteMarkers: xml.getList("DeleteMarker").map(DeleteMarkerEntry_Parse),
-        MaxKeys: xml.first("MaxKeys", false, x => parseInt(x.content ?? '0')),
-        CommonPrefixes: xml.getList("CommonPrefixes").map(CommonPrefix_Parse),
-        EncodingType: xml.first("EncodingType", false, x => (x.content ?? '') as EncodingType),
-      },
-  };
+    return {
+      ...xml.strings({
+        optional: {"KeyMarker":true,"VersionIdMarker":true,"NextKeyMarker":true,"NextVersionIdMarker":true,"Name":true,"Prefix":true,"Delimiter":true},
+      }),
+      IsTruncated: xml.first("IsTruncated", false, x => x.content === 'true'),
+      Versions: xml.getList("Version").map(ObjectVersion_Parse),
+      DeleteMarkers: xml.getList("DeleteMarker").map(DeleteMarkerEntry_Parse),
+      MaxKeys: xml.first("MaxKeys", false, x => parseInt(x.content ?? '0')),
+      CommonPrefixes: xml.getList("CommonPrefixes").map(CommonPrefix_Parse),
+      EncodingType: xml.first("EncodingType", false, x => (x.content ?? '') as EncodingType),
+    };
   }
 
   async listObjects(
@@ -1340,18 +1308,16 @@ export default class S3 {
       requestUri: cmnP.encodePath`/${params["Bucket"]}`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    ...{
-        ...xml.strings({
-          optional: {"Marker":true,"NextMarker":true,"Name":true,"Prefix":true,"Delimiter":true},
-        }),
-        IsTruncated: xml.first("IsTruncated", false, x => x.content === 'true'),
-        Contents: xml.getList("Contents").map(_Object_Parse),
-        MaxKeys: xml.first("MaxKeys", false, x => parseInt(x.content ?? '0')),
-        CommonPrefixes: xml.getList("CommonPrefixes").map(CommonPrefix_Parse),
-        EncodingType: xml.first("EncodingType", false, x => (x.content ?? '') as EncodingType),
-      },
-  };
+    return {
+      ...xml.strings({
+        optional: {"Marker":true,"NextMarker":true,"Name":true,"Prefix":true,"Delimiter":true},
+      }),
+      IsTruncated: xml.first("IsTruncated", false, x => x.content === 'true'),
+      Contents: xml.getList("Contents").map(_Object_Parse),
+      MaxKeys: xml.first("MaxKeys", false, x => parseInt(x.content ?? '0')),
+      CommonPrefixes: xml.getList("CommonPrefixes").map(CommonPrefix_Parse),
+      EncodingType: xml.first("EncodingType", false, x => (x.content ?? '') as EncodingType),
+    };
   }
 
   async listObjectsV2(
@@ -1375,19 +1341,17 @@ export default class S3 {
       requestUri: cmnP.encodePath`/${params["Bucket"]}?list-type=2`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    ...{
-        ...xml.strings({
-          optional: {"Name":true,"Prefix":true,"Delimiter":true,"ContinuationToken":true,"NextContinuationToken":true,"StartAfter":true},
-        }),
-        IsTruncated: xml.first("IsTruncated", false, x => x.content === 'true'),
-        Contents: xml.getList("Contents").map(_Object_Parse),
-        MaxKeys: xml.first("MaxKeys", false, x => parseInt(x.content ?? '0')),
-        CommonPrefixes: xml.getList("CommonPrefixes").map(CommonPrefix_Parse),
-        EncodingType: xml.first("EncodingType", false, x => (x.content ?? '') as EncodingType),
-        KeyCount: xml.first("KeyCount", false, x => parseInt(x.content ?? '0')),
-      },
-  };
+    return {
+      ...xml.strings({
+        optional: {"Name":true,"Prefix":true,"Delimiter":true,"ContinuationToken":true,"NextContinuationToken":true,"StartAfter":true},
+      }),
+      IsTruncated: xml.first("IsTruncated", false, x => x.content === 'true'),
+      Contents: xml.getList("Contents").map(_Object_Parse),
+      MaxKeys: xml.first("MaxKeys", false, x => parseInt(x.content ?? '0')),
+      CommonPrefixes: xml.getList("CommonPrefixes").map(CommonPrefix_Parse),
+      EncodingType: xml.first("EncodingType", false, x => (x.content ?? '') as EncodingType),
+      KeyCount: xml.first("KeyCount", false, x => parseInt(x.content ?? '0')),
+    };
   }
 
   async listParts(
@@ -1407,11 +1371,11 @@ export default class S3 {
       requestUri: cmnP.encodePath`/${params["Bucket"]}/${params["Key"].split("/")}`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    AbortDate: cmnP.readTimestamp(resp.headers.get("x-amz-abort-date")),
-    AbortRuleId: resp.headers.get("x-amz-abort-rule-id"),
-    RequestCharged: cmnP.readEnum<RequestCharged>(resp.headers.get("x-amz-request-charged")),
-    ...{
+    return {
+      AbortDate: cmnP.readTimestamp(resp.headers.get("x-amz-abort-date")),
+      AbortRuleId: resp.headers.get("x-amz-abort-rule-id"),
+      RequestCharged: cmnP.readEnum<RequestCharged>(resp.headers.get("x-amz-request-charged")),
+      ...{
         ...xml.strings({
           optional: {"Bucket":true,"Key":true,"UploadId":true},
         }),
@@ -1424,21 +1388,21 @@ export default class S3 {
         Owner: xml.first("Owner", false, Owner_Parse),
         StorageClass: xml.first("StorageClass", false, x => (x.content ?? '') as StorageClass),
       },
-  };
+    };
   }
 
   async putBucketAccelerateConfiguration(
     {abortSignal, ...params}: RequestConfig & PutBucketAccelerateConfigurationRequest,
   ): Promise<void> {
-    const headers = new Headers;
-    if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const inner = params["AccelerateConfiguration"];
-    const body = xmlP.stringify({
+    const body = inner ? xmlP.stringify({
       name: "AccelerateConfiguration",
       attributes: {"xmlns":"http://s3.amazonaws.com/doc/2006-03-01/"},
-      children: inner ? [
+      children: [
         {name: "Status", content: inner["Status"]?.toString()},
-      ] : []});
+      ]}) : "";
+    const headers = new Headers;
+    if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "PutBucketAccelerateConfiguration",
@@ -1450,23 +1414,23 @@ export default class S3 {
   async putBucketAcl(
     {abortSignal, ...params}: RequestConfig & PutBucketAclRequest,
   ): Promise<void> {
+    const inner = params["AccessControlPolicy"];
+    const body = inner ? xmlP.stringify({
+      name: "AccessControlPolicy",
+      attributes: {"xmlns":"http://s3.amazonaws.com/doc/2006-03-01/"},
+      children: [
+        {name: "AccessControlList", children: inner["Grants"]?.map(x => ({name: "Grant", ...Grant_Serialize(x)}))},
+        {name: "Owner", ...Owner_Serialize(inner["Owner"])},
+      ]}) : "";
     const headers = new Headers;
     if (params["ACL"] != null) headers.append("x-amz-acl", params["ACL"]);
-    if (params["ContentMD5"] != null) headers.append("Content-MD5", params["ContentMD5"]);
+    headers.append("Content-MD5", params["ContentMD5"] ?? hashMD5(body ?? ''));
     if (params["GrantFullControl"] != null) headers.append("x-amz-grant-full-control", params["GrantFullControl"]);
     if (params["GrantRead"] != null) headers.append("x-amz-grant-read", params["GrantRead"]);
     if (params["GrantReadACP"] != null) headers.append("x-amz-grant-read-acp", params["GrantReadACP"]);
     if (params["GrantWrite"] != null) headers.append("x-amz-grant-write", params["GrantWrite"]);
     if (params["GrantWriteACP"] != null) headers.append("x-amz-grant-write-acp", params["GrantWriteACP"]);
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
-    const inner = params["AccessControlPolicy"];
-    const body = xmlP.stringify({
-      name: "AccessControlPolicy",
-      attributes: {"xmlns":"http://s3.amazonaws.com/doc/2006-03-01/"},
-      children: inner ? [
-        {name: "AccessControlList", children: inner["Grants"]?.map(x => ({name: "Grant", ...Grant_Serialize(x)}))},
-        {name: "Owner", ...Owner_Serialize(inner["Owner"])},
-      ] : []});
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "PutBucketAcl",
@@ -1478,19 +1442,19 @@ export default class S3 {
   async putBucketAnalyticsConfiguration(
     {abortSignal, ...params}: RequestConfig & PutBucketAnalyticsConfigurationRequest,
   ): Promise<void> {
+    const inner = params["AnalyticsConfiguration"];
+    const body = inner ? xmlP.stringify({
+      name: "AnalyticsConfiguration",
+      attributes: {"xmlns":"http://s3.amazonaws.com/doc/2006-03-01/"},
+      children: [
+        {name: "Id", content: inner["Id"]?.toString()},
+        {name: "Filter", ...AnalyticsFilter_Serialize(inner["Filter"])},
+        {name: "StorageClassAnalysis", ...StorageClassAnalysis_Serialize(inner["StorageClassAnalysis"])},
+      ]}) : "";
     const headers = new Headers;
     const query = new URLSearchParams;
     query.set("id", params["Id"]?.toString() ?? "");
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
-    const inner = params["AnalyticsConfiguration"];
-    const body = xmlP.stringify({
-      name: "AnalyticsConfiguration",
-      attributes: {"xmlns":"http://s3.amazonaws.com/doc/2006-03-01/"},
-      children: inner ? [
-        {name: "Id", content: inner["Id"]?.toString()},
-        {name: "Filter", ...AnalyticsFilter_Serialize(inner["Filter"])},
-        {name: "StorageClassAnalysis", ...StorageClassAnalysis_Serialize(inner["StorageClassAnalysis"])},
-      ] : []});
     const resp = await this.#client.performRequest({
       abortSignal, headers, query, body,
       action: "PutBucketAnalyticsConfiguration",
@@ -1502,16 +1466,16 @@ export default class S3 {
   async putBucketCors(
     {abortSignal, ...params}: RequestConfig & PutBucketCorsRequest,
   ): Promise<void> {
-    const headers = new Headers;
-    if (params["ContentMD5"] != null) headers.append("Content-MD5", params["ContentMD5"]);
-    if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const inner = params["CORSConfiguration"];
-    const body = xmlP.stringify({
+    const body = inner ? xmlP.stringify({
       name: "CORSConfiguration",
       attributes: {"xmlns":"http://s3.amazonaws.com/doc/2006-03-01/"},
-      children: inner ? [
+      children: [
         ...(inner["CORSRules"]?.map(x => ({name: "CORSRule", ...CORSRule_Serialize(x)})) ?? []),
-      ] : []});
+      ]}) : "";
+    const headers = new Headers;
+    headers.append("Content-MD5", params["ContentMD5"] ?? hashMD5(body ?? ''));
+    if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "PutBucketCors",
@@ -1523,16 +1487,16 @@ export default class S3 {
   async putBucketEncryption(
     {abortSignal, ...params}: RequestConfig & PutBucketEncryptionRequest,
   ): Promise<void> {
-    const headers = new Headers;
-    if (params["ContentMD5"] != null) headers.append("Content-MD5", params["ContentMD5"]);
-    if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const inner = params["ServerSideEncryptionConfiguration"];
-    const body = xmlP.stringify({
+    const body = inner ? xmlP.stringify({
       name: "ServerSideEncryptionConfiguration",
       attributes: {"xmlns":"http://s3.amazonaws.com/doc/2006-03-01/"},
-      children: inner ? [
+      children: [
         ...(inner["Rules"]?.map(x => ({name: "Rule", ...ServerSideEncryptionRule_Serialize(x)})) ?? []),
-      ] : []});
+      ]}) : "";
+    const headers = new Headers;
+    headers.append("Content-MD5", params["ContentMD5"] ?? hashMD5(body ?? ''));
+    if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "PutBucketEncryption",
@@ -1544,15 +1508,11 @@ export default class S3 {
   async putBucketInventoryConfiguration(
     {abortSignal, ...params}: RequestConfig & PutBucketInventoryConfigurationRequest,
   ): Promise<void> {
-    const headers = new Headers;
-    const query = new URLSearchParams;
-    query.set("id", params["Id"]?.toString() ?? "");
-    if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const inner = params["InventoryConfiguration"];
-    const body = xmlP.stringify({
+    const body = inner ? xmlP.stringify({
       name: "InventoryConfiguration",
       attributes: {"xmlns":"http://s3.amazonaws.com/doc/2006-03-01/"},
-      children: inner ? [
+      children: [
         {name: "Destination", ...InventoryDestination_Serialize(inner["Destination"])},
         {name: "IsEnabled", content: inner["IsEnabled"]?.toString()},
         {name: "Filter", ...InventoryFilter_Serialize(inner["Filter"])},
@@ -1560,7 +1520,11 @@ export default class S3 {
         {name: "IncludedObjectVersions", content: inner["IncludedObjectVersions"]?.toString()},
         {name: "OptionalFields", children: inner["OptionalFields"]?.map(x => ({name: "Field", content: x}))},
         {name: "Schedule", ...InventorySchedule_Serialize(inner["Schedule"])},
-      ] : []});
+      ]}) : "";
+    const headers = new Headers;
+    const query = new URLSearchParams;
+    query.set("id", params["Id"]?.toString() ?? "");
+    if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, query, body,
       action: "PutBucketInventoryConfiguration",
@@ -1572,16 +1536,16 @@ export default class S3 {
   async putBucketLifecycle(
     {abortSignal, ...params}: RequestConfig & PutBucketLifecycleRequest,
   ): Promise<void> {
-    const headers = new Headers;
-    if (params["ContentMD5"] != null) headers.append("Content-MD5", params["ContentMD5"]);
-    if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const inner = params["LifecycleConfiguration"];
-    const body = xmlP.stringify({
+    const body = inner ? xmlP.stringify({
       name: "LifecycleConfiguration",
       attributes: {"xmlns":"http://s3.amazonaws.com/doc/2006-03-01/"},
-      children: inner ? [
+      children: [
         ...(inner["Rules"]?.map(x => ({name: "Rule", ...Rule_Serialize(x)})) ?? []),
-      ] : []});
+      ]}) : "";
+    const headers = new Headers;
+    headers.append("Content-MD5", params["ContentMD5"] ?? hashMD5(body ?? ''));
+    if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "PutBucketLifecycle",
@@ -1593,15 +1557,15 @@ export default class S3 {
   async putBucketLifecycleConfiguration(
     {abortSignal, ...params}: RequestConfig & PutBucketLifecycleConfigurationRequest,
   ): Promise<void> {
-    const headers = new Headers;
-    if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const inner = params["LifecycleConfiguration"];
-    const body = xmlP.stringify({
+    const body = inner ? xmlP.stringify({
       name: "LifecycleConfiguration",
       attributes: {"xmlns":"http://s3.amazonaws.com/doc/2006-03-01/"},
-      children: inner ? [
+      children: [
         ...(inner["Rules"]?.map(x => ({name: "Rule", ...LifecycleRule_Serialize(x)})) ?? []),
-      ] : []});
+      ]}) : "";
+    const headers = new Headers;
+    if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "PutBucketLifecycleConfiguration",
@@ -1613,16 +1577,16 @@ export default class S3 {
   async putBucketLogging(
     {abortSignal, ...params}: RequestConfig & PutBucketLoggingRequest,
   ): Promise<void> {
-    const headers = new Headers;
-    if (params["ContentMD5"] != null) headers.append("Content-MD5", params["ContentMD5"]);
-    if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const inner = params["BucketLoggingStatus"];
-    const body = xmlP.stringify({
+    const body = inner ? xmlP.stringify({
       name: "BucketLoggingStatus",
       attributes: {"xmlns":"http://s3.amazonaws.com/doc/2006-03-01/"},
-      children: inner ? [
+      children: [
         {name: "LoggingEnabled", ...LoggingEnabled_Serialize(inner["LoggingEnabled"])},
-      ] : []});
+      ]}) : "";
+    const headers = new Headers;
+    headers.append("Content-MD5", params["ContentMD5"] ?? hashMD5(body ?? ''));
+    if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "PutBucketLogging",
@@ -1634,18 +1598,18 @@ export default class S3 {
   async putBucketMetricsConfiguration(
     {abortSignal, ...params}: RequestConfig & PutBucketMetricsConfigurationRequest,
   ): Promise<void> {
+    const inner = params["MetricsConfiguration"];
+    const body = inner ? xmlP.stringify({
+      name: "MetricsConfiguration",
+      attributes: {"xmlns":"http://s3.amazonaws.com/doc/2006-03-01/"},
+      children: [
+        {name: "Id", content: inner["Id"]?.toString()},
+        {name: "Filter", ...MetricsFilter_Serialize(inner["Filter"])},
+      ]}) : "";
     const headers = new Headers;
     const query = new URLSearchParams;
     query.set("id", params["Id"]?.toString() ?? "");
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
-    const inner = params["MetricsConfiguration"];
-    const body = xmlP.stringify({
-      name: "MetricsConfiguration",
-      attributes: {"xmlns":"http://s3.amazonaws.com/doc/2006-03-01/"},
-      children: inner ? [
-        {name: "Id", content: inner["Id"]?.toString()},
-        {name: "Filter", ...MetricsFilter_Serialize(inner["Filter"])},
-      ] : []});
     const resp = await this.#client.performRequest({
       abortSignal, headers, query, body,
       action: "PutBucketMetricsConfiguration",
@@ -1657,18 +1621,18 @@ export default class S3 {
   async putBucketNotification(
     {abortSignal, ...params}: RequestConfig & PutBucketNotificationRequest,
   ): Promise<void> {
-    const headers = new Headers;
-    if (params["ContentMD5"] != null) headers.append("Content-MD5", params["ContentMD5"]);
-    if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const inner = params["NotificationConfiguration"];
-    const body = xmlP.stringify({
+    const body = inner ? xmlP.stringify({
       name: "NotificationConfiguration",
       attributes: {"xmlns":"http://s3.amazonaws.com/doc/2006-03-01/"},
-      children: inner ? [
+      children: [
         {name: "TopicConfiguration", ...TopicConfigurationDeprecated_Serialize(inner["TopicConfiguration"])},
         {name: "QueueConfiguration", ...QueueConfigurationDeprecated_Serialize(inner["QueueConfiguration"])},
         {name: "CloudFunctionConfiguration", ...CloudFunctionConfiguration_Serialize(inner["CloudFunctionConfiguration"])},
-      ] : []});
+      ]}) : "";
+    const headers = new Headers;
+    headers.append("Content-MD5", params["ContentMD5"] ?? hashMD5(body ?? ''));
+    if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "PutBucketNotification",
@@ -1680,17 +1644,17 @@ export default class S3 {
   async putBucketNotificationConfiguration(
     {abortSignal, ...params}: RequestConfig & PutBucketNotificationConfigurationRequest,
   ): Promise<void> {
-    const headers = new Headers;
-    if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const inner = params["NotificationConfiguration"];
-    const body = xmlP.stringify({
+    const body = inner ? xmlP.stringify({
       name: "NotificationConfiguration",
       attributes: {"xmlns":"http://s3.amazonaws.com/doc/2006-03-01/"},
-      children: inner ? [
+      children: [
         ...(inner["TopicConfigurations"]?.map(x => ({name: "TopicConfiguration", ...TopicConfiguration_Serialize(x)})) ?? []),
         ...(inner["QueueConfigurations"]?.map(x => ({name: "QueueConfiguration", ...QueueConfiguration_Serialize(x)})) ?? []),
         ...(inner["LambdaFunctionConfigurations"]?.map(x => ({name: "CloudFunctionConfiguration", ...LambdaFunctionConfiguration_Serialize(x)})) ?? []),
-      ] : []});
+      ]}) : "";
+    const headers = new Headers;
+    if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "PutBucketNotificationConfiguration",
@@ -1702,16 +1666,16 @@ export default class S3 {
   async putBucketOwnershipControls(
     {abortSignal, ...params}: RequestConfig & PutBucketOwnershipControlsRequest,
   ): Promise<void> {
-    const headers = new Headers;
-    if (params["ContentMD5"] != null) headers.append("Content-MD5", params["ContentMD5"]);
-    if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const inner = params["OwnershipControls"];
-    const body = xmlP.stringify({
+    const body = inner ? xmlP.stringify({
       name: "OwnershipControls",
       attributes: {"xmlns":"http://s3.amazonaws.com/doc/2006-03-01/"},
-      children: inner ? [
+      children: [
         ...(inner["Rules"]?.map(x => ({name: "Rule", ...OwnershipControlsRule_Serialize(x)})) ?? []),
-      ] : []});
+      ]}) : "";
+    const headers = new Headers;
+    headers.append("Content-MD5", params["ContentMD5"] ?? hashMD5(body ?? ''));
+    if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "PutBucketOwnershipControls",
@@ -1723,11 +1687,11 @@ export default class S3 {
   async putBucketPolicy(
     {abortSignal, ...params}: RequestConfig & PutBucketPolicyRequest,
   ): Promise<void> {
+    const body = typeof params["Policy"] === 'string' ? new TextEncoder().encode(params["Policy"]) : params["Policy"];
     const headers = new Headers;
-    if (params["ContentMD5"] != null) headers.append("Content-MD5", params["ContentMD5"]);
+    headers.append("Content-MD5", params["ContentMD5"] ?? hashMD5(body ?? ''));
     if (params["ConfirmRemoveSelfBucketAccess"] != null) headers.append("x-amz-confirm-remove-self-bucket-access", params["ConfirmRemoveSelfBucketAccess"]?.toString() ?? '');
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
-    const body = typeof params["Policy"] === 'string' ? new TextEncoder().encode(params["Policy"]) : params["Policy"];
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "PutBucketPolicy",
@@ -1739,18 +1703,18 @@ export default class S3 {
   async putBucketReplication(
     {abortSignal, ...params}: RequestConfig & PutBucketReplicationRequest,
   ): Promise<void> {
-    const headers = new Headers;
-    if (params["ContentMD5"] != null) headers.append("Content-MD5", params["ContentMD5"]);
-    if (params["Token"] != null) headers.append("x-amz-bucket-object-lock-token", params["Token"]);
-    if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const inner = params["ReplicationConfiguration"];
-    const body = xmlP.stringify({
+    const body = inner ? xmlP.stringify({
       name: "ReplicationConfiguration",
       attributes: {"xmlns":"http://s3.amazonaws.com/doc/2006-03-01/"},
-      children: inner ? [
+      children: [
         {name: "Role", content: inner["Role"]?.toString()},
         ...(inner["Rules"]?.map(x => ({name: "Rule", ...ReplicationRule_Serialize(x)})) ?? []),
-      ] : []});
+      ]}) : "";
+    const headers = new Headers;
+    headers.append("Content-MD5", params["ContentMD5"] ?? hashMD5(body ?? ''));
+    if (params["Token"] != null) headers.append("x-amz-bucket-object-lock-token", params["Token"]);
+    if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "PutBucketReplication",
@@ -1762,16 +1726,16 @@ export default class S3 {
   async putBucketRequestPayment(
     {abortSignal, ...params}: RequestConfig & PutBucketRequestPaymentRequest,
   ): Promise<void> {
-    const headers = new Headers;
-    if (params["ContentMD5"] != null) headers.append("Content-MD5", params["ContentMD5"]);
-    if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const inner = params["RequestPaymentConfiguration"];
-    const body = xmlP.stringify({
+    const body = inner ? xmlP.stringify({
       name: "RequestPaymentConfiguration",
       attributes: {"xmlns":"http://s3.amazonaws.com/doc/2006-03-01/"},
-      children: inner ? [
+      children: [
         {name: "Payer", content: inner["Payer"]?.toString()},
-      ] : []});
+      ]}) : "";
+    const headers = new Headers;
+    headers.append("Content-MD5", params["ContentMD5"] ?? hashMD5(body ?? ''));
+    if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "PutBucketRequestPayment",
@@ -1783,39 +1747,40 @@ export default class S3 {
   async putBucketTagging(
     {abortSignal, ...params}: RequestConfig & PutBucketTaggingRequest,
   ): Promise<void> {
-    const headers = new Headers;
-    if (params["ContentMD5"] != null) headers.append("Content-MD5", params["ContentMD5"]);
-    if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const inner = params["Tagging"];
-    const body = xmlP.stringify({
+    const body = inner ? xmlP.stringify({
       name: "Tagging",
       attributes: {"xmlns":"http://s3.amazonaws.com/doc/2006-03-01/"},
-      children: inner ? [
+      children: [
         {name: "TagSet", children: inner["TagSet"]?.map(x => ({name: "Tag", ...Tag_Serialize(x)}))},
-      ] : []});
+      ]}) : "";
+    const headers = new Headers;
+    headers.append("Content-MD5", params["ContentMD5"] ?? hashMD5(body ?? ''));
+    if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "PutBucketTagging",
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?tagging`,
+      responseCode: 204,
     });
   }
 
   async putBucketVersioning(
     {abortSignal, ...params}: RequestConfig & PutBucketVersioningRequest,
   ): Promise<void> {
-    const headers = new Headers;
-    if (params["ContentMD5"] != null) headers.append("Content-MD5", params["ContentMD5"]);
-    if (params["MFA"] != null) headers.append("x-amz-mfa", params["MFA"]);
-    if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const inner = params["VersioningConfiguration"];
-    const body = xmlP.stringify({
+    const body = inner ? xmlP.stringify({
       name: "VersioningConfiguration",
       attributes: {"xmlns":"http://s3.amazonaws.com/doc/2006-03-01/"},
-      children: inner ? [
+      children: [
         {name: "MfaDelete", content: inner["MFADelete"]?.toString()},
         {name: "Status", content: inner["Status"]?.toString()},
-      ] : []});
+      ]}) : "";
+    const headers = new Headers;
+    headers.append("Content-MD5", params["ContentMD5"] ?? hashMD5(body ?? ''));
+    if (params["MFA"] != null) headers.append("x-amz-mfa", params["MFA"]);
+    if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "PutBucketVersioning",
@@ -1827,19 +1792,19 @@ export default class S3 {
   async putBucketWebsite(
     {abortSignal, ...params}: RequestConfig & PutBucketWebsiteRequest,
   ): Promise<void> {
-    const headers = new Headers;
-    if (params["ContentMD5"] != null) headers.append("Content-MD5", params["ContentMD5"]);
-    if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const inner = params["WebsiteConfiguration"];
-    const body = xmlP.stringify({
+    const body = inner ? xmlP.stringify({
       name: "WebsiteConfiguration",
       attributes: {"xmlns":"http://s3.amazonaws.com/doc/2006-03-01/"},
-      children: inner ? [
+      children: [
         {name: "ErrorDocument", ...ErrorDocument_Serialize(inner["ErrorDocument"])},
         {name: "IndexDocument", ...IndexDocument_Serialize(inner["IndexDocument"])},
         {name: "RedirectAllRequestsTo", ...RedirectAllRequestsTo_Serialize(inner["RedirectAllRequestsTo"])},
         {name: "RoutingRules", children: inner["RoutingRules"]?.map(x => ({name: "RoutingRule", ...RoutingRule_Serialize(x)}))},
-      ] : []});
+      ]}) : "";
+    const headers = new Headers;
+    headers.append("Content-MD5", params["ContentMD5"] ?? hashMD5(body ?? ''));
+    if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "PutBucketWebsite",
@@ -1851,6 +1816,7 @@ export default class S3 {
   async putObject(
     {abortSignal, ...params}: RequestConfig & PutObjectRequest,
   ): Promise<PutObjectOutput> {
+    const body = typeof params["Body"] === 'string' ? new TextEncoder().encode(params["Body"]) : params["Body"];
     const headers = new Headers;
     if (params["ACL"] != null) headers.append("x-amz-acl", params["ACL"]);
     if (params["CacheControl"] != null) headers.append("Cache-Control", params["CacheControl"]);
@@ -1858,7 +1824,7 @@ export default class S3 {
     if (params["ContentEncoding"] != null) headers.append("Content-Encoding", params["ContentEncoding"]);
     if (params["ContentLanguage"] != null) headers.append("Content-Language", params["ContentLanguage"]);
     if (params["ContentLength"] != null) headers.append("Content-Length", params["ContentLength"]?.toString() ?? '');
-    if (params["ContentMD5"] != null) headers.append("Content-MD5", params["ContentMD5"]);
+    headers.append("Content-MD5", params["ContentMD5"] ?? hashMD5(body ?? ''));
     if (params["ContentType"] != null) headers.append("Content-Type", params["ContentType"]);
     if (params["Expires"] != null) headers.append("Expires", cmnP.serializeDate_rfc822(params["Expires"]) ?? "");
     if (params["GrantFullControl"] != null) headers.append("x-amz-grant-full-control", params["GrantFullControl"]);
@@ -1882,33 +1848,40 @@ export default class S3 {
     if (params["ObjectLockRetainUntilDate"] != null) headers.append("x-amz-object-lock-retain-until-date", cmnP.serializeDate_iso8601(params["ObjectLockRetainUntilDate"]) ?? "");
     if (params["ObjectLockLegalHoldStatus"] != null) headers.append("x-amz-object-lock-legal-hold", params["ObjectLockLegalHoldStatus"]);
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
-    const body = typeof params["Body"] === 'string' ? new TextEncoder().encode(params["Body"]) : params["Body"];
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "PutObject",
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}/${params["Key"].split("/")}`,
     });
-  return {
-    Expiration: resp.headers.get("x-amz-expiration"),
-    ETag: resp.headers.get("ETag"),
-    ServerSideEncryption: cmnP.readEnum<ServerSideEncryption>(resp.headers.get("x-amz-server-side-encryption")),
-    VersionId: resp.headers.get("x-amz-version-id"),
-    SSECustomerAlgorithm: resp.headers.get("x-amz-server-side-encryption-customer-algorithm"),
-    SSECustomerKeyMD5: resp.headers.get("x-amz-server-side-encryption-customer-key-MD5"),
-    SSEKMSKeyId: resp.headers.get("x-amz-server-side-encryption-aws-kms-key-id"),
-    SSEKMSEncryptionContext: resp.headers.get("x-amz-server-side-encryption-context"),
-    RequestCharged: cmnP.readEnum<RequestCharged>(resp.headers.get("x-amz-request-charged")),
-  };
+    return {
+      Expiration: resp.headers.get("x-amz-expiration"),
+      ETag: resp.headers.get("ETag"),
+      ServerSideEncryption: cmnP.readEnum<ServerSideEncryption>(resp.headers.get("x-amz-server-side-encryption")),
+      VersionId: resp.headers.get("x-amz-version-id"),
+      SSECustomerAlgorithm: resp.headers.get("x-amz-server-side-encryption-customer-algorithm"),
+      SSECustomerKeyMD5: resp.headers.get("x-amz-server-side-encryption-customer-key-MD5"),
+      SSEKMSKeyId: resp.headers.get("x-amz-server-side-encryption-aws-kms-key-id"),
+      SSEKMSEncryptionContext: resp.headers.get("x-amz-server-side-encryption-context"),
+      RequestCharged: cmnP.readEnum<RequestCharged>(resp.headers.get("x-amz-request-charged")),
+    };
   }
 
   async putObjectAcl(
     {abortSignal, ...params}: RequestConfig & PutObjectAclRequest,
   ): Promise<PutObjectAclOutput> {
+    const inner = params["AccessControlPolicy"];
+    const body = inner ? xmlP.stringify({
+      name: "AccessControlPolicy",
+      attributes: {"xmlns":"http://s3.amazonaws.com/doc/2006-03-01/"},
+      children: [
+        {name: "AccessControlList", children: inner["Grants"]?.map(x => ({name: "Grant", ...Grant_Serialize(x)}))},
+        {name: "Owner", ...Owner_Serialize(inner["Owner"])},
+      ]}) : "";
     const headers = new Headers;
     const query = new URLSearchParams;
     if (params["ACL"] != null) headers.append("x-amz-acl", params["ACL"]);
-    if (params["ContentMD5"] != null) headers.append("Content-MD5", params["ContentMD5"]);
+    headers.append("Content-MD5", params["ContentMD5"] ?? hashMD5(body ?? ''));
     if (params["GrantFullControl"] != null) headers.append("x-amz-grant-full-control", params["GrantFullControl"]);
     if (params["GrantRead"] != null) headers.append("x-amz-grant-read", params["GrantRead"]);
     if (params["GrantReadACP"] != null) headers.append("x-amz-grant-read-acp", params["GrantReadACP"]);
@@ -1917,150 +1890,142 @@ export default class S3 {
     if (params["RequestPayer"] != null) headers.append("x-amz-request-payer", params["RequestPayer"]);
     if (params["VersionId"] != null) query.set("versionId", params["VersionId"]?.toString() ?? "");
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
-    const inner = params["AccessControlPolicy"];
-    const body = xmlP.stringify({
-      name: "AccessControlPolicy",
-      attributes: {"xmlns":"http://s3.amazonaws.com/doc/2006-03-01/"},
-      children: inner ? [
-        {name: "AccessControlList", children: inner["Grants"]?.map(x => ({name: "Grant", ...Grant_Serialize(x)}))},
-        {name: "Owner", ...Owner_Serialize(inner["Owner"])},
-      ] : []});
     const resp = await this.#client.performRequest({
       abortSignal, headers, query, body,
       action: "PutObjectAcl",
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}/${params["Key"].split("/")}?acl`,
     });
-  return {
-    RequestCharged: cmnP.readEnum<RequestCharged>(resp.headers.get("x-amz-request-charged")),
-  };
+    return {
+      RequestCharged: cmnP.readEnum<RequestCharged>(resp.headers.get("x-amz-request-charged")),
+    };
   }
 
   async putObjectLegalHold(
     {abortSignal, ...params}: RequestConfig & PutObjectLegalHoldRequest,
   ): Promise<PutObjectLegalHoldOutput> {
+    const inner = params["LegalHold"];
+    const body = inner ? xmlP.stringify({
+      name: "LegalHold",
+      attributes: {"xmlns":"http://s3.amazonaws.com/doc/2006-03-01/"},
+      children: [
+        {name: "Status", content: inner["Status"]?.toString()},
+      ]}) : "";
     const headers = new Headers;
     const query = new URLSearchParams;
     if (params["RequestPayer"] != null) headers.append("x-amz-request-payer", params["RequestPayer"]);
     if (params["VersionId"] != null) query.set("versionId", params["VersionId"]?.toString() ?? "");
-    if (params["ContentMD5"] != null) headers.append("Content-MD5", params["ContentMD5"]);
+    headers.append("Content-MD5", params["ContentMD5"] ?? hashMD5(body ?? ''));
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
-    const inner = params["LegalHold"];
-    const body = xmlP.stringify({
-      name: "LegalHold",
-      attributes: {"xmlns":"http://s3.amazonaws.com/doc/2006-03-01/"},
-      children: inner ? [
-        {name: "Status", content: inner["Status"]?.toString()},
-      ] : []});
     const resp = await this.#client.performRequest({
       abortSignal, headers, query, body,
       action: "PutObjectLegalHold",
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}/${params["Key"].split("/")}?legal-hold`,
     });
-  return {
-    RequestCharged: cmnP.readEnum<RequestCharged>(resp.headers.get("x-amz-request-charged")),
-  };
+    return {
+      RequestCharged: cmnP.readEnum<RequestCharged>(resp.headers.get("x-amz-request-charged")),
+    };
   }
 
   async putObjectLockConfiguration(
     {abortSignal, ...params}: RequestConfig & PutObjectLockConfigurationRequest,
   ): Promise<PutObjectLockConfigurationOutput> {
+    const inner = params["ObjectLockConfiguration"];
+    const body = inner ? xmlP.stringify({
+      name: "ObjectLockConfiguration",
+      attributes: {"xmlns":"http://s3.amazonaws.com/doc/2006-03-01/"},
+      children: [
+        {name: "ObjectLockEnabled", content: inner["ObjectLockEnabled"]?.toString()},
+        {name: "Rule", ...ObjectLockRule_Serialize(inner["Rule"])},
+      ]}) : "";
     const headers = new Headers;
     if (params["RequestPayer"] != null) headers.append("x-amz-request-payer", params["RequestPayer"]);
     if (params["Token"] != null) headers.append("x-amz-bucket-object-lock-token", params["Token"]);
-    if (params["ContentMD5"] != null) headers.append("Content-MD5", params["ContentMD5"]);
+    headers.append("Content-MD5", params["ContentMD5"] ?? hashMD5(body ?? ''));
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
-    const inner = params["ObjectLockConfiguration"];
-    const body = xmlP.stringify({
-      name: "ObjectLockConfiguration",
-      attributes: {"xmlns":"http://s3.amazonaws.com/doc/2006-03-01/"},
-      children: inner ? [
-        {name: "ObjectLockEnabled", content: inner["ObjectLockEnabled"]?.toString()},
-        {name: "Rule", ...ObjectLockRule_Serialize(inner["Rule"])},
-      ] : []});
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "PutObjectLockConfiguration",
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?object-lock`,
     });
-  return {
-    RequestCharged: cmnP.readEnum<RequestCharged>(resp.headers.get("x-amz-request-charged")),
-  };
+    return {
+      RequestCharged: cmnP.readEnum<RequestCharged>(resp.headers.get("x-amz-request-charged")),
+    };
   }
 
   async putObjectRetention(
     {abortSignal, ...params}: RequestConfig & PutObjectRetentionRequest,
   ): Promise<PutObjectRetentionOutput> {
+    const inner = params["Retention"];
+    const body = inner ? xmlP.stringify({
+      name: "Retention",
+      attributes: {"xmlns":"http://s3.amazonaws.com/doc/2006-03-01/"},
+      children: [
+        {name: "Mode", content: inner["Mode"]?.toString()},
+        {name: "RetainUntilDate", content: cmnP.serializeDate_iso8601(inner["RetainUntilDate"])},
+      ]}) : "";
     const headers = new Headers;
     const query = new URLSearchParams;
     if (params["RequestPayer"] != null) headers.append("x-amz-request-payer", params["RequestPayer"]);
     if (params["VersionId"] != null) query.set("versionId", params["VersionId"]?.toString() ?? "");
     if (params["BypassGovernanceRetention"] != null) headers.append("x-amz-bypass-governance-retention", params["BypassGovernanceRetention"]?.toString() ?? '');
-    if (params["ContentMD5"] != null) headers.append("Content-MD5", params["ContentMD5"]);
+    headers.append("Content-MD5", params["ContentMD5"] ?? hashMD5(body ?? ''));
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
-    const inner = params["Retention"];
-    const body = xmlP.stringify({
-      name: "Retention",
-      attributes: {"xmlns":"http://s3.amazonaws.com/doc/2006-03-01/"},
-      children: inner ? [
-        {name: "Mode", content: inner["Mode"]?.toString()},
-        {name: "RetainUntilDate", content: cmnP.serializeDate_iso8601(inner["RetainUntilDate"])},
-      ] : []});
     const resp = await this.#client.performRequest({
       abortSignal, headers, query, body,
       action: "PutObjectRetention",
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}/${params["Key"].split("/")}?retention`,
     });
-  return {
-    RequestCharged: cmnP.readEnum<RequestCharged>(resp.headers.get("x-amz-request-charged")),
-  };
+    return {
+      RequestCharged: cmnP.readEnum<RequestCharged>(resp.headers.get("x-amz-request-charged")),
+    };
   }
 
   async putObjectTagging(
     {abortSignal, ...params}: RequestConfig & PutObjectTaggingRequest,
   ): Promise<PutObjectTaggingOutput> {
+    const inner = params["Tagging"];
+    const body = inner ? xmlP.stringify({
+      name: "Tagging",
+      attributes: {"xmlns":"http://s3.amazonaws.com/doc/2006-03-01/"},
+      children: [
+        {name: "TagSet", children: inner["TagSet"]?.map(x => ({name: "Tag", ...Tag_Serialize(x)}))},
+      ]}) : "";
     const headers = new Headers;
     const query = new URLSearchParams;
     if (params["VersionId"] != null) query.set("versionId", params["VersionId"]?.toString() ?? "");
-    if (params["ContentMD5"] != null) headers.append("Content-MD5", params["ContentMD5"]);
+    headers.append("Content-MD5", params["ContentMD5"] ?? hashMD5(body ?? ''));
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
-    const inner = params["Tagging"];
-    const body = xmlP.stringify({
-      name: "Tagging",
-      attributes: {"xmlns":"http://s3.amazonaws.com/doc/2006-03-01/"},
-      children: inner ? [
-        {name: "TagSet", children: inner["TagSet"]?.map(x => ({name: "Tag", ...Tag_Serialize(x)}))},
-      ] : []});
     const resp = await this.#client.performRequest({
       abortSignal, headers, query, body,
       action: "PutObjectTagging",
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}/${params["Key"].split("/")}?tagging`,
     });
-  return {
-    VersionId: resp.headers.get("x-amz-version-id"),
-  };
+    return {
+      VersionId: resp.headers.get("x-amz-version-id"),
+    };
   }
 
   async putPublicAccessBlock(
     {abortSignal, ...params}: RequestConfig & PutPublicAccessBlockRequest,
   ): Promise<void> {
-    const headers = new Headers;
-    if (params["ContentMD5"] != null) headers.append("Content-MD5", params["ContentMD5"]);
-    if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const inner = params["PublicAccessBlockConfiguration"];
-    const body = xmlP.stringify({
+    const body = inner ? xmlP.stringify({
       name: "PublicAccessBlockConfiguration",
       attributes: {"xmlns":"http://s3.amazonaws.com/doc/2006-03-01/"},
-      children: inner ? [
+      children: [
         {name: "BlockPublicAcls", content: inner["BlockPublicAcls"]?.toString()},
         {name: "IgnorePublicAcls", content: inner["IgnorePublicAcls"]?.toString()},
         {name: "BlockPublicPolicy", content: inner["BlockPublicPolicy"]?.toString()},
         {name: "RestrictPublicBuckets", content: inner["RestrictPublicBuckets"]?.toString()},
-      ] : []});
+      ]}) : "";
+    const headers = new Headers;
+    headers.append("Content-MD5", params["ContentMD5"] ?? hashMD5(body ?? ''));
+    if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "PutPublicAccessBlock",
@@ -2072,16 +2037,11 @@ export default class S3 {
   async restoreObject(
     {abortSignal, ...params}: RequestConfig & RestoreObjectRequest,
   ): Promise<RestoreObjectOutput> {
-    const headers = new Headers;
-    const query = new URLSearchParams;
-    if (params["VersionId"] != null) query.set("versionId", params["VersionId"]?.toString() ?? "");
-    if (params["RequestPayer"] != null) headers.append("x-amz-request-payer", params["RequestPayer"]);
-    if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const inner = params["RestoreRequest"];
-    const body = xmlP.stringify({
+    const body = inner ? xmlP.stringify({
       name: "RestoreRequest",
       attributes: {"xmlns":"http://s3.amazonaws.com/doc/2006-03-01/"},
-      children: inner ? [
+      children: [
         {name: "Days", content: inner["Days"]?.toString()},
         {name: "GlacierJobParameters", ...GlacierJobParameters_Serialize(inner["GlacierJobParameters"])},
         {name: "Type", content: inner["Type"]?.toString()},
@@ -2089,26 +2049,27 @@ export default class S3 {
         {name: "Description", content: inner["Description"]?.toString()},
         {name: "SelectParameters", ...SelectParameters_Serialize(inner["SelectParameters"])},
         {name: "OutputLocation", ...OutputLocation_Serialize(inner["OutputLocation"])},
-      ] : []});
+      ]}) : "";
+    const headers = new Headers;
+    const query = new URLSearchParams;
+    if (params["VersionId"] != null) query.set("versionId", params["VersionId"]?.toString() ?? "");
+    if (params["RequestPayer"] != null) headers.append("x-amz-request-payer", params["RequestPayer"]);
+    if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, query, body,
       action: "RestoreObject",
       requestUri: cmnP.encodePath`/${params["Bucket"]}/${params["Key"].split("/")}?restore`,
     });
-  return {
-    RequestCharged: cmnP.readEnum<RequestCharged>(resp.headers.get("x-amz-request-charged")),
-    RestoreOutputPath: resp.headers.get("x-amz-restore-output-path"),
-  };
+    return {
+      RequestCharged: cmnP.readEnum<RequestCharged>(resp.headers.get("x-amz-request-charged")),
+      RestoreOutputPath: resp.headers.get("x-amz-restore-output-path"),
+    };
   }
 
   async selectObjectContent(
     {abortSignal, ...params}: RequestConfig & SelectObjectContentRequest,
   ): Promise<SelectObjectContentOutput> {
     const headers = new Headers;
-    if (params["SSECustomerAlgorithm"] != null) headers.append("x-amz-server-side-encryption-customer-algorithm", params["SSECustomerAlgorithm"]);
-    if (params["SSECustomerKey"] != null) headers.append("x-amz-server-side-encryption-customer-key", cmnP.serializeBlob(params["SSECustomerKey"]) ?? '');
-    if (params["SSECustomerKeyMD5"] != null) headers.append("x-amz-server-side-encryption-customer-key-MD5", params["SSECustomerKeyMD5"]);
-    if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const body = xmlP.stringify({
       name: "SelectObjectContentRequest",
       attributes: {"xmlns":"http://s3.amazonaws.com/doc/2006-03-01/"},
@@ -2120,6 +2081,10 @@ export default class S3 {
         {name: "OutputSerialization", ...OutputSerialization_Serialize(params["OutputSerialization"])},
         {name: "ScanRange", ...ScanRange_Serialize(params["ScanRange"])},
       ]});
+    if (params["SSECustomerAlgorithm"] != null) headers.append("x-amz-server-side-encryption-customer-algorithm", params["SSECustomerAlgorithm"]);
+    if (params["SSECustomerKey"] != null) headers.append("x-amz-server-side-encryption-customer-key", cmnP.serializeBlob(params["SSECustomerKey"]) ?? '');
+    if (params["SSECustomerKeyMD5"] != null) headers.append("x-amz-server-side-encryption-customer-key-MD5", params["SSECustomerKeyMD5"]);
+    if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "SelectObjectContent",
@@ -2140,10 +2105,11 @@ export default class S3 {
   async uploadPart(
     {abortSignal, ...params}: RequestConfig & UploadPartRequest,
   ): Promise<UploadPartOutput> {
+    const body = typeof params["Body"] === 'string' ? new TextEncoder().encode(params["Body"]) : params["Body"];
     const headers = new Headers;
     const query = new URLSearchParams;
     if (params["ContentLength"] != null) headers.append("Content-Length", params["ContentLength"]?.toString() ?? '');
-    if (params["ContentMD5"] != null) headers.append("Content-MD5", params["ContentMD5"]);
+    headers.append("Content-MD5", params["ContentMD5"] ?? hashMD5(body ?? ''));
     query.set("partNumber", params["PartNumber"]?.toString() ?? "");
     query.set("uploadId", params["UploadId"]?.toString() ?? "");
     if (params["SSECustomerAlgorithm"] != null) headers.append("x-amz-server-side-encryption-customer-algorithm", params["SSECustomerAlgorithm"]);
@@ -2151,21 +2117,20 @@ export default class S3 {
     if (params["SSECustomerKeyMD5"] != null) headers.append("x-amz-server-side-encryption-customer-key-MD5", params["SSECustomerKeyMD5"]);
     if (params["RequestPayer"] != null) headers.append("x-amz-request-payer", params["RequestPayer"]);
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
-    const body = typeof params["Body"] === 'string' ? new TextEncoder().encode(params["Body"]) : params["Body"];
     const resp = await this.#client.performRequest({
       abortSignal, headers, query, body,
       action: "UploadPart",
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}/${params["Key"].split("/")}`,
     });
-  return {
-    ServerSideEncryption: cmnP.readEnum<ServerSideEncryption>(resp.headers.get("x-amz-server-side-encryption")),
-    ETag: resp.headers.get("ETag"),
-    SSECustomerAlgorithm: resp.headers.get("x-amz-server-side-encryption-customer-algorithm"),
-    SSECustomerKeyMD5: resp.headers.get("x-amz-server-side-encryption-customer-key-MD5"),
-    SSEKMSKeyId: resp.headers.get("x-amz-server-side-encryption-aws-kms-key-id"),
-    RequestCharged: cmnP.readEnum<RequestCharged>(resp.headers.get("x-amz-request-charged")),
-  };
+    return {
+      ServerSideEncryption: cmnP.readEnum<ServerSideEncryption>(resp.headers.get("x-amz-server-side-encryption")),
+      ETag: resp.headers.get("ETag"),
+      SSECustomerAlgorithm: resp.headers.get("x-amz-server-side-encryption-customer-algorithm"),
+      SSECustomerKeyMD5: resp.headers.get("x-amz-server-side-encryption-customer-key-MD5"),
+      SSEKMSKeyId: resp.headers.get("x-amz-server-side-encryption-aws-kms-key-id"),
+      RequestCharged: cmnP.readEnum<RequestCharged>(resp.headers.get("x-amz-request-charged")),
+    };
   }
 
   async uploadPartCopy(
@@ -2218,14 +2183,17 @@ export default class S3 {
   /** Checks state up to 20 times, 5 seconds apart (about 2 minutes max wait time). */
   async waitForBucketExists(
     params: RequestConfig & HeadBucketRequest,
-  ): Promise<void> {
+  ): Promise<Error | void> {
     const errMessage = 'ResourceNotReady: Resource is not in the state BucketExists';
     for (let i = 0; i < 20; i++) {
-      await this.headBucket(params);
-      return; // for status 200
-      // TODO: if (statusCode == 301) return;
-      // TODO: if (statusCode == 403) return;
-      // TODO: if (statusCode == 404) continue;
+      try {
+        await this.headBucket(params);
+        return; // for status 200
+        return; // for status 301
+      } catch (err) {
+        if (["Http403"].includes(err.shortCode)) return err;
+        if (!["Http404"].includes(err.shortCode)) throw err;
+      }
       await new Promise(r => setTimeout(r, 5000));
     }
     throw new Error(errMessage);
@@ -2234,11 +2202,15 @@ export default class S3 {
   /** Checks state up to 20 times, 5 seconds apart (about 2 minutes max wait time). */
   async waitForBucketNotExists(
     params: RequestConfig & HeadBucketRequest,
-  ): Promise<void> {
+  ): Promise<Error | void> {
     const errMessage = 'ResourceNotReady: Resource is not in the state BucketNotExists';
     for (let i = 0; i < 20; i++) {
-      await this.headBucket(params);
-      // TODO: if (statusCode == 404) return;
+      try {
+        await this.headBucket(params);
+      } catch (err) {
+        if (["Http404"].includes(err.shortCode)) return err;
+        throw err;
+      }
       await new Promise(r => setTimeout(r, 5000));
     }
     throw new Error(errMessage);
@@ -2250,9 +2222,12 @@ export default class S3 {
   ): Promise<HeadObjectOutput> {
     const errMessage = 'ResourceNotReady: Resource is not in the state ObjectExists';
     for (let i = 0; i < 20; i++) {
-      const resp = await this.headObject(params);
-      return resp; // for status 200
-      // TODO: if (statusCode == 404) continue;
+      try {
+        const resp = await this.headObject(params);
+        return resp; // for status 200
+      } catch (err) {
+        if (!["Http404"].includes(err.shortCode)) throw err;
+      }
       await new Promise(r => setTimeout(r, 5000));
     }
     throw new Error(errMessage);
@@ -2261,11 +2236,15 @@ export default class S3 {
   /** Checks state up to 20 times, 5 seconds apart (about 2 minutes max wait time). */
   async waitForObjectNotExists(
     params: RequestConfig & HeadObjectRequest,
-  ): Promise<HeadObjectOutput> {
+  ): Promise<Error | HeadObjectOutput> {
     const errMessage = 'ResourceNotReady: Resource is not in the state ObjectNotExists';
     for (let i = 0; i < 20; i++) {
-      const resp = await this.headObject(params);
-      // TODO: if (statusCode == 404) return resp;
+      try {
+        const resp = await this.headObject(params);
+      } catch (err) {
+        if (["Http404"].includes(err.shortCode)) return err;
+        throw err;
+      }
       await new Promise(r => setTimeout(r, 5000));
     }
     throw new Error(errMessage);

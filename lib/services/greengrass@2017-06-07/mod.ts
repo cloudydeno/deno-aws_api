@@ -29,9 +29,9 @@ export default class Greengrass {
   async associateRoleToGroup(
     {abortSignal, ...params}: RequestConfig & AssociateRoleToGroupRequest,
   ): Promise<AssociateRoleToGroupResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       RoleArn: params["RoleArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AssociateRoleToGroup",
@@ -39,22 +39,20 @@ export default class Greengrass {
       requestUri: cmnP.encodePath`/greengrass/groups/${params["GroupId"]}/role`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "AssociatedAt": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "AssociatedAt": "s",
+      },
+    }, await resp.json());
   }
 
   async associateServiceRoleToAccount(
     {abortSignal, ...params}: RequestConfig & AssociateServiceRoleToAccountRequest,
   ): Promise<AssociateServiceRoleToAccountResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       RoleArn: params["RoleArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AssociateServiceRoleToAccount",
@@ -62,310 +60,288 @@ export default class Greengrass {
       requestUri: "/greengrass/servicerole",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "AssociatedAt": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "AssociatedAt": "s",
+      },
+    }, await resp.json());
   }
 
   async createConnectorDefinition(
     {abortSignal, ...params}: RequestConfig & CreateConnectorDefinitionRequest = {},
   ): Promise<CreateConnectorDefinitionResponse> {
     const headers = new Headers;
-    if (params["AmznClientToken"] != null) headers.append("X-Amzn-Client-Token", params["AmznClientToken"]);
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       InitialVersion: fromConnectorDefinitionVersion(params["InitialVersion"]),
       Name: params["Name"],
       tags: params["tags"],
-    } : {};
+    };
+    if (params["AmznClientToken"] != null) headers.append("X-Amzn-Client-Token", params["AmznClientToken"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "CreateConnectorDefinition",
       requestUri: "/greengrass/definition/connectors",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Arn": "s",
-          "CreationTimestamp": "s",
-          "Id": "s",
-          "LastUpdatedTimestamp": "s",
-          "LatestVersion": "s",
-          "LatestVersionArn": "s",
-          "Name": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+        "CreationTimestamp": "s",
+        "Id": "s",
+        "LastUpdatedTimestamp": "s",
+        "LatestVersion": "s",
+        "LatestVersionArn": "s",
+        "Name": "s",
+      },
+    }, await resp.json());
   }
 
   async createConnectorDefinitionVersion(
     {abortSignal, ...params}: RequestConfig & CreateConnectorDefinitionVersionRequest,
   ): Promise<CreateConnectorDefinitionVersionResponse> {
     const headers = new Headers;
-    if (params["AmznClientToken"] != null) headers.append("X-Amzn-Client-Token", params["AmznClientToken"]);
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Connectors: params["Connectors"]?.map(x => fromConnector(x)),
-    } : {};
+    };
+    if (params["AmznClientToken"] != null) headers.append("X-Amzn-Client-Token", params["AmznClientToken"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "CreateConnectorDefinitionVersion",
       requestUri: cmnP.encodePath`/greengrass/definition/connectors/${params["ConnectorDefinitionId"]}/versions`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Arn": "s",
-          "CreationTimestamp": "s",
-          "Id": "s",
-          "Version": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+        "CreationTimestamp": "s",
+        "Id": "s",
+        "Version": "s",
+      },
+    }, await resp.json());
   }
 
   async createCoreDefinition(
     {abortSignal, ...params}: RequestConfig & CreateCoreDefinitionRequest = {},
   ): Promise<CreateCoreDefinitionResponse> {
     const headers = new Headers;
-    if (params["AmznClientToken"] != null) headers.append("X-Amzn-Client-Token", params["AmznClientToken"]);
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       InitialVersion: fromCoreDefinitionVersion(params["InitialVersion"]),
       Name: params["Name"],
       tags: params["tags"],
-    } : {};
+    };
+    if (params["AmznClientToken"] != null) headers.append("X-Amzn-Client-Token", params["AmznClientToken"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "CreateCoreDefinition",
       requestUri: "/greengrass/definition/cores",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Arn": "s",
-          "CreationTimestamp": "s",
-          "Id": "s",
-          "LastUpdatedTimestamp": "s",
-          "LatestVersion": "s",
-          "LatestVersionArn": "s",
-          "Name": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+        "CreationTimestamp": "s",
+        "Id": "s",
+        "LastUpdatedTimestamp": "s",
+        "LatestVersion": "s",
+        "LatestVersionArn": "s",
+        "Name": "s",
+      },
+    }, await resp.json());
   }
 
   async createCoreDefinitionVersion(
     {abortSignal, ...params}: RequestConfig & CreateCoreDefinitionVersionRequest,
   ): Promise<CreateCoreDefinitionVersionResponse> {
     const headers = new Headers;
-    if (params["AmznClientToken"] != null) headers.append("X-Amzn-Client-Token", params["AmznClientToken"]);
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Cores: params["Cores"]?.map(x => fromCore(x)),
-    } : {};
+    };
+    if (params["AmznClientToken"] != null) headers.append("X-Amzn-Client-Token", params["AmznClientToken"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "CreateCoreDefinitionVersion",
       requestUri: cmnP.encodePath`/greengrass/definition/cores/${params["CoreDefinitionId"]}/versions`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Arn": "s",
-          "CreationTimestamp": "s",
-          "Id": "s",
-          "Version": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+        "CreationTimestamp": "s",
+        "Id": "s",
+        "Version": "s",
+      },
+    }, await resp.json());
   }
 
   async createDeployment(
     {abortSignal, ...params}: RequestConfig & CreateDeploymentRequest,
   ): Promise<CreateDeploymentResponse> {
     const headers = new Headers;
-    if (params["AmznClientToken"] != null) headers.append("X-Amzn-Client-Token", params["AmznClientToken"]);
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DeploymentId: params["DeploymentId"],
       DeploymentType: params["DeploymentType"],
       GroupVersionId: params["GroupVersionId"],
-    } : {};
+    };
+    if (params["AmznClientToken"] != null) headers.append("X-Amzn-Client-Token", params["AmznClientToken"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "CreateDeployment",
       requestUri: cmnP.encodePath`/greengrass/groups/${params["GroupId"]}/deployments`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "DeploymentArn": "s",
-          "DeploymentId": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "DeploymentArn": "s",
+        "DeploymentId": "s",
+      },
+    }, await resp.json());
   }
 
   async createDeviceDefinition(
     {abortSignal, ...params}: RequestConfig & CreateDeviceDefinitionRequest = {},
   ): Promise<CreateDeviceDefinitionResponse> {
     const headers = new Headers;
-    if (params["AmznClientToken"] != null) headers.append("X-Amzn-Client-Token", params["AmznClientToken"]);
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       InitialVersion: fromDeviceDefinitionVersion(params["InitialVersion"]),
       Name: params["Name"],
       tags: params["tags"],
-    } : {};
+    };
+    if (params["AmznClientToken"] != null) headers.append("X-Amzn-Client-Token", params["AmznClientToken"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "CreateDeviceDefinition",
       requestUri: "/greengrass/definition/devices",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Arn": "s",
-          "CreationTimestamp": "s",
-          "Id": "s",
-          "LastUpdatedTimestamp": "s",
-          "LatestVersion": "s",
-          "LatestVersionArn": "s",
-          "Name": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+        "CreationTimestamp": "s",
+        "Id": "s",
+        "LastUpdatedTimestamp": "s",
+        "LatestVersion": "s",
+        "LatestVersionArn": "s",
+        "Name": "s",
+      },
+    }, await resp.json());
   }
 
   async createDeviceDefinitionVersion(
     {abortSignal, ...params}: RequestConfig & CreateDeviceDefinitionVersionRequest,
   ): Promise<CreateDeviceDefinitionVersionResponse> {
     const headers = new Headers;
-    if (params["AmznClientToken"] != null) headers.append("X-Amzn-Client-Token", params["AmznClientToken"]);
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Devices: params["Devices"]?.map(x => fromDevice(x)),
-    } : {};
+    };
+    if (params["AmznClientToken"] != null) headers.append("X-Amzn-Client-Token", params["AmznClientToken"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "CreateDeviceDefinitionVersion",
       requestUri: cmnP.encodePath`/greengrass/definition/devices/${params["DeviceDefinitionId"]}/versions`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Arn": "s",
-          "CreationTimestamp": "s",
-          "Id": "s",
-          "Version": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+        "CreationTimestamp": "s",
+        "Id": "s",
+        "Version": "s",
+      },
+    }, await resp.json());
   }
 
   async createFunctionDefinition(
     {abortSignal, ...params}: RequestConfig & CreateFunctionDefinitionRequest = {},
   ): Promise<CreateFunctionDefinitionResponse> {
     const headers = new Headers;
-    if (params["AmznClientToken"] != null) headers.append("X-Amzn-Client-Token", params["AmznClientToken"]);
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       InitialVersion: fromFunctionDefinitionVersion(params["InitialVersion"]),
       Name: params["Name"],
       tags: params["tags"],
-    } : {};
+    };
+    if (params["AmznClientToken"] != null) headers.append("X-Amzn-Client-Token", params["AmznClientToken"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "CreateFunctionDefinition",
       requestUri: "/greengrass/definition/functions",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Arn": "s",
-          "CreationTimestamp": "s",
-          "Id": "s",
-          "LastUpdatedTimestamp": "s",
-          "LatestVersion": "s",
-          "LatestVersionArn": "s",
-          "Name": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+        "CreationTimestamp": "s",
+        "Id": "s",
+        "LastUpdatedTimestamp": "s",
+        "LatestVersion": "s",
+        "LatestVersionArn": "s",
+        "Name": "s",
+      },
+    }, await resp.json());
   }
 
   async createFunctionDefinitionVersion(
     {abortSignal, ...params}: RequestConfig & CreateFunctionDefinitionVersionRequest,
   ): Promise<CreateFunctionDefinitionVersionResponse> {
     const headers = new Headers;
-    if (params["AmznClientToken"] != null) headers.append("X-Amzn-Client-Token", params["AmznClientToken"]);
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DefaultConfig: fromFunctionDefaultConfig(params["DefaultConfig"]),
       Functions: params["Functions"]?.map(x => fromFunction(x)),
-    } : {};
+    };
+    if (params["AmznClientToken"] != null) headers.append("X-Amzn-Client-Token", params["AmznClientToken"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "CreateFunctionDefinitionVersion",
       requestUri: cmnP.encodePath`/greengrass/definition/functions/${params["FunctionDefinitionId"]}/versions`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Arn": "s",
-          "CreationTimestamp": "s",
-          "Id": "s",
-          "Version": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+        "CreationTimestamp": "s",
+        "Id": "s",
+        "Version": "s",
+      },
+    }, await resp.json());
   }
 
   async createGroup(
     {abortSignal, ...params}: RequestConfig & CreateGroupRequest = {},
   ): Promise<CreateGroupResponse> {
     const headers = new Headers;
-    if (params["AmznClientToken"] != null) headers.append("X-Amzn-Client-Token", params["AmznClientToken"]);
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       InitialVersion: fromGroupVersion(params["InitialVersion"]),
       Name: params["Name"],
       tags: params["tags"],
-    } : {};
+    };
+    if (params["AmznClientToken"] != null) headers.append("X-Amzn-Client-Token", params["AmznClientToken"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "CreateGroup",
       requestUri: "/greengrass/groups",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Arn": "s",
-          "CreationTimestamp": "s",
-          "Id": "s",
-          "LastUpdatedTimestamp": "s",
-          "LatestVersion": "s",
-          "LatestVersionArn": "s",
-          "Name": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+        "CreationTimestamp": "s",
+        "Id": "s",
+        "LastUpdatedTimestamp": "s",
+        "LatestVersion": "s",
+        "LatestVersionArn": "s",
+        "Name": "s",
+      },
+    }, await resp.json());
   }
 
   async createGroupCertificateAuthority(
@@ -379,22 +355,19 @@ export default class Greengrass {
       requestUri: cmnP.encodePath`/greengrass/groups/${params["GroupId"]}/certificateauthorities`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "GroupCertificateAuthorityArn": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "GroupCertificateAuthorityArn": "s",
+      },
+    }, await resp.json());
   }
 
   async createGroupVersion(
     {abortSignal, ...params}: RequestConfig & CreateGroupVersionRequest,
   ): Promise<CreateGroupVersionResponse> {
     const headers = new Headers;
-    if (params["AmznClientToken"] != null) headers.append("X-Amzn-Client-Token", params["AmznClientToken"]);
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ConnectorDefinitionVersionArn: params["ConnectorDefinitionVersionArn"],
       CoreDefinitionVersionArn: params["CoreDefinitionVersionArn"],
       DeviceDefinitionVersionArn: params["DeviceDefinitionVersionArn"],
@@ -402,232 +375,217 @@ export default class Greengrass {
       LoggerDefinitionVersionArn: params["LoggerDefinitionVersionArn"],
       ResourceDefinitionVersionArn: params["ResourceDefinitionVersionArn"],
       SubscriptionDefinitionVersionArn: params["SubscriptionDefinitionVersionArn"],
-    } : {};
+    };
+    if (params["AmznClientToken"] != null) headers.append("X-Amzn-Client-Token", params["AmznClientToken"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "CreateGroupVersion",
       requestUri: cmnP.encodePath`/greengrass/groups/${params["GroupId"]}/versions`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Arn": "s",
-          "CreationTimestamp": "s",
-          "Id": "s",
-          "Version": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+        "CreationTimestamp": "s",
+        "Id": "s",
+        "Version": "s",
+      },
+    }, await resp.json());
   }
 
   async createLoggerDefinition(
     {abortSignal, ...params}: RequestConfig & CreateLoggerDefinitionRequest = {},
   ): Promise<CreateLoggerDefinitionResponse> {
     const headers = new Headers;
-    if (params["AmznClientToken"] != null) headers.append("X-Amzn-Client-Token", params["AmznClientToken"]);
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       InitialVersion: fromLoggerDefinitionVersion(params["InitialVersion"]),
       Name: params["Name"],
       tags: params["tags"],
-    } : {};
+    };
+    if (params["AmznClientToken"] != null) headers.append("X-Amzn-Client-Token", params["AmznClientToken"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "CreateLoggerDefinition",
       requestUri: "/greengrass/definition/loggers",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Arn": "s",
-          "CreationTimestamp": "s",
-          "Id": "s",
-          "LastUpdatedTimestamp": "s",
-          "LatestVersion": "s",
-          "LatestVersionArn": "s",
-          "Name": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+        "CreationTimestamp": "s",
+        "Id": "s",
+        "LastUpdatedTimestamp": "s",
+        "LatestVersion": "s",
+        "LatestVersionArn": "s",
+        "Name": "s",
+      },
+    }, await resp.json());
   }
 
   async createLoggerDefinitionVersion(
     {abortSignal, ...params}: RequestConfig & CreateLoggerDefinitionVersionRequest,
   ): Promise<CreateLoggerDefinitionVersionResponse> {
     const headers = new Headers;
-    if (params["AmznClientToken"] != null) headers.append("X-Amzn-Client-Token", params["AmznClientToken"]);
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Loggers: params["Loggers"]?.map(x => fromLogger(x)),
-    } : {};
+    };
+    if (params["AmznClientToken"] != null) headers.append("X-Amzn-Client-Token", params["AmznClientToken"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "CreateLoggerDefinitionVersion",
       requestUri: cmnP.encodePath`/greengrass/definition/loggers/${params["LoggerDefinitionId"]}/versions`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Arn": "s",
-          "CreationTimestamp": "s",
-          "Id": "s",
-          "Version": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+        "CreationTimestamp": "s",
+        "Id": "s",
+        "Version": "s",
+      },
+    }, await resp.json());
   }
 
   async createResourceDefinition(
     {abortSignal, ...params}: RequestConfig & CreateResourceDefinitionRequest = {},
   ): Promise<CreateResourceDefinitionResponse> {
     const headers = new Headers;
-    if (params["AmznClientToken"] != null) headers.append("X-Amzn-Client-Token", params["AmznClientToken"]);
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       InitialVersion: fromResourceDefinitionVersion(params["InitialVersion"]),
       Name: params["Name"],
       tags: params["tags"],
-    } : {};
+    };
+    if (params["AmznClientToken"] != null) headers.append("X-Amzn-Client-Token", params["AmznClientToken"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "CreateResourceDefinition",
       requestUri: "/greengrass/definition/resources",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Arn": "s",
-          "CreationTimestamp": "s",
-          "Id": "s",
-          "LastUpdatedTimestamp": "s",
-          "LatestVersion": "s",
-          "LatestVersionArn": "s",
-          "Name": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+        "CreationTimestamp": "s",
+        "Id": "s",
+        "LastUpdatedTimestamp": "s",
+        "LatestVersion": "s",
+        "LatestVersionArn": "s",
+        "Name": "s",
+      },
+    }, await resp.json());
   }
 
   async createResourceDefinitionVersion(
     {abortSignal, ...params}: RequestConfig & CreateResourceDefinitionVersionRequest,
   ): Promise<CreateResourceDefinitionVersionResponse> {
     const headers = new Headers;
-    if (params["AmznClientToken"] != null) headers.append("X-Amzn-Client-Token", params["AmznClientToken"]);
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Resources: params["Resources"]?.map(x => fromResource(x)),
-    } : {};
+    };
+    if (params["AmznClientToken"] != null) headers.append("X-Amzn-Client-Token", params["AmznClientToken"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "CreateResourceDefinitionVersion",
       requestUri: cmnP.encodePath`/greengrass/definition/resources/${params["ResourceDefinitionId"]}/versions`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Arn": "s",
-          "CreationTimestamp": "s",
-          "Id": "s",
-          "Version": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+        "CreationTimestamp": "s",
+        "Id": "s",
+        "Version": "s",
+      },
+    }, await resp.json());
   }
 
   async createSoftwareUpdateJob(
     {abortSignal, ...params}: RequestConfig & CreateSoftwareUpdateJobRequest,
   ): Promise<CreateSoftwareUpdateJobResponse> {
     const headers = new Headers;
-    if (params["AmznClientToken"] != null) headers.append("X-Amzn-Client-Token", params["AmznClientToken"]);
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       S3UrlSignerRole: params["S3UrlSignerRole"],
       SoftwareToUpdate: params["SoftwareToUpdate"],
       UpdateAgentLogLevel: params["UpdateAgentLogLevel"],
       UpdateTargets: params["UpdateTargets"],
       UpdateTargetsArchitecture: params["UpdateTargetsArchitecture"],
       UpdateTargetsOperatingSystem: params["UpdateTargetsOperatingSystem"],
-    } : {};
+    };
+    if (params["AmznClientToken"] != null) headers.append("X-Amzn-Client-Token", params["AmznClientToken"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "CreateSoftwareUpdateJob",
       requestUri: "/greengrass/updates",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "IotJobArn": "s",
-          "IotJobId": "s",
-          "PlatformSoftwareVersion": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "IotJobArn": "s",
+        "IotJobId": "s",
+        "PlatformSoftwareVersion": "s",
+      },
+    }, await resp.json());
   }
 
   async createSubscriptionDefinition(
     {abortSignal, ...params}: RequestConfig & CreateSubscriptionDefinitionRequest = {},
   ): Promise<CreateSubscriptionDefinitionResponse> {
     const headers = new Headers;
-    if (params["AmznClientToken"] != null) headers.append("X-Amzn-Client-Token", params["AmznClientToken"]);
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       InitialVersion: fromSubscriptionDefinitionVersion(params["InitialVersion"]),
       Name: params["Name"],
       tags: params["tags"],
-    } : {};
+    };
+    if (params["AmznClientToken"] != null) headers.append("X-Amzn-Client-Token", params["AmznClientToken"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "CreateSubscriptionDefinition",
       requestUri: "/greengrass/definition/subscriptions",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Arn": "s",
-          "CreationTimestamp": "s",
-          "Id": "s",
-          "LastUpdatedTimestamp": "s",
-          "LatestVersion": "s",
-          "LatestVersionArn": "s",
-          "Name": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+        "CreationTimestamp": "s",
+        "Id": "s",
+        "LastUpdatedTimestamp": "s",
+        "LatestVersion": "s",
+        "LatestVersionArn": "s",
+        "Name": "s",
+      },
+    }, await resp.json());
   }
 
   async createSubscriptionDefinitionVersion(
     {abortSignal, ...params}: RequestConfig & CreateSubscriptionDefinitionVersionRequest,
   ): Promise<CreateSubscriptionDefinitionVersionResponse> {
     const headers = new Headers;
-    if (params["AmznClientToken"] != null) headers.append("X-Amzn-Client-Token", params["AmznClientToken"]);
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Subscriptions: params["Subscriptions"]?.map(x => fromSubscription(x)),
-    } : {};
+    };
+    if (params["AmznClientToken"] != null) headers.append("X-Amzn-Client-Token", params["AmznClientToken"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "CreateSubscriptionDefinitionVersion",
       requestUri: cmnP.encodePath`/greengrass/definition/subscriptions/${params["SubscriptionDefinitionId"]}/versions`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Arn": "s",
-          "CreationTimestamp": "s",
-          "Id": "s",
-          "Version": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+        "CreationTimestamp": "s",
+        "Id": "s",
+        "Version": "s",
+      },
+    }, await resp.json());
   }
 
   async deleteConnectorDefinition(
@@ -641,12 +599,10 @@ export default class Greengrass {
       requestUri: cmnP.encodePath`/greengrass/definition/connectors/${params["ConnectorDefinitionId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async deleteCoreDefinition(
@@ -660,12 +616,10 @@ export default class Greengrass {
       requestUri: cmnP.encodePath`/greengrass/definition/cores/${params["CoreDefinitionId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async deleteDeviceDefinition(
@@ -679,12 +633,10 @@ export default class Greengrass {
       requestUri: cmnP.encodePath`/greengrass/definition/devices/${params["DeviceDefinitionId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async deleteFunctionDefinition(
@@ -698,12 +650,10 @@ export default class Greengrass {
       requestUri: cmnP.encodePath`/greengrass/definition/functions/${params["FunctionDefinitionId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async deleteGroup(
@@ -717,12 +667,10 @@ export default class Greengrass {
       requestUri: cmnP.encodePath`/greengrass/groups/${params["GroupId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async deleteLoggerDefinition(
@@ -736,12 +684,10 @@ export default class Greengrass {
       requestUri: cmnP.encodePath`/greengrass/definition/loggers/${params["LoggerDefinitionId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async deleteResourceDefinition(
@@ -755,12 +701,10 @@ export default class Greengrass {
       requestUri: cmnP.encodePath`/greengrass/definition/resources/${params["ResourceDefinitionId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async deleteSubscriptionDefinition(
@@ -774,12 +718,10 @@ export default class Greengrass {
       requestUri: cmnP.encodePath`/greengrass/definition/subscriptions/${params["SubscriptionDefinitionId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async disassociateRoleFromGroup(
@@ -793,14 +735,12 @@ export default class Greengrass {
       requestUri: cmnP.encodePath`/greengrass/groups/${params["GroupId"]}/role`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "DisassociatedAt": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "DisassociatedAt": "s",
+      },
+    }, await resp.json());
   }
 
   async disassociateServiceRoleFromAccount(
@@ -814,14 +754,12 @@ export default class Greengrass {
       requestUri: "/greengrass/servicerole",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "DisassociatedAt": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "DisassociatedAt": "s",
+      },
+    }, await resp.json());
   }
 
   async getAssociatedRole(
@@ -835,15 +773,13 @@ export default class Greengrass {
       requestUri: cmnP.encodePath`/greengrass/groups/${params["GroupId"]}/role`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "AssociatedAt": "s",
-          "RoleArn": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "AssociatedAt": "s",
+        "RoleArn": "s",
+      },
+    }, await resp.json());
   }
 
   async getBulkDeploymentStatus(
@@ -857,19 +793,17 @@ export default class Greengrass {
       requestUri: cmnP.encodePath`/greengrass/bulk/deployments/${params["BulkDeploymentId"]}/status`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "BulkDeploymentMetrics": toBulkDeploymentMetrics,
-          "BulkDeploymentStatus": (x: jsonP.JSONValue) => cmnP.readEnum<BulkDeploymentStatus>(x),
-          "CreatedAt": "s",
-          "ErrorDetails": [toErrorDetail],
-          "ErrorMessage": "s",
-          "tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "BulkDeploymentMetrics": toBulkDeploymentMetrics,
+        "BulkDeploymentStatus": (x: jsonP.JSONValue) => cmnP.readEnum<BulkDeploymentStatus>(x),
+        "CreatedAt": "s",
+        "ErrorDetails": [toErrorDetail],
+        "ErrorMessage": "s",
+        "tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async getConnectivityInfo(
@@ -883,15 +817,13 @@ export default class Greengrass {
       requestUri: cmnP.encodePath`/greengrass/things/${params["ThingName"]}/connectivityInfo`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ConnectivityInfo": [toConnectivityInfo],
-          "Message": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ConnectivityInfo": [toConnectivityInfo],
+        "Message": "s",
+      },
+    }, await resp.json());
   }
 
   async getConnectorDefinition(
@@ -905,21 +837,19 @@ export default class Greengrass {
       requestUri: cmnP.encodePath`/greengrass/definition/connectors/${params["ConnectorDefinitionId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Arn": "s",
-          "CreationTimestamp": "s",
-          "Id": "s",
-          "LastUpdatedTimestamp": "s",
-          "LatestVersion": "s",
-          "LatestVersionArn": "s",
-          "Name": "s",
-          "tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+        "CreationTimestamp": "s",
+        "Id": "s",
+        "LastUpdatedTimestamp": "s",
+        "LatestVersion": "s",
+        "LatestVersionArn": "s",
+        "Name": "s",
+        "tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async getConnectorDefinitionVersion(
@@ -934,19 +864,17 @@ export default class Greengrass {
       requestUri: cmnP.encodePath`/greengrass/definition/connectors/${params["ConnectorDefinitionId"]}/versions/${params["ConnectorDefinitionVersionId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Arn": "s",
-          "CreationTimestamp": "s",
-          "Definition": toConnectorDefinitionVersion,
-          "Id": "s",
-          "NextToken": "s",
-          "Version": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+        "CreationTimestamp": "s",
+        "Definition": toConnectorDefinitionVersion,
+        "Id": "s",
+        "NextToken": "s",
+        "Version": "s",
+      },
+    }, await resp.json());
   }
 
   async getCoreDefinition(
@@ -960,21 +888,19 @@ export default class Greengrass {
       requestUri: cmnP.encodePath`/greengrass/definition/cores/${params["CoreDefinitionId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Arn": "s",
-          "CreationTimestamp": "s",
-          "Id": "s",
-          "LastUpdatedTimestamp": "s",
-          "LatestVersion": "s",
-          "LatestVersionArn": "s",
-          "Name": "s",
-          "tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+        "CreationTimestamp": "s",
+        "Id": "s",
+        "LastUpdatedTimestamp": "s",
+        "LatestVersion": "s",
+        "LatestVersionArn": "s",
+        "Name": "s",
+        "tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async getCoreDefinitionVersion(
@@ -988,19 +914,17 @@ export default class Greengrass {
       requestUri: cmnP.encodePath`/greengrass/definition/cores/${params["CoreDefinitionId"]}/versions/${params["CoreDefinitionVersionId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Arn": "s",
-          "CreationTimestamp": "s",
-          "Definition": toCoreDefinitionVersion,
-          "Id": "s",
-          "NextToken": "s",
-          "Version": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+        "CreationTimestamp": "s",
+        "Definition": toCoreDefinitionVersion,
+        "Id": "s",
+        "NextToken": "s",
+        "Version": "s",
+      },
+    }, await resp.json());
   }
 
   async getDeploymentStatus(
@@ -1014,18 +938,16 @@ export default class Greengrass {
       requestUri: cmnP.encodePath`/greengrass/groups/${params["GroupId"]}/deployments/${params["DeploymentId"]}/status`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "DeploymentStatus": "s",
-          "DeploymentType": (x: jsonP.JSONValue) => cmnP.readEnum<DeploymentType>(x),
-          "ErrorDetails": [toErrorDetail],
-          "ErrorMessage": "s",
-          "UpdatedAt": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "DeploymentStatus": "s",
+        "DeploymentType": (x: jsonP.JSONValue) => cmnP.readEnum<DeploymentType>(x),
+        "ErrorDetails": [toErrorDetail],
+        "ErrorMessage": "s",
+        "UpdatedAt": "s",
+      },
+    }, await resp.json());
   }
 
   async getDeviceDefinition(
@@ -1039,21 +961,19 @@ export default class Greengrass {
       requestUri: cmnP.encodePath`/greengrass/definition/devices/${params["DeviceDefinitionId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Arn": "s",
-          "CreationTimestamp": "s",
-          "Id": "s",
-          "LastUpdatedTimestamp": "s",
-          "LatestVersion": "s",
-          "LatestVersionArn": "s",
-          "Name": "s",
-          "tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+        "CreationTimestamp": "s",
+        "Id": "s",
+        "LastUpdatedTimestamp": "s",
+        "LatestVersion": "s",
+        "LatestVersionArn": "s",
+        "Name": "s",
+        "tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async getDeviceDefinitionVersion(
@@ -1068,19 +988,17 @@ export default class Greengrass {
       requestUri: cmnP.encodePath`/greengrass/definition/devices/${params["DeviceDefinitionId"]}/versions/${params["DeviceDefinitionVersionId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Arn": "s",
-          "CreationTimestamp": "s",
-          "Definition": toDeviceDefinitionVersion,
-          "Id": "s",
-          "NextToken": "s",
-          "Version": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+        "CreationTimestamp": "s",
+        "Definition": toDeviceDefinitionVersion,
+        "Id": "s",
+        "NextToken": "s",
+        "Version": "s",
+      },
+    }, await resp.json());
   }
 
   async getFunctionDefinition(
@@ -1094,21 +1012,19 @@ export default class Greengrass {
       requestUri: cmnP.encodePath`/greengrass/definition/functions/${params["FunctionDefinitionId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Arn": "s",
-          "CreationTimestamp": "s",
-          "Id": "s",
-          "LastUpdatedTimestamp": "s",
-          "LatestVersion": "s",
-          "LatestVersionArn": "s",
-          "Name": "s",
-          "tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+        "CreationTimestamp": "s",
+        "Id": "s",
+        "LastUpdatedTimestamp": "s",
+        "LatestVersion": "s",
+        "LatestVersionArn": "s",
+        "Name": "s",
+        "tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async getFunctionDefinitionVersion(
@@ -1123,19 +1039,17 @@ export default class Greengrass {
       requestUri: cmnP.encodePath`/greengrass/definition/functions/${params["FunctionDefinitionId"]}/versions/${params["FunctionDefinitionVersionId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Arn": "s",
-          "CreationTimestamp": "s",
-          "Definition": toFunctionDefinitionVersion,
-          "Id": "s",
-          "NextToken": "s",
-          "Version": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+        "CreationTimestamp": "s",
+        "Definition": toFunctionDefinitionVersion,
+        "Id": "s",
+        "NextToken": "s",
+        "Version": "s",
+      },
+    }, await resp.json());
   }
 
   async getGroup(
@@ -1149,21 +1063,19 @@ export default class Greengrass {
       requestUri: cmnP.encodePath`/greengrass/groups/${params["GroupId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Arn": "s",
-          "CreationTimestamp": "s",
-          "Id": "s",
-          "LastUpdatedTimestamp": "s",
-          "LatestVersion": "s",
-          "LatestVersionArn": "s",
-          "Name": "s",
-          "tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+        "CreationTimestamp": "s",
+        "Id": "s",
+        "LastUpdatedTimestamp": "s",
+        "LatestVersion": "s",
+        "LatestVersionArn": "s",
+        "Name": "s",
+        "tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async getGroupCertificateAuthority(
@@ -1177,16 +1089,14 @@ export default class Greengrass {
       requestUri: cmnP.encodePath`/greengrass/groups/${params["GroupId"]}/certificateauthorities/${params["CertificateAuthorityId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "GroupCertificateAuthorityArn": "s",
-          "GroupCertificateAuthorityId": "s",
-          "PemEncodedCertificate": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "GroupCertificateAuthorityArn": "s",
+        "GroupCertificateAuthorityId": "s",
+        "PemEncodedCertificate": "s",
+      },
+    }, await resp.json());
   }
 
   async getGroupCertificateConfiguration(
@@ -1200,16 +1110,14 @@ export default class Greengrass {
       requestUri: cmnP.encodePath`/greengrass/groups/${params["GroupId"]}/certificateauthorities/configuration/expiry`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "CertificateAuthorityExpiryInMilliseconds": "s",
-          "CertificateExpiryInMilliseconds": "s",
-          "GroupId": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "CertificateAuthorityExpiryInMilliseconds": "s",
+        "CertificateExpiryInMilliseconds": "s",
+        "GroupId": "s",
+      },
+    }, await resp.json());
   }
 
   async getGroupVersion(
@@ -1223,18 +1131,16 @@ export default class Greengrass {
       requestUri: cmnP.encodePath`/greengrass/groups/${params["GroupId"]}/versions/${params["GroupVersionId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Arn": "s",
-          "CreationTimestamp": "s",
-          "Definition": toGroupVersion,
-          "Id": "s",
-          "Version": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+        "CreationTimestamp": "s",
+        "Definition": toGroupVersion,
+        "Id": "s",
+        "Version": "s",
+      },
+    }, await resp.json());
   }
 
   async getLoggerDefinition(
@@ -1248,21 +1154,19 @@ export default class Greengrass {
       requestUri: cmnP.encodePath`/greengrass/definition/loggers/${params["LoggerDefinitionId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Arn": "s",
-          "CreationTimestamp": "s",
-          "Id": "s",
-          "LastUpdatedTimestamp": "s",
-          "LatestVersion": "s",
-          "LatestVersionArn": "s",
-          "Name": "s",
-          "tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+        "CreationTimestamp": "s",
+        "Id": "s",
+        "LastUpdatedTimestamp": "s",
+        "LatestVersion": "s",
+        "LatestVersionArn": "s",
+        "Name": "s",
+        "tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async getLoggerDefinitionVersion(
@@ -1277,18 +1181,16 @@ export default class Greengrass {
       requestUri: cmnP.encodePath`/greengrass/definition/loggers/${params["LoggerDefinitionId"]}/versions/${params["LoggerDefinitionVersionId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Arn": "s",
-          "CreationTimestamp": "s",
-          "Definition": toLoggerDefinitionVersion,
-          "Id": "s",
-          "Version": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+        "CreationTimestamp": "s",
+        "Definition": toLoggerDefinitionVersion,
+        "Id": "s",
+        "Version": "s",
+      },
+    }, await resp.json());
   }
 
   async getResourceDefinition(
@@ -1302,21 +1204,19 @@ export default class Greengrass {
       requestUri: cmnP.encodePath`/greengrass/definition/resources/${params["ResourceDefinitionId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Arn": "s",
-          "CreationTimestamp": "s",
-          "Id": "s",
-          "LastUpdatedTimestamp": "s",
-          "LatestVersion": "s",
-          "LatestVersionArn": "s",
-          "Name": "s",
-          "tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+        "CreationTimestamp": "s",
+        "Id": "s",
+        "LastUpdatedTimestamp": "s",
+        "LatestVersion": "s",
+        "LatestVersionArn": "s",
+        "Name": "s",
+        "tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async getResourceDefinitionVersion(
@@ -1330,18 +1230,16 @@ export default class Greengrass {
       requestUri: cmnP.encodePath`/greengrass/definition/resources/${params["ResourceDefinitionId"]}/versions/${params["ResourceDefinitionVersionId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Arn": "s",
-          "CreationTimestamp": "s",
-          "Definition": toResourceDefinitionVersion,
-          "Id": "s",
-          "Version": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+        "CreationTimestamp": "s",
+        "Definition": toResourceDefinitionVersion,
+        "Id": "s",
+        "Version": "s",
+      },
+    }, await resp.json());
   }
 
   async getServiceRoleForAccount(
@@ -1355,15 +1253,13 @@ export default class Greengrass {
       requestUri: "/greengrass/servicerole",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "AssociatedAt": "s",
-          "RoleArn": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "AssociatedAt": "s",
+        "RoleArn": "s",
+      },
+    }, await resp.json());
   }
 
   async getSubscriptionDefinition(
@@ -1377,21 +1273,19 @@ export default class Greengrass {
       requestUri: cmnP.encodePath`/greengrass/definition/subscriptions/${params["SubscriptionDefinitionId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Arn": "s",
-          "CreationTimestamp": "s",
-          "Id": "s",
-          "LastUpdatedTimestamp": "s",
-          "LatestVersion": "s",
-          "LatestVersionArn": "s",
-          "Name": "s",
-          "tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+        "CreationTimestamp": "s",
+        "Id": "s",
+        "LastUpdatedTimestamp": "s",
+        "LatestVersion": "s",
+        "LatestVersionArn": "s",
+        "Name": "s",
+        "tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async getSubscriptionDefinitionVersion(
@@ -1406,19 +1300,17 @@ export default class Greengrass {
       requestUri: cmnP.encodePath`/greengrass/definition/subscriptions/${params["SubscriptionDefinitionId"]}/versions/${params["SubscriptionDefinitionVersionId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Arn": "s",
-          "CreationTimestamp": "s",
-          "Definition": toSubscriptionDefinitionVersion,
-          "Id": "s",
-          "NextToken": "s",
-          "Version": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+        "CreationTimestamp": "s",
+        "Definition": toSubscriptionDefinitionVersion,
+        "Id": "s",
+        "NextToken": "s",
+        "Version": "s",
+      },
+    }, await resp.json());
   }
 
   async getThingRuntimeConfiguration(
@@ -1432,14 +1324,12 @@ export default class Greengrass {
       requestUri: cmnP.encodePath`/greengrass/things/${params["ThingName"]}/runtimeconfig`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "RuntimeConfiguration": toRuntimeConfiguration,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "RuntimeConfiguration": toRuntimeConfiguration,
+      },
+    }, await resp.json());
   }
 
   async listBulkDeploymentDetailedReports(
@@ -1455,15 +1345,13 @@ export default class Greengrass {
       requestUri: cmnP.encodePath`/greengrass/bulk/deployments/${params["BulkDeploymentId"]}/detailed-reports`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Deployments": [toBulkDeploymentResult],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Deployments": [toBulkDeploymentResult],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listBulkDeployments(
@@ -1479,15 +1367,13 @@ export default class Greengrass {
       requestUri: "/greengrass/bulk/deployments",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "BulkDeployments": [toBulkDeployment],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "BulkDeployments": [toBulkDeployment],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listConnectorDefinitionVersions(
@@ -1503,15 +1389,13 @@ export default class Greengrass {
       requestUri: cmnP.encodePath`/greengrass/definition/connectors/${params["ConnectorDefinitionId"]}/versions`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "NextToken": "s",
-          "Versions": [toVersionInformation],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "NextToken": "s",
+        "Versions": [toVersionInformation],
+      },
+    }, await resp.json());
   }
 
   async listConnectorDefinitions(
@@ -1527,15 +1411,13 @@ export default class Greengrass {
       requestUri: "/greengrass/definition/connectors",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Definitions": [toDefinitionInformation],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Definitions": [toDefinitionInformation],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listCoreDefinitionVersions(
@@ -1551,15 +1433,13 @@ export default class Greengrass {
       requestUri: cmnP.encodePath`/greengrass/definition/cores/${params["CoreDefinitionId"]}/versions`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "NextToken": "s",
-          "Versions": [toVersionInformation],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "NextToken": "s",
+        "Versions": [toVersionInformation],
+      },
+    }, await resp.json());
   }
 
   async listCoreDefinitions(
@@ -1575,15 +1455,13 @@ export default class Greengrass {
       requestUri: "/greengrass/definition/cores",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Definitions": [toDefinitionInformation],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Definitions": [toDefinitionInformation],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listDeployments(
@@ -1599,15 +1477,13 @@ export default class Greengrass {
       requestUri: cmnP.encodePath`/greengrass/groups/${params["GroupId"]}/deployments`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Deployments": [toDeployment],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Deployments": [toDeployment],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listDeviceDefinitionVersions(
@@ -1623,15 +1499,13 @@ export default class Greengrass {
       requestUri: cmnP.encodePath`/greengrass/definition/devices/${params["DeviceDefinitionId"]}/versions`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "NextToken": "s",
-          "Versions": [toVersionInformation],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "NextToken": "s",
+        "Versions": [toVersionInformation],
+      },
+    }, await resp.json());
   }
 
   async listDeviceDefinitions(
@@ -1647,15 +1521,13 @@ export default class Greengrass {
       requestUri: "/greengrass/definition/devices",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Definitions": [toDefinitionInformation],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Definitions": [toDefinitionInformation],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listFunctionDefinitionVersions(
@@ -1671,15 +1543,13 @@ export default class Greengrass {
       requestUri: cmnP.encodePath`/greengrass/definition/functions/${params["FunctionDefinitionId"]}/versions`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "NextToken": "s",
-          "Versions": [toVersionInformation],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "NextToken": "s",
+        "Versions": [toVersionInformation],
+      },
+    }, await resp.json());
   }
 
   async listFunctionDefinitions(
@@ -1695,15 +1565,13 @@ export default class Greengrass {
       requestUri: "/greengrass/definition/functions",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Definitions": [toDefinitionInformation],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Definitions": [toDefinitionInformation],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listGroupCertificateAuthorities(
@@ -1717,14 +1585,12 @@ export default class Greengrass {
       requestUri: cmnP.encodePath`/greengrass/groups/${params["GroupId"]}/certificateauthorities`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "GroupCertificateAuthorities": [toGroupCertificateAuthorityProperties],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "GroupCertificateAuthorities": [toGroupCertificateAuthorityProperties],
+      },
+    }, await resp.json());
   }
 
   async listGroupVersions(
@@ -1740,15 +1606,13 @@ export default class Greengrass {
       requestUri: cmnP.encodePath`/greengrass/groups/${params["GroupId"]}/versions`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "NextToken": "s",
-          "Versions": [toVersionInformation],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "NextToken": "s",
+        "Versions": [toVersionInformation],
+      },
+    }, await resp.json());
   }
 
   async listGroups(
@@ -1764,15 +1628,13 @@ export default class Greengrass {
       requestUri: "/greengrass/groups",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Groups": [toGroupInformation],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Groups": [toGroupInformation],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listLoggerDefinitionVersions(
@@ -1788,15 +1650,13 @@ export default class Greengrass {
       requestUri: cmnP.encodePath`/greengrass/definition/loggers/${params["LoggerDefinitionId"]}/versions`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "NextToken": "s",
-          "Versions": [toVersionInformation],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "NextToken": "s",
+        "Versions": [toVersionInformation],
+      },
+    }, await resp.json());
   }
 
   async listLoggerDefinitions(
@@ -1812,15 +1672,13 @@ export default class Greengrass {
       requestUri: "/greengrass/definition/loggers",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Definitions": [toDefinitionInformation],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Definitions": [toDefinitionInformation],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listResourceDefinitionVersions(
@@ -1836,15 +1694,13 @@ export default class Greengrass {
       requestUri: cmnP.encodePath`/greengrass/definition/resources/${params["ResourceDefinitionId"]}/versions`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "NextToken": "s",
-          "Versions": [toVersionInformation],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "NextToken": "s",
+        "Versions": [toVersionInformation],
+      },
+    }, await resp.json());
   }
 
   async listResourceDefinitions(
@@ -1860,15 +1716,13 @@ export default class Greengrass {
       requestUri: "/greengrass/definition/resources",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Definitions": [toDefinitionInformation],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Definitions": [toDefinitionInformation],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listSubscriptionDefinitionVersions(
@@ -1884,15 +1738,13 @@ export default class Greengrass {
       requestUri: cmnP.encodePath`/greengrass/definition/subscriptions/${params["SubscriptionDefinitionId"]}/versions`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "NextToken": "s",
-          "Versions": [toVersionInformation],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "NextToken": "s",
+        "Versions": [toVersionInformation],
+      },
+    }, await resp.json());
   }
 
   async listSubscriptionDefinitions(
@@ -1908,15 +1760,13 @@ export default class Greengrass {
       requestUri: "/greengrass/definition/subscriptions",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Definitions": [toDefinitionInformation],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Definitions": [toDefinitionInformation],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listTagsForResource(
@@ -1930,66 +1780,60 @@ export default class Greengrass {
       requestUri: cmnP.encodePath`/tags/${params["ResourceArn"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async resetDeployments(
     {abortSignal, ...params}: RequestConfig & ResetDeploymentsRequest,
   ): Promise<ResetDeploymentsResponse> {
     const headers = new Headers;
-    if (params["AmznClientToken"] != null) headers.append("X-Amzn-Client-Token", params["AmznClientToken"]);
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Force: params["Force"],
-    } : {};
+    };
+    if (params["AmznClientToken"] != null) headers.append("X-Amzn-Client-Token", params["AmznClientToken"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "ResetDeployments",
       requestUri: cmnP.encodePath`/greengrass/groups/${params["GroupId"]}/deployments/$reset`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "DeploymentArn": "s",
-          "DeploymentId": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "DeploymentArn": "s",
+        "DeploymentId": "s",
+      },
+    }, await resp.json());
   }
 
   async startBulkDeployment(
     {abortSignal, ...params}: RequestConfig & StartBulkDeploymentRequest,
   ): Promise<StartBulkDeploymentResponse> {
     const headers = new Headers;
-    if (params["AmznClientToken"] != null) headers.append("X-Amzn-Client-Token", params["AmznClientToken"]);
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ExecutionRoleArn: params["ExecutionRoleArn"],
       InputFileUri: params["InputFileUri"],
       tags: params["tags"],
-    } : {};
+    };
+    if (params["AmznClientToken"] != null) headers.append("X-Amzn-Client-Token", params["AmznClientToken"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "StartBulkDeployment",
       requestUri: "/greengrass/bulk/deployments",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "BulkDeploymentArn": "s",
-          "BulkDeploymentId": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "BulkDeploymentArn": "s",
+        "BulkDeploymentId": "s",
+      },
+    }, await resp.json());
   }
 
   async stopBulkDeployment(
@@ -2003,20 +1847,18 @@ export default class Greengrass {
       requestUri: cmnP.encodePath`/greengrass/bulk/deployments/${params["BulkDeploymentId"]}/$stop`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       tags: params["tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
@@ -2044,9 +1886,9 @@ export default class Greengrass {
   async updateConnectivityInfo(
     {abortSignal, ...params}: RequestConfig & UpdateConnectivityInfoRequest,
   ): Promise<UpdateConnectivityInfoResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ConnectivityInfo: params["ConnectivityInfo"]?.map(x => fromConnectivityInfo(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateConnectivityInfo",
@@ -2054,23 +1896,21 @@ export default class Greengrass {
       requestUri: cmnP.encodePath`/greengrass/things/${params["ThingName"]}/connectivityInfo`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Message": "s",
-          "Version": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Message": "s",
+        "Version": "s",
+      },
+    }, await resp.json());
   }
 
   async updateConnectorDefinition(
     {abortSignal, ...params}: RequestConfig & UpdateConnectorDefinitionRequest,
   ): Promise<UpdateConnectorDefinitionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateConnectorDefinition",
@@ -2078,20 +1918,18 @@ export default class Greengrass {
       requestUri: cmnP.encodePath`/greengrass/definition/connectors/${params["ConnectorDefinitionId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async updateCoreDefinition(
     {abortSignal, ...params}: RequestConfig & UpdateCoreDefinitionRequest,
   ): Promise<UpdateCoreDefinitionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateCoreDefinition",
@@ -2099,20 +1937,18 @@ export default class Greengrass {
       requestUri: cmnP.encodePath`/greengrass/definition/cores/${params["CoreDefinitionId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async updateDeviceDefinition(
     {abortSignal, ...params}: RequestConfig & UpdateDeviceDefinitionRequest,
   ): Promise<UpdateDeviceDefinitionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateDeviceDefinition",
@@ -2120,20 +1956,18 @@ export default class Greengrass {
       requestUri: cmnP.encodePath`/greengrass/definition/devices/${params["DeviceDefinitionId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async updateFunctionDefinition(
     {abortSignal, ...params}: RequestConfig & UpdateFunctionDefinitionRequest,
   ): Promise<UpdateFunctionDefinitionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateFunctionDefinition",
@@ -2141,20 +1975,18 @@ export default class Greengrass {
       requestUri: cmnP.encodePath`/greengrass/definition/functions/${params["FunctionDefinitionId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async updateGroup(
     {abortSignal, ...params}: RequestConfig & UpdateGroupRequest,
   ): Promise<UpdateGroupResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateGroup",
@@ -2162,20 +1994,18 @@ export default class Greengrass {
       requestUri: cmnP.encodePath`/greengrass/groups/${params["GroupId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async updateGroupCertificateConfiguration(
     {abortSignal, ...params}: RequestConfig & UpdateGroupCertificateConfigurationRequest,
   ): Promise<UpdateGroupCertificateConfigurationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CertificateExpiryInMilliseconds: params["CertificateExpiryInMilliseconds"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateGroupCertificateConfiguration",
@@ -2183,24 +2013,22 @@ export default class Greengrass {
       requestUri: cmnP.encodePath`/greengrass/groups/${params["GroupId"]}/certificateauthorities/configuration/expiry`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "CertificateAuthorityExpiryInMilliseconds": "s",
-          "CertificateExpiryInMilliseconds": "s",
-          "GroupId": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "CertificateAuthorityExpiryInMilliseconds": "s",
+        "CertificateExpiryInMilliseconds": "s",
+        "GroupId": "s",
+      },
+    }, await resp.json());
   }
 
   async updateLoggerDefinition(
     {abortSignal, ...params}: RequestConfig & UpdateLoggerDefinitionRequest,
   ): Promise<UpdateLoggerDefinitionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateLoggerDefinition",
@@ -2208,20 +2036,18 @@ export default class Greengrass {
       requestUri: cmnP.encodePath`/greengrass/definition/loggers/${params["LoggerDefinitionId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async updateResourceDefinition(
     {abortSignal, ...params}: RequestConfig & UpdateResourceDefinitionRequest,
   ): Promise<UpdateResourceDefinitionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateResourceDefinition",
@@ -2229,20 +2055,18 @@ export default class Greengrass {
       requestUri: cmnP.encodePath`/greengrass/definition/resources/${params["ResourceDefinitionId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async updateSubscriptionDefinition(
     {abortSignal, ...params}: RequestConfig & UpdateSubscriptionDefinitionRequest,
   ): Promise<UpdateSubscriptionDefinitionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateSubscriptionDefinition",
@@ -2250,20 +2074,18 @@ export default class Greengrass {
       requestUri: cmnP.encodePath`/greengrass/definition/subscriptions/${params["SubscriptionDefinitionId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async updateThingRuntimeConfiguration(
     {abortSignal, ...params}: RequestConfig & UpdateThingRuntimeConfigurationRequest,
   ): Promise<UpdateThingRuntimeConfigurationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TelemetryConfiguration: fromTelemetryConfigurationUpdate(params["TelemetryConfiguration"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateThingRuntimeConfiguration",
@@ -2271,12 +2093,10 @@ export default class Greengrass {
       requestUri: cmnP.encodePath`/greengrass/things/${params["ThingName"]}/runtimeconfig`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
 }

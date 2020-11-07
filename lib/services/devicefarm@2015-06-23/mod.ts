@@ -29,13 +29,13 @@ export default class DeviceFarm {
   async createDevicePool(
     {abortSignal, ...params}: RequestConfig & CreateDevicePoolRequest,
   ): Promise<CreateDevicePoolResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       projectArn: params["projectArn"],
       name: params["name"],
       description: params["description"],
       rules: params["rules"]?.map(x => fromRule(x)),
       maxDevices: params["maxDevices"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDevicePool",
@@ -51,13 +51,13 @@ export default class DeviceFarm {
   async createInstanceProfile(
     {abortSignal, ...params}: RequestConfig & CreateInstanceProfileRequest,
   ): Promise<CreateInstanceProfileResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       name: params["name"],
       description: params["description"],
       packageCleanup: params["packageCleanup"],
       excludeAppPackagesFromCleanup: params["excludeAppPackagesFromCleanup"],
       rebootAfterUse: params["rebootAfterUse"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateInstanceProfile",
@@ -73,7 +73,7 @@ export default class DeviceFarm {
   async createNetworkProfile(
     {abortSignal, ...params}: RequestConfig & CreateNetworkProfileRequest,
   ): Promise<CreateNetworkProfileResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       projectArn: params["projectArn"],
       name: params["name"],
       description: params["description"],
@@ -86,7 +86,7 @@ export default class DeviceFarm {
       downlinkJitterMs: params["downlinkJitterMs"],
       uplinkLossPercent: params["uplinkLossPercent"],
       downlinkLossPercent: params["downlinkLossPercent"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateNetworkProfile",
@@ -102,10 +102,10 @@ export default class DeviceFarm {
   async createProject(
     {abortSignal, ...params}: RequestConfig & CreateProjectRequest,
   ): Promise<CreateProjectResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       name: params["name"],
       defaultJobTimeoutMinutes: params["defaultJobTimeoutMinutes"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateProject",
@@ -121,7 +121,7 @@ export default class DeviceFarm {
   async createRemoteAccessSession(
     {abortSignal, ...params}: RequestConfig & CreateRemoteAccessSessionRequest,
   ): Promise<CreateRemoteAccessSessionResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       projectArn: params["projectArn"],
       deviceArn: params["deviceArn"],
       instanceArn: params["instanceArn"],
@@ -134,7 +134,7 @@ export default class DeviceFarm {
       configuration: fromCreateRemoteAccessSessionConfiguration(params["configuration"]),
       interactionMode: params["interactionMode"],
       skipAppResign: params["skipAppResign"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateRemoteAccessSession",
@@ -150,10 +150,10 @@ export default class DeviceFarm {
   async createTestGridProject(
     {abortSignal, ...params}: RequestConfig & CreateTestGridProjectRequest,
   ): Promise<CreateTestGridProjectResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       name: params["name"],
       description: params["description"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateTestGridProject",
@@ -169,10 +169,10 @@ export default class DeviceFarm {
   async createTestGridUrl(
     {abortSignal, ...params}: RequestConfig & CreateTestGridUrlRequest,
   ): Promise<CreateTestGridUrlResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       projectArn: params["projectArn"],
       expiresInSeconds: params["expiresInSeconds"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateTestGridUrl",
@@ -189,12 +189,12 @@ export default class DeviceFarm {
   async createUpload(
     {abortSignal, ...params}: RequestConfig & CreateUploadRequest,
   ): Promise<CreateUploadResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       projectArn: params["projectArn"],
       name: params["name"],
       type: params["type"],
       contentType: params["contentType"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateUpload",
@@ -210,12 +210,12 @@ export default class DeviceFarm {
   async createVPCEConfiguration(
     {abortSignal, ...params}: RequestConfig & CreateVPCEConfigurationRequest,
   ): Promise<CreateVPCEConfigurationResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       vpceConfigurationName: params["vpceConfigurationName"],
       vpceServiceName: params["vpceServiceName"],
       serviceDnsName: params["serviceDnsName"],
       vpceConfigurationDescription: params["vpceConfigurationDescription"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateVPCEConfiguration",
@@ -231,9 +231,9 @@ export default class DeviceFarm {
   async deleteDevicePool(
     {abortSignal, ...params}: RequestConfig & DeleteDevicePoolRequest,
   ): Promise<DeleteDevicePoolResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       arn: params["arn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteDevicePool",
@@ -247,9 +247,9 @@ export default class DeviceFarm {
   async deleteInstanceProfile(
     {abortSignal, ...params}: RequestConfig & DeleteInstanceProfileRequest,
   ): Promise<DeleteInstanceProfileResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       arn: params["arn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteInstanceProfile",
@@ -263,9 +263,9 @@ export default class DeviceFarm {
   async deleteNetworkProfile(
     {abortSignal, ...params}: RequestConfig & DeleteNetworkProfileRequest,
   ): Promise<DeleteNetworkProfileResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       arn: params["arn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteNetworkProfile",
@@ -279,9 +279,9 @@ export default class DeviceFarm {
   async deleteProject(
     {abortSignal, ...params}: RequestConfig & DeleteProjectRequest,
   ): Promise<DeleteProjectResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       arn: params["arn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteProject",
@@ -295,9 +295,9 @@ export default class DeviceFarm {
   async deleteRemoteAccessSession(
     {abortSignal, ...params}: RequestConfig & DeleteRemoteAccessSessionRequest,
   ): Promise<DeleteRemoteAccessSessionResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       arn: params["arn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteRemoteAccessSession",
@@ -311,9 +311,9 @@ export default class DeviceFarm {
   async deleteRun(
     {abortSignal, ...params}: RequestConfig & DeleteRunRequest,
   ): Promise<DeleteRunResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       arn: params["arn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteRun",
@@ -327,9 +327,9 @@ export default class DeviceFarm {
   async deleteTestGridProject(
     {abortSignal, ...params}: RequestConfig & DeleteTestGridProjectRequest,
   ): Promise<DeleteTestGridProjectResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       projectArn: params["projectArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteTestGridProject",
@@ -343,9 +343,9 @@ export default class DeviceFarm {
   async deleteUpload(
     {abortSignal, ...params}: RequestConfig & DeleteUploadRequest,
   ): Promise<DeleteUploadResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       arn: params["arn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteUpload",
@@ -359,9 +359,9 @@ export default class DeviceFarm {
   async deleteVPCEConfiguration(
     {abortSignal, ...params}: RequestConfig & DeleteVPCEConfigurationRequest,
   ): Promise<DeleteVPCEConfigurationResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       arn: params["arn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteVPCEConfiguration",
@@ -375,8 +375,8 @@ export default class DeviceFarm {
   async getAccountSettings(
     {abortSignal, ...params}: RequestConfig & GetAccountSettingsRequest = {},
   ): Promise<GetAccountSettingsResult> {
-    const body: jsonP.JSONObject = params ? {
-    } : {};
+    const body: jsonP.JSONObject = {
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetAccountSettings",
@@ -392,9 +392,9 @@ export default class DeviceFarm {
   async getDevice(
     {abortSignal, ...params}: RequestConfig & GetDeviceRequest,
   ): Promise<GetDeviceResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       arn: params["arn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetDevice",
@@ -410,9 +410,9 @@ export default class DeviceFarm {
   async getDeviceInstance(
     {abortSignal, ...params}: RequestConfig & GetDeviceInstanceRequest,
   ): Promise<GetDeviceInstanceResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       arn: params["arn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetDeviceInstance",
@@ -428,9 +428,9 @@ export default class DeviceFarm {
   async getDevicePool(
     {abortSignal, ...params}: RequestConfig & GetDevicePoolRequest,
   ): Promise<GetDevicePoolResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       arn: params["arn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetDevicePool",
@@ -446,13 +446,13 @@ export default class DeviceFarm {
   async getDevicePoolCompatibility(
     {abortSignal, ...params}: RequestConfig & GetDevicePoolCompatibilityRequest,
   ): Promise<GetDevicePoolCompatibilityResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       devicePoolArn: params["devicePoolArn"],
       appArn: params["appArn"],
       testType: params["testType"],
       test: fromScheduleRunTest(params["test"]),
       configuration: fromScheduleRunConfiguration(params["configuration"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetDevicePoolCompatibility",
@@ -469,9 +469,9 @@ export default class DeviceFarm {
   async getInstanceProfile(
     {abortSignal, ...params}: RequestConfig & GetInstanceProfileRequest,
   ): Promise<GetInstanceProfileResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       arn: params["arn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetInstanceProfile",
@@ -487,9 +487,9 @@ export default class DeviceFarm {
   async getJob(
     {abortSignal, ...params}: RequestConfig & GetJobRequest,
   ): Promise<GetJobResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       arn: params["arn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetJob",
@@ -505,9 +505,9 @@ export default class DeviceFarm {
   async getNetworkProfile(
     {abortSignal, ...params}: RequestConfig & GetNetworkProfileRequest,
   ): Promise<GetNetworkProfileResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       arn: params["arn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetNetworkProfile",
@@ -523,9 +523,9 @@ export default class DeviceFarm {
   async getOfferingStatus(
     {abortSignal, ...params}: RequestConfig & GetOfferingStatusRequest = {},
   ): Promise<GetOfferingStatusResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       nextToken: params["nextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetOfferingStatus",
@@ -543,9 +543,9 @@ export default class DeviceFarm {
   async getProject(
     {abortSignal, ...params}: RequestConfig & GetProjectRequest,
   ): Promise<GetProjectResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       arn: params["arn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetProject",
@@ -561,9 +561,9 @@ export default class DeviceFarm {
   async getRemoteAccessSession(
     {abortSignal, ...params}: RequestConfig & GetRemoteAccessSessionRequest,
   ): Promise<GetRemoteAccessSessionResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       arn: params["arn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetRemoteAccessSession",
@@ -579,9 +579,9 @@ export default class DeviceFarm {
   async getRun(
     {abortSignal, ...params}: RequestConfig & GetRunRequest,
   ): Promise<GetRunResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       arn: params["arn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetRun",
@@ -597,9 +597,9 @@ export default class DeviceFarm {
   async getSuite(
     {abortSignal, ...params}: RequestConfig & GetSuiteRequest,
   ): Promise<GetSuiteResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       arn: params["arn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetSuite",
@@ -615,9 +615,9 @@ export default class DeviceFarm {
   async getTest(
     {abortSignal, ...params}: RequestConfig & GetTestRequest,
   ): Promise<GetTestResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       arn: params["arn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetTest",
@@ -633,9 +633,9 @@ export default class DeviceFarm {
   async getTestGridProject(
     {abortSignal, ...params}: RequestConfig & GetTestGridProjectRequest,
   ): Promise<GetTestGridProjectResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       projectArn: params["projectArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetTestGridProject",
@@ -651,11 +651,11 @@ export default class DeviceFarm {
   async getTestGridSession(
     {abortSignal, ...params}: RequestConfig & GetTestGridSessionRequest = {},
   ): Promise<GetTestGridSessionResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       projectArn: params["projectArn"],
       sessionId: params["sessionId"],
       sessionArn: params["sessionArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetTestGridSession",
@@ -671,9 +671,9 @@ export default class DeviceFarm {
   async getUpload(
     {abortSignal, ...params}: RequestConfig & GetUploadRequest,
   ): Promise<GetUploadResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       arn: params["arn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetUpload",
@@ -689,9 +689,9 @@ export default class DeviceFarm {
   async getVPCEConfiguration(
     {abortSignal, ...params}: RequestConfig & GetVPCEConfigurationRequest,
   ): Promise<GetVPCEConfigurationResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       arn: params["arn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetVPCEConfiguration",
@@ -707,10 +707,10 @@ export default class DeviceFarm {
   async installToRemoteAccessSession(
     {abortSignal, ...params}: RequestConfig & InstallToRemoteAccessSessionRequest,
   ): Promise<InstallToRemoteAccessSessionResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       remoteAccessSessionArn: params["remoteAccessSessionArn"],
       appArn: params["appArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "InstallToRemoteAccessSession",
@@ -726,11 +726,11 @@ export default class DeviceFarm {
   async listArtifacts(
     {abortSignal, ...params}: RequestConfig & ListArtifactsRequest,
   ): Promise<ListArtifactsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       arn: params["arn"],
       type: params["type"],
       nextToken: params["nextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListArtifacts",
@@ -747,10 +747,10 @@ export default class DeviceFarm {
   async listDeviceInstances(
     {abortSignal, ...params}: RequestConfig & ListDeviceInstancesRequest = {},
   ): Promise<ListDeviceInstancesResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       maxResults: params["maxResults"],
       nextToken: params["nextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListDeviceInstances",
@@ -767,11 +767,11 @@ export default class DeviceFarm {
   async listDevicePools(
     {abortSignal, ...params}: RequestConfig & ListDevicePoolsRequest,
   ): Promise<ListDevicePoolsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       arn: params["arn"],
       type: params["type"],
       nextToken: params["nextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListDevicePools",
@@ -788,11 +788,11 @@ export default class DeviceFarm {
   async listDevices(
     {abortSignal, ...params}: RequestConfig & ListDevicesRequest = {},
   ): Promise<ListDevicesResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       arn: params["arn"],
       nextToken: params["nextToken"],
       filters: params["filters"]?.map(x => fromDeviceFilter(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListDevices",
@@ -809,10 +809,10 @@ export default class DeviceFarm {
   async listInstanceProfiles(
     {abortSignal, ...params}: RequestConfig & ListInstanceProfilesRequest = {},
   ): Promise<ListInstanceProfilesResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       maxResults: params["maxResults"],
       nextToken: params["nextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListInstanceProfiles",
@@ -829,10 +829,10 @@ export default class DeviceFarm {
   async listJobs(
     {abortSignal, ...params}: RequestConfig & ListJobsRequest,
   ): Promise<ListJobsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       arn: params["arn"],
       nextToken: params["nextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListJobs",
@@ -849,11 +849,11 @@ export default class DeviceFarm {
   async listNetworkProfiles(
     {abortSignal, ...params}: RequestConfig & ListNetworkProfilesRequest,
   ): Promise<ListNetworkProfilesResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       arn: params["arn"],
       type: params["type"],
       nextToken: params["nextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListNetworkProfiles",
@@ -870,9 +870,9 @@ export default class DeviceFarm {
   async listOfferingPromotions(
     {abortSignal, ...params}: RequestConfig & ListOfferingPromotionsRequest = {},
   ): Promise<ListOfferingPromotionsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       nextToken: params["nextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListOfferingPromotions",
@@ -889,9 +889,9 @@ export default class DeviceFarm {
   async listOfferingTransactions(
     {abortSignal, ...params}: RequestConfig & ListOfferingTransactionsRequest = {},
   ): Promise<ListOfferingTransactionsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       nextToken: params["nextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListOfferingTransactions",
@@ -908,9 +908,9 @@ export default class DeviceFarm {
   async listOfferings(
     {abortSignal, ...params}: RequestConfig & ListOfferingsRequest = {},
   ): Promise<ListOfferingsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       nextToken: params["nextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListOfferings",
@@ -927,10 +927,10 @@ export default class DeviceFarm {
   async listProjects(
     {abortSignal, ...params}: RequestConfig & ListProjectsRequest = {},
   ): Promise<ListProjectsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       arn: params["arn"],
       nextToken: params["nextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListProjects",
@@ -947,10 +947,10 @@ export default class DeviceFarm {
   async listRemoteAccessSessions(
     {abortSignal, ...params}: RequestConfig & ListRemoteAccessSessionsRequest,
   ): Promise<ListRemoteAccessSessionsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       arn: params["arn"],
       nextToken: params["nextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListRemoteAccessSessions",
@@ -967,10 +967,10 @@ export default class DeviceFarm {
   async listRuns(
     {abortSignal, ...params}: RequestConfig & ListRunsRequest,
   ): Promise<ListRunsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       arn: params["arn"],
       nextToken: params["nextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListRuns",
@@ -987,10 +987,10 @@ export default class DeviceFarm {
   async listSamples(
     {abortSignal, ...params}: RequestConfig & ListSamplesRequest,
   ): Promise<ListSamplesResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       arn: params["arn"],
       nextToken: params["nextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListSamples",
@@ -1007,10 +1007,10 @@ export default class DeviceFarm {
   async listSuites(
     {abortSignal, ...params}: RequestConfig & ListSuitesRequest,
   ): Promise<ListSuitesResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       arn: params["arn"],
       nextToken: params["nextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListSuites",
@@ -1027,9 +1027,9 @@ export default class DeviceFarm {
   async listTagsForResource(
     {abortSignal, ...params}: RequestConfig & ListTagsForResourceRequest,
   ): Promise<ListTagsForResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceARN: params["ResourceARN"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForResource",
@@ -1045,10 +1045,10 @@ export default class DeviceFarm {
   async listTestGridProjects(
     {abortSignal, ...params}: RequestConfig & ListTestGridProjectsRequest = {},
   ): Promise<ListTestGridProjectsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       maxResult: params["maxResult"],
       nextToken: params["nextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTestGridProjects",
@@ -1065,11 +1065,11 @@ export default class DeviceFarm {
   async listTestGridSessionActions(
     {abortSignal, ...params}: RequestConfig & ListTestGridSessionActionsRequest,
   ): Promise<ListTestGridSessionActionsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       sessionArn: params["sessionArn"],
       maxResult: params["maxResult"],
       nextToken: params["nextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTestGridSessionActions",
@@ -1086,12 +1086,12 @@ export default class DeviceFarm {
   async listTestGridSessionArtifacts(
     {abortSignal, ...params}: RequestConfig & ListTestGridSessionArtifactsRequest,
   ): Promise<ListTestGridSessionArtifactsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       sessionArn: params["sessionArn"],
       type: params["type"],
       maxResult: params["maxResult"],
       nextToken: params["nextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTestGridSessionArtifacts",
@@ -1108,7 +1108,7 @@ export default class DeviceFarm {
   async listTestGridSessions(
     {abortSignal, ...params}: RequestConfig & ListTestGridSessionsRequest,
   ): Promise<ListTestGridSessionsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       projectArn: params["projectArn"],
       status: params["status"],
       creationTimeAfter: jsonP.serializeDate_unixTimestamp(params["creationTimeAfter"]),
@@ -1117,7 +1117,7 @@ export default class DeviceFarm {
       endTimeBefore: jsonP.serializeDate_unixTimestamp(params["endTimeBefore"]),
       maxResult: params["maxResult"],
       nextToken: params["nextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTestGridSessions",
@@ -1134,10 +1134,10 @@ export default class DeviceFarm {
   async listTests(
     {abortSignal, ...params}: RequestConfig & ListTestsRequest,
   ): Promise<ListTestsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       arn: params["arn"],
       nextToken: params["nextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTests",
@@ -1154,10 +1154,10 @@ export default class DeviceFarm {
   async listUniqueProblems(
     {abortSignal, ...params}: RequestConfig & ListUniqueProblemsRequest,
   ): Promise<ListUniqueProblemsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       arn: params["arn"],
       nextToken: params["nextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListUniqueProblems",
@@ -1174,11 +1174,11 @@ export default class DeviceFarm {
   async listUploads(
     {abortSignal, ...params}: RequestConfig & ListUploadsRequest,
   ): Promise<ListUploadsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       arn: params["arn"],
       type: params["type"],
       nextToken: params["nextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListUploads",
@@ -1195,10 +1195,10 @@ export default class DeviceFarm {
   async listVPCEConfigurations(
     {abortSignal, ...params}: RequestConfig & ListVPCEConfigurationsRequest = {},
   ): Promise<ListVPCEConfigurationsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       maxResults: params["maxResults"],
       nextToken: params["nextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListVPCEConfigurations",
@@ -1215,11 +1215,11 @@ export default class DeviceFarm {
   async purchaseOffering(
     {abortSignal, ...params}: RequestConfig & PurchaseOfferingRequest = {},
   ): Promise<PurchaseOfferingResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       offeringId: params["offeringId"],
       quantity: params["quantity"],
       offeringPromotionId: params["offeringPromotionId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PurchaseOffering",
@@ -1235,10 +1235,10 @@ export default class DeviceFarm {
   async renewOffering(
     {abortSignal, ...params}: RequestConfig & RenewOfferingRequest = {},
   ): Promise<RenewOfferingResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       offeringId: params["offeringId"],
       quantity: params["quantity"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RenewOffering",
@@ -1254,7 +1254,7 @@ export default class DeviceFarm {
   async scheduleRun(
     {abortSignal, ...params}: RequestConfig & ScheduleRunRequest,
   ): Promise<ScheduleRunResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       projectArn: params["projectArn"],
       appArn: params["appArn"],
       devicePoolArn: params["devicePoolArn"],
@@ -1263,7 +1263,7 @@ export default class DeviceFarm {
       test: fromScheduleRunTest(params["test"]),
       configuration: fromScheduleRunConfiguration(params["configuration"]),
       executionConfiguration: fromExecutionConfiguration(params["executionConfiguration"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ScheduleRun",
@@ -1279,9 +1279,9 @@ export default class DeviceFarm {
   async stopJob(
     {abortSignal, ...params}: RequestConfig & StopJobRequest,
   ): Promise<StopJobResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       arn: params["arn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopJob",
@@ -1297,9 +1297,9 @@ export default class DeviceFarm {
   async stopRemoteAccessSession(
     {abortSignal, ...params}: RequestConfig & StopRemoteAccessSessionRequest,
   ): Promise<StopRemoteAccessSessionResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       arn: params["arn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopRemoteAccessSession",
@@ -1315,9 +1315,9 @@ export default class DeviceFarm {
   async stopRun(
     {abortSignal, ...params}: RequestConfig & StopRunRequest,
   ): Promise<StopRunResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       arn: params["arn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopRun",
@@ -1333,10 +1333,10 @@ export default class DeviceFarm {
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceARN: params["ResourceARN"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
@@ -1350,10 +1350,10 @@ export default class DeviceFarm {
   async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceRequest,
   ): Promise<UntagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceARN: params["ResourceARN"],
       TagKeys: params["TagKeys"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResource",
@@ -1367,11 +1367,11 @@ export default class DeviceFarm {
   async updateDeviceInstance(
     {abortSignal, ...params}: RequestConfig & UpdateDeviceInstanceRequest,
   ): Promise<UpdateDeviceInstanceResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       arn: params["arn"],
       profileArn: params["profileArn"],
       labels: params["labels"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateDeviceInstance",
@@ -1387,14 +1387,14 @@ export default class DeviceFarm {
   async updateDevicePool(
     {abortSignal, ...params}: RequestConfig & UpdateDevicePoolRequest,
   ): Promise<UpdateDevicePoolResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       arn: params["arn"],
       name: params["name"],
       description: params["description"],
       rules: params["rules"]?.map(x => fromRule(x)),
       maxDevices: params["maxDevices"],
       clearMaxDevices: params["clearMaxDevices"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateDevicePool",
@@ -1410,14 +1410,14 @@ export default class DeviceFarm {
   async updateInstanceProfile(
     {abortSignal, ...params}: RequestConfig & UpdateInstanceProfileRequest,
   ): Promise<UpdateInstanceProfileResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       arn: params["arn"],
       name: params["name"],
       description: params["description"],
       packageCleanup: params["packageCleanup"],
       excludeAppPackagesFromCleanup: params["excludeAppPackagesFromCleanup"],
       rebootAfterUse: params["rebootAfterUse"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateInstanceProfile",
@@ -1433,7 +1433,7 @@ export default class DeviceFarm {
   async updateNetworkProfile(
     {abortSignal, ...params}: RequestConfig & UpdateNetworkProfileRequest,
   ): Promise<UpdateNetworkProfileResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       arn: params["arn"],
       name: params["name"],
       description: params["description"],
@@ -1446,7 +1446,7 @@ export default class DeviceFarm {
       downlinkJitterMs: params["downlinkJitterMs"],
       uplinkLossPercent: params["uplinkLossPercent"],
       downlinkLossPercent: params["downlinkLossPercent"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateNetworkProfile",
@@ -1462,11 +1462,11 @@ export default class DeviceFarm {
   async updateProject(
     {abortSignal, ...params}: RequestConfig & UpdateProjectRequest,
   ): Promise<UpdateProjectResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       arn: params["arn"],
       name: params["name"],
       defaultJobTimeoutMinutes: params["defaultJobTimeoutMinutes"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateProject",
@@ -1482,11 +1482,11 @@ export default class DeviceFarm {
   async updateTestGridProject(
     {abortSignal, ...params}: RequestConfig & UpdateTestGridProjectRequest,
   ): Promise<UpdateTestGridProjectResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       projectArn: params["projectArn"],
       name: params["name"],
       description: params["description"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateTestGridProject",
@@ -1502,12 +1502,12 @@ export default class DeviceFarm {
   async updateUpload(
     {abortSignal, ...params}: RequestConfig & UpdateUploadRequest,
   ): Promise<UpdateUploadResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       arn: params["arn"],
       name: params["name"],
       contentType: params["contentType"],
       editContent: params["editContent"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateUpload",
@@ -1523,13 +1523,13 @@ export default class DeviceFarm {
   async updateVPCEConfiguration(
     {abortSignal, ...params}: RequestConfig & UpdateVPCEConfigurationRequest,
   ): Promise<UpdateVPCEConfigurationResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       arn: params["arn"],
       vpceConfigurationName: params["vpceConfigurationName"],
       vpceServiceName: params["vpceServiceName"],
       serviceDnsName: params["serviceDnsName"],
       vpceConfigurationDescription: params["vpceConfigurationDescription"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateVPCEConfiguration",

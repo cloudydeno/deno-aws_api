@@ -2069,9 +2069,6 @@ export default class Pinpoint {
   async updateEmailTemplate(
     {abortSignal, ...params}: RequestConfig & UpdateEmailTemplateRequest,
   ): Promise<UpdateEmailTemplateResponse> {
-    const query = new URLSearchParams;
-    if (params["CreateNewVersion"] != null) query.set("create-new-version", params["CreateNewVersion"]?.toString() ?? "");
-    if (params["Version"] != null) query.set("version", params["Version"]?.toString() ?? "");
     const inner = params["EmailTemplateRequest"];
     const body: jsonP.JSONObject = inner ? {
       DefaultSubstitutions: inner["DefaultSubstitutions"],
@@ -2082,6 +2079,9 @@ export default class Pinpoint {
       TemplateDescription: inner["TemplateDescription"],
       TextPart: inner["TextPart"],
     } : {};
+    const query = new URLSearchParams;
+    if (params["CreateNewVersion"] != null) query.set("create-new-version", params["CreateNewVersion"]?.toString() ?? "");
+    if (params["Version"] != null) query.set("version", params["Version"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
       abortSignal, query, body,
       action: "UpdateEmailTemplate",
@@ -2214,9 +2214,6 @@ export default class Pinpoint {
   async updatePushTemplate(
     {abortSignal, ...params}: RequestConfig & UpdatePushTemplateRequest,
   ): Promise<UpdatePushTemplateResponse> {
-    const query = new URLSearchParams;
-    if (params["CreateNewVersion"] != null) query.set("create-new-version", params["CreateNewVersion"]?.toString() ?? "");
-    if (params["Version"] != null) query.set("version", params["Version"]?.toString() ?? "");
     const inner = params["PushNotificationTemplateRequest"];
     const body: jsonP.JSONObject = inner ? {
       ADM: fromAndroidPushNotificationTemplate(inner["ADM"]),
@@ -2229,6 +2226,9 @@ export default class Pinpoint {
       tags: inner["tags"],
       TemplateDescription: inner["TemplateDescription"],
     } : {};
+    const query = new URLSearchParams;
+    if (params["CreateNewVersion"] != null) query.set("create-new-version", params["CreateNewVersion"]?.toString() ?? "");
+    if (params["Version"] != null) query.set("version", params["Version"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
       abortSignal, query, body,
       action: "UpdatePushTemplate",
@@ -2314,9 +2314,6 @@ export default class Pinpoint {
   async updateSmsTemplate(
     {abortSignal, ...params}: RequestConfig & UpdateSmsTemplateRequest,
   ): Promise<UpdateSmsTemplateResponse> {
-    const query = new URLSearchParams;
-    if (params["CreateNewVersion"] != null) query.set("create-new-version", params["CreateNewVersion"]?.toString() ?? "");
-    if (params["Version"] != null) query.set("version", params["Version"]?.toString() ?? "");
     const inner = params["SMSTemplateRequest"];
     const body: jsonP.JSONObject = inner ? {
       Body: inner["Body"],
@@ -2325,6 +2322,9 @@ export default class Pinpoint {
       tags: inner["tags"],
       TemplateDescription: inner["TemplateDescription"],
     } : {};
+    const query = new URLSearchParams;
+    if (params["CreateNewVersion"] != null) query.set("create-new-version", params["CreateNewVersion"]?.toString() ?? "");
+    if (params["Version"] != null) query.set("version", params["Version"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
       abortSignal, query, body,
       action: "UpdateSmsTemplate",
@@ -2378,9 +2378,6 @@ export default class Pinpoint {
   async updateVoiceTemplate(
     {abortSignal, ...params}: RequestConfig & UpdateVoiceTemplateRequest,
   ): Promise<UpdateVoiceTemplateResponse> {
-    const query = new URLSearchParams;
-    if (params["CreateNewVersion"] != null) query.set("create-new-version", params["CreateNewVersion"]?.toString() ?? "");
-    if (params["Version"] != null) query.set("version", params["Version"]?.toString() ?? "");
     const inner = params["VoiceTemplateRequest"];
     const body: jsonP.JSONObject = inner ? {
       Body: inner["Body"],
@@ -2390,6 +2387,9 @@ export default class Pinpoint {
       TemplateDescription: inner["TemplateDescription"],
       VoiceId: inner["VoiceId"],
     } : {};
+    const query = new URLSearchParams;
+    if (params["CreateNewVersion"] != null) query.set("create-new-version", params["CreateNewVersion"]?.toString() ?? "");
+    if (params["Version"] != null) query.set("version", params["Version"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
       abortSignal, query, body,
       action: "UpdateVoiceTemplate",

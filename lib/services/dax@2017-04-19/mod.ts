@@ -30,7 +30,7 @@ export default class DAX {
   async createCluster(
     {abortSignal, ...params}: RequestConfig & CreateClusterRequest,
   ): Promise<CreateClusterResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ClusterName: params["ClusterName"],
       NodeType: params["NodeType"],
       Description: params["Description"],
@@ -44,7 +44,7 @@ export default class DAX {
       ParameterGroupName: params["ParameterGroupName"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
       SSESpecification: fromSSESpecification(params["SSESpecification"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateCluster",
@@ -60,10 +60,10 @@ export default class DAX {
   async createParameterGroup(
     {abortSignal, ...params}: RequestConfig & CreateParameterGroupRequest,
   ): Promise<CreateParameterGroupResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ParameterGroupName: params["ParameterGroupName"],
       Description: params["Description"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateParameterGroup",
@@ -79,11 +79,11 @@ export default class DAX {
   async createSubnetGroup(
     {abortSignal, ...params}: RequestConfig & CreateSubnetGroupRequest,
   ): Promise<CreateSubnetGroupResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       SubnetGroupName: params["SubnetGroupName"],
       Description: params["Description"],
       SubnetIds: params["SubnetIds"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateSubnetGroup",
@@ -99,12 +99,12 @@ export default class DAX {
   async decreaseReplicationFactor(
     {abortSignal, ...params}: RequestConfig & DecreaseReplicationFactorRequest,
   ): Promise<DecreaseReplicationFactorResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ClusterName: params["ClusterName"],
       NewReplicationFactor: params["NewReplicationFactor"],
       AvailabilityZones: params["AvailabilityZones"],
       NodeIdsToRemove: params["NodeIdsToRemove"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DecreaseReplicationFactor",
@@ -120,9 +120,9 @@ export default class DAX {
   async deleteCluster(
     {abortSignal, ...params}: RequestConfig & DeleteClusterRequest,
   ): Promise<DeleteClusterResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ClusterName: params["ClusterName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteCluster",
@@ -138,9 +138,9 @@ export default class DAX {
   async deleteParameterGroup(
     {abortSignal, ...params}: RequestConfig & DeleteParameterGroupRequest,
   ): Promise<DeleteParameterGroupResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ParameterGroupName: params["ParameterGroupName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteParameterGroup",
@@ -156,9 +156,9 @@ export default class DAX {
   async deleteSubnetGroup(
     {abortSignal, ...params}: RequestConfig & DeleteSubnetGroupRequest,
   ): Promise<DeleteSubnetGroupResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       SubnetGroupName: params["SubnetGroupName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteSubnetGroup",
@@ -174,11 +174,11 @@ export default class DAX {
   async describeClusters(
     {abortSignal, ...params}: RequestConfig & DescribeClustersRequest = {},
   ): Promise<DescribeClustersResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ClusterNames: params["ClusterNames"],
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeClusters",
@@ -195,10 +195,10 @@ export default class DAX {
   async describeDefaultParameters(
     {abortSignal, ...params}: RequestConfig & DescribeDefaultParametersRequest = {},
   ): Promise<DescribeDefaultParametersResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeDefaultParameters",
@@ -215,7 +215,7 @@ export default class DAX {
   async describeEvents(
     {abortSignal, ...params}: RequestConfig & DescribeEventsRequest = {},
   ): Promise<DescribeEventsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       SourceName: params["SourceName"],
       SourceType: params["SourceType"],
       StartTime: jsonP.serializeDate_unixTimestamp(params["StartTime"]),
@@ -223,7 +223,7 @@ export default class DAX {
       Duration: params["Duration"],
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeEvents",
@@ -240,11 +240,11 @@ export default class DAX {
   async describeParameterGroups(
     {abortSignal, ...params}: RequestConfig & DescribeParameterGroupsRequest = {},
   ): Promise<DescribeParameterGroupsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ParameterGroupNames: params["ParameterGroupNames"],
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeParameterGroups",
@@ -261,12 +261,12 @@ export default class DAX {
   async describeParameters(
     {abortSignal, ...params}: RequestConfig & DescribeParametersRequest,
   ): Promise<DescribeParametersResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ParameterGroupName: params["ParameterGroupName"],
       Source: params["Source"],
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeParameters",
@@ -283,11 +283,11 @@ export default class DAX {
   async describeSubnetGroups(
     {abortSignal, ...params}: RequestConfig & DescribeSubnetGroupsRequest = {},
   ): Promise<DescribeSubnetGroupsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       SubnetGroupNames: params["SubnetGroupNames"],
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeSubnetGroups",
@@ -304,11 +304,11 @@ export default class DAX {
   async increaseReplicationFactor(
     {abortSignal, ...params}: RequestConfig & IncreaseReplicationFactorRequest,
   ): Promise<IncreaseReplicationFactorResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ClusterName: params["ClusterName"],
       NewReplicationFactor: params["NewReplicationFactor"],
       AvailabilityZones: params["AvailabilityZones"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "IncreaseReplicationFactor",
@@ -324,10 +324,10 @@ export default class DAX {
   async listTags(
     {abortSignal, ...params}: RequestConfig & ListTagsRequest,
   ): Promise<ListTagsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceName: params["ResourceName"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTags",
@@ -344,10 +344,10 @@ export default class DAX {
   async rebootNode(
     {abortSignal, ...params}: RequestConfig & RebootNodeRequest,
   ): Promise<RebootNodeResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ClusterName: params["ClusterName"],
       NodeId: params["NodeId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RebootNode",
@@ -363,10 +363,10 @@ export default class DAX {
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceName: params["ResourceName"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
@@ -382,10 +382,10 @@ export default class DAX {
   async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceRequest,
   ): Promise<UntagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceName: params["ResourceName"],
       TagKeys: params["TagKeys"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResource",
@@ -401,7 +401,7 @@ export default class DAX {
   async updateCluster(
     {abortSignal, ...params}: RequestConfig & UpdateClusterRequest,
   ): Promise<UpdateClusterResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ClusterName: params["ClusterName"],
       Description: params["Description"],
       PreferredMaintenanceWindow: params["PreferredMaintenanceWindow"],
@@ -409,7 +409,7 @@ export default class DAX {
       NotificationTopicStatus: params["NotificationTopicStatus"],
       ParameterGroupName: params["ParameterGroupName"],
       SecurityGroupIds: params["SecurityGroupIds"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateCluster",
@@ -425,10 +425,10 @@ export default class DAX {
   async updateParameterGroup(
     {abortSignal, ...params}: RequestConfig & UpdateParameterGroupRequest,
   ): Promise<UpdateParameterGroupResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ParameterGroupName: params["ParameterGroupName"],
       ParameterNameValues: params["ParameterNameValues"]?.map(x => fromParameterNameValue(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateParameterGroup",
@@ -444,11 +444,11 @@ export default class DAX {
   async updateSubnetGroup(
     {abortSignal, ...params}: RequestConfig & UpdateSubnetGroupRequest,
   ): Promise<UpdateSubnetGroupResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       SubnetGroupName: params["SubnetGroupName"],
       Description: params["Description"],
       SubnetIds: params["SubnetIds"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateSubnetGroup",

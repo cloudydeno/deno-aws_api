@@ -31,7 +31,7 @@ export default class QLDBSession {
   async sendCommand(
     {abortSignal, ...params}: RequestConfig & SendCommandRequest = {},
   ): Promise<SendCommandResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       SessionToken: params["SessionToken"],
       StartSession: fromStartSessionRequest(params["StartSession"]),
       StartTransaction: fromStartTransactionRequest(params["StartTransaction"]),
@@ -40,7 +40,7 @@ export default class QLDBSession {
       AbortTransaction: fromAbortTransactionRequest(params["AbortTransaction"]),
       ExecuteStatement: fromExecuteStatementRequest(params["ExecuteStatement"]),
       FetchPage: fromFetchPageRequest(params["FetchPage"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SendCommand",

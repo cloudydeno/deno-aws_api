@@ -30,10 +30,10 @@ export default class LakeFormation {
   async batchGrantPermissions(
     {abortSignal, ...params}: RequestConfig & BatchGrantPermissionsRequest,
   ): Promise<BatchGrantPermissionsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CatalogId: params["CatalogId"],
       Entries: params["Entries"]?.map(x => fromBatchPermissionsRequestEntry(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchGrantPermissions",
@@ -49,10 +49,10 @@ export default class LakeFormation {
   async batchRevokePermissions(
     {abortSignal, ...params}: RequestConfig & BatchRevokePermissionsRequest,
   ): Promise<BatchRevokePermissionsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CatalogId: params["CatalogId"],
       Entries: params["Entries"]?.map(x => fromBatchPermissionsRequestEntry(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchRevokePermissions",
@@ -68,9 +68,9 @@ export default class LakeFormation {
   async deregisterResource(
     {abortSignal, ...params}: RequestConfig & DeregisterResourceRequest,
   ): Promise<DeregisterResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeregisterResource",
@@ -84,9 +84,9 @@ export default class LakeFormation {
   async describeResource(
     {abortSignal, ...params}: RequestConfig & DescribeResourceRequest,
   ): Promise<DescribeResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeResource",
@@ -102,9 +102,9 @@ export default class LakeFormation {
   async getDataLakeSettings(
     {abortSignal, ...params}: RequestConfig & GetDataLakeSettingsRequest = {},
   ): Promise<GetDataLakeSettingsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CatalogId: params["CatalogId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetDataLakeSettings",
@@ -120,12 +120,12 @@ export default class LakeFormation {
   async getEffectivePermissionsForPath(
     {abortSignal, ...params}: RequestConfig & GetEffectivePermissionsForPathRequest,
   ): Promise<GetEffectivePermissionsForPathResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CatalogId: params["CatalogId"],
       ResourceArn: params["ResourceArn"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetEffectivePermissionsForPath",
@@ -142,13 +142,13 @@ export default class LakeFormation {
   async grantPermissions(
     {abortSignal, ...params}: RequestConfig & GrantPermissionsRequest,
   ): Promise<GrantPermissionsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CatalogId: params["CatalogId"],
       Principal: fromDataLakePrincipal(params["Principal"]),
       Resource: fromResource(params["Resource"]),
       Permissions: params["Permissions"],
       PermissionsWithGrantOption: params["PermissionsWithGrantOption"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GrantPermissions",
@@ -162,14 +162,14 @@ export default class LakeFormation {
   async listPermissions(
     {abortSignal, ...params}: RequestConfig & ListPermissionsRequest = {},
   ): Promise<ListPermissionsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CatalogId: params["CatalogId"],
       Principal: fromDataLakePrincipal(params["Principal"]),
       ResourceType: params["ResourceType"],
       Resource: fromResource(params["Resource"]),
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListPermissions",
@@ -186,11 +186,11 @@ export default class LakeFormation {
   async listResources(
     {abortSignal, ...params}: RequestConfig & ListResourcesRequest = {},
   ): Promise<ListResourcesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       FilterConditionList: params["FilterConditionList"]?.map(x => fromFilterCondition(x)),
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListResources",
@@ -207,10 +207,10 @@ export default class LakeFormation {
   async putDataLakeSettings(
     {abortSignal, ...params}: RequestConfig & PutDataLakeSettingsRequest,
   ): Promise<PutDataLakeSettingsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CatalogId: params["CatalogId"],
       DataLakeSettings: fromDataLakeSettings(params["DataLakeSettings"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutDataLakeSettings",
@@ -224,11 +224,11 @@ export default class LakeFormation {
   async registerResource(
     {abortSignal, ...params}: RequestConfig & RegisterResourceRequest,
   ): Promise<RegisterResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
       UseServiceLinkedRole: params["UseServiceLinkedRole"],
       RoleArn: params["RoleArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RegisterResource",
@@ -242,13 +242,13 @@ export default class LakeFormation {
   async revokePermissions(
     {abortSignal, ...params}: RequestConfig & RevokePermissionsRequest,
   ): Promise<RevokePermissionsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CatalogId: params["CatalogId"],
       Principal: fromDataLakePrincipal(params["Principal"]),
       Resource: fromResource(params["Resource"]),
       Permissions: params["Permissions"],
       PermissionsWithGrantOption: params["PermissionsWithGrantOption"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RevokePermissions",
@@ -262,10 +262,10 @@ export default class LakeFormation {
   async updateResource(
     {abortSignal, ...params}: RequestConfig & UpdateResourceRequest,
   ): Promise<UpdateResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       RoleArn: params["RoleArn"],
       ResourceArn: params["ResourceArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateResource",

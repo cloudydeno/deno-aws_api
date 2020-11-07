@@ -29,7 +29,7 @@ export default class ApiGatewayV2 {
   async createApi(
     {abortSignal, ...params}: RequestConfig & CreateApiRequest,
   ): Promise<CreateApiResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       apiKeySelectionExpression: params["ApiKeySelectionExpression"],
       corsConfiguration: fromCors(params["CorsConfiguration"]),
       credentialsArn: params["CredentialsArn"],
@@ -43,69 +43,65 @@ export default class ApiGatewayV2 {
       tags: params["Tags"],
       target: params["Target"],
       version: params["Version"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateApi",
       requestUri: "/v2/apis",
       responseCode: 201,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ApiEndpoint": "s",
-          "ApiGatewayManaged": "b",
-          "ApiId": "s",
-          "ApiKeySelectionExpression": "s",
-          "CorsConfiguration": toCors,
-          "CreatedDate": "d",
-          "Description": "s",
-          "DisableSchemaValidation": "b",
-          "DisableExecuteApiEndpoint": "b",
-          "ImportInfo": ["s"],
-          "Name": "s",
-          "ProtocolType": (x: jsonP.JSONValue) => cmnP.readEnum<ProtocolType>(x),
-          "RouteSelectionExpression": "s",
-          "Tags": x => jsonP.readMap(String, String, x),
-          "Version": "s",
-          "Warnings": ["s"],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ApiEndpoint": "s",
+        "ApiGatewayManaged": "b",
+        "ApiId": "s",
+        "ApiKeySelectionExpression": "s",
+        "CorsConfiguration": toCors,
+        "CreatedDate": "d",
+        "Description": "s",
+        "DisableSchemaValidation": "b",
+        "DisableExecuteApiEndpoint": "b",
+        "ImportInfo": ["s"],
+        "Name": "s",
+        "ProtocolType": (x: jsonP.JSONValue) => cmnP.readEnum<ProtocolType>(x),
+        "RouteSelectionExpression": "s",
+        "Tags": x => jsonP.readMap(String, String, x),
+        "Version": "s",
+        "Warnings": ["s"],
+      },
+    }, await resp.json());
   }
 
   async createApiMapping(
     {abortSignal, ...params}: RequestConfig & CreateApiMappingRequest,
   ): Promise<CreateApiMappingResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       apiId: params["ApiId"],
       apiMappingKey: params["ApiMappingKey"],
       stage: params["Stage"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateApiMapping",
       requestUri: cmnP.encodePath`/v2/domainnames/${params["DomainName"]}/apimappings`,
       responseCode: 201,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ApiId": "s",
-          "ApiMappingId": "s",
-          "ApiMappingKey": "s",
-          "Stage": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ApiId": "s",
+        "ApiMappingId": "s",
+        "ApiMappingKey": "s",
+        "Stage": "s",
+      },
+    }, await resp.json());
   }
 
   async createAuthorizer(
     {abortSignal, ...params}: RequestConfig & CreateAuthorizerRequest,
   ): Promise<CreateAuthorizerResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       authorizerCredentialsArn: params["AuthorizerCredentialsArn"],
       authorizerPayloadFormatVersion: params["AuthorizerPayloadFormatVersion"],
       authorizerResultTtlInSeconds: params["AuthorizerResultTtlInSeconds"],
@@ -116,94 +112,88 @@ export default class ApiGatewayV2 {
       identityValidationExpression: params["IdentityValidationExpression"],
       jwtConfiguration: fromJWTConfiguration(params["JwtConfiguration"]),
       name: params["Name"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateAuthorizer",
       requestUri: cmnP.encodePath`/v2/apis/${params["ApiId"]}/authorizers`,
       responseCode: 201,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "AuthorizerCredentialsArn": "s",
-          "AuthorizerId": "s",
-          "AuthorizerPayloadFormatVersion": "s",
-          "AuthorizerResultTtlInSeconds": "n",
-          "AuthorizerType": (x: jsonP.JSONValue) => cmnP.readEnum<AuthorizerType>(x),
-          "AuthorizerUri": "s",
-          "EnableSimpleResponses": "b",
-          "IdentitySource": ["s"],
-          "IdentityValidationExpression": "s",
-          "JwtConfiguration": toJWTConfiguration,
-          "Name": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "AuthorizerCredentialsArn": "s",
+        "AuthorizerId": "s",
+        "AuthorizerPayloadFormatVersion": "s",
+        "AuthorizerResultTtlInSeconds": "n",
+        "AuthorizerType": (x: jsonP.JSONValue) => cmnP.readEnum<AuthorizerType>(x),
+        "AuthorizerUri": "s",
+        "EnableSimpleResponses": "b",
+        "IdentitySource": ["s"],
+        "IdentityValidationExpression": "s",
+        "JwtConfiguration": toJWTConfiguration,
+        "Name": "s",
+      },
+    }, await resp.json());
   }
 
   async createDeployment(
     {abortSignal, ...params}: RequestConfig & CreateDeploymentRequest,
   ): Promise<CreateDeploymentResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       description: params["Description"],
       stageName: params["StageName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDeployment",
       requestUri: cmnP.encodePath`/v2/apis/${params["ApiId"]}/deployments`,
       responseCode: 201,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "AutoDeployed": "b",
-          "CreatedDate": "d",
-          "DeploymentId": "s",
-          "DeploymentStatus": (x: jsonP.JSONValue) => cmnP.readEnum<DeploymentStatus>(x),
-          "DeploymentStatusMessage": "s",
-          "Description": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "AutoDeployed": "b",
+        "CreatedDate": "d",
+        "DeploymentId": "s",
+        "DeploymentStatus": (x: jsonP.JSONValue) => cmnP.readEnum<DeploymentStatus>(x),
+        "DeploymentStatusMessage": "s",
+        "Description": "s",
+      },
+    }, await resp.json());
   }
 
   async createDomainName(
     {abortSignal, ...params}: RequestConfig & CreateDomainNameRequest,
   ): Promise<CreateDomainNameResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       domainName: params["DomainName"],
       domainNameConfigurations: params["DomainNameConfigurations"]?.map(x => fromDomainNameConfiguration(x)),
       mutualTlsAuthentication: fromMutualTlsAuthenticationInput(params["MutualTlsAuthentication"]),
       tags: params["Tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDomainName",
       requestUri: "/v2/domainnames",
       responseCode: 201,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ApiMappingSelectionExpression": "s",
-          "DomainName": "s",
-          "DomainNameConfigurations": [toDomainNameConfiguration],
-          "MutualTlsAuthentication": toMutualTlsAuthentication,
-          "Tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ApiMappingSelectionExpression": "s",
+        "DomainName": "s",
+        "DomainNameConfigurations": [toDomainNameConfiguration],
+        "MutualTlsAuthentication": toMutualTlsAuthentication,
+        "Tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async createIntegration(
     {abortSignal, ...params}: RequestConfig & CreateIntegrationRequest,
   ): Promise<CreateIntegrationResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       connectionId: params["ConnectionId"],
       connectionType: params["ConnectionType"],
       contentHandlingStrategy: params["ContentHandlingStrategy"],
@@ -220,105 +210,99 @@ export default class ApiGatewayV2 {
       templateSelectionExpression: params["TemplateSelectionExpression"],
       timeoutInMillis: params["TimeoutInMillis"],
       tlsConfig: fromTlsConfigInput(params["TlsConfig"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateIntegration",
       requestUri: cmnP.encodePath`/v2/apis/${params["ApiId"]}/integrations`,
       responseCode: 201,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ApiGatewayManaged": "b",
-          "ConnectionId": "s",
-          "ConnectionType": (x: jsonP.JSONValue) => cmnP.readEnum<ConnectionType>(x),
-          "ContentHandlingStrategy": (x: jsonP.JSONValue) => cmnP.readEnum<ContentHandlingStrategy>(x),
-          "CredentialsArn": "s",
-          "Description": "s",
-          "IntegrationId": "s",
-          "IntegrationMethod": "s",
-          "IntegrationResponseSelectionExpression": "s",
-          "IntegrationSubtype": "s",
-          "IntegrationType": (x: jsonP.JSONValue) => cmnP.readEnum<IntegrationType>(x),
-          "IntegrationUri": "s",
-          "PassthroughBehavior": (x: jsonP.JSONValue) => cmnP.readEnum<PassthroughBehavior>(x),
-          "PayloadFormatVersion": "s",
-          "RequestParameters": x => jsonP.readMap(String, String, x),
-          "RequestTemplates": x => jsonP.readMap(String, String, x),
-          "TemplateSelectionExpression": "s",
-          "TimeoutInMillis": "n",
-          "TlsConfig": toTlsConfig,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ApiGatewayManaged": "b",
+        "ConnectionId": "s",
+        "ConnectionType": (x: jsonP.JSONValue) => cmnP.readEnum<ConnectionType>(x),
+        "ContentHandlingStrategy": (x: jsonP.JSONValue) => cmnP.readEnum<ContentHandlingStrategy>(x),
+        "CredentialsArn": "s",
+        "Description": "s",
+        "IntegrationId": "s",
+        "IntegrationMethod": "s",
+        "IntegrationResponseSelectionExpression": "s",
+        "IntegrationSubtype": "s",
+        "IntegrationType": (x: jsonP.JSONValue) => cmnP.readEnum<IntegrationType>(x),
+        "IntegrationUri": "s",
+        "PassthroughBehavior": (x: jsonP.JSONValue) => cmnP.readEnum<PassthroughBehavior>(x),
+        "PayloadFormatVersion": "s",
+        "RequestParameters": x => jsonP.readMap(String, String, x),
+        "RequestTemplates": x => jsonP.readMap(String, String, x),
+        "TemplateSelectionExpression": "s",
+        "TimeoutInMillis": "n",
+        "TlsConfig": toTlsConfig,
+      },
+    }, await resp.json());
   }
 
   async createIntegrationResponse(
     {abortSignal, ...params}: RequestConfig & CreateIntegrationResponseRequest,
   ): Promise<CreateIntegrationResponseResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       contentHandlingStrategy: params["ContentHandlingStrategy"],
       integrationResponseKey: params["IntegrationResponseKey"],
       responseParameters: params["ResponseParameters"],
       responseTemplates: params["ResponseTemplates"],
       templateSelectionExpression: params["TemplateSelectionExpression"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateIntegrationResponse",
       requestUri: cmnP.encodePath`/v2/apis/${params["ApiId"]}/integrations/${params["IntegrationId"]}/integrationresponses`,
       responseCode: 201,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ContentHandlingStrategy": (x: jsonP.JSONValue) => cmnP.readEnum<ContentHandlingStrategy>(x),
-          "IntegrationResponseId": "s",
-          "IntegrationResponseKey": "s",
-          "ResponseParameters": x => jsonP.readMap(String, String, x),
-          "ResponseTemplates": x => jsonP.readMap(String, String, x),
-          "TemplateSelectionExpression": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ContentHandlingStrategy": (x: jsonP.JSONValue) => cmnP.readEnum<ContentHandlingStrategy>(x),
+        "IntegrationResponseId": "s",
+        "IntegrationResponseKey": "s",
+        "ResponseParameters": x => jsonP.readMap(String, String, x),
+        "ResponseTemplates": x => jsonP.readMap(String, String, x),
+        "TemplateSelectionExpression": "s",
+      },
+    }, await resp.json());
   }
 
   async createModel(
     {abortSignal, ...params}: RequestConfig & CreateModelRequest,
   ): Promise<CreateModelResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       contentType: params["ContentType"],
       description: params["Description"],
       name: params["Name"],
       schema: params["Schema"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateModel",
       requestUri: cmnP.encodePath`/v2/apis/${params["ApiId"]}/models`,
       responseCode: 201,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ContentType": "s",
-          "Description": "s",
-          "ModelId": "s",
-          "Name": "s",
-          "Schema": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ContentType": "s",
+        "Description": "s",
+        "ModelId": "s",
+        "Name": "s",
+        "Schema": "s",
+      },
+    }, await resp.json());
   }
 
   async createRoute(
     {abortSignal, ...params}: RequestConfig & CreateRouteRequest,
   ): Promise<CreateRouteResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       apiKeyRequired: params["ApiKeyRequired"],
       authorizationScopes: params["AuthorizationScopes"],
       authorizationType: params["AuthorizationType"],
@@ -330,68 +314,64 @@ export default class ApiGatewayV2 {
       routeKey: params["RouteKey"],
       routeResponseSelectionExpression: params["RouteResponseSelectionExpression"],
       target: params["Target"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateRoute",
       requestUri: cmnP.encodePath`/v2/apis/${params["ApiId"]}/routes`,
       responseCode: 201,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ApiGatewayManaged": "b",
-          "ApiKeyRequired": "b",
-          "AuthorizationScopes": ["s"],
-          "AuthorizationType": (x: jsonP.JSONValue) => cmnP.readEnum<AuthorizationType>(x),
-          "AuthorizerId": "s",
-          "ModelSelectionExpression": "s",
-          "OperationName": "s",
-          "RequestModels": x => jsonP.readMap(String, String, x),
-          "RequestParameters": x => jsonP.readMap(String, toParameterConstraints, x),
-          "RouteId": "s",
-          "RouteKey": "s",
-          "RouteResponseSelectionExpression": "s",
-          "Target": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ApiGatewayManaged": "b",
+        "ApiKeyRequired": "b",
+        "AuthorizationScopes": ["s"],
+        "AuthorizationType": (x: jsonP.JSONValue) => cmnP.readEnum<AuthorizationType>(x),
+        "AuthorizerId": "s",
+        "ModelSelectionExpression": "s",
+        "OperationName": "s",
+        "RequestModels": x => jsonP.readMap(String, String, x),
+        "RequestParameters": x => jsonP.readMap(String, toParameterConstraints, x),
+        "RouteId": "s",
+        "RouteKey": "s",
+        "RouteResponseSelectionExpression": "s",
+        "Target": "s",
+      },
+    }, await resp.json());
   }
 
   async createRouteResponse(
     {abortSignal, ...params}: RequestConfig & CreateRouteResponseRequest,
   ): Promise<CreateRouteResponseResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       modelSelectionExpression: params["ModelSelectionExpression"],
       responseModels: params["ResponseModels"],
       responseParameters: jsonP.serializeMap(params["ResponseParameters"], x => fromParameterConstraints(x)),
       routeResponseKey: params["RouteResponseKey"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateRouteResponse",
       requestUri: cmnP.encodePath`/v2/apis/${params["ApiId"]}/routes/${params["RouteId"]}/routeresponses`,
       responseCode: 201,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ModelSelectionExpression": "s",
-          "ResponseModels": x => jsonP.readMap(String, String, x),
-          "ResponseParameters": x => jsonP.readMap(String, toParameterConstraints, x),
-          "RouteResponseId": "s",
-          "RouteResponseKey": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ModelSelectionExpression": "s",
+        "ResponseModels": x => jsonP.readMap(String, String, x),
+        "ResponseParameters": x => jsonP.readMap(String, toParameterConstraints, x),
+        "RouteResponseId": "s",
+        "RouteResponseKey": "s",
+      },
+    }, await resp.json());
   }
 
   async createStage(
     {abortSignal, ...params}: RequestConfig & CreateStageRequest,
   ): Promise<CreateStageResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       accessLogSettings: fromAccessLogSettings(params["AccessLogSettings"]),
       autoDeploy: params["AutoDeploy"],
       clientCertificateId: params["ClientCertificateId"],
@@ -402,67 +382,63 @@ export default class ApiGatewayV2 {
       stageName: params["StageName"],
       stageVariables: params["StageVariables"],
       tags: params["Tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateStage",
       requestUri: cmnP.encodePath`/v2/apis/${params["ApiId"]}/stages`,
       responseCode: 201,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "AccessLogSettings": toAccessLogSettings,
-          "ApiGatewayManaged": "b",
-          "AutoDeploy": "b",
-          "ClientCertificateId": "s",
-          "CreatedDate": "d",
-          "DefaultRouteSettings": toRouteSettings,
-          "DeploymentId": "s",
-          "Description": "s",
-          "LastDeploymentStatusMessage": "s",
-          "LastUpdatedDate": "d",
-          "RouteSettings": x => jsonP.readMap(String, toRouteSettings, x),
-          "StageName": "s",
-          "StageVariables": x => jsonP.readMap(String, String, x),
-          "Tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "AccessLogSettings": toAccessLogSettings,
+        "ApiGatewayManaged": "b",
+        "AutoDeploy": "b",
+        "ClientCertificateId": "s",
+        "CreatedDate": "d",
+        "DefaultRouteSettings": toRouteSettings,
+        "DeploymentId": "s",
+        "Description": "s",
+        "LastDeploymentStatusMessage": "s",
+        "LastUpdatedDate": "d",
+        "RouteSettings": x => jsonP.readMap(String, toRouteSettings, x),
+        "StageName": "s",
+        "StageVariables": x => jsonP.readMap(String, String, x),
+        "Tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async createVpcLink(
     {abortSignal, ...params}: RequestConfig & CreateVpcLinkRequest,
   ): Promise<CreateVpcLinkResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       name: params["Name"],
       securityGroupIds: params["SecurityGroupIds"],
       subnetIds: params["SubnetIds"],
       tags: params["Tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateVpcLink",
       requestUri: "/v2/vpclinks",
       responseCode: 201,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "CreatedDate": "d",
-          "Name": "s",
-          "SecurityGroupIds": ["s"],
-          "SubnetIds": ["s"],
-          "Tags": x => jsonP.readMap(String, String, x),
-          "VpcLinkId": "s",
-          "VpcLinkStatus": (x: jsonP.JSONValue) => cmnP.readEnum<VpcLinkStatus>(x),
-          "VpcLinkStatusMessage": "s",
-          "VpcLinkVersion": (x: jsonP.JSONValue) => cmnP.readEnum<VpcLinkVersion>(x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "CreatedDate": "d",
+        "Name": "s",
+        "SecurityGroupIds": ["s"],
+        "SubnetIds": ["s"],
+        "Tags": x => jsonP.readMap(String, String, x),
+        "VpcLinkId": "s",
+        "VpcLinkStatus": (x: jsonP.JSONValue) => cmnP.readEnum<VpcLinkStatus>(x),
+        "VpcLinkStatusMessage": "s",
+        "VpcLinkVersion": (x: jsonP.JSONValue) => cmnP.readEnum<VpcLinkVersion>(x),
+      },
+    }, await resp.json());
   }
 
   async deleteAccessLogSettings(
@@ -671,12 +647,10 @@ export default class ApiGatewayV2 {
       requestUri: cmnP.encodePath`/v2/vpclinks/${params["VpcLinkId"]}`,
       responseCode: 202,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async exportApi(
@@ -723,29 +697,27 @@ export default class ApiGatewayV2 {
       requestUri: cmnP.encodePath`/v2/apis/${params["ApiId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ApiEndpoint": "s",
-          "ApiGatewayManaged": "b",
-          "ApiId": "s",
-          "ApiKeySelectionExpression": "s",
-          "CorsConfiguration": toCors,
-          "CreatedDate": "d",
-          "Description": "s",
-          "DisableSchemaValidation": "b",
-          "DisableExecuteApiEndpoint": "b",
-          "ImportInfo": ["s"],
-          "Name": "s",
-          "ProtocolType": (x: jsonP.JSONValue) => cmnP.readEnum<ProtocolType>(x),
-          "RouteSelectionExpression": "s",
-          "Tags": x => jsonP.readMap(String, String, x),
-          "Version": "s",
-          "Warnings": ["s"],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ApiEndpoint": "s",
+        "ApiGatewayManaged": "b",
+        "ApiId": "s",
+        "ApiKeySelectionExpression": "s",
+        "CorsConfiguration": toCors,
+        "CreatedDate": "d",
+        "Description": "s",
+        "DisableSchemaValidation": "b",
+        "DisableExecuteApiEndpoint": "b",
+        "ImportInfo": ["s"],
+        "Name": "s",
+        "ProtocolType": (x: jsonP.JSONValue) => cmnP.readEnum<ProtocolType>(x),
+        "RouteSelectionExpression": "s",
+        "Tags": x => jsonP.readMap(String, String, x),
+        "Version": "s",
+        "Warnings": ["s"],
+      },
+    }, await resp.json());
   }
 
   async getApiMapping(
@@ -759,17 +731,15 @@ export default class ApiGatewayV2 {
       requestUri: cmnP.encodePath`/v2/domainnames/${params["DomainName"]}/apimappings/${params["ApiMappingId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ApiId": "s",
-          "ApiMappingId": "s",
-          "ApiMappingKey": "s",
-          "Stage": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ApiId": "s",
+        "ApiMappingId": "s",
+        "ApiMappingKey": "s",
+        "Stage": "s",
+      },
+    }, await resp.json());
   }
 
   async getApiMappings(
@@ -785,15 +755,13 @@ export default class ApiGatewayV2 {
       requestUri: cmnP.encodePath`/v2/domainnames/${params["DomainName"]}/apimappings`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Items": [toApiMapping],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Items": [toApiMapping],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async getApis(
@@ -809,15 +777,13 @@ export default class ApiGatewayV2 {
       requestUri: "/v2/apis",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Items": [toApi],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Items": [toApi],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async getAuthorizer(
@@ -831,24 +797,22 @@ export default class ApiGatewayV2 {
       requestUri: cmnP.encodePath`/v2/apis/${params["ApiId"]}/authorizers/${params["AuthorizerId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "AuthorizerCredentialsArn": "s",
-          "AuthorizerId": "s",
-          "AuthorizerPayloadFormatVersion": "s",
-          "AuthorizerResultTtlInSeconds": "n",
-          "AuthorizerType": (x: jsonP.JSONValue) => cmnP.readEnum<AuthorizerType>(x),
-          "AuthorizerUri": "s",
-          "EnableSimpleResponses": "b",
-          "IdentitySource": ["s"],
-          "IdentityValidationExpression": "s",
-          "JwtConfiguration": toJWTConfiguration,
-          "Name": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "AuthorizerCredentialsArn": "s",
+        "AuthorizerId": "s",
+        "AuthorizerPayloadFormatVersion": "s",
+        "AuthorizerResultTtlInSeconds": "n",
+        "AuthorizerType": (x: jsonP.JSONValue) => cmnP.readEnum<AuthorizerType>(x),
+        "AuthorizerUri": "s",
+        "EnableSimpleResponses": "b",
+        "IdentitySource": ["s"],
+        "IdentityValidationExpression": "s",
+        "JwtConfiguration": toJWTConfiguration,
+        "Name": "s",
+      },
+    }, await resp.json());
   }
 
   async getAuthorizers(
@@ -864,15 +828,13 @@ export default class ApiGatewayV2 {
       requestUri: cmnP.encodePath`/v2/apis/${params["ApiId"]}/authorizers`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Items": [toAuthorizer],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Items": [toAuthorizer],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async getDeployment(
@@ -886,19 +848,17 @@ export default class ApiGatewayV2 {
       requestUri: cmnP.encodePath`/v2/apis/${params["ApiId"]}/deployments/${params["DeploymentId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "AutoDeployed": "b",
-          "CreatedDate": "d",
-          "DeploymentId": "s",
-          "DeploymentStatus": (x: jsonP.JSONValue) => cmnP.readEnum<DeploymentStatus>(x),
-          "DeploymentStatusMessage": "s",
-          "Description": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "AutoDeployed": "b",
+        "CreatedDate": "d",
+        "DeploymentId": "s",
+        "DeploymentStatus": (x: jsonP.JSONValue) => cmnP.readEnum<DeploymentStatus>(x),
+        "DeploymentStatusMessage": "s",
+        "Description": "s",
+      },
+    }, await resp.json());
   }
 
   async getDeployments(
@@ -914,15 +874,13 @@ export default class ApiGatewayV2 {
       requestUri: cmnP.encodePath`/v2/apis/${params["ApiId"]}/deployments`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Items": [toDeployment],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Items": [toDeployment],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async getDomainName(
@@ -936,18 +894,16 @@ export default class ApiGatewayV2 {
       requestUri: cmnP.encodePath`/v2/domainnames/${params["DomainName"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ApiMappingSelectionExpression": "s",
-          "DomainName": "s",
-          "DomainNameConfigurations": [toDomainNameConfiguration],
-          "MutualTlsAuthentication": toMutualTlsAuthentication,
-          "Tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ApiMappingSelectionExpression": "s",
+        "DomainName": "s",
+        "DomainNameConfigurations": [toDomainNameConfiguration],
+        "MutualTlsAuthentication": toMutualTlsAuthentication,
+        "Tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async getDomainNames(
@@ -963,15 +919,13 @@ export default class ApiGatewayV2 {
       requestUri: "/v2/domainnames",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Items": [toDomainName],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Items": [toDomainName],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async getIntegration(
@@ -985,32 +939,30 @@ export default class ApiGatewayV2 {
       requestUri: cmnP.encodePath`/v2/apis/${params["ApiId"]}/integrations/${params["IntegrationId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ApiGatewayManaged": "b",
-          "ConnectionId": "s",
-          "ConnectionType": (x: jsonP.JSONValue) => cmnP.readEnum<ConnectionType>(x),
-          "ContentHandlingStrategy": (x: jsonP.JSONValue) => cmnP.readEnum<ContentHandlingStrategy>(x),
-          "CredentialsArn": "s",
-          "Description": "s",
-          "IntegrationId": "s",
-          "IntegrationMethod": "s",
-          "IntegrationResponseSelectionExpression": "s",
-          "IntegrationSubtype": "s",
-          "IntegrationType": (x: jsonP.JSONValue) => cmnP.readEnum<IntegrationType>(x),
-          "IntegrationUri": "s",
-          "PassthroughBehavior": (x: jsonP.JSONValue) => cmnP.readEnum<PassthroughBehavior>(x),
-          "PayloadFormatVersion": "s",
-          "RequestParameters": x => jsonP.readMap(String, String, x),
-          "RequestTemplates": x => jsonP.readMap(String, String, x),
-          "TemplateSelectionExpression": "s",
-          "TimeoutInMillis": "n",
-          "TlsConfig": toTlsConfig,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ApiGatewayManaged": "b",
+        "ConnectionId": "s",
+        "ConnectionType": (x: jsonP.JSONValue) => cmnP.readEnum<ConnectionType>(x),
+        "ContentHandlingStrategy": (x: jsonP.JSONValue) => cmnP.readEnum<ContentHandlingStrategy>(x),
+        "CredentialsArn": "s",
+        "Description": "s",
+        "IntegrationId": "s",
+        "IntegrationMethod": "s",
+        "IntegrationResponseSelectionExpression": "s",
+        "IntegrationSubtype": "s",
+        "IntegrationType": (x: jsonP.JSONValue) => cmnP.readEnum<IntegrationType>(x),
+        "IntegrationUri": "s",
+        "PassthroughBehavior": (x: jsonP.JSONValue) => cmnP.readEnum<PassthroughBehavior>(x),
+        "PayloadFormatVersion": "s",
+        "RequestParameters": x => jsonP.readMap(String, String, x),
+        "RequestTemplates": x => jsonP.readMap(String, String, x),
+        "TemplateSelectionExpression": "s",
+        "TimeoutInMillis": "n",
+        "TlsConfig": toTlsConfig,
+      },
+    }, await resp.json());
   }
 
   async getIntegrationResponse(
@@ -1024,19 +976,17 @@ export default class ApiGatewayV2 {
       requestUri: cmnP.encodePath`/v2/apis/${params["ApiId"]}/integrations/${params["IntegrationId"]}/integrationresponses/${params["IntegrationResponseId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ContentHandlingStrategy": (x: jsonP.JSONValue) => cmnP.readEnum<ContentHandlingStrategy>(x),
-          "IntegrationResponseId": "s",
-          "IntegrationResponseKey": "s",
-          "ResponseParameters": x => jsonP.readMap(String, String, x),
-          "ResponseTemplates": x => jsonP.readMap(String, String, x),
-          "TemplateSelectionExpression": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ContentHandlingStrategy": (x: jsonP.JSONValue) => cmnP.readEnum<ContentHandlingStrategy>(x),
+        "IntegrationResponseId": "s",
+        "IntegrationResponseKey": "s",
+        "ResponseParameters": x => jsonP.readMap(String, String, x),
+        "ResponseTemplates": x => jsonP.readMap(String, String, x),
+        "TemplateSelectionExpression": "s",
+      },
+    }, await resp.json());
   }
 
   async getIntegrationResponses(
@@ -1052,15 +1002,13 @@ export default class ApiGatewayV2 {
       requestUri: cmnP.encodePath`/v2/apis/${params["ApiId"]}/integrations/${params["IntegrationId"]}/integrationresponses`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Items": [toIntegrationResponse],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Items": [toIntegrationResponse],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async getIntegrations(
@@ -1076,15 +1024,13 @@ export default class ApiGatewayV2 {
       requestUri: cmnP.encodePath`/v2/apis/${params["ApiId"]}/integrations`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Items": [toIntegration],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Items": [toIntegration],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async getModel(
@@ -1098,18 +1044,16 @@ export default class ApiGatewayV2 {
       requestUri: cmnP.encodePath`/v2/apis/${params["ApiId"]}/models/${params["ModelId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ContentType": "s",
-          "Description": "s",
-          "ModelId": "s",
-          "Name": "s",
-          "Schema": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ContentType": "s",
+        "Description": "s",
+        "ModelId": "s",
+        "Name": "s",
+        "Schema": "s",
+      },
+    }, await resp.json());
   }
 
   async getModelTemplate(
@@ -1123,14 +1067,12 @@ export default class ApiGatewayV2 {
       requestUri: cmnP.encodePath`/v2/apis/${params["ApiId"]}/models/${params["ModelId"]}/template`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Value": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Value": "s",
+      },
+    }, await resp.json());
   }
 
   async getModels(
@@ -1146,15 +1088,13 @@ export default class ApiGatewayV2 {
       requestUri: cmnP.encodePath`/v2/apis/${params["ApiId"]}/models`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Items": [toModel],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Items": [toModel],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async getRoute(
@@ -1168,26 +1108,24 @@ export default class ApiGatewayV2 {
       requestUri: cmnP.encodePath`/v2/apis/${params["ApiId"]}/routes/${params["RouteId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ApiGatewayManaged": "b",
-          "ApiKeyRequired": "b",
-          "AuthorizationScopes": ["s"],
-          "AuthorizationType": (x: jsonP.JSONValue) => cmnP.readEnum<AuthorizationType>(x),
-          "AuthorizerId": "s",
-          "ModelSelectionExpression": "s",
-          "OperationName": "s",
-          "RequestModels": x => jsonP.readMap(String, String, x),
-          "RequestParameters": x => jsonP.readMap(String, toParameterConstraints, x),
-          "RouteId": "s",
-          "RouteKey": "s",
-          "RouteResponseSelectionExpression": "s",
-          "Target": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ApiGatewayManaged": "b",
+        "ApiKeyRequired": "b",
+        "AuthorizationScopes": ["s"],
+        "AuthorizationType": (x: jsonP.JSONValue) => cmnP.readEnum<AuthorizationType>(x),
+        "AuthorizerId": "s",
+        "ModelSelectionExpression": "s",
+        "OperationName": "s",
+        "RequestModels": x => jsonP.readMap(String, String, x),
+        "RequestParameters": x => jsonP.readMap(String, toParameterConstraints, x),
+        "RouteId": "s",
+        "RouteKey": "s",
+        "RouteResponseSelectionExpression": "s",
+        "Target": "s",
+      },
+    }, await resp.json());
   }
 
   async getRouteResponse(
@@ -1201,18 +1139,16 @@ export default class ApiGatewayV2 {
       requestUri: cmnP.encodePath`/v2/apis/${params["ApiId"]}/routes/${params["RouteId"]}/routeresponses/${params["RouteResponseId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ModelSelectionExpression": "s",
-          "ResponseModels": x => jsonP.readMap(String, String, x),
-          "ResponseParameters": x => jsonP.readMap(String, toParameterConstraints, x),
-          "RouteResponseId": "s",
-          "RouteResponseKey": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ModelSelectionExpression": "s",
+        "ResponseModels": x => jsonP.readMap(String, String, x),
+        "ResponseParameters": x => jsonP.readMap(String, toParameterConstraints, x),
+        "RouteResponseId": "s",
+        "RouteResponseKey": "s",
+      },
+    }, await resp.json());
   }
 
   async getRouteResponses(
@@ -1228,15 +1164,13 @@ export default class ApiGatewayV2 {
       requestUri: cmnP.encodePath`/v2/apis/${params["ApiId"]}/routes/${params["RouteId"]}/routeresponses`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Items": [toRouteResponse],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Items": [toRouteResponse],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async getRoutes(
@@ -1252,15 +1186,13 @@ export default class ApiGatewayV2 {
       requestUri: cmnP.encodePath`/v2/apis/${params["ApiId"]}/routes`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Items": [toRoute],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Items": [toRoute],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async getStage(
@@ -1274,27 +1206,25 @@ export default class ApiGatewayV2 {
       requestUri: cmnP.encodePath`/v2/apis/${params["ApiId"]}/stages/${params["StageName"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "AccessLogSettings": toAccessLogSettings,
-          "ApiGatewayManaged": "b",
-          "AutoDeploy": "b",
-          "ClientCertificateId": "s",
-          "CreatedDate": "d",
-          "DefaultRouteSettings": toRouteSettings,
-          "DeploymentId": "s",
-          "Description": "s",
-          "LastDeploymentStatusMessage": "s",
-          "LastUpdatedDate": "d",
-          "RouteSettings": x => jsonP.readMap(String, toRouteSettings, x),
-          "StageName": "s",
-          "StageVariables": x => jsonP.readMap(String, String, x),
-          "Tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "AccessLogSettings": toAccessLogSettings,
+        "ApiGatewayManaged": "b",
+        "AutoDeploy": "b",
+        "ClientCertificateId": "s",
+        "CreatedDate": "d",
+        "DefaultRouteSettings": toRouteSettings,
+        "DeploymentId": "s",
+        "Description": "s",
+        "LastDeploymentStatusMessage": "s",
+        "LastUpdatedDate": "d",
+        "RouteSettings": x => jsonP.readMap(String, toRouteSettings, x),
+        "StageName": "s",
+        "StageVariables": x => jsonP.readMap(String, String, x),
+        "Tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async getStages(
@@ -1310,15 +1240,13 @@ export default class ApiGatewayV2 {
       requestUri: cmnP.encodePath`/v2/apis/${params["ApiId"]}/stages`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Items": [toStage],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Items": [toStage],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async getTags(
@@ -1332,14 +1260,12 @@ export default class ApiGatewayV2 {
       requestUri: cmnP.encodePath`/v2/tags/${params["ResourceArn"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async getVpcLink(
@@ -1353,22 +1279,20 @@ export default class ApiGatewayV2 {
       requestUri: cmnP.encodePath`/v2/vpclinks/${params["VpcLinkId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "CreatedDate": "d",
-          "Name": "s",
-          "SecurityGroupIds": ["s"],
-          "SubnetIds": ["s"],
-          "Tags": x => jsonP.readMap(String, String, x),
-          "VpcLinkId": "s",
-          "VpcLinkStatus": (x: jsonP.JSONValue) => cmnP.readEnum<VpcLinkStatus>(x),
-          "VpcLinkStatusMessage": "s",
-          "VpcLinkVersion": (x: jsonP.JSONValue) => cmnP.readEnum<VpcLinkVersion>(x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "CreatedDate": "d",
+        "Name": "s",
+        "SecurityGroupIds": ["s"],
+        "SubnetIds": ["s"],
+        "Tags": x => jsonP.readMap(String, String, x),
+        "VpcLinkId": "s",
+        "VpcLinkStatus": (x: jsonP.JSONValue) => cmnP.readEnum<VpcLinkStatus>(x),
+        "VpcLinkStatusMessage": "s",
+        "VpcLinkVersion": (x: jsonP.JSONValue) => cmnP.readEnum<VpcLinkVersion>(x),
+      },
+    }, await resp.json());
   }
 
   async getVpcLinks(
@@ -1384,26 +1308,24 @@ export default class ApiGatewayV2 {
       requestUri: "/v2/vpclinks",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Items": [toVpcLink],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Items": [toVpcLink],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async importApi(
     {abortSignal, ...params}: RequestConfig & ImportApiRequest,
   ): Promise<ImportApiResponse> {
     const query = new URLSearchParams;
+    const body: jsonP.JSONObject = {
+      body: params["Body"],
+    };
     if (params["Basepath"] != null) query.set("basepath", params["Basepath"]?.toString() ?? "");
     if (params["FailOnWarnings"] != null) query.set("failOnWarnings", params["FailOnWarnings"]?.toString() ?? "");
-    const body: jsonP.JSONObject = params ? {
-      body: params["Body"],
-    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, query, body,
       action: "ImportApi",
@@ -1411,40 +1333,38 @@ export default class ApiGatewayV2 {
       requestUri: "/v2/apis",
       responseCode: 201,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ApiEndpoint": "s",
-          "ApiGatewayManaged": "b",
-          "ApiId": "s",
-          "ApiKeySelectionExpression": "s",
-          "CorsConfiguration": toCors,
-          "CreatedDate": "d",
-          "Description": "s",
-          "DisableSchemaValidation": "b",
-          "DisableExecuteApiEndpoint": "b",
-          "ImportInfo": ["s"],
-          "Name": "s",
-          "ProtocolType": (x: jsonP.JSONValue) => cmnP.readEnum<ProtocolType>(x),
-          "RouteSelectionExpression": "s",
-          "Tags": x => jsonP.readMap(String, String, x),
-          "Version": "s",
-          "Warnings": ["s"],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ApiEndpoint": "s",
+        "ApiGatewayManaged": "b",
+        "ApiId": "s",
+        "ApiKeySelectionExpression": "s",
+        "CorsConfiguration": toCors,
+        "CreatedDate": "d",
+        "Description": "s",
+        "DisableSchemaValidation": "b",
+        "DisableExecuteApiEndpoint": "b",
+        "ImportInfo": ["s"],
+        "Name": "s",
+        "ProtocolType": (x: jsonP.JSONValue) => cmnP.readEnum<ProtocolType>(x),
+        "RouteSelectionExpression": "s",
+        "Tags": x => jsonP.readMap(String, String, x),
+        "Version": "s",
+        "Warnings": ["s"],
+      },
+    }, await resp.json());
   }
 
   async reimportApi(
     {abortSignal, ...params}: RequestConfig & ReimportApiRequest,
   ): Promise<ReimportApiResponse> {
     const query = new URLSearchParams;
+    const body: jsonP.JSONObject = {
+      body: params["Body"],
+    };
     if (params["Basepath"] != null) query.set("basepath", params["Basepath"]?.toString() ?? "");
     if (params["FailOnWarnings"] != null) query.set("failOnWarnings", params["FailOnWarnings"]?.toString() ?? "");
-    const body: jsonP.JSONObject = params ? {
-      body: params["Body"],
-    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, query, body,
       action: "ReimportApi",
@@ -1452,49 +1372,45 @@ export default class ApiGatewayV2 {
       requestUri: cmnP.encodePath`/v2/apis/${params["ApiId"]}`,
       responseCode: 201,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ApiEndpoint": "s",
-          "ApiGatewayManaged": "b",
-          "ApiId": "s",
-          "ApiKeySelectionExpression": "s",
-          "CorsConfiguration": toCors,
-          "CreatedDate": "d",
-          "Description": "s",
-          "DisableSchemaValidation": "b",
-          "DisableExecuteApiEndpoint": "b",
-          "ImportInfo": ["s"],
-          "Name": "s",
-          "ProtocolType": (x: jsonP.JSONValue) => cmnP.readEnum<ProtocolType>(x),
-          "RouteSelectionExpression": "s",
-          "Tags": x => jsonP.readMap(String, String, x),
-          "Version": "s",
-          "Warnings": ["s"],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ApiEndpoint": "s",
+        "ApiGatewayManaged": "b",
+        "ApiId": "s",
+        "ApiKeySelectionExpression": "s",
+        "CorsConfiguration": toCors,
+        "CreatedDate": "d",
+        "Description": "s",
+        "DisableSchemaValidation": "b",
+        "DisableExecuteApiEndpoint": "b",
+        "ImportInfo": ["s"],
+        "Name": "s",
+        "ProtocolType": (x: jsonP.JSONValue) => cmnP.readEnum<ProtocolType>(x),
+        "RouteSelectionExpression": "s",
+        "Tags": x => jsonP.readMap(String, String, x),
+        "Version": "s",
+        "Warnings": ["s"],
+      },
+    }, await resp.json());
   }
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       tags: params["Tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
       requestUri: cmnP.encodePath`/v2/tags/${params["ResourceArn"]}`,
       responseCode: 201,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async untagResource(
@@ -1516,7 +1432,7 @@ export default class ApiGatewayV2 {
   async updateApi(
     {abortSignal, ...params}: RequestConfig & UpdateApiRequest,
   ): Promise<UpdateApiResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       apiKeySelectionExpression: params["ApiKeySelectionExpression"],
       corsConfiguration: fromCors(params["CorsConfiguration"]),
       credentialsArn: params["CredentialsArn"],
@@ -1528,7 +1444,7 @@ export default class ApiGatewayV2 {
       routeSelectionExpression: params["RouteSelectionExpression"],
       target: params["Target"],
       version: params["Version"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateApi",
@@ -1536,39 +1452,37 @@ export default class ApiGatewayV2 {
       requestUri: cmnP.encodePath`/v2/apis/${params["ApiId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ApiEndpoint": "s",
-          "ApiGatewayManaged": "b",
-          "ApiId": "s",
-          "ApiKeySelectionExpression": "s",
-          "CorsConfiguration": toCors,
-          "CreatedDate": "d",
-          "Description": "s",
-          "DisableSchemaValidation": "b",
-          "DisableExecuteApiEndpoint": "b",
-          "ImportInfo": ["s"],
-          "Name": "s",
-          "ProtocolType": (x: jsonP.JSONValue) => cmnP.readEnum<ProtocolType>(x),
-          "RouteSelectionExpression": "s",
-          "Tags": x => jsonP.readMap(String, String, x),
-          "Version": "s",
-          "Warnings": ["s"],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ApiEndpoint": "s",
+        "ApiGatewayManaged": "b",
+        "ApiId": "s",
+        "ApiKeySelectionExpression": "s",
+        "CorsConfiguration": toCors,
+        "CreatedDate": "d",
+        "Description": "s",
+        "DisableSchemaValidation": "b",
+        "DisableExecuteApiEndpoint": "b",
+        "ImportInfo": ["s"],
+        "Name": "s",
+        "ProtocolType": (x: jsonP.JSONValue) => cmnP.readEnum<ProtocolType>(x),
+        "RouteSelectionExpression": "s",
+        "Tags": x => jsonP.readMap(String, String, x),
+        "Version": "s",
+        "Warnings": ["s"],
+      },
+    }, await resp.json());
   }
 
   async updateApiMapping(
     {abortSignal, ...params}: RequestConfig & UpdateApiMappingRequest,
   ): Promise<UpdateApiMappingResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       apiId: params["ApiId"],
       apiMappingKey: params["ApiMappingKey"],
       stage: params["Stage"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateApiMapping",
@@ -1576,23 +1490,21 @@ export default class ApiGatewayV2 {
       requestUri: cmnP.encodePath`/v2/domainnames/${params["DomainName"]}/apimappings/${params["ApiMappingId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ApiId": "s",
-          "ApiMappingId": "s",
-          "ApiMappingKey": "s",
-          "Stage": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ApiId": "s",
+        "ApiMappingId": "s",
+        "ApiMappingKey": "s",
+        "Stage": "s",
+      },
+    }, await resp.json());
   }
 
   async updateAuthorizer(
     {abortSignal, ...params}: RequestConfig & UpdateAuthorizerRequest,
   ): Promise<UpdateAuthorizerResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       authorizerCredentialsArn: params["AuthorizerCredentialsArn"],
       authorizerPayloadFormatVersion: params["AuthorizerPayloadFormatVersion"],
       authorizerResultTtlInSeconds: params["AuthorizerResultTtlInSeconds"],
@@ -1603,7 +1515,7 @@ export default class ApiGatewayV2 {
       identityValidationExpression: params["IdentityValidationExpression"],
       jwtConfiguration: fromJWTConfiguration(params["JwtConfiguration"]),
       name: params["Name"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateAuthorizer",
@@ -1611,32 +1523,30 @@ export default class ApiGatewayV2 {
       requestUri: cmnP.encodePath`/v2/apis/${params["ApiId"]}/authorizers/${params["AuthorizerId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "AuthorizerCredentialsArn": "s",
-          "AuthorizerId": "s",
-          "AuthorizerPayloadFormatVersion": "s",
-          "AuthorizerResultTtlInSeconds": "n",
-          "AuthorizerType": (x: jsonP.JSONValue) => cmnP.readEnum<AuthorizerType>(x),
-          "AuthorizerUri": "s",
-          "EnableSimpleResponses": "b",
-          "IdentitySource": ["s"],
-          "IdentityValidationExpression": "s",
-          "JwtConfiguration": toJWTConfiguration,
-          "Name": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "AuthorizerCredentialsArn": "s",
+        "AuthorizerId": "s",
+        "AuthorizerPayloadFormatVersion": "s",
+        "AuthorizerResultTtlInSeconds": "n",
+        "AuthorizerType": (x: jsonP.JSONValue) => cmnP.readEnum<AuthorizerType>(x),
+        "AuthorizerUri": "s",
+        "EnableSimpleResponses": "b",
+        "IdentitySource": ["s"],
+        "IdentityValidationExpression": "s",
+        "JwtConfiguration": toJWTConfiguration,
+        "Name": "s",
+      },
+    }, await resp.json());
   }
 
   async updateDeployment(
     {abortSignal, ...params}: RequestConfig & UpdateDeploymentRequest,
   ): Promise<UpdateDeploymentResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       description: params["Description"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateDeployment",
@@ -1644,28 +1554,26 @@ export default class ApiGatewayV2 {
       requestUri: cmnP.encodePath`/v2/apis/${params["ApiId"]}/deployments/${params["DeploymentId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "AutoDeployed": "b",
-          "CreatedDate": "d",
-          "DeploymentId": "s",
-          "DeploymentStatus": (x: jsonP.JSONValue) => cmnP.readEnum<DeploymentStatus>(x),
-          "DeploymentStatusMessage": "s",
-          "Description": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "AutoDeployed": "b",
+        "CreatedDate": "d",
+        "DeploymentId": "s",
+        "DeploymentStatus": (x: jsonP.JSONValue) => cmnP.readEnum<DeploymentStatus>(x),
+        "DeploymentStatusMessage": "s",
+        "Description": "s",
+      },
+    }, await resp.json());
   }
 
   async updateDomainName(
     {abortSignal, ...params}: RequestConfig & UpdateDomainNameRequest,
   ): Promise<UpdateDomainNameResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       domainNameConfigurations: params["DomainNameConfigurations"]?.map(x => fromDomainNameConfiguration(x)),
       mutualTlsAuthentication: fromMutualTlsAuthenticationInput(params["MutualTlsAuthentication"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateDomainName",
@@ -1673,24 +1581,22 @@ export default class ApiGatewayV2 {
       requestUri: cmnP.encodePath`/v2/domainnames/${params["DomainName"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ApiMappingSelectionExpression": "s",
-          "DomainName": "s",
-          "DomainNameConfigurations": [toDomainNameConfiguration],
-          "MutualTlsAuthentication": toMutualTlsAuthentication,
-          "Tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ApiMappingSelectionExpression": "s",
+        "DomainName": "s",
+        "DomainNameConfigurations": [toDomainNameConfiguration],
+        "MutualTlsAuthentication": toMutualTlsAuthentication,
+        "Tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async updateIntegration(
     {abortSignal, ...params}: RequestConfig & UpdateIntegrationRequest,
   ): Promise<UpdateIntegrationResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       connectionId: params["ConnectionId"],
       connectionType: params["ConnectionType"],
       contentHandlingStrategy: params["ContentHandlingStrategy"],
@@ -1707,7 +1613,7 @@ export default class ApiGatewayV2 {
       templateSelectionExpression: params["TemplateSelectionExpression"],
       timeoutInMillis: params["TimeoutInMillis"],
       tlsConfig: fromTlsConfigInput(params["TlsConfig"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateIntegration",
@@ -1715,44 +1621,42 @@ export default class ApiGatewayV2 {
       requestUri: cmnP.encodePath`/v2/apis/${params["ApiId"]}/integrations/${params["IntegrationId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ApiGatewayManaged": "b",
-          "ConnectionId": "s",
-          "ConnectionType": (x: jsonP.JSONValue) => cmnP.readEnum<ConnectionType>(x),
-          "ContentHandlingStrategy": (x: jsonP.JSONValue) => cmnP.readEnum<ContentHandlingStrategy>(x),
-          "CredentialsArn": "s",
-          "Description": "s",
-          "IntegrationId": "s",
-          "IntegrationMethod": "s",
-          "IntegrationResponseSelectionExpression": "s",
-          "IntegrationSubtype": "s",
-          "IntegrationType": (x: jsonP.JSONValue) => cmnP.readEnum<IntegrationType>(x),
-          "IntegrationUri": "s",
-          "PassthroughBehavior": (x: jsonP.JSONValue) => cmnP.readEnum<PassthroughBehavior>(x),
-          "PayloadFormatVersion": "s",
-          "RequestParameters": x => jsonP.readMap(String, String, x),
-          "RequestTemplates": x => jsonP.readMap(String, String, x),
-          "TemplateSelectionExpression": "s",
-          "TimeoutInMillis": "n",
-          "TlsConfig": toTlsConfig,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ApiGatewayManaged": "b",
+        "ConnectionId": "s",
+        "ConnectionType": (x: jsonP.JSONValue) => cmnP.readEnum<ConnectionType>(x),
+        "ContentHandlingStrategy": (x: jsonP.JSONValue) => cmnP.readEnum<ContentHandlingStrategy>(x),
+        "CredentialsArn": "s",
+        "Description": "s",
+        "IntegrationId": "s",
+        "IntegrationMethod": "s",
+        "IntegrationResponseSelectionExpression": "s",
+        "IntegrationSubtype": "s",
+        "IntegrationType": (x: jsonP.JSONValue) => cmnP.readEnum<IntegrationType>(x),
+        "IntegrationUri": "s",
+        "PassthroughBehavior": (x: jsonP.JSONValue) => cmnP.readEnum<PassthroughBehavior>(x),
+        "PayloadFormatVersion": "s",
+        "RequestParameters": x => jsonP.readMap(String, String, x),
+        "RequestTemplates": x => jsonP.readMap(String, String, x),
+        "TemplateSelectionExpression": "s",
+        "TimeoutInMillis": "n",
+        "TlsConfig": toTlsConfig,
+      },
+    }, await resp.json());
   }
 
   async updateIntegrationResponse(
     {abortSignal, ...params}: RequestConfig & UpdateIntegrationResponseRequest,
   ): Promise<UpdateIntegrationResponseResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       contentHandlingStrategy: params["ContentHandlingStrategy"],
       integrationResponseKey: params["IntegrationResponseKey"],
       responseParameters: params["ResponseParameters"],
       responseTemplates: params["ResponseTemplates"],
       templateSelectionExpression: params["TemplateSelectionExpression"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateIntegrationResponse",
@@ -1760,30 +1664,28 @@ export default class ApiGatewayV2 {
       requestUri: cmnP.encodePath`/v2/apis/${params["ApiId"]}/integrations/${params["IntegrationId"]}/integrationresponses/${params["IntegrationResponseId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ContentHandlingStrategy": (x: jsonP.JSONValue) => cmnP.readEnum<ContentHandlingStrategy>(x),
-          "IntegrationResponseId": "s",
-          "IntegrationResponseKey": "s",
-          "ResponseParameters": x => jsonP.readMap(String, String, x),
-          "ResponseTemplates": x => jsonP.readMap(String, String, x),
-          "TemplateSelectionExpression": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ContentHandlingStrategy": (x: jsonP.JSONValue) => cmnP.readEnum<ContentHandlingStrategy>(x),
+        "IntegrationResponseId": "s",
+        "IntegrationResponseKey": "s",
+        "ResponseParameters": x => jsonP.readMap(String, String, x),
+        "ResponseTemplates": x => jsonP.readMap(String, String, x),
+        "TemplateSelectionExpression": "s",
+      },
+    }, await resp.json());
   }
 
   async updateModel(
     {abortSignal, ...params}: RequestConfig & UpdateModelRequest,
   ): Promise<UpdateModelResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       contentType: params["ContentType"],
       description: params["Description"],
       name: params["Name"],
       schema: params["Schema"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateModel",
@@ -1791,24 +1693,22 @@ export default class ApiGatewayV2 {
       requestUri: cmnP.encodePath`/v2/apis/${params["ApiId"]}/models/${params["ModelId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ContentType": "s",
-          "Description": "s",
-          "ModelId": "s",
-          "Name": "s",
-          "Schema": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ContentType": "s",
+        "Description": "s",
+        "ModelId": "s",
+        "Name": "s",
+        "Schema": "s",
+      },
+    }, await resp.json());
   }
 
   async updateRoute(
     {abortSignal, ...params}: RequestConfig & UpdateRouteRequest,
   ): Promise<UpdateRouteResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       apiKeyRequired: params["ApiKeyRequired"],
       authorizationScopes: params["AuthorizationScopes"],
       authorizationType: params["AuthorizationType"],
@@ -1820,7 +1720,7 @@ export default class ApiGatewayV2 {
       routeKey: params["RouteKey"],
       routeResponseSelectionExpression: params["RouteResponseSelectionExpression"],
       target: params["Target"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateRoute",
@@ -1828,37 +1728,35 @@ export default class ApiGatewayV2 {
       requestUri: cmnP.encodePath`/v2/apis/${params["ApiId"]}/routes/${params["RouteId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ApiGatewayManaged": "b",
-          "ApiKeyRequired": "b",
-          "AuthorizationScopes": ["s"],
-          "AuthorizationType": (x: jsonP.JSONValue) => cmnP.readEnum<AuthorizationType>(x),
-          "AuthorizerId": "s",
-          "ModelSelectionExpression": "s",
-          "OperationName": "s",
-          "RequestModels": x => jsonP.readMap(String, String, x),
-          "RequestParameters": x => jsonP.readMap(String, toParameterConstraints, x),
-          "RouteId": "s",
-          "RouteKey": "s",
-          "RouteResponseSelectionExpression": "s",
-          "Target": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ApiGatewayManaged": "b",
+        "ApiKeyRequired": "b",
+        "AuthorizationScopes": ["s"],
+        "AuthorizationType": (x: jsonP.JSONValue) => cmnP.readEnum<AuthorizationType>(x),
+        "AuthorizerId": "s",
+        "ModelSelectionExpression": "s",
+        "OperationName": "s",
+        "RequestModels": x => jsonP.readMap(String, String, x),
+        "RequestParameters": x => jsonP.readMap(String, toParameterConstraints, x),
+        "RouteId": "s",
+        "RouteKey": "s",
+        "RouteResponseSelectionExpression": "s",
+        "Target": "s",
+      },
+    }, await resp.json());
   }
 
   async updateRouteResponse(
     {abortSignal, ...params}: RequestConfig & UpdateRouteResponseRequest,
   ): Promise<UpdateRouteResponseResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       modelSelectionExpression: params["ModelSelectionExpression"],
       responseModels: params["ResponseModels"],
       responseParameters: jsonP.serializeMap(params["ResponseParameters"], x => fromParameterConstraints(x)),
       routeResponseKey: params["RouteResponseKey"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateRouteResponse",
@@ -1866,24 +1764,22 @@ export default class ApiGatewayV2 {
       requestUri: cmnP.encodePath`/v2/apis/${params["ApiId"]}/routes/${params["RouteId"]}/routeresponses/${params["RouteResponseId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ModelSelectionExpression": "s",
-          "ResponseModels": x => jsonP.readMap(String, String, x),
-          "ResponseParameters": x => jsonP.readMap(String, toParameterConstraints, x),
-          "RouteResponseId": "s",
-          "RouteResponseKey": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ModelSelectionExpression": "s",
+        "ResponseModels": x => jsonP.readMap(String, String, x),
+        "ResponseParameters": x => jsonP.readMap(String, toParameterConstraints, x),
+        "RouteResponseId": "s",
+        "RouteResponseKey": "s",
+      },
+    }, await resp.json());
   }
 
   async updateStage(
     {abortSignal, ...params}: RequestConfig & UpdateStageRequest,
   ): Promise<UpdateStageResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       accessLogSettings: fromAccessLogSettings(params["AccessLogSettings"]),
       autoDeploy: params["AutoDeploy"],
       clientCertificateId: params["ClientCertificateId"],
@@ -1892,7 +1788,7 @@ export default class ApiGatewayV2 {
       description: params["Description"],
       routeSettings: jsonP.serializeMap(params["RouteSettings"], x => fromRouteSettings(x)),
       stageVariables: params["StageVariables"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateStage",
@@ -1900,35 +1796,33 @@ export default class ApiGatewayV2 {
       requestUri: cmnP.encodePath`/v2/apis/${params["ApiId"]}/stages/${params["StageName"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "AccessLogSettings": toAccessLogSettings,
-          "ApiGatewayManaged": "b",
-          "AutoDeploy": "b",
-          "ClientCertificateId": "s",
-          "CreatedDate": "d",
-          "DefaultRouteSettings": toRouteSettings,
-          "DeploymentId": "s",
-          "Description": "s",
-          "LastDeploymentStatusMessage": "s",
-          "LastUpdatedDate": "d",
-          "RouteSettings": x => jsonP.readMap(String, toRouteSettings, x),
-          "StageName": "s",
-          "StageVariables": x => jsonP.readMap(String, String, x),
-          "Tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "AccessLogSettings": toAccessLogSettings,
+        "ApiGatewayManaged": "b",
+        "AutoDeploy": "b",
+        "ClientCertificateId": "s",
+        "CreatedDate": "d",
+        "DefaultRouteSettings": toRouteSettings,
+        "DeploymentId": "s",
+        "Description": "s",
+        "LastDeploymentStatusMessage": "s",
+        "LastUpdatedDate": "d",
+        "RouteSettings": x => jsonP.readMap(String, toRouteSettings, x),
+        "StageName": "s",
+        "StageVariables": x => jsonP.readMap(String, String, x),
+        "Tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async updateVpcLink(
     {abortSignal, ...params}: RequestConfig & UpdateVpcLinkRequest,
   ): Promise<UpdateVpcLinkResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       name: params["Name"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateVpcLink",
@@ -1936,22 +1830,20 @@ export default class ApiGatewayV2 {
       requestUri: cmnP.encodePath`/v2/vpclinks/${params["VpcLinkId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "CreatedDate": "d",
-          "Name": "s",
-          "SecurityGroupIds": ["s"],
-          "SubnetIds": ["s"],
-          "Tags": x => jsonP.readMap(String, String, x),
-          "VpcLinkId": "s",
-          "VpcLinkStatus": (x: jsonP.JSONValue) => cmnP.readEnum<VpcLinkStatus>(x),
-          "VpcLinkStatusMessage": "s",
-          "VpcLinkVersion": (x: jsonP.JSONValue) => cmnP.readEnum<VpcLinkVersion>(x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "CreatedDate": "d",
+        "Name": "s",
+        "SecurityGroupIds": ["s"],
+        "SubnetIds": ["s"],
+        "Tags": x => jsonP.readMap(String, String, x),
+        "VpcLinkId": "s",
+        "VpcLinkStatus": (x: jsonP.JSONValue) => cmnP.readEnum<VpcLinkStatus>(x),
+        "VpcLinkStatusMessage": "s",
+        "VpcLinkVersion": (x: jsonP.JSONValue) => cmnP.readEnum<VpcLinkVersion>(x),
+      },
+    }, await resp.json());
   }
 
 }

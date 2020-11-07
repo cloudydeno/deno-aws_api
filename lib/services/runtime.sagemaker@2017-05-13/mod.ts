@@ -29,13 +29,13 @@ export default class SageMakerRuntime {
   async invokeEndpoint(
     {abortSignal, ...params}: RequestConfig & InvokeEndpointInput,
   ): Promise<InvokeEndpointOutput> {
+    const body = typeof params["Body"] === 'string' ? new TextEncoder().encode(params["Body"]) : params["Body"];
     const headers = new Headers;
     if (params["ContentType"] != null) headers.append("Content-Type", params["ContentType"]);
     if (params["Accept"] != null) headers.append("Accept", params["Accept"]);
     if (params["CustomAttributes"] != null) headers.append("X-Amzn-SageMaker-Custom-Attributes", params["CustomAttributes"]);
     if (params["TargetModel"] != null) headers.append("X-Amzn-SageMaker-Target-Model", params["TargetModel"]);
     if (params["TargetVariant"] != null) headers.append("X-Amzn-SageMaker-Target-Variant", params["TargetVariant"]);
-    const body = typeof params["Body"] === 'string' ? new TextEncoder().encode(params["Body"]) : params["Body"];
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "InvokeEndpoint",

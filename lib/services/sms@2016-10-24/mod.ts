@@ -30,14 +30,14 @@ export default class SMS {
   async createApp(
     {abortSignal, ...params}: RequestConfig & CreateAppRequest = {},
   ): Promise<CreateAppResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       name: params["name"],
       description: params["description"],
       roleName: params["roleName"],
       clientToken: params["clientToken"],
       serverGroups: params["serverGroups"]?.map(x => fromServerGroup(x)),
       tags: params["tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateApp",
@@ -55,7 +55,7 @@ export default class SMS {
   async createReplicationJob(
     {abortSignal, ...params}: RequestConfig & CreateReplicationJobRequest,
   ): Promise<CreateReplicationJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       serverId: params["serverId"],
       seedReplicationTime: jsonP.serializeDate_unixTimestamp(params["seedReplicationTime"]),
       frequency: params["frequency"],
@@ -66,7 +66,7 @@ export default class SMS {
       numberOfRecentAmisToKeep: params["numberOfRecentAmisToKeep"],
       encrypted: params["encrypted"],
       kmsKeyId: params["kmsKeyId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateReplicationJob",
@@ -82,11 +82,11 @@ export default class SMS {
   async deleteApp(
     {abortSignal, ...params}: RequestConfig & DeleteAppRequest = {},
   ): Promise<DeleteAppResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       appId: params["appId"],
       forceStopAppReplication: params["forceStopAppReplication"],
       forceTerminateApp: params["forceTerminateApp"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteApp",
@@ -100,9 +100,9 @@ export default class SMS {
   async deleteAppLaunchConfiguration(
     {abortSignal, ...params}: RequestConfig & DeleteAppLaunchConfigurationRequest = {},
   ): Promise<DeleteAppLaunchConfigurationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       appId: params["appId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteAppLaunchConfiguration",
@@ -116,9 +116,9 @@ export default class SMS {
   async deleteAppReplicationConfiguration(
     {abortSignal, ...params}: RequestConfig & DeleteAppReplicationConfigurationRequest = {},
   ): Promise<DeleteAppReplicationConfigurationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       appId: params["appId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteAppReplicationConfiguration",
@@ -132,9 +132,9 @@ export default class SMS {
   async deleteAppValidationConfiguration(
     {abortSignal, ...params}: RequestConfig & DeleteAppValidationConfigurationRequest,
   ): Promise<DeleteAppValidationConfigurationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       appId: params["appId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteAppValidationConfiguration",
@@ -148,9 +148,9 @@ export default class SMS {
   async deleteReplicationJob(
     {abortSignal, ...params}: RequestConfig & DeleteReplicationJobRequest,
   ): Promise<DeleteReplicationJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       replicationJobId: params["replicationJobId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteReplicationJob",
@@ -164,8 +164,8 @@ export default class SMS {
   async deleteServerCatalog(
     {abortSignal, ...params}: RequestConfig & DeleteServerCatalogRequest = {},
   ): Promise<DeleteServerCatalogResponse> {
-    const body: jsonP.JSONObject = params ? {
-    } : {};
+    const body: jsonP.JSONObject = {
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteServerCatalog",
@@ -179,9 +179,9 @@ export default class SMS {
   async disassociateConnector(
     {abortSignal, ...params}: RequestConfig & DisassociateConnectorRequest,
   ): Promise<DisassociateConnectorResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       connectorId: params["connectorId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisassociateConnector",
@@ -195,10 +195,10 @@ export default class SMS {
   async generateChangeSet(
     {abortSignal, ...params}: RequestConfig & GenerateChangeSetRequest = {},
   ): Promise<GenerateChangeSetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       appId: params["appId"],
       changesetFormat: params["changesetFormat"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GenerateChangeSet",
@@ -214,10 +214,10 @@ export default class SMS {
   async generateTemplate(
     {abortSignal, ...params}: RequestConfig & GenerateTemplateRequest = {},
   ): Promise<GenerateTemplateResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       appId: params["appId"],
       templateFormat: params["templateFormat"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GenerateTemplate",
@@ -233,9 +233,9 @@ export default class SMS {
   async getApp(
     {abortSignal, ...params}: RequestConfig & GetAppRequest = {},
   ): Promise<GetAppResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       appId: params["appId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetApp",
@@ -253,9 +253,9 @@ export default class SMS {
   async getAppLaunchConfiguration(
     {abortSignal, ...params}: RequestConfig & GetAppLaunchConfigurationRequest = {},
   ): Promise<GetAppLaunchConfigurationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       appId: params["appId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetAppLaunchConfiguration",
@@ -274,9 +274,9 @@ export default class SMS {
   async getAppReplicationConfiguration(
     {abortSignal, ...params}: RequestConfig & GetAppReplicationConfigurationRequest = {},
   ): Promise<GetAppReplicationConfigurationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       appId: params["appId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetAppReplicationConfiguration",
@@ -292,9 +292,9 @@ export default class SMS {
   async getAppValidationConfiguration(
     {abortSignal, ...params}: RequestConfig & GetAppValidationConfigurationRequest,
   ): Promise<GetAppValidationConfigurationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       appId: params["appId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetAppValidationConfiguration",
@@ -311,9 +311,9 @@ export default class SMS {
   async getAppValidationOutput(
     {abortSignal, ...params}: RequestConfig & GetAppValidationOutputRequest,
   ): Promise<GetAppValidationOutputResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       appId: params["appId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetAppValidationOutput",
@@ -329,10 +329,10 @@ export default class SMS {
   async getConnectors(
     {abortSignal, ...params}: RequestConfig & GetConnectorsRequest = {},
   ): Promise<GetConnectorsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetConnectors",
@@ -349,11 +349,11 @@ export default class SMS {
   async getReplicationJobs(
     {abortSignal, ...params}: RequestConfig & GetReplicationJobsRequest = {},
   ): Promise<GetReplicationJobsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       replicationJobId: params["replicationJobId"],
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetReplicationJobs",
@@ -370,11 +370,11 @@ export default class SMS {
   async getReplicationRuns(
     {abortSignal, ...params}: RequestConfig & GetReplicationRunsRequest,
   ): Promise<GetReplicationRunsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       replicationJobId: params["replicationJobId"],
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetReplicationRuns",
@@ -392,11 +392,11 @@ export default class SMS {
   async getServers(
     {abortSignal, ...params}: RequestConfig & GetServersRequest = {},
   ): Promise<GetServersResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
       vmServerAddressList: params["vmServerAddressList"]?.map(x => fromVmServerAddress(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetServers",
@@ -415,9 +415,9 @@ export default class SMS {
   async importAppCatalog(
     {abortSignal, ...params}: RequestConfig & ImportAppCatalogRequest = {},
   ): Promise<ImportAppCatalogResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       roleName: params["roleName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ImportAppCatalog",
@@ -431,8 +431,8 @@ export default class SMS {
   async importServerCatalog(
     {abortSignal, ...params}: RequestConfig & ImportServerCatalogRequest = {},
   ): Promise<ImportServerCatalogResponse> {
-    const body: jsonP.JSONObject = params ? {
-    } : {};
+    const body: jsonP.JSONObject = {
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ImportServerCatalog",
@@ -446,9 +446,9 @@ export default class SMS {
   async launchApp(
     {abortSignal, ...params}: RequestConfig & LaunchAppRequest = {},
   ): Promise<LaunchAppResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       appId: params["appId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "LaunchApp",
@@ -462,11 +462,11 @@ export default class SMS {
   async listApps(
     {abortSignal, ...params}: RequestConfig & ListAppsRequest = {},
   ): Promise<ListAppsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       appIds: params["appIds"],
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListApps",
@@ -483,10 +483,10 @@ export default class SMS {
   async notifyAppValidationOutput(
     {abortSignal, ...params}: RequestConfig & NotifyAppValidationOutputRequest,
   ): Promise<NotifyAppValidationOutputResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       appId: params["appId"],
       notificationContext: fromNotificationContext(params["notificationContext"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "NotifyAppValidationOutput",
@@ -500,12 +500,12 @@ export default class SMS {
   async putAppLaunchConfiguration(
     {abortSignal, ...params}: RequestConfig & PutAppLaunchConfigurationRequest = {},
   ): Promise<PutAppLaunchConfigurationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       appId: params["appId"],
       roleName: params["roleName"],
       autoLaunch: params["autoLaunch"],
       serverGroupLaunchConfigurations: params["serverGroupLaunchConfigurations"]?.map(x => fromServerGroupLaunchConfiguration(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutAppLaunchConfiguration",
@@ -519,10 +519,10 @@ export default class SMS {
   async putAppReplicationConfiguration(
     {abortSignal, ...params}: RequestConfig & PutAppReplicationConfigurationRequest = {},
   ): Promise<PutAppReplicationConfigurationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       appId: params["appId"],
       serverGroupReplicationConfigurations: params["serverGroupReplicationConfigurations"]?.map(x => fromServerGroupReplicationConfiguration(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutAppReplicationConfiguration",
@@ -536,11 +536,11 @@ export default class SMS {
   async putAppValidationConfiguration(
     {abortSignal, ...params}: RequestConfig & PutAppValidationConfigurationRequest,
   ): Promise<PutAppValidationConfigurationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       appId: params["appId"],
       appValidationConfigurations: params["appValidationConfigurations"]?.map(x => fromAppValidationConfiguration(x)),
       serverGroupValidationConfigurations: params["serverGroupValidationConfigurations"]?.map(x => fromServerGroupValidationConfiguration(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutAppValidationConfiguration",
@@ -554,9 +554,9 @@ export default class SMS {
   async startAppReplication(
     {abortSignal, ...params}: RequestConfig & StartAppReplicationRequest = {},
   ): Promise<StartAppReplicationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       appId: params["appId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartAppReplication",
@@ -570,10 +570,10 @@ export default class SMS {
   async startOnDemandAppReplication(
     {abortSignal, ...params}: RequestConfig & StartOnDemandAppReplicationRequest,
   ): Promise<StartOnDemandAppReplicationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       appId: params["appId"],
       description: params["description"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartOnDemandAppReplication",
@@ -587,10 +587,10 @@ export default class SMS {
   async startOnDemandReplicationRun(
     {abortSignal, ...params}: RequestConfig & StartOnDemandReplicationRunRequest,
   ): Promise<StartOnDemandReplicationRunResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       replicationJobId: params["replicationJobId"],
       description: params["description"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartOnDemandReplicationRun",
@@ -606,9 +606,9 @@ export default class SMS {
   async stopAppReplication(
     {abortSignal, ...params}: RequestConfig & StopAppReplicationRequest = {},
   ): Promise<StopAppReplicationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       appId: params["appId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopAppReplication",
@@ -622,9 +622,9 @@ export default class SMS {
   async terminateApp(
     {abortSignal, ...params}: RequestConfig & TerminateAppRequest = {},
   ): Promise<TerminateAppResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       appId: params["appId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TerminateApp",
@@ -638,14 +638,14 @@ export default class SMS {
   async updateApp(
     {abortSignal, ...params}: RequestConfig & UpdateAppRequest = {},
   ): Promise<UpdateAppResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       appId: params["appId"],
       name: params["name"],
       description: params["description"],
       roleName: params["roleName"],
       serverGroups: params["serverGroups"]?.map(x => fromServerGroup(x)),
       tags: params["tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateApp",
@@ -663,7 +663,7 @@ export default class SMS {
   async updateReplicationJob(
     {abortSignal, ...params}: RequestConfig & UpdateReplicationJobRequest,
   ): Promise<UpdateReplicationJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       replicationJobId: params["replicationJobId"],
       frequency: params["frequency"],
       nextReplicationRunStartTime: jsonP.serializeDate_unixTimestamp(params["nextReplicationRunStartTime"]),
@@ -673,7 +673,7 @@ export default class SMS {
       numberOfRecentAmisToKeep: params["numberOfRecentAmisToKeep"],
       encrypted: params["encrypted"],
       kmsKeyId: params["kmsKeyId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateReplicationJob",

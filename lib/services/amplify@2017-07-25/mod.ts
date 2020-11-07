@@ -30,7 +30,7 @@ export default class Amplify {
   async createApp(
     {abortSignal, ...params}: RequestConfig & CreateAppRequest,
   ): Promise<CreateAppResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       name: params["name"],
       description: params["description"],
       repository: params["repository"],
@@ -49,49 +49,45 @@ export default class Amplify {
       enableAutoBranchCreation: params["enableAutoBranchCreation"],
       autoBranchCreationPatterns: params["autoBranchCreationPatterns"],
       autoBranchCreationConfig: fromAutoBranchCreationConfig(params["autoBranchCreationConfig"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateApp",
       requestUri: "/apps",
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "app": toApp,
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "app": toApp,
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async createBackendEnvironment(
     {abortSignal, ...params}: RequestConfig & CreateBackendEnvironmentRequest,
   ): Promise<CreateBackendEnvironmentResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       environmentName: params["environmentName"],
       stackName: params["stackName"],
       deploymentArtifacts: params["deploymentArtifacts"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateBackendEnvironment",
       requestUri: cmnP.encodePath`/apps/${params["appId"]}/backendenvironments`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "backendEnvironment": toBackendEnvironment,
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "backendEnvironment": toBackendEnvironment,
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async createBranch(
     {abortSignal, ...params}: RequestConfig & CreateBranchRequest,
   ): Promise<CreateBranchResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       branchName: params["branchName"],
       description: params["description"],
       stage: params["stage"],
@@ -109,91 +105,83 @@ export default class Amplify {
       enablePullRequestPreview: params["enablePullRequestPreview"],
       pullRequestEnvironmentName: params["pullRequestEnvironmentName"],
       backendEnvironmentArn: params["backendEnvironmentArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateBranch",
       requestUri: cmnP.encodePath`/apps/${params["appId"]}/branches`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "branch": toBranch,
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "branch": toBranch,
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async createDeployment(
     {abortSignal, ...params}: RequestConfig & CreateDeploymentRequest,
   ): Promise<CreateDeploymentResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       fileMap: params["fileMap"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDeployment",
       requestUri: cmnP.encodePath`/apps/${params["appId"]}/branches/${params["branchName"]}/deployments`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "fileUploadUrls": x => jsonP.readMap(String, String, x),
-          "zipUploadUrl": "s",
-        },
-        optional: {
-          "jobId": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "fileUploadUrls": x => jsonP.readMap(String, String, x),
+        "zipUploadUrl": "s",
+      },
+      optional: {
+        "jobId": "s",
+      },
+    }, await resp.json());
   }
 
   async createDomainAssociation(
     {abortSignal, ...params}: RequestConfig & CreateDomainAssociationRequest,
   ): Promise<CreateDomainAssociationResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       domainName: params["domainName"],
       enableAutoSubDomain: params["enableAutoSubDomain"],
       subDomainSettings: params["subDomainSettings"]?.map(x => fromSubDomainSetting(x)),
       autoSubDomainCreationPatterns: params["autoSubDomainCreationPatterns"],
       autoSubDomainIAMRole: params["autoSubDomainIAMRole"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDomainAssociation",
       requestUri: cmnP.encodePath`/apps/${params["appId"]}/domains`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "domainAssociation": toDomainAssociation,
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "domainAssociation": toDomainAssociation,
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async createWebhook(
     {abortSignal, ...params}: RequestConfig & CreateWebhookRequest,
   ): Promise<CreateWebhookResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       branchName: params["branchName"],
       description: params["description"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateWebhook",
       requestUri: cmnP.encodePath`/apps/${params["appId"]}/webhooks`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "webhook": toWebhook,
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "webhook": toWebhook,
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async deleteApp(
@@ -206,14 +194,12 @@ export default class Amplify {
       method: "DELETE",
       requestUri: cmnP.encodePath`/apps/${params["appId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "app": toApp,
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "app": toApp,
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async deleteBackendEnvironment(
@@ -226,14 +212,12 @@ export default class Amplify {
       method: "DELETE",
       requestUri: cmnP.encodePath`/apps/${params["appId"]}/backendenvironments/${params["environmentName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "backendEnvironment": toBackendEnvironment,
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "backendEnvironment": toBackendEnvironment,
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async deleteBranch(
@@ -246,14 +230,12 @@ export default class Amplify {
       method: "DELETE",
       requestUri: cmnP.encodePath`/apps/${params["appId"]}/branches/${params["branchName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "branch": toBranch,
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "branch": toBranch,
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async deleteDomainAssociation(
@@ -266,14 +248,12 @@ export default class Amplify {
       method: "DELETE",
       requestUri: cmnP.encodePath`/apps/${params["appId"]}/domains/${params["domainName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "domainAssociation": toDomainAssociation,
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "domainAssociation": toDomainAssociation,
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async deleteJob(
@@ -286,14 +266,12 @@ export default class Amplify {
       method: "DELETE",
       requestUri: cmnP.encodePath`/apps/${params["appId"]}/branches/${params["branchName"]}/jobs/${params["jobId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "jobSummary": toJobSummary,
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "jobSummary": toJobSummary,
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async deleteWebhook(
@@ -306,37 +284,33 @@ export default class Amplify {
       method: "DELETE",
       requestUri: cmnP.encodePath`/webhooks/${params["webhookId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "webhook": toWebhook,
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "webhook": toWebhook,
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async generateAccessLogs(
     {abortSignal, ...params}: RequestConfig & GenerateAccessLogsRequest,
   ): Promise<GenerateAccessLogsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       startTime: jsonP.serializeDate_unixTimestamp(params["startTime"]),
       endTime: jsonP.serializeDate_unixTimestamp(params["endTime"]),
       domainName: params["domainName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GenerateAccessLogs",
       requestUri: cmnP.encodePath`/apps/${params["appId"]}/accesslogs`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "logUrl": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "logUrl": "s",
+      },
+    }, await resp.json());
   }
 
   async getApp(
@@ -349,14 +323,12 @@ export default class Amplify {
       method: "GET",
       requestUri: cmnP.encodePath`/apps/${params["appId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "app": toApp,
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "app": toApp,
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async getArtifactUrl(
@@ -369,15 +341,13 @@ export default class Amplify {
       method: "GET",
       requestUri: cmnP.encodePath`/artifacts/${params["artifactId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "artifactId": "s",
-          "artifactUrl": "s",
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "artifactId": "s",
+        "artifactUrl": "s",
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async getBackendEnvironment(
@@ -390,14 +360,12 @@ export default class Amplify {
       method: "GET",
       requestUri: cmnP.encodePath`/apps/${params["appId"]}/backendenvironments/${params["environmentName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "backendEnvironment": toBackendEnvironment,
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "backendEnvironment": toBackendEnvironment,
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async getBranch(
@@ -410,14 +378,12 @@ export default class Amplify {
       method: "GET",
       requestUri: cmnP.encodePath`/apps/${params["appId"]}/branches/${params["branchName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "branch": toBranch,
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "branch": toBranch,
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async getDomainAssociation(
@@ -430,14 +396,12 @@ export default class Amplify {
       method: "GET",
       requestUri: cmnP.encodePath`/apps/${params["appId"]}/domains/${params["domainName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "domainAssociation": toDomainAssociation,
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "domainAssociation": toDomainAssociation,
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async getJob(
@@ -450,14 +414,12 @@ export default class Amplify {
       method: "GET",
       requestUri: cmnP.encodePath`/apps/${params["appId"]}/branches/${params["branchName"]}/jobs/${params["jobId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "job": toJob,
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "job": toJob,
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async getWebhook(
@@ -470,14 +432,12 @@ export default class Amplify {
       method: "GET",
       requestUri: cmnP.encodePath`/webhooks/${params["webhookId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "webhook": toWebhook,
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "webhook": toWebhook,
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async listApps(
@@ -492,16 +452,14 @@ export default class Amplify {
       method: "GET",
       requestUri: "/apps",
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "apps": [toApp],
-        },
-        optional: {
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "apps": [toApp],
+      },
+      optional: {
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listArtifacts(
@@ -516,16 +474,14 @@ export default class Amplify {
       method: "GET",
       requestUri: cmnP.encodePath`/apps/${params["appId"]}/branches/${params["branchName"]}/jobs/${params["jobId"]}/artifacts`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "artifacts": [toArtifact],
-        },
-        optional: {
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "artifacts": [toArtifact],
+      },
+      optional: {
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listBackendEnvironments(
@@ -541,16 +497,14 @@ export default class Amplify {
       method: "GET",
       requestUri: cmnP.encodePath`/apps/${params["appId"]}/backendenvironments`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "backendEnvironments": [toBackendEnvironment],
-        },
-        optional: {
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "backendEnvironments": [toBackendEnvironment],
+      },
+      optional: {
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listBranches(
@@ -565,16 +519,14 @@ export default class Amplify {
       method: "GET",
       requestUri: cmnP.encodePath`/apps/${params["appId"]}/branches`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "branches": [toBranch],
-        },
-        optional: {
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "branches": [toBranch],
+      },
+      optional: {
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listDomainAssociations(
@@ -589,16 +541,14 @@ export default class Amplify {
       method: "GET",
       requestUri: cmnP.encodePath`/apps/${params["appId"]}/domains`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "domainAssociations": [toDomainAssociation],
-        },
-        optional: {
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "domainAssociations": [toDomainAssociation],
+      },
+      optional: {
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listJobs(
@@ -613,16 +563,14 @@ export default class Amplify {
       method: "GET",
       requestUri: cmnP.encodePath`/apps/${params["appId"]}/branches/${params["branchName"]}/jobs`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "jobSummaries": [toJobSummary],
-        },
-        optional: {
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "jobSummaries": [toJobSummary],
+      },
+      optional: {
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listTagsForResource(
@@ -635,14 +583,12 @@ export default class Amplify {
       method: "GET",
       requestUri: cmnP.encodePath`/tags/${params["resourceArn"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async listWebhooks(
@@ -657,64 +603,58 @@ export default class Amplify {
       method: "GET",
       requestUri: cmnP.encodePath`/apps/${params["appId"]}/webhooks`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "webhooks": [toWebhook],
-        },
-        optional: {
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "webhooks": [toWebhook],
+      },
+      optional: {
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async startDeployment(
     {abortSignal, ...params}: RequestConfig & StartDeploymentRequest,
   ): Promise<StartDeploymentResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       jobId: params["jobId"],
       sourceUrl: params["sourceUrl"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartDeployment",
       requestUri: cmnP.encodePath`/apps/${params["appId"]}/branches/${params["branchName"]}/deployments/start`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "jobSummary": toJobSummary,
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "jobSummary": toJobSummary,
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async startJob(
     {abortSignal, ...params}: RequestConfig & StartJobRequest,
   ): Promise<StartJobResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       jobId: params["jobId"],
       jobType: params["jobType"],
       jobReason: params["jobReason"],
       commitId: params["commitId"],
       commitMessage: params["commitMessage"],
       commitTime: jsonP.serializeDate_unixTimestamp(params["commitTime"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartJob",
       requestUri: cmnP.encodePath`/apps/${params["appId"]}/branches/${params["branchName"]}/jobs`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "jobSummary": toJobSummary,
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "jobSummary": toJobSummary,
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async stopJob(
@@ -727,33 +667,29 @@ export default class Amplify {
       method: "DELETE",
       requestUri: cmnP.encodePath`/apps/${params["appId"]}/branches/${params["branchName"]}/jobs/${params["jobId"]}/stop`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "jobSummary": toJobSummary,
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "jobSummary": toJobSummary,
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       tags: params["tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
       requestUri: cmnP.encodePath`/tags/${params["resourceArn"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async untagResource(
@@ -769,18 +705,16 @@ export default class Amplify {
       method: "DELETE",
       requestUri: cmnP.encodePath`/tags/${params["resourceArn"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async updateApp(
     {abortSignal, ...params}: RequestConfig & UpdateAppRequest,
   ): Promise<UpdateAppResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       name: params["name"],
       description: params["description"],
       platform: params["platform"],
@@ -798,26 +732,24 @@ export default class Amplify {
       repository: params["repository"],
       oauthToken: params["oauthToken"],
       accessToken: params["accessToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateApp",
       requestUri: cmnP.encodePath`/apps/${params["appId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "app": toApp,
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "app": toApp,
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async updateBranch(
     {abortSignal, ...params}: RequestConfig & UpdateBranchRequest,
   ): Promise<UpdateBranchResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       description: params["description"],
       framework: params["framework"],
       stage: params["stage"],
@@ -833,66 +765,60 @@ export default class Amplify {
       enablePullRequestPreview: params["enablePullRequestPreview"],
       pullRequestEnvironmentName: params["pullRequestEnvironmentName"],
       backendEnvironmentArn: params["backendEnvironmentArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateBranch",
       requestUri: cmnP.encodePath`/apps/${params["appId"]}/branches/${params["branchName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "branch": toBranch,
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "branch": toBranch,
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async updateDomainAssociation(
     {abortSignal, ...params}: RequestConfig & UpdateDomainAssociationRequest,
   ): Promise<UpdateDomainAssociationResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       enableAutoSubDomain: params["enableAutoSubDomain"],
       subDomainSettings: params["subDomainSettings"]?.map(x => fromSubDomainSetting(x)),
       autoSubDomainCreationPatterns: params["autoSubDomainCreationPatterns"],
       autoSubDomainIAMRole: params["autoSubDomainIAMRole"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateDomainAssociation",
       requestUri: cmnP.encodePath`/apps/${params["appId"]}/domains/${params["domainName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "domainAssociation": toDomainAssociation,
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "domainAssociation": toDomainAssociation,
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async updateWebhook(
     {abortSignal, ...params}: RequestConfig & UpdateWebhookRequest,
   ): Promise<UpdateWebhookResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       branchName: params["branchName"],
       description: params["description"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateWebhook",
       requestUri: cmnP.encodePath`/webhooks/${params["webhookId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "webhook": toWebhook,
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "webhook": toWebhook,
+      },
+      optional: {},
+    }, await resp.json());
   }
 
 }

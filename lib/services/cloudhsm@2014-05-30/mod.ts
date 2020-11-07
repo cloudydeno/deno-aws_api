@@ -30,10 +30,10 @@ export default class CloudHSM {
   async addTagsToResource(
     {abortSignal, ...params}: RequestConfig & AddTagsToResourceRequest,
   ): Promise<AddTagsToResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
       TagList: params["TagList"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AddTagsToResource",
@@ -49,9 +49,9 @@ export default class CloudHSM {
   async createHapg(
     {abortSignal, ...params}: RequestConfig & CreateHapgRequest,
   ): Promise<CreateHapgResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Label: params["Label"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateHapg",
@@ -67,7 +67,7 @@ export default class CloudHSM {
   async createHsm(
     {abortSignal, ...params}: RequestConfig & CreateHsmRequest,
   ): Promise<CreateHsmResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       SubnetId: params["SubnetId"],
       SshKey: params["SshKey"],
       EniIp: params["EniIp"],
@@ -76,7 +76,7 @@ export default class CloudHSM {
       SubscriptionType: params["SubscriptionType"],
       ClientToken: params["ClientToken"],
       SyslogIp: params["SyslogIp"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateHsm",
@@ -92,10 +92,10 @@ export default class CloudHSM {
   async createLunaClient(
     {abortSignal, ...params}: RequestConfig & CreateLunaClientRequest,
   ): Promise<CreateLunaClientResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Label: params["Label"],
       Certificate: params["Certificate"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateLunaClient",
@@ -111,9 +111,9 @@ export default class CloudHSM {
   async deleteHapg(
     {abortSignal, ...params}: RequestConfig & DeleteHapgRequest,
   ): Promise<DeleteHapgResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       HapgArn: params["HapgArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteHapg",
@@ -129,9 +129,9 @@ export default class CloudHSM {
   async deleteHsm(
     {abortSignal, ...params}: RequestConfig & DeleteHsmRequest,
   ): Promise<DeleteHsmResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       HsmArn: params["HsmArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteHsm",
@@ -147,9 +147,9 @@ export default class CloudHSM {
   async deleteLunaClient(
     {abortSignal, ...params}: RequestConfig & DeleteLunaClientRequest,
   ): Promise<DeleteLunaClientResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ClientArn: params["ClientArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteLunaClient",
@@ -165,9 +165,9 @@ export default class CloudHSM {
   async describeHapg(
     {abortSignal, ...params}: RequestConfig & DescribeHapgRequest,
   ): Promise<DescribeHapgResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       HapgArn: params["HapgArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeHapg",
@@ -191,10 +191,10 @@ export default class CloudHSM {
   async describeHsm(
     {abortSignal, ...params}: RequestConfig & DescribeHsmRequest = {},
   ): Promise<DescribeHsmResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       HsmArn: params["HsmArn"],
       HsmSerialNumber: params["HsmSerialNumber"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeHsm",
@@ -230,10 +230,10 @@ export default class CloudHSM {
   async describeLunaClient(
     {abortSignal, ...params}: RequestConfig & DescribeLunaClientRequest = {},
   ): Promise<DescribeLunaClientResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ClientArn: params["ClientArn"],
       CertificateFingerprint: params["CertificateFingerprint"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeLunaClient",
@@ -253,11 +253,11 @@ export default class CloudHSM {
   async getConfig(
     {abortSignal, ...params}: RequestConfig & GetConfigRequest,
   ): Promise<GetConfigResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ClientArn: params["ClientArn"],
       ClientVersion: params["ClientVersion"],
       HapgList: params["HapgList"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetConfig",
@@ -275,8 +275,8 @@ export default class CloudHSM {
   async listAvailableZones(
     {abortSignal, ...params}: RequestConfig & ListAvailableZonesRequest = {},
   ): Promise<ListAvailableZonesResponse> {
-    const body: jsonP.JSONObject = params ? {
-    } : {};
+    const body: jsonP.JSONObject = {
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListAvailableZones",
@@ -292,9 +292,9 @@ export default class CloudHSM {
   async listHapgs(
     {abortSignal, ...params}: RequestConfig & ListHapgsRequest = {},
   ): Promise<ListHapgsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListHapgs",
@@ -312,9 +312,9 @@ export default class CloudHSM {
   async listHsms(
     {abortSignal, ...params}: RequestConfig & ListHsmsRequest = {},
   ): Promise<ListHsmsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListHsms",
@@ -331,9 +331,9 @@ export default class CloudHSM {
   async listLunaClients(
     {abortSignal, ...params}: RequestConfig & ListLunaClientsRequest = {},
   ): Promise<ListLunaClientsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListLunaClients",
@@ -351,9 +351,9 @@ export default class CloudHSM {
   async listTagsForResource(
     {abortSignal, ...params}: RequestConfig & ListTagsForResourceRequest,
   ): Promise<ListTagsForResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForResource",
@@ -369,11 +369,11 @@ export default class CloudHSM {
   async modifyHapg(
     {abortSignal, ...params}: RequestConfig & ModifyHapgRequest,
   ): Promise<ModifyHapgResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       HapgArn: params["HapgArn"],
       Label: params["Label"],
       PartitionSerialList: params["PartitionSerialList"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ModifyHapg",
@@ -389,14 +389,14 @@ export default class CloudHSM {
   async modifyHsm(
     {abortSignal, ...params}: RequestConfig & ModifyHsmRequest,
   ): Promise<ModifyHsmResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       HsmArn: params["HsmArn"],
       SubnetId: params["SubnetId"],
       EniIp: params["EniIp"],
       IamRoleArn: params["IamRoleArn"],
       ExternalId: params["ExternalId"],
       SyslogIp: params["SyslogIp"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ModifyHsm",
@@ -412,10 +412,10 @@ export default class CloudHSM {
   async modifyLunaClient(
     {abortSignal, ...params}: RequestConfig & ModifyLunaClientRequest,
   ): Promise<ModifyLunaClientResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ClientArn: params["ClientArn"],
       Certificate: params["Certificate"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ModifyLunaClient",
@@ -431,10 +431,10 @@ export default class CloudHSM {
   async removeTagsFromResource(
     {abortSignal, ...params}: RequestConfig & RemoveTagsFromResourceRequest,
   ): Promise<RemoveTagsFromResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
       TagKeyList: params["TagKeyList"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RemoveTagsFromResource",

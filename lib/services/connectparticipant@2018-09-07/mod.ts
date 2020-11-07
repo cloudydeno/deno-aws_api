@@ -35,127 +35,117 @@ export default class ConnectParticipant {
     {abortSignal, ...params}: RequestConfig & CreateParticipantConnectionRequest,
   ): Promise<CreateParticipantConnectionResponse> {
     const headers = new Headers;
-    headers.append("X-Amz-Bearer", params["ParticipantToken"]);
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Type: params["Type"],
-    } : {};
+    };
+    headers.append("X-Amz-Bearer", params["ParticipantToken"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "CreateParticipantConnection",
       requestUri: "/participant/connection",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Websocket": toWebsocket,
-          "ConnectionCredentials": toConnectionCredentials,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Websocket": toWebsocket,
+        "ConnectionCredentials": toConnectionCredentials,
+      },
+    }, await resp.json());
   }
 
   async disconnectParticipant(
     {abortSignal, ...params}: RequestConfig & DisconnectParticipantRequest,
   ): Promise<DisconnectParticipantResponse> {
     const headers = new Headers;
-    headers.append("X-Amz-Bearer", params["ConnectionToken"]);
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ClientToken: params["ClientToken"] ?? generateIdemptToken(),
-    } : {};
+    };
+    headers.append("X-Amz-Bearer", params["ConnectionToken"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "DisconnectParticipant",
       requestUri: "/participant/disconnect",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async getTranscript(
     {abortSignal, ...params}: RequestConfig & GetTranscriptRequest,
   ): Promise<GetTranscriptResponse> {
     const headers = new Headers;
-    headers.append("X-Amz-Bearer", params["ConnectionToken"]);
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ContactId: params["ContactId"],
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
       ScanDirection: params["ScanDirection"],
       SortOrder: params["SortOrder"],
       StartPosition: fromStartPosition(params["StartPosition"]),
-    } : {};
+    };
+    headers.append("X-Amz-Bearer", params["ConnectionToken"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "GetTranscript",
       requestUri: "/participant/transcript",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "InitialContactId": "s",
-          "Transcript": [toItem],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "InitialContactId": "s",
+        "Transcript": [toItem],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async sendEvent(
     {abortSignal, ...params}: RequestConfig & SendEventRequest,
   ): Promise<SendEventResponse> {
     const headers = new Headers;
-    headers.append("X-Amz-Bearer", params["ConnectionToken"]);
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ContentType: params["ContentType"],
       Content: params["Content"],
       ClientToken: params["ClientToken"] ?? generateIdemptToken(),
-    } : {};
+    };
+    headers.append("X-Amz-Bearer", params["ConnectionToken"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "SendEvent",
       requestUri: "/participant/event",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Id": "s",
-          "AbsoluteTime": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Id": "s",
+        "AbsoluteTime": "s",
+      },
+    }, await resp.json());
   }
 
   async sendMessage(
     {abortSignal, ...params}: RequestConfig & SendMessageRequest,
   ): Promise<SendMessageResponse> {
     const headers = new Headers;
-    headers.append("X-Amz-Bearer", params["ConnectionToken"]);
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ContentType: params["ContentType"],
       Content: params["Content"],
       ClientToken: params["ClientToken"] ?? generateIdemptToken(),
-    } : {};
+    };
+    headers.append("X-Amz-Bearer", params["ConnectionToken"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "SendMessage",
       requestUri: "/participant/message",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Id": "s",
-          "AbsoluteTime": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Id": "s",
+        "AbsoluteTime": "s",
+      },
+    }, await resp.json());
   }
 
 }

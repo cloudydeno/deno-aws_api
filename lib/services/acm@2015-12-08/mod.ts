@@ -30,10 +30,10 @@ export default class ACM {
   async addTagsToCertificate(
     {abortSignal, ...params}: RequestConfig & AddTagsToCertificateRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CertificateArn: params["CertificateArn"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AddTagsToCertificate",
@@ -43,9 +43,9 @@ export default class ACM {
   async deleteCertificate(
     {abortSignal, ...params}: RequestConfig & DeleteCertificateRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CertificateArn: params["CertificateArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteCertificate",
@@ -55,9 +55,9 @@ export default class ACM {
   async describeCertificate(
     {abortSignal, ...params}: RequestConfig & DescribeCertificateRequest,
   ): Promise<DescribeCertificateResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CertificateArn: params["CertificateArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeCertificate",
@@ -73,10 +73,10 @@ export default class ACM {
   async exportCertificate(
     {abortSignal, ...params}: RequestConfig & ExportCertificateRequest,
   ): Promise<ExportCertificateResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CertificateArn: params["CertificateArn"],
       Passphrase: jsonP.serializeBlob(params["Passphrase"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ExportCertificate",
@@ -94,9 +94,9 @@ export default class ACM {
   async getCertificate(
     {abortSignal, ...params}: RequestConfig & GetCertificateRequest,
   ): Promise<GetCertificateResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CertificateArn: params["CertificateArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetCertificate",
@@ -113,13 +113,13 @@ export default class ACM {
   async importCertificate(
     {abortSignal, ...params}: RequestConfig & ImportCertificateRequest,
   ): Promise<ImportCertificateResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CertificateArn: params["CertificateArn"],
       Certificate: jsonP.serializeBlob(params["Certificate"]),
       PrivateKey: jsonP.serializeBlob(params["PrivateKey"]),
       CertificateChain: jsonP.serializeBlob(params["CertificateChain"]),
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ImportCertificate",
@@ -135,12 +135,12 @@ export default class ACM {
   async listCertificates(
     {abortSignal, ...params}: RequestConfig & ListCertificatesRequest = {},
   ): Promise<ListCertificatesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CertificateStatuses: params["CertificateStatuses"],
       Includes: fromFilters(params["Includes"]),
       NextToken: params["NextToken"],
       MaxItems: params["MaxItems"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListCertificates",
@@ -157,9 +157,9 @@ export default class ACM {
   async listTagsForCertificate(
     {abortSignal, ...params}: RequestConfig & ListTagsForCertificateRequest,
   ): Promise<ListTagsForCertificateResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CertificateArn: params["CertificateArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForCertificate",
@@ -175,10 +175,10 @@ export default class ACM {
   async removeTagsFromCertificate(
     {abortSignal, ...params}: RequestConfig & RemoveTagsFromCertificateRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CertificateArn: params["CertificateArn"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RemoveTagsFromCertificate",
@@ -188,9 +188,9 @@ export default class ACM {
   async renewCertificate(
     {abortSignal, ...params}: RequestConfig & RenewCertificateRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CertificateArn: params["CertificateArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RenewCertificate",
@@ -200,7 +200,7 @@ export default class ACM {
   async requestCertificate(
     {abortSignal, ...params}: RequestConfig & RequestCertificateRequest,
   ): Promise<RequestCertificateResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DomainName: params["DomainName"],
       ValidationMethod: params["ValidationMethod"],
       SubjectAlternativeNames: params["SubjectAlternativeNames"],
@@ -209,7 +209,7 @@ export default class ACM {
       Options: fromCertificateOptions(params["Options"]),
       CertificateAuthorityArn: params["CertificateAuthorityArn"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RequestCertificate",
@@ -225,11 +225,11 @@ export default class ACM {
   async resendValidationEmail(
     {abortSignal, ...params}: RequestConfig & ResendValidationEmailRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CertificateArn: params["CertificateArn"],
       Domain: params["Domain"],
       ValidationDomain: params["ValidationDomain"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ResendValidationEmail",
@@ -239,10 +239,10 @@ export default class ACM {
   async updateCertificateOptions(
     {abortSignal, ...params}: RequestConfig & UpdateCertificateOptionsRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CertificateArn: params["CertificateArn"],
       Options: fromCertificateOptions(params["Options"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateCertificateOptions",
@@ -263,7 +263,7 @@ export default class ACM {
         if (resp?.Certificate?.DomainValidationOptions?.flatMap(x => x?.ValidationStatus)?.some(x => x === "PENDING_VALIDATION")) continue;
         if (resp?.Certificate?.Status === "FAILED") throw new Error(errMessage);
       } catch (err) {
-        if (["ResourceNotFoundException"].includes(err.code)) throw err;
+        if (["ResourceNotFoundException"].includes(err.shortCode)) throw err;
         throw err;
       }
       await new Promise(r => setTimeout(r, 60000));

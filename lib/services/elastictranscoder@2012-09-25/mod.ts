@@ -35,18 +35,16 @@ export default class ElasticTranscoder {
       requestUri: cmnP.encodePath`/2012-09-25/jobs/${params["Id"]}`,
       responseCode: 202,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async createJob(
     {abortSignal, ...params}: RequestConfig & CreateJobRequest,
   ): Promise<CreateJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       PipelineId: params["PipelineId"],
       Input: fromJobInput(params["Input"]),
       Inputs: params["Inputs"]?.map(x => fromJobInput(x)),
@@ -55,27 +53,25 @@ export default class ElasticTranscoder {
       OutputKeyPrefix: params["OutputKeyPrefix"],
       Playlists: params["Playlists"]?.map(x => fromCreateJobPlaylist(x)),
       UserMetadata: params["UserMetadata"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateJob",
       requestUri: "/2012-09-25/jobs",
       responseCode: 201,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Job": toJob,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Job": toJob,
+      },
+    }, await resp.json());
   }
 
   async createPipeline(
     {abortSignal, ...params}: RequestConfig & CreatePipelineRequest,
   ): Promise<CreatePipelineResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       InputBucket: params["InputBucket"],
       OutputBucket: params["OutputBucket"],
@@ -84,50 +80,46 @@ export default class ElasticTranscoder {
       Notifications: fromNotifications(params["Notifications"]),
       ContentConfig: fromPipelineOutputConfig(params["ContentConfig"]),
       ThumbnailConfig: fromPipelineOutputConfig(params["ThumbnailConfig"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreatePipeline",
       requestUri: "/2012-09-25/pipelines",
       responseCode: 201,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Pipeline": toPipeline,
-          "Warnings": [toWarning],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Pipeline": toPipeline,
+        "Warnings": [toWarning],
+      },
+    }, await resp.json());
   }
 
   async createPreset(
     {abortSignal, ...params}: RequestConfig & CreatePresetRequest,
   ): Promise<CreatePresetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       Description: params["Description"],
       Container: params["Container"],
       Video: fromVideoParameters(params["Video"]),
       Audio: fromAudioParameters(params["Audio"]),
       Thumbnails: fromThumbnails(params["Thumbnails"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreatePreset",
       requestUri: "/2012-09-25/presets",
       responseCode: 201,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Preset": toPreset,
-          "Warning": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Preset": toPreset,
+        "Warning": "s",
+      },
+    }, await resp.json());
   }
 
   async deletePipeline(
@@ -141,12 +133,10 @@ export default class ElasticTranscoder {
       requestUri: cmnP.encodePath`/2012-09-25/pipelines/${params["Id"]}`,
       responseCode: 202,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async deletePreset(
@@ -160,12 +150,10 @@ export default class ElasticTranscoder {
       requestUri: cmnP.encodePath`/2012-09-25/presets/${params["Id"]}`,
       responseCode: 202,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async listJobsByPipeline(
@@ -180,15 +168,13 @@ export default class ElasticTranscoder {
       method: "GET",
       requestUri: cmnP.encodePath`/2012-09-25/jobsByPipeline/${params["PipelineId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Jobs": [toJob],
-          "NextPageToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Jobs": [toJob],
+        "NextPageToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listJobsByStatus(
@@ -203,15 +189,13 @@ export default class ElasticTranscoder {
       method: "GET",
       requestUri: cmnP.encodePath`/2012-09-25/jobsByStatus/${params["Status"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Jobs": [toJob],
-          "NextPageToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Jobs": [toJob],
+        "NextPageToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listPipelines(
@@ -226,15 +210,13 @@ export default class ElasticTranscoder {
       method: "GET",
       requestUri: "/2012-09-25/pipelines",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Pipelines": [toPipeline],
-          "NextPageToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Pipelines": [toPipeline],
+        "NextPageToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listPresets(
@@ -249,15 +231,13 @@ export default class ElasticTranscoder {
       method: "GET",
       requestUri: "/2012-09-25/presets",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Presets": [toPreset],
-          "NextPageToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Presets": [toPreset],
+        "NextPageToken": "s",
+      },
+    }, await resp.json());
   }
 
   async readJob(
@@ -270,14 +250,12 @@ export default class ElasticTranscoder {
       method: "GET",
       requestUri: cmnP.encodePath`/2012-09-25/jobs/${params["Id"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Job": toJob,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Job": toJob,
+      },
+    }, await resp.json());
   }
 
   async readPipeline(
@@ -290,15 +268,13 @@ export default class ElasticTranscoder {
       method: "GET",
       requestUri: cmnP.encodePath`/2012-09-25/pipelines/${params["Id"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Pipeline": toPipeline,
-          "Warnings": [toWarning],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Pipeline": toPipeline,
+        "Warnings": [toWarning],
+      },
+    }, await resp.json());
   }
 
   async readPreset(
@@ -311,46 +287,42 @@ export default class ElasticTranscoder {
       method: "GET",
       requestUri: cmnP.encodePath`/2012-09-25/presets/${params["Id"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Preset": toPreset,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Preset": toPreset,
+      },
+    }, await resp.json());
   }
 
   async testRole(
     {abortSignal, ...params}: RequestConfig & TestRoleRequest,
   ): Promise<TestRoleResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Role: params["Role"],
       InputBucket: params["InputBucket"],
       OutputBucket: params["OutputBucket"],
       Topics: params["Topics"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TestRole",
       requestUri: "/2012-09-25/roleTests",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Success": "s",
-          "Messages": ["s"],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Success": "s",
+        "Messages": ["s"],
+      },
+    }, await resp.json());
   }
 
   async updatePipeline(
     {abortSignal, ...params}: RequestConfig & UpdatePipelineRequest,
   ): Promise<UpdatePipelineResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       InputBucket: params["InputBucket"],
       Role: params["Role"],
@@ -358,7 +330,7 @@ export default class ElasticTranscoder {
       Notifications: fromNotifications(params["Notifications"]),
       ContentConfig: fromPipelineOutputConfig(params["ContentConfig"]),
       ThumbnailConfig: fromPipelineOutputConfig(params["ThumbnailConfig"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdatePipeline",
@@ -366,57 +338,51 @@ export default class ElasticTranscoder {
       requestUri: cmnP.encodePath`/2012-09-25/pipelines/${params["Id"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Pipeline": toPipeline,
-          "Warnings": [toWarning],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Pipeline": toPipeline,
+        "Warnings": [toWarning],
+      },
+    }, await resp.json());
   }
 
   async updatePipelineNotifications(
     {abortSignal, ...params}: RequestConfig & UpdatePipelineNotificationsRequest,
   ): Promise<UpdatePipelineNotificationsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Notifications: fromNotifications(params["Notifications"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdatePipelineNotifications",
       requestUri: cmnP.encodePath`/2012-09-25/pipelines/${params["Id"]}/notifications`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Pipeline": toPipeline,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Pipeline": toPipeline,
+      },
+    }, await resp.json());
   }
 
   async updatePipelineStatus(
     {abortSignal, ...params}: RequestConfig & UpdatePipelineStatusRequest,
   ): Promise<UpdatePipelineStatusResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Status: params["Status"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdatePipelineStatus",
       requestUri: cmnP.encodePath`/2012-09-25/pipelines/${params["Id"]}/status`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Pipeline": toPipeline,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Pipeline": toPipeline,
+      },
+    }, await resp.json());
   }
 
   // Resource State Waiters

@@ -50,17 +50,15 @@ export default class CloudSearchDomain {
       method: "GET",
       requestUri: "/2013-01-01/search?format=sdk&pretty=true",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "status": toSearchStatus,
-          "hits": toHits,
-          "facets": x => jsonP.readMap(String, toBucketInfo, x),
-          "stats": x => jsonP.readMap(String, toFieldStats, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "status": toSearchStatus,
+        "hits": toHits,
+        "facets": x => jsonP.readMap(String, toBucketInfo, x),
+        "stats": x => jsonP.readMap(String, toFieldStats, x),
+      },
+    }, await resp.json());
   }
 
   async suggest(
@@ -76,39 +74,35 @@ export default class CloudSearchDomain {
       method: "GET",
       requestUri: "/2013-01-01/suggest?format=sdk&pretty=true",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "status": toSuggestStatus,
-          "suggest": toSuggestModel,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "status": toSuggestStatus,
+        "suggest": toSuggestModel,
+      },
+    }, await resp.json());
   }
 
   async uploadDocuments(
     {abortSignal, ...params}: RequestConfig & UploadDocumentsRequest,
   ): Promise<UploadDocumentsResponse> {
+    const body = typeof params["documents"] === 'string' ? new TextEncoder().encode(params["documents"]) : params["documents"];
     const headers = new Headers;
     headers.append("Content-Type", params["contentType"]);
-    const body = typeof params["documents"] === 'string' ? new TextEncoder().encode(params["documents"]) : params["documents"];
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "UploadDocuments",
       requestUri: "/2013-01-01/documents/batch?format=sdk",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "status": "s",
-          "adds": "n",
-          "deletes": "n",
-          "warnings": [toDocumentServiceWarning],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "status": "s",
+        "adds": "n",
+        "deletes": "n",
+        "warnings": [toDocumentServiceWarning],
+      },
+    }, await resp.json());
   }
 
 }

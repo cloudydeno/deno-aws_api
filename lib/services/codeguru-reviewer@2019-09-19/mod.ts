@@ -34,47 +34,43 @@ export default class CodeGuruReviewer {
   async associateRepository(
     {abortSignal, ...params}: RequestConfig & AssociateRepositoryRequest,
   ): Promise<AssociateRepositoryResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Repository: fromRepository(params["Repository"]),
       ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AssociateRepository",
       requestUri: "/associations",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "RepositoryAssociation": toRepositoryAssociation,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "RepositoryAssociation": toRepositoryAssociation,
+      },
+    }, await resp.json());
   }
 
   async createCodeReview(
     {abortSignal, ...params}: RequestConfig & CreateCodeReviewRequest,
   ): Promise<CreateCodeReviewResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       RepositoryAssociationArn: params["RepositoryAssociationArn"],
       Type: fromCodeReviewType(params["Type"]),
       ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateCodeReview",
       requestUri: "/codereviews",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "CodeReview": toCodeReview,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "CodeReview": toCodeReview,
+      },
+    }, await resp.json());
   }
 
   async describeCodeReview(
@@ -87,14 +83,12 @@ export default class CodeGuruReviewer {
       method: "GET",
       requestUri: cmnP.encodePath`/codereviews/${params["CodeReviewArn"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "CodeReview": toCodeReview,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "CodeReview": toCodeReview,
+      },
+    }, await resp.json());
   }
 
   async describeRecommendationFeedback(
@@ -109,14 +103,12 @@ export default class CodeGuruReviewer {
       method: "GET",
       requestUri: cmnP.encodePath`/feedback/${params["CodeReviewArn"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "RecommendationFeedback": toRecommendationFeedback,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "RecommendationFeedback": toRecommendationFeedback,
+      },
+    }, await resp.json());
   }
 
   async describeRepositoryAssociation(
@@ -129,14 +121,12 @@ export default class CodeGuruReviewer {
       method: "GET",
       requestUri: cmnP.encodePath`/associations/${params["AssociationArn"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "RepositoryAssociation": toRepositoryAssociation,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "RepositoryAssociation": toRepositoryAssociation,
+      },
+    }, await resp.json());
   }
 
   async disassociateRepository(
@@ -149,14 +139,12 @@ export default class CodeGuruReviewer {
       method: "DELETE",
       requestUri: cmnP.encodePath`/associations/${params["AssociationArn"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "RepositoryAssociation": toRepositoryAssociation,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "RepositoryAssociation": toRepositoryAssociation,
+      },
+    }, await resp.json());
   }
 
   async listCodeReviews(
@@ -181,15 +169,13 @@ export default class CodeGuruReviewer {
       method: "GET",
       requestUri: "/codereviews",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "CodeReviewSummaries": [toCodeReviewSummary],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "CodeReviewSummaries": [toCodeReviewSummary],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listRecommendationFeedback(
@@ -210,15 +196,13 @@ export default class CodeGuruReviewer {
       method: "GET",
       requestUri: cmnP.encodePath`/feedback/${params["CodeReviewArn"]}/RecommendationFeedback`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "RecommendationFeedbackSummaries": [toRecommendationFeedbackSummary],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "RecommendationFeedbackSummaries": [toRecommendationFeedbackSummary],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listRecommendations(
@@ -233,15 +217,13 @@ export default class CodeGuruReviewer {
       method: "GET",
       requestUri: cmnP.encodePath`/codereviews/${params["CodeReviewArn"]}/Recommendations`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "RecommendationSummaries": [toRecommendationSummary],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "RecommendationSummaries": [toRecommendationSummary],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listRepositoryAssociations(
@@ -268,37 +250,33 @@ export default class CodeGuruReviewer {
       method: "GET",
       requestUri: "/associations",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "RepositoryAssociationSummaries": [toRepositoryAssociationSummary],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "RepositoryAssociationSummaries": [toRepositoryAssociationSummary],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async putRecommendationFeedback(
     {abortSignal, ...params}: RequestConfig & PutRecommendationFeedbackRequest,
   ): Promise<PutRecommendationFeedbackResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CodeReviewArn: params["CodeReviewArn"],
       RecommendationId: params["RecommendationId"],
       Reactions: params["Reactions"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutRecommendationFeedback",
       method: "PUT",
       requestUri: "/feedback",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
 }

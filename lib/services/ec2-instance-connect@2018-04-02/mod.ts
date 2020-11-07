@@ -30,12 +30,12 @@ export default class EC2InstanceConnect {
   async sendSSHPublicKey(
     {abortSignal, ...params}: RequestConfig & SendSSHPublicKeyRequest,
   ): Promise<SendSSHPublicKeyResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       InstanceId: params["InstanceId"],
       InstanceOSUser: params["InstanceOSUser"],
       SSHPublicKey: params["SSHPublicKey"],
       AvailabilityZone: params["AvailabilityZone"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SendSSHPublicKey",

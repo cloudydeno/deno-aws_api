@@ -39,15 +39,13 @@ export default class MarketplaceCatalog {
       method: "PATCH",
       requestUri: "/CancelChangeSet",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ChangeSetId": "s",
-          "ChangeSetArn": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ChangeSetId": "s",
+        "ChangeSetArn": "s",
+      },
+    }, await resp.json());
   }
 
   async describeChangeSet(
@@ -62,22 +60,20 @@ export default class MarketplaceCatalog {
       method: "GET",
       requestUri: "/DescribeChangeSet",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ChangeSetId": "s",
-          "ChangeSetArn": "s",
-          "ChangeSetName": "s",
-          "StartTime": "s",
-          "EndTime": "s",
-          "Status": (x: jsonP.JSONValue) => cmnP.readEnum<ChangeStatus>(x),
-          "FailureCode": (x: jsonP.JSONValue) => cmnP.readEnum<FailureCode>(x),
-          "FailureDescription": "s",
-          "ChangeSet": [toChangeSummary],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ChangeSetId": "s",
+        "ChangeSetArn": "s",
+        "ChangeSetName": "s",
+        "StartTime": "s",
+        "EndTime": "s",
+        "Status": (x: jsonP.JSONValue) => cmnP.readEnum<ChangeStatus>(x),
+        "FailureCode": (x: jsonP.JSONValue) => cmnP.readEnum<FailureCode>(x),
+        "FailureDescription": "s",
+        "ChangeSet": [toChangeSummary],
+      },
+    }, await resp.json());
   }
 
   async describeEntity(
@@ -92,96 +88,88 @@ export default class MarketplaceCatalog {
       method: "GET",
       requestUri: "/DescribeEntity",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "EntityType": "s",
-          "EntityIdentifier": "s",
-          "EntityArn": "s",
-          "LastModifiedDate": "s",
-          "Details": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "EntityType": "s",
+        "EntityIdentifier": "s",
+        "EntityArn": "s",
+        "LastModifiedDate": "s",
+        "Details": "s",
+      },
+    }, await resp.json());
   }
 
   async listChangeSets(
     {abortSignal, ...params}: RequestConfig & ListChangeSetsRequest,
   ): Promise<ListChangeSetsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Catalog: params["Catalog"],
       FilterList: params["FilterList"]?.map(x => fromFilter(x)),
       Sort: fromSort(params["Sort"]),
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListChangeSets",
       requestUri: "/ListChangeSets",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ChangeSetSummaryList": [toChangeSetSummaryListItem],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ChangeSetSummaryList": [toChangeSetSummaryListItem],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listEntities(
     {abortSignal, ...params}: RequestConfig & ListEntitiesRequest,
   ): Promise<ListEntitiesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Catalog: params["Catalog"],
       EntityType: params["EntityType"],
       FilterList: params["FilterList"]?.map(x => fromFilter(x)),
       Sort: fromSort(params["Sort"]),
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListEntities",
       requestUri: "/ListEntities",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "EntitySummaryList": [toEntitySummary],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "EntitySummaryList": [toEntitySummary],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async startChangeSet(
     {abortSignal, ...params}: RequestConfig & StartChangeSetRequest,
   ): Promise<StartChangeSetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Catalog: params["Catalog"],
       ChangeSet: params["ChangeSet"]?.map(x => fromChange(x)),
       ChangeSetName: params["ChangeSetName"],
       ClientRequestToken: params["ClientRequestToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartChangeSet",
       requestUri: "/StartChangeSet",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ChangeSetId": "s",
-          "ChangeSetArn": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ChangeSetId": "s",
+        "ChangeSetArn": "s",
+      },
+    }, await resp.json());
   }
 
 }

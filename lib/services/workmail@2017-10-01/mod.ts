@@ -33,11 +33,11 @@ export default class WorkMail {
   async associateDelegateToResource(
     {abortSignal, ...params}: RequestConfig & AssociateDelegateToResourceRequest,
   ): Promise<AssociateDelegateToResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       OrganizationId: params["OrganizationId"],
       ResourceId: params["ResourceId"],
       EntityId: params["EntityId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AssociateDelegateToResource",
@@ -51,11 +51,11 @@ export default class WorkMail {
   async associateMemberToGroup(
     {abortSignal, ...params}: RequestConfig & AssociateMemberToGroupRequest,
   ): Promise<AssociateMemberToGroupResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       OrganizationId: params["OrganizationId"],
       GroupId: params["GroupId"],
       MemberId: params["MemberId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AssociateMemberToGroup",
@@ -69,11 +69,11 @@ export default class WorkMail {
   async cancelMailboxExportJob(
     {abortSignal, ...params}: RequestConfig & CancelMailboxExportJobRequest,
   ): Promise<CancelMailboxExportJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ClientToken: params["ClientToken"] ?? generateIdemptToken(),
       JobId: params["JobId"],
       OrganizationId: params["OrganizationId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CancelMailboxExportJob",
@@ -87,11 +87,11 @@ export default class WorkMail {
   async createAlias(
     {abortSignal, ...params}: RequestConfig & CreateAliasRequest,
   ): Promise<CreateAliasResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       OrganizationId: params["OrganizationId"],
       EntityId: params["EntityId"],
       Alias: params["Alias"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateAlias",
@@ -105,10 +105,10 @@ export default class WorkMail {
   async createGroup(
     {abortSignal, ...params}: RequestConfig & CreateGroupRequest,
   ): Promise<CreateGroupResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       OrganizationId: params["OrganizationId"],
       Name: params["Name"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateGroup",
@@ -124,14 +124,14 @@ export default class WorkMail {
   async createOrganization(
     {abortSignal, ...params}: RequestConfig & CreateOrganizationRequest,
   ): Promise<CreateOrganizationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DirectoryId: params["DirectoryId"],
       Alias: params["Alias"],
       ClientToken: params["ClientToken"] ?? generateIdemptToken(),
       Domains: params["Domains"]?.map(x => fromDomain(x)),
       KmsKeyArn: params["KmsKeyArn"],
       EnableInteroperability: params["EnableInteroperability"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateOrganization",
@@ -147,11 +147,11 @@ export default class WorkMail {
   async createResource(
     {abortSignal, ...params}: RequestConfig & CreateResourceRequest,
   ): Promise<CreateResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       OrganizationId: params["OrganizationId"],
       Name: params["Name"],
       Type: params["Type"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateResource",
@@ -167,12 +167,12 @@ export default class WorkMail {
   async createUser(
     {abortSignal, ...params}: RequestConfig & CreateUserRequest,
   ): Promise<CreateUserResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       OrganizationId: params["OrganizationId"],
       Name: params["Name"],
       DisplayName: params["DisplayName"],
       Password: params["Password"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateUser",
@@ -188,10 +188,10 @@ export default class WorkMail {
   async deleteAccessControlRule(
     {abortSignal, ...params}: RequestConfig & DeleteAccessControlRuleRequest,
   ): Promise<DeleteAccessControlRuleResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       OrganizationId: params["OrganizationId"],
       Name: params["Name"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteAccessControlRule",
@@ -205,11 +205,11 @@ export default class WorkMail {
   async deleteAlias(
     {abortSignal, ...params}: RequestConfig & DeleteAliasRequest,
   ): Promise<DeleteAliasResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       OrganizationId: params["OrganizationId"],
       EntityId: params["EntityId"],
       Alias: params["Alias"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteAlias",
@@ -223,10 +223,10 @@ export default class WorkMail {
   async deleteGroup(
     {abortSignal, ...params}: RequestConfig & DeleteGroupRequest,
   ): Promise<DeleteGroupResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       OrganizationId: params["OrganizationId"],
       GroupId: params["GroupId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteGroup",
@@ -240,11 +240,11 @@ export default class WorkMail {
   async deleteMailboxPermissions(
     {abortSignal, ...params}: RequestConfig & DeleteMailboxPermissionsRequest,
   ): Promise<DeleteMailboxPermissionsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       OrganizationId: params["OrganizationId"],
       EntityId: params["EntityId"],
       GranteeId: params["GranteeId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteMailboxPermissions",
@@ -258,11 +258,11 @@ export default class WorkMail {
   async deleteOrganization(
     {abortSignal, ...params}: RequestConfig & DeleteOrganizationRequest,
   ): Promise<DeleteOrganizationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ClientToken: params["ClientToken"] ?? generateIdemptToken(),
       OrganizationId: params["OrganizationId"],
       DeleteDirectory: params["DeleteDirectory"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteOrganization",
@@ -279,10 +279,10 @@ export default class WorkMail {
   async deleteResource(
     {abortSignal, ...params}: RequestConfig & DeleteResourceRequest,
   ): Promise<DeleteResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       OrganizationId: params["OrganizationId"],
       ResourceId: params["ResourceId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteResource",
@@ -296,10 +296,10 @@ export default class WorkMail {
   async deleteRetentionPolicy(
     {abortSignal, ...params}: RequestConfig & DeleteRetentionPolicyRequest,
   ): Promise<DeleteRetentionPolicyResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       OrganizationId: params["OrganizationId"],
       Id: params["Id"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteRetentionPolicy",
@@ -313,10 +313,10 @@ export default class WorkMail {
   async deleteUser(
     {abortSignal, ...params}: RequestConfig & DeleteUserRequest,
   ): Promise<DeleteUserResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       OrganizationId: params["OrganizationId"],
       UserId: params["UserId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteUser",
@@ -330,10 +330,10 @@ export default class WorkMail {
   async deregisterFromWorkMail(
     {abortSignal, ...params}: RequestConfig & DeregisterFromWorkMailRequest,
   ): Promise<DeregisterFromWorkMailResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       OrganizationId: params["OrganizationId"],
       EntityId: params["EntityId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeregisterFromWorkMail",
@@ -347,10 +347,10 @@ export default class WorkMail {
   async describeGroup(
     {abortSignal, ...params}: RequestConfig & DescribeGroupRequest,
   ): Promise<DescribeGroupResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       OrganizationId: params["OrganizationId"],
       GroupId: params["GroupId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeGroup",
@@ -371,10 +371,10 @@ export default class WorkMail {
   async describeMailboxExportJob(
     {abortSignal, ...params}: RequestConfig & DescribeMailboxExportJobRequest,
   ): Promise<DescribeMailboxExportJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       JobId: params["JobId"],
       OrganizationId: params["OrganizationId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeMailboxExportJob",
@@ -401,9 +401,9 @@ export default class WorkMail {
   async describeOrganization(
     {abortSignal, ...params}: RequestConfig & DescribeOrganizationRequest,
   ): Promise<DescribeOrganizationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       OrganizationId: params["OrganizationId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeOrganization",
@@ -427,10 +427,10 @@ export default class WorkMail {
   async describeResource(
     {abortSignal, ...params}: RequestConfig & DescribeResourceRequest,
   ): Promise<DescribeResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       OrganizationId: params["OrganizationId"],
       ResourceId: params["ResourceId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeResource",
@@ -453,10 +453,10 @@ export default class WorkMail {
   async describeUser(
     {abortSignal, ...params}: RequestConfig & DescribeUserRequest,
   ): Promise<DescribeUserResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       OrganizationId: params["OrganizationId"],
       UserId: params["UserId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeUser",
@@ -479,11 +479,11 @@ export default class WorkMail {
   async disassociateDelegateFromResource(
     {abortSignal, ...params}: RequestConfig & DisassociateDelegateFromResourceRequest,
   ): Promise<DisassociateDelegateFromResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       OrganizationId: params["OrganizationId"],
       ResourceId: params["ResourceId"],
       EntityId: params["EntityId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisassociateDelegateFromResource",
@@ -497,11 +497,11 @@ export default class WorkMail {
   async disassociateMemberFromGroup(
     {abortSignal, ...params}: RequestConfig & DisassociateMemberFromGroupRequest,
   ): Promise<DisassociateMemberFromGroupResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       OrganizationId: params["OrganizationId"],
       GroupId: params["GroupId"],
       MemberId: params["MemberId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisassociateMemberFromGroup",
@@ -515,12 +515,12 @@ export default class WorkMail {
   async getAccessControlEffect(
     {abortSignal, ...params}: RequestConfig & GetAccessControlEffectRequest,
   ): Promise<GetAccessControlEffectResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       OrganizationId: params["OrganizationId"],
       IpAddress: params["IpAddress"],
       Action: params["Action"],
       UserId: params["UserId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetAccessControlEffect",
@@ -537,9 +537,9 @@ export default class WorkMail {
   async getDefaultRetentionPolicy(
     {abortSignal, ...params}: RequestConfig & GetDefaultRetentionPolicyRequest,
   ): Promise<GetDefaultRetentionPolicyResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       OrganizationId: params["OrganizationId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetDefaultRetentionPolicy",
@@ -558,10 +558,10 @@ export default class WorkMail {
   async getMailboxDetails(
     {abortSignal, ...params}: RequestConfig & GetMailboxDetailsRequest,
   ): Promise<GetMailboxDetailsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       OrganizationId: params["OrganizationId"],
       UserId: params["UserId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetMailboxDetails",
@@ -578,9 +578,9 @@ export default class WorkMail {
   async listAccessControlRules(
     {abortSignal, ...params}: RequestConfig & ListAccessControlRulesRequest,
   ): Promise<ListAccessControlRulesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       OrganizationId: params["OrganizationId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListAccessControlRules",
@@ -596,12 +596,12 @@ export default class WorkMail {
   async listAliases(
     {abortSignal, ...params}: RequestConfig & ListAliasesRequest,
   ): Promise<ListAliasesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       OrganizationId: params["OrganizationId"],
       EntityId: params["EntityId"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListAliases",
@@ -618,12 +618,12 @@ export default class WorkMail {
   async listGroupMembers(
     {abortSignal, ...params}: RequestConfig & ListGroupMembersRequest,
   ): Promise<ListGroupMembersResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       OrganizationId: params["OrganizationId"],
       GroupId: params["GroupId"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListGroupMembers",
@@ -640,11 +640,11 @@ export default class WorkMail {
   async listGroups(
     {abortSignal, ...params}: RequestConfig & ListGroupsRequest,
   ): Promise<ListGroupsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       OrganizationId: params["OrganizationId"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListGroups",
@@ -661,11 +661,11 @@ export default class WorkMail {
   async listMailboxExportJobs(
     {abortSignal, ...params}: RequestConfig & ListMailboxExportJobsRequest,
   ): Promise<ListMailboxExportJobsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       OrganizationId: params["OrganizationId"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListMailboxExportJobs",
@@ -682,12 +682,12 @@ export default class WorkMail {
   async listMailboxPermissions(
     {abortSignal, ...params}: RequestConfig & ListMailboxPermissionsRequest,
   ): Promise<ListMailboxPermissionsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       OrganizationId: params["OrganizationId"],
       EntityId: params["EntityId"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListMailboxPermissions",
@@ -704,10 +704,10 @@ export default class WorkMail {
   async listOrganizations(
     {abortSignal, ...params}: RequestConfig & ListOrganizationsRequest = {},
   ): Promise<ListOrganizationsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListOrganizations",
@@ -724,12 +724,12 @@ export default class WorkMail {
   async listResourceDelegates(
     {abortSignal, ...params}: RequestConfig & ListResourceDelegatesRequest,
   ): Promise<ListResourceDelegatesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       OrganizationId: params["OrganizationId"],
       ResourceId: params["ResourceId"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListResourceDelegates",
@@ -746,11 +746,11 @@ export default class WorkMail {
   async listResources(
     {abortSignal, ...params}: RequestConfig & ListResourcesRequest,
   ): Promise<ListResourcesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       OrganizationId: params["OrganizationId"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListResources",
@@ -767,9 +767,9 @@ export default class WorkMail {
   async listTagsForResource(
     {abortSignal, ...params}: RequestConfig & ListTagsForResourceRequest,
   ): Promise<ListTagsForResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceARN: params["ResourceARN"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForResource",
@@ -785,11 +785,11 @@ export default class WorkMail {
   async listUsers(
     {abortSignal, ...params}: RequestConfig & ListUsersRequest,
   ): Promise<ListUsersResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       OrganizationId: params["OrganizationId"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListUsers",
@@ -806,7 +806,7 @@ export default class WorkMail {
   async putAccessControlRule(
     {abortSignal, ...params}: RequestConfig & PutAccessControlRuleRequest,
   ): Promise<PutAccessControlRuleResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       Effect: params["Effect"],
       Description: params["Description"],
@@ -817,7 +817,7 @@ export default class WorkMail {
       UserIds: params["UserIds"],
       NotUserIds: params["NotUserIds"],
       OrganizationId: params["OrganizationId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutAccessControlRule",
@@ -831,12 +831,12 @@ export default class WorkMail {
   async putMailboxPermissions(
     {abortSignal, ...params}: RequestConfig & PutMailboxPermissionsRequest,
   ): Promise<PutMailboxPermissionsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       OrganizationId: params["OrganizationId"],
       EntityId: params["EntityId"],
       GranteeId: params["GranteeId"],
       PermissionValues: params["PermissionValues"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutMailboxPermissions",
@@ -850,13 +850,13 @@ export default class WorkMail {
   async putRetentionPolicy(
     {abortSignal, ...params}: RequestConfig & PutRetentionPolicyRequest,
   ): Promise<PutRetentionPolicyResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       OrganizationId: params["OrganizationId"],
       Id: params["Id"],
       Name: params["Name"],
       Description: params["Description"],
       FolderConfigurations: params["FolderConfigurations"]?.map(x => fromFolderConfiguration(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutRetentionPolicy",
@@ -870,11 +870,11 @@ export default class WorkMail {
   async registerToWorkMail(
     {abortSignal, ...params}: RequestConfig & RegisterToWorkMailRequest,
   ): Promise<RegisterToWorkMailResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       OrganizationId: params["OrganizationId"],
       EntityId: params["EntityId"],
       Email: params["Email"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RegisterToWorkMail",
@@ -888,11 +888,11 @@ export default class WorkMail {
   async resetPassword(
     {abortSignal, ...params}: RequestConfig & ResetPasswordRequest,
   ): Promise<ResetPasswordResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       OrganizationId: params["OrganizationId"],
       UserId: params["UserId"],
       Password: params["Password"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ResetPassword",
@@ -906,7 +906,7 @@ export default class WorkMail {
   async startMailboxExportJob(
     {abortSignal, ...params}: RequestConfig & StartMailboxExportJobRequest,
   ): Promise<StartMailboxExportJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ClientToken: params["ClientToken"] ?? generateIdemptToken(),
       OrganizationId: params["OrganizationId"],
       EntityId: params["EntityId"],
@@ -915,7 +915,7 @@ export default class WorkMail {
       KmsKeyArn: params["KmsKeyArn"],
       S3BucketName: params["S3BucketName"],
       S3Prefix: params["S3Prefix"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartMailboxExportJob",
@@ -931,10 +931,10 @@ export default class WorkMail {
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceARN: params["ResourceARN"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
@@ -948,10 +948,10 @@ export default class WorkMail {
   async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceRequest,
   ): Promise<UntagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceARN: params["ResourceARN"],
       TagKeys: params["TagKeys"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResource",
@@ -965,11 +965,11 @@ export default class WorkMail {
   async updateMailboxQuota(
     {abortSignal, ...params}: RequestConfig & UpdateMailboxQuotaRequest,
   ): Promise<UpdateMailboxQuotaResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       OrganizationId: params["OrganizationId"],
       UserId: params["UserId"],
       MailboxQuota: params["MailboxQuota"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateMailboxQuota",
@@ -983,11 +983,11 @@ export default class WorkMail {
   async updatePrimaryEmailAddress(
     {abortSignal, ...params}: RequestConfig & UpdatePrimaryEmailAddressRequest,
   ): Promise<UpdatePrimaryEmailAddressResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       OrganizationId: params["OrganizationId"],
       EntityId: params["EntityId"],
       Email: params["Email"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdatePrimaryEmailAddress",
@@ -1001,12 +1001,12 @@ export default class WorkMail {
   async updateResource(
     {abortSignal, ...params}: RequestConfig & UpdateResourceRequest,
   ): Promise<UpdateResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       OrganizationId: params["OrganizationId"],
       ResourceId: params["ResourceId"],
       Name: params["Name"],
       BookingOptions: fromBookingOptions(params["BookingOptions"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateResource",

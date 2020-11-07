@@ -45,82 +45,76 @@ export default class Iot {
   async addThingToBillingGroup(
     {abortSignal, ...params}: RequestConfig & AddThingToBillingGroupRequest = {},
   ): Promise<AddThingToBillingGroupResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       billingGroupName: params["billingGroupName"],
       billingGroupArn: params["billingGroupArn"],
       thingName: params["thingName"],
       thingArn: params["thingArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AddThingToBillingGroup",
       method: "PUT",
       requestUri: "/billing-groups/addThingToBillingGroup",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async addThingToThingGroup(
     {abortSignal, ...params}: RequestConfig & AddThingToThingGroupRequest = {},
   ): Promise<AddThingToThingGroupResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       thingGroupName: params["thingGroupName"],
       thingGroupArn: params["thingGroupArn"],
       thingName: params["thingName"],
       thingArn: params["thingArn"],
       overrideDynamicGroups: params["overrideDynamicGroups"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AddThingToThingGroup",
       method: "PUT",
       requestUri: "/thing-groups/addThingToThingGroup",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async associateTargetsWithJob(
     {abortSignal, ...params}: RequestConfig & AssociateTargetsWithJobRequest,
   ): Promise<AssociateTargetsWithJobResponse> {
     const query = new URLSearchParams;
-    if (params["namespaceId"] != null) query.set("namespaceId", params["namespaceId"]?.toString() ?? "");
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       targets: params["targets"],
       comment: params["comment"],
-    } : {};
+    };
+    if (params["namespaceId"] != null) query.set("namespaceId", params["namespaceId"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
       abortSignal, query, body,
       action: "AssociateTargetsWithJob",
       requestUri: cmnP.encodePath`/jobs/${params["jobId"]}/targets`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "jobArn": "s",
-          "jobId": "s",
-          "description": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "jobArn": "s",
+        "jobId": "s",
+        "description": "s",
+      },
+    }, await resp.json());
   }
 
   async attachPolicy(
     {abortSignal, ...params}: RequestConfig & AttachPolicyRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       target: params["target"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AttachPolicy",
@@ -153,12 +147,10 @@ export default class Iot {
       method: "PUT",
       requestUri: cmnP.encodePath`/security-profiles/${params["securityProfileName"]}/targets`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async attachThingPrincipal(
@@ -172,12 +164,10 @@ export default class Iot {
       method: "PUT",
       requestUri: cmnP.encodePath`/things/${params["thingName"]}/principals`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async cancelAuditMitigationActionsTask(
@@ -190,12 +180,10 @@ export default class Iot {
       method: "PUT",
       requestUri: cmnP.encodePath`/audit/mitigationactions/tasks/${params["taskId"]}/cancel`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async cancelAuditTask(
@@ -208,12 +196,10 @@ export default class Iot {
       method: "PUT",
       requestUri: cmnP.encodePath`/audit/tasks/${params["taskId"]}/cancel`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async cancelCertificateTransfer(
@@ -232,38 +218,36 @@ export default class Iot {
     {abortSignal, ...params}: RequestConfig & CancelJobRequest,
   ): Promise<CancelJobResponse> {
     const query = new URLSearchParams;
-    if (params["force"] != null) query.set("force", params["force"]?.toString() ?? "");
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       reasonCode: params["reasonCode"],
       comment: params["comment"],
-    } : {};
+    };
+    if (params["force"] != null) query.set("force", params["force"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
       abortSignal, query, body,
       action: "CancelJob",
       method: "PUT",
       requestUri: cmnP.encodePath`/jobs/${params["jobId"]}/cancel`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "jobArn": "s",
-          "jobId": "s",
-          "description": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "jobArn": "s",
+        "jobId": "s",
+        "description": "s",
+      },
+    }, await resp.json());
   }
 
   async cancelJobExecution(
     {abortSignal, ...params}: RequestConfig & CancelJobExecutionRequest,
   ): Promise<void> {
     const query = new URLSearchParams;
-    if (params["force"] != null) query.set("force", params["force"]?.toString() ?? "");
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       expectedVersion: params["expectedVersion"],
       statusDetails: params["statusDetails"],
-    } : {};
+    };
+    if (params["force"] != null) query.set("force", params["force"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
       abortSignal, query, body,
       action: "CancelJobExecution",
@@ -282,12 +266,10 @@ export default class Iot {
       method: "DELETE",
       requestUri: "/default-authorizer",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async confirmTopicRuleDestination(
@@ -300,200 +282,184 @@ export default class Iot {
       method: "GET",
       requestUri: cmnP.encodePath`/confirmdestination/${params["confirmationToken"].split("/")}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async createAuditSuppression(
     {abortSignal, ...params}: RequestConfig & CreateAuditSuppressionRequest,
   ): Promise<CreateAuditSuppressionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       checkName: params["checkName"],
       resourceIdentifier: fromResourceIdentifier(params["resourceIdentifier"]),
       expirationDate: jsonP.serializeDate_unixTimestamp(params["expirationDate"]),
       suppressIndefinitely: params["suppressIndefinitely"],
       description: params["description"],
       clientRequestToken: params["clientRequestToken"] ?? generateIdemptToken(),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateAuditSuppression",
       requestUri: "/audit/suppressions/create",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async createAuthorizer(
     {abortSignal, ...params}: RequestConfig & CreateAuthorizerRequest,
   ): Promise<CreateAuthorizerResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       authorizerFunctionArn: params["authorizerFunctionArn"],
       tokenKeyName: params["tokenKeyName"],
       tokenSigningPublicKeys: params["tokenSigningPublicKeys"],
       status: params["status"],
       tags: params["tags"]?.map(x => fromTag(x)),
       signingDisabled: params["signingDisabled"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateAuthorizer",
       requestUri: cmnP.encodePath`/authorizer/${params["authorizerName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "authorizerName": "s",
-          "authorizerArn": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "authorizerName": "s",
+        "authorizerArn": "s",
+      },
+    }, await resp.json());
   }
 
   async createBillingGroup(
     {abortSignal, ...params}: RequestConfig & CreateBillingGroupRequest,
   ): Promise<CreateBillingGroupResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       billingGroupProperties: fromBillingGroupProperties(params["billingGroupProperties"]),
       tags: params["tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateBillingGroup",
       requestUri: cmnP.encodePath`/billing-groups/${params["billingGroupName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "billingGroupName": "s",
-          "billingGroupArn": "s",
-          "billingGroupId": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "billingGroupName": "s",
+        "billingGroupArn": "s",
+        "billingGroupId": "s",
+      },
+    }, await resp.json());
   }
 
   async createCertificateFromCsr(
     {abortSignal, ...params}: RequestConfig & CreateCertificateFromCsrRequest,
   ): Promise<CreateCertificateFromCsrResponse> {
     const query = new URLSearchParams;
-    if (params["setAsActive"] != null) query.set("setAsActive", params["setAsActive"]?.toString() ?? "");
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       certificateSigningRequest: params["certificateSigningRequest"],
-    } : {};
+    };
+    if (params["setAsActive"] != null) query.set("setAsActive", params["setAsActive"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
       abortSignal, query, body,
       action: "CreateCertificateFromCsr",
       requestUri: "/certificates",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "certificateArn": "s",
-          "certificateId": "s",
-          "certificatePem": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "certificateArn": "s",
+        "certificateId": "s",
+        "certificatePem": "s",
+      },
+    }, await resp.json());
   }
 
   async createDimension(
     {abortSignal, ...params}: RequestConfig & CreateDimensionRequest,
   ): Promise<CreateDimensionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       type: params["type"],
       stringValues: params["stringValues"],
       tags: params["tags"]?.map(x => fromTag(x)),
       clientRequestToken: params["clientRequestToken"] ?? generateIdemptToken(),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDimension",
       requestUri: cmnP.encodePath`/dimensions/${params["name"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "name": "s",
-          "arn": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "name": "s",
+        "arn": "s",
+      },
+    }, await resp.json());
   }
 
   async createDomainConfiguration(
     {abortSignal, ...params}: RequestConfig & CreateDomainConfigurationRequest,
   ): Promise<CreateDomainConfigurationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       domainName: params["domainName"],
       serverCertificateArns: params["serverCertificateArns"],
       validationCertificateArn: params["validationCertificateArn"],
       authorizerConfig: fromAuthorizerConfig(params["authorizerConfig"]),
       serviceType: params["serviceType"],
       tags: params["tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDomainConfiguration",
       requestUri: cmnP.encodePath`/domainConfigurations/${params["domainConfigurationName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "domainConfigurationName": "s",
-          "domainConfigurationArn": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "domainConfigurationName": "s",
+        "domainConfigurationArn": "s",
+      },
+    }, await resp.json());
   }
 
   async createDynamicThingGroup(
     {abortSignal, ...params}: RequestConfig & CreateDynamicThingGroupRequest,
   ): Promise<CreateDynamicThingGroupResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       thingGroupProperties: fromThingGroupProperties(params["thingGroupProperties"]),
       indexName: params["indexName"],
       queryString: params["queryString"],
       queryVersion: params["queryVersion"],
       tags: params["tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDynamicThingGroup",
       requestUri: cmnP.encodePath`/dynamic-thing-groups/${params["thingGroupName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "thingGroupName": "s",
-          "thingGroupArn": "s",
-          "thingGroupId": "s",
-          "indexName": "s",
-          "queryString": "s",
-          "queryVersion": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "thingGroupName": "s",
+        "thingGroupArn": "s",
+        "thingGroupId": "s",
+        "indexName": "s",
+        "queryString": "s",
+        "queryVersion": "s",
+      },
+    }, await resp.json());
   }
 
   async createJob(
     {abortSignal, ...params}: RequestConfig & CreateJobRequest,
   ): Promise<CreateJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       targets: params["targets"],
       documentSource: params["documentSource"],
       document: params["document"],
@@ -505,23 +471,21 @@ export default class Iot {
       timeoutConfig: fromTimeoutConfig(params["timeoutConfig"]),
       tags: params["tags"]?.map(x => fromTag(x)),
       namespaceId: params["namespaceId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateJob",
       method: "PUT",
       requestUri: cmnP.encodePath`/jobs/${params["jobId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "jobArn": "s",
-          "jobId": "s",
-          "description": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "jobArn": "s",
+        "jobId": "s",
+        "description": "s",
+      },
+    }, await resp.json());
   }
 
   async createKeysAndCertificate(
@@ -534,47 +498,43 @@ export default class Iot {
       action: "CreateKeysAndCertificate",
       requestUri: "/keys-and-certificate",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "certificateArn": "s",
-          "certificateId": "s",
-          "certificatePem": "s",
-          "keyPair": toKeyPair,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "certificateArn": "s",
+        "certificateId": "s",
+        "certificatePem": "s",
+        "keyPair": toKeyPair,
+      },
+    }, await resp.json());
   }
 
   async createMitigationAction(
     {abortSignal, ...params}: RequestConfig & CreateMitigationActionRequest,
   ): Promise<CreateMitigationActionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       roleArn: params["roleArn"],
       actionParams: fromMitigationActionParams(params["actionParams"]),
       tags: params["tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateMitigationAction",
       requestUri: cmnP.encodePath`/mitigationactions/actions/${params["actionName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "actionArn": "s",
-          "actionId": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "actionArn": "s",
+        "actionId": "s",
+      },
+    }, await resp.json());
   }
 
   async createOTAUpdate(
     {abortSignal, ...params}: RequestConfig & CreateOTAUpdateRequest,
   ): Promise<CreateOTAUpdateResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       description: params["description"],
       targets: params["targets"],
       protocols: params["protocols"],
@@ -587,75 +547,69 @@ export default class Iot {
       roleArn: params["roleArn"],
       additionalParameters: params["additionalParameters"],
       tags: params["tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateOTAUpdate",
       requestUri: cmnP.encodePath`/otaUpdates/${params["otaUpdateId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "otaUpdateId": "s",
-          "awsIotJobId": "s",
-          "otaUpdateArn": "s",
-          "awsIotJobArn": "s",
-          "otaUpdateStatus": (x: jsonP.JSONValue) => cmnP.readEnum<OTAUpdateStatus>(x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "otaUpdateId": "s",
+        "awsIotJobId": "s",
+        "otaUpdateArn": "s",
+        "awsIotJobArn": "s",
+        "otaUpdateStatus": (x: jsonP.JSONValue) => cmnP.readEnum<OTAUpdateStatus>(x),
+      },
+    }, await resp.json());
   }
 
   async createPolicy(
     {abortSignal, ...params}: RequestConfig & CreatePolicyRequest,
   ): Promise<CreatePolicyResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       policyDocument: params["policyDocument"],
       tags: params["tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreatePolicy",
       requestUri: cmnP.encodePath`/policies/${params["policyName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "policyName": "s",
-          "policyArn": "s",
-          "policyDocument": "s",
-          "policyVersionId": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "policyName": "s",
+        "policyArn": "s",
+        "policyDocument": "s",
+        "policyVersionId": "s",
+      },
+    }, await resp.json());
   }
 
   async createPolicyVersion(
     {abortSignal, ...params}: RequestConfig & CreatePolicyVersionRequest,
   ): Promise<CreatePolicyVersionResponse> {
     const query = new URLSearchParams;
-    if (params["setAsDefault"] != null) query.set("setAsDefault", params["setAsDefault"]?.toString() ?? "");
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       policyDocument: params["policyDocument"],
-    } : {};
+    };
+    if (params["setAsDefault"] != null) query.set("setAsDefault", params["setAsDefault"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
       abortSignal, query, body,
       action: "CreatePolicyVersion",
       requestUri: cmnP.encodePath`/policies/${params["policyName"]}/version`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "policyArn": "s",
-          "policyDocument": "s",
-          "policyVersionId": "s",
-          "isDefaultVersion": "b",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "policyArn": "s",
+        "policyDocument": "s",
+        "policyVersionId": "s",
+        "isDefaultVersion": "b",
+      },
+    }, await resp.json());
   }
 
   async createProvisioningClaim(
@@ -667,23 +621,21 @@ export default class Iot {
       action: "CreateProvisioningClaim",
       requestUri: cmnP.encodePath`/provisioning-templates/${params["templateName"]}/provisioning-claim`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "certificateId": "s",
-          "certificatePem": "s",
-          "keyPair": toKeyPair,
-          "expiration": "d",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "certificateId": "s",
+        "certificatePem": "s",
+        "keyPair": toKeyPair,
+        "expiration": "d",
+      },
+    }, await resp.json());
   }
 
   async createProvisioningTemplate(
     {abortSignal, ...params}: RequestConfig & CreateProvisioningTemplateRequest,
   ): Promise<CreateProvisioningTemplateResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       templateName: params["templateName"],
       description: params["description"],
       templateBody: params["templateBody"],
@@ -691,232 +643,212 @@ export default class Iot {
       provisioningRoleArn: params["provisioningRoleArn"],
       preProvisioningHook: fromProvisioningHook(params["preProvisioningHook"]),
       tags: params["tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateProvisioningTemplate",
       requestUri: "/provisioning-templates",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "templateArn": "s",
-          "templateName": "s",
-          "defaultVersionId": "n",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "templateArn": "s",
+        "templateName": "s",
+        "defaultVersionId": "n",
+      },
+    }, await resp.json());
   }
 
   async createProvisioningTemplateVersion(
     {abortSignal, ...params}: RequestConfig & CreateProvisioningTemplateVersionRequest,
   ): Promise<CreateProvisioningTemplateVersionResponse> {
     const query = new URLSearchParams;
-    if (params["setAsDefault"] != null) query.set("setAsDefault", params["setAsDefault"]?.toString() ?? "");
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       templateBody: params["templateBody"],
-    } : {};
+    };
+    if (params["setAsDefault"] != null) query.set("setAsDefault", params["setAsDefault"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
       abortSignal, query, body,
       action: "CreateProvisioningTemplateVersion",
       requestUri: cmnP.encodePath`/provisioning-templates/${params["templateName"]}/versions`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "templateArn": "s",
-          "templateName": "s",
-          "versionId": "n",
-          "isDefaultVersion": "b",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "templateArn": "s",
+        "templateName": "s",
+        "versionId": "n",
+        "isDefaultVersion": "b",
+      },
+    }, await resp.json());
   }
 
   async createRoleAlias(
     {abortSignal, ...params}: RequestConfig & CreateRoleAliasRequest,
   ): Promise<CreateRoleAliasResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       roleArn: params["roleArn"],
       credentialDurationSeconds: params["credentialDurationSeconds"],
       tags: params["tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateRoleAlias",
       requestUri: cmnP.encodePath`/role-aliases/${params["roleAlias"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "roleAlias": "s",
-          "roleAliasArn": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "roleAlias": "s",
+        "roleAliasArn": "s",
+      },
+    }, await resp.json());
   }
 
   async createScheduledAudit(
     {abortSignal, ...params}: RequestConfig & CreateScheduledAuditRequest,
   ): Promise<CreateScheduledAuditResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       frequency: params["frequency"],
       dayOfMonth: params["dayOfMonth"],
       dayOfWeek: params["dayOfWeek"],
       targetCheckNames: params["targetCheckNames"],
       tags: params["tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateScheduledAudit",
       requestUri: cmnP.encodePath`/audit/scheduledaudits/${params["scheduledAuditName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "scheduledAuditArn": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "scheduledAuditArn": "s",
+      },
+    }, await resp.json());
   }
 
   async createSecurityProfile(
     {abortSignal, ...params}: RequestConfig & CreateSecurityProfileRequest,
   ): Promise<CreateSecurityProfileResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       securityProfileDescription: params["securityProfileDescription"],
       behaviors: params["behaviors"]?.map(x => fromBehavior(x)),
       alertTargets: jsonP.serializeMap(params["alertTargets"], x => fromAlertTarget(x)),
       additionalMetricsToRetain: params["additionalMetricsToRetain"],
       additionalMetricsToRetainV2: params["additionalMetricsToRetainV2"]?.map(x => fromMetricToRetain(x)),
       tags: params["tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateSecurityProfile",
       requestUri: cmnP.encodePath`/security-profiles/${params["securityProfileName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "securityProfileName": "s",
-          "securityProfileArn": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "securityProfileName": "s",
+        "securityProfileArn": "s",
+      },
+    }, await resp.json());
   }
 
   async createStream(
     {abortSignal, ...params}: RequestConfig & CreateStreamRequest,
   ): Promise<CreateStreamResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       description: params["description"],
       files: params["files"]?.map(x => fromStreamFile(x)),
       roleArn: params["roleArn"],
       tags: params["tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateStream",
       requestUri: cmnP.encodePath`/streams/${params["streamId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "streamId": "s",
-          "streamArn": "s",
-          "description": "s",
-          "streamVersion": "n",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "streamId": "s",
+        "streamArn": "s",
+        "description": "s",
+        "streamVersion": "n",
+      },
+    }, await resp.json());
   }
 
   async createThing(
     {abortSignal, ...params}: RequestConfig & CreateThingRequest,
   ): Promise<CreateThingResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       thingTypeName: params["thingTypeName"],
       attributePayload: fromAttributePayload(params["attributePayload"]),
       billingGroupName: params["billingGroupName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateThing",
       requestUri: cmnP.encodePath`/things/${params["thingName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "thingName": "s",
-          "thingArn": "s",
-          "thingId": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "thingName": "s",
+        "thingArn": "s",
+        "thingId": "s",
+      },
+    }, await resp.json());
   }
 
   async createThingGroup(
     {abortSignal, ...params}: RequestConfig & CreateThingGroupRequest,
   ): Promise<CreateThingGroupResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       parentGroupName: params["parentGroupName"],
       thingGroupProperties: fromThingGroupProperties(params["thingGroupProperties"]),
       tags: params["tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateThingGroup",
       requestUri: cmnP.encodePath`/thing-groups/${params["thingGroupName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "thingGroupName": "s",
-          "thingGroupArn": "s",
-          "thingGroupId": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "thingGroupName": "s",
+        "thingGroupArn": "s",
+        "thingGroupId": "s",
+      },
+    }, await resp.json());
   }
 
   async createThingType(
     {abortSignal, ...params}: RequestConfig & CreateThingTypeRequest,
   ): Promise<CreateThingTypeResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       thingTypeProperties: fromThingTypeProperties(params["thingTypeProperties"]),
       tags: params["tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateThingType",
       requestUri: cmnP.encodePath`/thing-types/${params["thingTypeName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "thingTypeName": "s",
-          "thingTypeArn": "s",
-          "thingTypeId": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "thingTypeName": "s",
+        "thingTypeArn": "s",
+        "thingTypeId": "s",
+      },
+    }, await resp.json());
   }
 
   async createTopicRule(
     {abortSignal, ...params}: RequestConfig & CreateTopicRuleRequest,
   ): Promise<void> {
-    const headers = new Headers;
-    if (params["tags"] != null) headers.append("x-amz-tagging", params["tags"]);
     const inner = params["topicRulePayload"];
     const body: jsonP.JSONObject = inner ? {
       sql: inner["sql"],
@@ -926,6 +858,8 @@ export default class Iot {
       awsIotSqlVersion: inner["awsIotSqlVersion"],
       errorAction: fromAction(inner["errorAction"]),
     } : {};
+    const headers = new Headers;
+    if (params["tags"] != null) headers.append("x-amz-tagging", params["tags"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "CreateTopicRule",
@@ -936,22 +870,20 @@ export default class Iot {
   async createTopicRuleDestination(
     {abortSignal, ...params}: RequestConfig & CreateTopicRuleDestinationRequest,
   ): Promise<CreateTopicRuleDestinationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       destinationConfiguration: fromTopicRuleDestinationConfiguration(params["destinationConfiguration"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateTopicRuleDestination",
       requestUri: "/destinations",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "topicRuleDestination": toTopicRuleDestination,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "topicRuleDestination": toTopicRuleDestination,
+      },
+    }, await resp.json());
   }
 
   async deleteAccountAuditConfiguration(
@@ -965,32 +897,28 @@ export default class Iot {
       method: "DELETE",
       requestUri: "/audit/configuration",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async deleteAuditSuppression(
     {abortSignal, ...params}: RequestConfig & DeleteAuditSuppressionRequest,
   ): Promise<DeleteAuditSuppressionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       checkName: params["checkName"],
       resourceIdentifier: fromResourceIdentifier(params["resourceIdentifier"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteAuditSuppression",
       requestUri: "/audit/suppressions/delete",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async deleteAuthorizer(
@@ -1003,12 +931,10 @@ export default class Iot {
       method: "DELETE",
       requestUri: cmnP.encodePath`/authorizer/${params["authorizerName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async deleteBillingGroup(
@@ -1022,12 +948,10 @@ export default class Iot {
       method: "DELETE",
       requestUri: cmnP.encodePath`/billing-groups/${params["billingGroupName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async deleteCACertificate(
@@ -1040,12 +964,10 @@ export default class Iot {
       method: "DELETE",
       requestUri: cmnP.encodePath`/cacertificate/${params["certificateId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async deleteCertificate(
@@ -1071,12 +993,10 @@ export default class Iot {
       method: "DELETE",
       requestUri: cmnP.encodePath`/dimensions/${params["name"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async deleteDomainConfiguration(
@@ -1089,12 +1009,10 @@ export default class Iot {
       method: "DELETE",
       requestUri: cmnP.encodePath`/domainConfigurations/${params["domainConfigurationName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async deleteDynamicThingGroup(
@@ -1108,12 +1026,10 @@ export default class Iot {
       method: "DELETE",
       requestUri: cmnP.encodePath`/dynamic-thing-groups/${params["thingGroupName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async deleteJob(
@@ -1154,12 +1070,10 @@ export default class Iot {
       method: "DELETE",
       requestUri: cmnP.encodePath`/mitigationactions/actions/${params["actionName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async deleteOTAUpdate(
@@ -1174,12 +1088,10 @@ export default class Iot {
       method: "DELETE",
       requestUri: cmnP.encodePath`/otaUpdates/${params["otaUpdateId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async deletePolicy(
@@ -1216,12 +1128,10 @@ export default class Iot {
       method: "DELETE",
       requestUri: cmnP.encodePath`/provisioning-templates/${params["templateName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async deleteProvisioningTemplateVersion(
@@ -1234,12 +1144,10 @@ export default class Iot {
       method: "DELETE",
       requestUri: cmnP.encodePath`/provisioning-templates/${params["templateName"]}/versions/${params["versionId"].toString()}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async deleteRegistrationCode(
@@ -1252,12 +1160,10 @@ export default class Iot {
       method: "DELETE",
       requestUri: "/registrationcode",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async deleteRoleAlias(
@@ -1270,12 +1176,10 @@ export default class Iot {
       method: "DELETE",
       requestUri: cmnP.encodePath`/role-aliases/${params["roleAlias"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async deleteScheduledAudit(
@@ -1288,12 +1192,10 @@ export default class Iot {
       method: "DELETE",
       requestUri: cmnP.encodePath`/audit/scheduledaudits/${params["scheduledAuditName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async deleteSecurityProfile(
@@ -1307,12 +1209,10 @@ export default class Iot {
       method: "DELETE",
       requestUri: cmnP.encodePath`/security-profiles/${params["securityProfileName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async deleteStream(
@@ -1325,12 +1225,10 @@ export default class Iot {
       method: "DELETE",
       requestUri: cmnP.encodePath`/streams/${params["streamId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async deleteThing(
@@ -1344,12 +1242,10 @@ export default class Iot {
       method: "DELETE",
       requestUri: cmnP.encodePath`/things/${params["thingName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async deleteThingGroup(
@@ -1363,12 +1259,10 @@ export default class Iot {
       method: "DELETE",
       requestUri: cmnP.encodePath`/thing-groups/${params["thingGroupName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async deleteThingType(
@@ -1381,12 +1275,10 @@ export default class Iot {
       method: "DELETE",
       requestUri: cmnP.encodePath`/thing-types/${params["thingTypeName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async deleteTopicRule(
@@ -1411,12 +1303,10 @@ export default class Iot {
       method: "DELETE",
       requestUri: cmnP.encodePath`/destinations/${params["arn"].split("/")}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async deleteV2LoggingLevel(
@@ -1436,20 +1326,18 @@ export default class Iot {
   async deprecateThingType(
     {abortSignal, ...params}: RequestConfig & DeprecateThingTypeRequest,
   ): Promise<DeprecateThingTypeResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       undoDeprecate: params["undoDeprecate"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeprecateThingType",
       requestUri: cmnP.encodePath`/thing-types/${params["thingTypeName"]}/deprecate`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async describeAccountAuditConfiguration(
@@ -1462,16 +1350,14 @@ export default class Iot {
       method: "GET",
       requestUri: "/audit/configuration",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "roleArn": "s",
-          "auditNotificationTargetConfigurations": x => jsonP.readMap(x => cmnP.readEnumReq<AuditNotificationType>(x), toAuditNotificationTarget, x),
-          "auditCheckConfigurations": x => jsonP.readMap(String, toAuditCheckConfiguration, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "roleArn": "s",
+        "auditNotificationTargetConfigurations": x => jsonP.readMap(x => cmnP.readEnumReq<AuditNotificationType>(x), toAuditNotificationTarget, x),
+        "auditCheckConfigurations": x => jsonP.readMap(String, toAuditCheckConfiguration, x),
+      },
+    }, await resp.json());
   }
 
   async describeAuditFinding(
@@ -1484,14 +1370,12 @@ export default class Iot {
       method: "GET",
       requestUri: cmnP.encodePath`/audit/findings/${params["findingId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "finding": toAuditFinding,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "finding": toAuditFinding,
+      },
+    }, await resp.json());
   }
 
   async describeAuditMitigationActionsTask(
@@ -1504,46 +1388,42 @@ export default class Iot {
       method: "GET",
       requestUri: cmnP.encodePath`/audit/mitigationactions/tasks/${params["taskId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "taskStatus": (x: jsonP.JSONValue) => cmnP.readEnum<AuditMitigationActionsTaskStatus>(x),
-          "startTime": "d",
-          "endTime": "d",
-          "taskStatistics": x => jsonP.readMap(String, toTaskStatisticsForAuditCheck, x),
-          "target": toAuditMitigationActionsTaskTarget,
-          "auditCheckToActionsMapping": x => jsonP.readMap(String, l => Array.isArray(l) ? l.map(String) : [], x),
-          "actionsDefinition": [toMitigationAction],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "taskStatus": (x: jsonP.JSONValue) => cmnP.readEnum<AuditMitigationActionsTaskStatus>(x),
+        "startTime": "d",
+        "endTime": "d",
+        "taskStatistics": x => jsonP.readMap(String, toTaskStatisticsForAuditCheck, x),
+        "target": toAuditMitigationActionsTaskTarget,
+        "auditCheckToActionsMapping": x => jsonP.readMap(String, l => Array.isArray(l) ? l.map(String) : [], x),
+        "actionsDefinition": [toMitigationAction],
+      },
+    }, await resp.json());
   }
 
   async describeAuditSuppression(
     {abortSignal, ...params}: RequestConfig & DescribeAuditSuppressionRequest,
   ): Promise<DescribeAuditSuppressionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       checkName: params["checkName"],
       resourceIdentifier: fromResourceIdentifier(params["resourceIdentifier"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeAuditSuppression",
       requestUri: "/audit/suppressions/describe",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "checkName": "s",
-          "resourceIdentifier": toResourceIdentifier,
-          "expirationDate": "d",
-          "suppressIndefinitely": "b",
-          "description": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "checkName": "s",
+        "resourceIdentifier": toResourceIdentifier,
+        "expirationDate": "d",
+        "suppressIndefinitely": "b",
+        "description": "s",
+      },
+    }, await resp.json());
   }
 
   async describeAuditTask(
@@ -1556,19 +1436,17 @@ export default class Iot {
       method: "GET",
       requestUri: cmnP.encodePath`/audit/tasks/${params["taskId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "taskStatus": (x: jsonP.JSONValue) => cmnP.readEnum<AuditTaskStatus>(x),
-          "taskType": (x: jsonP.JSONValue) => cmnP.readEnum<AuditTaskType>(x),
-          "taskStartTime": "d",
-          "taskStatistics": toTaskStatistics,
-          "scheduledAuditName": "s",
-          "auditDetails": x => jsonP.readMap(String, toAuditCheckDetails, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "taskStatus": (x: jsonP.JSONValue) => cmnP.readEnum<AuditTaskStatus>(x),
+        "taskType": (x: jsonP.JSONValue) => cmnP.readEnum<AuditTaskType>(x),
+        "taskStartTime": "d",
+        "taskStatistics": toTaskStatistics,
+        "scheduledAuditName": "s",
+        "auditDetails": x => jsonP.readMap(String, toAuditCheckDetails, x),
+      },
+    }, await resp.json());
   }
 
   async describeAuthorizer(
@@ -1581,14 +1459,12 @@ export default class Iot {
       method: "GET",
       requestUri: cmnP.encodePath`/authorizer/${params["authorizerName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "authorizerDescription": toAuthorizerDescription,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "authorizerDescription": toAuthorizerDescription,
+      },
+    }, await resp.json());
   }
 
   async describeBillingGroup(
@@ -1601,19 +1477,17 @@ export default class Iot {
       method: "GET",
       requestUri: cmnP.encodePath`/billing-groups/${params["billingGroupName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "billingGroupName": "s",
-          "billingGroupId": "s",
-          "billingGroupArn": "s",
-          "version": "n",
-          "billingGroupProperties": toBillingGroupProperties,
-          "billingGroupMetadata": toBillingGroupMetadata,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "billingGroupName": "s",
+        "billingGroupId": "s",
+        "billingGroupArn": "s",
+        "version": "n",
+        "billingGroupProperties": toBillingGroupProperties,
+        "billingGroupMetadata": toBillingGroupMetadata,
+      },
+    }, await resp.json());
   }
 
   async describeCACertificate(
@@ -1626,15 +1500,13 @@ export default class Iot {
       method: "GET",
       requestUri: cmnP.encodePath`/cacertificate/${params["certificateId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "certificateDescription": toCACertificateDescription,
-          "registrationConfig": toRegistrationConfig,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "certificateDescription": toCACertificateDescription,
+        "registrationConfig": toRegistrationConfig,
+      },
+    }, await resp.json());
   }
 
   async describeCertificate(
@@ -1647,14 +1519,12 @@ export default class Iot {
       method: "GET",
       requestUri: cmnP.encodePath`/certificates/${params["certificateId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "certificateDescription": toCertificateDescription,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "certificateDescription": toCertificateDescription,
+      },
+    }, await resp.json());
   }
 
   async describeDefaultAuthorizer(
@@ -1667,14 +1537,12 @@ export default class Iot {
       method: "GET",
       requestUri: "/default-authorizer",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "authorizerDescription": toAuthorizerDescription,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "authorizerDescription": toAuthorizerDescription,
+      },
+    }, await resp.json());
   }
 
   async describeDimension(
@@ -1687,19 +1555,17 @@ export default class Iot {
       method: "GET",
       requestUri: cmnP.encodePath`/dimensions/${params["name"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "name": "s",
-          "arn": "s",
-          "type": (x: jsonP.JSONValue) => cmnP.readEnum<DimensionType>(x),
-          "stringValues": ["s"],
-          "creationDate": "d",
-          "lastModifiedDate": "d",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "name": "s",
+        "arn": "s",
+        "type": (x: jsonP.JSONValue) => cmnP.readEnum<DimensionType>(x),
+        "stringValues": ["s"],
+        "creationDate": "d",
+        "lastModifiedDate": "d",
+      },
+    }, await resp.json());
   }
 
   async describeDomainConfiguration(
@@ -1712,22 +1578,20 @@ export default class Iot {
       method: "GET",
       requestUri: cmnP.encodePath`/domainConfigurations/${params["domainConfigurationName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "domainConfigurationName": "s",
-          "domainConfigurationArn": "s",
-          "domainName": "s",
-          "serverCertificates": [toServerCertificateSummary],
-          "authorizerConfig": toAuthorizerConfig,
-          "domainConfigurationStatus": (x: jsonP.JSONValue) => cmnP.readEnum<DomainConfigurationStatus>(x),
-          "serviceType": (x: jsonP.JSONValue) => cmnP.readEnum<ServiceType>(x),
-          "domainType": (x: jsonP.JSONValue) => cmnP.readEnum<DomainType>(x),
-          "lastStatusChangeDate": "d",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "domainConfigurationName": "s",
+        "domainConfigurationArn": "s",
+        "domainName": "s",
+        "serverCertificates": [toServerCertificateSummary],
+        "authorizerConfig": toAuthorizerConfig,
+        "domainConfigurationStatus": (x: jsonP.JSONValue) => cmnP.readEnum<DomainConfigurationStatus>(x),
+        "serviceType": (x: jsonP.JSONValue) => cmnP.readEnum<ServiceType>(x),
+        "domainType": (x: jsonP.JSONValue) => cmnP.readEnum<DomainType>(x),
+        "lastStatusChangeDate": "d",
+      },
+    }, await resp.json());
   }
 
   async describeEndpoint(
@@ -1741,14 +1605,12 @@ export default class Iot {
       method: "GET",
       requestUri: "/endpoint",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "endpointAddress": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "endpointAddress": "s",
+      },
+    }, await resp.json());
   }
 
   async describeEventConfigurations(
@@ -1761,16 +1623,14 @@ export default class Iot {
       method: "GET",
       requestUri: "/event-configurations",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "eventConfigurations": x => jsonP.readMap(x => cmnP.readEnumReq<EventType>(x), toConfiguration, x),
-          "creationDate": "d",
-          "lastModifiedDate": "d",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "eventConfigurations": x => jsonP.readMap(x => cmnP.readEnumReq<EventType>(x), toConfiguration, x),
+        "creationDate": "d",
+        "lastModifiedDate": "d",
+      },
+    }, await resp.json());
   }
 
   async describeIndex(
@@ -1783,16 +1643,14 @@ export default class Iot {
       method: "GET",
       requestUri: cmnP.encodePath`/indices/${params["indexName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "indexName": "s",
-          "indexStatus": (x: jsonP.JSONValue) => cmnP.readEnum<IndexStatus>(x),
-          "schema": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "indexName": "s",
+        "indexStatus": (x: jsonP.JSONValue) => cmnP.readEnum<IndexStatus>(x),
+        "schema": "s",
+      },
+    }, await resp.json());
   }
 
   async describeJob(
@@ -1805,15 +1663,13 @@ export default class Iot {
       method: "GET",
       requestUri: cmnP.encodePath`/jobs/${params["jobId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "documentSource": "s",
-          "job": toJob,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "documentSource": "s",
+        "job": toJob,
+      },
+    }, await resp.json());
   }
 
   async describeJobExecution(
@@ -1827,14 +1683,12 @@ export default class Iot {
       method: "GET",
       requestUri: cmnP.encodePath`/things/${params["thingName"]}/jobs/${params["jobId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "execution": toJobExecution,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "execution": toJobExecution,
+      },
+    }, await resp.json());
   }
 
   async describeMitigationAction(
@@ -1847,21 +1701,19 @@ export default class Iot {
       method: "GET",
       requestUri: cmnP.encodePath`/mitigationactions/actions/${params["actionName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "actionName": "s",
-          "actionType": (x: jsonP.JSONValue) => cmnP.readEnum<MitigationActionType>(x),
-          "actionArn": "s",
-          "actionId": "s",
-          "roleArn": "s",
-          "actionParams": toMitigationActionParams,
-          "creationDate": "d",
-          "lastModifiedDate": "d",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "actionName": "s",
+        "actionType": (x: jsonP.JSONValue) => cmnP.readEnum<MitigationActionType>(x),
+        "actionArn": "s",
+        "actionId": "s",
+        "roleArn": "s",
+        "actionParams": toMitigationActionParams,
+        "creationDate": "d",
+        "lastModifiedDate": "d",
+      },
+    }, await resp.json());
   }
 
   async describeProvisioningTemplate(
@@ -1874,23 +1726,21 @@ export default class Iot {
       method: "GET",
       requestUri: cmnP.encodePath`/provisioning-templates/${params["templateName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "templateArn": "s",
-          "templateName": "s",
-          "description": "s",
-          "creationDate": "d",
-          "lastModifiedDate": "d",
-          "defaultVersionId": "n",
-          "templateBody": "s",
-          "enabled": "b",
-          "provisioningRoleArn": "s",
-          "preProvisioningHook": toProvisioningHook,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "templateArn": "s",
+        "templateName": "s",
+        "description": "s",
+        "creationDate": "d",
+        "lastModifiedDate": "d",
+        "defaultVersionId": "n",
+        "templateBody": "s",
+        "enabled": "b",
+        "provisioningRoleArn": "s",
+        "preProvisioningHook": toProvisioningHook,
+      },
+    }, await resp.json());
   }
 
   async describeProvisioningTemplateVersion(
@@ -1903,17 +1753,15 @@ export default class Iot {
       method: "GET",
       requestUri: cmnP.encodePath`/provisioning-templates/${params["templateName"]}/versions/${params["versionId"].toString()}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "versionId": "n",
-          "creationDate": "d",
-          "templateBody": "s",
-          "isDefaultVersion": "b",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "versionId": "n",
+        "creationDate": "d",
+        "templateBody": "s",
+        "isDefaultVersion": "b",
+      },
+    }, await resp.json());
   }
 
   async describeRoleAlias(
@@ -1926,14 +1774,12 @@ export default class Iot {
       method: "GET",
       requestUri: cmnP.encodePath`/role-aliases/${params["roleAlias"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "roleAliasDescription": toRoleAliasDescription,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "roleAliasDescription": toRoleAliasDescription,
+      },
+    }, await resp.json());
   }
 
   async describeScheduledAudit(
@@ -1946,19 +1792,17 @@ export default class Iot {
       method: "GET",
       requestUri: cmnP.encodePath`/audit/scheduledaudits/${params["scheduledAuditName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "frequency": (x: jsonP.JSONValue) => cmnP.readEnum<AuditFrequency>(x),
-          "dayOfMonth": "s",
-          "dayOfWeek": (x: jsonP.JSONValue) => cmnP.readEnum<DayOfWeek>(x),
-          "targetCheckNames": ["s"],
-          "scheduledAuditName": "s",
-          "scheduledAuditArn": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "frequency": (x: jsonP.JSONValue) => cmnP.readEnum<AuditFrequency>(x),
+        "dayOfMonth": "s",
+        "dayOfWeek": (x: jsonP.JSONValue) => cmnP.readEnum<DayOfWeek>(x),
+        "targetCheckNames": ["s"],
+        "scheduledAuditName": "s",
+        "scheduledAuditArn": "s",
+      },
+    }, await resp.json());
   }
 
   async describeSecurityProfile(
@@ -1971,23 +1815,21 @@ export default class Iot {
       method: "GET",
       requestUri: cmnP.encodePath`/security-profiles/${params["securityProfileName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "securityProfileName": "s",
-          "securityProfileArn": "s",
-          "securityProfileDescription": "s",
-          "behaviors": [toBehavior],
-          "alertTargets": x => jsonP.readMap(x => cmnP.readEnumReq<AlertTargetType>(x), toAlertTarget, x),
-          "additionalMetricsToRetain": ["s"],
-          "additionalMetricsToRetainV2": [toMetricToRetain],
-          "version": "n",
-          "creationDate": "d",
-          "lastModifiedDate": "d",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "securityProfileName": "s",
+        "securityProfileArn": "s",
+        "securityProfileDescription": "s",
+        "behaviors": [toBehavior],
+        "alertTargets": x => jsonP.readMap(x => cmnP.readEnumReq<AlertTargetType>(x), toAlertTarget, x),
+        "additionalMetricsToRetain": ["s"],
+        "additionalMetricsToRetainV2": [toMetricToRetain],
+        "version": "n",
+        "creationDate": "d",
+        "lastModifiedDate": "d",
+      },
+    }, await resp.json());
   }
 
   async describeStream(
@@ -2000,14 +1842,12 @@ export default class Iot {
       method: "GET",
       requestUri: cmnP.encodePath`/streams/${params["streamId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "streamInfo": toStreamInfo,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "streamInfo": toStreamInfo,
+      },
+    }, await resp.json());
   }
 
   async describeThing(
@@ -2020,21 +1860,19 @@ export default class Iot {
       method: "GET",
       requestUri: cmnP.encodePath`/things/${params["thingName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "defaultClientId": "s",
-          "thingName": "s",
-          "thingId": "s",
-          "thingArn": "s",
-          "thingTypeName": "s",
-          "attributes": x => jsonP.readMap(String, String, x),
-          "version": "n",
-          "billingGroupName": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "defaultClientId": "s",
+        "thingName": "s",
+        "thingId": "s",
+        "thingArn": "s",
+        "thingTypeName": "s",
+        "attributes": x => jsonP.readMap(String, String, x),
+        "version": "n",
+        "billingGroupName": "s",
+      },
+    }, await resp.json());
   }
 
   async describeThingGroup(
@@ -2047,23 +1885,21 @@ export default class Iot {
       method: "GET",
       requestUri: cmnP.encodePath`/thing-groups/${params["thingGroupName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "thingGroupName": "s",
-          "thingGroupId": "s",
-          "thingGroupArn": "s",
-          "version": "n",
-          "thingGroupProperties": toThingGroupProperties,
-          "thingGroupMetadata": toThingGroupMetadata,
-          "indexName": "s",
-          "queryString": "s",
-          "queryVersion": "s",
-          "status": (x: jsonP.JSONValue) => cmnP.readEnum<DynamicGroupStatus>(x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "thingGroupName": "s",
+        "thingGroupId": "s",
+        "thingGroupArn": "s",
+        "version": "n",
+        "thingGroupProperties": toThingGroupProperties,
+        "thingGroupMetadata": toThingGroupMetadata,
+        "indexName": "s",
+        "queryString": "s",
+        "queryVersion": "s",
+        "status": (x: jsonP.JSONValue) => cmnP.readEnum<DynamicGroupStatus>(x),
+      },
+    }, await resp.json());
   }
 
   async describeThingRegistrationTask(
@@ -2076,25 +1912,23 @@ export default class Iot {
       method: "GET",
       requestUri: cmnP.encodePath`/thing-registration-tasks/${params["taskId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "taskId": "s",
-          "creationDate": "d",
-          "lastModifiedDate": "d",
-          "templateBody": "s",
-          "inputFileBucket": "s",
-          "inputFileKey": "s",
-          "roleArn": "s",
-          "status": (x: jsonP.JSONValue) => cmnP.readEnum<Status>(x),
-          "message": "s",
-          "successCount": "n",
-          "failureCount": "n",
-          "percentageProgress": "n",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "taskId": "s",
+        "creationDate": "d",
+        "lastModifiedDate": "d",
+        "templateBody": "s",
+        "inputFileBucket": "s",
+        "inputFileKey": "s",
+        "roleArn": "s",
+        "status": (x: jsonP.JSONValue) => cmnP.readEnum<Status>(x),
+        "message": "s",
+        "successCount": "n",
+        "failureCount": "n",
+        "percentageProgress": "n",
+      },
+    }, await resp.json());
   }
 
   async describeThingType(
@@ -2107,26 +1941,24 @@ export default class Iot {
       method: "GET",
       requestUri: cmnP.encodePath`/thing-types/${params["thingTypeName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "thingTypeName": "s",
-          "thingTypeId": "s",
-          "thingTypeArn": "s",
-          "thingTypeProperties": toThingTypeProperties,
-          "thingTypeMetadata": toThingTypeMetadata,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "thingTypeName": "s",
+        "thingTypeId": "s",
+        "thingTypeArn": "s",
+        "thingTypeProperties": toThingTypeProperties,
+        "thingTypeMetadata": toThingTypeMetadata,
+      },
+    }, await resp.json());
   }
 
   async detachPolicy(
     {abortSignal, ...params}: RequestConfig & DetachPolicyRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       target: params["target"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DetachPolicy",
@@ -2158,12 +1990,10 @@ export default class Iot {
       method: "DELETE",
       requestUri: cmnP.encodePath`/security-profiles/${params["securityProfileName"]}/targets`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async detachThingPrincipal(
@@ -2177,12 +2007,10 @@ export default class Iot {
       method: "DELETE",
       requestUri: cmnP.encodePath`/things/${params["thingName"]}/principals`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async disableTopicRule(
@@ -2210,49 +2038,45 @@ export default class Iot {
   async getCardinality(
     {abortSignal, ...params}: RequestConfig & GetCardinalityRequest,
   ): Promise<GetCardinalityResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       indexName: params["indexName"],
       queryString: params["queryString"],
       aggregationField: params["aggregationField"],
       queryVersion: params["queryVersion"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetCardinality",
       requestUri: "/indices/cardinality",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "cardinality": "n",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "cardinality": "n",
+      },
+    }, await resp.json());
   }
 
   async getEffectivePolicies(
     {abortSignal, ...params}: RequestConfig & GetEffectivePoliciesRequest = {},
   ): Promise<GetEffectivePoliciesResponse> {
     const query = new URLSearchParams;
-    if (params["thingName"] != null) query.set("thingName", params["thingName"]?.toString() ?? "");
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       principal: params["principal"],
       cognitoIdentityPoolId: params["cognitoIdentityPoolId"],
-    } : {};
+    };
+    if (params["thingName"] != null) query.set("thingName", params["thingName"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
       abortSignal, query, body,
       action: "GetEffectivePolicies",
       requestUri: "/effective-policies",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "effectivePolicies": [toEffectivePolicy],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "effectivePolicies": [toEffectivePolicy],
+      },
+    }, await resp.json());
   }
 
   async getIndexingConfiguration(
@@ -2265,15 +2089,13 @@ export default class Iot {
       method: "GET",
       requestUri: "/indexing/config",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "thingIndexingConfiguration": toThingIndexingConfiguration,
-          "thingGroupIndexingConfiguration": toThingGroupIndexingConfiguration,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "thingIndexingConfiguration": toThingIndexingConfiguration,
+        "thingGroupIndexingConfiguration": toThingGroupIndexingConfiguration,
+      },
+    }, await resp.json());
   }
 
   async getJobDocument(
@@ -2286,14 +2108,12 @@ export default class Iot {
       method: "GET",
       requestUri: cmnP.encodePath`/jobs/${params["jobId"]}/job-document`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "document": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "document": "s",
+      },
+    }, await resp.json());
   }
 
   async getLoggingOptions(
@@ -2306,15 +2126,13 @@ export default class Iot {
       method: "GET",
       requestUri: "/loggingOptions",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "roleArn": "s",
-          "logLevel": (x: jsonP.JSONValue) => cmnP.readEnum<LogLevel>(x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "roleArn": "s",
+        "logLevel": (x: jsonP.JSONValue) => cmnP.readEnum<LogLevel>(x),
+      },
+    }, await resp.json());
   }
 
   async getOTAUpdate(
@@ -2327,39 +2145,35 @@ export default class Iot {
       method: "GET",
       requestUri: cmnP.encodePath`/otaUpdates/${params["otaUpdateId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "otaUpdateInfo": toOTAUpdateInfo,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "otaUpdateInfo": toOTAUpdateInfo,
+      },
+    }, await resp.json());
   }
 
   async getPercentiles(
     {abortSignal, ...params}: RequestConfig & GetPercentilesRequest,
   ): Promise<GetPercentilesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       indexName: params["indexName"],
       queryString: params["queryString"],
       aggregationField: params["aggregationField"],
       queryVersion: params["queryVersion"],
       percents: params["percents"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetPercentiles",
       requestUri: "/indices/percentiles",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "percentiles": [toPercentPair],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "percentiles": [toPercentPair],
+      },
+    }, await resp.json());
   }
 
   async getPolicy(
@@ -2372,20 +2186,18 @@ export default class Iot {
       method: "GET",
       requestUri: cmnP.encodePath`/policies/${params["policyName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "policyName": "s",
-          "policyArn": "s",
-          "policyDocument": "s",
-          "defaultVersionId": "s",
-          "creationDate": "d",
-          "lastModifiedDate": "d",
-          "generationId": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "policyName": "s",
+        "policyArn": "s",
+        "policyDocument": "s",
+        "defaultVersionId": "s",
+        "creationDate": "d",
+        "lastModifiedDate": "d",
+        "generationId": "s",
+      },
+    }, await resp.json());
   }
 
   async getPolicyVersion(
@@ -2398,21 +2210,19 @@ export default class Iot {
       method: "GET",
       requestUri: cmnP.encodePath`/policies/${params["policyName"]}/version/${params["policyVersionId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "policyArn": "s",
-          "policyName": "s",
-          "policyDocument": "s",
-          "policyVersionId": "s",
-          "isDefaultVersion": "b",
-          "creationDate": "d",
-          "lastModifiedDate": "d",
-          "generationId": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "policyArn": "s",
+        "policyName": "s",
+        "policyDocument": "s",
+        "policyVersionId": "s",
+        "isDefaultVersion": "b",
+        "creationDate": "d",
+        "lastModifiedDate": "d",
+        "generationId": "s",
+      },
+    }, await resp.json());
   }
 
   async getRegistrationCode(
@@ -2425,38 +2235,34 @@ export default class Iot {
       method: "GET",
       requestUri: "/registrationcode",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "registrationCode": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "registrationCode": "s",
+      },
+    }, await resp.json());
   }
 
   async getStatistics(
     {abortSignal, ...params}: RequestConfig & GetStatisticsRequest,
   ): Promise<GetStatisticsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       indexName: params["indexName"],
       queryString: params["queryString"],
       aggregationField: params["aggregationField"],
       queryVersion: params["queryVersion"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetStatistics",
       requestUri: "/indices/statistics",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "statistics": toStatistics,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "statistics": toStatistics,
+      },
+    }, await resp.json());
   }
 
   async getTopicRule(
@@ -2469,15 +2275,13 @@ export default class Iot {
       method: "GET",
       requestUri: cmnP.encodePath`/rules/${params["ruleName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ruleArn": "s",
-          "rule": toTopicRule,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ruleArn": "s",
+        "rule": toTopicRule,
+      },
+    }, await resp.json());
   }
 
   async getTopicRuleDestination(
@@ -2490,14 +2294,12 @@ export default class Iot {
       method: "GET",
       requestUri: cmnP.encodePath`/destinations/${params["arn"].split("/")}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "topicRuleDestination": toTopicRuleDestination,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "topicRuleDestination": toTopicRuleDestination,
+      },
+    }, await resp.json());
   }
 
   async getV2LoggingOptions(
@@ -2510,16 +2312,14 @@ export default class Iot {
       method: "GET",
       requestUri: "/v2LoggingOptions",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "roleArn": "s",
-          "defaultLogLevel": (x: jsonP.JSONValue) => cmnP.readEnum<LogLevel>(x),
-          "disableAllLogs": "b",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "roleArn": "s",
+        "defaultLogLevel": (x: jsonP.JSONValue) => cmnP.readEnum<LogLevel>(x),
+        "disableAllLogs": "b",
+      },
+    }, await resp.json());
   }
 
   async listActiveViolations(
@@ -2536,15 +2336,13 @@ export default class Iot {
       method: "GET",
       requestUri: "/active-violations",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "activeViolations": [toActiveViolation],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "activeViolations": [toActiveViolation],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listAttachedPolicies(
@@ -2559,21 +2357,19 @@ export default class Iot {
       action: "ListAttachedPolicies",
       requestUri: cmnP.encodePath`/attached-policies/${params["target"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "policies": [toPolicy],
-          "nextMarker": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "policies": [toPolicy],
+        "nextMarker": "s",
+      },
+    }, await resp.json());
   }
 
   async listAuditFindings(
     {abortSignal, ...params}: RequestConfig & ListAuditFindingsRequest = {},
   ): Promise<ListAuditFindingsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       taskId: params["taskId"],
       checkName: params["checkName"],
       resourceIdentifier: fromResourceIdentifier(params["resourceIdentifier"]),
@@ -2582,21 +2378,19 @@ export default class Iot {
       startTime: jsonP.serializeDate_unixTimestamp(params["startTime"]),
       endTime: jsonP.serializeDate_unixTimestamp(params["endTime"]),
       listSuppressedFindings: params["listSuppressedFindings"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListAuditFindings",
       requestUri: "/audit/findings",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "findings": [toAuditFinding],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "findings": [toAuditFinding],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listAuditMitigationActionsExecutions(
@@ -2614,15 +2408,13 @@ export default class Iot {
       method: "GET",
       requestUri: "/audit/mitigationactions/executions",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "actionsExecutions": [toAuditMitigationActionExecutionMetadata],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "actionsExecutions": [toAuditMitigationActionExecutionMetadata],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listAuditMitigationActionsTasks(
@@ -2642,41 +2434,37 @@ export default class Iot {
       method: "GET",
       requestUri: "/audit/mitigationactions/tasks",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "tasks": [toAuditMitigationActionsTaskMetadata],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "tasks": [toAuditMitigationActionsTaskMetadata],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listAuditSuppressions(
     {abortSignal, ...params}: RequestConfig & ListAuditSuppressionsRequest = {},
   ): Promise<ListAuditSuppressionsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       checkName: params["checkName"],
       resourceIdentifier: fromResourceIdentifier(params["resourceIdentifier"]),
       ascendingOrder: params["ascendingOrder"],
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListAuditSuppressions",
       requestUri: "/audit/suppressions/list",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "suppressions": [toAuditSuppression],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "suppressions": [toAuditSuppression],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listAuditTasks(
@@ -2695,15 +2483,13 @@ export default class Iot {
       method: "GET",
       requestUri: "/audit/tasks",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "tasks": [toAuditTaskMetadata],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "tasks": [toAuditTaskMetadata],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listAuthorizers(
@@ -2720,15 +2506,13 @@ export default class Iot {
       method: "GET",
       requestUri: "/authorizers/",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "authorizers": [toAuthorizerSummary],
-          "nextMarker": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "authorizers": [toAuthorizerSummary],
+        "nextMarker": "s",
+      },
+    }, await resp.json());
   }
 
   async listBillingGroups(
@@ -2744,15 +2528,13 @@ export default class Iot {
       method: "GET",
       requestUri: "/billing-groups",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "billingGroups": [toGroupNameAndArn],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "billingGroups": [toGroupNameAndArn],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listCACertificates(
@@ -2768,15 +2550,13 @@ export default class Iot {
       method: "GET",
       requestUri: "/cacertificates",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "certificates": [toCACertificate],
-          "nextMarker": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "certificates": [toCACertificate],
+        "nextMarker": "s",
+      },
+    }, await resp.json());
   }
 
   async listCertificates(
@@ -2792,15 +2572,13 @@ export default class Iot {
       method: "GET",
       requestUri: "/certificates",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "certificates": [toCertificate],
-          "nextMarker": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "certificates": [toCertificate],
+        "nextMarker": "s",
+      },
+    }, await resp.json());
   }
 
   async listCertificatesByCA(
@@ -2816,15 +2594,13 @@ export default class Iot {
       method: "GET",
       requestUri: cmnP.encodePath`/certificates-by-ca/${params["caCertificateId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "certificates": [toCertificate],
-          "nextMarker": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "certificates": [toCertificate],
+        "nextMarker": "s",
+      },
+    }, await resp.json());
   }
 
   async listDimensions(
@@ -2839,15 +2615,13 @@ export default class Iot {
       method: "GET",
       requestUri: "/dimensions",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "dimensionNames": ["s"],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "dimensionNames": ["s"],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listDomainConfigurations(
@@ -2863,15 +2637,13 @@ export default class Iot {
       method: "GET",
       requestUri: "/domainConfigurations",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "domainConfigurations": [toDomainConfigurationSummary],
-          "nextMarker": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "domainConfigurations": [toDomainConfigurationSummary],
+        "nextMarker": "s",
+      },
+    }, await resp.json());
   }
 
   async listIndices(
@@ -2886,15 +2658,13 @@ export default class Iot {
       method: "GET",
       requestUri: "/indices",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "indexNames": ["s"],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "indexNames": ["s"],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listJobExecutionsForJob(
@@ -2910,15 +2680,13 @@ export default class Iot {
       method: "GET",
       requestUri: cmnP.encodePath`/jobs/${params["jobId"]}/things`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "executionSummaries": [toJobExecutionSummaryForJob],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "executionSummaries": [toJobExecutionSummaryForJob],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listJobExecutionsForThing(
@@ -2935,15 +2703,13 @@ export default class Iot {
       method: "GET",
       requestUri: cmnP.encodePath`/things/${params["thingName"]}/jobs`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "executionSummaries": [toJobExecutionSummaryForThing],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "executionSummaries": [toJobExecutionSummaryForThing],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listJobs(
@@ -2963,15 +2729,13 @@ export default class Iot {
       method: "GET",
       requestUri: "/jobs",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "jobs": [toJobSummary],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "jobs": [toJobSummary],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listMitigationActions(
@@ -2987,15 +2751,13 @@ export default class Iot {
       method: "GET",
       requestUri: "/mitigationactions/actions",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "actionIdentifiers": [toMitigationActionIdentifier],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "actionIdentifiers": [toMitigationActionIdentifier],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listOTAUpdates(
@@ -3011,15 +2773,13 @@ export default class Iot {
       method: "GET",
       requestUri: "/otaUpdates",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "otaUpdates": [toOTAUpdateSummary],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "otaUpdates": [toOTAUpdateSummary],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listOutgoingCertificates(
@@ -3035,15 +2795,13 @@ export default class Iot {
       method: "GET",
       requestUri: "/certificates-out-going",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "outgoingCertificates": [toOutgoingCertificate],
-          "nextMarker": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "outgoingCertificates": [toOutgoingCertificate],
+        "nextMarker": "s",
+      },
+    }, await resp.json());
   }
 
   async listPolicies(
@@ -3059,15 +2817,13 @@ export default class Iot {
       method: "GET",
       requestUri: "/policies",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "policies": [toPolicy],
-          "nextMarker": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "policies": [toPolicy],
+        "nextMarker": "s",
+      },
+    }, await resp.json());
   }
 
   async listPolicyPrincipals(
@@ -3085,15 +2841,13 @@ export default class Iot {
       method: "GET",
       requestUri: "/policy-principals",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "principals": ["s"],
-          "nextMarker": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "principals": ["s"],
+        "nextMarker": "s",
+      },
+    }, await resp.json());
   }
 
   async listPolicyVersions(
@@ -3106,14 +2860,12 @@ export default class Iot {
       method: "GET",
       requestUri: cmnP.encodePath`/policies/${params["policyName"]}/version`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "policyVersions": [toPolicyVersion],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "policyVersions": [toPolicyVersion],
+      },
+    }, await resp.json());
   }
 
   async listPrincipalPolicies(
@@ -3131,15 +2883,13 @@ export default class Iot {
       method: "GET",
       requestUri: "/principal-policies",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "policies": [toPolicy],
-          "nextMarker": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "policies": [toPolicy],
+        "nextMarker": "s",
+      },
+    }, await resp.json());
   }
 
   async listPrincipalThings(
@@ -3156,15 +2906,13 @@ export default class Iot {
       method: "GET",
       requestUri: "/principals/things",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "things": ["s"],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "things": ["s"],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listProvisioningTemplateVersions(
@@ -3179,15 +2927,13 @@ export default class Iot {
       method: "GET",
       requestUri: cmnP.encodePath`/provisioning-templates/${params["templateName"]}/versions`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "versions": [toProvisioningTemplateVersionSummary],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "versions": [toProvisioningTemplateVersionSummary],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listProvisioningTemplates(
@@ -3202,15 +2948,13 @@ export default class Iot {
       method: "GET",
       requestUri: "/provisioning-templates",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "templates": [toProvisioningTemplateSummary],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "templates": [toProvisioningTemplateSummary],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listRoleAliases(
@@ -3226,15 +2970,13 @@ export default class Iot {
       method: "GET",
       requestUri: "/role-aliases",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "roleAliases": ["s"],
-          "nextMarker": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "roleAliases": ["s"],
+        "nextMarker": "s",
+      },
+    }, await resp.json());
   }
 
   async listScheduledAudits(
@@ -3249,15 +2991,13 @@ export default class Iot {
       method: "GET",
       requestUri: "/audit/scheduledaudits",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "scheduledAudits": [toScheduledAuditMetadata],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "scheduledAudits": [toScheduledAuditMetadata],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listSecurityProfiles(
@@ -3273,15 +3013,13 @@ export default class Iot {
       method: "GET",
       requestUri: "/security-profiles",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "securityProfileIdentifiers": [toSecurityProfileIdentifier],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "securityProfileIdentifiers": [toSecurityProfileIdentifier],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listSecurityProfilesForTarget(
@@ -3298,15 +3036,13 @@ export default class Iot {
       method: "GET",
       requestUri: "/security-profiles-for-target",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "securityProfileTargetMappings": [toSecurityProfileTargetMapping],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "securityProfileTargetMappings": [toSecurityProfileTargetMapping],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listStreams(
@@ -3322,15 +3058,13 @@ export default class Iot {
       method: "GET",
       requestUri: "/streams",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "streams": [toStreamSummary],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "streams": [toStreamSummary],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listTagsForResource(
@@ -3345,15 +3079,13 @@ export default class Iot {
       method: "GET",
       requestUri: "/tags",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "tags": [toTag],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "tags": [toTag],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listTargetsForPolicy(
@@ -3367,15 +3099,13 @@ export default class Iot {
       action: "ListTargetsForPolicy",
       requestUri: cmnP.encodePath`/policy-targets/${params["policyName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "targets": ["s"],
-          "nextMarker": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "targets": ["s"],
+        "nextMarker": "s",
+      },
+    }, await resp.json());
   }
 
   async listTargetsForSecurityProfile(
@@ -3390,15 +3120,13 @@ export default class Iot {
       method: "GET",
       requestUri: cmnP.encodePath`/security-profiles/${params["securityProfileName"]}/targets`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "securityProfileTargets": [toSecurityProfileTarget],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "securityProfileTargets": [toSecurityProfileTarget],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listThingGroups(
@@ -3416,15 +3144,13 @@ export default class Iot {
       method: "GET",
       requestUri: "/thing-groups",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "thingGroups": [toGroupNameAndArn],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "thingGroups": [toGroupNameAndArn],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listThingGroupsForThing(
@@ -3439,15 +3165,13 @@ export default class Iot {
       method: "GET",
       requestUri: cmnP.encodePath`/things/${params["thingName"]}/thing-groups`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "thingGroups": [toGroupNameAndArn],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "thingGroups": [toGroupNameAndArn],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listThingPrincipals(
@@ -3460,14 +3184,12 @@ export default class Iot {
       method: "GET",
       requestUri: cmnP.encodePath`/things/${params["thingName"]}/principals`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "principals": ["s"],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "principals": ["s"],
+      },
+    }, await resp.json());
   }
 
   async listThingRegistrationTaskReports(
@@ -3483,16 +3205,14 @@ export default class Iot {
       method: "GET",
       requestUri: cmnP.encodePath`/thing-registration-tasks/${params["taskId"]}/reports`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "resourceLinks": ["s"],
-          "reportType": (x: jsonP.JSONValue) => cmnP.readEnum<ReportType>(x),
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "resourceLinks": ["s"],
+        "reportType": (x: jsonP.JSONValue) => cmnP.readEnum<ReportType>(x),
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listThingRegistrationTasks(
@@ -3508,15 +3228,13 @@ export default class Iot {
       method: "GET",
       requestUri: "/thing-registration-tasks",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "taskIds": ["s"],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "taskIds": ["s"],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listThingTypes(
@@ -3532,15 +3250,13 @@ export default class Iot {
       method: "GET",
       requestUri: "/thing-types",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "thingTypes": [toThingTypeDefinition],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "thingTypes": [toThingTypeDefinition],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listThings(
@@ -3558,15 +3274,13 @@ export default class Iot {
       method: "GET",
       requestUri: "/things",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "things": [toThingAttribute],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "things": [toThingAttribute],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listThingsInBillingGroup(
@@ -3581,15 +3295,13 @@ export default class Iot {
       method: "GET",
       requestUri: cmnP.encodePath`/billing-groups/${params["billingGroupName"]}/things`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "things": ["s"],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "things": ["s"],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listThingsInThingGroup(
@@ -3605,15 +3317,13 @@ export default class Iot {
       method: "GET",
       requestUri: cmnP.encodePath`/thing-groups/${params["thingGroupName"]}/things`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "things": ["s"],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "things": ["s"],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listTopicRuleDestinations(
@@ -3628,15 +3338,13 @@ export default class Iot {
       method: "GET",
       requestUri: "/destinations",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "destinationSummaries": [toTopicRuleDestinationSummary],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "destinationSummaries": [toTopicRuleDestinationSummary],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listTopicRules(
@@ -3653,15 +3361,13 @@ export default class Iot {
       method: "GET",
       requestUri: "/rules",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "rules": [toTopicRuleListItem],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "rules": [toTopicRuleListItem],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listV2LoggingLevels(
@@ -3677,15 +3383,13 @@ export default class Iot {
       method: "GET",
       requestUri: "/v2LoggingLevel",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "logTargetConfigurations": [toLogTargetConfiguration],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "logTargetConfigurations": [toLogTargetConfiguration],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listViolationEvents(
@@ -3704,123 +3408,113 @@ export default class Iot {
       method: "GET",
       requestUri: "/violation-events",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "violationEvents": [toViolationEvent],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "violationEvents": [toViolationEvent],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async registerCACertificate(
     {abortSignal, ...params}: RequestConfig & RegisterCACertificateRequest,
   ): Promise<RegisterCACertificateResponse> {
     const query = new URLSearchParams;
-    if (params["setAsActive"] != null) query.set("setAsActive", params["setAsActive"]?.toString() ?? "");
-    if (params["allowAutoRegistration"] != null) query.set("allowAutoRegistration", params["allowAutoRegistration"]?.toString() ?? "");
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       caCertificate: params["caCertificate"],
       verificationCertificate: params["verificationCertificate"],
       registrationConfig: fromRegistrationConfig(params["registrationConfig"]),
       tags: params["tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
+    if (params["setAsActive"] != null) query.set("setAsActive", params["setAsActive"]?.toString() ?? "");
+    if (params["allowAutoRegistration"] != null) query.set("allowAutoRegistration", params["allowAutoRegistration"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
       abortSignal, query, body,
       action: "RegisterCACertificate",
       requestUri: "/cacertificate",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "certificateArn": "s",
-          "certificateId": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "certificateArn": "s",
+        "certificateId": "s",
+      },
+    }, await resp.json());
   }
 
   async registerCertificate(
     {abortSignal, ...params}: RequestConfig & RegisterCertificateRequest,
   ): Promise<RegisterCertificateResponse> {
     const query = new URLSearchParams;
-    if (params["setAsActive"] != null) query.set("setAsActive", params["setAsActive"]?.toString() ?? "");
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       certificatePem: params["certificatePem"],
       caCertificatePem: params["caCertificatePem"],
       status: params["status"],
-    } : {};
+    };
+    if (params["setAsActive"] != null) query.set("setAsActive", params["setAsActive"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
       abortSignal, query, body,
       action: "RegisterCertificate",
       requestUri: "/certificate/register",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "certificateArn": "s",
-          "certificateId": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "certificateArn": "s",
+        "certificateId": "s",
+      },
+    }, await resp.json());
   }
 
   async registerCertificateWithoutCA(
     {abortSignal, ...params}: RequestConfig & RegisterCertificateWithoutCARequest,
   ): Promise<RegisterCertificateWithoutCAResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       certificatePem: params["certificatePem"],
       status: params["status"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RegisterCertificateWithoutCA",
       requestUri: "/certificate/register-no-ca",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "certificateArn": "s",
-          "certificateId": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "certificateArn": "s",
+        "certificateId": "s",
+      },
+    }, await resp.json());
   }
 
   async registerThing(
     {abortSignal, ...params}: RequestConfig & RegisterThingRequest,
   ): Promise<RegisterThingResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       templateBody: params["templateBody"],
       parameters: params["parameters"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RegisterThing",
       requestUri: "/things",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "certificatePem": "s",
-          "resourceArns": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "certificatePem": "s",
+        "resourceArns": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async rejectCertificateTransfer(
     {abortSignal, ...params}: RequestConfig & RejectCertificateTransferRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       rejectReason: params["rejectReason"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RejectCertificateTransfer",
@@ -3832,47 +3526,43 @@ export default class Iot {
   async removeThingFromBillingGroup(
     {abortSignal, ...params}: RequestConfig & RemoveThingFromBillingGroupRequest = {},
   ): Promise<RemoveThingFromBillingGroupResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       billingGroupName: params["billingGroupName"],
       billingGroupArn: params["billingGroupArn"],
       thingName: params["thingName"],
       thingArn: params["thingArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RemoveThingFromBillingGroup",
       method: "PUT",
       requestUri: "/billing-groups/removeThingFromBillingGroup",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async removeThingFromThingGroup(
     {abortSignal, ...params}: RequestConfig & RemoveThingFromThingGroupRequest = {},
   ): Promise<RemoveThingFromThingGroupResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       thingGroupName: params["thingGroupName"],
       thingGroupArn: params["thingGroupArn"],
       thingName: params["thingName"],
       thingArn: params["thingArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RemoveThingFromThingGroup",
       method: "PUT",
       requestUri: "/thing-groups/removeThingFromThingGroup",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async replaceTopicRule(
@@ -3898,50 +3588,46 @@ export default class Iot {
   async searchIndex(
     {abortSignal, ...params}: RequestConfig & SearchIndexRequest,
   ): Promise<SearchIndexResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       indexName: params["indexName"],
       queryString: params["queryString"],
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
       queryVersion: params["queryVersion"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SearchIndex",
       requestUri: "/indices/search",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "nextToken": "s",
-          "things": [toThingDocument],
-          "thingGroups": [toThingGroupDocument],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "nextToken": "s",
+        "things": [toThingDocument],
+        "thingGroups": [toThingGroupDocument],
+      },
+    }, await resp.json());
   }
 
   async setDefaultAuthorizer(
     {abortSignal, ...params}: RequestConfig & SetDefaultAuthorizerRequest,
   ): Promise<SetDefaultAuthorizerResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       authorizerName: params["authorizerName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SetDefaultAuthorizer",
       requestUri: "/default-authorizer",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "authorizerName": "s",
-          "authorizerArn": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "authorizerName": "s",
+        "authorizerArn": "s",
+      },
+    }, await resp.json());
   }
 
   async setDefaultPolicyVersion(
@@ -3974,10 +3660,10 @@ export default class Iot {
   async setV2LoggingLevel(
     {abortSignal, ...params}: RequestConfig & SetV2LoggingLevelRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       logTarget: fromLogTarget(params["logTarget"]),
       logLevel: params["logLevel"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SetV2LoggingLevel",
@@ -3988,11 +3674,11 @@ export default class Iot {
   async setV2LoggingOptions(
     {abortSignal, ...params}: RequestConfig & SetV2LoggingOptionsRequest = {},
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       roleArn: params["roleArn"],
       defaultLogLevel: params["defaultLogLevel"],
       disableAllLogs: params["disableAllLogs"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SetV2LoggingOptions",
@@ -4003,69 +3689,63 @@ export default class Iot {
   async startAuditMitigationActionsTask(
     {abortSignal, ...params}: RequestConfig & StartAuditMitigationActionsTaskRequest,
   ): Promise<StartAuditMitigationActionsTaskResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       target: fromAuditMitigationActionsTaskTarget(params["target"]),
       auditCheckToActionsMapping: params["auditCheckToActionsMapping"],
       clientRequestToken: params["clientRequestToken"] ?? generateIdemptToken(),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartAuditMitigationActionsTask",
       requestUri: cmnP.encodePath`/audit/mitigationactions/tasks/${params["taskId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "taskId": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "taskId": "s",
+      },
+    }, await resp.json());
   }
 
   async startOnDemandAuditTask(
     {abortSignal, ...params}: RequestConfig & StartOnDemandAuditTaskRequest,
   ): Promise<StartOnDemandAuditTaskResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       targetCheckNames: params["targetCheckNames"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartOnDemandAuditTask",
       requestUri: "/audit/tasks",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "taskId": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "taskId": "s",
+      },
+    }, await resp.json());
   }
 
   async startThingRegistrationTask(
     {abortSignal, ...params}: RequestConfig & StartThingRegistrationTaskRequest,
   ): Promise<StartThingRegistrationTaskResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       templateBody: params["templateBody"],
       inputFileBucket: params["inputFileBucket"],
       inputFileKey: params["inputFileKey"],
       roleArn: params["roleArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartThingRegistrationTask",
       requestUri: "/thing-registration-tasks",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "taskId": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "taskId": "s",
+      },
+    }, await resp.json());
   }
 
   async stopThingRegistrationTask(
@@ -4078,239 +3758,219 @@ export default class Iot {
       method: "PUT",
       requestUri: cmnP.encodePath`/thing-registration-tasks/${params["taskId"]}/cancel`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       resourceArn: params["resourceArn"],
       tags: params["tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
       requestUri: "/tags",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async testAuthorization(
     {abortSignal, ...params}: RequestConfig & TestAuthorizationRequest,
   ): Promise<TestAuthorizationResponse> {
     const query = new URLSearchParams;
-    if (params["clientId"] != null) query.set("clientId", params["clientId"]?.toString() ?? "");
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       principal: params["principal"],
       cognitoIdentityPoolId: params["cognitoIdentityPoolId"],
       authInfos: params["authInfos"]?.map(x => fromAuthInfo(x)),
       policyNamesToAdd: params["policyNamesToAdd"],
       policyNamesToSkip: params["policyNamesToSkip"],
-    } : {};
+    };
+    if (params["clientId"] != null) query.set("clientId", params["clientId"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
       abortSignal, query, body,
       action: "TestAuthorization",
       requestUri: "/test-authorization",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "authResults": [toAuthResult],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "authResults": [toAuthResult],
+      },
+    }, await resp.json());
   }
 
   async testInvokeAuthorizer(
     {abortSignal, ...params}: RequestConfig & TestInvokeAuthorizerRequest,
   ): Promise<TestInvokeAuthorizerResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       token: params["token"],
       tokenSignature: params["tokenSignature"],
       httpContext: fromHttpContext(params["httpContext"]),
       mqttContext: fromMqttContext(params["mqttContext"]),
       tlsContext: fromTlsContext(params["tlsContext"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TestInvokeAuthorizer",
       requestUri: cmnP.encodePath`/authorizer/${params["authorizerName"]}/test`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "isAuthenticated": "b",
-          "principalId": "s",
-          "policyDocuments": ["s"],
-          "refreshAfterInSeconds": "n",
-          "disconnectAfterInSeconds": "n",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "isAuthenticated": "b",
+        "principalId": "s",
+        "policyDocuments": ["s"],
+        "refreshAfterInSeconds": "n",
+        "disconnectAfterInSeconds": "n",
+      },
+    }, await resp.json());
   }
 
   async transferCertificate(
     {abortSignal, ...params}: RequestConfig & TransferCertificateRequest,
   ): Promise<TransferCertificateResponse> {
     const query = new URLSearchParams;
-    query.set("targetAwsAccount", params["targetAwsAccount"]?.toString() ?? "");
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       transferMessage: params["transferMessage"],
-    } : {};
+    };
+    query.set("targetAwsAccount", params["targetAwsAccount"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
       abortSignal, query, body,
       action: "TransferCertificate",
       method: "PATCH",
       requestUri: cmnP.encodePath`/transfer-certificate/${params["certificateId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "transferredCertificateArn": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "transferredCertificateArn": "s",
+      },
+    }, await resp.json());
   }
 
   async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceRequest,
   ): Promise<UntagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       resourceArn: params["resourceArn"],
       tagKeys: params["tagKeys"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResource",
       requestUri: "/untag",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async updateAccountAuditConfiguration(
     {abortSignal, ...params}: RequestConfig & UpdateAccountAuditConfigurationRequest = {},
   ): Promise<UpdateAccountAuditConfigurationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       roleArn: params["roleArn"],
       auditNotificationTargetConfigurations: jsonP.serializeMap(params["auditNotificationTargetConfigurations"], x => fromAuditNotificationTarget(x)),
       auditCheckConfigurations: jsonP.serializeMap(params["auditCheckConfigurations"], x => fromAuditCheckConfiguration(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateAccountAuditConfiguration",
       method: "PATCH",
       requestUri: "/audit/configuration",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async updateAuditSuppression(
     {abortSignal, ...params}: RequestConfig & UpdateAuditSuppressionRequest,
   ): Promise<UpdateAuditSuppressionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       checkName: params["checkName"],
       resourceIdentifier: fromResourceIdentifier(params["resourceIdentifier"]),
       expirationDate: jsonP.serializeDate_unixTimestamp(params["expirationDate"]),
       suppressIndefinitely: params["suppressIndefinitely"],
       description: params["description"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateAuditSuppression",
       method: "PATCH",
       requestUri: "/audit/suppressions/update",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async updateAuthorizer(
     {abortSignal, ...params}: RequestConfig & UpdateAuthorizerRequest,
   ): Promise<UpdateAuthorizerResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       authorizerFunctionArn: params["authorizerFunctionArn"],
       tokenKeyName: params["tokenKeyName"],
       tokenSigningPublicKeys: params["tokenSigningPublicKeys"],
       status: params["status"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateAuthorizer",
       method: "PUT",
       requestUri: cmnP.encodePath`/authorizer/${params["authorizerName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "authorizerName": "s",
-          "authorizerArn": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "authorizerName": "s",
+        "authorizerArn": "s",
+      },
+    }, await resp.json());
   }
 
   async updateBillingGroup(
     {abortSignal, ...params}: RequestConfig & UpdateBillingGroupRequest,
   ): Promise<UpdateBillingGroupResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       billingGroupProperties: fromBillingGroupProperties(params["billingGroupProperties"]),
       expectedVersion: params["expectedVersion"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateBillingGroup",
       method: "PATCH",
       requestUri: cmnP.encodePath`/billing-groups/${params["billingGroupName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "version": "n",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "version": "n",
+      },
+    }, await resp.json());
   }
 
   async updateCACertificate(
     {abortSignal, ...params}: RequestConfig & UpdateCACertificateRequest,
   ): Promise<void> {
     const query = new URLSearchParams;
-    if (params["newStatus"] != null) query.set("newStatus", params["newStatus"]?.toString() ?? "");
-    if (params["newAutoRegistrationStatus"] != null) query.set("newAutoRegistrationStatus", params["newAutoRegistrationStatus"]?.toString() ?? "");
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       registrationConfig: fromRegistrationConfig(params["registrationConfig"]),
       removeAutoRegistration: params["removeAutoRegistration"],
-    } : {};
+    };
+    if (params["newStatus"] != null) query.set("newStatus", params["newStatus"]?.toString() ?? "");
+    if (params["newAutoRegistrationStatus"] != null) query.set("newAutoRegistrationStatus", params["newAutoRegistrationStatus"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
       abortSignal, query, body,
       action: "UpdateCACertificate",
@@ -4335,133 +3995,123 @@ export default class Iot {
   async updateDimension(
     {abortSignal, ...params}: RequestConfig & UpdateDimensionRequest,
   ): Promise<UpdateDimensionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       stringValues: params["stringValues"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateDimension",
       method: "PATCH",
       requestUri: cmnP.encodePath`/dimensions/${params["name"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "name": "s",
-          "arn": "s",
-          "type": (x: jsonP.JSONValue) => cmnP.readEnum<DimensionType>(x),
-          "stringValues": ["s"],
-          "creationDate": "d",
-          "lastModifiedDate": "d",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "name": "s",
+        "arn": "s",
+        "type": (x: jsonP.JSONValue) => cmnP.readEnum<DimensionType>(x),
+        "stringValues": ["s"],
+        "creationDate": "d",
+        "lastModifiedDate": "d",
+      },
+    }, await resp.json());
   }
 
   async updateDomainConfiguration(
     {abortSignal, ...params}: RequestConfig & UpdateDomainConfigurationRequest,
   ): Promise<UpdateDomainConfigurationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       authorizerConfig: fromAuthorizerConfig(params["authorizerConfig"]),
       domainConfigurationStatus: params["domainConfigurationStatus"],
       removeAuthorizerConfig: params["removeAuthorizerConfig"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateDomainConfiguration",
       method: "PUT",
       requestUri: cmnP.encodePath`/domainConfigurations/${params["domainConfigurationName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "domainConfigurationName": "s",
-          "domainConfigurationArn": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "domainConfigurationName": "s",
+        "domainConfigurationArn": "s",
+      },
+    }, await resp.json());
   }
 
   async updateDynamicThingGroup(
     {abortSignal, ...params}: RequestConfig & UpdateDynamicThingGroupRequest,
   ): Promise<UpdateDynamicThingGroupResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       thingGroupProperties: fromThingGroupProperties(params["thingGroupProperties"]),
       expectedVersion: params["expectedVersion"],
       indexName: params["indexName"],
       queryString: params["queryString"],
       queryVersion: params["queryVersion"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateDynamicThingGroup",
       method: "PATCH",
       requestUri: cmnP.encodePath`/dynamic-thing-groups/${params["thingGroupName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "version": "n",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "version": "n",
+      },
+    }, await resp.json());
   }
 
   async updateEventConfigurations(
     {abortSignal, ...params}: RequestConfig & UpdateEventConfigurationsRequest = {},
   ): Promise<UpdateEventConfigurationsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       eventConfigurations: jsonP.serializeMap(params["eventConfigurations"], x => fromConfiguration(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateEventConfigurations",
       method: "PATCH",
       requestUri: "/event-configurations",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async updateIndexingConfiguration(
     {abortSignal, ...params}: RequestConfig & UpdateIndexingConfigurationRequest = {},
   ): Promise<UpdateIndexingConfigurationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       thingIndexingConfiguration: fromThingIndexingConfiguration(params["thingIndexingConfiguration"]),
       thingGroupIndexingConfiguration: fromThingGroupIndexingConfiguration(params["thingGroupIndexingConfiguration"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateIndexingConfiguration",
       requestUri: "/indexing/config",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async updateJob(
     {abortSignal, ...params}: RequestConfig & UpdateJobRequest,
   ): Promise<void> {
     const query = new URLSearchParams;
-    if (params["namespaceId"] != null) query.set("namespaceId", params["namespaceId"]?.toString() ?? "");
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       description: params["description"],
       presignedUrlConfig: fromPresignedUrlConfig(params["presignedUrlConfig"]),
       jobExecutionsRolloutConfig: fromJobExecutionsRolloutConfig(params["jobExecutionsRolloutConfig"]),
       abortConfig: fromAbortConfig(params["abortConfig"]),
       timeoutConfig: fromTimeoutConfig(params["timeoutConfig"]),
-    } : {};
+    };
+    if (params["namespaceId"] != null) query.set("namespaceId", params["namespaceId"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
       abortSignal, query, body,
       action: "UpdateJob",
@@ -4473,107 +4123,98 @@ export default class Iot {
   async updateMitigationAction(
     {abortSignal, ...params}: RequestConfig & UpdateMitigationActionRequest,
   ): Promise<UpdateMitigationActionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       roleArn: params["roleArn"],
       actionParams: fromMitigationActionParams(params["actionParams"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateMitigationAction",
       method: "PATCH",
       requestUri: cmnP.encodePath`/mitigationactions/actions/${params["actionName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "actionArn": "s",
-          "actionId": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "actionArn": "s",
+        "actionId": "s",
+      },
+    }, await resp.json());
   }
 
   async updateProvisioningTemplate(
     {abortSignal, ...params}: RequestConfig & UpdateProvisioningTemplateRequest,
   ): Promise<UpdateProvisioningTemplateResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       description: params["description"],
       enabled: params["enabled"],
       defaultVersionId: params["defaultVersionId"],
       provisioningRoleArn: params["provisioningRoleArn"],
       preProvisioningHook: fromProvisioningHook(params["preProvisioningHook"]),
       removePreProvisioningHook: params["removePreProvisioningHook"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateProvisioningTemplate",
       method: "PATCH",
       requestUri: cmnP.encodePath`/provisioning-templates/${params["templateName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async updateRoleAlias(
     {abortSignal, ...params}: RequestConfig & UpdateRoleAliasRequest,
   ): Promise<UpdateRoleAliasResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       roleArn: params["roleArn"],
       credentialDurationSeconds: params["credentialDurationSeconds"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateRoleAlias",
       method: "PUT",
       requestUri: cmnP.encodePath`/role-aliases/${params["roleAlias"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "roleAlias": "s",
-          "roleAliasArn": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "roleAlias": "s",
+        "roleAliasArn": "s",
+      },
+    }, await resp.json());
   }
 
   async updateScheduledAudit(
     {abortSignal, ...params}: RequestConfig & UpdateScheduledAuditRequest,
   ): Promise<UpdateScheduledAuditResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       frequency: params["frequency"],
       dayOfMonth: params["dayOfMonth"],
       dayOfWeek: params["dayOfWeek"],
       targetCheckNames: params["targetCheckNames"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateScheduledAudit",
       method: "PATCH",
       requestUri: cmnP.encodePath`/audit/scheduledaudits/${params["scheduledAuditName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "scheduledAuditArn": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "scheduledAuditArn": "s",
+      },
+    }, await resp.json());
   }
 
   async updateSecurityProfile(
     {abortSignal, ...params}: RequestConfig & UpdateSecurityProfileRequest,
   ): Promise<UpdateSecurityProfileResponse> {
     const query = new URLSearchParams;
-    if (params["expectedVersion"] != null) query.set("expectedVersion", params["expectedVersion"]?.toString() ?? "");
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       securityProfileDescription: params["securityProfileDescription"],
       behaviors: params["behaviors"]?.map(x => fromBehavior(x)),
       alertTargets: jsonP.serializeMap(params["alertTargets"], x => fromAlertTarget(x)),
@@ -4582,169 +4223,156 @@ export default class Iot {
       deleteBehaviors: params["deleteBehaviors"],
       deleteAlertTargets: params["deleteAlertTargets"],
       deleteAdditionalMetricsToRetain: params["deleteAdditionalMetricsToRetain"],
-    } : {};
+    };
+    if (params["expectedVersion"] != null) query.set("expectedVersion", params["expectedVersion"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
       abortSignal, query, body,
       action: "UpdateSecurityProfile",
       method: "PATCH",
       requestUri: cmnP.encodePath`/security-profiles/${params["securityProfileName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "securityProfileName": "s",
-          "securityProfileArn": "s",
-          "securityProfileDescription": "s",
-          "behaviors": [toBehavior],
-          "alertTargets": x => jsonP.readMap(x => cmnP.readEnumReq<AlertTargetType>(x), toAlertTarget, x),
-          "additionalMetricsToRetain": ["s"],
-          "additionalMetricsToRetainV2": [toMetricToRetain],
-          "version": "n",
-          "creationDate": "d",
-          "lastModifiedDate": "d",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "securityProfileName": "s",
+        "securityProfileArn": "s",
+        "securityProfileDescription": "s",
+        "behaviors": [toBehavior],
+        "alertTargets": x => jsonP.readMap(x => cmnP.readEnumReq<AlertTargetType>(x), toAlertTarget, x),
+        "additionalMetricsToRetain": ["s"],
+        "additionalMetricsToRetainV2": [toMetricToRetain],
+        "version": "n",
+        "creationDate": "d",
+        "lastModifiedDate": "d",
+      },
+    }, await resp.json());
   }
 
   async updateStream(
     {abortSignal, ...params}: RequestConfig & UpdateStreamRequest,
   ): Promise<UpdateStreamResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       description: params["description"],
       files: params["files"]?.map(x => fromStreamFile(x)),
       roleArn: params["roleArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateStream",
       method: "PUT",
       requestUri: cmnP.encodePath`/streams/${params["streamId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "streamId": "s",
-          "streamArn": "s",
-          "description": "s",
-          "streamVersion": "n",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "streamId": "s",
+        "streamArn": "s",
+        "description": "s",
+        "streamVersion": "n",
+      },
+    }, await resp.json());
   }
 
   async updateThing(
     {abortSignal, ...params}: RequestConfig & UpdateThingRequest,
   ): Promise<UpdateThingResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       thingTypeName: params["thingTypeName"],
       attributePayload: fromAttributePayload(params["attributePayload"]),
       expectedVersion: params["expectedVersion"],
       removeThingType: params["removeThingType"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateThing",
       method: "PATCH",
       requestUri: cmnP.encodePath`/things/${params["thingName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async updateThingGroup(
     {abortSignal, ...params}: RequestConfig & UpdateThingGroupRequest,
   ): Promise<UpdateThingGroupResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       thingGroupProperties: fromThingGroupProperties(params["thingGroupProperties"]),
       expectedVersion: params["expectedVersion"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateThingGroup",
       method: "PATCH",
       requestUri: cmnP.encodePath`/thing-groups/${params["thingGroupName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "version": "n",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "version": "n",
+      },
+    }, await resp.json());
   }
 
   async updateThingGroupsForThing(
     {abortSignal, ...params}: RequestConfig & UpdateThingGroupsForThingRequest = {},
   ): Promise<UpdateThingGroupsForThingResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       thingName: params["thingName"],
       thingGroupsToAdd: params["thingGroupsToAdd"],
       thingGroupsToRemove: params["thingGroupsToRemove"],
       overrideDynamicGroups: params["overrideDynamicGroups"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateThingGroupsForThing",
       method: "PUT",
       requestUri: "/thing-groups/updateThingGroupsForThing",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async updateTopicRuleDestination(
     {abortSignal, ...params}: RequestConfig & UpdateTopicRuleDestinationRequest,
   ): Promise<UpdateTopicRuleDestinationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       arn: params["arn"],
       status: params["status"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateTopicRuleDestination",
       method: "PATCH",
       requestUri: "/destinations",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async validateSecurityProfileBehaviors(
     {abortSignal, ...params}: RequestConfig & ValidateSecurityProfileBehaviorsRequest,
   ): Promise<ValidateSecurityProfileBehaviorsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       behaviors: params["behaviors"]?.map(x => fromBehavior(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ValidateSecurityProfileBehaviors",
       requestUri: "/security-profile-behaviors/validate",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "valid": "b",
-          "validationErrors": [toValidationError],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "valid": "b",
+        "validationErrors": [toValidationError],
+      },
+    }, await resp.json());
   }
 
 }

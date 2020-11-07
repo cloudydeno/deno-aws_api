@@ -34,356 +34,328 @@ export default class RoboMaker {
   async batchDeleteWorlds(
     {abortSignal, ...params}: RequestConfig & BatchDeleteWorldsRequest,
   ): Promise<BatchDeleteWorldsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       worlds: params["worlds"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchDeleteWorlds",
       requestUri: "/batchDeleteWorlds",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "unprocessedWorlds": ["s"],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "unprocessedWorlds": ["s"],
+      },
+    }, await resp.json());
   }
 
   async batchDescribeSimulationJob(
     {abortSignal, ...params}: RequestConfig & BatchDescribeSimulationJobRequest,
   ): Promise<BatchDescribeSimulationJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       jobs: params["jobs"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchDescribeSimulationJob",
       requestUri: "/batchDescribeSimulationJob",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "jobs": [toSimulationJob],
-          "unprocessedJobs": ["s"],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "jobs": [toSimulationJob],
+        "unprocessedJobs": ["s"],
+      },
+    }, await resp.json());
   }
 
   async cancelDeploymentJob(
     {abortSignal, ...params}: RequestConfig & CancelDeploymentJobRequest,
   ): Promise<CancelDeploymentJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       job: params["job"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CancelDeploymentJob",
       requestUri: "/cancelDeploymentJob",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async cancelSimulationJob(
     {abortSignal, ...params}: RequestConfig & CancelSimulationJobRequest,
   ): Promise<CancelSimulationJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       job: params["job"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CancelSimulationJob",
       requestUri: "/cancelSimulationJob",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async cancelSimulationJobBatch(
     {abortSignal, ...params}: RequestConfig & CancelSimulationJobBatchRequest,
   ): Promise<CancelSimulationJobBatchResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       batch: params["batch"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CancelSimulationJobBatch",
       requestUri: "/cancelSimulationJobBatch",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async cancelWorldExportJob(
     {abortSignal, ...params}: RequestConfig & CancelWorldExportJobRequest,
   ): Promise<CancelWorldExportJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       job: params["job"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CancelWorldExportJob",
       requestUri: "/cancelWorldExportJob",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async cancelWorldGenerationJob(
     {abortSignal, ...params}: RequestConfig & CancelWorldGenerationJobRequest,
   ): Promise<CancelWorldGenerationJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       job: params["job"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CancelWorldGenerationJob",
       requestUri: "/cancelWorldGenerationJob",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async createDeploymentJob(
     {abortSignal, ...params}: RequestConfig & CreateDeploymentJobRequest,
   ): Promise<CreateDeploymentJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       deploymentConfig: fromDeploymentConfig(params["deploymentConfig"]),
       clientRequestToken: params["clientRequestToken"] ?? generateIdemptToken(),
       fleet: params["fleet"],
       deploymentApplicationConfigs: params["deploymentApplicationConfigs"]?.map(x => fromDeploymentApplicationConfig(x)),
       tags: params["tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDeploymentJob",
       requestUri: "/createDeploymentJob",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "arn": "s",
-          "fleet": "s",
-          "status": (x: jsonP.JSONValue) => cmnP.readEnum<DeploymentStatus>(x),
-          "deploymentApplicationConfigs": [toDeploymentApplicationConfig],
-          "failureReason": "s",
-          "failureCode": (x: jsonP.JSONValue) => cmnP.readEnum<DeploymentJobErrorCode>(x),
-          "createdAt": "d",
-          "deploymentConfig": toDeploymentConfig,
-          "tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "arn": "s",
+        "fleet": "s",
+        "status": (x: jsonP.JSONValue) => cmnP.readEnum<DeploymentStatus>(x),
+        "deploymentApplicationConfigs": [toDeploymentApplicationConfig],
+        "failureReason": "s",
+        "failureCode": (x: jsonP.JSONValue) => cmnP.readEnum<DeploymentJobErrorCode>(x),
+        "createdAt": "d",
+        "deploymentConfig": toDeploymentConfig,
+        "tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async createFleet(
     {abortSignal, ...params}: RequestConfig & CreateFleetRequest,
   ): Promise<CreateFleetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       name: params["name"],
       tags: params["tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateFleet",
       requestUri: "/createFleet",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "arn": "s",
-          "name": "s",
-          "createdAt": "d",
-          "tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "arn": "s",
+        "name": "s",
+        "createdAt": "d",
+        "tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async createRobot(
     {abortSignal, ...params}: RequestConfig & CreateRobotRequest,
   ): Promise<CreateRobotResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       name: params["name"],
       architecture: params["architecture"],
       greengrassGroupId: params["greengrassGroupId"],
       tags: params["tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateRobot",
       requestUri: "/createRobot",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "arn": "s",
-          "name": "s",
-          "createdAt": "d",
-          "greengrassGroupId": "s",
-          "architecture": (x: jsonP.JSONValue) => cmnP.readEnum<Architecture>(x),
-          "tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "arn": "s",
+        "name": "s",
+        "createdAt": "d",
+        "greengrassGroupId": "s",
+        "architecture": (x: jsonP.JSONValue) => cmnP.readEnum<Architecture>(x),
+        "tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async createRobotApplication(
     {abortSignal, ...params}: RequestConfig & CreateRobotApplicationRequest,
   ): Promise<CreateRobotApplicationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       name: params["name"],
       sources: params["sources"]?.map(x => fromSourceConfig(x)),
       robotSoftwareSuite: fromRobotSoftwareSuite(params["robotSoftwareSuite"]),
       tags: params["tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateRobotApplication",
       requestUri: "/createRobotApplication",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "arn": "s",
-          "name": "s",
-          "version": "s",
-          "sources": [toSource],
-          "robotSoftwareSuite": toRobotSoftwareSuite,
-          "lastUpdatedAt": "d",
-          "revisionId": "s",
-          "tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "arn": "s",
+        "name": "s",
+        "version": "s",
+        "sources": [toSource],
+        "robotSoftwareSuite": toRobotSoftwareSuite,
+        "lastUpdatedAt": "d",
+        "revisionId": "s",
+        "tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async createRobotApplicationVersion(
     {abortSignal, ...params}: RequestConfig & CreateRobotApplicationVersionRequest,
   ): Promise<CreateRobotApplicationVersionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       application: params["application"],
       currentRevisionId: params["currentRevisionId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateRobotApplicationVersion",
       requestUri: "/createRobotApplicationVersion",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "arn": "s",
-          "name": "s",
-          "version": "s",
-          "sources": [toSource],
-          "robotSoftwareSuite": toRobotSoftwareSuite,
-          "lastUpdatedAt": "d",
-          "revisionId": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "arn": "s",
+        "name": "s",
+        "version": "s",
+        "sources": [toSource],
+        "robotSoftwareSuite": toRobotSoftwareSuite,
+        "lastUpdatedAt": "d",
+        "revisionId": "s",
+      },
+    }, await resp.json());
   }
 
   async createSimulationApplication(
     {abortSignal, ...params}: RequestConfig & CreateSimulationApplicationRequest,
   ): Promise<CreateSimulationApplicationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       name: params["name"],
       sources: params["sources"]?.map(x => fromSourceConfig(x)),
       simulationSoftwareSuite: fromSimulationSoftwareSuite(params["simulationSoftwareSuite"]),
       robotSoftwareSuite: fromRobotSoftwareSuite(params["robotSoftwareSuite"]),
       renderingEngine: fromRenderingEngine(params["renderingEngine"]),
       tags: params["tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateSimulationApplication",
       requestUri: "/createSimulationApplication",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "arn": "s",
-          "name": "s",
-          "version": "s",
-          "sources": [toSource],
-          "simulationSoftwareSuite": toSimulationSoftwareSuite,
-          "robotSoftwareSuite": toRobotSoftwareSuite,
-          "renderingEngine": toRenderingEngine,
-          "lastUpdatedAt": "d",
-          "revisionId": "s",
-          "tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "arn": "s",
+        "name": "s",
+        "version": "s",
+        "sources": [toSource],
+        "simulationSoftwareSuite": toSimulationSoftwareSuite,
+        "robotSoftwareSuite": toRobotSoftwareSuite,
+        "renderingEngine": toRenderingEngine,
+        "lastUpdatedAt": "d",
+        "revisionId": "s",
+        "tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async createSimulationApplicationVersion(
     {abortSignal, ...params}: RequestConfig & CreateSimulationApplicationVersionRequest,
   ): Promise<CreateSimulationApplicationVersionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       application: params["application"],
       currentRevisionId: params["currentRevisionId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateSimulationApplicationVersion",
       requestUri: "/createSimulationApplicationVersion",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "arn": "s",
-          "name": "s",
-          "version": "s",
-          "sources": [toSource],
-          "simulationSoftwareSuite": toSimulationSoftwareSuite,
-          "robotSoftwareSuite": toRobotSoftwareSuite,
-          "renderingEngine": toRenderingEngine,
-          "lastUpdatedAt": "d",
-          "revisionId": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "arn": "s",
+        "name": "s",
+        "version": "s",
+        "sources": [toSource],
+        "simulationSoftwareSuite": toSimulationSoftwareSuite,
+        "robotSoftwareSuite": toRobotSoftwareSuite,
+        "renderingEngine": toRenderingEngine,
+        "lastUpdatedAt": "d",
+        "revisionId": "s",
+      },
+    }, await resp.json());
   }
 
   async createSimulationJob(
     {abortSignal, ...params}: RequestConfig & CreateSimulationJobRequest,
   ): Promise<CreateSimulationJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       clientRequestToken: params["clientRequestToken"] ?? generateIdemptToken(),
       outputLocation: fromOutputLocation(params["outputLocation"]),
       loggingConfig: fromLoggingConfig(params["loggingConfig"]),
@@ -396,774 +368,716 @@ export default class RoboMaker {
       tags: params["tags"],
       vpcConfig: fromVPCConfig(params["vpcConfig"]),
       compute: fromCompute(params["compute"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateSimulationJob",
       requestUri: "/createSimulationJob",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "arn": "s",
-          "status": (x: jsonP.JSONValue) => cmnP.readEnum<SimulationJobStatus>(x),
-          "lastStartedAt": "d",
-          "lastUpdatedAt": "d",
-          "failureBehavior": (x: jsonP.JSONValue) => cmnP.readEnum<FailureBehavior>(x),
-          "failureCode": (x: jsonP.JSONValue) => cmnP.readEnum<SimulationJobErrorCode>(x),
-          "clientRequestToken": "s",
-          "outputLocation": toOutputLocation,
-          "loggingConfig": toLoggingConfig,
-          "maxJobDurationInSeconds": "n",
-          "simulationTimeMillis": "n",
-          "iamRole": "s",
-          "robotApplications": [toRobotApplicationConfig],
-          "simulationApplications": [toSimulationApplicationConfig],
-          "dataSources": [toDataSource],
-          "tags": x => jsonP.readMap(String, String, x),
-          "vpcConfig": toVPCConfigResponse,
-          "compute": toComputeResponse,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "arn": "s",
+        "status": (x: jsonP.JSONValue) => cmnP.readEnum<SimulationJobStatus>(x),
+        "lastStartedAt": "d",
+        "lastUpdatedAt": "d",
+        "failureBehavior": (x: jsonP.JSONValue) => cmnP.readEnum<FailureBehavior>(x),
+        "failureCode": (x: jsonP.JSONValue) => cmnP.readEnum<SimulationJobErrorCode>(x),
+        "clientRequestToken": "s",
+        "outputLocation": toOutputLocation,
+        "loggingConfig": toLoggingConfig,
+        "maxJobDurationInSeconds": "n",
+        "simulationTimeMillis": "n",
+        "iamRole": "s",
+        "robotApplications": [toRobotApplicationConfig],
+        "simulationApplications": [toSimulationApplicationConfig],
+        "dataSources": [toDataSource],
+        "tags": x => jsonP.readMap(String, String, x),
+        "vpcConfig": toVPCConfigResponse,
+        "compute": toComputeResponse,
+      },
+    }, await resp.json());
   }
 
   async createWorldExportJob(
     {abortSignal, ...params}: RequestConfig & CreateWorldExportJobRequest,
   ): Promise<CreateWorldExportJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       clientRequestToken: params["clientRequestToken"] ?? generateIdemptToken(),
       worlds: params["worlds"],
       outputLocation: fromOutputLocation(params["outputLocation"]),
       iamRole: params["iamRole"],
       tags: params["tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateWorldExportJob",
       requestUri: "/createWorldExportJob",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "arn": "s",
-          "status": (x: jsonP.JSONValue) => cmnP.readEnum<WorldExportJobStatus>(x),
-          "createdAt": "d",
-          "failureCode": (x: jsonP.JSONValue) => cmnP.readEnum<WorldExportJobErrorCode>(x),
-          "clientRequestToken": "s",
-          "outputLocation": toOutputLocation,
-          "iamRole": "s",
-          "tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "arn": "s",
+        "status": (x: jsonP.JSONValue) => cmnP.readEnum<WorldExportJobStatus>(x),
+        "createdAt": "d",
+        "failureCode": (x: jsonP.JSONValue) => cmnP.readEnum<WorldExportJobErrorCode>(x),
+        "clientRequestToken": "s",
+        "outputLocation": toOutputLocation,
+        "iamRole": "s",
+        "tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async createWorldGenerationJob(
     {abortSignal, ...params}: RequestConfig & CreateWorldGenerationJobRequest,
   ): Promise<CreateWorldGenerationJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       clientRequestToken: params["clientRequestToken"] ?? generateIdemptToken(),
       template: params["template"],
       worldCount: fromWorldCount(params["worldCount"]),
       tags: params["tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateWorldGenerationJob",
       requestUri: "/createWorldGenerationJob",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "arn": "s",
-          "status": (x: jsonP.JSONValue) => cmnP.readEnum<WorldGenerationJobStatus>(x),
-          "createdAt": "d",
-          "failureCode": (x: jsonP.JSONValue) => cmnP.readEnum<WorldGenerationJobErrorCode>(x),
-          "clientRequestToken": "s",
-          "template": "s",
-          "worldCount": toWorldCount,
-          "tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "arn": "s",
+        "status": (x: jsonP.JSONValue) => cmnP.readEnum<WorldGenerationJobStatus>(x),
+        "createdAt": "d",
+        "failureCode": (x: jsonP.JSONValue) => cmnP.readEnum<WorldGenerationJobErrorCode>(x),
+        "clientRequestToken": "s",
+        "template": "s",
+        "worldCount": toWorldCount,
+        "tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async createWorldTemplate(
     {abortSignal, ...params}: RequestConfig & CreateWorldTemplateRequest = {},
   ): Promise<CreateWorldTemplateResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       clientRequestToken: params["clientRequestToken"],
       name: params["name"],
       templateBody: params["templateBody"],
       templateLocation: fromTemplateLocation(params["templateLocation"]),
       tags: params["tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateWorldTemplate",
       requestUri: "/createWorldTemplate",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "arn": "s",
-          "clientRequestToken": "s",
-          "createdAt": "d",
-          "name": "s",
-          "tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "arn": "s",
+        "clientRequestToken": "s",
+        "createdAt": "d",
+        "name": "s",
+        "tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async deleteFleet(
     {abortSignal, ...params}: RequestConfig & DeleteFleetRequest,
   ): Promise<DeleteFleetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       fleet: params["fleet"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteFleet",
       requestUri: "/deleteFleet",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async deleteRobot(
     {abortSignal, ...params}: RequestConfig & DeleteRobotRequest,
   ): Promise<DeleteRobotResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       robot: params["robot"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteRobot",
       requestUri: "/deleteRobot",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async deleteRobotApplication(
     {abortSignal, ...params}: RequestConfig & DeleteRobotApplicationRequest,
   ): Promise<DeleteRobotApplicationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       application: params["application"],
       applicationVersion: params["applicationVersion"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteRobotApplication",
       requestUri: "/deleteRobotApplication",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async deleteSimulationApplication(
     {abortSignal, ...params}: RequestConfig & DeleteSimulationApplicationRequest,
   ): Promise<DeleteSimulationApplicationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       application: params["application"],
       applicationVersion: params["applicationVersion"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteSimulationApplication",
       requestUri: "/deleteSimulationApplication",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async deleteWorldTemplate(
     {abortSignal, ...params}: RequestConfig & DeleteWorldTemplateRequest,
   ): Promise<DeleteWorldTemplateResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       template: params["template"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteWorldTemplate",
       requestUri: "/deleteWorldTemplate",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async deregisterRobot(
     {abortSignal, ...params}: RequestConfig & DeregisterRobotRequest,
   ): Promise<DeregisterRobotResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       fleet: params["fleet"],
       robot: params["robot"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeregisterRobot",
       requestUri: "/deregisterRobot",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "fleet": "s",
-          "robot": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "fleet": "s",
+        "robot": "s",
+      },
+    }, await resp.json());
   }
 
   async describeDeploymentJob(
     {abortSignal, ...params}: RequestConfig & DescribeDeploymentJobRequest,
   ): Promise<DescribeDeploymentJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       job: params["job"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeDeploymentJob",
       requestUri: "/describeDeploymentJob",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "arn": "s",
-          "fleet": "s",
-          "status": (x: jsonP.JSONValue) => cmnP.readEnum<DeploymentStatus>(x),
-          "deploymentConfig": toDeploymentConfig,
-          "deploymentApplicationConfigs": [toDeploymentApplicationConfig],
-          "failureReason": "s",
-          "failureCode": (x: jsonP.JSONValue) => cmnP.readEnum<DeploymentJobErrorCode>(x),
-          "createdAt": "d",
-          "robotDeploymentSummary": [toRobotDeployment],
-          "tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "arn": "s",
+        "fleet": "s",
+        "status": (x: jsonP.JSONValue) => cmnP.readEnum<DeploymentStatus>(x),
+        "deploymentConfig": toDeploymentConfig,
+        "deploymentApplicationConfigs": [toDeploymentApplicationConfig],
+        "failureReason": "s",
+        "failureCode": (x: jsonP.JSONValue) => cmnP.readEnum<DeploymentJobErrorCode>(x),
+        "createdAt": "d",
+        "robotDeploymentSummary": [toRobotDeployment],
+        "tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async describeFleet(
     {abortSignal, ...params}: RequestConfig & DescribeFleetRequest,
   ): Promise<DescribeFleetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       fleet: params["fleet"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeFleet",
       requestUri: "/describeFleet",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "name": "s",
-          "arn": "s",
-          "robots": [toRobot],
-          "createdAt": "d",
-          "lastDeploymentStatus": (x: jsonP.JSONValue) => cmnP.readEnum<DeploymentStatus>(x),
-          "lastDeploymentJob": "s",
-          "lastDeploymentTime": "d",
-          "tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "name": "s",
+        "arn": "s",
+        "robots": [toRobot],
+        "createdAt": "d",
+        "lastDeploymentStatus": (x: jsonP.JSONValue) => cmnP.readEnum<DeploymentStatus>(x),
+        "lastDeploymentJob": "s",
+        "lastDeploymentTime": "d",
+        "tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async describeRobot(
     {abortSignal, ...params}: RequestConfig & DescribeRobotRequest,
   ): Promise<DescribeRobotResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       robot: params["robot"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeRobot",
       requestUri: "/describeRobot",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "arn": "s",
-          "name": "s",
-          "fleetArn": "s",
-          "status": (x: jsonP.JSONValue) => cmnP.readEnum<RobotStatus>(x),
-          "greengrassGroupId": "s",
-          "createdAt": "d",
-          "architecture": (x: jsonP.JSONValue) => cmnP.readEnum<Architecture>(x),
-          "lastDeploymentJob": "s",
-          "lastDeploymentTime": "d",
-          "tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "arn": "s",
+        "name": "s",
+        "fleetArn": "s",
+        "status": (x: jsonP.JSONValue) => cmnP.readEnum<RobotStatus>(x),
+        "greengrassGroupId": "s",
+        "createdAt": "d",
+        "architecture": (x: jsonP.JSONValue) => cmnP.readEnum<Architecture>(x),
+        "lastDeploymentJob": "s",
+        "lastDeploymentTime": "d",
+        "tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async describeRobotApplication(
     {abortSignal, ...params}: RequestConfig & DescribeRobotApplicationRequest,
   ): Promise<DescribeRobotApplicationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       application: params["application"],
       applicationVersion: params["applicationVersion"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeRobotApplication",
       requestUri: "/describeRobotApplication",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "arn": "s",
-          "name": "s",
-          "version": "s",
-          "sources": [toSource],
-          "robotSoftwareSuite": toRobotSoftwareSuite,
-          "revisionId": "s",
-          "lastUpdatedAt": "d",
-          "tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "arn": "s",
+        "name": "s",
+        "version": "s",
+        "sources": [toSource],
+        "robotSoftwareSuite": toRobotSoftwareSuite,
+        "revisionId": "s",
+        "lastUpdatedAt": "d",
+        "tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async describeSimulationApplication(
     {abortSignal, ...params}: RequestConfig & DescribeSimulationApplicationRequest,
   ): Promise<DescribeSimulationApplicationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       application: params["application"],
       applicationVersion: params["applicationVersion"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeSimulationApplication",
       requestUri: "/describeSimulationApplication",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "arn": "s",
-          "name": "s",
-          "version": "s",
-          "sources": [toSource],
-          "simulationSoftwareSuite": toSimulationSoftwareSuite,
-          "robotSoftwareSuite": toRobotSoftwareSuite,
-          "renderingEngine": toRenderingEngine,
-          "revisionId": "s",
-          "lastUpdatedAt": "d",
-          "tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "arn": "s",
+        "name": "s",
+        "version": "s",
+        "sources": [toSource],
+        "simulationSoftwareSuite": toSimulationSoftwareSuite,
+        "robotSoftwareSuite": toRobotSoftwareSuite,
+        "renderingEngine": toRenderingEngine,
+        "revisionId": "s",
+        "lastUpdatedAt": "d",
+        "tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async describeSimulationJob(
     {abortSignal, ...params}: RequestConfig & DescribeSimulationJobRequest,
   ): Promise<DescribeSimulationJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       job: params["job"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeSimulationJob",
       requestUri: "/describeSimulationJob",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "arn": "s",
-          "name": "s",
-          "status": (x: jsonP.JSONValue) => cmnP.readEnum<SimulationJobStatus>(x),
-          "lastStartedAt": "d",
-          "lastUpdatedAt": "d",
-          "failureBehavior": (x: jsonP.JSONValue) => cmnP.readEnum<FailureBehavior>(x),
-          "failureCode": (x: jsonP.JSONValue) => cmnP.readEnum<SimulationJobErrorCode>(x),
-          "failureReason": "s",
-          "clientRequestToken": "s",
-          "outputLocation": toOutputLocation,
-          "loggingConfig": toLoggingConfig,
-          "maxJobDurationInSeconds": "n",
-          "simulationTimeMillis": "n",
-          "iamRole": "s",
-          "robotApplications": [toRobotApplicationConfig],
-          "simulationApplications": [toSimulationApplicationConfig],
-          "dataSources": [toDataSource],
-          "tags": x => jsonP.readMap(String, String, x),
-          "vpcConfig": toVPCConfigResponse,
-          "networkInterface": toNetworkInterface,
-          "compute": toComputeResponse,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "arn": "s",
+        "name": "s",
+        "status": (x: jsonP.JSONValue) => cmnP.readEnum<SimulationJobStatus>(x),
+        "lastStartedAt": "d",
+        "lastUpdatedAt": "d",
+        "failureBehavior": (x: jsonP.JSONValue) => cmnP.readEnum<FailureBehavior>(x),
+        "failureCode": (x: jsonP.JSONValue) => cmnP.readEnum<SimulationJobErrorCode>(x),
+        "failureReason": "s",
+        "clientRequestToken": "s",
+        "outputLocation": toOutputLocation,
+        "loggingConfig": toLoggingConfig,
+        "maxJobDurationInSeconds": "n",
+        "simulationTimeMillis": "n",
+        "iamRole": "s",
+        "robotApplications": [toRobotApplicationConfig],
+        "simulationApplications": [toSimulationApplicationConfig],
+        "dataSources": [toDataSource],
+        "tags": x => jsonP.readMap(String, String, x),
+        "vpcConfig": toVPCConfigResponse,
+        "networkInterface": toNetworkInterface,
+        "compute": toComputeResponse,
+      },
+    }, await resp.json());
   }
 
   async describeSimulationJobBatch(
     {abortSignal, ...params}: RequestConfig & DescribeSimulationJobBatchRequest,
   ): Promise<DescribeSimulationJobBatchResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       batch: params["batch"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeSimulationJobBatch",
       requestUri: "/describeSimulationJobBatch",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "arn": "s",
-          "status": (x: jsonP.JSONValue) => cmnP.readEnum<SimulationJobBatchStatus>(x),
-          "lastUpdatedAt": "d",
-          "createdAt": "d",
-          "clientRequestToken": "s",
-          "batchPolicy": toBatchPolicy,
-          "failureCode": (x: jsonP.JSONValue) => cmnP.readEnum<SimulationJobBatchErrorCode>(x),
-          "failureReason": "s",
-          "failedRequests": [toFailedCreateSimulationJobRequest],
-          "pendingRequests": [toSimulationJobRequest],
-          "createdRequests": [toSimulationJobSummary],
-          "tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "arn": "s",
+        "status": (x: jsonP.JSONValue) => cmnP.readEnum<SimulationJobBatchStatus>(x),
+        "lastUpdatedAt": "d",
+        "createdAt": "d",
+        "clientRequestToken": "s",
+        "batchPolicy": toBatchPolicy,
+        "failureCode": (x: jsonP.JSONValue) => cmnP.readEnum<SimulationJobBatchErrorCode>(x),
+        "failureReason": "s",
+        "failedRequests": [toFailedCreateSimulationJobRequest],
+        "pendingRequests": [toSimulationJobRequest],
+        "createdRequests": [toSimulationJobSummary],
+        "tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async describeWorld(
     {abortSignal, ...params}: RequestConfig & DescribeWorldRequest,
   ): Promise<DescribeWorldResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       world: params["world"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeWorld",
       requestUri: "/describeWorld",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "arn": "s",
-          "generationJob": "s",
-          "template": "s",
-          "createdAt": "d",
-          "tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "arn": "s",
+        "generationJob": "s",
+        "template": "s",
+        "createdAt": "d",
+        "tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async describeWorldExportJob(
     {abortSignal, ...params}: RequestConfig & DescribeWorldExportJobRequest,
   ): Promise<DescribeWorldExportJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       job: params["job"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeWorldExportJob",
       requestUri: "/describeWorldExportJob",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "arn": "s",
-          "status": (x: jsonP.JSONValue) => cmnP.readEnum<WorldExportJobStatus>(x),
-          "createdAt": "d",
-          "failureCode": (x: jsonP.JSONValue) => cmnP.readEnum<WorldExportJobErrorCode>(x),
-          "failureReason": "s",
-          "clientRequestToken": "s",
-          "worlds": ["s"],
-          "outputLocation": toOutputLocation,
-          "iamRole": "s",
-          "tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "arn": "s",
+        "status": (x: jsonP.JSONValue) => cmnP.readEnum<WorldExportJobStatus>(x),
+        "createdAt": "d",
+        "failureCode": (x: jsonP.JSONValue) => cmnP.readEnum<WorldExportJobErrorCode>(x),
+        "failureReason": "s",
+        "clientRequestToken": "s",
+        "worlds": ["s"],
+        "outputLocation": toOutputLocation,
+        "iamRole": "s",
+        "tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async describeWorldGenerationJob(
     {abortSignal, ...params}: RequestConfig & DescribeWorldGenerationJobRequest,
   ): Promise<DescribeWorldGenerationJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       job: params["job"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeWorldGenerationJob",
       requestUri: "/describeWorldGenerationJob",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "arn": "s",
-          "status": (x: jsonP.JSONValue) => cmnP.readEnum<WorldGenerationJobStatus>(x),
-          "createdAt": "d",
-          "failureCode": (x: jsonP.JSONValue) => cmnP.readEnum<WorldGenerationJobErrorCode>(x),
-          "failureReason": "s",
-          "clientRequestToken": "s",
-          "template": "s",
-          "worldCount": toWorldCount,
-          "finishedWorldsSummary": toFinishedWorldsSummary,
-          "tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "arn": "s",
+        "status": (x: jsonP.JSONValue) => cmnP.readEnum<WorldGenerationJobStatus>(x),
+        "createdAt": "d",
+        "failureCode": (x: jsonP.JSONValue) => cmnP.readEnum<WorldGenerationJobErrorCode>(x),
+        "failureReason": "s",
+        "clientRequestToken": "s",
+        "template": "s",
+        "worldCount": toWorldCount,
+        "finishedWorldsSummary": toFinishedWorldsSummary,
+        "tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async describeWorldTemplate(
     {abortSignal, ...params}: RequestConfig & DescribeWorldTemplateRequest,
   ): Promise<DescribeWorldTemplateResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       template: params["template"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeWorldTemplate",
       requestUri: "/describeWorldTemplate",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "arn": "s",
-          "clientRequestToken": "s",
-          "name": "s",
-          "createdAt": "d",
-          "lastUpdatedAt": "d",
-          "tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "arn": "s",
+        "clientRequestToken": "s",
+        "name": "s",
+        "createdAt": "d",
+        "lastUpdatedAt": "d",
+        "tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async getWorldTemplateBody(
     {abortSignal, ...params}: RequestConfig & GetWorldTemplateBodyRequest = {},
   ): Promise<GetWorldTemplateBodyResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       template: params["template"],
       generationJob: params["generationJob"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetWorldTemplateBody",
       requestUri: "/getWorldTemplateBody",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "templateBody": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "templateBody": "s",
+      },
+    }, await resp.json());
   }
 
   async listDeploymentJobs(
     {abortSignal, ...params}: RequestConfig & ListDeploymentJobsRequest = {},
   ): Promise<ListDeploymentJobsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       filters: params["filters"]?.map(x => fromFilter(x)),
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListDeploymentJobs",
       requestUri: "/listDeploymentJobs",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "deploymentJobs": [toDeploymentJob],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "deploymentJobs": [toDeploymentJob],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listFleets(
     {abortSignal, ...params}: RequestConfig & ListFleetsRequest = {},
   ): Promise<ListFleetsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
       filters: params["filters"]?.map(x => fromFilter(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListFleets",
       requestUri: "/listFleets",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "fleetDetails": [toFleet],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "fleetDetails": [toFleet],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listRobotApplications(
     {abortSignal, ...params}: RequestConfig & ListRobotApplicationsRequest = {},
   ): Promise<ListRobotApplicationsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       versionQualifier: params["versionQualifier"],
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
       filters: params["filters"]?.map(x => fromFilter(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListRobotApplications",
       requestUri: "/listRobotApplications",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "robotApplicationSummaries": [toRobotApplicationSummary],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "robotApplicationSummaries": [toRobotApplicationSummary],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listRobots(
     {abortSignal, ...params}: RequestConfig & ListRobotsRequest = {},
   ): Promise<ListRobotsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
       filters: params["filters"]?.map(x => fromFilter(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListRobots",
       requestUri: "/listRobots",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "robots": [toRobot],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "robots": [toRobot],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listSimulationApplications(
     {abortSignal, ...params}: RequestConfig & ListSimulationApplicationsRequest = {},
   ): Promise<ListSimulationApplicationsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       versionQualifier: params["versionQualifier"],
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
       filters: params["filters"]?.map(x => fromFilter(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListSimulationApplications",
       requestUri: "/listSimulationApplications",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "simulationApplicationSummaries": [toSimulationApplicationSummary],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "simulationApplicationSummaries": [toSimulationApplicationSummary],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listSimulationJobBatches(
     {abortSignal, ...params}: RequestConfig & ListSimulationJobBatchesRequest = {},
   ): Promise<ListSimulationJobBatchesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
       filters: params["filters"]?.map(x => fromFilter(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListSimulationJobBatches",
       requestUri: "/listSimulationJobBatches",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "simulationJobBatchSummaries": [toSimulationJobBatchSummary],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "simulationJobBatchSummaries": [toSimulationJobBatchSummary],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listSimulationJobs(
     {abortSignal, ...params}: RequestConfig & ListSimulationJobsRequest = {},
   ): Promise<ListSimulationJobsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
       filters: params["filters"]?.map(x => fromFilter(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListSimulationJobs",
       requestUri: "/listSimulationJobs",
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "simulationJobSummaries": [toSimulationJobSummary],
-        },
-        optional: {
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "simulationJobSummaries": [toSimulationJobSummary],
+      },
+      optional: {
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listTagsForResource(
@@ -1176,235 +1090,215 @@ export default class RoboMaker {
       method: "GET",
       requestUri: cmnP.encodePath`/tags/${params["resourceArn"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async listWorldExportJobs(
     {abortSignal, ...params}: RequestConfig & ListWorldExportJobsRequest = {},
   ): Promise<ListWorldExportJobsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
       filters: params["filters"]?.map(x => fromFilter(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListWorldExportJobs",
       requestUri: "/listWorldExportJobs",
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "worldExportJobSummaries": [toWorldExportJobSummary],
-        },
-        optional: {
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "worldExportJobSummaries": [toWorldExportJobSummary],
+      },
+      optional: {
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listWorldGenerationJobs(
     {abortSignal, ...params}: RequestConfig & ListWorldGenerationJobsRequest = {},
   ): Promise<ListWorldGenerationJobsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
       filters: params["filters"]?.map(x => fromFilter(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListWorldGenerationJobs",
       requestUri: "/listWorldGenerationJobs",
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "worldGenerationJobSummaries": [toWorldGenerationJobSummary],
-        },
-        optional: {
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "worldGenerationJobSummaries": [toWorldGenerationJobSummary],
+      },
+      optional: {
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listWorldTemplates(
     {abortSignal, ...params}: RequestConfig & ListWorldTemplatesRequest = {},
   ): Promise<ListWorldTemplatesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListWorldTemplates",
       requestUri: "/listWorldTemplates",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "templateSummaries": [toTemplateSummary],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "templateSummaries": [toTemplateSummary],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listWorlds(
     {abortSignal, ...params}: RequestConfig & ListWorldsRequest = {},
   ): Promise<ListWorldsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
       filters: params["filters"]?.map(x => fromFilter(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListWorlds",
       requestUri: "/listWorlds",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "worldSummaries": [toWorldSummary],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "worldSummaries": [toWorldSummary],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async registerRobot(
     {abortSignal, ...params}: RequestConfig & RegisterRobotRequest,
   ): Promise<RegisterRobotResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       fleet: params["fleet"],
       robot: params["robot"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RegisterRobot",
       requestUri: "/registerRobot",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "fleet": "s",
-          "robot": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "fleet": "s",
+        "robot": "s",
+      },
+    }, await resp.json());
   }
 
   async restartSimulationJob(
     {abortSignal, ...params}: RequestConfig & RestartSimulationJobRequest,
   ): Promise<RestartSimulationJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       job: params["job"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RestartSimulationJob",
       requestUri: "/restartSimulationJob",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async startSimulationJobBatch(
     {abortSignal, ...params}: RequestConfig & StartSimulationJobBatchRequest,
   ): Promise<StartSimulationJobBatchResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       clientRequestToken: params["clientRequestToken"] ?? generateIdemptToken(),
       batchPolicy: fromBatchPolicy(params["batchPolicy"]),
       createSimulationJobRequests: params["createSimulationJobRequests"]?.map(x => fromSimulationJobRequest(x)),
       tags: params["tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartSimulationJobBatch",
       requestUri: "/startSimulationJobBatch",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "arn": "s",
-          "status": (x: jsonP.JSONValue) => cmnP.readEnum<SimulationJobBatchStatus>(x),
-          "createdAt": "d",
-          "clientRequestToken": "s",
-          "batchPolicy": toBatchPolicy,
-          "failureCode": (x: jsonP.JSONValue) => cmnP.readEnum<SimulationJobBatchErrorCode>(x),
-          "failureReason": "s",
-          "failedRequests": [toFailedCreateSimulationJobRequest],
-          "pendingRequests": [toSimulationJobRequest],
-          "createdRequests": [toSimulationJobSummary],
-          "tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "arn": "s",
+        "status": (x: jsonP.JSONValue) => cmnP.readEnum<SimulationJobBatchStatus>(x),
+        "createdAt": "d",
+        "clientRequestToken": "s",
+        "batchPolicy": toBatchPolicy,
+        "failureCode": (x: jsonP.JSONValue) => cmnP.readEnum<SimulationJobBatchErrorCode>(x),
+        "failureReason": "s",
+        "failedRequests": [toFailedCreateSimulationJobRequest],
+        "pendingRequests": [toSimulationJobRequest],
+        "createdRequests": [toSimulationJobSummary],
+        "tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async syncDeploymentJob(
     {abortSignal, ...params}: RequestConfig & SyncDeploymentJobRequest,
   ): Promise<SyncDeploymentJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       clientRequestToken: params["clientRequestToken"] ?? generateIdemptToken(),
       fleet: params["fleet"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SyncDeploymentJob",
       requestUri: "/syncDeploymentJob",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "arn": "s",
-          "fleet": "s",
-          "status": (x: jsonP.JSONValue) => cmnP.readEnum<DeploymentStatus>(x),
-          "deploymentConfig": toDeploymentConfig,
-          "deploymentApplicationConfigs": [toDeploymentApplicationConfig],
-          "failureReason": "s",
-          "failureCode": (x: jsonP.JSONValue) => cmnP.readEnum<DeploymentJobErrorCode>(x),
-          "createdAt": "d",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "arn": "s",
+        "fleet": "s",
+        "status": (x: jsonP.JSONValue) => cmnP.readEnum<DeploymentStatus>(x),
+        "deploymentConfig": toDeploymentConfig,
+        "deploymentApplicationConfigs": [toDeploymentApplicationConfig],
+        "failureReason": "s",
+        "failureCode": (x: jsonP.JSONValue) => cmnP.readEnum<DeploymentJobErrorCode>(x),
+        "createdAt": "d",
+      },
+    }, await resp.json());
   }
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       tags: params["tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
       requestUri: cmnP.encodePath`/tags/${params["resourceArn"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async untagResource(
@@ -1420,103 +1314,95 @@ export default class RoboMaker {
       method: "DELETE",
       requestUri: cmnP.encodePath`/tags/${params["resourceArn"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async updateRobotApplication(
     {abortSignal, ...params}: RequestConfig & UpdateRobotApplicationRequest,
   ): Promise<UpdateRobotApplicationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       application: params["application"],
       sources: params["sources"]?.map(x => fromSourceConfig(x)),
       robotSoftwareSuite: fromRobotSoftwareSuite(params["robotSoftwareSuite"]),
       currentRevisionId: params["currentRevisionId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateRobotApplication",
       requestUri: "/updateRobotApplication",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "arn": "s",
-          "name": "s",
-          "version": "s",
-          "sources": [toSource],
-          "robotSoftwareSuite": toRobotSoftwareSuite,
-          "lastUpdatedAt": "d",
-          "revisionId": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "arn": "s",
+        "name": "s",
+        "version": "s",
+        "sources": [toSource],
+        "robotSoftwareSuite": toRobotSoftwareSuite,
+        "lastUpdatedAt": "d",
+        "revisionId": "s",
+      },
+    }, await resp.json());
   }
 
   async updateSimulationApplication(
     {abortSignal, ...params}: RequestConfig & UpdateSimulationApplicationRequest,
   ): Promise<UpdateSimulationApplicationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       application: params["application"],
       sources: params["sources"]?.map(x => fromSourceConfig(x)),
       simulationSoftwareSuite: fromSimulationSoftwareSuite(params["simulationSoftwareSuite"]),
       robotSoftwareSuite: fromRobotSoftwareSuite(params["robotSoftwareSuite"]),
       renderingEngine: fromRenderingEngine(params["renderingEngine"]),
       currentRevisionId: params["currentRevisionId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateSimulationApplication",
       requestUri: "/updateSimulationApplication",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "arn": "s",
-          "name": "s",
-          "version": "s",
-          "sources": [toSource],
-          "simulationSoftwareSuite": toSimulationSoftwareSuite,
-          "robotSoftwareSuite": toRobotSoftwareSuite,
-          "renderingEngine": toRenderingEngine,
-          "lastUpdatedAt": "d",
-          "revisionId": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "arn": "s",
+        "name": "s",
+        "version": "s",
+        "sources": [toSource],
+        "simulationSoftwareSuite": toSimulationSoftwareSuite,
+        "robotSoftwareSuite": toRobotSoftwareSuite,
+        "renderingEngine": toRenderingEngine,
+        "lastUpdatedAt": "d",
+        "revisionId": "s",
+      },
+    }, await resp.json());
   }
 
   async updateWorldTemplate(
     {abortSignal, ...params}: RequestConfig & UpdateWorldTemplateRequest,
   ): Promise<UpdateWorldTemplateResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       template: params["template"],
       name: params["name"],
       templateBody: params["templateBody"],
       templateLocation: fromTemplateLocation(params["templateLocation"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateWorldTemplate",
       requestUri: "/updateWorldTemplate",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "arn": "s",
-          "name": "s",
-          "createdAt": "d",
-          "lastUpdatedAt": "d",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "arn": "s",
+        "name": "s",
+        "createdAt": "d",
+        "lastUpdatedAt": "d",
+      },
+    }, await resp.json());
   }
 
 }

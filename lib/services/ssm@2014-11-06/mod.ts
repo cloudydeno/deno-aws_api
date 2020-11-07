@@ -34,11 +34,11 @@ export default class SSM {
   async addTagsToResource(
     {abortSignal, ...params}: RequestConfig & AddTagsToResourceRequest,
   ): Promise<AddTagsToResourceResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceType: params["ResourceType"],
       ResourceId: params["ResourceId"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AddTagsToResource",
@@ -52,10 +52,10 @@ export default class SSM {
   async cancelCommand(
     {abortSignal, ...params}: RequestConfig & CancelCommandRequest,
   ): Promise<CancelCommandResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CommandId: params["CommandId"],
       InstanceIds: params["InstanceIds"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CancelCommand",
@@ -69,9 +69,9 @@ export default class SSM {
   async cancelMaintenanceWindowExecution(
     {abortSignal, ...params}: RequestConfig & CancelMaintenanceWindowExecutionRequest,
   ): Promise<CancelMaintenanceWindowExecutionResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       WindowExecutionId: params["WindowExecutionId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CancelMaintenanceWindowExecution",
@@ -87,14 +87,14 @@ export default class SSM {
   async createActivation(
     {abortSignal, ...params}: RequestConfig & CreateActivationRequest,
   ): Promise<CreateActivationResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Description: params["Description"],
       DefaultInstanceName: params["DefaultInstanceName"],
       IamRole: params["IamRole"],
       RegistrationLimit: params["RegistrationLimit"],
       ExpirationDate: jsonP.serializeDate_unixTimestamp(params["ExpirationDate"]),
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateActivation",
@@ -111,7 +111,7 @@ export default class SSM {
   async createAssociation(
     {abortSignal, ...params}: RequestConfig & CreateAssociationRequest,
   ): Promise<CreateAssociationResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       DocumentVersion: params["DocumentVersion"],
       InstanceId: params["InstanceId"],
@@ -126,7 +126,7 @@ export default class SSM {
       ComplianceSeverity: params["ComplianceSeverity"],
       SyncCompliance: params["SyncCompliance"],
       ApplyOnlyAtCronInterval: params["ApplyOnlyAtCronInterval"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateAssociation",
@@ -142,9 +142,9 @@ export default class SSM {
   async createAssociationBatch(
     {abortSignal, ...params}: RequestConfig & CreateAssociationBatchRequest,
   ): Promise<CreateAssociationBatchResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Entries: params["Entries"]?.map(x => fromCreateAssociationBatchRequestEntry(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateAssociationBatch",
@@ -161,7 +161,7 @@ export default class SSM {
   async createDocument(
     {abortSignal, ...params}: RequestConfig & CreateDocumentRequest,
   ): Promise<CreateDocumentResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Content: params["Content"],
       Requires: params["Requires"]?.map(x => fromDocumentRequires(x)),
       Attachments: params["Attachments"]?.map(x => fromAttachmentsSource(x)),
@@ -171,7 +171,7 @@ export default class SSM {
       DocumentFormat: params["DocumentFormat"],
       TargetType: params["TargetType"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDocument",
@@ -187,7 +187,7 @@ export default class SSM {
   async createMaintenanceWindow(
     {abortSignal, ...params}: RequestConfig & CreateMaintenanceWindowRequest,
   ): Promise<CreateMaintenanceWindowResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       Description: params["Description"],
       StartDate: params["StartDate"],
@@ -200,7 +200,7 @@ export default class SSM {
       AllowUnassociatedTargets: params["AllowUnassociatedTargets"],
       ClientToken: params["ClientToken"] ?? generateIdemptToken(),
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateMaintenanceWindow",
@@ -216,7 +216,7 @@ export default class SSM {
   async createOpsItem(
     {abortSignal, ...params}: RequestConfig & CreateOpsItemRequest,
   ): Promise<CreateOpsItemResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Description: params["Description"],
       OperationalData: jsonP.serializeMap(params["OperationalData"], x => fromOpsItemDataValue(x)),
       Notifications: params["Notifications"]?.map(x => fromOpsItemNotification(x)),
@@ -227,7 +227,7 @@ export default class SSM {
       Tags: params["Tags"]?.map(x => fromTag(x)),
       Category: params["Category"],
       Severity: params["Severity"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateOpsItem",
@@ -243,7 +243,7 @@ export default class SSM {
   async createPatchBaseline(
     {abortSignal, ...params}: RequestConfig & CreatePatchBaselineRequest,
   ): Promise<CreatePatchBaselineResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       OperatingSystem: params["OperatingSystem"],
       Name: params["Name"],
       GlobalFilters: fromPatchFilterGroup(params["GlobalFilters"]),
@@ -257,7 +257,7 @@ export default class SSM {
       Sources: params["Sources"]?.map(x => fromPatchSource(x)),
       ClientToken: params["ClientToken"] ?? generateIdemptToken(),
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreatePatchBaseline",
@@ -273,12 +273,12 @@ export default class SSM {
   async createResourceDataSync(
     {abortSignal, ...params}: RequestConfig & CreateResourceDataSyncRequest,
   ): Promise<CreateResourceDataSyncResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       SyncName: params["SyncName"],
       S3Destination: fromResourceDataSyncS3Destination(params["S3Destination"]),
       SyncType: params["SyncType"],
       SyncSource: fromResourceDataSyncSource(params["SyncSource"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateResourceDataSync",
@@ -292,9 +292,9 @@ export default class SSM {
   async deleteActivation(
     {abortSignal, ...params}: RequestConfig & DeleteActivationRequest,
   ): Promise<DeleteActivationResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ActivationId: params["ActivationId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteActivation",
@@ -308,11 +308,11 @@ export default class SSM {
   async deleteAssociation(
     {abortSignal, ...params}: RequestConfig & DeleteAssociationRequest = {},
   ): Promise<DeleteAssociationResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       InstanceId: params["InstanceId"],
       AssociationId: params["AssociationId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteAssociation",
@@ -326,12 +326,12 @@ export default class SSM {
   async deleteDocument(
     {abortSignal, ...params}: RequestConfig & DeleteDocumentRequest,
   ): Promise<DeleteDocumentResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       DocumentVersion: params["DocumentVersion"],
       VersionName: params["VersionName"],
       Force: params["Force"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteDocument",
@@ -345,12 +345,12 @@ export default class SSM {
   async deleteInventory(
     {abortSignal, ...params}: RequestConfig & DeleteInventoryRequest,
   ): Promise<DeleteInventoryResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TypeName: params["TypeName"],
       SchemaDeleteOption: params["SchemaDeleteOption"],
       DryRun: params["DryRun"],
       ClientToken: params["ClientToken"] ?? generateIdemptToken(),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteInventory",
@@ -368,9 +368,9 @@ export default class SSM {
   async deleteMaintenanceWindow(
     {abortSignal, ...params}: RequestConfig & DeleteMaintenanceWindowRequest,
   ): Promise<DeleteMaintenanceWindowResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       WindowId: params["WindowId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteMaintenanceWindow",
@@ -386,9 +386,9 @@ export default class SSM {
   async deleteParameter(
     {abortSignal, ...params}: RequestConfig & DeleteParameterRequest,
   ): Promise<DeleteParameterResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteParameter",
@@ -402,9 +402,9 @@ export default class SSM {
   async deleteParameters(
     {abortSignal, ...params}: RequestConfig & DeleteParametersRequest,
   ): Promise<DeleteParametersResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Names: params["Names"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteParameters",
@@ -421,9 +421,9 @@ export default class SSM {
   async deletePatchBaseline(
     {abortSignal, ...params}: RequestConfig & DeletePatchBaselineRequest,
   ): Promise<DeletePatchBaselineResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       BaselineId: params["BaselineId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeletePatchBaseline",
@@ -439,10 +439,10 @@ export default class SSM {
   async deleteResourceDataSync(
     {abortSignal, ...params}: RequestConfig & DeleteResourceDataSyncRequest,
   ): Promise<DeleteResourceDataSyncResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       SyncName: params["SyncName"],
       SyncType: params["SyncType"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteResourceDataSync",
@@ -456,9 +456,9 @@ export default class SSM {
   async deregisterManagedInstance(
     {abortSignal, ...params}: RequestConfig & DeregisterManagedInstanceRequest,
   ): Promise<DeregisterManagedInstanceResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       InstanceId: params["InstanceId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeregisterManagedInstance",
@@ -472,10 +472,10 @@ export default class SSM {
   async deregisterPatchBaselineForPatchGroup(
     {abortSignal, ...params}: RequestConfig & DeregisterPatchBaselineForPatchGroupRequest,
   ): Promise<DeregisterPatchBaselineForPatchGroupResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       BaselineId: params["BaselineId"],
       PatchGroup: params["PatchGroup"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeregisterPatchBaselineForPatchGroup",
@@ -492,11 +492,11 @@ export default class SSM {
   async deregisterTargetFromMaintenanceWindow(
     {abortSignal, ...params}: RequestConfig & DeregisterTargetFromMaintenanceWindowRequest,
   ): Promise<DeregisterTargetFromMaintenanceWindowResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       WindowId: params["WindowId"],
       WindowTargetId: params["WindowTargetId"],
       Safe: params["Safe"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeregisterTargetFromMaintenanceWindow",
@@ -513,10 +513,10 @@ export default class SSM {
   async deregisterTaskFromMaintenanceWindow(
     {abortSignal, ...params}: RequestConfig & DeregisterTaskFromMaintenanceWindowRequest,
   ): Promise<DeregisterTaskFromMaintenanceWindowResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       WindowId: params["WindowId"],
       WindowTaskId: params["WindowTaskId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeregisterTaskFromMaintenanceWindow",
@@ -533,11 +533,11 @@ export default class SSM {
   async describeActivations(
     {abortSignal, ...params}: RequestConfig & DescribeActivationsRequest = {},
   ): Promise<DescribeActivationsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Filters: params["Filters"]?.map(x => fromDescribeActivationsFilter(x)),
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeActivations",
@@ -554,12 +554,12 @@ export default class SSM {
   async describeAssociation(
     {abortSignal, ...params}: RequestConfig & DescribeAssociationRequest = {},
   ): Promise<DescribeAssociationResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       InstanceId: params["InstanceId"],
       AssociationId: params["AssociationId"],
       AssociationVersion: params["AssociationVersion"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeAssociation",
@@ -575,13 +575,13 @@ export default class SSM {
   async describeAssociationExecutionTargets(
     {abortSignal, ...params}: RequestConfig & DescribeAssociationExecutionTargetsRequest,
   ): Promise<DescribeAssociationExecutionTargetsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AssociationId: params["AssociationId"],
       ExecutionId: params["ExecutionId"],
       Filters: params["Filters"]?.map(x => fromAssociationExecutionTargetsFilter(x)),
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeAssociationExecutionTargets",
@@ -598,12 +598,12 @@ export default class SSM {
   async describeAssociationExecutions(
     {abortSignal, ...params}: RequestConfig & DescribeAssociationExecutionsRequest,
   ): Promise<DescribeAssociationExecutionsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AssociationId: params["AssociationId"],
       Filters: params["Filters"]?.map(x => fromAssociationExecutionFilter(x)),
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeAssociationExecutions",
@@ -620,11 +620,11 @@ export default class SSM {
   async describeAutomationExecutions(
     {abortSignal, ...params}: RequestConfig & DescribeAutomationExecutionsRequest = {},
   ): Promise<DescribeAutomationExecutionsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Filters: params["Filters"]?.map(x => fromAutomationExecutionFilter(x)),
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeAutomationExecutions",
@@ -641,13 +641,13 @@ export default class SSM {
   async describeAutomationStepExecutions(
     {abortSignal, ...params}: RequestConfig & DescribeAutomationStepExecutionsRequest,
   ): Promise<DescribeAutomationStepExecutionsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AutomationExecutionId: params["AutomationExecutionId"],
       Filters: params["Filters"]?.map(x => fromStepExecutionFilter(x)),
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
       ReverseOrder: params["ReverseOrder"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeAutomationStepExecutions",
@@ -664,11 +664,11 @@ export default class SSM {
   async describeAvailablePatches(
     {abortSignal, ...params}: RequestConfig & DescribeAvailablePatchesRequest = {},
   ): Promise<DescribeAvailablePatchesResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Filters: params["Filters"]?.map(x => fromPatchOrchestratorFilter(x)),
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeAvailablePatches",
@@ -685,11 +685,11 @@ export default class SSM {
   async describeDocument(
     {abortSignal, ...params}: RequestConfig & DescribeDocumentRequest,
   ): Promise<DescribeDocumentResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       DocumentVersion: params["DocumentVersion"],
       VersionName: params["VersionName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeDocument",
@@ -705,10 +705,10 @@ export default class SSM {
   async describeDocumentPermission(
     {abortSignal, ...params}: RequestConfig & DescribeDocumentPermissionRequest,
   ): Promise<DescribeDocumentPermissionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       PermissionType: params["PermissionType"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeDocumentPermission",
@@ -725,11 +725,11 @@ export default class SSM {
   async describeEffectiveInstanceAssociations(
     {abortSignal, ...params}: RequestConfig & DescribeEffectiveInstanceAssociationsRequest,
   ): Promise<DescribeEffectiveInstanceAssociationsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       InstanceId: params["InstanceId"],
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeEffectiveInstanceAssociations",
@@ -746,11 +746,11 @@ export default class SSM {
   async describeEffectivePatchesForPatchBaseline(
     {abortSignal, ...params}: RequestConfig & DescribeEffectivePatchesForPatchBaselineRequest,
   ): Promise<DescribeEffectivePatchesForPatchBaselineResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       BaselineId: params["BaselineId"],
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeEffectivePatchesForPatchBaseline",
@@ -767,11 +767,11 @@ export default class SSM {
   async describeInstanceAssociationsStatus(
     {abortSignal, ...params}: RequestConfig & DescribeInstanceAssociationsStatusRequest,
   ): Promise<DescribeInstanceAssociationsStatusResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       InstanceId: params["InstanceId"],
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeInstanceAssociationsStatus",
@@ -788,12 +788,12 @@ export default class SSM {
   async describeInstanceInformation(
     {abortSignal, ...params}: RequestConfig & DescribeInstanceInformationRequest = {},
   ): Promise<DescribeInstanceInformationResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       InstanceInformationFilterList: params["InstanceInformationFilterList"]?.map(x => fromInstanceInformationFilter(x)),
       Filters: params["Filters"]?.map(x => fromInstanceInformationStringFilter(x)),
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeInstanceInformation",
@@ -810,11 +810,11 @@ export default class SSM {
   async describeInstancePatchStates(
     {abortSignal, ...params}: RequestConfig & DescribeInstancePatchStatesRequest,
   ): Promise<DescribeInstancePatchStatesResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       InstanceIds: params["InstanceIds"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeInstancePatchStates",
@@ -831,12 +831,12 @@ export default class SSM {
   async describeInstancePatchStatesForPatchGroup(
     {abortSignal, ...params}: RequestConfig & DescribeInstancePatchStatesForPatchGroupRequest,
   ): Promise<DescribeInstancePatchStatesForPatchGroupResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       PatchGroup: params["PatchGroup"],
       Filters: params["Filters"]?.map(x => fromInstancePatchStateFilter(x)),
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeInstancePatchStatesForPatchGroup",
@@ -853,12 +853,12 @@ export default class SSM {
   async describeInstancePatches(
     {abortSignal, ...params}: RequestConfig & DescribeInstancePatchesRequest,
   ): Promise<DescribeInstancePatchesResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       InstanceId: params["InstanceId"],
       Filters: params["Filters"]?.map(x => fromPatchOrchestratorFilter(x)),
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeInstancePatches",
@@ -875,11 +875,11 @@ export default class SSM {
   async describeInventoryDeletions(
     {abortSignal, ...params}: RequestConfig & DescribeInventoryDeletionsRequest = {},
   ): Promise<DescribeInventoryDeletionsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DeletionId: params["DeletionId"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeInventoryDeletions",
@@ -896,13 +896,13 @@ export default class SSM {
   async describeMaintenanceWindowExecutionTaskInvocations(
     {abortSignal, ...params}: RequestConfig & DescribeMaintenanceWindowExecutionTaskInvocationsRequest,
   ): Promise<DescribeMaintenanceWindowExecutionTaskInvocationsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       WindowExecutionId: params["WindowExecutionId"],
       TaskId: params["TaskId"],
       Filters: params["Filters"]?.map(x => fromMaintenanceWindowFilter(x)),
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeMaintenanceWindowExecutionTaskInvocations",
@@ -919,12 +919,12 @@ export default class SSM {
   async describeMaintenanceWindowExecutionTasks(
     {abortSignal, ...params}: RequestConfig & DescribeMaintenanceWindowExecutionTasksRequest,
   ): Promise<DescribeMaintenanceWindowExecutionTasksResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       WindowExecutionId: params["WindowExecutionId"],
       Filters: params["Filters"]?.map(x => fromMaintenanceWindowFilter(x)),
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeMaintenanceWindowExecutionTasks",
@@ -941,12 +941,12 @@ export default class SSM {
   async describeMaintenanceWindowExecutions(
     {abortSignal, ...params}: RequestConfig & DescribeMaintenanceWindowExecutionsRequest,
   ): Promise<DescribeMaintenanceWindowExecutionsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       WindowId: params["WindowId"],
       Filters: params["Filters"]?.map(x => fromMaintenanceWindowFilter(x)),
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeMaintenanceWindowExecutions",
@@ -963,14 +963,14 @@ export default class SSM {
   async describeMaintenanceWindowSchedule(
     {abortSignal, ...params}: RequestConfig & DescribeMaintenanceWindowScheduleRequest = {},
   ): Promise<DescribeMaintenanceWindowScheduleResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       WindowId: params["WindowId"],
       Targets: params["Targets"]?.map(x => fromTarget(x)),
       ResourceType: params["ResourceType"],
       Filters: params["Filters"]?.map(x => fromPatchOrchestratorFilter(x)),
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeMaintenanceWindowSchedule",
@@ -987,12 +987,12 @@ export default class SSM {
   async describeMaintenanceWindowTargets(
     {abortSignal, ...params}: RequestConfig & DescribeMaintenanceWindowTargetsRequest,
   ): Promise<DescribeMaintenanceWindowTargetsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       WindowId: params["WindowId"],
       Filters: params["Filters"]?.map(x => fromMaintenanceWindowFilter(x)),
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeMaintenanceWindowTargets",
@@ -1009,12 +1009,12 @@ export default class SSM {
   async describeMaintenanceWindowTasks(
     {abortSignal, ...params}: RequestConfig & DescribeMaintenanceWindowTasksRequest,
   ): Promise<DescribeMaintenanceWindowTasksResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       WindowId: params["WindowId"],
       Filters: params["Filters"]?.map(x => fromMaintenanceWindowFilter(x)),
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeMaintenanceWindowTasks",
@@ -1031,11 +1031,11 @@ export default class SSM {
   async describeMaintenanceWindows(
     {abortSignal, ...params}: RequestConfig & DescribeMaintenanceWindowsRequest = {},
   ): Promise<DescribeMaintenanceWindowsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Filters: params["Filters"]?.map(x => fromMaintenanceWindowFilter(x)),
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeMaintenanceWindows",
@@ -1052,12 +1052,12 @@ export default class SSM {
   async describeMaintenanceWindowsForTarget(
     {abortSignal, ...params}: RequestConfig & DescribeMaintenanceWindowsForTargetRequest,
   ): Promise<DescribeMaintenanceWindowsForTargetResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Targets: params["Targets"]?.map(x => fromTarget(x)),
       ResourceType: params["ResourceType"],
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeMaintenanceWindowsForTarget",
@@ -1074,11 +1074,11 @@ export default class SSM {
   async describeOpsItems(
     {abortSignal, ...params}: RequestConfig & DescribeOpsItemsRequest = {},
   ): Promise<DescribeOpsItemsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       OpsItemFilters: params["OpsItemFilters"]?.map(x => fromOpsItemFilter(x)),
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeOpsItems",
@@ -1095,12 +1095,12 @@ export default class SSM {
   async describeParameters(
     {abortSignal, ...params}: RequestConfig & DescribeParametersRequest = {},
   ): Promise<DescribeParametersResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Filters: params["Filters"]?.map(x => fromParametersFilter(x)),
       ParameterFilters: params["ParameterFilters"]?.map(x => fromParameterStringFilter(x)),
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeParameters",
@@ -1117,11 +1117,11 @@ export default class SSM {
   async describePatchBaselines(
     {abortSignal, ...params}: RequestConfig & DescribePatchBaselinesRequest = {},
   ): Promise<DescribePatchBaselinesResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Filters: params["Filters"]?.map(x => fromPatchOrchestratorFilter(x)),
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribePatchBaselines",
@@ -1138,9 +1138,9 @@ export default class SSM {
   async describePatchGroupState(
     {abortSignal, ...params}: RequestConfig & DescribePatchGroupStateRequest,
   ): Promise<DescribePatchGroupStateResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       PatchGroup: params["PatchGroup"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribePatchGroupState",
@@ -1164,11 +1164,11 @@ export default class SSM {
   async describePatchGroups(
     {abortSignal, ...params}: RequestConfig & DescribePatchGroupsRequest = {},
   ): Promise<DescribePatchGroupsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       MaxResults: params["MaxResults"],
       Filters: params["Filters"]?.map(x => fromPatchOrchestratorFilter(x)),
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribePatchGroups",
@@ -1185,13 +1185,13 @@ export default class SSM {
   async describePatchProperties(
     {abortSignal, ...params}: RequestConfig & DescribePatchPropertiesRequest,
   ): Promise<DescribePatchPropertiesResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       OperatingSystem: params["OperatingSystem"],
       Property: params["Property"],
       PatchSet: params["PatchSet"],
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribePatchProperties",
@@ -1208,12 +1208,12 @@ export default class SSM {
   async describeSessions(
     {abortSignal, ...params}: RequestConfig & DescribeSessionsRequest,
   ): Promise<DescribeSessionsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       State: params["State"],
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
       Filters: params["Filters"]?.map(x => fromSessionFilter(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeSessions",
@@ -1230,9 +1230,9 @@ export default class SSM {
   async getAutomationExecution(
     {abortSignal, ...params}: RequestConfig & GetAutomationExecutionRequest,
   ): Promise<GetAutomationExecutionResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AutomationExecutionId: params["AutomationExecutionId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetAutomationExecution",
@@ -1248,10 +1248,10 @@ export default class SSM {
   async getCalendarState(
     {abortSignal, ...params}: RequestConfig & GetCalendarStateRequest,
   ): Promise<GetCalendarStateResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CalendarNames: params["CalendarNames"],
       AtTime: params["AtTime"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetCalendarState",
@@ -1269,11 +1269,11 @@ export default class SSM {
   async getCommandInvocation(
     {abortSignal, ...params}: RequestConfig & GetCommandInvocationRequest,
   ): Promise<GetCommandInvocationResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CommandId: params["CommandId"],
       InstanceId: params["InstanceId"],
       PluginName: params["PluginName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetCommandInvocation",
@@ -1305,9 +1305,9 @@ export default class SSM {
   async getConnectionStatus(
     {abortSignal, ...params}: RequestConfig & GetConnectionStatusRequest,
   ): Promise<GetConnectionStatusResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Target: params["Target"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetConnectionStatus",
@@ -1324,9 +1324,9 @@ export default class SSM {
   async getDefaultPatchBaseline(
     {abortSignal, ...params}: RequestConfig & GetDefaultPatchBaselineRequest = {},
   ): Promise<GetDefaultPatchBaselineResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       OperatingSystem: params["OperatingSystem"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetDefaultPatchBaseline",
@@ -1343,10 +1343,10 @@ export default class SSM {
   async getDeployablePatchSnapshotForInstance(
     {abortSignal, ...params}: RequestConfig & GetDeployablePatchSnapshotForInstanceRequest,
   ): Promise<GetDeployablePatchSnapshotForInstanceResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       InstanceId: params["InstanceId"],
       SnapshotId: params["SnapshotId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetDeployablePatchSnapshotForInstance",
@@ -1365,12 +1365,12 @@ export default class SSM {
   async getDocument(
     {abortSignal, ...params}: RequestConfig & GetDocumentRequest,
   ): Promise<GetDocumentResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       VersionName: params["VersionName"],
       DocumentVersion: params["DocumentVersion"],
       DocumentFormat: params["DocumentFormat"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetDocument",
@@ -1395,13 +1395,13 @@ export default class SSM {
   async getInventory(
     {abortSignal, ...params}: RequestConfig & GetInventoryRequest = {},
   ): Promise<GetInventoryResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Filters: params["Filters"]?.map(x => fromInventoryFilter(x)),
       Aggregators: params["Aggregators"]?.map(x => fromInventoryAggregator(x)),
       ResultAttributes: params["ResultAttributes"]?.map(x => fromResultAttribute(x)),
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetInventory",
@@ -1418,13 +1418,13 @@ export default class SSM {
   async getInventorySchema(
     {abortSignal, ...params}: RequestConfig & GetInventorySchemaRequest = {},
   ): Promise<GetInventorySchemaResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TypeName: params["TypeName"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
       Aggregator: params["Aggregator"],
       SubType: params["SubType"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetInventorySchema",
@@ -1441,9 +1441,9 @@ export default class SSM {
   async getMaintenanceWindow(
     {abortSignal, ...params}: RequestConfig & GetMaintenanceWindowRequest,
   ): Promise<GetMaintenanceWindowResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       WindowId: params["WindowId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetMaintenanceWindow",
@@ -1473,9 +1473,9 @@ export default class SSM {
   async getMaintenanceWindowExecution(
     {abortSignal, ...params}: RequestConfig & GetMaintenanceWindowExecutionRequest,
   ): Promise<GetMaintenanceWindowExecutionResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       WindowExecutionId: params["WindowExecutionId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetMaintenanceWindowExecution",
@@ -1496,10 +1496,10 @@ export default class SSM {
   async getMaintenanceWindowExecutionTask(
     {abortSignal, ...params}: RequestConfig & GetMaintenanceWindowExecutionTaskRequest,
   ): Promise<GetMaintenanceWindowExecutionTaskResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       WindowExecutionId: params["WindowExecutionId"],
       TaskId: params["TaskId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetMaintenanceWindowExecutionTask",
@@ -1527,11 +1527,11 @@ export default class SSM {
   async getMaintenanceWindowExecutionTaskInvocation(
     {abortSignal, ...params}: RequestConfig & GetMaintenanceWindowExecutionTaskInvocationRequest,
   ): Promise<GetMaintenanceWindowExecutionTaskInvocationResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       WindowExecutionId: params["WindowExecutionId"],
       TaskId: params["TaskId"],
       InvocationId: params["InvocationId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetMaintenanceWindowExecutionTaskInvocation",
@@ -1558,10 +1558,10 @@ export default class SSM {
   async getMaintenanceWindowTask(
     {abortSignal, ...params}: RequestConfig & GetMaintenanceWindowTaskRequest,
   ): Promise<GetMaintenanceWindowTaskResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       WindowId: params["WindowId"],
       WindowTaskId: params["WindowTaskId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetMaintenanceWindowTask",
@@ -1590,9 +1590,9 @@ export default class SSM {
   async getOpsItem(
     {abortSignal, ...params}: RequestConfig & GetOpsItemRequest,
   ): Promise<GetOpsItemResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       OpsItemId: params["OpsItemId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetOpsItem",
@@ -1608,14 +1608,14 @@ export default class SSM {
   async getOpsSummary(
     {abortSignal, ...params}: RequestConfig & GetOpsSummaryRequest = {},
   ): Promise<GetOpsSummaryResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       SyncName: params["SyncName"],
       Filters: params["Filters"]?.map(x => fromOpsFilter(x)),
       Aggregators: params["Aggregators"]?.map(x => fromOpsAggregator(x)),
       ResultAttributes: params["ResultAttributes"]?.map(x => fromOpsResultAttribute(x)),
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetOpsSummary",
@@ -1632,10 +1632,10 @@ export default class SSM {
   async getParameter(
     {abortSignal, ...params}: RequestConfig & GetParameterRequest,
   ): Promise<GetParameterResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       WithDecryption: params["WithDecryption"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetParameter",
@@ -1651,12 +1651,12 @@ export default class SSM {
   async getParameterHistory(
     {abortSignal, ...params}: RequestConfig & GetParameterHistoryRequest,
   ): Promise<GetParameterHistoryResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       WithDecryption: params["WithDecryption"],
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetParameterHistory",
@@ -1673,10 +1673,10 @@ export default class SSM {
   async getParameters(
     {abortSignal, ...params}: RequestConfig & GetParametersRequest,
   ): Promise<GetParametersResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Names: params["Names"],
       WithDecryption: params["WithDecryption"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetParameters",
@@ -1693,14 +1693,14 @@ export default class SSM {
   async getParametersByPath(
     {abortSignal, ...params}: RequestConfig & GetParametersByPathRequest,
   ): Promise<GetParametersByPathResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Path: params["Path"],
       Recursive: params["Recursive"],
       ParameterFilters: params["ParameterFilters"]?.map(x => fromParameterStringFilter(x)),
       WithDecryption: params["WithDecryption"],
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetParametersByPath",
@@ -1717,9 +1717,9 @@ export default class SSM {
   async getPatchBaseline(
     {abortSignal, ...params}: RequestConfig & GetPatchBaselineRequest,
   ): Promise<GetPatchBaselineResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       BaselineId: params["BaselineId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetPatchBaseline",
@@ -1749,10 +1749,10 @@ export default class SSM {
   async getPatchBaselineForPatchGroup(
     {abortSignal, ...params}: RequestConfig & GetPatchBaselineForPatchGroupRequest,
   ): Promise<GetPatchBaselineForPatchGroupResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       PatchGroup: params["PatchGroup"],
       OperatingSystem: params["OperatingSystem"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetPatchBaselineForPatchGroup",
@@ -1770,9 +1770,9 @@ export default class SSM {
   async getServiceSetting(
     {abortSignal, ...params}: RequestConfig & GetServiceSettingRequest,
   ): Promise<GetServiceSettingResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       SettingId: params["SettingId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetServiceSetting",
@@ -1788,11 +1788,11 @@ export default class SSM {
   async labelParameterVersion(
     {abortSignal, ...params}: RequestConfig & LabelParameterVersionRequest,
   ): Promise<LabelParameterVersionResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       ParameterVersion: params["ParameterVersion"],
       Labels: params["Labels"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "LabelParameterVersion",
@@ -1809,11 +1809,11 @@ export default class SSM {
   async listAssociationVersions(
     {abortSignal, ...params}: RequestConfig & ListAssociationVersionsRequest,
   ): Promise<ListAssociationVersionsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AssociationId: params["AssociationId"],
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListAssociationVersions",
@@ -1830,11 +1830,11 @@ export default class SSM {
   async listAssociations(
     {abortSignal, ...params}: RequestConfig & ListAssociationsRequest = {},
   ): Promise<ListAssociationsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AssociationFilterList: params["AssociationFilterList"]?.map(x => fromAssociationFilter(x)),
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListAssociations",
@@ -1851,14 +1851,14 @@ export default class SSM {
   async listCommandInvocations(
     {abortSignal, ...params}: RequestConfig & ListCommandInvocationsRequest = {},
   ): Promise<ListCommandInvocationsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CommandId: params["CommandId"],
       InstanceId: params["InstanceId"],
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
       Filters: params["Filters"]?.map(x => fromCommandFilter(x)),
       Details: params["Details"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListCommandInvocations",
@@ -1875,13 +1875,13 @@ export default class SSM {
   async listCommands(
     {abortSignal, ...params}: RequestConfig & ListCommandsRequest = {},
   ): Promise<ListCommandsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CommandId: params["CommandId"],
       InstanceId: params["InstanceId"],
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
       Filters: params["Filters"]?.map(x => fromCommandFilter(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListCommands",
@@ -1898,13 +1898,13 @@ export default class SSM {
   async listComplianceItems(
     {abortSignal, ...params}: RequestConfig & ListComplianceItemsRequest = {},
   ): Promise<ListComplianceItemsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Filters: params["Filters"]?.map(x => fromComplianceStringFilter(x)),
       ResourceIds: params["ResourceIds"],
       ResourceTypes: params["ResourceTypes"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListComplianceItems",
@@ -1921,11 +1921,11 @@ export default class SSM {
   async listComplianceSummaries(
     {abortSignal, ...params}: RequestConfig & ListComplianceSummariesRequest = {},
   ): Promise<ListComplianceSummariesResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Filters: params["Filters"]?.map(x => fromComplianceStringFilter(x)),
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListComplianceSummaries",
@@ -1942,11 +1942,11 @@ export default class SSM {
   async listDocumentVersions(
     {abortSignal, ...params}: RequestConfig & ListDocumentVersionsRequest,
   ): Promise<ListDocumentVersionsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListDocumentVersions",
@@ -1963,12 +1963,12 @@ export default class SSM {
   async listDocuments(
     {abortSignal, ...params}: RequestConfig & ListDocumentsRequest = {},
   ): Promise<ListDocumentsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DocumentFilterList: params["DocumentFilterList"]?.map(x => fromDocumentFilter(x)),
       Filters: params["Filters"]?.map(x => fromDocumentKeyValuesFilter(x)),
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListDocuments",
@@ -1985,13 +1985,13 @@ export default class SSM {
   async listInventoryEntries(
     {abortSignal, ...params}: RequestConfig & ListInventoryEntriesRequest,
   ): Promise<ListInventoryEntriesResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       InstanceId: params["InstanceId"],
       TypeName: params["TypeName"],
       Filters: params["Filters"]?.map(x => fromInventoryFilter(x)),
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListInventoryEntries",
@@ -2012,11 +2012,11 @@ export default class SSM {
   async listResourceComplianceSummaries(
     {abortSignal, ...params}: RequestConfig & ListResourceComplianceSummariesRequest = {},
   ): Promise<ListResourceComplianceSummariesResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Filters: params["Filters"]?.map(x => fromComplianceStringFilter(x)),
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListResourceComplianceSummaries",
@@ -2033,11 +2033,11 @@ export default class SSM {
   async listResourceDataSync(
     {abortSignal, ...params}: RequestConfig & ListResourceDataSyncRequest = {},
   ): Promise<ListResourceDataSyncResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       SyncType: params["SyncType"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListResourceDataSync",
@@ -2054,10 +2054,10 @@ export default class SSM {
   async listTagsForResource(
     {abortSignal, ...params}: RequestConfig & ListTagsForResourceRequest,
   ): Promise<ListTagsForResourceResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceType: params["ResourceType"],
       ResourceId: params["ResourceId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForResource",
@@ -2073,13 +2073,13 @@ export default class SSM {
   async modifyDocumentPermission(
     {abortSignal, ...params}: RequestConfig & ModifyDocumentPermissionRequest,
   ): Promise<ModifyDocumentPermissionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       PermissionType: params["PermissionType"],
       AccountIdsToAdd: params["AccountIdsToAdd"],
       AccountIdsToRemove: params["AccountIdsToRemove"],
       SharedDocumentVersion: params["SharedDocumentVersion"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ModifyDocumentPermission",
@@ -2093,7 +2093,7 @@ export default class SSM {
   async putComplianceItems(
     {abortSignal, ...params}: RequestConfig & PutComplianceItemsRequest,
   ): Promise<PutComplianceItemsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceId: params["ResourceId"],
       ResourceType: params["ResourceType"],
       ComplianceType: params["ComplianceType"],
@@ -2101,7 +2101,7 @@ export default class SSM {
       Items: params["Items"]?.map(x => fromComplianceItemEntry(x)),
       ItemContentHash: params["ItemContentHash"],
       UploadType: params["UploadType"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutComplianceItems",
@@ -2115,10 +2115,10 @@ export default class SSM {
   async putInventory(
     {abortSignal, ...params}: RequestConfig & PutInventoryRequest,
   ): Promise<PutInventoryResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       InstanceId: params["InstanceId"],
       Items: params["Items"]?.map(x => fromInventoryItem(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutInventory",
@@ -2134,7 +2134,7 @@ export default class SSM {
   async putParameter(
     {abortSignal, ...params}: RequestConfig & PutParameterRequest,
   ): Promise<PutParameterResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       Description: params["Description"],
       Value: params["Value"],
@@ -2146,7 +2146,7 @@ export default class SSM {
       Tier: params["Tier"],
       Policies: params["Policies"],
       DataType: params["DataType"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutParameter",
@@ -2163,9 +2163,9 @@ export default class SSM {
   async registerDefaultPatchBaseline(
     {abortSignal, ...params}: RequestConfig & RegisterDefaultPatchBaselineRequest,
   ): Promise<RegisterDefaultPatchBaselineResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       BaselineId: params["BaselineId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RegisterDefaultPatchBaseline",
@@ -2181,10 +2181,10 @@ export default class SSM {
   async registerPatchBaselineForPatchGroup(
     {abortSignal, ...params}: RequestConfig & RegisterPatchBaselineForPatchGroupRequest,
   ): Promise<RegisterPatchBaselineForPatchGroupResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       BaselineId: params["BaselineId"],
       PatchGroup: params["PatchGroup"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RegisterPatchBaselineForPatchGroup",
@@ -2201,7 +2201,7 @@ export default class SSM {
   async registerTargetWithMaintenanceWindow(
     {abortSignal, ...params}: RequestConfig & RegisterTargetWithMaintenanceWindowRequest,
   ): Promise<RegisterTargetWithMaintenanceWindowResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       WindowId: params["WindowId"],
       ResourceType: params["ResourceType"],
       Targets: params["Targets"]?.map(x => fromTarget(x)),
@@ -2209,7 +2209,7 @@ export default class SSM {
       Name: params["Name"],
       Description: params["Description"],
       ClientToken: params["ClientToken"] ?? generateIdemptToken(),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RegisterTargetWithMaintenanceWindow",
@@ -2225,7 +2225,7 @@ export default class SSM {
   async registerTaskWithMaintenanceWindow(
     {abortSignal, ...params}: RequestConfig & RegisterTaskWithMaintenanceWindowRequest,
   ): Promise<RegisterTaskWithMaintenanceWindowResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       WindowId: params["WindowId"],
       Targets: params["Targets"]?.map(x => fromTarget(x)),
       TaskArn: params["TaskArn"],
@@ -2240,7 +2240,7 @@ export default class SSM {
       Name: params["Name"],
       Description: params["Description"],
       ClientToken: params["ClientToken"] ?? generateIdemptToken(),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RegisterTaskWithMaintenanceWindow",
@@ -2256,11 +2256,11 @@ export default class SSM {
   async removeTagsFromResource(
     {abortSignal, ...params}: RequestConfig & RemoveTagsFromResourceRequest,
   ): Promise<RemoveTagsFromResourceResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceType: params["ResourceType"],
       ResourceId: params["ResourceId"],
       TagKeys: params["TagKeys"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RemoveTagsFromResource",
@@ -2274,9 +2274,9 @@ export default class SSM {
   async resetServiceSetting(
     {abortSignal, ...params}: RequestConfig & ResetServiceSettingRequest,
   ): Promise<ResetServiceSettingResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       SettingId: params["SettingId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ResetServiceSetting",
@@ -2292,9 +2292,9 @@ export default class SSM {
   async resumeSession(
     {abortSignal, ...params}: RequestConfig & ResumeSessionRequest,
   ): Promise<ResumeSessionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       SessionId: params["SessionId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ResumeSession",
@@ -2312,11 +2312,11 @@ export default class SSM {
   async sendAutomationSignal(
     {abortSignal, ...params}: RequestConfig & SendAutomationSignalRequest,
   ): Promise<SendAutomationSignalResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AutomationExecutionId: params["AutomationExecutionId"],
       SignalType: params["SignalType"],
       Payload: params["Payload"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SendAutomationSignal",
@@ -2330,7 +2330,7 @@ export default class SSM {
   async sendCommand(
     {abortSignal, ...params}: RequestConfig & SendCommandRequest,
   ): Promise<SendCommandResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       InstanceIds: params["InstanceIds"],
       Targets: params["Targets"]?.map(x => fromTarget(x)),
       DocumentName: params["DocumentName"],
@@ -2348,7 +2348,7 @@ export default class SSM {
       ServiceRoleArn: params["ServiceRoleArn"],
       NotificationConfig: fromNotificationConfig(params["NotificationConfig"]),
       CloudWatchOutputConfig: fromCloudWatchOutputConfig(params["CloudWatchOutputConfig"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SendCommand",
@@ -2364,9 +2364,9 @@ export default class SSM {
   async startAssociationsOnce(
     {abortSignal, ...params}: RequestConfig & StartAssociationsOnceRequest,
   ): Promise<StartAssociationsOnceResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AssociationIds: params["AssociationIds"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartAssociationsOnce",
@@ -2380,7 +2380,7 @@ export default class SSM {
   async startAutomationExecution(
     {abortSignal, ...params}: RequestConfig & StartAutomationExecutionRequest,
   ): Promise<StartAutomationExecutionResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DocumentName: params["DocumentName"],
       DocumentVersion: params["DocumentVersion"],
       Parameters: params["Parameters"],
@@ -2393,7 +2393,7 @@ export default class SSM {
       MaxErrors: params["MaxErrors"],
       TargetLocations: params["TargetLocations"]?.map(x => fromTargetLocation(x)),
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartAutomationExecution",
@@ -2409,11 +2409,11 @@ export default class SSM {
   async startSession(
     {abortSignal, ...params}: RequestConfig & StartSessionRequest,
   ): Promise<StartSessionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Target: params["Target"],
       DocumentName: params["DocumentName"],
       Parameters: params["Parameters"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartSession",
@@ -2431,10 +2431,10 @@ export default class SSM {
   async stopAutomationExecution(
     {abortSignal, ...params}: RequestConfig & StopAutomationExecutionRequest,
   ): Promise<StopAutomationExecutionResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AutomationExecutionId: params["AutomationExecutionId"],
       Type: params["Type"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopAutomationExecution",
@@ -2448,9 +2448,9 @@ export default class SSM {
   async terminateSession(
     {abortSignal, ...params}: RequestConfig & TerminateSessionRequest,
   ): Promise<TerminateSessionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       SessionId: params["SessionId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TerminateSession",
@@ -2466,7 +2466,7 @@ export default class SSM {
   async updateAssociation(
     {abortSignal, ...params}: RequestConfig & UpdateAssociationRequest,
   ): Promise<UpdateAssociationResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AssociationId: params["AssociationId"],
       Parameters: params["Parameters"],
       DocumentVersion: params["DocumentVersion"],
@@ -2482,7 +2482,7 @@ export default class SSM {
       ComplianceSeverity: params["ComplianceSeverity"],
       SyncCompliance: params["SyncCompliance"],
       ApplyOnlyAtCronInterval: params["ApplyOnlyAtCronInterval"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateAssociation",
@@ -2498,11 +2498,11 @@ export default class SSM {
   async updateAssociationStatus(
     {abortSignal, ...params}: RequestConfig & UpdateAssociationStatusRequest,
   ): Promise<UpdateAssociationStatusResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       InstanceId: params["InstanceId"],
       AssociationStatus: fromAssociationStatus(params["AssociationStatus"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateAssociationStatus",
@@ -2518,7 +2518,7 @@ export default class SSM {
   async updateDocument(
     {abortSignal, ...params}: RequestConfig & UpdateDocumentRequest,
   ): Promise<UpdateDocumentResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Content: params["Content"],
       Attachments: params["Attachments"]?.map(x => fromAttachmentsSource(x)),
       Name: params["Name"],
@@ -2526,7 +2526,7 @@ export default class SSM {
       DocumentVersion: params["DocumentVersion"],
       DocumentFormat: params["DocumentFormat"],
       TargetType: params["TargetType"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateDocument",
@@ -2542,10 +2542,10 @@ export default class SSM {
   async updateDocumentDefaultVersion(
     {abortSignal, ...params}: RequestConfig & UpdateDocumentDefaultVersionRequest,
   ): Promise<UpdateDocumentDefaultVersionResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       DocumentVersion: params["DocumentVersion"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateDocumentDefaultVersion",
@@ -2561,7 +2561,7 @@ export default class SSM {
   async updateMaintenanceWindow(
     {abortSignal, ...params}: RequestConfig & UpdateMaintenanceWindowRequest,
   ): Promise<UpdateMaintenanceWindowResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       WindowId: params["WindowId"],
       Name: params["Name"],
       Description: params["Description"],
@@ -2575,7 +2575,7 @@ export default class SSM {
       AllowUnassociatedTargets: params["AllowUnassociatedTargets"],
       Enabled: params["Enabled"],
       Replace: params["Replace"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateMaintenanceWindow",
@@ -2602,7 +2602,7 @@ export default class SSM {
   async updateMaintenanceWindowTarget(
     {abortSignal, ...params}: RequestConfig & UpdateMaintenanceWindowTargetRequest,
   ): Promise<UpdateMaintenanceWindowTargetResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       WindowId: params["WindowId"],
       WindowTargetId: params["WindowTargetId"],
       Targets: params["Targets"]?.map(x => fromTarget(x)),
@@ -2610,7 +2610,7 @@ export default class SSM {
       Name: params["Name"],
       Description: params["Description"],
       Replace: params["Replace"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateMaintenanceWindowTarget",
@@ -2631,7 +2631,7 @@ export default class SSM {
   async updateMaintenanceWindowTask(
     {abortSignal, ...params}: RequestConfig & UpdateMaintenanceWindowTaskRequest,
   ): Promise<UpdateMaintenanceWindowTaskResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       WindowId: params["WindowId"],
       WindowTaskId: params["WindowTaskId"],
       Targets: params["Targets"]?.map(x => fromTarget(x)),
@@ -2646,7 +2646,7 @@ export default class SSM {
       Name: params["Name"],
       Description: params["Description"],
       Replace: params["Replace"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateMaintenanceWindowTask",
@@ -2674,10 +2674,10 @@ export default class SSM {
   async updateManagedInstanceRole(
     {abortSignal, ...params}: RequestConfig & UpdateManagedInstanceRoleRequest,
   ): Promise<UpdateManagedInstanceRoleResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       InstanceId: params["InstanceId"],
       IamRole: params["IamRole"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateManagedInstanceRole",
@@ -2691,7 +2691,7 @@ export default class SSM {
   async updateOpsItem(
     {abortSignal, ...params}: RequestConfig & UpdateOpsItemRequest,
   ): Promise<UpdateOpsItemResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Description: params["Description"],
       OperationalData: jsonP.serializeMap(params["OperationalData"], x => fromOpsItemDataValue(x)),
       OperationalDataToDelete: params["OperationalDataToDelete"],
@@ -2703,7 +2703,7 @@ export default class SSM {
       Title: params["Title"],
       Category: params["Category"],
       Severity: params["Severity"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateOpsItem",
@@ -2717,7 +2717,7 @@ export default class SSM {
   async updatePatchBaseline(
     {abortSignal, ...params}: RequestConfig & UpdatePatchBaselineRequest,
   ): Promise<UpdatePatchBaselineResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       BaselineId: params["BaselineId"],
       Name: params["Name"],
       GlobalFilters: fromPatchFilterGroup(params["GlobalFilters"]),
@@ -2730,7 +2730,7 @@ export default class SSM {
       Description: params["Description"],
       Sources: params["Sources"]?.map(x => fromPatchSource(x)),
       Replace: params["Replace"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdatePatchBaseline",
@@ -2759,11 +2759,11 @@ export default class SSM {
   async updateResourceDataSync(
     {abortSignal, ...params}: RequestConfig & UpdateResourceDataSyncRequest,
   ): Promise<UpdateResourceDataSyncResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       SyncName: params["SyncName"],
       SyncType: params["SyncType"],
       SyncSource: fromResourceDataSyncSource(params["SyncSource"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateResourceDataSync",
@@ -2777,10 +2777,10 @@ export default class SSM {
   async updateServiceSetting(
     {abortSignal, ...params}: RequestConfig & UpdateServiceSettingRequest,
   ): Promise<UpdateServiceSettingResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       SettingId: params["SettingId"],
       SettingValue: params["SettingValue"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateServiceSetting",

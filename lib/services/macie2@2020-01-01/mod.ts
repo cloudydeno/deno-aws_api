@@ -33,51 +33,47 @@ export default class Macie2 {
   async acceptInvitation(
     {abortSignal, ...params}: RequestConfig & AcceptInvitationRequest,
   ): Promise<AcceptInvitationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       invitationId: params["invitationId"],
       masterAccount: params["masterAccount"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AcceptInvitation",
       requestUri: "/invitations/accept",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async batchGetCustomDataIdentifiers(
     {abortSignal, ...params}: RequestConfig & BatchGetCustomDataIdentifiersRequest = {},
   ): Promise<BatchGetCustomDataIdentifiersResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ids: params["ids"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchGetCustomDataIdentifiers",
       requestUri: "/custom-data-identifiers/get",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "customDataIdentifiers": [toBatchGetCustomDataIdentifierSummary],
-          "notFoundIdentifierIds": ["s"],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "customDataIdentifiers": [toBatchGetCustomDataIdentifierSummary],
+        "notFoundIdentifierIds": ["s"],
+      },
+    }, await resp.json());
   }
 
   async createClassificationJob(
     {abortSignal, ...params}: RequestConfig & CreateClassificationJobRequest,
   ): Promise<CreateClassificationJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       clientToken: params["clientToken"] ?? generateIdemptToken(),
       customDataIdentifierIds: params["customDataIdentifierIds"],
       description: params["description"],
@@ -88,28 +84,26 @@ export default class Macie2 {
       samplingPercentage: params["samplingPercentage"],
       scheduleFrequency: fromJobScheduleFrequency(params["scheduleFrequency"]),
       tags: params["tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateClassificationJob",
       requestUri: "/jobs",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "jobArn": "s",
-          "jobId": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "jobArn": "s",
+        "jobId": "s",
+      },
+    }, await resp.json());
   }
 
   async createCustomDataIdentifier(
     {abortSignal, ...params}: RequestConfig & CreateCustomDataIdentifierRequest = {},
   ): Promise<CreateCustomDataIdentifierResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       clientToken: params["clientToken"] ?? generateIdemptToken(),
       description: params["description"],
       ignoreWords: params["ignoreWords"],
@@ -118,27 +112,25 @@ export default class Macie2 {
       name: params["name"],
       regex: params["regex"],
       tags: params["tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateCustomDataIdentifier",
       requestUri: "/custom-data-identifiers",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "customDataIdentifierId": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "customDataIdentifierId": "s",
+      },
+    }, await resp.json());
   }
 
   async createFindingsFilter(
     {abortSignal, ...params}: RequestConfig & CreateFindingsFilterRequest,
   ): Promise<CreateFindingsFilterResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       action: params["action"],
       clientToken: params["clientToken"] ?? generateIdemptToken(),
       description: params["description"],
@@ -146,111 +138,101 @@ export default class Macie2 {
       name: params["name"],
       position: params["position"],
       tags: params["tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateFindingsFilter",
       requestUri: "/findingsfilters",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "arn": "s",
-          "id": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "arn": "s",
+        "id": "s",
+      },
+    }, await resp.json());
   }
 
   async createInvitations(
     {abortSignal, ...params}: RequestConfig & CreateInvitationsRequest,
   ): Promise<CreateInvitationsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       accountIds: params["accountIds"],
       disableEmailNotification: params["disableEmailNotification"],
       message: params["message"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateInvitations",
       requestUri: "/invitations",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "unprocessedAccounts": [toUnprocessedAccount],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "unprocessedAccounts": [toUnprocessedAccount],
+      },
+    }, await resp.json());
   }
 
   async createMember(
     {abortSignal, ...params}: RequestConfig & CreateMemberRequest,
   ): Promise<CreateMemberResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       account: fromAccountDetail(params["account"]),
       tags: params["tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateMember",
       requestUri: "/members",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "arn": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "arn": "s",
+      },
+    }, await resp.json());
   }
 
   async createSampleFindings(
     {abortSignal, ...params}: RequestConfig & CreateSampleFindingsRequest = {},
   ): Promise<CreateSampleFindingsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       findingTypes: params["findingTypes"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateSampleFindings",
       requestUri: "/findings/sample",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async declineInvitations(
     {abortSignal, ...params}: RequestConfig & DeclineInvitationsRequest,
   ): Promise<DeclineInvitationsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       accountIds: params["accountIds"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeclineInvitations",
       requestUri: "/invitations/decline",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "unprocessedAccounts": [toUnprocessedAccount],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "unprocessedAccounts": [toUnprocessedAccount],
+      },
+    }, await resp.json());
   }
 
   async deleteCustomDataIdentifier(
@@ -264,12 +246,10 @@ export default class Macie2 {
       requestUri: cmnP.encodePath`/custom-data-identifiers/${params["id"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async deleteFindingsFilter(
@@ -283,34 +263,30 @@ export default class Macie2 {
       requestUri: cmnP.encodePath`/findingsfilters/${params["id"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async deleteInvitations(
     {abortSignal, ...params}: RequestConfig & DeleteInvitationsRequest,
   ): Promise<DeleteInvitationsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       accountIds: params["accountIds"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteInvitations",
       requestUri: "/invitations/delete",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "unprocessedAccounts": [toUnprocessedAccount],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "unprocessedAccounts": [toUnprocessedAccount],
+      },
+    }, await resp.json());
   }
 
   async deleteMember(
@@ -324,38 +300,34 @@ export default class Macie2 {
       requestUri: cmnP.encodePath`/members/${params["id"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async describeBuckets(
     {abortSignal, ...params}: RequestConfig & DescribeBucketsRequest = {},
   ): Promise<DescribeBucketsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       criteria: jsonP.serializeMap(params["criteria"], x => fromBucketCriteriaAdditionalProperties(x)),
       maxResults: params["maxResults"],
       nextToken: params["nextToken"],
       sortCriteria: fromBucketSortCriteria(params["sortCriteria"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeBuckets",
       requestUri: "/datasources/s3",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "buckets": [toBucketMetadata],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "buckets": [toBucketMetadata],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async describeClassificationJob(
@@ -369,30 +341,28 @@ export default class Macie2 {
       requestUri: cmnP.encodePath`/jobs/${params["jobId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "clientToken": "s",
-          "createdAt": "d",
-          "customDataIdentifierIds": ["s"],
-          "description": "s",
-          "initialRun": "b",
-          "jobArn": "s",
-          "jobId": "s",
-          "jobStatus": (x: jsonP.JSONValue) => cmnP.readEnum<JobStatus>(x),
-          "jobType": (x: jsonP.JSONValue) => cmnP.readEnum<JobType>(x),
-          "lastRunTime": "d",
-          "name": "s",
-          "s3JobDefinition": toS3JobDefinition,
-          "samplingPercentage": "n",
-          "scheduleFrequency": toJobScheduleFrequency,
-          "statistics": toStatistics,
-          "tags": x => jsonP.readMap(String, String, x),
-          "userPausedDetails": toUserPausedDetails,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "clientToken": "s",
+        "createdAt": "d",
+        "customDataIdentifierIds": ["s"],
+        "description": "s",
+        "initialRun": "b",
+        "jobArn": "s",
+        "jobId": "s",
+        "jobStatus": (x: jsonP.JSONValue) => cmnP.readEnum<JobStatus>(x),
+        "jobType": (x: jsonP.JSONValue) => cmnP.readEnum<JobType>(x),
+        "lastRunTime": "d",
+        "name": "s",
+        "s3JobDefinition": toS3JobDefinition,
+        "samplingPercentage": "n",
+        "scheduleFrequency": toJobScheduleFrequency,
+        "statistics": toStatistics,
+        "tags": x => jsonP.readMap(String, String, x),
+        "userPausedDetails": toUserPausedDetails,
+      },
+    }, await resp.json());
   }
 
   async describeOrganizationConfiguration(
@@ -406,15 +376,13 @@ export default class Macie2 {
       requestUri: "/admin/configuration",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "autoEnable": "b",
-          "maxAccountLimitReached": "b",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "autoEnable": "b",
+        "maxAccountLimitReached": "b",
+      },
+    }, await resp.json());
   }
 
   async disableMacie(
@@ -428,12 +396,10 @@ export default class Macie2 {
       requestUri: "/macie",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async disableOrganizationAdminAccount(
@@ -448,12 +414,10 @@ export default class Macie2 {
       requestUri: "/admin",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async disassociateFromMasterAccount(
@@ -466,12 +430,10 @@ export default class Macie2 {
       requestUri: "/master/disassociate",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async disassociateMember(
@@ -484,88 +446,80 @@ export default class Macie2 {
       requestUri: cmnP.encodePath`/members/disassociate/${params["id"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async enableMacie(
     {abortSignal, ...params}: RequestConfig & EnableMacieRequest = {},
   ): Promise<EnableMacieResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       clientToken: params["clientToken"] ?? generateIdemptToken(),
       findingPublishingFrequency: params["findingPublishingFrequency"],
       status: params["status"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "EnableMacie",
       requestUri: "/macie",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async enableOrganizationAdminAccount(
     {abortSignal, ...params}: RequestConfig & EnableOrganizationAdminAccountRequest,
   ): Promise<EnableOrganizationAdminAccountResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       adminAccountId: params["adminAccountId"],
       clientToken: params["clientToken"] ?? generateIdemptToken(),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "EnableOrganizationAdminAccount",
       requestUri: "/admin",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async getBucketStatistics(
     {abortSignal, ...params}: RequestConfig & GetBucketStatisticsRequest = {},
   ): Promise<GetBucketStatisticsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       accountId: params["accountId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetBucketStatistics",
       requestUri: "/datasources/s3/statistics",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "bucketCount": "n",
-          "bucketCountByEffectivePermission": toBucketCountByEffectivePermission,
-          "bucketCountByEncryptionType": toBucketCountByEncryptionType,
-          "bucketCountBySharedAccessType": toBucketCountBySharedAccessType,
-          "classifiableObjectCount": "n",
-          "classifiableSizeInBytes": "n",
-          "lastUpdated": "d",
-          "objectCount": "n",
-          "sizeInBytes": "n",
-          "sizeInBytesCompressed": "n",
-          "unclassifiableObjectCount": toObjectLevelStatistics,
-          "unclassifiableObjectSizeInBytes": toObjectLevelStatistics,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "bucketCount": "n",
+        "bucketCountByEffectivePermission": toBucketCountByEffectivePermission,
+        "bucketCountByEncryptionType": toBucketCountByEncryptionType,
+        "bucketCountBySharedAccessType": toBucketCountBySharedAccessType,
+        "classifiableObjectCount": "n",
+        "classifiableSizeInBytes": "n",
+        "lastUpdated": "d",
+        "objectCount": "n",
+        "sizeInBytes": "n",
+        "sizeInBytesCompressed": "n",
+        "unclassifiableObjectCount": toObjectLevelStatistics,
+        "unclassifiableObjectSizeInBytes": toObjectLevelStatistics,
+      },
+    }, await resp.json());
   }
 
   async getClassificationExportConfiguration(
@@ -579,14 +533,12 @@ export default class Macie2 {
       requestUri: "/classification-export-configuration",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "configuration": toClassificationExportConfiguration,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "configuration": toClassificationExportConfiguration,
+      },
+    }, await resp.json());
   }
 
   async getCustomDataIdentifier(
@@ -600,72 +552,66 @@ export default class Macie2 {
       requestUri: cmnP.encodePath`/custom-data-identifiers/${params["id"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "arn": "s",
-          "createdAt": "d",
-          "deleted": "b",
-          "description": "s",
-          "id": "s",
-          "ignoreWords": ["s"],
-          "keywords": ["s"],
-          "maximumMatchDistance": "n",
-          "name": "s",
-          "regex": "s",
-          "tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "arn": "s",
+        "createdAt": "d",
+        "deleted": "b",
+        "description": "s",
+        "id": "s",
+        "ignoreWords": ["s"],
+        "keywords": ["s"],
+        "maximumMatchDistance": "n",
+        "name": "s",
+        "regex": "s",
+        "tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async getFindingStatistics(
     {abortSignal, ...params}: RequestConfig & GetFindingStatisticsRequest,
   ): Promise<GetFindingStatisticsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       findingCriteria: fromFindingCriteria(params["findingCriteria"]),
       groupBy: params["groupBy"],
       size: params["size"],
       sortCriteria: fromFindingStatisticsSortCriteria(params["sortCriteria"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetFindingStatistics",
       requestUri: "/findings/statistics",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "countsByGroup": [toGroupCount],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "countsByGroup": [toGroupCount],
+      },
+    }, await resp.json());
   }
 
   async getFindings(
     {abortSignal, ...params}: RequestConfig & GetFindingsRequest,
   ): Promise<GetFindingsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       findingIds: params["findingIds"],
       sortCriteria: fromSortCriteria(params["sortCriteria"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetFindings",
       requestUri: "/findings/describe",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "findings": [toFinding],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "findings": [toFinding],
+      },
+    }, await resp.json());
   }
 
   async getFindingsFilter(
@@ -679,21 +625,19 @@ export default class Macie2 {
       requestUri: cmnP.encodePath`/findingsfilters/${params["id"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "action": (x: jsonP.JSONValue) => cmnP.readEnum<FindingsFilterAction>(x),
-          "arn": "s",
-          "description": "s",
-          "findingCriteria": toFindingCriteria,
-          "id": "s",
-          "name": "s",
-          "position": "n",
-          "tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "action": (x: jsonP.JSONValue) => cmnP.readEnum<FindingsFilterAction>(x),
+        "arn": "s",
+        "description": "s",
+        "findingCriteria": toFindingCriteria,
+        "id": "s",
+        "name": "s",
+        "position": "n",
+        "tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async getInvitationsCount(
@@ -707,14 +651,12 @@ export default class Macie2 {
       requestUri: "/invitations/count",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "invitationsCount": "n",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "invitationsCount": "n",
+      },
+    }, await resp.json());
   }
 
   async getMacieSession(
@@ -728,18 +670,16 @@ export default class Macie2 {
       requestUri: "/macie",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "createdAt": "d",
-          "findingPublishingFrequency": (x: jsonP.JSONValue) => cmnP.readEnum<FindingPublishingFrequency>(x),
-          "serviceRole": "s",
-          "status": (x: jsonP.JSONValue) => cmnP.readEnum<MacieStatus>(x),
-          "updatedAt": "d",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "createdAt": "d",
+        "findingPublishingFrequency": (x: jsonP.JSONValue) => cmnP.readEnum<FindingPublishingFrequency>(x),
+        "serviceRole": "s",
+        "status": (x: jsonP.JSONValue) => cmnP.readEnum<MacieStatus>(x),
+        "updatedAt": "d",
+      },
+    }, await resp.json());
   }
 
   async getMasterAccount(
@@ -753,14 +693,12 @@ export default class Macie2 {
       requestUri: "/master",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "master": toInvitation,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "master": toInvitation,
+      },
+    }, await resp.json());
   }
 
   async getMember(
@@ -774,47 +712,43 @@ export default class Macie2 {
       requestUri: cmnP.encodePath`/members/${params["id"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "accountId": "s",
-          "arn": "s",
-          "email": "s",
-          "invitedAt": "d",
-          "masterAccountId": "s",
-          "relationshipStatus": (x: jsonP.JSONValue) => cmnP.readEnum<RelationshipStatus>(x),
-          "tags": x => jsonP.readMap(String, String, x),
-          "updatedAt": "d",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "accountId": "s",
+        "arn": "s",
+        "email": "s",
+        "invitedAt": "d",
+        "masterAccountId": "s",
+        "relationshipStatus": (x: jsonP.JSONValue) => cmnP.readEnum<RelationshipStatus>(x),
+        "tags": x => jsonP.readMap(String, String, x),
+        "updatedAt": "d",
+      },
+    }, await resp.json());
   }
 
   async getUsageStatistics(
     {abortSignal, ...params}: RequestConfig & GetUsageStatisticsRequest = {},
   ): Promise<GetUsageStatisticsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       filterBy: params["filterBy"]?.map(x => fromUsageStatisticsFilter(x)),
       maxResults: params["maxResults"],
       nextToken: params["nextToken"],
       sortBy: fromUsageStatisticsSortBy(params["sortBy"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetUsageStatistics",
       requestUri: "/usage/statistics",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "nextToken": "s",
-          "records": [toUsageRecord],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "nextToken": "s",
+        "records": [toUsageRecord],
+      },
+    }, await resp.json());
   }
 
   async getUsageTotals(
@@ -828,90 +762,82 @@ export default class Macie2 {
       requestUri: "/usage",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "usageTotals": [toUsageTotal],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "usageTotals": [toUsageTotal],
+      },
+    }, await resp.json());
   }
 
   async listClassificationJobs(
     {abortSignal, ...params}: RequestConfig & ListClassificationJobsRequest = {},
   ): Promise<ListClassificationJobsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       filterCriteria: fromListJobsFilterCriteria(params["filterCriteria"]),
       maxResults: params["maxResults"],
       nextToken: params["nextToken"],
       sortCriteria: fromListJobsSortCriteria(params["sortCriteria"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListClassificationJobs",
       requestUri: "/jobs/list",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "items": [toJobSummary],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "items": [toJobSummary],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listCustomDataIdentifiers(
     {abortSignal, ...params}: RequestConfig & ListCustomDataIdentifiersRequest = {},
   ): Promise<ListCustomDataIdentifiersResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       maxResults: params["maxResults"],
       nextToken: params["nextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListCustomDataIdentifiers",
       requestUri: "/custom-data-identifiers/list",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "items": [toCustomDataIdentifierSummary],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "items": [toCustomDataIdentifierSummary],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listFindings(
     {abortSignal, ...params}: RequestConfig & ListFindingsRequest = {},
   ): Promise<ListFindingsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       findingCriteria: fromFindingCriteria(params["findingCriteria"]),
       maxResults: params["maxResults"],
       nextToken: params["nextToken"],
       sortCriteria: fromSortCriteria(params["sortCriteria"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListFindings",
       requestUri: "/findings",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "findingIds": ["s"],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "findingIds": ["s"],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listFindingsFilters(
@@ -927,15 +853,13 @@ export default class Macie2 {
       requestUri: "/findingsfilters",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "findingsFilterListItems": [toFindingsFilterListItem],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "findingsFilterListItems": [toFindingsFilterListItem],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listInvitations(
@@ -951,15 +875,13 @@ export default class Macie2 {
       requestUri: "/invitations",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "invitations": [toInvitation],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "invitations": [toInvitation],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listMembers(
@@ -976,15 +898,13 @@ export default class Macie2 {
       requestUri: "/members",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "members": [toMember],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "members": [toMember],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listOrganizationAdminAccounts(
@@ -1000,15 +920,13 @@ export default class Macie2 {
       requestUri: "/admin",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "adminAccounts": [toAdminAccount],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "adminAccounts": [toAdminAccount],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listTagsForResource(
@@ -1022,22 +940,20 @@ export default class Macie2 {
       requestUri: cmnP.encodePath`/tags/${params["resourceArn"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async putClassificationExportConfiguration(
     {abortSignal, ...params}: RequestConfig & PutClassificationExportConfigurationRequest,
   ): Promise<PutClassificationExportConfigurationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       configuration: fromClassificationExportConfiguration(params["configuration"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutClassificationExportConfiguration",
@@ -1045,60 +961,54 @@ export default class Macie2 {
       requestUri: "/classification-export-configuration",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "configuration": toClassificationExportConfiguration,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "configuration": toClassificationExportConfiguration,
+      },
+    }, await resp.json());
   }
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       tags: params["tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
       requestUri: cmnP.encodePath`/tags/${params["resourceArn"]}`,
       responseCode: 204,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async testCustomDataIdentifier(
     {abortSignal, ...params}: RequestConfig & TestCustomDataIdentifierRequest,
   ): Promise<TestCustomDataIdentifierResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ignoreWords: params["ignoreWords"],
       keywords: params["keywords"],
       maximumMatchDistance: params["maximumMatchDistance"],
       regex: params["regex"],
       sampleText: params["sampleText"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TestCustomDataIdentifier",
       requestUri: "/custom-data-identifiers/test",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "matchCount": "n",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "matchCount": "n",
+      },
+    }, await resp.json());
   }
 
   async untagResource(
@@ -1115,20 +1025,18 @@ export default class Macie2 {
       requestUri: cmnP.encodePath`/tags/${params["resourceArn"]}`,
       responseCode: 204,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async updateClassificationJob(
     {abortSignal, ...params}: RequestConfig & UpdateClassificationJobRequest,
   ): Promise<UpdateClassificationJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       jobStatus: params["jobStatus"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateClassificationJob",
@@ -1136,24 +1044,22 @@ export default class Macie2 {
       requestUri: cmnP.encodePath`/jobs/${params["jobId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async updateFindingsFilter(
     {abortSignal, ...params}: RequestConfig & UpdateFindingsFilterRequest,
   ): Promise<UpdateFindingsFilterResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       action: params["action"],
       description: params["description"],
       findingCriteria: fromFindingCriteria(params["findingCriteria"]),
       name: params["name"],
       position: params["position"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateFindingsFilter",
@@ -1161,24 +1067,22 @@ export default class Macie2 {
       requestUri: cmnP.encodePath`/findingsfilters/${params["id"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "arn": "s",
-          "id": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "arn": "s",
+        "id": "s",
+      },
+    }, await resp.json());
   }
 
   async updateMacieSession(
     {abortSignal, ...params}: RequestConfig & UpdateMacieSessionRequest = {},
   ): Promise<UpdateMacieSessionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       findingPublishingFrequency: params["findingPublishingFrequency"],
       status: params["status"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateMacieSession",
@@ -1186,20 +1090,18 @@ export default class Macie2 {
       requestUri: "/macie",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async updateMemberSession(
     {abortSignal, ...params}: RequestConfig & UpdateMemberSessionRequest,
   ): Promise<UpdateMemberSessionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       status: params["status"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateMemberSession",
@@ -1207,20 +1109,18 @@ export default class Macie2 {
       requestUri: cmnP.encodePath`/macie/members/${params["id"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async updateOrganizationConfiguration(
     {abortSignal, ...params}: RequestConfig & UpdateOrganizationConfigurationRequest,
   ): Promise<UpdateOrganizationConfigurationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       autoEnable: params["autoEnable"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateOrganizationConfiguration",
@@ -1228,12 +1128,10 @@ export default class Macie2 {
       requestUri: "/admin/configuration",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
 }

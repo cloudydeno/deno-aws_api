@@ -29,11 +29,11 @@ export default class GameLift {
   async acceptMatch(
     {abortSignal, ...params}: RequestConfig & AcceptMatchInput,
   ): Promise<AcceptMatchOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TicketId: params["TicketId"],
       PlayerIds: params["PlayerIds"],
       AcceptanceType: params["AcceptanceType"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AcceptMatch",
@@ -47,11 +47,11 @@ export default class GameLift {
   async claimGameServer(
     {abortSignal, ...params}: RequestConfig & ClaimGameServerInput,
   ): Promise<ClaimGameServerOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       GameServerGroupName: params["GameServerGroupName"],
       GameServerId: params["GameServerId"],
       GameServerData: params["GameServerData"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ClaimGameServer",
@@ -67,12 +67,12 @@ export default class GameLift {
   async createAlias(
     {abortSignal, ...params}: RequestConfig & CreateAliasInput,
   ): Promise<CreateAliasOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       Description: params["Description"],
       RoutingStrategy: fromRoutingStrategy(params["RoutingStrategy"]),
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateAlias",
@@ -88,13 +88,13 @@ export default class GameLift {
   async createBuild(
     {abortSignal, ...params}: RequestConfig & CreateBuildInput = {},
   ): Promise<CreateBuildOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       Version: params["Version"],
       StorageLocation: fromS3Location(params["StorageLocation"]),
       OperatingSystem: params["OperatingSystem"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateBuild",
@@ -112,7 +112,7 @@ export default class GameLift {
   async createFleet(
     {abortSignal, ...params}: RequestConfig & CreateFleetInput,
   ): Promise<CreateFleetOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       Description: params["Description"],
       BuildId: params["BuildId"],
@@ -132,7 +132,7 @@ export default class GameLift {
       InstanceRoleArn: params["InstanceRoleArn"],
       CertificateConfiguration: fromCertificateConfiguration(params["CertificateConfiguration"]),
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateFleet",
@@ -148,7 +148,7 @@ export default class GameLift {
   async createGameServerGroup(
     {abortSignal, ...params}: RequestConfig & CreateGameServerGroupInput,
   ): Promise<CreateGameServerGroupOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       GameServerGroupName: params["GameServerGroupName"],
       RoleArn: params["RoleArn"],
       MinSize: params["MinSize"],
@@ -160,7 +160,7 @@ export default class GameLift {
       GameServerProtectionPolicy: params["GameServerProtectionPolicy"],
       VpcSubnets: params["VpcSubnets"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateGameServerGroup",
@@ -176,7 +176,7 @@ export default class GameLift {
   async createGameSession(
     {abortSignal, ...params}: RequestConfig & CreateGameSessionInput,
   ): Promise<CreateGameSessionOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       FleetId: params["FleetId"],
       AliasId: params["AliasId"],
       MaximumPlayerSessionCount: params["MaximumPlayerSessionCount"],
@@ -186,7 +186,7 @@ export default class GameLift {
       GameSessionId: params["GameSessionId"],
       IdempotencyToken: params["IdempotencyToken"],
       GameSessionData: params["GameSessionData"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateGameSession",
@@ -202,13 +202,13 @@ export default class GameLift {
   async createGameSessionQueue(
     {abortSignal, ...params}: RequestConfig & CreateGameSessionQueueInput,
   ): Promise<CreateGameSessionQueueOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       TimeoutInSeconds: params["TimeoutInSeconds"],
       PlayerLatencyPolicies: params["PlayerLatencyPolicies"]?.map(x => fromPlayerLatencyPolicy(x)),
       Destinations: params["Destinations"]?.map(x => fromGameSessionQueueDestination(x)),
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateGameSessionQueue",
@@ -224,7 +224,7 @@ export default class GameLift {
   async createMatchmakingConfiguration(
     {abortSignal, ...params}: RequestConfig & CreateMatchmakingConfigurationInput,
   ): Promise<CreateMatchmakingConfigurationOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       Description: params["Description"],
       GameSessionQueueArns: params["GameSessionQueueArns"],
@@ -239,7 +239,7 @@ export default class GameLift {
       GameSessionData: params["GameSessionData"],
       BackfillMode: params["BackfillMode"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateMatchmakingConfiguration",
@@ -255,11 +255,11 @@ export default class GameLift {
   async createMatchmakingRuleSet(
     {abortSignal, ...params}: RequestConfig & CreateMatchmakingRuleSetInput,
   ): Promise<CreateMatchmakingRuleSetOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       RuleSetBody: params["RuleSetBody"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateMatchmakingRuleSet",
@@ -275,11 +275,11 @@ export default class GameLift {
   async createPlayerSession(
     {abortSignal, ...params}: RequestConfig & CreatePlayerSessionInput,
   ): Promise<CreatePlayerSessionOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       GameSessionId: params["GameSessionId"],
       PlayerId: params["PlayerId"],
       PlayerData: params["PlayerData"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreatePlayerSession",
@@ -295,11 +295,11 @@ export default class GameLift {
   async createPlayerSessions(
     {abortSignal, ...params}: RequestConfig & CreatePlayerSessionsInput,
   ): Promise<CreatePlayerSessionsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       GameSessionId: params["GameSessionId"],
       PlayerIds: params["PlayerIds"],
       PlayerDataMap: params["PlayerDataMap"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreatePlayerSessions",
@@ -315,13 +315,13 @@ export default class GameLift {
   async createScript(
     {abortSignal, ...params}: RequestConfig & CreateScriptInput = {},
   ): Promise<CreateScriptOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       Version: params["Version"],
       StorageLocation: fromS3Location(params["StorageLocation"]),
       ZipFile: jsonP.serializeBlob(params["ZipFile"]),
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateScript",
@@ -337,10 +337,10 @@ export default class GameLift {
   async createVpcPeeringAuthorization(
     {abortSignal, ...params}: RequestConfig & CreateVpcPeeringAuthorizationInput,
   ): Promise<CreateVpcPeeringAuthorizationOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       GameLiftAwsAccountId: params["GameLiftAwsAccountId"],
       PeerVpcId: params["PeerVpcId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateVpcPeeringAuthorization",
@@ -356,11 +356,11 @@ export default class GameLift {
   async createVpcPeeringConnection(
     {abortSignal, ...params}: RequestConfig & CreateVpcPeeringConnectionInput,
   ): Promise<CreateVpcPeeringConnectionOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       FleetId: params["FleetId"],
       PeerVpcAwsAccountId: params["PeerVpcAwsAccountId"],
       PeerVpcId: params["PeerVpcId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateVpcPeeringConnection",
@@ -374,9 +374,9 @@ export default class GameLift {
   async deleteAlias(
     {abortSignal, ...params}: RequestConfig & DeleteAliasInput,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AliasId: params["AliasId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteAlias",
@@ -386,9 +386,9 @@ export default class GameLift {
   async deleteBuild(
     {abortSignal, ...params}: RequestConfig & DeleteBuildInput,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       BuildId: params["BuildId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteBuild",
@@ -398,9 +398,9 @@ export default class GameLift {
   async deleteFleet(
     {abortSignal, ...params}: RequestConfig & DeleteFleetInput,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       FleetId: params["FleetId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteFleet",
@@ -410,10 +410,10 @@ export default class GameLift {
   async deleteGameServerGroup(
     {abortSignal, ...params}: RequestConfig & DeleteGameServerGroupInput,
   ): Promise<DeleteGameServerGroupOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       GameServerGroupName: params["GameServerGroupName"],
       DeleteOption: params["DeleteOption"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteGameServerGroup",
@@ -429,9 +429,9 @@ export default class GameLift {
   async deleteGameSessionQueue(
     {abortSignal, ...params}: RequestConfig & DeleteGameSessionQueueInput,
   ): Promise<DeleteGameSessionQueueOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteGameSessionQueue",
@@ -445,9 +445,9 @@ export default class GameLift {
   async deleteMatchmakingConfiguration(
     {abortSignal, ...params}: RequestConfig & DeleteMatchmakingConfigurationInput,
   ): Promise<DeleteMatchmakingConfigurationOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteMatchmakingConfiguration",
@@ -461,9 +461,9 @@ export default class GameLift {
   async deleteMatchmakingRuleSet(
     {abortSignal, ...params}: RequestConfig & DeleteMatchmakingRuleSetInput,
   ): Promise<DeleteMatchmakingRuleSetOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteMatchmakingRuleSet",
@@ -477,10 +477,10 @@ export default class GameLift {
   async deleteScalingPolicy(
     {abortSignal, ...params}: RequestConfig & DeleteScalingPolicyInput,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       FleetId: params["FleetId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteScalingPolicy",
@@ -490,9 +490,9 @@ export default class GameLift {
   async deleteScript(
     {abortSignal, ...params}: RequestConfig & DeleteScriptInput,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ScriptId: params["ScriptId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteScript",
@@ -502,10 +502,10 @@ export default class GameLift {
   async deleteVpcPeeringAuthorization(
     {abortSignal, ...params}: RequestConfig & DeleteVpcPeeringAuthorizationInput,
   ): Promise<DeleteVpcPeeringAuthorizationOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       GameLiftAwsAccountId: params["GameLiftAwsAccountId"],
       PeerVpcId: params["PeerVpcId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteVpcPeeringAuthorization",
@@ -519,10 +519,10 @@ export default class GameLift {
   async deleteVpcPeeringConnection(
     {abortSignal, ...params}: RequestConfig & DeleteVpcPeeringConnectionInput,
   ): Promise<DeleteVpcPeeringConnectionOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       FleetId: params["FleetId"],
       VpcPeeringConnectionId: params["VpcPeeringConnectionId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteVpcPeeringConnection",
@@ -536,10 +536,10 @@ export default class GameLift {
   async deregisterGameServer(
     {abortSignal, ...params}: RequestConfig & DeregisterGameServerInput,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       GameServerGroupName: params["GameServerGroupName"],
       GameServerId: params["GameServerId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeregisterGameServer",
@@ -549,9 +549,9 @@ export default class GameLift {
   async describeAlias(
     {abortSignal, ...params}: RequestConfig & DescribeAliasInput,
   ): Promise<DescribeAliasOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AliasId: params["AliasId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeAlias",
@@ -567,9 +567,9 @@ export default class GameLift {
   async describeBuild(
     {abortSignal, ...params}: RequestConfig & DescribeBuildInput,
   ): Promise<DescribeBuildOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       BuildId: params["BuildId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeBuild",
@@ -585,9 +585,9 @@ export default class GameLift {
   async describeEC2InstanceLimits(
     {abortSignal, ...params}: RequestConfig & DescribeEC2InstanceLimitsInput = {},
   ): Promise<DescribeEC2InstanceLimitsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       EC2InstanceType: params["EC2InstanceType"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeEC2InstanceLimits",
@@ -603,11 +603,11 @@ export default class GameLift {
   async describeFleetAttributes(
     {abortSignal, ...params}: RequestConfig & DescribeFleetAttributesInput = {},
   ): Promise<DescribeFleetAttributesOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       FleetIds: params["FleetIds"],
       Limit: params["Limit"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeFleetAttributes",
@@ -624,11 +624,11 @@ export default class GameLift {
   async describeFleetCapacity(
     {abortSignal, ...params}: RequestConfig & DescribeFleetCapacityInput = {},
   ): Promise<DescribeFleetCapacityOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       FleetIds: params["FleetIds"],
       Limit: params["Limit"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeFleetCapacity",
@@ -645,13 +645,13 @@ export default class GameLift {
   async describeFleetEvents(
     {abortSignal, ...params}: RequestConfig & DescribeFleetEventsInput,
   ): Promise<DescribeFleetEventsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       FleetId: params["FleetId"],
       StartTime: jsonP.serializeDate_unixTimestamp(params["StartTime"]),
       EndTime: jsonP.serializeDate_unixTimestamp(params["EndTime"]),
       Limit: params["Limit"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeFleetEvents",
@@ -668,9 +668,9 @@ export default class GameLift {
   async describeFleetPortSettings(
     {abortSignal, ...params}: RequestConfig & DescribeFleetPortSettingsInput,
   ): Promise<DescribeFleetPortSettingsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       FleetId: params["FleetId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeFleetPortSettings",
@@ -686,11 +686,11 @@ export default class GameLift {
   async describeFleetUtilization(
     {abortSignal, ...params}: RequestConfig & DescribeFleetUtilizationInput = {},
   ): Promise<DescribeFleetUtilizationOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       FleetIds: params["FleetIds"],
       Limit: params["Limit"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeFleetUtilization",
@@ -707,10 +707,10 @@ export default class GameLift {
   async describeGameServer(
     {abortSignal, ...params}: RequestConfig & DescribeGameServerInput,
   ): Promise<DescribeGameServerOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       GameServerGroupName: params["GameServerGroupName"],
       GameServerId: params["GameServerId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeGameServer",
@@ -726,9 +726,9 @@ export default class GameLift {
   async describeGameServerGroup(
     {abortSignal, ...params}: RequestConfig & DescribeGameServerGroupInput,
   ): Promise<DescribeGameServerGroupOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       GameServerGroupName: params["GameServerGroupName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeGameServerGroup",
@@ -744,12 +744,12 @@ export default class GameLift {
   async describeGameServerInstances(
     {abortSignal, ...params}: RequestConfig & DescribeGameServerInstancesInput,
   ): Promise<DescribeGameServerInstancesOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       GameServerGroupName: params["GameServerGroupName"],
       InstanceIds: params["InstanceIds"],
       Limit: params["Limit"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeGameServerInstances",
@@ -766,14 +766,14 @@ export default class GameLift {
   async describeGameSessionDetails(
     {abortSignal, ...params}: RequestConfig & DescribeGameSessionDetailsInput = {},
   ): Promise<DescribeGameSessionDetailsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       FleetId: params["FleetId"],
       GameSessionId: params["GameSessionId"],
       AliasId: params["AliasId"],
       StatusFilter: params["StatusFilter"],
       Limit: params["Limit"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeGameSessionDetails",
@@ -790,9 +790,9 @@ export default class GameLift {
   async describeGameSessionPlacement(
     {abortSignal, ...params}: RequestConfig & DescribeGameSessionPlacementInput,
   ): Promise<DescribeGameSessionPlacementOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       PlacementId: params["PlacementId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeGameSessionPlacement",
@@ -808,11 +808,11 @@ export default class GameLift {
   async describeGameSessionQueues(
     {abortSignal, ...params}: RequestConfig & DescribeGameSessionQueuesInput = {},
   ): Promise<DescribeGameSessionQueuesOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Names: params["Names"],
       Limit: params["Limit"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeGameSessionQueues",
@@ -829,14 +829,14 @@ export default class GameLift {
   async describeGameSessions(
     {abortSignal, ...params}: RequestConfig & DescribeGameSessionsInput = {},
   ): Promise<DescribeGameSessionsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       FleetId: params["FleetId"],
       GameSessionId: params["GameSessionId"],
       AliasId: params["AliasId"],
       StatusFilter: params["StatusFilter"],
       Limit: params["Limit"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeGameSessions",
@@ -853,12 +853,12 @@ export default class GameLift {
   async describeInstances(
     {abortSignal, ...params}: RequestConfig & DescribeInstancesInput,
   ): Promise<DescribeInstancesOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       FleetId: params["FleetId"],
       InstanceId: params["InstanceId"],
       Limit: params["Limit"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeInstances",
@@ -875,9 +875,9 @@ export default class GameLift {
   async describeMatchmaking(
     {abortSignal, ...params}: RequestConfig & DescribeMatchmakingInput,
   ): Promise<DescribeMatchmakingOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TicketIds: params["TicketIds"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeMatchmaking",
@@ -893,12 +893,12 @@ export default class GameLift {
   async describeMatchmakingConfigurations(
     {abortSignal, ...params}: RequestConfig & DescribeMatchmakingConfigurationsInput = {},
   ): Promise<DescribeMatchmakingConfigurationsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Names: params["Names"],
       RuleSetName: params["RuleSetName"],
       Limit: params["Limit"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeMatchmakingConfigurations",
@@ -915,11 +915,11 @@ export default class GameLift {
   async describeMatchmakingRuleSets(
     {abortSignal, ...params}: RequestConfig & DescribeMatchmakingRuleSetsInput = {},
   ): Promise<DescribeMatchmakingRuleSetsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Names: params["Names"],
       Limit: params["Limit"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeMatchmakingRuleSets",
@@ -937,14 +937,14 @@ export default class GameLift {
   async describePlayerSessions(
     {abortSignal, ...params}: RequestConfig & DescribePlayerSessionsInput = {},
   ): Promise<DescribePlayerSessionsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       GameSessionId: params["GameSessionId"],
       PlayerId: params["PlayerId"],
       PlayerSessionId: params["PlayerSessionId"],
       PlayerSessionStatusFilter: params["PlayerSessionStatusFilter"],
       Limit: params["Limit"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribePlayerSessions",
@@ -961,9 +961,9 @@ export default class GameLift {
   async describeRuntimeConfiguration(
     {abortSignal, ...params}: RequestConfig & DescribeRuntimeConfigurationInput,
   ): Promise<DescribeRuntimeConfigurationOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       FleetId: params["FleetId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeRuntimeConfiguration",
@@ -979,12 +979,12 @@ export default class GameLift {
   async describeScalingPolicies(
     {abortSignal, ...params}: RequestConfig & DescribeScalingPoliciesInput,
   ): Promise<DescribeScalingPoliciesOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       FleetId: params["FleetId"],
       StatusFilter: params["StatusFilter"],
       Limit: params["Limit"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeScalingPolicies",
@@ -1001,9 +1001,9 @@ export default class GameLift {
   async describeScript(
     {abortSignal, ...params}: RequestConfig & DescribeScriptInput,
   ): Promise<DescribeScriptOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ScriptId: params["ScriptId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeScript",
@@ -1019,8 +1019,8 @@ export default class GameLift {
   async describeVpcPeeringAuthorizations(
     {abortSignal, ...params}: RequestConfig & DescribeVpcPeeringAuthorizationsInput = {},
   ): Promise<DescribeVpcPeeringAuthorizationsOutput> {
-    const body: jsonP.JSONObject = params ? {
-    } : {};
+    const body: jsonP.JSONObject = {
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeVpcPeeringAuthorizations",
@@ -1036,9 +1036,9 @@ export default class GameLift {
   async describeVpcPeeringConnections(
     {abortSignal, ...params}: RequestConfig & DescribeVpcPeeringConnectionsInput = {},
   ): Promise<DescribeVpcPeeringConnectionsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       FleetId: params["FleetId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeVpcPeeringConnections",
@@ -1054,9 +1054,9 @@ export default class GameLift {
   async getGameSessionLogUrl(
     {abortSignal, ...params}: RequestConfig & GetGameSessionLogUrlInput,
   ): Promise<GetGameSessionLogUrlOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       GameSessionId: params["GameSessionId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetGameSessionLogUrl",
@@ -1072,10 +1072,10 @@ export default class GameLift {
   async getInstanceAccess(
     {abortSignal, ...params}: RequestConfig & GetInstanceAccessInput,
   ): Promise<GetInstanceAccessOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       FleetId: params["FleetId"],
       InstanceId: params["InstanceId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetInstanceAccess",
@@ -1091,12 +1091,12 @@ export default class GameLift {
   async listAliases(
     {abortSignal, ...params}: RequestConfig & ListAliasesInput = {},
   ): Promise<ListAliasesOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       RoutingStrategyType: params["RoutingStrategyType"],
       Name: params["Name"],
       Limit: params["Limit"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListAliases",
@@ -1113,11 +1113,11 @@ export default class GameLift {
   async listBuilds(
     {abortSignal, ...params}: RequestConfig & ListBuildsInput = {},
   ): Promise<ListBuildsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Status: params["Status"],
       Limit: params["Limit"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListBuilds",
@@ -1134,12 +1134,12 @@ export default class GameLift {
   async listFleets(
     {abortSignal, ...params}: RequestConfig & ListFleetsInput = {},
   ): Promise<ListFleetsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       BuildId: params["BuildId"],
       ScriptId: params["ScriptId"],
       Limit: params["Limit"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListFleets",
@@ -1156,10 +1156,10 @@ export default class GameLift {
   async listGameServerGroups(
     {abortSignal, ...params}: RequestConfig & ListGameServerGroupsInput = {},
   ): Promise<ListGameServerGroupsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Limit: params["Limit"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListGameServerGroups",
@@ -1176,12 +1176,12 @@ export default class GameLift {
   async listGameServers(
     {abortSignal, ...params}: RequestConfig & ListGameServersInput,
   ): Promise<ListGameServersOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       GameServerGroupName: params["GameServerGroupName"],
       SortOrder: params["SortOrder"],
       Limit: params["Limit"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListGameServers",
@@ -1198,10 +1198,10 @@ export default class GameLift {
   async listScripts(
     {abortSignal, ...params}: RequestConfig & ListScriptsInput = {},
   ): Promise<ListScriptsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Limit: params["Limit"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListScripts",
@@ -1218,9 +1218,9 @@ export default class GameLift {
   async listTagsForResource(
     {abortSignal, ...params}: RequestConfig & ListTagsForResourceRequest,
   ): Promise<ListTagsForResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceARN: params["ResourceARN"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForResource",
@@ -1236,7 +1236,7 @@ export default class GameLift {
   async putScalingPolicy(
     {abortSignal, ...params}: RequestConfig & PutScalingPolicyInput,
   ): Promise<PutScalingPolicyOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       FleetId: params["FleetId"],
       ScalingAdjustment: params["ScalingAdjustment"],
@@ -1247,7 +1247,7 @@ export default class GameLift {
       MetricName: params["MetricName"],
       PolicyType: params["PolicyType"],
       TargetConfiguration: fromTargetConfiguration(params["TargetConfiguration"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutScalingPolicy",
@@ -1263,13 +1263,13 @@ export default class GameLift {
   async registerGameServer(
     {abortSignal, ...params}: RequestConfig & RegisterGameServerInput,
   ): Promise<RegisterGameServerOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       GameServerGroupName: params["GameServerGroupName"],
       GameServerId: params["GameServerId"],
       InstanceId: params["InstanceId"],
       ConnectionInfo: params["ConnectionInfo"],
       GameServerData: params["GameServerData"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RegisterGameServer",
@@ -1285,9 +1285,9 @@ export default class GameLift {
   async requestUploadCredentials(
     {abortSignal, ...params}: RequestConfig & RequestUploadCredentialsInput,
   ): Promise<RequestUploadCredentialsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       BuildId: params["BuildId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RequestUploadCredentials",
@@ -1304,9 +1304,9 @@ export default class GameLift {
   async resolveAlias(
     {abortSignal, ...params}: RequestConfig & ResolveAliasInput,
   ): Promise<ResolveAliasOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AliasId: params["AliasId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ResolveAlias",
@@ -1323,10 +1323,10 @@ export default class GameLift {
   async resumeGameServerGroup(
     {abortSignal, ...params}: RequestConfig & ResumeGameServerGroupInput,
   ): Promise<ResumeGameServerGroupOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       GameServerGroupName: params["GameServerGroupName"],
       ResumeActions: params["ResumeActions"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ResumeGameServerGroup",
@@ -1342,14 +1342,14 @@ export default class GameLift {
   async searchGameSessions(
     {abortSignal, ...params}: RequestConfig & SearchGameSessionsInput = {},
   ): Promise<SearchGameSessionsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       FleetId: params["FleetId"],
       AliasId: params["AliasId"],
       FilterExpression: params["FilterExpression"],
       SortExpression: params["SortExpression"],
       Limit: params["Limit"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SearchGameSessions",
@@ -1366,10 +1366,10 @@ export default class GameLift {
   async startFleetActions(
     {abortSignal, ...params}: RequestConfig & StartFleetActionsInput,
   ): Promise<StartFleetActionsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       FleetId: params["FleetId"],
       Actions: params["Actions"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartFleetActions",
@@ -1383,7 +1383,7 @@ export default class GameLift {
   async startGameSessionPlacement(
     {abortSignal, ...params}: RequestConfig & StartGameSessionPlacementInput,
   ): Promise<StartGameSessionPlacementOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       PlacementId: params["PlacementId"],
       GameSessionQueueName: params["GameSessionQueueName"],
       GameProperties: params["GameProperties"]?.map(x => fromGameProperty(x)),
@@ -1392,7 +1392,7 @@ export default class GameLift {
       PlayerLatencies: params["PlayerLatencies"]?.map(x => fromPlayerLatency(x)),
       DesiredPlayerSessions: params["DesiredPlayerSessions"]?.map(x => fromDesiredPlayerSession(x)),
       GameSessionData: params["GameSessionData"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartGameSessionPlacement",
@@ -1408,12 +1408,12 @@ export default class GameLift {
   async startMatchBackfill(
     {abortSignal, ...params}: RequestConfig & StartMatchBackfillInput,
   ): Promise<StartMatchBackfillOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TicketId: params["TicketId"],
       ConfigurationName: params["ConfigurationName"],
       GameSessionArn: params["GameSessionArn"],
       Players: params["Players"]?.map(x => fromPlayer(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartMatchBackfill",
@@ -1429,11 +1429,11 @@ export default class GameLift {
   async startMatchmaking(
     {abortSignal, ...params}: RequestConfig & StartMatchmakingInput,
   ): Promise<StartMatchmakingOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TicketId: params["TicketId"],
       ConfigurationName: params["ConfigurationName"],
       Players: params["Players"]?.map(x => fromPlayer(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartMatchmaking",
@@ -1449,10 +1449,10 @@ export default class GameLift {
   async stopFleetActions(
     {abortSignal, ...params}: RequestConfig & StopFleetActionsInput,
   ): Promise<StopFleetActionsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       FleetId: params["FleetId"],
       Actions: params["Actions"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopFleetActions",
@@ -1466,9 +1466,9 @@ export default class GameLift {
   async stopGameSessionPlacement(
     {abortSignal, ...params}: RequestConfig & StopGameSessionPlacementInput,
   ): Promise<StopGameSessionPlacementOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       PlacementId: params["PlacementId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopGameSessionPlacement",
@@ -1484,9 +1484,9 @@ export default class GameLift {
   async stopMatchmaking(
     {abortSignal, ...params}: RequestConfig & StopMatchmakingInput,
   ): Promise<StopMatchmakingOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TicketId: params["TicketId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopMatchmaking",
@@ -1500,10 +1500,10 @@ export default class GameLift {
   async suspendGameServerGroup(
     {abortSignal, ...params}: RequestConfig & SuspendGameServerGroupInput,
   ): Promise<SuspendGameServerGroupOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       GameServerGroupName: params["GameServerGroupName"],
       SuspendActions: params["SuspendActions"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SuspendGameServerGroup",
@@ -1519,10 +1519,10 @@ export default class GameLift {
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceARN: params["ResourceARN"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
@@ -1536,10 +1536,10 @@ export default class GameLift {
   async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceRequest,
   ): Promise<UntagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceARN: params["ResourceARN"],
       TagKeys: params["TagKeys"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResource",
@@ -1553,12 +1553,12 @@ export default class GameLift {
   async updateAlias(
     {abortSignal, ...params}: RequestConfig & UpdateAliasInput,
   ): Promise<UpdateAliasOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AliasId: params["AliasId"],
       Name: params["Name"],
       Description: params["Description"],
       RoutingStrategy: fromRoutingStrategy(params["RoutingStrategy"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateAlias",
@@ -1574,11 +1574,11 @@ export default class GameLift {
   async updateBuild(
     {abortSignal, ...params}: RequestConfig & UpdateBuildInput,
   ): Promise<UpdateBuildOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       BuildId: params["BuildId"],
       Name: params["Name"],
       Version: params["Version"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateBuild",
@@ -1594,14 +1594,14 @@ export default class GameLift {
   async updateFleetAttributes(
     {abortSignal, ...params}: RequestConfig & UpdateFleetAttributesInput,
   ): Promise<UpdateFleetAttributesOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       FleetId: params["FleetId"],
       Name: params["Name"],
       Description: params["Description"],
       NewGameSessionProtectionPolicy: params["NewGameSessionProtectionPolicy"],
       ResourceCreationLimitPolicy: fromResourceCreationLimitPolicy(params["ResourceCreationLimitPolicy"]),
       MetricGroups: params["MetricGroups"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateFleetAttributes",
@@ -1617,12 +1617,12 @@ export default class GameLift {
   async updateFleetCapacity(
     {abortSignal, ...params}: RequestConfig & UpdateFleetCapacityInput,
   ): Promise<UpdateFleetCapacityOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       FleetId: params["FleetId"],
       DesiredInstances: params["DesiredInstances"],
       MinSize: params["MinSize"],
       MaxSize: params["MaxSize"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateFleetCapacity",
@@ -1638,11 +1638,11 @@ export default class GameLift {
   async updateFleetPortSettings(
     {abortSignal, ...params}: RequestConfig & UpdateFleetPortSettingsInput,
   ): Promise<UpdateFleetPortSettingsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       FleetId: params["FleetId"],
       InboundPermissionAuthorizations: params["InboundPermissionAuthorizations"]?.map(x => fromIpPermission(x)),
       InboundPermissionRevocations: params["InboundPermissionRevocations"]?.map(x => fromIpPermission(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateFleetPortSettings",
@@ -1658,13 +1658,13 @@ export default class GameLift {
   async updateGameServer(
     {abortSignal, ...params}: RequestConfig & UpdateGameServerInput,
   ): Promise<UpdateGameServerOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       GameServerGroupName: params["GameServerGroupName"],
       GameServerId: params["GameServerId"],
       GameServerData: params["GameServerData"],
       UtilizationStatus: params["UtilizationStatus"],
       HealthCheck: params["HealthCheck"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateGameServer",
@@ -1680,13 +1680,13 @@ export default class GameLift {
   async updateGameServerGroup(
     {abortSignal, ...params}: RequestConfig & UpdateGameServerGroupInput,
   ): Promise<UpdateGameServerGroupOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       GameServerGroupName: params["GameServerGroupName"],
       RoleArn: params["RoleArn"],
       InstanceDefinitions: params["InstanceDefinitions"]?.map(x => fromInstanceDefinition(x)),
       GameServerProtectionPolicy: params["GameServerProtectionPolicy"],
       BalancingStrategy: params["BalancingStrategy"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateGameServerGroup",
@@ -1702,13 +1702,13 @@ export default class GameLift {
   async updateGameSession(
     {abortSignal, ...params}: RequestConfig & UpdateGameSessionInput,
   ): Promise<UpdateGameSessionOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       GameSessionId: params["GameSessionId"],
       MaximumPlayerSessionCount: params["MaximumPlayerSessionCount"],
       Name: params["Name"],
       PlayerSessionCreationPolicy: params["PlayerSessionCreationPolicy"],
       ProtectionPolicy: params["ProtectionPolicy"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateGameSession",
@@ -1724,12 +1724,12 @@ export default class GameLift {
   async updateGameSessionQueue(
     {abortSignal, ...params}: RequestConfig & UpdateGameSessionQueueInput,
   ): Promise<UpdateGameSessionQueueOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       TimeoutInSeconds: params["TimeoutInSeconds"],
       PlayerLatencyPolicies: params["PlayerLatencyPolicies"]?.map(x => fromPlayerLatencyPolicy(x)),
       Destinations: params["Destinations"]?.map(x => fromGameSessionQueueDestination(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateGameSessionQueue",
@@ -1745,7 +1745,7 @@ export default class GameLift {
   async updateMatchmakingConfiguration(
     {abortSignal, ...params}: RequestConfig & UpdateMatchmakingConfigurationInput,
   ): Promise<UpdateMatchmakingConfigurationOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       Description: params["Description"],
       GameSessionQueueArns: params["GameSessionQueueArns"],
@@ -1759,7 +1759,7 @@ export default class GameLift {
       GameProperties: params["GameProperties"]?.map(x => fromGameProperty(x)),
       GameSessionData: params["GameSessionData"],
       BackfillMode: params["BackfillMode"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateMatchmakingConfiguration",
@@ -1775,10 +1775,10 @@ export default class GameLift {
   async updateRuntimeConfiguration(
     {abortSignal, ...params}: RequestConfig & UpdateRuntimeConfigurationInput,
   ): Promise<UpdateRuntimeConfigurationOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       FleetId: params["FleetId"],
       RuntimeConfiguration: fromRuntimeConfiguration(params["RuntimeConfiguration"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateRuntimeConfiguration",
@@ -1794,13 +1794,13 @@ export default class GameLift {
   async updateScript(
     {abortSignal, ...params}: RequestConfig & UpdateScriptInput,
   ): Promise<UpdateScriptOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ScriptId: params["ScriptId"],
       Name: params["Name"],
       Version: params["Version"],
       StorageLocation: fromS3Location(params["StorageLocation"]),
       ZipFile: jsonP.serializeBlob(params["ZipFile"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateScript",
@@ -1816,9 +1816,9 @@ export default class GameLift {
   async validateMatchmakingRuleSet(
     {abortSignal, ...params}: RequestConfig & ValidateMatchmakingRuleSetInput,
   ): Promise<ValidateMatchmakingRuleSetOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       RuleSetBody: params["RuleSetBody"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ValidateMatchmakingRuleSet",

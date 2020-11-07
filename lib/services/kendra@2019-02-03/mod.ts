@@ -35,11 +35,11 @@ export default class Kendra {
   async batchDeleteDocument(
     {abortSignal, ...params}: RequestConfig & BatchDeleteDocumentRequest,
   ): Promise<BatchDeleteDocumentResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       IndexId: params["IndexId"],
       DocumentIdList: params["DocumentIdList"],
       DataSourceSyncJobMetricTarget: fromDataSourceSyncJobMetricTarget(params["DataSourceSyncJobMetricTarget"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchDeleteDocument",
@@ -55,11 +55,11 @@ export default class Kendra {
   async batchPutDocument(
     {abortSignal, ...params}: RequestConfig & BatchPutDocumentRequest,
   ): Promise<BatchPutDocumentResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       IndexId: params["IndexId"],
       RoleArn: params["RoleArn"],
       Documents: params["Documents"]?.map(x => fromDocument(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchPutDocument",
@@ -75,7 +75,7 @@ export default class Kendra {
   async createDataSource(
     {abortSignal, ...params}: RequestConfig & CreateDataSourceRequest,
   ): Promise<CreateDataSourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       IndexId: params["IndexId"],
       Type: params["Type"],
@@ -85,7 +85,7 @@ export default class Kendra {
       RoleArn: params["RoleArn"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
       ClientToken: params["ClientToken"] ?? generateIdemptToken(),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDataSource",
@@ -101,7 +101,7 @@ export default class Kendra {
   async createFaq(
     {abortSignal, ...params}: RequestConfig & CreateFaqRequest,
   ): Promise<CreateFaqResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       IndexId: params["IndexId"],
       Name: params["Name"],
       Description: params["Description"],
@@ -110,7 +110,7 @@ export default class Kendra {
       Tags: params["Tags"]?.map(x => fromTag(x)),
       FileFormat: params["FileFormat"],
       ClientToken: params["ClientToken"] ?? generateIdemptToken(),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateFaq",
@@ -126,7 +126,7 @@ export default class Kendra {
   async createIndex(
     {abortSignal, ...params}: RequestConfig & CreateIndexRequest,
   ): Promise<CreateIndexResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       Edition: params["Edition"],
       RoleArn: params["RoleArn"],
@@ -134,7 +134,7 @@ export default class Kendra {
       Description: params["Description"],
       ClientToken: params["ClientToken"] ?? generateIdemptToken(),
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateIndex",
@@ -150,10 +150,10 @@ export default class Kendra {
   async deleteDataSource(
     {abortSignal, ...params}: RequestConfig & DeleteDataSourceRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Id: params["Id"],
       IndexId: params["IndexId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteDataSource",
@@ -163,10 +163,10 @@ export default class Kendra {
   async deleteFaq(
     {abortSignal, ...params}: RequestConfig & DeleteFaqRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Id: params["Id"],
       IndexId: params["IndexId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteFaq",
@@ -176,9 +176,9 @@ export default class Kendra {
   async deleteIndex(
     {abortSignal, ...params}: RequestConfig & DeleteIndexRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Id: params["Id"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteIndex",
@@ -188,10 +188,10 @@ export default class Kendra {
   async describeDataSource(
     {abortSignal, ...params}: RequestConfig & DescribeDataSourceRequest,
   ): Promise<DescribeDataSourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Id: params["Id"],
       IndexId: params["IndexId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeDataSource",
@@ -218,10 +218,10 @@ export default class Kendra {
   async describeFaq(
     {abortSignal, ...params}: RequestConfig & DescribeFaqRequest,
   ): Promise<DescribeFaqResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Id: params["Id"],
       IndexId: params["IndexId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeFaq",
@@ -247,9 +247,9 @@ export default class Kendra {
   async describeIndex(
     {abortSignal, ...params}: RequestConfig & DescribeIndexRequest,
   ): Promise<DescribeIndexResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Id: params["Id"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeIndex",
@@ -277,14 +277,14 @@ export default class Kendra {
   async listDataSourceSyncJobs(
     {abortSignal, ...params}: RequestConfig & ListDataSourceSyncJobsRequest,
   ): Promise<ListDataSourceSyncJobsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Id: params["Id"],
       IndexId: params["IndexId"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
       StartTimeFilter: fromTimeRange(params["StartTimeFilter"]),
       StatusFilter: params["StatusFilter"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListDataSourceSyncJobs",
@@ -301,11 +301,11 @@ export default class Kendra {
   async listDataSources(
     {abortSignal, ...params}: RequestConfig & ListDataSourcesRequest,
   ): Promise<ListDataSourcesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       IndexId: params["IndexId"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListDataSources",
@@ -322,11 +322,11 @@ export default class Kendra {
   async listFaqs(
     {abortSignal, ...params}: RequestConfig & ListFaqsRequest,
   ): Promise<ListFaqsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       IndexId: params["IndexId"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListFaqs",
@@ -343,10 +343,10 @@ export default class Kendra {
   async listIndices(
     {abortSignal, ...params}: RequestConfig & ListIndicesRequest = {},
   ): Promise<ListIndicesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListIndices",
@@ -363,9 +363,9 @@ export default class Kendra {
   async listTagsForResource(
     {abortSignal, ...params}: RequestConfig & ListTagsForResourceRequest,
   ): Promise<ListTagsForResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceARN: params["ResourceARN"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForResource",
@@ -381,7 +381,7 @@ export default class Kendra {
   async query(
     {abortSignal, ...params}: RequestConfig & QueryRequest,
   ): Promise<QueryResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       IndexId: params["IndexId"],
       QueryText: params["QueryText"],
       AttributeFilter: fromAttributeFilter(params["AttributeFilter"]),
@@ -391,7 +391,7 @@ export default class Kendra {
       PageNumber: params["PageNumber"],
       PageSize: params["PageSize"],
       SortingConfiguration: fromSortingConfiguration(params["SortingConfiguration"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "Query",
@@ -410,10 +410,10 @@ export default class Kendra {
   async startDataSourceSyncJob(
     {abortSignal, ...params}: RequestConfig & StartDataSourceSyncJobRequest,
   ): Promise<StartDataSourceSyncJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Id: params["Id"],
       IndexId: params["IndexId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartDataSourceSyncJob",
@@ -429,10 +429,10 @@ export default class Kendra {
   async stopDataSourceSyncJob(
     {abortSignal, ...params}: RequestConfig & StopDataSourceSyncJobRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Id: params["Id"],
       IndexId: params["IndexId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopDataSourceSyncJob",
@@ -442,12 +442,12 @@ export default class Kendra {
   async submitFeedback(
     {abortSignal, ...params}: RequestConfig & SubmitFeedbackRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       IndexId: params["IndexId"],
       QueryId: params["QueryId"],
       ClickFeedbackItems: params["ClickFeedbackItems"]?.map(x => fromClickFeedback(x)),
       RelevanceFeedbackItems: params["RelevanceFeedbackItems"]?.map(x => fromRelevanceFeedback(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SubmitFeedback",
@@ -457,10 +457,10 @@ export default class Kendra {
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceARN: params["ResourceARN"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
@@ -474,10 +474,10 @@ export default class Kendra {
   async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceRequest,
   ): Promise<UntagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceARN: params["ResourceARN"],
       TagKeys: params["TagKeys"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResource",
@@ -491,7 +491,7 @@ export default class Kendra {
   async updateDataSource(
     {abortSignal, ...params}: RequestConfig & UpdateDataSourceRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Id: params["Id"],
       Name: params["Name"],
       IndexId: params["IndexId"],
@@ -499,7 +499,7 @@ export default class Kendra {
       Description: params["Description"],
       Schedule: params["Schedule"],
       RoleArn: params["RoleArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateDataSource",
@@ -509,14 +509,14 @@ export default class Kendra {
   async updateIndex(
     {abortSignal, ...params}: RequestConfig & UpdateIndexRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Id: params["Id"],
       Name: params["Name"],
       RoleArn: params["RoleArn"],
       Description: params["Description"],
       DocumentMetadataConfigurationUpdates: params["DocumentMetadataConfigurationUpdates"]?.map(x => fromDocumentMetadataConfiguration(x)),
       CapacityUnits: fromCapacityUnitsConfiguration(params["CapacityUnits"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateIndex",

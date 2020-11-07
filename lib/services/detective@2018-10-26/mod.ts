@@ -29,9 +29,9 @@ export default class Detective {
   async acceptInvitation(
     {abortSignal, ...params}: RequestConfig & AcceptInvitationRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       GraphArn: params["GraphArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AcceptInvitation",
@@ -48,46 +48,42 @@ export default class Detective {
       action: "CreateGraph",
       requestUri: "/graph",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "GraphArn": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "GraphArn": "s",
+      },
+    }, await resp.json());
   }
 
   async createMembers(
     {abortSignal, ...params}: RequestConfig & CreateMembersRequest,
   ): Promise<CreateMembersResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       GraphArn: params["GraphArn"],
       Message: params["Message"],
       Accounts: params["Accounts"]?.map(x => fromAccount(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateMembers",
       requestUri: "/graph/members",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Members": [toMemberDetail],
-          "UnprocessedAccounts": [toUnprocessedAccount],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Members": [toMemberDetail],
+        "UnprocessedAccounts": [toUnprocessedAccount],
+      },
+    }, await resp.json());
   }
 
   async deleteGraph(
     {abortSignal, ...params}: RequestConfig & DeleteGraphRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       GraphArn: params["GraphArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteGraph",
@@ -98,32 +94,30 @@ export default class Detective {
   async deleteMembers(
     {abortSignal, ...params}: RequestConfig & DeleteMembersRequest,
   ): Promise<DeleteMembersResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       GraphArn: params["GraphArn"],
       AccountIds: params["AccountIds"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteMembers",
       requestUri: "/graph/members/removal",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "AccountIds": ["s"],
-          "UnprocessedAccounts": [toUnprocessedAccount],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "AccountIds": ["s"],
+        "UnprocessedAccounts": [toUnprocessedAccount],
+      },
+    }, await resp.json());
   }
 
   async disassociateMembership(
     {abortSignal, ...params}: RequestConfig & DisassociateMembershipRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       GraphArn: params["GraphArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisassociateMembership",
@@ -134,102 +128,94 @@ export default class Detective {
   async getMembers(
     {abortSignal, ...params}: RequestConfig & GetMembersRequest,
   ): Promise<GetMembersResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       GraphArn: params["GraphArn"],
       AccountIds: params["AccountIds"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetMembers",
       requestUri: "/graph/members/get",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "MemberDetails": [toMemberDetail],
-          "UnprocessedAccounts": [toUnprocessedAccount],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "MemberDetails": [toMemberDetail],
+        "UnprocessedAccounts": [toUnprocessedAccount],
+      },
+    }, await resp.json());
   }
 
   async listGraphs(
     {abortSignal, ...params}: RequestConfig & ListGraphsRequest = {},
   ): Promise<ListGraphsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListGraphs",
       requestUri: "/graphs/list",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "GraphList": [toGraph],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "GraphList": [toGraph],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listInvitations(
     {abortSignal, ...params}: RequestConfig & ListInvitationsRequest = {},
   ): Promise<ListInvitationsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListInvitations",
       requestUri: "/invitations/list",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Invitations": [toMemberDetail],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Invitations": [toMemberDetail],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listMembers(
     {abortSignal, ...params}: RequestConfig & ListMembersRequest,
   ): Promise<ListMembersResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       GraphArn: params["GraphArn"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListMembers",
       requestUri: "/graph/members/list",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "MemberDetails": [toMemberDetail],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "MemberDetails": [toMemberDetail],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async rejectInvitation(
     {abortSignal, ...params}: RequestConfig & RejectInvitationRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       GraphArn: params["GraphArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RejectInvitation",
@@ -240,10 +226,10 @@ export default class Detective {
   async startMonitoringMember(
     {abortSignal, ...params}: RequestConfig & StartMonitoringMemberRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       GraphArn: params["GraphArn"],
       AccountId: params["AccountId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartMonitoringMember",

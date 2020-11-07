@@ -30,11 +30,11 @@ export default class Budgets {
   async createBudget(
     {abortSignal, ...params}: RequestConfig & CreateBudgetRequest,
   ): Promise<CreateBudgetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AccountId: params["AccountId"],
       Budget: fromBudget(params["Budget"]),
       NotificationsWithSubscribers: params["NotificationsWithSubscribers"]?.map(x => fromNotificationWithSubscribers(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateBudget",
@@ -48,7 +48,7 @@ export default class Budgets {
   async createBudgetAction(
     {abortSignal, ...params}: RequestConfig & CreateBudgetActionRequest,
   ): Promise<CreateBudgetActionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AccountId: params["AccountId"],
       BudgetName: params["BudgetName"],
       NotificationType: params["NotificationType"],
@@ -58,7 +58,7 @@ export default class Budgets {
       ExecutionRoleArn: params["ExecutionRoleArn"],
       ApprovalModel: params["ApprovalModel"],
       Subscribers: params["Subscribers"]?.map(x => fromSubscriber(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateBudgetAction",
@@ -76,12 +76,12 @@ export default class Budgets {
   async createNotification(
     {abortSignal, ...params}: RequestConfig & CreateNotificationRequest,
   ): Promise<CreateNotificationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AccountId: params["AccountId"],
       BudgetName: params["BudgetName"],
       Notification: fromNotification(params["Notification"]),
       Subscribers: params["Subscribers"]?.map(x => fromSubscriber(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateNotification",
@@ -95,12 +95,12 @@ export default class Budgets {
   async createSubscriber(
     {abortSignal, ...params}: RequestConfig & CreateSubscriberRequest,
   ): Promise<CreateSubscriberResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AccountId: params["AccountId"],
       BudgetName: params["BudgetName"],
       Notification: fromNotification(params["Notification"]),
       Subscriber: fromSubscriber(params["Subscriber"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateSubscriber",
@@ -114,10 +114,10 @@ export default class Budgets {
   async deleteBudget(
     {abortSignal, ...params}: RequestConfig & DeleteBudgetRequest,
   ): Promise<DeleteBudgetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AccountId: params["AccountId"],
       BudgetName: params["BudgetName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteBudget",
@@ -131,11 +131,11 @@ export default class Budgets {
   async deleteBudgetAction(
     {abortSignal, ...params}: RequestConfig & DeleteBudgetActionRequest,
   ): Promise<DeleteBudgetActionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AccountId: params["AccountId"],
       BudgetName: params["BudgetName"],
       ActionId: params["ActionId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteBudgetAction",
@@ -153,11 +153,11 @@ export default class Budgets {
   async deleteNotification(
     {abortSignal, ...params}: RequestConfig & DeleteNotificationRequest,
   ): Promise<DeleteNotificationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AccountId: params["AccountId"],
       BudgetName: params["BudgetName"],
       Notification: fromNotification(params["Notification"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteNotification",
@@ -171,12 +171,12 @@ export default class Budgets {
   async deleteSubscriber(
     {abortSignal, ...params}: RequestConfig & DeleteSubscriberRequest,
   ): Promise<DeleteSubscriberResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AccountId: params["AccountId"],
       BudgetName: params["BudgetName"],
       Notification: fromNotification(params["Notification"]),
       Subscriber: fromSubscriber(params["Subscriber"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteSubscriber",
@@ -190,10 +190,10 @@ export default class Budgets {
   async describeBudget(
     {abortSignal, ...params}: RequestConfig & DescribeBudgetRequest,
   ): Promise<DescribeBudgetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AccountId: params["AccountId"],
       BudgetName: params["BudgetName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeBudget",
@@ -209,11 +209,11 @@ export default class Budgets {
   async describeBudgetAction(
     {abortSignal, ...params}: RequestConfig & DescribeBudgetActionRequest,
   ): Promise<DescribeBudgetActionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AccountId: params["AccountId"],
       BudgetName: params["BudgetName"],
       ActionId: params["ActionId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeBudgetAction",
@@ -231,14 +231,14 @@ export default class Budgets {
   async describeBudgetActionHistories(
     {abortSignal, ...params}: RequestConfig & DescribeBudgetActionHistoriesRequest,
   ): Promise<DescribeBudgetActionHistoriesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AccountId: params["AccountId"],
       BudgetName: params["BudgetName"],
       ActionId: params["ActionId"],
       TimePeriod: fromTimePeriod(params["TimePeriod"]),
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeBudgetActionHistories",
@@ -256,11 +256,11 @@ export default class Budgets {
   async describeBudgetActionsForAccount(
     {abortSignal, ...params}: RequestConfig & DescribeBudgetActionsForAccountRequest,
   ): Promise<DescribeBudgetActionsForAccountResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AccountId: params["AccountId"],
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeBudgetActionsForAccount",
@@ -278,12 +278,12 @@ export default class Budgets {
   async describeBudgetActionsForBudget(
     {abortSignal, ...params}: RequestConfig & DescribeBudgetActionsForBudgetRequest,
   ): Promise<DescribeBudgetActionsForBudgetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AccountId: params["AccountId"],
       BudgetName: params["BudgetName"],
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeBudgetActionsForBudget",
@@ -301,13 +301,13 @@ export default class Budgets {
   async describeBudgetPerformanceHistory(
     {abortSignal, ...params}: RequestConfig & DescribeBudgetPerformanceHistoryRequest,
   ): Promise<DescribeBudgetPerformanceHistoryResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AccountId: params["AccountId"],
       BudgetName: params["BudgetName"],
       TimePeriod: fromTimePeriod(params["TimePeriod"]),
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeBudgetPerformanceHistory",
@@ -324,11 +324,11 @@ export default class Budgets {
   async describeBudgets(
     {abortSignal, ...params}: RequestConfig & DescribeBudgetsRequest,
   ): Promise<DescribeBudgetsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AccountId: params["AccountId"],
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeBudgets",
@@ -345,12 +345,12 @@ export default class Budgets {
   async describeNotificationsForBudget(
     {abortSignal, ...params}: RequestConfig & DescribeNotificationsForBudgetRequest,
   ): Promise<DescribeNotificationsForBudgetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AccountId: params["AccountId"],
       BudgetName: params["BudgetName"],
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeNotificationsForBudget",
@@ -367,13 +367,13 @@ export default class Budgets {
   async describeSubscribersForNotification(
     {abortSignal, ...params}: RequestConfig & DescribeSubscribersForNotificationRequest,
   ): Promise<DescribeSubscribersForNotificationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AccountId: params["AccountId"],
       BudgetName: params["BudgetName"],
       Notification: fromNotification(params["Notification"]),
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeSubscribersForNotification",
@@ -390,12 +390,12 @@ export default class Budgets {
   async executeBudgetAction(
     {abortSignal, ...params}: RequestConfig & ExecuteBudgetActionRequest,
   ): Promise<ExecuteBudgetActionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AccountId: params["AccountId"],
       BudgetName: params["BudgetName"],
       ActionId: params["ActionId"],
       ExecutionType: params["ExecutionType"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ExecuteBudgetAction",
@@ -414,10 +414,10 @@ export default class Budgets {
   async updateBudget(
     {abortSignal, ...params}: RequestConfig & UpdateBudgetRequest,
   ): Promise<UpdateBudgetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AccountId: params["AccountId"],
       NewBudget: fromBudget(params["NewBudget"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateBudget",
@@ -431,7 +431,7 @@ export default class Budgets {
   async updateBudgetAction(
     {abortSignal, ...params}: RequestConfig & UpdateBudgetActionRequest,
   ): Promise<UpdateBudgetActionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AccountId: params["AccountId"],
       BudgetName: params["BudgetName"],
       ActionId: params["ActionId"],
@@ -441,7 +441,7 @@ export default class Budgets {
       ExecutionRoleArn: params["ExecutionRoleArn"],
       ApprovalModel: params["ApprovalModel"],
       Subscribers: params["Subscribers"]?.map(x => fromSubscriber(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateBudgetAction",
@@ -460,12 +460,12 @@ export default class Budgets {
   async updateNotification(
     {abortSignal, ...params}: RequestConfig & UpdateNotificationRequest,
   ): Promise<UpdateNotificationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AccountId: params["AccountId"],
       BudgetName: params["BudgetName"],
       OldNotification: fromNotification(params["OldNotification"]),
       NewNotification: fromNotification(params["NewNotification"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateNotification",
@@ -479,13 +479,13 @@ export default class Budgets {
   async updateSubscriber(
     {abortSignal, ...params}: RequestConfig & UpdateSubscriberRequest,
   ): Promise<UpdateSubscriberResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AccountId: params["AccountId"],
       BudgetName: params["BudgetName"],
       Notification: fromNotification(params["Notification"]),
       OldSubscriber: fromSubscriber(params["OldSubscriber"]),
       NewSubscriber: fromSubscriber(params["NewSubscriber"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateSubscriber",

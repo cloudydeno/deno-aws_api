@@ -30,10 +30,10 @@ export default class ConfigService {
   async batchGetAggregateResourceConfig(
     {abortSignal, ...params}: RequestConfig & BatchGetAggregateResourceConfigRequest,
   ): Promise<BatchGetAggregateResourceConfigResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ConfigurationAggregatorName: params["ConfigurationAggregatorName"],
       ResourceIdentifiers: params["ResourceIdentifiers"]?.map(x => fromAggregateResourceIdentifier(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchGetAggregateResourceConfig",
@@ -50,9 +50,9 @@ export default class ConfigService {
   async batchGetResourceConfig(
     {abortSignal, ...params}: RequestConfig & BatchGetResourceConfigRequest,
   ): Promise<BatchGetResourceConfigResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       resourceKeys: params["resourceKeys"]?.map(x => fromResourceKey(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchGetResourceConfig",
@@ -69,10 +69,10 @@ export default class ConfigService {
   async deleteAggregationAuthorization(
     {abortSignal, ...params}: RequestConfig & DeleteAggregationAuthorizationRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AuthorizedAccountId: params["AuthorizedAccountId"],
       AuthorizedAwsRegion: params["AuthorizedAwsRegion"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteAggregationAuthorization",
@@ -82,9 +82,9 @@ export default class ConfigService {
   async deleteConfigRule(
     {abortSignal, ...params}: RequestConfig & DeleteConfigRuleRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ConfigRuleName: params["ConfigRuleName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteConfigRule",
@@ -94,9 +94,9 @@ export default class ConfigService {
   async deleteConfigurationAggregator(
     {abortSignal, ...params}: RequestConfig & DeleteConfigurationAggregatorRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ConfigurationAggregatorName: params["ConfigurationAggregatorName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteConfigurationAggregator",
@@ -106,9 +106,9 @@ export default class ConfigService {
   async deleteConfigurationRecorder(
     {abortSignal, ...params}: RequestConfig & DeleteConfigurationRecorderRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ConfigurationRecorderName: params["ConfigurationRecorderName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteConfigurationRecorder",
@@ -118,9 +118,9 @@ export default class ConfigService {
   async deleteConformancePack(
     {abortSignal, ...params}: RequestConfig & DeleteConformancePackRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ConformancePackName: params["ConformancePackName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteConformancePack",
@@ -130,9 +130,9 @@ export default class ConfigService {
   async deleteDeliveryChannel(
     {abortSignal, ...params}: RequestConfig & DeleteDeliveryChannelRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DeliveryChannelName: params["DeliveryChannelName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteDeliveryChannel",
@@ -142,9 +142,9 @@ export default class ConfigService {
   async deleteEvaluationResults(
     {abortSignal, ...params}: RequestConfig & DeleteEvaluationResultsRequest,
   ): Promise<DeleteEvaluationResultsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ConfigRuleName: params["ConfigRuleName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteEvaluationResults",
@@ -158,9 +158,9 @@ export default class ConfigService {
   async deleteOrganizationConfigRule(
     {abortSignal, ...params}: RequestConfig & DeleteOrganizationConfigRuleRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       OrganizationConfigRuleName: params["OrganizationConfigRuleName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteOrganizationConfigRule",
@@ -170,9 +170,9 @@ export default class ConfigService {
   async deleteOrganizationConformancePack(
     {abortSignal, ...params}: RequestConfig & DeleteOrganizationConformancePackRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       OrganizationConformancePackName: params["OrganizationConformancePackName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteOrganizationConformancePack",
@@ -182,10 +182,10 @@ export default class ConfigService {
   async deletePendingAggregationRequest(
     {abortSignal, ...params}: RequestConfig & DeletePendingAggregationRequestRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       RequesterAccountId: params["RequesterAccountId"],
       RequesterAwsRegion: params["RequesterAwsRegion"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeletePendingAggregationRequest",
@@ -195,10 +195,10 @@ export default class ConfigService {
   async deleteRemediationConfiguration(
     {abortSignal, ...params}: RequestConfig & DeleteRemediationConfigurationRequest,
   ): Promise<DeleteRemediationConfigurationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ConfigRuleName: params["ConfigRuleName"],
       ResourceType: params["ResourceType"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteRemediationConfiguration",
@@ -212,10 +212,10 @@ export default class ConfigService {
   async deleteRemediationExceptions(
     {abortSignal, ...params}: RequestConfig & DeleteRemediationExceptionsRequest,
   ): Promise<DeleteRemediationExceptionsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ConfigRuleName: params["ConfigRuleName"],
       ResourceKeys: params["ResourceKeys"]?.map(x => fromRemediationExceptionResourceKey(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteRemediationExceptions",
@@ -231,10 +231,10 @@ export default class ConfigService {
   async deleteResourceConfig(
     {abortSignal, ...params}: RequestConfig & DeleteResourceConfigRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceType: params["ResourceType"],
       ResourceId: params["ResourceId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteResourceConfig",
@@ -244,9 +244,9 @@ export default class ConfigService {
   async deleteRetentionConfiguration(
     {abortSignal, ...params}: RequestConfig & DeleteRetentionConfigurationRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       RetentionConfigurationName: params["RetentionConfigurationName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteRetentionConfiguration",
@@ -256,9 +256,9 @@ export default class ConfigService {
   async deliverConfigSnapshot(
     {abortSignal, ...params}: RequestConfig & DeliverConfigSnapshotRequest,
   ): Promise<DeliverConfigSnapshotResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       deliveryChannelName: params["deliveryChannelName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeliverConfigSnapshot",
@@ -274,12 +274,12 @@ export default class ConfigService {
   async describeAggregateComplianceByConfigRules(
     {abortSignal, ...params}: RequestConfig & DescribeAggregateComplianceByConfigRulesRequest,
   ): Promise<DescribeAggregateComplianceByConfigRulesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ConfigurationAggregatorName: params["ConfigurationAggregatorName"],
       Filters: fromConfigRuleComplianceFilters(params["Filters"]),
       Limit: params["Limit"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeAggregateComplianceByConfigRules",
@@ -296,10 +296,10 @@ export default class ConfigService {
   async describeAggregationAuthorizations(
     {abortSignal, ...params}: RequestConfig & DescribeAggregationAuthorizationsRequest = {},
   ): Promise<DescribeAggregationAuthorizationsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Limit: params["Limit"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeAggregationAuthorizations",
@@ -316,11 +316,11 @@ export default class ConfigService {
   async describeComplianceByConfigRule(
     {abortSignal, ...params}: RequestConfig & DescribeComplianceByConfigRuleRequest = {},
   ): Promise<DescribeComplianceByConfigRuleResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ConfigRuleNames: params["ConfigRuleNames"],
       ComplianceTypes: params["ComplianceTypes"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeComplianceByConfigRule",
@@ -337,13 +337,13 @@ export default class ConfigService {
   async describeComplianceByResource(
     {abortSignal, ...params}: RequestConfig & DescribeComplianceByResourceRequest = {},
   ): Promise<DescribeComplianceByResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceType: params["ResourceType"],
       ResourceId: params["ResourceId"],
       ComplianceTypes: params["ComplianceTypes"],
       Limit: params["Limit"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeComplianceByResource",
@@ -360,11 +360,11 @@ export default class ConfigService {
   async describeConfigRuleEvaluationStatus(
     {abortSignal, ...params}: RequestConfig & DescribeConfigRuleEvaluationStatusRequest = {},
   ): Promise<DescribeConfigRuleEvaluationStatusResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ConfigRuleNames: params["ConfigRuleNames"],
       NextToken: params["NextToken"],
       Limit: params["Limit"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeConfigRuleEvaluationStatus",
@@ -381,10 +381,10 @@ export default class ConfigService {
   async describeConfigRules(
     {abortSignal, ...params}: RequestConfig & DescribeConfigRulesRequest = {},
   ): Promise<DescribeConfigRulesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ConfigRuleNames: params["ConfigRuleNames"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeConfigRules",
@@ -401,12 +401,12 @@ export default class ConfigService {
   async describeConfigurationAggregatorSourcesStatus(
     {abortSignal, ...params}: RequestConfig & DescribeConfigurationAggregatorSourcesStatusRequest,
   ): Promise<DescribeConfigurationAggregatorSourcesStatusResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ConfigurationAggregatorName: params["ConfigurationAggregatorName"],
       UpdateStatus: params["UpdateStatus"],
       NextToken: params["NextToken"],
       Limit: params["Limit"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeConfigurationAggregatorSourcesStatus",
@@ -423,11 +423,11 @@ export default class ConfigService {
   async describeConfigurationAggregators(
     {abortSignal, ...params}: RequestConfig & DescribeConfigurationAggregatorsRequest = {},
   ): Promise<DescribeConfigurationAggregatorsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ConfigurationAggregatorNames: params["ConfigurationAggregatorNames"],
       NextToken: params["NextToken"],
       Limit: params["Limit"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeConfigurationAggregators",
@@ -444,9 +444,9 @@ export default class ConfigService {
   async describeConfigurationRecorderStatus(
     {abortSignal, ...params}: RequestConfig & DescribeConfigurationRecorderStatusRequest = {},
   ): Promise<DescribeConfigurationRecorderStatusResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ConfigurationRecorderNames: params["ConfigurationRecorderNames"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeConfigurationRecorderStatus",
@@ -462,9 +462,9 @@ export default class ConfigService {
   async describeConfigurationRecorders(
     {abortSignal, ...params}: RequestConfig & DescribeConfigurationRecordersRequest = {},
   ): Promise<DescribeConfigurationRecordersResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ConfigurationRecorderNames: params["ConfigurationRecorderNames"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeConfigurationRecorders",
@@ -480,12 +480,12 @@ export default class ConfigService {
   async describeConformancePackCompliance(
     {abortSignal, ...params}: RequestConfig & DescribeConformancePackComplianceRequest,
   ): Promise<DescribeConformancePackComplianceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ConformancePackName: params["ConformancePackName"],
       Filters: fromConformancePackComplianceFilters(params["Filters"]),
       Limit: params["Limit"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeConformancePackCompliance",
@@ -504,11 +504,11 @@ export default class ConfigService {
   async describeConformancePackStatus(
     {abortSignal, ...params}: RequestConfig & DescribeConformancePackStatusRequest = {},
   ): Promise<DescribeConformancePackStatusResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ConformancePackNames: params["ConformancePackNames"],
       Limit: params["Limit"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeConformancePackStatus",
@@ -525,11 +525,11 @@ export default class ConfigService {
   async describeConformancePacks(
     {abortSignal, ...params}: RequestConfig & DescribeConformancePacksRequest = {},
   ): Promise<DescribeConformancePacksResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ConformancePackNames: params["ConformancePackNames"],
       Limit: params["Limit"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeConformancePacks",
@@ -546,9 +546,9 @@ export default class ConfigService {
   async describeDeliveryChannelStatus(
     {abortSignal, ...params}: RequestConfig & DescribeDeliveryChannelStatusRequest = {},
   ): Promise<DescribeDeliveryChannelStatusResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DeliveryChannelNames: params["DeliveryChannelNames"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeDeliveryChannelStatus",
@@ -564,9 +564,9 @@ export default class ConfigService {
   async describeDeliveryChannels(
     {abortSignal, ...params}: RequestConfig & DescribeDeliveryChannelsRequest = {},
   ): Promise<DescribeDeliveryChannelsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DeliveryChannelNames: params["DeliveryChannelNames"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeDeliveryChannels",
@@ -582,11 +582,11 @@ export default class ConfigService {
   async describeOrganizationConfigRuleStatuses(
     {abortSignal, ...params}: RequestConfig & DescribeOrganizationConfigRuleStatusesRequest = {},
   ): Promise<DescribeOrganizationConfigRuleStatusesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       OrganizationConfigRuleNames: params["OrganizationConfigRuleNames"],
       Limit: params["Limit"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeOrganizationConfigRuleStatuses",
@@ -603,11 +603,11 @@ export default class ConfigService {
   async describeOrganizationConfigRules(
     {abortSignal, ...params}: RequestConfig & DescribeOrganizationConfigRulesRequest = {},
   ): Promise<DescribeOrganizationConfigRulesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       OrganizationConfigRuleNames: params["OrganizationConfigRuleNames"],
       Limit: params["Limit"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeOrganizationConfigRules",
@@ -624,11 +624,11 @@ export default class ConfigService {
   async describeOrganizationConformancePackStatuses(
     {abortSignal, ...params}: RequestConfig & DescribeOrganizationConformancePackStatusesRequest = {},
   ): Promise<DescribeOrganizationConformancePackStatusesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       OrganizationConformancePackNames: params["OrganizationConformancePackNames"],
       Limit: params["Limit"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeOrganizationConformancePackStatuses",
@@ -645,11 +645,11 @@ export default class ConfigService {
   async describeOrganizationConformancePacks(
     {abortSignal, ...params}: RequestConfig & DescribeOrganizationConformancePacksRequest = {},
   ): Promise<DescribeOrganizationConformancePacksResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       OrganizationConformancePackNames: params["OrganizationConformancePackNames"],
       Limit: params["Limit"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeOrganizationConformancePacks",
@@ -666,10 +666,10 @@ export default class ConfigService {
   async describePendingAggregationRequests(
     {abortSignal, ...params}: RequestConfig & DescribePendingAggregationRequestsRequest = {},
   ): Promise<DescribePendingAggregationRequestsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Limit: params["Limit"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribePendingAggregationRequests",
@@ -686,9 +686,9 @@ export default class ConfigService {
   async describeRemediationConfigurations(
     {abortSignal, ...params}: RequestConfig & DescribeRemediationConfigurationsRequest,
   ): Promise<DescribeRemediationConfigurationsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ConfigRuleNames: params["ConfigRuleNames"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeRemediationConfigurations",
@@ -704,12 +704,12 @@ export default class ConfigService {
   async describeRemediationExceptions(
     {abortSignal, ...params}: RequestConfig & DescribeRemediationExceptionsRequest,
   ): Promise<DescribeRemediationExceptionsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ConfigRuleName: params["ConfigRuleName"],
       ResourceKeys: params["ResourceKeys"]?.map(x => fromRemediationExceptionResourceKey(x)),
       Limit: params["Limit"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeRemediationExceptions",
@@ -726,12 +726,12 @@ export default class ConfigService {
   async describeRemediationExecutionStatus(
     {abortSignal, ...params}: RequestConfig & DescribeRemediationExecutionStatusRequest,
   ): Promise<DescribeRemediationExecutionStatusResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ConfigRuleName: params["ConfigRuleName"],
       ResourceKeys: params["ResourceKeys"]?.map(x => fromResourceKey(x)),
       Limit: params["Limit"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeRemediationExecutionStatus",
@@ -748,10 +748,10 @@ export default class ConfigService {
   async describeRetentionConfigurations(
     {abortSignal, ...params}: RequestConfig & DescribeRetentionConfigurationsRequest = {},
   ): Promise<DescribeRetentionConfigurationsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       RetentionConfigurationNames: params["RetentionConfigurationNames"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeRetentionConfigurations",
@@ -768,7 +768,7 @@ export default class ConfigService {
   async getAggregateComplianceDetailsByConfigRule(
     {abortSignal, ...params}: RequestConfig & GetAggregateComplianceDetailsByConfigRuleRequest,
   ): Promise<GetAggregateComplianceDetailsByConfigRuleResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ConfigurationAggregatorName: params["ConfigurationAggregatorName"],
       ConfigRuleName: params["ConfigRuleName"],
       AccountId: params["AccountId"],
@@ -776,7 +776,7 @@ export default class ConfigService {
       ComplianceType: params["ComplianceType"],
       Limit: params["Limit"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetAggregateComplianceDetailsByConfigRule",
@@ -793,13 +793,13 @@ export default class ConfigService {
   async getAggregateConfigRuleComplianceSummary(
     {abortSignal, ...params}: RequestConfig & GetAggregateConfigRuleComplianceSummaryRequest,
   ): Promise<GetAggregateConfigRuleComplianceSummaryResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ConfigurationAggregatorName: params["ConfigurationAggregatorName"],
       Filters: fromConfigRuleComplianceSummaryFilters(params["Filters"]),
       GroupByKey: params["GroupByKey"],
       Limit: params["Limit"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetAggregateConfigRuleComplianceSummary",
@@ -817,13 +817,13 @@ export default class ConfigService {
   async getAggregateDiscoveredResourceCounts(
     {abortSignal, ...params}: RequestConfig & GetAggregateDiscoveredResourceCountsRequest,
   ): Promise<GetAggregateDiscoveredResourceCountsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ConfigurationAggregatorName: params["ConfigurationAggregatorName"],
       Filters: fromResourceCountFilters(params["Filters"]),
       GroupByKey: params["GroupByKey"],
       Limit: params["Limit"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetAggregateDiscoveredResourceCounts",
@@ -843,10 +843,10 @@ export default class ConfigService {
   async getAggregateResourceConfig(
     {abortSignal, ...params}: RequestConfig & GetAggregateResourceConfigRequest,
   ): Promise<GetAggregateResourceConfigResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ConfigurationAggregatorName: params["ConfigurationAggregatorName"],
       ResourceIdentifier: fromAggregateResourceIdentifier(params["ResourceIdentifier"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetAggregateResourceConfig",
@@ -862,12 +862,12 @@ export default class ConfigService {
   async getComplianceDetailsByConfigRule(
     {abortSignal, ...params}: RequestConfig & GetComplianceDetailsByConfigRuleRequest,
   ): Promise<GetComplianceDetailsByConfigRuleResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ConfigRuleName: params["ConfigRuleName"],
       ComplianceTypes: params["ComplianceTypes"],
       Limit: params["Limit"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetComplianceDetailsByConfigRule",
@@ -884,12 +884,12 @@ export default class ConfigService {
   async getComplianceDetailsByResource(
     {abortSignal, ...params}: RequestConfig & GetComplianceDetailsByResourceRequest,
   ): Promise<GetComplianceDetailsByResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceType: params["ResourceType"],
       ResourceId: params["ResourceId"],
       ComplianceTypes: params["ComplianceTypes"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetComplianceDetailsByResource",
@@ -921,9 +921,9 @@ export default class ConfigService {
   async getComplianceSummaryByResourceType(
     {abortSignal, ...params}: RequestConfig & GetComplianceSummaryByResourceTypeRequest = {},
   ): Promise<GetComplianceSummaryByResourceTypeResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceTypes: params["ResourceTypes"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetComplianceSummaryByResourceType",
@@ -939,12 +939,12 @@ export default class ConfigService {
   async getConformancePackComplianceDetails(
     {abortSignal, ...params}: RequestConfig & GetConformancePackComplianceDetailsRequest,
   ): Promise<GetConformancePackComplianceDetailsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ConformancePackName: params["ConformancePackName"],
       Filters: fromConformancePackEvaluationFilters(params["Filters"]),
       Limit: params["Limit"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetConformancePackComplianceDetails",
@@ -963,11 +963,11 @@ export default class ConfigService {
   async getConformancePackComplianceSummary(
     {abortSignal, ...params}: RequestConfig & GetConformancePackComplianceSummaryRequest,
   ): Promise<GetConformancePackComplianceSummaryResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ConformancePackNames: params["ConformancePackNames"],
       Limit: params["Limit"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetConformancePackComplianceSummary",
@@ -984,11 +984,11 @@ export default class ConfigService {
   async getDiscoveredResourceCounts(
     {abortSignal, ...params}: RequestConfig & GetDiscoveredResourceCountsRequest = {},
   ): Promise<GetDiscoveredResourceCountsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       resourceTypes: params["resourceTypes"],
       limit: params["limit"],
       nextToken: params["nextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetDiscoveredResourceCounts",
@@ -1006,12 +1006,12 @@ export default class ConfigService {
   async getOrganizationConfigRuleDetailedStatus(
     {abortSignal, ...params}: RequestConfig & GetOrganizationConfigRuleDetailedStatusRequest,
   ): Promise<GetOrganizationConfigRuleDetailedStatusResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       OrganizationConfigRuleName: params["OrganizationConfigRuleName"],
       Filters: fromStatusDetailFilters(params["Filters"]),
       Limit: params["Limit"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetOrganizationConfigRuleDetailedStatus",
@@ -1028,12 +1028,12 @@ export default class ConfigService {
   async getOrganizationConformancePackDetailedStatus(
     {abortSignal, ...params}: RequestConfig & GetOrganizationConformancePackDetailedStatusRequest,
   ): Promise<GetOrganizationConformancePackDetailedStatusResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       OrganizationConformancePackName: params["OrganizationConformancePackName"],
       Filters: fromOrganizationResourceDetailedStatusFilters(params["Filters"]),
       Limit: params["Limit"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetOrganizationConformancePackDetailedStatus",
@@ -1050,7 +1050,7 @@ export default class ConfigService {
   async getResourceConfigHistory(
     {abortSignal, ...params}: RequestConfig & GetResourceConfigHistoryRequest,
   ): Promise<GetResourceConfigHistoryResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       resourceType: params["resourceType"],
       resourceId: params["resourceId"],
       laterTime: jsonP.serializeDate_unixTimestamp(params["laterTime"]),
@@ -1058,7 +1058,7 @@ export default class ConfigService {
       chronologicalOrder: params["chronologicalOrder"],
       limit: params["limit"],
       nextToken: params["nextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetResourceConfigHistory",
@@ -1075,13 +1075,13 @@ export default class ConfigService {
   async listAggregateDiscoveredResources(
     {abortSignal, ...params}: RequestConfig & ListAggregateDiscoveredResourcesRequest,
   ): Promise<ListAggregateDiscoveredResourcesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ConfigurationAggregatorName: params["ConfigurationAggregatorName"],
       ResourceType: params["ResourceType"],
       Filters: fromResourceFilters(params["Filters"]),
       Limit: params["Limit"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListAggregateDiscoveredResources",
@@ -1098,14 +1098,14 @@ export default class ConfigService {
   async listDiscoveredResources(
     {abortSignal, ...params}: RequestConfig & ListDiscoveredResourcesRequest,
   ): Promise<ListDiscoveredResourcesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       resourceType: params["resourceType"],
       resourceIds: params["resourceIds"],
       resourceName: params["resourceName"],
       limit: params["limit"],
       includeDeletedResources: params["includeDeletedResources"],
       nextToken: params["nextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListDiscoveredResources",
@@ -1122,11 +1122,11 @@ export default class ConfigService {
   async listTagsForResource(
     {abortSignal, ...params}: RequestConfig & ListTagsForResourceRequest,
   ): Promise<ListTagsForResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
       Limit: params["Limit"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForResource",
@@ -1143,11 +1143,11 @@ export default class ConfigService {
   async putAggregationAuthorization(
     {abortSignal, ...params}: RequestConfig & PutAggregationAuthorizationRequest,
   ): Promise<PutAggregationAuthorizationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AuthorizedAccountId: params["AuthorizedAccountId"],
       AuthorizedAwsRegion: params["AuthorizedAwsRegion"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutAggregationAuthorization",
@@ -1163,10 +1163,10 @@ export default class ConfigService {
   async putConfigRule(
     {abortSignal, ...params}: RequestConfig & PutConfigRuleRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ConfigRule: fromConfigRule(params["ConfigRule"]),
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutConfigRule",
@@ -1176,12 +1176,12 @@ export default class ConfigService {
   async putConfigurationAggregator(
     {abortSignal, ...params}: RequestConfig & PutConfigurationAggregatorRequest,
   ): Promise<PutConfigurationAggregatorResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ConfigurationAggregatorName: params["ConfigurationAggregatorName"],
       AccountAggregationSources: params["AccountAggregationSources"]?.map(x => fromAccountAggregationSource(x)),
       OrganizationAggregationSource: fromOrganizationAggregationSource(params["OrganizationAggregationSource"]),
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutConfigurationAggregator",
@@ -1197,9 +1197,9 @@ export default class ConfigService {
   async putConfigurationRecorder(
     {abortSignal, ...params}: RequestConfig & PutConfigurationRecorderRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ConfigurationRecorder: fromConfigurationRecorder(params["ConfigurationRecorder"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutConfigurationRecorder",
@@ -1209,14 +1209,14 @@ export default class ConfigService {
   async putConformancePack(
     {abortSignal, ...params}: RequestConfig & PutConformancePackRequest,
   ): Promise<PutConformancePackResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ConformancePackName: params["ConformancePackName"],
       TemplateS3Uri: params["TemplateS3Uri"],
       TemplateBody: params["TemplateBody"],
       DeliveryS3Bucket: params["DeliveryS3Bucket"],
       DeliveryS3KeyPrefix: params["DeliveryS3KeyPrefix"],
       ConformancePackInputParameters: params["ConformancePackInputParameters"]?.map(x => fromConformancePackInputParameter(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutConformancePack",
@@ -1232,9 +1232,9 @@ export default class ConfigService {
   async putDeliveryChannel(
     {abortSignal, ...params}: RequestConfig & PutDeliveryChannelRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DeliveryChannel: fromDeliveryChannel(params["DeliveryChannel"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutDeliveryChannel",
@@ -1244,11 +1244,11 @@ export default class ConfigService {
   async putEvaluations(
     {abortSignal, ...params}: RequestConfig & PutEvaluationsRequest,
   ): Promise<PutEvaluationsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Evaluations: params["Evaluations"]?.map(x => fromEvaluation(x)),
       ResultToken: params["ResultToken"],
       TestMode: params["TestMode"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutEvaluations",
@@ -1264,12 +1264,12 @@ export default class ConfigService {
   async putOrganizationConfigRule(
     {abortSignal, ...params}: RequestConfig & PutOrganizationConfigRuleRequest,
   ): Promise<PutOrganizationConfigRuleResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       OrganizationConfigRuleName: params["OrganizationConfigRuleName"],
       OrganizationManagedRuleMetadata: fromOrganizationManagedRuleMetadata(params["OrganizationManagedRuleMetadata"]),
       OrganizationCustomRuleMetadata: fromOrganizationCustomRuleMetadata(params["OrganizationCustomRuleMetadata"]),
       ExcludedAccounts: params["ExcludedAccounts"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutOrganizationConfigRule",
@@ -1285,7 +1285,7 @@ export default class ConfigService {
   async putOrganizationConformancePack(
     {abortSignal, ...params}: RequestConfig & PutOrganizationConformancePackRequest,
   ): Promise<PutOrganizationConformancePackResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       OrganizationConformancePackName: params["OrganizationConformancePackName"],
       TemplateS3Uri: params["TemplateS3Uri"],
       TemplateBody: params["TemplateBody"],
@@ -1293,7 +1293,7 @@ export default class ConfigService {
       DeliveryS3KeyPrefix: params["DeliveryS3KeyPrefix"],
       ConformancePackInputParameters: params["ConformancePackInputParameters"]?.map(x => fromConformancePackInputParameter(x)),
       ExcludedAccounts: params["ExcludedAccounts"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutOrganizationConformancePack",
@@ -1309,9 +1309,9 @@ export default class ConfigService {
   async putRemediationConfigurations(
     {abortSignal, ...params}: RequestConfig & PutRemediationConfigurationsRequest,
   ): Promise<PutRemediationConfigurationsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       RemediationConfigurations: params["RemediationConfigurations"]?.map(x => fromRemediationConfiguration(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutRemediationConfigurations",
@@ -1327,12 +1327,12 @@ export default class ConfigService {
   async putRemediationExceptions(
     {abortSignal, ...params}: RequestConfig & PutRemediationExceptionsRequest,
   ): Promise<PutRemediationExceptionsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ConfigRuleName: params["ConfigRuleName"],
       ResourceKeys: params["ResourceKeys"]?.map(x => fromRemediationExceptionResourceKey(x)),
       Message: params["Message"],
       ExpirationTime: jsonP.serializeDate_unixTimestamp(params["ExpirationTime"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutRemediationExceptions",
@@ -1348,14 +1348,14 @@ export default class ConfigService {
   async putResourceConfig(
     {abortSignal, ...params}: RequestConfig & PutResourceConfigRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceType: params["ResourceType"],
       SchemaVersionId: params["SchemaVersionId"],
       ResourceId: params["ResourceId"],
       ResourceName: params["ResourceName"],
       Configuration: params["Configuration"],
       Tags: params["Tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutResourceConfig",
@@ -1365,9 +1365,9 @@ export default class ConfigService {
   async putRetentionConfiguration(
     {abortSignal, ...params}: RequestConfig & PutRetentionConfigurationRequest,
   ): Promise<PutRetentionConfigurationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       RetentionPeriodInDays: params["RetentionPeriodInDays"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutRetentionConfiguration",
@@ -1383,13 +1383,13 @@ export default class ConfigService {
   async selectAggregateResourceConfig(
     {abortSignal, ...params}: RequestConfig & SelectAggregateResourceConfigRequest,
   ): Promise<SelectAggregateResourceConfigResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Expression: params["Expression"],
       ConfigurationAggregatorName: params["ConfigurationAggregatorName"],
       Limit: params["Limit"],
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SelectAggregateResourceConfig",
@@ -1407,11 +1407,11 @@ export default class ConfigService {
   async selectResourceConfig(
     {abortSignal, ...params}: RequestConfig & SelectResourceConfigRequest,
   ): Promise<SelectResourceConfigResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Expression: params["Expression"],
       Limit: params["Limit"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SelectResourceConfig",
@@ -1429,9 +1429,9 @@ export default class ConfigService {
   async startConfigRulesEvaluation(
     {abortSignal, ...params}: RequestConfig & StartConfigRulesEvaluationRequest = {},
   ): Promise<StartConfigRulesEvaluationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ConfigRuleNames: params["ConfigRuleNames"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartConfigRulesEvaluation",
@@ -1445,9 +1445,9 @@ export default class ConfigService {
   async startConfigurationRecorder(
     {abortSignal, ...params}: RequestConfig & StartConfigurationRecorderRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ConfigurationRecorderName: params["ConfigurationRecorderName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartConfigurationRecorder",
@@ -1457,10 +1457,10 @@ export default class ConfigService {
   async startRemediationExecution(
     {abortSignal, ...params}: RequestConfig & StartRemediationExecutionRequest,
   ): Promise<StartRemediationExecutionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ConfigRuleName: params["ConfigRuleName"],
       ResourceKeys: params["ResourceKeys"]?.map(x => fromResourceKey(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartRemediationExecution",
@@ -1477,9 +1477,9 @@ export default class ConfigService {
   async stopConfigurationRecorder(
     {abortSignal, ...params}: RequestConfig & StopConfigurationRecorderRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ConfigurationRecorderName: params["ConfigurationRecorderName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopConfigurationRecorder",
@@ -1489,10 +1489,10 @@ export default class ConfigService {
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
@@ -1502,10 +1502,10 @@ export default class ConfigService {
   async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
       TagKeys: params["TagKeys"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResource",

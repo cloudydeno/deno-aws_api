@@ -30,42 +30,38 @@ export default class PinpointSMSVoice {
   async createConfigurationSet(
     {abortSignal, ...params}: RequestConfig & CreateConfigurationSetRequest = {},
   ): Promise<CreateConfigurationSetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ConfigurationSetName: params["ConfigurationSetName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateConfigurationSet",
       requestUri: "/v1/sms-voice/configuration-sets",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async createConfigurationSetEventDestination(
     {abortSignal, ...params}: RequestConfig & CreateConfigurationSetEventDestinationRequest,
   ): Promise<CreateConfigurationSetEventDestinationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       EventDestination: fromEventDestinationDefinition(params["EventDestination"]),
       EventDestinationName: params["EventDestinationName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateConfigurationSetEventDestination",
       requestUri: cmnP.encodePath`/v1/sms-voice/configuration-sets/${params["ConfigurationSetName"]}/event-destinations`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async deleteConfigurationSet(
@@ -79,12 +75,10 @@ export default class PinpointSMSVoice {
       requestUri: cmnP.encodePath`/v1/sms-voice/configuration-sets/${params["ConfigurationSetName"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async deleteConfigurationSetEventDestination(
@@ -98,12 +92,10 @@ export default class PinpointSMSVoice {
       requestUri: cmnP.encodePath`/v1/sms-voice/configuration-sets/${params["ConfigurationSetName"]}/event-destinations/${params["EventDestinationName"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async getConfigurationSetEventDestinations(
@@ -117,14 +109,12 @@ export default class PinpointSMSVoice {
       requestUri: cmnP.encodePath`/v1/sms-voice/configuration-sets/${params["ConfigurationSetName"]}/event-destinations`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "EventDestinations": [toEventDestination],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "EventDestinations": [toEventDestination],
+      },
+    }, await resp.json());
   }
 
   async listConfigurationSets(
@@ -140,49 +130,45 @@ export default class PinpointSMSVoice {
       requestUri: "/v1/sms-voice/configuration-sets",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ConfigurationSets": ["s"],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ConfigurationSets": ["s"],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async sendVoiceMessage(
     {abortSignal, ...params}: RequestConfig & SendVoiceMessageRequest = {},
   ): Promise<SendVoiceMessageResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CallerId: params["CallerId"],
       ConfigurationSetName: params["ConfigurationSetName"],
       Content: fromVoiceMessageContent(params["Content"]),
       DestinationPhoneNumber: params["DestinationPhoneNumber"],
       OriginationPhoneNumber: params["OriginationPhoneNumber"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SendVoiceMessage",
       requestUri: "/v1/sms-voice/voice/message",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "MessageId": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "MessageId": "s",
+      },
+    }, await resp.json());
   }
 
   async updateConfigurationSetEventDestination(
     {abortSignal, ...params}: RequestConfig & UpdateConfigurationSetEventDestinationRequest,
   ): Promise<UpdateConfigurationSetEventDestinationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       EventDestination: fromEventDestinationDefinition(params["EventDestination"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateConfigurationSetEventDestination",
@@ -190,12 +176,10 @@ export default class PinpointSMSVoice {
       requestUri: cmnP.encodePath`/v1/sms-voice/configuration-sets/${params["ConfigurationSetName"]}/event-destinations/${params["EventDestinationName"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
 }

@@ -30,9 +30,9 @@ export default class CUR {
   async deleteReportDefinition(
     {abortSignal, ...params}: RequestConfig & DeleteReportDefinitionRequest = {},
   ): Promise<DeleteReportDefinitionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ReportName: params["ReportName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteReportDefinition",
@@ -48,10 +48,10 @@ export default class CUR {
   async describeReportDefinitions(
     {abortSignal, ...params}: RequestConfig & DescribeReportDefinitionsRequest = {},
   ): Promise<DescribeReportDefinitionsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeReportDefinitions",
@@ -68,10 +68,10 @@ export default class CUR {
   async modifyReportDefinition(
     {abortSignal, ...params}: RequestConfig & ModifyReportDefinitionRequest,
   ): Promise<ModifyReportDefinitionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ReportName: params["ReportName"],
       ReportDefinition: fromReportDefinition(params["ReportDefinition"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ModifyReportDefinition",
@@ -85,9 +85,9 @@ export default class CUR {
   async putReportDefinition(
     {abortSignal, ...params}: RequestConfig & PutReportDefinitionRequest,
   ): Promise<PutReportDefinitionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ReportDefinition: fromReportDefinition(params["ReportDefinition"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutReportDefinition",

@@ -30,7 +30,7 @@ export default class Synthetics {
   async createCanary(
     {abortSignal, ...params}: RequestConfig & CreateCanaryRequest,
   ): Promise<CreateCanaryResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       Code: fromCanaryCodeInput(params["Code"]),
       ArtifactS3Location: params["ArtifactS3Location"],
@@ -42,20 +42,18 @@ export default class Synthetics {
       RuntimeVersion: params["RuntimeVersion"],
       VpcConfig: fromVpcConfigInput(params["VpcConfig"]),
       Tags: params["Tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateCanary",
       requestUri: "/canary",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Canary": toCanary,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Canary": toCanary,
+      },
+    }, await resp.json());
   }
 
   async deleteCanary(
@@ -68,81 +66,73 @@ export default class Synthetics {
       method: "DELETE",
       requestUri: cmnP.encodePath`/canary/${params["Name"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async describeCanaries(
     {abortSignal, ...params}: RequestConfig & DescribeCanariesRequest = {},
   ): Promise<DescribeCanariesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeCanaries",
       requestUri: "/canaries",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Canaries": [toCanary],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Canaries": [toCanary],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async describeCanariesLastRun(
     {abortSignal, ...params}: RequestConfig & DescribeCanariesLastRunRequest = {},
   ): Promise<DescribeCanariesLastRunResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeCanariesLastRun",
       requestUri: "/canaries/last-run",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "CanariesLastRun": [toCanaryLastRun],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "CanariesLastRun": [toCanaryLastRun],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async describeRuntimeVersions(
     {abortSignal, ...params}: RequestConfig & DescribeRuntimeVersionsRequest = {},
   ): Promise<DescribeRuntimeVersionsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeRuntimeVersions",
       requestUri: "/runtime-versions",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "RuntimeVersions": [toRuntimeVersion],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "RuntimeVersions": [toRuntimeVersion],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async getCanary(
@@ -155,37 +145,33 @@ export default class Synthetics {
       method: "GET",
       requestUri: cmnP.encodePath`/canary/${params["Name"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Canary": toCanary,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Canary": toCanary,
+      },
+    }, await resp.json());
   }
 
   async getCanaryRuns(
     {abortSignal, ...params}: RequestConfig & GetCanaryRunsRequest,
   ): Promise<GetCanaryRunsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetCanaryRuns",
       requestUri: cmnP.encodePath`/canary/${params["Name"]}/runs`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "CanaryRuns": [toCanaryRun],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "CanaryRuns": [toCanaryRun],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listTagsForResource(
@@ -198,14 +184,12 @@ export default class Synthetics {
       method: "GET",
       requestUri: cmnP.encodePath`/tags/${params["ResourceArn"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async startCanary(
@@ -217,12 +201,10 @@ export default class Synthetics {
       action: "StartCanary",
       requestUri: cmnP.encodePath`/canary/${params["Name"]}/start`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async stopCanary(
@@ -234,31 +216,27 @@ export default class Synthetics {
       action: "StopCanary",
       requestUri: cmnP.encodePath`/canary/${params["Name"]}/stop`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Tags: params["Tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
       requestUri: cmnP.encodePath`/tags/${params["ResourceArn"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async untagResource(
@@ -274,18 +252,16 @@ export default class Synthetics {
       method: "DELETE",
       requestUri: cmnP.encodePath`/tags/${params["ResourceArn"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async updateCanary(
     {abortSignal, ...params}: RequestConfig & UpdateCanaryRequest,
   ): Promise<UpdateCanaryResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Code: fromCanaryCodeInput(params["Code"]),
       ExecutionRoleArn: params["ExecutionRoleArn"],
       RuntimeVersion: params["RuntimeVersion"],
@@ -294,19 +270,17 @@ export default class Synthetics {
       SuccessRetentionPeriodInDays: params["SuccessRetentionPeriodInDays"],
       FailureRetentionPeriodInDays: params["FailureRetentionPeriodInDays"],
       VpcConfig: fromVpcConfigInput(params["VpcConfig"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateCanary",
       method: "PATCH",
       requestUri: cmnP.encodePath`/canary/${params["Name"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
 }

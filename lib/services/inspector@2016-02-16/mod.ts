@@ -29,10 +29,10 @@ export default class Inspector {
   async addAttributesToFindings(
     {abortSignal, ...params}: RequestConfig & AddAttributesToFindingsRequest,
   ): Promise<AddAttributesToFindingsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       findingArns: params["findingArns"],
       attributes: params["attributes"]?.map(x => fromAttribute(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AddAttributesToFindings",
@@ -48,10 +48,10 @@ export default class Inspector {
   async createAssessmentTarget(
     {abortSignal, ...params}: RequestConfig & CreateAssessmentTargetRequest,
   ): Promise<CreateAssessmentTargetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       assessmentTargetName: params["assessmentTargetName"],
       resourceGroupArn: params["resourceGroupArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateAssessmentTarget",
@@ -67,13 +67,13 @@ export default class Inspector {
   async createAssessmentTemplate(
     {abortSignal, ...params}: RequestConfig & CreateAssessmentTemplateRequest,
   ): Promise<CreateAssessmentTemplateResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       assessmentTargetArn: params["assessmentTargetArn"],
       assessmentTemplateName: params["assessmentTemplateName"],
       durationInSeconds: params["durationInSeconds"],
       rulesPackageArns: params["rulesPackageArns"],
       userAttributesForFindings: params["userAttributesForFindings"]?.map(x => fromAttribute(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateAssessmentTemplate",
@@ -89,9 +89,9 @@ export default class Inspector {
   async createExclusionsPreview(
     {abortSignal, ...params}: RequestConfig & CreateExclusionsPreviewRequest,
   ): Promise<CreateExclusionsPreviewResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       assessmentTemplateArn: params["assessmentTemplateArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateExclusionsPreview",
@@ -107,9 +107,9 @@ export default class Inspector {
   async createResourceGroup(
     {abortSignal, ...params}: RequestConfig & CreateResourceGroupRequest,
   ): Promise<CreateResourceGroupResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       resourceGroupTags: params["resourceGroupTags"]?.map(x => fromResourceGroupTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateResourceGroup",
@@ -125,9 +125,9 @@ export default class Inspector {
   async deleteAssessmentRun(
     {abortSignal, ...params}: RequestConfig & DeleteAssessmentRunRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       assessmentRunArn: params["assessmentRunArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteAssessmentRun",
@@ -137,9 +137,9 @@ export default class Inspector {
   async deleteAssessmentTarget(
     {abortSignal, ...params}: RequestConfig & DeleteAssessmentTargetRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       assessmentTargetArn: params["assessmentTargetArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteAssessmentTarget",
@@ -149,9 +149,9 @@ export default class Inspector {
   async deleteAssessmentTemplate(
     {abortSignal, ...params}: RequestConfig & DeleteAssessmentTemplateRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       assessmentTemplateArn: params["assessmentTemplateArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteAssessmentTemplate",
@@ -161,9 +161,9 @@ export default class Inspector {
   async describeAssessmentRuns(
     {abortSignal, ...params}: RequestConfig & DescribeAssessmentRunsRequest,
   ): Promise<DescribeAssessmentRunsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       assessmentRunArns: params["assessmentRunArns"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeAssessmentRuns",
@@ -180,9 +180,9 @@ export default class Inspector {
   async describeAssessmentTargets(
     {abortSignal, ...params}: RequestConfig & DescribeAssessmentTargetsRequest,
   ): Promise<DescribeAssessmentTargetsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       assessmentTargetArns: params["assessmentTargetArns"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeAssessmentTargets",
@@ -199,9 +199,9 @@ export default class Inspector {
   async describeAssessmentTemplates(
     {abortSignal, ...params}: RequestConfig & DescribeAssessmentTemplatesRequest,
   ): Promise<DescribeAssessmentTemplatesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       assessmentTemplateArns: params["assessmentTemplateArns"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeAssessmentTemplates",
@@ -235,10 +235,10 @@ export default class Inspector {
   async describeExclusions(
     {abortSignal, ...params}: RequestConfig & DescribeExclusionsRequest,
   ): Promise<DescribeExclusionsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       exclusionArns: params["exclusionArns"],
       locale: params["locale"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeExclusions",
@@ -255,10 +255,10 @@ export default class Inspector {
   async describeFindings(
     {abortSignal, ...params}: RequestConfig & DescribeFindingsRequest,
   ): Promise<DescribeFindingsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       findingArns: params["findingArns"],
       locale: params["locale"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeFindings",
@@ -275,9 +275,9 @@ export default class Inspector {
   async describeResourceGroups(
     {abortSignal, ...params}: RequestConfig & DescribeResourceGroupsRequest,
   ): Promise<DescribeResourceGroupsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       resourceGroupArns: params["resourceGroupArns"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeResourceGroups",
@@ -294,10 +294,10 @@ export default class Inspector {
   async describeRulesPackages(
     {abortSignal, ...params}: RequestConfig & DescribeRulesPackagesRequest,
   ): Promise<DescribeRulesPackagesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       rulesPackageArns: params["rulesPackageArns"],
       locale: params["locale"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeRulesPackages",
@@ -314,11 +314,11 @@ export default class Inspector {
   async getAssessmentReport(
     {abortSignal, ...params}: RequestConfig & GetAssessmentReportRequest,
   ): Promise<GetAssessmentReportResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       assessmentRunArn: params["assessmentRunArn"],
       reportFileFormat: params["reportFileFormat"],
       reportType: params["reportType"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetAssessmentReport",
@@ -336,13 +336,13 @@ export default class Inspector {
   async getExclusionsPreview(
     {abortSignal, ...params}: RequestConfig & GetExclusionsPreviewRequest,
   ): Promise<GetExclusionsPreviewResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       assessmentTemplateArn: params["assessmentTemplateArn"],
       previewToken: params["previewToken"],
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
       locale: params["locale"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetExclusionsPreview",
@@ -361,9 +361,9 @@ export default class Inspector {
   async getTelemetryMetadata(
     {abortSignal, ...params}: RequestConfig & GetTelemetryMetadataRequest,
   ): Promise<GetTelemetryMetadataResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       assessmentRunArn: params["assessmentRunArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetTelemetryMetadata",
@@ -379,12 +379,12 @@ export default class Inspector {
   async listAssessmentRunAgents(
     {abortSignal, ...params}: RequestConfig & ListAssessmentRunAgentsRequest,
   ): Promise<ListAssessmentRunAgentsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       assessmentRunArn: params["assessmentRunArn"],
       filter: fromAgentFilter(params["filter"]),
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListAssessmentRunAgents",
@@ -402,12 +402,12 @@ export default class Inspector {
   async listAssessmentRuns(
     {abortSignal, ...params}: RequestConfig & ListAssessmentRunsRequest = {},
   ): Promise<ListAssessmentRunsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       assessmentTemplateArns: params["assessmentTemplateArns"],
       filter: fromAssessmentRunFilter(params["filter"]),
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListAssessmentRuns",
@@ -425,11 +425,11 @@ export default class Inspector {
   async listAssessmentTargets(
     {abortSignal, ...params}: RequestConfig & ListAssessmentTargetsRequest = {},
   ): Promise<ListAssessmentTargetsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       filter: fromAssessmentTargetFilter(params["filter"]),
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListAssessmentTargets",
@@ -447,12 +447,12 @@ export default class Inspector {
   async listAssessmentTemplates(
     {abortSignal, ...params}: RequestConfig & ListAssessmentTemplatesRequest = {},
   ): Promise<ListAssessmentTemplatesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       assessmentTargetArns: params["assessmentTargetArns"],
       filter: fromAssessmentTemplateFilter(params["filter"]),
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListAssessmentTemplates",
@@ -470,11 +470,11 @@ export default class Inspector {
   async listEventSubscriptions(
     {abortSignal, ...params}: RequestConfig & ListEventSubscriptionsRequest = {},
   ): Promise<ListEventSubscriptionsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       resourceArn: params["resourceArn"],
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListEventSubscriptions",
@@ -492,11 +492,11 @@ export default class Inspector {
   async listExclusions(
     {abortSignal, ...params}: RequestConfig & ListExclusionsRequest,
   ): Promise<ListExclusionsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       assessmentRunArn: params["assessmentRunArn"],
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListExclusions",
@@ -514,12 +514,12 @@ export default class Inspector {
   async listFindings(
     {abortSignal, ...params}: RequestConfig & ListFindingsRequest = {},
   ): Promise<ListFindingsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       assessmentRunArns: params["assessmentRunArns"],
       filter: fromFindingFilter(params["filter"]),
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListFindings",
@@ -537,10 +537,10 @@ export default class Inspector {
   async listRulesPackages(
     {abortSignal, ...params}: RequestConfig & ListRulesPackagesRequest = {},
   ): Promise<ListRulesPackagesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListRulesPackages",
@@ -558,9 +558,9 @@ export default class Inspector {
   async listTagsForResource(
     {abortSignal, ...params}: RequestConfig & ListTagsForResourceRequest,
   ): Promise<ListTagsForResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       resourceArn: params["resourceArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForResource",
@@ -576,11 +576,11 @@ export default class Inspector {
   async previewAgents(
     {abortSignal, ...params}: RequestConfig & PreviewAgentsRequest,
   ): Promise<PreviewAgentsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       previewAgentsArn: params["previewAgentsArn"],
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PreviewAgents",
@@ -598,9 +598,9 @@ export default class Inspector {
   async registerCrossAccountAccessRole(
     {abortSignal, ...params}: RequestConfig & RegisterCrossAccountAccessRoleRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       roleArn: params["roleArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RegisterCrossAccountAccessRole",
@@ -610,10 +610,10 @@ export default class Inspector {
   async removeAttributesFromFindings(
     {abortSignal, ...params}: RequestConfig & RemoveAttributesFromFindingsRequest,
   ): Promise<RemoveAttributesFromFindingsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       findingArns: params["findingArns"],
       attributeKeys: params["attributeKeys"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RemoveAttributesFromFindings",
@@ -629,10 +629,10 @@ export default class Inspector {
   async setTagsForResource(
     {abortSignal, ...params}: RequestConfig & SetTagsForResourceRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       resourceArn: params["resourceArn"],
       tags: params["tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SetTagsForResource",
@@ -642,10 +642,10 @@ export default class Inspector {
   async startAssessmentRun(
     {abortSignal, ...params}: RequestConfig & StartAssessmentRunRequest,
   ): Promise<StartAssessmentRunResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       assessmentTemplateArn: params["assessmentTemplateArn"],
       assessmentRunName: params["assessmentRunName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartAssessmentRun",
@@ -661,10 +661,10 @@ export default class Inspector {
   async stopAssessmentRun(
     {abortSignal, ...params}: RequestConfig & StopAssessmentRunRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       assessmentRunArn: params["assessmentRunArn"],
       stopAction: params["stopAction"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopAssessmentRun",
@@ -674,11 +674,11 @@ export default class Inspector {
   async subscribeToEvent(
     {abortSignal, ...params}: RequestConfig & SubscribeToEventRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       resourceArn: params["resourceArn"],
       event: params["event"],
       topicArn: params["topicArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SubscribeToEvent",
@@ -688,11 +688,11 @@ export default class Inspector {
   async unsubscribeFromEvent(
     {abortSignal, ...params}: RequestConfig & UnsubscribeFromEventRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       resourceArn: params["resourceArn"],
       event: params["event"],
       topicArn: params["topicArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UnsubscribeFromEvent",
@@ -702,11 +702,11 @@ export default class Inspector {
   async updateAssessmentTarget(
     {abortSignal, ...params}: RequestConfig & UpdateAssessmentTargetRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       assessmentTargetArn: params["assessmentTargetArn"],
       assessmentTargetName: params["assessmentTargetName"],
       resourceGroupArn: params["resourceGroupArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateAssessmentTarget",

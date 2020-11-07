@@ -29,7 +29,7 @@ export default class ServerlessApplicationRepository {
   async createApplication(
     {abortSignal, ...params}: RequestConfig & CreateApplicationRequest,
   ): Promise<CreateApplicationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       author: params["Author"],
       description: params["Description"],
       homePageUrl: params["HomePageUrl"],
@@ -45,44 +45,42 @@ export default class ServerlessApplicationRepository {
       spdxLicenseId: params["SpdxLicenseId"],
       templateBody: params["TemplateBody"],
       templateUrl: params["TemplateUrl"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateApplication",
       requestUri: "/applications",
       responseCode: 201,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ApplicationId": "s",
-          "Author": "s",
-          "CreationTime": "s",
-          "Description": "s",
-          "HomePageUrl": "s",
-          "IsVerifiedAuthor": "b",
-          "Labels": ["s"],
-          "LicenseUrl": "s",
-          "Name": "s",
-          "ReadmeUrl": "s",
-          "SpdxLicenseId": "s",
-          "VerifiedAuthorUrl": "s",
-          "Version": toVersion,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ApplicationId": "s",
+        "Author": "s",
+        "CreationTime": "s",
+        "Description": "s",
+        "HomePageUrl": "s",
+        "IsVerifiedAuthor": "b",
+        "Labels": ["s"],
+        "LicenseUrl": "s",
+        "Name": "s",
+        "ReadmeUrl": "s",
+        "SpdxLicenseId": "s",
+        "VerifiedAuthorUrl": "s",
+        "Version": toVersion,
+      },
+    }, await resp.json());
   }
 
   async createApplicationVersion(
     {abortSignal, ...params}: RequestConfig & CreateApplicationVersionRequest,
   ): Promise<CreateApplicationVersionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       sourceCodeArchiveUrl: params["SourceCodeArchiveUrl"],
       sourceCodeUrl: params["SourceCodeUrl"],
       templateBody: params["TemplateBody"],
       templateUrl: params["TemplateUrl"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateApplicationVersion",
@@ -90,28 +88,26 @@ export default class ServerlessApplicationRepository {
       requestUri: cmnP.encodePath`/applications/${params["ApplicationId"]}/versions/${params["SemanticVersion"]}`,
       responseCode: 201,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ApplicationId": "s",
-          "CreationTime": "s",
-          "ParameterDefinitions": [toParameterDefinition],
-          "RequiredCapabilities": [(x: jsonP.JSONValue) => cmnP.readEnum<Capability>(x)],
-          "ResourcesSupported": "b",
-          "SemanticVersion": "s",
-          "SourceCodeArchiveUrl": "s",
-          "SourceCodeUrl": "s",
-          "TemplateUrl": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ApplicationId": "s",
+        "CreationTime": "s",
+        "ParameterDefinitions": [toParameterDefinition],
+        "RequiredCapabilities": [(x: jsonP.JSONValue) => cmnP.readEnum<Capability>(x)],
+        "ResourcesSupported": "b",
+        "SemanticVersion": "s",
+        "SourceCodeArchiveUrl": "s",
+        "SourceCodeUrl": "s",
+        "TemplateUrl": "s",
+      },
+    }, await resp.json());
   }
 
   async createCloudFormationChangeSet(
     {abortSignal, ...params}: RequestConfig & CreateCloudFormationChangeSetRequest,
   ): Promise<CreateCloudFormationChangeSetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       capabilities: params["Capabilities"],
       changeSetName: params["ChangeSetName"],
       clientToken: params["ClientToken"],
@@ -124,52 +120,48 @@ export default class ServerlessApplicationRepository {
       stackName: params["StackName"],
       tags: params["Tags"]?.map(x => fromTag(x)),
       templateId: params["TemplateId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateCloudFormationChangeSet",
       requestUri: cmnP.encodePath`/applications/${params["ApplicationId"]}/changesets`,
       responseCode: 201,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ApplicationId": "s",
-          "ChangeSetId": "s",
-          "SemanticVersion": "s",
-          "StackId": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ApplicationId": "s",
+        "ChangeSetId": "s",
+        "SemanticVersion": "s",
+        "StackId": "s",
+      },
+    }, await resp.json());
   }
 
   async createCloudFormationTemplate(
     {abortSignal, ...params}: RequestConfig & CreateCloudFormationTemplateRequest,
   ): Promise<CreateCloudFormationTemplateResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       semanticVersion: params["SemanticVersion"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateCloudFormationTemplate",
       requestUri: cmnP.encodePath`/applications/${params["ApplicationId"]}/templates`,
       responseCode: 201,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ApplicationId": "s",
-          "CreationTime": "s",
-          "ExpirationTime": "s",
-          "SemanticVersion": "s",
-          "Status": (x: jsonP.JSONValue) => cmnP.readEnum<Status>(x),
-          "TemplateId": "s",
-          "TemplateUrl": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ApplicationId": "s",
+        "CreationTime": "s",
+        "ExpirationTime": "s",
+        "SemanticVersion": "s",
+        "Status": (x: jsonP.JSONValue) => cmnP.readEnum<Status>(x),
+        "TemplateId": "s",
+        "TemplateUrl": "s",
+      },
+    }, await resp.json());
   }
 
   async deleteApplication(
@@ -197,26 +189,24 @@ export default class ServerlessApplicationRepository {
       requestUri: cmnP.encodePath`/applications/${params["ApplicationId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ApplicationId": "s",
-          "Author": "s",
-          "CreationTime": "s",
-          "Description": "s",
-          "HomePageUrl": "s",
-          "IsVerifiedAuthor": "b",
-          "Labels": ["s"],
-          "LicenseUrl": "s",
-          "Name": "s",
-          "ReadmeUrl": "s",
-          "SpdxLicenseId": "s",
-          "VerifiedAuthorUrl": "s",
-          "Version": toVersion,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ApplicationId": "s",
+        "Author": "s",
+        "CreationTime": "s",
+        "Description": "s",
+        "HomePageUrl": "s",
+        "IsVerifiedAuthor": "b",
+        "Labels": ["s"],
+        "LicenseUrl": "s",
+        "Name": "s",
+        "ReadmeUrl": "s",
+        "SpdxLicenseId": "s",
+        "VerifiedAuthorUrl": "s",
+        "Version": toVersion,
+      },
+    }, await resp.json());
   }
 
   async getApplicationPolicy(
@@ -230,14 +220,12 @@ export default class ServerlessApplicationRepository {
       requestUri: cmnP.encodePath`/applications/${params["ApplicationId"]}/policy`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Statements": [toApplicationPolicyStatement],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Statements": [toApplicationPolicyStatement],
+      },
+    }, await resp.json());
   }
 
   async getCloudFormationTemplate(
@@ -251,20 +239,18 @@ export default class ServerlessApplicationRepository {
       requestUri: cmnP.encodePath`/applications/${params["ApplicationId"]}/templates/${params["TemplateId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ApplicationId": "s",
-          "CreationTime": "s",
-          "ExpirationTime": "s",
-          "SemanticVersion": "s",
-          "Status": (x: jsonP.JSONValue) => cmnP.readEnum<Status>(x),
-          "TemplateId": "s",
-          "TemplateUrl": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ApplicationId": "s",
+        "CreationTime": "s",
+        "ExpirationTime": "s",
+        "SemanticVersion": "s",
+        "Status": (x: jsonP.JSONValue) => cmnP.readEnum<Status>(x),
+        "TemplateId": "s",
+        "TemplateUrl": "s",
+      },
+    }, await resp.json());
   }
 
   async listApplicationDependencies(
@@ -281,15 +267,13 @@ export default class ServerlessApplicationRepository {
       requestUri: cmnP.encodePath`/applications/${params["ApplicationId"]}/dependencies`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Dependencies": [toApplicationDependencySummary],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Dependencies": [toApplicationDependencySummary],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listApplicationVersions(
@@ -305,15 +289,13 @@ export default class ServerlessApplicationRepository {
       requestUri: cmnP.encodePath`/applications/${params["ApplicationId"]}/versions`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "NextToken": "s",
-          "Versions": [toVersionSummary],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "NextToken": "s",
+        "Versions": [toVersionSummary],
+      },
+    }, await resp.json());
   }
 
   async listApplications(
@@ -329,23 +311,21 @@ export default class ServerlessApplicationRepository {
       requestUri: "/applications",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Applications": [toApplicationSummary],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Applications": [toApplicationSummary],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async putApplicationPolicy(
     {abortSignal, ...params}: RequestConfig & PutApplicationPolicyRequest,
   ): Promise<PutApplicationPolicyResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       statements: params["Statements"]?.map(x => fromApplicationPolicyStatement(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutApplicationPolicy",
@@ -353,22 +333,20 @@ export default class ServerlessApplicationRepository {
       requestUri: cmnP.encodePath`/applications/${params["ApplicationId"]}/policy`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Statements": [toApplicationPolicyStatement],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Statements": [toApplicationPolicyStatement],
+      },
+    }, await resp.json());
   }
 
   async unshareApplication(
     {abortSignal, ...params}: RequestConfig & UnshareApplicationRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       organizationId: params["OrganizationId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UnshareApplication",
@@ -380,14 +358,14 @@ export default class ServerlessApplicationRepository {
   async updateApplication(
     {abortSignal, ...params}: RequestConfig & UpdateApplicationRequest,
   ): Promise<UpdateApplicationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       author: params["Author"],
       description: params["Description"],
       homePageUrl: params["HomePageUrl"],
       labels: params["Labels"],
       readmeBody: params["ReadmeBody"],
       readmeUrl: params["ReadmeUrl"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateApplication",
@@ -395,26 +373,24 @@ export default class ServerlessApplicationRepository {
       requestUri: cmnP.encodePath`/applications/${params["ApplicationId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ApplicationId": "s",
-          "Author": "s",
-          "CreationTime": "s",
-          "Description": "s",
-          "HomePageUrl": "s",
-          "IsVerifiedAuthor": "b",
-          "Labels": ["s"],
-          "LicenseUrl": "s",
-          "Name": "s",
-          "ReadmeUrl": "s",
-          "SpdxLicenseId": "s",
-          "VerifiedAuthorUrl": "s",
-          "Version": toVersion,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ApplicationId": "s",
+        "Author": "s",
+        "CreationTime": "s",
+        "Description": "s",
+        "HomePageUrl": "s",
+        "IsVerifiedAuthor": "b",
+        "Labels": ["s"],
+        "LicenseUrl": "s",
+        "Name": "s",
+        "ReadmeUrl": "s",
+        "SpdxLicenseId": "s",
+        "VerifiedAuthorUrl": "s",
+        "Version": toVersion,
+      },
+    }, await resp.json());
   }
 
 }

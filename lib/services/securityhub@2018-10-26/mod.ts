@@ -29,93 +29,85 @@ export default class SecurityHub {
   async acceptInvitation(
     {abortSignal, ...params}: RequestConfig & AcceptInvitationRequest,
   ): Promise<AcceptInvitationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       MasterId: params["MasterId"],
       InvitationId: params["InvitationId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AcceptInvitation",
       requestUri: "/master",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async batchDisableStandards(
     {abortSignal, ...params}: RequestConfig & BatchDisableStandardsRequest,
   ): Promise<BatchDisableStandardsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       StandardsSubscriptionArns: params["StandardsSubscriptionArns"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchDisableStandards",
       requestUri: "/standards/deregister",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "StandardsSubscriptions": [toStandardsSubscription],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "StandardsSubscriptions": [toStandardsSubscription],
+      },
+    }, await resp.json());
   }
 
   async batchEnableStandards(
     {abortSignal, ...params}: RequestConfig & BatchEnableStandardsRequest,
   ): Promise<BatchEnableStandardsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       StandardsSubscriptionRequests: params["StandardsSubscriptionRequests"]?.map(x => fromStandardsSubscriptionRequest(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchEnableStandards",
       requestUri: "/standards/register",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "StandardsSubscriptions": [toStandardsSubscription],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "StandardsSubscriptions": [toStandardsSubscription],
+      },
+    }, await resp.json());
   }
 
   async batchImportFindings(
     {abortSignal, ...params}: RequestConfig & BatchImportFindingsRequest,
   ): Promise<BatchImportFindingsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Findings: params["Findings"]?.map(x => fromAwsSecurityFinding(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchImportFindings",
       requestUri: "/findings/import",
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "FailedCount": "n",
-          "SuccessCount": "n",
-        },
-        optional: {
-          "FailedFindings": [toImportFindingsError],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "FailedCount": "n",
+        "SuccessCount": "n",
+      },
+      optional: {
+        "FailedFindings": [toImportFindingsError],
+      },
+    }, await resp.json());
   }
 
   async batchUpdateFindings(
     {abortSignal, ...params}: RequestConfig & BatchUpdateFindingsRequest,
   ): Promise<BatchUpdateFindingsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       FindingIdentifiers: params["FindingIdentifiers"]?.map(x => fromAwsSecurityFindingIdentifier(x)),
       Note: fromNoteUpdate(params["Note"]),
       Severity: fromSeverityUpdate(params["Severity"]),
@@ -126,110 +118,100 @@ export default class SecurityHub {
       UserDefinedFields: params["UserDefinedFields"],
       Workflow: fromWorkflowUpdate(params["Workflow"]),
       RelatedFindings: params["RelatedFindings"]?.map(x => fromRelatedFinding(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchUpdateFindings",
       method: "PATCH",
       requestUri: "/findings/batchupdate",
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "ProcessedFindings": [toAwsSecurityFindingIdentifier],
-          "UnprocessedFindings": [toBatchUpdateFindingsUnprocessedFinding],
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "ProcessedFindings": [toAwsSecurityFindingIdentifier],
+        "UnprocessedFindings": [toBatchUpdateFindingsUnprocessedFinding],
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async createActionTarget(
     {abortSignal, ...params}: RequestConfig & CreateActionTargetRequest,
   ): Promise<CreateActionTargetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       Description: params["Description"],
       Id: params["Id"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateActionTarget",
       requestUri: "/actionTargets",
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "ActionTargetArn": "s",
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "ActionTargetArn": "s",
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async createInsight(
     {abortSignal, ...params}: RequestConfig & CreateInsightRequest,
   ): Promise<CreateInsightResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       Filters: fromAwsSecurityFindingFilters(params["Filters"]),
       GroupByAttribute: params["GroupByAttribute"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateInsight",
       requestUri: "/insights",
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "InsightArn": "s",
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "InsightArn": "s",
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async createMembers(
     {abortSignal, ...params}: RequestConfig & CreateMembersRequest = {},
   ): Promise<CreateMembersResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AccountDetails: params["AccountDetails"]?.map(x => fromAccountDetails(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateMembers",
       requestUri: "/members",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "UnprocessedAccounts": [toResult],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "UnprocessedAccounts": [toResult],
+      },
+    }, await resp.json());
   }
 
   async declineInvitations(
     {abortSignal, ...params}: RequestConfig & DeclineInvitationsRequest,
   ): Promise<DeclineInvitationsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AccountIds: params["AccountIds"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeclineInvitations",
       requestUri: "/invitations/decline",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "UnprocessedAccounts": [toResult],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "UnprocessedAccounts": [toResult],
+      },
+    }, await resp.json());
   }
 
   async deleteActionTarget(
@@ -242,14 +224,12 @@ export default class SecurityHub {
       method: "DELETE",
       requestUri: cmnP.encodePath`/actionTargets/${params["ActionTargetArn"].split("/")}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "ActionTargetArn": "s",
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "ActionTargetArn": "s",
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async deleteInsight(
@@ -262,81 +242,73 @@ export default class SecurityHub {
       method: "DELETE",
       requestUri: cmnP.encodePath`/insights/${params["InsightArn"].split("/")}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "InsightArn": "s",
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "InsightArn": "s",
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async deleteInvitations(
     {abortSignal, ...params}: RequestConfig & DeleteInvitationsRequest,
   ): Promise<DeleteInvitationsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AccountIds: params["AccountIds"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteInvitations",
       requestUri: "/invitations/delete",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "UnprocessedAccounts": [toResult],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "UnprocessedAccounts": [toResult],
+      },
+    }, await resp.json());
   }
 
   async deleteMembers(
     {abortSignal, ...params}: RequestConfig & DeleteMembersRequest = {},
   ): Promise<DeleteMembersResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AccountIds: params["AccountIds"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteMembers",
       requestUri: "/members/delete",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "UnprocessedAccounts": [toResult],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "UnprocessedAccounts": [toResult],
+      },
+    }, await resp.json());
   }
 
   async describeActionTargets(
     {abortSignal, ...params}: RequestConfig & DescribeActionTargetsRequest = {},
   ): Promise<DescribeActionTargetsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ActionTargetArns: params["ActionTargetArns"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeActionTargets",
       requestUri: "/actionTargets/get",
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "ActionTargets": [toActionTarget],
-        },
-        optional: {
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "ActionTargets": [toActionTarget],
+      },
+      optional: {
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async describeHub(
@@ -350,16 +322,14 @@ export default class SecurityHub {
       method: "GET",
       requestUri: "/accounts",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "HubArn": "s",
-          "SubscribedAt": "s",
-          "AutoEnableControls": "b",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "HubArn": "s",
+        "SubscribedAt": "s",
+        "AutoEnableControls": "b",
+      },
+    }, await resp.json());
   }
 
   async describeProducts(
@@ -374,16 +344,14 @@ export default class SecurityHub {
       method: "GET",
       requestUri: "/products",
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "Products": [toProduct],
-        },
-        optional: {
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "Products": [toProduct],
+      },
+      optional: {
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async describeStandards(
@@ -398,15 +366,13 @@ export default class SecurityHub {
       method: "GET",
       requestUri: "/standards",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Standards": [toStandard],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Standards": [toStandard],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async describeStandardsControls(
@@ -421,15 +387,13 @@ export default class SecurityHub {
       method: "GET",
       requestUri: cmnP.encodePath`/standards/controls/${params["StandardsSubscriptionArn"].split("/")}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Controls": [toStandardsControl],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Controls": [toStandardsControl],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async disableImportFindingsForProduct(
@@ -442,12 +406,10 @@ export default class SecurityHub {
       method: "DELETE",
       requestUri: cmnP.encodePath`/productSubscriptions/${params["ProductSubscriptionArn"].split("/")}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async disableSecurityHub(
@@ -460,12 +422,10 @@ export default class SecurityHub {
       method: "DELETE",
       requestUri: "/accounts",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async disassociateFromMasterAccount(
@@ -477,122 +437,110 @@ export default class SecurityHub {
       action: "DisassociateFromMasterAccount",
       requestUri: "/master/disassociate",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async disassociateMembers(
     {abortSignal, ...params}: RequestConfig & DisassociateMembersRequest = {},
   ): Promise<DisassociateMembersResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AccountIds: params["AccountIds"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisassociateMembers",
       requestUri: "/members/disassociate",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async enableImportFindingsForProduct(
     {abortSignal, ...params}: RequestConfig & EnableImportFindingsForProductRequest,
   ): Promise<EnableImportFindingsForProductResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ProductArn: params["ProductArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "EnableImportFindingsForProduct",
       requestUri: "/productSubscriptions",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ProductSubscriptionArn": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ProductSubscriptionArn": "s",
+      },
+    }, await resp.json());
   }
 
   async enableSecurityHub(
     {abortSignal, ...params}: RequestConfig & EnableSecurityHubRequest = {},
   ): Promise<EnableSecurityHubResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Tags: params["Tags"],
       EnableDefaultStandards: params["EnableDefaultStandards"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "EnableSecurityHub",
       requestUri: "/accounts",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async getEnabledStandards(
     {abortSignal, ...params}: RequestConfig & GetEnabledStandardsRequest = {},
   ): Promise<GetEnabledStandardsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       StandardsSubscriptionArns: params["StandardsSubscriptionArns"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetEnabledStandards",
       requestUri: "/standards/get",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "StandardsSubscriptions": [toStandardsSubscription],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "StandardsSubscriptions": [toStandardsSubscription],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async getFindings(
     {abortSignal, ...params}: RequestConfig & GetFindingsRequest = {},
   ): Promise<GetFindingsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Filters: fromAwsSecurityFindingFilters(params["Filters"]),
       SortCriteria: params["SortCriteria"]?.map(x => fromSortCriterion(x)),
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetFindings",
       requestUri: "/findings",
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "Findings": [toAwsSecurityFinding],
-        },
-        optional: {
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "Findings": [toAwsSecurityFinding],
+      },
+      optional: {
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async getInsightResults(
@@ -605,39 +553,35 @@ export default class SecurityHub {
       method: "GET",
       requestUri: cmnP.encodePath`/insights/results/${params["InsightArn"].split("/")}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "InsightResults": toInsightResults,
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "InsightResults": toInsightResults,
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async getInsights(
     {abortSignal, ...params}: RequestConfig & GetInsightsRequest = {},
   ): Promise<GetInsightsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       InsightArns: params["InsightArns"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetInsights",
       requestUri: "/insights/get",
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "Insights": [toInsight],
-        },
-        optional: {
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "Insights": [toInsight],
+      },
+      optional: {
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async getInvitationsCount(
@@ -650,14 +594,12 @@ export default class SecurityHub {
       method: "GET",
       requestUri: "/invitations/count",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "InvitationsCount": "n",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "InvitationsCount": "n",
+      },
+    }, await resp.json());
   }
 
   async getMasterAccount(
@@ -670,57 +612,51 @@ export default class SecurityHub {
       method: "GET",
       requestUri: "/master",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Master": toInvitation,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Master": toInvitation,
+      },
+    }, await resp.json());
   }
 
   async getMembers(
     {abortSignal, ...params}: RequestConfig & GetMembersRequest,
   ): Promise<GetMembersResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AccountIds: params["AccountIds"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetMembers",
       requestUri: "/members/get",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Members": [toMember],
-          "UnprocessedAccounts": [toResult],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Members": [toMember],
+        "UnprocessedAccounts": [toResult],
+      },
+    }, await resp.json());
   }
 
   async inviteMembers(
     {abortSignal, ...params}: RequestConfig & InviteMembersRequest = {},
   ): Promise<InviteMembersResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AccountIds: params["AccountIds"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "InviteMembers",
       requestUri: "/members/invite",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "UnprocessedAccounts": [toResult],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "UnprocessedAccounts": [toResult],
+      },
+    }, await resp.json());
   }
 
   async listEnabledProductsForImport(
@@ -735,15 +671,13 @@ export default class SecurityHub {
       method: "GET",
       requestUri: "/productSubscriptions",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ProductSubscriptions": ["s"],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ProductSubscriptions": ["s"],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listInvitations(
@@ -758,15 +692,13 @@ export default class SecurityHub {
       method: "GET",
       requestUri: "/invitations",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Invitations": [toInvitation],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Invitations": [toInvitation],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listMembers(
@@ -782,15 +714,13 @@ export default class SecurityHub {
       method: "GET",
       requestUri: "/members",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Members": [toMember],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Members": [toMember],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listTagsForResource(
@@ -803,33 +733,29 @@ export default class SecurityHub {
       method: "GET",
       requestUri: cmnP.encodePath`/tags/${params["ResourceArn"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Tags: params["Tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
       requestUri: cmnP.encodePath`/tags/${params["ResourceArn"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async untagResource(
@@ -845,118 +771,106 @@ export default class SecurityHub {
       method: "DELETE",
       requestUri: cmnP.encodePath`/tags/${params["ResourceArn"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async updateActionTarget(
     {abortSignal, ...params}: RequestConfig & UpdateActionTargetRequest,
   ): Promise<UpdateActionTargetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       Description: params["Description"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateActionTarget",
       method: "PATCH",
       requestUri: cmnP.encodePath`/actionTargets/${params["ActionTargetArn"].split("/")}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async updateFindings(
     {abortSignal, ...params}: RequestConfig & UpdateFindingsRequest,
   ): Promise<UpdateFindingsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Filters: fromAwsSecurityFindingFilters(params["Filters"]),
       Note: fromNoteUpdate(params["Note"]),
       RecordState: params["RecordState"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateFindings",
       method: "PATCH",
       requestUri: "/findings",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async updateInsight(
     {abortSignal, ...params}: RequestConfig & UpdateInsightRequest,
   ): Promise<UpdateInsightResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       Filters: fromAwsSecurityFindingFilters(params["Filters"]),
       GroupByAttribute: params["GroupByAttribute"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateInsight",
       method: "PATCH",
       requestUri: cmnP.encodePath`/insights/${params["InsightArn"].split("/")}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async updateSecurityHubConfiguration(
     {abortSignal, ...params}: RequestConfig & UpdateSecurityHubConfigurationRequest = {},
   ): Promise<UpdateSecurityHubConfigurationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AutoEnableControls: params["AutoEnableControls"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateSecurityHubConfiguration",
       method: "PATCH",
       requestUri: "/accounts",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async updateStandardsControl(
     {abortSignal, ...params}: RequestConfig & UpdateStandardsControlRequest,
   ): Promise<UpdateStandardsControlResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ControlStatus: params["ControlStatus"],
       DisabledReason: params["DisabledReason"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateStandardsControl",
       method: "PATCH",
       requestUri: cmnP.encodePath`/standards/control/${params["StandardsControlArn"].split("/")}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
 }

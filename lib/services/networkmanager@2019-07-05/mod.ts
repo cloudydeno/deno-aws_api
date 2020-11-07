@@ -30,52 +30,48 @@ export default class NetworkManager {
   async associateCustomerGateway(
     {abortSignal, ...params}: RequestConfig & AssociateCustomerGatewayRequest,
   ): Promise<AssociateCustomerGatewayResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CustomerGatewayArn: params["CustomerGatewayArn"],
       DeviceId: params["DeviceId"],
       LinkId: params["LinkId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AssociateCustomerGateway",
       requestUri: cmnP.encodePath`/global-networks/${params["GlobalNetworkId"]}/customer-gateway-associations`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "CustomerGatewayAssociation": toCustomerGatewayAssociation,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "CustomerGatewayAssociation": toCustomerGatewayAssociation,
+      },
+    }, await resp.json());
   }
 
   async associateLink(
     {abortSignal, ...params}: RequestConfig & AssociateLinkRequest,
   ): Promise<AssociateLinkResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DeviceId: params["DeviceId"],
       LinkId: params["LinkId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AssociateLink",
       requestUri: cmnP.encodePath`/global-networks/${params["GlobalNetworkId"]}/link-associations`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "LinkAssociation": toLinkAssociation,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "LinkAssociation": toLinkAssociation,
+      },
+    }, await resp.json());
   }
 
   async createDevice(
     {abortSignal, ...params}: RequestConfig & CreateDeviceRequest,
   ): Promise<CreateDeviceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Description: params["Description"],
       Type: params["Type"],
       Vendor: params["Vendor"],
@@ -84,91 +80,83 @@ export default class NetworkManager {
       Location: fromLocation(params["Location"]),
       SiteId: params["SiteId"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDevice",
       requestUri: cmnP.encodePath`/global-networks/${params["GlobalNetworkId"]}/devices`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Device": toDevice,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Device": toDevice,
+      },
+    }, await resp.json());
   }
 
   async createGlobalNetwork(
     {abortSignal, ...params}: RequestConfig & CreateGlobalNetworkRequest = {},
   ): Promise<CreateGlobalNetworkResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Description: params["Description"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateGlobalNetwork",
       requestUri: "/global-networks",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "GlobalNetwork": toGlobalNetwork,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "GlobalNetwork": toGlobalNetwork,
+      },
+    }, await resp.json());
   }
 
   async createLink(
     {abortSignal, ...params}: RequestConfig & CreateLinkRequest,
   ): Promise<CreateLinkResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Description: params["Description"],
       Type: params["Type"],
       Bandwidth: fromBandwidth(params["Bandwidth"]),
       Provider: params["Provider"],
       SiteId: params["SiteId"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateLink",
       requestUri: cmnP.encodePath`/global-networks/${params["GlobalNetworkId"]}/links`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Link": toLink,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Link": toLink,
+      },
+    }, await resp.json());
   }
 
   async createSite(
     {abortSignal, ...params}: RequestConfig & CreateSiteRequest,
   ): Promise<CreateSiteResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Description: params["Description"],
       Location: fromLocation(params["Location"]),
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateSite",
       requestUri: cmnP.encodePath`/global-networks/${params["GlobalNetworkId"]}/sites`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Site": toSite,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Site": toSite,
+      },
+    }, await resp.json());
   }
 
   async deleteDevice(
@@ -181,14 +169,12 @@ export default class NetworkManager {
       method: "DELETE",
       requestUri: cmnP.encodePath`/global-networks/${params["GlobalNetworkId"]}/devices/${params["DeviceId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Device": toDevice,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Device": toDevice,
+      },
+    }, await resp.json());
   }
 
   async deleteGlobalNetwork(
@@ -201,14 +187,12 @@ export default class NetworkManager {
       method: "DELETE",
       requestUri: cmnP.encodePath`/global-networks/${params["GlobalNetworkId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "GlobalNetwork": toGlobalNetwork,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "GlobalNetwork": toGlobalNetwork,
+      },
+    }, await resp.json());
   }
 
   async deleteLink(
@@ -221,14 +205,12 @@ export default class NetworkManager {
       method: "DELETE",
       requestUri: cmnP.encodePath`/global-networks/${params["GlobalNetworkId"]}/links/${params["LinkId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Link": toLink,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Link": toLink,
+      },
+    }, await resp.json());
   }
 
   async deleteSite(
@@ -241,14 +223,12 @@ export default class NetworkManager {
       method: "DELETE",
       requestUri: cmnP.encodePath`/global-networks/${params["GlobalNetworkId"]}/sites/${params["SiteId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Site": toSite,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Site": toSite,
+      },
+    }, await resp.json());
   }
 
   async deregisterTransitGateway(
@@ -261,14 +241,12 @@ export default class NetworkManager {
       method: "DELETE",
       requestUri: cmnP.encodePath`/global-networks/${params["GlobalNetworkId"]}/transit-gateway-registrations/${params["TransitGatewayArn"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "TransitGatewayRegistration": toTransitGatewayRegistration,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "TransitGatewayRegistration": toTransitGatewayRegistration,
+      },
+    }, await resp.json());
   }
 
   async describeGlobalNetworks(
@@ -286,15 +264,13 @@ export default class NetworkManager {
       method: "GET",
       requestUri: "/global-networks",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "GlobalNetworks": [toGlobalNetwork],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "GlobalNetworks": [toGlobalNetwork],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async disassociateCustomerGateway(
@@ -307,14 +283,12 @@ export default class NetworkManager {
       method: "DELETE",
       requestUri: cmnP.encodePath`/global-networks/${params["GlobalNetworkId"]}/customer-gateway-associations/${params["CustomerGatewayArn"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "CustomerGatewayAssociation": toCustomerGatewayAssociation,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "CustomerGatewayAssociation": toCustomerGatewayAssociation,
+      },
+    }, await resp.json());
   }
 
   async disassociateLink(
@@ -329,14 +303,12 @@ export default class NetworkManager {
       method: "DELETE",
       requestUri: cmnP.encodePath`/global-networks/${params["GlobalNetworkId"]}/link-associations`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "LinkAssociation": toLinkAssociation,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "LinkAssociation": toLinkAssociation,
+      },
+    }, await resp.json());
   }
 
   async getCustomerGatewayAssociations(
@@ -354,15 +326,13 @@ export default class NetworkManager {
       method: "GET",
       requestUri: cmnP.encodePath`/global-networks/${params["GlobalNetworkId"]}/customer-gateway-associations`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "CustomerGatewayAssociations": [toCustomerGatewayAssociation],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "CustomerGatewayAssociations": [toCustomerGatewayAssociation],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async getDevices(
@@ -381,15 +351,13 @@ export default class NetworkManager {
       method: "GET",
       requestUri: cmnP.encodePath`/global-networks/${params["GlobalNetworkId"]}/devices`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Devices": [toDevice],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Devices": [toDevice],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async getLinkAssociations(
@@ -406,15 +374,13 @@ export default class NetworkManager {
       method: "GET",
       requestUri: cmnP.encodePath`/global-networks/${params["GlobalNetworkId"]}/link-associations`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "LinkAssociations": [toLinkAssociation],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "LinkAssociations": [toLinkAssociation],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async getLinks(
@@ -435,15 +401,13 @@ export default class NetworkManager {
       method: "GET",
       requestUri: cmnP.encodePath`/global-networks/${params["GlobalNetworkId"]}/links`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Links": [toLink],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Links": [toLink],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async getSites(
@@ -461,15 +425,13 @@ export default class NetworkManager {
       method: "GET",
       requestUri: cmnP.encodePath`/global-networks/${params["GlobalNetworkId"]}/sites`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Sites": [toSite],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Sites": [toSite],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async getTransitGatewayRegistrations(
@@ -487,15 +449,13 @@ export default class NetworkManager {
       method: "GET",
       requestUri: cmnP.encodePath`/global-networks/${params["GlobalNetworkId"]}/transit-gateway-registrations`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "TransitGatewayRegistrations": [toTransitGatewayRegistration],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "TransitGatewayRegistrations": [toTransitGatewayRegistration],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listTagsForResource(
@@ -508,54 +468,48 @@ export default class NetworkManager {
       method: "GET",
       requestUri: cmnP.encodePath`/tags/${params["ResourceArn"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "TagList": [toTag],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "TagList": [toTag],
+      },
+    }, await resp.json());
   }
 
   async registerTransitGateway(
     {abortSignal, ...params}: RequestConfig & RegisterTransitGatewayRequest,
   ): Promise<RegisterTransitGatewayResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TransitGatewayArn: params["TransitGatewayArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RegisterTransitGateway",
       requestUri: cmnP.encodePath`/global-networks/${params["GlobalNetworkId"]}/transit-gateway-registrations`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "TransitGatewayRegistration": toTransitGatewayRegistration,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "TransitGatewayRegistration": toTransitGatewayRegistration,
+      },
+    }, await resp.json());
   }
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
       requestUri: cmnP.encodePath`/tags/${params["ResourceArn"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async untagResource(
@@ -571,18 +525,16 @@ export default class NetworkManager {
       method: "DELETE",
       requestUri: cmnP.encodePath`/tags/${params["ResourceArn"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async updateDevice(
     {abortSignal, ...params}: RequestConfig & UpdateDeviceRequest,
   ): Promise<UpdateDeviceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Description: params["Description"],
       Type: params["Type"],
       Vendor: params["Vendor"],
@@ -590,91 +542,83 @@ export default class NetworkManager {
       SerialNumber: params["SerialNumber"],
       Location: fromLocation(params["Location"]),
       SiteId: params["SiteId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateDevice",
       method: "PATCH",
       requestUri: cmnP.encodePath`/global-networks/${params["GlobalNetworkId"]}/devices/${params["DeviceId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Device": toDevice,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Device": toDevice,
+      },
+    }, await resp.json());
   }
 
   async updateGlobalNetwork(
     {abortSignal, ...params}: RequestConfig & UpdateGlobalNetworkRequest,
   ): Promise<UpdateGlobalNetworkResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Description: params["Description"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateGlobalNetwork",
       method: "PATCH",
       requestUri: cmnP.encodePath`/global-networks/${params["GlobalNetworkId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "GlobalNetwork": toGlobalNetwork,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "GlobalNetwork": toGlobalNetwork,
+      },
+    }, await resp.json());
   }
 
   async updateLink(
     {abortSignal, ...params}: RequestConfig & UpdateLinkRequest,
   ): Promise<UpdateLinkResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Description: params["Description"],
       Type: params["Type"],
       Bandwidth: fromBandwidth(params["Bandwidth"]),
       Provider: params["Provider"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateLink",
       method: "PATCH",
       requestUri: cmnP.encodePath`/global-networks/${params["GlobalNetworkId"]}/links/${params["LinkId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Link": toLink,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Link": toLink,
+      },
+    }, await resp.json());
   }
 
   async updateSite(
     {abortSignal, ...params}: RequestConfig & UpdateSiteRequest,
   ): Promise<UpdateSiteResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Description: params["Description"],
       Location: fromLocation(params["Location"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateSite",
       method: "PATCH",
       requestUri: cmnP.encodePath`/global-networks/${params["GlobalNetworkId"]}/sites/${params["SiteId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Site": toSite,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Site": toSite,
+      },
+    }, await resp.json());
   }
 
 }

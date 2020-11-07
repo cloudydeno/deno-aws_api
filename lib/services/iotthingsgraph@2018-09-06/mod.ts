@@ -30,11 +30,11 @@ export default class IoTThingsGraph {
   async associateEntityToThing(
     {abortSignal, ...params}: RequestConfig & AssociateEntityToThingRequest,
   ): Promise<AssociateEntityToThingResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       thingName: params["thingName"],
       entityId: params["entityId"],
       namespaceVersion: params["namespaceVersion"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AssociateEntityToThing",
@@ -48,10 +48,10 @@ export default class IoTThingsGraph {
   async createFlowTemplate(
     {abortSignal, ...params}: RequestConfig & CreateFlowTemplateRequest,
   ): Promise<CreateFlowTemplateResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       definition: fromDefinitionDocument(params["definition"]),
       compatibleNamespaceVersion: params["compatibleNamespaceVersion"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateFlowTemplate",
@@ -67,7 +67,7 @@ export default class IoTThingsGraph {
   async createSystemInstance(
     {abortSignal, ...params}: RequestConfig & CreateSystemInstanceRequest,
   ): Promise<CreateSystemInstanceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       tags: params["tags"]?.map(x => fromTag(x)),
       definition: fromDefinitionDocument(params["definition"]),
       target: params["target"],
@@ -75,7 +75,7 @@ export default class IoTThingsGraph {
       s3BucketName: params["s3BucketName"],
       metricsConfiguration: fromMetricsConfiguration(params["metricsConfiguration"]),
       flowActionsRoleArn: params["flowActionsRoleArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateSystemInstance",
@@ -91,10 +91,10 @@ export default class IoTThingsGraph {
   async createSystemTemplate(
     {abortSignal, ...params}: RequestConfig & CreateSystemTemplateRequest,
   ): Promise<CreateSystemTemplateResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       definition: fromDefinitionDocument(params["definition"]),
       compatibleNamespaceVersion: params["compatibleNamespaceVersion"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateSystemTemplate",
@@ -110,9 +110,9 @@ export default class IoTThingsGraph {
   async deleteFlowTemplate(
     {abortSignal, ...params}: RequestConfig & DeleteFlowTemplateRequest,
   ): Promise<DeleteFlowTemplateResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       id: params["id"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteFlowTemplate",
@@ -126,8 +126,8 @@ export default class IoTThingsGraph {
   async deleteNamespace(
     {abortSignal, ...params}: RequestConfig & DeleteNamespaceRequest = {},
   ): Promise<DeleteNamespaceResponse> {
-    const body: jsonP.JSONObject = params ? {
-    } : {};
+    const body: jsonP.JSONObject = {
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteNamespace",
@@ -144,9 +144,9 @@ export default class IoTThingsGraph {
   async deleteSystemInstance(
     {abortSignal, ...params}: RequestConfig & DeleteSystemInstanceRequest = {},
   ): Promise<DeleteSystemInstanceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       id: params["id"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteSystemInstance",
@@ -160,9 +160,9 @@ export default class IoTThingsGraph {
   async deleteSystemTemplate(
     {abortSignal, ...params}: RequestConfig & DeleteSystemTemplateRequest,
   ): Promise<DeleteSystemTemplateResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       id: params["id"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteSystemTemplate",
@@ -176,9 +176,9 @@ export default class IoTThingsGraph {
   async deploySystemInstance(
     {abortSignal, ...params}: RequestConfig & DeploySystemInstanceRequest = {},
   ): Promise<DeploySystemInstanceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       id: params["id"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeploySystemInstance",
@@ -196,9 +196,9 @@ export default class IoTThingsGraph {
   async deprecateFlowTemplate(
     {abortSignal, ...params}: RequestConfig & DeprecateFlowTemplateRequest,
   ): Promise<DeprecateFlowTemplateResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       id: params["id"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeprecateFlowTemplate",
@@ -212,9 +212,9 @@ export default class IoTThingsGraph {
   async deprecateSystemTemplate(
     {abortSignal, ...params}: RequestConfig & DeprecateSystemTemplateRequest,
   ): Promise<DeprecateSystemTemplateResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       id: params["id"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeprecateSystemTemplate",
@@ -228,9 +228,9 @@ export default class IoTThingsGraph {
   async describeNamespace(
     {abortSignal, ...params}: RequestConfig & DescribeNamespaceRequest = {},
   ): Promise<DescribeNamespaceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       namespaceName: params["namespaceName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeNamespace",
@@ -250,10 +250,10 @@ export default class IoTThingsGraph {
   async dissociateEntityFromThing(
     {abortSignal, ...params}: RequestConfig & DissociateEntityFromThingRequest,
   ): Promise<DissociateEntityFromThingResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       thingName: params["thingName"],
       entityType: params["entityType"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DissociateEntityFromThing",
@@ -267,10 +267,10 @@ export default class IoTThingsGraph {
   async getEntities(
     {abortSignal, ...params}: RequestConfig & GetEntitiesRequest,
   ): Promise<GetEntitiesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ids: params["ids"],
       namespaceVersion: params["namespaceVersion"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetEntities",
@@ -286,10 +286,10 @@ export default class IoTThingsGraph {
   async getFlowTemplate(
     {abortSignal, ...params}: RequestConfig & GetFlowTemplateRequest,
   ): Promise<GetFlowTemplateResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       id: params["id"],
       revisionNumber: params["revisionNumber"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetFlowTemplate",
@@ -305,11 +305,11 @@ export default class IoTThingsGraph {
   async getFlowTemplateRevisions(
     {abortSignal, ...params}: RequestConfig & GetFlowTemplateRevisionsRequest,
   ): Promise<GetFlowTemplateRevisionsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       id: params["id"],
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetFlowTemplateRevisions",
@@ -326,8 +326,8 @@ export default class IoTThingsGraph {
   async getNamespaceDeletionStatus(
     {abortSignal, ...params}: RequestConfig & GetNamespaceDeletionStatusRequest = {},
   ): Promise<GetNamespaceDeletionStatusResponse> {
-    const body: jsonP.JSONObject = params ? {
-    } : {};
+    const body: jsonP.JSONObject = {
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetNamespaceDeletionStatus",
@@ -347,9 +347,9 @@ export default class IoTThingsGraph {
   async getSystemInstance(
     {abortSignal, ...params}: RequestConfig & GetSystemInstanceRequest,
   ): Promise<GetSystemInstanceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       id: params["id"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetSystemInstance",
@@ -365,10 +365,10 @@ export default class IoTThingsGraph {
   async getSystemTemplate(
     {abortSignal, ...params}: RequestConfig & GetSystemTemplateRequest,
   ): Promise<GetSystemTemplateResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       id: params["id"],
       revisionNumber: params["revisionNumber"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetSystemTemplate",
@@ -384,11 +384,11 @@ export default class IoTThingsGraph {
   async getSystemTemplateRevisions(
     {abortSignal, ...params}: RequestConfig & GetSystemTemplateRevisionsRequest,
   ): Promise<GetSystemTemplateRevisionsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       id: params["id"],
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetSystemTemplateRevisions",
@@ -405,9 +405,9 @@ export default class IoTThingsGraph {
   async getUploadStatus(
     {abortSignal, ...params}: RequestConfig & GetUploadStatusRequest,
   ): Promise<GetUploadStatusResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       uploadId: params["uploadId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetUploadStatus",
@@ -430,11 +430,11 @@ export default class IoTThingsGraph {
   async listFlowExecutionMessages(
     {abortSignal, ...params}: RequestConfig & ListFlowExecutionMessagesRequest,
   ): Promise<ListFlowExecutionMessagesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       flowExecutionId: params["flowExecutionId"],
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListFlowExecutionMessages",
@@ -451,11 +451,11 @@ export default class IoTThingsGraph {
   async listTagsForResource(
     {abortSignal, ...params}: RequestConfig & ListTagsForResourceRequest,
   ): Promise<ListTagsForResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       maxResults: params["maxResults"],
       resourceArn: params["resourceArn"],
       nextToken: params["nextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForResource",
@@ -472,13 +472,13 @@ export default class IoTThingsGraph {
   async searchEntities(
     {abortSignal, ...params}: RequestConfig & SearchEntitiesRequest,
   ): Promise<SearchEntitiesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       entityTypes: params["entityTypes"],
       filters: params["filters"]?.map(x => fromEntityFilter(x)),
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
       namespaceVersion: params["namespaceVersion"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SearchEntities",
@@ -495,14 +495,14 @@ export default class IoTThingsGraph {
   async searchFlowExecutions(
     {abortSignal, ...params}: RequestConfig & SearchFlowExecutionsRequest,
   ): Promise<SearchFlowExecutionsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       systemInstanceId: params["systemInstanceId"],
       flowExecutionId: params["flowExecutionId"],
       startTime: jsonP.serializeDate_unixTimestamp(params["startTime"]),
       endTime: jsonP.serializeDate_unixTimestamp(params["endTime"]),
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SearchFlowExecutions",
@@ -519,11 +519,11 @@ export default class IoTThingsGraph {
   async searchFlowTemplates(
     {abortSignal, ...params}: RequestConfig & SearchFlowTemplatesRequest = {},
   ): Promise<SearchFlowTemplatesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       filters: params["filters"]?.map(x => fromFlowTemplateFilter(x)),
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SearchFlowTemplates",
@@ -540,11 +540,11 @@ export default class IoTThingsGraph {
   async searchSystemInstances(
     {abortSignal, ...params}: RequestConfig & SearchSystemInstancesRequest = {},
   ): Promise<SearchSystemInstancesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       filters: params["filters"]?.map(x => fromSystemInstanceFilter(x)),
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SearchSystemInstances",
@@ -561,11 +561,11 @@ export default class IoTThingsGraph {
   async searchSystemTemplates(
     {abortSignal, ...params}: RequestConfig & SearchSystemTemplatesRequest = {},
   ): Promise<SearchSystemTemplatesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       filters: params["filters"]?.map(x => fromSystemTemplateFilter(x)),
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SearchSystemTemplates",
@@ -582,12 +582,12 @@ export default class IoTThingsGraph {
   async searchThings(
     {abortSignal, ...params}: RequestConfig & SearchThingsRequest,
   ): Promise<SearchThingsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       entityId: params["entityId"],
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
       namespaceVersion: params["namespaceVersion"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SearchThings",
@@ -604,10 +604,10 @@ export default class IoTThingsGraph {
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       resourceArn: params["resourceArn"],
       tags: params["tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
@@ -621,9 +621,9 @@ export default class IoTThingsGraph {
   async undeploySystemInstance(
     {abortSignal, ...params}: RequestConfig & UndeploySystemInstanceRequest = {},
   ): Promise<UndeploySystemInstanceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       id: params["id"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UndeploySystemInstance",
@@ -639,10 +639,10 @@ export default class IoTThingsGraph {
   async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceRequest,
   ): Promise<UntagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       resourceArn: params["resourceArn"],
       tagKeys: params["tagKeys"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResource",
@@ -656,11 +656,11 @@ export default class IoTThingsGraph {
   async updateFlowTemplate(
     {abortSignal, ...params}: RequestConfig & UpdateFlowTemplateRequest,
   ): Promise<UpdateFlowTemplateResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       id: params["id"],
       definition: fromDefinitionDocument(params["definition"]),
       compatibleNamespaceVersion: params["compatibleNamespaceVersion"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateFlowTemplate",
@@ -676,11 +676,11 @@ export default class IoTThingsGraph {
   async updateSystemTemplate(
     {abortSignal, ...params}: RequestConfig & UpdateSystemTemplateRequest,
   ): Promise<UpdateSystemTemplateResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       id: params["id"],
       definition: fromDefinitionDocument(params["definition"]),
       compatibleNamespaceVersion: params["compatibleNamespaceVersion"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateSystemTemplate",
@@ -696,11 +696,11 @@ export default class IoTThingsGraph {
   async uploadEntityDefinitions(
     {abortSignal, ...params}: RequestConfig & UploadEntityDefinitionsRequest = {},
   ): Promise<UploadEntityDefinitionsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       document: fromDefinitionDocument(params["document"]),
       syncWithPublicNamespace: params["syncWithPublicNamespace"],
       deprecateExistingEntities: params["deprecateExistingEntities"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UploadEntityDefinitions",

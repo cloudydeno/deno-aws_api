@@ -30,53 +30,49 @@ export default class Honeycode {
   async getScreenData(
     {abortSignal, ...params}: RequestConfig & GetScreenDataRequest,
   ): Promise<GetScreenDataResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       workbookId: params["workbookId"],
       appId: params["appId"],
       screenId: params["screenId"],
       variables: jsonP.serializeMap(params["variables"], x => fromVariableValue(x)),
       maxResults: params["maxResults"],
       nextToken: params["nextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetScreenData",
       requestUri: "/screendata",
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "results": x => jsonP.readMap(String, toResultSet, x),
-          "workbookCursor": "n",
-        },
-        optional: {
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "results": x => jsonP.readMap(String, toResultSet, x),
+        "workbookCursor": "n",
+      },
+      optional: {
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async invokeScreenAutomation(
     {abortSignal, ...params}: RequestConfig & InvokeScreenAutomationRequest,
   ): Promise<InvokeScreenAutomationResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       variables: jsonP.serializeMap(params["variables"], x => fromVariableValue(x)),
       rowId: params["rowId"],
       clientRequestToken: params["clientRequestToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "InvokeScreenAutomation",
       requestUri: cmnP.encodePath`/workbooks/${params["workbookId"]}/apps/${params["appId"]}/screens/${params["screenId"]}/automations/${params["screenAutomationId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "workbookCursor": "n",
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "workbookCursor": "n",
+      },
+      optional: {},
+    }, await resp.json());
   }
 
 }

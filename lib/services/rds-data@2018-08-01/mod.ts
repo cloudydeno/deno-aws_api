@@ -29,7 +29,7 @@ export default class RDSDataService {
   async batchExecuteStatement(
     {abortSignal, ...params}: RequestConfig & BatchExecuteStatementRequest,
   ): Promise<BatchExecuteStatementResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       database: params["database"],
       parameterSets: params["parameterSets"]?.map(x => x?.map(fromSqlParameter)),
       resourceArn: params["resourceArn"],
@@ -37,102 +37,94 @@ export default class RDSDataService {
       secretArn: params["secretArn"],
       sql: params["sql"],
       transactionId: params["transactionId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchExecuteStatement",
       requestUri: "/BatchExecute",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "updateResults": [toUpdateResult],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "updateResults": [toUpdateResult],
+      },
+    }, await resp.json());
   }
 
   async beginTransaction(
     {abortSignal, ...params}: RequestConfig & BeginTransactionRequest,
   ): Promise<BeginTransactionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       database: params["database"],
       resourceArn: params["resourceArn"],
       schema: params["schema"],
       secretArn: params["secretArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BeginTransaction",
       requestUri: "/BeginTransaction",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "transactionId": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "transactionId": "s",
+      },
+    }, await resp.json());
   }
 
   async commitTransaction(
     {abortSignal, ...params}: RequestConfig & CommitTransactionRequest,
   ): Promise<CommitTransactionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       resourceArn: params["resourceArn"],
       secretArn: params["secretArn"],
       transactionId: params["transactionId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CommitTransaction",
       requestUri: "/CommitTransaction",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "transactionStatus": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "transactionStatus": "s",
+      },
+    }, await resp.json());
   }
 
   async executeSql(
     {abortSignal, ...params}: RequestConfig & ExecuteSqlRequest,
   ): Promise<ExecuteSqlResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       awsSecretStoreArn: params["awsSecretStoreArn"],
       database: params["database"],
       dbClusterOrInstanceArn: params["dbClusterOrInstanceArn"],
       schema: params["schema"],
       sqlStatements: params["sqlStatements"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ExecuteSql",
       requestUri: "/ExecuteSql",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "sqlStatementResults": [toSqlStatementResult],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "sqlStatementResults": [toSqlStatementResult],
+      },
+    }, await resp.json());
   }
 
   async executeStatement(
     {abortSignal, ...params}: RequestConfig & ExecuteStatementRequest,
   ): Promise<ExecuteStatementResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       continueAfterTimeout: params["continueAfterTimeout"],
       database: params["database"],
       includeResultMetadata: params["includeResultMetadata"],
@@ -143,48 +135,44 @@ export default class RDSDataService {
       secretArn: params["secretArn"],
       sql: params["sql"],
       transactionId: params["transactionId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ExecuteStatement",
       requestUri: "/Execute",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "columnMetadata": [toColumnMetadata],
-          "generatedFields": [toField],
-          "numberOfRecordsUpdated": "n",
-          "records": [x => jsonP.readList(toField, x)],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "columnMetadata": [toColumnMetadata],
+        "generatedFields": [toField],
+        "numberOfRecordsUpdated": "n",
+        "records": [x => jsonP.readList(toField, x)],
+      },
+    }, await resp.json());
   }
 
   async rollbackTransaction(
     {abortSignal, ...params}: RequestConfig & RollbackTransactionRequest,
   ): Promise<RollbackTransactionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       resourceArn: params["resourceArn"],
       secretArn: params["secretArn"],
       transactionId: params["transactionId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RollbackTransaction",
       requestUri: "/RollbackTransaction",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "transactionStatus": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "transactionStatus": "s",
+      },
+    }, await resp.json());
   }
 
 }

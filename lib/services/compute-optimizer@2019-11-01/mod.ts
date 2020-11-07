@@ -30,12 +30,12 @@ export default class ComputeOptimizer {
   async describeRecommendationExportJobs(
     {abortSignal, ...params}: RequestConfig & DescribeRecommendationExportJobsRequest = {},
   ): Promise<DescribeRecommendationExportJobsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       jobIds: params["jobIds"],
       filters: params["filters"]?.map(x => fromJobFilter(x)),
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeRecommendationExportJobs",
@@ -52,14 +52,14 @@ export default class ComputeOptimizer {
   async exportAutoScalingGroupRecommendations(
     {abortSignal, ...params}: RequestConfig & ExportAutoScalingGroupRecommendationsRequest,
   ): Promise<ExportAutoScalingGroupRecommendationsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       accountIds: params["accountIds"],
       filters: params["filters"]?.map(x => fromFilter(x)),
       fieldsToExport: params["fieldsToExport"],
       s3DestinationConfig: fromS3DestinationConfig(params["s3DestinationConfig"]),
       fileFormat: params["fileFormat"],
       includeMemberAccounts: params["includeMemberAccounts"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ExportAutoScalingGroupRecommendations",
@@ -76,14 +76,14 @@ export default class ComputeOptimizer {
   async exportEC2InstanceRecommendations(
     {abortSignal, ...params}: RequestConfig & ExportEC2InstanceRecommendationsRequest,
   ): Promise<ExportEC2InstanceRecommendationsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       accountIds: params["accountIds"],
       filters: params["filters"]?.map(x => fromFilter(x)),
       fieldsToExport: params["fieldsToExport"],
       s3DestinationConfig: fromS3DestinationConfig(params["s3DestinationConfig"]),
       fileFormat: params["fileFormat"],
       includeMemberAccounts: params["includeMemberAccounts"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ExportEC2InstanceRecommendations",
@@ -100,13 +100,13 @@ export default class ComputeOptimizer {
   async getAutoScalingGroupRecommendations(
     {abortSignal, ...params}: RequestConfig & GetAutoScalingGroupRecommendationsRequest = {},
   ): Promise<GetAutoScalingGroupRecommendationsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       accountIds: params["accountIds"],
       autoScalingGroupArns: params["autoScalingGroupArns"],
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
       filters: params["filters"]?.map(x => fromFilter(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetAutoScalingGroupRecommendations",
@@ -124,13 +124,13 @@ export default class ComputeOptimizer {
   async getEC2InstanceRecommendations(
     {abortSignal, ...params}: RequestConfig & GetEC2InstanceRecommendationsRequest = {},
   ): Promise<GetEC2InstanceRecommendationsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       instanceArns: params["instanceArns"],
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
       filters: params["filters"]?.map(x => fromFilter(x)),
       accountIds: params["accountIds"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetEC2InstanceRecommendations",
@@ -148,13 +148,13 @@ export default class ComputeOptimizer {
   async getEC2RecommendationProjectedMetrics(
     {abortSignal, ...params}: RequestConfig & GetEC2RecommendationProjectedMetricsRequest,
   ): Promise<GetEC2RecommendationProjectedMetricsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       instanceArn: params["instanceArn"],
       stat: params["stat"],
       period: params["period"],
       startTime: jsonP.serializeDate_unixTimestamp(params["startTime"]),
       endTime: jsonP.serializeDate_unixTimestamp(params["endTime"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetEC2RecommendationProjectedMetrics",
@@ -170,8 +170,8 @@ export default class ComputeOptimizer {
   async getEnrollmentStatus(
     {abortSignal, ...params}: RequestConfig & GetEnrollmentStatusRequest = {},
   ): Promise<GetEnrollmentStatusResponse> {
-    const body: jsonP.JSONObject = params ? {
-    } : {};
+    const body: jsonP.JSONObject = {
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetEnrollmentStatus",
@@ -189,11 +189,11 @@ export default class ComputeOptimizer {
   async getRecommendationSummaries(
     {abortSignal, ...params}: RequestConfig & GetRecommendationSummariesRequest = {},
   ): Promise<GetRecommendationSummariesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       accountIds: params["accountIds"],
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetRecommendationSummaries",
@@ -210,10 +210,10 @@ export default class ComputeOptimizer {
   async updateEnrollmentStatus(
     {abortSignal, ...params}: RequestConfig & UpdateEnrollmentStatusRequest,
   ): Promise<UpdateEnrollmentStatusResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       status: params["status"],
       includeMemberAccounts: params["includeMemberAccounts"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateEnrollmentStatus",

@@ -31,12 +31,12 @@ export default class Pricing {
   async describeServices(
     {abortSignal, ...params}: RequestConfig & DescribeServicesRequest = {},
   ): Promise<DescribeServicesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ServiceCode: params["ServiceCode"],
       FormatVersion: params["FormatVersion"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeServices",
@@ -54,12 +54,12 @@ export default class Pricing {
   async getAttributeValues(
     {abortSignal, ...params}: RequestConfig & GetAttributeValuesRequest,
   ): Promise<GetAttributeValuesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ServiceCode: params["ServiceCode"],
       AttributeName: params["AttributeName"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetAttributeValues",
@@ -76,13 +76,13 @@ export default class Pricing {
   async getProducts(
     {abortSignal, ...params}: RequestConfig & GetProductsRequest = {},
   ): Promise<GetProductsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ServiceCode: params["ServiceCode"],
       Filters: params["Filters"]?.map(x => fromFilter(x)),
       FormatVersion: params["FormatVersion"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetProducts",

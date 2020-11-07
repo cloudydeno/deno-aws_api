@@ -28,7 +28,7 @@ export default class IoTEvents {
   async createDetectorModel(
     {abortSignal, ...params}: RequestConfig & CreateDetectorModelRequest,
   ): Promise<CreateDetectorModelResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       detectorModelName: params["detectorModelName"],
       detectorModelDefinition: fromDetectorModelDefinition(params["detectorModelDefinition"]),
       detectorModelDescription: params["detectorModelDescription"],
@@ -36,45 +36,41 @@ export default class IoTEvents {
       roleArn: params["roleArn"],
       tags: params["tags"]?.map(x => fromTag(x)),
       evaluationMethod: params["evaluationMethod"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDetectorModel",
       requestUri: "/detector-models",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "detectorModelConfiguration": toDetectorModelConfiguration,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "detectorModelConfiguration": toDetectorModelConfiguration,
+      },
+    }, await resp.json());
   }
 
   async createInput(
     {abortSignal, ...params}: RequestConfig & CreateInputRequest,
   ): Promise<CreateInputResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       inputName: params["inputName"],
       inputDescription: params["inputDescription"],
       inputDefinition: fromInputDefinition(params["inputDefinition"]),
       tags: params["tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateInput",
       requestUri: "/inputs",
       responseCode: 201,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "inputConfiguration": toInputConfiguration,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "inputConfiguration": toInputConfiguration,
+      },
+    }, await resp.json());
   }
 
   async deleteDetectorModel(
@@ -88,12 +84,10 @@ export default class IoTEvents {
       requestUri: cmnP.encodePath`/detector-models/${params["detectorModelName"]}`,
       responseCode: 204,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async deleteInput(
@@ -106,12 +100,10 @@ export default class IoTEvents {
       method: "DELETE",
       requestUri: cmnP.encodePath`/inputs/${params["inputName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async describeDetectorModel(
@@ -125,14 +117,12 @@ export default class IoTEvents {
       method: "GET",
       requestUri: cmnP.encodePath`/detector-models/${params["detectorModelName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "detectorModel": toDetectorModel,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "detectorModel": toDetectorModel,
+      },
+    }, await resp.json());
   }
 
   async describeInput(
@@ -145,14 +135,12 @@ export default class IoTEvents {
       method: "GET",
       requestUri: cmnP.encodePath`/inputs/${params["inputName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "input": toInput,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "input": toInput,
+      },
+    }, await resp.json());
   }
 
   async describeLoggingOptions(
@@ -165,14 +153,12 @@ export default class IoTEvents {
       method: "GET",
       requestUri: "/logging",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "loggingOptions": toLoggingOptions,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "loggingOptions": toLoggingOptions,
+      },
+    }, await resp.json());
   }
 
   async listDetectorModelVersions(
@@ -187,15 +173,13 @@ export default class IoTEvents {
       method: "GET",
       requestUri: cmnP.encodePath`/detector-models/${params["detectorModelName"]}/versions`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "detectorModelVersionSummaries": [toDetectorModelVersionSummary],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "detectorModelVersionSummaries": [toDetectorModelVersionSummary],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listDetectorModels(
@@ -210,15 +194,13 @@ export default class IoTEvents {
       method: "GET",
       requestUri: "/detector-models",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "detectorModelSummaries": [toDetectorModelSummary],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "detectorModelSummaries": [toDetectorModelSummary],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listInputs(
@@ -233,15 +215,13 @@ export default class IoTEvents {
       method: "GET",
       requestUri: "/inputs",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "inputSummaries": [toInputSummary],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "inputSummaries": [toInputSummary],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listTagsForResource(
@@ -255,22 +235,20 @@ export default class IoTEvents {
       method: "GET",
       requestUri: "/tags",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "tags": [toTag],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "tags": [toTag],
+      },
+    }, await resp.json());
   }
 
   async putLoggingOptions(
     {abortSignal, ...params}: RequestConfig & PutLoggingOptionsRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       loggingOptions: fromLoggingOptions(params["loggingOptions"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutLoggingOptions",
@@ -283,21 +261,19 @@ export default class IoTEvents {
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResponse> {
     const query = new URLSearchParams;
-    query.set("resourceArn", params["resourceArn"]?.toString() ?? "");
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       tags: params["tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
+    query.set("resourceArn", params["resourceArn"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
       abortSignal, query, body,
       action: "TagResource",
       requestUri: "/tags",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async untagResource(
@@ -314,59 +290,53 @@ export default class IoTEvents {
       method: "DELETE",
       requestUri: "/tags",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async updateDetectorModel(
     {abortSignal, ...params}: RequestConfig & UpdateDetectorModelRequest,
   ): Promise<UpdateDetectorModelResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       detectorModelDefinition: fromDetectorModelDefinition(params["detectorModelDefinition"]),
       detectorModelDescription: params["detectorModelDescription"],
       roleArn: params["roleArn"],
       evaluationMethod: params["evaluationMethod"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateDetectorModel",
       requestUri: cmnP.encodePath`/detector-models/${params["detectorModelName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "detectorModelConfiguration": toDetectorModelConfiguration,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "detectorModelConfiguration": toDetectorModelConfiguration,
+      },
+    }, await resp.json());
   }
 
   async updateInput(
     {abortSignal, ...params}: RequestConfig & UpdateInputRequest,
   ): Promise<UpdateInputResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       inputDescription: params["inputDescription"],
       inputDefinition: fromInputDefinition(params["inputDefinition"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateInput",
       method: "PUT",
       requestUri: cmnP.encodePath`/inputs/${params["inputName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "inputConfiguration": toInputConfiguration,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "inputConfiguration": toInputConfiguration,
+      },
+    }, await resp.json());
   }
 
 }

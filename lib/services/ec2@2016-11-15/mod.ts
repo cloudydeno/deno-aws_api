@@ -8273,7 +8273,7 @@ export default class EC2 {
         const resp = await this.describeInstances(params);
         if ((resp?.Reservations || '').length > 0) return resp;
       } catch (err) {
-        if (!["InvalidInstanceID.NotFound"].includes(err.code)) throw err;
+        if (!["InvalidInstanceID.NotFound"].includes(err.shortCode)) throw err;
       }
       await new Promise(r => setTimeout(r, 5000));
     }
@@ -8376,7 +8376,7 @@ export default class EC2 {
         const resp = await this.describeImages(params);
         if ((resp?.Images || '').length > 0) return resp;
       } catch (err) {
-        if (!["InvalidAMIID.NotFound"].includes(err.code)) throw err;
+        if (!["InvalidAMIID.NotFound"].includes(err.shortCode)) throw err;
       }
       await new Promise(r => setTimeout(r, 15000));
     }
@@ -8412,7 +8412,7 @@ export default class EC2 {
         if (field?.some(x => x === "terminated")) throw new Error(errMessage);
         if (field?.some(x => x === "stopping")) throw new Error(errMessage);
       } catch (err) {
-        if (!["InvalidInstanceID.NotFound"].includes(err.code)) throw err;
+        if (!["InvalidInstanceID.NotFound"].includes(err.shortCode)) throw err;
       }
       await new Promise(r => setTimeout(r, 15000));
     }
@@ -8429,7 +8429,7 @@ export default class EC2 {
         const resp = await this.describeInstanceStatus(params);
         if (resp?.InstanceStatuses?.flatMap(x => x?.InstanceStatus?.Status)?.every(x => x === "ok")) return resp;
       } catch (err) {
-        if (!["InvalidInstanceID.NotFound"].includes(err.code)) throw err;
+        if (!["InvalidInstanceID.NotFound"].includes(err.shortCode)) throw err;
       }
       await new Promise(r => setTimeout(r, 15000));
     }
@@ -8478,7 +8478,7 @@ export default class EC2 {
         const resp = await this.describeKeyPairs(params);
         if ((resp?.KeyPairs?.flatMap(x => x?.KeyName) || '').length > 0) return resp;
       } catch (err) {
-        if (!["InvalidKeyPair.NotFound"].includes(err.code)) throw err;
+        if (!["InvalidKeyPair.NotFound"].includes(err.shortCode)) throw err;
       }
       await new Promise(r => setTimeout(r, 5000));
     }
@@ -8499,7 +8499,7 @@ export default class EC2 {
         if (field?.some(x => x === "deleting")) throw new Error(errMessage);
         if (field?.some(x => x === "deleted")) throw new Error(errMessage);
       } catch (err) {
-        if (!["NatGatewayNotFound"].includes(err.code)) throw err;
+        if (!["NatGatewayNotFound"].includes(err.shortCode)) throw err;
       }
       await new Promise(r => setTimeout(r, 15000));
     }
@@ -8516,7 +8516,7 @@ export default class EC2 {
         const resp = await this.describeNetworkInterfaces(params);
         if (resp?.NetworkInterfaces?.flatMap(x => x?.Status)?.every(x => x === "available")) return resp;
       } catch (err) {
-        if (["InvalidNetworkInterfaceID.NotFound"].includes(err.code)) throw err;
+        if (["InvalidNetworkInterfaceID.NotFound"].includes(err.shortCode)) throw err;
         throw err;
       }
       await new Promise(r => setTimeout(r, 20000));
@@ -8560,7 +8560,7 @@ export default class EC2 {
         const resp = await this.describeSecurityGroups(params);
         if ((resp?.SecurityGroups?.flatMap(x => x?.GroupId) || '').length > 0) return resp;
       } catch (err) {
-        if (!["InvalidGroupNotFound"].includes(err.code)) throw err;
+        if (!["InvalidGroupNotFound"].includes(err.shortCode)) throw err;
       }
       await new Promise(r => setTimeout(r, 5000));
     }
@@ -8583,7 +8583,7 @@ export default class EC2 {
         if (field?.some(x => x === "bad-parameters")) throw new Error(errMessage);
         if (field?.some(x => x === "system-error")) throw new Error(errMessage);
       } catch (err) {
-        if (!["InvalidSpotInstanceRequestID.NotFound"].includes(err.code)) throw err;
+        if (!["InvalidSpotInstanceRequestID.NotFound"].includes(err.shortCode)) throw err;
       }
       await new Promise(r => setTimeout(r, 15000));
     }
@@ -8641,7 +8641,7 @@ export default class EC2 {
         const resp = await this.describeVolumes(params);
         if (resp?.Volumes?.flatMap(x => x?.State)?.every(x => x === "deleted")) return resp;
       } catch (err) {
-        if (["InvalidVolume.NotFound"].includes(err.code)) return err;
+        if (["InvalidVolume.NotFound"].includes(err.shortCode)) return err;
         throw err;
       }
       await new Promise(r => setTimeout(r, 15000));
@@ -8687,7 +8687,7 @@ export default class EC2 {
         const resp = await this.describeVpcs(params);
         return resp; // for status 200
       } catch (err) {
-        if (!["InvalidVpcID.NotFound"].includes(err.code)) throw err;
+        if (!["InvalidVpcID.NotFound"].includes(err.shortCode)) throw err;
       }
       await new Promise(r => setTimeout(r, 1000));
     }
@@ -8735,7 +8735,7 @@ export default class EC2 {
         const resp = await this.describeVpcPeeringConnections(params);
         return resp; // for status 200
       } catch (err) {
-        if (!["InvalidVpcPeeringConnectionID.NotFound"].includes(err.code)) throw err;
+        if (!["InvalidVpcPeeringConnectionID.NotFound"].includes(err.shortCode)) throw err;
       }
       await new Promise(r => setTimeout(r, 15000));
     }
@@ -8752,7 +8752,7 @@ export default class EC2 {
         const resp = await this.describeVpcPeeringConnections(params);
         if (resp?.VpcPeeringConnections?.flatMap(x => x?.Status?.Code)?.every(x => x === "deleted")) return resp;
       } catch (err) {
-        if (["InvalidVpcPeeringConnectionID.NotFound"].includes(err.code)) return err;
+        if (["InvalidVpcPeeringConnectionID.NotFound"].includes(err.shortCode)) return err;
         throw err;
       }
       await new Promise(r => setTimeout(r, 15000));

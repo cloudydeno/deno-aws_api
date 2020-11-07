@@ -29,10 +29,10 @@ export default class Route53Domains {
   async acceptDomainTransferFromAnotherAwsAccount(
     {abortSignal, ...params}: RequestConfig & AcceptDomainTransferFromAnotherAwsAccountRequest,
   ): Promise<AcceptDomainTransferFromAnotherAwsAccountResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DomainName: params["DomainName"],
       Password: params["Password"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AcceptDomainTransferFromAnotherAwsAccount",
@@ -48,9 +48,9 @@ export default class Route53Domains {
   async cancelDomainTransferToAnotherAwsAccount(
     {abortSignal, ...params}: RequestConfig & CancelDomainTransferToAnotherAwsAccountRequest,
   ): Promise<CancelDomainTransferToAnotherAwsAccountResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DomainName: params["DomainName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CancelDomainTransferToAnotherAwsAccount",
@@ -66,10 +66,10 @@ export default class Route53Domains {
   async checkDomainAvailability(
     {abortSignal, ...params}: RequestConfig & CheckDomainAvailabilityRequest,
   ): Promise<CheckDomainAvailabilityResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DomainName: params["DomainName"],
       IdnLangCode: params["IdnLangCode"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CheckDomainAvailability",
@@ -85,10 +85,10 @@ export default class Route53Domains {
   async checkDomainTransferability(
     {abortSignal, ...params}: RequestConfig & CheckDomainTransferabilityRequest,
   ): Promise<CheckDomainTransferabilityResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DomainName: params["DomainName"],
       AuthCode: params["AuthCode"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CheckDomainTransferability",
@@ -104,10 +104,10 @@ export default class Route53Domains {
   async deleteTagsForDomain(
     {abortSignal, ...params}: RequestConfig & DeleteTagsForDomainRequest,
   ): Promise<DeleteTagsForDomainResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DomainName: params["DomainName"],
       TagsToDelete: params["TagsToDelete"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteTagsForDomain",
@@ -121,9 +121,9 @@ export default class Route53Domains {
   async disableDomainAutoRenew(
     {abortSignal, ...params}: RequestConfig & DisableDomainAutoRenewRequest,
   ): Promise<DisableDomainAutoRenewResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DomainName: params["DomainName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisableDomainAutoRenew",
@@ -137,9 +137,9 @@ export default class Route53Domains {
   async disableDomainTransferLock(
     {abortSignal, ...params}: RequestConfig & DisableDomainTransferLockRequest,
   ): Promise<DisableDomainTransferLockResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DomainName: params["DomainName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisableDomainTransferLock",
@@ -155,9 +155,9 @@ export default class Route53Domains {
   async enableDomainAutoRenew(
     {abortSignal, ...params}: RequestConfig & EnableDomainAutoRenewRequest,
   ): Promise<EnableDomainAutoRenewResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DomainName: params["DomainName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "EnableDomainAutoRenew",
@@ -171,9 +171,9 @@ export default class Route53Domains {
   async enableDomainTransferLock(
     {abortSignal, ...params}: RequestConfig & EnableDomainTransferLockRequest,
   ): Promise<EnableDomainTransferLockResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DomainName: params["DomainName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "EnableDomainTransferLock",
@@ -189,9 +189,9 @@ export default class Route53Domains {
   async getContactReachabilityStatus(
     {abortSignal, ...params}: RequestConfig & GetContactReachabilityStatusRequest = {},
   ): Promise<GetContactReachabilityStatusResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       domainName: params["domainName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetContactReachabilityStatus",
@@ -208,9 +208,9 @@ export default class Route53Domains {
   async getDomainDetail(
     {abortSignal, ...params}: RequestConfig & GetDomainDetailRequest,
   ): Promise<GetDomainDetailResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DomainName: params["DomainName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetDomainDetail",
@@ -247,11 +247,11 @@ export default class Route53Domains {
   async getDomainSuggestions(
     {abortSignal, ...params}: RequestConfig & GetDomainSuggestionsRequest,
   ): Promise<GetDomainSuggestionsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DomainName: params["DomainName"],
       SuggestionCount: params["SuggestionCount"],
       OnlyAvailable: params["OnlyAvailable"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetDomainSuggestions",
@@ -267,9 +267,9 @@ export default class Route53Domains {
   async getOperationDetail(
     {abortSignal, ...params}: RequestConfig & GetOperationDetailRequest,
   ): Promise<GetOperationDetailResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       OperationId: params["OperationId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetOperationDetail",
@@ -290,10 +290,10 @@ export default class Route53Domains {
   async listDomains(
     {abortSignal, ...params}: RequestConfig & ListDomainsRequest = {},
   ): Promise<ListDomainsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Marker: params["Marker"],
       MaxItems: params["MaxItems"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListDomains",
@@ -311,11 +311,11 @@ export default class Route53Domains {
   async listOperations(
     {abortSignal, ...params}: RequestConfig & ListOperationsRequest = {},
   ): Promise<ListOperationsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       SubmittedSince: jsonP.serializeDate_unixTimestamp(params["SubmittedSince"]),
       Marker: params["Marker"],
       MaxItems: params["MaxItems"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListOperations",
@@ -333,9 +333,9 @@ export default class Route53Domains {
   async listTagsForDomain(
     {abortSignal, ...params}: RequestConfig & ListTagsForDomainRequest,
   ): Promise<ListTagsForDomainResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DomainName: params["DomainName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForDomain",
@@ -351,7 +351,7 @@ export default class Route53Domains {
   async registerDomain(
     {abortSignal, ...params}: RequestConfig & RegisterDomainRequest,
   ): Promise<RegisterDomainResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DomainName: params["DomainName"],
       IdnLangCode: params["IdnLangCode"],
       DurationInYears: params["DurationInYears"],
@@ -362,7 +362,7 @@ export default class Route53Domains {
       PrivacyProtectAdminContact: params["PrivacyProtectAdminContact"],
       PrivacyProtectRegistrantContact: params["PrivacyProtectRegistrantContact"],
       PrivacyProtectTechContact: params["PrivacyProtectTechContact"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RegisterDomain",
@@ -378,9 +378,9 @@ export default class Route53Domains {
   async rejectDomainTransferFromAnotherAwsAccount(
     {abortSignal, ...params}: RequestConfig & RejectDomainTransferFromAnotherAwsAccountRequest,
   ): Promise<RejectDomainTransferFromAnotherAwsAccountResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DomainName: params["DomainName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RejectDomainTransferFromAnotherAwsAccount",
@@ -396,11 +396,11 @@ export default class Route53Domains {
   async renewDomain(
     {abortSignal, ...params}: RequestConfig & RenewDomainRequest,
   ): Promise<RenewDomainResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DomainName: params["DomainName"],
       DurationInYears: params["DurationInYears"],
       CurrentExpiryYear: params["CurrentExpiryYear"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RenewDomain",
@@ -416,9 +416,9 @@ export default class Route53Domains {
   async resendContactReachabilityEmail(
     {abortSignal, ...params}: RequestConfig & ResendContactReachabilityEmailRequest = {},
   ): Promise<ResendContactReachabilityEmailResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       domainName: params["domainName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ResendContactReachabilityEmail",
@@ -436,9 +436,9 @@ export default class Route53Domains {
   async retrieveDomainAuthCode(
     {abortSignal, ...params}: RequestConfig & RetrieveDomainAuthCodeRequest,
   ): Promise<RetrieveDomainAuthCodeResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DomainName: params["DomainName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RetrieveDomainAuthCode",
@@ -454,7 +454,7 @@ export default class Route53Domains {
   async transferDomain(
     {abortSignal, ...params}: RequestConfig & TransferDomainRequest,
   ): Promise<TransferDomainResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DomainName: params["DomainName"],
       IdnLangCode: params["IdnLangCode"],
       DurationInYears: params["DurationInYears"],
@@ -467,7 +467,7 @@ export default class Route53Domains {
       PrivacyProtectAdminContact: params["PrivacyProtectAdminContact"],
       PrivacyProtectRegistrantContact: params["PrivacyProtectRegistrantContact"],
       PrivacyProtectTechContact: params["PrivacyProtectTechContact"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TransferDomain",
@@ -483,10 +483,10 @@ export default class Route53Domains {
   async transferDomainToAnotherAwsAccount(
     {abortSignal, ...params}: RequestConfig & TransferDomainToAnotherAwsAccountRequest,
   ): Promise<TransferDomainToAnotherAwsAccountResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DomainName: params["DomainName"],
       AccountId: params["AccountId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TransferDomainToAnotherAwsAccount",
@@ -503,12 +503,12 @@ export default class Route53Domains {
   async updateDomainContact(
     {abortSignal, ...params}: RequestConfig & UpdateDomainContactRequest,
   ): Promise<UpdateDomainContactResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DomainName: params["DomainName"],
       AdminContact: fromContactDetail(params["AdminContact"]),
       RegistrantContact: fromContactDetail(params["RegistrantContact"]),
       TechContact: fromContactDetail(params["TechContact"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateDomainContact",
@@ -524,12 +524,12 @@ export default class Route53Domains {
   async updateDomainContactPrivacy(
     {abortSignal, ...params}: RequestConfig & UpdateDomainContactPrivacyRequest,
   ): Promise<UpdateDomainContactPrivacyResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DomainName: params["DomainName"],
       AdminPrivacy: params["AdminPrivacy"],
       RegistrantPrivacy: params["RegistrantPrivacy"],
       TechPrivacy: params["TechPrivacy"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateDomainContactPrivacy",
@@ -545,11 +545,11 @@ export default class Route53Domains {
   async updateDomainNameservers(
     {abortSignal, ...params}: RequestConfig & UpdateDomainNameserversRequest,
   ): Promise<UpdateDomainNameserversResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DomainName: params["DomainName"],
       FIAuthKey: params["FIAuthKey"],
       Nameservers: params["Nameservers"]?.map(x => fromNameserver(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateDomainNameservers",
@@ -565,10 +565,10 @@ export default class Route53Domains {
   async updateTagsForDomain(
     {abortSignal, ...params}: RequestConfig & UpdateTagsForDomainRequest,
   ): Promise<UpdateTagsForDomainResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DomainName: params["DomainName"],
       TagsToUpdate: params["TagsToUpdate"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateTagsForDomain",
@@ -582,12 +582,12 @@ export default class Route53Domains {
   async viewBilling(
     {abortSignal, ...params}: RequestConfig & ViewBillingRequest = {},
   ): Promise<ViewBillingResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Start: jsonP.serializeDate_unixTimestamp(params["Start"]),
       End: jsonP.serializeDate_unixTimestamp(params["End"]),
       Marker: params["Marker"],
       MaxItems: params["MaxItems"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ViewBilling",

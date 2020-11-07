@@ -34,7 +34,7 @@ export default class EKS {
   async createCluster(
     {abortSignal, ...params}: RequestConfig & CreateClusterRequest,
   ): Promise<CreateClusterResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       name: params["name"],
       version: params["version"],
       roleArn: params["roleArn"],
@@ -44,52 +44,48 @@ export default class EKS {
       clientRequestToken: params["clientRequestToken"] ?? generateIdemptToken(),
       tags: params["tags"],
       encryptionConfig: params["encryptionConfig"]?.map(x => fromEncryptionConfig(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateCluster",
       requestUri: "/clusters",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "cluster": toCluster,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "cluster": toCluster,
+      },
+    }, await resp.json());
   }
 
   async createFargateProfile(
     {abortSignal, ...params}: RequestConfig & CreateFargateProfileRequest,
   ): Promise<CreateFargateProfileResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       fargateProfileName: params["fargateProfileName"],
       podExecutionRoleArn: params["podExecutionRoleArn"],
       subnets: params["subnets"],
       selectors: params["selectors"]?.map(x => fromFargateProfileSelector(x)),
       clientRequestToken: params["clientRequestToken"] ?? generateIdemptToken(),
       tags: params["tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateFargateProfile",
       requestUri: cmnP.encodePath`/clusters/${params["clusterName"]}/fargate-profiles`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "fargateProfile": toFargateProfile,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "fargateProfile": toFargateProfile,
+      },
+    }, await resp.json());
   }
 
   async createNodegroup(
     {abortSignal, ...params}: RequestConfig & CreateNodegroupRequest,
   ): Promise<CreateNodegroupResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       nodegroupName: params["nodegroupName"],
       scalingConfig: fromNodegroupScalingConfig(params["scalingConfig"]),
       diskSize: params["diskSize"],
@@ -104,20 +100,18 @@ export default class EKS {
       launchTemplate: fromLaunchTemplateSpecification(params["launchTemplate"]),
       version: params["version"],
       releaseVersion: params["releaseVersion"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateNodegroup",
       requestUri: cmnP.encodePath`/clusters/${params["clusterName"]}/node-groups`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "nodegroup": toNodegroup,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "nodegroup": toNodegroup,
+      },
+    }, await resp.json());
   }
 
   async deleteCluster(
@@ -130,14 +124,12 @@ export default class EKS {
       method: "DELETE",
       requestUri: cmnP.encodePath`/clusters/${params["name"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "cluster": toCluster,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "cluster": toCluster,
+      },
+    }, await resp.json());
   }
 
   async deleteFargateProfile(
@@ -150,14 +142,12 @@ export default class EKS {
       method: "DELETE",
       requestUri: cmnP.encodePath`/clusters/${params["clusterName"]}/fargate-profiles/${params["fargateProfileName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "fargateProfile": toFargateProfile,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "fargateProfile": toFargateProfile,
+      },
+    }, await resp.json());
   }
 
   async deleteNodegroup(
@@ -170,14 +160,12 @@ export default class EKS {
       method: "DELETE",
       requestUri: cmnP.encodePath`/clusters/${params["clusterName"]}/node-groups/${params["nodegroupName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "nodegroup": toNodegroup,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "nodegroup": toNodegroup,
+      },
+    }, await resp.json());
   }
 
   async describeCluster(
@@ -190,14 +178,12 @@ export default class EKS {
       method: "GET",
       requestUri: cmnP.encodePath`/clusters/${params["name"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "cluster": toCluster,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "cluster": toCluster,
+      },
+    }, await resp.json());
   }
 
   async describeFargateProfile(
@@ -210,14 +196,12 @@ export default class EKS {
       method: "GET",
       requestUri: cmnP.encodePath`/clusters/${params["clusterName"]}/fargate-profiles/${params["fargateProfileName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "fargateProfile": toFargateProfile,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "fargateProfile": toFargateProfile,
+      },
+    }, await resp.json());
   }
 
   async describeNodegroup(
@@ -230,14 +214,12 @@ export default class EKS {
       method: "GET",
       requestUri: cmnP.encodePath`/clusters/${params["clusterName"]}/node-groups/${params["nodegroupName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "nodegroup": toNodegroup,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "nodegroup": toNodegroup,
+      },
+    }, await resp.json());
   }
 
   async describeUpdate(
@@ -251,14 +233,12 @@ export default class EKS {
       method: "GET",
       requestUri: cmnP.encodePath`/clusters/${params["name"]}/updates/${params["updateId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "update": toUpdate,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "update": toUpdate,
+      },
+    }, await resp.json());
   }
 
   async listClusters(
@@ -273,15 +253,13 @@ export default class EKS {
       method: "GET",
       requestUri: "/clusters",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "clusters": ["s"],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "clusters": ["s"],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listFargateProfiles(
@@ -296,15 +274,13 @@ export default class EKS {
       method: "GET",
       requestUri: cmnP.encodePath`/clusters/${params["clusterName"]}/fargate-profiles`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "fargateProfileNames": ["s"],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "fargateProfileNames": ["s"],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listNodegroups(
@@ -319,15 +295,13 @@ export default class EKS {
       method: "GET",
       requestUri: cmnP.encodePath`/clusters/${params["clusterName"]}/node-groups`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "nodegroups": ["s"],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "nodegroups": ["s"],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listTagsForResource(
@@ -340,14 +314,12 @@ export default class EKS {
       method: "GET",
       requestUri: cmnP.encodePath`/tags/${params["resourceArn"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async listUpdates(
@@ -363,34 +335,30 @@ export default class EKS {
       method: "GET",
       requestUri: cmnP.encodePath`/clusters/${params["name"]}/updates`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "updateIds": ["s"],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "updateIds": ["s"],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       tags: params["tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
       requestUri: cmnP.encodePath`/tags/${params["resourceArn"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async untagResource(
@@ -406,105 +374,95 @@ export default class EKS {
       method: "DELETE",
       requestUri: cmnP.encodePath`/tags/${params["resourceArn"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async updateClusterConfig(
     {abortSignal, ...params}: RequestConfig & UpdateClusterConfigRequest,
   ): Promise<UpdateClusterConfigResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       resourcesVpcConfig: fromVpcConfigRequest(params["resourcesVpcConfig"]),
       logging: fromLogging(params["logging"]),
       clientRequestToken: params["clientRequestToken"] ?? generateIdemptToken(),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateClusterConfig",
       requestUri: cmnP.encodePath`/clusters/${params["name"]}/update-config`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "update": toUpdate,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "update": toUpdate,
+      },
+    }, await resp.json());
   }
 
   async updateClusterVersion(
     {abortSignal, ...params}: RequestConfig & UpdateClusterVersionRequest,
   ): Promise<UpdateClusterVersionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       version: params["version"],
       clientRequestToken: params["clientRequestToken"] ?? generateIdemptToken(),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateClusterVersion",
       requestUri: cmnP.encodePath`/clusters/${params["name"]}/updates`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "update": toUpdate,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "update": toUpdate,
+      },
+    }, await resp.json());
   }
 
   async updateNodegroupConfig(
     {abortSignal, ...params}: RequestConfig & UpdateNodegroupConfigRequest,
   ): Promise<UpdateNodegroupConfigResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       labels: fromUpdateLabelsPayload(params["labels"]),
       scalingConfig: fromNodegroupScalingConfig(params["scalingConfig"]),
       clientRequestToken: params["clientRequestToken"] ?? generateIdemptToken(),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateNodegroupConfig",
       requestUri: cmnP.encodePath`/clusters/${params["clusterName"]}/node-groups/${params["nodegroupName"]}/update-config`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "update": toUpdate,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "update": toUpdate,
+      },
+    }, await resp.json());
   }
 
   async updateNodegroupVersion(
     {abortSignal, ...params}: RequestConfig & UpdateNodegroupVersionRequest,
   ): Promise<UpdateNodegroupVersionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       version: params["version"],
       releaseVersion: params["releaseVersion"],
       launchTemplate: fromLaunchTemplateSpecification(params["launchTemplate"]),
       force: params["force"],
       clientRequestToken: params["clientRequestToken"] ?? generateIdemptToken(),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateNodegroupVersion",
       requestUri: cmnP.encodePath`/clusters/${params["clusterName"]}/node-groups/${params["nodegroupName"]}/update-version`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "update": toUpdate,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "update": toUpdate,
+      },
+    }, await resp.json());
   }
 
   // Resource State Waiters
@@ -537,7 +495,7 @@ export default class EKS {
         if (field === "ACTIVE") throw new Error(errMessage);
         if (field === "CREATING") throw new Error(errMessage);
       } catch (err) {
-        if (["ResourceNotFoundException"].includes(err.code)) return err;
+        if (["ResourceNotFoundException"].includes(err.shortCode)) return err;
         throw err;
       }
       await new Promise(r => setTimeout(r, 30000));
@@ -570,7 +528,7 @@ export default class EKS {
         const resp = await this.describeNodegroup(params);
         if (resp?.nodegroup?.status === "DELETE_FAILED") throw new Error(errMessage);
       } catch (err) {
-        if (["ResourceNotFoundException"].includes(err.code)) return err;
+        if (["ResourceNotFoundException"].includes(err.shortCode)) return err;
         throw err;
       }
       await new Promise(r => setTimeout(r, 30000));

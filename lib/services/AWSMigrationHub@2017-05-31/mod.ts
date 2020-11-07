@@ -29,12 +29,12 @@ export default class MigrationHub {
   async associateCreatedArtifact(
     {abortSignal, ...params}: RequestConfig & AssociateCreatedArtifactRequest,
   ): Promise<AssociateCreatedArtifactResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ProgressUpdateStream: params["ProgressUpdateStream"],
       MigrationTaskName: params["MigrationTaskName"],
       CreatedArtifact: fromCreatedArtifact(params["CreatedArtifact"]),
       DryRun: params["DryRun"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AssociateCreatedArtifact",
@@ -48,12 +48,12 @@ export default class MigrationHub {
   async associateDiscoveredResource(
     {abortSignal, ...params}: RequestConfig & AssociateDiscoveredResourceRequest,
   ): Promise<AssociateDiscoveredResourceResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ProgressUpdateStream: params["ProgressUpdateStream"],
       MigrationTaskName: params["MigrationTaskName"],
       DiscoveredResource: fromDiscoveredResource(params["DiscoveredResource"]),
       DryRun: params["DryRun"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AssociateDiscoveredResource",
@@ -67,10 +67,10 @@ export default class MigrationHub {
   async createProgressUpdateStream(
     {abortSignal, ...params}: RequestConfig & CreateProgressUpdateStreamRequest,
   ): Promise<CreateProgressUpdateStreamResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ProgressUpdateStreamName: params["ProgressUpdateStreamName"],
       DryRun: params["DryRun"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateProgressUpdateStream",
@@ -84,10 +84,10 @@ export default class MigrationHub {
   async deleteProgressUpdateStream(
     {abortSignal, ...params}: RequestConfig & DeleteProgressUpdateStreamRequest,
   ): Promise<DeleteProgressUpdateStreamResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ProgressUpdateStreamName: params["ProgressUpdateStreamName"],
       DryRun: params["DryRun"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteProgressUpdateStream",
@@ -101,9 +101,9 @@ export default class MigrationHub {
   async describeApplicationState(
     {abortSignal, ...params}: RequestConfig & DescribeApplicationStateRequest,
   ): Promise<DescribeApplicationStateResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ApplicationId: params["ApplicationId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeApplicationState",
@@ -120,10 +120,10 @@ export default class MigrationHub {
   async describeMigrationTask(
     {abortSignal, ...params}: RequestConfig & DescribeMigrationTaskRequest,
   ): Promise<DescribeMigrationTaskResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ProgressUpdateStream: params["ProgressUpdateStream"],
       MigrationTaskName: params["MigrationTaskName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeMigrationTask",
@@ -139,12 +139,12 @@ export default class MigrationHub {
   async disassociateCreatedArtifact(
     {abortSignal, ...params}: RequestConfig & DisassociateCreatedArtifactRequest,
   ): Promise<DisassociateCreatedArtifactResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ProgressUpdateStream: params["ProgressUpdateStream"],
       MigrationTaskName: params["MigrationTaskName"],
       CreatedArtifactName: params["CreatedArtifactName"],
       DryRun: params["DryRun"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisassociateCreatedArtifact",
@@ -158,12 +158,12 @@ export default class MigrationHub {
   async disassociateDiscoveredResource(
     {abortSignal, ...params}: RequestConfig & DisassociateDiscoveredResourceRequest,
   ): Promise<DisassociateDiscoveredResourceResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ProgressUpdateStream: params["ProgressUpdateStream"],
       MigrationTaskName: params["MigrationTaskName"],
       ConfigurationId: params["ConfigurationId"],
       DryRun: params["DryRun"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisassociateDiscoveredResource",
@@ -177,11 +177,11 @@ export default class MigrationHub {
   async importMigrationTask(
     {abortSignal, ...params}: RequestConfig & ImportMigrationTaskRequest,
   ): Promise<ImportMigrationTaskResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ProgressUpdateStream: params["ProgressUpdateStream"],
       MigrationTaskName: params["MigrationTaskName"],
       DryRun: params["DryRun"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ImportMigrationTask",
@@ -195,11 +195,11 @@ export default class MigrationHub {
   async listApplicationStates(
     {abortSignal, ...params}: RequestConfig & ListApplicationStatesRequest = {},
   ): Promise<ListApplicationStatesResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ApplicationIds: params["ApplicationIds"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListApplicationStates",
@@ -216,12 +216,12 @@ export default class MigrationHub {
   async listCreatedArtifacts(
     {abortSignal, ...params}: RequestConfig & ListCreatedArtifactsRequest,
   ): Promise<ListCreatedArtifactsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ProgressUpdateStream: params["ProgressUpdateStream"],
       MigrationTaskName: params["MigrationTaskName"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListCreatedArtifacts",
@@ -238,12 +238,12 @@ export default class MigrationHub {
   async listDiscoveredResources(
     {abortSignal, ...params}: RequestConfig & ListDiscoveredResourcesRequest,
   ): Promise<ListDiscoveredResourcesResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ProgressUpdateStream: params["ProgressUpdateStream"],
       MigrationTaskName: params["MigrationTaskName"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListDiscoveredResources",
@@ -260,11 +260,11 @@ export default class MigrationHub {
   async listMigrationTasks(
     {abortSignal, ...params}: RequestConfig & ListMigrationTasksRequest = {},
   ): Promise<ListMigrationTasksResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
       ResourceName: params["ResourceName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListMigrationTasks",
@@ -281,10 +281,10 @@ export default class MigrationHub {
   async listProgressUpdateStreams(
     {abortSignal, ...params}: RequestConfig & ListProgressUpdateStreamsRequest = {},
   ): Promise<ListProgressUpdateStreamsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListProgressUpdateStreams",
@@ -301,12 +301,12 @@ export default class MigrationHub {
   async notifyApplicationState(
     {abortSignal, ...params}: RequestConfig & NotifyApplicationStateRequest,
   ): Promise<NotifyApplicationStateResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ApplicationId: params["ApplicationId"],
       Status: params["Status"],
       UpdateDateTime: jsonP.serializeDate_unixTimestamp(params["UpdateDateTime"]),
       DryRun: params["DryRun"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "NotifyApplicationState",
@@ -320,14 +320,14 @@ export default class MigrationHub {
   async notifyMigrationTaskState(
     {abortSignal, ...params}: RequestConfig & NotifyMigrationTaskStateRequest,
   ): Promise<NotifyMigrationTaskStateResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ProgressUpdateStream: params["ProgressUpdateStream"],
       MigrationTaskName: params["MigrationTaskName"],
       Task: fromTask(params["Task"]),
       UpdateDateTime: jsonP.serializeDate_unixTimestamp(params["UpdateDateTime"]),
       NextUpdateSeconds: params["NextUpdateSeconds"],
       DryRun: params["DryRun"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "NotifyMigrationTaskState",
@@ -341,12 +341,12 @@ export default class MigrationHub {
   async putResourceAttributes(
     {abortSignal, ...params}: RequestConfig & PutResourceAttributesRequest,
   ): Promise<PutResourceAttributesResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ProgressUpdateStream: params["ProgressUpdateStream"],
       MigrationTaskName: params["MigrationTaskName"],
       ResourceAttributeList: params["ResourceAttributeList"]?.map(x => fromResourceAttribute(x)),
       DryRun: params["DryRun"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutResourceAttributes",

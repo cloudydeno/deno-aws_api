@@ -30,23 +30,21 @@ export default class ElasticInference {
   async describeAcceleratorOfferings(
     {abortSignal, ...params}: RequestConfig & DescribeAcceleratorOfferingsRequest,
   ): Promise<DescribeAcceleratorOfferingsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       locationType: params["locationType"],
       acceleratorTypes: params["acceleratorTypes"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeAcceleratorOfferings",
       requestUri: "/describe-accelerator-offerings",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "acceleratorTypeOfferings": [toAcceleratorTypeOffering],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "acceleratorTypeOfferings": [toAcceleratorTypeOffering],
+      },
+    }, await resp.json());
   }
 
   async describeAcceleratorTypes(
@@ -59,39 +57,35 @@ export default class ElasticInference {
       method: "GET",
       requestUri: "/describe-accelerator-types",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "acceleratorTypes": [toAcceleratorType],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "acceleratorTypes": [toAcceleratorType],
+      },
+    }, await resp.json());
   }
 
   async describeAccelerators(
     {abortSignal, ...params}: RequestConfig & DescribeAcceleratorsRequest = {},
   ): Promise<DescribeAcceleratorsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       acceleratorIds: params["acceleratorIds"],
       filters: params["filters"]?.map(x => fromFilter(x)),
       maxResults: params["maxResults"],
       nextToken: params["nextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeAccelerators",
       requestUri: "/describe-accelerators",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "acceleratorSet": [toElasticInferenceAccelerator],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "acceleratorSet": [toElasticInferenceAccelerator],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listTagsForResource(
@@ -104,33 +98,29 @@ export default class ElasticInference {
       method: "GET",
       requestUri: cmnP.encodePath`/tags/${params["resourceArn"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       tags: params["tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
       requestUri: cmnP.encodePath`/tags/${params["resourceArn"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async untagResource(
@@ -146,12 +136,10 @@ export default class ElasticInference {
       method: "DELETE",
       requestUri: cmnP.encodePath`/tags/${params["resourceArn"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
 }

@@ -29,107 +29,101 @@ export default class LexModelBuildingService {
   async createBotVersion(
     {abortSignal, ...params}: RequestConfig & CreateBotVersionRequest,
   ): Promise<CreateBotVersionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       checksum: params["checksum"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateBotVersion",
       requestUri: cmnP.encodePath`/bots/${params["name"]}/versions`,
       responseCode: 201,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "name": "s",
-          "description": "s",
-          "intents": [toIntent],
-          "clarificationPrompt": toPrompt,
-          "abortStatement": toStatement,
-          "status": (x: jsonP.JSONValue) => cmnP.readEnum<Status>(x),
-          "failureReason": "s",
-          "lastUpdatedDate": "d",
-          "createdDate": "d",
-          "idleSessionTTLInSeconds": "n",
-          "voiceId": "s",
-          "checksum": "s",
-          "version": "s",
-          "locale": (x: jsonP.JSONValue) => cmnP.readEnum<Locale>(x),
-          "childDirected": "b",
-          "enableModelImprovements": "b",
-          "detectSentiment": "b",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "name": "s",
+        "description": "s",
+        "intents": [toIntent],
+        "clarificationPrompt": toPrompt,
+        "abortStatement": toStatement,
+        "status": (x: jsonP.JSONValue) => cmnP.readEnum<Status>(x),
+        "failureReason": "s",
+        "lastUpdatedDate": "d",
+        "createdDate": "d",
+        "idleSessionTTLInSeconds": "n",
+        "voiceId": "s",
+        "checksum": "s",
+        "version": "s",
+        "locale": (x: jsonP.JSONValue) => cmnP.readEnum<Locale>(x),
+        "childDirected": "b",
+        "enableModelImprovements": "b",
+        "detectSentiment": "b",
+      },
+    }, await resp.json());
   }
 
   async createIntentVersion(
     {abortSignal, ...params}: RequestConfig & CreateIntentVersionRequest,
   ): Promise<CreateIntentVersionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       checksum: params["checksum"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateIntentVersion",
       requestUri: cmnP.encodePath`/intents/${params["name"]}/versions`,
       responseCode: 201,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "name": "s",
-          "description": "s",
-          "slots": [toSlot],
-          "sampleUtterances": ["s"],
-          "confirmationPrompt": toPrompt,
-          "rejectionStatement": toStatement,
-          "followUpPrompt": toFollowUpPrompt,
-          "conclusionStatement": toStatement,
-          "dialogCodeHook": toCodeHook,
-          "fulfillmentActivity": toFulfillmentActivity,
-          "parentIntentSignature": "s",
-          "lastUpdatedDate": "d",
-          "createdDate": "d",
-          "version": "s",
-          "checksum": "s",
-          "kendraConfiguration": toKendraConfiguration,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "name": "s",
+        "description": "s",
+        "slots": [toSlot],
+        "sampleUtterances": ["s"],
+        "confirmationPrompt": toPrompt,
+        "rejectionStatement": toStatement,
+        "followUpPrompt": toFollowUpPrompt,
+        "conclusionStatement": toStatement,
+        "dialogCodeHook": toCodeHook,
+        "fulfillmentActivity": toFulfillmentActivity,
+        "parentIntentSignature": "s",
+        "lastUpdatedDate": "d",
+        "createdDate": "d",
+        "version": "s",
+        "checksum": "s",
+        "kendraConfiguration": toKendraConfiguration,
+      },
+    }, await resp.json());
   }
 
   async createSlotTypeVersion(
     {abortSignal, ...params}: RequestConfig & CreateSlotTypeVersionRequest,
   ): Promise<CreateSlotTypeVersionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       checksum: params["checksum"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateSlotTypeVersion",
       requestUri: cmnP.encodePath`/slottypes/${params["name"]}/versions`,
       responseCode: 201,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "name": "s",
-          "description": "s",
-          "enumerationValues": [toEnumerationValue],
-          "lastUpdatedDate": "d",
-          "createdDate": "d",
-          "version": "s",
-          "checksum": "s",
-          "valueSelectionStrategy": (x: jsonP.JSONValue) => cmnP.readEnum<SlotValueSelectionStrategy>(x),
-          "parentSlotTypeSignature": "s",
-          "slotTypeConfigurations": [toSlotTypeConfiguration],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "name": "s",
+        "description": "s",
+        "enumerationValues": [toEnumerationValue],
+        "lastUpdatedDate": "d",
+        "createdDate": "d",
+        "version": "s",
+        "checksum": "s",
+        "valueSelectionStrategy": (x: jsonP.JSONValue) => cmnP.readEnum<SlotValueSelectionStrategy>(x),
+        "parentSlotTypeSignature": "s",
+        "slotTypeConfigurations": [toSlotTypeConfiguration],
+      },
+    }, await resp.json());
   }
 
   async deleteBot(
@@ -260,31 +254,29 @@ export default class LexModelBuildingService {
       requestUri: cmnP.encodePath`/bots/${params["name"]}/versions/${params["versionOrAlias"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "name": "s",
-          "description": "s",
-          "intents": [toIntent],
-          "enableModelImprovements": "b",
-          "nluIntentConfidenceThreshold": "n",
-          "clarificationPrompt": toPrompt,
-          "abortStatement": toStatement,
-          "status": (x: jsonP.JSONValue) => cmnP.readEnum<Status>(x),
-          "failureReason": "s",
-          "lastUpdatedDate": "d",
-          "createdDate": "d",
-          "idleSessionTTLInSeconds": "n",
-          "voiceId": "s",
-          "checksum": "s",
-          "version": "s",
-          "locale": (x: jsonP.JSONValue) => cmnP.readEnum<Locale>(x),
-          "childDirected": "b",
-          "detectSentiment": "b",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "name": "s",
+        "description": "s",
+        "intents": [toIntent],
+        "enableModelImprovements": "b",
+        "nluIntentConfidenceThreshold": "n",
+        "clarificationPrompt": toPrompt,
+        "abortStatement": toStatement,
+        "status": (x: jsonP.JSONValue) => cmnP.readEnum<Status>(x),
+        "failureReason": "s",
+        "lastUpdatedDate": "d",
+        "createdDate": "d",
+        "idleSessionTTLInSeconds": "n",
+        "voiceId": "s",
+        "checksum": "s",
+        "version": "s",
+        "locale": (x: jsonP.JSONValue) => cmnP.readEnum<Locale>(x),
+        "childDirected": "b",
+        "detectSentiment": "b",
+      },
+    }, await resp.json());
   }
 
   async getBotAlias(
@@ -298,21 +290,19 @@ export default class LexModelBuildingService {
       requestUri: cmnP.encodePath`/bots/${params["botName"]}/aliases/${params["name"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "name": "s",
-          "description": "s",
-          "botVersion": "s",
-          "botName": "s",
-          "lastUpdatedDate": "d",
-          "createdDate": "d",
-          "checksum": "s",
-          "conversationLogs": toConversationLogsResponse,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "name": "s",
+        "description": "s",
+        "botVersion": "s",
+        "botName": "s",
+        "lastUpdatedDate": "d",
+        "createdDate": "d",
+        "checksum": "s",
+        "conversationLogs": toConversationLogsResponse,
+      },
+    }, await resp.json());
   }
 
   async getBotAliases(
@@ -329,15 +319,13 @@ export default class LexModelBuildingService {
       requestUri: cmnP.encodePath`/bots/${params["botName"]}/aliases/`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "BotAliases": [toBotAliasMetadata],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "BotAliases": [toBotAliasMetadata],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async getBotChannelAssociation(
@@ -351,22 +339,20 @@ export default class LexModelBuildingService {
       requestUri: cmnP.encodePath`/bots/${params["botName"]}/aliases/${params["botAlias"]}/channels/${params["name"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "name": "s",
-          "description": "s",
-          "botAlias": "s",
-          "botName": "s",
-          "createdDate": "d",
-          "type": (x: jsonP.JSONValue) => cmnP.readEnum<ChannelType>(x),
-          "botConfiguration": x => jsonP.readMap(String, String, x),
-          "status": (x: jsonP.JSONValue) => cmnP.readEnum<ChannelStatus>(x),
-          "failureReason": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "name": "s",
+        "description": "s",
+        "botAlias": "s",
+        "botName": "s",
+        "createdDate": "d",
+        "type": (x: jsonP.JSONValue) => cmnP.readEnum<ChannelType>(x),
+        "botConfiguration": x => jsonP.readMap(String, String, x),
+        "status": (x: jsonP.JSONValue) => cmnP.readEnum<ChannelStatus>(x),
+        "failureReason": "s",
+      },
+    }, await resp.json());
   }
 
   async getBotChannelAssociations(
@@ -383,15 +369,13 @@ export default class LexModelBuildingService {
       requestUri: cmnP.encodePath`/bots/${params["botName"]}/aliases/${params["botAlias"]}/channels/`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "botChannelAssociations": [toBotChannelAssociation],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "botChannelAssociations": [toBotChannelAssociation],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async getBotVersions(
@@ -407,15 +391,13 @@ export default class LexModelBuildingService {
       requestUri: cmnP.encodePath`/bots/${params["name"]}/versions/`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "bots": [toBotMetadata],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "bots": [toBotMetadata],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async getBots(
@@ -432,15 +414,13 @@ export default class LexModelBuildingService {
       requestUri: "/bots/",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "bots": [toBotMetadata],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "bots": [toBotMetadata],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async getBuiltinIntent(
@@ -454,16 +434,14 @@ export default class LexModelBuildingService {
       requestUri: cmnP.encodePath`/builtins/intents/${params["signature"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "signature": "s",
-          "supportedLocales": [(x: jsonP.JSONValue) => cmnP.readEnum<Locale>(x)],
-          "slots": [toBuiltinIntentSlot],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "signature": "s",
+        "supportedLocales": [(x: jsonP.JSONValue) => cmnP.readEnum<Locale>(x)],
+        "slots": [toBuiltinIntentSlot],
+      },
+    }, await resp.json());
   }
 
   async getBuiltinIntents(
@@ -481,15 +459,13 @@ export default class LexModelBuildingService {
       requestUri: "/builtins/intents/",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "intents": [toBuiltinIntentMetadata],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "intents": [toBuiltinIntentMetadata],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async getBuiltinSlotTypes(
@@ -507,15 +483,13 @@ export default class LexModelBuildingService {
       requestUri: "/builtins/slottypes/",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "slotTypes": [toBuiltinSlotTypeMetadata],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "slotTypes": [toBuiltinSlotTypeMetadata],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async getExport(
@@ -533,20 +507,18 @@ export default class LexModelBuildingService {
       requestUri: "/exports/",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "name": "s",
-          "version": "s",
-          "resourceType": (x: jsonP.JSONValue) => cmnP.readEnum<ResourceType>(x),
-          "exportType": (x: jsonP.JSONValue) => cmnP.readEnum<ExportType>(x),
-          "exportStatus": (x: jsonP.JSONValue) => cmnP.readEnum<ExportStatus>(x),
-          "failureReason": "s",
-          "url": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "name": "s",
+        "version": "s",
+        "resourceType": (x: jsonP.JSONValue) => cmnP.readEnum<ResourceType>(x),
+        "exportType": (x: jsonP.JSONValue) => cmnP.readEnum<ExportType>(x),
+        "exportStatus": (x: jsonP.JSONValue) => cmnP.readEnum<ExportStatus>(x),
+        "failureReason": "s",
+        "url": "s",
+      },
+    }, await resp.json());
   }
 
   async getImport(
@@ -560,20 +532,18 @@ export default class LexModelBuildingService {
       requestUri: cmnP.encodePath`/imports/${params["importId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "name": "s",
-          "resourceType": (x: jsonP.JSONValue) => cmnP.readEnum<ResourceType>(x),
-          "mergeStrategy": (x: jsonP.JSONValue) => cmnP.readEnum<MergeStrategy>(x),
-          "importId": "s",
-          "importStatus": (x: jsonP.JSONValue) => cmnP.readEnum<ImportStatus>(x),
-          "failureReason": ["s"],
-          "createdDate": "d",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "name": "s",
+        "resourceType": (x: jsonP.JSONValue) => cmnP.readEnum<ResourceType>(x),
+        "mergeStrategy": (x: jsonP.JSONValue) => cmnP.readEnum<MergeStrategy>(x),
+        "importId": "s",
+        "importStatus": (x: jsonP.JSONValue) => cmnP.readEnum<ImportStatus>(x),
+        "failureReason": ["s"],
+        "createdDate": "d",
+      },
+    }, await resp.json());
   }
 
   async getIntent(
@@ -587,29 +557,27 @@ export default class LexModelBuildingService {
       requestUri: cmnP.encodePath`/intents/${params["name"]}/versions/${params["version"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "name": "s",
-          "description": "s",
-          "slots": [toSlot],
-          "sampleUtterances": ["s"],
-          "confirmationPrompt": toPrompt,
-          "rejectionStatement": toStatement,
-          "followUpPrompt": toFollowUpPrompt,
-          "conclusionStatement": toStatement,
-          "dialogCodeHook": toCodeHook,
-          "fulfillmentActivity": toFulfillmentActivity,
-          "parentIntentSignature": "s",
-          "lastUpdatedDate": "d",
-          "createdDate": "d",
-          "version": "s",
-          "checksum": "s",
-          "kendraConfiguration": toKendraConfiguration,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "name": "s",
+        "description": "s",
+        "slots": [toSlot],
+        "sampleUtterances": ["s"],
+        "confirmationPrompt": toPrompt,
+        "rejectionStatement": toStatement,
+        "followUpPrompt": toFollowUpPrompt,
+        "conclusionStatement": toStatement,
+        "dialogCodeHook": toCodeHook,
+        "fulfillmentActivity": toFulfillmentActivity,
+        "parentIntentSignature": "s",
+        "lastUpdatedDate": "d",
+        "createdDate": "d",
+        "version": "s",
+        "checksum": "s",
+        "kendraConfiguration": toKendraConfiguration,
+      },
+    }, await resp.json());
   }
 
   async getIntentVersions(
@@ -625,15 +593,13 @@ export default class LexModelBuildingService {
       requestUri: cmnP.encodePath`/intents/${params["name"]}/versions/`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "intents": [toIntentMetadata],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "intents": [toIntentMetadata],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async getIntents(
@@ -650,15 +616,13 @@ export default class LexModelBuildingService {
       requestUri: "/intents/",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "intents": [toIntentMetadata],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "intents": [toIntentMetadata],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async getSlotType(
@@ -672,23 +636,21 @@ export default class LexModelBuildingService {
       requestUri: cmnP.encodePath`/slottypes/${params["name"]}/versions/${params["version"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "name": "s",
-          "description": "s",
-          "enumerationValues": [toEnumerationValue],
-          "lastUpdatedDate": "d",
-          "createdDate": "d",
-          "version": "s",
-          "checksum": "s",
-          "valueSelectionStrategy": (x: jsonP.JSONValue) => cmnP.readEnum<SlotValueSelectionStrategy>(x),
-          "parentSlotTypeSignature": "s",
-          "slotTypeConfigurations": [toSlotTypeConfiguration],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "name": "s",
+        "description": "s",
+        "enumerationValues": [toEnumerationValue],
+        "lastUpdatedDate": "d",
+        "createdDate": "d",
+        "version": "s",
+        "checksum": "s",
+        "valueSelectionStrategy": (x: jsonP.JSONValue) => cmnP.readEnum<SlotValueSelectionStrategy>(x),
+        "parentSlotTypeSignature": "s",
+        "slotTypeConfigurations": [toSlotTypeConfiguration],
+      },
+    }, await resp.json());
   }
 
   async getSlotTypeVersions(
@@ -704,15 +666,13 @@ export default class LexModelBuildingService {
       requestUri: cmnP.encodePath`/slottypes/${params["name"]}/versions/`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "slotTypes": [toSlotTypeMetadata],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "slotTypes": [toSlotTypeMetadata],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async getSlotTypes(
@@ -729,15 +689,13 @@ export default class LexModelBuildingService {
       requestUri: "/slottypes/",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "slotTypes": [toSlotTypeMetadata],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "slotTypes": [toSlotTypeMetadata],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async getUtterancesView(
@@ -755,15 +713,13 @@ export default class LexModelBuildingService {
       requestUri: cmnP.encodePath`/bots/${params["botName"]}/utterances?view=aggregation`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "botName": "s",
-          "utterances": [toUtteranceList],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "botName": "s",
+        "utterances": [toUtteranceList],
+      },
+    }, await resp.json());
   }
 
   async listTagsForResource(
@@ -777,20 +733,18 @@ export default class LexModelBuildingService {
       requestUri: cmnP.encodePath`/tags/${params["resourceArn"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "tags": [toTag],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "tags": [toTag],
+      },
+    }, await resp.json());
   }
 
   async putBot(
     {abortSignal, ...params}: RequestConfig & PutBotRequest,
   ): Promise<PutBotResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       description: params["description"],
       intents: params["intents"]?.map(x => fromIntent(x)),
       enableModelImprovements: params["enableModelImprovements"],
@@ -806,7 +760,7 @@ export default class LexModelBuildingService {
       detectSentiment: params["detectSentiment"],
       createVersion: params["createVersion"],
       tags: params["tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutBot",
@@ -814,45 +768,43 @@ export default class LexModelBuildingService {
       requestUri: cmnP.encodePath`/bots/${params["name"]}/versions/$LATEST`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "name": "s",
-          "description": "s",
-          "intents": [toIntent],
-          "enableModelImprovements": "b",
-          "nluIntentConfidenceThreshold": "n",
-          "clarificationPrompt": toPrompt,
-          "abortStatement": toStatement,
-          "status": (x: jsonP.JSONValue) => cmnP.readEnum<Status>(x),
-          "failureReason": "s",
-          "lastUpdatedDate": "d",
-          "createdDate": "d",
-          "idleSessionTTLInSeconds": "n",
-          "voiceId": "s",
-          "checksum": "s",
-          "version": "s",
-          "locale": (x: jsonP.JSONValue) => cmnP.readEnum<Locale>(x),
-          "childDirected": "b",
-          "createVersion": "b",
-          "detectSentiment": "b",
-          "tags": [toTag],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "name": "s",
+        "description": "s",
+        "intents": [toIntent],
+        "enableModelImprovements": "b",
+        "nluIntentConfidenceThreshold": "n",
+        "clarificationPrompt": toPrompt,
+        "abortStatement": toStatement,
+        "status": (x: jsonP.JSONValue) => cmnP.readEnum<Status>(x),
+        "failureReason": "s",
+        "lastUpdatedDate": "d",
+        "createdDate": "d",
+        "idleSessionTTLInSeconds": "n",
+        "voiceId": "s",
+        "checksum": "s",
+        "version": "s",
+        "locale": (x: jsonP.JSONValue) => cmnP.readEnum<Locale>(x),
+        "childDirected": "b",
+        "createVersion": "b",
+        "detectSentiment": "b",
+        "tags": [toTag],
+      },
+    }, await resp.json());
   }
 
   async putBotAlias(
     {abortSignal, ...params}: RequestConfig & PutBotAliasRequest,
   ): Promise<PutBotAliasResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       description: params["description"],
       botVersion: params["botVersion"],
       checksum: params["checksum"],
       conversationLogs: fromConversationLogsRequest(params["conversationLogs"]),
       tags: params["tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutBotAlias",
@@ -860,28 +812,26 @@ export default class LexModelBuildingService {
       requestUri: cmnP.encodePath`/bots/${params["botName"]}/aliases/${params["name"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "name": "s",
-          "description": "s",
-          "botVersion": "s",
-          "botName": "s",
-          "lastUpdatedDate": "d",
-          "createdDate": "d",
-          "checksum": "s",
-          "conversationLogs": toConversationLogsResponse,
-          "tags": [toTag],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "name": "s",
+        "description": "s",
+        "botVersion": "s",
+        "botName": "s",
+        "lastUpdatedDate": "d",
+        "createdDate": "d",
+        "checksum": "s",
+        "conversationLogs": toConversationLogsResponse,
+        "tags": [toTag],
+      },
+    }, await resp.json());
   }
 
   async putIntent(
     {abortSignal, ...params}: RequestConfig & PutIntentRequest,
   ): Promise<PutIntentResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       description: params["description"],
       slots: params["slots"]?.map(x => fromSlot(x)),
       sampleUtterances: params["sampleUtterances"],
@@ -895,7 +845,7 @@ export default class LexModelBuildingService {
       checksum: params["checksum"],
       createVersion: params["createVersion"],
       kendraConfiguration: fromKendraConfiguration(params["kendraConfiguration"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutIntent",
@@ -903,36 +853,34 @@ export default class LexModelBuildingService {
       requestUri: cmnP.encodePath`/intents/${params["name"]}/versions/$LATEST`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "name": "s",
-          "description": "s",
-          "slots": [toSlot],
-          "sampleUtterances": ["s"],
-          "confirmationPrompt": toPrompt,
-          "rejectionStatement": toStatement,
-          "followUpPrompt": toFollowUpPrompt,
-          "conclusionStatement": toStatement,
-          "dialogCodeHook": toCodeHook,
-          "fulfillmentActivity": toFulfillmentActivity,
-          "parentIntentSignature": "s",
-          "lastUpdatedDate": "d",
-          "createdDate": "d",
-          "version": "s",
-          "checksum": "s",
-          "createVersion": "b",
-          "kendraConfiguration": toKendraConfiguration,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "name": "s",
+        "description": "s",
+        "slots": [toSlot],
+        "sampleUtterances": ["s"],
+        "confirmationPrompt": toPrompt,
+        "rejectionStatement": toStatement,
+        "followUpPrompt": toFollowUpPrompt,
+        "conclusionStatement": toStatement,
+        "dialogCodeHook": toCodeHook,
+        "fulfillmentActivity": toFulfillmentActivity,
+        "parentIntentSignature": "s",
+        "lastUpdatedDate": "d",
+        "createdDate": "d",
+        "version": "s",
+        "checksum": "s",
+        "createVersion": "b",
+        "kendraConfiguration": toKendraConfiguration,
+      },
+    }, await resp.json());
   }
 
   async putSlotType(
     {abortSignal, ...params}: RequestConfig & PutSlotTypeRequest,
   ): Promise<PutSlotTypeResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       description: params["description"],
       enumerationValues: params["enumerationValues"]?.map(x => fromEnumerationValue(x)),
       checksum: params["checksum"],
@@ -940,7 +888,7 @@ export default class LexModelBuildingService {
       createVersion: params["createVersion"],
       parentSlotTypeSignature: params["parentSlotTypeSignature"],
       slotTypeConfigurations: params["slotTypeConfigurations"]?.map(x => fromSlotTypeConfiguration(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutSlotType",
@@ -948,75 +896,69 @@ export default class LexModelBuildingService {
       requestUri: cmnP.encodePath`/slottypes/${params["name"]}/versions/$LATEST`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "name": "s",
-          "description": "s",
-          "enumerationValues": [toEnumerationValue],
-          "lastUpdatedDate": "d",
-          "createdDate": "d",
-          "version": "s",
-          "checksum": "s",
-          "valueSelectionStrategy": (x: jsonP.JSONValue) => cmnP.readEnum<SlotValueSelectionStrategy>(x),
-          "createVersion": "b",
-          "parentSlotTypeSignature": "s",
-          "slotTypeConfigurations": [toSlotTypeConfiguration],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "name": "s",
+        "description": "s",
+        "enumerationValues": [toEnumerationValue],
+        "lastUpdatedDate": "d",
+        "createdDate": "d",
+        "version": "s",
+        "checksum": "s",
+        "valueSelectionStrategy": (x: jsonP.JSONValue) => cmnP.readEnum<SlotValueSelectionStrategy>(x),
+        "createVersion": "b",
+        "parentSlotTypeSignature": "s",
+        "slotTypeConfigurations": [toSlotTypeConfiguration],
+      },
+    }, await resp.json());
   }
 
   async startImport(
     {abortSignal, ...params}: RequestConfig & StartImportRequest,
   ): Promise<StartImportResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       payload: jsonP.serializeBlob(params["payload"]),
       resourceType: params["resourceType"],
       mergeStrategy: params["mergeStrategy"],
       tags: params["tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartImport",
       requestUri: "/imports/",
       responseCode: 201,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "name": "s",
-          "resourceType": (x: jsonP.JSONValue) => cmnP.readEnum<ResourceType>(x),
-          "mergeStrategy": (x: jsonP.JSONValue) => cmnP.readEnum<MergeStrategy>(x),
-          "importId": "s",
-          "importStatus": (x: jsonP.JSONValue) => cmnP.readEnum<ImportStatus>(x),
-          "tags": [toTag],
-          "createdDate": "d",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "name": "s",
+        "resourceType": (x: jsonP.JSONValue) => cmnP.readEnum<ResourceType>(x),
+        "mergeStrategy": (x: jsonP.JSONValue) => cmnP.readEnum<MergeStrategy>(x),
+        "importId": "s",
+        "importStatus": (x: jsonP.JSONValue) => cmnP.readEnum<ImportStatus>(x),
+        "tags": [toTag],
+        "createdDate": "d",
+      },
+    }, await resp.json());
   }
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       tags: params["tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
       requestUri: cmnP.encodePath`/tags/${params["resourceArn"]}`,
       responseCode: 204,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async untagResource(
@@ -1033,12 +975,10 @@ export default class LexModelBuildingService {
       requestUri: cmnP.encodePath`/tags/${params["resourceArn"]}`,
       responseCode: 204,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
 }

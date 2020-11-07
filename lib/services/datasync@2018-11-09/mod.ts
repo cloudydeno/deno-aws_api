@@ -31,9 +31,9 @@ export default class DataSync {
   async cancelTaskExecution(
     {abortSignal, ...params}: RequestConfig & CancelTaskExecutionRequest,
   ): Promise<CancelTaskExecutionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TaskExecutionArn: params["TaskExecutionArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CancelTaskExecution",
@@ -47,14 +47,14 @@ export default class DataSync {
   async createAgent(
     {abortSignal, ...params}: RequestConfig & CreateAgentRequest,
   ): Promise<CreateAgentResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ActivationKey: params["ActivationKey"],
       AgentName: params["AgentName"],
       Tags: params["Tags"]?.map(x => fromTagListEntry(x)),
       VpcEndpointId: params["VpcEndpointId"],
       SubnetArns: params["SubnetArns"],
       SecurityGroupArns: params["SecurityGroupArns"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateAgent",
@@ -70,12 +70,12 @@ export default class DataSync {
   async createLocationEfs(
     {abortSignal, ...params}: RequestConfig & CreateLocationEfsRequest,
   ): Promise<CreateLocationEfsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Subdirectory: params["Subdirectory"],
       EfsFilesystemArn: params["EfsFilesystemArn"],
       Ec2Config: fromEc2Config(params["Ec2Config"]),
       Tags: params["Tags"]?.map(x => fromTagListEntry(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateLocationEfs",
@@ -91,7 +91,7 @@ export default class DataSync {
   async createLocationFsxWindows(
     {abortSignal, ...params}: RequestConfig & CreateLocationFsxWindowsRequest,
   ): Promise<CreateLocationFsxWindowsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Subdirectory: params["Subdirectory"],
       FsxFilesystemArn: params["FsxFilesystemArn"],
       SecurityGroupArns: params["SecurityGroupArns"],
@@ -99,7 +99,7 @@ export default class DataSync {
       User: params["User"],
       Domain: params["Domain"],
       Password: params["Password"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateLocationFsxWindows",
@@ -115,13 +115,13 @@ export default class DataSync {
   async createLocationNfs(
     {abortSignal, ...params}: RequestConfig & CreateLocationNfsRequest,
   ): Promise<CreateLocationNfsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Subdirectory: params["Subdirectory"],
       ServerHostname: params["ServerHostname"],
       OnPremConfig: fromOnPremConfig(params["OnPremConfig"]),
       MountOptions: fromNfsMountOptions(params["MountOptions"]),
       Tags: params["Tags"]?.map(x => fromTagListEntry(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateLocationNfs",
@@ -137,7 +137,7 @@ export default class DataSync {
   async createLocationObjectStorage(
     {abortSignal, ...params}: RequestConfig & CreateLocationObjectStorageRequest,
   ): Promise<CreateLocationObjectStorageResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ServerHostname: params["ServerHostname"],
       ServerPort: params["ServerPort"],
       ServerProtocol: params["ServerProtocol"],
@@ -147,7 +147,7 @@ export default class DataSync {
       SecretKey: params["SecretKey"],
       AgentArns: params["AgentArns"],
       Tags: params["Tags"]?.map(x => fromTagListEntry(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateLocationObjectStorage",
@@ -163,14 +163,14 @@ export default class DataSync {
   async createLocationS3(
     {abortSignal, ...params}: RequestConfig & CreateLocationS3Request,
   ): Promise<CreateLocationS3Response> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Subdirectory: params["Subdirectory"],
       S3BucketArn: params["S3BucketArn"],
       S3StorageClass: params["S3StorageClass"],
       S3Config: fromS3Config(params["S3Config"]),
       AgentArns: params["AgentArns"],
       Tags: params["Tags"]?.map(x => fromTagListEntry(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateLocationS3",
@@ -186,7 +186,7 @@ export default class DataSync {
   async createLocationSmb(
     {abortSignal, ...params}: RequestConfig & CreateLocationSmbRequest,
   ): Promise<CreateLocationSmbResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Subdirectory: params["Subdirectory"],
       ServerHostname: params["ServerHostname"],
       User: params["User"],
@@ -195,7 +195,7 @@ export default class DataSync {
       AgentArns: params["AgentArns"],
       MountOptions: fromSmbMountOptions(params["MountOptions"]),
       Tags: params["Tags"]?.map(x => fromTagListEntry(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateLocationSmb",
@@ -211,7 +211,7 @@ export default class DataSync {
   async createTask(
     {abortSignal, ...params}: RequestConfig & CreateTaskRequest,
   ): Promise<CreateTaskResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       SourceLocationArn: params["SourceLocationArn"],
       DestinationLocationArn: params["DestinationLocationArn"],
       CloudWatchLogGroupArn: params["CloudWatchLogGroupArn"],
@@ -220,7 +220,7 @@ export default class DataSync {
       Excludes: params["Excludes"]?.map(x => fromFilterRule(x)),
       Schedule: fromTaskSchedule(params["Schedule"]),
       Tags: params["Tags"]?.map(x => fromTagListEntry(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateTask",
@@ -236,9 +236,9 @@ export default class DataSync {
   async deleteAgent(
     {abortSignal, ...params}: RequestConfig & DeleteAgentRequest,
   ): Promise<DeleteAgentResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AgentArn: params["AgentArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteAgent",
@@ -252,9 +252,9 @@ export default class DataSync {
   async deleteLocation(
     {abortSignal, ...params}: RequestConfig & DeleteLocationRequest,
   ): Promise<DeleteLocationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       LocationArn: params["LocationArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteLocation",
@@ -268,9 +268,9 @@ export default class DataSync {
   async deleteTask(
     {abortSignal, ...params}: RequestConfig & DeleteTaskRequest,
   ): Promise<DeleteTaskResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TaskArn: params["TaskArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteTask",
@@ -284,9 +284,9 @@ export default class DataSync {
   async describeAgent(
     {abortSignal, ...params}: RequestConfig & DescribeAgentRequest,
   ): Promise<DescribeAgentResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AgentArn: params["AgentArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeAgent",
@@ -308,9 +308,9 @@ export default class DataSync {
   async describeLocationEfs(
     {abortSignal, ...params}: RequestConfig & DescribeLocationEfsRequest,
   ): Promise<DescribeLocationEfsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       LocationArn: params["LocationArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeLocationEfs",
@@ -329,9 +329,9 @@ export default class DataSync {
   async describeLocationFsxWindows(
     {abortSignal, ...params}: RequestConfig & DescribeLocationFsxWindowsRequest,
   ): Promise<DescribeLocationFsxWindowsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       LocationArn: params["LocationArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeLocationFsxWindows",
@@ -352,9 +352,9 @@ export default class DataSync {
   async describeLocationNfs(
     {abortSignal, ...params}: RequestConfig & DescribeLocationNfsRequest,
   ): Promise<DescribeLocationNfsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       LocationArn: params["LocationArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeLocationNfs",
@@ -374,9 +374,9 @@ export default class DataSync {
   async describeLocationObjectStorage(
     {abortSignal, ...params}: RequestConfig & DescribeLocationObjectStorageRequest,
   ): Promise<DescribeLocationObjectStorageResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       LocationArn: params["LocationArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeLocationObjectStorage",
@@ -398,9 +398,9 @@ export default class DataSync {
   async describeLocationS3(
     {abortSignal, ...params}: RequestConfig & DescribeLocationS3Request,
   ): Promise<DescribeLocationS3Response> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       LocationArn: params["LocationArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeLocationS3",
@@ -421,9 +421,9 @@ export default class DataSync {
   async describeLocationSmb(
     {abortSignal, ...params}: RequestConfig & DescribeLocationSmbRequest,
   ): Promise<DescribeLocationSmbResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       LocationArn: params["LocationArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeLocationSmb",
@@ -445,9 +445,9 @@ export default class DataSync {
   async describeTask(
     {abortSignal, ...params}: RequestConfig & DescribeTaskRequest,
   ): Promise<DescribeTaskResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TaskArn: params["TaskArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeTask",
@@ -477,9 +477,9 @@ export default class DataSync {
   async describeTaskExecution(
     {abortSignal, ...params}: RequestConfig & DescribeTaskExecutionRequest,
   ): Promise<DescribeTaskExecutionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TaskExecutionArn: params["TaskExecutionArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeTaskExecution",
@@ -506,10 +506,10 @@ export default class DataSync {
   async listAgents(
     {abortSignal, ...params}: RequestConfig & ListAgentsRequest = {},
   ): Promise<ListAgentsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListAgents",
@@ -526,11 +526,11 @@ export default class DataSync {
   async listLocations(
     {abortSignal, ...params}: RequestConfig & ListLocationsRequest = {},
   ): Promise<ListLocationsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
       Filters: params["Filters"]?.map(x => fromLocationFilter(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListLocations",
@@ -547,11 +547,11 @@ export default class DataSync {
   async listTagsForResource(
     {abortSignal, ...params}: RequestConfig & ListTagsForResourceRequest,
   ): Promise<ListTagsForResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForResource",
@@ -568,11 +568,11 @@ export default class DataSync {
   async listTaskExecutions(
     {abortSignal, ...params}: RequestConfig & ListTaskExecutionsRequest = {},
   ): Promise<ListTaskExecutionsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TaskArn: params["TaskArn"],
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTaskExecutions",
@@ -589,11 +589,11 @@ export default class DataSync {
   async listTasks(
     {abortSignal, ...params}: RequestConfig & ListTasksRequest = {},
   ): Promise<ListTasksResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
       Filters: params["Filters"]?.map(x => fromTaskFilter(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTasks",
@@ -610,11 +610,11 @@ export default class DataSync {
   async startTaskExecution(
     {abortSignal, ...params}: RequestConfig & StartTaskExecutionRequest,
   ): Promise<StartTaskExecutionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TaskArn: params["TaskArn"],
       OverrideOptions: fromOptions(params["OverrideOptions"]),
       Includes: params["Includes"]?.map(x => fromFilterRule(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartTaskExecution",
@@ -630,10 +630,10 @@ export default class DataSync {
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
       Tags: params["Tags"]?.map(x => fromTagListEntry(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
@@ -647,10 +647,10 @@ export default class DataSync {
   async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceRequest,
   ): Promise<UntagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
       Keys: params["Keys"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResource",
@@ -664,10 +664,10 @@ export default class DataSync {
   async updateAgent(
     {abortSignal, ...params}: RequestConfig & UpdateAgentRequest,
   ): Promise<UpdateAgentResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AgentArn: params["AgentArn"],
       Name: params["Name"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateAgent",
@@ -681,14 +681,14 @@ export default class DataSync {
   async updateTask(
     {abortSignal, ...params}: RequestConfig & UpdateTaskRequest,
   ): Promise<UpdateTaskResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TaskArn: params["TaskArn"],
       Options: fromOptions(params["Options"]),
       Excludes: params["Excludes"]?.map(x => fromFilterRule(x)),
       Schedule: fromTaskSchedule(params["Schedule"]),
       Name: params["Name"],
       CloudWatchLogGroupArn: params["CloudWatchLogGroupArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateTask",

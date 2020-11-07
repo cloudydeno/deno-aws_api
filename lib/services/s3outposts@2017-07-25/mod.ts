@@ -30,24 +30,22 @@ export default class S3Outposts {
   async createEndpoint(
     {abortSignal, ...params}: RequestConfig & CreateEndpointRequest,
   ): Promise<CreateEndpointResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       OutpostId: params["OutpostId"],
       SubnetId: params["SubnetId"],
       SecurityGroupId: params["SecurityGroupId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateEndpoint",
       requestUri: "/S3Outposts/CreateEndpoint",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "EndpointArn": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "EndpointArn": "s",
+      },
+    }, await resp.json());
   }
 
   async deleteEndpoint(
@@ -76,15 +74,13 @@ export default class S3Outposts {
       method: "GET",
       requestUri: "/S3Outposts/ListEndpoints",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Endpoints": [toEndpoint],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Endpoints": [toEndpoint],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
 }

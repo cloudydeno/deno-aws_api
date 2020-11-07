@@ -37,15 +37,13 @@ export default class IoT1ClickDevicesService {
       requestUri: cmnP.encodePath`/claims/${params["ClaimCode"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ClaimCode": "s",
-          "Total": "n",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ClaimCode": "s",
+        "Total": "n",
+      },
+    }, await resp.json());
   }
 
   async describeDevice(
@@ -59,22 +57,20 @@ export default class IoT1ClickDevicesService {
       requestUri: cmnP.encodePath`/devices/${params["DeviceId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "DeviceDescription": toDeviceDescription,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "DeviceDescription": toDeviceDescription,
+      },
+    }, await resp.json());
   }
 
   async finalizeDeviceClaim(
     {abortSignal, ...params}: RequestConfig & FinalizeDeviceClaimRequest,
   ): Promise<FinalizeDeviceClaimResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       tags: params["Tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "FinalizeDeviceClaim",
@@ -82,14 +78,12 @@ export default class IoT1ClickDevicesService {
       requestUri: cmnP.encodePath`/devices/${params["DeviceId"]}/finalize-claim`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "State": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "State": "s",
+      },
+    }, await resp.json());
   }
 
   async getDeviceMethods(
@@ -103,14 +97,12 @@ export default class IoT1ClickDevicesService {
       requestUri: cmnP.encodePath`/devices/${params["DeviceId"]}/methods`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "DeviceMethods": [toDeviceMethod],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "DeviceMethods": [toDeviceMethod],
+      },
+    }, await resp.json());
   }
 
   async initiateDeviceClaim(
@@ -124,37 +116,33 @@ export default class IoT1ClickDevicesService {
       requestUri: cmnP.encodePath`/devices/${params["DeviceId"]}/initiate-claim`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "State": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "State": "s",
+      },
+    }, await resp.json());
   }
 
   async invokeDeviceMethod(
     {abortSignal, ...params}: RequestConfig & InvokeDeviceMethodRequest,
   ): Promise<InvokeDeviceMethodResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       deviceMethod: fromDeviceMethod(params["DeviceMethod"]),
       deviceMethodParameters: params["DeviceMethodParameters"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "InvokeDeviceMethod",
       requestUri: cmnP.encodePath`/devices/${params["DeviceId"]}/methods`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "DeviceMethodResponse": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "DeviceMethodResponse": "s",
+      },
+    }, await resp.json());
   }
 
   async listDeviceEvents(
@@ -172,15 +160,13 @@ export default class IoT1ClickDevicesService {
       requestUri: cmnP.encodePath`/devices/${params["DeviceId"]}/events`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Events": [toDeviceEvent],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Events": [toDeviceEvent],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listDevices(
@@ -197,15 +183,13 @@ export default class IoT1ClickDevicesService {
       requestUri: "/devices",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Devices": [toDeviceDescription],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Devices": [toDeviceDescription],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listTagsForResource(
@@ -219,22 +203,20 @@ export default class IoT1ClickDevicesService {
       requestUri: cmnP.encodePath`/tags/${params["ResourceArn"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       tags: params["Tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
@@ -254,14 +236,12 @@ export default class IoT1ClickDevicesService {
       requestUri: cmnP.encodePath`/devices/${params["DeviceId"]}/unclaim`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "State": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "State": "s",
+      },
+    }, await resp.json());
   }
 
   async untagResource(
@@ -283,9 +263,9 @@ export default class IoT1ClickDevicesService {
   async updateDeviceState(
     {abortSignal, ...params}: RequestConfig & UpdateDeviceStateRequest,
   ): Promise<UpdateDeviceStateResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       enabled: params["Enabled"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateDeviceState",
@@ -293,12 +273,10 @@ export default class IoT1ClickDevicesService {
       requestUri: cmnP.encodePath`/devices/${params["DeviceId"]}/state`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
 }

@@ -28,24 +28,22 @@ export default class IoTAnalytics {
   async batchPutMessage(
     {abortSignal, ...params}: RequestConfig & BatchPutMessageRequest,
   ): Promise<BatchPutMessageResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       channelName: params["channelName"],
       messages: params["messages"]?.map(x => fromMessage(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchPutMessage",
       requestUri: "/messages/batch",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "batchPutMessageErrorEntries": [toBatchPutMessageErrorEntry],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "batchPutMessageErrorEntries": [toBatchPutMessageErrorEntry],
+      },
+    }, await resp.json());
   }
 
   async cancelPipelineReprocessing(
@@ -58,45 +56,41 @@ export default class IoTAnalytics {
       method: "DELETE",
       requestUri: cmnP.encodePath`/pipelines/${params["pipelineName"]}/reprocessing/${params["reprocessingId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async createChannel(
     {abortSignal, ...params}: RequestConfig & CreateChannelRequest,
   ): Promise<CreateChannelResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       channelName: params["channelName"],
       channelStorage: fromChannelStorage(params["channelStorage"]),
       retentionPeriod: fromRetentionPeriod(params["retentionPeriod"]),
       tags: params["tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateChannel",
       requestUri: "/channels",
       responseCode: 201,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "channelName": "s",
-          "channelArn": "s",
-          "retentionPeriod": toRetentionPeriod,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "channelName": "s",
+        "channelArn": "s",
+        "retentionPeriod": toRetentionPeriod,
+      },
+    }, await resp.json());
   }
 
   async createDataset(
     {abortSignal, ...params}: RequestConfig & CreateDatasetRequest,
   ): Promise<CreateDatasetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       datasetName: params["datasetName"],
       actions: params["actions"]?.map(x => fromDatasetAction(x)),
       triggers: params["triggers"]?.map(x => fromDatasetTrigger(x)),
@@ -104,23 +98,21 @@ export default class IoTAnalytics {
       retentionPeriod: fromRetentionPeriod(params["retentionPeriod"]),
       versioningConfiguration: fromVersioningConfiguration(params["versioningConfiguration"]),
       tags: params["tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDataset",
       requestUri: "/datasets",
       responseCode: 201,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "datasetName": "s",
-          "datasetArn": "s",
-          "retentionPeriod": toRetentionPeriod,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "datasetName": "s",
+        "datasetArn": "s",
+        "retentionPeriod": toRetentionPeriod,
+      },
+    }, await resp.json());
   }
 
   async createDatasetContent(
@@ -132,66 +124,60 @@ export default class IoTAnalytics {
       action: "CreateDatasetContent",
       requestUri: cmnP.encodePath`/datasets/${params["datasetName"]}/content`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "versionId": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "versionId": "s",
+      },
+    }, await resp.json());
   }
 
   async createDatastore(
     {abortSignal, ...params}: RequestConfig & CreateDatastoreRequest,
   ): Promise<CreateDatastoreResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       datastoreName: params["datastoreName"],
       datastoreStorage: fromDatastoreStorage(params["datastoreStorage"]),
       retentionPeriod: fromRetentionPeriod(params["retentionPeriod"]),
       tags: params["tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDatastore",
       requestUri: "/datastores",
       responseCode: 201,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "datastoreName": "s",
-          "datastoreArn": "s",
-          "retentionPeriod": toRetentionPeriod,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "datastoreName": "s",
+        "datastoreArn": "s",
+        "retentionPeriod": toRetentionPeriod,
+      },
+    }, await resp.json());
   }
 
   async createPipeline(
     {abortSignal, ...params}: RequestConfig & CreatePipelineRequest,
   ): Promise<CreatePipelineResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       pipelineName: params["pipelineName"],
       pipelineActivities: params["pipelineActivities"]?.map(x => fromPipelineActivity(x)),
       tags: params["tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreatePipeline",
       requestUri: "/pipelines",
       responseCode: 201,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "pipelineName": "s",
-          "pipelineArn": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "pipelineName": "s",
+        "pipelineArn": "s",
+      },
+    }, await resp.json());
   }
 
   async deleteChannel(
@@ -271,15 +257,13 @@ export default class IoTAnalytics {
       method: "GET",
       requestUri: cmnP.encodePath`/channels/${params["channelName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "channel": toChannel,
-          "statistics": toChannelStatistics,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "channel": toChannel,
+        "statistics": toChannelStatistics,
+      },
+    }, await resp.json());
   }
 
   async describeDataset(
@@ -292,14 +276,12 @@ export default class IoTAnalytics {
       method: "GET",
       requestUri: cmnP.encodePath`/datasets/${params["datasetName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "dataset": toDataset,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "dataset": toDataset,
+      },
+    }, await resp.json());
   }
 
   async describeDatastore(
@@ -313,15 +295,13 @@ export default class IoTAnalytics {
       method: "GET",
       requestUri: cmnP.encodePath`/datastores/${params["datastoreName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "datastore": toDatastore,
-          "statistics": toDatastoreStatistics,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "datastore": toDatastore,
+        "statistics": toDatastoreStatistics,
+      },
+    }, await resp.json());
   }
 
   async describeLoggingOptions(
@@ -334,14 +314,12 @@ export default class IoTAnalytics {
       method: "GET",
       requestUri: "/logging",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "loggingOptions": toLoggingOptions,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "loggingOptions": toLoggingOptions,
+      },
+    }, await resp.json());
   }
 
   async describePipeline(
@@ -354,14 +332,12 @@ export default class IoTAnalytics {
       method: "GET",
       requestUri: cmnP.encodePath`/pipelines/${params["pipelineName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "pipeline": toPipeline,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "pipeline": toPipeline,
+      },
+    }, await resp.json());
   }
 
   async getDatasetContent(
@@ -375,16 +351,14 @@ export default class IoTAnalytics {
       method: "GET",
       requestUri: cmnP.encodePath`/datasets/${params["datasetName"]}/content`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "entries": [toDatasetEntry],
-          "timestamp": "d",
-          "status": toDatasetContentStatus,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "entries": [toDatasetEntry],
+        "timestamp": "d",
+        "status": toDatasetContentStatus,
+      },
+    }, await resp.json());
   }
 
   async listChannels(
@@ -399,15 +373,13 @@ export default class IoTAnalytics {
       method: "GET",
       requestUri: "/channels",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "channelSummaries": [toChannelSummary],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "channelSummaries": [toChannelSummary],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listDatasetContents(
@@ -424,15 +396,13 @@ export default class IoTAnalytics {
       method: "GET",
       requestUri: cmnP.encodePath`/datasets/${params["datasetName"]}/contents`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "datasetContentSummaries": [toDatasetContentSummary],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "datasetContentSummaries": [toDatasetContentSummary],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listDatasets(
@@ -447,15 +417,13 @@ export default class IoTAnalytics {
       method: "GET",
       requestUri: "/datasets",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "datasetSummaries": [toDatasetSummary],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "datasetSummaries": [toDatasetSummary],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listDatastores(
@@ -470,15 +438,13 @@ export default class IoTAnalytics {
       method: "GET",
       requestUri: "/datastores",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "datastoreSummaries": [toDatastoreSummary],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "datastoreSummaries": [toDatastoreSummary],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listPipelines(
@@ -493,15 +459,13 @@ export default class IoTAnalytics {
       method: "GET",
       requestUri: "/pipelines",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "pipelineSummaries": [toPipelineSummary],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "pipelineSummaries": [toPipelineSummary],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listTagsForResource(
@@ -515,22 +479,20 @@ export default class IoTAnalytics {
       method: "GET",
       requestUri: "/tags",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "tags": [toTag],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "tags": [toTag],
+      },
+    }, await resp.json());
   }
 
   async putLoggingOptions(
     {abortSignal, ...params}: RequestConfig & PutLoggingOptionsRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       loggingOptions: fromLoggingOptions(params["loggingOptions"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutLoggingOptions",
@@ -542,24 +504,22 @@ export default class IoTAnalytics {
   async runPipelineActivity(
     {abortSignal, ...params}: RequestConfig & RunPipelineActivityRequest,
   ): Promise<RunPipelineActivityResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       pipelineActivity: fromPipelineActivity(params["pipelineActivity"]),
       payloads: params["payloads"]?.map(x => jsonP.serializeBlob(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RunPipelineActivity",
       requestUri: "/pipelineactivities/run",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "payloads": ["a"],
-          "logResult": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "payloads": ["a"],
+        "logResult": "s",
+      },
+    }, await resp.json());
   }
 
   async sampleChannelData(
@@ -575,58 +535,52 @@ export default class IoTAnalytics {
       method: "GET",
       requestUri: cmnP.encodePath`/channels/${params["channelName"]}/sample`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "payloads": ["a"],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "payloads": ["a"],
+      },
+    }, await resp.json());
   }
 
   async startPipelineReprocessing(
     {abortSignal, ...params}: RequestConfig & StartPipelineReprocessingRequest,
   ): Promise<StartPipelineReprocessingResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       startTime: jsonP.serializeDate_unixTimestamp(params["startTime"]),
       endTime: jsonP.serializeDate_unixTimestamp(params["endTime"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartPipelineReprocessing",
       requestUri: cmnP.encodePath`/pipelines/${params["pipelineName"]}/reprocessing`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "reprocessingId": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "reprocessingId": "s",
+      },
+    }, await resp.json());
   }
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResponse> {
     const query = new URLSearchParams;
-    query.set("resourceArn", params["resourceArn"]?.toString() ?? "");
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       tags: params["tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
+    query.set("resourceArn", params["resourceArn"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
       abortSignal, query, body,
       action: "TagResource",
       requestUri: "/tags",
       responseCode: 204,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async untagResource(
@@ -644,21 +598,19 @@ export default class IoTAnalytics {
       requestUri: "/tags",
       responseCode: 204,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async updateChannel(
     {abortSignal, ...params}: RequestConfig & UpdateChannelRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       channelStorage: fromChannelStorage(params["channelStorage"]),
       retentionPeriod: fromRetentionPeriod(params["retentionPeriod"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateChannel",
@@ -670,13 +622,13 @@ export default class IoTAnalytics {
   async updateDataset(
     {abortSignal, ...params}: RequestConfig & UpdateDatasetRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       actions: params["actions"]?.map(x => fromDatasetAction(x)),
       triggers: params["triggers"]?.map(x => fromDatasetTrigger(x)),
       contentDeliveryRules: params["contentDeliveryRules"]?.map(x => fromDatasetContentDeliveryRule(x)),
       retentionPeriod: fromRetentionPeriod(params["retentionPeriod"]),
       versioningConfiguration: fromVersioningConfiguration(params["versioningConfiguration"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateDataset",
@@ -688,10 +640,10 @@ export default class IoTAnalytics {
   async updateDatastore(
     {abortSignal, ...params}: RequestConfig & UpdateDatastoreRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       retentionPeriod: fromRetentionPeriod(params["retentionPeriod"]),
       datastoreStorage: fromDatastoreStorage(params["datastoreStorage"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateDatastore",
@@ -703,9 +655,9 @@ export default class IoTAnalytics {
   async updatePipeline(
     {abortSignal, ...params}: RequestConfig & UpdatePipelineRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       pipelineActivities: params["pipelineActivities"]?.map(x => fromPipelineActivity(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdatePipeline",

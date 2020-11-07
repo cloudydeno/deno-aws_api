@@ -33,11 +33,11 @@ export default class IoTSiteWise {
   async associateAssets(
     {abortSignal, ...params}: RequestConfig & AssociateAssetsRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       hierarchyId: params["hierarchyId"],
       childAssetId: params["childAssetId"],
       clientToken: params["clientToken"] ?? generateIdemptToken(),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AssociateAssets",
@@ -49,10 +49,10 @@ export default class IoTSiteWise {
   async batchAssociateProjectAssets(
     {abortSignal, ...params}: RequestConfig & BatchAssociateProjectAssetsRequest,
   ): Promise<BatchAssociateProjectAssetsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       assetIds: params["assetIds"],
       clientToken: params["clientToken"] ?? generateIdemptToken(),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchAssociateProjectAssets",
@@ -60,23 +60,21 @@ export default class IoTSiteWise {
       responseCode: 200,
       hostPrefix: `monitor.`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "errors": [toAssetErrorDetails],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "errors": [toAssetErrorDetails],
+      },
+    }, await resp.json());
   }
 
   async batchDisassociateProjectAssets(
     {abortSignal, ...params}: RequestConfig & BatchDisassociateProjectAssetsRequest,
   ): Promise<BatchDisassociateProjectAssetsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       assetIds: params["assetIds"],
       clientToken: params["clientToken"] ?? generateIdemptToken(),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchDisassociateProjectAssets",
@@ -84,48 +82,44 @@ export default class IoTSiteWise {
       responseCode: 200,
       hostPrefix: `monitor.`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "errors": [toAssetErrorDetails],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "errors": [toAssetErrorDetails],
+      },
+    }, await resp.json());
   }
 
   async batchPutAssetPropertyValue(
     {abortSignal, ...params}: RequestConfig & BatchPutAssetPropertyValueRequest,
   ): Promise<BatchPutAssetPropertyValueResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       entries: params["entries"]?.map(x => fromPutAssetPropertyValueEntry(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchPutAssetPropertyValue",
       requestUri: "/properties",
       hostPrefix: `data.`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "errorEntries": [toBatchPutAssetPropertyErrorEntry],
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "errorEntries": [toBatchPutAssetPropertyErrorEntry],
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async createAccessPolicy(
     {abortSignal, ...params}: RequestConfig & CreateAccessPolicyRequest,
   ): Promise<CreateAccessPolicyResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       accessPolicyIdentity: fromIdentity(params["accessPolicyIdentity"]),
       accessPolicyResource: fromResource(params["accessPolicyResource"]),
       accessPolicyPermission: params["accessPolicyPermission"],
       clientToken: params["clientToken"] ?? generateIdemptToken(),
       tags: params["tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateAccessPolicy",
@@ -133,26 +127,24 @@ export default class IoTSiteWise {
       responseCode: 201,
       hostPrefix: `monitor.`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "accessPolicyId": "s",
-          "accessPolicyArn": "s",
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "accessPolicyId": "s",
+        "accessPolicyArn": "s",
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async createAsset(
     {abortSignal, ...params}: RequestConfig & CreateAssetRequest,
   ): Promise<CreateAssetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       assetName: params["assetName"],
       assetModelId: params["assetModelId"],
       clientToken: params["clientToken"] ?? generateIdemptToken(),
       tags: params["tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateAsset",
@@ -160,29 +152,27 @@ export default class IoTSiteWise {
       responseCode: 202,
       hostPrefix: `model.`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "assetId": "s",
-          "assetArn": "s",
-          "assetStatus": toAssetStatus,
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "assetId": "s",
+        "assetArn": "s",
+        "assetStatus": toAssetStatus,
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async createAssetModel(
     {abortSignal, ...params}: RequestConfig & CreateAssetModelRequest,
   ): Promise<CreateAssetModelResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       assetModelName: params["assetModelName"],
       assetModelDescription: params["assetModelDescription"],
       assetModelProperties: params["assetModelProperties"]?.map(x => fromAssetModelPropertyDefinition(x)),
       assetModelHierarchies: params["assetModelHierarchies"]?.map(x => fromAssetModelHierarchyDefinition(x)),
       clientToken: params["clientToken"] ?? generateIdemptToken(),
       tags: params["tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateAssetModel",
@@ -190,29 +180,27 @@ export default class IoTSiteWise {
       responseCode: 202,
       hostPrefix: `model.`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "assetModelId": "s",
-          "assetModelArn": "s",
-          "assetModelStatus": toAssetModelStatus,
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "assetModelId": "s",
+        "assetModelArn": "s",
+        "assetModelStatus": toAssetModelStatus,
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async createDashboard(
     {abortSignal, ...params}: RequestConfig & CreateDashboardRequest,
   ): Promise<CreateDashboardResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       projectId: params["projectId"],
       dashboardName: params["dashboardName"],
       dashboardDescription: params["dashboardDescription"],
       dashboardDefinition: params["dashboardDefinition"],
       clientToken: params["clientToken"] ?? generateIdemptToken(),
       tags: params["tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDashboard",
@@ -220,25 +208,23 @@ export default class IoTSiteWise {
       responseCode: 201,
       hostPrefix: `monitor.`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "dashboardId": "s",
-          "dashboardArn": "s",
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "dashboardId": "s",
+        "dashboardArn": "s",
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async createGateway(
     {abortSignal, ...params}: RequestConfig & CreateGatewayRequest,
   ): Promise<CreateGatewayResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       gatewayName: params["gatewayName"],
       gatewayPlatform: fromGatewayPlatform(params["gatewayPlatform"]),
       tags: params["tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateGateway",
@@ -246,21 +232,19 @@ export default class IoTSiteWise {
       responseCode: 201,
       hostPrefix: `edge.`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "gatewayId": "s",
-          "gatewayArn": "s",
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "gatewayId": "s",
+        "gatewayArn": "s",
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async createPortal(
     {abortSignal, ...params}: RequestConfig & CreatePortalRequest,
   ): Promise<CreatePortalResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       portalName: params["portalName"],
       portalDescription: params["portalDescription"],
       portalContactEmail: params["portalContactEmail"],
@@ -269,7 +253,7 @@ export default class IoTSiteWise {
       roleArn: params["roleArn"],
       tags: params["tags"],
       portalAuthMode: params["portalAuthMode"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreatePortal",
@@ -277,18 +261,16 @@ export default class IoTSiteWise {
       responseCode: 202,
       hostPrefix: `monitor.`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "portalId": "s",
-          "portalArn": "s",
-          "portalStartUrl": "s",
-          "portalStatus": toPortalStatus,
-          "ssoApplicationId": "s",
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "portalId": "s",
+        "portalArn": "s",
+        "portalStartUrl": "s",
+        "portalStatus": toPortalStatus,
+        "ssoApplicationId": "s",
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async createPresignedPortalUrl(
@@ -304,26 +286,24 @@ export default class IoTSiteWise {
       responseCode: 200,
       hostPrefix: `monitor.`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "presignedPortalUrl": "s",
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "presignedPortalUrl": "s",
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async createProject(
     {abortSignal, ...params}: RequestConfig & CreateProjectRequest,
   ): Promise<CreateProjectResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       portalId: params["portalId"],
       projectName: params["projectName"],
       projectDescription: params["projectDescription"],
       clientToken: params["clientToken"] ?? generateIdemptToken(),
       tags: params["tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateProject",
@@ -331,15 +311,13 @@ export default class IoTSiteWise {
       responseCode: 201,
       hostPrefix: `monitor.`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "projectId": "s",
-          "projectArn": "s",
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "projectId": "s",
+        "projectArn": "s",
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async deleteAccessPolicy(
@@ -355,12 +333,10 @@ export default class IoTSiteWise {
       responseCode: 204,
       hostPrefix: `monitor.`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async deleteAsset(
@@ -376,14 +352,12 @@ export default class IoTSiteWise {
       responseCode: 202,
       hostPrefix: `model.`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "assetStatus": toAssetStatus,
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "assetStatus": toAssetStatus,
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async deleteAssetModel(
@@ -399,14 +373,12 @@ export default class IoTSiteWise {
       responseCode: 202,
       hostPrefix: `model.`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "assetModelStatus": toAssetModelStatus,
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "assetModelStatus": toAssetModelStatus,
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async deleteDashboard(
@@ -422,12 +394,10 @@ export default class IoTSiteWise {
       responseCode: 204,
       hostPrefix: `monitor.`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async deleteGateway(
@@ -456,14 +426,12 @@ export default class IoTSiteWise {
       responseCode: 202,
       hostPrefix: `monitor.`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "portalStatus": toPortalStatus,
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "portalStatus": toPortalStatus,
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async deleteProject(
@@ -479,12 +447,10 @@ export default class IoTSiteWise {
       responseCode: 204,
       hostPrefix: `monitor.`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async describeAccessPolicy(
@@ -499,20 +465,18 @@ export default class IoTSiteWise {
       responseCode: 200,
       hostPrefix: `monitor.`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "accessPolicyId": "s",
-          "accessPolicyArn": "s",
-          "accessPolicyIdentity": toIdentity,
-          "accessPolicyResource": toResource,
-          "accessPolicyPermission": (x: jsonP.JSONValue) => cmnP.readEnum<Permission>(x),
-          "accessPolicyCreationDate": "d",
-          "accessPolicyLastUpdateDate": "d",
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "accessPolicyId": "s",
+        "accessPolicyArn": "s",
+        "accessPolicyIdentity": toIdentity,
+        "accessPolicyResource": toResource,
+        "accessPolicyPermission": (x: jsonP.JSONValue) => cmnP.readEnum<Permission>(x),
+        "accessPolicyCreationDate": "d",
+        "accessPolicyLastUpdateDate": "d",
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async describeAsset(
@@ -526,22 +490,20 @@ export default class IoTSiteWise {
       requestUri: cmnP.encodePath`/assets/${params["assetId"]}`,
       hostPrefix: `model.`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "assetId": "s",
-          "assetArn": "s",
-          "assetName": "s",
-          "assetModelId": "s",
-          "assetProperties": [toAssetProperty],
-          "assetHierarchies": [toAssetHierarchy],
-          "assetCreationDate": "d",
-          "assetLastUpdateDate": "d",
-          "assetStatus": toAssetStatus,
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "assetId": "s",
+        "assetArn": "s",
+        "assetName": "s",
+        "assetModelId": "s",
+        "assetProperties": [toAssetProperty],
+        "assetHierarchies": [toAssetHierarchy],
+        "assetCreationDate": "d",
+        "assetLastUpdateDate": "d",
+        "assetStatus": toAssetStatus,
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async describeAssetModel(
@@ -555,22 +517,20 @@ export default class IoTSiteWise {
       requestUri: cmnP.encodePath`/asset-models/${params["assetModelId"]}`,
       hostPrefix: `model.`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "assetModelId": "s",
-          "assetModelArn": "s",
-          "assetModelName": "s",
-          "assetModelDescription": "s",
-          "assetModelProperties": [toAssetModelProperty],
-          "assetModelHierarchies": [toAssetModelHierarchy],
-          "assetModelCreationDate": "d",
-          "assetModelLastUpdateDate": "d",
-          "assetModelStatus": toAssetModelStatus,
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "assetModelId": "s",
+        "assetModelArn": "s",
+        "assetModelName": "s",
+        "assetModelDescription": "s",
+        "assetModelProperties": [toAssetModelProperty],
+        "assetModelHierarchies": [toAssetModelHierarchy],
+        "assetModelCreationDate": "d",
+        "assetModelLastUpdateDate": "d",
+        "assetModelStatus": toAssetModelStatus,
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async describeAssetProperty(
@@ -584,17 +544,15 @@ export default class IoTSiteWise {
       requestUri: cmnP.encodePath`/assets/${params["assetId"]}/properties/${params["propertyId"]}`,
       hostPrefix: `model.`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "assetId": "s",
-          "assetName": "s",
-          "assetModelId": "s",
-          "assetProperty": toProperty,
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "assetId": "s",
+        "assetName": "s",
+        "assetModelId": "s",
+        "assetProperty": toProperty,
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async describeDashboard(
@@ -609,22 +567,20 @@ export default class IoTSiteWise {
       responseCode: 200,
       hostPrefix: `monitor.`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "dashboardId": "s",
-          "dashboardArn": "s",
-          "dashboardName": "s",
-          "projectId": "s",
-          "dashboardDefinition": "s",
-          "dashboardCreationDate": "d",
-          "dashboardLastUpdateDate": "d",
-        },
-        optional: {
-          "dashboardDescription": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "dashboardId": "s",
+        "dashboardArn": "s",
+        "dashboardName": "s",
+        "projectId": "s",
+        "dashboardDefinition": "s",
+        "dashboardCreationDate": "d",
+        "dashboardLastUpdateDate": "d",
+      },
+      optional: {
+        "dashboardDescription": "s",
+      },
+    }, await resp.json());
   }
 
   async describeGateway(
@@ -638,21 +594,19 @@ export default class IoTSiteWise {
       requestUri: cmnP.encodePath`/20200301/gateways/${params["gatewayId"]}`,
       hostPrefix: `edge.`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "gatewayId": "s",
-          "gatewayName": "s",
-          "gatewayArn": "s",
-          "gatewayCapabilitySummaries": [toGatewayCapabilitySummary],
-          "creationDate": "d",
-          "lastUpdateDate": "d",
-        },
-        optional: {
-          "gatewayPlatform": toGatewayPlatform,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "gatewayId": "s",
+        "gatewayName": "s",
+        "gatewayArn": "s",
+        "gatewayCapabilitySummaries": [toGatewayCapabilitySummary],
+        "creationDate": "d",
+        "lastUpdateDate": "d",
+      },
+      optional: {
+        "gatewayPlatform": toGatewayPlatform,
+      },
+    }, await resp.json());
   }
 
   async describeGatewayCapabilityConfiguration(
@@ -666,17 +620,15 @@ export default class IoTSiteWise {
       requestUri: cmnP.encodePath`/20200301/gateways/${params["gatewayId"]}/capability/${params["capabilityNamespace"]}`,
       hostPrefix: `edge.`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "gatewayId": "s",
-          "capabilityNamespace": "s",
-          "capabilityConfiguration": "s",
-          "capabilitySyncStatus": (x: jsonP.JSONValue) => cmnP.readEnum<CapabilitySyncStatus>(x),
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "gatewayId": "s",
+        "capabilityNamespace": "s",
+        "capabilityConfiguration": "s",
+        "capabilitySyncStatus": (x: jsonP.JSONValue) => cmnP.readEnum<CapabilitySyncStatus>(x),
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async describeLoggingOptions(
@@ -690,14 +642,12 @@ export default class IoTSiteWise {
       requestUri: "/logging",
       hostPrefix: `model.`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "loggingOptions": toLoggingOptions,
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "loggingOptions": toLoggingOptions,
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async describePortal(
@@ -712,27 +662,25 @@ export default class IoTSiteWise {
       responseCode: 200,
       hostPrefix: `monitor.`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "portalId": "s",
-          "portalArn": "s",
-          "portalName": "s",
-          "portalClientId": "s",
-          "portalStartUrl": "s",
-          "portalContactEmail": "s",
-          "portalStatus": toPortalStatus,
-          "portalCreationDate": "d",
-          "portalLastUpdateDate": "d",
-        },
-        optional: {
-          "portalDescription": "s",
-          "portalLogoImageLocation": toImageLocation,
-          "roleArn": "s",
-          "portalAuthMode": (x: jsonP.JSONValue) => cmnP.readEnum<AuthMode>(x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "portalId": "s",
+        "portalArn": "s",
+        "portalName": "s",
+        "portalClientId": "s",
+        "portalStartUrl": "s",
+        "portalContactEmail": "s",
+        "portalStatus": toPortalStatus,
+        "portalCreationDate": "d",
+        "portalLastUpdateDate": "d",
+      },
+      optional: {
+        "portalDescription": "s",
+        "portalLogoImageLocation": toImageLocation,
+        "roleArn": "s",
+        "portalAuthMode": (x: jsonP.JSONValue) => cmnP.readEnum<AuthMode>(x),
+      },
+    }, await resp.json());
   }
 
   async describeProject(
@@ -747,31 +695,29 @@ export default class IoTSiteWise {
       responseCode: 200,
       hostPrefix: `monitor.`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "projectId": "s",
-          "projectArn": "s",
-          "projectName": "s",
-          "portalId": "s",
-          "projectCreationDate": "d",
-          "projectLastUpdateDate": "d",
-        },
-        optional: {
-          "projectDescription": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "projectId": "s",
+        "projectArn": "s",
+        "projectName": "s",
+        "portalId": "s",
+        "projectCreationDate": "d",
+        "projectLastUpdateDate": "d",
+      },
+      optional: {
+        "projectDescription": "s",
+      },
+    }, await resp.json());
   }
 
   async disassociateAssets(
     {abortSignal, ...params}: RequestConfig & DisassociateAssetsRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       hierarchyId: params["hierarchyId"],
       childAssetId: params["childAssetId"],
       clientToken: params["clientToken"] ?? generateIdemptToken(),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisassociateAssets",
@@ -806,16 +752,14 @@ export default class IoTSiteWise {
       requestUri: "/properties/aggregates",
       hostPrefix: `data.`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "aggregatedValues": [toAggregatedValue],
-        },
-        optional: {
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "aggregatedValues": [toAggregatedValue],
+      },
+      optional: {
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async getAssetPropertyValue(
@@ -832,14 +776,12 @@ export default class IoTSiteWise {
       requestUri: "/properties/latest",
       hostPrefix: `data.`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "propertyValue": toAssetPropertyValue,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "propertyValue": toAssetPropertyValue,
+      },
+    }, await resp.json());
   }
 
   async getAssetPropertyValueHistory(
@@ -864,16 +806,14 @@ export default class IoTSiteWise {
       requestUri: "/properties/history",
       hostPrefix: `data.`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "assetPropertyValueHistory": [toAssetPropertyValue],
-        },
-        optional: {
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "assetPropertyValueHistory": [toAssetPropertyValue],
+      },
+      optional: {
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listAccessPolicies(
@@ -895,16 +835,14 @@ export default class IoTSiteWise {
       responseCode: 200,
       hostPrefix: `monitor.`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "accessPolicySummaries": [toAccessPolicySummary],
-        },
-        optional: {
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "accessPolicySummaries": [toAccessPolicySummary],
+      },
+      optional: {
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listAssetModels(
@@ -920,16 +858,14 @@ export default class IoTSiteWise {
       requestUri: "/asset-models",
       hostPrefix: `model.`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "assetModelSummaries": [toAssetModelSummary],
-        },
-        optional: {
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "assetModelSummaries": [toAssetModelSummary],
+      },
+      optional: {
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listAssets(
@@ -947,16 +883,14 @@ export default class IoTSiteWise {
       requestUri: "/assets",
       hostPrefix: `model.`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "assetSummaries": [toAssetSummary],
-        },
-        optional: {
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "assetSummaries": [toAssetSummary],
+      },
+      optional: {
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listAssociatedAssets(
@@ -974,16 +908,14 @@ export default class IoTSiteWise {
       requestUri: cmnP.encodePath`/assets/${params["assetId"]}/hierarchies`,
       hostPrefix: `model.`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "assetSummaries": [toAssociatedAssetsSummary],
-        },
-        optional: {
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "assetSummaries": [toAssociatedAssetsSummary],
+      },
+      optional: {
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listDashboards(
@@ -1001,16 +933,14 @@ export default class IoTSiteWise {
       responseCode: 200,
       hostPrefix: `monitor.`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "dashboardSummaries": [toDashboardSummary],
-        },
-        optional: {
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "dashboardSummaries": [toDashboardSummary],
+      },
+      optional: {
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listGateways(
@@ -1026,16 +956,14 @@ export default class IoTSiteWise {
       requestUri: "/20200301/gateways",
       hostPrefix: `edge.`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "gatewaySummaries": [toGatewaySummary],
-        },
-        optional: {
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "gatewaySummaries": [toGatewaySummary],
+      },
+      optional: {
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listPortals(
@@ -1052,15 +980,13 @@ export default class IoTSiteWise {
       responseCode: 200,
       hostPrefix: `monitor.`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "portalSummaries": [toPortalSummary],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "portalSummaries": [toPortalSummary],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listProjectAssets(
@@ -1077,16 +1003,14 @@ export default class IoTSiteWise {
       responseCode: 200,
       hostPrefix: `monitor.`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "assetIds": ["s"],
-        },
-        optional: {
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "assetIds": ["s"],
+      },
+      optional: {
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listProjects(
@@ -1104,16 +1028,14 @@ export default class IoTSiteWise {
       responseCode: 200,
       hostPrefix: `monitor.`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "projectSummaries": [toProjectSummary],
-        },
-        optional: {
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "projectSummaries": [toProjectSummary],
+      },
+      optional: {
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listTagsForResource(
@@ -1127,22 +1049,20 @@ export default class IoTSiteWise {
       method: "GET",
       requestUri: "/tags",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async putLoggingOptions(
     {abortSignal, ...params}: RequestConfig & PutLoggingOptionsRequest,
   ): Promise<PutLoggingOptionsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       loggingOptions: fromLoggingOptions(params["loggingOptions"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutLoggingOptions",
@@ -1150,33 +1070,29 @@ export default class IoTSiteWise {
       requestUri: "/logging",
       hostPrefix: `model.`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResponse> {
     const query = new URLSearchParams;
-    query.set("resourceArn", params["resourceArn"]?.toString() ?? "");
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       tags: params["tags"],
-    } : {};
+    };
+    query.set("resourceArn", params["resourceArn"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
       abortSignal, query, body,
       action: "TagResource",
       requestUri: "/tags",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async untagResource(
@@ -1193,23 +1109,21 @@ export default class IoTSiteWise {
       method: "DELETE",
       requestUri: "/tags",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async updateAccessPolicy(
     {abortSignal, ...params}: RequestConfig & UpdateAccessPolicyRequest,
   ): Promise<UpdateAccessPolicyResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       accessPolicyIdentity: fromIdentity(params["accessPolicyIdentity"]),
       accessPolicyResource: fromResource(params["accessPolicyResource"]),
       accessPolicyPermission: params["accessPolicyPermission"],
       clientToken: params["clientToken"] ?? generateIdemptToken(),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateAccessPolicy",
@@ -1218,21 +1132,19 @@ export default class IoTSiteWise {
       responseCode: 200,
       hostPrefix: `monitor.`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async updateAsset(
     {abortSignal, ...params}: RequestConfig & UpdateAssetRequest,
   ): Promise<UpdateAssetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       assetName: params["assetName"],
       clientToken: params["clientToken"] ?? generateIdemptToken(),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateAsset",
@@ -1241,26 +1153,24 @@ export default class IoTSiteWise {
       responseCode: 202,
       hostPrefix: `model.`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "assetStatus": toAssetStatus,
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "assetStatus": toAssetStatus,
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async updateAssetModel(
     {abortSignal, ...params}: RequestConfig & UpdateAssetModelRequest,
   ): Promise<UpdateAssetModelResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       assetModelName: params["assetModelName"],
       assetModelDescription: params["assetModelDescription"],
       assetModelProperties: params["assetModelProperties"]?.map(x => fromAssetModelProperty(x)),
       assetModelHierarchies: params["assetModelHierarchies"]?.map(x => fromAssetModelHierarchy(x)),
       clientToken: params["clientToken"] ?? generateIdemptToken(),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateAssetModel",
@@ -1269,24 +1179,22 @@ export default class IoTSiteWise {
       responseCode: 202,
       hostPrefix: `model.`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "assetModelStatus": toAssetModelStatus,
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "assetModelStatus": toAssetModelStatus,
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async updateAssetProperty(
     {abortSignal, ...params}: RequestConfig & UpdateAssetPropertyRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       propertyAlias: params["propertyAlias"],
       propertyNotificationState: params["propertyNotificationState"],
       clientToken: params["clientToken"] ?? generateIdemptToken(),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateAssetProperty",
@@ -1299,12 +1207,12 @@ export default class IoTSiteWise {
   async updateDashboard(
     {abortSignal, ...params}: RequestConfig & UpdateDashboardRequest,
   ): Promise<UpdateDashboardResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       dashboardName: params["dashboardName"],
       dashboardDescription: params["dashboardDescription"],
       dashboardDefinition: params["dashboardDefinition"],
       clientToken: params["clientToken"] ?? generateIdemptToken(),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateDashboard",
@@ -1313,20 +1221,18 @@ export default class IoTSiteWise {
       responseCode: 200,
       hostPrefix: `monitor.`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async updateGateway(
     {abortSignal, ...params}: RequestConfig & UpdateGatewayRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       gatewayName: params["gatewayName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateGateway",
@@ -1339,10 +1245,10 @@ export default class IoTSiteWise {
   async updateGatewayCapabilityConfiguration(
     {abortSignal, ...params}: RequestConfig & UpdateGatewayCapabilityConfigurationRequest,
   ): Promise<UpdateGatewayCapabilityConfigurationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       capabilityNamespace: params["capabilityNamespace"],
       capabilityConfiguration: params["capabilityConfiguration"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateGatewayCapabilityConfiguration",
@@ -1350,28 +1256,26 @@ export default class IoTSiteWise {
       responseCode: 201,
       hostPrefix: `edge.`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "capabilityNamespace": "s",
-          "capabilitySyncStatus": (x: jsonP.JSONValue) => cmnP.readEnum<CapabilitySyncStatus>(x),
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "capabilityNamespace": "s",
+        "capabilitySyncStatus": (x: jsonP.JSONValue) => cmnP.readEnum<CapabilitySyncStatus>(x),
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async updatePortal(
     {abortSignal, ...params}: RequestConfig & UpdatePortalRequest,
   ): Promise<UpdatePortalResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       portalName: params["portalName"],
       portalDescription: params["portalDescription"],
       portalContactEmail: params["portalContactEmail"],
       portalLogoImage: fromImage(params["portalLogoImage"]),
       roleArn: params["roleArn"],
       clientToken: params["clientToken"] ?? generateIdemptToken(),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdatePortal",
@@ -1380,24 +1284,22 @@ export default class IoTSiteWise {
       responseCode: 202,
       hostPrefix: `monitor.`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "portalStatus": toPortalStatus,
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "portalStatus": toPortalStatus,
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async updateProject(
     {abortSignal, ...params}: RequestConfig & UpdateProjectRequest,
   ): Promise<UpdateProjectResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       projectName: params["projectName"],
       projectDescription: params["projectDescription"],
       clientToken: params["clientToken"] ?? generateIdemptToken(),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateProject",
@@ -1406,12 +1308,10 @@ export default class IoTSiteWise {
       responseCode: 200,
       hostPrefix: `monitor.`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   // Resource State Waiters
@@ -1425,7 +1325,7 @@ export default class IoTSiteWise {
       try {
         const resp = await this.describeAssetModel(params);
       } catch (err) {
-        if (["ResourceNotFoundException"].includes(err.code)) return err;
+        if (["ResourceNotFoundException"].includes(err.shortCode)) return err;
         throw err;
       }
       await new Promise(r => setTimeout(r, 3000));
@@ -1457,7 +1357,7 @@ export default class IoTSiteWise {
       try {
         const resp = await this.describeAsset(params);
       } catch (err) {
-        if (["ResourceNotFoundException"].includes(err.code)) return err;
+        if (["ResourceNotFoundException"].includes(err.shortCode)) return err;
         throw err;
       }
       await new Promise(r => setTimeout(r, 3000));
@@ -1489,7 +1389,7 @@ export default class IoTSiteWise {
       try {
         const resp = await this.describePortal(params);
       } catch (err) {
-        if (["ResourceNotFoundException"].includes(err.code)) return err;
+        if (["ResourceNotFoundException"].includes(err.shortCode)) return err;
         throw err;
       }
       await new Promise(r => setTimeout(r, 3000));

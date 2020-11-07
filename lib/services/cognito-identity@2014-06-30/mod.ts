@@ -29,7 +29,7 @@ export default class CognitoIdentity {
   async createIdentityPool(
     {abortSignal, ...params}: RequestConfig & CreateIdentityPoolInput,
   ): Promise<IdentityPool> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       IdentityPoolName: params["IdentityPoolName"],
       AllowUnauthenticatedIdentities: params["AllowUnauthenticatedIdentities"],
       AllowClassicFlow: params["AllowClassicFlow"],
@@ -39,7 +39,7 @@ export default class CognitoIdentity {
       CognitoIdentityProviders: params["CognitoIdentityProviders"]?.map(x => fromCognitoIdentityProvider(x)),
       SamlProviderARNs: params["SamlProviderARNs"],
       IdentityPoolTags: params["IdentityPoolTags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateIdentityPool",
@@ -50,9 +50,9 @@ export default class CognitoIdentity {
   async deleteIdentities(
     {abortSignal, ...params}: RequestConfig & DeleteIdentitiesInput,
   ): Promise<DeleteIdentitiesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       IdentityIdsToDelete: params["IdentityIdsToDelete"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteIdentities",
@@ -68,9 +68,9 @@ export default class CognitoIdentity {
   async deleteIdentityPool(
     {abortSignal, ...params}: RequestConfig & DeleteIdentityPoolInput,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       IdentityPoolId: params["IdentityPoolId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteIdentityPool",
@@ -80,9 +80,9 @@ export default class CognitoIdentity {
   async describeIdentity(
     {abortSignal, ...params}: RequestConfig & DescribeIdentityInput,
   ): Promise<IdentityDescription> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       IdentityId: params["IdentityId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeIdentity",
@@ -93,9 +93,9 @@ export default class CognitoIdentity {
   async describeIdentityPool(
     {abortSignal, ...params}: RequestConfig & DescribeIdentityPoolInput,
   ): Promise<IdentityPool> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       IdentityPoolId: params["IdentityPoolId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeIdentityPool",
@@ -106,11 +106,11 @@ export default class CognitoIdentity {
   async getCredentialsForIdentity(
     {abortSignal, ...params}: RequestConfig & GetCredentialsForIdentityInput,
   ): Promise<GetCredentialsForIdentityResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       IdentityId: params["IdentityId"],
       Logins: params["Logins"],
       CustomRoleArn: params["CustomRoleArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       skipSigning: true,
       abortSignal, body,
@@ -128,11 +128,11 @@ export default class CognitoIdentity {
   async getId(
     {abortSignal, ...params}: RequestConfig & GetIdInput,
   ): Promise<GetIdResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AccountId: params["AccountId"],
       IdentityPoolId: params["IdentityPoolId"],
       Logins: params["Logins"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       skipSigning: true,
       abortSignal, body,
@@ -149,9 +149,9 @@ export default class CognitoIdentity {
   async getIdentityPoolRoles(
     {abortSignal, ...params}: RequestConfig & GetIdentityPoolRolesInput,
   ): Promise<GetIdentityPoolRolesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       IdentityPoolId: params["IdentityPoolId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetIdentityPoolRoles",
@@ -169,10 +169,10 @@ export default class CognitoIdentity {
   async getOpenIdToken(
     {abortSignal, ...params}: RequestConfig & GetOpenIdTokenInput,
   ): Promise<GetOpenIdTokenResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       IdentityId: params["IdentityId"],
       Logins: params["Logins"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       skipSigning: true,
       abortSignal, body,
@@ -190,12 +190,12 @@ export default class CognitoIdentity {
   async getOpenIdTokenForDeveloperIdentity(
     {abortSignal, ...params}: RequestConfig & GetOpenIdTokenForDeveloperIdentityInput,
   ): Promise<GetOpenIdTokenForDeveloperIdentityResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       IdentityPoolId: params["IdentityPoolId"],
       IdentityId: params["IdentityId"],
       Logins: params["Logins"],
       TokenDuration: params["TokenDuration"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetOpenIdTokenForDeveloperIdentity",
@@ -212,12 +212,12 @@ export default class CognitoIdentity {
   async listIdentities(
     {abortSignal, ...params}: RequestConfig & ListIdentitiesInput,
   ): Promise<ListIdentitiesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       IdentityPoolId: params["IdentityPoolId"],
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
       HideDisabled: params["HideDisabled"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListIdentities",
@@ -235,10 +235,10 @@ export default class CognitoIdentity {
   async listIdentityPools(
     {abortSignal, ...params}: RequestConfig & ListIdentityPoolsInput,
   ): Promise<ListIdentityPoolsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListIdentityPools",
@@ -255,9 +255,9 @@ export default class CognitoIdentity {
   async listTagsForResource(
     {abortSignal, ...params}: RequestConfig & ListTagsForResourceInput,
   ): Promise<ListTagsForResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForResource",
@@ -273,13 +273,13 @@ export default class CognitoIdentity {
   async lookupDeveloperIdentity(
     {abortSignal, ...params}: RequestConfig & LookupDeveloperIdentityInput,
   ): Promise<LookupDeveloperIdentityResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       IdentityPoolId: params["IdentityPoolId"],
       IdentityId: params["IdentityId"],
       DeveloperUserIdentifier: params["DeveloperUserIdentifier"],
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "LookupDeveloperIdentity",
@@ -297,12 +297,12 @@ export default class CognitoIdentity {
   async mergeDeveloperIdentities(
     {abortSignal, ...params}: RequestConfig & MergeDeveloperIdentitiesInput,
   ): Promise<MergeDeveloperIdentitiesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       SourceUserIdentifier: params["SourceUserIdentifier"],
       DestinationUserIdentifier: params["DestinationUserIdentifier"],
       DeveloperProviderName: params["DeveloperProviderName"],
       IdentityPoolId: params["IdentityPoolId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "MergeDeveloperIdentities",
@@ -318,11 +318,11 @@ export default class CognitoIdentity {
   async setIdentityPoolRoles(
     {abortSignal, ...params}: RequestConfig & SetIdentityPoolRolesInput,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       IdentityPoolId: params["IdentityPoolId"],
       Roles: params["Roles"],
       RoleMappings: jsonP.serializeMap(params["RoleMappings"], x => fromRoleMapping(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SetIdentityPoolRoles",
@@ -332,10 +332,10 @@ export default class CognitoIdentity {
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceInput,
   ): Promise<TagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
       Tags: params["Tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
@@ -349,12 +349,12 @@ export default class CognitoIdentity {
   async unlinkDeveloperIdentity(
     {abortSignal, ...params}: RequestConfig & UnlinkDeveloperIdentityInput,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       IdentityId: params["IdentityId"],
       IdentityPoolId: params["IdentityPoolId"],
       DeveloperProviderName: params["DeveloperProviderName"],
       DeveloperUserIdentifier: params["DeveloperUserIdentifier"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UnlinkDeveloperIdentity",
@@ -364,11 +364,11 @@ export default class CognitoIdentity {
   async unlinkIdentity(
     {abortSignal, ...params}: RequestConfig & UnlinkIdentityInput,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       IdentityId: params["IdentityId"],
       Logins: params["Logins"],
       LoginsToRemove: params["LoginsToRemove"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UnlinkIdentity",
@@ -378,10 +378,10 @@ export default class CognitoIdentity {
   async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceInput,
   ): Promise<UntagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
       TagKeys: params["TagKeys"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResource",
@@ -395,7 +395,7 @@ export default class CognitoIdentity {
   async updateIdentityPool(
     {abortSignal, ...params}: RequestConfig & IdentityPool,
   ): Promise<IdentityPool> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       IdentityPoolId: params["IdentityPoolId"],
       IdentityPoolName: params["IdentityPoolName"],
       AllowUnauthenticatedIdentities: params["AllowUnauthenticatedIdentities"],
@@ -406,7 +406,7 @@ export default class CognitoIdentity {
       CognitoIdentityProviders: params["CognitoIdentityProviders"]?.map(x => fromCognitoIdentityProvider(x)),
       SamlProviderARNs: params["SamlProviderARNs"],
       IdentityPoolTags: params["IdentityPoolTags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateIdentityPool",

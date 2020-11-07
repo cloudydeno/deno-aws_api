@@ -33,11 +33,11 @@ export default class AccessAnalyzer {
   async applyArchiveRule(
     {abortSignal, ...params}: RequestConfig & ApplyArchiveRuleRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       analyzerArn: params["analyzerArn"],
       clientToken: params["clientToken"] ?? generateIdemptToken(),
       ruleName: params["ruleName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ApplyArchiveRule",
@@ -50,13 +50,13 @@ export default class AccessAnalyzer {
   async createAnalyzer(
     {abortSignal, ...params}: RequestConfig & CreateAnalyzerRequest,
   ): Promise<CreateAnalyzerResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       analyzerName: params["analyzerName"],
       archiveRules: params["archiveRules"]?.map(x => fromInlineArchiveRule(x)),
       clientToken: params["clientToken"] ?? generateIdemptToken(),
       tags: params["tags"],
       type: params["type"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateAnalyzer",
@@ -64,24 +64,22 @@ export default class AccessAnalyzer {
       requestUri: "/analyzer",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "arn": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "arn": "s",
+      },
+    }, await resp.json());
   }
 
   async createArchiveRule(
     {abortSignal, ...params}: RequestConfig & CreateArchiveRuleRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       clientToken: params["clientToken"] ?? generateIdemptToken(),
       filter: jsonP.serializeMap(params["filter"], x => fromCriterion(x)),
       ruleName: params["ruleName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateArchiveRule",
@@ -132,14 +130,12 @@ export default class AccessAnalyzer {
       requestUri: "/analyzed-resource",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "resource": toAnalyzedResource,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "resource": toAnalyzedResource,
+      },
+    }, await resp.json());
   }
 
   async getAnalyzer(
@@ -153,14 +149,12 @@ export default class AccessAnalyzer {
       requestUri: cmnP.encodePath`/analyzer/${params["analyzerName"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "analyzer": toAnalyzerSummary,
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "analyzer": toAnalyzerSummary,
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async getArchiveRule(
@@ -174,14 +168,12 @@ export default class AccessAnalyzer {
       requestUri: cmnP.encodePath`/analyzer/${params["analyzerName"]}/archive-rule/${params["ruleName"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "archiveRule": toArchiveRuleSummary,
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "archiveRule": toArchiveRuleSummary,
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async getFinding(
@@ -196,41 +188,37 @@ export default class AccessAnalyzer {
       requestUri: cmnP.encodePath`/finding/${params["id"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "finding": toFinding,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "finding": toFinding,
+      },
+    }, await resp.json());
   }
 
   async listAnalyzedResources(
     {abortSignal, ...params}: RequestConfig & ListAnalyzedResourcesRequest,
   ): Promise<ListAnalyzedResourcesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       analyzerArn: params["analyzerArn"],
       maxResults: params["maxResults"],
       nextToken: params["nextToken"],
       resourceType: params["resourceType"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListAnalyzedResources",
       requestUri: "/analyzed-resource",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "analyzedResources": [toAnalyzedResourceSummary],
-        },
-        optional: {
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "analyzedResources": [toAnalyzedResourceSummary],
+      },
+      optional: {
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listAnalyzers(
@@ -247,16 +235,14 @@ export default class AccessAnalyzer {
       requestUri: "/analyzer",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "analyzers": [toAnalyzerSummary],
-        },
-        optional: {
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "analyzers": [toAnalyzerSummary],
+      },
+      optional: {
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listArchiveRules(
@@ -272,44 +258,40 @@ export default class AccessAnalyzer {
       requestUri: cmnP.encodePath`/analyzer/${params["analyzerName"]}/archive-rule`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "archiveRules": [toArchiveRuleSummary],
-        },
-        optional: {
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "archiveRules": [toArchiveRuleSummary],
+      },
+      optional: {
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listFindings(
     {abortSignal, ...params}: RequestConfig & ListFindingsRequest,
   ): Promise<ListFindingsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       analyzerArn: params["analyzerArn"],
       filter: jsonP.serializeMap(params["filter"], x => fromCriterion(x)),
       maxResults: params["maxResults"],
       nextToken: params["nextToken"],
       sort: fromSortCriteria(params["sort"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListFindings",
       requestUri: "/finding",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "findings": [toFindingSummary],
-        },
-        optional: {
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "findings": [toFindingSummary],
+      },
+      optional: {
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listTagsForResource(
@@ -323,23 +305,21 @@ export default class AccessAnalyzer {
       requestUri: cmnP.encodePath`/tags/${params["resourceArn"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async startResourceScan(
     {abortSignal, ...params}: RequestConfig & StartResourceScanRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       analyzerArn: params["analyzerArn"],
       resourceArn: params["resourceArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartResourceScan",
@@ -351,21 +331,19 @@ export default class AccessAnalyzer {
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       tags: params["tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
       requestUri: cmnP.encodePath`/tags/${params["resourceArn"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async untagResource(
@@ -382,21 +360,19 @@ export default class AccessAnalyzer {
       requestUri: cmnP.encodePath`/tags/${params["resourceArn"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async updateArchiveRule(
     {abortSignal, ...params}: RequestConfig & UpdateArchiveRuleRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       clientToken: params["clientToken"] ?? generateIdemptToken(),
       filter: jsonP.serializeMap(params["filter"], x => fromCriterion(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateArchiveRule",
@@ -409,13 +385,13 @@ export default class AccessAnalyzer {
   async updateFindings(
     {abortSignal, ...params}: RequestConfig & UpdateFindingsRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       analyzerArn: params["analyzerArn"],
       clientToken: params["clientToken"] ?? generateIdemptToken(),
       ids: params["ids"],
       resourceArn: params["resourceArn"],
       status: params["status"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateFindings",

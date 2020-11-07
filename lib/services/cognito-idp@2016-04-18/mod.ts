@@ -29,10 +29,10 @@ export default class CognitoIdentityServiceProvider {
   async addCustomAttributes(
     {abortSignal, ...params}: RequestConfig & AddCustomAttributesRequest,
   ): Promise<AddCustomAttributesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       UserPoolId: params["UserPoolId"],
       CustomAttributes: params["CustomAttributes"]?.map(x => fromSchemaAttributeType(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AddCustomAttributes",
@@ -46,11 +46,11 @@ export default class CognitoIdentityServiceProvider {
   async adminAddUserToGroup(
     {abortSignal, ...params}: RequestConfig & AdminAddUserToGroupRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       UserPoolId: params["UserPoolId"],
       Username: params["Username"],
       GroupName: params["GroupName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AdminAddUserToGroup",
@@ -60,11 +60,11 @@ export default class CognitoIdentityServiceProvider {
   async adminConfirmSignUp(
     {abortSignal, ...params}: RequestConfig & AdminConfirmSignUpRequest,
   ): Promise<AdminConfirmSignUpResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       UserPoolId: params["UserPoolId"],
       Username: params["Username"],
       ClientMetadata: params["ClientMetadata"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AdminConfirmSignUp",
@@ -78,7 +78,7 @@ export default class CognitoIdentityServiceProvider {
   async adminCreateUser(
     {abortSignal, ...params}: RequestConfig & AdminCreateUserRequest,
   ): Promise<AdminCreateUserResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       UserPoolId: params["UserPoolId"],
       Username: params["Username"],
       UserAttributes: params["UserAttributes"]?.map(x => fromAttributeType(x)),
@@ -88,7 +88,7 @@ export default class CognitoIdentityServiceProvider {
       MessageAction: params["MessageAction"],
       DesiredDeliveryMediums: params["DesiredDeliveryMediums"],
       ClientMetadata: params["ClientMetadata"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AdminCreateUser",
@@ -104,10 +104,10 @@ export default class CognitoIdentityServiceProvider {
   async adminDeleteUser(
     {abortSignal, ...params}: RequestConfig & AdminDeleteUserRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       UserPoolId: params["UserPoolId"],
       Username: params["Username"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AdminDeleteUser",
@@ -117,11 +117,11 @@ export default class CognitoIdentityServiceProvider {
   async adminDeleteUserAttributes(
     {abortSignal, ...params}: RequestConfig & AdminDeleteUserAttributesRequest,
   ): Promise<AdminDeleteUserAttributesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       UserPoolId: params["UserPoolId"],
       Username: params["Username"],
       UserAttributeNames: params["UserAttributeNames"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AdminDeleteUserAttributes",
@@ -135,10 +135,10 @@ export default class CognitoIdentityServiceProvider {
   async adminDisableProviderForUser(
     {abortSignal, ...params}: RequestConfig & AdminDisableProviderForUserRequest,
   ): Promise<AdminDisableProviderForUserResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       UserPoolId: params["UserPoolId"],
       User: fromProviderUserIdentifierType(params["User"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AdminDisableProviderForUser",
@@ -152,10 +152,10 @@ export default class CognitoIdentityServiceProvider {
   async adminDisableUser(
     {abortSignal, ...params}: RequestConfig & AdminDisableUserRequest,
   ): Promise<AdminDisableUserResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       UserPoolId: params["UserPoolId"],
       Username: params["Username"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AdminDisableUser",
@@ -169,10 +169,10 @@ export default class CognitoIdentityServiceProvider {
   async adminEnableUser(
     {abortSignal, ...params}: RequestConfig & AdminEnableUserRequest,
   ): Promise<AdminEnableUserResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       UserPoolId: params["UserPoolId"],
       Username: params["Username"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AdminEnableUser",
@@ -186,11 +186,11 @@ export default class CognitoIdentityServiceProvider {
   async adminForgetDevice(
     {abortSignal, ...params}: RequestConfig & AdminForgetDeviceRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       UserPoolId: params["UserPoolId"],
       Username: params["Username"],
       DeviceKey: params["DeviceKey"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AdminForgetDevice",
@@ -200,11 +200,11 @@ export default class CognitoIdentityServiceProvider {
   async adminGetDevice(
     {abortSignal, ...params}: RequestConfig & AdminGetDeviceRequest,
   ): Promise<AdminGetDeviceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DeviceKey: params["DeviceKey"],
       UserPoolId: params["UserPoolId"],
       Username: params["Username"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AdminGetDevice",
@@ -220,10 +220,10 @@ export default class CognitoIdentityServiceProvider {
   async adminGetUser(
     {abortSignal, ...params}: RequestConfig & AdminGetUserRequest,
   ): Promise<AdminGetUserResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       UserPoolId: params["UserPoolId"],
       Username: params["Username"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AdminGetUser",
@@ -248,7 +248,7 @@ export default class CognitoIdentityServiceProvider {
   async adminInitiateAuth(
     {abortSignal, ...params}: RequestConfig & AdminInitiateAuthRequest,
   ): Promise<AdminInitiateAuthResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       UserPoolId: params["UserPoolId"],
       ClientId: params["ClientId"],
       AuthFlow: params["AuthFlow"],
@@ -256,7 +256,7 @@ export default class CognitoIdentityServiceProvider {
       ClientMetadata: params["ClientMetadata"],
       AnalyticsMetadata: fromAnalyticsMetadataType(params["AnalyticsMetadata"]),
       ContextData: fromContextDataType(params["ContextData"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AdminInitiateAuth",
@@ -275,11 +275,11 @@ export default class CognitoIdentityServiceProvider {
   async adminLinkProviderForUser(
     {abortSignal, ...params}: RequestConfig & AdminLinkProviderForUserRequest,
   ): Promise<AdminLinkProviderForUserResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       UserPoolId: params["UserPoolId"],
       DestinationUser: fromProviderUserIdentifierType(params["DestinationUser"]),
       SourceUser: fromProviderUserIdentifierType(params["SourceUser"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AdminLinkProviderForUser",
@@ -293,12 +293,12 @@ export default class CognitoIdentityServiceProvider {
   async adminListDevices(
     {abortSignal, ...params}: RequestConfig & AdminListDevicesRequest,
   ): Promise<AdminListDevicesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       UserPoolId: params["UserPoolId"],
       Username: params["Username"],
       Limit: params["Limit"],
       PaginationToken: params["PaginationToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AdminListDevices",
@@ -315,12 +315,12 @@ export default class CognitoIdentityServiceProvider {
   async adminListGroupsForUser(
     {abortSignal, ...params}: RequestConfig & AdminListGroupsForUserRequest,
   ): Promise<AdminListGroupsForUserResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Username: params["Username"],
       UserPoolId: params["UserPoolId"],
       Limit: params["Limit"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AdminListGroupsForUser",
@@ -337,12 +337,12 @@ export default class CognitoIdentityServiceProvider {
   async adminListUserAuthEvents(
     {abortSignal, ...params}: RequestConfig & AdminListUserAuthEventsRequest,
   ): Promise<AdminListUserAuthEventsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       UserPoolId: params["UserPoolId"],
       Username: params["Username"],
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AdminListUserAuthEvents",
@@ -359,11 +359,11 @@ export default class CognitoIdentityServiceProvider {
   async adminRemoveUserFromGroup(
     {abortSignal, ...params}: RequestConfig & AdminRemoveUserFromGroupRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       UserPoolId: params["UserPoolId"],
       Username: params["Username"],
       GroupName: params["GroupName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AdminRemoveUserFromGroup",
@@ -373,11 +373,11 @@ export default class CognitoIdentityServiceProvider {
   async adminResetUserPassword(
     {abortSignal, ...params}: RequestConfig & AdminResetUserPasswordRequest,
   ): Promise<AdminResetUserPasswordResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       UserPoolId: params["UserPoolId"],
       Username: params["Username"],
       ClientMetadata: params["ClientMetadata"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AdminResetUserPassword",
@@ -391,7 +391,7 @@ export default class CognitoIdentityServiceProvider {
   async adminRespondToAuthChallenge(
     {abortSignal, ...params}: RequestConfig & AdminRespondToAuthChallengeRequest,
   ): Promise<AdminRespondToAuthChallengeResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       UserPoolId: params["UserPoolId"],
       ClientId: params["ClientId"],
       ChallengeName: params["ChallengeName"],
@@ -400,7 +400,7 @@ export default class CognitoIdentityServiceProvider {
       AnalyticsMetadata: fromAnalyticsMetadataType(params["AnalyticsMetadata"]),
       ContextData: fromContextDataType(params["ContextData"]),
       ClientMetadata: params["ClientMetadata"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AdminRespondToAuthChallenge",
@@ -419,12 +419,12 @@ export default class CognitoIdentityServiceProvider {
   async adminSetUserMFAPreference(
     {abortSignal, ...params}: RequestConfig & AdminSetUserMFAPreferenceRequest,
   ): Promise<AdminSetUserMFAPreferenceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       SMSMfaSettings: fromSMSMfaSettingsType(params["SMSMfaSettings"]),
       SoftwareTokenMfaSettings: fromSoftwareTokenMfaSettingsType(params["SoftwareTokenMfaSettings"]),
       Username: params["Username"],
       UserPoolId: params["UserPoolId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AdminSetUserMFAPreference",
@@ -438,12 +438,12 @@ export default class CognitoIdentityServiceProvider {
   async adminSetUserPassword(
     {abortSignal, ...params}: RequestConfig & AdminSetUserPasswordRequest,
   ): Promise<AdminSetUserPasswordResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       UserPoolId: params["UserPoolId"],
       Username: params["Username"],
       Password: params["Password"],
       Permanent: params["Permanent"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AdminSetUserPassword",
@@ -457,11 +457,11 @@ export default class CognitoIdentityServiceProvider {
   async adminSetUserSettings(
     {abortSignal, ...params}: RequestConfig & AdminSetUserSettingsRequest,
   ): Promise<AdminSetUserSettingsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       UserPoolId: params["UserPoolId"],
       Username: params["Username"],
       MFAOptions: params["MFAOptions"]?.map(x => fromMFAOptionType(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AdminSetUserSettings",
@@ -475,12 +475,12 @@ export default class CognitoIdentityServiceProvider {
   async adminUpdateAuthEventFeedback(
     {abortSignal, ...params}: RequestConfig & AdminUpdateAuthEventFeedbackRequest,
   ): Promise<AdminUpdateAuthEventFeedbackResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       UserPoolId: params["UserPoolId"],
       Username: params["Username"],
       EventId: params["EventId"],
       FeedbackValue: params["FeedbackValue"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AdminUpdateAuthEventFeedback",
@@ -494,12 +494,12 @@ export default class CognitoIdentityServiceProvider {
   async adminUpdateDeviceStatus(
     {abortSignal, ...params}: RequestConfig & AdminUpdateDeviceStatusRequest,
   ): Promise<AdminUpdateDeviceStatusResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       UserPoolId: params["UserPoolId"],
       Username: params["Username"],
       DeviceKey: params["DeviceKey"],
       DeviceRememberedStatus: params["DeviceRememberedStatus"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AdminUpdateDeviceStatus",
@@ -513,12 +513,12 @@ export default class CognitoIdentityServiceProvider {
   async adminUpdateUserAttributes(
     {abortSignal, ...params}: RequestConfig & AdminUpdateUserAttributesRequest,
   ): Promise<AdminUpdateUserAttributesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       UserPoolId: params["UserPoolId"],
       Username: params["Username"],
       UserAttributes: params["UserAttributes"]?.map(x => fromAttributeType(x)),
       ClientMetadata: params["ClientMetadata"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AdminUpdateUserAttributes",
@@ -532,10 +532,10 @@ export default class CognitoIdentityServiceProvider {
   async adminUserGlobalSignOut(
     {abortSignal, ...params}: RequestConfig & AdminUserGlobalSignOutRequest,
   ): Promise<AdminUserGlobalSignOutResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       UserPoolId: params["UserPoolId"],
       Username: params["Username"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AdminUserGlobalSignOut",
@@ -549,10 +549,10 @@ export default class CognitoIdentityServiceProvider {
   async associateSoftwareToken(
     {abortSignal, ...params}: RequestConfig & AssociateSoftwareTokenRequest = {},
   ): Promise<AssociateSoftwareTokenResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AccessToken: params["AccessToken"],
       Session: params["Session"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AssociateSoftwareToken",
@@ -569,11 +569,11 @@ export default class CognitoIdentityServiceProvider {
   async changePassword(
     {abortSignal, ...params}: RequestConfig & ChangePasswordRequest,
   ): Promise<ChangePasswordResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       PreviousPassword: params["PreviousPassword"],
       ProposedPassword: params["ProposedPassword"],
       AccessToken: params["AccessToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ChangePassword",
@@ -587,12 +587,12 @@ export default class CognitoIdentityServiceProvider {
   async confirmDevice(
     {abortSignal, ...params}: RequestConfig & ConfirmDeviceRequest,
   ): Promise<ConfirmDeviceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AccessToken: params["AccessToken"],
       DeviceKey: params["DeviceKey"],
       DeviceSecretVerifierConfig: fromDeviceSecretVerifierConfigType(params["DeviceSecretVerifierConfig"]),
       DeviceName: params["DeviceName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ConfirmDevice",
@@ -608,7 +608,7 @@ export default class CognitoIdentityServiceProvider {
   async confirmForgotPassword(
     {abortSignal, ...params}: RequestConfig & ConfirmForgotPasswordRequest,
   ): Promise<ConfirmForgotPasswordResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ClientId: params["ClientId"],
       SecretHash: params["SecretHash"],
       Username: params["Username"],
@@ -617,7 +617,7 @@ export default class CognitoIdentityServiceProvider {
       AnalyticsMetadata: fromAnalyticsMetadataType(params["AnalyticsMetadata"]),
       UserContextData: fromUserContextDataType(params["UserContextData"]),
       ClientMetadata: params["ClientMetadata"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ConfirmForgotPassword",
@@ -631,7 +631,7 @@ export default class CognitoIdentityServiceProvider {
   async confirmSignUp(
     {abortSignal, ...params}: RequestConfig & ConfirmSignUpRequest,
   ): Promise<ConfirmSignUpResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ClientId: params["ClientId"],
       SecretHash: params["SecretHash"],
       Username: params["Username"],
@@ -640,7 +640,7 @@ export default class CognitoIdentityServiceProvider {
       AnalyticsMetadata: fromAnalyticsMetadataType(params["AnalyticsMetadata"]),
       UserContextData: fromUserContextDataType(params["UserContextData"]),
       ClientMetadata: params["ClientMetadata"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ConfirmSignUp",
@@ -654,13 +654,13 @@ export default class CognitoIdentityServiceProvider {
   async createGroup(
     {abortSignal, ...params}: RequestConfig & CreateGroupRequest,
   ): Promise<CreateGroupResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       GroupName: params["GroupName"],
       UserPoolId: params["UserPoolId"],
       Description: params["Description"],
       RoleArn: params["RoleArn"],
       Precedence: params["Precedence"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateGroup",
@@ -676,14 +676,14 @@ export default class CognitoIdentityServiceProvider {
   async createIdentityProvider(
     {abortSignal, ...params}: RequestConfig & CreateIdentityProviderRequest,
   ): Promise<CreateIdentityProviderResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       UserPoolId: params["UserPoolId"],
       ProviderName: params["ProviderName"],
       ProviderType: params["ProviderType"],
       ProviderDetails: params["ProviderDetails"],
       AttributeMapping: params["AttributeMapping"],
       IdpIdentifiers: params["IdpIdentifiers"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateIdentityProvider",
@@ -699,12 +699,12 @@ export default class CognitoIdentityServiceProvider {
   async createResourceServer(
     {abortSignal, ...params}: RequestConfig & CreateResourceServerRequest,
   ): Promise<CreateResourceServerResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       UserPoolId: params["UserPoolId"],
       Identifier: params["Identifier"],
       Name: params["Name"],
       Scopes: params["Scopes"]?.map(x => fromResourceServerScopeType(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateResourceServer",
@@ -720,11 +720,11 @@ export default class CognitoIdentityServiceProvider {
   async createUserImportJob(
     {abortSignal, ...params}: RequestConfig & CreateUserImportJobRequest,
   ): Promise<CreateUserImportJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       JobName: params["JobName"],
       UserPoolId: params["UserPoolId"],
       CloudWatchLogsRoleArn: params["CloudWatchLogsRoleArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateUserImportJob",
@@ -740,7 +740,7 @@ export default class CognitoIdentityServiceProvider {
   async createUserPool(
     {abortSignal, ...params}: RequestConfig & CreateUserPoolRequest,
   ): Promise<CreateUserPoolResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       PoolName: params["PoolName"],
       Policies: fromUserPoolPolicyType(params["Policies"]),
       LambdaConfig: fromLambdaConfigType(params["LambdaConfig"]),
@@ -762,7 +762,7 @@ export default class CognitoIdentityServiceProvider {
       UserPoolAddOns: fromUserPoolAddOnsType(params["UserPoolAddOns"]),
       UsernameConfiguration: fromUsernameConfigurationType(params["UsernameConfiguration"]),
       AccountRecoverySetting: fromAccountRecoverySettingType(params["AccountRecoverySetting"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateUserPool",
@@ -778,7 +778,7 @@ export default class CognitoIdentityServiceProvider {
   async createUserPoolClient(
     {abortSignal, ...params}: RequestConfig & CreateUserPoolClientRequest,
   ): Promise<CreateUserPoolClientResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       UserPoolId: params["UserPoolId"],
       ClientName: params["ClientName"],
       GenerateSecret: params["GenerateSecret"],
@@ -798,7 +798,7 @@ export default class CognitoIdentityServiceProvider {
       AllowedOAuthFlowsUserPoolClient: params["AllowedOAuthFlowsUserPoolClient"],
       AnalyticsConfiguration: fromAnalyticsConfigurationType(params["AnalyticsConfiguration"]),
       PreventUserExistenceErrors: params["PreventUserExistenceErrors"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateUserPoolClient",
@@ -814,11 +814,11 @@ export default class CognitoIdentityServiceProvider {
   async createUserPoolDomain(
     {abortSignal, ...params}: RequestConfig & CreateUserPoolDomainRequest,
   ): Promise<CreateUserPoolDomainResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Domain: params["Domain"],
       UserPoolId: params["UserPoolId"],
       CustomDomainConfig: fromCustomDomainConfigType(params["CustomDomainConfig"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateUserPoolDomain",
@@ -834,10 +834,10 @@ export default class CognitoIdentityServiceProvider {
   async deleteGroup(
     {abortSignal, ...params}: RequestConfig & DeleteGroupRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       GroupName: params["GroupName"],
       UserPoolId: params["UserPoolId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteGroup",
@@ -847,10 +847,10 @@ export default class CognitoIdentityServiceProvider {
   async deleteIdentityProvider(
     {abortSignal, ...params}: RequestConfig & DeleteIdentityProviderRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       UserPoolId: params["UserPoolId"],
       ProviderName: params["ProviderName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteIdentityProvider",
@@ -860,10 +860,10 @@ export default class CognitoIdentityServiceProvider {
   async deleteResourceServer(
     {abortSignal, ...params}: RequestConfig & DeleteResourceServerRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       UserPoolId: params["UserPoolId"],
       Identifier: params["Identifier"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteResourceServer",
@@ -873,9 +873,9 @@ export default class CognitoIdentityServiceProvider {
   async deleteUser(
     {abortSignal, ...params}: RequestConfig & DeleteUserRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AccessToken: params["AccessToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteUser",
@@ -885,10 +885,10 @@ export default class CognitoIdentityServiceProvider {
   async deleteUserAttributes(
     {abortSignal, ...params}: RequestConfig & DeleteUserAttributesRequest,
   ): Promise<DeleteUserAttributesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       UserAttributeNames: params["UserAttributeNames"],
       AccessToken: params["AccessToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteUserAttributes",
@@ -902,9 +902,9 @@ export default class CognitoIdentityServiceProvider {
   async deleteUserPool(
     {abortSignal, ...params}: RequestConfig & DeleteUserPoolRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       UserPoolId: params["UserPoolId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteUserPool",
@@ -914,10 +914,10 @@ export default class CognitoIdentityServiceProvider {
   async deleteUserPoolClient(
     {abortSignal, ...params}: RequestConfig & DeleteUserPoolClientRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       UserPoolId: params["UserPoolId"],
       ClientId: params["ClientId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteUserPoolClient",
@@ -927,10 +927,10 @@ export default class CognitoIdentityServiceProvider {
   async deleteUserPoolDomain(
     {abortSignal, ...params}: RequestConfig & DeleteUserPoolDomainRequest,
   ): Promise<DeleteUserPoolDomainResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Domain: params["Domain"],
       UserPoolId: params["UserPoolId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteUserPoolDomain",
@@ -944,10 +944,10 @@ export default class CognitoIdentityServiceProvider {
   async describeIdentityProvider(
     {abortSignal, ...params}: RequestConfig & DescribeIdentityProviderRequest,
   ): Promise<DescribeIdentityProviderResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       UserPoolId: params["UserPoolId"],
       ProviderName: params["ProviderName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeIdentityProvider",
@@ -963,10 +963,10 @@ export default class CognitoIdentityServiceProvider {
   async describeResourceServer(
     {abortSignal, ...params}: RequestConfig & DescribeResourceServerRequest,
   ): Promise<DescribeResourceServerResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       UserPoolId: params["UserPoolId"],
       Identifier: params["Identifier"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeResourceServer",
@@ -982,10 +982,10 @@ export default class CognitoIdentityServiceProvider {
   async describeRiskConfiguration(
     {abortSignal, ...params}: RequestConfig & DescribeRiskConfigurationRequest,
   ): Promise<DescribeRiskConfigurationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       UserPoolId: params["UserPoolId"],
       ClientId: params["ClientId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeRiskConfiguration",
@@ -1001,10 +1001,10 @@ export default class CognitoIdentityServiceProvider {
   async describeUserImportJob(
     {abortSignal, ...params}: RequestConfig & DescribeUserImportJobRequest,
   ): Promise<DescribeUserImportJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       UserPoolId: params["UserPoolId"],
       JobId: params["JobId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeUserImportJob",
@@ -1020,9 +1020,9 @@ export default class CognitoIdentityServiceProvider {
   async describeUserPool(
     {abortSignal, ...params}: RequestConfig & DescribeUserPoolRequest,
   ): Promise<DescribeUserPoolResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       UserPoolId: params["UserPoolId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeUserPool",
@@ -1038,10 +1038,10 @@ export default class CognitoIdentityServiceProvider {
   async describeUserPoolClient(
     {abortSignal, ...params}: RequestConfig & DescribeUserPoolClientRequest,
   ): Promise<DescribeUserPoolClientResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       UserPoolId: params["UserPoolId"],
       ClientId: params["ClientId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeUserPoolClient",
@@ -1057,9 +1057,9 @@ export default class CognitoIdentityServiceProvider {
   async describeUserPoolDomain(
     {abortSignal, ...params}: RequestConfig & DescribeUserPoolDomainRequest,
   ): Promise<DescribeUserPoolDomainResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Domain: params["Domain"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeUserPoolDomain",
@@ -1075,10 +1075,10 @@ export default class CognitoIdentityServiceProvider {
   async forgetDevice(
     {abortSignal, ...params}: RequestConfig & ForgetDeviceRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AccessToken: params["AccessToken"],
       DeviceKey: params["DeviceKey"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ForgetDevice",
@@ -1088,14 +1088,14 @@ export default class CognitoIdentityServiceProvider {
   async forgotPassword(
     {abortSignal, ...params}: RequestConfig & ForgotPasswordRequest,
   ): Promise<ForgotPasswordResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ClientId: params["ClientId"],
       SecretHash: params["SecretHash"],
       UserContextData: fromUserContextDataType(params["UserContextData"]),
       Username: params["Username"],
       AnalyticsMetadata: fromAnalyticsMetadataType(params["AnalyticsMetadata"]),
       ClientMetadata: params["ClientMetadata"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ForgotPassword",
@@ -1111,9 +1111,9 @@ export default class CognitoIdentityServiceProvider {
   async getCSVHeader(
     {abortSignal, ...params}: RequestConfig & GetCSVHeaderRequest,
   ): Promise<GetCSVHeaderResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       UserPoolId: params["UserPoolId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetCSVHeader",
@@ -1130,10 +1130,10 @@ export default class CognitoIdentityServiceProvider {
   async getDevice(
     {abortSignal, ...params}: RequestConfig & GetDeviceRequest,
   ): Promise<GetDeviceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DeviceKey: params["DeviceKey"],
       AccessToken: params["AccessToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetDevice",
@@ -1149,10 +1149,10 @@ export default class CognitoIdentityServiceProvider {
   async getGroup(
     {abortSignal, ...params}: RequestConfig & GetGroupRequest,
   ): Promise<GetGroupResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       GroupName: params["GroupName"],
       UserPoolId: params["UserPoolId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetGroup",
@@ -1168,10 +1168,10 @@ export default class CognitoIdentityServiceProvider {
   async getIdentityProviderByIdentifier(
     {abortSignal, ...params}: RequestConfig & GetIdentityProviderByIdentifierRequest,
   ): Promise<GetIdentityProviderByIdentifierResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       UserPoolId: params["UserPoolId"],
       IdpIdentifier: params["IdpIdentifier"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetIdentityProviderByIdentifier",
@@ -1187,9 +1187,9 @@ export default class CognitoIdentityServiceProvider {
   async getSigningCertificate(
     {abortSignal, ...params}: RequestConfig & GetSigningCertificateRequest,
   ): Promise<GetSigningCertificateResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       UserPoolId: params["UserPoolId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetSigningCertificate",
@@ -1205,10 +1205,10 @@ export default class CognitoIdentityServiceProvider {
   async getUICustomization(
     {abortSignal, ...params}: RequestConfig & GetUICustomizationRequest,
   ): Promise<GetUICustomizationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       UserPoolId: params["UserPoolId"],
       ClientId: params["ClientId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetUICustomization",
@@ -1224,9 +1224,9 @@ export default class CognitoIdentityServiceProvider {
   async getUser(
     {abortSignal, ...params}: RequestConfig & GetUserRequest,
   ): Promise<GetUserResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AccessToken: params["AccessToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetUser",
@@ -1247,11 +1247,11 @@ export default class CognitoIdentityServiceProvider {
   async getUserAttributeVerificationCode(
     {abortSignal, ...params}: RequestConfig & GetUserAttributeVerificationCodeRequest,
   ): Promise<GetUserAttributeVerificationCodeResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AccessToken: params["AccessToken"],
       AttributeName: params["AttributeName"],
       ClientMetadata: params["ClientMetadata"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetUserAttributeVerificationCode",
@@ -1267,9 +1267,9 @@ export default class CognitoIdentityServiceProvider {
   async getUserPoolMfaConfig(
     {abortSignal, ...params}: RequestConfig & GetUserPoolMfaConfigRequest,
   ): Promise<GetUserPoolMfaConfigResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       UserPoolId: params["UserPoolId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetUserPoolMfaConfig",
@@ -1287,9 +1287,9 @@ export default class CognitoIdentityServiceProvider {
   async globalSignOut(
     {abortSignal, ...params}: RequestConfig & GlobalSignOutRequest,
   ): Promise<GlobalSignOutResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AccessToken: params["AccessToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GlobalSignOut",
@@ -1303,14 +1303,14 @@ export default class CognitoIdentityServiceProvider {
   async initiateAuth(
     {abortSignal, ...params}: RequestConfig & InitiateAuthRequest,
   ): Promise<InitiateAuthResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AuthFlow: params["AuthFlow"],
       AuthParameters: params["AuthParameters"],
       ClientMetadata: params["ClientMetadata"],
       ClientId: params["ClientId"],
       AnalyticsMetadata: fromAnalyticsMetadataType(params["AnalyticsMetadata"]),
       UserContextData: fromUserContextDataType(params["UserContextData"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "InitiateAuth",
@@ -1329,11 +1329,11 @@ export default class CognitoIdentityServiceProvider {
   async listDevices(
     {abortSignal, ...params}: RequestConfig & ListDevicesRequest,
   ): Promise<ListDevicesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AccessToken: params["AccessToken"],
       Limit: params["Limit"],
       PaginationToken: params["PaginationToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListDevices",
@@ -1350,11 +1350,11 @@ export default class CognitoIdentityServiceProvider {
   async listGroups(
     {abortSignal, ...params}: RequestConfig & ListGroupsRequest,
   ): Promise<ListGroupsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       UserPoolId: params["UserPoolId"],
       Limit: params["Limit"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListGroups",
@@ -1371,11 +1371,11 @@ export default class CognitoIdentityServiceProvider {
   async listIdentityProviders(
     {abortSignal, ...params}: RequestConfig & ListIdentityProvidersRequest,
   ): Promise<ListIdentityProvidersResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       UserPoolId: params["UserPoolId"],
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListIdentityProviders",
@@ -1393,11 +1393,11 @@ export default class CognitoIdentityServiceProvider {
   async listResourceServers(
     {abortSignal, ...params}: RequestConfig & ListResourceServersRequest,
   ): Promise<ListResourceServersResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       UserPoolId: params["UserPoolId"],
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListResourceServers",
@@ -1415,9 +1415,9 @@ export default class CognitoIdentityServiceProvider {
   async listTagsForResource(
     {abortSignal, ...params}: RequestConfig & ListTagsForResourceRequest,
   ): Promise<ListTagsForResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForResource",
@@ -1433,11 +1433,11 @@ export default class CognitoIdentityServiceProvider {
   async listUserImportJobs(
     {abortSignal, ...params}: RequestConfig & ListUserImportJobsRequest,
   ): Promise<ListUserImportJobsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       UserPoolId: params["UserPoolId"],
       MaxResults: params["MaxResults"],
       PaginationToken: params["PaginationToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListUserImportJobs",
@@ -1454,11 +1454,11 @@ export default class CognitoIdentityServiceProvider {
   async listUserPoolClients(
     {abortSignal, ...params}: RequestConfig & ListUserPoolClientsRequest,
   ): Promise<ListUserPoolClientsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       UserPoolId: params["UserPoolId"],
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListUserPoolClients",
@@ -1475,10 +1475,10 @@ export default class CognitoIdentityServiceProvider {
   async listUserPools(
     {abortSignal, ...params}: RequestConfig & ListUserPoolsRequest,
   ): Promise<ListUserPoolsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListUserPools",
@@ -1495,13 +1495,13 @@ export default class CognitoIdentityServiceProvider {
   async listUsers(
     {abortSignal, ...params}: RequestConfig & ListUsersRequest,
   ): Promise<ListUsersResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       UserPoolId: params["UserPoolId"],
       AttributesToGet: params["AttributesToGet"],
       Limit: params["Limit"],
       PaginationToken: params["PaginationToken"],
       Filter: params["Filter"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListUsers",
@@ -1518,12 +1518,12 @@ export default class CognitoIdentityServiceProvider {
   async listUsersInGroup(
     {abortSignal, ...params}: RequestConfig & ListUsersInGroupRequest,
   ): Promise<ListUsersInGroupResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       UserPoolId: params["UserPoolId"],
       GroupName: params["GroupName"],
       Limit: params["Limit"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListUsersInGroup",
@@ -1540,14 +1540,14 @@ export default class CognitoIdentityServiceProvider {
   async resendConfirmationCode(
     {abortSignal, ...params}: RequestConfig & ResendConfirmationCodeRequest,
   ): Promise<ResendConfirmationCodeResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ClientId: params["ClientId"],
       SecretHash: params["SecretHash"],
       UserContextData: fromUserContextDataType(params["UserContextData"]),
       Username: params["Username"],
       AnalyticsMetadata: fromAnalyticsMetadataType(params["AnalyticsMetadata"]),
       ClientMetadata: params["ClientMetadata"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ResendConfirmationCode",
@@ -1563,7 +1563,7 @@ export default class CognitoIdentityServiceProvider {
   async respondToAuthChallenge(
     {abortSignal, ...params}: RequestConfig & RespondToAuthChallengeRequest,
   ): Promise<RespondToAuthChallengeResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ClientId: params["ClientId"],
       ChallengeName: params["ChallengeName"],
       Session: params["Session"],
@@ -1571,7 +1571,7 @@ export default class CognitoIdentityServiceProvider {
       AnalyticsMetadata: fromAnalyticsMetadataType(params["AnalyticsMetadata"]),
       UserContextData: fromUserContextDataType(params["UserContextData"]),
       ClientMetadata: params["ClientMetadata"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RespondToAuthChallenge",
@@ -1590,13 +1590,13 @@ export default class CognitoIdentityServiceProvider {
   async setRiskConfiguration(
     {abortSignal, ...params}: RequestConfig & SetRiskConfigurationRequest,
   ): Promise<SetRiskConfigurationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       UserPoolId: params["UserPoolId"],
       ClientId: params["ClientId"],
       CompromisedCredentialsRiskConfiguration: fromCompromisedCredentialsRiskConfigurationType(params["CompromisedCredentialsRiskConfiguration"]),
       AccountTakeoverRiskConfiguration: fromAccountTakeoverRiskConfigurationType(params["AccountTakeoverRiskConfiguration"]),
       RiskExceptionConfiguration: fromRiskExceptionConfigurationType(params["RiskExceptionConfiguration"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SetRiskConfiguration",
@@ -1612,12 +1612,12 @@ export default class CognitoIdentityServiceProvider {
   async setUICustomization(
     {abortSignal, ...params}: RequestConfig & SetUICustomizationRequest,
   ): Promise<SetUICustomizationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       UserPoolId: params["UserPoolId"],
       ClientId: params["ClientId"],
       CSS: params["CSS"],
       ImageFile: jsonP.serializeBlob(params["ImageFile"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SetUICustomization",
@@ -1633,11 +1633,11 @@ export default class CognitoIdentityServiceProvider {
   async setUserMFAPreference(
     {abortSignal, ...params}: RequestConfig & SetUserMFAPreferenceRequest,
   ): Promise<SetUserMFAPreferenceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       SMSMfaSettings: fromSMSMfaSettingsType(params["SMSMfaSettings"]),
       SoftwareTokenMfaSettings: fromSoftwareTokenMfaSettingsType(params["SoftwareTokenMfaSettings"]),
       AccessToken: params["AccessToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SetUserMFAPreference",
@@ -1651,12 +1651,12 @@ export default class CognitoIdentityServiceProvider {
   async setUserPoolMfaConfig(
     {abortSignal, ...params}: RequestConfig & SetUserPoolMfaConfigRequest,
   ): Promise<SetUserPoolMfaConfigResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       UserPoolId: params["UserPoolId"],
       SmsMfaConfiguration: fromSmsMfaConfigType(params["SmsMfaConfiguration"]),
       SoftwareTokenMfaConfiguration: fromSoftwareTokenMfaConfigType(params["SoftwareTokenMfaConfiguration"]),
       MfaConfiguration: params["MfaConfiguration"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SetUserPoolMfaConfig",
@@ -1674,10 +1674,10 @@ export default class CognitoIdentityServiceProvider {
   async setUserSettings(
     {abortSignal, ...params}: RequestConfig & SetUserSettingsRequest,
   ): Promise<SetUserSettingsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AccessToken: params["AccessToken"],
       MFAOptions: params["MFAOptions"]?.map(x => fromMFAOptionType(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SetUserSettings",
@@ -1691,7 +1691,7 @@ export default class CognitoIdentityServiceProvider {
   async signUp(
     {abortSignal, ...params}: RequestConfig & SignUpRequest,
   ): Promise<SignUpResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ClientId: params["ClientId"],
       SecretHash: params["SecretHash"],
       Username: params["Username"],
@@ -1701,7 +1701,7 @@ export default class CognitoIdentityServiceProvider {
       AnalyticsMetadata: fromAnalyticsMetadataType(params["AnalyticsMetadata"]),
       UserContextData: fromUserContextDataType(params["UserContextData"]),
       ClientMetadata: params["ClientMetadata"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SignUp",
@@ -1720,10 +1720,10 @@ export default class CognitoIdentityServiceProvider {
   async startUserImportJob(
     {abortSignal, ...params}: RequestConfig & StartUserImportJobRequest,
   ): Promise<StartUserImportJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       UserPoolId: params["UserPoolId"],
       JobId: params["JobId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartUserImportJob",
@@ -1739,10 +1739,10 @@ export default class CognitoIdentityServiceProvider {
   async stopUserImportJob(
     {abortSignal, ...params}: RequestConfig & StopUserImportJobRequest,
   ): Promise<StopUserImportJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       UserPoolId: params["UserPoolId"],
       JobId: params["JobId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopUserImportJob",
@@ -1758,10 +1758,10 @@ export default class CognitoIdentityServiceProvider {
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
       Tags: params["Tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
@@ -1775,10 +1775,10 @@ export default class CognitoIdentityServiceProvider {
   async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceRequest,
   ): Promise<UntagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
       TagKeys: params["TagKeys"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResource",
@@ -1792,13 +1792,13 @@ export default class CognitoIdentityServiceProvider {
   async updateAuthEventFeedback(
     {abortSignal, ...params}: RequestConfig & UpdateAuthEventFeedbackRequest,
   ): Promise<UpdateAuthEventFeedbackResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       UserPoolId: params["UserPoolId"],
       Username: params["Username"],
       EventId: params["EventId"],
       FeedbackToken: params["FeedbackToken"],
       FeedbackValue: params["FeedbackValue"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateAuthEventFeedback",
@@ -1812,11 +1812,11 @@ export default class CognitoIdentityServiceProvider {
   async updateDeviceStatus(
     {abortSignal, ...params}: RequestConfig & UpdateDeviceStatusRequest,
   ): Promise<UpdateDeviceStatusResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AccessToken: params["AccessToken"],
       DeviceKey: params["DeviceKey"],
       DeviceRememberedStatus: params["DeviceRememberedStatus"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateDeviceStatus",
@@ -1830,13 +1830,13 @@ export default class CognitoIdentityServiceProvider {
   async updateGroup(
     {abortSignal, ...params}: RequestConfig & UpdateGroupRequest,
   ): Promise<UpdateGroupResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       GroupName: params["GroupName"],
       UserPoolId: params["UserPoolId"],
       Description: params["Description"],
       RoleArn: params["RoleArn"],
       Precedence: params["Precedence"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateGroup",
@@ -1852,13 +1852,13 @@ export default class CognitoIdentityServiceProvider {
   async updateIdentityProvider(
     {abortSignal, ...params}: RequestConfig & UpdateIdentityProviderRequest,
   ): Promise<UpdateIdentityProviderResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       UserPoolId: params["UserPoolId"],
       ProviderName: params["ProviderName"],
       ProviderDetails: params["ProviderDetails"],
       AttributeMapping: params["AttributeMapping"],
       IdpIdentifiers: params["IdpIdentifiers"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateIdentityProvider",
@@ -1874,12 +1874,12 @@ export default class CognitoIdentityServiceProvider {
   async updateResourceServer(
     {abortSignal, ...params}: RequestConfig & UpdateResourceServerRequest,
   ): Promise<UpdateResourceServerResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       UserPoolId: params["UserPoolId"],
       Identifier: params["Identifier"],
       Name: params["Name"],
       Scopes: params["Scopes"]?.map(x => fromResourceServerScopeType(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateResourceServer",
@@ -1895,11 +1895,11 @@ export default class CognitoIdentityServiceProvider {
   async updateUserAttributes(
     {abortSignal, ...params}: RequestConfig & UpdateUserAttributesRequest,
   ): Promise<UpdateUserAttributesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       UserAttributes: params["UserAttributes"]?.map(x => fromAttributeType(x)),
       AccessToken: params["AccessToken"],
       ClientMetadata: params["ClientMetadata"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateUserAttributes",
@@ -1915,7 +1915,7 @@ export default class CognitoIdentityServiceProvider {
   async updateUserPool(
     {abortSignal, ...params}: RequestConfig & UpdateUserPoolRequest,
   ): Promise<UpdateUserPoolResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       UserPoolId: params["UserPoolId"],
       Policies: fromUserPoolPolicyType(params["Policies"]),
       LambdaConfig: fromLambdaConfigType(params["LambdaConfig"]),
@@ -1933,7 +1933,7 @@ export default class CognitoIdentityServiceProvider {
       AdminCreateUserConfig: fromAdminCreateUserConfigType(params["AdminCreateUserConfig"]),
       UserPoolAddOns: fromUserPoolAddOnsType(params["UserPoolAddOns"]),
       AccountRecoverySetting: fromAccountRecoverySettingType(params["AccountRecoverySetting"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateUserPool",
@@ -1947,7 +1947,7 @@ export default class CognitoIdentityServiceProvider {
   async updateUserPoolClient(
     {abortSignal, ...params}: RequestConfig & UpdateUserPoolClientRequest,
   ): Promise<UpdateUserPoolClientResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       UserPoolId: params["UserPoolId"],
       ClientId: params["ClientId"],
       ClientName: params["ClientName"],
@@ -1967,7 +1967,7 @@ export default class CognitoIdentityServiceProvider {
       AllowedOAuthFlowsUserPoolClient: params["AllowedOAuthFlowsUserPoolClient"],
       AnalyticsConfiguration: fromAnalyticsConfigurationType(params["AnalyticsConfiguration"]),
       PreventUserExistenceErrors: params["PreventUserExistenceErrors"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateUserPoolClient",
@@ -1983,11 +1983,11 @@ export default class CognitoIdentityServiceProvider {
   async updateUserPoolDomain(
     {abortSignal, ...params}: RequestConfig & UpdateUserPoolDomainRequest,
   ): Promise<UpdateUserPoolDomainResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Domain: params["Domain"],
       UserPoolId: params["UserPoolId"],
       CustomDomainConfig: fromCustomDomainConfigType(params["CustomDomainConfig"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateUserPoolDomain",
@@ -2003,12 +2003,12 @@ export default class CognitoIdentityServiceProvider {
   async verifySoftwareToken(
     {abortSignal, ...params}: RequestConfig & VerifySoftwareTokenRequest,
   ): Promise<VerifySoftwareTokenResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AccessToken: params["AccessToken"],
       Session: params["Session"],
       UserCode: params["UserCode"],
       FriendlyDeviceName: params["FriendlyDeviceName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "VerifySoftwareToken",
@@ -2025,11 +2025,11 @@ export default class CognitoIdentityServiceProvider {
   async verifyUserAttribute(
     {abortSignal, ...params}: RequestConfig & VerifyUserAttributeRequest,
   ): Promise<VerifyUserAttributeResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AccessToken: params["AccessToken"],
       AttributeName: params["AttributeName"],
       Code: params["Code"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "VerifyUserAttribute",

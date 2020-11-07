@@ -29,12 +29,12 @@ export default class CloudDirectory {
     {abortSignal, ...params}: RequestConfig & AddFacetToObjectRequest,
   ): Promise<AddFacetToObjectResponse> {
     const headers = new Headers;
-    headers.append("x-amz-data-partition", params["DirectoryArn"]);
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       SchemaFacet: fromSchemaFacet(params["SchemaFacet"]),
       ObjectAttributeList: params["ObjectAttributeList"]?.map(x => fromAttributeKeyAndValue(x)),
       ObjectReference: fromObjectReference(params["ObjectReference"]),
-    } : {};
+    };
+    headers.append("x-amz-data-partition", params["DirectoryArn"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "AddFacetToObject",
@@ -42,22 +42,20 @@ export default class CloudDirectory {
       requestUri: "/amazonclouddirectory/2017-01-11/object/facets",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async applySchema(
     {abortSignal, ...params}: RequestConfig & ApplySchemaRequest,
   ): Promise<ApplySchemaResponse> {
     const headers = new Headers;
-    headers.append("x-amz-data-partition", params["DirectoryArn"]);
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       PublishedSchemaArn: params["PublishedSchemaArn"],
-    } : {};
+    };
+    headers.append("x-amz-data-partition", params["DirectoryArn"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "ApplySchema",
@@ -65,27 +63,25 @@ export default class CloudDirectory {
       requestUri: "/amazonclouddirectory/2017-01-11/schema/apply",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "AppliedSchemaArn": "s",
-          "DirectoryArn": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "AppliedSchemaArn": "s",
+        "DirectoryArn": "s",
+      },
+    }, await resp.json());
   }
 
   async attachObject(
     {abortSignal, ...params}: RequestConfig & AttachObjectRequest,
   ): Promise<AttachObjectResponse> {
     const headers = new Headers;
-    headers.append("x-amz-data-partition", params["DirectoryArn"]);
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ParentReference: fromObjectReference(params["ParentReference"]),
       ChildReference: fromObjectReference(params["ChildReference"]),
       LinkName: params["LinkName"],
-    } : {};
+    };
+    headers.append("x-amz-data-partition", params["DirectoryArn"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "AttachObject",
@@ -93,25 +89,23 @@ export default class CloudDirectory {
       requestUri: "/amazonclouddirectory/2017-01-11/object/attach",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "AttachedObjectIdentifier": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "AttachedObjectIdentifier": "s",
+      },
+    }, await resp.json());
   }
 
   async attachPolicy(
     {abortSignal, ...params}: RequestConfig & AttachPolicyRequest,
   ): Promise<AttachPolicyResponse> {
     const headers = new Headers;
-    headers.append("x-amz-data-partition", params["DirectoryArn"]);
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       PolicyReference: fromObjectReference(params["PolicyReference"]),
       ObjectReference: fromObjectReference(params["ObjectReference"]),
-    } : {};
+    };
+    headers.append("x-amz-data-partition", params["DirectoryArn"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "AttachPolicy",
@@ -119,23 +113,21 @@ export default class CloudDirectory {
       requestUri: "/amazonclouddirectory/2017-01-11/policy/attach",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async attachToIndex(
     {abortSignal, ...params}: RequestConfig & AttachToIndexRequest,
   ): Promise<AttachToIndexResponse> {
     const headers = new Headers;
-    headers.append("x-amz-data-partition", params["DirectoryArn"]);
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       IndexReference: fromObjectReference(params["IndexReference"]),
       TargetReference: fromObjectReference(params["TargetReference"]),
-    } : {};
+    };
+    headers.append("x-amz-data-partition", params["DirectoryArn"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "AttachToIndex",
@@ -143,27 +135,25 @@ export default class CloudDirectory {
       requestUri: "/amazonclouddirectory/2017-01-11/index/attach",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "AttachedObjectIdentifier": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "AttachedObjectIdentifier": "s",
+      },
+    }, await resp.json());
   }
 
   async attachTypedLink(
     {abortSignal, ...params}: RequestConfig & AttachTypedLinkRequest,
   ): Promise<AttachTypedLinkResponse> {
     const headers = new Headers;
-    headers.append("x-amz-data-partition", params["DirectoryArn"]);
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       SourceObjectReference: fromObjectReference(params["SourceObjectReference"]),
       TargetObjectReference: fromObjectReference(params["TargetObjectReference"]),
       TypedLinkFacet: fromTypedLinkSchemaAndFacetName(params["TypedLinkFacet"]),
       Attributes: params["Attributes"]?.map(x => fromAttributeNameAndValue(x)),
-    } : {};
+    };
+    headers.append("x-amz-data-partition", params["DirectoryArn"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "AttachTypedLink",
@@ -171,49 +161,45 @@ export default class CloudDirectory {
       requestUri: "/amazonclouddirectory/2017-01-11/typedlink/attach",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "TypedLinkSpecifier": toTypedLinkSpecifier,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "TypedLinkSpecifier": toTypedLinkSpecifier,
+      },
+    }, await resp.json());
   }
 
   async batchRead(
     {abortSignal, ...params}: RequestConfig & BatchReadRequest,
   ): Promise<BatchReadResponse> {
     const headers = new Headers;
+    const body: jsonP.JSONObject = {
+      Operations: params["Operations"]?.map(x => fromBatchReadOperation(x)),
+    };
     headers.append("x-amz-data-partition", params["DirectoryArn"]);
     if (params["ConsistencyLevel"] != null) headers.append("x-amz-consistency-level", params["ConsistencyLevel"]);
-    const body: jsonP.JSONObject = params ? {
-      Operations: params["Operations"]?.map(x => fromBatchReadOperation(x)),
-    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "BatchRead",
       requestUri: "/amazonclouddirectory/2017-01-11/batchread",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Responses": [toBatchReadOperationResponse],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Responses": [toBatchReadOperationResponse],
+      },
+    }, await resp.json());
   }
 
   async batchWrite(
     {abortSignal, ...params}: RequestConfig & BatchWriteRequest,
   ): Promise<BatchWriteResponse> {
     const headers = new Headers;
-    headers.append("x-amz-data-partition", params["DirectoryArn"]);
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Operations: params["Operations"]?.map(x => fromBatchWriteOperation(x)),
-    } : {};
+    };
+    headers.append("x-amz-data-partition", params["DirectoryArn"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "BatchWrite",
@@ -221,24 +207,22 @@ export default class CloudDirectory {
       requestUri: "/amazonclouddirectory/2017-01-11/batchwrite",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Responses": [toBatchWriteOperationResponse],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Responses": [toBatchWriteOperationResponse],
+      },
+    }, await resp.json());
   }
 
   async createDirectory(
     {abortSignal, ...params}: RequestConfig & CreateDirectoryRequest,
   ): Promise<CreateDirectoryResponse> {
     const headers = new Headers;
-    headers.append("x-amz-data-partition", params["SchemaArn"]);
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
-    } : {};
+    };
+    headers.append("x-amz-data-partition", params["SchemaArn"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "CreateDirectory",
@@ -246,30 +230,28 @@ export default class CloudDirectory {
       requestUri: "/amazonclouddirectory/2017-01-11/directory/create",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "DirectoryArn": "s",
-          "Name": "s",
-          "ObjectIdentifier": "s",
-          "AppliedSchemaArn": "s",
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "DirectoryArn": "s",
+        "Name": "s",
+        "ObjectIdentifier": "s",
+        "AppliedSchemaArn": "s",
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async createFacet(
     {abortSignal, ...params}: RequestConfig & CreateFacetRequest,
   ): Promise<CreateFacetResponse> {
     const headers = new Headers;
-    headers.append("x-amz-data-partition", params["SchemaArn"]);
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       Attributes: params["Attributes"]?.map(x => fromFacetAttribute(x)),
       ObjectType: params["ObjectType"],
       FacetStyle: params["FacetStyle"],
-    } : {};
+    };
+    headers.append("x-amz-data-partition", params["SchemaArn"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "CreateFacet",
@@ -277,25 +259,23 @@ export default class CloudDirectory {
       requestUri: "/amazonclouddirectory/2017-01-11/facet/create",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async createIndex(
     {abortSignal, ...params}: RequestConfig & CreateIndexRequest,
   ): Promise<CreateIndexResponse> {
     const headers = new Headers;
-    headers.append("x-amz-data-partition", params["DirectoryArn"]);
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       OrderedIndexedAttributeList: params["OrderedIndexedAttributeList"]?.map(x => fromAttributeKey(x)),
       IsUnique: params["IsUnique"],
       ParentReference: fromObjectReference(params["ParentReference"]),
       LinkName: params["LinkName"],
-    } : {};
+    };
+    headers.append("x-amz-data-partition", params["DirectoryArn"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "CreateIndex",
@@ -303,27 +283,25 @@ export default class CloudDirectory {
       requestUri: "/amazonclouddirectory/2017-01-11/index",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ObjectIdentifier": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ObjectIdentifier": "s",
+      },
+    }, await resp.json());
   }
 
   async createObject(
     {abortSignal, ...params}: RequestConfig & CreateObjectRequest,
   ): Promise<CreateObjectResponse> {
     const headers = new Headers;
-    headers.append("x-amz-data-partition", params["DirectoryArn"]);
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       SchemaFacets: params["SchemaFacets"]?.map(x => fromSchemaFacet(x)),
       ObjectAttributeList: params["ObjectAttributeList"]?.map(x => fromAttributeKeyAndValue(x)),
       ParentReference: fromObjectReference(params["ParentReference"]),
       LinkName: params["LinkName"],
-    } : {};
+    };
+    headers.append("x-amz-data-partition", params["DirectoryArn"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "CreateObject",
@@ -331,22 +309,20 @@ export default class CloudDirectory {
       requestUri: "/amazonclouddirectory/2017-01-11/object",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ObjectIdentifier": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ObjectIdentifier": "s",
+      },
+    }, await resp.json());
   }
 
   async createSchema(
     {abortSignal, ...params}: RequestConfig & CreateSchemaRequest,
   ): Promise<CreateSchemaResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateSchema",
@@ -354,24 +330,22 @@ export default class CloudDirectory {
       requestUri: "/amazonclouddirectory/2017-01-11/schema/create",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "SchemaArn": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "SchemaArn": "s",
+      },
+    }, await resp.json());
   }
 
   async createTypedLinkFacet(
     {abortSignal, ...params}: RequestConfig & CreateTypedLinkFacetRequest,
   ): Promise<CreateTypedLinkFacetResponse> {
     const headers = new Headers;
-    headers.append("x-amz-data-partition", params["SchemaArn"]);
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Facet: fromTypedLinkFacet(params["Facet"]),
-    } : {};
+    };
+    headers.append("x-amz-data-partition", params["SchemaArn"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "CreateTypedLinkFacet",
@@ -379,12 +353,10 @@ export default class CloudDirectory {
       requestUri: "/amazonclouddirectory/2017-01-11/typedlink/facet/create",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async deleteDirectory(
@@ -399,24 +371,22 @@ export default class CloudDirectory {
       requestUri: "/amazonclouddirectory/2017-01-11/directory",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "DirectoryArn": "s",
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "DirectoryArn": "s",
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async deleteFacet(
     {abortSignal, ...params}: RequestConfig & DeleteFacetRequest,
   ): Promise<DeleteFacetResponse> {
     const headers = new Headers;
-    headers.append("x-amz-data-partition", params["SchemaArn"]);
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
-    } : {};
+    };
+    headers.append("x-amz-data-partition", params["SchemaArn"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "DeleteFacet",
@@ -424,22 +394,20 @@ export default class CloudDirectory {
       requestUri: "/amazonclouddirectory/2017-01-11/facet/delete",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async deleteObject(
     {abortSignal, ...params}: RequestConfig & DeleteObjectRequest,
   ): Promise<DeleteObjectResponse> {
     const headers = new Headers;
-    headers.append("x-amz-data-partition", params["DirectoryArn"]);
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ObjectReference: fromObjectReference(params["ObjectReference"]),
-    } : {};
+    };
+    headers.append("x-amz-data-partition", params["DirectoryArn"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "DeleteObject",
@@ -447,12 +415,10 @@ export default class CloudDirectory {
       requestUri: "/amazonclouddirectory/2017-01-11/object/delete",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async deleteSchema(
@@ -467,24 +433,22 @@ export default class CloudDirectory {
       requestUri: "/amazonclouddirectory/2017-01-11/schema",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "SchemaArn": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "SchemaArn": "s",
+      },
+    }, await resp.json());
   }
 
   async deleteTypedLinkFacet(
     {abortSignal, ...params}: RequestConfig & DeleteTypedLinkFacetRequest,
   ): Promise<DeleteTypedLinkFacetResponse> {
     const headers = new Headers;
-    headers.append("x-amz-data-partition", params["SchemaArn"]);
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
-    } : {};
+    };
+    headers.append("x-amz-data-partition", params["SchemaArn"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "DeleteTypedLinkFacet",
@@ -492,23 +456,21 @@ export default class CloudDirectory {
       requestUri: "/amazonclouddirectory/2017-01-11/typedlink/facet/delete",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async detachFromIndex(
     {abortSignal, ...params}: RequestConfig & DetachFromIndexRequest,
   ): Promise<DetachFromIndexResponse> {
     const headers = new Headers;
-    headers.append("x-amz-data-partition", params["DirectoryArn"]);
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       IndexReference: fromObjectReference(params["IndexReference"]),
       TargetReference: fromObjectReference(params["TargetReference"]),
-    } : {};
+    };
+    headers.append("x-amz-data-partition", params["DirectoryArn"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "DetachFromIndex",
@@ -516,25 +478,23 @@ export default class CloudDirectory {
       requestUri: "/amazonclouddirectory/2017-01-11/index/detach",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "DetachedObjectIdentifier": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "DetachedObjectIdentifier": "s",
+      },
+    }, await resp.json());
   }
 
   async detachObject(
     {abortSignal, ...params}: RequestConfig & DetachObjectRequest,
   ): Promise<DetachObjectResponse> {
     const headers = new Headers;
-    headers.append("x-amz-data-partition", params["DirectoryArn"]);
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ParentReference: fromObjectReference(params["ParentReference"]),
       LinkName: params["LinkName"],
-    } : {};
+    };
+    headers.append("x-amz-data-partition", params["DirectoryArn"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "DetachObject",
@@ -542,25 +502,23 @@ export default class CloudDirectory {
       requestUri: "/amazonclouddirectory/2017-01-11/object/detach",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "DetachedObjectIdentifier": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "DetachedObjectIdentifier": "s",
+      },
+    }, await resp.json());
   }
 
   async detachPolicy(
     {abortSignal, ...params}: RequestConfig & DetachPolicyRequest,
   ): Promise<DetachPolicyResponse> {
     const headers = new Headers;
-    headers.append("x-amz-data-partition", params["DirectoryArn"]);
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       PolicyReference: fromObjectReference(params["PolicyReference"]),
       ObjectReference: fromObjectReference(params["ObjectReference"]),
-    } : {};
+    };
+    headers.append("x-amz-data-partition", params["DirectoryArn"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "DetachPolicy",
@@ -568,22 +526,20 @@ export default class CloudDirectory {
       requestUri: "/amazonclouddirectory/2017-01-11/policy/detach",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async detachTypedLink(
     {abortSignal, ...params}: RequestConfig & DetachTypedLinkRequest,
   ): Promise<void> {
     const headers = new Headers;
-    headers.append("x-amz-data-partition", params["DirectoryArn"]);
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TypedLinkSpecifier: fromTypedLinkSpecifier(params["TypedLinkSpecifier"]),
-    } : {};
+    };
+    headers.append("x-amz-data-partition", params["DirectoryArn"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "DetachTypedLink",
@@ -605,14 +561,12 @@ export default class CloudDirectory {
       requestUri: "/amazonclouddirectory/2017-01-11/directory/disable",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "DirectoryArn": "s",
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "DirectoryArn": "s",
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async enableDirectory(
@@ -627,36 +581,32 @@ export default class CloudDirectory {
       requestUri: "/amazonclouddirectory/2017-01-11/directory/enable",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "DirectoryArn": "s",
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "DirectoryArn": "s",
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async getAppliedSchemaVersion(
     {abortSignal, ...params}: RequestConfig & GetAppliedSchemaVersionRequest,
   ): Promise<GetAppliedSchemaVersionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       SchemaArn: params["SchemaArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetAppliedSchemaVersion",
       requestUri: "/amazonclouddirectory/2017-01-11/schema/getappliedschema",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "AppliedSchemaArn": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "AppliedSchemaArn": "s",
+      },
+    }, await resp.json());
   }
 
   async getDirectory(
@@ -670,117 +620,107 @@ export default class CloudDirectory {
       requestUri: "/amazonclouddirectory/2017-01-11/directory/get",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "Directory": toDirectory,
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "Directory": toDirectory,
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async getFacet(
     {abortSignal, ...params}: RequestConfig & GetFacetRequest,
   ): Promise<GetFacetResponse> {
     const headers = new Headers;
-    headers.append("x-amz-data-partition", params["SchemaArn"]);
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
-    } : {};
+    };
+    headers.append("x-amz-data-partition", params["SchemaArn"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "GetFacet",
       requestUri: "/amazonclouddirectory/2017-01-11/facet",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Facet": toFacet,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Facet": toFacet,
+      },
+    }, await resp.json());
   }
 
   async getLinkAttributes(
     {abortSignal, ...params}: RequestConfig & GetLinkAttributesRequest,
   ): Promise<GetLinkAttributesResponse> {
     const headers = new Headers;
-    headers.append("x-amz-data-partition", params["DirectoryArn"]);
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TypedLinkSpecifier: fromTypedLinkSpecifier(params["TypedLinkSpecifier"]),
       AttributeNames: params["AttributeNames"],
       ConsistencyLevel: params["ConsistencyLevel"],
-    } : {};
+    };
+    headers.append("x-amz-data-partition", params["DirectoryArn"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "GetLinkAttributes",
       requestUri: "/amazonclouddirectory/2017-01-11/typedlink/attributes/get",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Attributes": [toAttributeKeyAndValue],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Attributes": [toAttributeKeyAndValue],
+      },
+    }, await resp.json());
   }
 
   async getObjectAttributes(
     {abortSignal, ...params}: RequestConfig & GetObjectAttributesRequest,
   ): Promise<GetObjectAttributesResponse> {
     const headers = new Headers;
-    headers.append("x-amz-data-partition", params["DirectoryArn"]);
-    if (params["ConsistencyLevel"] != null) headers.append("x-amz-consistency-level", params["ConsistencyLevel"]);
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ObjectReference: fromObjectReference(params["ObjectReference"]),
       SchemaFacet: fromSchemaFacet(params["SchemaFacet"]),
       AttributeNames: params["AttributeNames"],
-    } : {};
+    };
+    headers.append("x-amz-data-partition", params["DirectoryArn"]);
+    if (params["ConsistencyLevel"] != null) headers.append("x-amz-consistency-level", params["ConsistencyLevel"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "GetObjectAttributes",
       requestUri: "/amazonclouddirectory/2017-01-11/object/attributes/get",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Attributes": [toAttributeKeyAndValue],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Attributes": [toAttributeKeyAndValue],
+      },
+    }, await resp.json());
   }
 
   async getObjectInformation(
     {abortSignal, ...params}: RequestConfig & GetObjectInformationRequest,
   ): Promise<GetObjectInformationResponse> {
     const headers = new Headers;
+    const body: jsonP.JSONObject = {
+      ObjectReference: fromObjectReference(params["ObjectReference"]),
+    };
     headers.append("x-amz-data-partition", params["DirectoryArn"]);
     if (params["ConsistencyLevel"] != null) headers.append("x-amz-consistency-level", params["ConsistencyLevel"]);
-    const body: jsonP.JSONObject = params ? {
-      ObjectReference: fromObjectReference(params["ObjectReference"]),
-    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "GetObjectInformation",
       requestUri: "/amazonclouddirectory/2017-01-11/object/information",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "SchemaFacets": [toSchemaFacet],
-          "ObjectIdentifier": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "SchemaFacets": [toSchemaFacet],
+        "ObjectIdentifier": "s",
+      },
+    }, await resp.json());
   }
 
   async getSchemaAsJson(
@@ -794,622 +734,576 @@ export default class CloudDirectory {
       requestUri: "/amazonclouddirectory/2017-01-11/schema/json",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Name": "s",
-          "Document": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Name": "s",
+        "Document": "s",
+      },
+    }, await resp.json());
   }
 
   async getTypedLinkFacetInformation(
     {abortSignal, ...params}: RequestConfig & GetTypedLinkFacetInformationRequest,
   ): Promise<GetTypedLinkFacetInformationResponse> {
     const headers = new Headers;
-    headers.append("x-amz-data-partition", params["SchemaArn"]);
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
-    } : {};
+    };
+    headers.append("x-amz-data-partition", params["SchemaArn"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "GetTypedLinkFacetInformation",
       requestUri: "/amazonclouddirectory/2017-01-11/typedlink/facet/get",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "IdentityAttributeOrder": ["s"],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "IdentityAttributeOrder": ["s"],
+      },
+    }, await resp.json());
   }
 
   async listAppliedSchemaArns(
     {abortSignal, ...params}: RequestConfig & ListAppliedSchemaArnsRequest,
   ): Promise<ListAppliedSchemaArnsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DirectoryArn: params["DirectoryArn"],
       SchemaArn: params["SchemaArn"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListAppliedSchemaArns",
       requestUri: "/amazonclouddirectory/2017-01-11/schema/applied",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "SchemaArns": ["s"],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "SchemaArns": ["s"],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listAttachedIndices(
     {abortSignal, ...params}: RequestConfig & ListAttachedIndicesRequest,
   ): Promise<ListAttachedIndicesResponse> {
     const headers = new Headers;
-    headers.append("x-amz-data-partition", params["DirectoryArn"]);
-    if (params["ConsistencyLevel"] != null) headers.append("x-amz-consistency-level", params["ConsistencyLevel"]);
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TargetReference: fromObjectReference(params["TargetReference"]),
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
+    headers.append("x-amz-data-partition", params["DirectoryArn"]);
+    if (params["ConsistencyLevel"] != null) headers.append("x-amz-consistency-level", params["ConsistencyLevel"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "ListAttachedIndices",
       requestUri: "/amazonclouddirectory/2017-01-11/object/indices",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "IndexAttachments": [toIndexAttachment],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "IndexAttachments": [toIndexAttachment],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listDevelopmentSchemaArns(
     {abortSignal, ...params}: RequestConfig & ListDevelopmentSchemaArnsRequest = {},
   ): Promise<ListDevelopmentSchemaArnsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListDevelopmentSchemaArns",
       requestUri: "/amazonclouddirectory/2017-01-11/schema/development",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "SchemaArns": ["s"],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "SchemaArns": ["s"],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listDirectories(
     {abortSignal, ...params}: RequestConfig & ListDirectoriesRequest = {},
   ): Promise<ListDirectoriesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
       state: params["state"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListDirectories",
       requestUri: "/amazonclouddirectory/2017-01-11/directory/list",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "Directories": [toDirectory],
-        },
-        optional: {
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "Directories": [toDirectory],
+      },
+      optional: {
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listFacetAttributes(
     {abortSignal, ...params}: RequestConfig & ListFacetAttributesRequest,
   ): Promise<ListFacetAttributesResponse> {
     const headers = new Headers;
-    headers.append("x-amz-data-partition", params["SchemaArn"]);
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
+    headers.append("x-amz-data-partition", params["SchemaArn"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "ListFacetAttributes",
       requestUri: "/amazonclouddirectory/2017-01-11/facet/attributes",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Attributes": [toFacetAttribute],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Attributes": [toFacetAttribute],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listFacetNames(
     {abortSignal, ...params}: RequestConfig & ListFacetNamesRequest,
   ): Promise<ListFacetNamesResponse> {
     const headers = new Headers;
-    headers.append("x-amz-data-partition", params["SchemaArn"]);
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
+    headers.append("x-amz-data-partition", params["SchemaArn"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "ListFacetNames",
       requestUri: "/amazonclouddirectory/2017-01-11/facet/list",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "FacetNames": ["s"],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "FacetNames": ["s"],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listIncomingTypedLinks(
     {abortSignal, ...params}: RequestConfig & ListIncomingTypedLinksRequest,
   ): Promise<ListIncomingTypedLinksResponse> {
     const headers = new Headers;
-    headers.append("x-amz-data-partition", params["DirectoryArn"]);
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ObjectReference: fromObjectReference(params["ObjectReference"]),
       FilterAttributeRanges: params["FilterAttributeRanges"]?.map(x => fromTypedLinkAttributeRange(x)),
       FilterTypedLink: fromTypedLinkSchemaAndFacetName(params["FilterTypedLink"]),
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
       ConsistencyLevel: params["ConsistencyLevel"],
-    } : {};
+    };
+    headers.append("x-amz-data-partition", params["DirectoryArn"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "ListIncomingTypedLinks",
       requestUri: "/amazonclouddirectory/2017-01-11/typedlink/incoming",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "LinkSpecifiers": [toTypedLinkSpecifier],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "LinkSpecifiers": [toTypedLinkSpecifier],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listIndex(
     {abortSignal, ...params}: RequestConfig & ListIndexRequest,
   ): Promise<ListIndexResponse> {
     const headers = new Headers;
-    headers.append("x-amz-data-partition", params["DirectoryArn"]);
-    if (params["ConsistencyLevel"] != null) headers.append("x-amz-consistency-level", params["ConsistencyLevel"]);
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       RangesOnIndexedValues: params["RangesOnIndexedValues"]?.map(x => fromObjectAttributeRange(x)),
       IndexReference: fromObjectReference(params["IndexReference"]),
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
+    headers.append("x-amz-data-partition", params["DirectoryArn"]);
+    if (params["ConsistencyLevel"] != null) headers.append("x-amz-consistency-level", params["ConsistencyLevel"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "ListIndex",
       requestUri: "/amazonclouddirectory/2017-01-11/index/targets",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "IndexAttachments": [toIndexAttachment],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "IndexAttachments": [toIndexAttachment],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listManagedSchemaArns(
     {abortSignal, ...params}: RequestConfig & ListManagedSchemaArnsRequest = {},
   ): Promise<ListManagedSchemaArnsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       SchemaArn: params["SchemaArn"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListManagedSchemaArns",
       requestUri: "/amazonclouddirectory/2017-01-11/schema/managed",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "SchemaArns": ["s"],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "SchemaArns": ["s"],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listObjectAttributes(
     {abortSignal, ...params}: RequestConfig & ListObjectAttributesRequest,
   ): Promise<ListObjectAttributesResponse> {
     const headers = new Headers;
-    headers.append("x-amz-data-partition", params["DirectoryArn"]);
-    if (params["ConsistencyLevel"] != null) headers.append("x-amz-consistency-level", params["ConsistencyLevel"]);
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ObjectReference: fromObjectReference(params["ObjectReference"]),
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
       FacetFilter: fromSchemaFacet(params["FacetFilter"]),
-    } : {};
+    };
+    headers.append("x-amz-data-partition", params["DirectoryArn"]);
+    if (params["ConsistencyLevel"] != null) headers.append("x-amz-consistency-level", params["ConsistencyLevel"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "ListObjectAttributes",
       requestUri: "/amazonclouddirectory/2017-01-11/object/attributes",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Attributes": [toAttributeKeyAndValue],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Attributes": [toAttributeKeyAndValue],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listObjectChildren(
     {abortSignal, ...params}: RequestConfig & ListObjectChildrenRequest,
   ): Promise<ListObjectChildrenResponse> {
     const headers = new Headers;
-    headers.append("x-amz-data-partition", params["DirectoryArn"]);
-    if (params["ConsistencyLevel"] != null) headers.append("x-amz-consistency-level", params["ConsistencyLevel"]);
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ObjectReference: fromObjectReference(params["ObjectReference"]),
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
+    headers.append("x-amz-data-partition", params["DirectoryArn"]);
+    if (params["ConsistencyLevel"] != null) headers.append("x-amz-consistency-level", params["ConsistencyLevel"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "ListObjectChildren",
       requestUri: "/amazonclouddirectory/2017-01-11/object/children",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Children": x => jsonP.readMap(String, String, x),
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Children": x => jsonP.readMap(String, String, x),
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listObjectParentPaths(
     {abortSignal, ...params}: RequestConfig & ListObjectParentPathsRequest,
   ): Promise<ListObjectParentPathsResponse> {
     const headers = new Headers;
-    headers.append("x-amz-data-partition", params["DirectoryArn"]);
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ObjectReference: fromObjectReference(params["ObjectReference"]),
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
+    headers.append("x-amz-data-partition", params["DirectoryArn"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "ListObjectParentPaths",
       requestUri: "/amazonclouddirectory/2017-01-11/object/parentpaths",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "PathToObjectIdentifiersList": [toPathToObjectIdentifiers],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "PathToObjectIdentifiersList": [toPathToObjectIdentifiers],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listObjectParents(
     {abortSignal, ...params}: RequestConfig & ListObjectParentsRequest,
   ): Promise<ListObjectParentsResponse> {
     const headers = new Headers;
-    headers.append("x-amz-data-partition", params["DirectoryArn"]);
-    if (params["ConsistencyLevel"] != null) headers.append("x-amz-consistency-level", params["ConsistencyLevel"]);
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ObjectReference: fromObjectReference(params["ObjectReference"]),
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
       IncludeAllLinksToEachParent: params["IncludeAllLinksToEachParent"],
-    } : {};
+    };
+    headers.append("x-amz-data-partition", params["DirectoryArn"]);
+    if (params["ConsistencyLevel"] != null) headers.append("x-amz-consistency-level", params["ConsistencyLevel"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "ListObjectParents",
       requestUri: "/amazonclouddirectory/2017-01-11/object/parent",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Parents": x => jsonP.readMap(String, String, x),
-          "NextToken": "s",
-          "ParentLinks": [toObjectIdentifierAndLinkNameTuple],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Parents": x => jsonP.readMap(String, String, x),
+        "NextToken": "s",
+        "ParentLinks": [toObjectIdentifierAndLinkNameTuple],
+      },
+    }, await resp.json());
   }
 
   async listObjectPolicies(
     {abortSignal, ...params}: RequestConfig & ListObjectPoliciesRequest,
   ): Promise<ListObjectPoliciesResponse> {
     const headers = new Headers;
-    headers.append("x-amz-data-partition", params["DirectoryArn"]);
-    if (params["ConsistencyLevel"] != null) headers.append("x-amz-consistency-level", params["ConsistencyLevel"]);
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ObjectReference: fromObjectReference(params["ObjectReference"]),
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
+    headers.append("x-amz-data-partition", params["DirectoryArn"]);
+    if (params["ConsistencyLevel"] != null) headers.append("x-amz-consistency-level", params["ConsistencyLevel"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "ListObjectPolicies",
       requestUri: "/amazonclouddirectory/2017-01-11/object/policy",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "AttachedPolicyIds": ["s"],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "AttachedPolicyIds": ["s"],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listOutgoingTypedLinks(
     {abortSignal, ...params}: RequestConfig & ListOutgoingTypedLinksRequest,
   ): Promise<ListOutgoingTypedLinksResponse> {
     const headers = new Headers;
-    headers.append("x-amz-data-partition", params["DirectoryArn"]);
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ObjectReference: fromObjectReference(params["ObjectReference"]),
       FilterAttributeRanges: params["FilterAttributeRanges"]?.map(x => fromTypedLinkAttributeRange(x)),
       FilterTypedLink: fromTypedLinkSchemaAndFacetName(params["FilterTypedLink"]),
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
       ConsistencyLevel: params["ConsistencyLevel"],
-    } : {};
+    };
+    headers.append("x-amz-data-partition", params["DirectoryArn"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "ListOutgoingTypedLinks",
       requestUri: "/amazonclouddirectory/2017-01-11/typedlink/outgoing",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "TypedLinkSpecifiers": [toTypedLinkSpecifier],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "TypedLinkSpecifiers": [toTypedLinkSpecifier],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listPolicyAttachments(
     {abortSignal, ...params}: RequestConfig & ListPolicyAttachmentsRequest,
   ): Promise<ListPolicyAttachmentsResponse> {
     const headers = new Headers;
-    headers.append("x-amz-data-partition", params["DirectoryArn"]);
-    if (params["ConsistencyLevel"] != null) headers.append("x-amz-consistency-level", params["ConsistencyLevel"]);
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       PolicyReference: fromObjectReference(params["PolicyReference"]),
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
+    headers.append("x-amz-data-partition", params["DirectoryArn"]);
+    if (params["ConsistencyLevel"] != null) headers.append("x-amz-consistency-level", params["ConsistencyLevel"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "ListPolicyAttachments",
       requestUri: "/amazonclouddirectory/2017-01-11/policy/attachment",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ObjectIdentifiers": ["s"],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ObjectIdentifiers": ["s"],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listPublishedSchemaArns(
     {abortSignal, ...params}: RequestConfig & ListPublishedSchemaArnsRequest = {},
   ): Promise<ListPublishedSchemaArnsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       SchemaArn: params["SchemaArn"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListPublishedSchemaArns",
       requestUri: "/amazonclouddirectory/2017-01-11/schema/published",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "SchemaArns": ["s"],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "SchemaArns": ["s"],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listTagsForResource(
     {abortSignal, ...params}: RequestConfig & ListTagsForResourceRequest,
   ): Promise<ListTagsForResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForResource",
       requestUri: "/amazonclouddirectory/2017-01-11/tags",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Tags": [toTag],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Tags": [toTag],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listTypedLinkFacetAttributes(
     {abortSignal, ...params}: RequestConfig & ListTypedLinkFacetAttributesRequest,
   ): Promise<ListTypedLinkFacetAttributesResponse> {
     const headers = new Headers;
-    headers.append("x-amz-data-partition", params["SchemaArn"]);
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
+    headers.append("x-amz-data-partition", params["SchemaArn"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "ListTypedLinkFacetAttributes",
       requestUri: "/amazonclouddirectory/2017-01-11/typedlink/facet/attributes",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Attributes": [toTypedLinkAttributeDefinition],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Attributes": [toTypedLinkAttributeDefinition],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listTypedLinkFacetNames(
     {abortSignal, ...params}: RequestConfig & ListTypedLinkFacetNamesRequest,
   ): Promise<ListTypedLinkFacetNamesResponse> {
     const headers = new Headers;
-    headers.append("x-amz-data-partition", params["SchemaArn"]);
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
+    headers.append("x-amz-data-partition", params["SchemaArn"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "ListTypedLinkFacetNames",
       requestUri: "/amazonclouddirectory/2017-01-11/typedlink/facet/list",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "FacetNames": ["s"],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "FacetNames": ["s"],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async lookupPolicy(
     {abortSignal, ...params}: RequestConfig & LookupPolicyRequest,
   ): Promise<LookupPolicyResponse> {
     const headers = new Headers;
-    headers.append("x-amz-data-partition", params["DirectoryArn"]);
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ObjectReference: fromObjectReference(params["ObjectReference"]),
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
+    headers.append("x-amz-data-partition", params["DirectoryArn"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "LookupPolicy",
       requestUri: "/amazonclouddirectory/2017-01-11/policy/lookup",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "PolicyToPathList": [toPolicyToPath],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "PolicyToPathList": [toPolicyToPath],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async publishSchema(
     {abortSignal, ...params}: RequestConfig & PublishSchemaRequest,
   ): Promise<PublishSchemaResponse> {
     const headers = new Headers;
-    headers.append("x-amz-data-partition", params["DevelopmentSchemaArn"]);
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Version: params["Version"],
       MinorVersion: params["MinorVersion"],
       Name: params["Name"],
-    } : {};
+    };
+    headers.append("x-amz-data-partition", params["DevelopmentSchemaArn"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "PublishSchema",
@@ -1417,24 +1311,22 @@ export default class CloudDirectory {
       requestUri: "/amazonclouddirectory/2017-01-11/schema/publish",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "PublishedSchemaArn": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "PublishedSchemaArn": "s",
+      },
+    }, await resp.json());
   }
 
   async putSchemaFromJson(
     {abortSignal, ...params}: RequestConfig & PutSchemaFromJsonRequest,
   ): Promise<PutSchemaFromJsonResponse> {
     const headers = new Headers;
-    headers.append("x-amz-data-partition", params["SchemaArn"]);
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Document: params["Document"],
-    } : {};
+    };
+    headers.append("x-amz-data-partition", params["SchemaArn"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "PutSchemaFromJson",
@@ -1442,25 +1334,23 @@ export default class CloudDirectory {
       requestUri: "/amazonclouddirectory/2017-01-11/schema/json",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Arn": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+      },
+    }, await resp.json());
   }
 
   async removeFacetFromObject(
     {abortSignal, ...params}: RequestConfig & RemoveFacetFromObjectRequest,
   ): Promise<RemoveFacetFromObjectResponse> {
     const headers = new Headers;
-    headers.append("x-amz-data-partition", params["DirectoryArn"]);
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       SchemaFacet: fromSchemaFacet(params["SchemaFacet"]),
       ObjectReference: fromObjectReference(params["ObjectReference"]),
-    } : {};
+    };
+    headers.append("x-amz-data-partition", params["DirectoryArn"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "RemoveFacetFromObject",
@@ -1468,21 +1358,19 @@ export default class CloudDirectory {
       requestUri: "/amazonclouddirectory/2017-01-11/object/facets/delete",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
@@ -1490,21 +1378,19 @@ export default class CloudDirectory {
       requestUri: "/amazonclouddirectory/2017-01-11/tags/add",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceRequest,
   ): Promise<UntagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
       TagKeys: params["TagKeys"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResource",
@@ -1512,24 +1398,22 @@ export default class CloudDirectory {
       requestUri: "/amazonclouddirectory/2017-01-11/tags/remove",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async updateFacet(
     {abortSignal, ...params}: RequestConfig & UpdateFacetRequest,
   ): Promise<UpdateFacetResponse> {
     const headers = new Headers;
-    headers.append("x-amz-data-partition", params["SchemaArn"]);
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       AttributeUpdates: params["AttributeUpdates"]?.map(x => fromFacetAttributeUpdate(x)),
       ObjectType: params["ObjectType"],
-    } : {};
+    };
+    headers.append("x-amz-data-partition", params["SchemaArn"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "UpdateFacet",
@@ -1537,46 +1421,42 @@ export default class CloudDirectory {
       requestUri: "/amazonclouddirectory/2017-01-11/facet",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async updateLinkAttributes(
     {abortSignal, ...params}: RequestConfig & UpdateLinkAttributesRequest,
   ): Promise<UpdateLinkAttributesResponse> {
     const headers = new Headers;
-    headers.append("x-amz-data-partition", params["DirectoryArn"]);
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TypedLinkSpecifier: fromTypedLinkSpecifier(params["TypedLinkSpecifier"]),
       AttributeUpdates: params["AttributeUpdates"]?.map(x => fromLinkAttributeUpdate(x)),
-    } : {};
+    };
+    headers.append("x-amz-data-partition", params["DirectoryArn"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "UpdateLinkAttributes",
       requestUri: "/amazonclouddirectory/2017-01-11/typedlink/attributes/update",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async updateObjectAttributes(
     {abortSignal, ...params}: RequestConfig & UpdateObjectAttributesRequest,
   ): Promise<UpdateObjectAttributesResponse> {
     const headers = new Headers;
-    headers.append("x-amz-data-partition", params["DirectoryArn"]);
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ObjectReference: fromObjectReference(params["ObjectReference"]),
       AttributeUpdates: params["AttributeUpdates"]?.map(x => fromObjectAttributeUpdate(x)),
-    } : {};
+    };
+    headers.append("x-amz-data-partition", params["DirectoryArn"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "UpdateObjectAttributes",
@@ -1584,24 +1464,22 @@ export default class CloudDirectory {
       requestUri: "/amazonclouddirectory/2017-01-11/object/update",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ObjectIdentifier": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ObjectIdentifier": "s",
+      },
+    }, await resp.json());
   }
 
   async updateSchema(
     {abortSignal, ...params}: RequestConfig & UpdateSchemaRequest,
   ): Promise<UpdateSchemaResponse> {
     const headers = new Headers;
-    headers.append("x-amz-data-partition", params["SchemaArn"]);
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
-    } : {};
+    };
+    headers.append("x-amz-data-partition", params["SchemaArn"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "UpdateSchema",
@@ -1609,26 +1487,24 @@ export default class CloudDirectory {
       requestUri: "/amazonclouddirectory/2017-01-11/schema/update",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "SchemaArn": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "SchemaArn": "s",
+      },
+    }, await resp.json());
   }
 
   async updateTypedLinkFacet(
     {abortSignal, ...params}: RequestConfig & UpdateTypedLinkFacetRequest,
   ): Promise<UpdateTypedLinkFacetResponse> {
     const headers = new Headers;
-    headers.append("x-amz-data-partition", params["SchemaArn"]);
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       AttributeUpdates: params["AttributeUpdates"]?.map(x => fromTypedLinkFacetAttributeUpdate(x)),
       IdentityAttributeOrder: params["IdentityAttributeOrder"],
-    } : {};
+    };
+    headers.append("x-amz-data-partition", params["SchemaArn"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "UpdateTypedLinkFacet",
@@ -1636,22 +1512,20 @@ export default class CloudDirectory {
       requestUri: "/amazonclouddirectory/2017-01-11/typedlink/facet",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async upgradeAppliedSchema(
     {abortSignal, ...params}: RequestConfig & UpgradeAppliedSchemaRequest,
   ): Promise<UpgradeAppliedSchemaResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       PublishedSchemaArn: params["PublishedSchemaArn"],
       DirectoryArn: params["DirectoryArn"],
       DryRun: params["DryRun"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpgradeAppliedSchema",
@@ -1659,26 +1533,24 @@ export default class CloudDirectory {
       requestUri: "/amazonclouddirectory/2017-01-11/schema/upgradeapplied",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "UpgradedSchemaArn": "s",
-          "DirectoryArn": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "UpgradedSchemaArn": "s",
+        "DirectoryArn": "s",
+      },
+    }, await resp.json());
   }
 
   async upgradePublishedSchema(
     {abortSignal, ...params}: RequestConfig & UpgradePublishedSchemaRequest,
   ): Promise<UpgradePublishedSchemaResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DevelopmentSchemaArn: params["DevelopmentSchemaArn"],
       PublishedSchemaArn: params["PublishedSchemaArn"],
       MinorVersion: params["MinorVersion"],
       DryRun: params["DryRun"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpgradePublishedSchema",
@@ -1686,14 +1558,12 @@ export default class CloudDirectory {
       requestUri: "/amazonclouddirectory/2017-01-11/schema/upgradepublished",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "UpgradedSchemaArn": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "UpgradedSchemaArn": "s",
+      },
+    }, await resp.json());
   }
 
 }

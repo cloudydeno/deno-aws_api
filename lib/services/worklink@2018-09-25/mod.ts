@@ -30,439 +30,401 @@ export default class WorkLink {
   async associateDomain(
     {abortSignal, ...params}: RequestConfig & AssociateDomainRequest,
   ): Promise<AssociateDomainResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       FleetArn: params["FleetArn"],
       DomainName: params["DomainName"],
       DisplayName: params["DisplayName"],
       AcmCertificateArn: params["AcmCertificateArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AssociateDomain",
       requestUri: "/associateDomain",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async associateWebsiteAuthorizationProvider(
     {abortSignal, ...params}: RequestConfig & AssociateWebsiteAuthorizationProviderRequest,
   ): Promise<AssociateWebsiteAuthorizationProviderResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       FleetArn: params["FleetArn"],
       AuthorizationProviderType: params["AuthorizationProviderType"],
       DomainName: params["DomainName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AssociateWebsiteAuthorizationProvider",
       requestUri: "/associateWebsiteAuthorizationProvider",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "AuthorizationProviderId": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "AuthorizationProviderId": "s",
+      },
+    }, await resp.json());
   }
 
   async associateWebsiteCertificateAuthority(
     {abortSignal, ...params}: RequestConfig & AssociateWebsiteCertificateAuthorityRequest,
   ): Promise<AssociateWebsiteCertificateAuthorityResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       FleetArn: params["FleetArn"],
       Certificate: params["Certificate"],
       DisplayName: params["DisplayName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AssociateWebsiteCertificateAuthority",
       requestUri: "/associateWebsiteCertificateAuthority",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "WebsiteCaId": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "WebsiteCaId": "s",
+      },
+    }, await resp.json());
   }
 
   async createFleet(
     {abortSignal, ...params}: RequestConfig & CreateFleetRequest,
   ): Promise<CreateFleetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       FleetName: params["FleetName"],
       DisplayName: params["DisplayName"],
       OptimizeForEndUserLocation: params["OptimizeForEndUserLocation"],
       Tags: params["Tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateFleet",
       requestUri: "/createFleet",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "FleetArn": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "FleetArn": "s",
+      },
+    }, await resp.json());
   }
 
   async deleteFleet(
     {abortSignal, ...params}: RequestConfig & DeleteFleetRequest,
   ): Promise<DeleteFleetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       FleetArn: params["FleetArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteFleet",
       requestUri: "/deleteFleet",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async describeAuditStreamConfiguration(
     {abortSignal, ...params}: RequestConfig & DescribeAuditStreamConfigurationRequest,
   ): Promise<DescribeAuditStreamConfigurationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       FleetArn: params["FleetArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeAuditStreamConfiguration",
       requestUri: "/describeAuditStreamConfiguration",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "AuditStreamArn": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "AuditStreamArn": "s",
+      },
+    }, await resp.json());
   }
 
   async describeCompanyNetworkConfiguration(
     {abortSignal, ...params}: RequestConfig & DescribeCompanyNetworkConfigurationRequest,
   ): Promise<DescribeCompanyNetworkConfigurationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       FleetArn: params["FleetArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeCompanyNetworkConfiguration",
       requestUri: "/describeCompanyNetworkConfiguration",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "VpcId": "s",
-          "SubnetIds": ["s"],
-          "SecurityGroupIds": ["s"],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "VpcId": "s",
+        "SubnetIds": ["s"],
+        "SecurityGroupIds": ["s"],
+      },
+    }, await resp.json());
   }
 
   async describeDevice(
     {abortSignal, ...params}: RequestConfig & DescribeDeviceRequest,
   ): Promise<DescribeDeviceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       FleetArn: params["FleetArn"],
       DeviceId: params["DeviceId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeDevice",
       requestUri: "/describeDevice",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Status": (x: jsonP.JSONValue) => cmnP.readEnum<DeviceStatus>(x),
-          "Model": "s",
-          "Manufacturer": "s",
-          "OperatingSystem": "s",
-          "OperatingSystemVersion": "s",
-          "PatchLevel": "s",
-          "FirstAccessedTime": "d",
-          "LastAccessedTime": "d",
-          "Username": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Status": (x: jsonP.JSONValue) => cmnP.readEnum<DeviceStatus>(x),
+        "Model": "s",
+        "Manufacturer": "s",
+        "OperatingSystem": "s",
+        "OperatingSystemVersion": "s",
+        "PatchLevel": "s",
+        "FirstAccessedTime": "d",
+        "LastAccessedTime": "d",
+        "Username": "s",
+      },
+    }, await resp.json());
   }
 
   async describeDevicePolicyConfiguration(
     {abortSignal, ...params}: RequestConfig & DescribeDevicePolicyConfigurationRequest,
   ): Promise<DescribeDevicePolicyConfigurationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       FleetArn: params["FleetArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeDevicePolicyConfiguration",
       requestUri: "/describeDevicePolicyConfiguration",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "DeviceCaCertificate": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "DeviceCaCertificate": "s",
+      },
+    }, await resp.json());
   }
 
   async describeDomain(
     {abortSignal, ...params}: RequestConfig & DescribeDomainRequest,
   ): Promise<DescribeDomainResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       FleetArn: params["FleetArn"],
       DomainName: params["DomainName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeDomain",
       requestUri: "/describeDomain",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "DomainName": "s",
-          "DisplayName": "s",
-          "CreatedTime": "d",
-          "DomainStatus": (x: jsonP.JSONValue) => cmnP.readEnum<DomainStatus>(x),
-          "AcmCertificateArn": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "DomainName": "s",
+        "DisplayName": "s",
+        "CreatedTime": "d",
+        "DomainStatus": (x: jsonP.JSONValue) => cmnP.readEnum<DomainStatus>(x),
+        "AcmCertificateArn": "s",
+      },
+    }, await resp.json());
   }
 
   async describeFleetMetadata(
     {abortSignal, ...params}: RequestConfig & DescribeFleetMetadataRequest,
   ): Promise<DescribeFleetMetadataResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       FleetArn: params["FleetArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeFleetMetadata",
       requestUri: "/describeFleetMetadata",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "CreatedTime": "d",
-          "LastUpdatedTime": "d",
-          "FleetName": "s",
-          "DisplayName": "s",
-          "OptimizeForEndUserLocation": "b",
-          "CompanyCode": "s",
-          "FleetStatus": (x: jsonP.JSONValue) => cmnP.readEnum<FleetStatus>(x),
-          "Tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "CreatedTime": "d",
+        "LastUpdatedTime": "d",
+        "FleetName": "s",
+        "DisplayName": "s",
+        "OptimizeForEndUserLocation": "b",
+        "CompanyCode": "s",
+        "FleetStatus": (x: jsonP.JSONValue) => cmnP.readEnum<FleetStatus>(x),
+        "Tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async describeIdentityProviderConfiguration(
     {abortSignal, ...params}: RequestConfig & DescribeIdentityProviderConfigurationRequest,
   ): Promise<DescribeIdentityProviderConfigurationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       FleetArn: params["FleetArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeIdentityProviderConfiguration",
       requestUri: "/describeIdentityProviderConfiguration",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "IdentityProviderType": (x: jsonP.JSONValue) => cmnP.readEnum<IdentityProviderType>(x),
-          "ServiceProviderSamlMetadata": "s",
-          "IdentityProviderSamlMetadata": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "IdentityProviderType": (x: jsonP.JSONValue) => cmnP.readEnum<IdentityProviderType>(x),
+        "ServiceProviderSamlMetadata": "s",
+        "IdentityProviderSamlMetadata": "s",
+      },
+    }, await resp.json());
   }
 
   async describeWebsiteCertificateAuthority(
     {abortSignal, ...params}: RequestConfig & DescribeWebsiteCertificateAuthorityRequest,
   ): Promise<DescribeWebsiteCertificateAuthorityResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       FleetArn: params["FleetArn"],
       WebsiteCaId: params["WebsiteCaId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeWebsiteCertificateAuthority",
       requestUri: "/describeWebsiteCertificateAuthority",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Certificate": "s",
-          "CreatedTime": "d",
-          "DisplayName": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Certificate": "s",
+        "CreatedTime": "d",
+        "DisplayName": "s",
+      },
+    }, await resp.json());
   }
 
   async disassociateDomain(
     {abortSignal, ...params}: RequestConfig & DisassociateDomainRequest,
   ): Promise<DisassociateDomainResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       FleetArn: params["FleetArn"],
       DomainName: params["DomainName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisassociateDomain",
       requestUri: "/disassociateDomain",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async disassociateWebsiteAuthorizationProvider(
     {abortSignal, ...params}: RequestConfig & DisassociateWebsiteAuthorizationProviderRequest,
   ): Promise<DisassociateWebsiteAuthorizationProviderResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       FleetArn: params["FleetArn"],
       AuthorizationProviderId: params["AuthorizationProviderId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisassociateWebsiteAuthorizationProvider",
       requestUri: "/disassociateWebsiteAuthorizationProvider",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async disassociateWebsiteCertificateAuthority(
     {abortSignal, ...params}: RequestConfig & DisassociateWebsiteCertificateAuthorityRequest,
   ): Promise<DisassociateWebsiteCertificateAuthorityResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       FleetArn: params["FleetArn"],
       WebsiteCaId: params["WebsiteCaId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisassociateWebsiteCertificateAuthority",
       requestUri: "/disassociateWebsiteCertificateAuthority",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async listDevices(
     {abortSignal, ...params}: RequestConfig & ListDevicesRequest,
   ): Promise<ListDevicesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       FleetArn: params["FleetArn"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListDevices",
       requestUri: "/listDevices",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Devices": [toDeviceSummary],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Devices": [toDeviceSummary],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listDomains(
     {abortSignal, ...params}: RequestConfig & ListDomainsRequest,
   ): Promise<ListDomainsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       FleetArn: params["FleetArn"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListDomains",
       requestUri: "/listDomains",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Domains": [toDomainSummary],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Domains": [toDomainSummary],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listFleets(
     {abortSignal, ...params}: RequestConfig & ListFleetsRequest = {},
   ): Promise<ListFleetsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListFleets",
       requestUri: "/listFleets",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "FleetSummaryList": [toFleetSummary],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "FleetSummaryList": [toFleetSummary],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listTagsForResource(
@@ -475,141 +437,127 @@ export default class WorkLink {
       method: "GET",
       requestUri: cmnP.encodePath`/tags/${params["ResourceArn"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async listWebsiteAuthorizationProviders(
     {abortSignal, ...params}: RequestConfig & ListWebsiteAuthorizationProvidersRequest,
   ): Promise<ListWebsiteAuthorizationProvidersResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       FleetArn: params["FleetArn"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListWebsiteAuthorizationProviders",
       requestUri: "/listWebsiteAuthorizationProviders",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "WebsiteAuthorizationProviders": [toWebsiteAuthorizationProviderSummary],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "WebsiteAuthorizationProviders": [toWebsiteAuthorizationProviderSummary],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listWebsiteCertificateAuthorities(
     {abortSignal, ...params}: RequestConfig & ListWebsiteCertificateAuthoritiesRequest,
   ): Promise<ListWebsiteCertificateAuthoritiesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       FleetArn: params["FleetArn"],
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListWebsiteCertificateAuthorities",
       requestUri: "/listWebsiteCertificateAuthorities",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "WebsiteCertificateAuthorities": [toWebsiteCaSummary],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "WebsiteCertificateAuthorities": [toWebsiteCaSummary],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async restoreDomainAccess(
     {abortSignal, ...params}: RequestConfig & RestoreDomainAccessRequest,
   ): Promise<RestoreDomainAccessResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       FleetArn: params["FleetArn"],
       DomainName: params["DomainName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RestoreDomainAccess",
       requestUri: "/restoreDomainAccess",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async revokeDomainAccess(
     {abortSignal, ...params}: RequestConfig & RevokeDomainAccessRequest,
   ): Promise<RevokeDomainAccessResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       FleetArn: params["FleetArn"],
       DomainName: params["DomainName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RevokeDomainAccess",
       requestUri: "/revokeDomainAccess",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async signOutUser(
     {abortSignal, ...params}: RequestConfig & SignOutUserRequest,
   ): Promise<SignOutUserResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       FleetArn: params["FleetArn"],
       Username: params["Username"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SignOutUser",
       requestUri: "/signOutUser",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Tags: params["Tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
       requestUri: cmnP.encodePath`/tags/${params["ResourceArn"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async untagResource(
@@ -625,137 +573,123 @@ export default class WorkLink {
       method: "DELETE",
       requestUri: cmnP.encodePath`/tags/${params["ResourceArn"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async updateAuditStreamConfiguration(
     {abortSignal, ...params}: RequestConfig & UpdateAuditStreamConfigurationRequest,
   ): Promise<UpdateAuditStreamConfigurationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       FleetArn: params["FleetArn"],
       AuditStreamArn: params["AuditStreamArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateAuditStreamConfiguration",
       requestUri: "/updateAuditStreamConfiguration",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async updateCompanyNetworkConfiguration(
     {abortSignal, ...params}: RequestConfig & UpdateCompanyNetworkConfigurationRequest,
   ): Promise<UpdateCompanyNetworkConfigurationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       FleetArn: params["FleetArn"],
       VpcId: params["VpcId"],
       SubnetIds: params["SubnetIds"],
       SecurityGroupIds: params["SecurityGroupIds"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateCompanyNetworkConfiguration",
       requestUri: "/updateCompanyNetworkConfiguration",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async updateDevicePolicyConfiguration(
     {abortSignal, ...params}: RequestConfig & UpdateDevicePolicyConfigurationRequest,
   ): Promise<UpdateDevicePolicyConfigurationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       FleetArn: params["FleetArn"],
       DeviceCaCertificate: params["DeviceCaCertificate"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateDevicePolicyConfiguration",
       requestUri: "/updateDevicePolicyConfiguration",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async updateDomainMetadata(
     {abortSignal, ...params}: RequestConfig & UpdateDomainMetadataRequest,
   ): Promise<UpdateDomainMetadataResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       FleetArn: params["FleetArn"],
       DomainName: params["DomainName"],
       DisplayName: params["DisplayName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateDomainMetadata",
       requestUri: "/updateDomainMetadata",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async updateFleetMetadata(
     {abortSignal, ...params}: RequestConfig & UpdateFleetMetadataRequest,
   ): Promise<UpdateFleetMetadataResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       FleetArn: params["FleetArn"],
       DisplayName: params["DisplayName"],
       OptimizeForEndUserLocation: params["OptimizeForEndUserLocation"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateFleetMetadata",
       requestUri: "/UpdateFleetMetadata",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async updateIdentityProviderConfiguration(
     {abortSignal, ...params}: RequestConfig & UpdateIdentityProviderConfigurationRequest,
   ): Promise<UpdateIdentityProviderConfigurationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       FleetArn: params["FleetArn"],
       IdentityProviderType: params["IdentityProviderType"],
       IdentityProviderSamlMetadata: params["IdentityProviderSamlMetadata"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateIdentityProviderConfiguration",
       requestUri: "/updateIdentityProviderConfiguration",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
 }

@@ -30,54 +30,50 @@ export default class AppSync {
   async createApiCache(
     {abortSignal, ...params}: RequestConfig & CreateApiCacheRequest,
   ): Promise<CreateApiCacheResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ttl: params["ttl"],
       transitEncryptionEnabled: params["transitEncryptionEnabled"],
       atRestEncryptionEnabled: params["atRestEncryptionEnabled"],
       apiCachingBehavior: params["apiCachingBehavior"],
       type: params["type"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateApiCache",
       requestUri: cmnP.encodePath`/v1/apis/${params["apiId"]}/ApiCaches`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "apiCache": toApiCache,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "apiCache": toApiCache,
+      },
+    }, await resp.json());
   }
 
   async createApiKey(
     {abortSignal, ...params}: RequestConfig & CreateApiKeyRequest,
   ): Promise<CreateApiKeyResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       description: params["description"],
       expires: params["expires"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateApiKey",
       requestUri: cmnP.encodePath`/v1/apis/${params["apiId"]}/apikeys`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "apiKey": toApiKey,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "apiKey": toApiKey,
+      },
+    }, await resp.json());
   }
 
   async createDataSource(
     {abortSignal, ...params}: RequestConfig & CreateDataSourceRequest,
   ): Promise<CreateDataSourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       name: params["name"],
       description: params["description"],
       type: params["type"],
@@ -87,52 +83,48 @@ export default class AppSync {
       elasticsearchConfig: fromElasticsearchDataSourceConfig(params["elasticsearchConfig"]),
       httpConfig: fromHttpDataSourceConfig(params["httpConfig"]),
       relationalDatabaseConfig: fromRelationalDatabaseDataSourceConfig(params["relationalDatabaseConfig"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDataSource",
       requestUri: cmnP.encodePath`/v1/apis/${params["apiId"]}/datasources`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "dataSource": toDataSource,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "dataSource": toDataSource,
+      },
+    }, await resp.json());
   }
 
   async createFunction(
     {abortSignal, ...params}: RequestConfig & CreateFunctionRequest,
   ): Promise<CreateFunctionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       name: params["name"],
       description: params["description"],
       dataSourceName: params["dataSourceName"],
       requestMappingTemplate: params["requestMappingTemplate"],
       responseMappingTemplate: params["responseMappingTemplate"],
       functionVersion: params["functionVersion"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateFunction",
       requestUri: cmnP.encodePath`/v1/apis/${params["apiId"]}/functions`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "functionConfiguration": toFunctionConfiguration,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "functionConfiguration": toFunctionConfiguration,
+      },
+    }, await resp.json());
   }
 
   async createGraphqlApi(
     {abortSignal, ...params}: RequestConfig & CreateGraphqlApiRequest,
   ): Promise<CreateGraphqlApiResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       name: params["name"],
       logConfig: fromLogConfig(params["logConfig"]),
       authenticationType: params["authenticationType"],
@@ -141,26 +133,24 @@ export default class AppSync {
       tags: params["tags"],
       additionalAuthenticationProviders: params["additionalAuthenticationProviders"]?.map(x => fromAdditionalAuthenticationProvider(x)),
       xrayEnabled: params["xrayEnabled"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateGraphqlApi",
       requestUri: "/v1/apis",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "graphqlApi": toGraphqlApi,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "graphqlApi": toGraphqlApi,
+      },
+    }, await resp.json());
   }
 
   async createResolver(
     {abortSignal, ...params}: RequestConfig & CreateResolverRequest,
   ): Promise<CreateResolverResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       fieldName: params["fieldName"],
       dataSourceName: params["dataSourceName"],
       requestMappingTemplate: params["requestMappingTemplate"],
@@ -169,42 +159,38 @@ export default class AppSync {
       pipelineConfig: fromPipelineConfig(params["pipelineConfig"]),
       syncConfig: fromSyncConfig(params["syncConfig"]),
       cachingConfig: fromCachingConfig(params["cachingConfig"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateResolver",
       requestUri: cmnP.encodePath`/v1/apis/${params["apiId"]}/types/${params["typeName"]}/resolvers`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "resolver": toResolver,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "resolver": toResolver,
+      },
+    }, await resp.json());
   }
 
   async createType(
     {abortSignal, ...params}: RequestConfig & CreateTypeRequest,
   ): Promise<CreateTypeResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       definition: params["definition"],
       format: params["format"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateType",
       requestUri: cmnP.encodePath`/v1/apis/${params["apiId"]}/types`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "type": toType,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "type": toType,
+      },
+    }, await resp.json());
   }
 
   async deleteApiCache(
@@ -217,12 +203,10 @@ export default class AppSync {
       method: "DELETE",
       requestUri: cmnP.encodePath`/v1/apis/${params["apiId"]}/ApiCaches`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async deleteApiKey(
@@ -235,12 +219,10 @@ export default class AppSync {
       method: "DELETE",
       requestUri: cmnP.encodePath`/v1/apis/${params["apiId"]}/apikeys/${params["id"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async deleteDataSource(
@@ -253,12 +235,10 @@ export default class AppSync {
       method: "DELETE",
       requestUri: cmnP.encodePath`/v1/apis/${params["apiId"]}/datasources/${params["name"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async deleteFunction(
@@ -271,12 +251,10 @@ export default class AppSync {
       method: "DELETE",
       requestUri: cmnP.encodePath`/v1/apis/${params["apiId"]}/functions/${params["functionId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async deleteGraphqlApi(
@@ -289,12 +267,10 @@ export default class AppSync {
       method: "DELETE",
       requestUri: cmnP.encodePath`/v1/apis/${params["apiId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async deleteResolver(
@@ -307,12 +283,10 @@ export default class AppSync {
       method: "DELETE",
       requestUri: cmnP.encodePath`/v1/apis/${params["apiId"]}/types/${params["typeName"]}/resolvers/${params["fieldName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async deleteType(
@@ -325,12 +299,10 @@ export default class AppSync {
       method: "DELETE",
       requestUri: cmnP.encodePath`/v1/apis/${params["apiId"]}/types/${params["typeName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async flushApiCache(
@@ -343,12 +315,10 @@ export default class AppSync {
       method: "DELETE",
       requestUri: cmnP.encodePath`/v1/apis/${params["apiId"]}/FlushCache`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async getApiCache(
@@ -361,14 +331,12 @@ export default class AppSync {
       method: "GET",
       requestUri: cmnP.encodePath`/v1/apis/${params["apiId"]}/ApiCaches`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "apiCache": toApiCache,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "apiCache": toApiCache,
+      },
+    }, await resp.json());
   }
 
   async getDataSource(
@@ -381,14 +349,12 @@ export default class AppSync {
       method: "GET",
       requestUri: cmnP.encodePath`/v1/apis/${params["apiId"]}/datasources/${params["name"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "dataSource": toDataSource,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "dataSource": toDataSource,
+      },
+    }, await resp.json());
   }
 
   async getFunction(
@@ -401,14 +367,12 @@ export default class AppSync {
       method: "GET",
       requestUri: cmnP.encodePath`/v1/apis/${params["apiId"]}/functions/${params["functionId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "functionConfiguration": toFunctionConfiguration,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "functionConfiguration": toFunctionConfiguration,
+      },
+    }, await resp.json());
   }
 
   async getGraphqlApi(
@@ -421,14 +385,12 @@ export default class AppSync {
       method: "GET",
       requestUri: cmnP.encodePath`/v1/apis/${params["apiId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "graphqlApi": toGraphqlApi,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "graphqlApi": toGraphqlApi,
+      },
+    }, await resp.json());
   }
 
   async getIntrospectionSchema(
@@ -458,14 +420,12 @@ export default class AppSync {
       method: "GET",
       requestUri: cmnP.encodePath`/v1/apis/${params["apiId"]}/types/${params["typeName"]}/resolvers/${params["fieldName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "resolver": toResolver,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "resolver": toResolver,
+      },
+    }, await resp.json());
   }
 
   async getSchemaCreationStatus(
@@ -478,15 +438,13 @@ export default class AppSync {
       method: "GET",
       requestUri: cmnP.encodePath`/v1/apis/${params["apiId"]}/schemacreation`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "status": (x: jsonP.JSONValue) => cmnP.readEnum<SchemaStatus>(x),
-          "details": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "status": (x: jsonP.JSONValue) => cmnP.readEnum<SchemaStatus>(x),
+        "details": "s",
+      },
+    }, await resp.json());
   }
 
   async getType(
@@ -500,14 +458,12 @@ export default class AppSync {
       method: "GET",
       requestUri: cmnP.encodePath`/v1/apis/${params["apiId"]}/types/${params["typeName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "type": toType,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "type": toType,
+      },
+    }, await resp.json());
   }
 
   async listApiKeys(
@@ -522,15 +478,13 @@ export default class AppSync {
       method: "GET",
       requestUri: cmnP.encodePath`/v1/apis/${params["apiId"]}/apikeys`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "apiKeys": [toApiKey],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "apiKeys": [toApiKey],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listDataSources(
@@ -545,15 +499,13 @@ export default class AppSync {
       method: "GET",
       requestUri: cmnP.encodePath`/v1/apis/${params["apiId"]}/datasources`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "dataSources": [toDataSource],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "dataSources": [toDataSource],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listFunctions(
@@ -568,15 +520,13 @@ export default class AppSync {
       method: "GET",
       requestUri: cmnP.encodePath`/v1/apis/${params["apiId"]}/functions`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "functions": [toFunctionConfiguration],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "functions": [toFunctionConfiguration],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listGraphqlApis(
@@ -591,15 +541,13 @@ export default class AppSync {
       method: "GET",
       requestUri: "/v1/apis",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "graphqlApis": [toGraphqlApi],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "graphqlApis": [toGraphqlApi],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listResolvers(
@@ -614,15 +562,13 @@ export default class AppSync {
       method: "GET",
       requestUri: cmnP.encodePath`/v1/apis/${params["apiId"]}/types/${params["typeName"]}/resolvers`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "resolvers": [toResolver],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "resolvers": [toResolver],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listResolversByFunction(
@@ -637,15 +583,13 @@ export default class AppSync {
       method: "GET",
       requestUri: cmnP.encodePath`/v1/apis/${params["apiId"]}/functions/${params["functionId"]}/resolvers`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "resolvers": [toResolver],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "resolvers": [toResolver],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listTagsForResource(
@@ -658,14 +602,12 @@ export default class AppSync {
       method: "GET",
       requestUri: cmnP.encodePath`/v1/tags/${params["resourceArn"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async listTypes(
@@ -681,55 +623,49 @@ export default class AppSync {
       method: "GET",
       requestUri: cmnP.encodePath`/v1/apis/${params["apiId"]}/types`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "types": [toType],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "types": [toType],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async startSchemaCreation(
     {abortSignal, ...params}: RequestConfig & StartSchemaCreationRequest,
   ): Promise<StartSchemaCreationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       definition: jsonP.serializeBlob(params["definition"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartSchemaCreation",
       requestUri: cmnP.encodePath`/v1/apis/${params["apiId"]}/schemacreation`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "status": (x: jsonP.JSONValue) => cmnP.readEnum<SchemaStatus>(x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "status": (x: jsonP.JSONValue) => cmnP.readEnum<SchemaStatus>(x),
+      },
+    }, await resp.json());
   }
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       tags: params["tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
       requestUri: cmnP.encodePath`/v1/tags/${params["resourceArn"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async untagResource(
@@ -745,63 +681,57 @@ export default class AppSync {
       method: "DELETE",
       requestUri: cmnP.encodePath`/v1/tags/${params["resourceArn"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async updateApiCache(
     {abortSignal, ...params}: RequestConfig & UpdateApiCacheRequest,
   ): Promise<UpdateApiCacheResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ttl: params["ttl"],
       apiCachingBehavior: params["apiCachingBehavior"],
       type: params["type"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateApiCache",
       requestUri: cmnP.encodePath`/v1/apis/${params["apiId"]}/ApiCaches/update`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "apiCache": toApiCache,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "apiCache": toApiCache,
+      },
+    }, await resp.json());
   }
 
   async updateApiKey(
     {abortSignal, ...params}: RequestConfig & UpdateApiKeyRequest,
   ): Promise<UpdateApiKeyResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       description: params["description"],
       expires: params["expires"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateApiKey",
       requestUri: cmnP.encodePath`/v1/apis/${params["apiId"]}/apikeys/${params["id"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "apiKey": toApiKey,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "apiKey": toApiKey,
+      },
+    }, await resp.json());
   }
 
   async updateDataSource(
     {abortSignal, ...params}: RequestConfig & UpdateDataSourceRequest,
   ): Promise<UpdateDataSourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       description: params["description"],
       type: params["type"],
       serviceRoleArn: params["serviceRoleArn"],
@@ -810,52 +740,48 @@ export default class AppSync {
       elasticsearchConfig: fromElasticsearchDataSourceConfig(params["elasticsearchConfig"]),
       httpConfig: fromHttpDataSourceConfig(params["httpConfig"]),
       relationalDatabaseConfig: fromRelationalDatabaseDataSourceConfig(params["relationalDatabaseConfig"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateDataSource",
       requestUri: cmnP.encodePath`/v1/apis/${params["apiId"]}/datasources/${params["name"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "dataSource": toDataSource,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "dataSource": toDataSource,
+      },
+    }, await resp.json());
   }
 
   async updateFunction(
     {abortSignal, ...params}: RequestConfig & UpdateFunctionRequest,
   ): Promise<UpdateFunctionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       name: params["name"],
       description: params["description"],
       dataSourceName: params["dataSourceName"],
       requestMappingTemplate: params["requestMappingTemplate"],
       responseMappingTemplate: params["responseMappingTemplate"],
       functionVersion: params["functionVersion"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateFunction",
       requestUri: cmnP.encodePath`/v1/apis/${params["apiId"]}/functions/${params["functionId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "functionConfiguration": toFunctionConfiguration,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "functionConfiguration": toFunctionConfiguration,
+      },
+    }, await resp.json());
   }
 
   async updateGraphqlApi(
     {abortSignal, ...params}: RequestConfig & UpdateGraphqlApiRequest,
   ): Promise<UpdateGraphqlApiResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       name: params["name"],
       logConfig: fromLogConfig(params["logConfig"]),
       authenticationType: params["authenticationType"],
@@ -863,26 +789,24 @@ export default class AppSync {
       openIDConnectConfig: fromOpenIDConnectConfig(params["openIDConnectConfig"]),
       additionalAuthenticationProviders: params["additionalAuthenticationProviders"]?.map(x => fromAdditionalAuthenticationProvider(x)),
       xrayEnabled: params["xrayEnabled"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateGraphqlApi",
       requestUri: cmnP.encodePath`/v1/apis/${params["apiId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "graphqlApi": toGraphqlApi,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "graphqlApi": toGraphqlApi,
+      },
+    }, await resp.json());
   }
 
   async updateResolver(
     {abortSignal, ...params}: RequestConfig & UpdateResolverRequest,
   ): Promise<UpdateResolverResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       dataSourceName: params["dataSourceName"],
       requestMappingTemplate: params["requestMappingTemplate"],
       responseMappingTemplate: params["responseMappingTemplate"],
@@ -890,42 +814,38 @@ export default class AppSync {
       pipelineConfig: fromPipelineConfig(params["pipelineConfig"]),
       syncConfig: fromSyncConfig(params["syncConfig"]),
       cachingConfig: fromCachingConfig(params["cachingConfig"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateResolver",
       requestUri: cmnP.encodePath`/v1/apis/${params["apiId"]}/types/${params["typeName"]}/resolvers/${params["fieldName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "resolver": toResolver,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "resolver": toResolver,
+      },
+    }, await resp.json());
   }
 
   async updateType(
     {abortSignal, ...params}: RequestConfig & UpdateTypeRequest,
   ): Promise<UpdateTypeResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       definition: params["definition"],
       format: params["format"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateType",
       requestUri: cmnP.encodePath`/v1/apis/${params["apiId"]}/types/${params["typeName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "type": toType,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "type": toType,
+      },
+    }, await resp.json());
   }
 
 }

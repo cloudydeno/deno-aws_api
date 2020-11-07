@@ -30,12 +30,12 @@ export default class CodeStarconnections {
   async createConnection(
     {abortSignal, ...params}: RequestConfig & CreateConnectionInput,
   ): Promise<CreateConnectionOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ProviderType: params["ProviderType"],
       ConnectionName: params["ConnectionName"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
       HostArn: params["HostArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateConnection",
@@ -53,12 +53,12 @@ export default class CodeStarconnections {
   async createHost(
     {abortSignal, ...params}: RequestConfig & CreateHostInput,
   ): Promise<CreateHostOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       ProviderType: params["ProviderType"],
       ProviderEndpoint: params["ProviderEndpoint"],
       VpcConfiguration: fromVpcConfiguration(params["VpcConfiguration"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateHost",
@@ -74,9 +74,9 @@ export default class CodeStarconnections {
   async deleteConnection(
     {abortSignal, ...params}: RequestConfig & DeleteConnectionInput,
   ): Promise<DeleteConnectionOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ConnectionArn: params["ConnectionArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteConnection",
@@ -90,9 +90,9 @@ export default class CodeStarconnections {
   async deleteHost(
     {abortSignal, ...params}: RequestConfig & DeleteHostInput,
   ): Promise<DeleteHostOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       HostArn: params["HostArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteHost",
@@ -106,9 +106,9 @@ export default class CodeStarconnections {
   async getConnection(
     {abortSignal, ...params}: RequestConfig & GetConnectionInput,
   ): Promise<GetConnectionOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ConnectionArn: params["ConnectionArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetConnection",
@@ -124,9 +124,9 @@ export default class CodeStarconnections {
   async getHost(
     {abortSignal, ...params}: RequestConfig & GetHostInput,
   ): Promise<GetHostOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       HostArn: params["HostArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetHost",
@@ -146,12 +146,12 @@ export default class CodeStarconnections {
   async listConnections(
     {abortSignal, ...params}: RequestConfig & ListConnectionsInput = {},
   ): Promise<ListConnectionsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ProviderTypeFilter: params["ProviderTypeFilter"],
       HostArnFilter: params["HostArnFilter"],
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListConnections",
@@ -168,10 +168,10 @@ export default class CodeStarconnections {
   async listHosts(
     {abortSignal, ...params}: RequestConfig & ListHostsInput = {},
   ): Promise<ListHostsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListHosts",
@@ -188,9 +188,9 @@ export default class CodeStarconnections {
   async listTagsForResource(
     {abortSignal, ...params}: RequestConfig & ListTagsForResourceInput,
   ): Promise<ListTagsForResourceOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForResource",
@@ -206,10 +206,10 @@ export default class CodeStarconnections {
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceInput,
   ): Promise<TagResourceOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
@@ -223,10 +223,10 @@ export default class CodeStarconnections {
   async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceInput,
   ): Promise<UntagResourceOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
       TagKeys: params["TagKeys"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResource",

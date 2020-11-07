@@ -33,9 +33,9 @@ export default class Braket {
   async cancelQuantumTask(
     {abortSignal, ...params}: RequestConfig & CancelQuantumTaskRequest,
   ): Promise<CancelQuantumTaskResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       clientToken: params["clientToken"] ?? generateIdemptToken(),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CancelQuantumTask",
@@ -43,21 +43,19 @@ export default class Braket {
       requestUri: cmnP.encodePath`/quantum-task/${params["quantumTaskArn"]}/cancel`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "cancellationStatus": (x: jsonP.JSONValue) => cmnP.readEnum<CancellationStatus>(x),
-          "quantumTaskArn": "s",
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "cancellationStatus": (x: jsonP.JSONValue) => cmnP.readEnum<CancellationStatus>(x),
+        "quantumTaskArn": "s",
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async createQuantumTask(
     {abortSignal, ...params}: RequestConfig & CreateQuantumTaskRequest,
   ): Promise<CreateQuantumTaskResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       action: jsonP.serializeJsonValue(params["action"]),
       clientToken: params["clientToken"] ?? generateIdemptToken(),
       deviceArn: params["deviceArn"],
@@ -66,21 +64,19 @@ export default class Braket {
       outputS3KeyPrefix: params["outputS3KeyPrefix"],
       shots: params["shots"],
       tags: params["tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateQuantumTask",
       requestUri: "/quantum-task",
       responseCode: 201,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "quantumTaskArn": "s",
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "quantumTaskArn": "s",
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async getDevice(
@@ -94,19 +90,17 @@ export default class Braket {
       requestUri: cmnP.encodePath`/device/${params["deviceArn"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "deviceArn": "s",
-          "deviceCapabilities": jsonP.readJsonValue,
-          "deviceName": "s",
-          "deviceStatus": (x: jsonP.JSONValue) => cmnP.readEnum<DeviceStatus>(x),
-          "deviceType": (x: jsonP.JSONValue) => cmnP.readEnum<DeviceType>(x),
-          "providerName": "s",
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "deviceArn": "s",
+        "deviceCapabilities": jsonP.readJsonValue,
+        "deviceName": "s",
+        "deviceStatus": (x: jsonP.JSONValue) => cmnP.readEnum<DeviceStatus>(x),
+        "deviceType": (x: jsonP.JSONValue) => cmnP.readEnum<DeviceType>(x),
+        "providerName": "s",
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async getQuantumTask(
@@ -120,25 +114,23 @@ export default class Braket {
       requestUri: cmnP.encodePath`/quantum-task/${params["quantumTaskArn"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "createdAt": "d",
-          "deviceArn": "s",
-          "deviceParameters": jsonP.readJsonValue,
-          "outputS3Bucket": "s",
-          "outputS3Directory": "s",
-          "quantumTaskArn": "s",
-          "shots": "n",
-          "status": (x: jsonP.JSONValue) => cmnP.readEnum<QuantumTaskStatus>(x),
-        },
-        optional: {
-          "endedAt": "d",
-          "failureReason": "s",
-          "tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "createdAt": "d",
+        "deviceArn": "s",
+        "deviceParameters": jsonP.readJsonValue,
+        "outputS3Bucket": "s",
+        "outputS3Directory": "s",
+        "quantumTaskArn": "s",
+        "shots": "n",
+        "status": (x: jsonP.JSONValue) => cmnP.readEnum<QuantumTaskStatus>(x),
+      },
+      optional: {
+        "endedAt": "d",
+        "failureReason": "s",
+        "tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async listTagsForResource(
@@ -152,86 +144,78 @@ export default class Braket {
       requestUri: cmnP.encodePath`/tags/${params["resourceArn"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async searchDevices(
     {abortSignal, ...params}: RequestConfig & SearchDevicesRequest,
   ): Promise<SearchDevicesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       filters: params["filters"]?.map(x => fromSearchDevicesFilter(x)),
       maxResults: params["maxResults"],
       nextToken: params["nextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SearchDevices",
       requestUri: "/devices",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "devices": [toDeviceSummary],
-        },
-        optional: {
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "devices": [toDeviceSummary],
+      },
+      optional: {
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async searchQuantumTasks(
     {abortSignal, ...params}: RequestConfig & SearchQuantumTasksRequest,
   ): Promise<SearchQuantumTasksResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       filters: params["filters"]?.map(x => fromSearchQuantumTasksFilter(x)),
       maxResults: params["maxResults"],
       nextToken: params["nextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SearchQuantumTasks",
       requestUri: "/quantum-tasks",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "quantumTasks": [toQuantumTaskSummary],
-        },
-        optional: {
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "quantumTasks": [toQuantumTaskSummary],
+      },
+      optional: {
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       tags: params["tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
       requestUri: cmnP.encodePath`/tags/${params["resourceArn"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async untagResource(
@@ -248,12 +232,10 @@ export default class Braket {
       requestUri: cmnP.encodePath`/tags/${params["resourceArn"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
 }

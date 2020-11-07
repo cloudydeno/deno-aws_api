@@ -29,254 +29,232 @@ export default class Batch {
   async cancelJob(
     {abortSignal, ...params}: RequestConfig & CancelJobRequest,
   ): Promise<CancelJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       jobId: params["jobId"],
       reason: params["reason"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CancelJob",
       requestUri: "/v1/canceljob",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async createComputeEnvironment(
     {abortSignal, ...params}: RequestConfig & CreateComputeEnvironmentRequest,
   ): Promise<CreateComputeEnvironmentResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       computeEnvironmentName: params["computeEnvironmentName"],
       type: params["type"],
       state: params["state"],
       computeResources: fromComputeResource(params["computeResources"]),
       serviceRole: params["serviceRole"],
       tags: params["tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateComputeEnvironment",
       requestUri: "/v1/createcomputeenvironment",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "computeEnvironmentName": "s",
-          "computeEnvironmentArn": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "computeEnvironmentName": "s",
+        "computeEnvironmentArn": "s",
+      },
+    }, await resp.json());
   }
 
   async createJobQueue(
     {abortSignal, ...params}: RequestConfig & CreateJobQueueRequest,
   ): Promise<CreateJobQueueResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       jobQueueName: params["jobQueueName"],
       state: params["state"],
       priority: params["priority"],
       computeEnvironmentOrder: params["computeEnvironmentOrder"]?.map(x => fromComputeEnvironmentOrder(x)),
       tags: params["tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateJobQueue",
       requestUri: "/v1/createjobqueue",
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "jobQueueName": "s",
-          "jobQueueArn": "s",
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "jobQueueName": "s",
+        "jobQueueArn": "s",
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async deleteComputeEnvironment(
     {abortSignal, ...params}: RequestConfig & DeleteComputeEnvironmentRequest,
   ): Promise<DeleteComputeEnvironmentResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       computeEnvironment: params["computeEnvironment"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteComputeEnvironment",
       requestUri: "/v1/deletecomputeenvironment",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async deleteJobQueue(
     {abortSignal, ...params}: RequestConfig & DeleteJobQueueRequest,
   ): Promise<DeleteJobQueueResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       jobQueue: params["jobQueue"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteJobQueue",
       requestUri: "/v1/deletejobqueue",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async deregisterJobDefinition(
     {abortSignal, ...params}: RequestConfig & DeregisterJobDefinitionRequest,
   ): Promise<DeregisterJobDefinitionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       jobDefinition: params["jobDefinition"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeregisterJobDefinition",
       requestUri: "/v1/deregisterjobdefinition",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async describeComputeEnvironments(
     {abortSignal, ...params}: RequestConfig & DescribeComputeEnvironmentsRequest = {},
   ): Promise<DescribeComputeEnvironmentsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       computeEnvironments: params["computeEnvironments"],
       maxResults: params["maxResults"],
       nextToken: params["nextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeComputeEnvironments",
       requestUri: "/v1/describecomputeenvironments",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "computeEnvironments": [toComputeEnvironmentDetail],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "computeEnvironments": [toComputeEnvironmentDetail],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async describeJobDefinitions(
     {abortSignal, ...params}: RequestConfig & DescribeJobDefinitionsRequest = {},
   ): Promise<DescribeJobDefinitionsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       jobDefinitions: params["jobDefinitions"],
       maxResults: params["maxResults"],
       jobDefinitionName: params["jobDefinitionName"],
       status: params["status"],
       nextToken: params["nextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeJobDefinitions",
       requestUri: "/v1/describejobdefinitions",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "jobDefinitions": [toJobDefinition],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "jobDefinitions": [toJobDefinition],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async describeJobQueues(
     {abortSignal, ...params}: RequestConfig & DescribeJobQueuesRequest = {},
   ): Promise<DescribeJobQueuesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       jobQueues: params["jobQueues"],
       maxResults: params["maxResults"],
       nextToken: params["nextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeJobQueues",
       requestUri: "/v1/describejobqueues",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "jobQueues": [toJobQueueDetail],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "jobQueues": [toJobQueueDetail],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async describeJobs(
     {abortSignal, ...params}: RequestConfig & DescribeJobsRequest,
   ): Promise<DescribeJobsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       jobs: params["jobs"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeJobs",
       requestUri: "/v1/describejobs",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "jobs": [toJobDetail],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "jobs": [toJobDetail],
+      },
+    }, await resp.json());
   }
 
   async listJobs(
     {abortSignal, ...params}: RequestConfig & ListJobsRequest = {},
   ): Promise<ListJobsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       jobQueue: params["jobQueue"],
       arrayJobId: params["arrayJobId"],
       multiNodeJobId: params["multiNodeJobId"],
       jobStatus: params["jobStatus"],
       maxResults: params["maxResults"],
       nextToken: params["nextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListJobs",
       requestUri: "/v1/listjobs",
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "jobSummaryList": [toJobSummary],
-        },
-        optional: {
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "jobSummaryList": [toJobSummary],
+      },
+      optional: {
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listTagsForResource(
@@ -289,20 +267,18 @@ export default class Batch {
       method: "GET",
       requestUri: cmnP.encodePath`/v1/tags/${params["resourceArn"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async registerJobDefinition(
     {abortSignal, ...params}: RequestConfig & RegisterJobDefinitionRequest,
   ): Promise<RegisterJobDefinitionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       jobDefinitionName: params["jobDefinitionName"],
       type: params["type"],
       parameters: params["parameters"],
@@ -311,28 +287,26 @@ export default class Batch {
       retryStrategy: fromRetryStrategy(params["retryStrategy"]),
       timeout: fromJobTimeout(params["timeout"]),
       tags: params["tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RegisterJobDefinition",
       requestUri: "/v1/registerjobdefinition",
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "jobDefinitionName": "s",
-          "jobDefinitionArn": "s",
-          "revision": "n",
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "jobDefinitionName": "s",
+        "jobDefinitionArn": "s",
+        "revision": "n",
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async submitJob(
     {abortSignal, ...params}: RequestConfig & SubmitJobRequest,
   ): Promise<SubmitJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       jobName: params["jobName"],
       jobQueue: params["jobQueue"],
       arrayProperties: fromArrayProperties(params["arrayProperties"]),
@@ -344,62 +318,56 @@ export default class Batch {
       retryStrategy: fromRetryStrategy(params["retryStrategy"]),
       timeout: fromJobTimeout(params["timeout"]),
       tags: params["tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SubmitJob",
       requestUri: "/v1/submitjob",
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "jobName": "s",
-          "jobId": "s",
-        },
-        optional: {
-          "jobArn": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "jobName": "s",
+        "jobId": "s",
+      },
+      optional: {
+        "jobArn": "s",
+      },
+    }, await resp.json());
   }
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       tags: params["tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
       requestUri: cmnP.encodePath`/v1/tags/${params["resourceArn"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async terminateJob(
     {abortSignal, ...params}: RequestConfig & TerminateJobRequest,
   ): Promise<TerminateJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       jobId: params["jobId"],
       reason: params["reason"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TerminateJob",
       requestUri: "/v1/terminatejob",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async untagResource(
@@ -415,62 +383,56 @@ export default class Batch {
       method: "DELETE",
       requestUri: cmnP.encodePath`/v1/tags/${params["resourceArn"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async updateComputeEnvironment(
     {abortSignal, ...params}: RequestConfig & UpdateComputeEnvironmentRequest,
   ): Promise<UpdateComputeEnvironmentResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       computeEnvironment: params["computeEnvironment"],
       state: params["state"],
       computeResources: fromComputeResourceUpdate(params["computeResources"]),
       serviceRole: params["serviceRole"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateComputeEnvironment",
       requestUri: "/v1/updatecomputeenvironment",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "computeEnvironmentName": "s",
-          "computeEnvironmentArn": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "computeEnvironmentName": "s",
+        "computeEnvironmentArn": "s",
+      },
+    }, await resp.json());
   }
 
   async updateJobQueue(
     {abortSignal, ...params}: RequestConfig & UpdateJobQueueRequest,
   ): Promise<UpdateJobQueueResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       jobQueue: params["jobQueue"],
       state: params["state"],
       priority: params["priority"],
       computeEnvironmentOrder: params["computeEnvironmentOrder"]?.map(x => fromComputeEnvironmentOrder(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateJobQueue",
       requestUri: "/v1/updatejobqueue",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "jobQueueName": "s",
-          "jobQueueArn": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "jobQueueName": "s",
+        "jobQueueArn": "s",
+      },
+    }, await resp.json());
   }
 
 }

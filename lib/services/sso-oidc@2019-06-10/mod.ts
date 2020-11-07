@@ -30,7 +30,7 @@ export default class SSOOIDC {
   async createToken(
     {abortSignal, ...params}: RequestConfig & CreateTokenRequest,
   ): Promise<CreateTokenResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       clientId: params["clientId"],
       clientSecret: params["clientSecret"],
       grantType: params["grantType"],
@@ -39,80 +39,74 @@ export default class SSOOIDC {
       refreshToken: params["refreshToken"],
       scope: params["scope"],
       redirectUri: params["redirectUri"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateToken",
       requestUri: "/token",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "accessToken": "s",
-          "tokenType": "s",
-          "expiresIn": "n",
-          "refreshToken": "s",
-          "idToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "accessToken": "s",
+        "tokenType": "s",
+        "expiresIn": "n",
+        "refreshToken": "s",
+        "idToken": "s",
+      },
+    }, await resp.json());
   }
 
   async registerClient(
     {abortSignal, ...params}: RequestConfig & RegisterClientRequest,
   ): Promise<RegisterClientResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       clientName: params["clientName"],
       clientType: params["clientType"],
       scopes: params["scopes"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RegisterClient",
       requestUri: "/client/register",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "clientId": "s",
-          "clientSecret": "s",
-          "clientIdIssuedAt": "n",
-          "clientSecretExpiresAt": "n",
-          "authorizationEndpoint": "s",
-          "tokenEndpoint": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "clientId": "s",
+        "clientSecret": "s",
+        "clientIdIssuedAt": "n",
+        "clientSecretExpiresAt": "n",
+        "authorizationEndpoint": "s",
+        "tokenEndpoint": "s",
+      },
+    }, await resp.json());
   }
 
   async startDeviceAuthorization(
     {abortSignal, ...params}: RequestConfig & StartDeviceAuthorizationRequest,
   ): Promise<StartDeviceAuthorizationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       clientId: params["clientId"],
       clientSecret: params["clientSecret"],
       startUrl: params["startUrl"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartDeviceAuthorization",
       requestUri: "/device_authorization",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "deviceCode": "s",
-          "userCode": "s",
-          "verificationUri": "s",
-          "verificationUriComplete": "s",
-          "expiresIn": "n",
-          "interval": "n",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "deviceCode": "s",
+        "userCode": "s",
+        "verificationUri": "s",
+        "verificationUriComplete": "s",
+        "expiresIn": "n",
+        "interval": "n",
+      },
+    }, await resp.json());
   }
 
 }

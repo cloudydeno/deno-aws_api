@@ -30,26 +30,24 @@ export default class Outposts {
   async createOutpost(
     {abortSignal, ...params}: RequestConfig & CreateOutpostInput,
   ): Promise<CreateOutpostOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       Description: params["Description"],
       SiteId: params["SiteId"],
       AvailabilityZone: params["AvailabilityZone"],
       AvailabilityZoneId: params["AvailabilityZoneId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateOutpost",
       requestUri: "/outposts",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Outpost": toOutpost,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Outpost": toOutpost,
+      },
+    }, await resp.json());
   }
 
   async deleteOutpost(
@@ -62,12 +60,10 @@ export default class Outposts {
       method: "DELETE",
       requestUri: cmnP.encodePath`/outposts/${params["OutpostId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async deleteSite(
@@ -80,12 +76,10 @@ export default class Outposts {
       method: "DELETE",
       requestUri: cmnP.encodePath`/sites/${params["SiteId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async getOutpost(
@@ -98,14 +92,12 @@ export default class Outposts {
       method: "GET",
       requestUri: cmnP.encodePath`/outposts/${params["OutpostId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Outpost": toOutpost,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Outpost": toOutpost,
+      },
+    }, await resp.json());
   }
 
   async getOutpostInstanceTypes(
@@ -120,17 +112,15 @@ export default class Outposts {
       method: "GET",
       requestUri: cmnP.encodePath`/outposts/${params["OutpostId"]}/instanceTypes`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "InstanceTypes": [toInstanceTypeItem],
-          "NextToken": "s",
-          "OutpostId": "s",
-          "OutpostArn": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "InstanceTypes": [toInstanceTypeItem],
+        "NextToken": "s",
+        "OutpostId": "s",
+        "OutpostArn": "s",
+      },
+    }, await resp.json());
   }
 
   async listOutposts(
@@ -145,15 +135,13 @@ export default class Outposts {
       method: "GET",
       requestUri: "/outposts",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Outposts": [toOutpost],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Outposts": [toOutpost],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listSites(
@@ -168,15 +156,13 @@ export default class Outposts {
       method: "GET",
       requestUri: "/sites",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Sites": [toSite],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Sites": [toSite],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
 }

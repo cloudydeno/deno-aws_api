@@ -34,10 +34,10 @@ export default class Route53Resolver {
   async associateResolverEndpointIpAddress(
     {abortSignal, ...params}: RequestConfig & AssociateResolverEndpointIpAddressRequest,
   ): Promise<AssociateResolverEndpointIpAddressResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResolverEndpointId: params["ResolverEndpointId"],
       IpAddress: fromIpAddressUpdate(params["IpAddress"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AssociateResolverEndpointIpAddress",
@@ -53,10 +53,10 @@ export default class Route53Resolver {
   async associateResolverQueryLogConfig(
     {abortSignal, ...params}: RequestConfig & AssociateResolverQueryLogConfigRequest,
   ): Promise<AssociateResolverQueryLogConfigResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResolverQueryLogConfigId: params["ResolverQueryLogConfigId"],
       ResourceId: params["ResourceId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AssociateResolverQueryLogConfig",
@@ -72,11 +72,11 @@ export default class Route53Resolver {
   async associateResolverRule(
     {abortSignal, ...params}: RequestConfig & AssociateResolverRuleRequest,
   ): Promise<AssociateResolverRuleResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResolverRuleId: params["ResolverRuleId"],
       Name: params["Name"],
       VPCId: params["VPCId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AssociateResolverRule",
@@ -92,14 +92,14 @@ export default class Route53Resolver {
   async createResolverEndpoint(
     {abortSignal, ...params}: RequestConfig & CreateResolverEndpointRequest,
   ): Promise<CreateResolverEndpointResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CreatorRequestId: params["CreatorRequestId"],
       Name: params["Name"],
       SecurityGroupIds: params["SecurityGroupIds"],
       Direction: params["Direction"],
       IpAddresses: params["IpAddresses"]?.map(x => fromIpAddressRequest(x)),
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateResolverEndpoint",
@@ -115,12 +115,12 @@ export default class Route53Resolver {
   async createResolverQueryLogConfig(
     {abortSignal, ...params}: RequestConfig & CreateResolverQueryLogConfigRequest,
   ): Promise<CreateResolverQueryLogConfigResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       DestinationArn: params["DestinationArn"],
       CreatorRequestId: params["CreatorRequestId"] ?? generateIdemptToken(),
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateResolverQueryLogConfig",
@@ -136,7 +136,7 @@ export default class Route53Resolver {
   async createResolverRule(
     {abortSignal, ...params}: RequestConfig & CreateResolverRuleRequest,
   ): Promise<CreateResolverRuleResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CreatorRequestId: params["CreatorRequestId"],
       Name: params["Name"],
       RuleType: params["RuleType"],
@@ -144,7 +144,7 @@ export default class Route53Resolver {
       TargetIps: params["TargetIps"]?.map(x => fromTargetAddress(x)),
       ResolverEndpointId: params["ResolverEndpointId"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateResolverRule",
@@ -160,9 +160,9 @@ export default class Route53Resolver {
   async deleteResolverEndpoint(
     {abortSignal, ...params}: RequestConfig & DeleteResolverEndpointRequest,
   ): Promise<DeleteResolverEndpointResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResolverEndpointId: params["ResolverEndpointId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteResolverEndpoint",
@@ -178,9 +178,9 @@ export default class Route53Resolver {
   async deleteResolverQueryLogConfig(
     {abortSignal, ...params}: RequestConfig & DeleteResolverQueryLogConfigRequest,
   ): Promise<DeleteResolverQueryLogConfigResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResolverQueryLogConfigId: params["ResolverQueryLogConfigId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteResolverQueryLogConfig",
@@ -196,9 +196,9 @@ export default class Route53Resolver {
   async deleteResolverRule(
     {abortSignal, ...params}: RequestConfig & DeleteResolverRuleRequest,
   ): Promise<DeleteResolverRuleResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResolverRuleId: params["ResolverRuleId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteResolverRule",
@@ -214,10 +214,10 @@ export default class Route53Resolver {
   async disassociateResolverEndpointIpAddress(
     {abortSignal, ...params}: RequestConfig & DisassociateResolverEndpointIpAddressRequest,
   ): Promise<DisassociateResolverEndpointIpAddressResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResolverEndpointId: params["ResolverEndpointId"],
       IpAddress: fromIpAddressUpdate(params["IpAddress"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisassociateResolverEndpointIpAddress",
@@ -233,10 +233,10 @@ export default class Route53Resolver {
   async disassociateResolverQueryLogConfig(
     {abortSignal, ...params}: RequestConfig & DisassociateResolverQueryLogConfigRequest,
   ): Promise<DisassociateResolverQueryLogConfigResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResolverQueryLogConfigId: params["ResolverQueryLogConfigId"],
       ResourceId: params["ResourceId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisassociateResolverQueryLogConfig",
@@ -252,10 +252,10 @@ export default class Route53Resolver {
   async disassociateResolverRule(
     {abortSignal, ...params}: RequestConfig & DisassociateResolverRuleRequest,
   ): Promise<DisassociateResolverRuleResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       VPCId: params["VPCId"],
       ResolverRuleId: params["ResolverRuleId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisassociateResolverRule",
@@ -271,9 +271,9 @@ export default class Route53Resolver {
   async getResolverEndpoint(
     {abortSignal, ...params}: RequestConfig & GetResolverEndpointRequest,
   ): Promise<GetResolverEndpointResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResolverEndpointId: params["ResolverEndpointId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetResolverEndpoint",
@@ -289,9 +289,9 @@ export default class Route53Resolver {
   async getResolverQueryLogConfig(
     {abortSignal, ...params}: RequestConfig & GetResolverQueryLogConfigRequest,
   ): Promise<GetResolverQueryLogConfigResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResolverQueryLogConfigId: params["ResolverQueryLogConfigId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetResolverQueryLogConfig",
@@ -307,9 +307,9 @@ export default class Route53Resolver {
   async getResolverQueryLogConfigAssociation(
     {abortSignal, ...params}: RequestConfig & GetResolverQueryLogConfigAssociationRequest,
   ): Promise<GetResolverQueryLogConfigAssociationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResolverQueryLogConfigAssociationId: params["ResolverQueryLogConfigAssociationId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetResolverQueryLogConfigAssociation",
@@ -325,9 +325,9 @@ export default class Route53Resolver {
   async getResolverQueryLogConfigPolicy(
     {abortSignal, ...params}: RequestConfig & GetResolverQueryLogConfigPolicyRequest,
   ): Promise<GetResolverQueryLogConfigPolicyResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Arn: params["Arn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetResolverQueryLogConfigPolicy",
@@ -343,9 +343,9 @@ export default class Route53Resolver {
   async getResolverRule(
     {abortSignal, ...params}: RequestConfig & GetResolverRuleRequest,
   ): Promise<GetResolverRuleResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResolverRuleId: params["ResolverRuleId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetResolverRule",
@@ -361,9 +361,9 @@ export default class Route53Resolver {
   async getResolverRuleAssociation(
     {abortSignal, ...params}: RequestConfig & GetResolverRuleAssociationRequest,
   ): Promise<GetResolverRuleAssociationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResolverRuleAssociationId: params["ResolverRuleAssociationId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetResolverRuleAssociation",
@@ -379,9 +379,9 @@ export default class Route53Resolver {
   async getResolverRulePolicy(
     {abortSignal, ...params}: RequestConfig & GetResolverRulePolicyRequest,
   ): Promise<GetResolverRulePolicyResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Arn: params["Arn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetResolverRulePolicy",
@@ -397,11 +397,11 @@ export default class Route53Resolver {
   async listResolverEndpointIpAddresses(
     {abortSignal, ...params}: RequestConfig & ListResolverEndpointIpAddressesRequest,
   ): Promise<ListResolverEndpointIpAddressesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResolverEndpointId: params["ResolverEndpointId"],
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListResolverEndpointIpAddresses",
@@ -419,11 +419,11 @@ export default class Route53Resolver {
   async listResolverEndpoints(
     {abortSignal, ...params}: RequestConfig & ListResolverEndpointsRequest = {},
   ): Promise<ListResolverEndpointsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
       Filters: params["Filters"]?.map(x => fromFilter(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListResolverEndpoints",
@@ -441,13 +441,13 @@ export default class Route53Resolver {
   async listResolverQueryLogConfigAssociations(
     {abortSignal, ...params}: RequestConfig & ListResolverQueryLogConfigAssociationsRequest = {},
   ): Promise<ListResolverQueryLogConfigAssociationsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
       Filters: params["Filters"]?.map(x => fromFilter(x)),
       SortBy: params["SortBy"],
       SortOrder: params["SortOrder"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListResolverQueryLogConfigAssociations",
@@ -466,13 +466,13 @@ export default class Route53Resolver {
   async listResolverQueryLogConfigs(
     {abortSignal, ...params}: RequestConfig & ListResolverQueryLogConfigsRequest = {},
   ): Promise<ListResolverQueryLogConfigsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
       Filters: params["Filters"]?.map(x => fromFilter(x)),
       SortBy: params["SortBy"],
       SortOrder: params["SortOrder"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListResolverQueryLogConfigs",
@@ -491,11 +491,11 @@ export default class Route53Resolver {
   async listResolverRuleAssociations(
     {abortSignal, ...params}: RequestConfig & ListResolverRuleAssociationsRequest = {},
   ): Promise<ListResolverRuleAssociationsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
       Filters: params["Filters"]?.map(x => fromFilter(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListResolverRuleAssociations",
@@ -513,11 +513,11 @@ export default class Route53Resolver {
   async listResolverRules(
     {abortSignal, ...params}: RequestConfig & ListResolverRulesRequest = {},
   ): Promise<ListResolverRulesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
       Filters: params["Filters"]?.map(x => fromFilter(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListResolverRules",
@@ -535,11 +535,11 @@ export default class Route53Resolver {
   async listTagsForResource(
     {abortSignal, ...params}: RequestConfig & ListTagsForResourceRequest,
   ): Promise<ListTagsForResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForResource",
@@ -556,10 +556,10 @@ export default class Route53Resolver {
   async putResolverQueryLogConfigPolicy(
     {abortSignal, ...params}: RequestConfig & PutResolverQueryLogConfigPolicyRequest,
   ): Promise<PutResolverQueryLogConfigPolicyResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Arn: params["Arn"],
       ResolverQueryLogConfigPolicy: params["ResolverQueryLogConfigPolicy"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutResolverQueryLogConfigPolicy",
@@ -575,10 +575,10 @@ export default class Route53Resolver {
   async putResolverRulePolicy(
     {abortSignal, ...params}: RequestConfig & PutResolverRulePolicyRequest,
   ): Promise<PutResolverRulePolicyResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Arn: params["Arn"],
       ResolverRulePolicy: params["ResolverRulePolicy"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutResolverRulePolicy",
@@ -594,10 +594,10 @@ export default class Route53Resolver {
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
@@ -611,10 +611,10 @@ export default class Route53Resolver {
   async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceRequest,
   ): Promise<UntagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
       TagKeys: params["TagKeys"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResource",
@@ -628,10 +628,10 @@ export default class Route53Resolver {
   async updateResolverEndpoint(
     {abortSignal, ...params}: RequestConfig & UpdateResolverEndpointRequest,
   ): Promise<UpdateResolverEndpointResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResolverEndpointId: params["ResolverEndpointId"],
       Name: params["Name"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateResolverEndpoint",
@@ -647,10 +647,10 @@ export default class Route53Resolver {
   async updateResolverRule(
     {abortSignal, ...params}: RequestConfig & UpdateResolverRuleRequest,
   ): Promise<UpdateResolverRuleResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResolverRuleId: params["ResolverRuleId"],
       Config: fromResolverRuleConfig(params["Config"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateResolverRule",

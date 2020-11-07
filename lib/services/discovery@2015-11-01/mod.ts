@@ -33,10 +33,10 @@ export default class Discovery {
   async associateConfigurationItemsToApplication(
     {abortSignal, ...params}: RequestConfig & AssociateConfigurationItemsToApplicationRequest,
   ): Promise<AssociateConfigurationItemsToApplicationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       applicationConfigurationId: params["applicationConfigurationId"],
       configurationIds: params["configurationIds"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AssociateConfigurationItemsToApplication",
@@ -50,9 +50,9 @@ export default class Discovery {
   async batchDeleteImportData(
     {abortSignal, ...params}: RequestConfig & BatchDeleteImportDataRequest,
   ): Promise<BatchDeleteImportDataResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       importTaskIds: params["importTaskIds"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchDeleteImportData",
@@ -68,10 +68,10 @@ export default class Discovery {
   async createApplication(
     {abortSignal, ...params}: RequestConfig & CreateApplicationRequest,
   ): Promise<CreateApplicationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       name: params["name"],
       description: params["description"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateApplication",
@@ -87,10 +87,10 @@ export default class Discovery {
   async createTags(
     {abortSignal, ...params}: RequestConfig & CreateTagsRequest,
   ): Promise<CreateTagsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       configurationIds: params["configurationIds"],
       tags: params["tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateTags",
@@ -104,9 +104,9 @@ export default class Discovery {
   async deleteApplications(
     {abortSignal, ...params}: RequestConfig & DeleteApplicationsRequest,
   ): Promise<DeleteApplicationsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       configurationIds: params["configurationIds"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteApplications",
@@ -120,10 +120,10 @@ export default class Discovery {
   async deleteTags(
     {abortSignal, ...params}: RequestConfig & DeleteTagsRequest,
   ): Promise<DeleteTagsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       configurationIds: params["configurationIds"],
       tags: params["tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteTags",
@@ -137,12 +137,12 @@ export default class Discovery {
   async describeAgents(
     {abortSignal, ...params}: RequestConfig & DescribeAgentsRequest = {},
   ): Promise<DescribeAgentsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       agentIds: params["agentIds"],
       filters: params["filters"]?.map(x => fromFilter(x)),
       maxResults: params["maxResults"],
       nextToken: params["nextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeAgents",
@@ -159,9 +159,9 @@ export default class Discovery {
   async describeConfigurations(
     {abortSignal, ...params}: RequestConfig & DescribeConfigurationsRequest,
   ): Promise<DescribeConfigurationsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       configurationIds: params["configurationIds"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeConfigurations",
@@ -177,11 +177,11 @@ export default class Discovery {
   async describeContinuousExports(
     {abortSignal, ...params}: RequestConfig & DescribeContinuousExportsRequest = {},
   ): Promise<DescribeContinuousExportsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       exportIds: params["exportIds"],
       maxResults: params["maxResults"],
       nextToken: params["nextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeContinuousExports",
@@ -198,11 +198,11 @@ export default class Discovery {
   async describeExportConfigurations(
     {abortSignal, ...params}: RequestConfig & DescribeExportConfigurationsRequest = {},
   ): Promise<DescribeExportConfigurationsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       exportIds: params["exportIds"],
       maxResults: params["maxResults"],
       nextToken: params["nextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeExportConfigurations",
@@ -219,12 +219,12 @@ export default class Discovery {
   async describeExportTasks(
     {abortSignal, ...params}: RequestConfig & DescribeExportTasksRequest = {},
   ): Promise<DescribeExportTasksResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       exportIds: params["exportIds"],
       filters: params["filters"]?.map(x => fromExportFilter(x)),
       maxResults: params["maxResults"],
       nextToken: params["nextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeExportTasks",
@@ -241,11 +241,11 @@ export default class Discovery {
   async describeImportTasks(
     {abortSignal, ...params}: RequestConfig & DescribeImportTasksRequest = {},
   ): Promise<DescribeImportTasksResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       filters: params["filters"]?.map(x => fromImportTaskFilter(x)),
       maxResults: params["maxResults"],
       nextToken: params["nextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeImportTasks",
@@ -262,11 +262,11 @@ export default class Discovery {
   async describeTags(
     {abortSignal, ...params}: RequestConfig & DescribeTagsRequest = {},
   ): Promise<DescribeTagsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       filters: params["filters"]?.map(x => fromTagFilter(x)),
       maxResults: params["maxResults"],
       nextToken: params["nextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeTags",
@@ -283,10 +283,10 @@ export default class Discovery {
   async disassociateConfigurationItemsFromApplication(
     {abortSignal, ...params}: RequestConfig & DisassociateConfigurationItemsFromApplicationRequest,
   ): Promise<DisassociateConfigurationItemsFromApplicationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       applicationConfigurationId: params["applicationConfigurationId"],
       configurationIds: params["configurationIds"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisassociateConfigurationItemsFromApplication",
@@ -315,8 +315,8 @@ export default class Discovery {
   async getDiscoverySummary(
     {abortSignal, ...params}: RequestConfig & GetDiscoverySummaryRequest = {},
   ): Promise<GetDiscoverySummaryResponse> {
-    const body: jsonP.JSONObject = params ? {
-    } : {};
+    const body: jsonP.JSONObject = {
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetDiscoverySummary",
@@ -337,13 +337,13 @@ export default class Discovery {
   async listConfigurations(
     {abortSignal, ...params}: RequestConfig & ListConfigurationsRequest,
   ): Promise<ListConfigurationsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       configurationType: params["configurationType"],
       filters: params["filters"]?.map(x => fromFilter(x)),
       maxResults: params["maxResults"],
       nextToken: params["nextToken"],
       orderBy: params["orderBy"]?.map(x => fromOrderByElement(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListConfigurations",
@@ -360,13 +360,13 @@ export default class Discovery {
   async listServerNeighbors(
     {abortSignal, ...params}: RequestConfig & ListServerNeighborsRequest,
   ): Promise<ListServerNeighborsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       configurationId: params["configurationId"],
       portInformationNeeded: params["portInformationNeeded"],
       neighborConfigurationIds: params["neighborConfigurationIds"],
       maxResults: params["maxResults"],
       nextToken: params["nextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListServerNeighbors",
@@ -385,8 +385,8 @@ export default class Discovery {
   async startContinuousExport(
     {abortSignal, ...params}: RequestConfig & StartContinuousExportRequest = {},
   ): Promise<StartContinuousExportResponse> {
-    const body: jsonP.JSONObject = params ? {
-    } : {};
+    const body: jsonP.JSONObject = {
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartContinuousExport",
@@ -406,9 +406,9 @@ export default class Discovery {
   async startDataCollectionByAgentIds(
     {abortSignal, ...params}: RequestConfig & StartDataCollectionByAgentIdsRequest,
   ): Promise<StartDataCollectionByAgentIdsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       agentIds: params["agentIds"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartDataCollectionByAgentIds",
@@ -424,12 +424,12 @@ export default class Discovery {
   async startExportTask(
     {abortSignal, ...params}: RequestConfig & StartExportTaskRequest = {},
   ): Promise<StartExportTaskResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       exportDataFormat: params["exportDataFormat"],
       filters: params["filters"]?.map(x => fromExportFilter(x)),
       startTime: jsonP.serializeDate_unixTimestamp(params["startTime"]),
       endTime: jsonP.serializeDate_unixTimestamp(params["endTime"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartExportTask",
@@ -445,11 +445,11 @@ export default class Discovery {
   async startImportTask(
     {abortSignal, ...params}: RequestConfig & StartImportTaskRequest,
   ): Promise<StartImportTaskResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       clientRequestToken: params["clientRequestToken"] ?? generateIdemptToken(),
       name: params["name"],
       importUrl: params["importUrl"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartImportTask",
@@ -465,9 +465,9 @@ export default class Discovery {
   async stopContinuousExport(
     {abortSignal, ...params}: RequestConfig & StopContinuousExportRequest,
   ): Promise<StopContinuousExportResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       exportId: params["exportId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopContinuousExport",
@@ -484,9 +484,9 @@ export default class Discovery {
   async stopDataCollectionByAgentIds(
     {abortSignal, ...params}: RequestConfig & StopDataCollectionByAgentIdsRequest,
   ): Promise<StopDataCollectionByAgentIdsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       agentIds: params["agentIds"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopDataCollectionByAgentIds",
@@ -502,11 +502,11 @@ export default class Discovery {
   async updateApplication(
     {abortSignal, ...params}: RequestConfig & UpdateApplicationRequest,
   ): Promise<UpdateApplicationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       configurationId: params["configurationId"],
       name: params["name"],
       description: params["description"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateApplication",

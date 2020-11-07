@@ -29,64 +29,60 @@ export default class CodeGuruProfiler {
   async addNotificationChannels(
     {abortSignal, ...params}: RequestConfig & AddNotificationChannelsRequest,
   ): Promise<AddNotificationChannelsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       channels: params["channels"]?.map(x => fromChannel(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AddNotificationChannels",
       requestUri: cmnP.encodePath`/profilingGroups/${params["profilingGroupName"]}/notificationConfiguration`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "notificationConfiguration": toNotificationConfiguration,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "notificationConfiguration": toNotificationConfiguration,
+      },
+    }, await resp.json());
   }
 
   async batchGetFrameMetricData(
     {abortSignal, ...params}: RequestConfig & BatchGetFrameMetricDataRequest,
   ): Promise<BatchGetFrameMetricDataResponse> {
     const query = new URLSearchParams;
+    const body: jsonP.JSONObject = {
+      frameMetrics: params["frameMetrics"]?.map(x => fromFrameMetric(x)),
+    };
     if (params["endTime"] != null) query.set("endTime", cmnP.serializeDate_iso8601(params["endTime"]) ?? "");
     if (params["period"] != null) query.set("period", params["period"]?.toString() ?? "");
     if (params["startTime"] != null) query.set("startTime", cmnP.serializeDate_iso8601(params["startTime"]) ?? "");
     if (params["targetResolution"] != null) query.set("targetResolution", params["targetResolution"]?.toString() ?? "");
-    const body: jsonP.JSONObject = params ? {
-      frameMetrics: params["frameMetrics"]?.map(x => fromFrameMetric(x)),
-    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, query, body,
       action: "BatchGetFrameMetricData",
       requestUri: cmnP.encodePath`/profilingGroups/${params["profilingGroupName"]}/frames/-/metrics`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "endTime": "d",
-          "endTimes": [toTimestampStructure],
-          "frameMetricData": [toFrameMetricDatum],
-          "resolution": (x: jsonP.JSONValue) => cmnP.readEnum<AggregationPeriod>(x),
-          "startTime": "d",
-          "unprocessedEndTimes": x => jsonP.readMap(String, l => Array.isArray(l) ? l.map(toTimestampStructure) : [], x),
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "endTime": "d",
+        "endTimes": [toTimestampStructure],
+        "frameMetricData": [toFrameMetricDatum],
+        "resolution": (x: jsonP.JSONValue) => cmnP.readEnum<AggregationPeriod>(x),
+        "startTime": "d",
+        "unprocessedEndTimes": x => jsonP.readMap(String, l => Array.isArray(l) ? l.map(toTimestampStructure) : [], x),
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async configureAgent(
     {abortSignal, ...params}: RequestConfig & ConfigureAgentRequest,
   ): Promise<ConfigureAgentResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       fleetInstanceId: params["fleetInstanceId"],
       metadata: params["metadata"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ConfigureAgent",
@@ -110,13 +106,13 @@ export default class CodeGuruProfiler {
     {abortSignal, ...params}: RequestConfig & CreateProfilingGroupRequest,
   ): Promise<CreateProfilingGroupResponse> {
     const query = new URLSearchParams;
-    query.set("clientToken", params["clientToken"]?.toString() ?? "");
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       agentOrchestrationConfig: fromAgentOrchestrationConfig(params["agentOrchestrationConfig"]),
       computePlatform: params["computePlatform"],
       profilingGroupName: params["profilingGroupName"],
       tags: params["tags"],
-    } : {};
+    };
+    query.set("clientToken", params["clientToken"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
       abortSignal, query, body,
       action: "CreateProfilingGroup",
@@ -139,12 +135,10 @@ export default class CodeGuruProfiler {
       requestUri: cmnP.encodePath`/profilingGroups/${params["profilingGroupName"]}`,
       responseCode: 204,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async describeProfilingGroup(
@@ -177,16 +171,14 @@ export default class CodeGuruProfiler {
       requestUri: "/internal/findingsReports",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "reportSummaries": [toFindingsReportSummary],
-        },
-        optional: {
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "reportSummaries": [toFindingsReportSummary],
+      },
+      optional: {
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async getNotificationConfiguration(
@@ -200,14 +192,12 @@ export default class CodeGuruProfiler {
       requestUri: cmnP.encodePath`/profilingGroups/${params["profilingGroupName"]}/notificationConfiguration`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "notificationConfiguration": toNotificationConfiguration,
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "notificationConfiguration": toNotificationConfiguration,
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async getPolicy(
@@ -221,15 +211,13 @@ export default class CodeGuruProfiler {
       requestUri: cmnP.encodePath`/profilingGroups/${params["profilingGroupName"]}/policy`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "policy": "s",
-          "revisionId": "s",
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "policy": "s",
+        "revisionId": "s",
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async getProfile(
@@ -270,18 +258,16 @@ export default class CodeGuruProfiler {
       requestUri: cmnP.encodePath`/internal/profilingGroups/${params["profilingGroupName"]}/recommendations`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "anomalies": [toAnomaly],
-          "profileEndTime": "d",
-          "profileStartTime": "d",
-          "profilingGroupName": "s",
-          "recommendations": [toRecommendation],
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "anomalies": [toAnomaly],
+        "profileEndTime": "d",
+        "profileStartTime": "d",
+        "profilingGroupName": "s",
+        "recommendations": [toRecommendation],
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async listFindingsReports(
@@ -300,16 +286,14 @@ export default class CodeGuruProfiler {
       requestUri: cmnP.encodePath`/internal/profilingGroups/${params["profilingGroupName"]}/findingsReports`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "findingsReportSummaries": [toFindingsReportSummary],
-        },
-        optional: {
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "findingsReportSummaries": [toFindingsReportSummary],
+      },
+      optional: {
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listProfileTimes(
@@ -329,16 +313,14 @@ export default class CodeGuruProfiler {
       requestUri: cmnP.encodePath`/profilingGroups/${params["profilingGroupName"]}/profileTimes`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "profileTimes": [toProfileTime],
-        },
-        optional: {
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "profileTimes": [toProfileTime],
+      },
+      optional: {
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listProfilingGroups(
@@ -355,17 +337,15 @@ export default class CodeGuruProfiler {
       requestUri: "/profilingGroups",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "profilingGroupNames": ["s"],
-        },
-        optional: {
-          "nextToken": "s",
-          "profilingGroups": [toProfilingGroupDescription],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "profilingGroupNames": ["s"],
+      },
+      optional: {
+        "nextToken": "s",
+        "profilingGroups": [toProfilingGroupDescription],
+      },
+    }, await resp.json());
   }
 
   async listTagsForResource(
@@ -379,45 +359,41 @@ export default class CodeGuruProfiler {
       requestUri: cmnP.encodePath`/tags/${params["resourceArn"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async postAgentProfile(
     {abortSignal, ...params}: RequestConfig & PostAgentProfileRequest,
   ): Promise<PostAgentProfileResponse> {
+    const body = typeof params["agentProfile"] === 'string' ? new TextEncoder().encode(params["agentProfile"]) : params["agentProfile"];
     const headers = new Headers;
     const query = new URLSearchParams;
     headers.append("Content-Type", params["contentType"]);
     if (params["profileToken"] != null) query.set("profileToken", params["profileToken"]?.toString() ?? "");
-    const body = typeof params["agentProfile"] === 'string' ? new TextEncoder().encode(params["agentProfile"]) : params["agentProfile"];
     const resp = await this.#client.performRequest({
       abortSignal, headers, query, body,
       action: "PostAgentProfile",
       requestUri: cmnP.encodePath`/profilingGroups/${params["profilingGroupName"]}/agentProfile`,
       responseCode: 204,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async putPermission(
     {abortSignal, ...params}: RequestConfig & PutPermissionRequest,
   ): Promise<PutPermissionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       principals: params["principals"],
       revisionId: params["revisionId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutPermission",
@@ -425,15 +401,13 @@ export default class CodeGuruProfiler {
       requestUri: cmnP.encodePath`/profilingGroups/${params["profilingGroupName"]}/policy/${params["actionGroup"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "policy": "s",
-          "revisionId": "s",
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "policy": "s",
+        "revisionId": "s",
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async removeNotificationChannel(
@@ -447,14 +421,12 @@ export default class CodeGuruProfiler {
       requestUri: cmnP.encodePath`/profilingGroups/${params["profilingGroupName"]}/notificationConfiguration/${params["channelId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "notificationConfiguration": toNotificationConfiguration,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "notificationConfiguration": toNotificationConfiguration,
+      },
+    }, await resp.json());
   }
 
   async removePermission(
@@ -469,56 +441,50 @@ export default class CodeGuruProfiler {
       requestUri: cmnP.encodePath`/profilingGroups/${params["profilingGroupName"]}/policy/${params["actionGroup"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "policy": "s",
-          "revisionId": "s",
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "policy": "s",
+        "revisionId": "s",
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async submitFeedback(
     {abortSignal, ...params}: RequestConfig & SubmitFeedbackRequest,
   ): Promise<SubmitFeedbackResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       comment: params["comment"],
       type: params["type"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SubmitFeedback",
       requestUri: cmnP.encodePath`/internal/profilingGroups/${params["profilingGroupName"]}/anomalies/${params["anomalyInstanceId"]}/feedback`,
       responseCode: 204,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       tags: params["tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
       requestUri: cmnP.encodePath`/tags/${params["resourceArn"]}`,
       responseCode: 204,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async untagResource(
@@ -535,20 +501,18 @@ export default class CodeGuruProfiler {
       requestUri: cmnP.encodePath`/tags/${params["resourceArn"]}`,
       responseCode: 204,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async updateProfilingGroup(
     {abortSignal, ...params}: RequestConfig & UpdateProfilingGroupRequest,
   ): Promise<UpdateProfilingGroupResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       agentOrchestrationConfig: fromAgentOrchestrationConfig(params["agentOrchestrationConfig"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateProfilingGroup",

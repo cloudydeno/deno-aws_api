@@ -31,11 +31,11 @@ export default class ECR {
   async batchCheckLayerAvailability(
     {abortSignal, ...params}: RequestConfig & BatchCheckLayerAvailabilityRequest,
   ): Promise<BatchCheckLayerAvailabilityResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       registryId: params["registryId"],
       repositoryName: params["repositoryName"],
       layerDigests: params["layerDigests"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchCheckLayerAvailability",
@@ -52,11 +52,11 @@ export default class ECR {
   async batchDeleteImage(
     {abortSignal, ...params}: RequestConfig & BatchDeleteImageRequest,
   ): Promise<BatchDeleteImageResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       registryId: params["registryId"],
       repositoryName: params["repositoryName"],
       imageIds: params["imageIds"]?.map(x => fromImageIdentifier(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchDeleteImage",
@@ -73,12 +73,12 @@ export default class ECR {
   async batchGetImage(
     {abortSignal, ...params}: RequestConfig & BatchGetImageRequest,
   ): Promise<BatchGetImageResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       registryId: params["registryId"],
       repositoryName: params["repositoryName"],
       imageIds: params["imageIds"]?.map(x => fromImageIdentifier(x)),
       acceptedMediaTypes: params["acceptedMediaTypes"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchGetImage",
@@ -95,12 +95,12 @@ export default class ECR {
   async completeLayerUpload(
     {abortSignal, ...params}: RequestConfig & CompleteLayerUploadRequest,
   ): Promise<CompleteLayerUploadResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       registryId: params["registryId"],
       repositoryName: params["repositoryName"],
       uploadId: params["uploadId"],
       layerDigests: params["layerDigests"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CompleteLayerUpload",
@@ -119,13 +119,13 @@ export default class ECR {
   async createRepository(
     {abortSignal, ...params}: RequestConfig & CreateRepositoryRequest,
   ): Promise<CreateRepositoryResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       repositoryName: params["repositoryName"],
       tags: params["tags"]?.map(x => fromTag(x)),
       imageTagMutability: params["imageTagMutability"],
       imageScanningConfiguration: fromImageScanningConfiguration(params["imageScanningConfiguration"]),
       encryptionConfiguration: fromEncryptionConfiguration(params["encryptionConfiguration"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateRepository",
@@ -141,10 +141,10 @@ export default class ECR {
   async deleteLifecyclePolicy(
     {abortSignal, ...params}: RequestConfig & DeleteLifecyclePolicyRequest,
   ): Promise<DeleteLifecyclePolicyResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       registryId: params["registryId"],
       repositoryName: params["repositoryName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteLifecyclePolicy",
@@ -163,11 +163,11 @@ export default class ECR {
   async deleteRepository(
     {abortSignal, ...params}: RequestConfig & DeleteRepositoryRequest,
   ): Promise<DeleteRepositoryResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       registryId: params["registryId"],
       repositoryName: params["repositoryName"],
       force: params["force"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteRepository",
@@ -183,10 +183,10 @@ export default class ECR {
   async deleteRepositoryPolicy(
     {abortSignal, ...params}: RequestConfig & DeleteRepositoryPolicyRequest,
   ): Promise<DeleteRepositoryPolicyResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       registryId: params["registryId"],
       repositoryName: params["repositoryName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteRepositoryPolicy",
@@ -204,13 +204,13 @@ export default class ECR {
   async describeImageScanFindings(
     {abortSignal, ...params}: RequestConfig & DescribeImageScanFindingsRequest,
   ): Promise<DescribeImageScanFindingsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       registryId: params["registryId"],
       repositoryName: params["repositoryName"],
       imageId: fromImageIdentifier(params["imageId"]),
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeImageScanFindings",
@@ -231,14 +231,14 @@ export default class ECR {
   async describeImages(
     {abortSignal, ...params}: RequestConfig & DescribeImagesRequest,
   ): Promise<DescribeImagesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       registryId: params["registryId"],
       repositoryName: params["repositoryName"],
       imageIds: params["imageIds"]?.map(x => fromImageIdentifier(x)),
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
       filter: fromDescribeImagesFilter(params["filter"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeImages",
@@ -255,12 +255,12 @@ export default class ECR {
   async describeRepositories(
     {abortSignal, ...params}: RequestConfig & DescribeRepositoriesRequest = {},
   ): Promise<DescribeRepositoriesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       registryId: params["registryId"],
       repositoryNames: params["repositoryNames"],
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeRepositories",
@@ -277,9 +277,9 @@ export default class ECR {
   async getAuthorizationToken(
     {abortSignal, ...params}: RequestConfig & GetAuthorizationTokenRequest = {},
   ): Promise<GetAuthorizationTokenResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       registryIds: params["registryIds"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetAuthorizationToken",
@@ -295,11 +295,11 @@ export default class ECR {
   async getDownloadUrlForLayer(
     {abortSignal, ...params}: RequestConfig & GetDownloadUrlForLayerRequest,
   ): Promise<GetDownloadUrlForLayerResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       registryId: params["registryId"],
       repositoryName: params["repositoryName"],
       layerDigest: params["layerDigest"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetDownloadUrlForLayer",
@@ -316,10 +316,10 @@ export default class ECR {
   async getLifecyclePolicy(
     {abortSignal, ...params}: RequestConfig & GetLifecyclePolicyRequest,
   ): Promise<GetLifecyclePolicyResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       registryId: params["registryId"],
       repositoryName: params["repositoryName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetLifecyclePolicy",
@@ -338,14 +338,14 @@ export default class ECR {
   async getLifecyclePolicyPreview(
     {abortSignal, ...params}: RequestConfig & GetLifecyclePolicyPreviewRequest,
   ): Promise<GetLifecyclePolicyPreviewResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       registryId: params["registryId"],
       repositoryName: params["repositoryName"],
       imageIds: params["imageIds"]?.map(x => fromImageIdentifier(x)),
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
       filter: fromLifecyclePolicyPreviewFilter(params["filter"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetLifecyclePolicyPreview",
@@ -367,10 +367,10 @@ export default class ECR {
   async getRepositoryPolicy(
     {abortSignal, ...params}: RequestConfig & GetRepositoryPolicyRequest,
   ): Promise<GetRepositoryPolicyResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       registryId: params["registryId"],
       repositoryName: params["repositoryName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetRepositoryPolicy",
@@ -388,10 +388,10 @@ export default class ECR {
   async initiateLayerUpload(
     {abortSignal, ...params}: RequestConfig & InitiateLayerUploadRequest,
   ): Promise<InitiateLayerUploadResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       registryId: params["registryId"],
       repositoryName: params["repositoryName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "InitiateLayerUpload",
@@ -408,13 +408,13 @@ export default class ECR {
   async listImages(
     {abortSignal, ...params}: RequestConfig & ListImagesRequest,
   ): Promise<ListImagesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       registryId: params["registryId"],
       repositoryName: params["repositoryName"],
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
       filter: fromListImagesFilter(params["filter"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListImages",
@@ -431,9 +431,9 @@ export default class ECR {
   async listTagsForResource(
     {abortSignal, ...params}: RequestConfig & ListTagsForResourceRequest,
   ): Promise<ListTagsForResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       resourceArn: params["resourceArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForResource",
@@ -449,14 +449,14 @@ export default class ECR {
   async putImage(
     {abortSignal, ...params}: RequestConfig & PutImageRequest,
   ): Promise<PutImageResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       registryId: params["registryId"],
       repositoryName: params["repositoryName"],
       imageManifest: params["imageManifest"],
       imageManifestMediaType: params["imageManifestMediaType"],
       imageTag: params["imageTag"],
       imageDigest: params["imageDigest"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutImage",
@@ -472,11 +472,11 @@ export default class ECR {
   async putImageScanningConfiguration(
     {abortSignal, ...params}: RequestConfig & PutImageScanningConfigurationRequest,
   ): Promise<PutImageScanningConfigurationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       registryId: params["registryId"],
       repositoryName: params["repositoryName"],
       imageScanningConfiguration: fromImageScanningConfiguration(params["imageScanningConfiguration"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutImageScanningConfiguration",
@@ -494,11 +494,11 @@ export default class ECR {
   async putImageTagMutability(
     {abortSignal, ...params}: RequestConfig & PutImageTagMutabilityRequest,
   ): Promise<PutImageTagMutabilityResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       registryId: params["registryId"],
       repositoryName: params["repositoryName"],
       imageTagMutability: params["imageTagMutability"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutImageTagMutability",
@@ -516,11 +516,11 @@ export default class ECR {
   async putLifecyclePolicy(
     {abortSignal, ...params}: RequestConfig & PutLifecyclePolicyRequest,
   ): Promise<PutLifecyclePolicyResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       registryId: params["registryId"],
       repositoryName: params["repositoryName"],
       lifecyclePolicyText: params["lifecyclePolicyText"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutLifecyclePolicy",
@@ -538,12 +538,12 @@ export default class ECR {
   async setRepositoryPolicy(
     {abortSignal, ...params}: RequestConfig & SetRepositoryPolicyRequest,
   ): Promise<SetRepositoryPolicyResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       registryId: params["registryId"],
       repositoryName: params["repositoryName"],
       policyText: params["policyText"],
       force: params["force"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SetRepositoryPolicy",
@@ -561,11 +561,11 @@ export default class ECR {
   async startImageScan(
     {abortSignal, ...params}: RequestConfig & StartImageScanRequest,
   ): Promise<StartImageScanResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       registryId: params["registryId"],
       repositoryName: params["repositoryName"],
       imageId: fromImageIdentifier(params["imageId"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartImageScan",
@@ -584,11 +584,11 @@ export default class ECR {
   async startLifecyclePolicyPreview(
     {abortSignal, ...params}: RequestConfig & StartLifecyclePolicyPreviewRequest,
   ): Promise<StartLifecyclePolicyPreviewResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       registryId: params["registryId"],
       repositoryName: params["repositoryName"],
       lifecyclePolicyText: params["lifecyclePolicyText"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartLifecyclePolicyPreview",
@@ -607,10 +607,10 @@ export default class ECR {
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       resourceArn: params["resourceArn"],
       tags: params["tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
@@ -624,10 +624,10 @@ export default class ECR {
   async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceRequest,
   ): Promise<UntagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       resourceArn: params["resourceArn"],
       tagKeys: params["tagKeys"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResource",
@@ -641,14 +641,14 @@ export default class ECR {
   async uploadLayerPart(
     {abortSignal, ...params}: RequestConfig & UploadLayerPartRequest,
   ): Promise<UploadLayerPartResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       registryId: params["registryId"],
       repositoryName: params["repositoryName"],
       uploadId: params["uploadId"],
       partFirstByte: params["partFirstByte"],
       partLastByte: params["partLastByte"],
       layerPartBlob: jsonP.serializeBlob(params["layerPartBlob"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UploadLayerPart",

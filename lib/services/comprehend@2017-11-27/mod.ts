@@ -34,9 +34,9 @@ export default class Comprehend {
   async batchDetectDominantLanguage(
     {abortSignal, ...params}: RequestConfig & BatchDetectDominantLanguageRequest,
   ): Promise<BatchDetectDominantLanguageResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TextList: params["TextList"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchDetectDominantLanguage",
@@ -53,10 +53,10 @@ export default class Comprehend {
   async batchDetectEntities(
     {abortSignal, ...params}: RequestConfig & BatchDetectEntitiesRequest,
   ): Promise<BatchDetectEntitiesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TextList: params["TextList"],
       LanguageCode: params["LanguageCode"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchDetectEntities",
@@ -73,10 +73,10 @@ export default class Comprehend {
   async batchDetectKeyPhrases(
     {abortSignal, ...params}: RequestConfig & BatchDetectKeyPhrasesRequest,
   ): Promise<BatchDetectKeyPhrasesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TextList: params["TextList"],
       LanguageCode: params["LanguageCode"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchDetectKeyPhrases",
@@ -93,10 +93,10 @@ export default class Comprehend {
   async batchDetectSentiment(
     {abortSignal, ...params}: RequestConfig & BatchDetectSentimentRequest,
   ): Promise<BatchDetectSentimentResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TextList: params["TextList"],
       LanguageCode: params["LanguageCode"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchDetectSentiment",
@@ -113,10 +113,10 @@ export default class Comprehend {
   async batchDetectSyntax(
     {abortSignal, ...params}: RequestConfig & BatchDetectSyntaxRequest,
   ): Promise<BatchDetectSyntaxResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TextList: params["TextList"],
       LanguageCode: params["LanguageCode"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchDetectSyntax",
@@ -133,10 +133,10 @@ export default class Comprehend {
   async classifyDocument(
     {abortSignal, ...params}: RequestConfig & ClassifyDocumentRequest,
   ): Promise<ClassifyDocumentResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Text: params["Text"],
       EndpointArn: params["EndpointArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ClassifyDocument",
@@ -153,7 +153,7 @@ export default class Comprehend {
   async createDocumentClassifier(
     {abortSignal, ...params}: RequestConfig & CreateDocumentClassifierRequest,
   ): Promise<CreateDocumentClassifierResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DocumentClassifierName: params["DocumentClassifierName"],
       DataAccessRoleArn: params["DataAccessRoleArn"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
@@ -164,7 +164,7 @@ export default class Comprehend {
       VolumeKmsKeyId: params["VolumeKmsKeyId"],
       VpcConfig: fromVpcConfig(params["VpcConfig"]),
       Mode: params["Mode"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDocumentClassifier",
@@ -180,13 +180,13 @@ export default class Comprehend {
   async createEndpoint(
     {abortSignal, ...params}: RequestConfig & CreateEndpointRequest,
   ): Promise<CreateEndpointResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       EndpointName: params["EndpointName"],
       ModelArn: params["ModelArn"],
       DesiredInferenceUnits: params["DesiredInferenceUnits"],
       ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateEndpoint",
@@ -202,7 +202,7 @@ export default class Comprehend {
   async createEntityRecognizer(
     {abortSignal, ...params}: RequestConfig & CreateEntityRecognizerRequest,
   ): Promise<CreateEntityRecognizerResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       RecognizerName: params["RecognizerName"],
       DataAccessRoleArn: params["DataAccessRoleArn"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
@@ -211,7 +211,7 @@ export default class Comprehend {
       LanguageCode: params["LanguageCode"],
       VolumeKmsKeyId: params["VolumeKmsKeyId"],
       VpcConfig: fromVpcConfig(params["VpcConfig"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateEntityRecognizer",
@@ -227,9 +227,9 @@ export default class Comprehend {
   async deleteDocumentClassifier(
     {abortSignal, ...params}: RequestConfig & DeleteDocumentClassifierRequest,
   ): Promise<DeleteDocumentClassifierResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DocumentClassifierArn: params["DocumentClassifierArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteDocumentClassifier",
@@ -243,9 +243,9 @@ export default class Comprehend {
   async deleteEndpoint(
     {abortSignal, ...params}: RequestConfig & DeleteEndpointRequest,
   ): Promise<DeleteEndpointResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       EndpointArn: params["EndpointArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteEndpoint",
@@ -259,9 +259,9 @@ export default class Comprehend {
   async deleteEntityRecognizer(
     {abortSignal, ...params}: RequestConfig & DeleteEntityRecognizerRequest,
   ): Promise<DeleteEntityRecognizerResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       EntityRecognizerArn: params["EntityRecognizerArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteEntityRecognizer",
@@ -275,9 +275,9 @@ export default class Comprehend {
   async describeDocumentClassificationJob(
     {abortSignal, ...params}: RequestConfig & DescribeDocumentClassificationJobRequest,
   ): Promise<DescribeDocumentClassificationJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       JobId: params["JobId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeDocumentClassificationJob",
@@ -293,9 +293,9 @@ export default class Comprehend {
   async describeDocumentClassifier(
     {abortSignal, ...params}: RequestConfig & DescribeDocumentClassifierRequest,
   ): Promise<DescribeDocumentClassifierResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DocumentClassifierArn: params["DocumentClassifierArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeDocumentClassifier",
@@ -311,9 +311,9 @@ export default class Comprehend {
   async describeDominantLanguageDetectionJob(
     {abortSignal, ...params}: RequestConfig & DescribeDominantLanguageDetectionJobRequest,
   ): Promise<DescribeDominantLanguageDetectionJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       JobId: params["JobId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeDominantLanguageDetectionJob",
@@ -329,9 +329,9 @@ export default class Comprehend {
   async describeEndpoint(
     {abortSignal, ...params}: RequestConfig & DescribeEndpointRequest,
   ): Promise<DescribeEndpointResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       EndpointArn: params["EndpointArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeEndpoint",
@@ -347,9 +347,9 @@ export default class Comprehend {
   async describeEntitiesDetectionJob(
     {abortSignal, ...params}: RequestConfig & DescribeEntitiesDetectionJobRequest,
   ): Promise<DescribeEntitiesDetectionJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       JobId: params["JobId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeEntitiesDetectionJob",
@@ -365,9 +365,9 @@ export default class Comprehend {
   async describeEntityRecognizer(
     {abortSignal, ...params}: RequestConfig & DescribeEntityRecognizerRequest,
   ): Promise<DescribeEntityRecognizerResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       EntityRecognizerArn: params["EntityRecognizerArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeEntityRecognizer",
@@ -383,9 +383,9 @@ export default class Comprehend {
   async describeKeyPhrasesDetectionJob(
     {abortSignal, ...params}: RequestConfig & DescribeKeyPhrasesDetectionJobRequest,
   ): Promise<DescribeKeyPhrasesDetectionJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       JobId: params["JobId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeKeyPhrasesDetectionJob",
@@ -401,9 +401,9 @@ export default class Comprehend {
   async describePiiEntitiesDetectionJob(
     {abortSignal, ...params}: RequestConfig & DescribePiiEntitiesDetectionJobRequest,
   ): Promise<DescribePiiEntitiesDetectionJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       JobId: params["JobId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribePiiEntitiesDetectionJob",
@@ -419,9 +419,9 @@ export default class Comprehend {
   async describeSentimentDetectionJob(
     {abortSignal, ...params}: RequestConfig & DescribeSentimentDetectionJobRequest,
   ): Promise<DescribeSentimentDetectionJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       JobId: params["JobId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeSentimentDetectionJob",
@@ -437,9 +437,9 @@ export default class Comprehend {
   async describeTopicsDetectionJob(
     {abortSignal, ...params}: RequestConfig & DescribeTopicsDetectionJobRequest,
   ): Promise<DescribeTopicsDetectionJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       JobId: params["JobId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeTopicsDetectionJob",
@@ -455,9 +455,9 @@ export default class Comprehend {
   async detectDominantLanguage(
     {abortSignal, ...params}: RequestConfig & DetectDominantLanguageRequest,
   ): Promise<DetectDominantLanguageResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Text: params["Text"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DetectDominantLanguage",
@@ -473,11 +473,11 @@ export default class Comprehend {
   async detectEntities(
     {abortSignal, ...params}: RequestConfig & DetectEntitiesRequest,
   ): Promise<DetectEntitiesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Text: params["Text"],
       LanguageCode: params["LanguageCode"],
       EndpointArn: params["EndpointArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DetectEntities",
@@ -493,10 +493,10 @@ export default class Comprehend {
   async detectKeyPhrases(
     {abortSignal, ...params}: RequestConfig & DetectKeyPhrasesRequest,
   ): Promise<DetectKeyPhrasesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Text: params["Text"],
       LanguageCode: params["LanguageCode"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DetectKeyPhrases",
@@ -512,10 +512,10 @@ export default class Comprehend {
   async detectPiiEntities(
     {abortSignal, ...params}: RequestConfig & DetectPiiEntitiesRequest,
   ): Promise<DetectPiiEntitiesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Text: params["Text"],
       LanguageCode: params["LanguageCode"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DetectPiiEntities",
@@ -531,10 +531,10 @@ export default class Comprehend {
   async detectSentiment(
     {abortSignal, ...params}: RequestConfig & DetectSentimentRequest,
   ): Promise<DetectSentimentResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Text: params["Text"],
       LanguageCode: params["LanguageCode"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DetectSentiment",
@@ -551,10 +551,10 @@ export default class Comprehend {
   async detectSyntax(
     {abortSignal, ...params}: RequestConfig & DetectSyntaxRequest,
   ): Promise<DetectSyntaxResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Text: params["Text"],
       LanguageCode: params["LanguageCode"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DetectSyntax",
@@ -570,11 +570,11 @@ export default class Comprehend {
   async listDocumentClassificationJobs(
     {abortSignal, ...params}: RequestConfig & ListDocumentClassificationJobsRequest = {},
   ): Promise<ListDocumentClassificationJobsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Filter: fromDocumentClassificationJobFilter(params["Filter"]),
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListDocumentClassificationJobs",
@@ -591,11 +591,11 @@ export default class Comprehend {
   async listDocumentClassifiers(
     {abortSignal, ...params}: RequestConfig & ListDocumentClassifiersRequest = {},
   ): Promise<ListDocumentClassifiersResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Filter: fromDocumentClassifierFilter(params["Filter"]),
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListDocumentClassifiers",
@@ -612,11 +612,11 @@ export default class Comprehend {
   async listDominantLanguageDetectionJobs(
     {abortSignal, ...params}: RequestConfig & ListDominantLanguageDetectionJobsRequest = {},
   ): Promise<ListDominantLanguageDetectionJobsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Filter: fromDominantLanguageDetectionJobFilter(params["Filter"]),
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListDominantLanguageDetectionJobs",
@@ -633,11 +633,11 @@ export default class Comprehend {
   async listEndpoints(
     {abortSignal, ...params}: RequestConfig & ListEndpointsRequest = {},
   ): Promise<ListEndpointsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Filter: fromEndpointFilter(params["Filter"]),
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListEndpoints",
@@ -654,11 +654,11 @@ export default class Comprehend {
   async listEntitiesDetectionJobs(
     {abortSignal, ...params}: RequestConfig & ListEntitiesDetectionJobsRequest = {},
   ): Promise<ListEntitiesDetectionJobsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Filter: fromEntitiesDetectionJobFilter(params["Filter"]),
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListEntitiesDetectionJobs",
@@ -675,11 +675,11 @@ export default class Comprehend {
   async listEntityRecognizers(
     {abortSignal, ...params}: RequestConfig & ListEntityRecognizersRequest = {},
   ): Promise<ListEntityRecognizersResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Filter: fromEntityRecognizerFilter(params["Filter"]),
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListEntityRecognizers",
@@ -696,11 +696,11 @@ export default class Comprehend {
   async listKeyPhrasesDetectionJobs(
     {abortSignal, ...params}: RequestConfig & ListKeyPhrasesDetectionJobsRequest = {},
   ): Promise<ListKeyPhrasesDetectionJobsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Filter: fromKeyPhrasesDetectionJobFilter(params["Filter"]),
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListKeyPhrasesDetectionJobs",
@@ -717,11 +717,11 @@ export default class Comprehend {
   async listPiiEntitiesDetectionJobs(
     {abortSignal, ...params}: RequestConfig & ListPiiEntitiesDetectionJobsRequest = {},
   ): Promise<ListPiiEntitiesDetectionJobsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Filter: fromPiiEntitiesDetectionJobFilter(params["Filter"]),
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListPiiEntitiesDetectionJobs",
@@ -738,11 +738,11 @@ export default class Comprehend {
   async listSentimentDetectionJobs(
     {abortSignal, ...params}: RequestConfig & ListSentimentDetectionJobsRequest = {},
   ): Promise<ListSentimentDetectionJobsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Filter: fromSentimentDetectionJobFilter(params["Filter"]),
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListSentimentDetectionJobs",
@@ -759,9 +759,9 @@ export default class Comprehend {
   async listTagsForResource(
     {abortSignal, ...params}: RequestConfig & ListTagsForResourceRequest,
   ): Promise<ListTagsForResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForResource",
@@ -778,11 +778,11 @@ export default class Comprehend {
   async listTopicsDetectionJobs(
     {abortSignal, ...params}: RequestConfig & ListTopicsDetectionJobsRequest = {},
   ): Promise<ListTopicsDetectionJobsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Filter: fromTopicsDetectionJobFilter(params["Filter"]),
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTopicsDetectionJobs",
@@ -799,7 +799,7 @@ export default class Comprehend {
   async startDocumentClassificationJob(
     {abortSignal, ...params}: RequestConfig & StartDocumentClassificationJobRequest,
   ): Promise<StartDocumentClassificationJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       JobName: params["JobName"],
       DocumentClassifierArn: params["DocumentClassifierArn"],
       InputDataConfig: fromInputDataConfig(params["InputDataConfig"]),
@@ -808,7 +808,7 @@ export default class Comprehend {
       ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
       VolumeKmsKeyId: params["VolumeKmsKeyId"],
       VpcConfig: fromVpcConfig(params["VpcConfig"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartDocumentClassificationJob",
@@ -825,7 +825,7 @@ export default class Comprehend {
   async startDominantLanguageDetectionJob(
     {abortSignal, ...params}: RequestConfig & StartDominantLanguageDetectionJobRequest,
   ): Promise<StartDominantLanguageDetectionJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       InputDataConfig: fromInputDataConfig(params["InputDataConfig"]),
       OutputDataConfig: fromOutputDataConfig(params["OutputDataConfig"]),
       DataAccessRoleArn: params["DataAccessRoleArn"],
@@ -833,7 +833,7 @@ export default class Comprehend {
       ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
       VolumeKmsKeyId: params["VolumeKmsKeyId"],
       VpcConfig: fromVpcConfig(params["VpcConfig"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartDominantLanguageDetectionJob",
@@ -850,7 +850,7 @@ export default class Comprehend {
   async startEntitiesDetectionJob(
     {abortSignal, ...params}: RequestConfig & StartEntitiesDetectionJobRequest,
   ): Promise<StartEntitiesDetectionJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       InputDataConfig: fromInputDataConfig(params["InputDataConfig"]),
       OutputDataConfig: fromOutputDataConfig(params["OutputDataConfig"]),
       DataAccessRoleArn: params["DataAccessRoleArn"],
@@ -860,7 +860,7 @@ export default class Comprehend {
       ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
       VolumeKmsKeyId: params["VolumeKmsKeyId"],
       VpcConfig: fromVpcConfig(params["VpcConfig"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartEntitiesDetectionJob",
@@ -877,7 +877,7 @@ export default class Comprehend {
   async startKeyPhrasesDetectionJob(
     {abortSignal, ...params}: RequestConfig & StartKeyPhrasesDetectionJobRequest,
   ): Promise<StartKeyPhrasesDetectionJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       InputDataConfig: fromInputDataConfig(params["InputDataConfig"]),
       OutputDataConfig: fromOutputDataConfig(params["OutputDataConfig"]),
       DataAccessRoleArn: params["DataAccessRoleArn"],
@@ -886,7 +886,7 @@ export default class Comprehend {
       ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
       VolumeKmsKeyId: params["VolumeKmsKeyId"],
       VpcConfig: fromVpcConfig(params["VpcConfig"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartKeyPhrasesDetectionJob",
@@ -903,7 +903,7 @@ export default class Comprehend {
   async startPiiEntitiesDetectionJob(
     {abortSignal, ...params}: RequestConfig & StartPiiEntitiesDetectionJobRequest,
   ): Promise<StartPiiEntitiesDetectionJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       InputDataConfig: fromInputDataConfig(params["InputDataConfig"]),
       OutputDataConfig: fromOutputDataConfig(params["OutputDataConfig"]),
       Mode: params["Mode"],
@@ -912,7 +912,7 @@ export default class Comprehend {
       JobName: params["JobName"],
       LanguageCode: params["LanguageCode"],
       ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartPiiEntitiesDetectionJob",
@@ -929,7 +929,7 @@ export default class Comprehend {
   async startSentimentDetectionJob(
     {abortSignal, ...params}: RequestConfig & StartSentimentDetectionJobRequest,
   ): Promise<StartSentimentDetectionJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       InputDataConfig: fromInputDataConfig(params["InputDataConfig"]),
       OutputDataConfig: fromOutputDataConfig(params["OutputDataConfig"]),
       DataAccessRoleArn: params["DataAccessRoleArn"],
@@ -938,7 +938,7 @@ export default class Comprehend {
       ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
       VolumeKmsKeyId: params["VolumeKmsKeyId"],
       VpcConfig: fromVpcConfig(params["VpcConfig"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartSentimentDetectionJob",
@@ -955,7 +955,7 @@ export default class Comprehend {
   async startTopicsDetectionJob(
     {abortSignal, ...params}: RequestConfig & StartTopicsDetectionJobRequest,
   ): Promise<StartTopicsDetectionJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       InputDataConfig: fromInputDataConfig(params["InputDataConfig"]),
       OutputDataConfig: fromOutputDataConfig(params["OutputDataConfig"]),
       DataAccessRoleArn: params["DataAccessRoleArn"],
@@ -964,7 +964,7 @@ export default class Comprehend {
       ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
       VolumeKmsKeyId: params["VolumeKmsKeyId"],
       VpcConfig: fromVpcConfig(params["VpcConfig"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartTopicsDetectionJob",
@@ -981,9 +981,9 @@ export default class Comprehend {
   async stopDominantLanguageDetectionJob(
     {abortSignal, ...params}: RequestConfig & StopDominantLanguageDetectionJobRequest,
   ): Promise<StopDominantLanguageDetectionJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       JobId: params["JobId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopDominantLanguageDetectionJob",
@@ -1000,9 +1000,9 @@ export default class Comprehend {
   async stopEntitiesDetectionJob(
     {abortSignal, ...params}: RequestConfig & StopEntitiesDetectionJobRequest,
   ): Promise<StopEntitiesDetectionJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       JobId: params["JobId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopEntitiesDetectionJob",
@@ -1019,9 +1019,9 @@ export default class Comprehend {
   async stopKeyPhrasesDetectionJob(
     {abortSignal, ...params}: RequestConfig & StopKeyPhrasesDetectionJobRequest,
   ): Promise<StopKeyPhrasesDetectionJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       JobId: params["JobId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopKeyPhrasesDetectionJob",
@@ -1038,9 +1038,9 @@ export default class Comprehend {
   async stopPiiEntitiesDetectionJob(
     {abortSignal, ...params}: RequestConfig & StopPiiEntitiesDetectionJobRequest,
   ): Promise<StopPiiEntitiesDetectionJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       JobId: params["JobId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopPiiEntitiesDetectionJob",
@@ -1057,9 +1057,9 @@ export default class Comprehend {
   async stopSentimentDetectionJob(
     {abortSignal, ...params}: RequestConfig & StopSentimentDetectionJobRequest,
   ): Promise<StopSentimentDetectionJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       JobId: params["JobId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopSentimentDetectionJob",
@@ -1076,9 +1076,9 @@ export default class Comprehend {
   async stopTrainingDocumentClassifier(
     {abortSignal, ...params}: RequestConfig & StopTrainingDocumentClassifierRequest,
   ): Promise<StopTrainingDocumentClassifierResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DocumentClassifierArn: params["DocumentClassifierArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopTrainingDocumentClassifier",
@@ -1092,9 +1092,9 @@ export default class Comprehend {
   async stopTrainingEntityRecognizer(
     {abortSignal, ...params}: RequestConfig & StopTrainingEntityRecognizerRequest,
   ): Promise<StopTrainingEntityRecognizerResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       EntityRecognizerArn: params["EntityRecognizerArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopTrainingEntityRecognizer",
@@ -1108,10 +1108,10 @@ export default class Comprehend {
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
@@ -1125,10 +1125,10 @@ export default class Comprehend {
   async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceRequest,
   ): Promise<UntagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
       TagKeys: params["TagKeys"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResource",
@@ -1142,10 +1142,10 @@ export default class Comprehend {
   async updateEndpoint(
     {abortSignal, ...params}: RequestConfig & UpdateEndpointRequest,
   ): Promise<UpdateEndpointResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       EndpointArn: params["EndpointArn"],
       DesiredInferenceUnits: params["DesiredInferenceUnits"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateEndpoint",

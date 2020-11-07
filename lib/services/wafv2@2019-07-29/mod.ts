@@ -30,10 +30,10 @@ export default class WAFV2 {
   async associateWebACL(
     {abortSignal, ...params}: RequestConfig & AssociateWebACLRequest,
   ): Promise<AssociateWebACLResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       WebACLArn: params["WebACLArn"],
       ResourceArn: params["ResourceArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AssociateWebACL",
@@ -47,10 +47,10 @@ export default class WAFV2 {
   async checkCapacity(
     {abortSignal, ...params}: RequestConfig & CheckCapacityRequest,
   ): Promise<CheckCapacityResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Scope: params["Scope"],
       Rules: params["Rules"]?.map(x => fromRule(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CheckCapacity",
@@ -66,14 +66,14 @@ export default class WAFV2 {
   async createIPSet(
     {abortSignal, ...params}: RequestConfig & CreateIPSetRequest,
   ): Promise<CreateIPSetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       Scope: params["Scope"],
       Description: params["Description"],
       IPAddressVersion: params["IPAddressVersion"],
       Addresses: params["Addresses"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateIPSet",
@@ -89,13 +89,13 @@ export default class WAFV2 {
   async createRegexPatternSet(
     {abortSignal, ...params}: RequestConfig & CreateRegexPatternSetRequest,
   ): Promise<CreateRegexPatternSetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       Scope: params["Scope"],
       Description: params["Description"],
       RegularExpressionList: params["RegularExpressionList"]?.map(x => fromRegex(x)),
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateRegexPatternSet",
@@ -111,7 +111,7 @@ export default class WAFV2 {
   async createRuleGroup(
     {abortSignal, ...params}: RequestConfig & CreateRuleGroupRequest,
   ): Promise<CreateRuleGroupResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       Scope: params["Scope"],
       Capacity: params["Capacity"],
@@ -119,7 +119,7 @@ export default class WAFV2 {
       Rules: params["Rules"]?.map(x => fromRule(x)),
       VisibilityConfig: fromVisibilityConfig(params["VisibilityConfig"]),
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateRuleGroup",
@@ -135,7 +135,7 @@ export default class WAFV2 {
   async createWebACL(
     {abortSignal, ...params}: RequestConfig & CreateWebACLRequest,
   ): Promise<CreateWebACLResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       Scope: params["Scope"],
       DefaultAction: fromDefaultAction(params["DefaultAction"]),
@@ -143,7 +143,7 @@ export default class WAFV2 {
       Rules: params["Rules"]?.map(x => fromRule(x)),
       VisibilityConfig: fromVisibilityConfig(params["VisibilityConfig"]),
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateWebACL",
@@ -159,10 +159,10 @@ export default class WAFV2 {
   async deleteFirewallManagerRuleGroups(
     {abortSignal, ...params}: RequestConfig & DeleteFirewallManagerRuleGroupsRequest,
   ): Promise<DeleteFirewallManagerRuleGroupsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       WebACLArn: params["WebACLArn"],
       WebACLLockToken: params["WebACLLockToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteFirewallManagerRuleGroups",
@@ -178,12 +178,12 @@ export default class WAFV2 {
   async deleteIPSet(
     {abortSignal, ...params}: RequestConfig & DeleteIPSetRequest,
   ): Promise<DeleteIPSetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       Scope: params["Scope"],
       Id: params["Id"],
       LockToken: params["LockToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteIPSet",
@@ -197,9 +197,9 @@ export default class WAFV2 {
   async deleteLoggingConfiguration(
     {abortSignal, ...params}: RequestConfig & DeleteLoggingConfigurationRequest,
   ): Promise<DeleteLoggingConfigurationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteLoggingConfiguration",
@@ -213,9 +213,9 @@ export default class WAFV2 {
   async deletePermissionPolicy(
     {abortSignal, ...params}: RequestConfig & DeletePermissionPolicyRequest,
   ): Promise<DeletePermissionPolicyResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeletePermissionPolicy",
@@ -229,12 +229,12 @@ export default class WAFV2 {
   async deleteRegexPatternSet(
     {abortSignal, ...params}: RequestConfig & DeleteRegexPatternSetRequest,
   ): Promise<DeleteRegexPatternSetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       Scope: params["Scope"],
       Id: params["Id"],
       LockToken: params["LockToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteRegexPatternSet",
@@ -248,12 +248,12 @@ export default class WAFV2 {
   async deleteRuleGroup(
     {abortSignal, ...params}: RequestConfig & DeleteRuleGroupRequest,
   ): Promise<DeleteRuleGroupResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       Scope: params["Scope"],
       Id: params["Id"],
       LockToken: params["LockToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteRuleGroup",
@@ -267,12 +267,12 @@ export default class WAFV2 {
   async deleteWebACL(
     {abortSignal, ...params}: RequestConfig & DeleteWebACLRequest,
   ): Promise<DeleteWebACLResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       Scope: params["Scope"],
       Id: params["Id"],
       LockToken: params["LockToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteWebACL",
@@ -286,11 +286,11 @@ export default class WAFV2 {
   async describeManagedRuleGroup(
     {abortSignal, ...params}: RequestConfig & DescribeManagedRuleGroupRequest,
   ): Promise<DescribeManagedRuleGroupResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       VendorName: params["VendorName"],
       Name: params["Name"],
       Scope: params["Scope"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeManagedRuleGroup",
@@ -307,9 +307,9 @@ export default class WAFV2 {
   async disassociateWebACL(
     {abortSignal, ...params}: RequestConfig & DisassociateWebACLRequest,
   ): Promise<DisassociateWebACLResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisassociateWebACL",
@@ -323,11 +323,11 @@ export default class WAFV2 {
   async getIPSet(
     {abortSignal, ...params}: RequestConfig & GetIPSetRequest,
   ): Promise<GetIPSetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       Scope: params["Scope"],
       Id: params["Id"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetIPSet",
@@ -344,9 +344,9 @@ export default class WAFV2 {
   async getLoggingConfiguration(
     {abortSignal, ...params}: RequestConfig & GetLoggingConfigurationRequest,
   ): Promise<GetLoggingConfigurationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetLoggingConfiguration",
@@ -362,9 +362,9 @@ export default class WAFV2 {
   async getPermissionPolicy(
     {abortSignal, ...params}: RequestConfig & GetPermissionPolicyRequest,
   ): Promise<GetPermissionPolicyResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetPermissionPolicy",
@@ -380,12 +380,12 @@ export default class WAFV2 {
   async getRateBasedStatementManagedKeys(
     {abortSignal, ...params}: RequestConfig & GetRateBasedStatementManagedKeysRequest,
   ): Promise<GetRateBasedStatementManagedKeysResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Scope: params["Scope"],
       WebACLName: params["WebACLName"],
       WebACLId: params["WebACLId"],
       RuleName: params["RuleName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetRateBasedStatementManagedKeys",
@@ -402,11 +402,11 @@ export default class WAFV2 {
   async getRegexPatternSet(
     {abortSignal, ...params}: RequestConfig & GetRegexPatternSetRequest,
   ): Promise<GetRegexPatternSetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       Scope: params["Scope"],
       Id: params["Id"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetRegexPatternSet",
@@ -423,11 +423,11 @@ export default class WAFV2 {
   async getRuleGroup(
     {abortSignal, ...params}: RequestConfig & GetRuleGroupRequest,
   ): Promise<GetRuleGroupResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       Scope: params["Scope"],
       Id: params["Id"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetRuleGroup",
@@ -444,13 +444,13 @@ export default class WAFV2 {
   async getSampledRequests(
     {abortSignal, ...params}: RequestConfig & GetSampledRequestsRequest,
   ): Promise<GetSampledRequestsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       WebAclArn: params["WebAclArn"],
       RuleMetricName: params["RuleMetricName"],
       Scope: params["Scope"],
       TimeWindow: fromTimeWindow(params["TimeWindow"]),
       MaxItems: params["MaxItems"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetSampledRequests",
@@ -468,11 +468,11 @@ export default class WAFV2 {
   async getWebACL(
     {abortSignal, ...params}: RequestConfig & GetWebACLRequest,
   ): Promise<GetWebACLResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       Scope: params["Scope"],
       Id: params["Id"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetWebACL",
@@ -489,9 +489,9 @@ export default class WAFV2 {
   async getWebACLForResource(
     {abortSignal, ...params}: RequestConfig & GetWebACLForResourceRequest,
   ): Promise<GetWebACLForResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetWebACLForResource",
@@ -507,11 +507,11 @@ export default class WAFV2 {
   async listAvailableManagedRuleGroups(
     {abortSignal, ...params}: RequestConfig & ListAvailableManagedRuleGroupsRequest,
   ): Promise<ListAvailableManagedRuleGroupsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Scope: params["Scope"],
       NextMarker: params["NextMarker"],
       Limit: params["Limit"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListAvailableManagedRuleGroups",
@@ -528,11 +528,11 @@ export default class WAFV2 {
   async listIPSets(
     {abortSignal, ...params}: RequestConfig & ListIPSetsRequest,
   ): Promise<ListIPSetsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Scope: params["Scope"],
       NextMarker: params["NextMarker"],
       Limit: params["Limit"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListIPSets",
@@ -549,11 +549,11 @@ export default class WAFV2 {
   async listLoggingConfigurations(
     {abortSignal, ...params}: RequestConfig & ListLoggingConfigurationsRequest = {},
   ): Promise<ListLoggingConfigurationsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Scope: params["Scope"],
       NextMarker: params["NextMarker"],
       Limit: params["Limit"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListLoggingConfigurations",
@@ -570,11 +570,11 @@ export default class WAFV2 {
   async listRegexPatternSets(
     {abortSignal, ...params}: RequestConfig & ListRegexPatternSetsRequest,
   ): Promise<ListRegexPatternSetsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Scope: params["Scope"],
       NextMarker: params["NextMarker"],
       Limit: params["Limit"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListRegexPatternSets",
@@ -591,10 +591,10 @@ export default class WAFV2 {
   async listResourcesForWebACL(
     {abortSignal, ...params}: RequestConfig & ListResourcesForWebACLRequest,
   ): Promise<ListResourcesForWebACLResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       WebACLArn: params["WebACLArn"],
       ResourceType: params["ResourceType"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListResourcesForWebACL",
@@ -610,11 +610,11 @@ export default class WAFV2 {
   async listRuleGroups(
     {abortSignal, ...params}: RequestConfig & ListRuleGroupsRequest,
   ): Promise<ListRuleGroupsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Scope: params["Scope"],
       NextMarker: params["NextMarker"],
       Limit: params["Limit"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListRuleGroups",
@@ -631,11 +631,11 @@ export default class WAFV2 {
   async listTagsForResource(
     {abortSignal, ...params}: RequestConfig & ListTagsForResourceRequest,
   ): Promise<ListTagsForResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NextMarker: params["NextMarker"],
       Limit: params["Limit"],
       ResourceARN: params["ResourceARN"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForResource",
@@ -652,11 +652,11 @@ export default class WAFV2 {
   async listWebACLs(
     {abortSignal, ...params}: RequestConfig & ListWebACLsRequest,
   ): Promise<ListWebACLsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Scope: params["Scope"],
       NextMarker: params["NextMarker"],
       Limit: params["Limit"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListWebACLs",
@@ -673,9 +673,9 @@ export default class WAFV2 {
   async putLoggingConfiguration(
     {abortSignal, ...params}: RequestConfig & PutLoggingConfigurationRequest,
   ): Promise<PutLoggingConfigurationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       LoggingConfiguration: fromLoggingConfiguration(params["LoggingConfiguration"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutLoggingConfiguration",
@@ -691,10 +691,10 @@ export default class WAFV2 {
   async putPermissionPolicy(
     {abortSignal, ...params}: RequestConfig & PutPermissionPolicyRequest,
   ): Promise<PutPermissionPolicyResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
       Policy: params["Policy"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutPermissionPolicy",
@@ -708,10 +708,10 @@ export default class WAFV2 {
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceARN: params["ResourceARN"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
@@ -725,10 +725,10 @@ export default class WAFV2 {
   async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceRequest,
   ): Promise<UntagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceARN: params["ResourceARN"],
       TagKeys: params["TagKeys"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResource",
@@ -742,14 +742,14 @@ export default class WAFV2 {
   async updateIPSet(
     {abortSignal, ...params}: RequestConfig & UpdateIPSetRequest,
   ): Promise<UpdateIPSetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       Scope: params["Scope"],
       Id: params["Id"],
       Description: params["Description"],
       Addresses: params["Addresses"],
       LockToken: params["LockToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateIPSet",
@@ -765,14 +765,14 @@ export default class WAFV2 {
   async updateRegexPatternSet(
     {abortSignal, ...params}: RequestConfig & UpdateRegexPatternSetRequest,
   ): Promise<UpdateRegexPatternSetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       Scope: params["Scope"],
       Id: params["Id"],
       Description: params["Description"],
       RegularExpressionList: params["RegularExpressionList"]?.map(x => fromRegex(x)),
       LockToken: params["LockToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateRegexPatternSet",
@@ -788,7 +788,7 @@ export default class WAFV2 {
   async updateRuleGroup(
     {abortSignal, ...params}: RequestConfig & UpdateRuleGroupRequest,
   ): Promise<UpdateRuleGroupResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       Scope: params["Scope"],
       Id: params["Id"],
@@ -796,7 +796,7 @@ export default class WAFV2 {
       Rules: params["Rules"]?.map(x => fromRule(x)),
       VisibilityConfig: fromVisibilityConfig(params["VisibilityConfig"]),
       LockToken: params["LockToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateRuleGroup",
@@ -812,7 +812,7 @@ export default class WAFV2 {
   async updateWebACL(
     {abortSignal, ...params}: RequestConfig & UpdateWebACLRequest,
   ): Promise<UpdateWebACLResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       Scope: params["Scope"],
       Id: params["Id"],
@@ -821,7 +821,7 @@ export default class WAFV2 {
       Rules: params["Rules"]?.map(x => fromRule(x)),
       VisibilityConfig: fromVisibilityConfig(params["VisibilityConfig"]),
       LockToken: params["LockToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateWebACL",

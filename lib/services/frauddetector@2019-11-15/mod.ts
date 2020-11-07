@@ -29,10 +29,10 @@ export default class FraudDetector {
   async batchCreateVariable(
     {abortSignal, ...params}: RequestConfig & BatchCreateVariableRequest,
   ): Promise<BatchCreateVariableResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       variableEntries: params["variableEntries"]?.map(x => fromVariableEntry(x)),
       tags: params["tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchCreateVariable",
@@ -48,9 +48,9 @@ export default class FraudDetector {
   async batchGetVariable(
     {abortSignal, ...params}: RequestConfig & BatchGetVariableRequest,
   ): Promise<BatchGetVariableResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       names: params["names"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchGetVariable",
@@ -67,7 +67,7 @@ export default class FraudDetector {
   async createDetectorVersion(
     {abortSignal, ...params}: RequestConfig & CreateDetectorVersionRequest,
   ): Promise<CreateDetectorVersionResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       detectorId: params["detectorId"],
       description: params["description"],
       externalModelEndpoints: params["externalModelEndpoints"],
@@ -75,7 +75,7 @@ export default class FraudDetector {
       modelVersions: params["modelVersions"]?.map(x => fromModelVersion(x)),
       ruleExecutionMode: params["ruleExecutionMode"],
       tags: params["tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDetectorVersion",
@@ -93,13 +93,13 @@ export default class FraudDetector {
   async createModel(
     {abortSignal, ...params}: RequestConfig & CreateModelRequest,
   ): Promise<CreateModelResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       modelId: params["modelId"],
       modelType: params["modelType"],
       description: params["description"],
       eventTypeName: params["eventTypeName"],
       tags: params["tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateModel",
@@ -113,14 +113,14 @@ export default class FraudDetector {
   async createModelVersion(
     {abortSignal, ...params}: RequestConfig & CreateModelVersionRequest,
   ): Promise<CreateModelVersionResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       modelId: params["modelId"],
       modelType: params["modelType"],
       trainingDataSource: params["trainingDataSource"],
       trainingDataSchema: fromTrainingDataSchema(params["trainingDataSchema"]),
       externalEventsDetail: fromExternalEventsDetail(params["externalEventsDetail"]),
       tags: params["tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateModelVersion",
@@ -139,7 +139,7 @@ export default class FraudDetector {
   async createRule(
     {abortSignal, ...params}: RequestConfig & CreateRuleRequest,
   ): Promise<CreateRuleResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ruleId: params["ruleId"],
       detectorId: params["detectorId"],
       description: params["description"],
@@ -147,7 +147,7 @@ export default class FraudDetector {
       language: params["language"],
       outcomes: params["outcomes"],
       tags: params["tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateRule",
@@ -163,7 +163,7 @@ export default class FraudDetector {
   async createVariable(
     {abortSignal, ...params}: RequestConfig & CreateVariableRequest,
   ): Promise<CreateVariableResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       name: params["name"],
       dataType: params["dataType"],
       dataSource: params["dataSource"],
@@ -171,7 +171,7 @@ export default class FraudDetector {
       description: params["description"],
       variableType: params["variableType"],
       tags: params["tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateVariable",
@@ -185,9 +185,9 @@ export default class FraudDetector {
   async deleteDetector(
     {abortSignal, ...params}: RequestConfig & DeleteDetectorRequest,
   ): Promise<DeleteDetectorResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       detectorId: params["detectorId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteDetector",
@@ -201,10 +201,10 @@ export default class FraudDetector {
   async deleteDetectorVersion(
     {abortSignal, ...params}: RequestConfig & DeleteDetectorVersionRequest,
   ): Promise<DeleteDetectorVersionResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       detectorId: params["detectorId"],
       detectorVersionId: params["detectorVersionId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteDetectorVersion",
@@ -218,10 +218,10 @@ export default class FraudDetector {
   async deleteEvent(
     {abortSignal, ...params}: RequestConfig & DeleteEventRequest,
   ): Promise<DeleteEventResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       eventId: params["eventId"],
       eventTypeName: params["eventTypeName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteEvent",
@@ -235,9 +235,9 @@ export default class FraudDetector {
   async deleteRule(
     {abortSignal, ...params}: RequestConfig & DeleteRuleRequest,
   ): Promise<DeleteRuleResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       rule: fromRule(params["rule"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteRule",
@@ -251,11 +251,11 @@ export default class FraudDetector {
   async describeDetector(
     {abortSignal, ...params}: RequestConfig & DescribeDetectorRequest,
   ): Promise<DescribeDetectorResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       detectorId: params["detectorId"],
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeDetector",
@@ -274,13 +274,13 @@ export default class FraudDetector {
   async describeModelVersions(
     {abortSignal, ...params}: RequestConfig & DescribeModelVersionsRequest = {},
   ): Promise<DescribeModelVersionsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       modelId: params["modelId"],
       modelVersionNumber: params["modelVersionNumber"],
       modelType: params["modelType"],
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeModelVersions",
@@ -297,10 +297,10 @@ export default class FraudDetector {
   async getDetectorVersion(
     {abortSignal, ...params}: RequestConfig & GetDetectorVersionRequest,
   ): Promise<GetDetectorVersionResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       detectorId: params["detectorId"],
       detectorVersionId: params["detectorVersionId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetDetectorVersion",
@@ -326,11 +326,11 @@ export default class FraudDetector {
   async getDetectors(
     {abortSignal, ...params}: RequestConfig & GetDetectorsRequest = {},
   ): Promise<GetDetectorsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       detectorId: params["detectorId"],
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetDetectors",
@@ -347,11 +347,11 @@ export default class FraudDetector {
   async getEntityTypes(
     {abortSignal, ...params}: RequestConfig & GetEntityTypesRequest = {},
   ): Promise<GetEntityTypesResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       name: params["name"],
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetEntityTypes",
@@ -368,7 +368,7 @@ export default class FraudDetector {
   async getEventPrediction(
     {abortSignal, ...params}: RequestConfig & GetEventPredictionRequest,
   ): Promise<GetEventPredictionResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       detectorId: params["detectorId"],
       detectorVersionId: params["detectorVersionId"],
       eventId: params["eventId"],
@@ -377,7 +377,7 @@ export default class FraudDetector {
       eventTimestamp: params["eventTimestamp"],
       eventVariables: params["eventVariables"],
       externalModelEndpointDataBlobs: jsonP.serializeMap(params["externalModelEndpointDataBlobs"], x => fromModelEndpointDataBlob(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetEventPrediction",
@@ -394,11 +394,11 @@ export default class FraudDetector {
   async getEventTypes(
     {abortSignal, ...params}: RequestConfig & GetEventTypesRequest = {},
   ): Promise<GetEventTypesResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       name: params["name"],
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetEventTypes",
@@ -415,11 +415,11 @@ export default class FraudDetector {
   async getExternalModels(
     {abortSignal, ...params}: RequestConfig & GetExternalModelsRequest = {},
   ): Promise<GetExternalModelsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       modelEndpoint: params["modelEndpoint"],
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetExternalModels",
@@ -451,11 +451,11 @@ export default class FraudDetector {
   async getLabels(
     {abortSignal, ...params}: RequestConfig & GetLabelsRequest = {},
   ): Promise<GetLabelsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       name: params["name"],
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetLabels",
@@ -472,11 +472,11 @@ export default class FraudDetector {
   async getModelVersion(
     {abortSignal, ...params}: RequestConfig & GetModelVersionRequest,
   ): Promise<GetModelVersionResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       modelId: params["modelId"],
       modelType: params["modelType"],
       modelVersionNumber: params["modelVersionNumber"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetModelVersion",
@@ -499,12 +499,12 @@ export default class FraudDetector {
   async getModels(
     {abortSignal, ...params}: RequestConfig & GetModelsRequest = {},
   ): Promise<GetModelsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       modelId: params["modelId"],
       modelType: params["modelType"],
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetModels",
@@ -521,11 +521,11 @@ export default class FraudDetector {
   async getOutcomes(
     {abortSignal, ...params}: RequestConfig & GetOutcomesRequest = {},
   ): Promise<GetOutcomesResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       name: params["name"],
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetOutcomes",
@@ -542,13 +542,13 @@ export default class FraudDetector {
   async getRules(
     {abortSignal, ...params}: RequestConfig & GetRulesRequest,
   ): Promise<GetRulesResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ruleId: params["ruleId"],
       detectorId: params["detectorId"],
       ruleVersion: params["ruleVersion"],
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetRules",
@@ -565,11 +565,11 @@ export default class FraudDetector {
   async getVariables(
     {abortSignal, ...params}: RequestConfig & GetVariablesRequest = {},
   ): Promise<GetVariablesResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       name: params["name"],
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetVariables",
@@ -586,11 +586,11 @@ export default class FraudDetector {
   async listTagsForResource(
     {abortSignal, ...params}: RequestConfig & ListTagsForResourceRequest,
   ): Promise<ListTagsForResourceResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       resourceARN: params["resourceARN"],
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForResource",
@@ -607,12 +607,12 @@ export default class FraudDetector {
   async putDetector(
     {abortSignal, ...params}: RequestConfig & PutDetectorRequest,
   ): Promise<PutDetectorResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       detectorId: params["detectorId"],
       description: params["description"],
       eventTypeName: params["eventTypeName"],
       tags: params["tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutDetector",
@@ -626,11 +626,11 @@ export default class FraudDetector {
   async putEntityType(
     {abortSignal, ...params}: RequestConfig & PutEntityTypeRequest,
   ): Promise<PutEntityTypeResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       name: params["name"],
       description: params["description"],
       tags: params["tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutEntityType",
@@ -644,14 +644,14 @@ export default class FraudDetector {
   async putEventType(
     {abortSignal, ...params}: RequestConfig & PutEventTypeRequest,
   ): Promise<PutEventTypeResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       name: params["name"],
       description: params["description"],
       eventVariables: params["eventVariables"],
       labels: params["labels"],
       entityTypes: params["entityTypes"],
       tags: params["tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutEventType",
@@ -665,7 +665,7 @@ export default class FraudDetector {
   async putExternalModel(
     {abortSignal, ...params}: RequestConfig & PutExternalModelRequest,
   ): Promise<PutExternalModelResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       modelEndpoint: params["modelEndpoint"],
       modelSource: params["modelSource"],
       invokeModelEndpointRoleArn: params["invokeModelEndpointRoleArn"],
@@ -673,7 +673,7 @@ export default class FraudDetector {
       outputConfiguration: fromModelOutputConfiguration(params["outputConfiguration"]),
       modelEndpointStatus: params["modelEndpointStatus"],
       tags: params["tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutExternalModel",
@@ -687,9 +687,9 @@ export default class FraudDetector {
   async putKMSEncryptionKey(
     {abortSignal, ...params}: RequestConfig & PutKMSEncryptionKeyRequest,
   ): Promise<PutKMSEncryptionKeyResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       kmsEncryptionKeyArn: params["kmsEncryptionKeyArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutKMSEncryptionKey",
@@ -703,11 +703,11 @@ export default class FraudDetector {
   async putLabel(
     {abortSignal, ...params}: RequestConfig & PutLabelRequest,
   ): Promise<PutLabelResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       name: params["name"],
       description: params["description"],
       tags: params["tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutLabel",
@@ -721,11 +721,11 @@ export default class FraudDetector {
   async putOutcome(
     {abortSignal, ...params}: RequestConfig & PutOutcomeRequest,
   ): Promise<PutOutcomeResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       name: params["name"],
       description: params["description"],
       tags: params["tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutOutcome",
@@ -739,10 +739,10 @@ export default class FraudDetector {
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       resourceARN: params["resourceARN"],
       tags: params["tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
@@ -756,10 +756,10 @@ export default class FraudDetector {
   async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceRequest,
   ): Promise<UntagResourceResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       resourceARN: params["resourceARN"],
       tagKeys: params["tagKeys"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResource",
@@ -773,7 +773,7 @@ export default class FraudDetector {
   async updateDetectorVersion(
     {abortSignal, ...params}: RequestConfig & UpdateDetectorVersionRequest,
   ): Promise<UpdateDetectorVersionResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       detectorId: params["detectorId"],
       detectorVersionId: params["detectorVersionId"],
       externalModelEndpoints: params["externalModelEndpoints"],
@@ -781,7 +781,7 @@ export default class FraudDetector {
       description: params["description"],
       modelVersions: params["modelVersions"]?.map(x => fromModelVersion(x)),
       ruleExecutionMode: params["ruleExecutionMode"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateDetectorVersion",
@@ -795,11 +795,11 @@ export default class FraudDetector {
   async updateDetectorVersionMetadata(
     {abortSignal, ...params}: RequestConfig & UpdateDetectorVersionMetadataRequest,
   ): Promise<UpdateDetectorVersionMetadataResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       detectorId: params["detectorId"],
       detectorVersionId: params["detectorVersionId"],
       description: params["description"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateDetectorVersionMetadata",
@@ -813,11 +813,11 @@ export default class FraudDetector {
   async updateDetectorVersionStatus(
     {abortSignal, ...params}: RequestConfig & UpdateDetectorVersionStatusRequest,
   ): Promise<UpdateDetectorVersionStatusResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       detectorId: params["detectorId"],
       detectorVersionId: params["detectorVersionId"],
       status: params["status"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateDetectorVersionStatus",
@@ -831,11 +831,11 @@ export default class FraudDetector {
   async updateModel(
     {abortSignal, ...params}: RequestConfig & UpdateModelRequest,
   ): Promise<UpdateModelResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       modelId: params["modelId"],
       modelType: params["modelType"],
       description: params["description"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateModel",
@@ -849,13 +849,13 @@ export default class FraudDetector {
   async updateModelVersion(
     {abortSignal, ...params}: RequestConfig & UpdateModelVersionRequest,
   ): Promise<UpdateModelVersionResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       modelId: params["modelId"],
       modelType: params["modelType"],
       majorVersionNumber: params["majorVersionNumber"],
       externalEventsDetail: fromExternalEventsDetail(params["externalEventsDetail"]),
       tags: params["tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateModelVersion",
@@ -874,12 +874,12 @@ export default class FraudDetector {
   async updateModelVersionStatus(
     {abortSignal, ...params}: RequestConfig & UpdateModelVersionStatusRequest,
   ): Promise<UpdateModelVersionStatusResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       modelId: params["modelId"],
       modelType: params["modelType"],
       modelVersionNumber: params["modelVersionNumber"],
       status: params["status"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateModelVersionStatus",
@@ -893,10 +893,10 @@ export default class FraudDetector {
   async updateRuleMetadata(
     {abortSignal, ...params}: RequestConfig & UpdateRuleMetadataRequest,
   ): Promise<UpdateRuleMetadataResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       rule: fromRule(params["rule"]),
       description: params["description"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateRuleMetadata",
@@ -910,14 +910,14 @@ export default class FraudDetector {
   async updateRuleVersion(
     {abortSignal, ...params}: RequestConfig & UpdateRuleVersionRequest,
   ): Promise<UpdateRuleVersionResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       rule: fromRule(params["rule"]),
       description: params["description"],
       expression: params["expression"],
       language: params["language"],
       outcomes: params["outcomes"],
       tags: params["tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateRuleVersion",
@@ -933,12 +933,12 @@ export default class FraudDetector {
   async updateVariable(
     {abortSignal, ...params}: RequestConfig & UpdateVariableRequest,
   ): Promise<UpdateVariableResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       name: params["name"],
       defaultValue: params["defaultValue"],
       description: params["description"],
       variableType: params["variableType"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateVariable",

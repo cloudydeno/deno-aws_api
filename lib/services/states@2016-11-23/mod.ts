@@ -30,10 +30,10 @@ export default class StepFunctions {
   async createActivity(
     {abortSignal, ...params}: RequestConfig & CreateActivityInput,
   ): Promise<CreateActivityOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       name: params["name"],
       tags: params["tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateActivity",
@@ -50,7 +50,7 @@ export default class StepFunctions {
   async createStateMachine(
     {abortSignal, ...params}: RequestConfig & CreateStateMachineInput,
   ): Promise<CreateStateMachineOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       name: params["name"],
       definition: params["definition"],
       roleArn: params["roleArn"],
@@ -58,7 +58,7 @@ export default class StepFunctions {
       loggingConfiguration: fromLoggingConfiguration(params["loggingConfiguration"]),
       tags: params["tags"]?.map(x => fromTag(x)),
       tracingConfiguration: fromTracingConfiguration(params["tracingConfiguration"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateStateMachine",
@@ -75,9 +75,9 @@ export default class StepFunctions {
   async deleteActivity(
     {abortSignal, ...params}: RequestConfig & DeleteActivityInput,
   ): Promise<DeleteActivityOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       activityArn: params["activityArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteActivity",
@@ -91,9 +91,9 @@ export default class StepFunctions {
   async deleteStateMachine(
     {abortSignal, ...params}: RequestConfig & DeleteStateMachineInput,
   ): Promise<DeleteStateMachineOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       stateMachineArn: params["stateMachineArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteStateMachine",
@@ -107,9 +107,9 @@ export default class StepFunctions {
   async describeActivity(
     {abortSignal, ...params}: RequestConfig & DescribeActivityInput,
   ): Promise<DescribeActivityOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       activityArn: params["activityArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeActivity",
@@ -127,9 +127,9 @@ export default class StepFunctions {
   async describeExecution(
     {abortSignal, ...params}: RequestConfig & DescribeExecutionInput,
   ): Promise<DescribeExecutionOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       executionArn: params["executionArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeExecution",
@@ -156,9 +156,9 @@ export default class StepFunctions {
   async describeStateMachine(
     {abortSignal, ...params}: RequestConfig & DescribeStateMachineInput,
   ): Promise<DescribeStateMachineOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       stateMachineArn: params["stateMachineArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeStateMachine",
@@ -183,9 +183,9 @@ export default class StepFunctions {
   async describeStateMachineForExecution(
     {abortSignal, ...params}: RequestConfig & DescribeStateMachineForExecutionInput,
   ): Promise<DescribeStateMachineForExecutionOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       executionArn: params["executionArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeStateMachineForExecution",
@@ -208,10 +208,10 @@ export default class StepFunctions {
   async getActivityTask(
     {abortSignal, ...params}: RequestConfig & GetActivityTaskInput,
   ): Promise<GetActivityTaskOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       activityArn: params["activityArn"],
       workerName: params["workerName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetActivityTask",
@@ -228,13 +228,13 @@ export default class StepFunctions {
   async getExecutionHistory(
     {abortSignal, ...params}: RequestConfig & GetExecutionHistoryInput,
   ): Promise<GetExecutionHistoryOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       executionArn: params["executionArn"],
       maxResults: params["maxResults"],
       reverseOrder: params["reverseOrder"],
       nextToken: params["nextToken"],
       includeExecutionData: params["includeExecutionData"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetExecutionHistory",
@@ -252,10 +252,10 @@ export default class StepFunctions {
   async listActivities(
     {abortSignal, ...params}: RequestConfig & ListActivitiesInput = {},
   ): Promise<ListActivitiesOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       maxResults: params["maxResults"],
       nextToken: params["nextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListActivities",
@@ -273,12 +273,12 @@ export default class StepFunctions {
   async listExecutions(
     {abortSignal, ...params}: RequestConfig & ListExecutionsInput,
   ): Promise<ListExecutionsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       stateMachineArn: params["stateMachineArn"],
       statusFilter: params["statusFilter"],
       maxResults: params["maxResults"],
       nextToken: params["nextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListExecutions",
@@ -296,10 +296,10 @@ export default class StepFunctions {
   async listStateMachines(
     {abortSignal, ...params}: RequestConfig & ListStateMachinesInput = {},
   ): Promise<ListStateMachinesOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       maxResults: params["maxResults"],
       nextToken: params["nextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListStateMachines",
@@ -317,9 +317,9 @@ export default class StepFunctions {
   async listTagsForResource(
     {abortSignal, ...params}: RequestConfig & ListTagsForResourceInput,
   ): Promise<ListTagsForResourceOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       resourceArn: params["resourceArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForResource",
@@ -335,11 +335,11 @@ export default class StepFunctions {
   async sendTaskFailure(
     {abortSignal, ...params}: RequestConfig & SendTaskFailureInput,
   ): Promise<SendTaskFailureOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       taskToken: params["taskToken"],
       error: params["error"],
       cause: params["cause"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SendTaskFailure",
@@ -353,9 +353,9 @@ export default class StepFunctions {
   async sendTaskHeartbeat(
     {abortSignal, ...params}: RequestConfig & SendTaskHeartbeatInput,
   ): Promise<SendTaskHeartbeatOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       taskToken: params["taskToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SendTaskHeartbeat",
@@ -369,10 +369,10 @@ export default class StepFunctions {
   async sendTaskSuccess(
     {abortSignal, ...params}: RequestConfig & SendTaskSuccessInput,
   ): Promise<SendTaskSuccessOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       taskToken: params["taskToken"],
       output: params["output"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SendTaskSuccess",
@@ -386,12 +386,12 @@ export default class StepFunctions {
   async startExecution(
     {abortSignal, ...params}: RequestConfig & StartExecutionInput,
   ): Promise<StartExecutionOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       stateMachineArn: params["stateMachineArn"],
       name: params["name"],
       input: params["input"],
       traceHeader: params["traceHeader"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartExecution",
@@ -408,11 +408,11 @@ export default class StepFunctions {
   async stopExecution(
     {abortSignal, ...params}: RequestConfig & StopExecutionInput,
   ): Promise<StopExecutionOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       executionArn: params["executionArn"],
       error: params["error"],
       cause: params["cause"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopExecution",
@@ -428,10 +428,10 @@ export default class StepFunctions {
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceInput,
   ): Promise<TagResourceOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       resourceArn: params["resourceArn"],
       tags: params["tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
@@ -445,10 +445,10 @@ export default class StepFunctions {
   async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceInput,
   ): Promise<UntagResourceOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       resourceArn: params["resourceArn"],
       tagKeys: params["tagKeys"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResource",
@@ -462,13 +462,13 @@ export default class StepFunctions {
   async updateStateMachine(
     {abortSignal, ...params}: RequestConfig & UpdateStateMachineInput,
   ): Promise<UpdateStateMachineOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       stateMachineArn: params["stateMachineArn"],
       definition: params["definition"],
       roleArn: params["roleArn"],
       loggingConfiguration: fromLoggingConfiguration(params["loggingConfiguration"]),
       tracingConfiguration: fromTracingConfiguration(params["tracingConfiguration"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateStateMachine",

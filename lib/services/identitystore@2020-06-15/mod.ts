@@ -31,10 +31,10 @@ export default class IdentityStore {
   async describeGroup(
     {abortSignal, ...params}: RequestConfig & DescribeGroupRequest,
   ): Promise<DescribeGroupResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       IdentityStoreId: params["IdentityStoreId"],
       GroupId: params["GroupId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeGroup",
@@ -51,10 +51,10 @@ export default class IdentityStore {
   async describeUser(
     {abortSignal, ...params}: RequestConfig & DescribeUserRequest,
   ): Promise<DescribeUserResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       IdentityStoreId: params["IdentityStoreId"],
       UserId: params["UserId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeUser",
@@ -71,12 +71,12 @@ export default class IdentityStore {
   async listGroups(
     {abortSignal, ...params}: RequestConfig & ListGroupsRequest,
   ): Promise<ListGroupsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       IdentityStoreId: params["IdentityStoreId"],
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
       Filters: params["Filters"]?.map(x => fromFilter(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListGroups",
@@ -94,12 +94,12 @@ export default class IdentityStore {
   async listUsers(
     {abortSignal, ...params}: RequestConfig & ListUsersRequest,
   ): Promise<ListUsersResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       IdentityStoreId: params["IdentityStoreId"],
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
       Filters: params["Filters"]?.map(x => fromFilter(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListUsers",

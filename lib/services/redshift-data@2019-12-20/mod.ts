@@ -30,9 +30,9 @@ export default class RedshiftData {
   async cancelStatement(
     {abortSignal, ...params}: RequestConfig & CancelStatementRequest,
   ): Promise<CancelStatementResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Id: params["Id"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CancelStatement",
@@ -48,9 +48,9 @@ export default class RedshiftData {
   async describeStatement(
     {abortSignal, ...params}: RequestConfig & DescribeStatementRequest,
   ): Promise<DescribeStatementResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Id: params["Id"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeStatement",
@@ -81,7 +81,7 @@ export default class RedshiftData {
   async describeTable(
     {abortSignal, ...params}: RequestConfig & DescribeTableRequest,
   ): Promise<DescribeTableResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ClusterIdentifier: params["ClusterIdentifier"],
       Database: params["Database"],
       DbUser: params["DbUser"],
@@ -90,7 +90,7 @@ export default class RedshiftData {
       Schema: params["Schema"],
       SecretArn: params["SecretArn"],
       Table: params["Table"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeTable",
@@ -108,7 +108,7 @@ export default class RedshiftData {
   async executeStatement(
     {abortSignal, ...params}: RequestConfig & ExecuteStatementInput,
   ): Promise<ExecuteStatementOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ClusterIdentifier: params["ClusterIdentifier"],
       Database: params["Database"],
       DbUser: params["DbUser"],
@@ -116,7 +116,7 @@ export default class RedshiftData {
       Sql: params["Sql"],
       StatementName: params["StatementName"],
       WithEvent: params["WithEvent"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ExecuteStatement",
@@ -137,10 +137,10 @@ export default class RedshiftData {
   async getStatementResult(
     {abortSignal, ...params}: RequestConfig & GetStatementResultRequest,
   ): Promise<GetStatementResultResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Id: params["Id"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetStatementResult",
@@ -160,14 +160,14 @@ export default class RedshiftData {
   async listDatabases(
     {abortSignal, ...params}: RequestConfig & ListDatabasesRequest,
   ): Promise<ListDatabasesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ClusterIdentifier: params["ClusterIdentifier"],
       Database: params["Database"],
       DbUser: params["DbUser"],
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
       SecretArn: params["SecretArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListDatabases",
@@ -184,7 +184,7 @@ export default class RedshiftData {
   async listSchemas(
     {abortSignal, ...params}: RequestConfig & ListSchemasRequest,
   ): Promise<ListSchemasResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ClusterIdentifier: params["ClusterIdentifier"],
       Database: params["Database"],
       DbUser: params["DbUser"],
@@ -192,7 +192,7 @@ export default class RedshiftData {
       NextToken: params["NextToken"],
       SchemaPattern: params["SchemaPattern"],
       SecretArn: params["SecretArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListSchemas",
@@ -209,12 +209,12 @@ export default class RedshiftData {
   async listStatements(
     {abortSignal, ...params}: RequestConfig & ListStatementsRequest = {},
   ): Promise<ListStatementsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
       StatementName: params["StatementName"],
       Status: params["Status"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListStatements",
@@ -232,7 +232,7 @@ export default class RedshiftData {
   async listTables(
     {abortSignal, ...params}: RequestConfig & ListTablesRequest,
   ): Promise<ListTablesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ClusterIdentifier: params["ClusterIdentifier"],
       Database: params["Database"],
       DbUser: params["DbUser"],
@@ -241,7 +241,7 @@ export default class RedshiftData {
       SchemaPattern: params["SchemaPattern"],
       SecretArn: params["SecretArn"],
       TablePattern: params["TablePattern"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTables",

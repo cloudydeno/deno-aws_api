@@ -33,7 +33,7 @@ export default class CodeStarNotifications {
   async createNotificationRule(
     {abortSignal, ...params}: RequestConfig & CreateNotificationRuleRequest,
   ): Promise<CreateNotificationRuleResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       EventTypeIds: params["EventTypeIds"],
       Resource: params["Resource"],
@@ -42,297 +42,271 @@ export default class CodeStarNotifications {
       ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
       Tags: params["Tags"],
       Status: params["Status"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateNotificationRule",
       requestUri: "/createNotificationRule",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Arn": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+      },
+    }, await resp.json());
   }
 
   async deleteNotificationRule(
     {abortSignal, ...params}: RequestConfig & DeleteNotificationRuleRequest,
   ): Promise<DeleteNotificationRuleResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Arn: params["Arn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteNotificationRule",
       requestUri: "/deleteNotificationRule",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Arn": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+      },
+    }, await resp.json());
   }
 
   async deleteTarget(
     {abortSignal, ...params}: RequestConfig & DeleteTargetRequest,
   ): Promise<DeleteTargetResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TargetAddress: params["TargetAddress"],
       ForceUnsubscribeAll: params["ForceUnsubscribeAll"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteTarget",
       requestUri: "/deleteTarget",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async describeNotificationRule(
     {abortSignal, ...params}: RequestConfig & DescribeNotificationRuleRequest,
   ): Promise<DescribeNotificationRuleResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Arn: params["Arn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeNotificationRule",
       requestUri: "/describeNotificationRule",
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "Arn": "s",
-        },
-        optional: {
-          "Name": "s",
-          "EventTypes": [toEventTypeSummary],
-          "Resource": "s",
-          "Targets": [toTargetSummary],
-          "DetailType": (x: jsonP.JSONValue) => cmnP.readEnum<DetailType>(x),
-          "CreatedBy": "s",
-          "Status": (x: jsonP.JSONValue) => cmnP.readEnum<NotificationRuleStatus>(x),
-          "CreatedTimestamp": "d",
-          "LastModifiedTimestamp": "d",
-          "Tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "Arn": "s",
+      },
+      optional: {
+        "Name": "s",
+        "EventTypes": [toEventTypeSummary],
+        "Resource": "s",
+        "Targets": [toTargetSummary],
+        "DetailType": (x: jsonP.JSONValue) => cmnP.readEnum<DetailType>(x),
+        "CreatedBy": "s",
+        "Status": (x: jsonP.JSONValue) => cmnP.readEnum<NotificationRuleStatus>(x),
+        "CreatedTimestamp": "d",
+        "LastModifiedTimestamp": "d",
+        "Tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async listEventTypes(
     {abortSignal, ...params}: RequestConfig & ListEventTypesRequest = {},
   ): Promise<ListEventTypesResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Filters: params["Filters"]?.map(x => fromListEventTypesFilter(x)),
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListEventTypes",
       requestUri: "/listEventTypes",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "EventTypes": [toEventTypeSummary],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "EventTypes": [toEventTypeSummary],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listNotificationRules(
     {abortSignal, ...params}: RequestConfig & ListNotificationRulesRequest = {},
   ): Promise<ListNotificationRulesResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Filters: params["Filters"]?.map(x => fromListNotificationRulesFilter(x)),
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListNotificationRules",
       requestUri: "/listNotificationRules",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "NextToken": "s",
-          "NotificationRules": [toNotificationRuleSummary],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "NextToken": "s",
+        "NotificationRules": [toNotificationRuleSummary],
+      },
+    }, await resp.json());
   }
 
   async listTagsForResource(
     {abortSignal, ...params}: RequestConfig & ListTagsForResourceRequest,
   ): Promise<ListTagsForResourceResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Arn: params["Arn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForResource",
       requestUri: "/listTagsForResource",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async listTargets(
     {abortSignal, ...params}: RequestConfig & ListTargetsRequest = {},
   ): Promise<ListTargetsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Filters: params["Filters"]?.map(x => fromListTargetsFilter(x)),
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTargets",
       requestUri: "/listTargets",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Targets": [toTargetSummary],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Targets": [toTargetSummary],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async subscribe(
     {abortSignal, ...params}: RequestConfig & SubscribeRequest,
   ): Promise<SubscribeResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Arn: params["Arn"],
       Target: fromTarget(params["Target"]),
       ClientRequestToken: params["ClientRequestToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "Subscribe",
       requestUri: "/subscribe",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Arn": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+      },
+    }, await resp.json());
   }
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Arn: params["Arn"],
       Tags: params["Tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
       requestUri: "/tagResource",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async unsubscribe(
     {abortSignal, ...params}: RequestConfig & UnsubscribeRequest,
   ): Promise<UnsubscribeResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Arn: params["Arn"],
       TargetAddress: params["TargetAddress"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "Unsubscribe",
       requestUri: "/unsubscribe",
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "Arn": "s",
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "Arn": "s",
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceRequest,
   ): Promise<UntagResourceResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Arn: params["Arn"],
       TagKeys: params["TagKeys"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResource",
       requestUri: "/untagResource",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async updateNotificationRule(
     {abortSignal, ...params}: RequestConfig & UpdateNotificationRuleRequest,
   ): Promise<UpdateNotificationRuleResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Arn: params["Arn"],
       Name: params["Name"],
       Status: params["Status"],
       EventTypeIds: params["EventTypeIds"],
       Targets: params["Targets"]?.map(x => fromTarget(x)),
       DetailType: params["DetailType"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateNotificationRule",
       requestUri: "/updateNotificationRule",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
 }

@@ -30,42 +30,40 @@ export default class MediaPackageVod {
   async createAsset(
     {abortSignal, ...params}: RequestConfig & CreateAssetRequest,
   ): Promise<CreateAssetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       id: params["Id"],
       packagingGroupId: params["PackagingGroupId"],
       resourceId: params["ResourceId"],
       sourceArn: params["SourceArn"],
       sourceRoleArn: params["SourceRoleArn"],
       tags: params["Tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateAsset",
       requestUri: "/assets",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Arn": "s",
-          "CreatedAt": "s",
-          "EgressEndpoints": [toEgressEndpoint],
-          "Id": "s",
-          "PackagingGroupId": "s",
-          "ResourceId": "s",
-          "SourceArn": "s",
-          "SourceRoleArn": "s",
-          "Tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+        "CreatedAt": "s",
+        "EgressEndpoints": [toEgressEndpoint],
+        "Id": "s",
+        "PackagingGroupId": "s",
+        "ResourceId": "s",
+        "SourceArn": "s",
+        "SourceRoleArn": "s",
+        "Tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async createPackagingConfiguration(
     {abortSignal, ...params}: RequestConfig & CreatePackagingConfigurationRequest,
   ): Promise<CreatePackagingConfigurationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       cmafPackage: fromCmafPackage(params["CmafPackage"]),
       dashPackage: fromDashPackage(params["DashPackage"]),
       hlsPackage: fromHlsPackage(params["HlsPackage"]),
@@ -73,56 +71,52 @@ export default class MediaPackageVod {
       mssPackage: fromMssPackage(params["MssPackage"]),
       packagingGroupId: params["PackagingGroupId"],
       tags: params["Tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreatePackagingConfiguration",
       requestUri: "/packaging_configurations",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Arn": "s",
-          "CmafPackage": toCmafPackage,
-          "DashPackage": toDashPackage,
-          "HlsPackage": toHlsPackage,
-          "Id": "s",
-          "MssPackage": toMssPackage,
-          "PackagingGroupId": "s",
-          "Tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+        "CmafPackage": toCmafPackage,
+        "DashPackage": toDashPackage,
+        "HlsPackage": toHlsPackage,
+        "Id": "s",
+        "MssPackage": toMssPackage,
+        "PackagingGroupId": "s",
+        "Tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async createPackagingGroup(
     {abortSignal, ...params}: RequestConfig & CreatePackagingGroupRequest,
   ): Promise<CreatePackagingGroupResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       authorization: fromAuthorization(params["Authorization"]),
       id: params["Id"],
       tags: params["Tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreatePackagingGroup",
       requestUri: "/packaging_groups",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Arn": "s",
-          "Authorization": toAuthorization,
-          "DomainName": "s",
-          "Id": "s",
-          "Tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+        "Authorization": toAuthorization,
+        "DomainName": "s",
+        "Id": "s",
+        "Tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async deleteAsset(
@@ -136,12 +130,10 @@ export default class MediaPackageVod {
       requestUri: cmnP.encodePath`/assets/${params["Id"]}`,
       responseCode: 202,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async deletePackagingConfiguration(
@@ -155,12 +147,10 @@ export default class MediaPackageVod {
       requestUri: cmnP.encodePath`/packaging_configurations/${params["Id"]}`,
       responseCode: 202,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async deletePackagingGroup(
@@ -174,12 +164,10 @@ export default class MediaPackageVod {
       requestUri: cmnP.encodePath`/packaging_groups/${params["Id"]}`,
       responseCode: 202,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async describeAsset(
@@ -193,22 +181,20 @@ export default class MediaPackageVod {
       requestUri: cmnP.encodePath`/assets/${params["Id"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Arn": "s",
-          "CreatedAt": "s",
-          "EgressEndpoints": [toEgressEndpoint],
-          "Id": "s",
-          "PackagingGroupId": "s",
-          "ResourceId": "s",
-          "SourceArn": "s",
-          "SourceRoleArn": "s",
-          "Tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+        "CreatedAt": "s",
+        "EgressEndpoints": [toEgressEndpoint],
+        "Id": "s",
+        "PackagingGroupId": "s",
+        "ResourceId": "s",
+        "SourceArn": "s",
+        "SourceRoleArn": "s",
+        "Tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async describePackagingConfiguration(
@@ -222,21 +208,19 @@ export default class MediaPackageVod {
       requestUri: cmnP.encodePath`/packaging_configurations/${params["Id"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Arn": "s",
-          "CmafPackage": toCmafPackage,
-          "DashPackage": toDashPackage,
-          "HlsPackage": toHlsPackage,
-          "Id": "s",
-          "MssPackage": toMssPackage,
-          "PackagingGroupId": "s",
-          "Tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+        "CmafPackage": toCmafPackage,
+        "DashPackage": toDashPackage,
+        "HlsPackage": toHlsPackage,
+        "Id": "s",
+        "MssPackage": toMssPackage,
+        "PackagingGroupId": "s",
+        "Tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async describePackagingGroup(
@@ -250,18 +234,16 @@ export default class MediaPackageVod {
       requestUri: cmnP.encodePath`/packaging_groups/${params["Id"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Arn": "s",
-          "Authorization": toAuthorization,
-          "DomainName": "s",
-          "Id": "s",
-          "Tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+        "Authorization": toAuthorization,
+        "DomainName": "s",
+        "Id": "s",
+        "Tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async listAssets(
@@ -278,15 +260,13 @@ export default class MediaPackageVod {
       requestUri: "/assets",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Assets": [toAssetShallow],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Assets": [toAssetShallow],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listPackagingConfigurations(
@@ -303,15 +283,13 @@ export default class MediaPackageVod {
       requestUri: "/packaging_configurations",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "NextToken": "s",
-          "PackagingConfigurations": [toPackagingConfiguration],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "NextToken": "s",
+        "PackagingConfigurations": [toPackagingConfiguration],
+      },
+    }, await resp.json());
   }
 
   async listPackagingGroups(
@@ -327,15 +305,13 @@ export default class MediaPackageVod {
       requestUri: "/packaging_groups",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "NextToken": "s",
-          "PackagingGroups": [toPackagingGroup],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "NextToken": "s",
+        "PackagingGroups": [toPackagingGroup],
+      },
+    }, await resp.json());
   }
 
   async listTagsForResource(
@@ -349,22 +325,20 @@ export default class MediaPackageVod {
       requestUri: cmnP.encodePath`/tags/${params["ResourceArn"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       tags: params["Tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
@@ -392,9 +366,9 @@ export default class MediaPackageVod {
   async updatePackagingGroup(
     {abortSignal, ...params}: RequestConfig & UpdatePackagingGroupRequest,
   ): Promise<UpdatePackagingGroupResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       authorization: fromAuthorization(params["Authorization"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdatePackagingGroup",
@@ -402,18 +376,16 @@ export default class MediaPackageVod {
       requestUri: cmnP.encodePath`/packaging_groups/${params["Id"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Arn": "s",
-          "Authorization": toAuthorization,
-          "DomainName": "s",
-          "Id": "s",
-          "Tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+        "Authorization": toAuthorization,
+        "DomainName": "s",
+        "Id": "s",
+        "Tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
 }

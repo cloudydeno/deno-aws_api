@@ -30,12 +30,12 @@ export default class ApplicationAutoScaling {
   async deleteScalingPolicy(
     {abortSignal, ...params}: RequestConfig & DeleteScalingPolicyRequest,
   ): Promise<DeleteScalingPolicyResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       PolicyName: params["PolicyName"],
       ServiceNamespace: params["ServiceNamespace"],
       ResourceId: params["ResourceId"],
       ScalableDimension: params["ScalableDimension"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteScalingPolicy",
@@ -49,12 +49,12 @@ export default class ApplicationAutoScaling {
   async deleteScheduledAction(
     {abortSignal, ...params}: RequestConfig & DeleteScheduledActionRequest,
   ): Promise<DeleteScheduledActionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ServiceNamespace: params["ServiceNamespace"],
       ScheduledActionName: params["ScheduledActionName"],
       ResourceId: params["ResourceId"],
       ScalableDimension: params["ScalableDimension"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteScheduledAction",
@@ -68,11 +68,11 @@ export default class ApplicationAutoScaling {
   async deregisterScalableTarget(
     {abortSignal, ...params}: RequestConfig & DeregisterScalableTargetRequest,
   ): Promise<DeregisterScalableTargetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ServiceNamespace: params["ServiceNamespace"],
       ResourceId: params["ResourceId"],
       ScalableDimension: params["ScalableDimension"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeregisterScalableTarget",
@@ -86,13 +86,13 @@ export default class ApplicationAutoScaling {
   async describeScalableTargets(
     {abortSignal, ...params}: RequestConfig & DescribeScalableTargetsRequest,
   ): Promise<DescribeScalableTargetsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ServiceNamespace: params["ServiceNamespace"],
       ResourceIds: params["ResourceIds"],
       ScalableDimension: params["ScalableDimension"],
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeScalableTargets",
@@ -109,13 +109,13 @@ export default class ApplicationAutoScaling {
   async describeScalingActivities(
     {abortSignal, ...params}: RequestConfig & DescribeScalingActivitiesRequest,
   ): Promise<DescribeScalingActivitiesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ServiceNamespace: params["ServiceNamespace"],
       ResourceId: params["ResourceId"],
       ScalableDimension: params["ScalableDimension"],
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeScalingActivities",
@@ -132,14 +132,14 @@ export default class ApplicationAutoScaling {
   async describeScalingPolicies(
     {abortSignal, ...params}: RequestConfig & DescribeScalingPoliciesRequest,
   ): Promise<DescribeScalingPoliciesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       PolicyNames: params["PolicyNames"],
       ServiceNamespace: params["ServiceNamespace"],
       ResourceId: params["ResourceId"],
       ScalableDimension: params["ScalableDimension"],
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeScalingPolicies",
@@ -156,14 +156,14 @@ export default class ApplicationAutoScaling {
   async describeScheduledActions(
     {abortSignal, ...params}: RequestConfig & DescribeScheduledActionsRequest,
   ): Promise<DescribeScheduledActionsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ScheduledActionNames: params["ScheduledActionNames"],
       ServiceNamespace: params["ServiceNamespace"],
       ResourceId: params["ResourceId"],
       ScalableDimension: params["ScalableDimension"],
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeScheduledActions",
@@ -180,7 +180,7 @@ export default class ApplicationAutoScaling {
   async putScalingPolicy(
     {abortSignal, ...params}: RequestConfig & PutScalingPolicyRequest,
   ): Promise<PutScalingPolicyResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       PolicyName: params["PolicyName"],
       ServiceNamespace: params["ServiceNamespace"],
       ResourceId: params["ResourceId"],
@@ -188,7 +188,7 @@ export default class ApplicationAutoScaling {
       PolicyType: params["PolicyType"],
       StepScalingPolicyConfiguration: fromStepScalingPolicyConfiguration(params["StepScalingPolicyConfiguration"]),
       TargetTrackingScalingPolicyConfiguration: fromTargetTrackingScalingPolicyConfiguration(params["TargetTrackingScalingPolicyConfiguration"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutScalingPolicy",
@@ -206,7 +206,7 @@ export default class ApplicationAutoScaling {
   async putScheduledAction(
     {abortSignal, ...params}: RequestConfig & PutScheduledActionRequest,
   ): Promise<PutScheduledActionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ServiceNamespace: params["ServiceNamespace"],
       Schedule: params["Schedule"],
       ScheduledActionName: params["ScheduledActionName"],
@@ -215,7 +215,7 @@ export default class ApplicationAutoScaling {
       StartTime: jsonP.serializeDate_unixTimestamp(params["StartTime"]),
       EndTime: jsonP.serializeDate_unixTimestamp(params["EndTime"]),
       ScalableTargetAction: fromScalableTargetAction(params["ScalableTargetAction"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutScheduledAction",
@@ -229,7 +229,7 @@ export default class ApplicationAutoScaling {
   async registerScalableTarget(
     {abortSignal, ...params}: RequestConfig & RegisterScalableTargetRequest,
   ): Promise<RegisterScalableTargetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ServiceNamespace: params["ServiceNamespace"],
       ResourceId: params["ResourceId"],
       ScalableDimension: params["ScalableDimension"],
@@ -237,7 +237,7 @@ export default class ApplicationAutoScaling {
       MaxCapacity: params["MaxCapacity"],
       RoleARN: params["RoleARN"],
       SuspendedState: fromSuspendedState(params["SuspendedState"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RegisterScalableTarget",

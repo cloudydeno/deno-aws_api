@@ -29,32 +29,30 @@ export default class Appflow {
   async createConnectorProfile(
     {abortSignal, ...params}: RequestConfig & CreateConnectorProfileRequest,
   ): Promise<CreateConnectorProfileResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       connectorProfileName: params["connectorProfileName"],
       kmsArn: params["kmsArn"],
       connectorType: params["connectorType"],
       connectionMode: params["connectionMode"],
       connectorProfileConfig: fromConnectorProfileConfig(params["connectorProfileConfig"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateConnectorProfile",
       requestUri: "/create-connector-profile",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "connectorProfileArn": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "connectorProfileArn": "s",
+      },
+    }, await resp.json());
   }
 
   async createFlow(
     {abortSignal, ...params}: RequestConfig & CreateFlowRequest,
   ): Promise<CreateFlowResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       flowName: params["flowName"],
       description: params["description"],
       kmsArn: params["kmsArn"],
@@ -63,238 +61,218 @@ export default class Appflow {
       destinationFlowConfigList: params["destinationFlowConfigList"]?.map(x => fromDestinationFlowConfig(x)),
       tasks: params["tasks"]?.map(x => fromTask(x)),
       tags: params["tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateFlow",
       requestUri: "/create-flow",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "flowArn": "s",
-          "flowStatus": (x: jsonP.JSONValue) => cmnP.readEnum<FlowStatus>(x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "flowArn": "s",
+        "flowStatus": (x: jsonP.JSONValue) => cmnP.readEnum<FlowStatus>(x),
+      },
+    }, await resp.json());
   }
 
   async deleteConnectorProfile(
     {abortSignal, ...params}: RequestConfig & DeleteConnectorProfileRequest,
   ): Promise<DeleteConnectorProfileResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       connectorProfileName: params["connectorProfileName"],
       forceDelete: params["forceDelete"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteConnectorProfile",
       requestUri: "/delete-connector-profile",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async deleteFlow(
     {abortSignal, ...params}: RequestConfig & DeleteFlowRequest,
   ): Promise<DeleteFlowResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       flowName: params["flowName"],
       forceDelete: params["forceDelete"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteFlow",
       requestUri: "/delete-flow",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async describeConnectorEntity(
     {abortSignal, ...params}: RequestConfig & DescribeConnectorEntityRequest,
   ): Promise<DescribeConnectorEntityResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       connectorEntityName: params["connectorEntityName"],
       connectorType: params["connectorType"],
       connectorProfileName: params["connectorProfileName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeConnectorEntity",
       requestUri: "/describe-connector-entity",
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "connectorEntityFields": [toConnectorEntityField],
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "connectorEntityFields": [toConnectorEntityField],
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async describeConnectorProfiles(
     {abortSignal, ...params}: RequestConfig & DescribeConnectorProfilesRequest = {},
   ): Promise<DescribeConnectorProfilesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       connectorProfileNames: params["connectorProfileNames"],
       connectorType: params["connectorType"],
       maxResults: params["maxResults"],
       nextToken: params["nextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeConnectorProfiles",
       requestUri: "/describe-connector-profiles",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "connectorProfileDetails": [toConnectorProfile],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "connectorProfileDetails": [toConnectorProfile],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async describeConnectors(
     {abortSignal, ...params}: RequestConfig & DescribeConnectorsRequest = {},
   ): Promise<DescribeConnectorsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       connectorTypes: params["connectorTypes"],
       nextToken: params["nextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeConnectors",
       requestUri: "/describe-connectors",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "connectorConfigurations": x => jsonP.readMap(x => cmnP.readEnumReq<ConnectorType>(x), toConnectorConfiguration, x),
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "connectorConfigurations": x => jsonP.readMap(x => cmnP.readEnumReq<ConnectorType>(x), toConnectorConfiguration, x),
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async describeFlow(
     {abortSignal, ...params}: RequestConfig & DescribeFlowRequest,
   ): Promise<DescribeFlowResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       flowName: params["flowName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeFlow",
       requestUri: "/describe-flow",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "flowArn": "s",
-          "description": "s",
-          "flowName": "s",
-          "kmsArn": "s",
-          "flowStatus": (x: jsonP.JSONValue) => cmnP.readEnum<FlowStatus>(x),
-          "flowStatusMessage": "s",
-          "sourceFlowConfig": toSourceFlowConfig,
-          "destinationFlowConfigList": [toDestinationFlowConfig],
-          "lastRunExecutionDetails": toExecutionDetails,
-          "triggerConfig": toTriggerConfig,
-          "tasks": [toTask],
-          "createdAt": "d",
-          "lastUpdatedAt": "d",
-          "createdBy": "s",
-          "lastUpdatedBy": "s",
-          "tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "flowArn": "s",
+        "description": "s",
+        "flowName": "s",
+        "kmsArn": "s",
+        "flowStatus": (x: jsonP.JSONValue) => cmnP.readEnum<FlowStatus>(x),
+        "flowStatusMessage": "s",
+        "sourceFlowConfig": toSourceFlowConfig,
+        "destinationFlowConfigList": [toDestinationFlowConfig],
+        "lastRunExecutionDetails": toExecutionDetails,
+        "triggerConfig": toTriggerConfig,
+        "tasks": [toTask],
+        "createdAt": "d",
+        "lastUpdatedAt": "d",
+        "createdBy": "s",
+        "lastUpdatedBy": "s",
+        "tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async describeFlowExecutionRecords(
     {abortSignal, ...params}: RequestConfig & DescribeFlowExecutionRecordsRequest,
   ): Promise<DescribeFlowExecutionRecordsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       flowName: params["flowName"],
       maxResults: params["maxResults"],
       nextToken: params["nextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeFlowExecutionRecords",
       requestUri: "/describe-flow-execution-records",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "flowExecutions": [toExecutionRecord],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "flowExecutions": [toExecutionRecord],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listConnectorEntities(
     {abortSignal, ...params}: RequestConfig & ListConnectorEntitiesRequest = {},
   ): Promise<ListConnectorEntitiesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       connectorProfileName: params["connectorProfileName"],
       connectorType: params["connectorType"],
       entitiesPath: params["entitiesPath"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListConnectorEntities",
       requestUri: "/list-connector-entities",
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "connectorEntityMap": x => jsonP.readMap(String, l => Array.isArray(l) ? l.map(toConnectorEntity) : [], x),
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "connectorEntityMap": x => jsonP.readMap(String, l => Array.isArray(l) ? l.map(toConnectorEntity) : [], x),
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async listFlows(
     {abortSignal, ...params}: RequestConfig & ListFlowsRequest = {},
   ): Promise<ListFlowsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       maxResults: params["maxResults"],
       nextToken: params["nextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListFlows",
       requestUri: "/list-flows",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "flows": [toFlowDefinition],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "flows": [toFlowDefinition],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listTagsForResource(
@@ -307,78 +285,70 @@ export default class Appflow {
       method: "GET",
       requestUri: cmnP.encodePath`/tags/${params["resourceArn"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async startFlow(
     {abortSignal, ...params}: RequestConfig & StartFlowRequest,
   ): Promise<StartFlowResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       flowName: params["flowName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartFlow",
       requestUri: "/start-flow",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "flowArn": "s",
-          "flowStatus": (x: jsonP.JSONValue) => cmnP.readEnum<FlowStatus>(x),
-          "executionId": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "flowArn": "s",
+        "flowStatus": (x: jsonP.JSONValue) => cmnP.readEnum<FlowStatus>(x),
+        "executionId": "s",
+      },
+    }, await resp.json());
   }
 
   async stopFlow(
     {abortSignal, ...params}: RequestConfig & StopFlowRequest,
   ): Promise<StopFlowResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       flowName: params["flowName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopFlow",
       requestUri: "/stop-flow",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "flowArn": "s",
-          "flowStatus": (x: jsonP.JSONValue) => cmnP.readEnum<FlowStatus>(x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "flowArn": "s",
+        "flowStatus": (x: jsonP.JSONValue) => cmnP.readEnum<FlowStatus>(x),
+      },
+    }, await resp.json());
   }
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       tags: params["tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
       requestUri: cmnP.encodePath`/tags/${params["resourceArn"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async untagResource(
@@ -394,61 +364,55 @@ export default class Appflow {
       method: "DELETE",
       requestUri: cmnP.encodePath`/tags/${params["resourceArn"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async updateConnectorProfile(
     {abortSignal, ...params}: RequestConfig & UpdateConnectorProfileRequest,
   ): Promise<UpdateConnectorProfileResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       connectorProfileName: params["connectorProfileName"],
       connectionMode: params["connectionMode"],
       connectorProfileConfig: fromConnectorProfileConfig(params["connectorProfileConfig"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateConnectorProfile",
       requestUri: "/update-connector-profile",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "connectorProfileArn": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "connectorProfileArn": "s",
+      },
+    }, await resp.json());
   }
 
   async updateFlow(
     {abortSignal, ...params}: RequestConfig & UpdateFlowRequest,
   ): Promise<UpdateFlowResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       flowName: params["flowName"],
       description: params["description"],
       triggerConfig: fromTriggerConfig(params["triggerConfig"]),
       sourceFlowConfig: fromSourceFlowConfig(params["sourceFlowConfig"]),
       destinationFlowConfigList: params["destinationFlowConfigList"]?.map(x => fromDestinationFlowConfig(x)),
       tasks: params["tasks"]?.map(x => fromTask(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateFlow",
       requestUri: "/update-flow",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "flowStatus": (x: jsonP.JSONValue) => cmnP.readEnum<FlowStatus>(x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "flowStatus": (x: jsonP.JSONValue) => cmnP.readEnum<FlowStatus>(x),
+      },
+    }, await resp.json());
   }
 
 }

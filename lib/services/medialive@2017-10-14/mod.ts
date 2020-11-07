@@ -41,95 +41,87 @@ export default class MediaLive {
       requestUri: cmnP.encodePath`/prod/inputDevices/${params["InputDeviceId"]}/accept`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async batchDelete(
     {abortSignal, ...params}: RequestConfig & BatchDeleteRequest = {},
   ): Promise<BatchDeleteResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       channelIds: params["ChannelIds"],
       inputIds: params["InputIds"],
       inputSecurityGroupIds: params["InputSecurityGroupIds"],
       multiplexIds: params["MultiplexIds"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchDelete",
       requestUri: "/prod/batch/delete",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Failed": [toBatchFailedResultModel],
-          "Successful": [toBatchSuccessfulResultModel],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Failed": [toBatchFailedResultModel],
+        "Successful": [toBatchSuccessfulResultModel],
+      },
+    }, await resp.json());
   }
 
   async batchStart(
     {abortSignal, ...params}: RequestConfig & BatchStartRequest = {},
   ): Promise<BatchStartResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       channelIds: params["ChannelIds"],
       multiplexIds: params["MultiplexIds"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchStart",
       requestUri: "/prod/batch/start",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Failed": [toBatchFailedResultModel],
-          "Successful": [toBatchSuccessfulResultModel],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Failed": [toBatchFailedResultModel],
+        "Successful": [toBatchSuccessfulResultModel],
+      },
+    }, await resp.json());
   }
 
   async batchStop(
     {abortSignal, ...params}: RequestConfig & BatchStopRequest = {},
   ): Promise<BatchStopResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       channelIds: params["ChannelIds"],
       multiplexIds: params["MultiplexIds"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchStop",
       requestUri: "/prod/batch/stop",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Failed": [toBatchFailedResultModel],
-          "Successful": [toBatchSuccessfulResultModel],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Failed": [toBatchFailedResultModel],
+        "Successful": [toBatchSuccessfulResultModel],
+      },
+    }, await resp.json());
   }
 
   async batchUpdateSchedule(
     {abortSignal, ...params}: RequestConfig & BatchUpdateScheduleRequest,
   ): Promise<BatchUpdateScheduleResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       creates: fromBatchScheduleActionCreateRequest(params["Creates"]),
       deletes: fromBatchScheduleActionDeleteRequest(params["Deletes"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchUpdateSchedule",
@@ -137,15 +129,13 @@ export default class MediaLive {
       requestUri: cmnP.encodePath`/prod/channels/${params["ChannelId"]}/schedule`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Creates": toBatchScheduleActionCreateResult,
-          "Deletes": toBatchScheduleActionDeleteResult,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Creates": toBatchScheduleActionCreateResult,
+        "Deletes": toBatchScheduleActionDeleteResult,
+      },
+    }, await resp.json());
   }
 
   async cancelInputDeviceTransfer(
@@ -158,18 +148,16 @@ export default class MediaLive {
       requestUri: cmnP.encodePath`/prod/inputDevices/${params["InputDeviceId"]}/cancel`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async createChannel(
     {abortSignal, ...params}: RequestConfig & CreateChannelRequest = {},
   ): Promise<CreateChannelResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       cdiInputSpecification: fromCdiInputSpecification(params["CdiInputSpecification"]),
       channelClass: params["ChannelClass"],
       destinations: params["Destinations"]?.map(x => fromOutputDestination(x)),
@@ -182,27 +170,25 @@ export default class MediaLive {
       reserved: params["Reserved"],
       roleArn: params["RoleArn"],
       tags: params["Tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateChannel",
       requestUri: "/prod/channels",
       responseCode: 201,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Channel": toChannel,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Channel": toChannel,
+      },
+    }, await resp.json());
   }
 
   async createInput(
     {abortSignal, ...params}: RequestConfig & CreateInputRequest = {},
   ): Promise<CreateInputResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       destinations: params["Destinations"]?.map(x => fromInputDestinationRequest(x)),
       inputDevices: params["InputDevices"]?.map(x => fromInputDeviceSettings(x)),
       inputSecurityGroups: params["InputSecurityGroups"],
@@ -214,102 +200,94 @@ export default class MediaLive {
       tags: params["Tags"],
       type: params["Type"],
       vpc: fromInputVpcRequest(params["Vpc"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateInput",
       requestUri: "/prod/inputs",
       responseCode: 201,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Input": toInput,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Input": toInput,
+      },
+    }, await resp.json());
   }
 
   async createInputSecurityGroup(
     {abortSignal, ...params}: RequestConfig & CreateInputSecurityGroupRequest = {},
   ): Promise<CreateInputSecurityGroupResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       tags: params["Tags"],
       whitelistRules: params["WhitelistRules"]?.map(x => fromInputWhitelistRuleCidr(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateInputSecurityGroup",
       requestUri: "/prod/inputSecurityGroups",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "SecurityGroup": toInputSecurityGroup,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "SecurityGroup": toInputSecurityGroup,
+      },
+    }, await resp.json());
   }
 
   async createMultiplex(
     {abortSignal, ...params}: RequestConfig & CreateMultiplexRequest,
   ): Promise<CreateMultiplexResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       availabilityZones: params["AvailabilityZones"],
       multiplexSettings: fromMultiplexSettings(params["MultiplexSettings"]),
       name: params["Name"],
       requestId: params["RequestId"] ?? generateIdemptToken(),
       tags: params["Tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateMultiplex",
       requestUri: "/prod/multiplexes",
       responseCode: 201,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Multiplex": toMultiplex,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Multiplex": toMultiplex,
+      },
+    }, await resp.json());
   }
 
   async createMultiplexProgram(
     {abortSignal, ...params}: RequestConfig & CreateMultiplexProgramRequest,
   ): Promise<CreateMultiplexProgramResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       multiplexProgramSettings: fromMultiplexProgramSettings(params["MultiplexProgramSettings"]),
       programName: params["ProgramName"],
       requestId: params["RequestId"] ?? generateIdemptToken(),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateMultiplexProgram",
       requestUri: cmnP.encodePath`/prod/multiplexes/${params["MultiplexId"]}/programs`,
       responseCode: 201,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "MultiplexProgram": toMultiplexProgram,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "MultiplexProgram": toMultiplexProgram,
+      },
+    }, await resp.json());
   }
 
   async createTags(
     {abortSignal, ...params}: RequestConfig & CreateTagsRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       tags: params["Tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateTags",
@@ -329,29 +307,27 @@ export default class MediaLive {
       requestUri: cmnP.encodePath`/prod/channels/${params["ChannelId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Arn": "s",
-          "CdiInputSpecification": toCdiInputSpecification,
-          "ChannelClass": (x: jsonP.JSONValue) => cmnP.readEnum<ChannelClass>(x),
-          "Destinations": [toOutputDestination],
-          "EgressEndpoints": [toChannelEgressEndpoint],
-          "EncoderSettings": toEncoderSettings,
-          "Id": "s",
-          "InputAttachments": [toInputAttachment],
-          "InputSpecification": toInputSpecification,
-          "LogLevel": (x: jsonP.JSONValue) => cmnP.readEnum<LogLevel>(x),
-          "Name": "s",
-          "PipelineDetails": [toPipelineDetail],
-          "PipelinesRunningCount": "n",
-          "RoleArn": "s",
-          "State": (x: jsonP.JSONValue) => cmnP.readEnum<ChannelState>(x),
-          "Tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+        "CdiInputSpecification": toCdiInputSpecification,
+        "ChannelClass": (x: jsonP.JSONValue) => cmnP.readEnum<ChannelClass>(x),
+        "Destinations": [toOutputDestination],
+        "EgressEndpoints": [toChannelEgressEndpoint],
+        "EncoderSettings": toEncoderSettings,
+        "Id": "s",
+        "InputAttachments": [toInputAttachment],
+        "InputSpecification": toInputSpecification,
+        "LogLevel": (x: jsonP.JSONValue) => cmnP.readEnum<LogLevel>(x),
+        "Name": "s",
+        "PipelineDetails": [toPipelineDetail],
+        "PipelinesRunningCount": "n",
+        "RoleArn": "s",
+        "State": (x: jsonP.JSONValue) => cmnP.readEnum<ChannelState>(x),
+        "Tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async deleteInput(
@@ -365,12 +341,10 @@ export default class MediaLive {
       requestUri: cmnP.encodePath`/prod/inputs/${params["InputId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async deleteInputSecurityGroup(
@@ -384,12 +358,10 @@ export default class MediaLive {
       requestUri: cmnP.encodePath`/prod/inputSecurityGroups/${params["InputSecurityGroupId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async deleteMultiplex(
@@ -403,23 +375,21 @@ export default class MediaLive {
       requestUri: cmnP.encodePath`/prod/multiplexes/${params["MultiplexId"]}`,
       responseCode: 202,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Arn": "s",
-          "AvailabilityZones": ["s"],
-          "Destinations": [toMultiplexOutputDestination],
-          "Id": "s",
-          "MultiplexSettings": toMultiplexSettings,
-          "Name": "s",
-          "PipelinesRunningCount": "n",
-          "ProgramCount": "n",
-          "State": (x: jsonP.JSONValue) => cmnP.readEnum<MultiplexState>(x),
-          "Tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+        "AvailabilityZones": ["s"],
+        "Destinations": [toMultiplexOutputDestination],
+        "Id": "s",
+        "MultiplexSettings": toMultiplexSettings,
+        "Name": "s",
+        "PipelinesRunningCount": "n",
+        "ProgramCount": "n",
+        "State": (x: jsonP.JSONValue) => cmnP.readEnum<MultiplexState>(x),
+        "Tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async deleteMultiplexProgram(
@@ -433,18 +403,16 @@ export default class MediaLive {
       requestUri: cmnP.encodePath`/prod/multiplexes/${params["MultiplexId"]}/programs/${params["ProgramName"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ChannelId": "s",
-          "MultiplexProgramSettings": toMultiplexProgramSettings,
-          "PacketIdentifiersMap": toMultiplexProgramPacketIdentifiersMap,
-          "PipelineDetails": [toMultiplexProgramPipelineDetail],
-          "ProgramName": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ChannelId": "s",
+        "MultiplexProgramSettings": toMultiplexProgramSettings,
+        "PacketIdentifiersMap": toMultiplexProgramPacketIdentifiersMap,
+        "PipelineDetails": [toMultiplexProgramPipelineDetail],
+        "ProgramName": "s",
+      },
+    }, await resp.json());
   }
 
   async deleteReservation(
@@ -458,31 +426,29 @@ export default class MediaLive {
       requestUri: cmnP.encodePath`/prod/reservations/${params["ReservationId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Arn": "s",
-          "Count": "n",
-          "CurrencyCode": "s",
-          "Duration": "n",
-          "DurationUnits": (x: jsonP.JSONValue) => cmnP.readEnum<OfferingDurationUnits>(x),
-          "End": "s",
-          "FixedPrice": "n",
-          "Name": "s",
-          "OfferingDescription": "s",
-          "OfferingId": "s",
-          "OfferingType": (x: jsonP.JSONValue) => cmnP.readEnum<OfferingType>(x),
-          "Region": "s",
-          "ReservationId": "s",
-          "ResourceSpecification": toReservationResourceSpecification,
-          "Start": "s",
-          "State": (x: jsonP.JSONValue) => cmnP.readEnum<ReservationState>(x),
-          "Tags": x => jsonP.readMap(String, String, x),
-          "UsagePrice": "n",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+        "Count": "n",
+        "CurrencyCode": "s",
+        "Duration": "n",
+        "DurationUnits": (x: jsonP.JSONValue) => cmnP.readEnum<OfferingDurationUnits>(x),
+        "End": "s",
+        "FixedPrice": "n",
+        "Name": "s",
+        "OfferingDescription": "s",
+        "OfferingId": "s",
+        "OfferingType": (x: jsonP.JSONValue) => cmnP.readEnum<OfferingType>(x),
+        "Region": "s",
+        "ReservationId": "s",
+        "ResourceSpecification": toReservationResourceSpecification,
+        "Start": "s",
+        "State": (x: jsonP.JSONValue) => cmnP.readEnum<ReservationState>(x),
+        "Tags": x => jsonP.readMap(String, String, x),
+        "UsagePrice": "n",
+      },
+    }, await resp.json());
   }
 
   async deleteSchedule(
@@ -496,12 +462,10 @@ export default class MediaLive {
       requestUri: cmnP.encodePath`/prod/channels/${params["ChannelId"]}/schedule`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async deleteTags(
@@ -531,29 +495,27 @@ export default class MediaLive {
       requestUri: cmnP.encodePath`/prod/channels/${params["ChannelId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Arn": "s",
-          "CdiInputSpecification": toCdiInputSpecification,
-          "ChannelClass": (x: jsonP.JSONValue) => cmnP.readEnum<ChannelClass>(x),
-          "Destinations": [toOutputDestination],
-          "EgressEndpoints": [toChannelEgressEndpoint],
-          "EncoderSettings": toEncoderSettings,
-          "Id": "s",
-          "InputAttachments": [toInputAttachment],
-          "InputSpecification": toInputSpecification,
-          "LogLevel": (x: jsonP.JSONValue) => cmnP.readEnum<LogLevel>(x),
-          "Name": "s",
-          "PipelineDetails": [toPipelineDetail],
-          "PipelinesRunningCount": "n",
-          "RoleArn": "s",
-          "State": (x: jsonP.JSONValue) => cmnP.readEnum<ChannelState>(x),
-          "Tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+        "CdiInputSpecification": toCdiInputSpecification,
+        "ChannelClass": (x: jsonP.JSONValue) => cmnP.readEnum<ChannelClass>(x),
+        "Destinations": [toOutputDestination],
+        "EgressEndpoints": [toChannelEgressEndpoint],
+        "EncoderSettings": toEncoderSettings,
+        "Id": "s",
+        "InputAttachments": [toInputAttachment],
+        "InputSpecification": toInputSpecification,
+        "LogLevel": (x: jsonP.JSONValue) => cmnP.readEnum<LogLevel>(x),
+        "Name": "s",
+        "PipelineDetails": [toPipelineDetail],
+        "PipelinesRunningCount": "n",
+        "RoleArn": "s",
+        "State": (x: jsonP.JSONValue) => cmnP.readEnum<ChannelState>(x),
+        "Tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async describeInput(
@@ -567,28 +529,26 @@ export default class MediaLive {
       requestUri: cmnP.encodePath`/prod/inputs/${params["InputId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Arn": "s",
-          "AttachedChannels": ["s"],
-          "Destinations": [toInputDestination],
-          "Id": "s",
-          "InputClass": (x: jsonP.JSONValue) => cmnP.readEnum<InputClass>(x),
-          "InputDevices": [toInputDeviceSettings],
-          "InputSourceType": (x: jsonP.JSONValue) => cmnP.readEnum<InputSourceType>(x),
-          "MediaConnectFlows": [toMediaConnectFlow],
-          "Name": "s",
-          "RoleArn": "s",
-          "SecurityGroups": ["s"],
-          "Sources": [toInputSource],
-          "State": (x: jsonP.JSONValue) => cmnP.readEnum<InputState>(x),
-          "Tags": x => jsonP.readMap(String, String, x),
-          "Type": (x: jsonP.JSONValue) => cmnP.readEnum<InputType>(x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+        "AttachedChannels": ["s"],
+        "Destinations": [toInputDestination],
+        "Id": "s",
+        "InputClass": (x: jsonP.JSONValue) => cmnP.readEnum<InputClass>(x),
+        "InputDevices": [toInputDeviceSettings],
+        "InputSourceType": (x: jsonP.JSONValue) => cmnP.readEnum<InputSourceType>(x),
+        "MediaConnectFlows": [toMediaConnectFlow],
+        "Name": "s",
+        "RoleArn": "s",
+        "SecurityGroups": ["s"],
+        "Sources": [toInputSource],
+        "State": (x: jsonP.JSONValue) => cmnP.readEnum<InputState>(x),
+        "Tags": x => jsonP.readMap(String, String, x),
+        "Type": (x: jsonP.JSONValue) => cmnP.readEnum<InputType>(x),
+      },
+    }, await resp.json());
   }
 
   async describeInputDevice(
@@ -602,23 +562,21 @@ export default class MediaLive {
       requestUri: cmnP.encodePath`/prod/inputDevices/${params["InputDeviceId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Arn": "s",
-          "ConnectionState": (x: jsonP.JSONValue) => cmnP.readEnum<InputDeviceConnectionState>(x),
-          "DeviceSettingsSyncState": (x: jsonP.JSONValue) => cmnP.readEnum<DeviceSettingsSyncState>(x),
-          "HdDeviceSettings": toInputDeviceHdSettings,
-          "Id": "s",
-          "MacAddress": "s",
-          "Name": "s",
-          "NetworkSettings": toInputDeviceNetworkSettings,
-          "SerialNumber": "s",
-          "Type": (x: jsonP.JSONValue) => cmnP.readEnum<InputDeviceType>(x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+        "ConnectionState": (x: jsonP.JSONValue) => cmnP.readEnum<InputDeviceConnectionState>(x),
+        "DeviceSettingsSyncState": (x: jsonP.JSONValue) => cmnP.readEnum<DeviceSettingsSyncState>(x),
+        "HdDeviceSettings": toInputDeviceHdSettings,
+        "Id": "s",
+        "MacAddress": "s",
+        "Name": "s",
+        "NetworkSettings": toInputDeviceNetworkSettings,
+        "SerialNumber": "s",
+        "Type": (x: jsonP.JSONValue) => cmnP.readEnum<InputDeviceType>(x),
+      },
+    }, await resp.json());
   }
 
   async describeInputDeviceThumbnail(
@@ -653,19 +611,17 @@ export default class MediaLive {
       requestUri: cmnP.encodePath`/prod/inputSecurityGroups/${params["InputSecurityGroupId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Arn": "s",
-          "Id": "s",
-          "Inputs": ["s"],
-          "State": (x: jsonP.JSONValue) => cmnP.readEnum<InputSecurityGroupState>(x),
-          "Tags": x => jsonP.readMap(String, String, x),
-          "WhitelistRules": [toInputWhitelistRule],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+        "Id": "s",
+        "Inputs": ["s"],
+        "State": (x: jsonP.JSONValue) => cmnP.readEnum<InputSecurityGroupState>(x),
+        "Tags": x => jsonP.readMap(String, String, x),
+        "WhitelistRules": [toInputWhitelistRule],
+      },
+    }, await resp.json());
   }
 
   async describeMultiplex(
@@ -679,23 +635,21 @@ export default class MediaLive {
       requestUri: cmnP.encodePath`/prod/multiplexes/${params["MultiplexId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Arn": "s",
-          "AvailabilityZones": ["s"],
-          "Destinations": [toMultiplexOutputDestination],
-          "Id": "s",
-          "MultiplexSettings": toMultiplexSettings,
-          "Name": "s",
-          "PipelinesRunningCount": "n",
-          "ProgramCount": "n",
-          "State": (x: jsonP.JSONValue) => cmnP.readEnum<MultiplexState>(x),
-          "Tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+        "AvailabilityZones": ["s"],
+        "Destinations": [toMultiplexOutputDestination],
+        "Id": "s",
+        "MultiplexSettings": toMultiplexSettings,
+        "Name": "s",
+        "PipelinesRunningCount": "n",
+        "ProgramCount": "n",
+        "State": (x: jsonP.JSONValue) => cmnP.readEnum<MultiplexState>(x),
+        "Tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async describeMultiplexProgram(
@@ -709,18 +663,16 @@ export default class MediaLive {
       requestUri: cmnP.encodePath`/prod/multiplexes/${params["MultiplexId"]}/programs/${params["ProgramName"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ChannelId": "s",
-          "MultiplexProgramSettings": toMultiplexProgramSettings,
-          "PacketIdentifiersMap": toMultiplexProgramPacketIdentifiersMap,
-          "PipelineDetails": [toMultiplexProgramPipelineDetail],
-          "ProgramName": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ChannelId": "s",
+        "MultiplexProgramSettings": toMultiplexProgramSettings,
+        "PacketIdentifiersMap": toMultiplexProgramPacketIdentifiersMap,
+        "PipelineDetails": [toMultiplexProgramPipelineDetail],
+        "ProgramName": "s",
+      },
+    }, await resp.json());
   }
 
   async describeOffering(
@@ -734,24 +686,22 @@ export default class MediaLive {
       requestUri: cmnP.encodePath`/prod/offerings/${params["OfferingId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Arn": "s",
-          "CurrencyCode": "s",
-          "Duration": "n",
-          "DurationUnits": (x: jsonP.JSONValue) => cmnP.readEnum<OfferingDurationUnits>(x),
-          "FixedPrice": "n",
-          "OfferingDescription": "s",
-          "OfferingId": "s",
-          "OfferingType": (x: jsonP.JSONValue) => cmnP.readEnum<OfferingType>(x),
-          "Region": "s",
-          "ResourceSpecification": toReservationResourceSpecification,
-          "UsagePrice": "n",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+        "CurrencyCode": "s",
+        "Duration": "n",
+        "DurationUnits": (x: jsonP.JSONValue) => cmnP.readEnum<OfferingDurationUnits>(x),
+        "FixedPrice": "n",
+        "OfferingDescription": "s",
+        "OfferingId": "s",
+        "OfferingType": (x: jsonP.JSONValue) => cmnP.readEnum<OfferingType>(x),
+        "Region": "s",
+        "ResourceSpecification": toReservationResourceSpecification,
+        "UsagePrice": "n",
+      },
+    }, await resp.json());
   }
 
   async describeReservation(
@@ -765,31 +715,29 @@ export default class MediaLive {
       requestUri: cmnP.encodePath`/prod/reservations/${params["ReservationId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Arn": "s",
-          "Count": "n",
-          "CurrencyCode": "s",
-          "Duration": "n",
-          "DurationUnits": (x: jsonP.JSONValue) => cmnP.readEnum<OfferingDurationUnits>(x),
-          "End": "s",
-          "FixedPrice": "n",
-          "Name": "s",
-          "OfferingDescription": "s",
-          "OfferingId": "s",
-          "OfferingType": (x: jsonP.JSONValue) => cmnP.readEnum<OfferingType>(x),
-          "Region": "s",
-          "ReservationId": "s",
-          "ResourceSpecification": toReservationResourceSpecification,
-          "Start": "s",
-          "State": (x: jsonP.JSONValue) => cmnP.readEnum<ReservationState>(x),
-          "Tags": x => jsonP.readMap(String, String, x),
-          "UsagePrice": "n",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+        "Count": "n",
+        "CurrencyCode": "s",
+        "Duration": "n",
+        "DurationUnits": (x: jsonP.JSONValue) => cmnP.readEnum<OfferingDurationUnits>(x),
+        "End": "s",
+        "FixedPrice": "n",
+        "Name": "s",
+        "OfferingDescription": "s",
+        "OfferingId": "s",
+        "OfferingType": (x: jsonP.JSONValue) => cmnP.readEnum<OfferingType>(x),
+        "Region": "s",
+        "ReservationId": "s",
+        "ResourceSpecification": toReservationResourceSpecification,
+        "Start": "s",
+        "State": (x: jsonP.JSONValue) => cmnP.readEnum<ReservationState>(x),
+        "Tags": x => jsonP.readMap(String, String, x),
+        "UsagePrice": "n",
+      },
+    }, await resp.json());
   }
 
   async describeSchedule(
@@ -805,15 +753,13 @@ export default class MediaLive {
       requestUri: cmnP.encodePath`/prod/channels/${params["ChannelId"]}/schedule`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "NextToken": "s",
-          "ScheduleActions": [toScheduleAction],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "NextToken": "s",
+        "ScheduleActions": [toScheduleAction],
+      },
+    }, await resp.json());
   }
 
   async listChannels(
@@ -829,15 +775,13 @@ export default class MediaLive {
       requestUri: "/prod/channels",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Channels": [toChannelSummary],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Channels": [toChannelSummary],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listInputDeviceTransfers(
@@ -854,15 +798,13 @@ export default class MediaLive {
       requestUri: "/prod/inputDeviceTransfers",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "InputDeviceTransfers": [toTransferringInputDeviceSummary],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "InputDeviceTransfers": [toTransferringInputDeviceSummary],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listInputDevices(
@@ -878,15 +820,13 @@ export default class MediaLive {
       requestUri: "/prod/inputDevices",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "InputDevices": [toInputDeviceSummary],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "InputDevices": [toInputDeviceSummary],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listInputSecurityGroups(
@@ -902,15 +842,13 @@ export default class MediaLive {
       requestUri: "/prod/inputSecurityGroups",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "InputSecurityGroups": [toInputSecurityGroup],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "InputSecurityGroups": [toInputSecurityGroup],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listInputs(
@@ -926,15 +864,13 @@ export default class MediaLive {
       requestUri: "/prod/inputs",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Inputs": [toInput],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Inputs": [toInput],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listMultiplexPrograms(
@@ -950,15 +886,13 @@ export default class MediaLive {
       requestUri: cmnP.encodePath`/prod/multiplexes/${params["MultiplexId"]}/programs`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "MultiplexPrograms": [toMultiplexProgramSummary],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "MultiplexPrograms": [toMultiplexProgramSummary],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listMultiplexes(
@@ -974,15 +908,13 @@ export default class MediaLive {
       requestUri: "/prod/multiplexes",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Multiplexes": [toMultiplexSummary],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Multiplexes": [toMultiplexSummary],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listOfferings(
@@ -1008,15 +940,13 @@ export default class MediaLive {
       requestUri: "/prod/offerings",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "NextToken": "s",
-          "Offerings": [toOffering],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "NextToken": "s",
+        "Offerings": [toOffering],
+      },
+    }, await resp.json());
   }
 
   async listReservations(
@@ -1040,15 +970,13 @@ export default class MediaLive {
       requestUri: "/prod/reservations",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "NextToken": "s",
-          "Reservations": [toReservation],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "NextToken": "s",
+        "Reservations": [toReservation],
+      },
+    }, await resp.json());
   }
 
   async listTagsForResource(
@@ -1062,40 +990,36 @@ export default class MediaLive {
       requestUri: cmnP.encodePath`/prod/tags/${params["ResourceArn"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async purchaseOffering(
     {abortSignal, ...params}: RequestConfig & PurchaseOfferingRequest,
   ): Promise<PurchaseOfferingResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       count: params["Count"],
       name: params["Name"],
       requestId: params["RequestId"] ?? generateIdemptToken(),
       start: params["Start"],
       tags: params["Tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PurchaseOffering",
       requestUri: cmnP.encodePath`/prod/offerings/${params["OfferingId"]}/purchase`,
       responseCode: 201,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Reservation": toReservation,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Reservation": toReservation,
+      },
+    }, await resp.json());
   }
 
   async rejectInputDeviceTransfer(
@@ -1108,12 +1032,10 @@ export default class MediaLive {
       requestUri: cmnP.encodePath`/prod/inputDevices/${params["InputDeviceId"]}/reject`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async startChannel(
@@ -1126,29 +1048,27 @@ export default class MediaLive {
       requestUri: cmnP.encodePath`/prod/channels/${params["ChannelId"]}/start`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Arn": "s",
-          "CdiInputSpecification": toCdiInputSpecification,
-          "ChannelClass": (x: jsonP.JSONValue) => cmnP.readEnum<ChannelClass>(x),
-          "Destinations": [toOutputDestination],
-          "EgressEndpoints": [toChannelEgressEndpoint],
-          "EncoderSettings": toEncoderSettings,
-          "Id": "s",
-          "InputAttachments": [toInputAttachment],
-          "InputSpecification": toInputSpecification,
-          "LogLevel": (x: jsonP.JSONValue) => cmnP.readEnum<LogLevel>(x),
-          "Name": "s",
-          "PipelineDetails": [toPipelineDetail],
-          "PipelinesRunningCount": "n",
-          "RoleArn": "s",
-          "State": (x: jsonP.JSONValue) => cmnP.readEnum<ChannelState>(x),
-          "Tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+        "CdiInputSpecification": toCdiInputSpecification,
+        "ChannelClass": (x: jsonP.JSONValue) => cmnP.readEnum<ChannelClass>(x),
+        "Destinations": [toOutputDestination],
+        "EgressEndpoints": [toChannelEgressEndpoint],
+        "EncoderSettings": toEncoderSettings,
+        "Id": "s",
+        "InputAttachments": [toInputAttachment],
+        "InputSpecification": toInputSpecification,
+        "LogLevel": (x: jsonP.JSONValue) => cmnP.readEnum<LogLevel>(x),
+        "Name": "s",
+        "PipelineDetails": [toPipelineDetail],
+        "PipelinesRunningCount": "n",
+        "RoleArn": "s",
+        "State": (x: jsonP.JSONValue) => cmnP.readEnum<ChannelState>(x),
+        "Tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async startMultiplex(
@@ -1161,23 +1081,21 @@ export default class MediaLive {
       requestUri: cmnP.encodePath`/prod/multiplexes/${params["MultiplexId"]}/start`,
       responseCode: 202,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Arn": "s",
-          "AvailabilityZones": ["s"],
-          "Destinations": [toMultiplexOutputDestination],
-          "Id": "s",
-          "MultiplexSettings": toMultiplexSettings,
-          "Name": "s",
-          "PipelinesRunningCount": "n",
-          "ProgramCount": "n",
-          "State": (x: jsonP.JSONValue) => cmnP.readEnum<MultiplexState>(x),
-          "Tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+        "AvailabilityZones": ["s"],
+        "Destinations": [toMultiplexOutputDestination],
+        "Id": "s",
+        "MultiplexSettings": toMultiplexSettings,
+        "Name": "s",
+        "PipelinesRunningCount": "n",
+        "ProgramCount": "n",
+        "State": (x: jsonP.JSONValue) => cmnP.readEnum<MultiplexState>(x),
+        "Tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async stopChannel(
@@ -1190,29 +1108,27 @@ export default class MediaLive {
       requestUri: cmnP.encodePath`/prod/channels/${params["ChannelId"]}/stop`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Arn": "s",
-          "CdiInputSpecification": toCdiInputSpecification,
-          "ChannelClass": (x: jsonP.JSONValue) => cmnP.readEnum<ChannelClass>(x),
-          "Destinations": [toOutputDestination],
-          "EgressEndpoints": [toChannelEgressEndpoint],
-          "EncoderSettings": toEncoderSettings,
-          "Id": "s",
-          "InputAttachments": [toInputAttachment],
-          "InputSpecification": toInputSpecification,
-          "LogLevel": (x: jsonP.JSONValue) => cmnP.readEnum<LogLevel>(x),
-          "Name": "s",
-          "PipelineDetails": [toPipelineDetail],
-          "PipelinesRunningCount": "n",
-          "RoleArn": "s",
-          "State": (x: jsonP.JSONValue) => cmnP.readEnum<ChannelState>(x),
-          "Tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+        "CdiInputSpecification": toCdiInputSpecification,
+        "ChannelClass": (x: jsonP.JSONValue) => cmnP.readEnum<ChannelClass>(x),
+        "Destinations": [toOutputDestination],
+        "EgressEndpoints": [toChannelEgressEndpoint],
+        "EncoderSettings": toEncoderSettings,
+        "Id": "s",
+        "InputAttachments": [toInputAttachment],
+        "InputSpecification": toInputSpecification,
+        "LogLevel": (x: jsonP.JSONValue) => cmnP.readEnum<LogLevel>(x),
+        "Name": "s",
+        "PipelineDetails": [toPipelineDetail],
+        "PipelinesRunningCount": "n",
+        "RoleArn": "s",
+        "State": (x: jsonP.JSONValue) => cmnP.readEnum<ChannelState>(x),
+        "Tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async stopMultiplex(
@@ -1225,50 +1141,46 @@ export default class MediaLive {
       requestUri: cmnP.encodePath`/prod/multiplexes/${params["MultiplexId"]}/stop`,
       responseCode: 202,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Arn": "s",
-          "AvailabilityZones": ["s"],
-          "Destinations": [toMultiplexOutputDestination],
-          "Id": "s",
-          "MultiplexSettings": toMultiplexSettings,
-          "Name": "s",
-          "PipelinesRunningCount": "n",
-          "ProgramCount": "n",
-          "State": (x: jsonP.JSONValue) => cmnP.readEnum<MultiplexState>(x),
-          "Tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+        "AvailabilityZones": ["s"],
+        "Destinations": [toMultiplexOutputDestination],
+        "Id": "s",
+        "MultiplexSettings": toMultiplexSettings,
+        "Name": "s",
+        "PipelinesRunningCount": "n",
+        "ProgramCount": "n",
+        "State": (x: jsonP.JSONValue) => cmnP.readEnum<MultiplexState>(x),
+        "Tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async transferInputDevice(
     {abortSignal, ...params}: RequestConfig & TransferInputDeviceRequest,
   ): Promise<TransferInputDeviceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       targetCustomerId: params["TargetCustomerId"],
       transferMessage: params["TransferMessage"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TransferInputDevice",
       requestUri: cmnP.encodePath`/prod/inputDevices/${params["InputDeviceId"]}/transfer`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async updateChannel(
     {abortSignal, ...params}: RequestConfig & UpdateChannelRequest,
   ): Promise<UpdateChannelResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       cdiInputSpecification: fromCdiInputSpecification(params["CdiInputSpecification"]),
       destinations: params["Destinations"]?.map(x => fromOutputDestination(x)),
       encoderSettings: fromEncoderSettings(params["EncoderSettings"]),
@@ -1277,7 +1189,7 @@ export default class MediaLive {
       logLevel: params["LogLevel"],
       name: params["Name"],
       roleArn: params["RoleArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateChannel",
@@ -1285,23 +1197,21 @@ export default class MediaLive {
       requestUri: cmnP.encodePath`/prod/channels/${params["ChannelId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Channel": toChannel,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Channel": toChannel,
+      },
+    }, await resp.json());
   }
 
   async updateChannelClass(
     {abortSignal, ...params}: RequestConfig & UpdateChannelClassRequest,
   ): Promise<UpdateChannelClassResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       channelClass: params["ChannelClass"],
       destinations: params["Destinations"]?.map(x => fromOutputDestination(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateChannelClass",
@@ -1309,20 +1219,18 @@ export default class MediaLive {
       requestUri: cmnP.encodePath`/prod/channels/${params["ChannelId"]}/channelClass`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Channel": toChannel,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Channel": toChannel,
+      },
+    }, await resp.json());
   }
 
   async updateInput(
     {abortSignal, ...params}: RequestConfig & UpdateInputRequest,
   ): Promise<UpdateInputResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       destinations: params["Destinations"]?.map(x => fromInputDestinationRequest(x)),
       inputDevices: params["InputDevices"]?.map(x => fromInputDeviceRequest(x)),
       inputSecurityGroups: params["InputSecurityGroups"],
@@ -1330,7 +1238,7 @@ export default class MediaLive {
       name: params["Name"],
       roleArn: params["RoleArn"],
       sources: params["Sources"]?.map(x => fromInputSourceRequest(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateInput",
@@ -1338,23 +1246,21 @@ export default class MediaLive {
       requestUri: cmnP.encodePath`/prod/inputs/${params["InputId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Input": toInput,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Input": toInput,
+      },
+    }, await resp.json());
   }
 
   async updateInputDevice(
     {abortSignal, ...params}: RequestConfig & UpdateInputDeviceRequest,
   ): Promise<UpdateInputDeviceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       hdDeviceSettings: fromInputDeviceConfigurableSettings(params["HdDeviceSettings"]),
       name: params["Name"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateInputDevice",
@@ -1362,32 +1268,30 @@ export default class MediaLive {
       requestUri: cmnP.encodePath`/prod/inputDevices/${params["InputDeviceId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Arn": "s",
-          "ConnectionState": (x: jsonP.JSONValue) => cmnP.readEnum<InputDeviceConnectionState>(x),
-          "DeviceSettingsSyncState": (x: jsonP.JSONValue) => cmnP.readEnum<DeviceSettingsSyncState>(x),
-          "HdDeviceSettings": toInputDeviceHdSettings,
-          "Id": "s",
-          "MacAddress": "s",
-          "Name": "s",
-          "NetworkSettings": toInputDeviceNetworkSettings,
-          "SerialNumber": "s",
-          "Type": (x: jsonP.JSONValue) => cmnP.readEnum<InputDeviceType>(x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+        "ConnectionState": (x: jsonP.JSONValue) => cmnP.readEnum<InputDeviceConnectionState>(x),
+        "DeviceSettingsSyncState": (x: jsonP.JSONValue) => cmnP.readEnum<DeviceSettingsSyncState>(x),
+        "HdDeviceSettings": toInputDeviceHdSettings,
+        "Id": "s",
+        "MacAddress": "s",
+        "Name": "s",
+        "NetworkSettings": toInputDeviceNetworkSettings,
+        "SerialNumber": "s",
+        "Type": (x: jsonP.JSONValue) => cmnP.readEnum<InputDeviceType>(x),
+      },
+    }, await resp.json());
   }
 
   async updateInputSecurityGroup(
     {abortSignal, ...params}: RequestConfig & UpdateInputSecurityGroupRequest,
   ): Promise<UpdateInputSecurityGroupResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       tags: params["Tags"],
       whitelistRules: params["WhitelistRules"]?.map(x => fromInputWhitelistRuleCidr(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateInputSecurityGroup",
@@ -1395,23 +1299,21 @@ export default class MediaLive {
       requestUri: cmnP.encodePath`/prod/inputSecurityGroups/${params["InputSecurityGroupId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "SecurityGroup": toInputSecurityGroup,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "SecurityGroup": toInputSecurityGroup,
+      },
+    }, await resp.json());
   }
 
   async updateMultiplex(
     {abortSignal, ...params}: RequestConfig & UpdateMultiplexRequest,
   ): Promise<UpdateMultiplexResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       multiplexSettings: fromMultiplexSettings(params["MultiplexSettings"]),
       name: params["Name"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateMultiplex",
@@ -1419,22 +1321,20 @@ export default class MediaLive {
       requestUri: cmnP.encodePath`/prod/multiplexes/${params["MultiplexId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Multiplex": toMultiplex,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Multiplex": toMultiplex,
+      },
+    }, await resp.json());
   }
 
   async updateMultiplexProgram(
     {abortSignal, ...params}: RequestConfig & UpdateMultiplexProgramRequest,
   ): Promise<UpdateMultiplexProgramResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       multiplexProgramSettings: fromMultiplexProgramSettings(params["MultiplexProgramSettings"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateMultiplexProgram",
@@ -1442,22 +1342,20 @@ export default class MediaLive {
       requestUri: cmnP.encodePath`/prod/multiplexes/${params["MultiplexId"]}/programs/${params["ProgramName"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "MultiplexProgram": toMultiplexProgram,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "MultiplexProgram": toMultiplexProgram,
+      },
+    }, await resp.json());
   }
 
   async updateReservation(
     {abortSignal, ...params}: RequestConfig & UpdateReservationRequest,
   ): Promise<UpdateReservationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       name: params["Name"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateReservation",
@@ -1465,14 +1363,12 @@ export default class MediaLive {
       requestUri: cmnP.encodePath`/prod/reservations/${params["ReservationId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Reservation": toReservation,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Reservation": toReservation,
+      },
+    }, await resp.json());
   }
 
   // Resource State Waiters
@@ -1486,12 +1382,15 @@ export default class MediaLive {
   ): Promise<DescribeChannelResponse> {
     const errMessage = 'ResourceNotReady: Resource is not in the state ChannelCreated';
     for (let i = 0; i < 5; i++) {
-      const resp = await this.describeChannel(params);
-      const field = resp?.State;
-      if (field === "IDLE") return resp;
-      if (field === "CREATING") continue;
-      // TODO: if (statusCode == 500) continue;
-      if (field === "CREATE_FAILED") throw new Error(errMessage);
+      try {
+        const resp = await this.describeChannel(params);
+        const field = resp?.State;
+        if (field === "IDLE") return resp;
+        if (field === "CREATING") continue;
+        if (field === "CREATE_FAILED") throw new Error(errMessage);
+      } catch (err) {
+        if (!["Http500"].includes(err.shortCode)) throw err;
+      }
       await new Promise(r => setTimeout(r, 3000));
     }
     throw new Error(errMessage);
@@ -1506,11 +1405,14 @@ export default class MediaLive {
   ): Promise<DescribeChannelResponse> {
     const errMessage = 'ResourceNotReady: Resource is not in the state ChannelRunning';
     for (let i = 0; i < 120; i++) {
-      const resp = await this.describeChannel(params);
-      const field = resp?.State;
-      if (field === "RUNNING") return resp;
-      if (field === "STARTING") continue;
-      // TODO: if (statusCode == 500) continue;
+      try {
+        const resp = await this.describeChannel(params);
+        const field = resp?.State;
+        if (field === "RUNNING") return resp;
+        if (field === "STARTING") continue;
+      } catch (err) {
+        if (!["Http500"].includes(err.shortCode)) throw err;
+      }
       await new Promise(r => setTimeout(r, 5000));
     }
     throw new Error(errMessage);
@@ -1525,11 +1427,14 @@ export default class MediaLive {
   ): Promise<DescribeChannelResponse> {
     const errMessage = 'ResourceNotReady: Resource is not in the state ChannelStopped';
     for (let i = 0; i < 60; i++) {
-      const resp = await this.describeChannel(params);
-      const field = resp?.State;
-      if (field === "IDLE") return resp;
-      if (field === "STOPPING") continue;
-      // TODO: if (statusCode == 500) continue;
+      try {
+        const resp = await this.describeChannel(params);
+        const field = resp?.State;
+        if (field === "IDLE") return resp;
+        if (field === "STOPPING") continue;
+      } catch (err) {
+        if (!["Http500"].includes(err.shortCode)) throw err;
+      }
       await new Promise(r => setTimeout(r, 5000));
     }
     throw new Error(errMessage);
@@ -1544,11 +1449,14 @@ export default class MediaLive {
   ): Promise<DescribeChannelResponse> {
     const errMessage = 'ResourceNotReady: Resource is not in the state ChannelDeleted';
     for (let i = 0; i < 84; i++) {
-      const resp = await this.describeChannel(params);
-      const field = resp?.State;
-      if (field === "DELETED") return resp;
-      if (field === "DELETING") continue;
-      // TODO: if (statusCode == 500) continue;
+      try {
+        const resp = await this.describeChannel(params);
+        const field = resp?.State;
+        if (field === "DELETED") return resp;
+        if (field === "DELETING") continue;
+      } catch (err) {
+        if (!["Http500"].includes(err.shortCode)) throw err;
+      }
       await new Promise(r => setTimeout(r, 5000));
     }
     throw new Error(errMessage);
@@ -1563,11 +1471,14 @@ export default class MediaLive {
   ): Promise<DescribeInputResponse> {
     const errMessage = 'ResourceNotReady: Resource is not in the state InputAttached';
     for (let i = 0; i < 20; i++) {
-      const resp = await this.describeInput(params);
-      const field = resp?.State;
-      if (field === "ATTACHED") return resp;
-      if (field === "DETACHED") continue;
-      // TODO: if (statusCode == 500) continue;
+      try {
+        const resp = await this.describeInput(params);
+        const field = resp?.State;
+        if (field === "ATTACHED") return resp;
+        if (field === "DETACHED") continue;
+      } catch (err) {
+        if (!["Http500"].includes(err.shortCode)) throw err;
+      }
       await new Promise(r => setTimeout(r, 5000));
     }
     throw new Error(errMessage);
@@ -1582,12 +1493,15 @@ export default class MediaLive {
   ): Promise<DescribeInputResponse> {
     const errMessage = 'ResourceNotReady: Resource is not in the state InputDetached';
     for (let i = 0; i < 84; i++) {
-      const resp = await this.describeInput(params);
-      const field = resp?.State;
-      if (field === "DETACHED") return resp;
-      if (field === "CREATING") continue;
-      if (field === "ATTACHED") continue;
-      // TODO: if (statusCode == 500) continue;
+      try {
+        const resp = await this.describeInput(params);
+        const field = resp?.State;
+        if (field === "DETACHED") return resp;
+        if (field === "CREATING") continue;
+        if (field === "ATTACHED") continue;
+      } catch (err) {
+        if (!["Http500"].includes(err.shortCode)) throw err;
+      }
       await new Promise(r => setTimeout(r, 5000));
     }
     throw new Error(errMessage);
@@ -1602,11 +1516,14 @@ export default class MediaLive {
   ): Promise<DescribeInputResponse> {
     const errMessage = 'ResourceNotReady: Resource is not in the state InputDeleted';
     for (let i = 0; i < 20; i++) {
-      const resp = await this.describeInput(params);
-      const field = resp?.State;
-      if (field === "DELETED") return resp;
-      if (field === "DELETING") continue;
-      // TODO: if (statusCode == 500) continue;
+      try {
+        const resp = await this.describeInput(params);
+        const field = resp?.State;
+        if (field === "DELETED") return resp;
+        if (field === "DELETING") continue;
+      } catch (err) {
+        if (!["Http500"].includes(err.shortCode)) throw err;
+      }
       await new Promise(r => setTimeout(r, 5000));
     }
     throw new Error(errMessage);
@@ -1621,12 +1538,15 @@ export default class MediaLive {
   ): Promise<DescribeMultiplexResponse> {
     const errMessage = 'ResourceNotReady: Resource is not in the state MultiplexCreated';
     for (let i = 0; i < 5; i++) {
-      const resp = await this.describeMultiplex(params);
-      const field = resp?.State;
-      if (field === "IDLE") return resp;
-      if (field === "CREATING") continue;
-      // TODO: if (statusCode == 500) continue;
-      if (field === "CREATE_FAILED") throw new Error(errMessage);
+      try {
+        const resp = await this.describeMultiplex(params);
+        const field = resp?.State;
+        if (field === "IDLE") return resp;
+        if (field === "CREATING") continue;
+        if (field === "CREATE_FAILED") throw new Error(errMessage);
+      } catch (err) {
+        if (!["Http500"].includes(err.shortCode)) throw err;
+      }
       await new Promise(r => setTimeout(r, 3000));
     }
     throw new Error(errMessage);
@@ -1641,11 +1561,14 @@ export default class MediaLive {
   ): Promise<DescribeMultiplexResponse> {
     const errMessage = 'ResourceNotReady: Resource is not in the state MultiplexRunning';
     for (let i = 0; i < 120; i++) {
-      const resp = await this.describeMultiplex(params);
-      const field = resp?.State;
-      if (field === "RUNNING") return resp;
-      if (field === "STARTING") continue;
-      // TODO: if (statusCode == 500) continue;
+      try {
+        const resp = await this.describeMultiplex(params);
+        const field = resp?.State;
+        if (field === "RUNNING") return resp;
+        if (field === "STARTING") continue;
+      } catch (err) {
+        if (!["Http500"].includes(err.shortCode)) throw err;
+      }
       await new Promise(r => setTimeout(r, 5000));
     }
     throw new Error(errMessage);
@@ -1660,11 +1583,14 @@ export default class MediaLive {
   ): Promise<DescribeMultiplexResponse> {
     const errMessage = 'ResourceNotReady: Resource is not in the state MultiplexStopped';
     for (let i = 0; i < 28; i++) {
-      const resp = await this.describeMultiplex(params);
-      const field = resp?.State;
-      if (field === "IDLE") return resp;
-      if (field === "STOPPING") continue;
-      // TODO: if (statusCode == 500) continue;
+      try {
+        const resp = await this.describeMultiplex(params);
+        const field = resp?.State;
+        if (field === "IDLE") return resp;
+        if (field === "STOPPING") continue;
+      } catch (err) {
+        if (!["Http500"].includes(err.shortCode)) throw err;
+      }
       await new Promise(r => setTimeout(r, 5000));
     }
     throw new Error(errMessage);
@@ -1679,11 +1605,14 @@ export default class MediaLive {
   ): Promise<DescribeMultiplexResponse> {
     const errMessage = 'ResourceNotReady: Resource is not in the state MultiplexDeleted';
     for (let i = 0; i < 20; i++) {
-      const resp = await this.describeMultiplex(params);
-      const field = resp?.State;
-      if (field === "DELETED") return resp;
-      if (field === "DELETING") continue;
-      // TODO: if (statusCode == 500) continue;
+      try {
+        const resp = await this.describeMultiplex(params);
+        const field = resp?.State;
+        if (field === "DELETED") return resp;
+        if (field === "DELETING") continue;
+      } catch (err) {
+        if (!["Http500"].includes(err.shortCode)) throw err;
+      }
       await new Promise(r => setTimeout(r, 5000));
     }
     throw new Error(errMessage);

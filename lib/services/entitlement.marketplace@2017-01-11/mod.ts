@@ -30,12 +30,12 @@ export default class MarketplaceEntitlementService {
   async getEntitlements(
     {abortSignal, ...params}: RequestConfig & GetEntitlementsRequest,
   ): Promise<GetEntitlementsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ProductCode: params["ProductCode"],
       Filter: params["Filter"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetEntitlements",

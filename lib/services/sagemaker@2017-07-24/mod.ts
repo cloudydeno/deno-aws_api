@@ -35,10 +35,10 @@ export default class SageMaker {
   async addTags(
     {abortSignal, ...params}: RequestConfig & AddTagsInput,
   ): Promise<AddTagsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AddTags",
@@ -54,10 +54,10 @@ export default class SageMaker {
   async associateTrialComponent(
     {abortSignal, ...params}: RequestConfig & AssociateTrialComponentRequest,
   ): Promise<AssociateTrialComponentResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TrialComponentName: params["TrialComponentName"],
       TrialName: params["TrialName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AssociateTrialComponent",
@@ -74,14 +74,14 @@ export default class SageMaker {
   async createAlgorithm(
     {abortSignal, ...params}: RequestConfig & CreateAlgorithmInput,
   ): Promise<CreateAlgorithmOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AlgorithmName: params["AlgorithmName"],
       AlgorithmDescription: params["AlgorithmDescription"],
       TrainingSpecification: fromTrainingSpecification(params["TrainingSpecification"]),
       InferenceSpecification: fromInferenceSpecification(params["InferenceSpecification"]),
       ValidationSpecification: fromAlgorithmValidationSpecification(params["ValidationSpecification"]),
       CertifyForMarketplace: params["CertifyForMarketplace"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateAlgorithm",
@@ -97,14 +97,14 @@ export default class SageMaker {
   async createApp(
     {abortSignal, ...params}: RequestConfig & CreateAppRequest,
   ): Promise<CreateAppResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DomainId: params["DomainId"],
       UserProfileName: params["UserProfileName"],
       AppType: params["AppType"],
       AppName: params["AppName"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
       ResourceSpec: fromResourceSpec(params["ResourceSpec"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateApp",
@@ -120,11 +120,11 @@ export default class SageMaker {
   async createAppImageConfig(
     {abortSignal, ...params}: RequestConfig & CreateAppImageConfigRequest,
   ): Promise<CreateAppImageConfigResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AppImageConfigName: params["AppImageConfigName"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
       KernelGatewayImageConfig: fromKernelGatewayImageConfig(params["KernelGatewayImageConfig"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateAppImageConfig",
@@ -140,7 +140,7 @@ export default class SageMaker {
   async createAutoMLJob(
     {abortSignal, ...params}: RequestConfig & CreateAutoMLJobRequest,
   ): Promise<CreateAutoMLJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AutoMLJobName: params["AutoMLJobName"],
       InputDataConfig: params["InputDataConfig"]?.map(x => fromAutoMLChannel(x)),
       OutputDataConfig: fromAutoMLOutputDataConfig(params["OutputDataConfig"]),
@@ -150,7 +150,7 @@ export default class SageMaker {
       RoleArn: params["RoleArn"],
       GenerateCandidateDefinitionsOnly: params["GenerateCandidateDefinitionsOnly"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateAutoMLJob",
@@ -166,10 +166,10 @@ export default class SageMaker {
   async createCodeRepository(
     {abortSignal, ...params}: RequestConfig & CreateCodeRepositoryInput,
   ): Promise<CreateCodeRepositoryOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CodeRepositoryName: params["CodeRepositoryName"],
       GitConfig: fromGitConfig(params["GitConfig"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateCodeRepository",
@@ -185,14 +185,14 @@ export default class SageMaker {
   async createCompilationJob(
     {abortSignal, ...params}: RequestConfig & CreateCompilationJobRequest,
   ): Promise<CreateCompilationJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CompilationJobName: params["CompilationJobName"],
       RoleArn: params["RoleArn"],
       InputConfig: fromInputConfig(params["InputConfig"]),
       OutputConfig: fromOutputConfig(params["OutputConfig"]),
       StoppingCondition: fromStoppingCondition(params["StoppingCondition"]),
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateCompilationJob",
@@ -208,7 +208,7 @@ export default class SageMaker {
   async createDomain(
     {abortSignal, ...params}: RequestConfig & CreateDomainRequest,
   ): Promise<CreateDomainResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DomainName: params["DomainName"],
       AuthMode: params["AuthMode"],
       DefaultUserSettings: fromUserSettings(params["DefaultUserSettings"]),
@@ -217,7 +217,7 @@ export default class SageMaker {
       Tags: params["Tags"]?.map(x => fromTag(x)),
       AppNetworkAccessType: params["AppNetworkAccessType"],
       HomeEfsFileSystemKmsKeyId: params["HomeEfsFileSystemKmsKeyId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDomain",
@@ -234,11 +234,11 @@ export default class SageMaker {
   async createEndpoint(
     {abortSignal, ...params}: RequestConfig & CreateEndpointInput,
   ): Promise<CreateEndpointOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       EndpointName: params["EndpointName"],
       EndpointConfigName: params["EndpointConfigName"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateEndpoint",
@@ -254,13 +254,13 @@ export default class SageMaker {
   async createEndpointConfig(
     {abortSignal, ...params}: RequestConfig & CreateEndpointConfigInput,
   ): Promise<CreateEndpointConfigOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       EndpointConfigName: params["EndpointConfigName"],
       ProductionVariants: params["ProductionVariants"]?.map(x => fromProductionVariant(x)),
       DataCaptureConfig: fromDataCaptureConfig(params["DataCaptureConfig"]),
       Tags: params["Tags"]?.map(x => fromTag(x)),
       KmsKeyId: params["KmsKeyId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateEndpointConfig",
@@ -276,12 +276,12 @@ export default class SageMaker {
   async createExperiment(
     {abortSignal, ...params}: RequestConfig & CreateExperimentRequest,
   ): Promise<CreateExperimentResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ExperimentName: params["ExperimentName"],
       DisplayName: params["DisplayName"],
       Description: params["Description"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateExperiment",
@@ -297,7 +297,7 @@ export default class SageMaker {
   async createFlowDefinition(
     {abortSignal, ...params}: RequestConfig & CreateFlowDefinitionRequest,
   ): Promise<CreateFlowDefinitionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       FlowDefinitionName: params["FlowDefinitionName"],
       HumanLoopRequestSource: fromHumanLoopRequestSource(params["HumanLoopRequestSource"]),
       HumanLoopActivationConfig: fromHumanLoopActivationConfig(params["HumanLoopActivationConfig"]),
@@ -305,7 +305,7 @@ export default class SageMaker {
       OutputConfig: fromFlowDefinitionOutputConfig(params["OutputConfig"]),
       RoleArn: params["RoleArn"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateFlowDefinition",
@@ -321,11 +321,11 @@ export default class SageMaker {
   async createHumanTaskUi(
     {abortSignal, ...params}: RequestConfig & CreateHumanTaskUiRequest,
   ): Promise<CreateHumanTaskUiResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       HumanTaskUiName: params["HumanTaskUiName"],
       UiTemplate: fromUiTemplate(params["UiTemplate"]),
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateHumanTaskUi",
@@ -341,14 +341,14 @@ export default class SageMaker {
   async createHyperParameterTuningJob(
     {abortSignal, ...params}: RequestConfig & CreateHyperParameterTuningJobRequest,
   ): Promise<CreateHyperParameterTuningJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       HyperParameterTuningJobName: params["HyperParameterTuningJobName"],
       HyperParameterTuningJobConfig: fromHyperParameterTuningJobConfig(params["HyperParameterTuningJobConfig"]),
       TrainingJobDefinition: fromHyperParameterTrainingJobDefinition(params["TrainingJobDefinition"]),
       TrainingJobDefinitions: params["TrainingJobDefinitions"]?.map(x => fromHyperParameterTrainingJobDefinition(x)),
       WarmStartConfig: fromHyperParameterTuningJobWarmStartConfig(params["WarmStartConfig"]),
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateHyperParameterTuningJob",
@@ -364,13 +364,13 @@ export default class SageMaker {
   async createImage(
     {abortSignal, ...params}: RequestConfig & CreateImageRequest,
   ): Promise<CreateImageResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Description: params["Description"],
       DisplayName: params["DisplayName"],
       ImageName: params["ImageName"],
       RoleArn: params["RoleArn"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateImage",
@@ -386,11 +386,11 @@ export default class SageMaker {
   async createImageVersion(
     {abortSignal, ...params}: RequestConfig & CreateImageVersionRequest,
   ): Promise<CreateImageVersionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       BaseImage: params["BaseImage"],
       ClientToken: params["ClientToken"] ?? generateIdemptToken(),
       ImageName: params["ImageName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateImageVersion",
@@ -406,7 +406,7 @@ export default class SageMaker {
   async createLabelingJob(
     {abortSignal, ...params}: RequestConfig & CreateLabelingJobRequest,
   ): Promise<CreateLabelingJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       LabelingJobName: params["LabelingJobName"],
       LabelAttributeName: params["LabelAttributeName"],
       InputConfig: fromLabelingJobInputConfig(params["InputConfig"]),
@@ -417,7 +417,7 @@ export default class SageMaker {
       LabelingJobAlgorithmsConfig: fromLabelingJobAlgorithmsConfig(params["LabelingJobAlgorithmsConfig"]),
       HumanTaskConfig: fromHumanTaskConfig(params["HumanTaskConfig"]),
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateLabelingJob",
@@ -433,7 +433,7 @@ export default class SageMaker {
   async createModel(
     {abortSignal, ...params}: RequestConfig & CreateModelInput,
   ): Promise<CreateModelOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ModelName: params["ModelName"],
       PrimaryContainer: fromContainerDefinition(params["PrimaryContainer"]),
       Containers: params["Containers"]?.map(x => fromContainerDefinition(x)),
@@ -441,7 +441,7 @@ export default class SageMaker {
       Tags: params["Tags"]?.map(x => fromTag(x)),
       VpcConfig: fromVpcConfig(params["VpcConfig"]),
       EnableNetworkIsolation: params["EnableNetworkIsolation"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateModel",
@@ -457,14 +457,14 @@ export default class SageMaker {
   async createModelPackage(
     {abortSignal, ...params}: RequestConfig & CreateModelPackageInput = {},
   ): Promise<CreateModelPackageOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ModelPackageName: params["ModelPackageName"],
       ModelPackageDescription: params["ModelPackageDescription"],
       InferenceSpecification: fromInferenceSpecification(params["InferenceSpecification"]),
       ValidationSpecification: fromModelPackageValidationSpecification(params["ValidationSpecification"]),
       SourceAlgorithmSpecification: fromSourceAlgorithmSpecification(params["SourceAlgorithmSpecification"]),
       CertifyForMarketplace: params["CertifyForMarketplace"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateModelPackage",
@@ -480,11 +480,11 @@ export default class SageMaker {
   async createMonitoringSchedule(
     {abortSignal, ...params}: RequestConfig & CreateMonitoringScheduleRequest,
   ): Promise<CreateMonitoringScheduleResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       MonitoringScheduleName: params["MonitoringScheduleName"],
       MonitoringScheduleConfig: fromMonitoringScheduleConfig(params["MonitoringScheduleConfig"]),
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateMonitoringSchedule",
@@ -500,7 +500,7 @@ export default class SageMaker {
   async createNotebookInstance(
     {abortSignal, ...params}: RequestConfig & CreateNotebookInstanceInput,
   ): Promise<CreateNotebookInstanceOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NotebookInstanceName: params["NotebookInstanceName"],
       InstanceType: params["InstanceType"],
       SubnetId: params["SubnetId"],
@@ -515,7 +515,7 @@ export default class SageMaker {
       DefaultCodeRepository: params["DefaultCodeRepository"],
       AdditionalCodeRepositories: params["AdditionalCodeRepositories"],
       RootAccess: params["RootAccess"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateNotebookInstance",
@@ -531,11 +531,11 @@ export default class SageMaker {
   async createNotebookInstanceLifecycleConfig(
     {abortSignal, ...params}: RequestConfig & CreateNotebookInstanceLifecycleConfigInput,
   ): Promise<CreateNotebookInstanceLifecycleConfigOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NotebookInstanceLifecycleConfigName: params["NotebookInstanceLifecycleConfigName"],
       OnCreate: params["OnCreate"]?.map(x => fromNotebookInstanceLifecycleHook(x)),
       OnStart: params["OnStart"]?.map(x => fromNotebookInstanceLifecycleHook(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateNotebookInstanceLifecycleConfig",
@@ -551,11 +551,11 @@ export default class SageMaker {
   async createPresignedDomainUrl(
     {abortSignal, ...params}: RequestConfig & CreatePresignedDomainUrlRequest,
   ): Promise<CreatePresignedDomainUrlResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DomainId: params["DomainId"],
       UserProfileName: params["UserProfileName"],
       SessionExpirationDurationInSeconds: params["SessionExpirationDurationInSeconds"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreatePresignedDomainUrl",
@@ -571,10 +571,10 @@ export default class SageMaker {
   async createPresignedNotebookInstanceUrl(
     {abortSignal, ...params}: RequestConfig & CreatePresignedNotebookInstanceUrlInput,
   ): Promise<CreatePresignedNotebookInstanceUrlOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NotebookInstanceName: params["NotebookInstanceName"],
       SessionExpirationDurationInSeconds: params["SessionExpirationDurationInSeconds"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreatePresignedNotebookInstanceUrl",
@@ -590,7 +590,7 @@ export default class SageMaker {
   async createProcessingJob(
     {abortSignal, ...params}: RequestConfig & CreateProcessingJobRequest,
   ): Promise<CreateProcessingJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ProcessingInputs: params["ProcessingInputs"]?.map(x => fromProcessingInput(x)),
       ProcessingOutputConfig: fromProcessingOutputConfig(params["ProcessingOutputConfig"]),
       ProcessingJobName: params["ProcessingJobName"],
@@ -602,7 +602,7 @@ export default class SageMaker {
       RoleArn: params["RoleArn"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
       ExperimentConfig: fromExperimentConfig(params["ExperimentConfig"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateProcessingJob",
@@ -618,7 +618,7 @@ export default class SageMaker {
   async createTrainingJob(
     {abortSignal, ...params}: RequestConfig & CreateTrainingJobRequest,
   ): Promise<CreateTrainingJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TrainingJobName: params["TrainingJobName"],
       HyperParameters: params["HyperParameters"],
       AlgorithmSpecification: fromAlgorithmSpecification(params["AlgorithmSpecification"]),
@@ -637,7 +637,7 @@ export default class SageMaker {
       DebugRuleConfigurations: params["DebugRuleConfigurations"]?.map(x => fromDebugRuleConfiguration(x)),
       TensorBoardOutputConfig: fromTensorBoardOutputConfig(params["TensorBoardOutputConfig"]),
       ExperimentConfig: fromExperimentConfig(params["ExperimentConfig"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateTrainingJob",
@@ -653,7 +653,7 @@ export default class SageMaker {
   async createTransformJob(
     {abortSignal, ...params}: RequestConfig & CreateTransformJobRequest,
   ): Promise<CreateTransformJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TransformJobName: params["TransformJobName"],
       ModelName: params["ModelName"],
       MaxConcurrentTransforms: params["MaxConcurrentTransforms"],
@@ -667,7 +667,7 @@ export default class SageMaker {
       DataProcessing: fromDataProcessing(params["DataProcessing"]),
       Tags: params["Tags"]?.map(x => fromTag(x)),
       ExperimentConfig: fromExperimentConfig(params["ExperimentConfig"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateTransformJob",
@@ -683,12 +683,12 @@ export default class SageMaker {
   async createTrial(
     {abortSignal, ...params}: RequestConfig & CreateTrialRequest,
   ): Promise<CreateTrialResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TrialName: params["TrialName"],
       DisplayName: params["DisplayName"],
       ExperimentName: params["ExperimentName"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateTrial",
@@ -704,7 +704,7 @@ export default class SageMaker {
   async createTrialComponent(
     {abortSignal, ...params}: RequestConfig & CreateTrialComponentRequest,
   ): Promise<CreateTrialComponentResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TrialComponentName: params["TrialComponentName"],
       DisplayName: params["DisplayName"],
       Status: fromTrialComponentStatus(params["Status"]),
@@ -714,7 +714,7 @@ export default class SageMaker {
       InputArtifacts: jsonP.serializeMap(params["InputArtifacts"], x => fromTrialComponentArtifact(x)),
       OutputArtifacts: jsonP.serializeMap(params["OutputArtifacts"], x => fromTrialComponentArtifact(x)),
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateTrialComponent",
@@ -730,14 +730,14 @@ export default class SageMaker {
   async createUserProfile(
     {abortSignal, ...params}: RequestConfig & CreateUserProfileRequest,
   ): Promise<CreateUserProfileResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DomainId: params["DomainId"],
       UserProfileName: params["UserProfileName"],
       SingleSignOnUserIdentifier: params["SingleSignOnUserIdentifier"],
       SingleSignOnUserValue: params["SingleSignOnUserValue"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
       UserSettings: fromUserSettings(params["UserSettings"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateUserProfile",
@@ -753,13 +753,13 @@ export default class SageMaker {
   async createWorkforce(
     {abortSignal, ...params}: RequestConfig & CreateWorkforceRequest,
   ): Promise<CreateWorkforceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CognitoConfig: fromCognitoConfig(params["CognitoConfig"]),
       OidcConfig: fromOidcConfig(params["OidcConfig"]),
       SourceIpConfig: fromSourceIpConfig(params["SourceIpConfig"]),
       WorkforceName: params["WorkforceName"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateWorkforce",
@@ -775,14 +775,14 @@ export default class SageMaker {
   async createWorkteam(
     {abortSignal, ...params}: RequestConfig & CreateWorkteamRequest,
   ): Promise<CreateWorkteamResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       WorkteamName: params["WorkteamName"],
       WorkforceName: params["WorkforceName"],
       MemberDefinitions: params["MemberDefinitions"]?.map(x => fromMemberDefinition(x)),
       Description: params["Description"],
       NotificationConfiguration: fromNotificationConfiguration(params["NotificationConfiguration"]),
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateWorkteam",
@@ -798,9 +798,9 @@ export default class SageMaker {
   async deleteAlgorithm(
     {abortSignal, ...params}: RequestConfig & DeleteAlgorithmInput,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AlgorithmName: params["AlgorithmName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteAlgorithm",
@@ -810,12 +810,12 @@ export default class SageMaker {
   async deleteApp(
     {abortSignal, ...params}: RequestConfig & DeleteAppRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DomainId: params["DomainId"],
       UserProfileName: params["UserProfileName"],
       AppType: params["AppType"],
       AppName: params["AppName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteApp",
@@ -825,9 +825,9 @@ export default class SageMaker {
   async deleteAppImageConfig(
     {abortSignal, ...params}: RequestConfig & DeleteAppImageConfigRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AppImageConfigName: params["AppImageConfigName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteAppImageConfig",
@@ -837,9 +837,9 @@ export default class SageMaker {
   async deleteCodeRepository(
     {abortSignal, ...params}: RequestConfig & DeleteCodeRepositoryInput,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CodeRepositoryName: params["CodeRepositoryName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteCodeRepository",
@@ -849,10 +849,10 @@ export default class SageMaker {
   async deleteDomain(
     {abortSignal, ...params}: RequestConfig & DeleteDomainRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DomainId: params["DomainId"],
       RetentionPolicy: fromRetentionPolicy(params["RetentionPolicy"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteDomain",
@@ -862,9 +862,9 @@ export default class SageMaker {
   async deleteEndpoint(
     {abortSignal, ...params}: RequestConfig & DeleteEndpointInput,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       EndpointName: params["EndpointName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteEndpoint",
@@ -874,9 +874,9 @@ export default class SageMaker {
   async deleteEndpointConfig(
     {abortSignal, ...params}: RequestConfig & DeleteEndpointConfigInput,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       EndpointConfigName: params["EndpointConfigName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteEndpointConfig",
@@ -886,9 +886,9 @@ export default class SageMaker {
   async deleteExperiment(
     {abortSignal, ...params}: RequestConfig & DeleteExperimentRequest,
   ): Promise<DeleteExperimentResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ExperimentName: params["ExperimentName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteExperiment",
@@ -904,9 +904,9 @@ export default class SageMaker {
   async deleteFlowDefinition(
     {abortSignal, ...params}: RequestConfig & DeleteFlowDefinitionRequest,
   ): Promise<DeleteFlowDefinitionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       FlowDefinitionName: params["FlowDefinitionName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteFlowDefinition",
@@ -920,9 +920,9 @@ export default class SageMaker {
   async deleteHumanTaskUi(
     {abortSignal, ...params}: RequestConfig & DeleteHumanTaskUiRequest,
   ): Promise<DeleteHumanTaskUiResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       HumanTaskUiName: params["HumanTaskUiName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteHumanTaskUi",
@@ -936,9 +936,9 @@ export default class SageMaker {
   async deleteImage(
     {abortSignal, ...params}: RequestConfig & DeleteImageRequest,
   ): Promise<DeleteImageResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ImageName: params["ImageName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteImage",
@@ -952,10 +952,10 @@ export default class SageMaker {
   async deleteImageVersion(
     {abortSignal, ...params}: RequestConfig & DeleteImageVersionRequest,
   ): Promise<DeleteImageVersionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ImageName: params["ImageName"],
       Version: params["Version"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteImageVersion",
@@ -969,9 +969,9 @@ export default class SageMaker {
   async deleteModel(
     {abortSignal, ...params}: RequestConfig & DeleteModelInput,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ModelName: params["ModelName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteModel",
@@ -981,9 +981,9 @@ export default class SageMaker {
   async deleteModelPackage(
     {abortSignal, ...params}: RequestConfig & DeleteModelPackageInput,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ModelPackageName: params["ModelPackageName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteModelPackage",
@@ -993,9 +993,9 @@ export default class SageMaker {
   async deleteMonitoringSchedule(
     {abortSignal, ...params}: RequestConfig & DeleteMonitoringScheduleRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       MonitoringScheduleName: params["MonitoringScheduleName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteMonitoringSchedule",
@@ -1005,9 +1005,9 @@ export default class SageMaker {
   async deleteNotebookInstance(
     {abortSignal, ...params}: RequestConfig & DeleteNotebookInstanceInput,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NotebookInstanceName: params["NotebookInstanceName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteNotebookInstance",
@@ -1017,9 +1017,9 @@ export default class SageMaker {
   async deleteNotebookInstanceLifecycleConfig(
     {abortSignal, ...params}: RequestConfig & DeleteNotebookInstanceLifecycleConfigInput,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NotebookInstanceLifecycleConfigName: params["NotebookInstanceLifecycleConfigName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteNotebookInstanceLifecycleConfig",
@@ -1029,10 +1029,10 @@ export default class SageMaker {
   async deleteTags(
     {abortSignal, ...params}: RequestConfig & DeleteTagsInput,
   ): Promise<DeleteTagsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
       TagKeys: params["TagKeys"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteTags",
@@ -1046,9 +1046,9 @@ export default class SageMaker {
   async deleteTrial(
     {abortSignal, ...params}: RequestConfig & DeleteTrialRequest,
   ): Promise<DeleteTrialResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TrialName: params["TrialName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteTrial",
@@ -1064,9 +1064,9 @@ export default class SageMaker {
   async deleteTrialComponent(
     {abortSignal, ...params}: RequestConfig & DeleteTrialComponentRequest,
   ): Promise<DeleteTrialComponentResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TrialComponentName: params["TrialComponentName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteTrialComponent",
@@ -1082,10 +1082,10 @@ export default class SageMaker {
   async deleteUserProfile(
     {abortSignal, ...params}: RequestConfig & DeleteUserProfileRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DomainId: params["DomainId"],
       UserProfileName: params["UserProfileName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteUserProfile",
@@ -1095,9 +1095,9 @@ export default class SageMaker {
   async deleteWorkforce(
     {abortSignal, ...params}: RequestConfig & DeleteWorkforceRequest,
   ): Promise<DeleteWorkforceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       WorkforceName: params["WorkforceName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteWorkforce",
@@ -1111,9 +1111,9 @@ export default class SageMaker {
   async deleteWorkteam(
     {abortSignal, ...params}: RequestConfig & DeleteWorkteamRequest,
   ): Promise<DeleteWorkteamResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       WorkteamName: params["WorkteamName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteWorkteam",
@@ -1129,9 +1129,9 @@ export default class SageMaker {
   async describeAlgorithm(
     {abortSignal, ...params}: RequestConfig & DescribeAlgorithmInput,
   ): Promise<DescribeAlgorithmOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AlgorithmName: params["AlgorithmName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeAlgorithm",
@@ -1158,12 +1158,12 @@ export default class SageMaker {
   async describeApp(
     {abortSignal, ...params}: RequestConfig & DescribeAppRequest,
   ): Promise<DescribeAppResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DomainId: params["DomainId"],
       UserProfileName: params["UserProfileName"],
       AppType: params["AppType"],
       AppName: params["AppName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeApp",
@@ -1189,9 +1189,9 @@ export default class SageMaker {
   async describeAppImageConfig(
     {abortSignal, ...params}: RequestConfig & DescribeAppImageConfigRequest,
   ): Promise<DescribeAppImageConfigResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AppImageConfigName: params["AppImageConfigName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeAppImageConfig",
@@ -1211,9 +1211,9 @@ export default class SageMaker {
   async describeAutoMLJob(
     {abortSignal, ...params}: RequestConfig & DescribeAutoMLJobRequest,
   ): Promise<DescribeAutoMLJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AutoMLJobName: params["AutoMLJobName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeAutoMLJob",
@@ -1247,9 +1247,9 @@ export default class SageMaker {
   async describeCodeRepository(
     {abortSignal, ...params}: RequestConfig & DescribeCodeRepositoryInput,
   ): Promise<DescribeCodeRepositoryOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CodeRepositoryName: params["CodeRepositoryName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeCodeRepository",
@@ -1270,9 +1270,9 @@ export default class SageMaker {
   async describeCompilationJob(
     {abortSignal, ...params}: RequestConfig & DescribeCompilationJobRequest,
   ): Promise<DescribeCompilationJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CompilationJobName: params["CompilationJobName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeCompilationJob",
@@ -1301,9 +1301,9 @@ export default class SageMaker {
   async describeDomain(
     {abortSignal, ...params}: RequestConfig & DescribeDomainRequest,
   ): Promise<DescribeDomainResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DomainId: params["DomainId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeDomain",
@@ -1334,9 +1334,9 @@ export default class SageMaker {
   async describeEndpoint(
     {abortSignal, ...params}: RequestConfig & DescribeEndpointInput,
   ): Promise<DescribeEndpointOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       EndpointName: params["EndpointName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeEndpoint",
@@ -1361,9 +1361,9 @@ export default class SageMaker {
   async describeEndpointConfig(
     {abortSignal, ...params}: RequestConfig & DescribeEndpointConfigInput,
   ): Promise<DescribeEndpointConfigOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       EndpointConfigName: params["EndpointConfigName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeEndpointConfig",
@@ -1385,9 +1385,9 @@ export default class SageMaker {
   async describeExperiment(
     {abortSignal, ...params}: RequestConfig & DescribeExperimentRequest,
   ): Promise<DescribeExperimentResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ExperimentName: params["ExperimentName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeExperiment",
@@ -1411,9 +1411,9 @@ export default class SageMaker {
   async describeFlowDefinition(
     {abortSignal, ...params}: RequestConfig & DescribeFlowDefinitionRequest,
   ): Promise<DescribeFlowDefinitionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       FlowDefinitionName: params["FlowDefinitionName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeFlowDefinition",
@@ -1439,9 +1439,9 @@ export default class SageMaker {
   async describeHumanTaskUi(
     {abortSignal, ...params}: RequestConfig & DescribeHumanTaskUiRequest,
   ): Promise<DescribeHumanTaskUiResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       HumanTaskUiName: params["HumanTaskUiName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeHumanTaskUi",
@@ -1462,9 +1462,9 @@ export default class SageMaker {
   async describeHyperParameterTuningJob(
     {abortSignal, ...params}: RequestConfig & DescribeHyperParameterTuningJobRequest,
   ): Promise<DescribeHyperParameterTuningJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       HyperParameterTuningJobName: params["HyperParameterTuningJobName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeHyperParameterTuningJob",
@@ -1495,9 +1495,9 @@ export default class SageMaker {
   async describeImage(
     {abortSignal, ...params}: RequestConfig & DescribeImageRequest,
   ): Promise<DescribeImageResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ImageName: params["ImageName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeImage",
@@ -1521,10 +1521,10 @@ export default class SageMaker {
   async describeImageVersion(
     {abortSignal, ...params}: RequestConfig & DescribeImageVersionRequest,
   ): Promise<DescribeImageVersionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ImageName: params["ImageName"],
       Version: params["Version"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeImageVersion",
@@ -1548,9 +1548,9 @@ export default class SageMaker {
   async describeLabelingJob(
     {abortSignal, ...params}: RequestConfig & DescribeLabelingJobRequest,
   ): Promise<DescribeLabelingJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       LabelingJobName: params["LabelingJobName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeLabelingJob",
@@ -1584,9 +1584,9 @@ export default class SageMaker {
   async describeModel(
     {abortSignal, ...params}: RequestConfig & DescribeModelInput,
   ): Promise<DescribeModelOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ModelName: params["ModelName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeModel",
@@ -1610,9 +1610,9 @@ export default class SageMaker {
   async describeModelPackage(
     {abortSignal, ...params}: RequestConfig & DescribeModelPackageInput,
   ): Promise<DescribeModelPackageOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ModelPackageName: params["ModelPackageName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeModelPackage",
@@ -1638,9 +1638,9 @@ export default class SageMaker {
   async describeMonitoringSchedule(
     {abortSignal, ...params}: RequestConfig & DescribeMonitoringScheduleRequest,
   ): Promise<DescribeMonitoringScheduleResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       MonitoringScheduleName: params["MonitoringScheduleName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeMonitoringSchedule",
@@ -1665,9 +1665,9 @@ export default class SageMaker {
   async describeNotebookInstance(
     {abortSignal, ...params}: RequestConfig & DescribeNotebookInstanceInput,
   ): Promise<DescribeNotebookInstanceOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NotebookInstanceName: params["NotebookInstanceName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeNotebookInstance",
@@ -1702,9 +1702,9 @@ export default class SageMaker {
   async describeNotebookInstanceLifecycleConfig(
     {abortSignal, ...params}: RequestConfig & DescribeNotebookInstanceLifecycleConfigInput,
   ): Promise<DescribeNotebookInstanceLifecycleConfigOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NotebookInstanceLifecycleConfigName: params["NotebookInstanceLifecycleConfigName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeNotebookInstanceLifecycleConfig",
@@ -1725,9 +1725,9 @@ export default class SageMaker {
   async describeProcessingJob(
     {abortSignal, ...params}: RequestConfig & DescribeProcessingJobRequest,
   ): Promise<DescribeProcessingJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ProcessingJobName: params["ProcessingJobName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeProcessingJob",
@@ -1764,9 +1764,9 @@ export default class SageMaker {
   async describeSubscribedWorkteam(
     {abortSignal, ...params}: RequestConfig & DescribeSubscribedWorkteamRequest,
   ): Promise<DescribeSubscribedWorkteamResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       WorkteamArn: params["WorkteamArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeSubscribedWorkteam",
@@ -1782,9 +1782,9 @@ export default class SageMaker {
   async describeTrainingJob(
     {abortSignal, ...params}: RequestConfig & DescribeTrainingJobRequest,
   ): Promise<DescribeTrainingJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TrainingJobName: params["TrainingJobName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeTrainingJob",
@@ -1834,9 +1834,9 @@ export default class SageMaker {
   async describeTransformJob(
     {abortSignal, ...params}: RequestConfig & DescribeTransformJobRequest,
   ): Promise<DescribeTransformJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TransformJobName: params["TransformJobName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeTransformJob",
@@ -1872,9 +1872,9 @@ export default class SageMaker {
   async describeTrial(
     {abortSignal, ...params}: RequestConfig & DescribeTrialRequest,
   ): Promise<DescribeTrialResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TrialName: params["TrialName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeTrial",
@@ -1898,9 +1898,9 @@ export default class SageMaker {
   async describeTrialComponent(
     {abortSignal, ...params}: RequestConfig & DescribeTrialComponentRequest,
   ): Promise<DescribeTrialComponentResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TrialComponentName: params["TrialComponentName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeTrialComponent",
@@ -1930,10 +1930,10 @@ export default class SageMaker {
   async describeUserProfile(
     {abortSignal, ...params}: RequestConfig & DescribeUserProfileRequest,
   ): Promise<DescribeUserProfileResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DomainId: params["DomainId"],
       UserProfileName: params["UserProfileName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeUserProfile",
@@ -1959,9 +1959,9 @@ export default class SageMaker {
   async describeWorkforce(
     {abortSignal, ...params}: RequestConfig & DescribeWorkforceRequest,
   ): Promise<DescribeWorkforceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       WorkforceName: params["WorkforceName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeWorkforce",
@@ -1977,9 +1977,9 @@ export default class SageMaker {
   async describeWorkteam(
     {abortSignal, ...params}: RequestConfig & DescribeWorkteamRequest,
   ): Promise<DescribeWorkteamResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       WorkteamName: params["WorkteamName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeWorkteam",
@@ -1995,10 +1995,10 @@ export default class SageMaker {
   async disassociateTrialComponent(
     {abortSignal, ...params}: RequestConfig & DisassociateTrialComponentRequest,
   ): Promise<DisassociateTrialComponentResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TrialComponentName: params["TrialComponentName"],
       TrialName: params["TrialName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisassociateTrialComponent",
@@ -2015,10 +2015,10 @@ export default class SageMaker {
   async getSearchSuggestions(
     {abortSignal, ...params}: RequestConfig & GetSearchSuggestionsRequest,
   ): Promise<GetSearchSuggestionsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Resource: params["Resource"],
       SuggestionQuery: fromSuggestionQuery(params["SuggestionQuery"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetSearchSuggestions",
@@ -2034,7 +2034,7 @@ export default class SageMaker {
   async listAlgorithms(
     {abortSignal, ...params}: RequestConfig & ListAlgorithmsInput = {},
   ): Promise<ListAlgorithmsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CreationTimeAfter: jsonP.serializeDate_unixTimestamp(params["CreationTimeAfter"]),
       CreationTimeBefore: jsonP.serializeDate_unixTimestamp(params["CreationTimeBefore"]),
       MaxResults: params["MaxResults"],
@@ -2042,7 +2042,7 @@ export default class SageMaker {
       NextToken: params["NextToken"],
       SortBy: params["SortBy"],
       SortOrder: params["SortOrder"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListAlgorithms",
@@ -2060,7 +2060,7 @@ export default class SageMaker {
   async listAppImageConfigs(
     {abortSignal, ...params}: RequestConfig & ListAppImageConfigsRequest = {},
   ): Promise<ListAppImageConfigsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
       NameContains: params["NameContains"],
@@ -2070,7 +2070,7 @@ export default class SageMaker {
       ModifiedTimeAfter: jsonP.serializeDate_unixTimestamp(params["ModifiedTimeAfter"]),
       SortBy: params["SortBy"],
       SortOrder: params["SortOrder"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListAppImageConfigs",
@@ -2087,14 +2087,14 @@ export default class SageMaker {
   async listApps(
     {abortSignal, ...params}: RequestConfig & ListAppsRequest = {},
   ): Promise<ListAppsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
       SortOrder: params["SortOrder"],
       SortBy: params["SortBy"],
       DomainIdEquals: params["DomainIdEquals"],
       UserProfileNameEquals: params["UserProfileNameEquals"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListApps",
@@ -2111,7 +2111,7 @@ export default class SageMaker {
   async listAutoMLJobs(
     {abortSignal, ...params}: RequestConfig & ListAutoMLJobsRequest = {},
   ): Promise<ListAutoMLJobsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CreationTimeAfter: jsonP.serializeDate_unixTimestamp(params["CreationTimeAfter"]),
       CreationTimeBefore: jsonP.serializeDate_unixTimestamp(params["CreationTimeBefore"]),
       LastModifiedTimeAfter: jsonP.serializeDate_unixTimestamp(params["LastModifiedTimeAfter"]),
@@ -2122,7 +2122,7 @@ export default class SageMaker {
       SortBy: params["SortBy"],
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListAutoMLJobs",
@@ -2140,7 +2140,7 @@ export default class SageMaker {
   async listCandidatesForAutoMLJob(
     {abortSignal, ...params}: RequestConfig & ListCandidatesForAutoMLJobRequest,
   ): Promise<ListCandidatesForAutoMLJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AutoMLJobName: params["AutoMLJobName"],
       StatusEquals: params["StatusEquals"],
       CandidateNameEquals: params["CandidateNameEquals"],
@@ -2148,7 +2148,7 @@ export default class SageMaker {
       SortBy: params["SortBy"],
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListCandidatesForAutoMLJob",
@@ -2166,7 +2166,7 @@ export default class SageMaker {
   async listCodeRepositories(
     {abortSignal, ...params}: RequestConfig & ListCodeRepositoriesInput = {},
   ): Promise<ListCodeRepositoriesOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CreationTimeAfter: jsonP.serializeDate_unixTimestamp(params["CreationTimeAfter"]),
       CreationTimeBefore: jsonP.serializeDate_unixTimestamp(params["CreationTimeBefore"]),
       LastModifiedTimeAfter: jsonP.serializeDate_unixTimestamp(params["LastModifiedTimeAfter"]),
@@ -2176,7 +2176,7 @@ export default class SageMaker {
       NextToken: params["NextToken"],
       SortBy: params["SortBy"],
       SortOrder: params["SortOrder"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListCodeRepositories",
@@ -2194,7 +2194,7 @@ export default class SageMaker {
   async listCompilationJobs(
     {abortSignal, ...params}: RequestConfig & ListCompilationJobsRequest = {},
   ): Promise<ListCompilationJobsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
       CreationTimeAfter: jsonP.serializeDate_unixTimestamp(params["CreationTimeAfter"]),
@@ -2205,7 +2205,7 @@ export default class SageMaker {
       StatusEquals: params["StatusEquals"],
       SortBy: params["SortBy"],
       SortOrder: params["SortOrder"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListCompilationJobs",
@@ -2223,10 +2223,10 @@ export default class SageMaker {
   async listDomains(
     {abortSignal, ...params}: RequestConfig & ListDomainsRequest = {},
   ): Promise<ListDomainsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListDomains",
@@ -2243,7 +2243,7 @@ export default class SageMaker {
   async listEndpointConfigs(
     {abortSignal, ...params}: RequestConfig & ListEndpointConfigsInput = {},
   ): Promise<ListEndpointConfigsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       SortBy: params["SortBy"],
       SortOrder: params["SortOrder"],
       NextToken: params["NextToken"],
@@ -2251,7 +2251,7 @@ export default class SageMaker {
       NameContains: params["NameContains"],
       CreationTimeBefore: jsonP.serializeDate_unixTimestamp(params["CreationTimeBefore"]),
       CreationTimeAfter: jsonP.serializeDate_unixTimestamp(params["CreationTimeAfter"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListEndpointConfigs",
@@ -2269,7 +2269,7 @@ export default class SageMaker {
   async listEndpoints(
     {abortSignal, ...params}: RequestConfig & ListEndpointsInput = {},
   ): Promise<ListEndpointsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       SortBy: params["SortBy"],
       SortOrder: params["SortOrder"],
       NextToken: params["NextToken"],
@@ -2280,7 +2280,7 @@ export default class SageMaker {
       LastModifiedTimeBefore: jsonP.serializeDate_unixTimestamp(params["LastModifiedTimeBefore"]),
       LastModifiedTimeAfter: jsonP.serializeDate_unixTimestamp(params["LastModifiedTimeAfter"]),
       StatusEquals: params["StatusEquals"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListEndpoints",
@@ -2298,14 +2298,14 @@ export default class SageMaker {
   async listExperiments(
     {abortSignal, ...params}: RequestConfig & ListExperimentsRequest = {},
   ): Promise<ListExperimentsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CreatedAfter: jsonP.serializeDate_unixTimestamp(params["CreatedAfter"]),
       CreatedBefore: jsonP.serializeDate_unixTimestamp(params["CreatedBefore"]),
       SortBy: params["SortBy"],
       SortOrder: params["SortOrder"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListExperiments",
@@ -2322,13 +2322,13 @@ export default class SageMaker {
   async listFlowDefinitions(
     {abortSignal, ...params}: RequestConfig & ListFlowDefinitionsRequest = {},
   ): Promise<ListFlowDefinitionsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CreationTimeAfter: jsonP.serializeDate_unixTimestamp(params["CreationTimeAfter"]),
       CreationTimeBefore: jsonP.serializeDate_unixTimestamp(params["CreationTimeBefore"]),
       SortOrder: params["SortOrder"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListFlowDefinitions",
@@ -2346,13 +2346,13 @@ export default class SageMaker {
   async listHumanTaskUis(
     {abortSignal, ...params}: RequestConfig & ListHumanTaskUisRequest = {},
   ): Promise<ListHumanTaskUisResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CreationTimeAfter: jsonP.serializeDate_unixTimestamp(params["CreationTimeAfter"]),
       CreationTimeBefore: jsonP.serializeDate_unixTimestamp(params["CreationTimeBefore"]),
       SortOrder: params["SortOrder"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListHumanTaskUis",
@@ -2370,7 +2370,7 @@ export default class SageMaker {
   async listHyperParameterTuningJobs(
     {abortSignal, ...params}: RequestConfig & ListHyperParameterTuningJobsRequest = {},
   ): Promise<ListHyperParameterTuningJobsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
       SortBy: params["SortBy"],
@@ -2381,7 +2381,7 @@ export default class SageMaker {
       LastModifiedTimeAfter: jsonP.serializeDate_unixTimestamp(params["LastModifiedTimeAfter"]),
       LastModifiedTimeBefore: jsonP.serializeDate_unixTimestamp(params["LastModifiedTimeBefore"]),
       StatusEquals: params["StatusEquals"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListHyperParameterTuningJobs",
@@ -2399,7 +2399,7 @@ export default class SageMaker {
   async listImageVersions(
     {abortSignal, ...params}: RequestConfig & ListImageVersionsRequest,
   ): Promise<ListImageVersionsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CreationTimeAfter: jsonP.serializeDate_unixTimestamp(params["CreationTimeAfter"]),
       CreationTimeBefore: jsonP.serializeDate_unixTimestamp(params["CreationTimeBefore"]),
       ImageName: params["ImageName"],
@@ -2409,7 +2409,7 @@ export default class SageMaker {
       NextToken: params["NextToken"],
       SortBy: params["SortBy"],
       SortOrder: params["SortOrder"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListImageVersions",
@@ -2426,7 +2426,7 @@ export default class SageMaker {
   async listImages(
     {abortSignal, ...params}: RequestConfig & ListImagesRequest = {},
   ): Promise<ListImagesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CreationTimeAfter: jsonP.serializeDate_unixTimestamp(params["CreationTimeAfter"]),
       CreationTimeBefore: jsonP.serializeDate_unixTimestamp(params["CreationTimeBefore"]),
       LastModifiedTimeAfter: jsonP.serializeDate_unixTimestamp(params["LastModifiedTimeAfter"]),
@@ -2436,7 +2436,7 @@ export default class SageMaker {
       NextToken: params["NextToken"],
       SortBy: params["SortBy"],
       SortOrder: params["SortOrder"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListImages",
@@ -2453,7 +2453,7 @@ export default class SageMaker {
   async listLabelingJobs(
     {abortSignal, ...params}: RequestConfig & ListLabelingJobsRequest = {},
   ): Promise<ListLabelingJobsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CreationTimeAfter: jsonP.serializeDate_unixTimestamp(params["CreationTimeAfter"]),
       CreationTimeBefore: jsonP.serializeDate_unixTimestamp(params["CreationTimeBefore"]),
       LastModifiedTimeAfter: jsonP.serializeDate_unixTimestamp(params["LastModifiedTimeAfter"]),
@@ -2464,7 +2464,7 @@ export default class SageMaker {
       SortBy: params["SortBy"],
       SortOrder: params["SortOrder"],
       StatusEquals: params["StatusEquals"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListLabelingJobs",
@@ -2481,7 +2481,7 @@ export default class SageMaker {
   async listLabelingJobsForWorkteam(
     {abortSignal, ...params}: RequestConfig & ListLabelingJobsForWorkteamRequest,
   ): Promise<ListLabelingJobsForWorkteamResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       WorkteamArn: params["WorkteamArn"],
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
@@ -2490,7 +2490,7 @@ export default class SageMaker {
       JobReferenceCodeContains: params["JobReferenceCodeContains"],
       SortBy: params["SortBy"],
       SortOrder: params["SortOrder"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListLabelingJobsForWorkteam",
@@ -2508,7 +2508,7 @@ export default class SageMaker {
   async listModelPackages(
     {abortSignal, ...params}: RequestConfig & ListModelPackagesInput = {},
   ): Promise<ListModelPackagesOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CreationTimeAfter: jsonP.serializeDate_unixTimestamp(params["CreationTimeAfter"]),
       CreationTimeBefore: jsonP.serializeDate_unixTimestamp(params["CreationTimeBefore"]),
       MaxResults: params["MaxResults"],
@@ -2516,7 +2516,7 @@ export default class SageMaker {
       NextToken: params["NextToken"],
       SortBy: params["SortBy"],
       SortOrder: params["SortOrder"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListModelPackages",
@@ -2534,7 +2534,7 @@ export default class SageMaker {
   async listModels(
     {abortSignal, ...params}: RequestConfig & ListModelsInput = {},
   ): Promise<ListModelsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       SortBy: params["SortBy"],
       SortOrder: params["SortOrder"],
       NextToken: params["NextToken"],
@@ -2542,7 +2542,7 @@ export default class SageMaker {
       NameContains: params["NameContains"],
       CreationTimeBefore: jsonP.serializeDate_unixTimestamp(params["CreationTimeBefore"]),
       CreationTimeAfter: jsonP.serializeDate_unixTimestamp(params["CreationTimeAfter"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListModels",
@@ -2560,7 +2560,7 @@ export default class SageMaker {
   async listMonitoringExecutions(
     {abortSignal, ...params}: RequestConfig & ListMonitoringExecutionsRequest = {},
   ): Promise<ListMonitoringExecutionsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       MonitoringScheduleName: params["MonitoringScheduleName"],
       EndpointName: params["EndpointName"],
       SortBy: params["SortBy"],
@@ -2574,7 +2574,7 @@ export default class SageMaker {
       LastModifiedTimeBefore: jsonP.serializeDate_unixTimestamp(params["LastModifiedTimeBefore"]),
       LastModifiedTimeAfter: jsonP.serializeDate_unixTimestamp(params["LastModifiedTimeAfter"]),
       StatusEquals: params["StatusEquals"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListMonitoringExecutions",
@@ -2592,7 +2592,7 @@ export default class SageMaker {
   async listMonitoringSchedules(
     {abortSignal, ...params}: RequestConfig & ListMonitoringSchedulesRequest = {},
   ): Promise<ListMonitoringSchedulesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       EndpointName: params["EndpointName"],
       SortBy: params["SortBy"],
       SortOrder: params["SortOrder"],
@@ -2604,7 +2604,7 @@ export default class SageMaker {
       LastModifiedTimeBefore: jsonP.serializeDate_unixTimestamp(params["LastModifiedTimeBefore"]),
       LastModifiedTimeAfter: jsonP.serializeDate_unixTimestamp(params["LastModifiedTimeAfter"]),
       StatusEquals: params["StatusEquals"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListMonitoringSchedules",
@@ -2622,7 +2622,7 @@ export default class SageMaker {
   async listNotebookInstanceLifecycleConfigs(
     {abortSignal, ...params}: RequestConfig & ListNotebookInstanceLifecycleConfigsInput = {},
   ): Promise<ListNotebookInstanceLifecycleConfigsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
       SortBy: params["SortBy"],
@@ -2632,7 +2632,7 @@ export default class SageMaker {
       CreationTimeAfter: jsonP.serializeDate_unixTimestamp(params["CreationTimeAfter"]),
       LastModifiedTimeBefore: jsonP.serializeDate_unixTimestamp(params["LastModifiedTimeBefore"]),
       LastModifiedTimeAfter: jsonP.serializeDate_unixTimestamp(params["LastModifiedTimeAfter"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListNotebookInstanceLifecycleConfigs",
@@ -2649,7 +2649,7 @@ export default class SageMaker {
   async listNotebookInstances(
     {abortSignal, ...params}: RequestConfig & ListNotebookInstancesInput = {},
   ): Promise<ListNotebookInstancesOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
       SortBy: params["SortBy"],
@@ -2663,7 +2663,7 @@ export default class SageMaker {
       NotebookInstanceLifecycleConfigNameContains: params["NotebookInstanceLifecycleConfigNameContains"],
       DefaultCodeRepositoryContains: params["DefaultCodeRepositoryContains"],
       AdditionalCodeRepositoryEquals: params["AdditionalCodeRepositoryEquals"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListNotebookInstances",
@@ -2680,7 +2680,7 @@ export default class SageMaker {
   async listProcessingJobs(
     {abortSignal, ...params}: RequestConfig & ListProcessingJobsRequest = {},
   ): Promise<ListProcessingJobsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CreationTimeAfter: jsonP.serializeDate_unixTimestamp(params["CreationTimeAfter"]),
       CreationTimeBefore: jsonP.serializeDate_unixTimestamp(params["CreationTimeBefore"]),
       LastModifiedTimeAfter: jsonP.serializeDate_unixTimestamp(params["LastModifiedTimeAfter"]),
@@ -2691,7 +2691,7 @@ export default class SageMaker {
       SortOrder: params["SortOrder"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListProcessingJobs",
@@ -2709,11 +2709,11 @@ export default class SageMaker {
   async listSubscribedWorkteams(
     {abortSignal, ...params}: RequestConfig & ListSubscribedWorkteamsRequest = {},
   ): Promise<ListSubscribedWorkteamsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NameContains: params["NameContains"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListSubscribedWorkteams",
@@ -2731,11 +2731,11 @@ export default class SageMaker {
   async listTags(
     {abortSignal, ...params}: RequestConfig & ListTagsInput,
   ): Promise<ListTagsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTags",
@@ -2752,7 +2752,7 @@ export default class SageMaker {
   async listTrainingJobs(
     {abortSignal, ...params}: RequestConfig & ListTrainingJobsRequest = {},
   ): Promise<ListTrainingJobsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
       CreationTimeAfter: jsonP.serializeDate_unixTimestamp(params["CreationTimeAfter"]),
@@ -2763,7 +2763,7 @@ export default class SageMaker {
       StatusEquals: params["StatusEquals"],
       SortBy: params["SortBy"],
       SortOrder: params["SortOrder"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTrainingJobs",
@@ -2781,14 +2781,14 @@ export default class SageMaker {
   async listTrainingJobsForHyperParameterTuningJob(
     {abortSignal, ...params}: RequestConfig & ListTrainingJobsForHyperParameterTuningJobRequest,
   ): Promise<ListTrainingJobsForHyperParameterTuningJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       HyperParameterTuningJobName: params["HyperParameterTuningJobName"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
       StatusEquals: params["StatusEquals"],
       SortBy: params["SortBy"],
       SortOrder: params["SortOrder"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTrainingJobsForHyperParameterTuningJob",
@@ -2806,7 +2806,7 @@ export default class SageMaker {
   async listTransformJobs(
     {abortSignal, ...params}: RequestConfig & ListTransformJobsRequest = {},
   ): Promise<ListTransformJobsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CreationTimeAfter: jsonP.serializeDate_unixTimestamp(params["CreationTimeAfter"]),
       CreationTimeBefore: jsonP.serializeDate_unixTimestamp(params["CreationTimeBefore"]),
       LastModifiedTimeAfter: jsonP.serializeDate_unixTimestamp(params["LastModifiedTimeAfter"]),
@@ -2817,7 +2817,7 @@ export default class SageMaker {
       SortOrder: params["SortOrder"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTransformJobs",
@@ -2835,7 +2835,7 @@ export default class SageMaker {
   async listTrialComponents(
     {abortSignal, ...params}: RequestConfig & ListTrialComponentsRequest = {},
   ): Promise<ListTrialComponentsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ExperimentName: params["ExperimentName"],
       TrialName: params["TrialName"],
       SourceArn: params["SourceArn"],
@@ -2845,7 +2845,7 @@ export default class SageMaker {
       SortOrder: params["SortOrder"],
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTrialComponents",
@@ -2862,7 +2862,7 @@ export default class SageMaker {
   async listTrials(
     {abortSignal, ...params}: RequestConfig & ListTrialsRequest = {},
   ): Promise<ListTrialsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ExperimentName: params["ExperimentName"],
       TrialComponentName: params["TrialComponentName"],
       CreatedAfter: jsonP.serializeDate_unixTimestamp(params["CreatedAfter"]),
@@ -2871,7 +2871,7 @@ export default class SageMaker {
       SortOrder: params["SortOrder"],
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTrials",
@@ -2888,14 +2888,14 @@ export default class SageMaker {
   async listUserProfiles(
     {abortSignal, ...params}: RequestConfig & ListUserProfilesRequest = {},
   ): Promise<ListUserProfilesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
       SortOrder: params["SortOrder"],
       SortBy: params["SortBy"],
       DomainIdEquals: params["DomainIdEquals"],
       UserProfileNameContains: params["UserProfileNameContains"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListUserProfiles",
@@ -2912,13 +2912,13 @@ export default class SageMaker {
   async listWorkforces(
     {abortSignal, ...params}: RequestConfig & ListWorkforcesRequest = {},
   ): Promise<ListWorkforcesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       SortBy: params["SortBy"],
       SortOrder: params["SortOrder"],
       NameContains: params["NameContains"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListWorkforces",
@@ -2936,13 +2936,13 @@ export default class SageMaker {
   async listWorkteams(
     {abortSignal, ...params}: RequestConfig & ListWorkteamsRequest = {},
   ): Promise<ListWorkteamsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       SortBy: params["SortBy"],
       SortOrder: params["SortOrder"],
       NameContains: params["NameContains"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListWorkteams",
@@ -2960,12 +2960,12 @@ export default class SageMaker {
   async renderUiTemplate(
     {abortSignal, ...params}: RequestConfig & RenderUiTemplateRequest,
   ): Promise<RenderUiTemplateResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       UiTemplate: fromUiTemplate(params["UiTemplate"]),
       Task: fromRenderableTask(params["Task"]),
       RoleArn: params["RoleArn"],
       HumanTaskUiArn: params["HumanTaskUiArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RenderUiTemplate",
@@ -2982,14 +2982,14 @@ export default class SageMaker {
   async search(
     {abortSignal, ...params}: RequestConfig & SearchRequest,
   ): Promise<SearchResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Resource: params["Resource"],
       SearchExpression: fromSearchExpression(params["SearchExpression"]),
       SortBy: params["SortBy"],
       SortOrder: params["SortOrder"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "Search",
@@ -3006,9 +3006,9 @@ export default class SageMaker {
   async startMonitoringSchedule(
     {abortSignal, ...params}: RequestConfig & StartMonitoringScheduleRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       MonitoringScheduleName: params["MonitoringScheduleName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartMonitoringSchedule",
@@ -3018,9 +3018,9 @@ export default class SageMaker {
   async startNotebookInstance(
     {abortSignal, ...params}: RequestConfig & StartNotebookInstanceInput,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NotebookInstanceName: params["NotebookInstanceName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartNotebookInstance",
@@ -3030,9 +3030,9 @@ export default class SageMaker {
   async stopAutoMLJob(
     {abortSignal, ...params}: RequestConfig & StopAutoMLJobRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AutoMLJobName: params["AutoMLJobName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopAutoMLJob",
@@ -3042,9 +3042,9 @@ export default class SageMaker {
   async stopCompilationJob(
     {abortSignal, ...params}: RequestConfig & StopCompilationJobRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CompilationJobName: params["CompilationJobName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopCompilationJob",
@@ -3054,9 +3054,9 @@ export default class SageMaker {
   async stopHyperParameterTuningJob(
     {abortSignal, ...params}: RequestConfig & StopHyperParameterTuningJobRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       HyperParameterTuningJobName: params["HyperParameterTuningJobName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopHyperParameterTuningJob",
@@ -3066,9 +3066,9 @@ export default class SageMaker {
   async stopLabelingJob(
     {abortSignal, ...params}: RequestConfig & StopLabelingJobRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       LabelingJobName: params["LabelingJobName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopLabelingJob",
@@ -3078,9 +3078,9 @@ export default class SageMaker {
   async stopMonitoringSchedule(
     {abortSignal, ...params}: RequestConfig & StopMonitoringScheduleRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       MonitoringScheduleName: params["MonitoringScheduleName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopMonitoringSchedule",
@@ -3090,9 +3090,9 @@ export default class SageMaker {
   async stopNotebookInstance(
     {abortSignal, ...params}: RequestConfig & StopNotebookInstanceInput,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NotebookInstanceName: params["NotebookInstanceName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopNotebookInstance",
@@ -3102,9 +3102,9 @@ export default class SageMaker {
   async stopProcessingJob(
     {abortSignal, ...params}: RequestConfig & StopProcessingJobRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ProcessingJobName: params["ProcessingJobName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopProcessingJob",
@@ -3114,9 +3114,9 @@ export default class SageMaker {
   async stopTrainingJob(
     {abortSignal, ...params}: RequestConfig & StopTrainingJobRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TrainingJobName: params["TrainingJobName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopTrainingJob",
@@ -3126,9 +3126,9 @@ export default class SageMaker {
   async stopTransformJob(
     {abortSignal, ...params}: RequestConfig & StopTransformJobRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TransformJobName: params["TransformJobName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopTransformJob",
@@ -3138,10 +3138,10 @@ export default class SageMaker {
   async updateAppImageConfig(
     {abortSignal, ...params}: RequestConfig & UpdateAppImageConfigRequest,
   ): Promise<UpdateAppImageConfigResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AppImageConfigName: params["AppImageConfigName"],
       KernelGatewayImageConfig: fromKernelGatewayImageConfig(params["KernelGatewayImageConfig"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateAppImageConfig",
@@ -3157,10 +3157,10 @@ export default class SageMaker {
   async updateCodeRepository(
     {abortSignal, ...params}: RequestConfig & UpdateCodeRepositoryInput,
   ): Promise<UpdateCodeRepositoryOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CodeRepositoryName: params["CodeRepositoryName"],
       GitConfig: fromGitConfigForUpdate(params["GitConfig"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateCodeRepository",
@@ -3176,10 +3176,10 @@ export default class SageMaker {
   async updateDomain(
     {abortSignal, ...params}: RequestConfig & UpdateDomainRequest,
   ): Promise<UpdateDomainResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DomainId: params["DomainId"],
       DefaultUserSettings: fromUserSettings(params["DefaultUserSettings"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateDomain",
@@ -3195,12 +3195,12 @@ export default class SageMaker {
   async updateEndpoint(
     {abortSignal, ...params}: RequestConfig & UpdateEndpointInput,
   ): Promise<UpdateEndpointOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       EndpointName: params["EndpointName"],
       EndpointConfigName: params["EndpointConfigName"],
       RetainAllVariantProperties: params["RetainAllVariantProperties"],
       ExcludeRetainedVariantProperties: params["ExcludeRetainedVariantProperties"]?.map(x => fromVariantProperty(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateEndpoint",
@@ -3216,10 +3216,10 @@ export default class SageMaker {
   async updateEndpointWeightsAndCapacities(
     {abortSignal, ...params}: RequestConfig & UpdateEndpointWeightsAndCapacitiesInput,
   ): Promise<UpdateEndpointWeightsAndCapacitiesOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       EndpointName: params["EndpointName"],
       DesiredWeightsAndCapacities: params["DesiredWeightsAndCapacities"]?.map(x => fromDesiredWeightAndCapacity(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateEndpointWeightsAndCapacities",
@@ -3235,11 +3235,11 @@ export default class SageMaker {
   async updateExperiment(
     {abortSignal, ...params}: RequestConfig & UpdateExperimentRequest,
   ): Promise<UpdateExperimentResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ExperimentName: params["ExperimentName"],
       DisplayName: params["DisplayName"],
       Description: params["Description"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateExperiment",
@@ -3255,13 +3255,13 @@ export default class SageMaker {
   async updateImage(
     {abortSignal, ...params}: RequestConfig & UpdateImageRequest,
   ): Promise<UpdateImageResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DeleteProperties: params["DeleteProperties"],
       Description: params["Description"],
       DisplayName: params["DisplayName"],
       ImageName: params["ImageName"],
       RoleArn: params["RoleArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateImage",
@@ -3277,10 +3277,10 @@ export default class SageMaker {
   async updateMonitoringSchedule(
     {abortSignal, ...params}: RequestConfig & UpdateMonitoringScheduleRequest,
   ): Promise<UpdateMonitoringScheduleResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       MonitoringScheduleName: params["MonitoringScheduleName"],
       MonitoringScheduleConfig: fromMonitoringScheduleConfig(params["MonitoringScheduleConfig"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateMonitoringSchedule",
@@ -3296,7 +3296,7 @@ export default class SageMaker {
   async updateNotebookInstance(
     {abortSignal, ...params}: RequestConfig & UpdateNotebookInstanceInput,
   ): Promise<UpdateNotebookInstanceOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NotebookInstanceName: params["NotebookInstanceName"],
       InstanceType: params["InstanceType"],
       RoleArn: params["RoleArn"],
@@ -3310,7 +3310,7 @@ export default class SageMaker {
       DisassociateDefaultCodeRepository: params["DisassociateDefaultCodeRepository"],
       DisassociateAdditionalCodeRepositories: params["DisassociateAdditionalCodeRepositories"],
       RootAccess: params["RootAccess"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateNotebookInstance",
@@ -3324,11 +3324,11 @@ export default class SageMaker {
   async updateNotebookInstanceLifecycleConfig(
     {abortSignal, ...params}: RequestConfig & UpdateNotebookInstanceLifecycleConfigInput,
   ): Promise<UpdateNotebookInstanceLifecycleConfigOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NotebookInstanceLifecycleConfigName: params["NotebookInstanceLifecycleConfigName"],
       OnCreate: params["OnCreate"]?.map(x => fromNotebookInstanceLifecycleHook(x)),
       OnStart: params["OnStart"]?.map(x => fromNotebookInstanceLifecycleHook(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateNotebookInstanceLifecycleConfig",
@@ -3342,10 +3342,10 @@ export default class SageMaker {
   async updateTrial(
     {abortSignal, ...params}: RequestConfig & UpdateTrialRequest,
   ): Promise<UpdateTrialResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TrialName: params["TrialName"],
       DisplayName: params["DisplayName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateTrial",
@@ -3361,7 +3361,7 @@ export default class SageMaker {
   async updateTrialComponent(
     {abortSignal, ...params}: RequestConfig & UpdateTrialComponentRequest,
   ): Promise<UpdateTrialComponentResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TrialComponentName: params["TrialComponentName"],
       DisplayName: params["DisplayName"],
       Status: fromTrialComponentStatus(params["Status"]),
@@ -3373,7 +3373,7 @@ export default class SageMaker {
       InputArtifactsToRemove: params["InputArtifactsToRemove"],
       OutputArtifacts: jsonP.serializeMap(params["OutputArtifacts"], x => fromTrialComponentArtifact(x)),
       OutputArtifactsToRemove: params["OutputArtifactsToRemove"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateTrialComponent",
@@ -3389,11 +3389,11 @@ export default class SageMaker {
   async updateUserProfile(
     {abortSignal, ...params}: RequestConfig & UpdateUserProfileRequest,
   ): Promise<UpdateUserProfileResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DomainId: params["DomainId"],
       UserProfileName: params["UserProfileName"],
       UserSettings: fromUserSettings(params["UserSettings"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateUserProfile",
@@ -3409,11 +3409,11 @@ export default class SageMaker {
   async updateWorkforce(
     {abortSignal, ...params}: RequestConfig & UpdateWorkforceRequest,
   ): Promise<UpdateWorkforceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       WorkforceName: params["WorkforceName"],
       SourceIpConfig: fromSourceIpConfig(params["SourceIpConfig"]),
       OidcConfig: fromOidcConfig(params["OidcConfig"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateWorkforce",
@@ -3429,12 +3429,12 @@ export default class SageMaker {
   async updateWorkteam(
     {abortSignal, ...params}: RequestConfig & UpdateWorkteamRequest,
   ): Promise<UpdateWorkteamResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       WorkteamName: params["WorkteamName"],
       MemberDefinitions: params["MemberDefinitions"]?.map(x => fromMemberDefinition(x)),
       Description: params["Description"],
       NotificationConfiguration: fromNotificationConfiguration(params["NotificationConfiguration"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateWorkteam",
@@ -3489,7 +3489,7 @@ export default class SageMaker {
         const resp = await this.describeNotebookInstance(params);
         if (resp?.NotebookInstanceStatus === "Failed") throw new Error(errMessage);
       } catch (err) {
-        if (["ValidationException"].includes(err.code)) return err;
+        if (["ValidationException"].includes(err.shortCode)) return err;
         throw err;
       }
       await new Promise(r => setTimeout(r, 30000));
@@ -3510,7 +3510,7 @@ export default class SageMaker {
         if (field === "Stopped") return resp;
         if (field === "Failed") throw new Error(errMessage);
       } catch (err) {
-        if (["ValidationException"].includes(err.code)) throw err;
+        if (["ValidationException"].includes(err.shortCode)) throw err;
         throw err;
       }
       await new Promise(r => setTimeout(r, 120000));
@@ -3530,7 +3530,7 @@ export default class SageMaker {
         if (field === "InService") return resp;
         if (field === "Failed") throw new Error(errMessage);
       } catch (err) {
-        if (["ValidationException"].includes(err.code)) throw err;
+        if (["ValidationException"].includes(err.shortCode)) throw err;
         throw err;
       }
       await new Promise(r => setTimeout(r, 30000));
@@ -3548,7 +3548,7 @@ export default class SageMaker {
         const resp = await this.describeEndpoint(params);
         if (resp?.EndpointStatus === "Failed") throw new Error(errMessage);
       } catch (err) {
-        if (["ValidationException"].includes(err.code)) return err;
+        if (["ValidationException"].includes(err.shortCode)) return err;
         throw err;
       }
       await new Promise(r => setTimeout(r, 30000));
@@ -3569,7 +3569,7 @@ export default class SageMaker {
         if (field === "Stopped") return resp;
         if (field === "Failed") throw new Error(errMessage);
       } catch (err) {
-        if (["ValidationException"].includes(err.code)) throw err;
+        if (["ValidationException"].includes(err.shortCode)) throw err;
         throw err;
       }
       await new Promise(r => setTimeout(r, 60000));
@@ -3590,7 +3590,7 @@ export default class SageMaker {
         if (field === "Stopped") return resp;
         if (field === "Failed") throw new Error(errMessage);
       } catch (err) {
-        if (["ValidationException"].includes(err.code)) throw err;
+        if (["ValidationException"].includes(err.shortCode)) throw err;
         throw err;
       }
       await new Promise(r => setTimeout(r, 60000));

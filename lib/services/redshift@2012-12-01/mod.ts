@@ -1864,7 +1864,7 @@ export default class Redshift {
         if (field?.every(x => x === "available")) return resp;
         if (field?.some(x => x === "deleting")) throw new Error(errMessage);
       } catch (err) {
-        if (!["ClusterNotFound"].includes(err.code)) throw err;
+        if (!["ClusterNotFound"].includes(err.shortCode)) throw err;
       }
       await new Promise(r => setTimeout(r, 60000));
     }
@@ -1883,7 +1883,7 @@ export default class Redshift {
         if (field?.some(x => x === "creating")) throw new Error(errMessage);
         if (field?.some(x => x === "modifying")) throw new Error(errMessage);
       } catch (err) {
-        if (["ClusterNotFound"].includes(err.code)) return err;
+        if (["ClusterNotFound"].includes(err.shortCode)) return err;
         throw err;
       }
       await new Promise(r => setTimeout(r, 60000));

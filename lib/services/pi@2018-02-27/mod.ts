@@ -31,7 +31,7 @@ export default class PI {
   async describeDimensionKeys(
     {abortSignal, ...params}: RequestConfig & DescribeDimensionKeysRequest,
   ): Promise<DescribeDimensionKeysResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ServiceType: params["ServiceType"],
       Identifier: params["Identifier"],
       StartTime: jsonP.serializeDate_unixTimestamp(params["StartTime"]),
@@ -43,7 +43,7 @@ export default class PI {
       Filter: params["Filter"],
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeDimensionKeys",
@@ -63,7 +63,7 @@ export default class PI {
   async getResourceMetrics(
     {abortSignal, ...params}: RequestConfig & GetResourceMetricsRequest,
   ): Promise<GetResourceMetricsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ServiceType: params["ServiceType"],
       Identifier: params["Identifier"],
       MetricQueries: params["MetricQueries"]?.map(x => fromMetricQuery(x)),
@@ -72,7 +72,7 @@ export default class PI {
       PeriodInSeconds: params["PeriodInSeconds"],
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetResourceMetrics",

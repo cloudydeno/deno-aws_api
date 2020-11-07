@@ -30,9 +30,9 @@ export default class KMS {
   async cancelKeyDeletion(
     {abortSignal, ...params}: RequestConfig & CancelKeyDeletionRequest,
   ): Promise<CancelKeyDeletionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       KeyId: params["KeyId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CancelKeyDeletion",
@@ -48,9 +48,9 @@ export default class KMS {
   async connectCustomKeyStore(
     {abortSignal, ...params}: RequestConfig & ConnectCustomKeyStoreRequest,
   ): Promise<ConnectCustomKeyStoreResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CustomKeyStoreId: params["CustomKeyStoreId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ConnectCustomKeyStore",
@@ -64,10 +64,10 @@ export default class KMS {
   async createAlias(
     {abortSignal, ...params}: RequestConfig & CreateAliasRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AliasName: params["AliasName"],
       TargetKeyId: params["TargetKeyId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateAlias",
@@ -77,12 +77,12 @@ export default class KMS {
   async createCustomKeyStore(
     {abortSignal, ...params}: RequestConfig & CreateCustomKeyStoreRequest,
   ): Promise<CreateCustomKeyStoreResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CustomKeyStoreName: params["CustomKeyStoreName"],
       CloudHsmClusterId: params["CloudHsmClusterId"],
       TrustAnchorCertificate: params["TrustAnchorCertificate"],
       KeyStorePassword: params["KeyStorePassword"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateCustomKeyStore",
@@ -98,7 +98,7 @@ export default class KMS {
   async createGrant(
     {abortSignal, ...params}: RequestConfig & CreateGrantRequest,
   ): Promise<CreateGrantResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       KeyId: params["KeyId"],
       GranteePrincipal: params["GranteePrincipal"],
       RetiringPrincipal: params["RetiringPrincipal"],
@@ -106,7 +106,7 @@ export default class KMS {
       Constraints: fromGrantConstraints(params["Constraints"]),
       GrantTokens: params["GrantTokens"],
       Name: params["Name"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateGrant",
@@ -123,7 +123,7 @@ export default class KMS {
   async createKey(
     {abortSignal, ...params}: RequestConfig & CreateKeyRequest = {},
   ): Promise<CreateKeyResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Policy: params["Policy"],
       Description: params["Description"],
       KeyUsage: params["KeyUsage"],
@@ -132,7 +132,7 @@ export default class KMS {
       CustomKeyStoreId: params["CustomKeyStoreId"],
       BypassPolicyLockoutSafetyCheck: params["BypassPolicyLockoutSafetyCheck"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateKey",
@@ -148,13 +148,13 @@ export default class KMS {
   async decrypt(
     {abortSignal, ...params}: RequestConfig & DecryptRequest,
   ): Promise<DecryptResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CiphertextBlob: jsonP.serializeBlob(params["CiphertextBlob"]),
       EncryptionContext: params["EncryptionContext"],
       GrantTokens: params["GrantTokens"],
       KeyId: params["KeyId"],
       EncryptionAlgorithm: params["EncryptionAlgorithm"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "Decrypt",
@@ -172,9 +172,9 @@ export default class KMS {
   async deleteAlias(
     {abortSignal, ...params}: RequestConfig & DeleteAliasRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AliasName: params["AliasName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteAlias",
@@ -184,9 +184,9 @@ export default class KMS {
   async deleteCustomKeyStore(
     {abortSignal, ...params}: RequestConfig & DeleteCustomKeyStoreRequest,
   ): Promise<DeleteCustomKeyStoreResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CustomKeyStoreId: params["CustomKeyStoreId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteCustomKeyStore",
@@ -200,9 +200,9 @@ export default class KMS {
   async deleteImportedKeyMaterial(
     {abortSignal, ...params}: RequestConfig & DeleteImportedKeyMaterialRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       KeyId: params["KeyId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteImportedKeyMaterial",
@@ -212,12 +212,12 @@ export default class KMS {
   async describeCustomKeyStores(
     {abortSignal, ...params}: RequestConfig & DescribeCustomKeyStoresRequest = {},
   ): Promise<DescribeCustomKeyStoresResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CustomKeyStoreId: params["CustomKeyStoreId"],
       CustomKeyStoreName: params["CustomKeyStoreName"],
       Limit: params["Limit"],
       Marker: params["Marker"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeCustomKeyStores",
@@ -235,10 +235,10 @@ export default class KMS {
   async describeKey(
     {abortSignal, ...params}: RequestConfig & DescribeKeyRequest,
   ): Promise<DescribeKeyResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       KeyId: params["KeyId"],
       GrantTokens: params["GrantTokens"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeKey",
@@ -254,9 +254,9 @@ export default class KMS {
   async disableKey(
     {abortSignal, ...params}: RequestConfig & DisableKeyRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       KeyId: params["KeyId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisableKey",
@@ -266,9 +266,9 @@ export default class KMS {
   async disableKeyRotation(
     {abortSignal, ...params}: RequestConfig & DisableKeyRotationRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       KeyId: params["KeyId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisableKeyRotation",
@@ -278,9 +278,9 @@ export default class KMS {
   async disconnectCustomKeyStore(
     {abortSignal, ...params}: RequestConfig & DisconnectCustomKeyStoreRequest,
   ): Promise<DisconnectCustomKeyStoreResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CustomKeyStoreId: params["CustomKeyStoreId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisconnectCustomKeyStore",
@@ -294,9 +294,9 @@ export default class KMS {
   async enableKey(
     {abortSignal, ...params}: RequestConfig & EnableKeyRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       KeyId: params["KeyId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "EnableKey",
@@ -306,9 +306,9 @@ export default class KMS {
   async enableKeyRotation(
     {abortSignal, ...params}: RequestConfig & EnableKeyRotationRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       KeyId: params["KeyId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "EnableKeyRotation",
@@ -318,13 +318,13 @@ export default class KMS {
   async encrypt(
     {abortSignal, ...params}: RequestConfig & EncryptRequest,
   ): Promise<EncryptResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       KeyId: params["KeyId"],
       Plaintext: jsonP.serializeBlob(params["Plaintext"]),
       EncryptionContext: params["EncryptionContext"],
       GrantTokens: params["GrantTokens"],
       EncryptionAlgorithm: params["EncryptionAlgorithm"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "Encrypt",
@@ -342,13 +342,13 @@ export default class KMS {
   async generateDataKey(
     {abortSignal, ...params}: RequestConfig & GenerateDataKeyRequest,
   ): Promise<GenerateDataKeyResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       KeyId: params["KeyId"],
       EncryptionContext: params["EncryptionContext"],
       NumberOfBytes: params["NumberOfBytes"],
       KeySpec: params["KeySpec"],
       GrantTokens: params["GrantTokens"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GenerateDataKey",
@@ -366,12 +366,12 @@ export default class KMS {
   async generateDataKeyPair(
     {abortSignal, ...params}: RequestConfig & GenerateDataKeyPairRequest,
   ): Promise<GenerateDataKeyPairResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       EncryptionContext: params["EncryptionContext"],
       KeyId: params["KeyId"],
       KeyPairSpec: params["KeyPairSpec"],
       GrantTokens: params["GrantTokens"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GenerateDataKeyPair",
@@ -391,12 +391,12 @@ export default class KMS {
   async generateDataKeyPairWithoutPlaintext(
     {abortSignal, ...params}: RequestConfig & GenerateDataKeyPairWithoutPlaintextRequest,
   ): Promise<GenerateDataKeyPairWithoutPlaintextResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       EncryptionContext: params["EncryptionContext"],
       KeyId: params["KeyId"],
       KeyPairSpec: params["KeyPairSpec"],
       GrantTokens: params["GrantTokens"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GenerateDataKeyPairWithoutPlaintext",
@@ -415,13 +415,13 @@ export default class KMS {
   async generateDataKeyWithoutPlaintext(
     {abortSignal, ...params}: RequestConfig & GenerateDataKeyWithoutPlaintextRequest,
   ): Promise<GenerateDataKeyWithoutPlaintextResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       KeyId: params["KeyId"],
       EncryptionContext: params["EncryptionContext"],
       KeySpec: params["KeySpec"],
       NumberOfBytes: params["NumberOfBytes"],
       GrantTokens: params["GrantTokens"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GenerateDataKeyWithoutPlaintext",
@@ -438,10 +438,10 @@ export default class KMS {
   async generateRandom(
     {abortSignal, ...params}: RequestConfig & GenerateRandomRequest = {},
   ): Promise<GenerateRandomResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NumberOfBytes: params["NumberOfBytes"],
       CustomKeyStoreId: params["CustomKeyStoreId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GenerateRandom",
@@ -457,10 +457,10 @@ export default class KMS {
   async getKeyPolicy(
     {abortSignal, ...params}: RequestConfig & GetKeyPolicyRequest,
   ): Promise<GetKeyPolicyResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       KeyId: params["KeyId"],
       PolicyName: params["PolicyName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetKeyPolicy",
@@ -476,9 +476,9 @@ export default class KMS {
   async getKeyRotationStatus(
     {abortSignal, ...params}: RequestConfig & GetKeyRotationStatusRequest,
   ): Promise<GetKeyRotationStatusResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       KeyId: params["KeyId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetKeyRotationStatus",
@@ -494,11 +494,11 @@ export default class KMS {
   async getParametersForImport(
     {abortSignal, ...params}: RequestConfig & GetParametersForImportRequest,
   ): Promise<GetParametersForImportResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       KeyId: params["KeyId"],
       WrappingAlgorithm: params["WrappingAlgorithm"],
       WrappingKeySpec: params["WrappingKeySpec"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetParametersForImport",
@@ -517,10 +517,10 @@ export default class KMS {
   async getPublicKey(
     {abortSignal, ...params}: RequestConfig & GetPublicKeyRequest,
   ): Promise<GetPublicKeyResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       KeyId: params["KeyId"],
       GrantTokens: params["GrantTokens"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetPublicKey",
@@ -541,13 +541,13 @@ export default class KMS {
   async importKeyMaterial(
     {abortSignal, ...params}: RequestConfig & ImportKeyMaterialRequest,
   ): Promise<ImportKeyMaterialResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       KeyId: params["KeyId"],
       ImportToken: jsonP.serializeBlob(params["ImportToken"]),
       EncryptedKeyMaterial: jsonP.serializeBlob(params["EncryptedKeyMaterial"]),
       ValidTo: jsonP.serializeDate_unixTimestamp(params["ValidTo"]),
       ExpirationModel: params["ExpirationModel"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ImportKeyMaterial",
@@ -561,11 +561,11 @@ export default class KMS {
   async listAliases(
     {abortSignal, ...params}: RequestConfig & ListAliasesRequest = {},
   ): Promise<ListAliasesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       KeyId: params["KeyId"],
       Limit: params["Limit"],
       Marker: params["Marker"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListAliases",
@@ -583,11 +583,11 @@ export default class KMS {
   async listGrants(
     {abortSignal, ...params}: RequestConfig & ListGrantsRequest,
   ): Promise<ListGrantsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Limit: params["Limit"],
       Marker: params["Marker"],
       KeyId: params["KeyId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListGrants",
@@ -605,11 +605,11 @@ export default class KMS {
   async listKeyPolicies(
     {abortSignal, ...params}: RequestConfig & ListKeyPoliciesRequest,
   ): Promise<ListKeyPoliciesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       KeyId: params["KeyId"],
       Limit: params["Limit"],
       Marker: params["Marker"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListKeyPolicies",
@@ -627,10 +627,10 @@ export default class KMS {
   async listKeys(
     {abortSignal, ...params}: RequestConfig & ListKeysRequest = {},
   ): Promise<ListKeysResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Limit: params["Limit"],
       Marker: params["Marker"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListKeys",
@@ -648,11 +648,11 @@ export default class KMS {
   async listResourceTags(
     {abortSignal, ...params}: RequestConfig & ListResourceTagsRequest,
   ): Promise<ListResourceTagsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       KeyId: params["KeyId"],
       Limit: params["Limit"],
       Marker: params["Marker"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListResourceTags",
@@ -670,11 +670,11 @@ export default class KMS {
   async listRetirableGrants(
     {abortSignal, ...params}: RequestConfig & ListRetirableGrantsRequest,
   ): Promise<ListGrantsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Limit: params["Limit"],
       Marker: params["Marker"],
       RetiringPrincipal: params["RetiringPrincipal"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListRetirableGrants",
@@ -692,12 +692,12 @@ export default class KMS {
   async putKeyPolicy(
     {abortSignal, ...params}: RequestConfig & PutKeyPolicyRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       KeyId: params["KeyId"],
       PolicyName: params["PolicyName"],
       Policy: params["Policy"],
       BypassPolicyLockoutSafetyCheck: params["BypassPolicyLockoutSafetyCheck"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutKeyPolicy",
@@ -707,7 +707,7 @@ export default class KMS {
   async reEncrypt(
     {abortSignal, ...params}: RequestConfig & ReEncryptRequest,
   ): Promise<ReEncryptResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CiphertextBlob: jsonP.serializeBlob(params["CiphertextBlob"]),
       SourceEncryptionContext: params["SourceEncryptionContext"],
       SourceKeyId: params["SourceKeyId"],
@@ -716,7 +716,7 @@ export default class KMS {
       SourceEncryptionAlgorithm: params["SourceEncryptionAlgorithm"],
       DestinationEncryptionAlgorithm: params["DestinationEncryptionAlgorithm"],
       GrantTokens: params["GrantTokens"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ReEncrypt",
@@ -736,11 +736,11 @@ export default class KMS {
   async retireGrant(
     {abortSignal, ...params}: RequestConfig & RetireGrantRequest = {},
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       GrantToken: params["GrantToken"],
       KeyId: params["KeyId"],
       GrantId: params["GrantId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RetireGrant",
@@ -750,10 +750,10 @@ export default class KMS {
   async revokeGrant(
     {abortSignal, ...params}: RequestConfig & RevokeGrantRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       KeyId: params["KeyId"],
       GrantId: params["GrantId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RevokeGrant",
@@ -763,10 +763,10 @@ export default class KMS {
   async scheduleKeyDeletion(
     {abortSignal, ...params}: RequestConfig & ScheduleKeyDeletionRequest,
   ): Promise<ScheduleKeyDeletionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       KeyId: params["KeyId"],
       PendingWindowInDays: params["PendingWindowInDays"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ScheduleKeyDeletion",
@@ -783,13 +783,13 @@ export default class KMS {
   async sign(
     {abortSignal, ...params}: RequestConfig & SignRequest,
   ): Promise<SignResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       KeyId: params["KeyId"],
       Message: jsonP.serializeBlob(params["Message"]),
       MessageType: params["MessageType"],
       GrantTokens: params["GrantTokens"],
       SigningAlgorithm: params["SigningAlgorithm"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "Sign",
@@ -807,10 +807,10 @@ export default class KMS {
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       KeyId: params["KeyId"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
@@ -820,10 +820,10 @@ export default class KMS {
   async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       KeyId: params["KeyId"],
       TagKeys: params["TagKeys"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResource",
@@ -833,10 +833,10 @@ export default class KMS {
   async updateAlias(
     {abortSignal, ...params}: RequestConfig & UpdateAliasRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AliasName: params["AliasName"],
       TargetKeyId: params["TargetKeyId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateAlias",
@@ -846,12 +846,12 @@ export default class KMS {
   async updateCustomKeyStore(
     {abortSignal, ...params}: RequestConfig & UpdateCustomKeyStoreRequest,
   ): Promise<UpdateCustomKeyStoreResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CustomKeyStoreId: params["CustomKeyStoreId"],
       NewCustomKeyStoreName: params["NewCustomKeyStoreName"],
       KeyStorePassword: params["KeyStorePassword"],
       CloudHsmClusterId: params["CloudHsmClusterId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateCustomKeyStore",
@@ -865,10 +865,10 @@ export default class KMS {
   async updateKeyDescription(
     {abortSignal, ...params}: RequestConfig & UpdateKeyDescriptionRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       KeyId: params["KeyId"],
       Description: params["Description"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateKeyDescription",
@@ -878,14 +878,14 @@ export default class KMS {
   async verify(
     {abortSignal, ...params}: RequestConfig & VerifyRequest,
   ): Promise<VerifyResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       KeyId: params["KeyId"],
       Message: jsonP.serializeBlob(params["Message"]),
       MessageType: params["MessageType"],
       Signature: jsonP.serializeBlob(params["Signature"]),
       SigningAlgorithm: params["SigningAlgorithm"],
       GrantTokens: params["GrantTokens"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "Verify",

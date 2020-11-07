@@ -29,116 +29,106 @@ export default class ResourceGroups {
   async createGroup(
     {abortSignal, ...params}: RequestConfig & CreateGroupInput,
   ): Promise<CreateGroupOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       Description: params["Description"],
       ResourceQuery: fromResourceQuery(params["ResourceQuery"]),
       Tags: params["Tags"],
       Configuration: params["Configuration"]?.map(x => fromGroupConfigurationItem(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateGroup",
       requestUri: "/groups",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Group": toGroup,
-          "ResourceQuery": toResourceQuery,
-          "Tags": x => jsonP.readMap(String, String, x),
-          "GroupConfiguration": toGroupConfiguration,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Group": toGroup,
+        "ResourceQuery": toResourceQuery,
+        "Tags": x => jsonP.readMap(String, String, x),
+        "GroupConfiguration": toGroupConfiguration,
+      },
+    }, await resp.json());
   }
 
   async deleteGroup(
     {abortSignal, ...params}: RequestConfig & DeleteGroupInput = {},
   ): Promise<DeleteGroupOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       GroupName: params["GroupName"],
       Group: params["Group"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteGroup",
       requestUri: "/delete-group",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Group": toGroup,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Group": toGroup,
+      },
+    }, await resp.json());
   }
 
   async getGroup(
     {abortSignal, ...params}: RequestConfig & GetGroupInput = {},
   ): Promise<GetGroupOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       GroupName: params["GroupName"],
       Group: params["Group"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetGroup",
       requestUri: "/get-group",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Group": toGroup,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Group": toGroup,
+      },
+    }, await resp.json());
   }
 
   async getGroupConfiguration(
     {abortSignal, ...params}: RequestConfig & GetGroupConfigurationInput = {},
   ): Promise<GetGroupConfigurationOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Group: params["Group"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetGroupConfiguration",
       requestUri: "/get-group-configuration",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "GroupConfiguration": toGroupConfiguration,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "GroupConfiguration": toGroupConfiguration,
+      },
+    }, await resp.json());
   }
 
   async getGroupQuery(
     {abortSignal, ...params}: RequestConfig & GetGroupQueryInput = {},
   ): Promise<GetGroupQueryOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       GroupName: params["GroupName"],
       Group: params["Group"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetGroupQuery",
       requestUri: "/get-group-query",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "GroupQuery": toGroupQuery,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "GroupQuery": toGroupQuery,
+      },
+    }, await resp.json());
   }
 
   async getTags(
@@ -151,231 +141,211 @@ export default class ResourceGroups {
       method: "GET",
       requestUri: cmnP.encodePath`/resources/${params["Arn"]}/tags`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Arn": "s",
-          "Tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+        "Tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async groupResources(
     {abortSignal, ...params}: RequestConfig & GroupResourcesInput,
   ): Promise<GroupResourcesOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Group: params["Group"],
       ResourceArns: params["ResourceArns"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GroupResources",
       requestUri: "/group-resources",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Succeeded": ["s"],
-          "Failed": [toFailedResource],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Succeeded": ["s"],
+        "Failed": [toFailedResource],
+      },
+    }, await resp.json());
   }
 
   async listGroupResources(
     {abortSignal, ...params}: RequestConfig & ListGroupResourcesInput = {},
   ): Promise<ListGroupResourcesOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       GroupName: params["GroupName"],
       Group: params["Group"],
       Filters: params["Filters"]?.map(x => fromResourceFilter(x)),
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListGroupResources",
       requestUri: "/list-group-resources",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ResourceIdentifiers": [toResourceIdentifier],
-          "NextToken": "s",
-          "QueryErrors": [toQueryError],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ResourceIdentifiers": [toResourceIdentifier],
+        "NextToken": "s",
+        "QueryErrors": [toQueryError],
+      },
+    }, await resp.json());
   }
 
   async listGroups(
     {abortSignal, ...params}: RequestConfig & ListGroupsInput = {},
   ): Promise<ListGroupsOutput> {
     const query = new URLSearchParams;
+    const body: jsonP.JSONObject = {
+      Filters: params["Filters"]?.map(x => fromGroupFilter(x)),
+    };
     if (params["MaxResults"] != null) query.set("maxResults", params["MaxResults"]?.toString() ?? "");
     if (params["NextToken"] != null) query.set("nextToken", params["NextToken"]?.toString() ?? "");
-    const body: jsonP.JSONObject = params ? {
-      Filters: params["Filters"]?.map(x => fromGroupFilter(x)),
-    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, query, body,
       action: "ListGroups",
       requestUri: "/groups-list",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "GroupIdentifiers": [toGroupIdentifier],
-          "Groups": [toGroup],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "GroupIdentifiers": [toGroupIdentifier],
+        "Groups": [toGroup],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async searchResources(
     {abortSignal, ...params}: RequestConfig & SearchResourcesInput,
   ): Promise<SearchResourcesOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceQuery: fromResourceQuery(params["ResourceQuery"]),
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SearchResources",
       requestUri: "/resources/search",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ResourceIdentifiers": [toResourceIdentifier],
-          "NextToken": "s",
-          "QueryErrors": [toQueryError],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ResourceIdentifiers": [toResourceIdentifier],
+        "NextToken": "s",
+        "QueryErrors": [toQueryError],
+      },
+    }, await resp.json());
   }
 
   async tag(
     {abortSignal, ...params}: RequestConfig & TagInput,
   ): Promise<TagOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Tags: params["Tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "Tag",
       method: "PUT",
       requestUri: cmnP.encodePath`/resources/${params["Arn"]}/tags`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Arn": "s",
-          "Tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+        "Tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async ungroupResources(
     {abortSignal, ...params}: RequestConfig & UngroupResourcesInput,
   ): Promise<UngroupResourcesOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Group: params["Group"],
       ResourceArns: params["ResourceArns"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UngroupResources",
       requestUri: "/ungroup-resources",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Succeeded": ["s"],
-          "Failed": [toFailedResource],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Succeeded": ["s"],
+        "Failed": [toFailedResource],
+      },
+    }, await resp.json());
   }
 
   async untag(
     {abortSignal, ...params}: RequestConfig & UntagInput,
   ): Promise<UntagOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Keys: params["Keys"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "Untag",
       method: "PATCH",
       requestUri: cmnP.encodePath`/resources/${params["Arn"]}/tags`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Arn": "s",
-          "Keys": ["s"],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+        "Keys": ["s"],
+      },
+    }, await resp.json());
   }
 
   async updateGroup(
     {abortSignal, ...params}: RequestConfig & UpdateGroupInput = {},
   ): Promise<UpdateGroupOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       GroupName: params["GroupName"],
       Group: params["Group"],
       Description: params["Description"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateGroup",
       requestUri: "/update-group",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Group": toGroup,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Group": toGroup,
+      },
+    }, await resp.json());
   }
 
   async updateGroupQuery(
     {abortSignal, ...params}: RequestConfig & UpdateGroupQueryInput,
   ): Promise<UpdateGroupQueryOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       GroupName: params["GroupName"],
       Group: params["Group"],
       ResourceQuery: fromResourceQuery(params["ResourceQuery"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateGroupQuery",
       requestUri: "/update-group-query",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "GroupQuery": toGroupQuery,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "GroupQuery": toGroupQuery,
+      },
+    }, await resp.json());
   }
 
 }

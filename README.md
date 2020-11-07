@@ -1,3 +1,5 @@
+![Test CI](https://github.com/danopia/deno-aws_api/workflows/Deno%20CI/badge.svg?branch=main)
+
 # `aws_api` for Deno
 
 From-scratch Typescript AWS API client built for Deno.

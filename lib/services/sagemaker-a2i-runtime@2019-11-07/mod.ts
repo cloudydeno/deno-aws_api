@@ -36,12 +36,10 @@ export default class AugmentedAIRuntime {
       method: "DELETE",
       requestUri: cmnP.encodePath`/human-loops/${params["HumanLoopName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async describeHumanLoop(
@@ -54,22 +52,20 @@ export default class AugmentedAIRuntime {
       method: "GET",
       requestUri: cmnP.encodePath`/human-loops/${params["HumanLoopName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "CreationTime": "d",
-          "HumanLoopStatus": (x: jsonP.JSONValue) => cmnP.readEnum<HumanLoopStatus>(x),
-          "HumanLoopName": "s",
-          "HumanLoopArn": "s",
-          "FlowDefinitionArn": "s",
-        },
-        optional: {
-          "FailureReason": "s",
-          "FailureCode": "s",
-          "HumanLoopOutput": toHumanLoopOutput,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "CreationTime": "d",
+        "HumanLoopStatus": (x: jsonP.JSONValue) => cmnP.readEnum<HumanLoopStatus>(x),
+        "HumanLoopName": "s",
+        "HumanLoopArn": "s",
+        "FlowDefinitionArn": "s",
+      },
+      optional: {
+        "FailureReason": "s",
+        "FailureCode": "s",
+        "HumanLoopOutput": toHumanLoopOutput,
+      },
+    }, await resp.json());
   }
 
   async listHumanLoops(
@@ -88,59 +84,53 @@ export default class AugmentedAIRuntime {
       method: "GET",
       requestUri: "/human-loops",
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "HumanLoopSummaries": [toHumanLoopSummary],
-        },
-        optional: {
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "HumanLoopSummaries": [toHumanLoopSummary],
+      },
+      optional: {
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async startHumanLoop(
     {abortSignal, ...params}: RequestConfig & StartHumanLoopRequest,
   ): Promise<StartHumanLoopResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       HumanLoopName: params["HumanLoopName"],
       FlowDefinitionArn: params["FlowDefinitionArn"],
       HumanLoopInput: fromHumanLoopInput(params["HumanLoopInput"]),
       DataAttributes: fromHumanLoopDataAttributes(params["DataAttributes"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartHumanLoop",
       requestUri: "/human-loops",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "HumanLoopArn": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "HumanLoopArn": "s",
+      },
+    }, await resp.json());
   }
 
   async stopHumanLoop(
     {abortSignal, ...params}: RequestConfig & StopHumanLoopRequest,
   ): Promise<StopHumanLoopResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       HumanLoopName: params["HumanLoopName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopHumanLoop",
       requestUri: "/human-loops/stop",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
 }

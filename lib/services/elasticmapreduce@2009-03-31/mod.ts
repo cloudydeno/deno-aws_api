@@ -30,10 +30,10 @@ export default class EMR {
   async addInstanceFleet(
     {abortSignal, ...params}: RequestConfig & AddInstanceFleetInput,
   ): Promise<AddInstanceFleetOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ClusterId: params["ClusterId"],
       InstanceFleet: fromInstanceFleetConfig(params["InstanceFleet"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AddInstanceFleet",
@@ -51,10 +51,10 @@ export default class EMR {
   async addInstanceGroups(
     {abortSignal, ...params}: RequestConfig & AddInstanceGroupsInput,
   ): Promise<AddInstanceGroupsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       InstanceGroups: params["InstanceGroups"]?.map(x => fromInstanceGroupConfig(x)),
       JobFlowId: params["JobFlowId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AddInstanceGroups",
@@ -72,10 +72,10 @@ export default class EMR {
   async addJobFlowSteps(
     {abortSignal, ...params}: RequestConfig & AddJobFlowStepsInput,
   ): Promise<AddJobFlowStepsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       JobFlowId: params["JobFlowId"],
       Steps: params["Steps"]?.map(x => fromStepConfig(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AddJobFlowSteps",
@@ -91,10 +91,10 @@ export default class EMR {
   async addTags(
     {abortSignal, ...params}: RequestConfig & AddTagsInput,
   ): Promise<AddTagsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceId: params["ResourceId"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AddTags",
@@ -108,11 +108,11 @@ export default class EMR {
   async cancelSteps(
     {abortSignal, ...params}: RequestConfig & CancelStepsInput,
   ): Promise<CancelStepsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ClusterId: params["ClusterId"],
       StepIds: params["StepIds"],
       StepCancellationOption: params["StepCancellationOption"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CancelSteps",
@@ -128,10 +128,10 @@ export default class EMR {
   async createSecurityConfiguration(
     {abortSignal, ...params}: RequestConfig & CreateSecurityConfigurationInput,
   ): Promise<CreateSecurityConfigurationOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       SecurityConfiguration: params["SecurityConfiguration"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateSecurityConfiguration",
@@ -148,9 +148,9 @@ export default class EMR {
   async deleteSecurityConfiguration(
     {abortSignal, ...params}: RequestConfig & DeleteSecurityConfigurationInput,
   ): Promise<DeleteSecurityConfigurationOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteSecurityConfiguration",
@@ -164,9 +164,9 @@ export default class EMR {
   async describeCluster(
     {abortSignal, ...params}: RequestConfig & DescribeClusterInput,
   ): Promise<DescribeClusterOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ClusterId: params["ClusterId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeCluster",
@@ -182,12 +182,12 @@ export default class EMR {
   async describeJobFlows(
     {abortSignal, ...params}: RequestConfig & DescribeJobFlowsInput = {},
   ): Promise<DescribeJobFlowsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CreatedAfter: jsonP.serializeDate_unixTimestamp(params["CreatedAfter"]),
       CreatedBefore: jsonP.serializeDate_unixTimestamp(params["CreatedBefore"]),
       JobFlowIds: params["JobFlowIds"],
       JobFlowStates: params["JobFlowStates"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeJobFlows",
@@ -203,9 +203,9 @@ export default class EMR {
   async describeNotebookExecution(
     {abortSignal, ...params}: RequestConfig & DescribeNotebookExecutionInput,
   ): Promise<DescribeNotebookExecutionOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NotebookExecutionId: params["NotebookExecutionId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeNotebookExecution",
@@ -221,9 +221,9 @@ export default class EMR {
   async describeSecurityConfiguration(
     {abortSignal, ...params}: RequestConfig & DescribeSecurityConfigurationInput,
   ): Promise<DescribeSecurityConfigurationOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeSecurityConfiguration",
@@ -241,10 +241,10 @@ export default class EMR {
   async describeStep(
     {abortSignal, ...params}: RequestConfig & DescribeStepInput,
   ): Promise<DescribeStepOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ClusterId: params["ClusterId"],
       StepId: params["StepId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeStep",
@@ -260,8 +260,8 @@ export default class EMR {
   async getBlockPublicAccessConfiguration(
     {abortSignal, ...params}: RequestConfig & GetBlockPublicAccessConfigurationInput = {},
   ): Promise<GetBlockPublicAccessConfigurationOutput> {
-    const body: jsonP.JSONObject = params ? {
-    } : {};
+    const body: jsonP.JSONObject = {
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetBlockPublicAccessConfiguration",
@@ -278,9 +278,9 @@ export default class EMR {
   async getManagedScalingPolicy(
     {abortSignal, ...params}: RequestConfig & GetManagedScalingPolicyInput,
   ): Promise<GetManagedScalingPolicyOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ClusterId: params["ClusterId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetManagedScalingPolicy",
@@ -296,10 +296,10 @@ export default class EMR {
   async listBootstrapActions(
     {abortSignal, ...params}: RequestConfig & ListBootstrapActionsInput,
   ): Promise<ListBootstrapActionsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ClusterId: params["ClusterId"],
       Marker: params["Marker"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListBootstrapActions",
@@ -316,12 +316,12 @@ export default class EMR {
   async listClusters(
     {abortSignal, ...params}: RequestConfig & ListClustersInput = {},
   ): Promise<ListClustersOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CreatedAfter: jsonP.serializeDate_unixTimestamp(params["CreatedAfter"]),
       CreatedBefore: jsonP.serializeDate_unixTimestamp(params["CreatedBefore"]),
       ClusterStates: params["ClusterStates"],
       Marker: params["Marker"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListClusters",
@@ -338,10 +338,10 @@ export default class EMR {
   async listInstanceFleets(
     {abortSignal, ...params}: RequestConfig & ListInstanceFleetsInput,
   ): Promise<ListInstanceFleetsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ClusterId: params["ClusterId"],
       Marker: params["Marker"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListInstanceFleets",
@@ -358,10 +358,10 @@ export default class EMR {
   async listInstanceGroups(
     {abortSignal, ...params}: RequestConfig & ListInstanceGroupsInput,
   ): Promise<ListInstanceGroupsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ClusterId: params["ClusterId"],
       Marker: params["Marker"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListInstanceGroups",
@@ -378,7 +378,7 @@ export default class EMR {
   async listInstances(
     {abortSignal, ...params}: RequestConfig & ListInstancesInput,
   ): Promise<ListInstancesOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ClusterId: params["ClusterId"],
       InstanceGroupId: params["InstanceGroupId"],
       InstanceGroupTypes: params["InstanceGroupTypes"],
@@ -386,7 +386,7 @@ export default class EMR {
       InstanceFleetType: params["InstanceFleetType"],
       InstanceStates: params["InstanceStates"],
       Marker: params["Marker"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListInstances",
@@ -403,13 +403,13 @@ export default class EMR {
   async listNotebookExecutions(
     {abortSignal, ...params}: RequestConfig & ListNotebookExecutionsInput = {},
   ): Promise<ListNotebookExecutionsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       EditorId: params["EditorId"],
       Status: params["Status"],
       From: jsonP.serializeDate_unixTimestamp(params["From"]),
       To: jsonP.serializeDate_unixTimestamp(params["To"]),
       Marker: params["Marker"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListNotebookExecutions",
@@ -426,9 +426,9 @@ export default class EMR {
   async listSecurityConfigurations(
     {abortSignal, ...params}: RequestConfig & ListSecurityConfigurationsInput = {},
   ): Promise<ListSecurityConfigurationsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Marker: params["Marker"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListSecurityConfigurations",
@@ -445,12 +445,12 @@ export default class EMR {
   async listSteps(
     {abortSignal, ...params}: RequestConfig & ListStepsInput,
   ): Promise<ListStepsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ClusterId: params["ClusterId"],
       StepStates: params["StepStates"],
       StepIds: params["StepIds"],
       Marker: params["Marker"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListSteps",
@@ -467,10 +467,10 @@ export default class EMR {
   async modifyCluster(
     {abortSignal, ...params}: RequestConfig & ModifyClusterInput,
   ): Promise<ModifyClusterOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ClusterId: params["ClusterId"],
       StepConcurrencyLevel: params["StepConcurrencyLevel"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ModifyCluster",
@@ -486,10 +486,10 @@ export default class EMR {
   async modifyInstanceFleet(
     {abortSignal, ...params}: RequestConfig & ModifyInstanceFleetInput,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ClusterId: params["ClusterId"],
       InstanceFleet: fromInstanceFleetModifyConfig(params["InstanceFleet"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ModifyInstanceFleet",
@@ -499,10 +499,10 @@ export default class EMR {
   async modifyInstanceGroups(
     {abortSignal, ...params}: RequestConfig & ModifyInstanceGroupsInput = {},
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ClusterId: params["ClusterId"],
       InstanceGroups: params["InstanceGroups"]?.map(x => fromInstanceGroupModifyConfig(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ModifyInstanceGroups",
@@ -512,11 +512,11 @@ export default class EMR {
   async putAutoScalingPolicy(
     {abortSignal, ...params}: RequestConfig & PutAutoScalingPolicyInput,
   ): Promise<PutAutoScalingPolicyOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ClusterId: params["ClusterId"],
       InstanceGroupId: params["InstanceGroupId"],
       AutoScalingPolicy: fromAutoScalingPolicy(params["AutoScalingPolicy"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutAutoScalingPolicy",
@@ -535,9 +535,9 @@ export default class EMR {
   async putBlockPublicAccessConfiguration(
     {abortSignal, ...params}: RequestConfig & PutBlockPublicAccessConfigurationInput,
   ): Promise<PutBlockPublicAccessConfigurationOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       BlockPublicAccessConfiguration: fromBlockPublicAccessConfiguration(params["BlockPublicAccessConfiguration"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutBlockPublicAccessConfiguration",
@@ -551,10 +551,10 @@ export default class EMR {
   async putManagedScalingPolicy(
     {abortSignal, ...params}: RequestConfig & PutManagedScalingPolicyInput,
   ): Promise<PutManagedScalingPolicyOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ClusterId: params["ClusterId"],
       ManagedScalingPolicy: fromManagedScalingPolicy(params["ManagedScalingPolicy"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutManagedScalingPolicy",
@@ -568,10 +568,10 @@ export default class EMR {
   async removeAutoScalingPolicy(
     {abortSignal, ...params}: RequestConfig & RemoveAutoScalingPolicyInput,
   ): Promise<RemoveAutoScalingPolicyOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ClusterId: params["ClusterId"],
       InstanceGroupId: params["InstanceGroupId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RemoveAutoScalingPolicy",
@@ -585,9 +585,9 @@ export default class EMR {
   async removeManagedScalingPolicy(
     {abortSignal, ...params}: RequestConfig & RemoveManagedScalingPolicyInput,
   ): Promise<RemoveManagedScalingPolicyOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ClusterId: params["ClusterId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RemoveManagedScalingPolicy",
@@ -601,10 +601,10 @@ export default class EMR {
   async removeTags(
     {abortSignal, ...params}: RequestConfig & RemoveTagsInput,
   ): Promise<RemoveTagsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceId: params["ResourceId"],
       TagKeys: params["TagKeys"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RemoveTags",
@@ -618,7 +618,7 @@ export default class EMR {
   async runJobFlow(
     {abortSignal, ...params}: RequestConfig & RunJobFlowInput,
   ): Promise<RunJobFlowOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       LogUri: params["LogUri"],
       LogEncryptionKmsKeyId: params["LogEncryptionKmsKeyId"],
@@ -646,7 +646,7 @@ export default class EMR {
       StepConcurrencyLevel: params["StepConcurrencyLevel"],
       ManagedScalingPolicy: fromManagedScalingPolicy(params["ManagedScalingPolicy"]),
       PlacementGroupConfigs: params["PlacementGroupConfigs"]?.map(x => fromPlacementGroupConfig(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RunJobFlow",
@@ -663,10 +663,10 @@ export default class EMR {
   async setTerminationProtection(
     {abortSignal, ...params}: RequestConfig & SetTerminationProtectionInput,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       JobFlowIds: params["JobFlowIds"],
       TerminationProtected: params["TerminationProtected"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SetTerminationProtection",
@@ -676,10 +676,10 @@ export default class EMR {
   async setVisibleToAllUsers(
     {abortSignal, ...params}: RequestConfig & SetVisibleToAllUsersInput,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       JobFlowIds: params["JobFlowIds"],
       VisibleToAllUsers: params["VisibleToAllUsers"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SetVisibleToAllUsers",
@@ -689,7 +689,7 @@ export default class EMR {
   async startNotebookExecution(
     {abortSignal, ...params}: RequestConfig & StartNotebookExecutionInput,
   ): Promise<StartNotebookExecutionOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       EditorId: params["EditorId"],
       RelativePath: params["RelativePath"],
       NotebookExecutionName: params["NotebookExecutionName"],
@@ -698,7 +698,7 @@ export default class EMR {
       ServiceRole: params["ServiceRole"],
       NotebookInstanceSecurityGroupId: params["NotebookInstanceSecurityGroupId"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartNotebookExecution",
@@ -714,9 +714,9 @@ export default class EMR {
   async stopNotebookExecution(
     {abortSignal, ...params}: RequestConfig & StopNotebookExecutionInput,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NotebookExecutionId: params["NotebookExecutionId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopNotebookExecution",
@@ -726,9 +726,9 @@ export default class EMR {
   async terminateJobFlows(
     {abortSignal, ...params}: RequestConfig & TerminateJobFlowsInput,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       JobFlowIds: params["JobFlowIds"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TerminateJobFlows",

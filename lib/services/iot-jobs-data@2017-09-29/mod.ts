@@ -37,14 +37,12 @@ export default class IoTJobsDataPlane {
       method: "GET",
       requestUri: cmnP.encodePath`/things/${params["thingName"]}/jobs/${params["jobId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "execution": toJobExecution,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "execution": toJobExecution,
+      },
+    }, await resp.json());
   }
 
   async getPendingJobExecutions(
@@ -57,44 +55,40 @@ export default class IoTJobsDataPlane {
       method: "GET",
       requestUri: cmnP.encodePath`/things/${params["thingName"]}/jobs`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "inProgressJobs": [toJobExecutionSummary],
-          "queuedJobs": [toJobExecutionSummary],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "inProgressJobs": [toJobExecutionSummary],
+        "queuedJobs": [toJobExecutionSummary],
+      },
+    }, await resp.json());
   }
 
   async startNextPendingJobExecution(
     {abortSignal, ...params}: RequestConfig & StartNextPendingJobExecutionRequest,
   ): Promise<StartNextPendingJobExecutionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       statusDetails: params["statusDetails"],
       stepTimeoutInMinutes: params["stepTimeoutInMinutes"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartNextPendingJobExecution",
       method: "PUT",
       requestUri: cmnP.encodePath`/things/${params["thingName"]}/jobs/$next`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "execution": toJobExecution,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "execution": toJobExecution,
+      },
+    }, await resp.json());
   }
 
   async updateJobExecution(
     {abortSignal, ...params}: RequestConfig & UpdateJobExecutionRequest,
   ): Promise<UpdateJobExecutionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       status: params["status"],
       statusDetails: params["statusDetails"],
       stepTimeoutInMinutes: params["stepTimeoutInMinutes"],
@@ -102,21 +96,19 @@ export default class IoTJobsDataPlane {
       includeJobExecutionState: params["includeJobExecutionState"],
       includeJobDocument: params["includeJobDocument"],
       executionNumber: params["executionNumber"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateJobExecution",
       requestUri: cmnP.encodePath`/things/${params["thingName"]}/jobs/${params["jobId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "executionState": toJobExecutionState,
-          "jobDocument": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "executionState": toJobExecutionState,
+        "jobDocument": "s",
+      },
+    }, await resp.json());
   }
 
 }

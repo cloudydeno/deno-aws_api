@@ -44,14 +44,12 @@ export default class EBS {
       requestUri: cmnP.encodePath`/snapshots/completion/${params["SnapshotId"]}`,
       responseCode: 202,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Status": (x: jsonP.JSONValue) => cmnP.readEnum<Status>(x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Status": (x: jsonP.JSONValue) => cmnP.readEnum<Status>(x),
+      },
+    }, await resp.json());
   }
 
   async getSnapshotBlock(
@@ -87,18 +85,16 @@ export default class EBS {
       method: "GET",
       requestUri: cmnP.encodePath`/snapshots/${params["SecondSnapshotId"]}/changedblocks`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ChangedBlocks": [toChangedBlock],
-          "ExpiryTime": "d",
-          "VolumeSize": "n",
-          "BlockSize": "n",
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ChangedBlocks": [toChangedBlock],
+        "ExpiryTime": "d",
+        "VolumeSize": "n",
+        "BlockSize": "n",
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listSnapshotBlocks(
@@ -114,29 +110,27 @@ export default class EBS {
       method: "GET",
       requestUri: cmnP.encodePath`/snapshots/${params["SnapshotId"]}/blocks`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Blocks": [toBlock],
-          "ExpiryTime": "d",
-          "VolumeSize": "n",
-          "BlockSize": "n",
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Blocks": [toBlock],
+        "ExpiryTime": "d",
+        "VolumeSize": "n",
+        "BlockSize": "n",
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async putSnapshotBlock(
     {abortSignal, ...params}: RequestConfig & PutSnapshotBlockRequest,
   ): Promise<PutSnapshotBlockResponse> {
+    const body = typeof params["BlockData"] === 'string' ? new TextEncoder().encode(params["BlockData"]) : params["BlockData"];
     const headers = new Headers;
     headers.append("x-amz-Data-Length", params["DataLength"]?.toString() ?? '');
     if (params["Progress"] != null) headers.append("x-amz-Progress", params["Progress"]?.toString() ?? '');
     headers.append("x-amz-Checksum", params["Checksum"]);
     headers.append("x-amz-Checksum-Algorithm", params["ChecksumAlgorithm"]);
-    const body = typeof params["BlockData"] === 'string' ? new TextEncoder().encode(params["BlockData"]) : params["BlockData"];
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "PutSnapshotBlock",
@@ -144,20 +138,20 @@ export default class EBS {
       requestUri: cmnP.encodePath`/snapshots/${params["SnapshotId"]}/blocks/${params["BlockIndex"].toString()}`,
       responseCode: 201,
     });
-  return {
-    Checksum: resp.headers.get("x-amz-Checksum"),
-    ChecksumAlgorithm: cmnP.readEnum<ChecksumAlgorithm>(resp.headers.get("x-amz-Checksum-Algorithm")),
-    ...jsonP.readObj({
+    return {
+      Checksum: resp.headers.get("x-amz-Checksum"),
+      ChecksumAlgorithm: cmnP.readEnum<ChecksumAlgorithm>(resp.headers.get("x-amz-Checksum-Algorithm")),
+      ...jsonP.readObj({
         required: {},
         optional: {},
       }, await resp.json()),
-  };
+    };
   }
 
   async startSnapshot(
     {abortSignal, ...params}: RequestConfig & StartSnapshotRequest,
   ): Promise<StartSnapshotResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       VolumeSize: params["VolumeSize"],
       ParentSnapshotId: params["ParentSnapshotId"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
@@ -166,30 +160,28 @@ export default class EBS {
       Encrypted: params["Encrypted"],
       KmsKeyArn: params["KmsKeyArn"],
       Timeout: params["Timeout"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartSnapshot",
       requestUri: "/snapshots",
       responseCode: 201,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Description": "s",
-          "SnapshotId": "s",
-          "OwnerId": "s",
-          "Status": (x: jsonP.JSONValue) => cmnP.readEnum<Status>(x),
-          "StartTime": "d",
-          "VolumeSize": "n",
-          "BlockSize": "n",
-          "Tags": [toTag],
-          "ParentSnapshotId": "s",
-          "KmsKeyArn": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Description": "s",
+        "SnapshotId": "s",
+        "OwnerId": "s",
+        "Status": (x: jsonP.JSONValue) => cmnP.readEnum<Status>(x),
+        "StartTime": "d",
+        "VolumeSize": "n",
+        "BlockSize": "n",
+        "Tags": [toTag],
+        "ParentSnapshotId": "s",
+        "KmsKeyArn": "s",
+      },
+    }, await resp.json());
   }
 
 }

@@ -29,101 +29,93 @@ export default class IVS {
   async batchGetChannel(
     {abortSignal, ...params}: RequestConfig & BatchGetChannelRequest,
   ): Promise<BatchGetChannelResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       arns: params["arns"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchGetChannel",
       requestUri: "/BatchGetChannel",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "channels": [toChannel],
-          "errors": [toBatchError],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "channels": [toChannel],
+        "errors": [toBatchError],
+      },
+    }, await resp.json());
   }
 
   async batchGetStreamKey(
     {abortSignal, ...params}: RequestConfig & BatchGetStreamKeyRequest,
   ): Promise<BatchGetStreamKeyResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       arns: params["arns"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchGetStreamKey",
       requestUri: "/BatchGetStreamKey",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "streamKeys": [toStreamKey],
-          "errors": [toBatchError],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "streamKeys": [toStreamKey],
+        "errors": [toBatchError],
+      },
+    }, await resp.json());
   }
 
   async createChannel(
     {abortSignal, ...params}: RequestConfig & CreateChannelRequest = {},
   ): Promise<CreateChannelResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       name: params["name"],
       latencyMode: params["latencyMode"],
       type: params["type"],
       authorized: params["authorized"],
       tags: params["tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateChannel",
       requestUri: "/CreateChannel",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "channel": toChannel,
-          "streamKey": toStreamKey,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "channel": toChannel,
+        "streamKey": toStreamKey,
+      },
+    }, await resp.json());
   }
 
   async createStreamKey(
     {abortSignal, ...params}: RequestConfig & CreateStreamKeyRequest,
   ): Promise<CreateStreamKeyResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       channelArn: params["channelArn"],
       tags: params["tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateStreamKey",
       requestUri: "/CreateStreamKey",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "streamKey": toStreamKey,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "streamKey": toStreamKey,
+      },
+    }, await resp.json());
   }
 
   async deleteChannel(
     {abortSignal, ...params}: RequestConfig & DeleteChannelRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       arn: params["arn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteChannel",
@@ -134,28 +126,26 @@ export default class IVS {
   async deletePlaybackKeyPair(
     {abortSignal, ...params}: RequestConfig & DeletePlaybackKeyPairRequest,
   ): Promise<DeletePlaybackKeyPairResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       arn: params["arn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeletePlaybackKeyPair",
       requestUri: "/DeletePlaybackKeyPair",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async deleteStreamKey(
     {abortSignal, ...params}: RequestConfig & DeleteStreamKeyRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       arn: params["arn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteStreamKey",
@@ -166,240 +156,220 @@ export default class IVS {
   async getChannel(
     {abortSignal, ...params}: RequestConfig & GetChannelRequest,
   ): Promise<GetChannelResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       arn: params["arn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetChannel",
       requestUri: "/GetChannel",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "channel": toChannel,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "channel": toChannel,
+      },
+    }, await resp.json());
   }
 
   async getPlaybackKeyPair(
     {abortSignal, ...params}: RequestConfig & GetPlaybackKeyPairRequest,
   ): Promise<GetPlaybackKeyPairResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       arn: params["arn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetPlaybackKeyPair",
       requestUri: "/GetPlaybackKeyPair",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "keyPair": toPlaybackKeyPair,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "keyPair": toPlaybackKeyPair,
+      },
+    }, await resp.json());
   }
 
   async getStream(
     {abortSignal, ...params}: RequestConfig & GetStreamRequest,
   ): Promise<GetStreamResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       channelArn: params["channelArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetStream",
       requestUri: "/GetStream",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "stream": toStream,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "stream": toStream,
+      },
+    }, await resp.json());
   }
 
   async getStreamKey(
     {abortSignal, ...params}: RequestConfig & GetStreamKeyRequest,
   ): Promise<GetStreamKeyResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       arn: params["arn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetStreamKey",
       requestUri: "/GetStreamKey",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "streamKey": toStreamKey,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "streamKey": toStreamKey,
+      },
+    }, await resp.json());
   }
 
   async importPlaybackKeyPair(
     {abortSignal, ...params}: RequestConfig & ImportPlaybackKeyPairRequest,
   ): Promise<ImportPlaybackKeyPairResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       publicKeyMaterial: params["publicKeyMaterial"],
       name: params["name"],
       tags: params["tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ImportPlaybackKeyPair",
       requestUri: "/ImportPlaybackKeyPair",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "keyPair": toPlaybackKeyPair,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "keyPair": toPlaybackKeyPair,
+      },
+    }, await resp.json());
   }
 
   async listChannels(
     {abortSignal, ...params}: RequestConfig & ListChannelsRequest = {},
   ): Promise<ListChannelsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       filterByName: params["filterByName"],
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListChannels",
       requestUri: "/ListChannels",
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "channels": [toChannelSummary],
-        },
-        optional: {
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "channels": [toChannelSummary],
+      },
+      optional: {
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listPlaybackKeyPairs(
     {abortSignal, ...params}: RequestConfig & ListPlaybackKeyPairsRequest = {},
   ): Promise<ListPlaybackKeyPairsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListPlaybackKeyPairs",
       requestUri: "/ListPlaybackKeyPairs",
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "keyPairs": [toPlaybackKeyPairSummary],
-        },
-        optional: {
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "keyPairs": [toPlaybackKeyPairSummary],
+      },
+      optional: {
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listStreamKeys(
     {abortSignal, ...params}: RequestConfig & ListStreamKeysRequest,
   ): Promise<ListStreamKeysResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       channelArn: params["channelArn"],
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListStreamKeys",
       requestUri: "/ListStreamKeys",
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "streamKeys": [toStreamKeySummary],
-        },
-        optional: {
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "streamKeys": [toStreamKeySummary],
+      },
+      optional: {
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listStreams(
     {abortSignal, ...params}: RequestConfig & ListStreamsRequest = {},
   ): Promise<ListStreamsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListStreams",
       requestUri: "/ListStreams",
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "streams": [toStreamSummary],
-        },
-        optional: {
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "streams": [toStreamSummary],
+      },
+      optional: {
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listTagsForResource(
     {abortSignal, ...params}: RequestConfig & ListTagsForResourceRequest,
   ): Promise<ListTagsForResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForResource",
       method: "GET",
       requestUri: cmnP.encodePath`/tags/${params["resourceArn"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "tags": x => jsonP.readMap(String, String, x),
-        },
-        optional: {
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "tags": x => jsonP.readMap(String, String, x),
+      },
+      optional: {
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async putMetadata(
     {abortSignal, ...params}: RequestConfig & PutMetadataRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       channelArn: params["channelArn"],
       metadata: params["metadata"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutMetadata",
@@ -410,39 +380,35 @@ export default class IVS {
   async stopStream(
     {abortSignal, ...params}: RequestConfig & StopStreamRequest,
   ): Promise<StopStreamResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       channelArn: params["channelArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopStream",
       requestUri: "/StopStream",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       tags: params["tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
       requestUri: cmnP.encodePath`/tags/${params["resourceArn"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async untagResource(
@@ -458,37 +424,33 @@ export default class IVS {
       method: "DELETE",
       requestUri: cmnP.encodePath`/tags/${params["resourceArn"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async updateChannel(
     {abortSignal, ...params}: RequestConfig & UpdateChannelRequest,
   ): Promise<UpdateChannelResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       arn: params["arn"],
       name: params["name"],
       latencyMode: params["latencyMode"],
       type: params["type"],
       authorized: params["authorized"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateChannel",
       requestUri: "/UpdateChannel",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "channel": toChannel,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "channel": toChannel,
+      },
+    }, await resp.json());
   }
 
 }

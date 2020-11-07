@@ -31,11 +31,11 @@ export default class OpsWorksCM {
   async associateNode(
     {abortSignal, ...params}: RequestConfig & AssociateNodeRequest,
   ): Promise<AssociateNodeResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ServerName: params["ServerName"],
       NodeName: params["NodeName"],
       EngineAttributes: params["EngineAttributes"]?.map(x => fromEngineAttribute(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AssociateNode",
@@ -51,11 +51,11 @@ export default class OpsWorksCM {
   async createBackup(
     {abortSignal, ...params}: RequestConfig & CreateBackupRequest,
   ): Promise<CreateBackupResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ServerName: params["ServerName"],
       Description: params["Description"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateBackup",
@@ -71,7 +71,7 @@ export default class OpsWorksCM {
   async createServer(
     {abortSignal, ...params}: RequestConfig & CreateServerRequest,
   ): Promise<CreateServerResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AssociatePublicIpAddress: params["AssociatePublicIpAddress"],
       CustomDomain: params["CustomDomain"],
       CustomCertificate: params["CustomCertificate"],
@@ -93,7 +93,7 @@ export default class OpsWorksCM {
       SubnetIds: params["SubnetIds"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
       BackupId: params["BackupId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateServer",
@@ -109,9 +109,9 @@ export default class OpsWorksCM {
   async deleteBackup(
     {abortSignal, ...params}: RequestConfig & DeleteBackupRequest,
   ): Promise<DeleteBackupResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       BackupId: params["BackupId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteBackup",
@@ -125,9 +125,9 @@ export default class OpsWorksCM {
   async deleteServer(
     {abortSignal, ...params}: RequestConfig & DeleteServerRequest,
   ): Promise<DeleteServerResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ServerName: params["ServerName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteServer",
@@ -141,8 +141,8 @@ export default class OpsWorksCM {
   async describeAccountAttributes(
     {abortSignal, ...params}: RequestConfig & DescribeAccountAttributesRequest = {},
   ): Promise<DescribeAccountAttributesResponse> {
-    const body: jsonP.JSONObject = params ? {
-    } : {};
+    const body: jsonP.JSONObject = {
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeAccountAttributes",
@@ -158,12 +158,12 @@ export default class OpsWorksCM {
   async describeBackups(
     {abortSignal, ...params}: RequestConfig & DescribeBackupsRequest = {},
   ): Promise<DescribeBackupsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       BackupId: params["BackupId"],
       ServerName: params["ServerName"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeBackups",
@@ -180,11 +180,11 @@ export default class OpsWorksCM {
   async describeEvents(
     {abortSignal, ...params}: RequestConfig & DescribeEventsRequest,
   ): Promise<DescribeEventsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ServerName: params["ServerName"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeEvents",
@@ -201,10 +201,10 @@ export default class OpsWorksCM {
   async describeNodeAssociationStatus(
     {abortSignal, ...params}: RequestConfig & DescribeNodeAssociationStatusRequest,
   ): Promise<DescribeNodeAssociationStatusResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NodeAssociationStatusToken: params["NodeAssociationStatusToken"],
       ServerName: params["ServerName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeNodeAssociationStatus",
@@ -221,11 +221,11 @@ export default class OpsWorksCM {
   async describeServers(
     {abortSignal, ...params}: RequestConfig & DescribeServersRequest = {},
   ): Promise<DescribeServersResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ServerName: params["ServerName"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeServers",
@@ -242,11 +242,11 @@ export default class OpsWorksCM {
   async disassociateNode(
     {abortSignal, ...params}: RequestConfig & DisassociateNodeRequest,
   ): Promise<DisassociateNodeResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ServerName: params["ServerName"],
       NodeName: params["NodeName"],
       EngineAttributes: params["EngineAttributes"]?.map(x => fromEngineAttribute(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisassociateNode",
@@ -262,11 +262,11 @@ export default class OpsWorksCM {
   async exportServerEngineAttribute(
     {abortSignal, ...params}: RequestConfig & ExportServerEngineAttributeRequest,
   ): Promise<ExportServerEngineAttributeResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ExportAttributeName: params["ExportAttributeName"],
       ServerName: params["ServerName"],
       InputAttributes: params["InputAttributes"]?.map(x => fromEngineAttribute(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ExportServerEngineAttribute",
@@ -283,11 +283,11 @@ export default class OpsWorksCM {
   async listTagsForResource(
     {abortSignal, ...params}: RequestConfig & ListTagsForResourceRequest,
   ): Promise<ListTagsForResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForResource",
@@ -304,12 +304,12 @@ export default class OpsWorksCM {
   async restoreServer(
     {abortSignal, ...params}: RequestConfig & RestoreServerRequest,
   ): Promise<RestoreServerResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       BackupId: params["BackupId"],
       ServerName: params["ServerName"],
       InstanceType: params["InstanceType"],
       KeyPair: params["KeyPair"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RestoreServer",
@@ -323,10 +323,10 @@ export default class OpsWorksCM {
   async startMaintenance(
     {abortSignal, ...params}: RequestConfig & StartMaintenanceRequest,
   ): Promise<StartMaintenanceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ServerName: params["ServerName"],
       EngineAttributes: params["EngineAttributes"]?.map(x => fromEngineAttribute(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartMaintenance",
@@ -342,10 +342,10 @@ export default class OpsWorksCM {
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
@@ -359,10 +359,10 @@ export default class OpsWorksCM {
   async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceRequest,
   ): Promise<UntagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
       TagKeys: params["TagKeys"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResource",
@@ -376,13 +376,13 @@ export default class OpsWorksCM {
   async updateServer(
     {abortSignal, ...params}: RequestConfig & UpdateServerRequest,
   ): Promise<UpdateServerResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DisableAutomatedBackup: params["DisableAutomatedBackup"],
       BackupRetentionCount: params["BackupRetentionCount"],
       ServerName: params["ServerName"],
       PreferredMaintenanceWindow: params["PreferredMaintenanceWindow"],
       PreferredBackupWindow: params["PreferredBackupWindow"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateServer",
@@ -398,11 +398,11 @@ export default class OpsWorksCM {
   async updateServerEngineAttributes(
     {abortSignal, ...params}: RequestConfig & UpdateServerEngineAttributesRequest,
   ): Promise<UpdateServerEngineAttributesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ServerName: params["ServerName"],
       AttributeName: params["AttributeName"],
       AttributeValue: params["AttributeValue"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateServerEngineAttributes",

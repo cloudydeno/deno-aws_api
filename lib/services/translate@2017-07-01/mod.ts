@@ -34,9 +34,9 @@ export default class Translate {
   async deleteTerminology(
     {abortSignal, ...params}: RequestConfig & DeleteTerminologyRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteTerminology",
@@ -46,9 +46,9 @@ export default class Translate {
   async describeTextTranslationJob(
     {abortSignal, ...params}: RequestConfig & DescribeTextTranslationJobRequest,
   ): Promise<DescribeTextTranslationJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       JobId: params["JobId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeTextTranslationJob",
@@ -64,10 +64,10 @@ export default class Translate {
   async getTerminology(
     {abortSignal, ...params}: RequestConfig & GetTerminologyRequest,
   ): Promise<GetTerminologyResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       TerminologyDataFormat: params["TerminologyDataFormat"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetTerminology",
@@ -84,13 +84,13 @@ export default class Translate {
   async importTerminology(
     {abortSignal, ...params}: RequestConfig & ImportTerminologyRequest,
   ): Promise<ImportTerminologyResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       MergeStrategy: params["MergeStrategy"],
       Description: params["Description"],
       TerminologyData: fromTerminologyData(params["TerminologyData"]),
       EncryptionKey: fromEncryptionKey(params["EncryptionKey"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ImportTerminology",
@@ -106,10 +106,10 @@ export default class Translate {
   async listTerminologies(
     {abortSignal, ...params}: RequestConfig & ListTerminologiesRequest = {},
   ): Promise<ListTerminologiesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTerminologies",
@@ -126,11 +126,11 @@ export default class Translate {
   async listTextTranslationJobs(
     {abortSignal, ...params}: RequestConfig & ListTextTranslationJobsRequest = {},
   ): Promise<ListTextTranslationJobsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Filter: fromTextTranslationJobFilter(params["Filter"]),
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTextTranslationJobs",
@@ -147,7 +147,7 @@ export default class Translate {
   async startTextTranslationJob(
     {abortSignal, ...params}: RequestConfig & StartTextTranslationJobRequest,
   ): Promise<StartTextTranslationJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       JobName: params["JobName"],
       InputDataConfig: fromInputDataConfig(params["InputDataConfig"]),
       OutputDataConfig: fromOutputDataConfig(params["OutputDataConfig"]),
@@ -156,7 +156,7 @@ export default class Translate {
       TargetLanguageCodes: params["TargetLanguageCodes"],
       TerminologyNames: params["TerminologyNames"],
       ClientToken: params["ClientToken"] ?? generateIdemptToken(),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartTextTranslationJob",
@@ -173,9 +173,9 @@ export default class Translate {
   async stopTextTranslationJob(
     {abortSignal, ...params}: RequestConfig & StopTextTranslationJobRequest,
   ): Promise<StopTextTranslationJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       JobId: params["JobId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopTextTranslationJob",
@@ -192,12 +192,12 @@ export default class Translate {
   async translateText(
     {abortSignal, ...params}: RequestConfig & TranslateTextRequest,
   ): Promise<TranslateTextResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Text: params["Text"],
       TerminologyNames: params["TerminologyNames"],
       SourceLanguageCode: params["SourceLanguageCode"],
       TargetLanguageCode: params["TargetLanguageCode"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TranslateText",

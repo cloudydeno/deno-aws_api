@@ -39,20 +39,24 @@ export default class CodeArtifact {
       action: "AssociateExternalConnection",
       requestUri: "/v1/repository/external-connection",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "repository": toRepositoryDescription,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "repository": toRepositoryDescription,
+      },
+    }, await resp.json());
   }
 
   async copyPackageVersions(
     {abortSignal, ...params}: RequestConfig & CopyPackageVersionsRequest,
   ): Promise<CopyPackageVersionsResult> {
     const query = new URLSearchParams;
+    const body: jsonP.JSONObject = {
+      versions: params["versions"],
+      versionRevisions: params["versionRevisions"],
+      allowOverwrite: params["allowOverwrite"],
+      includeFromUpstream: params["includeFromUpstream"],
+    };
     query.set("domain", params["domain"]?.toString() ?? "");
     if (params["domainOwner"] != null) query.set("domain-owner", params["domainOwner"]?.toString() ?? "");
     query.set("source-repository", params["sourceRepository"]?.toString() ?? "");
@@ -60,77 +64,65 @@ export default class CodeArtifact {
     query.set("format", params["format"]?.toString() ?? "");
     if (params["namespace"] != null) query.set("namespace", params["namespace"]?.toString() ?? "");
     query.set("package", params["package"]?.toString() ?? "");
-    const body: jsonP.JSONObject = params ? {
-      versions: params["versions"],
-      versionRevisions: params["versionRevisions"],
-      allowOverwrite: params["allowOverwrite"],
-      includeFromUpstream: params["includeFromUpstream"],
-    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, query, body,
       action: "CopyPackageVersions",
       requestUri: "/v1/package/versions/copy",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "successfulVersions": x => jsonP.readMap(String, toSuccessfulPackageVersionInfo, x),
-          "failedVersions": x => jsonP.readMap(String, toPackageVersionError, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "successfulVersions": x => jsonP.readMap(String, toSuccessfulPackageVersionInfo, x),
+        "failedVersions": x => jsonP.readMap(String, toPackageVersionError, x),
+      },
+    }, await resp.json());
   }
 
   async createDomain(
     {abortSignal, ...params}: RequestConfig & CreateDomainRequest,
   ): Promise<CreateDomainResult> {
     const query = new URLSearchParams;
-    query.set("domain", params["domain"]?.toString() ?? "");
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       encryptionKey: params["encryptionKey"],
       tags: params["tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
+    query.set("domain", params["domain"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
       abortSignal, query, body,
       action: "CreateDomain",
       requestUri: "/v1/domain",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "domain": toDomainDescription,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "domain": toDomainDescription,
+      },
+    }, await resp.json());
   }
 
   async createRepository(
     {abortSignal, ...params}: RequestConfig & CreateRepositoryRequest,
   ): Promise<CreateRepositoryResult> {
     const query = new URLSearchParams;
-    query.set("domain", params["domain"]?.toString() ?? "");
-    if (params["domainOwner"] != null) query.set("domain-owner", params["domainOwner"]?.toString() ?? "");
-    query.set("repository", params["repository"]?.toString() ?? "");
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       description: params["description"],
       upstreams: params["upstreams"]?.map(x => fromUpstreamRepository(x)),
       tags: params["tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
+    query.set("domain", params["domain"]?.toString() ?? "");
+    if (params["domainOwner"] != null) query.set("domain-owner", params["domainOwner"]?.toString() ?? "");
+    query.set("repository", params["repository"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
       abortSignal, query, body,
       action: "CreateRepository",
       requestUri: "/v1/repository",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "repository": toRepositoryDescription,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "repository": toRepositoryDescription,
+      },
+    }, await resp.json());
   }
 
   async deleteDomain(
@@ -145,14 +137,12 @@ export default class CodeArtifact {
       method: "DELETE",
       requestUri: "/v1/domain",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "domain": toDomainDescription,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "domain": toDomainDescription,
+      },
+    }, await resp.json());
   }
 
   async deleteDomainPermissionsPolicy(
@@ -168,44 +158,40 @@ export default class CodeArtifact {
       method: "DELETE",
       requestUri: "/v1/domain/permissions/policy",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "policy": toResourcePolicy,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "policy": toResourcePolicy,
+      },
+    }, await resp.json());
   }
 
   async deletePackageVersions(
     {abortSignal, ...params}: RequestConfig & DeletePackageVersionsRequest,
   ): Promise<DeletePackageVersionsResult> {
     const query = new URLSearchParams;
+    const body: jsonP.JSONObject = {
+      versions: params["versions"],
+      expectedStatus: params["expectedStatus"],
+    };
     query.set("domain", params["domain"]?.toString() ?? "");
     if (params["domainOwner"] != null) query.set("domain-owner", params["domainOwner"]?.toString() ?? "");
     query.set("repository", params["repository"]?.toString() ?? "");
     query.set("format", params["format"]?.toString() ?? "");
     if (params["namespace"] != null) query.set("namespace", params["namespace"]?.toString() ?? "");
     query.set("package", params["package"]?.toString() ?? "");
-    const body: jsonP.JSONObject = params ? {
-      versions: params["versions"],
-      expectedStatus: params["expectedStatus"],
-    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, query, body,
       action: "DeletePackageVersions",
       requestUri: "/v1/package/versions/delete",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "successfulVersions": x => jsonP.readMap(String, toSuccessfulPackageVersionInfo, x),
-          "failedVersions": x => jsonP.readMap(String, toPackageVersionError, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "successfulVersions": x => jsonP.readMap(String, toSuccessfulPackageVersionInfo, x),
+        "failedVersions": x => jsonP.readMap(String, toPackageVersionError, x),
+      },
+    }, await resp.json());
   }
 
   async deleteRepository(
@@ -221,14 +207,12 @@ export default class CodeArtifact {
       method: "DELETE",
       requestUri: "/v1/repository",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "repository": toRepositoryDescription,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "repository": toRepositoryDescription,
+      },
+    }, await resp.json());
   }
 
   async deleteRepositoryPermissionsPolicy(
@@ -245,14 +229,12 @@ export default class CodeArtifact {
       method: "DELETE",
       requestUri: "/v1/repository/permissions/policies",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "policy": toResourcePolicy,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "policy": toResourcePolicy,
+      },
+    }, await resp.json());
   }
 
   async describeDomain(
@@ -267,14 +249,12 @@ export default class CodeArtifact {
       method: "GET",
       requestUri: "/v1/domain",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "domain": toDomainDescription,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "domain": toDomainDescription,
+      },
+    }, await resp.json());
   }
 
   async describePackageVersion(
@@ -294,14 +274,12 @@ export default class CodeArtifact {
       method: "GET",
       requestUri: "/v1/package/version",
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "packageVersion": toPackageVersionDescription,
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "packageVersion": toPackageVersionDescription,
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async describeRepository(
@@ -317,14 +295,12 @@ export default class CodeArtifact {
       method: "GET",
       requestUri: "/v1/repository",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "repository": toRepositoryDescription,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "repository": toRepositoryDescription,
+      },
+    }, await resp.json());
   }
 
   async disassociateExternalConnection(
@@ -341,45 +317,41 @@ export default class CodeArtifact {
       method: "DELETE",
       requestUri: "/v1/repository/external-connection",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "repository": toRepositoryDescription,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "repository": toRepositoryDescription,
+      },
+    }, await resp.json());
   }
 
   async disposePackageVersions(
     {abortSignal, ...params}: RequestConfig & DisposePackageVersionsRequest,
   ): Promise<DisposePackageVersionsResult> {
     const query = new URLSearchParams;
+    const body: jsonP.JSONObject = {
+      versions: params["versions"],
+      versionRevisions: params["versionRevisions"],
+      expectedStatus: params["expectedStatus"],
+    };
     query.set("domain", params["domain"]?.toString() ?? "");
     if (params["domainOwner"] != null) query.set("domain-owner", params["domainOwner"]?.toString() ?? "");
     query.set("repository", params["repository"]?.toString() ?? "");
     query.set("format", params["format"]?.toString() ?? "");
     if (params["namespace"] != null) query.set("namespace", params["namespace"]?.toString() ?? "");
     query.set("package", params["package"]?.toString() ?? "");
-    const body: jsonP.JSONObject = params ? {
-      versions: params["versions"],
-      versionRevisions: params["versionRevisions"],
-      expectedStatus: params["expectedStatus"],
-    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, query, body,
       action: "DisposePackageVersions",
       requestUri: "/v1/package/versions/dispose",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "successfulVersions": x => jsonP.readMap(String, toSuccessfulPackageVersionInfo, x),
-          "failedVersions": x => jsonP.readMap(String, toPackageVersionError, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "successfulVersions": x => jsonP.readMap(String, toSuccessfulPackageVersionInfo, x),
+        "failedVersions": x => jsonP.readMap(String, toPackageVersionError, x),
+      },
+    }, await resp.json());
   }
 
   async getAuthorizationToken(
@@ -394,15 +366,13 @@ export default class CodeArtifact {
       action: "GetAuthorizationToken",
       requestUri: "/v1/authorization-token",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "authorizationToken": "s",
-          "expiration": "d",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "authorizationToken": "s",
+        "expiration": "d",
+      },
+    }, await resp.json());
   }
 
   async getDomainPermissionsPolicy(
@@ -417,14 +387,12 @@ export default class CodeArtifact {
       method: "GET",
       requestUri: "/v1/domain/permissions/policy",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "policy": toResourcePolicy,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "policy": toResourcePolicy,
+      },
+    }, await resp.json());
   }
 
   async getPackageVersionAsset(
@@ -471,19 +439,17 @@ export default class CodeArtifact {
       method: "GET",
       requestUri: "/v1/package/version/readme",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "format": (x: jsonP.JSONValue) => cmnP.readEnum<PackageFormat>(x),
-          "namespace": "s",
-          "package": "s",
-          "version": "s",
-          "versionRevision": "s",
-          "readme": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "format": (x: jsonP.JSONValue) => cmnP.readEnum<PackageFormat>(x),
+        "namespace": "s",
+        "package": "s",
+        "version": "s",
+        "versionRevision": "s",
+        "readme": "s",
+      },
+    }, await resp.json());
   }
 
   async getRepositoryEndpoint(
@@ -500,14 +466,12 @@ export default class CodeArtifact {
       method: "GET",
       requestUri: "/v1/repository/endpoint",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "repositoryEndpoint": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "repositoryEndpoint": "s",
+      },
+    }, await resp.json());
   }
 
   async getRepositoryPermissionsPolicy(
@@ -523,37 +487,33 @@ export default class CodeArtifact {
       method: "GET",
       requestUri: "/v1/repository/permissions/policy",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "policy": toResourcePolicy,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "policy": toResourcePolicy,
+      },
+    }, await resp.json());
   }
 
   async listDomains(
     {abortSignal, ...params}: RequestConfig & ListDomainsRequest = {},
   ): Promise<ListDomainsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       maxResults: params["maxResults"],
       nextToken: params["nextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListDomains",
       requestUri: "/v1/domains",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "domains": [toDomainSummary],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "domains": [toDomainSummary],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listPackageVersionAssets(
@@ -574,20 +534,18 @@ export default class CodeArtifact {
       action: "ListPackageVersionAssets",
       requestUri: "/v1/package/version/assets",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "format": (x: jsonP.JSONValue) => cmnP.readEnum<PackageFormat>(x),
-          "namespace": "s",
-          "package": "s",
-          "version": "s",
-          "versionRevision": "s",
-          "nextToken": "s",
-          "assets": [toAssetSummary],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "format": (x: jsonP.JSONValue) => cmnP.readEnum<PackageFormat>(x),
+        "namespace": "s",
+        "package": "s",
+        "version": "s",
+        "versionRevision": "s",
+        "nextToken": "s",
+        "assets": [toAssetSummary],
+      },
+    }, await resp.json());
   }
 
   async listPackageVersionDependencies(
@@ -607,20 +565,18 @@ export default class CodeArtifact {
       action: "ListPackageVersionDependencies",
       requestUri: "/v1/package/version/dependencies",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "format": (x: jsonP.JSONValue) => cmnP.readEnum<PackageFormat>(x),
-          "namespace": "s",
-          "package": "s",
-          "version": "s",
-          "versionRevision": "s",
-          "nextToken": "s",
-          "dependencies": [toPackageDependency],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "format": (x: jsonP.JSONValue) => cmnP.readEnum<PackageFormat>(x),
+        "namespace": "s",
+        "package": "s",
+        "version": "s",
+        "versionRevision": "s",
+        "nextToken": "s",
+        "dependencies": [toPackageDependency],
+      },
+    }, await resp.json());
   }
 
   async listPackageVersions(
@@ -642,19 +598,17 @@ export default class CodeArtifact {
       action: "ListPackageVersions",
       requestUri: "/v1/package/versions",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "defaultDisplayVersion": "s",
-          "format": (x: jsonP.JSONValue) => cmnP.readEnum<PackageFormat>(x),
-          "namespace": "s",
-          "package": "s",
-          "versions": [toPackageVersionSummary],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "defaultDisplayVersion": "s",
+        "format": (x: jsonP.JSONValue) => cmnP.readEnum<PackageFormat>(x),
+        "namespace": "s",
+        "package": "s",
+        "versions": [toPackageVersionSummary],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listPackages(
@@ -674,15 +628,13 @@ export default class CodeArtifact {
       action: "ListPackages",
       requestUri: "/v1/packages",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "packages": [toPackageSummary],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "packages": [toPackageSummary],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listRepositories(
@@ -697,15 +649,13 @@ export default class CodeArtifact {
       action: "ListRepositories",
       requestUri: "/v1/repositories",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "repositories": [toRepositorySummary],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "repositories": [toRepositorySummary],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listRepositoriesInDomain(
@@ -723,15 +673,13 @@ export default class CodeArtifact {
       action: "ListRepositoriesInDomain",
       requestUri: "/v1/domain/repositories",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "repositories": [toRepositorySummary],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "repositories": [toRepositorySummary],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listTagsForResource(
@@ -744,167 +692,153 @@ export default class CodeArtifact {
       action: "ListTagsForResource",
       requestUri: "/v1/tags",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "tags": [toTag],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "tags": [toTag],
+      },
+    }, await resp.json());
   }
 
   async putDomainPermissionsPolicy(
     {abortSignal, ...params}: RequestConfig & PutDomainPermissionsPolicyRequest,
   ): Promise<PutDomainPermissionsPolicyResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       domain: params["domain"],
       domainOwner: params["domainOwner"],
       policyRevision: params["policyRevision"],
       policyDocument: params["policyDocument"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutDomainPermissionsPolicy",
       method: "PUT",
       requestUri: "/v1/domain/permissions/policy",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "policy": toResourcePolicy,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "policy": toResourcePolicy,
+      },
+    }, await resp.json());
   }
 
   async putRepositoryPermissionsPolicy(
     {abortSignal, ...params}: RequestConfig & PutRepositoryPermissionsPolicyRequest,
   ): Promise<PutRepositoryPermissionsPolicyResult> {
     const query = new URLSearchParams;
+    const body: jsonP.JSONObject = {
+      policyRevision: params["policyRevision"],
+      policyDocument: params["policyDocument"],
+    };
     query.set("domain", params["domain"]?.toString() ?? "");
     if (params["domainOwner"] != null) query.set("domain-owner", params["domainOwner"]?.toString() ?? "");
     query.set("repository", params["repository"]?.toString() ?? "");
-    const body: jsonP.JSONObject = params ? {
-      policyRevision: params["policyRevision"],
-      policyDocument: params["policyDocument"],
-    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, query, body,
       action: "PutRepositoryPermissionsPolicy",
       method: "PUT",
       requestUri: "/v1/repository/permissions/policy",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "policy": toResourcePolicy,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "policy": toResourcePolicy,
+      },
+    }, await resp.json());
   }
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResult> {
     const query = new URLSearchParams;
-    query.set("resourceArn", params["resourceArn"]?.toString() ?? "");
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       tags: params["tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
+    query.set("resourceArn", params["resourceArn"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
       abortSignal, query, body,
       action: "TagResource",
       requestUri: "/v1/tag",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceRequest,
   ): Promise<UntagResourceResult> {
     const query = new URLSearchParams;
-    query.set("resourceArn", params["resourceArn"]?.toString() ?? "");
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       tagKeys: params["tagKeys"],
-    } : {};
+    };
+    query.set("resourceArn", params["resourceArn"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
       abortSignal, query, body,
       action: "UntagResource",
       requestUri: "/v1/untag",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async updatePackageVersionsStatus(
     {abortSignal, ...params}: RequestConfig & UpdatePackageVersionsStatusRequest,
   ): Promise<UpdatePackageVersionsStatusResult> {
     const query = new URLSearchParams;
+    const body: jsonP.JSONObject = {
+      versions: params["versions"],
+      versionRevisions: params["versionRevisions"],
+      expectedStatus: params["expectedStatus"],
+      targetStatus: params["targetStatus"],
+    };
     query.set("domain", params["domain"]?.toString() ?? "");
     if (params["domainOwner"] != null) query.set("domain-owner", params["domainOwner"]?.toString() ?? "");
     query.set("repository", params["repository"]?.toString() ?? "");
     query.set("format", params["format"]?.toString() ?? "");
     if (params["namespace"] != null) query.set("namespace", params["namespace"]?.toString() ?? "");
     query.set("package", params["package"]?.toString() ?? "");
-    const body: jsonP.JSONObject = params ? {
-      versions: params["versions"],
-      versionRevisions: params["versionRevisions"],
-      expectedStatus: params["expectedStatus"],
-      targetStatus: params["targetStatus"],
-    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, query, body,
       action: "UpdatePackageVersionsStatus",
       requestUri: "/v1/package/versions/update_status",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "successfulVersions": x => jsonP.readMap(String, toSuccessfulPackageVersionInfo, x),
-          "failedVersions": x => jsonP.readMap(String, toPackageVersionError, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "successfulVersions": x => jsonP.readMap(String, toSuccessfulPackageVersionInfo, x),
+        "failedVersions": x => jsonP.readMap(String, toPackageVersionError, x),
+      },
+    }, await resp.json());
   }
 
   async updateRepository(
     {abortSignal, ...params}: RequestConfig & UpdateRepositoryRequest,
   ): Promise<UpdateRepositoryResult> {
     const query = new URLSearchParams;
+    const body: jsonP.JSONObject = {
+      description: params["description"],
+      upstreams: params["upstreams"]?.map(x => fromUpstreamRepository(x)),
+    };
     query.set("domain", params["domain"]?.toString() ?? "");
     if (params["domainOwner"] != null) query.set("domain-owner", params["domainOwner"]?.toString() ?? "");
     query.set("repository", params["repository"]?.toString() ?? "");
-    const body: jsonP.JSONObject = params ? {
-      description: params["description"],
-      upstreams: params["upstreams"]?.map(x => fromUpstreamRepository(x)),
-    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, query, body,
       action: "UpdateRepository",
       method: "PUT",
       requestUri: "/v1/repository",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "repository": toRepositoryDescription,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "repository": toRepositoryDescription,
+      },
+    }, await resp.json());
   }
 
 }

@@ -30,12 +30,12 @@ export default class TranscribeService {
   async createLanguageModel(
     {abortSignal, ...params}: RequestConfig & CreateLanguageModelRequest,
   ): Promise<CreateLanguageModelResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       LanguageCode: params["LanguageCode"],
       BaseModelName: params["BaseModelName"],
       ModelName: params["ModelName"],
       InputDataConfig: fromInputDataConfig(params["InputDataConfig"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateLanguageModel",
@@ -55,11 +55,11 @@ export default class TranscribeService {
   async createMedicalVocabulary(
     {abortSignal, ...params}: RequestConfig & CreateMedicalVocabularyRequest,
   ): Promise<CreateMedicalVocabularyResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       VocabularyName: params["VocabularyName"],
       LanguageCode: params["LanguageCode"],
       VocabularyFileUri: params["VocabularyFileUri"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateMedicalVocabulary",
@@ -79,12 +79,12 @@ export default class TranscribeService {
   async createVocabulary(
     {abortSignal, ...params}: RequestConfig & CreateVocabularyRequest,
   ): Promise<CreateVocabularyResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       VocabularyName: params["VocabularyName"],
       LanguageCode: params["LanguageCode"],
       Phrases: params["Phrases"],
       VocabularyFileUri: params["VocabularyFileUri"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateVocabulary",
@@ -104,12 +104,12 @@ export default class TranscribeService {
   async createVocabularyFilter(
     {abortSignal, ...params}: RequestConfig & CreateVocabularyFilterRequest,
   ): Promise<CreateVocabularyFilterResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       VocabularyFilterName: params["VocabularyFilterName"],
       LanguageCode: params["LanguageCode"],
       Words: params["Words"],
       VocabularyFilterFileUri: params["VocabularyFilterFileUri"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateVocabularyFilter",
@@ -127,9 +127,9 @@ export default class TranscribeService {
   async deleteLanguageModel(
     {abortSignal, ...params}: RequestConfig & DeleteLanguageModelRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ModelName: params["ModelName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteLanguageModel",
@@ -139,9 +139,9 @@ export default class TranscribeService {
   async deleteMedicalTranscriptionJob(
     {abortSignal, ...params}: RequestConfig & DeleteMedicalTranscriptionJobRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       MedicalTranscriptionJobName: params["MedicalTranscriptionJobName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteMedicalTranscriptionJob",
@@ -151,9 +151,9 @@ export default class TranscribeService {
   async deleteMedicalVocabulary(
     {abortSignal, ...params}: RequestConfig & DeleteMedicalVocabularyRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       VocabularyName: params["VocabularyName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteMedicalVocabulary",
@@ -163,9 +163,9 @@ export default class TranscribeService {
   async deleteTranscriptionJob(
     {abortSignal, ...params}: RequestConfig & DeleteTranscriptionJobRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TranscriptionJobName: params["TranscriptionJobName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteTranscriptionJob",
@@ -175,9 +175,9 @@ export default class TranscribeService {
   async deleteVocabulary(
     {abortSignal, ...params}: RequestConfig & DeleteVocabularyRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       VocabularyName: params["VocabularyName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteVocabulary",
@@ -187,9 +187,9 @@ export default class TranscribeService {
   async deleteVocabularyFilter(
     {abortSignal, ...params}: RequestConfig & DeleteVocabularyFilterRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       VocabularyFilterName: params["VocabularyFilterName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteVocabularyFilter",
@@ -199,9 +199,9 @@ export default class TranscribeService {
   async describeLanguageModel(
     {abortSignal, ...params}: RequestConfig & DescribeLanguageModelRequest,
   ): Promise<DescribeLanguageModelResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ModelName: params["ModelName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeLanguageModel",
@@ -217,9 +217,9 @@ export default class TranscribeService {
   async getMedicalTranscriptionJob(
     {abortSignal, ...params}: RequestConfig & GetMedicalTranscriptionJobRequest,
   ): Promise<GetMedicalTranscriptionJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       MedicalTranscriptionJobName: params["MedicalTranscriptionJobName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetMedicalTranscriptionJob",
@@ -235,9 +235,9 @@ export default class TranscribeService {
   async getMedicalVocabulary(
     {abortSignal, ...params}: RequestConfig & GetMedicalVocabularyRequest,
   ): Promise<GetMedicalVocabularyResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       VocabularyName: params["VocabularyName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetMedicalVocabulary",
@@ -258,9 +258,9 @@ export default class TranscribeService {
   async getTranscriptionJob(
     {abortSignal, ...params}: RequestConfig & GetTranscriptionJobRequest,
   ): Promise<GetTranscriptionJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TranscriptionJobName: params["TranscriptionJobName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetTranscriptionJob",
@@ -276,9 +276,9 @@ export default class TranscribeService {
   async getVocabulary(
     {abortSignal, ...params}: RequestConfig & GetVocabularyRequest,
   ): Promise<GetVocabularyResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       VocabularyName: params["VocabularyName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetVocabulary",
@@ -299,9 +299,9 @@ export default class TranscribeService {
   async getVocabularyFilter(
     {abortSignal, ...params}: RequestConfig & GetVocabularyFilterRequest,
   ): Promise<GetVocabularyFilterResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       VocabularyFilterName: params["VocabularyFilterName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetVocabularyFilter",
@@ -320,12 +320,12 @@ export default class TranscribeService {
   async listLanguageModels(
     {abortSignal, ...params}: RequestConfig & ListLanguageModelsRequest = {},
   ): Promise<ListLanguageModelsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       StatusEquals: params["StatusEquals"],
       NameContains: params["NameContains"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListLanguageModels",
@@ -342,12 +342,12 @@ export default class TranscribeService {
   async listMedicalTranscriptionJobs(
     {abortSignal, ...params}: RequestConfig & ListMedicalTranscriptionJobsRequest = {},
   ): Promise<ListMedicalTranscriptionJobsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Status: params["Status"],
       JobNameContains: params["JobNameContains"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListMedicalTranscriptionJobs",
@@ -365,12 +365,12 @@ export default class TranscribeService {
   async listMedicalVocabularies(
     {abortSignal, ...params}: RequestConfig & ListMedicalVocabulariesRequest = {},
   ): Promise<ListMedicalVocabulariesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
       StateEquals: params["StateEquals"],
       NameContains: params["NameContains"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListMedicalVocabularies",
@@ -388,12 +388,12 @@ export default class TranscribeService {
   async listTranscriptionJobs(
     {abortSignal, ...params}: RequestConfig & ListTranscriptionJobsRequest = {},
   ): Promise<ListTranscriptionJobsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Status: params["Status"],
       JobNameContains: params["JobNameContains"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTranscriptionJobs",
@@ -411,12 +411,12 @@ export default class TranscribeService {
   async listVocabularies(
     {abortSignal, ...params}: RequestConfig & ListVocabulariesRequest = {},
   ): Promise<ListVocabulariesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
       StateEquals: params["StateEquals"],
       NameContains: params["NameContains"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListVocabularies",
@@ -434,11 +434,11 @@ export default class TranscribeService {
   async listVocabularyFilters(
     {abortSignal, ...params}: RequestConfig & ListVocabularyFiltersRequest = {},
   ): Promise<ListVocabularyFiltersResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
       NameContains: params["NameContains"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListVocabularyFilters",
@@ -455,7 +455,7 @@ export default class TranscribeService {
   async startMedicalTranscriptionJob(
     {abortSignal, ...params}: RequestConfig & StartMedicalTranscriptionJobRequest,
   ): Promise<StartMedicalTranscriptionJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       MedicalTranscriptionJobName: params["MedicalTranscriptionJobName"],
       LanguageCode: params["LanguageCode"],
       MediaSampleRateHertz: params["MediaSampleRateHertz"],
@@ -467,7 +467,7 @@ export default class TranscribeService {
       Settings: fromMedicalTranscriptionSetting(params["Settings"]),
       Specialty: params["Specialty"],
       Type: params["Type"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartMedicalTranscriptionJob",
@@ -483,7 +483,7 @@ export default class TranscribeService {
   async startTranscriptionJob(
     {abortSignal, ...params}: RequestConfig & StartTranscriptionJobRequest,
   ): Promise<StartTranscriptionJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TranscriptionJobName: params["TranscriptionJobName"],
       LanguageCode: params["LanguageCode"],
       MediaSampleRateHertz: params["MediaSampleRateHertz"],
@@ -498,7 +498,7 @@ export default class TranscribeService {
       ContentRedaction: fromContentRedaction(params["ContentRedaction"]),
       IdentifyLanguage: params["IdentifyLanguage"],
       LanguageOptions: params["LanguageOptions"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartTranscriptionJob",
@@ -514,11 +514,11 @@ export default class TranscribeService {
   async updateMedicalVocabulary(
     {abortSignal, ...params}: RequestConfig & UpdateMedicalVocabularyRequest,
   ): Promise<UpdateMedicalVocabularyResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       VocabularyName: params["VocabularyName"],
       LanguageCode: params["LanguageCode"],
       VocabularyFileUri: params["VocabularyFileUri"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateMedicalVocabulary",
@@ -537,12 +537,12 @@ export default class TranscribeService {
   async updateVocabulary(
     {abortSignal, ...params}: RequestConfig & UpdateVocabularyRequest,
   ): Promise<UpdateVocabularyResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       VocabularyName: params["VocabularyName"],
       LanguageCode: params["LanguageCode"],
       Phrases: params["Phrases"],
       VocabularyFileUri: params["VocabularyFileUri"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateVocabulary",
@@ -561,11 +561,11 @@ export default class TranscribeService {
   async updateVocabularyFilter(
     {abortSignal, ...params}: RequestConfig & UpdateVocabularyFilterRequest,
   ): Promise<UpdateVocabularyFilterResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       VocabularyFilterName: params["VocabularyFilterName"],
       Words: params["Words"],
       VocabularyFilterFileUri: params["VocabularyFilterFileUri"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateVocabularyFilter",

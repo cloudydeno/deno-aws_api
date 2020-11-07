@@ -29,76 +29,70 @@ export default class MediaConnect {
   async addFlowOutputs(
     {abortSignal, ...params}: RequestConfig & AddFlowOutputsRequest,
   ): Promise<AddFlowOutputsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       outputs: params["Outputs"]?.map(x => fromAddOutputRequest(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AddFlowOutputs",
       requestUri: cmnP.encodePath`/v1/flows/${params["FlowArn"]}/outputs`,
       responseCode: 201,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "FlowArn": "s",
-          "Outputs": [toOutput],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "FlowArn": "s",
+        "Outputs": [toOutput],
+      },
+    }, await resp.json());
   }
 
   async addFlowSources(
     {abortSignal, ...params}: RequestConfig & AddFlowSourcesRequest,
   ): Promise<AddFlowSourcesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       sources: params["Sources"]?.map(x => fromSetSourceRequest(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AddFlowSources",
       requestUri: cmnP.encodePath`/v1/flows/${params["FlowArn"]}/source`,
       responseCode: 201,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "FlowArn": "s",
-          "Sources": [toSource],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "FlowArn": "s",
+        "Sources": [toSource],
+      },
+    }, await resp.json());
   }
 
   async addFlowVpcInterfaces(
     {abortSignal, ...params}: RequestConfig & AddFlowVpcInterfacesRequest,
   ): Promise<AddFlowVpcInterfacesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       vpcInterfaces: params["VpcInterfaces"]?.map(x => fromVpcInterfaceRequest(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AddFlowVpcInterfaces",
       requestUri: cmnP.encodePath`/v1/flows/${params["FlowArn"]}/vpcInterfaces`,
       responseCode: 201,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "FlowArn": "s",
-          "VpcInterfaces": [toVpcInterface],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "FlowArn": "s",
+        "VpcInterfaces": [toVpcInterface],
+      },
+    }, await resp.json());
   }
 
   async createFlow(
     {abortSignal, ...params}: RequestConfig & CreateFlowRequest,
   ): Promise<CreateFlowResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       availabilityZone: params["AvailabilityZone"],
       entitlements: params["Entitlements"]?.map(x => fromGrantEntitlementRequest(x)),
       name: params["Name"],
@@ -107,21 +101,19 @@ export default class MediaConnect {
       sourceFailoverConfig: fromFailoverConfig(params["SourceFailoverConfig"]),
       sources: params["Sources"]?.map(x => fromSetSourceRequest(x)),
       vpcInterfaces: params["VpcInterfaces"]?.map(x => fromVpcInterfaceRequest(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateFlow",
       requestUri: "/v1/flows",
       responseCode: 201,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Flow": toFlow,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Flow": toFlow,
+      },
+    }, await resp.json());
   }
 
   async deleteFlow(
@@ -135,15 +127,13 @@ export default class MediaConnect {
       requestUri: cmnP.encodePath`/v1/flows/${params["FlowArn"]}`,
       responseCode: 202,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "FlowArn": "s",
-          "Status": (x: jsonP.JSONValue) => cmnP.readEnum<Status>(x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "FlowArn": "s",
+        "Status": (x: jsonP.JSONValue) => cmnP.readEnum<Status>(x),
+      },
+    }, await resp.json());
   }
 
   async describeFlow(
@@ -157,15 +147,13 @@ export default class MediaConnect {
       requestUri: cmnP.encodePath`/v1/flows/${params["FlowArn"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Flow": toFlow,
-          "Messages": toMessages,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Flow": toFlow,
+        "Messages": toMessages,
+      },
+    }, await resp.json());
   }
 
   async describeOffering(
@@ -179,14 +167,12 @@ export default class MediaConnect {
       requestUri: cmnP.encodePath`/v1/offerings/${params["OfferingArn"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Offering": toOffering,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Offering": toOffering,
+      },
+    }, await resp.json());
   }
 
   async describeReservation(
@@ -200,37 +186,33 @@ export default class MediaConnect {
       requestUri: cmnP.encodePath`/v1/reservations/${params["ReservationArn"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Reservation": toReservation,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Reservation": toReservation,
+      },
+    }, await resp.json());
   }
 
   async grantFlowEntitlements(
     {abortSignal, ...params}: RequestConfig & GrantFlowEntitlementsRequest,
   ): Promise<GrantFlowEntitlementsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       entitlements: params["Entitlements"]?.map(x => fromGrantEntitlementRequest(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GrantFlowEntitlements",
       requestUri: cmnP.encodePath`/v1/flows/${params["FlowArn"]}/entitlements`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Entitlements": [toEntitlement],
-          "FlowArn": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Entitlements": [toEntitlement],
+        "FlowArn": "s",
+      },
+    }, await resp.json());
   }
 
   async listEntitlements(
@@ -246,15 +228,13 @@ export default class MediaConnect {
       requestUri: "/v1/entitlements",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Entitlements": [toListedEntitlement],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Entitlements": [toListedEntitlement],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listFlows(
@@ -270,15 +250,13 @@ export default class MediaConnect {
       requestUri: "/v1/flows",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Flows": [toListedFlow],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Flows": [toListedFlow],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listOfferings(
@@ -294,15 +272,13 @@ export default class MediaConnect {
       requestUri: "/v1/offerings",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "NextToken": "s",
-          "Offerings": [toOffering],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "NextToken": "s",
+        "Offerings": [toOffering],
+      },
+    }, await resp.json());
   }
 
   async listReservations(
@@ -318,15 +294,13 @@ export default class MediaConnect {
       requestUri: "/v1/reservations",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "NextToken": "s",
-          "Reservations": [toReservation],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "NextToken": "s",
+        "Reservations": [toReservation],
+      },
+    }, await resp.json());
   }
 
   async listTagsForResource(
@@ -340,37 +314,33 @@ export default class MediaConnect {
       requestUri: cmnP.encodePath`/tags/${params["ResourceArn"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async purchaseOffering(
     {abortSignal, ...params}: RequestConfig & PurchaseOfferingRequest,
   ): Promise<PurchaseOfferingResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       reservationName: params["ReservationName"],
       start: params["Start"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PurchaseOffering",
       requestUri: cmnP.encodePath`/v1/offerings/${params["OfferingArn"]}`,
       responseCode: 201,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Reservation": toReservation,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Reservation": toReservation,
+      },
+    }, await resp.json());
   }
 
   async removeFlowOutput(
@@ -384,15 +354,13 @@ export default class MediaConnect {
       requestUri: cmnP.encodePath`/v1/flows/${params["FlowArn"]}/outputs/${params["OutputArn"]}`,
       responseCode: 202,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "FlowArn": "s",
-          "OutputArn": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "FlowArn": "s",
+        "OutputArn": "s",
+      },
+    }, await resp.json());
   }
 
   async removeFlowSource(
@@ -406,15 +374,13 @@ export default class MediaConnect {
       requestUri: cmnP.encodePath`/v1/flows/${params["FlowArn"]}/source/${params["SourceArn"]}`,
       responseCode: 202,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "FlowArn": "s",
-          "SourceArn": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "FlowArn": "s",
+        "SourceArn": "s",
+      },
+    }, await resp.json());
   }
 
   async removeFlowVpcInterface(
@@ -428,16 +394,14 @@ export default class MediaConnect {
       requestUri: cmnP.encodePath`/v1/flows/${params["FlowArn"]}/vpcInterfaces/${params["VpcInterfaceName"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "FlowArn": "s",
-          "NonDeletedNetworkInterfaceIds": ["s"],
-          "VpcInterfaceName": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "FlowArn": "s",
+        "NonDeletedNetworkInterfaceIds": ["s"],
+        "VpcInterfaceName": "s",
+      },
+    }, await resp.json());
   }
 
   async revokeFlowEntitlement(
@@ -451,15 +415,13 @@ export default class MediaConnect {
       requestUri: cmnP.encodePath`/v1/flows/${params["FlowArn"]}/entitlements/${params["EntitlementArn"]}`,
       responseCode: 202,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "EntitlementArn": "s",
-          "FlowArn": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "EntitlementArn": "s",
+        "FlowArn": "s",
+      },
+    }, await resp.json());
   }
 
   async startFlow(
@@ -472,15 +434,13 @@ export default class MediaConnect {
       requestUri: cmnP.encodePath`/v1/flows/start/${params["FlowArn"]}`,
       responseCode: 202,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "FlowArn": "s",
-          "Status": (x: jsonP.JSONValue) => cmnP.readEnum<Status>(x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "FlowArn": "s",
+        "Status": (x: jsonP.JSONValue) => cmnP.readEnum<Status>(x),
+      },
+    }, await resp.json());
   }
 
   async stopFlow(
@@ -493,23 +453,21 @@ export default class MediaConnect {
       requestUri: cmnP.encodePath`/v1/flows/stop/${params["FlowArn"]}`,
       responseCode: 202,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "FlowArn": "s",
-          "Status": (x: jsonP.JSONValue) => cmnP.readEnum<Status>(x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "FlowArn": "s",
+        "Status": (x: jsonP.JSONValue) => cmnP.readEnum<Status>(x),
+      },
+    }, await resp.json());
   }
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       tags: params["Tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
@@ -537,9 +495,9 @@ export default class MediaConnect {
   async updateFlow(
     {abortSignal, ...params}: RequestConfig & UpdateFlowRequest,
   ): Promise<UpdateFlowResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       sourceFailoverConfig: fromUpdateFailoverConfig(params["SourceFailoverConfig"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateFlow",
@@ -547,25 +505,23 @@ export default class MediaConnect {
       requestUri: cmnP.encodePath`/v1/flows/${params["FlowArn"]}`,
       responseCode: 202,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Flow": toFlow,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Flow": toFlow,
+      },
+    }, await resp.json());
   }
 
   async updateFlowEntitlement(
     {abortSignal, ...params}: RequestConfig & UpdateFlowEntitlementRequest,
   ): Promise<UpdateFlowEntitlementResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       description: params["Description"],
       encryption: fromUpdateEncryption(params["Encryption"]),
       entitlementStatus: params["EntitlementStatus"],
       subscribers: params["Subscribers"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateFlowEntitlement",
@@ -573,21 +529,19 @@ export default class MediaConnect {
       requestUri: cmnP.encodePath`/v1/flows/${params["FlowArn"]}/entitlements/${params["EntitlementArn"]}`,
       responseCode: 202,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Entitlement": toEntitlement,
-          "FlowArn": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Entitlement": toEntitlement,
+        "FlowArn": "s",
+      },
+    }, await resp.json());
   }
 
   async updateFlowOutput(
     {abortSignal, ...params}: RequestConfig & UpdateFlowOutputRequest,
   ): Promise<UpdateFlowOutputResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       cidrAllowList: params["CidrAllowList"],
       description: params["Description"],
       destination: params["Destination"],
@@ -599,7 +553,7 @@ export default class MediaConnect {
       smoothingLatency: params["SmoothingLatency"],
       streamId: params["StreamId"],
       vpcInterfaceAttachment: fromVpcInterfaceAttachment(params["VpcInterfaceAttachment"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateFlowOutput",
@@ -607,21 +561,19 @@ export default class MediaConnect {
       requestUri: cmnP.encodePath`/v1/flows/${params["FlowArn"]}/outputs/${params["OutputArn"]}`,
       responseCode: 202,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "FlowArn": "s",
-          "Output": toOutput,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "FlowArn": "s",
+        "Output": toOutput,
+      },
+    }, await resp.json());
   }
 
   async updateFlowSource(
     {abortSignal, ...params}: RequestConfig & UpdateFlowSourceRequest,
   ): Promise<UpdateFlowSourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       decryption: fromUpdateEncryption(params["Decryption"]),
       description: params["Description"],
       entitlementArn: params["EntitlementArn"],
@@ -632,7 +584,7 @@ export default class MediaConnect {
       streamId: params["StreamId"],
       vpcInterfaceName: params["VpcInterfaceName"],
       whitelistCidr: params["WhitelistCidr"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateFlowSource",
@@ -640,15 +592,13 @@ export default class MediaConnect {
       requestUri: cmnP.encodePath`/v1/flows/${params["FlowArn"]}/source/${params["SourceArn"]}`,
       responseCode: 202,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "FlowArn": "s",
-          "Source": toSource,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "FlowArn": "s",
+        "Source": toSource,
+      },
+    }, await resp.json());
   }
 
 }

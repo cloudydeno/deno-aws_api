@@ -30,7 +30,7 @@ export default class Personalize {
   async createBatchInferenceJob(
     {abortSignal, ...params}: RequestConfig & CreateBatchInferenceJobRequest,
   ): Promise<CreateBatchInferenceJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       jobName: params["jobName"],
       solutionVersionArn: params["solutionVersionArn"],
       filterArn: params["filterArn"],
@@ -39,7 +39,7 @@ export default class Personalize {
       jobOutput: fromBatchInferenceJobOutput(params["jobOutput"]),
       roleArn: params["roleArn"],
       batchInferenceJobConfig: fromBatchInferenceJobConfig(params["batchInferenceJobConfig"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateBatchInferenceJob",
@@ -55,12 +55,12 @@ export default class Personalize {
   async createCampaign(
     {abortSignal, ...params}: RequestConfig & CreateCampaignRequest,
   ): Promise<CreateCampaignResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       name: params["name"],
       solutionVersionArn: params["solutionVersionArn"],
       minProvisionedTPS: params["minProvisionedTPS"],
       campaignConfig: fromCampaignConfig(params["campaignConfig"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateCampaign",
@@ -76,12 +76,12 @@ export default class Personalize {
   async createDataset(
     {abortSignal, ...params}: RequestConfig & CreateDatasetRequest,
   ): Promise<CreateDatasetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       name: params["name"],
       schemaArn: params["schemaArn"],
       datasetGroupArn: params["datasetGroupArn"],
       datasetType: params["datasetType"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDataset",
@@ -97,11 +97,11 @@ export default class Personalize {
   async createDatasetGroup(
     {abortSignal, ...params}: RequestConfig & CreateDatasetGroupRequest,
   ): Promise<CreateDatasetGroupResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       name: params["name"],
       roleArn: params["roleArn"],
       kmsKeyArn: params["kmsKeyArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDatasetGroup",
@@ -117,12 +117,12 @@ export default class Personalize {
   async createDatasetImportJob(
     {abortSignal, ...params}: RequestConfig & CreateDatasetImportJobRequest,
   ): Promise<CreateDatasetImportJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       jobName: params["jobName"],
       datasetArn: params["datasetArn"],
       dataSource: fromDataSource(params["dataSource"]),
       roleArn: params["roleArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDatasetImportJob",
@@ -138,10 +138,10 @@ export default class Personalize {
   async createEventTracker(
     {abortSignal, ...params}: RequestConfig & CreateEventTrackerRequest,
   ): Promise<CreateEventTrackerResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       name: params["name"],
       datasetGroupArn: params["datasetGroupArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateEventTracker",
@@ -158,11 +158,11 @@ export default class Personalize {
   async createFilter(
     {abortSignal, ...params}: RequestConfig & CreateFilterRequest,
   ): Promise<CreateFilterResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       name: params["name"],
       datasetGroupArn: params["datasetGroupArn"],
       filterExpression: params["filterExpression"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateFilter",
@@ -178,10 +178,10 @@ export default class Personalize {
   async createSchema(
     {abortSignal, ...params}: RequestConfig & CreateSchemaRequest,
   ): Promise<CreateSchemaResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       name: params["name"],
       schema: params["schema"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateSchema",
@@ -197,7 +197,7 @@ export default class Personalize {
   async createSolution(
     {abortSignal, ...params}: RequestConfig & CreateSolutionRequest,
   ): Promise<CreateSolutionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       name: params["name"],
       performHPO: params["performHPO"],
       performAutoML: params["performAutoML"],
@@ -205,7 +205,7 @@ export default class Personalize {
       datasetGroupArn: params["datasetGroupArn"],
       eventType: params["eventType"],
       solutionConfig: fromSolutionConfig(params["solutionConfig"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateSolution",
@@ -221,10 +221,10 @@ export default class Personalize {
   async createSolutionVersion(
     {abortSignal, ...params}: RequestConfig & CreateSolutionVersionRequest,
   ): Promise<CreateSolutionVersionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       solutionArn: params["solutionArn"],
       trainingMode: params["trainingMode"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateSolutionVersion",
@@ -240,9 +240,9 @@ export default class Personalize {
   async deleteCampaign(
     {abortSignal, ...params}: RequestConfig & DeleteCampaignRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       campaignArn: params["campaignArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteCampaign",
@@ -252,9 +252,9 @@ export default class Personalize {
   async deleteDataset(
     {abortSignal, ...params}: RequestConfig & DeleteDatasetRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       datasetArn: params["datasetArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteDataset",
@@ -264,9 +264,9 @@ export default class Personalize {
   async deleteDatasetGroup(
     {abortSignal, ...params}: RequestConfig & DeleteDatasetGroupRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       datasetGroupArn: params["datasetGroupArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteDatasetGroup",
@@ -276,9 +276,9 @@ export default class Personalize {
   async deleteEventTracker(
     {abortSignal, ...params}: RequestConfig & DeleteEventTrackerRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       eventTrackerArn: params["eventTrackerArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteEventTracker",
@@ -288,9 +288,9 @@ export default class Personalize {
   async deleteFilter(
     {abortSignal, ...params}: RequestConfig & DeleteFilterRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       filterArn: params["filterArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteFilter",
@@ -300,9 +300,9 @@ export default class Personalize {
   async deleteSchema(
     {abortSignal, ...params}: RequestConfig & DeleteSchemaRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       schemaArn: params["schemaArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteSchema",
@@ -312,9 +312,9 @@ export default class Personalize {
   async deleteSolution(
     {abortSignal, ...params}: RequestConfig & DeleteSolutionRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       solutionArn: params["solutionArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteSolution",
@@ -324,9 +324,9 @@ export default class Personalize {
   async describeAlgorithm(
     {abortSignal, ...params}: RequestConfig & DescribeAlgorithmRequest,
   ): Promise<DescribeAlgorithmResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       algorithmArn: params["algorithmArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeAlgorithm",
@@ -342,9 +342,9 @@ export default class Personalize {
   async describeBatchInferenceJob(
     {abortSignal, ...params}: RequestConfig & DescribeBatchInferenceJobRequest,
   ): Promise<DescribeBatchInferenceJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       batchInferenceJobArn: params["batchInferenceJobArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeBatchInferenceJob",
@@ -360,9 +360,9 @@ export default class Personalize {
   async describeCampaign(
     {abortSignal, ...params}: RequestConfig & DescribeCampaignRequest,
   ): Promise<DescribeCampaignResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       campaignArn: params["campaignArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeCampaign",
@@ -378,9 +378,9 @@ export default class Personalize {
   async describeDataset(
     {abortSignal, ...params}: RequestConfig & DescribeDatasetRequest,
   ): Promise<DescribeDatasetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       datasetArn: params["datasetArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeDataset",
@@ -396,9 +396,9 @@ export default class Personalize {
   async describeDatasetGroup(
     {abortSignal, ...params}: RequestConfig & DescribeDatasetGroupRequest,
   ): Promise<DescribeDatasetGroupResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       datasetGroupArn: params["datasetGroupArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeDatasetGroup",
@@ -414,9 +414,9 @@ export default class Personalize {
   async describeDatasetImportJob(
     {abortSignal, ...params}: RequestConfig & DescribeDatasetImportJobRequest,
   ): Promise<DescribeDatasetImportJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       datasetImportJobArn: params["datasetImportJobArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeDatasetImportJob",
@@ -432,9 +432,9 @@ export default class Personalize {
   async describeEventTracker(
     {abortSignal, ...params}: RequestConfig & DescribeEventTrackerRequest,
   ): Promise<DescribeEventTrackerResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       eventTrackerArn: params["eventTrackerArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeEventTracker",
@@ -450,9 +450,9 @@ export default class Personalize {
   async describeFeatureTransformation(
     {abortSignal, ...params}: RequestConfig & DescribeFeatureTransformationRequest,
   ): Promise<DescribeFeatureTransformationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       featureTransformationArn: params["featureTransformationArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeFeatureTransformation",
@@ -468,9 +468,9 @@ export default class Personalize {
   async describeFilter(
     {abortSignal, ...params}: RequestConfig & DescribeFilterRequest,
   ): Promise<DescribeFilterResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       filterArn: params["filterArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeFilter",
@@ -486,9 +486,9 @@ export default class Personalize {
   async describeRecipe(
     {abortSignal, ...params}: RequestConfig & DescribeRecipeRequest,
   ): Promise<DescribeRecipeResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       recipeArn: params["recipeArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeRecipe",
@@ -504,9 +504,9 @@ export default class Personalize {
   async describeSchema(
     {abortSignal, ...params}: RequestConfig & DescribeSchemaRequest,
   ): Promise<DescribeSchemaResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       schemaArn: params["schemaArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeSchema",
@@ -522,9 +522,9 @@ export default class Personalize {
   async describeSolution(
     {abortSignal, ...params}: RequestConfig & DescribeSolutionRequest,
   ): Promise<DescribeSolutionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       solutionArn: params["solutionArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeSolution",
@@ -540,9 +540,9 @@ export default class Personalize {
   async describeSolutionVersion(
     {abortSignal, ...params}: RequestConfig & DescribeSolutionVersionRequest,
   ): Promise<DescribeSolutionVersionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       solutionVersionArn: params["solutionVersionArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeSolutionVersion",
@@ -558,9 +558,9 @@ export default class Personalize {
   async getSolutionMetrics(
     {abortSignal, ...params}: RequestConfig & GetSolutionMetricsRequest,
   ): Promise<GetSolutionMetricsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       solutionVersionArn: params["solutionVersionArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetSolutionMetrics",
@@ -577,11 +577,11 @@ export default class Personalize {
   async listBatchInferenceJobs(
     {abortSignal, ...params}: RequestConfig & ListBatchInferenceJobsRequest = {},
   ): Promise<ListBatchInferenceJobsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       solutionVersionArn: params["solutionVersionArn"],
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListBatchInferenceJobs",
@@ -598,11 +598,11 @@ export default class Personalize {
   async listCampaigns(
     {abortSignal, ...params}: RequestConfig & ListCampaignsRequest = {},
   ): Promise<ListCampaignsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       solutionArn: params["solutionArn"],
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListCampaigns",
@@ -619,10 +619,10 @@ export default class Personalize {
   async listDatasetGroups(
     {abortSignal, ...params}: RequestConfig & ListDatasetGroupsRequest = {},
   ): Promise<ListDatasetGroupsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListDatasetGroups",
@@ -639,11 +639,11 @@ export default class Personalize {
   async listDatasetImportJobs(
     {abortSignal, ...params}: RequestConfig & ListDatasetImportJobsRequest = {},
   ): Promise<ListDatasetImportJobsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       datasetArn: params["datasetArn"],
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListDatasetImportJobs",
@@ -660,11 +660,11 @@ export default class Personalize {
   async listDatasets(
     {abortSignal, ...params}: RequestConfig & ListDatasetsRequest = {},
   ): Promise<ListDatasetsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       datasetGroupArn: params["datasetGroupArn"],
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListDatasets",
@@ -681,11 +681,11 @@ export default class Personalize {
   async listEventTrackers(
     {abortSignal, ...params}: RequestConfig & ListEventTrackersRequest = {},
   ): Promise<ListEventTrackersResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       datasetGroupArn: params["datasetGroupArn"],
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListEventTrackers",
@@ -702,11 +702,11 @@ export default class Personalize {
   async listFilters(
     {abortSignal, ...params}: RequestConfig & ListFiltersRequest = {},
   ): Promise<ListFiltersResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       datasetGroupArn: params["datasetGroupArn"],
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListFilters",
@@ -723,11 +723,11 @@ export default class Personalize {
   async listRecipes(
     {abortSignal, ...params}: RequestConfig & ListRecipesRequest = {},
   ): Promise<ListRecipesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       recipeProvider: params["recipeProvider"],
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListRecipes",
@@ -744,10 +744,10 @@ export default class Personalize {
   async listSchemas(
     {abortSignal, ...params}: RequestConfig & ListSchemasRequest = {},
   ): Promise<ListSchemasResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListSchemas",
@@ -764,11 +764,11 @@ export default class Personalize {
   async listSolutionVersions(
     {abortSignal, ...params}: RequestConfig & ListSolutionVersionsRequest = {},
   ): Promise<ListSolutionVersionsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       solutionArn: params["solutionArn"],
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListSolutionVersions",
@@ -785,11 +785,11 @@ export default class Personalize {
   async listSolutions(
     {abortSignal, ...params}: RequestConfig & ListSolutionsRequest = {},
   ): Promise<ListSolutionsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       datasetGroupArn: params["datasetGroupArn"],
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListSolutions",
@@ -806,12 +806,12 @@ export default class Personalize {
   async updateCampaign(
     {abortSignal, ...params}: RequestConfig & UpdateCampaignRequest,
   ): Promise<UpdateCampaignResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       campaignArn: params["campaignArn"],
       solutionVersionArn: params["solutionVersionArn"],
       minProvisionedTPS: params["minProvisionedTPS"],
       campaignConfig: fromCampaignConfig(params["campaignConfig"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateCampaign",

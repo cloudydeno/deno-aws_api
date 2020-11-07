@@ -34,10 +34,10 @@ export default class CodeCommit {
   async associateApprovalRuleTemplateWithRepository(
     {abortSignal, ...params}: RequestConfig & AssociateApprovalRuleTemplateWithRepositoryInput,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       approvalRuleTemplateName: params["approvalRuleTemplateName"],
       repositoryName: params["repositoryName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AssociateApprovalRuleTemplateWithRepository",
@@ -47,10 +47,10 @@ export default class CodeCommit {
   async batchAssociateApprovalRuleTemplateWithRepositories(
     {abortSignal, ...params}: RequestConfig & BatchAssociateApprovalRuleTemplateWithRepositoriesInput,
   ): Promise<BatchAssociateApprovalRuleTemplateWithRepositoriesOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       approvalRuleTemplateName: params["approvalRuleTemplateName"],
       repositoryNames: params["repositoryNames"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchAssociateApprovalRuleTemplateWithRepositories",
@@ -67,7 +67,7 @@ export default class CodeCommit {
   async batchDescribeMergeConflicts(
     {abortSignal, ...params}: RequestConfig & BatchDescribeMergeConflictsInput,
   ): Promise<BatchDescribeMergeConflictsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       repositoryName: params["repositoryName"],
       destinationCommitSpecifier: params["destinationCommitSpecifier"],
       sourceCommitSpecifier: params["sourceCommitSpecifier"],
@@ -78,7 +78,7 @@ export default class CodeCommit {
       conflictDetailLevel: params["conflictDetailLevel"],
       conflictResolutionStrategy: params["conflictResolutionStrategy"],
       nextToken: params["nextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchDescribeMergeConflicts",
@@ -100,10 +100,10 @@ export default class CodeCommit {
   async batchDisassociateApprovalRuleTemplateFromRepositories(
     {abortSignal, ...params}: RequestConfig & BatchDisassociateApprovalRuleTemplateFromRepositoriesInput,
   ): Promise<BatchDisassociateApprovalRuleTemplateFromRepositoriesOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       approvalRuleTemplateName: params["approvalRuleTemplateName"],
       repositoryNames: params["repositoryNames"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchDisassociateApprovalRuleTemplateFromRepositories",
@@ -120,10 +120,10 @@ export default class CodeCommit {
   async batchGetCommits(
     {abortSignal, ...params}: RequestConfig & BatchGetCommitsInput,
   ): Promise<BatchGetCommitsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       commitIds: params["commitIds"],
       repositoryName: params["repositoryName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchGetCommits",
@@ -140,9 +140,9 @@ export default class CodeCommit {
   async batchGetRepositories(
     {abortSignal, ...params}: RequestConfig & BatchGetRepositoriesInput,
   ): Promise<BatchGetRepositoriesOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       repositoryNames: params["repositoryNames"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchGetRepositories",
@@ -159,11 +159,11 @@ export default class CodeCommit {
   async createApprovalRuleTemplate(
     {abortSignal, ...params}: RequestConfig & CreateApprovalRuleTemplateInput,
   ): Promise<CreateApprovalRuleTemplateOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       approvalRuleTemplateName: params["approvalRuleTemplateName"],
       approvalRuleTemplateContent: params["approvalRuleTemplateContent"],
       approvalRuleTemplateDescription: params["approvalRuleTemplateDescription"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateApprovalRuleTemplate",
@@ -179,11 +179,11 @@ export default class CodeCommit {
   async createBranch(
     {abortSignal, ...params}: RequestConfig & CreateBranchInput,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       repositoryName: params["repositoryName"],
       branchName: params["branchName"],
       commitId: params["commitId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateBranch",
@@ -193,7 +193,7 @@ export default class CodeCommit {
   async createCommit(
     {abortSignal, ...params}: RequestConfig & CreateCommitInput,
   ): Promise<CreateCommitOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       repositoryName: params["repositoryName"],
       branchName: params["branchName"],
       parentCommitId: params["parentCommitId"],
@@ -204,7 +204,7 @@ export default class CodeCommit {
       putFiles: params["putFiles"]?.map(x => fromPutFileEntry(x)),
       deleteFiles: params["deleteFiles"]?.map(x => fromDeleteFileEntry(x)),
       setFileModes: params["setFileModes"]?.map(x => fromSetFileModeEntry(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateCommit",
@@ -224,12 +224,12 @@ export default class CodeCommit {
   async createPullRequest(
     {abortSignal, ...params}: RequestConfig & CreatePullRequestInput,
   ): Promise<CreatePullRequestOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       title: params["title"],
       description: params["description"],
       targets: params["targets"]?.map(x => fromTarget(x)),
       clientRequestToken: params["clientRequestToken"] ?? generateIdemptToken(),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreatePullRequest",
@@ -245,11 +245,11 @@ export default class CodeCommit {
   async createPullRequestApprovalRule(
     {abortSignal, ...params}: RequestConfig & CreatePullRequestApprovalRuleInput,
   ): Promise<CreatePullRequestApprovalRuleOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       pullRequestId: params["pullRequestId"],
       approvalRuleName: params["approvalRuleName"],
       approvalRuleContent: params["approvalRuleContent"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreatePullRequestApprovalRule",
@@ -265,11 +265,11 @@ export default class CodeCommit {
   async createRepository(
     {abortSignal, ...params}: RequestConfig & CreateRepositoryInput,
   ): Promise<CreateRepositoryOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       repositoryName: params["repositoryName"],
       repositoryDescription: params["repositoryDescription"],
       tags: params["tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateRepository",
@@ -285,7 +285,7 @@ export default class CodeCommit {
   async createUnreferencedMergeCommit(
     {abortSignal, ...params}: RequestConfig & CreateUnreferencedMergeCommitInput,
   ): Promise<CreateUnreferencedMergeCommitOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       repositoryName: params["repositoryName"],
       sourceCommitSpecifier: params["sourceCommitSpecifier"],
       destinationCommitSpecifier: params["destinationCommitSpecifier"],
@@ -297,7 +297,7 @@ export default class CodeCommit {
       commitMessage: params["commitMessage"],
       keepEmptyFolders: params["keepEmptyFolders"],
       conflictResolution: fromConflictResolution(params["conflictResolution"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateUnreferencedMergeCommit",
@@ -314,9 +314,9 @@ export default class CodeCommit {
   async deleteApprovalRuleTemplate(
     {abortSignal, ...params}: RequestConfig & DeleteApprovalRuleTemplateInput,
   ): Promise<DeleteApprovalRuleTemplateOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       approvalRuleTemplateName: params["approvalRuleTemplateName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteApprovalRuleTemplate",
@@ -332,10 +332,10 @@ export default class CodeCommit {
   async deleteBranch(
     {abortSignal, ...params}: RequestConfig & DeleteBranchInput,
   ): Promise<DeleteBranchOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       repositoryName: params["repositoryName"],
       branchName: params["branchName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteBranch",
@@ -351,9 +351,9 @@ export default class CodeCommit {
   async deleteCommentContent(
     {abortSignal, ...params}: RequestConfig & DeleteCommentContentInput,
   ): Promise<DeleteCommentContentOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       commentId: params["commentId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteCommentContent",
@@ -369,7 +369,7 @@ export default class CodeCommit {
   async deleteFile(
     {abortSignal, ...params}: RequestConfig & DeleteFileInput,
   ): Promise<DeleteFileOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       repositoryName: params["repositoryName"],
       branchName: params["branchName"],
       filePath: params["filePath"],
@@ -378,7 +378,7 @@ export default class CodeCommit {
       commitMessage: params["commitMessage"],
       name: params["name"],
       email: params["email"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteFile",
@@ -397,10 +397,10 @@ export default class CodeCommit {
   async deletePullRequestApprovalRule(
     {abortSignal, ...params}: RequestConfig & DeletePullRequestApprovalRuleInput,
   ): Promise<DeletePullRequestApprovalRuleOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       pullRequestId: params["pullRequestId"],
       approvalRuleName: params["approvalRuleName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeletePullRequestApprovalRule",
@@ -416,9 +416,9 @@ export default class CodeCommit {
   async deleteRepository(
     {abortSignal, ...params}: RequestConfig & DeleteRepositoryInput,
   ): Promise<DeleteRepositoryOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       repositoryName: params["repositoryName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteRepository",
@@ -434,7 +434,7 @@ export default class CodeCommit {
   async describeMergeConflicts(
     {abortSignal, ...params}: RequestConfig & DescribeMergeConflictsInput,
   ): Promise<DescribeMergeConflictsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       repositoryName: params["repositoryName"],
       destinationCommitSpecifier: params["destinationCommitSpecifier"],
       sourceCommitSpecifier: params["sourceCommitSpecifier"],
@@ -444,7 +444,7 @@ export default class CodeCommit {
       conflictDetailLevel: params["conflictDetailLevel"],
       conflictResolutionStrategy: params["conflictResolutionStrategy"],
       nextToken: params["nextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeMergeConflicts",
@@ -466,13 +466,13 @@ export default class CodeCommit {
   async describePullRequestEvents(
     {abortSignal, ...params}: RequestConfig & DescribePullRequestEventsInput,
   ): Promise<DescribePullRequestEventsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       pullRequestId: params["pullRequestId"],
       pullRequestEventType: params["pullRequestEventType"],
       actorArn: params["actorArn"],
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribePullRequestEvents",
@@ -490,10 +490,10 @@ export default class CodeCommit {
   async disassociateApprovalRuleTemplateFromRepository(
     {abortSignal, ...params}: RequestConfig & DisassociateApprovalRuleTemplateFromRepositoryInput,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       approvalRuleTemplateName: params["approvalRuleTemplateName"],
       repositoryName: params["repositoryName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisassociateApprovalRuleTemplateFromRepository",
@@ -503,10 +503,10 @@ export default class CodeCommit {
   async evaluatePullRequestApprovalRules(
     {abortSignal, ...params}: RequestConfig & EvaluatePullRequestApprovalRulesInput,
   ): Promise<EvaluatePullRequestApprovalRulesOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       pullRequestId: params["pullRequestId"],
       revisionId: params["revisionId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "EvaluatePullRequestApprovalRules",
@@ -522,9 +522,9 @@ export default class CodeCommit {
   async getApprovalRuleTemplate(
     {abortSignal, ...params}: RequestConfig & GetApprovalRuleTemplateInput,
   ): Promise<GetApprovalRuleTemplateOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       approvalRuleTemplateName: params["approvalRuleTemplateName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetApprovalRuleTemplate",
@@ -540,10 +540,10 @@ export default class CodeCommit {
   async getBlob(
     {abortSignal, ...params}: RequestConfig & GetBlobInput,
   ): Promise<GetBlobOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       repositoryName: params["repositoryName"],
       blobId: params["blobId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetBlob",
@@ -559,10 +559,10 @@ export default class CodeCommit {
   async getBranch(
     {abortSignal, ...params}: RequestConfig & GetBranchInput = {},
   ): Promise<GetBranchOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       repositoryName: params["repositoryName"],
       branchName: params["branchName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetBranch",
@@ -578,9 +578,9 @@ export default class CodeCommit {
   async getComment(
     {abortSignal, ...params}: RequestConfig & GetCommentInput,
   ): Promise<GetCommentOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       commentId: params["commentId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetComment",
@@ -596,12 +596,12 @@ export default class CodeCommit {
   async getCommentReactions(
     {abortSignal, ...params}: RequestConfig & GetCommentReactionsInput,
   ): Promise<GetCommentReactionsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       commentId: params["commentId"],
       reactionUserArn: params["reactionUserArn"],
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetCommentReactions",
@@ -619,13 +619,13 @@ export default class CodeCommit {
   async getCommentsForComparedCommit(
     {abortSignal, ...params}: RequestConfig & GetCommentsForComparedCommitInput,
   ): Promise<GetCommentsForComparedCommitOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       repositoryName: params["repositoryName"],
       beforeCommitId: params["beforeCommitId"],
       afterCommitId: params["afterCommitId"],
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetCommentsForComparedCommit",
@@ -642,14 +642,14 @@ export default class CodeCommit {
   async getCommentsForPullRequest(
     {abortSignal, ...params}: RequestConfig & GetCommentsForPullRequestInput,
   ): Promise<GetCommentsForPullRequestOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       pullRequestId: params["pullRequestId"],
       repositoryName: params["repositoryName"],
       beforeCommitId: params["beforeCommitId"],
       afterCommitId: params["afterCommitId"],
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetCommentsForPullRequest",
@@ -666,10 +666,10 @@ export default class CodeCommit {
   async getCommit(
     {abortSignal, ...params}: RequestConfig & GetCommitInput,
   ): Promise<GetCommitOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       repositoryName: params["repositoryName"],
       commitId: params["commitId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetCommit",
@@ -685,7 +685,7 @@ export default class CodeCommit {
   async getDifferences(
     {abortSignal, ...params}: RequestConfig & GetDifferencesInput,
   ): Promise<GetDifferencesOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       repositoryName: params["repositoryName"],
       beforeCommitSpecifier: params["beforeCommitSpecifier"],
       afterCommitSpecifier: params["afterCommitSpecifier"],
@@ -693,7 +693,7 @@ export default class CodeCommit {
       afterPath: params["afterPath"],
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetDifferences",
@@ -710,11 +710,11 @@ export default class CodeCommit {
   async getFile(
     {abortSignal, ...params}: RequestConfig & GetFileInput,
   ): Promise<GetFileOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       repositoryName: params["repositoryName"],
       commitSpecifier: params["commitSpecifier"],
       filePath: params["filePath"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetFile",
@@ -735,11 +735,11 @@ export default class CodeCommit {
   async getFolder(
     {abortSignal, ...params}: RequestConfig & GetFolderInput,
   ): Promise<GetFolderOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       repositoryName: params["repositoryName"],
       commitSpecifier: params["commitSpecifier"],
       folderPath: params["folderPath"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetFolder",
@@ -762,13 +762,13 @@ export default class CodeCommit {
   async getMergeCommit(
     {abortSignal, ...params}: RequestConfig & GetMergeCommitInput,
   ): Promise<GetMergeCommitOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       repositoryName: params["repositoryName"],
       sourceCommitSpecifier: params["sourceCommitSpecifier"],
       destinationCommitSpecifier: params["destinationCommitSpecifier"],
       conflictDetailLevel: params["conflictDetailLevel"],
       conflictResolutionStrategy: params["conflictResolutionStrategy"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetMergeCommit",
@@ -787,7 +787,7 @@ export default class CodeCommit {
   async getMergeConflicts(
     {abortSignal, ...params}: RequestConfig & GetMergeConflictsInput,
   ): Promise<GetMergeConflictsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       repositoryName: params["repositoryName"],
       destinationCommitSpecifier: params["destinationCommitSpecifier"],
       sourceCommitSpecifier: params["sourceCommitSpecifier"],
@@ -796,7 +796,7 @@ export default class CodeCommit {
       maxConflictFiles: params["maxConflictFiles"],
       conflictResolutionStrategy: params["conflictResolutionStrategy"],
       nextToken: params["nextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetMergeConflicts",
@@ -818,13 +818,13 @@ export default class CodeCommit {
   async getMergeOptions(
     {abortSignal, ...params}: RequestConfig & GetMergeOptionsInput,
   ): Promise<GetMergeOptionsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       repositoryName: params["repositoryName"],
       sourceCommitSpecifier: params["sourceCommitSpecifier"],
       destinationCommitSpecifier: params["destinationCommitSpecifier"],
       conflictDetailLevel: params["conflictDetailLevel"],
       conflictResolutionStrategy: params["conflictResolutionStrategy"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetMergeOptions",
@@ -843,9 +843,9 @@ export default class CodeCommit {
   async getPullRequest(
     {abortSignal, ...params}: RequestConfig & GetPullRequestInput,
   ): Promise<GetPullRequestOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       pullRequestId: params["pullRequestId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetPullRequest",
@@ -861,10 +861,10 @@ export default class CodeCommit {
   async getPullRequestApprovalStates(
     {abortSignal, ...params}: RequestConfig & GetPullRequestApprovalStatesInput,
   ): Promise<GetPullRequestApprovalStatesOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       pullRequestId: params["pullRequestId"],
       revisionId: params["revisionId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetPullRequestApprovalStates",
@@ -880,10 +880,10 @@ export default class CodeCommit {
   async getPullRequestOverrideState(
     {abortSignal, ...params}: RequestConfig & GetPullRequestOverrideStateInput,
   ): Promise<GetPullRequestOverrideStateOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       pullRequestId: params["pullRequestId"],
       revisionId: params["revisionId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetPullRequestOverrideState",
@@ -900,9 +900,9 @@ export default class CodeCommit {
   async getRepository(
     {abortSignal, ...params}: RequestConfig & GetRepositoryInput,
   ): Promise<GetRepositoryOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       repositoryName: params["repositoryName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetRepository",
@@ -918,9 +918,9 @@ export default class CodeCommit {
   async getRepositoryTriggers(
     {abortSignal, ...params}: RequestConfig & GetRepositoryTriggersInput,
   ): Promise<GetRepositoryTriggersOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       repositoryName: params["repositoryName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetRepositoryTriggers",
@@ -937,10 +937,10 @@ export default class CodeCommit {
   async listApprovalRuleTemplates(
     {abortSignal, ...params}: RequestConfig & ListApprovalRuleTemplatesInput = {},
   ): Promise<ListApprovalRuleTemplatesOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListApprovalRuleTemplates",
@@ -957,11 +957,11 @@ export default class CodeCommit {
   async listAssociatedApprovalRuleTemplatesForRepository(
     {abortSignal, ...params}: RequestConfig & ListAssociatedApprovalRuleTemplatesForRepositoryInput,
   ): Promise<ListAssociatedApprovalRuleTemplatesForRepositoryOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       repositoryName: params["repositoryName"],
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListAssociatedApprovalRuleTemplatesForRepository",
@@ -978,10 +978,10 @@ export default class CodeCommit {
   async listBranches(
     {abortSignal, ...params}: RequestConfig & ListBranchesInput,
   ): Promise<ListBranchesOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       repositoryName: params["repositoryName"],
       nextToken: params["nextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListBranches",
@@ -998,13 +998,13 @@ export default class CodeCommit {
   async listPullRequests(
     {abortSignal, ...params}: RequestConfig & ListPullRequestsInput,
   ): Promise<ListPullRequestsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       repositoryName: params["repositoryName"],
       authorArn: params["authorArn"],
       pullRequestStatus: params["pullRequestStatus"],
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListPullRequests",
@@ -1022,11 +1022,11 @@ export default class CodeCommit {
   async listRepositories(
     {abortSignal, ...params}: RequestConfig & ListRepositoriesInput = {},
   ): Promise<ListRepositoriesOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       nextToken: params["nextToken"],
       sortBy: params["sortBy"],
       order: params["order"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListRepositories",
@@ -1043,11 +1043,11 @@ export default class CodeCommit {
   async listRepositoriesForApprovalRuleTemplate(
     {abortSignal, ...params}: RequestConfig & ListRepositoriesForApprovalRuleTemplateInput,
   ): Promise<ListRepositoriesForApprovalRuleTemplateOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       approvalRuleTemplateName: params["approvalRuleTemplateName"],
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListRepositoriesForApprovalRuleTemplate",
@@ -1064,10 +1064,10 @@ export default class CodeCommit {
   async listTagsForResource(
     {abortSignal, ...params}: RequestConfig & ListTagsForResourceInput,
   ): Promise<ListTagsForResourceOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       resourceArn: params["resourceArn"],
       nextToken: params["nextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForResource",
@@ -1084,12 +1084,12 @@ export default class CodeCommit {
   async mergeBranchesByFastForward(
     {abortSignal, ...params}: RequestConfig & MergeBranchesByFastForwardInput,
   ): Promise<MergeBranchesByFastForwardOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       repositoryName: params["repositoryName"],
       sourceCommitSpecifier: params["sourceCommitSpecifier"],
       destinationCommitSpecifier: params["destinationCommitSpecifier"],
       targetBranch: params["targetBranch"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "MergeBranchesByFastForward",
@@ -1106,7 +1106,7 @@ export default class CodeCommit {
   async mergeBranchesBySquash(
     {abortSignal, ...params}: RequestConfig & MergeBranchesBySquashInput,
   ): Promise<MergeBranchesBySquashOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       repositoryName: params["repositoryName"],
       sourceCommitSpecifier: params["sourceCommitSpecifier"],
       destinationCommitSpecifier: params["destinationCommitSpecifier"],
@@ -1118,7 +1118,7 @@ export default class CodeCommit {
       commitMessage: params["commitMessage"],
       keepEmptyFolders: params["keepEmptyFolders"],
       conflictResolution: fromConflictResolution(params["conflictResolution"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "MergeBranchesBySquash",
@@ -1135,7 +1135,7 @@ export default class CodeCommit {
   async mergeBranchesByThreeWay(
     {abortSignal, ...params}: RequestConfig & MergeBranchesByThreeWayInput,
   ): Promise<MergeBranchesByThreeWayOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       repositoryName: params["repositoryName"],
       sourceCommitSpecifier: params["sourceCommitSpecifier"],
       destinationCommitSpecifier: params["destinationCommitSpecifier"],
@@ -1147,7 +1147,7 @@ export default class CodeCommit {
       commitMessage: params["commitMessage"],
       keepEmptyFolders: params["keepEmptyFolders"],
       conflictResolution: fromConflictResolution(params["conflictResolution"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "MergeBranchesByThreeWay",
@@ -1164,11 +1164,11 @@ export default class CodeCommit {
   async mergePullRequestByFastForward(
     {abortSignal, ...params}: RequestConfig & MergePullRequestByFastForwardInput,
   ): Promise<MergePullRequestByFastForwardOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       pullRequestId: params["pullRequestId"],
       repositoryName: params["repositoryName"],
       sourceCommitId: params["sourceCommitId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "MergePullRequestByFastForward",
@@ -1184,7 +1184,7 @@ export default class CodeCommit {
   async mergePullRequestBySquash(
     {abortSignal, ...params}: RequestConfig & MergePullRequestBySquashInput,
   ): Promise<MergePullRequestBySquashOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       pullRequestId: params["pullRequestId"],
       repositoryName: params["repositoryName"],
       sourceCommitId: params["sourceCommitId"],
@@ -1195,7 +1195,7 @@ export default class CodeCommit {
       email: params["email"],
       keepEmptyFolders: params["keepEmptyFolders"],
       conflictResolution: fromConflictResolution(params["conflictResolution"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "MergePullRequestBySquash",
@@ -1211,7 +1211,7 @@ export default class CodeCommit {
   async mergePullRequestByThreeWay(
     {abortSignal, ...params}: RequestConfig & MergePullRequestByThreeWayInput,
   ): Promise<MergePullRequestByThreeWayOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       pullRequestId: params["pullRequestId"],
       repositoryName: params["repositoryName"],
       sourceCommitId: params["sourceCommitId"],
@@ -1222,7 +1222,7 @@ export default class CodeCommit {
       email: params["email"],
       keepEmptyFolders: params["keepEmptyFolders"],
       conflictResolution: fromConflictResolution(params["conflictResolution"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "MergePullRequestByThreeWay",
@@ -1238,11 +1238,11 @@ export default class CodeCommit {
   async overridePullRequestApprovalRules(
     {abortSignal, ...params}: RequestConfig & OverridePullRequestApprovalRulesInput,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       pullRequestId: params["pullRequestId"],
       revisionId: params["revisionId"],
       overrideStatus: params["overrideStatus"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "OverridePullRequestApprovalRules",
@@ -1252,14 +1252,14 @@ export default class CodeCommit {
   async postCommentForComparedCommit(
     {abortSignal, ...params}: RequestConfig & PostCommentForComparedCommitInput,
   ): Promise<PostCommentForComparedCommitOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       repositoryName: params["repositoryName"],
       beforeCommitId: params["beforeCommitId"],
       afterCommitId: params["afterCommitId"],
       location: fromLocation(params["location"]),
       content: params["content"],
       clientRequestToken: params["clientRequestToken"] ?? generateIdemptToken(),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PostCommentForComparedCommit",
@@ -1281,7 +1281,7 @@ export default class CodeCommit {
   async postCommentForPullRequest(
     {abortSignal, ...params}: RequestConfig & PostCommentForPullRequestInput,
   ): Promise<PostCommentForPullRequestOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       pullRequestId: params["pullRequestId"],
       repositoryName: params["repositoryName"],
       beforeCommitId: params["beforeCommitId"],
@@ -1289,7 +1289,7 @@ export default class CodeCommit {
       location: fromLocation(params["location"]),
       content: params["content"],
       clientRequestToken: params["clientRequestToken"] ?? generateIdemptToken(),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PostCommentForPullRequest",
@@ -1312,11 +1312,11 @@ export default class CodeCommit {
   async postCommentReply(
     {abortSignal, ...params}: RequestConfig & PostCommentReplyInput,
   ): Promise<PostCommentReplyOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       inReplyTo: params["inReplyTo"],
       clientRequestToken: params["clientRequestToken"] ?? generateIdemptToken(),
       content: params["content"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PostCommentReply",
@@ -1332,10 +1332,10 @@ export default class CodeCommit {
   async putCommentReaction(
     {abortSignal, ...params}: RequestConfig & PutCommentReactionInput,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       commentId: params["commentId"],
       reactionValue: params["reactionValue"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutCommentReaction",
@@ -1345,7 +1345,7 @@ export default class CodeCommit {
   async putFile(
     {abortSignal, ...params}: RequestConfig & PutFileInput,
   ): Promise<PutFileOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       repositoryName: params["repositoryName"],
       branchName: params["branchName"],
       fileContent: jsonP.serializeBlob(params["fileContent"]),
@@ -1355,7 +1355,7 @@ export default class CodeCommit {
       commitMessage: params["commitMessage"],
       name: params["name"],
       email: params["email"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutFile",
@@ -1373,10 +1373,10 @@ export default class CodeCommit {
   async putRepositoryTriggers(
     {abortSignal, ...params}: RequestConfig & PutRepositoryTriggersInput,
   ): Promise<PutRepositoryTriggersOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       repositoryName: params["repositoryName"],
       triggers: params["triggers"]?.map(x => fromRepositoryTrigger(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutRepositoryTriggers",
@@ -1392,10 +1392,10 @@ export default class CodeCommit {
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceInput,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       resourceArn: params["resourceArn"],
       tags: params["tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
@@ -1405,10 +1405,10 @@ export default class CodeCommit {
   async testRepositoryTriggers(
     {abortSignal, ...params}: RequestConfig & TestRepositoryTriggersInput,
   ): Promise<TestRepositoryTriggersOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       repositoryName: params["repositoryName"],
       triggers: params["triggers"]?.map(x => fromRepositoryTrigger(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TestRepositoryTriggers",
@@ -1425,10 +1425,10 @@ export default class CodeCommit {
   async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceInput,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       resourceArn: params["resourceArn"],
       tagKeys: params["tagKeys"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResource",
@@ -1438,11 +1438,11 @@ export default class CodeCommit {
   async updateApprovalRuleTemplateContent(
     {abortSignal, ...params}: RequestConfig & UpdateApprovalRuleTemplateContentInput,
   ): Promise<UpdateApprovalRuleTemplateContentOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       approvalRuleTemplateName: params["approvalRuleTemplateName"],
       newRuleContent: params["newRuleContent"],
       existingRuleContentSha256: params["existingRuleContentSha256"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateApprovalRuleTemplateContent",
@@ -1458,10 +1458,10 @@ export default class CodeCommit {
   async updateApprovalRuleTemplateDescription(
     {abortSignal, ...params}: RequestConfig & UpdateApprovalRuleTemplateDescriptionInput,
   ): Promise<UpdateApprovalRuleTemplateDescriptionOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       approvalRuleTemplateName: params["approvalRuleTemplateName"],
       approvalRuleTemplateDescription: params["approvalRuleTemplateDescription"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateApprovalRuleTemplateDescription",
@@ -1477,10 +1477,10 @@ export default class CodeCommit {
   async updateApprovalRuleTemplateName(
     {abortSignal, ...params}: RequestConfig & UpdateApprovalRuleTemplateNameInput,
   ): Promise<UpdateApprovalRuleTemplateNameOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       oldApprovalRuleTemplateName: params["oldApprovalRuleTemplateName"],
       newApprovalRuleTemplateName: params["newApprovalRuleTemplateName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateApprovalRuleTemplateName",
@@ -1496,10 +1496,10 @@ export default class CodeCommit {
   async updateComment(
     {abortSignal, ...params}: RequestConfig & UpdateCommentInput,
   ): Promise<UpdateCommentOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       commentId: params["commentId"],
       content: params["content"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateComment",
@@ -1515,10 +1515,10 @@ export default class CodeCommit {
   async updateDefaultBranch(
     {abortSignal, ...params}: RequestConfig & UpdateDefaultBranchInput,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       repositoryName: params["repositoryName"],
       defaultBranchName: params["defaultBranchName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateDefaultBranch",
@@ -1528,12 +1528,12 @@ export default class CodeCommit {
   async updatePullRequestApprovalRuleContent(
     {abortSignal, ...params}: RequestConfig & UpdatePullRequestApprovalRuleContentInput,
   ): Promise<UpdatePullRequestApprovalRuleContentOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       pullRequestId: params["pullRequestId"],
       approvalRuleName: params["approvalRuleName"],
       existingRuleContentSha256: params["existingRuleContentSha256"],
       newRuleContent: params["newRuleContent"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdatePullRequestApprovalRuleContent",
@@ -1549,11 +1549,11 @@ export default class CodeCommit {
   async updatePullRequestApprovalState(
     {abortSignal, ...params}: RequestConfig & UpdatePullRequestApprovalStateInput,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       pullRequestId: params["pullRequestId"],
       revisionId: params["revisionId"],
       approvalState: params["approvalState"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdatePullRequestApprovalState",
@@ -1563,10 +1563,10 @@ export default class CodeCommit {
   async updatePullRequestDescription(
     {abortSignal, ...params}: RequestConfig & UpdatePullRequestDescriptionInput,
   ): Promise<UpdatePullRequestDescriptionOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       pullRequestId: params["pullRequestId"],
       description: params["description"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdatePullRequestDescription",
@@ -1582,10 +1582,10 @@ export default class CodeCommit {
   async updatePullRequestStatus(
     {abortSignal, ...params}: RequestConfig & UpdatePullRequestStatusInput,
   ): Promise<UpdatePullRequestStatusOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       pullRequestId: params["pullRequestId"],
       pullRequestStatus: params["pullRequestStatus"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdatePullRequestStatus",
@@ -1601,10 +1601,10 @@ export default class CodeCommit {
   async updatePullRequestTitle(
     {abortSignal, ...params}: RequestConfig & UpdatePullRequestTitleInput,
   ): Promise<UpdatePullRequestTitleOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       pullRequestId: params["pullRequestId"],
       title: params["title"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdatePullRequestTitle",
@@ -1620,10 +1620,10 @@ export default class CodeCommit {
   async updateRepositoryDescription(
     {abortSignal, ...params}: RequestConfig & UpdateRepositoryDescriptionInput,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       repositoryName: params["repositoryName"],
       repositoryDescription: params["repositoryDescription"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateRepositoryDescription",
@@ -1633,10 +1633,10 @@ export default class CodeCommit {
   async updateRepositoryName(
     {abortSignal, ...params}: RequestConfig & UpdateRepositoryNameInput,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       oldName: params["oldName"],
       newName: params["newName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateRepositoryName",

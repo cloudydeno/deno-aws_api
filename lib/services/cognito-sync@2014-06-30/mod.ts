@@ -35,14 +35,12 @@ export default class CognitoSync {
       requestUri: cmnP.encodePath`/identitypools/${params["IdentityPoolId"]}/bulkpublish`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "IdentityPoolId": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "IdentityPoolId": "s",
+      },
+    }, await resp.json());
   }
 
   async deleteDataset(
@@ -56,14 +54,12 @@ export default class CognitoSync {
       requestUri: cmnP.encodePath`/identitypools/${params["IdentityPoolId"]}/identities/${params["IdentityId"]}/datasets/${params["DatasetName"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Dataset": toDataset,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Dataset": toDataset,
+      },
+    }, await resp.json());
   }
 
   async describeDataset(
@@ -77,14 +73,12 @@ export default class CognitoSync {
       requestUri: cmnP.encodePath`/identitypools/${params["IdentityPoolId"]}/identities/${params["IdentityId"]}/datasets/${params["DatasetName"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Dataset": toDataset,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Dataset": toDataset,
+      },
+    }, await resp.json());
   }
 
   async describeIdentityPoolUsage(
@@ -98,14 +92,12 @@ export default class CognitoSync {
       requestUri: cmnP.encodePath`/identitypools/${params["IdentityPoolId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "IdentityPoolUsage": toIdentityPoolUsage,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "IdentityPoolUsage": toIdentityPoolUsage,
+      },
+    }, await resp.json());
   }
 
   async describeIdentityUsage(
@@ -119,14 +111,12 @@ export default class CognitoSync {
       requestUri: cmnP.encodePath`/identitypools/${params["IdentityPoolId"]}/identities/${params["IdentityId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "IdentityUsage": toIdentityUsage,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "IdentityUsage": toIdentityUsage,
+      },
+    }, await resp.json());
   }
 
   async getBulkPublishDetails(
@@ -139,18 +129,16 @@ export default class CognitoSync {
       requestUri: cmnP.encodePath`/identitypools/${params["IdentityPoolId"]}/getBulkPublishDetails`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "IdentityPoolId": "s",
-          "BulkPublishStartTime": "d",
-          "BulkPublishCompleteTime": "d",
-          "BulkPublishStatus": (x: jsonP.JSONValue) => cmnP.readEnum<BulkPublishStatus>(x),
-          "FailureMessage": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "IdentityPoolId": "s",
+        "BulkPublishStartTime": "d",
+        "BulkPublishCompleteTime": "d",
+        "BulkPublishStatus": (x: jsonP.JSONValue) => cmnP.readEnum<BulkPublishStatus>(x),
+        "FailureMessage": "s",
+      },
+    }, await resp.json());
   }
 
   async getCognitoEvents(
@@ -164,14 +152,12 @@ export default class CognitoSync {
       requestUri: cmnP.encodePath`/identitypools/${params["IdentityPoolId"]}/events`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Events": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Events": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async getIdentityPoolConfiguration(
@@ -185,16 +171,14 @@ export default class CognitoSync {
       requestUri: cmnP.encodePath`/identitypools/${params["IdentityPoolId"]}/configuration`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "IdentityPoolId": "s",
-          "PushSync": toPushSync,
-          "CognitoStreams": toCognitoStreams,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "IdentityPoolId": "s",
+        "PushSync": toPushSync,
+        "CognitoStreams": toCognitoStreams,
+      },
+    }, await resp.json());
   }
 
   async listDatasets(
@@ -210,16 +194,14 @@ export default class CognitoSync {
       requestUri: cmnP.encodePath`/identitypools/${params["IdentityPoolId"]}/identities/${params["IdentityId"]}/datasets`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Datasets": [toDataset],
-          "Count": "n",
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Datasets": [toDataset],
+        "Count": "n",
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listIdentityPoolUsage(
@@ -235,17 +217,15 @@ export default class CognitoSync {
       requestUri: "/identitypools",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "IdentityPoolUsages": [toIdentityPoolUsage],
-          "MaxResults": "n",
-          "Count": "n",
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "IdentityPoolUsages": [toIdentityPoolUsage],
+        "MaxResults": "n",
+        "Count": "n",
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listRecords(
@@ -263,53 +243,49 @@ export default class CognitoSync {
       requestUri: cmnP.encodePath`/identitypools/${params["IdentityPoolId"]}/identities/${params["IdentityId"]}/datasets/${params["DatasetName"]}/records`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Records": [toRecord],
-          "NextToken": "s",
-          "Count": "n",
-          "DatasetSyncCount": "n",
-          "LastModifiedBy": "s",
-          "MergedDatasetNames": ["s"],
-          "DatasetExists": "b",
-          "DatasetDeletedAfterRequestedSyncCount": "b",
-          "SyncSessionToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Records": [toRecord],
+        "NextToken": "s",
+        "Count": "n",
+        "DatasetSyncCount": "n",
+        "LastModifiedBy": "s",
+        "MergedDatasetNames": ["s"],
+        "DatasetExists": "b",
+        "DatasetDeletedAfterRequestedSyncCount": "b",
+        "SyncSessionToken": "s",
+      },
+    }, await resp.json());
   }
 
   async registerDevice(
     {abortSignal, ...params}: RequestConfig & RegisterDeviceRequest,
   ): Promise<RegisterDeviceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Platform: params["Platform"],
       Token: params["Token"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RegisterDevice",
       requestUri: cmnP.encodePath`/identitypools/${params["IdentityPoolId"]}/identity/${params["IdentityId"]}/device`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "DeviceId": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "DeviceId": "s",
+      },
+    }, await resp.json());
   }
 
   async setCognitoEvents(
     {abortSignal, ...params}: RequestConfig & SetCognitoEventsRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Events: params["Events"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SetCognitoEvents",
@@ -321,26 +297,24 @@ export default class CognitoSync {
   async setIdentityPoolConfiguration(
     {abortSignal, ...params}: RequestConfig & SetIdentityPoolConfigurationRequest,
   ): Promise<SetIdentityPoolConfigurationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       PushSync: fromPushSync(params["PushSync"]),
       CognitoStreams: fromCognitoStreams(params["CognitoStreams"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SetIdentityPoolConfiguration",
       requestUri: cmnP.encodePath`/identitypools/${params["IdentityPoolId"]}/configuration`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "IdentityPoolId": "s",
-          "PushSync": toPushSync,
-          "CognitoStreams": toCognitoStreams,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "IdentityPoolId": "s",
+        "PushSync": toPushSync,
+        "CognitoStreams": toCognitoStreams,
+      },
+    }, await resp.json());
   }
 
   async subscribeToDataset(
@@ -353,12 +327,10 @@ export default class CognitoSync {
       requestUri: cmnP.encodePath`/identitypools/${params["IdentityPoolId"]}/identities/${params["IdentityId"]}/datasets/${params["DatasetName"]}/subscriptions/${params["DeviceId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async unsubscribeFromDataset(
@@ -372,38 +344,34 @@ export default class CognitoSync {
       requestUri: cmnP.encodePath`/identitypools/${params["IdentityPoolId"]}/identities/${params["IdentityId"]}/datasets/${params["DatasetName"]}/subscriptions/${params["DeviceId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async updateRecords(
     {abortSignal, ...params}: RequestConfig & UpdateRecordsRequest,
   ): Promise<UpdateRecordsResponse> {
     const headers = new Headers;
-    if (params["ClientContext"] != null) headers.append("x-amz-Client-Context", params["ClientContext"]);
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DeviceId: params["DeviceId"],
       RecordPatches: params["RecordPatches"]?.map(x => fromRecordPatch(x)),
       SyncSessionToken: params["SyncSessionToken"],
-    } : {};
+    };
+    if (params["ClientContext"] != null) headers.append("x-amz-Client-Context", params["ClientContext"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "UpdateRecords",
       requestUri: cmnP.encodePath`/identitypools/${params["IdentityPoolId"]}/identities/${params["IdentityId"]}/datasets/${params["DatasetName"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Records": [toRecord],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Records": [toRecord],
+      },
+    }, await resp.json());
   }
 
 }

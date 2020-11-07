@@ -33,10 +33,10 @@ export default class Kinesis {
   async addTagsToStream(
     {abortSignal, ...params}: RequestConfig & AddTagsToStreamInput,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       StreamName: params["StreamName"],
       Tags: params["Tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AddTagsToStream",
@@ -46,10 +46,10 @@ export default class Kinesis {
   async createStream(
     {abortSignal, ...params}: RequestConfig & CreateStreamInput,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       StreamName: params["StreamName"],
       ShardCount: params["ShardCount"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateStream",
@@ -59,10 +59,10 @@ export default class Kinesis {
   async decreaseStreamRetentionPeriod(
     {abortSignal, ...params}: RequestConfig & DecreaseStreamRetentionPeriodInput,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       StreamName: params["StreamName"],
       RetentionPeriodHours: params["RetentionPeriodHours"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DecreaseStreamRetentionPeriod",
@@ -72,10 +72,10 @@ export default class Kinesis {
   async deleteStream(
     {abortSignal, ...params}: RequestConfig & DeleteStreamInput,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       StreamName: params["StreamName"],
       EnforceConsumerDeletion: params["EnforceConsumerDeletion"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteStream",
@@ -85,11 +85,11 @@ export default class Kinesis {
   async deregisterStreamConsumer(
     {abortSignal, ...params}: RequestConfig & DeregisterStreamConsumerInput = {},
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       StreamARN: params["StreamARN"],
       ConsumerName: params["ConsumerName"],
       ConsumerARN: params["ConsumerARN"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeregisterStreamConsumer",
@@ -99,8 +99,8 @@ export default class Kinesis {
   async describeLimits(
     {abortSignal, ...params}: RequestConfig & DescribeLimitsInput = {},
   ): Promise<DescribeLimitsOutput> {
-    const body: jsonP.JSONObject = params ? {
-    } : {};
+    const body: jsonP.JSONObject = {
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeLimits",
@@ -117,11 +117,11 @@ export default class Kinesis {
   async describeStream(
     {abortSignal, ...params}: RequestConfig & DescribeStreamInput,
   ): Promise<DescribeStreamOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       StreamName: params["StreamName"],
       Limit: params["Limit"],
       ExclusiveStartShardId: params["ExclusiveStartShardId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeStream",
@@ -137,11 +137,11 @@ export default class Kinesis {
   async describeStreamConsumer(
     {abortSignal, ...params}: RequestConfig & DescribeStreamConsumerInput = {},
   ): Promise<DescribeStreamConsumerOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       StreamARN: params["StreamARN"],
       ConsumerName: params["ConsumerName"],
       ConsumerARN: params["ConsumerARN"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeStreamConsumer",
@@ -157,9 +157,9 @@ export default class Kinesis {
   async describeStreamSummary(
     {abortSignal, ...params}: RequestConfig & DescribeStreamSummaryInput,
   ): Promise<DescribeStreamSummaryOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       StreamName: params["StreamName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeStreamSummary",
@@ -175,10 +175,10 @@ export default class Kinesis {
   async disableEnhancedMonitoring(
     {abortSignal, ...params}: RequestConfig & DisableEnhancedMonitoringInput,
   ): Promise<EnhancedMonitoringOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       StreamName: params["StreamName"],
       ShardLevelMetrics: params["ShardLevelMetrics"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisableEnhancedMonitoring",
@@ -196,10 +196,10 @@ export default class Kinesis {
   async enableEnhancedMonitoring(
     {abortSignal, ...params}: RequestConfig & EnableEnhancedMonitoringInput,
   ): Promise<EnhancedMonitoringOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       StreamName: params["StreamName"],
       ShardLevelMetrics: params["ShardLevelMetrics"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "EnableEnhancedMonitoring",
@@ -217,10 +217,10 @@ export default class Kinesis {
   async getRecords(
     {abortSignal, ...params}: RequestConfig & GetRecordsInput,
   ): Promise<GetRecordsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ShardIterator: params["ShardIterator"],
       Limit: params["Limit"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetRecords",
@@ -240,13 +240,13 @@ export default class Kinesis {
   async getShardIterator(
     {abortSignal, ...params}: RequestConfig & GetShardIteratorInput,
   ): Promise<GetShardIteratorOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       StreamName: params["StreamName"],
       ShardId: params["ShardId"],
       ShardIteratorType: params["ShardIteratorType"],
       StartingSequenceNumber: params["StartingSequenceNumber"],
       Timestamp: jsonP.serializeDate_unixTimestamp(params["Timestamp"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetShardIterator",
@@ -262,10 +262,10 @@ export default class Kinesis {
   async increaseStreamRetentionPeriod(
     {abortSignal, ...params}: RequestConfig & IncreaseStreamRetentionPeriodInput,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       StreamName: params["StreamName"],
       RetentionPeriodHours: params["RetentionPeriodHours"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "IncreaseStreamRetentionPeriod",
@@ -275,14 +275,14 @@ export default class Kinesis {
   async listShards(
     {abortSignal, ...params}: RequestConfig & ListShardsInput = {},
   ): Promise<ListShardsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       StreamName: params["StreamName"],
       NextToken: params["NextToken"],
       ExclusiveStartShardId: params["ExclusiveStartShardId"],
       MaxResults: params["MaxResults"],
       StreamCreationTimestamp: jsonP.serializeDate_unixTimestamp(params["StreamCreationTimestamp"]),
       ShardFilter: fromShardFilter(params["ShardFilter"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListShards",
@@ -299,12 +299,12 @@ export default class Kinesis {
   async listStreamConsumers(
     {abortSignal, ...params}: RequestConfig & ListStreamConsumersInput,
   ): Promise<ListStreamConsumersOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       StreamARN: params["StreamARN"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
       StreamCreationTimestamp: jsonP.serializeDate_unixTimestamp(params["StreamCreationTimestamp"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListStreamConsumers",
@@ -321,10 +321,10 @@ export default class Kinesis {
   async listStreams(
     {abortSignal, ...params}: RequestConfig & ListStreamsInput = {},
   ): Promise<ListStreamsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Limit: params["Limit"],
       ExclusiveStartStreamName: params["ExclusiveStartStreamName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListStreams",
@@ -341,11 +341,11 @@ export default class Kinesis {
   async listTagsForStream(
     {abortSignal, ...params}: RequestConfig & ListTagsForStreamInput,
   ): Promise<ListTagsForStreamOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       StreamName: params["StreamName"],
       ExclusiveStartTagKey: params["ExclusiveStartTagKey"],
       Limit: params["Limit"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForStream",
@@ -362,11 +362,11 @@ export default class Kinesis {
   async mergeShards(
     {abortSignal, ...params}: RequestConfig & MergeShardsInput,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       StreamName: params["StreamName"],
       ShardToMerge: params["ShardToMerge"],
       AdjacentShardToMerge: params["AdjacentShardToMerge"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "MergeShards",
@@ -376,13 +376,13 @@ export default class Kinesis {
   async putRecord(
     {abortSignal, ...params}: RequestConfig & PutRecordInput,
   ): Promise<PutRecordOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       StreamName: params["StreamName"],
       Data: jsonP.serializeBlob(params["Data"]),
       PartitionKey: params["PartitionKey"],
       ExplicitHashKey: params["ExplicitHashKey"],
       SequenceNumberForOrdering: params["SequenceNumberForOrdering"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutRecord",
@@ -401,10 +401,10 @@ export default class Kinesis {
   async putRecords(
     {abortSignal, ...params}: RequestConfig & PutRecordsInput,
   ): Promise<PutRecordsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Records: params["Records"]?.map(x => fromPutRecordsRequestEntry(x)),
       StreamName: params["StreamName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutRecords",
@@ -423,10 +423,10 @@ export default class Kinesis {
   async registerStreamConsumer(
     {abortSignal, ...params}: RequestConfig & RegisterStreamConsumerInput,
   ): Promise<RegisterStreamConsumerOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       StreamARN: params["StreamARN"],
       ConsumerName: params["ConsumerName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RegisterStreamConsumer",
@@ -442,10 +442,10 @@ export default class Kinesis {
   async removeTagsFromStream(
     {abortSignal, ...params}: RequestConfig & RemoveTagsFromStreamInput,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       StreamName: params["StreamName"],
       TagKeys: params["TagKeys"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RemoveTagsFromStream",
@@ -455,11 +455,11 @@ export default class Kinesis {
   async splitShard(
     {abortSignal, ...params}: RequestConfig & SplitShardInput,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       StreamName: params["StreamName"],
       ShardToSplit: params["ShardToSplit"],
       NewStartingHashKey: params["NewStartingHashKey"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SplitShard",
@@ -469,11 +469,11 @@ export default class Kinesis {
   async startStreamEncryption(
     {abortSignal, ...params}: RequestConfig & StartStreamEncryptionInput,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       StreamName: params["StreamName"],
       EncryptionType: params["EncryptionType"],
       KeyId: params["KeyId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartStreamEncryption",
@@ -483,11 +483,11 @@ export default class Kinesis {
   async stopStreamEncryption(
     {abortSignal, ...params}: RequestConfig & StopStreamEncryptionInput,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       StreamName: params["StreamName"],
       EncryptionType: params["EncryptionType"],
       KeyId: params["KeyId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopStreamEncryption",
@@ -497,11 +497,11 @@ export default class Kinesis {
   async updateShardCount(
     {abortSignal, ...params}: RequestConfig & UpdateShardCountInput,
   ): Promise<UpdateShardCountOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       StreamName: params["StreamName"],
       TargetShardCount: params["TargetShardCount"],
       ScalingType: params["ScalingType"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateShardCount",
@@ -540,7 +540,7 @@ export default class Kinesis {
       try {
         const resp = await this.describeStream(params);
       } catch (err) {
-        if (["ResourceNotFoundException"].includes(err.code)) return err;
+        if (["ResourceNotFoundException"].includes(err.shortCode)) return err;
         throw err;
       }
       await new Promise(r => setTimeout(r, 10000));

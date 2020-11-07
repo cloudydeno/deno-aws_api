@@ -33,10 +33,10 @@ export default class AppMesh {
   async createMesh(
     {abortSignal, ...params}: RequestConfig & CreateMeshInput,
   ): Promise<CreateMeshOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       clientToken: params["clientToken"] ?? generateIdemptToken(),
       meshName: params["meshName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateMesh",
@@ -52,11 +52,11 @@ export default class AppMesh {
   async createRoute(
     {abortSignal, ...params}: RequestConfig & CreateRouteInput,
   ): Promise<CreateRouteOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       clientToken: params["clientToken"] ?? generateIdemptToken(),
       routeName: params["routeName"],
       spec: fromRouteSpec(params["spec"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateRoute",
@@ -72,11 +72,11 @@ export default class AppMesh {
   async createVirtualNode(
     {abortSignal, ...params}: RequestConfig & CreateVirtualNodeInput,
   ): Promise<CreateVirtualNodeOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       clientToken: params["clientToken"] ?? generateIdemptToken(),
       spec: fromVirtualNodeSpec(params["spec"]),
       virtualNodeName: params["virtualNodeName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateVirtualNode",
@@ -92,11 +92,11 @@ export default class AppMesh {
   async createVirtualRouter(
     {abortSignal, ...params}: RequestConfig & CreateVirtualRouterInput,
   ): Promise<CreateVirtualRouterOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       clientToken: params["clientToken"] ?? generateIdemptToken(),
       spec: fromVirtualRouterSpec(params["spec"]),
       virtualRouterName: params["virtualRouterName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateVirtualRouter",
@@ -250,16 +250,14 @@ export default class AppMesh {
       requestUri: "/meshes",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "meshes": [toMeshRef],
-        },
-        optional: {
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "meshes": [toMeshRef],
+      },
+      optional: {
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listRoutes(
@@ -275,16 +273,14 @@ export default class AppMesh {
       requestUri: cmnP.encodePath`/meshes/${params["meshName"]}/virtualRouter/${params["virtualRouterName"]}/routes`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "routes": [toRouteRef],
-        },
-        optional: {
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "routes": [toRouteRef],
+      },
+      optional: {
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listVirtualNodes(
@@ -300,16 +296,14 @@ export default class AppMesh {
       requestUri: cmnP.encodePath`/meshes/${params["meshName"]}/virtualNodes`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "virtualNodes": [toVirtualNodeRef],
-        },
-        optional: {
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "virtualNodes": [toVirtualNodeRef],
+      },
+      optional: {
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listVirtualRouters(
@@ -325,25 +319,23 @@ export default class AppMesh {
       requestUri: cmnP.encodePath`/meshes/${params["meshName"]}/virtualRouters`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "virtualRouters": [toVirtualRouterRef],
-        },
-        optional: {
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "virtualRouters": [toVirtualRouterRef],
+      },
+      optional: {
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async updateRoute(
     {abortSignal, ...params}: RequestConfig & UpdateRouteInput,
   ): Promise<UpdateRouteOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       clientToken: params["clientToken"] ?? generateIdemptToken(),
       spec: fromRouteSpec(params["spec"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateRoute",
@@ -359,10 +351,10 @@ export default class AppMesh {
   async updateVirtualNode(
     {abortSignal, ...params}: RequestConfig & UpdateVirtualNodeInput,
   ): Promise<UpdateVirtualNodeOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       clientToken: params["clientToken"] ?? generateIdemptToken(),
       spec: fromVirtualNodeSpec(params["spec"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateVirtualNode",
@@ -378,10 +370,10 @@ export default class AppMesh {
   async updateVirtualRouter(
     {abortSignal, ...params}: RequestConfig & UpdateVirtualRouterInput,
   ): Promise<UpdateVirtualRouterOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       clientToken: params["clientToken"] ?? generateIdemptToken(),
       spec: fromVirtualRouterSpec(params["spec"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateVirtualRouter",

@@ -30,13 +30,13 @@ export default class ACMPCA {
   async createCertificateAuthority(
     {abortSignal, ...params}: RequestConfig & CreateCertificateAuthorityRequest,
   ): Promise<CreateCertificateAuthorityResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CertificateAuthorityConfiguration: fromCertificateAuthorityConfiguration(params["CertificateAuthorityConfiguration"]),
       RevocationConfiguration: fromRevocationConfiguration(params["RevocationConfiguration"]),
       CertificateAuthorityType: params["CertificateAuthorityType"],
       IdempotencyToken: params["IdempotencyToken"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateCertificateAuthority",
@@ -52,11 +52,11 @@ export default class ACMPCA {
   async createCertificateAuthorityAuditReport(
     {abortSignal, ...params}: RequestConfig & CreateCertificateAuthorityAuditReportRequest,
   ): Promise<CreateCertificateAuthorityAuditReportResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CertificateAuthorityArn: params["CertificateAuthorityArn"],
       S3BucketName: params["S3BucketName"],
       AuditReportResponseFormat: params["AuditReportResponseFormat"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateCertificateAuthorityAuditReport",
@@ -73,12 +73,12 @@ export default class ACMPCA {
   async createPermission(
     {abortSignal, ...params}: RequestConfig & CreatePermissionRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CertificateAuthorityArn: params["CertificateAuthorityArn"],
       Principal: params["Principal"],
       SourceAccount: params["SourceAccount"],
       Actions: params["Actions"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreatePermission",
@@ -88,10 +88,10 @@ export default class ACMPCA {
   async deleteCertificateAuthority(
     {abortSignal, ...params}: RequestConfig & DeleteCertificateAuthorityRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CertificateAuthorityArn: params["CertificateAuthorityArn"],
       PermanentDeletionTimeInDays: params["PermanentDeletionTimeInDays"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteCertificateAuthority",
@@ -101,11 +101,11 @@ export default class ACMPCA {
   async deletePermission(
     {abortSignal, ...params}: RequestConfig & DeletePermissionRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CertificateAuthorityArn: params["CertificateAuthorityArn"],
       Principal: params["Principal"],
       SourceAccount: params["SourceAccount"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeletePermission",
@@ -115,9 +115,9 @@ export default class ACMPCA {
   async deletePolicy(
     {abortSignal, ...params}: RequestConfig & DeletePolicyRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeletePolicy",
@@ -127,9 +127,9 @@ export default class ACMPCA {
   async describeCertificateAuthority(
     {abortSignal, ...params}: RequestConfig & DescribeCertificateAuthorityRequest,
   ): Promise<DescribeCertificateAuthorityResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CertificateAuthorityArn: params["CertificateAuthorityArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeCertificateAuthority",
@@ -145,10 +145,10 @@ export default class ACMPCA {
   async describeCertificateAuthorityAuditReport(
     {abortSignal, ...params}: RequestConfig & DescribeCertificateAuthorityAuditReportRequest,
   ): Promise<DescribeCertificateAuthorityAuditReportResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CertificateAuthorityArn: params["CertificateAuthorityArn"],
       AuditReportId: params["AuditReportId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeCertificateAuthorityAuditReport",
@@ -167,10 +167,10 @@ export default class ACMPCA {
   async getCertificate(
     {abortSignal, ...params}: RequestConfig & GetCertificateRequest,
   ): Promise<GetCertificateResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CertificateAuthorityArn: params["CertificateAuthorityArn"],
       CertificateArn: params["CertificateArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetCertificate",
@@ -187,9 +187,9 @@ export default class ACMPCA {
   async getCertificateAuthorityCertificate(
     {abortSignal, ...params}: RequestConfig & GetCertificateAuthorityCertificateRequest,
   ): Promise<GetCertificateAuthorityCertificateResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CertificateAuthorityArn: params["CertificateAuthorityArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetCertificateAuthorityCertificate",
@@ -206,9 +206,9 @@ export default class ACMPCA {
   async getCertificateAuthorityCsr(
     {abortSignal, ...params}: RequestConfig & GetCertificateAuthorityCsrRequest,
   ): Promise<GetCertificateAuthorityCsrResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CertificateAuthorityArn: params["CertificateAuthorityArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetCertificateAuthorityCsr",
@@ -224,9 +224,9 @@ export default class ACMPCA {
   async getPolicy(
     {abortSignal, ...params}: RequestConfig & GetPolicyRequest,
   ): Promise<GetPolicyResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetPolicy",
@@ -242,11 +242,11 @@ export default class ACMPCA {
   async importCertificateAuthorityCertificate(
     {abortSignal, ...params}: RequestConfig & ImportCertificateAuthorityCertificateRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CertificateAuthorityArn: params["CertificateAuthorityArn"],
       Certificate: jsonP.serializeBlob(params["Certificate"]),
       CertificateChain: jsonP.serializeBlob(params["CertificateChain"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ImportCertificateAuthorityCertificate",
@@ -256,14 +256,14 @@ export default class ACMPCA {
   async issueCertificate(
     {abortSignal, ...params}: RequestConfig & IssueCertificateRequest,
   ): Promise<IssueCertificateResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CertificateAuthorityArn: params["CertificateAuthorityArn"],
       Csr: jsonP.serializeBlob(params["Csr"]),
       SigningAlgorithm: params["SigningAlgorithm"],
       TemplateArn: params["TemplateArn"],
       Validity: fromValidity(params["Validity"]),
       IdempotencyToken: params["IdempotencyToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "IssueCertificate",
@@ -279,11 +279,11 @@ export default class ACMPCA {
   async listCertificateAuthorities(
     {abortSignal, ...params}: RequestConfig & ListCertificateAuthoritiesRequest = {},
   ): Promise<ListCertificateAuthoritiesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
       ResourceOwner: params["ResourceOwner"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListCertificateAuthorities",
@@ -300,11 +300,11 @@ export default class ACMPCA {
   async listPermissions(
     {abortSignal, ...params}: RequestConfig & ListPermissionsRequest,
   ): Promise<ListPermissionsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CertificateAuthorityArn: params["CertificateAuthorityArn"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListPermissions",
@@ -321,11 +321,11 @@ export default class ACMPCA {
   async listTags(
     {abortSignal, ...params}: RequestConfig & ListTagsRequest,
   ): Promise<ListTagsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CertificateAuthorityArn: params["CertificateAuthorityArn"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTags",
@@ -342,10 +342,10 @@ export default class ACMPCA {
   async putPolicy(
     {abortSignal, ...params}: RequestConfig & PutPolicyRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
       Policy: params["Policy"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutPolicy",
@@ -355,9 +355,9 @@ export default class ACMPCA {
   async restoreCertificateAuthority(
     {abortSignal, ...params}: RequestConfig & RestoreCertificateAuthorityRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CertificateAuthorityArn: params["CertificateAuthorityArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RestoreCertificateAuthority",
@@ -367,11 +367,11 @@ export default class ACMPCA {
   async revokeCertificate(
     {abortSignal, ...params}: RequestConfig & RevokeCertificateRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CertificateAuthorityArn: params["CertificateAuthorityArn"],
       CertificateSerial: params["CertificateSerial"],
       RevocationReason: params["RevocationReason"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RevokeCertificate",
@@ -381,10 +381,10 @@ export default class ACMPCA {
   async tagCertificateAuthority(
     {abortSignal, ...params}: RequestConfig & TagCertificateAuthorityRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CertificateAuthorityArn: params["CertificateAuthorityArn"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagCertificateAuthority",
@@ -394,10 +394,10 @@ export default class ACMPCA {
   async untagCertificateAuthority(
     {abortSignal, ...params}: RequestConfig & UntagCertificateAuthorityRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CertificateAuthorityArn: params["CertificateAuthorityArn"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagCertificateAuthority",
@@ -407,11 +407,11 @@ export default class ACMPCA {
   async updateCertificateAuthority(
     {abortSignal, ...params}: RequestConfig & UpdateCertificateAuthorityRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CertificateAuthorityArn: params["CertificateAuthorityArn"],
       RevocationConfiguration: fromRevocationConfiguration(params["RevocationConfiguration"]),
       Status: params["Status"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateCertificateAuthority",
@@ -433,7 +433,7 @@ export default class ACMPCA {
         const resp = await this.getCertificateAuthorityCsr(params);
         return resp; // for status 200
       } catch (err) {
-        if (!["RequestInProgressException"].includes(err.code)) throw err;
+        if (!["RequestInProgressException"].includes(err.shortCode)) throw err;
       }
       await new Promise(r => setTimeout(r, 3000));
     }
@@ -453,7 +453,7 @@ export default class ACMPCA {
         const resp = await this.getCertificate(params);
         return resp; // for status 200
       } catch (err) {
-        if (!["RequestInProgressException"].includes(err.code)) throw err;
+        if (!["RequestInProgressException"].includes(err.shortCode)) throw err;
       }
       await new Promise(r => setTimeout(r, 3000));
     }

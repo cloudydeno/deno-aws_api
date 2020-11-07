@@ -34,105 +34,97 @@ export default class SavingsPlans {
   async createSavingsPlan(
     {abortSignal, ...params}: RequestConfig & CreateSavingsPlanRequest,
   ): Promise<CreateSavingsPlanResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       savingsPlanOfferingId: params["savingsPlanOfferingId"],
       commitment: params["commitment"],
       upfrontPaymentAmount: params["upfrontPaymentAmount"],
       purchaseTime: jsonP.serializeDate_unixTimestamp(params["purchaseTime"]),
       clientToken: params["clientToken"] ?? generateIdemptToken(),
       tags: params["tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateSavingsPlan",
       requestUri: "/CreateSavingsPlan",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "savingsPlanId": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "savingsPlanId": "s",
+      },
+    }, await resp.json());
   }
 
   async deleteQueuedSavingsPlan(
     {abortSignal, ...params}: RequestConfig & DeleteQueuedSavingsPlanRequest,
   ): Promise<DeleteQueuedSavingsPlanResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       savingsPlanId: params["savingsPlanId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteQueuedSavingsPlan",
       requestUri: "/DeleteQueuedSavingsPlan",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async describeSavingsPlanRates(
     {abortSignal, ...params}: RequestConfig & DescribeSavingsPlanRatesRequest,
   ): Promise<DescribeSavingsPlanRatesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       savingsPlanId: params["savingsPlanId"],
       filters: params["filters"]?.map(x => fromSavingsPlanRateFilter(x)),
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeSavingsPlanRates",
       requestUri: "/DescribeSavingsPlanRates",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "savingsPlanId": "s",
-          "searchResults": [toSavingsPlanRate],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "savingsPlanId": "s",
+        "searchResults": [toSavingsPlanRate],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async describeSavingsPlans(
     {abortSignal, ...params}: RequestConfig & DescribeSavingsPlansRequest = {},
   ): Promise<DescribeSavingsPlansResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       savingsPlanArns: params["savingsPlanArns"],
       savingsPlanIds: params["savingsPlanIds"],
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
       states: params["states"],
       filters: params["filters"]?.map(x => fromSavingsPlanFilter(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeSavingsPlans",
       requestUri: "/DescribeSavingsPlans",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "savingsPlans": [toSavingsPlan],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "savingsPlans": [toSavingsPlan],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async describeSavingsPlansOfferingRates(
     {abortSignal, ...params}: RequestConfig & DescribeSavingsPlansOfferingRatesRequest = {},
   ): Promise<DescribeSavingsPlansOfferingRatesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       savingsPlanOfferingIds: params["savingsPlanOfferingIds"],
       savingsPlanPaymentOptions: params["savingsPlanPaymentOptions"],
       savingsPlanTypes: params["savingsPlanTypes"],
@@ -143,27 +135,25 @@ export default class SavingsPlans {
       filters: params["filters"]?.map(x => fromSavingsPlanOfferingRateFilterElement(x)),
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeSavingsPlansOfferingRates",
       requestUri: "/DescribeSavingsPlansOfferingRates",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "searchResults": [toSavingsPlanOfferingRate],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "searchResults": [toSavingsPlanOfferingRate],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async describeSavingsPlansOfferings(
     {abortSignal, ...params}: RequestConfig & DescribeSavingsPlansOfferingsRequest = {},
   ): Promise<DescribeSavingsPlansOfferingsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       offeringIds: params["offeringIds"],
       paymentOptions: params["paymentOptions"],
       productType: params["productType"],
@@ -177,82 +167,74 @@ export default class SavingsPlans {
       filters: params["filters"]?.map(x => fromSavingsPlanOfferingFilterElement(x)),
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeSavingsPlansOfferings",
       requestUri: "/DescribeSavingsPlansOfferings",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "searchResults": [toSavingsPlanOffering],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "searchResults": [toSavingsPlanOffering],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listTagsForResource(
     {abortSignal, ...params}: RequestConfig & ListTagsForResourceRequest,
   ): Promise<ListTagsForResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       resourceArn: params["resourceArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForResource",
       requestUri: "/ListTagsForResource",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       resourceArn: params["resourceArn"],
       tags: params["tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
       requestUri: "/TagResource",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceRequest,
   ): Promise<UntagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       resourceArn: params["resourceArn"],
       tagKeys: params["tagKeys"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResource",
       requestUri: "/UntagResource",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
 }

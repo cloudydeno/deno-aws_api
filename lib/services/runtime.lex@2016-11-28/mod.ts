@@ -36,17 +36,15 @@ export default class LexRuntime {
       method: "DELETE",
       requestUri: cmnP.encodePath`/bot/${params["botName"]}/alias/${params["botAlias"]}/user/${params["userId"]}/session`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "botName": "s",
-          "botAlias": "s",
-          "userId": "s",
-          "sessionId": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "botName": "s",
+        "botAlias": "s",
+        "userId": "s",
+        "sessionId": "s",
+      },
+    }, await resp.json());
   }
 
   async getSession(
@@ -60,28 +58,26 @@ export default class LexRuntime {
       method: "GET",
       requestUri: cmnP.encodePath`/bot/${params["botName"]}/alias/${params["botAlias"]}/user/${params["userId"]}/session/`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "recentIntentSummaryView": [toIntentSummary],
-          "sessionAttributes": x => jsonP.readMap(String, String, x),
-          "sessionId": "s",
-          "dialogAction": toDialogAction,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "recentIntentSummaryView": [toIntentSummary],
+        "sessionAttributes": x => jsonP.readMap(String, String, x),
+        "sessionId": "s",
+        "dialogAction": toDialogAction,
+      },
+    }, await resp.json());
   }
 
   async postContent(
     {abortSignal, ...params}: RequestConfig & PostContentRequest,
   ): Promise<PostContentResponse> {
+    const body = typeof params["inputStream"] === 'string' ? new TextEncoder().encode(params["inputStream"]) : params["inputStream"];
     const headers = new Headers;
     if (params["sessionAttributes"] != null) headers.append("x-amz-lex-session-attributes", btoa(jsonP.serializeJsonValue(params["sessionAttributes"]) ?? ''));
     if (params["requestAttributes"] != null) headers.append("x-amz-lex-request-attributes", btoa(jsonP.serializeJsonValue(params["requestAttributes"]) ?? ''));
     headers.append("Content-Type", params["contentType"]);
     if (params["accept"] != null) headers.append("Accept", params["accept"]);
-    const body = typeof params["inputStream"] === 'string' ? new TextEncoder().encode(params["inputStream"]) : params["inputStream"];
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "PostContent",
@@ -109,48 +105,46 @@ export default class LexRuntime {
   async postText(
     {abortSignal, ...params}: RequestConfig & PostTextRequest,
   ): Promise<PostTextResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       sessionAttributes: params["sessionAttributes"],
       requestAttributes: params["requestAttributes"],
       inputText: params["inputText"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PostText",
       requestUri: cmnP.encodePath`/bot/${params["botName"]}/alias/${params["botAlias"]}/user/${params["userId"]}/text`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "intentName": "s",
-          "nluIntentConfidence": toIntentConfidence,
-          "alternativeIntents": [toPredictedIntent],
-          "slots": x => jsonP.readMap(String, String, x),
-          "sessionAttributes": x => jsonP.readMap(String, String, x),
-          "message": "s",
-          "sentimentResponse": toSentimentResponse,
-          "messageFormat": (x: jsonP.JSONValue) => cmnP.readEnum<MessageFormatType>(x),
-          "dialogState": (x: jsonP.JSONValue) => cmnP.readEnum<DialogState>(x),
-          "slotToElicit": "s",
-          "responseCard": toResponseCard,
-          "sessionId": "s",
-          "botVersion": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "intentName": "s",
+        "nluIntentConfidence": toIntentConfidence,
+        "alternativeIntents": [toPredictedIntent],
+        "slots": x => jsonP.readMap(String, String, x),
+        "sessionAttributes": x => jsonP.readMap(String, String, x),
+        "message": "s",
+        "sentimentResponse": toSentimentResponse,
+        "messageFormat": (x: jsonP.JSONValue) => cmnP.readEnum<MessageFormatType>(x),
+        "dialogState": (x: jsonP.JSONValue) => cmnP.readEnum<DialogState>(x),
+        "slotToElicit": "s",
+        "responseCard": toResponseCard,
+        "sessionId": "s",
+        "botVersion": "s",
+      },
+    }, await resp.json());
   }
 
   async putSession(
     {abortSignal, ...params}: RequestConfig & PutSessionRequest,
   ): Promise<PutSessionResponse> {
     const headers = new Headers;
-    if (params["accept"] != null) headers.append("Accept", params["accept"]);
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       sessionAttributes: params["sessionAttributes"],
       dialogAction: fromDialogAction(params["dialogAction"]),
       recentIntentSummaryView: params["recentIntentSummaryView"]?.map(x => fromIntentSummary(x)),
-    } : {};
+    };
+    if (params["accept"] != null) headers.append("Accept", params["accept"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "PutSession",

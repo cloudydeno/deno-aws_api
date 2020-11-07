@@ -29,12 +29,12 @@ export default class DirectConnect {
   async acceptDirectConnectGatewayAssociationProposal(
     {abortSignal, ...params}: RequestConfig & AcceptDirectConnectGatewayAssociationProposalRequest,
   ): Promise<AcceptDirectConnectGatewayAssociationProposalResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       directConnectGatewayId: params["directConnectGatewayId"],
       proposalId: params["proposalId"],
       associatedGatewayOwnerAccount: params["associatedGatewayOwnerAccount"],
       overrideAllowedPrefixesToDirectConnectGateway: params["overrideAllowedPrefixesToDirectConnectGateway"]?.map(x => fromRouteFilterPrefix(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AcceptDirectConnectGatewayAssociationProposal",
@@ -50,13 +50,13 @@ export default class DirectConnect {
   async allocateConnectionOnInterconnect(
     {abortSignal, ...params}: RequestConfig & AllocateConnectionOnInterconnectRequest,
   ): Promise<Connection> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       bandwidth: params["bandwidth"],
       connectionName: params["connectionName"],
       ownerAccount: params["ownerAccount"],
       interconnectId: params["interconnectId"],
       vlan: params["vlan"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AllocateConnectionOnInterconnect",
@@ -67,14 +67,14 @@ export default class DirectConnect {
   async allocateHostedConnection(
     {abortSignal, ...params}: RequestConfig & AllocateHostedConnectionRequest,
   ): Promise<Connection> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       connectionId: params["connectionId"],
       ownerAccount: params["ownerAccount"],
       bandwidth: params["bandwidth"],
       connectionName: params["connectionName"],
       vlan: params["vlan"],
       tags: params["tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AllocateHostedConnection",
@@ -85,11 +85,11 @@ export default class DirectConnect {
   async allocatePrivateVirtualInterface(
     {abortSignal, ...params}: RequestConfig & AllocatePrivateVirtualInterfaceRequest,
   ): Promise<VirtualInterface> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       connectionId: params["connectionId"],
       ownerAccount: params["ownerAccount"],
       newPrivateVirtualInterfaceAllocation: fromNewPrivateVirtualInterfaceAllocation(params["newPrivateVirtualInterfaceAllocation"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AllocatePrivateVirtualInterface",
@@ -100,11 +100,11 @@ export default class DirectConnect {
   async allocatePublicVirtualInterface(
     {abortSignal, ...params}: RequestConfig & AllocatePublicVirtualInterfaceRequest,
   ): Promise<VirtualInterface> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       connectionId: params["connectionId"],
       ownerAccount: params["ownerAccount"],
       newPublicVirtualInterfaceAllocation: fromNewPublicVirtualInterfaceAllocation(params["newPublicVirtualInterfaceAllocation"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AllocatePublicVirtualInterface",
@@ -115,11 +115,11 @@ export default class DirectConnect {
   async allocateTransitVirtualInterface(
     {abortSignal, ...params}: RequestConfig & AllocateTransitVirtualInterfaceRequest,
   ): Promise<AllocateTransitVirtualInterfaceResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       connectionId: params["connectionId"],
       ownerAccount: params["ownerAccount"],
       newTransitVirtualInterfaceAllocation: fromNewTransitVirtualInterfaceAllocation(params["newTransitVirtualInterfaceAllocation"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AllocateTransitVirtualInterface",
@@ -135,10 +135,10 @@ export default class DirectConnect {
   async associateConnectionWithLag(
     {abortSignal, ...params}: RequestConfig & AssociateConnectionWithLagRequest,
   ): Promise<Connection> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       connectionId: params["connectionId"],
       lagId: params["lagId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AssociateConnectionWithLag",
@@ -149,10 +149,10 @@ export default class DirectConnect {
   async associateHostedConnection(
     {abortSignal, ...params}: RequestConfig & AssociateHostedConnectionRequest,
   ): Promise<Connection> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       connectionId: params["connectionId"],
       parentConnectionId: params["parentConnectionId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AssociateHostedConnection",
@@ -163,10 +163,10 @@ export default class DirectConnect {
   async associateVirtualInterface(
     {abortSignal, ...params}: RequestConfig & AssociateVirtualInterfaceRequest,
   ): Promise<VirtualInterface> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       virtualInterfaceId: params["virtualInterfaceId"],
       connectionId: params["connectionId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AssociateVirtualInterface",
@@ -177,9 +177,9 @@ export default class DirectConnect {
   async confirmConnection(
     {abortSignal, ...params}: RequestConfig & ConfirmConnectionRequest,
   ): Promise<ConfirmConnectionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       connectionId: params["connectionId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ConfirmConnection",
@@ -195,11 +195,11 @@ export default class DirectConnect {
   async confirmPrivateVirtualInterface(
     {abortSignal, ...params}: RequestConfig & ConfirmPrivateVirtualInterfaceRequest,
   ): Promise<ConfirmPrivateVirtualInterfaceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       virtualInterfaceId: params["virtualInterfaceId"],
       virtualGatewayId: params["virtualGatewayId"],
       directConnectGatewayId: params["directConnectGatewayId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ConfirmPrivateVirtualInterface",
@@ -215,9 +215,9 @@ export default class DirectConnect {
   async confirmPublicVirtualInterface(
     {abortSignal, ...params}: RequestConfig & ConfirmPublicVirtualInterfaceRequest,
   ): Promise<ConfirmPublicVirtualInterfaceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       virtualInterfaceId: params["virtualInterfaceId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ConfirmPublicVirtualInterface",
@@ -233,10 +233,10 @@ export default class DirectConnect {
   async confirmTransitVirtualInterface(
     {abortSignal, ...params}: RequestConfig & ConfirmTransitVirtualInterfaceRequest,
   ): Promise<ConfirmTransitVirtualInterfaceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       virtualInterfaceId: params["virtualInterfaceId"],
       directConnectGatewayId: params["directConnectGatewayId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ConfirmTransitVirtualInterface",
@@ -252,10 +252,10 @@ export default class DirectConnect {
   async createBGPPeer(
     {abortSignal, ...params}: RequestConfig & CreateBGPPeerRequest = {},
   ): Promise<CreateBGPPeerResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       virtualInterfaceId: params["virtualInterfaceId"],
       newBGPPeer: fromNewBGPPeer(params["newBGPPeer"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateBGPPeer",
@@ -271,14 +271,14 @@ export default class DirectConnect {
   async createConnection(
     {abortSignal, ...params}: RequestConfig & CreateConnectionRequest,
   ): Promise<Connection> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       location: params["location"],
       bandwidth: params["bandwidth"],
       connectionName: params["connectionName"],
       lagId: params["lagId"],
       tags: params["tags"]?.map(x => fromTag(x)),
       providerName: params["providerName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateConnection",
@@ -289,10 +289,10 @@ export default class DirectConnect {
   async createDirectConnectGateway(
     {abortSignal, ...params}: RequestConfig & CreateDirectConnectGatewayRequest,
   ): Promise<CreateDirectConnectGatewayResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       directConnectGatewayName: params["directConnectGatewayName"],
       amazonSideAsn: params["amazonSideAsn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDirectConnectGateway",
@@ -308,12 +308,12 @@ export default class DirectConnect {
   async createDirectConnectGatewayAssociation(
     {abortSignal, ...params}: RequestConfig & CreateDirectConnectGatewayAssociationRequest,
   ): Promise<CreateDirectConnectGatewayAssociationResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       directConnectGatewayId: params["directConnectGatewayId"],
       gatewayId: params["gatewayId"],
       addAllowedPrefixesToDirectConnectGateway: params["addAllowedPrefixesToDirectConnectGateway"]?.map(x => fromRouteFilterPrefix(x)),
       virtualGatewayId: params["virtualGatewayId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDirectConnectGatewayAssociation",
@@ -329,13 +329,13 @@ export default class DirectConnect {
   async createDirectConnectGatewayAssociationProposal(
     {abortSignal, ...params}: RequestConfig & CreateDirectConnectGatewayAssociationProposalRequest,
   ): Promise<CreateDirectConnectGatewayAssociationProposalResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       directConnectGatewayId: params["directConnectGatewayId"],
       directConnectGatewayOwnerAccount: params["directConnectGatewayOwnerAccount"],
       gatewayId: params["gatewayId"],
       addAllowedPrefixesToDirectConnectGateway: params["addAllowedPrefixesToDirectConnectGateway"]?.map(x => fromRouteFilterPrefix(x)),
       removeAllowedPrefixesToDirectConnectGateway: params["removeAllowedPrefixesToDirectConnectGateway"]?.map(x => fromRouteFilterPrefix(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDirectConnectGatewayAssociationProposal",
@@ -351,14 +351,14 @@ export default class DirectConnect {
   async createInterconnect(
     {abortSignal, ...params}: RequestConfig & CreateInterconnectRequest,
   ): Promise<Interconnect> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       interconnectName: params["interconnectName"],
       bandwidth: params["bandwidth"],
       location: params["location"],
       lagId: params["lagId"],
       tags: params["tags"]?.map(x => fromTag(x)),
       providerName: params["providerName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateInterconnect",
@@ -369,7 +369,7 @@ export default class DirectConnect {
   async createLag(
     {abortSignal, ...params}: RequestConfig & CreateLagRequest,
   ): Promise<Lag> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       numberOfConnections: params["numberOfConnections"],
       location: params["location"],
       connectionsBandwidth: params["connectionsBandwidth"],
@@ -378,7 +378,7 @@ export default class DirectConnect {
       tags: params["tags"]?.map(x => fromTag(x)),
       childConnectionTags: params["childConnectionTags"]?.map(x => fromTag(x)),
       providerName: params["providerName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateLag",
@@ -389,10 +389,10 @@ export default class DirectConnect {
   async createPrivateVirtualInterface(
     {abortSignal, ...params}: RequestConfig & CreatePrivateVirtualInterfaceRequest,
   ): Promise<VirtualInterface> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       connectionId: params["connectionId"],
       newPrivateVirtualInterface: fromNewPrivateVirtualInterface(params["newPrivateVirtualInterface"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreatePrivateVirtualInterface",
@@ -403,10 +403,10 @@ export default class DirectConnect {
   async createPublicVirtualInterface(
     {abortSignal, ...params}: RequestConfig & CreatePublicVirtualInterfaceRequest,
   ): Promise<VirtualInterface> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       connectionId: params["connectionId"],
       newPublicVirtualInterface: fromNewPublicVirtualInterface(params["newPublicVirtualInterface"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreatePublicVirtualInterface",
@@ -417,10 +417,10 @@ export default class DirectConnect {
   async createTransitVirtualInterface(
     {abortSignal, ...params}: RequestConfig & CreateTransitVirtualInterfaceRequest,
   ): Promise<CreateTransitVirtualInterfaceResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       connectionId: params["connectionId"],
       newTransitVirtualInterface: fromNewTransitVirtualInterface(params["newTransitVirtualInterface"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateTransitVirtualInterface",
@@ -436,12 +436,12 @@ export default class DirectConnect {
   async deleteBGPPeer(
     {abortSignal, ...params}: RequestConfig & DeleteBGPPeerRequest = {},
   ): Promise<DeleteBGPPeerResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       virtualInterfaceId: params["virtualInterfaceId"],
       asn: params["asn"],
       customerAddress: params["customerAddress"],
       bgpPeerId: params["bgpPeerId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteBGPPeer",
@@ -457,9 +457,9 @@ export default class DirectConnect {
   async deleteConnection(
     {abortSignal, ...params}: RequestConfig & DeleteConnectionRequest,
   ): Promise<Connection> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       connectionId: params["connectionId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteConnection",
@@ -470,9 +470,9 @@ export default class DirectConnect {
   async deleteDirectConnectGateway(
     {abortSignal, ...params}: RequestConfig & DeleteDirectConnectGatewayRequest,
   ): Promise<DeleteDirectConnectGatewayResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       directConnectGatewayId: params["directConnectGatewayId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteDirectConnectGateway",
@@ -488,11 +488,11 @@ export default class DirectConnect {
   async deleteDirectConnectGatewayAssociation(
     {abortSignal, ...params}: RequestConfig & DeleteDirectConnectGatewayAssociationRequest = {},
   ): Promise<DeleteDirectConnectGatewayAssociationResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       associationId: params["associationId"],
       directConnectGatewayId: params["directConnectGatewayId"],
       virtualGatewayId: params["virtualGatewayId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteDirectConnectGatewayAssociation",
@@ -508,9 +508,9 @@ export default class DirectConnect {
   async deleteDirectConnectGatewayAssociationProposal(
     {abortSignal, ...params}: RequestConfig & DeleteDirectConnectGatewayAssociationProposalRequest,
   ): Promise<DeleteDirectConnectGatewayAssociationProposalResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       proposalId: params["proposalId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteDirectConnectGatewayAssociationProposal",
@@ -526,9 +526,9 @@ export default class DirectConnect {
   async deleteInterconnect(
     {abortSignal, ...params}: RequestConfig & DeleteInterconnectRequest,
   ): Promise<DeleteInterconnectResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       interconnectId: params["interconnectId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteInterconnect",
@@ -544,9 +544,9 @@ export default class DirectConnect {
   async deleteLag(
     {abortSignal, ...params}: RequestConfig & DeleteLagRequest,
   ): Promise<Lag> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       lagId: params["lagId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteLag",
@@ -557,9 +557,9 @@ export default class DirectConnect {
   async deleteVirtualInterface(
     {abortSignal, ...params}: RequestConfig & DeleteVirtualInterfaceRequest,
   ): Promise<DeleteVirtualInterfaceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       virtualInterfaceId: params["virtualInterfaceId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteVirtualInterface",
@@ -575,11 +575,11 @@ export default class DirectConnect {
   async describeConnectionLoa(
     {abortSignal, ...params}: RequestConfig & DescribeConnectionLoaRequest,
   ): Promise<DescribeConnectionLoaResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       connectionId: params["connectionId"],
       providerName: params["providerName"],
       loaContentType: params["loaContentType"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeConnectionLoa",
@@ -595,9 +595,9 @@ export default class DirectConnect {
   async describeConnections(
     {abortSignal, ...params}: RequestConfig & DescribeConnectionsRequest = {},
   ): Promise<Connections> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       connectionId: params["connectionId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeConnections",
@@ -613,9 +613,9 @@ export default class DirectConnect {
   async describeConnectionsOnInterconnect(
     {abortSignal, ...params}: RequestConfig & DescribeConnectionsOnInterconnectRequest,
   ): Promise<Connections> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       interconnectId: params["interconnectId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeConnectionsOnInterconnect",
@@ -631,13 +631,13 @@ export default class DirectConnect {
   async describeDirectConnectGatewayAssociationProposals(
     {abortSignal, ...params}: RequestConfig & DescribeDirectConnectGatewayAssociationProposalsRequest = {},
   ): Promise<DescribeDirectConnectGatewayAssociationProposalsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       directConnectGatewayId: params["directConnectGatewayId"],
       proposalId: params["proposalId"],
       associatedGatewayId: params["associatedGatewayId"],
       maxResults: params["maxResults"],
       nextToken: params["nextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeDirectConnectGatewayAssociationProposals",
@@ -654,14 +654,14 @@ export default class DirectConnect {
   async describeDirectConnectGatewayAssociations(
     {abortSignal, ...params}: RequestConfig & DescribeDirectConnectGatewayAssociationsRequest = {},
   ): Promise<DescribeDirectConnectGatewayAssociationsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       associationId: params["associationId"],
       associatedGatewayId: params["associatedGatewayId"],
       directConnectGatewayId: params["directConnectGatewayId"],
       maxResults: params["maxResults"],
       nextToken: params["nextToken"],
       virtualGatewayId: params["virtualGatewayId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeDirectConnectGatewayAssociations",
@@ -678,12 +678,12 @@ export default class DirectConnect {
   async describeDirectConnectGatewayAttachments(
     {abortSignal, ...params}: RequestConfig & DescribeDirectConnectGatewayAttachmentsRequest = {},
   ): Promise<DescribeDirectConnectGatewayAttachmentsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       directConnectGatewayId: params["directConnectGatewayId"],
       virtualInterfaceId: params["virtualInterfaceId"],
       maxResults: params["maxResults"],
       nextToken: params["nextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeDirectConnectGatewayAttachments",
@@ -700,11 +700,11 @@ export default class DirectConnect {
   async describeDirectConnectGateways(
     {abortSignal, ...params}: RequestConfig & DescribeDirectConnectGatewaysRequest = {},
   ): Promise<DescribeDirectConnectGatewaysResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       directConnectGatewayId: params["directConnectGatewayId"],
       maxResults: params["maxResults"],
       nextToken: params["nextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeDirectConnectGateways",
@@ -721,9 +721,9 @@ export default class DirectConnect {
   async describeHostedConnections(
     {abortSignal, ...params}: RequestConfig & DescribeHostedConnectionsRequest,
   ): Promise<Connections> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       connectionId: params["connectionId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeHostedConnections",
@@ -739,11 +739,11 @@ export default class DirectConnect {
   async describeInterconnectLoa(
     {abortSignal, ...params}: RequestConfig & DescribeInterconnectLoaRequest,
   ): Promise<DescribeInterconnectLoaResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       interconnectId: params["interconnectId"],
       providerName: params["providerName"],
       loaContentType: params["loaContentType"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeInterconnectLoa",
@@ -759,9 +759,9 @@ export default class DirectConnect {
   async describeInterconnects(
     {abortSignal, ...params}: RequestConfig & DescribeInterconnectsRequest = {},
   ): Promise<Interconnects> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       interconnectId: params["interconnectId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeInterconnects",
@@ -777,9 +777,9 @@ export default class DirectConnect {
   async describeLags(
     {abortSignal, ...params}: RequestConfig & DescribeLagsRequest = {},
   ): Promise<Lags> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       lagId: params["lagId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeLags",
@@ -795,11 +795,11 @@ export default class DirectConnect {
   async describeLoa(
     {abortSignal, ...params}: RequestConfig & DescribeLoaRequest,
   ): Promise<Loa> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       connectionId: params["connectionId"],
       providerName: params["providerName"],
       loaContentType: params["loaContentType"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeLoa",
@@ -825,9 +825,9 @@ export default class DirectConnect {
   async describeTags(
     {abortSignal, ...params}: RequestConfig & DescribeTagsRequest,
   ): Promise<DescribeTagsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       resourceArns: params["resourceArns"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeTags",
@@ -858,10 +858,10 @@ export default class DirectConnect {
   async describeVirtualInterfaces(
     {abortSignal, ...params}: RequestConfig & DescribeVirtualInterfacesRequest = {},
   ): Promise<VirtualInterfaces> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       connectionId: params["connectionId"],
       virtualInterfaceId: params["virtualInterfaceId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeVirtualInterfaces",
@@ -877,10 +877,10 @@ export default class DirectConnect {
   async disassociateConnectionFromLag(
     {abortSignal, ...params}: RequestConfig & DisassociateConnectionFromLagRequest,
   ): Promise<Connection> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       connectionId: params["connectionId"],
       lagId: params["lagId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisassociateConnectionFromLag",
@@ -891,14 +891,14 @@ export default class DirectConnect {
   async listVirtualInterfaceTestHistory(
     {abortSignal, ...params}: RequestConfig & ListVirtualInterfaceTestHistoryRequest = {},
   ): Promise<ListVirtualInterfaceTestHistoryResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       testId: params["testId"],
       virtualInterfaceId: params["virtualInterfaceId"],
       bgpPeers: params["bgpPeers"],
       status: params["status"],
       maxResults: params["maxResults"],
       nextToken: params["nextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListVirtualInterfaceTestHistory",
@@ -915,11 +915,11 @@ export default class DirectConnect {
   async startBgpFailoverTest(
     {abortSignal, ...params}: RequestConfig & StartBgpFailoverTestRequest,
   ): Promise<StartBgpFailoverTestResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       virtualInterfaceId: params["virtualInterfaceId"],
       bgpPeers: params["bgpPeers"],
       testDurationInMinutes: params["testDurationInMinutes"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartBgpFailoverTest",
@@ -935,9 +935,9 @@ export default class DirectConnect {
   async stopBgpFailoverTest(
     {abortSignal, ...params}: RequestConfig & StopBgpFailoverTestRequest,
   ): Promise<StopBgpFailoverTestResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       virtualInterfaceId: params["virtualInterfaceId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopBgpFailoverTest",
@@ -953,10 +953,10 @@ export default class DirectConnect {
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       resourceArn: params["resourceArn"],
       tags: params["tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
@@ -970,10 +970,10 @@ export default class DirectConnect {
   async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceRequest,
   ): Promise<UntagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       resourceArn: params["resourceArn"],
       tagKeys: params["tagKeys"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResource",
@@ -987,11 +987,11 @@ export default class DirectConnect {
   async updateDirectConnectGatewayAssociation(
     {abortSignal, ...params}: RequestConfig & UpdateDirectConnectGatewayAssociationRequest = {},
   ): Promise<UpdateDirectConnectGatewayAssociationResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       associationId: params["associationId"],
       addAllowedPrefixesToDirectConnectGateway: params["addAllowedPrefixesToDirectConnectGateway"]?.map(x => fromRouteFilterPrefix(x)),
       removeAllowedPrefixesToDirectConnectGateway: params["removeAllowedPrefixesToDirectConnectGateway"]?.map(x => fromRouteFilterPrefix(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateDirectConnectGatewayAssociation",
@@ -1007,11 +1007,11 @@ export default class DirectConnect {
   async updateLag(
     {abortSignal, ...params}: RequestConfig & UpdateLagRequest,
   ): Promise<Lag> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       lagId: params["lagId"],
       lagName: params["lagName"],
       minimumLinks: params["minimumLinks"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateLag",
@@ -1022,10 +1022,10 @@ export default class DirectConnect {
   async updateVirtualInterfaceAttributes(
     {abortSignal, ...params}: RequestConfig & UpdateVirtualInterfaceAttributesRequest,
   ): Promise<VirtualInterface> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       virtualInterfaceId: params["virtualInterfaceId"],
       mtu: params["mtu"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateVirtualInterfaceAttributes",

@@ -30,30 +30,28 @@ export default class Kafka {
   async batchAssociateScramSecret(
     {abortSignal, ...params}: RequestConfig & BatchAssociateScramSecretRequest,
   ): Promise<BatchAssociateScramSecretResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       secretArnList: params["SecretArnList"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchAssociateScramSecret",
       requestUri: cmnP.encodePath`/v1/clusters/${params["ClusterArn"]}/scram-secrets`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ClusterArn": "s",
-          "UnprocessedScramSecrets": [toUnprocessedScramSecret],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ClusterArn": "s",
+        "UnprocessedScramSecrets": [toUnprocessedScramSecret],
+      },
+    }, await resp.json());
   }
 
   async createCluster(
     {abortSignal, ...params}: RequestConfig & CreateClusterRequest,
   ): Promise<CreateClusterResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       brokerNodeGroupInfo: fromBrokerNodeGroupInfo(params["BrokerNodeGroupInfo"]),
       clientAuthentication: fromClientAuthentication(params["ClientAuthentication"]),
       clusterName: params["ClusterName"],
@@ -65,52 +63,48 @@ export default class Kafka {
       loggingInfo: fromLoggingInfo(params["LoggingInfo"]),
       numberOfBrokerNodes: params["NumberOfBrokerNodes"],
       tags: params["Tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateCluster",
       requestUri: "/v1/clusters",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ClusterArn": "s",
-          "ClusterName": "s",
-          "State": (x: jsonP.JSONValue) => cmnP.readEnum<ClusterState>(x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ClusterArn": "s",
+        "ClusterName": "s",
+        "State": (x: jsonP.JSONValue) => cmnP.readEnum<ClusterState>(x),
+      },
+    }, await resp.json());
   }
 
   async createConfiguration(
     {abortSignal, ...params}: RequestConfig & CreateConfigurationRequest,
   ): Promise<CreateConfigurationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       description: params["Description"],
       kafkaVersions: params["KafkaVersions"],
       name: params["Name"],
       serverProperties: jsonP.serializeBlob(params["ServerProperties"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateConfiguration",
       requestUri: "/v1/configurations",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Arn": "s",
-          "CreationTime": "d",
-          "LatestRevision": toConfigurationRevision,
-          "Name": "s",
-          "State": (x: jsonP.JSONValue) => cmnP.readEnum<ConfigurationState>(x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+        "CreationTime": "d",
+        "LatestRevision": toConfigurationRevision,
+        "Name": "s",
+        "State": (x: jsonP.JSONValue) => cmnP.readEnum<ConfigurationState>(x),
+      },
+    }, await resp.json());
   }
 
   async deleteCluster(
@@ -125,15 +119,13 @@ export default class Kafka {
       requestUri: cmnP.encodePath`/v1/clusters/${params["ClusterArn"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ClusterArn": "s",
-          "State": (x: jsonP.JSONValue) => cmnP.readEnum<ClusterState>(x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ClusterArn": "s",
+        "State": (x: jsonP.JSONValue) => cmnP.readEnum<ClusterState>(x),
+      },
+    }, await resp.json());
   }
 
   async deleteConfiguration(
@@ -147,15 +139,13 @@ export default class Kafka {
       requestUri: cmnP.encodePath`/v1/configurations/${params["Arn"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Arn": "s",
-          "State": (x: jsonP.JSONValue) => cmnP.readEnum<ConfigurationState>(x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+        "State": (x: jsonP.JSONValue) => cmnP.readEnum<ConfigurationState>(x),
+      },
+    }, await resp.json());
   }
 
   async describeCluster(
@@ -169,14 +159,12 @@ export default class Kafka {
       requestUri: cmnP.encodePath`/v1/clusters/${params["ClusterArn"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ClusterInfo": toClusterInfo,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ClusterInfo": toClusterInfo,
+      },
+    }, await resp.json());
   }
 
   async describeClusterOperation(
@@ -190,14 +178,12 @@ export default class Kafka {
       requestUri: cmnP.encodePath`/v1/operations/${params["ClusterOperationArn"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ClusterOperationInfo": toClusterOperationInfo,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ClusterOperationInfo": toClusterOperationInfo,
+      },
+    }, await resp.json());
   }
 
   async describeConfiguration(
@@ -211,20 +197,18 @@ export default class Kafka {
       requestUri: cmnP.encodePath`/v1/configurations/${params["Arn"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Arn": "s",
-          "CreationTime": "d",
-          "Description": "s",
-          "KafkaVersions": ["s"],
-          "LatestRevision": toConfigurationRevision,
-          "Name": "s",
-          "State": (x: jsonP.JSONValue) => cmnP.readEnum<ConfigurationState>(x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+        "CreationTime": "d",
+        "Description": "s",
+        "KafkaVersions": ["s"],
+        "LatestRevision": toConfigurationRevision,
+        "Name": "s",
+        "State": (x: jsonP.JSONValue) => cmnP.readEnum<ConfigurationState>(x),
+      },
+    }, await resp.json());
   }
 
   async describeConfigurationRevision(
@@ -238,26 +222,24 @@ export default class Kafka {
       requestUri: cmnP.encodePath`/v1/configurations/${params["Arn"]}/revisions/${params["Revision"].toString()}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Arn": "s",
-          "CreationTime": "d",
-          "Description": "s",
-          "Revision": "n",
-          "ServerProperties": "a",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+        "CreationTime": "d",
+        "Description": "s",
+        "Revision": "n",
+        "ServerProperties": "a",
+      },
+    }, await resp.json());
   }
 
   async batchDisassociateScramSecret(
     {abortSignal, ...params}: RequestConfig & BatchDisassociateScramSecretRequest,
   ): Promise<BatchDisassociateScramSecretResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       secretArnList: params["SecretArnList"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchDisassociateScramSecret",
@@ -265,15 +247,13 @@ export default class Kafka {
       requestUri: cmnP.encodePath`/v1/clusters/${params["ClusterArn"]}/scram-secrets`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ClusterArn": "s",
-          "UnprocessedScramSecrets": [toUnprocessedScramSecret],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ClusterArn": "s",
+        "UnprocessedScramSecrets": [toUnprocessedScramSecret],
+      },
+    }, await resp.json());
   }
 
   async getBootstrapBrokers(
@@ -287,16 +267,14 @@ export default class Kafka {
       requestUri: cmnP.encodePath`/v1/clusters/${params["ClusterArn"]}/bootstrap-brokers`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "BootstrapBrokerString": "s",
-          "BootstrapBrokerStringTls": "s",
-          "BootstrapBrokerStringSaslScram": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "BootstrapBrokerString": "s",
+        "BootstrapBrokerStringTls": "s",
+        "BootstrapBrokerStringSaslScram": "s",
+      },
+    }, await resp.json());
   }
 
   async getCompatibleKafkaVersions(
@@ -311,14 +289,12 @@ export default class Kafka {
       requestUri: "/v1/compatible-kafka-versions",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "CompatibleKafkaVersions": [toCompatibleKafkaVersion],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "CompatibleKafkaVersions": [toCompatibleKafkaVersion],
+      },
+    }, await resp.json());
   }
 
   async listClusterOperations(
@@ -334,15 +310,13 @@ export default class Kafka {
       requestUri: cmnP.encodePath`/v1/clusters/${params["ClusterArn"]}/operations`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ClusterOperationInfoList": [toClusterOperationInfo],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ClusterOperationInfoList": [toClusterOperationInfo],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listClusters(
@@ -359,15 +333,13 @@ export default class Kafka {
       requestUri: "/v1/clusters",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ClusterInfoList": [toClusterInfo],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ClusterInfoList": [toClusterInfo],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listConfigurationRevisions(
@@ -383,15 +355,13 @@ export default class Kafka {
       requestUri: cmnP.encodePath`/v1/configurations/${params["Arn"]}/revisions`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "NextToken": "s",
-          "Revisions": [toConfigurationRevision],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "NextToken": "s",
+        "Revisions": [toConfigurationRevision],
+      },
+    }, await resp.json());
   }
 
   async listConfigurations(
@@ -407,15 +377,13 @@ export default class Kafka {
       requestUri: "/v1/configurations",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Configurations": [toConfiguration],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Configurations": [toConfiguration],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listKafkaVersions(
@@ -431,15 +399,13 @@ export default class Kafka {
       requestUri: "/v1/kafka-versions",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "KafkaVersions": [toKafkaVersion],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "KafkaVersions": [toKafkaVersion],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listNodes(
@@ -455,15 +421,13 @@ export default class Kafka {
       requestUri: cmnP.encodePath`/v1/clusters/${params["ClusterArn"]}/nodes`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "NextToken": "s",
-          "NodeInfoList": [toNodeInfo],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "NextToken": "s",
+        "NodeInfoList": [toNodeInfo],
+      },
+    }, await resp.json());
   }
 
   async listScramSecrets(
@@ -479,15 +443,13 @@ export default class Kafka {
       requestUri: cmnP.encodePath`/v1/clusters/${params["ClusterArn"]}/scram-secrets`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "NextToken": "s",
-          "SecretArnList": ["s"],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "NextToken": "s",
+        "SecretArnList": ["s"],
+      },
+    }, await resp.json());
   }
 
   async listTagsForResource(
@@ -501,22 +463,20 @@ export default class Kafka {
       requestUri: cmnP.encodePath`/v1/tags/${params["ResourceArn"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async rebootBroker(
     {abortSignal, ...params}: RequestConfig & RebootBrokerRequest,
   ): Promise<RebootBrokerResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       brokerIds: params["BrokerIds"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RebootBroker",
@@ -524,23 +484,21 @@ export default class Kafka {
       requestUri: cmnP.encodePath`/v1/clusters/${params["ClusterArn"]}/reboot-broker`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ClusterArn": "s",
-          "ClusterOperationArn": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ClusterArn": "s",
+        "ClusterOperationArn": "s",
+      },
+    }, await resp.json());
   }
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       tags: params["Tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
@@ -568,10 +526,10 @@ export default class Kafka {
   async updateBrokerCount(
     {abortSignal, ...params}: RequestConfig & UpdateBrokerCountRequest,
   ): Promise<UpdateBrokerCountResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       currentVersion: params["CurrentVersion"],
       targetNumberOfBrokerNodes: params["TargetNumberOfBrokerNodes"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateBrokerCount",
@@ -579,24 +537,22 @@ export default class Kafka {
       requestUri: cmnP.encodePath`/v1/clusters/${params["ClusterArn"]}/nodes/count`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ClusterArn": "s",
-          "ClusterOperationArn": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ClusterArn": "s",
+        "ClusterOperationArn": "s",
+      },
+    }, await resp.json());
   }
 
   async updateBrokerStorage(
     {abortSignal, ...params}: RequestConfig & UpdateBrokerStorageRequest,
   ): Promise<UpdateBrokerStorageResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       currentVersion: params["CurrentVersion"],
       targetBrokerEBSVolumeInfo: params["TargetBrokerEBSVolumeInfo"]?.map(x => fromBrokerEBSVolumeInfo(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateBrokerStorage",
@@ -604,24 +560,22 @@ export default class Kafka {
       requestUri: cmnP.encodePath`/v1/clusters/${params["ClusterArn"]}/nodes/storage`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ClusterArn": "s",
-          "ClusterOperationArn": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ClusterArn": "s",
+        "ClusterOperationArn": "s",
+      },
+    }, await resp.json());
   }
 
   async updateConfiguration(
     {abortSignal, ...params}: RequestConfig & UpdateConfigurationRequest,
   ): Promise<UpdateConfigurationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       description: params["Description"],
       serverProperties: jsonP.serializeBlob(params["ServerProperties"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateConfiguration",
@@ -629,24 +583,22 @@ export default class Kafka {
       requestUri: cmnP.encodePath`/v1/configurations/${params["Arn"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Arn": "s",
-          "LatestRevision": toConfigurationRevision,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+        "LatestRevision": toConfigurationRevision,
+      },
+    }, await resp.json());
   }
 
   async updateClusterConfiguration(
     {abortSignal, ...params}: RequestConfig & UpdateClusterConfigurationRequest,
   ): Promise<UpdateClusterConfigurationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       configurationInfo: fromConfigurationInfo(params["ConfigurationInfo"]),
       currentVersion: params["CurrentVersion"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateClusterConfiguration",
@@ -654,25 +606,23 @@ export default class Kafka {
       requestUri: cmnP.encodePath`/v1/clusters/${params["ClusterArn"]}/configuration`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ClusterArn": "s",
-          "ClusterOperationArn": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ClusterArn": "s",
+        "ClusterOperationArn": "s",
+      },
+    }, await resp.json());
   }
 
   async updateClusterKafkaVersion(
     {abortSignal, ...params}: RequestConfig & UpdateClusterKafkaVersionRequest,
   ): Promise<UpdateClusterKafkaVersionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       configurationInfo: fromConfigurationInfo(params["ConfigurationInfo"]),
       currentVersion: params["CurrentVersion"],
       targetKafkaVersion: params["TargetKafkaVersion"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateClusterKafkaVersion",
@@ -680,26 +630,24 @@ export default class Kafka {
       requestUri: cmnP.encodePath`/v1/clusters/${params["ClusterArn"]}/version`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ClusterArn": "s",
-          "ClusterOperationArn": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ClusterArn": "s",
+        "ClusterOperationArn": "s",
+      },
+    }, await resp.json());
   }
 
   async updateMonitoring(
     {abortSignal, ...params}: RequestConfig & UpdateMonitoringRequest,
   ): Promise<UpdateMonitoringResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       currentVersion: params["CurrentVersion"],
       enhancedMonitoring: params["EnhancedMonitoring"],
       openMonitoring: fromOpenMonitoringInfo(params["OpenMonitoring"]),
       loggingInfo: fromLoggingInfo(params["LoggingInfo"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateMonitoring",
@@ -707,15 +655,13 @@ export default class Kafka {
       requestUri: cmnP.encodePath`/v1/clusters/${params["ClusterArn"]}/monitoring`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ClusterArn": "s",
-          "ClusterOperationArn": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ClusterArn": "s",
+        "ClusterOperationArn": "s",
+      },
+    }, await resp.json());
   }
 
 }

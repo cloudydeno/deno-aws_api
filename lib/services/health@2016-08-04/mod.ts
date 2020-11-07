@@ -30,11 +30,11 @@ export default class Health {
   async describeAffectedAccountsForOrganization(
     {abortSignal, ...params}: RequestConfig & DescribeAffectedAccountsForOrganizationRequest,
   ): Promise<DescribeAffectedAccountsForOrganizationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       eventArn: params["eventArn"],
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeAffectedAccountsForOrganization",
@@ -52,12 +52,12 @@ export default class Health {
   async describeAffectedEntities(
     {abortSignal, ...params}: RequestConfig & DescribeAffectedEntitiesRequest,
   ): Promise<DescribeAffectedEntitiesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       filter: fromEntityFilter(params["filter"]),
       locale: params["locale"],
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeAffectedEntities",
@@ -74,12 +74,12 @@ export default class Health {
   async describeAffectedEntitiesForOrganization(
     {abortSignal, ...params}: RequestConfig & DescribeAffectedEntitiesForOrganizationRequest,
   ): Promise<DescribeAffectedEntitiesForOrganizationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       organizationEntityFilters: params["organizationEntityFilters"]?.map(x => fromEventAccountFilter(x)),
       locale: params["locale"],
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeAffectedEntitiesForOrganization",
@@ -97,9 +97,9 @@ export default class Health {
   async describeEntityAggregates(
     {abortSignal, ...params}: RequestConfig & DescribeEntityAggregatesRequest = {},
   ): Promise<DescribeEntityAggregatesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       eventArns: params["eventArns"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeEntityAggregates",
@@ -115,12 +115,12 @@ export default class Health {
   async describeEventAggregates(
     {abortSignal, ...params}: RequestConfig & DescribeEventAggregatesRequest,
   ): Promise<DescribeEventAggregatesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       filter: fromEventFilter(params["filter"]),
       aggregateField: params["aggregateField"],
       maxResults: params["maxResults"],
       nextToken: params["nextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeEventAggregates",
@@ -137,10 +137,10 @@ export default class Health {
   async describeEventDetails(
     {abortSignal, ...params}: RequestConfig & DescribeEventDetailsRequest,
   ): Promise<DescribeEventDetailsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       eventArns: params["eventArns"],
       locale: params["locale"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeEventDetails",
@@ -157,10 +157,10 @@ export default class Health {
   async describeEventDetailsForOrganization(
     {abortSignal, ...params}: RequestConfig & DescribeEventDetailsForOrganizationRequest,
   ): Promise<DescribeEventDetailsForOrganizationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       organizationEventDetailFilters: params["organizationEventDetailFilters"]?.map(x => fromEventAccountFilter(x)),
       locale: params["locale"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeEventDetailsForOrganization",
@@ -177,12 +177,12 @@ export default class Health {
   async describeEventTypes(
     {abortSignal, ...params}: RequestConfig & DescribeEventTypesRequest = {},
   ): Promise<DescribeEventTypesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       filter: fromEventTypeFilter(params["filter"]),
       locale: params["locale"],
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeEventTypes",
@@ -199,12 +199,12 @@ export default class Health {
   async describeEvents(
     {abortSignal, ...params}: RequestConfig & DescribeEventsRequest = {},
   ): Promise<DescribeEventsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       filter: fromEventFilter(params["filter"]),
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
       locale: params["locale"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeEvents",
@@ -221,12 +221,12 @@ export default class Health {
   async describeEventsForOrganization(
     {abortSignal, ...params}: RequestConfig & DescribeEventsForOrganizationRequest = {},
   ): Promise<DescribeEventsForOrganizationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       filter: fromOrganizationEventFilter(params["filter"]),
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
       locale: params["locale"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeEventsForOrganization",

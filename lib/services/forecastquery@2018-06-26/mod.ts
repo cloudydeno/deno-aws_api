@@ -30,13 +30,13 @@ export default class ForecastQueryService {
   async queryForecast(
     {abortSignal, ...params}: RequestConfig & QueryForecastRequest,
   ): Promise<QueryForecastResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ForecastArn: params["ForecastArn"],
       StartDate: params["StartDate"],
       EndDate: params["EndDate"],
       Filters: params["Filters"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "QueryForecast",

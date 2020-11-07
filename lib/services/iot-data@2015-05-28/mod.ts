@@ -69,24 +69,22 @@ export default class IotData {
       method: "GET",
       requestUri: cmnP.encodePath`/api/things/shadow/ListNamedShadowsForThing/${params["thingName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "results": ["s"],
-          "nextToken": "s",
-          "timestamp": "n",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "results": ["s"],
+        "nextToken": "s",
+        "timestamp": "n",
+      },
+    }, await resp.json());
   }
 
   async publish(
     {abortSignal, ...params}: RequestConfig & PublishRequest,
   ): Promise<void> {
+    const body = typeof params["payload"] === 'string' ? new TextEncoder().encode(params["payload"]) : params["payload"];
     const query = new URLSearchParams;
     if (params["qos"] != null) query.set("qos", params["qos"]?.toString() ?? "");
-    const body = typeof params["payload"] === 'string' ? new TextEncoder().encode(params["payload"]) : params["payload"];
     const resp = await this.#client.performRequest({
       abortSignal, query, body,
       action: "Publish",
@@ -97,9 +95,9 @@ export default class IotData {
   async updateThingShadow(
     {abortSignal, ...params}: RequestConfig & UpdateThingShadowRequest,
   ): Promise<UpdateThingShadowResponse> {
+    const body = typeof params["payload"] === 'string' ? new TextEncoder().encode(params["payload"]) : params["payload"];
     const query = new URLSearchParams;
     if (params["shadowName"] != null) query.set("name", params["shadowName"]?.toString() ?? "");
-    const body = typeof params["payload"] === 'string' ? new TextEncoder().encode(params["payload"]) : params["payload"];
     const resp = await this.#client.performRequest({
       abortSignal, query, body,
       action: "UpdateThingShadow",

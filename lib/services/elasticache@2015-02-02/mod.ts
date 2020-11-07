@@ -1383,7 +1383,7 @@ export default class ElastiCache {
         if (field?.some(x => x === "restore-failed")) throw new Error(errMessage);
         if (field?.some(x => x === "snapshotting")) throw new Error(errMessage);
       } catch (err) {
-        if (["CacheClusterNotFound"].includes(err.code)) return err;
+        if (["CacheClusterNotFound"].includes(err.shortCode)) return err;
         throw err;
       }
       await new Promise(r => setTimeout(r, 15000));
@@ -1424,7 +1424,7 @@ export default class ElastiCache {
         if (field?.every(x => x === "deleted")) return resp;
         if (field?.some(x => x === "available")) throw new Error(errMessage);
       } catch (err) {
-        if (["ReplicationGroupNotFoundFault"].includes(err.code)) return err;
+        if (["ReplicationGroupNotFoundFault"].includes(err.shortCode)) return err;
         throw err;
       }
       await new Promise(r => setTimeout(r, 15000));

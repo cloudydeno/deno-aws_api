@@ -2387,9 +2387,12 @@ export default class IAM {
   ): Promise<GetInstanceProfileResponse> {
     const errMessage = 'ResourceNotReady: Resource is not in the state InstanceProfileExists';
     for (let i = 0; i < 40; i++) {
-      const resp = await this.getInstanceProfile(params);
-      return resp; // for status 200
-      // TODO: if (statusCode == 404) continue;
+      try {
+        const resp = await this.getInstanceProfile(params);
+        return resp; // for status 200
+      } catch (err) {
+        if (!["Http404"].includes(err.shortCode)) throw err;
+      }
       await new Promise(r => setTimeout(r, 1000));
     }
     throw new Error(errMessage);
@@ -2405,7 +2408,7 @@ export default class IAM {
         const resp = await this.getUser(params);
         return resp; // for status 200
       } catch (err) {
-        if (!["NoSuchEntity"].includes(err.code)) throw err;
+        if (!["NoSuchEntity"].includes(err.shortCode)) throw err;
       }
       await new Promise(r => setTimeout(r, 1000));
     }
@@ -2422,7 +2425,7 @@ export default class IAM {
         const resp = await this.getRole(params);
         return resp; // for status 200
       } catch (err) {
-        if (!["NoSuchEntity"].includes(err.code)) throw err;
+        if (!["NoSuchEntity"].includes(err.shortCode)) throw err;
       }
       await new Promise(r => setTimeout(r, 1000));
     }
@@ -2439,7 +2442,7 @@ export default class IAM {
         const resp = await this.getPolicy(params);
         return resp; // for status 200
       } catch (err) {
-        if (!["NoSuchEntity"].includes(err.code)) throw err;
+        if (!["NoSuchEntity"].includes(err.shortCode)) throw err;
       }
       await new Promise(r => setTimeout(r, 1000));
     }

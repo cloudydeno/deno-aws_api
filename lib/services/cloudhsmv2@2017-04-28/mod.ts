@@ -31,11 +31,11 @@ export default class CloudHSMV2 {
   async copyBackupToRegion(
     {abortSignal, ...params}: RequestConfig & CopyBackupToRegionRequest,
   ): Promise<CopyBackupToRegionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DestinationRegion: params["DestinationRegion"],
       BackupId: params["BackupId"],
       TagList: params["TagList"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CopyBackupToRegion",
@@ -51,12 +51,12 @@ export default class CloudHSMV2 {
   async createCluster(
     {abortSignal, ...params}: RequestConfig & CreateClusterRequest,
   ): Promise<CreateClusterResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       SubnetIds: params["SubnetIds"],
       HsmType: params["HsmType"],
       SourceBackupId: params["SourceBackupId"],
       TagList: params["TagList"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateCluster",
@@ -72,11 +72,11 @@ export default class CloudHSMV2 {
   async createHsm(
     {abortSignal, ...params}: RequestConfig & CreateHsmRequest,
   ): Promise<CreateHsmResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ClusterId: params["ClusterId"],
       AvailabilityZone: params["AvailabilityZone"],
       IpAddress: params["IpAddress"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateHsm",
@@ -92,9 +92,9 @@ export default class CloudHSMV2 {
   async deleteBackup(
     {abortSignal, ...params}: RequestConfig & DeleteBackupRequest,
   ): Promise<DeleteBackupResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       BackupId: params["BackupId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteBackup",
@@ -110,9 +110,9 @@ export default class CloudHSMV2 {
   async deleteCluster(
     {abortSignal, ...params}: RequestConfig & DeleteClusterRequest,
   ): Promise<DeleteClusterResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ClusterId: params["ClusterId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteCluster",
@@ -128,12 +128,12 @@ export default class CloudHSMV2 {
   async deleteHsm(
     {abortSignal, ...params}: RequestConfig & DeleteHsmRequest,
   ): Promise<DeleteHsmResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ClusterId: params["ClusterId"],
       HsmId: params["HsmId"],
       EniId: params["EniId"],
       EniIp: params["EniIp"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteHsm",
@@ -149,12 +149,12 @@ export default class CloudHSMV2 {
   async describeBackups(
     {abortSignal, ...params}: RequestConfig & DescribeBackupsRequest = {},
   ): Promise<DescribeBackupsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
       Filters: params["Filters"],
       SortAscending: params["SortAscending"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeBackups",
@@ -171,11 +171,11 @@ export default class CloudHSMV2 {
   async describeClusters(
     {abortSignal, ...params}: RequestConfig & DescribeClustersRequest = {},
   ): Promise<DescribeClustersResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Filters: params["Filters"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeClusters",
@@ -192,11 +192,11 @@ export default class CloudHSMV2 {
   async initializeCluster(
     {abortSignal, ...params}: RequestConfig & InitializeClusterRequest,
   ): Promise<InitializeClusterResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ClusterId: params["ClusterId"],
       SignedCert: params["SignedCert"],
       TrustAnchor: params["TrustAnchor"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "InitializeCluster",
@@ -213,11 +213,11 @@ export default class CloudHSMV2 {
   async listTags(
     {abortSignal, ...params}: RequestConfig & ListTagsRequest,
   ): Promise<ListTagsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceId: params["ResourceId"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTags",
@@ -235,9 +235,9 @@ export default class CloudHSMV2 {
   async restoreBackup(
     {abortSignal, ...params}: RequestConfig & RestoreBackupRequest,
   ): Promise<RestoreBackupResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       BackupId: params["BackupId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RestoreBackup",
@@ -253,10 +253,10 @@ export default class CloudHSMV2 {
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceId: params["ResourceId"],
       TagList: params["TagList"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
@@ -270,10 +270,10 @@ export default class CloudHSMV2 {
   async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceRequest,
   ): Promise<UntagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceId: params["ResourceId"],
       TagKeyList: params["TagKeyList"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResource",

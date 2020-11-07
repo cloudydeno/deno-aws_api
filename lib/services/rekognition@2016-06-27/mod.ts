@@ -29,12 +29,12 @@ export default class Rekognition {
   async compareFaces(
     {abortSignal, ...params}: RequestConfig & CompareFacesRequest,
   ): Promise<CompareFacesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       SourceImage: fromImage(params["SourceImage"]),
       TargetImage: fromImage(params["TargetImage"]),
       SimilarityThreshold: params["SimilarityThreshold"],
       QualityFilter: params["QualityFilter"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CompareFaces",
@@ -54,9 +54,9 @@ export default class Rekognition {
   async createCollection(
     {abortSignal, ...params}: RequestConfig & CreateCollectionRequest,
   ): Promise<CreateCollectionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CollectionId: params["CollectionId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateCollection",
@@ -74,9 +74,9 @@ export default class Rekognition {
   async createProject(
     {abortSignal, ...params}: RequestConfig & CreateProjectRequest,
   ): Promise<CreateProjectResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ProjectName: params["ProjectName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateProject",
@@ -92,13 +92,13 @@ export default class Rekognition {
   async createProjectVersion(
     {abortSignal, ...params}: RequestConfig & CreateProjectVersionRequest,
   ): Promise<CreateProjectVersionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ProjectArn: params["ProjectArn"],
       VersionName: params["VersionName"],
       OutputConfig: fromOutputConfig(params["OutputConfig"]),
       TrainingData: fromTrainingData(params["TrainingData"]),
       TestingData: fromTestingData(params["TestingData"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateProjectVersion",
@@ -114,13 +114,13 @@ export default class Rekognition {
   async createStreamProcessor(
     {abortSignal, ...params}: RequestConfig & CreateStreamProcessorRequest,
   ): Promise<CreateStreamProcessorResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Input: fromStreamProcessorInput(params["Input"]),
       Output: fromStreamProcessorOutput(params["Output"]),
       Name: params["Name"],
       Settings: fromStreamProcessorSettings(params["Settings"]),
       RoleArn: params["RoleArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateStreamProcessor",
@@ -136,9 +136,9 @@ export default class Rekognition {
   async deleteCollection(
     {abortSignal, ...params}: RequestConfig & DeleteCollectionRequest,
   ): Promise<DeleteCollectionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CollectionId: params["CollectionId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteCollection",
@@ -154,10 +154,10 @@ export default class Rekognition {
   async deleteFaces(
     {abortSignal, ...params}: RequestConfig & DeleteFacesRequest,
   ): Promise<DeleteFacesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CollectionId: params["CollectionId"],
       FaceIds: params["FaceIds"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteFaces",
@@ -173,9 +173,9 @@ export default class Rekognition {
   async deleteProject(
     {abortSignal, ...params}: RequestConfig & DeleteProjectRequest,
   ): Promise<DeleteProjectResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ProjectArn: params["ProjectArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteProject",
@@ -191,9 +191,9 @@ export default class Rekognition {
   async deleteProjectVersion(
     {abortSignal, ...params}: RequestConfig & DeleteProjectVersionRequest,
   ): Promise<DeleteProjectVersionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ProjectVersionArn: params["ProjectVersionArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteProjectVersion",
@@ -209,9 +209,9 @@ export default class Rekognition {
   async deleteStreamProcessor(
     {abortSignal, ...params}: RequestConfig & DeleteStreamProcessorRequest,
   ): Promise<DeleteStreamProcessorResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteStreamProcessor",
@@ -225,9 +225,9 @@ export default class Rekognition {
   async describeCollection(
     {abortSignal, ...params}: RequestConfig & DescribeCollectionRequest,
   ): Promise<DescribeCollectionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CollectionId: params["CollectionId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeCollection",
@@ -246,12 +246,12 @@ export default class Rekognition {
   async describeProjectVersions(
     {abortSignal, ...params}: RequestConfig & DescribeProjectVersionsRequest,
   ): Promise<DescribeProjectVersionsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ProjectArn: params["ProjectArn"],
       VersionNames: params["VersionNames"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeProjectVersions",
@@ -268,10 +268,10 @@ export default class Rekognition {
   async describeProjects(
     {abortSignal, ...params}: RequestConfig & DescribeProjectsRequest = {},
   ): Promise<DescribeProjectsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeProjects",
@@ -288,9 +288,9 @@ export default class Rekognition {
   async describeStreamProcessor(
     {abortSignal, ...params}: RequestConfig & DescribeStreamProcessorRequest,
   ): Promise<DescribeStreamProcessorResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeStreamProcessor",
@@ -315,12 +315,12 @@ export default class Rekognition {
   async detectCustomLabels(
     {abortSignal, ...params}: RequestConfig & DetectCustomLabelsRequest,
   ): Promise<DetectCustomLabelsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ProjectVersionArn: params["ProjectVersionArn"],
       Image: fromImage(params["Image"]),
       MaxResults: params["MaxResults"],
       MinConfidence: params["MinConfidence"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DetectCustomLabels",
@@ -336,10 +336,10 @@ export default class Rekognition {
   async detectFaces(
     {abortSignal, ...params}: RequestConfig & DetectFacesRequest,
   ): Promise<DetectFacesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Image: fromImage(params["Image"]),
       Attributes: params["Attributes"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DetectFaces",
@@ -356,11 +356,11 @@ export default class Rekognition {
   async detectLabels(
     {abortSignal, ...params}: RequestConfig & DetectLabelsRequest,
   ): Promise<DetectLabelsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Image: fromImage(params["Image"]),
       MaxLabels: params["MaxLabels"],
       MinConfidence: params["MinConfidence"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DetectLabels",
@@ -378,11 +378,11 @@ export default class Rekognition {
   async detectModerationLabels(
     {abortSignal, ...params}: RequestConfig & DetectModerationLabelsRequest,
   ): Promise<DetectModerationLabelsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Image: fromImage(params["Image"]),
       MinConfidence: params["MinConfidence"],
       HumanLoopConfig: fromHumanLoopConfig(params["HumanLoopConfig"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DetectModerationLabels",
@@ -400,10 +400,10 @@ export default class Rekognition {
   async detectProtectiveEquipment(
     {abortSignal, ...params}: RequestConfig & DetectProtectiveEquipmentRequest,
   ): Promise<DetectProtectiveEquipmentResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Image: fromImage(params["Image"]),
       SummarizationAttributes: fromProtectiveEquipmentSummarizationAttributes(params["SummarizationAttributes"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DetectProtectiveEquipment",
@@ -421,10 +421,10 @@ export default class Rekognition {
   async detectText(
     {abortSignal, ...params}: RequestConfig & DetectTextRequest,
   ): Promise<DetectTextResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Image: fromImage(params["Image"]),
       Filters: fromDetectTextFilters(params["Filters"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DetectText",
@@ -441,9 +441,9 @@ export default class Rekognition {
   async getCelebrityInfo(
     {abortSignal, ...params}: RequestConfig & GetCelebrityInfoRequest,
   ): Promise<GetCelebrityInfoResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Id: params["Id"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetCelebrityInfo",
@@ -460,12 +460,12 @@ export default class Rekognition {
   async getCelebrityRecognition(
     {abortSignal, ...params}: RequestConfig & GetCelebrityRecognitionRequest,
   ): Promise<GetCelebrityRecognitionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       JobId: params["JobId"],
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
       SortBy: params["SortBy"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetCelebrityRecognition",
@@ -485,12 +485,12 @@ export default class Rekognition {
   async getContentModeration(
     {abortSignal, ...params}: RequestConfig & GetContentModerationRequest,
   ): Promise<GetContentModerationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       JobId: params["JobId"],
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
       SortBy: params["SortBy"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetContentModeration",
@@ -511,11 +511,11 @@ export default class Rekognition {
   async getFaceDetection(
     {abortSignal, ...params}: RequestConfig & GetFaceDetectionRequest,
   ): Promise<GetFaceDetectionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       JobId: params["JobId"],
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetFaceDetection",
@@ -535,12 +535,12 @@ export default class Rekognition {
   async getFaceSearch(
     {abortSignal, ...params}: RequestConfig & GetFaceSearchRequest,
   ): Promise<GetFaceSearchResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       JobId: params["JobId"],
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
       SortBy: params["SortBy"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetFaceSearch",
@@ -560,12 +560,12 @@ export default class Rekognition {
   async getLabelDetection(
     {abortSignal, ...params}: RequestConfig & GetLabelDetectionRequest,
   ): Promise<GetLabelDetectionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       JobId: params["JobId"],
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
       SortBy: params["SortBy"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetLabelDetection",
@@ -586,12 +586,12 @@ export default class Rekognition {
   async getPersonTracking(
     {abortSignal, ...params}: RequestConfig & GetPersonTrackingRequest,
   ): Promise<GetPersonTrackingResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       JobId: params["JobId"],
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
       SortBy: params["SortBy"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetPersonTracking",
@@ -611,11 +611,11 @@ export default class Rekognition {
   async getSegmentDetection(
     {abortSignal, ...params}: RequestConfig & GetSegmentDetectionRequest,
   ): Promise<GetSegmentDetectionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       JobId: params["JobId"],
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetSegmentDetection",
@@ -637,11 +637,11 @@ export default class Rekognition {
   async getTextDetection(
     {abortSignal, ...params}: RequestConfig & GetTextDetectionRequest,
   ): Promise<GetTextDetectionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       JobId: params["JobId"],
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetTextDetection",
@@ -662,14 +662,14 @@ export default class Rekognition {
   async indexFaces(
     {abortSignal, ...params}: RequestConfig & IndexFacesRequest,
   ): Promise<IndexFacesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CollectionId: params["CollectionId"],
       Image: fromImage(params["Image"]),
       ExternalImageId: params["ExternalImageId"],
       DetectionAttributes: params["DetectionAttributes"],
       MaxFaces: params["MaxFaces"],
       QualityFilter: params["QualityFilter"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "IndexFaces",
@@ -688,10 +688,10 @@ export default class Rekognition {
   async listCollections(
     {abortSignal, ...params}: RequestConfig & ListCollectionsRequest = {},
   ): Promise<ListCollectionsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListCollections",
@@ -709,11 +709,11 @@ export default class Rekognition {
   async listFaces(
     {abortSignal, ...params}: RequestConfig & ListFacesRequest,
   ): Promise<ListFacesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CollectionId: params["CollectionId"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListFaces",
@@ -731,10 +731,10 @@ export default class Rekognition {
   async listStreamProcessors(
     {abortSignal, ...params}: RequestConfig & ListStreamProcessorsRequest = {},
   ): Promise<ListStreamProcessorsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListStreamProcessors",
@@ -751,9 +751,9 @@ export default class Rekognition {
   async recognizeCelebrities(
     {abortSignal, ...params}: RequestConfig & RecognizeCelebritiesRequest,
   ): Promise<RecognizeCelebritiesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Image: fromImage(params["Image"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RecognizeCelebrities",
@@ -771,12 +771,12 @@ export default class Rekognition {
   async searchFaces(
     {abortSignal, ...params}: RequestConfig & SearchFacesRequest,
   ): Promise<SearchFacesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CollectionId: params["CollectionId"],
       FaceId: params["FaceId"],
       MaxFaces: params["MaxFaces"],
       FaceMatchThreshold: params["FaceMatchThreshold"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SearchFaces",
@@ -794,13 +794,13 @@ export default class Rekognition {
   async searchFacesByImage(
     {abortSignal, ...params}: RequestConfig & SearchFacesByImageRequest,
   ): Promise<SearchFacesByImageResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CollectionId: params["CollectionId"],
       Image: fromImage(params["Image"]),
       MaxFaces: params["MaxFaces"],
       FaceMatchThreshold: params["FaceMatchThreshold"],
       QualityFilter: params["QualityFilter"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SearchFacesByImage",
@@ -819,12 +819,12 @@ export default class Rekognition {
   async startCelebrityRecognition(
     {abortSignal, ...params}: RequestConfig & StartCelebrityRecognitionRequest,
   ): Promise<StartCelebrityRecognitionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Video: fromVideo(params["Video"]),
       ClientRequestToken: params["ClientRequestToken"],
       NotificationChannel: fromNotificationChannel(params["NotificationChannel"]),
       JobTag: params["JobTag"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartCelebrityRecognition",
@@ -840,13 +840,13 @@ export default class Rekognition {
   async startContentModeration(
     {abortSignal, ...params}: RequestConfig & StartContentModerationRequest,
   ): Promise<StartContentModerationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Video: fromVideo(params["Video"]),
       MinConfidence: params["MinConfidence"],
       ClientRequestToken: params["ClientRequestToken"],
       NotificationChannel: fromNotificationChannel(params["NotificationChannel"]),
       JobTag: params["JobTag"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartContentModeration",
@@ -862,13 +862,13 @@ export default class Rekognition {
   async startFaceDetection(
     {abortSignal, ...params}: RequestConfig & StartFaceDetectionRequest,
   ): Promise<StartFaceDetectionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Video: fromVideo(params["Video"]),
       ClientRequestToken: params["ClientRequestToken"],
       NotificationChannel: fromNotificationChannel(params["NotificationChannel"]),
       FaceAttributes: params["FaceAttributes"],
       JobTag: params["JobTag"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartFaceDetection",
@@ -884,14 +884,14 @@ export default class Rekognition {
   async startFaceSearch(
     {abortSignal, ...params}: RequestConfig & StartFaceSearchRequest,
   ): Promise<StartFaceSearchResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Video: fromVideo(params["Video"]),
       ClientRequestToken: params["ClientRequestToken"],
       FaceMatchThreshold: params["FaceMatchThreshold"],
       CollectionId: params["CollectionId"],
       NotificationChannel: fromNotificationChannel(params["NotificationChannel"]),
       JobTag: params["JobTag"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartFaceSearch",
@@ -907,13 +907,13 @@ export default class Rekognition {
   async startLabelDetection(
     {abortSignal, ...params}: RequestConfig & StartLabelDetectionRequest,
   ): Promise<StartLabelDetectionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Video: fromVideo(params["Video"]),
       ClientRequestToken: params["ClientRequestToken"],
       MinConfidence: params["MinConfidence"],
       NotificationChannel: fromNotificationChannel(params["NotificationChannel"]),
       JobTag: params["JobTag"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartLabelDetection",
@@ -929,12 +929,12 @@ export default class Rekognition {
   async startPersonTracking(
     {abortSignal, ...params}: RequestConfig & StartPersonTrackingRequest,
   ): Promise<StartPersonTrackingResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Video: fromVideo(params["Video"]),
       ClientRequestToken: params["ClientRequestToken"],
       NotificationChannel: fromNotificationChannel(params["NotificationChannel"]),
       JobTag: params["JobTag"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartPersonTracking",
@@ -950,10 +950,10 @@ export default class Rekognition {
   async startProjectVersion(
     {abortSignal, ...params}: RequestConfig & StartProjectVersionRequest,
   ): Promise<StartProjectVersionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ProjectVersionArn: params["ProjectVersionArn"],
       MinInferenceUnits: params["MinInferenceUnits"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartProjectVersion",
@@ -969,14 +969,14 @@ export default class Rekognition {
   async startSegmentDetection(
     {abortSignal, ...params}: RequestConfig & StartSegmentDetectionRequest,
   ): Promise<StartSegmentDetectionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Video: fromVideo(params["Video"]),
       ClientRequestToken: params["ClientRequestToken"],
       NotificationChannel: fromNotificationChannel(params["NotificationChannel"]),
       JobTag: params["JobTag"],
       Filters: fromStartSegmentDetectionFilters(params["Filters"]),
       SegmentTypes: params["SegmentTypes"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartSegmentDetection",
@@ -992,9 +992,9 @@ export default class Rekognition {
   async startStreamProcessor(
     {abortSignal, ...params}: RequestConfig & StartStreamProcessorRequest,
   ): Promise<StartStreamProcessorResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartStreamProcessor",
@@ -1008,13 +1008,13 @@ export default class Rekognition {
   async startTextDetection(
     {abortSignal, ...params}: RequestConfig & StartTextDetectionRequest,
   ): Promise<StartTextDetectionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Video: fromVideo(params["Video"]),
       ClientRequestToken: params["ClientRequestToken"],
       NotificationChannel: fromNotificationChannel(params["NotificationChannel"]),
       JobTag: params["JobTag"],
       Filters: fromStartTextDetectionFilters(params["Filters"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartTextDetection",
@@ -1030,9 +1030,9 @@ export default class Rekognition {
   async stopProjectVersion(
     {abortSignal, ...params}: RequestConfig & StopProjectVersionRequest,
   ): Promise<StopProjectVersionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ProjectVersionArn: params["ProjectVersionArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopProjectVersion",
@@ -1048,9 +1048,9 @@ export default class Rekognition {
   async stopStreamProcessor(
     {abortSignal, ...params}: RequestConfig & StopStreamProcessorRequest,
   ): Promise<StopStreamProcessorResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopStreamProcessor",

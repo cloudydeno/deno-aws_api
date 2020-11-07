@@ -29,9 +29,9 @@ export default class EventBridge {
   async activateEventSource(
     {abortSignal, ...params}: RequestConfig & ActivateEventSourceRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ActivateEventSource",
@@ -41,11 +41,11 @@ export default class EventBridge {
   async createEventBus(
     {abortSignal, ...params}: RequestConfig & CreateEventBusRequest,
   ): Promise<CreateEventBusResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       EventSourceName: params["EventSourceName"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateEventBus",
@@ -61,10 +61,10 @@ export default class EventBridge {
   async createPartnerEventSource(
     {abortSignal, ...params}: RequestConfig & CreatePartnerEventSourceRequest,
   ): Promise<CreatePartnerEventSourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       Account: params["Account"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreatePartnerEventSource",
@@ -80,9 +80,9 @@ export default class EventBridge {
   async deactivateEventSource(
     {abortSignal, ...params}: RequestConfig & DeactivateEventSourceRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeactivateEventSource",
@@ -92,9 +92,9 @@ export default class EventBridge {
   async deleteEventBus(
     {abortSignal, ...params}: RequestConfig & DeleteEventBusRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteEventBus",
@@ -104,10 +104,10 @@ export default class EventBridge {
   async deletePartnerEventSource(
     {abortSignal, ...params}: RequestConfig & DeletePartnerEventSourceRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       Account: params["Account"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeletePartnerEventSource",
@@ -117,11 +117,11 @@ export default class EventBridge {
   async deleteRule(
     {abortSignal, ...params}: RequestConfig & DeleteRuleRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       EventBusName: params["EventBusName"],
       Force: params["Force"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteRule",
@@ -131,9 +131,9 @@ export default class EventBridge {
   async describeEventBus(
     {abortSignal, ...params}: RequestConfig & DescribeEventBusRequest = {},
   ): Promise<DescribeEventBusResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeEventBus",
@@ -151,9 +151,9 @@ export default class EventBridge {
   async describeEventSource(
     {abortSignal, ...params}: RequestConfig & DescribeEventSourceRequest,
   ): Promise<DescribeEventSourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeEventSource",
@@ -174,9 +174,9 @@ export default class EventBridge {
   async describePartnerEventSource(
     {abortSignal, ...params}: RequestConfig & DescribePartnerEventSourceRequest,
   ): Promise<DescribePartnerEventSourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribePartnerEventSource",
@@ -193,10 +193,10 @@ export default class EventBridge {
   async describeRule(
     {abortSignal, ...params}: RequestConfig & DescribeRuleRequest,
   ): Promise<DescribeRuleResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       EventBusName: params["EventBusName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeRule",
@@ -220,10 +220,10 @@ export default class EventBridge {
   async disableRule(
     {abortSignal, ...params}: RequestConfig & DisableRuleRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       EventBusName: params["EventBusName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisableRule",
@@ -233,10 +233,10 @@ export default class EventBridge {
   async enableRule(
     {abortSignal, ...params}: RequestConfig & EnableRuleRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       EventBusName: params["EventBusName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "EnableRule",
@@ -246,11 +246,11 @@ export default class EventBridge {
   async listEventBuses(
     {abortSignal, ...params}: RequestConfig & ListEventBusesRequest = {},
   ): Promise<ListEventBusesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NamePrefix: params["NamePrefix"],
       NextToken: params["NextToken"],
       Limit: params["Limit"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListEventBuses",
@@ -267,11 +267,11 @@ export default class EventBridge {
   async listEventSources(
     {abortSignal, ...params}: RequestConfig & ListEventSourcesRequest = {},
   ): Promise<ListEventSourcesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NamePrefix: params["NamePrefix"],
       NextToken: params["NextToken"],
       Limit: params["Limit"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListEventSources",
@@ -288,11 +288,11 @@ export default class EventBridge {
   async listPartnerEventSourceAccounts(
     {abortSignal, ...params}: RequestConfig & ListPartnerEventSourceAccountsRequest,
   ): Promise<ListPartnerEventSourceAccountsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       EventSourceName: params["EventSourceName"],
       NextToken: params["NextToken"],
       Limit: params["Limit"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListPartnerEventSourceAccounts",
@@ -309,11 +309,11 @@ export default class EventBridge {
   async listPartnerEventSources(
     {abortSignal, ...params}: RequestConfig & ListPartnerEventSourcesRequest,
   ): Promise<ListPartnerEventSourcesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NamePrefix: params["NamePrefix"],
       NextToken: params["NextToken"],
       Limit: params["Limit"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListPartnerEventSources",
@@ -330,12 +330,12 @@ export default class EventBridge {
   async listRuleNamesByTarget(
     {abortSignal, ...params}: RequestConfig & ListRuleNamesByTargetRequest,
   ): Promise<ListRuleNamesByTargetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TargetArn: params["TargetArn"],
       EventBusName: params["EventBusName"],
       NextToken: params["NextToken"],
       Limit: params["Limit"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListRuleNamesByTarget",
@@ -352,12 +352,12 @@ export default class EventBridge {
   async listRules(
     {abortSignal, ...params}: RequestConfig & ListRulesRequest = {},
   ): Promise<ListRulesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NamePrefix: params["NamePrefix"],
       EventBusName: params["EventBusName"],
       NextToken: params["NextToken"],
       Limit: params["Limit"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListRules",
@@ -374,9 +374,9 @@ export default class EventBridge {
   async listTagsForResource(
     {abortSignal, ...params}: RequestConfig & ListTagsForResourceRequest,
   ): Promise<ListTagsForResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceARN: params["ResourceARN"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForResource",
@@ -392,12 +392,12 @@ export default class EventBridge {
   async listTargetsByRule(
     {abortSignal, ...params}: RequestConfig & ListTargetsByRuleRequest,
   ): Promise<ListTargetsByRuleResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Rule: params["Rule"],
       EventBusName: params["EventBusName"],
       NextToken: params["NextToken"],
       Limit: params["Limit"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTargetsByRule",
@@ -414,9 +414,9 @@ export default class EventBridge {
   async putEvents(
     {abortSignal, ...params}: RequestConfig & PutEventsRequest,
   ): Promise<PutEventsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Entries: params["Entries"]?.map(x => fromPutEventsRequestEntry(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutEvents",
@@ -433,9 +433,9 @@ export default class EventBridge {
   async putPartnerEvents(
     {abortSignal, ...params}: RequestConfig & PutPartnerEventsRequest,
   ): Promise<PutPartnerEventsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Entries: params["Entries"]?.map(x => fromPutPartnerEventsRequestEntry(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutPartnerEvents",
@@ -452,13 +452,13 @@ export default class EventBridge {
   async putPermission(
     {abortSignal, ...params}: RequestConfig & PutPermissionRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       EventBusName: params["EventBusName"],
       Action: params["Action"],
       Principal: params["Principal"],
       StatementId: params["StatementId"],
       Condition: fromCondition(params["Condition"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutPermission",
@@ -468,7 +468,7 @@ export default class EventBridge {
   async putRule(
     {abortSignal, ...params}: RequestConfig & PutRuleRequest,
   ): Promise<PutRuleResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       ScheduleExpression: params["ScheduleExpression"],
       EventPattern: params["EventPattern"],
@@ -477,7 +477,7 @@ export default class EventBridge {
       RoleArn: params["RoleArn"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
       EventBusName: params["EventBusName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutRule",
@@ -493,11 +493,11 @@ export default class EventBridge {
   async putTargets(
     {abortSignal, ...params}: RequestConfig & PutTargetsRequest,
   ): Promise<PutTargetsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Rule: params["Rule"],
       EventBusName: params["EventBusName"],
       Targets: params["Targets"]?.map(x => fromTarget(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutTargets",
@@ -514,10 +514,10 @@ export default class EventBridge {
   async removePermission(
     {abortSignal, ...params}: RequestConfig & RemovePermissionRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       StatementId: params["StatementId"],
       EventBusName: params["EventBusName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RemovePermission",
@@ -527,12 +527,12 @@ export default class EventBridge {
   async removeTargets(
     {abortSignal, ...params}: RequestConfig & RemoveTargetsRequest,
   ): Promise<RemoveTargetsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Rule: params["Rule"],
       EventBusName: params["EventBusName"],
       Ids: params["Ids"],
       Force: params["Force"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RemoveTargets",
@@ -549,10 +549,10 @@ export default class EventBridge {
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceARN: params["ResourceARN"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
@@ -566,10 +566,10 @@ export default class EventBridge {
   async testEventPattern(
     {abortSignal, ...params}: RequestConfig & TestEventPatternRequest,
   ): Promise<TestEventPatternResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       EventPattern: params["EventPattern"],
       Event: params["Event"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TestEventPattern",
@@ -585,10 +585,10 @@ export default class EventBridge {
   async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceRequest,
   ): Promise<UntagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceARN: params["ResourceARN"],
       TagKeys: params["TagKeys"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResource",

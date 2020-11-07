@@ -29,11 +29,11 @@ export default class Textract {
   async analyzeDocument(
     {abortSignal, ...params}: RequestConfig & AnalyzeDocumentRequest,
   ): Promise<AnalyzeDocumentResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Document: fromDocument(params["Document"]),
       FeatureTypes: params["FeatureTypes"],
       HumanLoopConfig: fromHumanLoopConfig(params["HumanLoopConfig"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AnalyzeDocument",
@@ -52,9 +52,9 @@ export default class Textract {
   async detectDocumentText(
     {abortSignal, ...params}: RequestConfig & DetectDocumentTextRequest,
   ): Promise<DetectDocumentTextResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Document: fromDocument(params["Document"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DetectDocumentText",
@@ -72,11 +72,11 @@ export default class Textract {
   async getDocumentAnalysis(
     {abortSignal, ...params}: RequestConfig & GetDocumentAnalysisRequest,
   ): Promise<GetDocumentAnalysisResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       JobId: params["JobId"],
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetDocumentAnalysis",
@@ -98,11 +98,11 @@ export default class Textract {
   async getDocumentTextDetection(
     {abortSignal, ...params}: RequestConfig & GetDocumentTextDetectionRequest,
   ): Promise<GetDocumentTextDetectionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       JobId: params["JobId"],
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetDocumentTextDetection",
@@ -124,14 +124,14 @@ export default class Textract {
   async startDocumentAnalysis(
     {abortSignal, ...params}: RequestConfig & StartDocumentAnalysisRequest,
   ): Promise<StartDocumentAnalysisResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DocumentLocation: fromDocumentLocation(params["DocumentLocation"]),
       FeatureTypes: params["FeatureTypes"],
       ClientRequestToken: params["ClientRequestToken"],
       JobTag: params["JobTag"],
       NotificationChannel: fromNotificationChannel(params["NotificationChannel"]),
       OutputConfig: fromOutputConfig(params["OutputConfig"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartDocumentAnalysis",
@@ -147,13 +147,13 @@ export default class Textract {
   async startDocumentTextDetection(
     {abortSignal, ...params}: RequestConfig & StartDocumentTextDetectionRequest,
   ): Promise<StartDocumentTextDetectionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DocumentLocation: fromDocumentLocation(params["DocumentLocation"]),
       ClientRequestToken: params["ClientRequestToken"],
       JobTag: params["JobTag"],
       NotificationChannel: fromNotificationChannel(params["NotificationChannel"]),
       OutputConfig: fromOutputConfig(params["OutputConfig"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartDocumentTextDetection",

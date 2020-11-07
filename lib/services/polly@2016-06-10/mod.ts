@@ -35,12 +35,10 @@ export default class Polly {
       requestUri: cmnP.encodePath`/v1/lexicons/${params["Name"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async describeVoices(
@@ -58,15 +56,13 @@ export default class Polly {
       requestUri: "/v1/voices",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Voices": [toVoice],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Voices": [toVoice],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async getLexicon(
@@ -80,15 +76,13 @@ export default class Polly {
       requestUri: cmnP.encodePath`/v1/lexicons/${params["Name"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Lexicon": toLexicon,
-          "LexiconAttributes": toLexiconAttributes,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Lexicon": toLexicon,
+        "LexiconAttributes": toLexiconAttributes,
+      },
+    }, await resp.json());
   }
 
   async getSpeechSynthesisTask(
@@ -102,14 +96,12 @@ export default class Polly {
       requestUri: cmnP.encodePath`/v1/synthesisTasks/${params["TaskId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "SynthesisTask": toSynthesisTask,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "SynthesisTask": toSynthesisTask,
+      },
+    }, await resp.json());
   }
 
   async listLexicons(
@@ -124,15 +116,13 @@ export default class Polly {
       requestUri: "/v1/lexicons",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Lexicons": [toLexiconDescription],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Lexicons": [toLexiconDescription],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listSpeechSynthesisTasks(
@@ -149,23 +139,21 @@ export default class Polly {
       requestUri: "/v1/synthesisTasks",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "NextToken": "s",
-          "SynthesisTasks": [toSynthesisTask],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "NextToken": "s",
+        "SynthesisTasks": [toSynthesisTask],
+      },
+    }, await resp.json());
   }
 
   async putLexicon(
     {abortSignal, ...params}: RequestConfig & PutLexiconInput,
   ): Promise<PutLexiconOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Content: params["Content"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutLexicon",
@@ -173,18 +161,16 @@ export default class Polly {
       requestUri: cmnP.encodePath`/v1/lexicons/${params["Name"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async startSpeechSynthesisTask(
     {abortSignal, ...params}: RequestConfig & StartSpeechSynthesisTaskInput,
   ): Promise<StartSpeechSynthesisTaskOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Engine: params["Engine"],
       LanguageCode: params["LanguageCode"],
       LexiconNames: params["LexiconNames"],
@@ -197,27 +183,25 @@ export default class Polly {
       Text: params["Text"],
       TextType: params["TextType"],
       VoiceId: params["VoiceId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartSpeechSynthesisTask",
       requestUri: "/v1/synthesisTasks",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "SynthesisTask": toSynthesisTask,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "SynthesisTask": toSynthesisTask,
+      },
+    }, await resp.json());
   }
 
   async synthesizeSpeech(
     {abortSignal, ...params}: RequestConfig & SynthesizeSpeechInput,
   ): Promise<SynthesizeSpeechOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Engine: params["Engine"],
       LanguageCode: params["LanguageCode"],
       LexiconNames: params["LexiconNames"],
@@ -227,7 +211,7 @@ export default class Polly {
       Text: params["Text"],
       TextType: params["TextType"],
       VoiceId: params["VoiceId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SynthesizeSpeech",

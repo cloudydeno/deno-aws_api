@@ -31,7 +31,7 @@ export default class Transfer {
   async createServer(
     {abortSignal, ...params}: RequestConfig & CreateServerRequest = {},
   ): Promise<CreateServerResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Certificate: params["Certificate"],
       EndpointDetails: fromEndpointDetails(params["EndpointDetails"]),
       EndpointType: params["EndpointType"],
@@ -42,7 +42,7 @@ export default class Transfer {
       Protocols: params["Protocols"],
       SecurityPolicyName: params["SecurityPolicyName"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateServer",
@@ -58,7 +58,7 @@ export default class Transfer {
   async createUser(
     {abortSignal, ...params}: RequestConfig & CreateUserRequest,
   ): Promise<CreateUserResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       HomeDirectory: params["HomeDirectory"],
       HomeDirectoryType: params["HomeDirectoryType"],
       HomeDirectoryMappings: params["HomeDirectoryMappings"]?.map(x => fromHomeDirectoryMapEntry(x)),
@@ -68,7 +68,7 @@ export default class Transfer {
       SshPublicKeyBody: params["SshPublicKeyBody"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
       UserName: params["UserName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateUser",
@@ -85,9 +85,9 @@ export default class Transfer {
   async deleteServer(
     {abortSignal, ...params}: RequestConfig & DeleteServerRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ServerId: params["ServerId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteServer",
@@ -97,11 +97,11 @@ export default class Transfer {
   async deleteSshPublicKey(
     {abortSignal, ...params}: RequestConfig & DeleteSshPublicKeyRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ServerId: params["ServerId"],
       SshPublicKeyId: params["SshPublicKeyId"],
       UserName: params["UserName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteSshPublicKey",
@@ -111,10 +111,10 @@ export default class Transfer {
   async deleteUser(
     {abortSignal, ...params}: RequestConfig & DeleteUserRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ServerId: params["ServerId"],
       UserName: params["UserName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteUser",
@@ -124,9 +124,9 @@ export default class Transfer {
   async describeSecurityPolicy(
     {abortSignal, ...params}: RequestConfig & DescribeSecurityPolicyRequest,
   ): Promise<DescribeSecurityPolicyResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       SecurityPolicyName: params["SecurityPolicyName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeSecurityPolicy",
@@ -142,9 +142,9 @@ export default class Transfer {
   async describeServer(
     {abortSignal, ...params}: RequestConfig & DescribeServerRequest,
   ): Promise<DescribeServerResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ServerId: params["ServerId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeServer",
@@ -160,10 +160,10 @@ export default class Transfer {
   async describeUser(
     {abortSignal, ...params}: RequestConfig & DescribeUserRequest,
   ): Promise<DescribeUserResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ServerId: params["ServerId"],
       UserName: params["UserName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeUser",
@@ -180,11 +180,11 @@ export default class Transfer {
   async importSshPublicKey(
     {abortSignal, ...params}: RequestConfig & ImportSshPublicKeyRequest,
   ): Promise<ImportSshPublicKeyResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ServerId: params["ServerId"],
       SshPublicKeyBody: params["SshPublicKeyBody"],
       UserName: params["UserName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ImportSshPublicKey",
@@ -202,10 +202,10 @@ export default class Transfer {
   async listSecurityPolicies(
     {abortSignal, ...params}: RequestConfig & ListSecurityPoliciesRequest = {},
   ): Promise<ListSecurityPoliciesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListSecurityPolicies",
@@ -223,10 +223,10 @@ export default class Transfer {
   async listServers(
     {abortSignal, ...params}: RequestConfig & ListServersRequest = {},
   ): Promise<ListServersResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListServers",
@@ -244,11 +244,11 @@ export default class Transfer {
   async listTagsForResource(
     {abortSignal, ...params}: RequestConfig & ListTagsForResourceRequest,
   ): Promise<ListTagsForResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Arn: params["Arn"],
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForResource",
@@ -266,11 +266,11 @@ export default class Transfer {
   async listUsers(
     {abortSignal, ...params}: RequestConfig & ListUsersRequest,
   ): Promise<ListUsersResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
       ServerId: params["ServerId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListUsers",
@@ -289,9 +289,9 @@ export default class Transfer {
   async startServer(
     {abortSignal, ...params}: RequestConfig & StartServerRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ServerId: params["ServerId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartServer",
@@ -301,9 +301,9 @@ export default class Transfer {
   async stopServer(
     {abortSignal, ...params}: RequestConfig & StopServerRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ServerId: params["ServerId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopServer",
@@ -313,10 +313,10 @@ export default class Transfer {
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Arn: params["Arn"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
@@ -326,13 +326,13 @@ export default class Transfer {
   async testIdentityProvider(
     {abortSignal, ...params}: RequestConfig & TestIdentityProviderRequest,
   ): Promise<TestIdentityProviderResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ServerId: params["ServerId"],
       ServerProtocol: params["ServerProtocol"],
       SourceIp: params["SourceIp"],
       UserName: params["UserName"],
       UserPassword: params["UserPassword"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TestIdentityProvider",
@@ -352,10 +352,10 @@ export default class Transfer {
   async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Arn: params["Arn"],
       TagKeys: params["TagKeys"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResource",
@@ -365,7 +365,7 @@ export default class Transfer {
   async updateServer(
     {abortSignal, ...params}: RequestConfig & UpdateServerRequest,
   ): Promise<UpdateServerResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Certificate: params["Certificate"],
       EndpointDetails: fromEndpointDetails(params["EndpointDetails"]),
       EndpointType: params["EndpointType"],
@@ -375,7 +375,7 @@ export default class Transfer {
       Protocols: params["Protocols"],
       SecurityPolicyName: params["SecurityPolicyName"],
       ServerId: params["ServerId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateServer",
@@ -391,7 +391,7 @@ export default class Transfer {
   async updateUser(
     {abortSignal, ...params}: RequestConfig & UpdateUserRequest,
   ): Promise<UpdateUserResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       HomeDirectory: params["HomeDirectory"],
       HomeDirectoryType: params["HomeDirectoryType"],
       HomeDirectoryMappings: params["HomeDirectoryMappings"]?.map(x => fromHomeDirectoryMapEntry(x)),
@@ -399,7 +399,7 @@ export default class Transfer {
       Role: params["Role"],
       ServerId: params["ServerId"],
       UserName: params["UserName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateUser",

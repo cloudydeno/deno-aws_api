@@ -34,10 +34,10 @@ export default class CodePipeline {
   async acknowledgeJob(
     {abortSignal, ...params}: RequestConfig & AcknowledgeJobInput,
   ): Promise<AcknowledgeJobOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       jobId: params["jobId"],
       nonce: params["nonce"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AcknowledgeJob",
@@ -53,11 +53,11 @@ export default class CodePipeline {
   async acknowledgeThirdPartyJob(
     {abortSignal, ...params}: RequestConfig & AcknowledgeThirdPartyJobInput,
   ): Promise<AcknowledgeThirdPartyJobOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       jobId: params["jobId"],
       nonce: params["nonce"],
       clientToken: params["clientToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AcknowledgeThirdPartyJob",
@@ -73,7 +73,7 @@ export default class CodePipeline {
   async createCustomActionType(
     {abortSignal, ...params}: RequestConfig & CreateCustomActionTypeInput,
   ): Promise<CreateCustomActionTypeOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       category: params["category"],
       provider: params["provider"],
       version: params["version"],
@@ -82,7 +82,7 @@ export default class CodePipeline {
       inputArtifactDetails: fromArtifactDetails(params["inputArtifactDetails"]),
       outputArtifactDetails: fromArtifactDetails(params["outputArtifactDetails"]),
       tags: params["tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateCustomActionType",
@@ -100,10 +100,10 @@ export default class CodePipeline {
   async createPipeline(
     {abortSignal, ...params}: RequestConfig & CreatePipelineInput,
   ): Promise<CreatePipelineOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       pipeline: fromPipelineDeclaration(params["pipeline"]),
       tags: params["tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreatePipeline",
@@ -120,11 +120,11 @@ export default class CodePipeline {
   async deleteCustomActionType(
     {abortSignal, ...params}: RequestConfig & DeleteCustomActionTypeInput,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       category: params["category"],
       provider: params["provider"],
       version: params["version"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteCustomActionType",
@@ -134,9 +134,9 @@ export default class CodePipeline {
   async deletePipeline(
     {abortSignal, ...params}: RequestConfig & DeletePipelineInput,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       name: params["name"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeletePipeline",
@@ -146,9 +146,9 @@ export default class CodePipeline {
   async deleteWebhook(
     {abortSignal, ...params}: RequestConfig & DeleteWebhookInput,
   ): Promise<DeleteWebhookOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       name: params["name"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteWebhook",
@@ -162,9 +162,9 @@ export default class CodePipeline {
   async deregisterWebhookWithThirdParty(
     {abortSignal, ...params}: RequestConfig & DeregisterWebhookWithThirdPartyInput = {},
   ): Promise<DeregisterWebhookWithThirdPartyOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       webhookName: params["webhookName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeregisterWebhookWithThirdParty",
@@ -178,12 +178,12 @@ export default class CodePipeline {
   async disableStageTransition(
     {abortSignal, ...params}: RequestConfig & DisableStageTransitionInput,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       pipelineName: params["pipelineName"],
       stageName: params["stageName"],
       transitionType: params["transitionType"],
       reason: params["reason"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisableStageTransition",
@@ -193,11 +193,11 @@ export default class CodePipeline {
   async enableStageTransition(
     {abortSignal, ...params}: RequestConfig & EnableStageTransitionInput,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       pipelineName: params["pipelineName"],
       stageName: params["stageName"],
       transitionType: params["transitionType"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "EnableStageTransition",
@@ -207,9 +207,9 @@ export default class CodePipeline {
   async getJobDetails(
     {abortSignal, ...params}: RequestConfig & GetJobDetailsInput,
   ): Promise<GetJobDetailsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       jobId: params["jobId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetJobDetails",
@@ -225,10 +225,10 @@ export default class CodePipeline {
   async getPipeline(
     {abortSignal, ...params}: RequestConfig & GetPipelineInput,
   ): Promise<GetPipelineOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       name: params["name"],
       version: params["version"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetPipeline",
@@ -245,10 +245,10 @@ export default class CodePipeline {
   async getPipelineExecution(
     {abortSignal, ...params}: RequestConfig & GetPipelineExecutionInput,
   ): Promise<GetPipelineExecutionOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       pipelineName: params["pipelineName"],
       pipelineExecutionId: params["pipelineExecutionId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetPipelineExecution",
@@ -264,9 +264,9 @@ export default class CodePipeline {
   async getPipelineState(
     {abortSignal, ...params}: RequestConfig & GetPipelineStateInput,
   ): Promise<GetPipelineStateOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       name: params["name"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetPipelineState",
@@ -286,10 +286,10 @@ export default class CodePipeline {
   async getThirdPartyJobDetails(
     {abortSignal, ...params}: RequestConfig & GetThirdPartyJobDetailsInput,
   ): Promise<GetThirdPartyJobDetailsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       jobId: params["jobId"],
       clientToken: params["clientToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetThirdPartyJobDetails",
@@ -305,12 +305,12 @@ export default class CodePipeline {
   async listActionExecutions(
     {abortSignal, ...params}: RequestConfig & ListActionExecutionsInput,
   ): Promise<ListActionExecutionsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       pipelineName: params["pipelineName"],
       filter: fromActionExecutionFilter(params["filter"]),
       maxResults: params["maxResults"],
       nextToken: params["nextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListActionExecutions",
@@ -327,10 +327,10 @@ export default class CodePipeline {
   async listActionTypes(
     {abortSignal, ...params}: RequestConfig & ListActionTypesInput = {},
   ): Promise<ListActionTypesOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       actionOwnerFilter: params["actionOwnerFilter"],
       nextToken: params["nextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListActionTypes",
@@ -348,11 +348,11 @@ export default class CodePipeline {
   async listPipelineExecutions(
     {abortSignal, ...params}: RequestConfig & ListPipelineExecutionsInput,
   ): Promise<ListPipelineExecutionsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       pipelineName: params["pipelineName"],
       maxResults: params["maxResults"],
       nextToken: params["nextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListPipelineExecutions",
@@ -369,9 +369,9 @@ export default class CodePipeline {
   async listPipelines(
     {abortSignal, ...params}: RequestConfig & ListPipelinesInput = {},
   ): Promise<ListPipelinesOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       nextToken: params["nextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListPipelines",
@@ -388,11 +388,11 @@ export default class CodePipeline {
   async listTagsForResource(
     {abortSignal, ...params}: RequestConfig & ListTagsForResourceInput,
   ): Promise<ListTagsForResourceOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       resourceArn: params["resourceArn"],
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForResource",
@@ -409,10 +409,10 @@ export default class CodePipeline {
   async listWebhooks(
     {abortSignal, ...params}: RequestConfig & ListWebhooksInput = {},
   ): Promise<ListWebhooksOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListWebhooks",
@@ -429,11 +429,11 @@ export default class CodePipeline {
   async pollForJobs(
     {abortSignal, ...params}: RequestConfig & PollForJobsInput,
   ): Promise<PollForJobsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       actionTypeId: fromActionTypeId(params["actionTypeId"]),
       maxBatchSize: params["maxBatchSize"],
       queryParam: params["queryParam"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PollForJobs",
@@ -449,10 +449,10 @@ export default class CodePipeline {
   async pollForThirdPartyJobs(
     {abortSignal, ...params}: RequestConfig & PollForThirdPartyJobsInput,
   ): Promise<PollForThirdPartyJobsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       actionTypeId: fromActionTypeId(params["actionTypeId"]),
       maxBatchSize: params["maxBatchSize"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PollForThirdPartyJobs",
@@ -468,12 +468,12 @@ export default class CodePipeline {
   async putActionRevision(
     {abortSignal, ...params}: RequestConfig & PutActionRevisionInput,
   ): Promise<PutActionRevisionOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       pipelineName: params["pipelineName"],
       stageName: params["stageName"],
       actionName: params["actionName"],
       actionRevision: fromActionRevision(params["actionRevision"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutActionRevision",
@@ -490,13 +490,13 @@ export default class CodePipeline {
   async putApprovalResult(
     {abortSignal, ...params}: RequestConfig & PutApprovalResultInput,
   ): Promise<PutApprovalResultOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       pipelineName: params["pipelineName"],
       stageName: params["stageName"],
       actionName: params["actionName"],
       result: fromApprovalResult(params["result"]),
       token: params["token"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutApprovalResult",
@@ -512,10 +512,10 @@ export default class CodePipeline {
   async putJobFailureResult(
     {abortSignal, ...params}: RequestConfig & PutJobFailureResultInput,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       jobId: params["jobId"],
       failureDetails: fromFailureDetails(params["failureDetails"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutJobFailureResult",
@@ -525,13 +525,13 @@ export default class CodePipeline {
   async putJobSuccessResult(
     {abortSignal, ...params}: RequestConfig & PutJobSuccessResultInput,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       jobId: params["jobId"],
       currentRevision: fromCurrentRevision(params["currentRevision"]),
       continuationToken: params["continuationToken"],
       executionDetails: fromExecutionDetails(params["executionDetails"]),
       outputVariables: params["outputVariables"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutJobSuccessResult",
@@ -541,11 +541,11 @@ export default class CodePipeline {
   async putThirdPartyJobFailureResult(
     {abortSignal, ...params}: RequestConfig & PutThirdPartyJobFailureResultInput,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       jobId: params["jobId"],
       clientToken: params["clientToken"],
       failureDetails: fromFailureDetails(params["failureDetails"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutThirdPartyJobFailureResult",
@@ -555,13 +555,13 @@ export default class CodePipeline {
   async putThirdPartyJobSuccessResult(
     {abortSignal, ...params}: RequestConfig & PutThirdPartyJobSuccessResultInput,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       jobId: params["jobId"],
       clientToken: params["clientToken"],
       currentRevision: fromCurrentRevision(params["currentRevision"]),
       continuationToken: params["continuationToken"],
       executionDetails: fromExecutionDetails(params["executionDetails"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutThirdPartyJobSuccessResult",
@@ -571,10 +571,10 @@ export default class CodePipeline {
   async putWebhook(
     {abortSignal, ...params}: RequestConfig & PutWebhookInput,
   ): Promise<PutWebhookOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       webhook: fromWebhookDefinition(params["webhook"]),
       tags: params["tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutWebhook",
@@ -590,9 +590,9 @@ export default class CodePipeline {
   async registerWebhookWithThirdParty(
     {abortSignal, ...params}: RequestConfig & RegisterWebhookWithThirdPartyInput = {},
   ): Promise<RegisterWebhookWithThirdPartyOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       webhookName: params["webhookName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RegisterWebhookWithThirdParty",
@@ -606,12 +606,12 @@ export default class CodePipeline {
   async retryStageExecution(
     {abortSignal, ...params}: RequestConfig & RetryStageExecutionInput,
   ): Promise<RetryStageExecutionOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       pipelineName: params["pipelineName"],
       stageName: params["stageName"],
       pipelineExecutionId: params["pipelineExecutionId"],
       retryMode: params["retryMode"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RetryStageExecution",
@@ -627,10 +627,10 @@ export default class CodePipeline {
   async startPipelineExecution(
     {abortSignal, ...params}: RequestConfig & StartPipelineExecutionInput,
   ): Promise<StartPipelineExecutionOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       name: params["name"],
       clientRequestToken: params["clientRequestToken"] ?? generateIdemptToken(),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartPipelineExecution",
@@ -646,12 +646,12 @@ export default class CodePipeline {
   async stopPipelineExecution(
     {abortSignal, ...params}: RequestConfig & StopPipelineExecutionInput,
   ): Promise<StopPipelineExecutionOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       pipelineName: params["pipelineName"],
       pipelineExecutionId: params["pipelineExecutionId"],
       abandon: params["abandon"],
       reason: params["reason"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopPipelineExecution",
@@ -667,10 +667,10 @@ export default class CodePipeline {
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceInput,
   ): Promise<TagResourceOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       resourceArn: params["resourceArn"],
       tags: params["tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
@@ -684,10 +684,10 @@ export default class CodePipeline {
   async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceInput,
   ): Promise<UntagResourceOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       resourceArn: params["resourceArn"],
       tagKeys: params["tagKeys"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResource",
@@ -701,9 +701,9 @@ export default class CodePipeline {
   async updatePipeline(
     {abortSignal, ...params}: RequestConfig & UpdatePipelineInput,
   ): Promise<UpdatePipelineOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       pipeline: fromPipelineDeclaration(params["pipeline"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdatePipeline",

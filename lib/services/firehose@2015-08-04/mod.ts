@@ -30,7 +30,7 @@ export default class Firehose {
   async createDeliveryStream(
     {abortSignal, ...params}: RequestConfig & CreateDeliveryStreamInput,
   ): Promise<CreateDeliveryStreamOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DeliveryStreamName: params["DeliveryStreamName"],
       DeliveryStreamType: params["DeliveryStreamType"],
       KinesisStreamSourceConfiguration: fromKinesisStreamSourceConfiguration(params["KinesisStreamSourceConfiguration"]),
@@ -42,7 +42,7 @@ export default class Firehose {
       SplunkDestinationConfiguration: fromSplunkDestinationConfiguration(params["SplunkDestinationConfiguration"]),
       HttpEndpointDestinationConfiguration: fromHttpEndpointDestinationConfiguration(params["HttpEndpointDestinationConfiguration"]),
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDeliveryStream",
@@ -58,10 +58,10 @@ export default class Firehose {
   async deleteDeliveryStream(
     {abortSignal, ...params}: RequestConfig & DeleteDeliveryStreamInput,
   ): Promise<DeleteDeliveryStreamOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DeliveryStreamName: params["DeliveryStreamName"],
       AllowForceDelete: params["AllowForceDelete"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteDeliveryStream",
@@ -75,11 +75,11 @@ export default class Firehose {
   async describeDeliveryStream(
     {abortSignal, ...params}: RequestConfig & DescribeDeliveryStreamInput,
   ): Promise<DescribeDeliveryStreamOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DeliveryStreamName: params["DeliveryStreamName"],
       Limit: params["Limit"],
       ExclusiveStartDestinationId: params["ExclusiveStartDestinationId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeDeliveryStream",
@@ -95,11 +95,11 @@ export default class Firehose {
   async listDeliveryStreams(
     {abortSignal, ...params}: RequestConfig & ListDeliveryStreamsInput = {},
   ): Promise<ListDeliveryStreamsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Limit: params["Limit"],
       DeliveryStreamType: params["DeliveryStreamType"],
       ExclusiveStartDeliveryStreamName: params["ExclusiveStartDeliveryStreamName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListDeliveryStreams",
@@ -116,11 +116,11 @@ export default class Firehose {
   async listTagsForDeliveryStream(
     {abortSignal, ...params}: RequestConfig & ListTagsForDeliveryStreamInput,
   ): Promise<ListTagsForDeliveryStreamOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DeliveryStreamName: params["DeliveryStreamName"],
       ExclusiveStartTagKey: params["ExclusiveStartTagKey"],
       Limit: params["Limit"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForDeliveryStream",
@@ -137,10 +137,10 @@ export default class Firehose {
   async putRecord(
     {abortSignal, ...params}: RequestConfig & PutRecordInput,
   ): Promise<PutRecordOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DeliveryStreamName: params["DeliveryStreamName"],
       Record: fromRecord(params["Record"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutRecord",
@@ -158,10 +158,10 @@ export default class Firehose {
   async putRecordBatch(
     {abortSignal, ...params}: RequestConfig & PutRecordBatchInput,
   ): Promise<PutRecordBatchOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DeliveryStreamName: params["DeliveryStreamName"],
       Records: params["Records"]?.map(x => fromRecord(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutRecordBatch",
@@ -180,10 +180,10 @@ export default class Firehose {
   async startDeliveryStreamEncryption(
     {abortSignal, ...params}: RequestConfig & StartDeliveryStreamEncryptionInput,
   ): Promise<StartDeliveryStreamEncryptionOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DeliveryStreamName: params["DeliveryStreamName"],
       DeliveryStreamEncryptionConfigurationInput: fromDeliveryStreamEncryptionConfigurationInput(params["DeliveryStreamEncryptionConfigurationInput"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartDeliveryStreamEncryption",
@@ -197,9 +197,9 @@ export default class Firehose {
   async stopDeliveryStreamEncryption(
     {abortSignal, ...params}: RequestConfig & StopDeliveryStreamEncryptionInput,
   ): Promise<StopDeliveryStreamEncryptionOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DeliveryStreamName: params["DeliveryStreamName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopDeliveryStreamEncryption",
@@ -213,10 +213,10 @@ export default class Firehose {
   async tagDeliveryStream(
     {abortSignal, ...params}: RequestConfig & TagDeliveryStreamInput,
   ): Promise<TagDeliveryStreamOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DeliveryStreamName: params["DeliveryStreamName"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagDeliveryStream",
@@ -230,10 +230,10 @@ export default class Firehose {
   async untagDeliveryStream(
     {abortSignal, ...params}: RequestConfig & UntagDeliveryStreamInput,
   ): Promise<UntagDeliveryStreamOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DeliveryStreamName: params["DeliveryStreamName"],
       TagKeys: params["TagKeys"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagDeliveryStream",
@@ -247,7 +247,7 @@ export default class Firehose {
   async updateDestination(
     {abortSignal, ...params}: RequestConfig & UpdateDestinationInput,
   ): Promise<UpdateDestinationOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DeliveryStreamName: params["DeliveryStreamName"],
       CurrentDeliveryStreamVersionId: params["CurrentDeliveryStreamVersionId"],
       DestinationId: params["DestinationId"],
@@ -257,7 +257,7 @@ export default class Firehose {
       ElasticsearchDestinationUpdate: fromElasticsearchDestinationUpdate(params["ElasticsearchDestinationUpdate"]),
       SplunkDestinationUpdate: fromSplunkDestinationUpdate(params["SplunkDestinationUpdate"]),
       HttpEndpointDestinationUpdate: fromHttpEndpointDestinationUpdate(params["HttpEndpointDestinationUpdate"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateDestination",

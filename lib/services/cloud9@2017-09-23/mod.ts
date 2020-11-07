@@ -29,7 +29,7 @@ export default class Cloud9 {
   async createEnvironmentEC2(
     {abortSignal, ...params}: RequestConfig & CreateEnvironmentEC2Request,
   ): Promise<CreateEnvironmentEC2Result> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       name: params["name"],
       description: params["description"],
       clientRequestToken: params["clientRequestToken"],
@@ -39,7 +39,7 @@ export default class Cloud9 {
       ownerArn: params["ownerArn"],
       tags: params["tags"]?.map(x => fromTag(x)),
       connectionType: params["connectionType"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateEnvironmentEC2",
@@ -55,11 +55,11 @@ export default class Cloud9 {
   async createEnvironmentMembership(
     {abortSignal, ...params}: RequestConfig & CreateEnvironmentMembershipRequest,
   ): Promise<CreateEnvironmentMembershipResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       environmentId: params["environmentId"],
       userArn: params["userArn"],
       permissions: params["permissions"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateEnvironmentMembership",
@@ -75,9 +75,9 @@ export default class Cloud9 {
   async deleteEnvironment(
     {abortSignal, ...params}: RequestConfig & DeleteEnvironmentRequest,
   ): Promise<DeleteEnvironmentResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       environmentId: params["environmentId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteEnvironment",
@@ -91,10 +91,10 @@ export default class Cloud9 {
   async deleteEnvironmentMembership(
     {abortSignal, ...params}: RequestConfig & DeleteEnvironmentMembershipRequest,
   ): Promise<DeleteEnvironmentMembershipResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       environmentId: params["environmentId"],
       userArn: params["userArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteEnvironmentMembership",
@@ -108,13 +108,13 @@ export default class Cloud9 {
   async describeEnvironmentMemberships(
     {abortSignal, ...params}: RequestConfig & DescribeEnvironmentMembershipsRequest = {},
   ): Promise<DescribeEnvironmentMembershipsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       userArn: params["userArn"],
       environmentId: params["environmentId"],
       permissions: params["permissions"],
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeEnvironmentMemberships",
@@ -131,9 +131,9 @@ export default class Cloud9 {
   async describeEnvironmentStatus(
     {abortSignal, ...params}: RequestConfig & DescribeEnvironmentStatusRequest,
   ): Promise<DescribeEnvironmentStatusResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       environmentId: params["environmentId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeEnvironmentStatus",
@@ -150,9 +150,9 @@ export default class Cloud9 {
   async describeEnvironments(
     {abortSignal, ...params}: RequestConfig & DescribeEnvironmentsRequest,
   ): Promise<DescribeEnvironmentsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       environmentIds: params["environmentIds"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeEnvironments",
@@ -168,10 +168,10 @@ export default class Cloud9 {
   async listEnvironments(
     {abortSignal, ...params}: RequestConfig & ListEnvironmentsRequest = {},
   ): Promise<ListEnvironmentsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListEnvironments",
@@ -188,9 +188,9 @@ export default class Cloud9 {
   async listTagsForResource(
     {abortSignal, ...params}: RequestConfig & ListTagsForResourceRequest,
   ): Promise<ListTagsForResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceARN: params["ResourceARN"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForResource",
@@ -206,10 +206,10 @@ export default class Cloud9 {
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceARN: params["ResourceARN"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
@@ -223,10 +223,10 @@ export default class Cloud9 {
   async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceRequest,
   ): Promise<UntagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceARN: params["ResourceARN"],
       TagKeys: params["TagKeys"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResource",
@@ -240,11 +240,11 @@ export default class Cloud9 {
   async updateEnvironment(
     {abortSignal, ...params}: RequestConfig & UpdateEnvironmentRequest,
   ): Promise<UpdateEnvironmentResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       environmentId: params["environmentId"],
       name: params["name"],
       description: params["description"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateEnvironment",
@@ -258,11 +258,11 @@ export default class Cloud9 {
   async updateEnvironmentMembership(
     {abortSignal, ...params}: RequestConfig & UpdateEnvironmentMembershipRequest,
   ): Promise<UpdateEnvironmentMembershipResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       environmentId: params["environmentId"],
       userArn: params["userArn"],
       permissions: params["permissions"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateEnvironmentMembership",

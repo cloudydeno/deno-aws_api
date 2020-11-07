@@ -50,16 +50,14 @@ export default class ApiGatewayManagementApi {
       requestUri: cmnP.encodePath`/@connections/${params["ConnectionId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ConnectedAt": "d",
-          "Identity": toIdentity,
-          "LastActiveAt": "d",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ConnectedAt": "d",
+        "Identity": toIdentity,
+        "LastActiveAt": "d",
+      },
+    }, await resp.json());
   }
 
   async postToConnection(

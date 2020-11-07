@@ -31,10 +31,10 @@ export default class MediaStore {
   async createContainer(
     {abortSignal, ...params}: RequestConfig & CreateContainerInput,
   ): Promise<CreateContainerOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ContainerName: params["ContainerName"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateContainer",
@@ -50,9 +50,9 @@ export default class MediaStore {
   async deleteContainer(
     {abortSignal, ...params}: RequestConfig & DeleteContainerInput,
   ): Promise<DeleteContainerOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ContainerName: params["ContainerName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteContainer",
@@ -66,9 +66,9 @@ export default class MediaStore {
   async deleteContainerPolicy(
     {abortSignal, ...params}: RequestConfig & DeleteContainerPolicyInput,
   ): Promise<DeleteContainerPolicyOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ContainerName: params["ContainerName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteContainerPolicy",
@@ -82,9 +82,9 @@ export default class MediaStore {
   async deleteCorsPolicy(
     {abortSignal, ...params}: RequestConfig & DeleteCorsPolicyInput,
   ): Promise<DeleteCorsPolicyOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ContainerName: params["ContainerName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteCorsPolicy",
@@ -98,9 +98,9 @@ export default class MediaStore {
   async deleteLifecyclePolicy(
     {abortSignal, ...params}: RequestConfig & DeleteLifecyclePolicyInput,
   ): Promise<DeleteLifecyclePolicyOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ContainerName: params["ContainerName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteLifecyclePolicy",
@@ -114,9 +114,9 @@ export default class MediaStore {
   async deleteMetricPolicy(
     {abortSignal, ...params}: RequestConfig & DeleteMetricPolicyInput,
   ): Promise<DeleteMetricPolicyOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ContainerName: params["ContainerName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteMetricPolicy",
@@ -130,9 +130,9 @@ export default class MediaStore {
   async describeContainer(
     {abortSignal, ...params}: RequestConfig & DescribeContainerInput = {},
   ): Promise<DescribeContainerOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ContainerName: params["ContainerName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeContainer",
@@ -148,9 +148,9 @@ export default class MediaStore {
   async getContainerPolicy(
     {abortSignal, ...params}: RequestConfig & GetContainerPolicyInput,
   ): Promise<GetContainerPolicyOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ContainerName: params["ContainerName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetContainerPolicy",
@@ -166,9 +166,9 @@ export default class MediaStore {
   async getCorsPolicy(
     {abortSignal, ...params}: RequestConfig & GetCorsPolicyInput,
   ): Promise<GetCorsPolicyOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ContainerName: params["ContainerName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetCorsPolicy",
@@ -184,9 +184,9 @@ export default class MediaStore {
   async getLifecyclePolicy(
     {abortSignal, ...params}: RequestConfig & GetLifecyclePolicyInput,
   ): Promise<GetLifecyclePolicyOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ContainerName: params["ContainerName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetLifecyclePolicy",
@@ -202,9 +202,9 @@ export default class MediaStore {
   async getMetricPolicy(
     {abortSignal, ...params}: RequestConfig & GetMetricPolicyInput,
   ): Promise<GetMetricPolicyOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ContainerName: params["ContainerName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetMetricPolicy",
@@ -220,10 +220,10 @@ export default class MediaStore {
   async listContainers(
     {abortSignal, ...params}: RequestConfig & ListContainersInput = {},
   ): Promise<ListContainersOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListContainers",
@@ -241,9 +241,9 @@ export default class MediaStore {
   async listTagsForResource(
     {abortSignal, ...params}: RequestConfig & ListTagsForResourceInput,
   ): Promise<ListTagsForResourceOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Resource: params["Resource"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForResource",
@@ -259,10 +259,10 @@ export default class MediaStore {
   async putContainerPolicy(
     {abortSignal, ...params}: RequestConfig & PutContainerPolicyInput,
   ): Promise<PutContainerPolicyOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ContainerName: params["ContainerName"],
       Policy: params["Policy"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutContainerPolicy",
@@ -276,10 +276,10 @@ export default class MediaStore {
   async putCorsPolicy(
     {abortSignal, ...params}: RequestConfig & PutCorsPolicyInput,
   ): Promise<PutCorsPolicyOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ContainerName: params["ContainerName"],
       CorsPolicy: params["CorsPolicy"]?.map(x => fromCorsRule(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutCorsPolicy",
@@ -293,10 +293,10 @@ export default class MediaStore {
   async putLifecyclePolicy(
     {abortSignal, ...params}: RequestConfig & PutLifecyclePolicyInput,
   ): Promise<PutLifecyclePolicyOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ContainerName: params["ContainerName"],
       LifecyclePolicy: params["LifecyclePolicy"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutLifecyclePolicy",
@@ -310,10 +310,10 @@ export default class MediaStore {
   async putMetricPolicy(
     {abortSignal, ...params}: RequestConfig & PutMetricPolicyInput,
   ): Promise<PutMetricPolicyOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ContainerName: params["ContainerName"],
       MetricPolicy: fromMetricPolicy(params["MetricPolicy"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutMetricPolicy",
@@ -327,9 +327,9 @@ export default class MediaStore {
   async startAccessLogging(
     {abortSignal, ...params}: RequestConfig & StartAccessLoggingInput,
   ): Promise<StartAccessLoggingOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ContainerName: params["ContainerName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartAccessLogging",
@@ -343,9 +343,9 @@ export default class MediaStore {
   async stopAccessLogging(
     {abortSignal, ...params}: RequestConfig & StopAccessLoggingInput,
   ): Promise<StopAccessLoggingOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ContainerName: params["ContainerName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopAccessLogging",
@@ -359,10 +359,10 @@ export default class MediaStore {
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceInput,
   ): Promise<TagResourceOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Resource: params["Resource"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
@@ -376,10 +376,10 @@ export default class MediaStore {
   async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceInput,
   ): Promise<UntagResourceOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Resource: params["Resource"],
       TagKeys: params["TagKeys"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResource",

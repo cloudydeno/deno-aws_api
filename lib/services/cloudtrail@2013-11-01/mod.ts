@@ -30,10 +30,10 @@ export default class CloudTrail {
   async addTags(
     {abortSignal, ...params}: RequestConfig & AddTagsRequest,
   ): Promise<AddTagsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceId: params["ResourceId"],
       TagsList: params["TagsList"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AddTags",
@@ -47,7 +47,7 @@ export default class CloudTrail {
   async createTrail(
     {abortSignal, ...params}: RequestConfig & CreateTrailRequest,
   ): Promise<CreateTrailResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       S3BucketName: params["S3BucketName"],
       S3KeyPrefix: params["S3KeyPrefix"],
@@ -60,7 +60,7 @@ export default class CloudTrail {
       KmsKeyId: params["KmsKeyId"],
       IsOrganizationTrail: params["IsOrganizationTrail"],
       TagsList: params["TagsList"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateTrail",
@@ -88,9 +88,9 @@ export default class CloudTrail {
   async deleteTrail(
     {abortSignal, ...params}: RequestConfig & DeleteTrailRequest,
   ): Promise<DeleteTrailResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteTrail",
@@ -104,10 +104,10 @@ export default class CloudTrail {
   async describeTrails(
     {abortSignal, ...params}: RequestConfig & DescribeTrailsRequest = {},
   ): Promise<DescribeTrailsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       trailNameList: params["trailNameList"],
       includeShadowTrails: params["includeShadowTrails"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeTrails",
@@ -123,9 +123,9 @@ export default class CloudTrail {
   async getEventSelectors(
     {abortSignal, ...params}: RequestConfig & GetEventSelectorsRequest,
   ): Promise<GetEventSelectorsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TrailName: params["TrailName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetEventSelectors",
@@ -142,9 +142,9 @@ export default class CloudTrail {
   async getInsightSelectors(
     {abortSignal, ...params}: RequestConfig & GetInsightSelectorsRequest,
   ): Promise<GetInsightSelectorsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TrailName: params["TrailName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetInsightSelectors",
@@ -161,9 +161,9 @@ export default class CloudTrail {
   async getTrail(
     {abortSignal, ...params}: RequestConfig & GetTrailRequest,
   ): Promise<GetTrailResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetTrail",
@@ -179,9 +179,9 @@ export default class CloudTrail {
   async getTrailStatus(
     {abortSignal, ...params}: RequestConfig & GetTrailStatusRequest,
   ): Promise<GetTrailStatusResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetTrailStatus",
@@ -213,11 +213,11 @@ export default class CloudTrail {
   async listPublicKeys(
     {abortSignal, ...params}: RequestConfig & ListPublicKeysRequest = {},
   ): Promise<ListPublicKeysResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       StartTime: jsonP.serializeDate_unixTimestamp(params["StartTime"]),
       EndTime: jsonP.serializeDate_unixTimestamp(params["EndTime"]),
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListPublicKeys",
@@ -234,10 +234,10 @@ export default class CloudTrail {
   async listTags(
     {abortSignal, ...params}: RequestConfig & ListTagsRequest,
   ): Promise<ListTagsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceIdList: params["ResourceIdList"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTags",
@@ -254,9 +254,9 @@ export default class CloudTrail {
   async listTrails(
     {abortSignal, ...params}: RequestConfig & ListTrailsRequest = {},
   ): Promise<ListTrailsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTrails",
@@ -273,14 +273,14 @@ export default class CloudTrail {
   async lookupEvents(
     {abortSignal, ...params}: RequestConfig & LookupEventsRequest = {},
   ): Promise<LookupEventsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       LookupAttributes: params["LookupAttributes"]?.map(x => fromLookupAttribute(x)),
       StartTime: jsonP.serializeDate_unixTimestamp(params["StartTime"]),
       EndTime: jsonP.serializeDate_unixTimestamp(params["EndTime"]),
       EventCategory: params["EventCategory"],
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "LookupEvents",
@@ -297,10 +297,10 @@ export default class CloudTrail {
   async putEventSelectors(
     {abortSignal, ...params}: RequestConfig & PutEventSelectorsRequest,
   ): Promise<PutEventSelectorsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TrailName: params["TrailName"],
       EventSelectors: params["EventSelectors"]?.map(x => fromEventSelector(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutEventSelectors",
@@ -317,10 +317,10 @@ export default class CloudTrail {
   async putInsightSelectors(
     {abortSignal, ...params}: RequestConfig & PutInsightSelectorsRequest,
   ): Promise<PutInsightSelectorsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TrailName: params["TrailName"],
       InsightSelectors: params["InsightSelectors"]?.map(x => fromInsightSelector(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutInsightSelectors",
@@ -337,10 +337,10 @@ export default class CloudTrail {
   async removeTags(
     {abortSignal, ...params}: RequestConfig & RemoveTagsRequest,
   ): Promise<RemoveTagsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceId: params["ResourceId"],
       TagsList: params["TagsList"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RemoveTags",
@@ -354,9 +354,9 @@ export default class CloudTrail {
   async startLogging(
     {abortSignal, ...params}: RequestConfig & StartLoggingRequest,
   ): Promise<StartLoggingResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartLogging",
@@ -370,9 +370,9 @@ export default class CloudTrail {
   async stopLogging(
     {abortSignal, ...params}: RequestConfig & StopLoggingRequest,
   ): Promise<StopLoggingResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopLogging",
@@ -386,7 +386,7 @@ export default class CloudTrail {
   async updateTrail(
     {abortSignal, ...params}: RequestConfig & UpdateTrailRequest,
   ): Promise<UpdateTrailResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       S3BucketName: params["S3BucketName"],
       S3KeyPrefix: params["S3KeyPrefix"],
@@ -398,7 +398,7 @@ export default class CloudTrail {
       CloudWatchLogsRoleArn: params["CloudWatchLogsRoleArn"],
       KmsKeyId: params["KmsKeyId"],
       IsOrganizationTrail: params["IsOrganizationTrail"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateTrail",

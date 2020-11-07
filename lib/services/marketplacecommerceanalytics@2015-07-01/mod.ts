@@ -30,7 +30,7 @@ export default class MarketplaceCommerceAnalytics {
   async generateDataSet(
     {abortSignal, ...params}: RequestConfig & GenerateDataSetRequest,
   ): Promise<GenerateDataSetResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       dataSetType: params["dataSetType"],
       dataSetPublicationDate: jsonP.serializeDate_unixTimestamp(params["dataSetPublicationDate"]),
       roleNameArn: params["roleNameArn"],
@@ -38,7 +38,7 @@ export default class MarketplaceCommerceAnalytics {
       destinationS3Prefix: params["destinationS3Prefix"],
       snsTopicArn: params["snsTopicArn"],
       customerDefinedValues: params["customerDefinedValues"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GenerateDataSet",
@@ -54,7 +54,7 @@ export default class MarketplaceCommerceAnalytics {
   async startSupportDataExport(
     {abortSignal, ...params}: RequestConfig & StartSupportDataExportRequest,
   ): Promise<StartSupportDataExportResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       dataSetType: params["dataSetType"],
       fromDate: jsonP.serializeDate_unixTimestamp(params["fromDate"]),
       roleNameArn: params["roleNameArn"],
@@ -62,7 +62,7 @@ export default class MarketplaceCommerceAnalytics {
       destinationS3Prefix: params["destinationS3Prefix"],
       snsTopicArn: params["snsTopicArn"],
       customerDefinedValues: params["customerDefinedValues"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartSupportDataExport",

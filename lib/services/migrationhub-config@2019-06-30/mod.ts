@@ -30,11 +30,11 @@ export default class MigrationHubConfig {
   async createHomeRegionControl(
     {abortSignal, ...params}: RequestConfig & CreateHomeRegionControlRequest,
   ): Promise<CreateHomeRegionControlResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       HomeRegion: params["HomeRegion"],
       Target: fromTarget(params["Target"]),
       DryRun: params["DryRun"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateHomeRegionControl",
@@ -50,13 +50,13 @@ export default class MigrationHubConfig {
   async describeHomeRegionControls(
     {abortSignal, ...params}: RequestConfig & DescribeHomeRegionControlsRequest = {},
   ): Promise<DescribeHomeRegionControlsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ControlId: params["ControlId"],
       HomeRegion: params["HomeRegion"],
       Target: fromTarget(params["Target"]),
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeHomeRegionControls",
@@ -73,8 +73,8 @@ export default class MigrationHubConfig {
   async getHomeRegion(
     {abortSignal, ...params}: RequestConfig & GetHomeRegionRequest = {},
   ): Promise<GetHomeRegionResult> {
-    const body: jsonP.JSONObject = params ? {
-    } : {};
+    const body: jsonP.JSONObject = {
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetHomeRegion",

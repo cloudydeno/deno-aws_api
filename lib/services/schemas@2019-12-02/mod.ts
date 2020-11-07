@@ -33,88 +33,82 @@ export default class Schemas {
   async createDiscoverer(
     {abortSignal, ...params}: RequestConfig & CreateDiscovererRequest,
   ): Promise<CreateDiscovererResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Description: params["Description"],
       SourceArn: params["SourceArn"],
       tags: params["Tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDiscoverer",
       requestUri: "/v1/discoverers",
       responseCode: 201,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Description": "s",
-          "DiscovererArn": "s",
-          "DiscovererId": "s",
-          "SourceArn": "s",
-          "State": (x: jsonP.JSONValue) => cmnP.readEnum<DiscovererState>(x),
-          "Tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Description": "s",
+        "DiscovererArn": "s",
+        "DiscovererId": "s",
+        "SourceArn": "s",
+        "State": (x: jsonP.JSONValue) => cmnP.readEnum<DiscovererState>(x),
+        "Tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async createRegistry(
     {abortSignal, ...params}: RequestConfig & CreateRegistryRequest,
   ): Promise<CreateRegistryResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Description: params["Description"],
       tags: params["Tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateRegistry",
       requestUri: cmnP.encodePath`/v1/registries/name/${params["RegistryName"]}`,
       responseCode: 201,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Description": "s",
-          "RegistryArn": "s",
-          "RegistryName": "s",
-          "Tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Description": "s",
+        "RegistryArn": "s",
+        "RegistryName": "s",
+        "Tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async createSchema(
     {abortSignal, ...params}: RequestConfig & CreateSchemaRequest,
   ): Promise<CreateSchemaResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Content: params["Content"],
       Description: params["Description"],
       tags: params["Tags"],
       Type: params["Type"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateSchema",
       requestUri: cmnP.encodePath`/v1/registries/name/${params["RegistryName"]}/schemas/name/${params["SchemaName"]}`,
       responseCode: 201,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Description": "s",
-          "LastModified": "d",
-          "SchemaArn": "s",
-          "SchemaName": "s",
-          "SchemaVersion": "s",
-          "Tags": x => jsonP.readMap(String, String, x),
-          "Type": "s",
-          "VersionCreatedDate": "d",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Description": "s",
+        "LastModified": "d",
+        "SchemaArn": "s",
+        "SchemaName": "s",
+        "SchemaVersion": "s",
+        "Tags": x => jsonP.readMap(String, String, x),
+        "Type": "s",
+        "VersionCreatedDate": "d",
+      },
+    }, await resp.json());
   }
 
   async deleteDiscoverer(
@@ -195,17 +189,15 @@ export default class Schemas {
       requestUri: cmnP.encodePath`/v1/registries/name/${params["RegistryName"]}/schemas/name/${params["SchemaName"]}/language/${params["Language"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "CreationDate": "d",
-          "LastModified": "d",
-          "SchemaVersion": "s",
-          "Status": (x: jsonP.JSONValue) => cmnP.readEnum<CodeGenerationStatus>(x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "CreationDate": "d",
+        "LastModified": "d",
+        "SchemaVersion": "s",
+        "Status": (x: jsonP.JSONValue) => cmnP.readEnum<CodeGenerationStatus>(x),
+      },
+    }, await resp.json());
   }
 
   async describeDiscoverer(
@@ -219,19 +211,17 @@ export default class Schemas {
       requestUri: cmnP.encodePath`/v1/discoverers/id/${params["DiscovererId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Description": "s",
-          "DiscovererArn": "s",
-          "DiscovererId": "s",
-          "SourceArn": "s",
-          "State": (x: jsonP.JSONValue) => cmnP.readEnum<DiscovererState>(x),
-          "Tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Description": "s",
+        "DiscovererArn": "s",
+        "DiscovererId": "s",
+        "SourceArn": "s",
+        "State": (x: jsonP.JSONValue) => cmnP.readEnum<DiscovererState>(x),
+        "Tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async describeRegistry(
@@ -245,17 +235,15 @@ export default class Schemas {
       requestUri: cmnP.encodePath`/v1/registries/name/${params["RegistryName"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Description": "s",
-          "RegistryArn": "s",
-          "RegistryName": "s",
-          "Tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Description": "s",
+        "RegistryArn": "s",
+        "RegistryName": "s",
+        "Tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async describeSchema(
@@ -270,22 +258,20 @@ export default class Schemas {
       requestUri: cmnP.encodePath`/v1/registries/name/${params["RegistryName"]}/schemas/name/${params["SchemaName"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Content": "s",
-          "Description": "s",
-          "LastModified": "d",
-          "SchemaArn": "s",
-          "SchemaName": "s",
-          "SchemaVersion": "s",
-          "Tags": x => jsonP.readMap(String, String, x),
-          "Type": "s",
-          "VersionCreatedDate": "d",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Content": "s",
+        "Description": "s",
+        "LastModified": "d",
+        "SchemaArn": "s",
+        "SchemaName": "s",
+        "SchemaVersion": "s",
+        "Tags": x => jsonP.readMap(String, String, x),
+        "Type": "s",
+        "VersionCreatedDate": "d",
+      },
+    }, await resp.json());
   }
 
   async exportSchema(
@@ -301,18 +287,16 @@ export default class Schemas {
       requestUri: cmnP.encodePath`/v1/registries/name/${params["RegistryName"]}/schemas/name/${params["SchemaName"]}/export`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Content": "s",
-          "SchemaArn": "s",
-          "SchemaName": "s",
-          "SchemaVersion": "s",
-          "Type": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Content": "s",
+        "SchemaArn": "s",
+        "SchemaName": "s",
+        "SchemaVersion": "s",
+        "Type": "s",
+      },
+    }, await resp.json());
   }
 
   async getCodeBindingSource(
@@ -335,24 +319,22 @@ export default class Schemas {
   async getDiscoveredSchema(
     {abortSignal, ...params}: RequestConfig & GetDiscoveredSchemaRequest,
   ): Promise<GetDiscoveredSchemaResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Events: params["Events"],
       Type: params["Type"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetDiscoveredSchema",
       requestUri: "/v1/discover",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Content": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Content": "s",
+      },
+    }, await resp.json());
   }
 
   async getResourcePolicy(
@@ -367,15 +349,13 @@ export default class Schemas {
       requestUri: "/v1/policy",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Policy": jsonP.readJsonValue,
-          "RevisionId": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Policy": jsonP.readJsonValue,
+        "RevisionId": "s",
+      },
+    }, await resp.json());
   }
 
   async listDiscoverers(
@@ -393,15 +373,13 @@ export default class Schemas {
       requestUri: "/v1/discoverers",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Discoverers": [toDiscovererSummary],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Discoverers": [toDiscovererSummary],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listRegistries(
@@ -419,15 +397,13 @@ export default class Schemas {
       requestUri: "/v1/registries",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "NextToken": "s",
-          "Registries": [toRegistrySummary],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "NextToken": "s",
+        "Registries": [toRegistrySummary],
+      },
+    }, await resp.json());
   }
 
   async listSchemaVersions(
@@ -443,15 +419,13 @@ export default class Schemas {
       requestUri: cmnP.encodePath`/v1/registries/name/${params["RegistryName"]}/schemas/name/${params["SchemaName"]}/versions`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "NextToken": "s",
-          "SchemaVersions": [toSchemaVersionSummary],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "NextToken": "s",
+        "SchemaVersions": [toSchemaVersionSummary],
+      },
+    }, await resp.json());
   }
 
   async listSchemas(
@@ -468,15 +442,13 @@ export default class Schemas {
       requestUri: cmnP.encodePath`/v1/registries/name/${params["RegistryName"]}/schemas`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "NextToken": "s",
-          "Schemas": [toSchemaSummary],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "NextToken": "s",
+        "Schemas": [toSchemaSummary],
+      },
+    }, await resp.json());
   }
 
   async listTagsForResource(
@@ -490,14 +462,12 @@ export default class Schemas {
       requestUri: cmnP.encodePath`/tags/${params["ResourceArn"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async putCodeBinding(
@@ -511,28 +481,26 @@ export default class Schemas {
       requestUri: cmnP.encodePath`/v1/registries/name/${params["RegistryName"]}/schemas/name/${params["SchemaName"]}/language/${params["Language"]}`,
       responseCode: 202,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "CreationDate": "d",
-          "LastModified": "d",
-          "SchemaVersion": "s",
-          "Status": (x: jsonP.JSONValue) => cmnP.readEnum<CodeGenerationStatus>(x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "CreationDate": "d",
+        "LastModified": "d",
+        "SchemaVersion": "s",
+        "Status": (x: jsonP.JSONValue) => cmnP.readEnum<CodeGenerationStatus>(x),
+      },
+    }, await resp.json());
   }
 
   async putResourcePolicy(
     {abortSignal, ...params}: RequestConfig & PutResourcePolicyRequest,
   ): Promise<PutResourcePolicyResponse> {
     const query = new URLSearchParams;
-    if (params["RegistryName"] != null) query.set("registryName", params["RegistryName"]?.toString() ?? "");
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Policy: jsonP.serializeJsonValue(params["Policy"]),
       RevisionId: params["RevisionId"],
-    } : {};
+    };
+    if (params["RegistryName"] != null) query.set("registryName", params["RegistryName"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
       abortSignal, query, body,
       action: "PutResourcePolicy",
@@ -540,15 +508,13 @@ export default class Schemas {
       requestUri: "/v1/policy",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Policy": jsonP.readJsonValue,
-          "RevisionId": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Policy": jsonP.readJsonValue,
+        "RevisionId": "s",
+      },
+    }, await resp.json());
   }
 
   async searchSchemas(
@@ -565,15 +531,13 @@ export default class Schemas {
       requestUri: cmnP.encodePath`/v1/registries/name/${params["RegistryName"]}/schemas/search`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "NextToken": "s",
-          "Schemas": [toSearchSchemaSummary],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "NextToken": "s",
+        "Schemas": [toSearchSchemaSummary],
+      },
+    }, await resp.json());
   }
 
   async startDiscoverer(
@@ -586,15 +550,13 @@ export default class Schemas {
       requestUri: cmnP.encodePath`/v1/discoverers/id/${params["DiscovererId"]}/start`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "DiscovererId": "s",
-          "State": (x: jsonP.JSONValue) => cmnP.readEnum<DiscovererState>(x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "DiscovererId": "s",
+        "State": (x: jsonP.JSONValue) => cmnP.readEnum<DiscovererState>(x),
+      },
+    }, await resp.json());
   }
 
   async stopDiscoverer(
@@ -607,23 +569,21 @@ export default class Schemas {
       requestUri: cmnP.encodePath`/v1/discoverers/id/${params["DiscovererId"]}/stop`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "DiscovererId": "s",
-          "State": (x: jsonP.JSONValue) => cmnP.readEnum<DiscovererState>(x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "DiscovererId": "s",
+        "State": (x: jsonP.JSONValue) => cmnP.readEnum<DiscovererState>(x),
+      },
+    }, await resp.json());
   }
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       tags: params["Tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
@@ -651,9 +611,9 @@ export default class Schemas {
   async updateDiscoverer(
     {abortSignal, ...params}: RequestConfig & UpdateDiscovererRequest,
   ): Promise<UpdateDiscovererResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Description: params["Description"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateDiscoverer",
@@ -661,27 +621,25 @@ export default class Schemas {
       requestUri: cmnP.encodePath`/v1/discoverers/id/${params["DiscovererId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Description": "s",
-          "DiscovererArn": "s",
-          "DiscovererId": "s",
-          "SourceArn": "s",
-          "State": (x: jsonP.JSONValue) => cmnP.readEnum<DiscovererState>(x),
-          "Tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Description": "s",
+        "DiscovererArn": "s",
+        "DiscovererId": "s",
+        "SourceArn": "s",
+        "State": (x: jsonP.JSONValue) => cmnP.readEnum<DiscovererState>(x),
+        "Tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async updateRegistry(
     {abortSignal, ...params}: RequestConfig & UpdateRegistryRequest,
   ): Promise<UpdateRegistryResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Description: params["Description"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateRegistry",
@@ -689,28 +647,26 @@ export default class Schemas {
       requestUri: cmnP.encodePath`/v1/registries/name/${params["RegistryName"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Description": "s",
-          "RegistryArn": "s",
-          "RegistryName": "s",
-          "Tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Description": "s",
+        "RegistryArn": "s",
+        "RegistryName": "s",
+        "Tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async updateSchema(
     {abortSignal, ...params}: RequestConfig & UpdateSchemaRequest,
   ): Promise<UpdateSchemaResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ClientTokenId: params["ClientTokenId"] ?? generateIdemptToken(),
       Content: params["Content"],
       Description: params["Description"],
       Type: params["Type"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateSchema",
@@ -718,21 +674,19 @@ export default class Schemas {
       requestUri: cmnP.encodePath`/v1/registries/name/${params["RegistryName"]}/schemas/name/${params["SchemaName"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Description": "s",
-          "LastModified": "d",
-          "SchemaArn": "s",
-          "SchemaName": "s",
-          "SchemaVersion": "s",
-          "Tags": x => jsonP.readMap(String, String, x),
-          "Type": "s",
-          "VersionCreatedDate": "d",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Description": "s",
+        "LastModified": "d",
+        "SchemaArn": "s",
+        "SchemaName": "s",
+        "SchemaVersion": "s",
+        "Tags": x => jsonP.readMap(String, String, x),
+        "Type": "s",
+        "VersionCreatedDate": "d",
+      },
+    }, await resp.json());
   }
 
   // Resource State Waiters
@@ -753,7 +707,7 @@ export default class Schemas {
         if (field === "CREATE_IN_PROGRESS") continue;
         if (field === "CREATE_FAILED") throw new Error(errMessage);
       } catch (err) {
-        if (["NotFoundException"].includes(err.code)) throw err;
+        if (["NotFoundException"].includes(err.shortCode)) throw err;
         throw err;
       }
       await new Promise(r => setTimeout(r, 2000));

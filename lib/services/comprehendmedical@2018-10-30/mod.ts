@@ -35,9 +35,9 @@ export default class ComprehendMedical {
   async describeEntitiesDetectionV2Job(
     {abortSignal, ...params}: RequestConfig & DescribeEntitiesDetectionV2JobRequest,
   ): Promise<DescribeEntitiesDetectionV2JobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       JobId: params["JobId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeEntitiesDetectionV2Job",
@@ -53,9 +53,9 @@ export default class ComprehendMedical {
   async describeICD10CMInferenceJob(
     {abortSignal, ...params}: RequestConfig & DescribeICD10CMInferenceJobRequest,
   ): Promise<DescribeICD10CMInferenceJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       JobId: params["JobId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeICD10CMInferenceJob",
@@ -71,9 +71,9 @@ export default class ComprehendMedical {
   async describePHIDetectionJob(
     {abortSignal, ...params}: RequestConfig & DescribePHIDetectionJobRequest,
   ): Promise<DescribePHIDetectionJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       JobId: params["JobId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribePHIDetectionJob",
@@ -89,9 +89,9 @@ export default class ComprehendMedical {
   async describeRxNormInferenceJob(
     {abortSignal, ...params}: RequestConfig & DescribeRxNormInferenceJobRequest,
   ): Promise<DescribeRxNormInferenceJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       JobId: params["JobId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeRxNormInferenceJob",
@@ -107,9 +107,9 @@ export default class ComprehendMedical {
   async detectEntities(
     {abortSignal, ...params}: RequestConfig & DetectEntitiesRequest,
   ): Promise<DetectEntitiesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Text: params["Text"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DetectEntities",
@@ -129,9 +129,9 @@ export default class ComprehendMedical {
   async detectEntitiesV2(
     {abortSignal, ...params}: RequestConfig & DetectEntitiesV2Request,
   ): Promise<DetectEntitiesV2Response> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Text: params["Text"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DetectEntitiesV2",
@@ -151,9 +151,9 @@ export default class ComprehendMedical {
   async detectPHI(
     {abortSignal, ...params}: RequestConfig & DetectPHIRequest,
   ): Promise<DetectPHIResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Text: params["Text"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DetectPHI",
@@ -172,9 +172,9 @@ export default class ComprehendMedical {
   async inferICD10CM(
     {abortSignal, ...params}: RequestConfig & InferICD10CMRequest,
   ): Promise<InferICD10CMResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Text: params["Text"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "InferICD10CM",
@@ -193,9 +193,9 @@ export default class ComprehendMedical {
   async inferRxNorm(
     {abortSignal, ...params}: RequestConfig & InferRxNormRequest,
   ): Promise<InferRxNormResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Text: params["Text"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "InferRxNorm",
@@ -214,11 +214,11 @@ export default class ComprehendMedical {
   async listEntitiesDetectionV2Jobs(
     {abortSignal, ...params}: RequestConfig & ListEntitiesDetectionV2JobsRequest = {},
   ): Promise<ListEntitiesDetectionV2JobsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Filter: fromComprehendMedicalAsyncJobFilter(params["Filter"]),
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListEntitiesDetectionV2Jobs",
@@ -235,11 +235,11 @@ export default class ComprehendMedical {
   async listICD10CMInferenceJobs(
     {abortSignal, ...params}: RequestConfig & ListICD10CMInferenceJobsRequest = {},
   ): Promise<ListICD10CMInferenceJobsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Filter: fromComprehendMedicalAsyncJobFilter(params["Filter"]),
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListICD10CMInferenceJobs",
@@ -256,11 +256,11 @@ export default class ComprehendMedical {
   async listPHIDetectionJobs(
     {abortSignal, ...params}: RequestConfig & ListPHIDetectionJobsRequest = {},
   ): Promise<ListPHIDetectionJobsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Filter: fromComprehendMedicalAsyncJobFilter(params["Filter"]),
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListPHIDetectionJobs",
@@ -277,11 +277,11 @@ export default class ComprehendMedical {
   async listRxNormInferenceJobs(
     {abortSignal, ...params}: RequestConfig & ListRxNormInferenceJobsRequest = {},
   ): Promise<ListRxNormInferenceJobsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Filter: fromComprehendMedicalAsyncJobFilter(params["Filter"]),
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListRxNormInferenceJobs",
@@ -298,7 +298,7 @@ export default class ComprehendMedical {
   async startEntitiesDetectionV2Job(
     {abortSignal, ...params}: RequestConfig & StartEntitiesDetectionV2JobRequest,
   ): Promise<StartEntitiesDetectionV2JobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       InputDataConfig: fromInputDataConfig(params["InputDataConfig"]),
       OutputDataConfig: fromOutputDataConfig(params["OutputDataConfig"]),
       DataAccessRoleArn: params["DataAccessRoleArn"],
@@ -306,7 +306,7 @@ export default class ComprehendMedical {
       ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
       KMSKey: params["KMSKey"],
       LanguageCode: params["LanguageCode"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartEntitiesDetectionV2Job",
@@ -322,7 +322,7 @@ export default class ComprehendMedical {
   async startICD10CMInferenceJob(
     {abortSignal, ...params}: RequestConfig & StartICD10CMInferenceJobRequest,
   ): Promise<StartICD10CMInferenceJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       InputDataConfig: fromInputDataConfig(params["InputDataConfig"]),
       OutputDataConfig: fromOutputDataConfig(params["OutputDataConfig"]),
       DataAccessRoleArn: params["DataAccessRoleArn"],
@@ -330,7 +330,7 @@ export default class ComprehendMedical {
       ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
       KMSKey: params["KMSKey"],
       LanguageCode: params["LanguageCode"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartICD10CMInferenceJob",
@@ -346,7 +346,7 @@ export default class ComprehendMedical {
   async startPHIDetectionJob(
     {abortSignal, ...params}: RequestConfig & StartPHIDetectionJobRequest,
   ): Promise<StartPHIDetectionJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       InputDataConfig: fromInputDataConfig(params["InputDataConfig"]),
       OutputDataConfig: fromOutputDataConfig(params["OutputDataConfig"]),
       DataAccessRoleArn: params["DataAccessRoleArn"],
@@ -354,7 +354,7 @@ export default class ComprehendMedical {
       ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
       KMSKey: params["KMSKey"],
       LanguageCode: params["LanguageCode"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartPHIDetectionJob",
@@ -370,7 +370,7 @@ export default class ComprehendMedical {
   async startRxNormInferenceJob(
     {abortSignal, ...params}: RequestConfig & StartRxNormInferenceJobRequest,
   ): Promise<StartRxNormInferenceJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       InputDataConfig: fromInputDataConfig(params["InputDataConfig"]),
       OutputDataConfig: fromOutputDataConfig(params["OutputDataConfig"]),
       DataAccessRoleArn: params["DataAccessRoleArn"],
@@ -378,7 +378,7 @@ export default class ComprehendMedical {
       ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
       KMSKey: params["KMSKey"],
       LanguageCode: params["LanguageCode"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartRxNormInferenceJob",
@@ -394,9 +394,9 @@ export default class ComprehendMedical {
   async stopEntitiesDetectionV2Job(
     {abortSignal, ...params}: RequestConfig & StopEntitiesDetectionV2JobRequest,
   ): Promise<StopEntitiesDetectionV2JobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       JobId: params["JobId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopEntitiesDetectionV2Job",
@@ -412,9 +412,9 @@ export default class ComprehendMedical {
   async stopICD10CMInferenceJob(
     {abortSignal, ...params}: RequestConfig & StopICD10CMInferenceJobRequest,
   ): Promise<StopICD10CMInferenceJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       JobId: params["JobId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopICD10CMInferenceJob",
@@ -430,9 +430,9 @@ export default class ComprehendMedical {
   async stopPHIDetectionJob(
     {abortSignal, ...params}: RequestConfig & StopPHIDetectionJobRequest,
   ): Promise<StopPHIDetectionJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       JobId: params["JobId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopPHIDetectionJob",
@@ -448,9 +448,9 @@ export default class ComprehendMedical {
   async stopRxNormInferenceJob(
     {abortSignal, ...params}: RequestConfig & StopRxNormInferenceJobRequest,
   ): Promise<StopRxNormInferenceJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       JobId: params["JobId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopRxNormInferenceJob",

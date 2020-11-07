@@ -30,66 +30,62 @@ export default class AppConfig {
   async createApplication(
     {abortSignal, ...params}: RequestConfig & CreateApplicationRequest,
   ): Promise<Application> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       Description: params["Description"],
       Tags: params["Tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateApplication",
       requestUri: "/applications",
       responseCode: 201,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Id": "s",
-          "Name": "s",
-          "Description": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Id": "s",
+        "Name": "s",
+        "Description": "s",
+      },
+    }, await resp.json());
   }
 
   async createConfigurationProfile(
     {abortSignal, ...params}: RequestConfig & CreateConfigurationProfileRequest,
   ): Promise<ConfigurationProfile> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       Description: params["Description"],
       LocationUri: params["LocationUri"],
       RetrievalRoleArn: params["RetrievalRoleArn"],
       Validators: params["Validators"]?.map(x => fromValidator(x)),
       Tags: params["Tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateConfigurationProfile",
       requestUri: cmnP.encodePath`/applications/${params["ApplicationId"]}/configurationprofiles`,
       responseCode: 201,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ApplicationId": "s",
-          "Id": "s",
-          "Name": "s",
-          "Description": "s",
-          "LocationUri": "s",
-          "RetrievalRoleArn": "s",
-          "Validators": [toValidator],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ApplicationId": "s",
+        "Id": "s",
+        "Name": "s",
+        "Description": "s",
+        "LocationUri": "s",
+        "RetrievalRoleArn": "s",
+        "Validators": [toValidator],
+      },
+    }, await resp.json());
   }
 
   async createDeploymentStrategy(
     {abortSignal, ...params}: RequestConfig & CreateDeploymentStrategyRequest,
   ): Promise<DeploymentStrategy> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       Description: params["Description"],
       DeploymentDurationInMinutes: params["DeploymentDurationInMinutes"],
@@ -98,68 +94,64 @@ export default class AppConfig {
       GrowthType: params["GrowthType"],
       ReplicateTo: params["ReplicateTo"],
       Tags: params["Tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDeploymentStrategy",
       requestUri: "/deploymentstrategies",
       responseCode: 201,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Id": "s",
-          "Name": "s",
-          "Description": "s",
-          "DeploymentDurationInMinutes": "n",
-          "GrowthType": (x: jsonP.JSONValue) => cmnP.readEnum<GrowthType>(x),
-          "GrowthFactor": "n",
-          "FinalBakeTimeInMinutes": "n",
-          "ReplicateTo": (x: jsonP.JSONValue) => cmnP.readEnum<ReplicateTo>(x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Id": "s",
+        "Name": "s",
+        "Description": "s",
+        "DeploymentDurationInMinutes": "n",
+        "GrowthType": (x: jsonP.JSONValue) => cmnP.readEnum<GrowthType>(x),
+        "GrowthFactor": "n",
+        "FinalBakeTimeInMinutes": "n",
+        "ReplicateTo": (x: jsonP.JSONValue) => cmnP.readEnum<ReplicateTo>(x),
+      },
+    }, await resp.json());
   }
 
   async createEnvironment(
     {abortSignal, ...params}: RequestConfig & CreateEnvironmentRequest,
   ): Promise<Environment> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       Description: params["Description"],
       Monitors: params["Monitors"]?.map(x => fromMonitor(x)),
       Tags: params["Tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateEnvironment",
       requestUri: cmnP.encodePath`/applications/${params["ApplicationId"]}/environments`,
       responseCode: 201,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ApplicationId": "s",
-          "Id": "s",
-          "Name": "s",
-          "Description": "s",
-          "State": (x: jsonP.JSONValue) => cmnP.readEnum<EnvironmentState>(x),
-          "Monitors": [toMonitor],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ApplicationId": "s",
+        "Id": "s",
+        "Name": "s",
+        "Description": "s",
+        "State": (x: jsonP.JSONValue) => cmnP.readEnum<EnvironmentState>(x),
+        "Monitors": [toMonitor],
+      },
+    }, await resp.json());
   }
 
   async createHostedConfigurationVersion(
     {abortSignal, ...params}: RequestConfig & CreateHostedConfigurationVersionRequest,
   ): Promise<HostedConfigurationVersion> {
+    const body = typeof params["Content"] === 'string' ? new TextEncoder().encode(params["Content"]) : params["Content"];
     const headers = new Headers;
     if (params["Description"] != null) headers.append("Description", params["Description"]);
     headers.append("Content-Type", params["ContentType"]);
     if (params["LatestVersionNumber"] != null) headers.append("Latest-Version-Number", params["LatestVersionNumber"]?.toString() ?? '');
-    const body = typeof params["Content"] === 'string' ? new TextEncoder().encode(params["Content"]) : params["Content"];
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "CreateHostedConfigurationVersion",
@@ -252,16 +244,14 @@ export default class AppConfig {
       requestUri: cmnP.encodePath`/applications/${params["ApplicationId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Id": "s",
-          "Name": "s",
-          "Description": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Id": "s",
+        "Name": "s",
+        "Description": "s",
+      },
+    }, await resp.json());
   }
 
   async getConfiguration(
@@ -295,20 +285,18 @@ export default class AppConfig {
       requestUri: cmnP.encodePath`/applications/${params["ApplicationId"]}/configurationprofiles/${params["ConfigurationProfileId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ApplicationId": "s",
-          "Id": "s",
-          "Name": "s",
-          "Description": "s",
-          "LocationUri": "s",
-          "RetrievalRoleArn": "s",
-          "Validators": [toValidator],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ApplicationId": "s",
+        "Id": "s",
+        "Name": "s",
+        "Description": "s",
+        "LocationUri": "s",
+        "RetrievalRoleArn": "s",
+        "Validators": [toValidator],
+      },
+    }, await resp.json());
   }
 
   async getDeployment(
@@ -322,31 +310,29 @@ export default class AppConfig {
       requestUri: cmnP.encodePath`/applications/${params["ApplicationId"]}/environments/${params["EnvironmentId"]}/deployments/${params["DeploymentNumber"].toString()}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ApplicationId": "s",
-          "EnvironmentId": "s",
-          "DeploymentStrategyId": "s",
-          "ConfigurationProfileId": "s",
-          "DeploymentNumber": "n",
-          "ConfigurationName": "s",
-          "ConfigurationLocationUri": "s",
-          "ConfigurationVersion": "s",
-          "Description": "s",
-          "DeploymentDurationInMinutes": "n",
-          "GrowthType": (x: jsonP.JSONValue) => cmnP.readEnum<GrowthType>(x),
-          "GrowthFactor": "n",
-          "FinalBakeTimeInMinutes": "n",
-          "State": (x: jsonP.JSONValue) => cmnP.readEnum<DeploymentState>(x),
-          "EventLog": [toDeploymentEvent],
-          "PercentageComplete": "n",
-          "StartedAt": "d",
-          "CompletedAt": "d",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ApplicationId": "s",
+        "EnvironmentId": "s",
+        "DeploymentStrategyId": "s",
+        "ConfigurationProfileId": "s",
+        "DeploymentNumber": "n",
+        "ConfigurationName": "s",
+        "ConfigurationLocationUri": "s",
+        "ConfigurationVersion": "s",
+        "Description": "s",
+        "DeploymentDurationInMinutes": "n",
+        "GrowthType": (x: jsonP.JSONValue) => cmnP.readEnum<GrowthType>(x),
+        "GrowthFactor": "n",
+        "FinalBakeTimeInMinutes": "n",
+        "State": (x: jsonP.JSONValue) => cmnP.readEnum<DeploymentState>(x),
+        "EventLog": [toDeploymentEvent],
+        "PercentageComplete": "n",
+        "StartedAt": "d",
+        "CompletedAt": "d",
+      },
+    }, await resp.json());
   }
 
   async getDeploymentStrategy(
@@ -360,21 +346,19 @@ export default class AppConfig {
       requestUri: cmnP.encodePath`/deploymentstrategies/${params["DeploymentStrategyId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Id": "s",
-          "Name": "s",
-          "Description": "s",
-          "DeploymentDurationInMinutes": "n",
-          "GrowthType": (x: jsonP.JSONValue) => cmnP.readEnum<GrowthType>(x),
-          "GrowthFactor": "n",
-          "FinalBakeTimeInMinutes": "n",
-          "ReplicateTo": (x: jsonP.JSONValue) => cmnP.readEnum<ReplicateTo>(x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Id": "s",
+        "Name": "s",
+        "Description": "s",
+        "DeploymentDurationInMinutes": "n",
+        "GrowthType": (x: jsonP.JSONValue) => cmnP.readEnum<GrowthType>(x),
+        "GrowthFactor": "n",
+        "FinalBakeTimeInMinutes": "n",
+        "ReplicateTo": (x: jsonP.JSONValue) => cmnP.readEnum<ReplicateTo>(x),
+      },
+    }, await resp.json());
   }
 
   async getEnvironment(
@@ -388,19 +372,17 @@ export default class AppConfig {
       requestUri: cmnP.encodePath`/applications/${params["ApplicationId"]}/environments/${params["EnvironmentId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ApplicationId": "s",
-          "Id": "s",
-          "Name": "s",
-          "Description": "s",
-          "State": (x: jsonP.JSONValue) => cmnP.readEnum<EnvironmentState>(x),
-          "Monitors": [toMonitor],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ApplicationId": "s",
+        "Id": "s",
+        "Name": "s",
+        "Description": "s",
+        "State": (x: jsonP.JSONValue) => cmnP.readEnum<EnvironmentState>(x),
+        "Monitors": [toMonitor],
+      },
+    }, await resp.json());
   }
 
   async getHostedConfigurationVersion(
@@ -437,15 +419,13 @@ export default class AppConfig {
       requestUri: "/applications",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Items": [toApplication],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Items": [toApplication],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listConfigurationProfiles(
@@ -461,15 +441,13 @@ export default class AppConfig {
       requestUri: cmnP.encodePath`/applications/${params["ApplicationId"]}/configurationprofiles`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Items": [toConfigurationProfileSummary],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Items": [toConfigurationProfileSummary],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listDeploymentStrategies(
@@ -485,15 +463,13 @@ export default class AppConfig {
       requestUri: "/deploymentstrategies",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Items": [toDeploymentStrategy],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Items": [toDeploymentStrategy],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listDeployments(
@@ -509,15 +485,13 @@ export default class AppConfig {
       requestUri: cmnP.encodePath`/applications/${params["ApplicationId"]}/environments/${params["EnvironmentId"]}/deployments`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Items": [toDeploymentSummary],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Items": [toDeploymentSummary],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listEnvironments(
@@ -533,15 +507,13 @@ export default class AppConfig {
       requestUri: cmnP.encodePath`/applications/${params["ApplicationId"]}/environments`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Items": [toEnvironment],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Items": [toEnvironment],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listHostedConfigurationVersions(
@@ -557,15 +529,13 @@ export default class AppConfig {
       requestUri: cmnP.encodePath`/applications/${params["ApplicationId"]}/configurationprofiles/${params["ConfigurationProfileId"]}/hostedconfigurationversions`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Items": [toHostedConfigurationVersionSummary],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Items": [toHostedConfigurationVersionSummary],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listTagsForResource(
@@ -579,57 +549,53 @@ export default class AppConfig {
       requestUri: cmnP.encodePath`/tags/${params["ResourceArn"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async startDeployment(
     {abortSignal, ...params}: RequestConfig & StartDeploymentRequest,
   ): Promise<Deployment> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DeploymentStrategyId: params["DeploymentStrategyId"],
       ConfigurationProfileId: params["ConfigurationProfileId"],
       ConfigurationVersion: params["ConfigurationVersion"],
       Description: params["Description"],
       Tags: params["Tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartDeployment",
       requestUri: cmnP.encodePath`/applications/${params["ApplicationId"]}/environments/${params["EnvironmentId"]}/deployments`,
       responseCode: 201,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ApplicationId": "s",
-          "EnvironmentId": "s",
-          "DeploymentStrategyId": "s",
-          "ConfigurationProfileId": "s",
-          "DeploymentNumber": "n",
-          "ConfigurationName": "s",
-          "ConfigurationLocationUri": "s",
-          "ConfigurationVersion": "s",
-          "Description": "s",
-          "DeploymentDurationInMinutes": "n",
-          "GrowthType": (x: jsonP.JSONValue) => cmnP.readEnum<GrowthType>(x),
-          "GrowthFactor": "n",
-          "FinalBakeTimeInMinutes": "n",
-          "State": (x: jsonP.JSONValue) => cmnP.readEnum<DeploymentState>(x),
-          "EventLog": [toDeploymentEvent],
-          "PercentageComplete": "n",
-          "StartedAt": "d",
-          "CompletedAt": "d",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ApplicationId": "s",
+        "EnvironmentId": "s",
+        "DeploymentStrategyId": "s",
+        "ConfigurationProfileId": "s",
+        "DeploymentNumber": "n",
+        "ConfigurationName": "s",
+        "ConfigurationLocationUri": "s",
+        "ConfigurationVersion": "s",
+        "Description": "s",
+        "DeploymentDurationInMinutes": "n",
+        "GrowthType": (x: jsonP.JSONValue) => cmnP.readEnum<GrowthType>(x),
+        "GrowthFactor": "n",
+        "FinalBakeTimeInMinutes": "n",
+        "State": (x: jsonP.JSONValue) => cmnP.readEnum<DeploymentState>(x),
+        "EventLog": [toDeploymentEvent],
+        "PercentageComplete": "n",
+        "StartedAt": "d",
+        "CompletedAt": "d",
+      },
+    }, await resp.json());
   }
 
   async stopDeployment(
@@ -643,39 +609,37 @@ export default class AppConfig {
       requestUri: cmnP.encodePath`/applications/${params["ApplicationId"]}/environments/${params["EnvironmentId"]}/deployments/${params["DeploymentNumber"].toString()}`,
       responseCode: 202,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ApplicationId": "s",
-          "EnvironmentId": "s",
-          "DeploymentStrategyId": "s",
-          "ConfigurationProfileId": "s",
-          "DeploymentNumber": "n",
-          "ConfigurationName": "s",
-          "ConfigurationLocationUri": "s",
-          "ConfigurationVersion": "s",
-          "Description": "s",
-          "DeploymentDurationInMinutes": "n",
-          "GrowthType": (x: jsonP.JSONValue) => cmnP.readEnum<GrowthType>(x),
-          "GrowthFactor": "n",
-          "FinalBakeTimeInMinutes": "n",
-          "State": (x: jsonP.JSONValue) => cmnP.readEnum<DeploymentState>(x),
-          "EventLog": [toDeploymentEvent],
-          "PercentageComplete": "n",
-          "StartedAt": "d",
-          "CompletedAt": "d",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ApplicationId": "s",
+        "EnvironmentId": "s",
+        "DeploymentStrategyId": "s",
+        "ConfigurationProfileId": "s",
+        "DeploymentNumber": "n",
+        "ConfigurationName": "s",
+        "ConfigurationLocationUri": "s",
+        "ConfigurationVersion": "s",
+        "Description": "s",
+        "DeploymentDurationInMinutes": "n",
+        "GrowthType": (x: jsonP.JSONValue) => cmnP.readEnum<GrowthType>(x),
+        "GrowthFactor": "n",
+        "FinalBakeTimeInMinutes": "n",
+        "State": (x: jsonP.JSONValue) => cmnP.readEnum<DeploymentState>(x),
+        "EventLog": [toDeploymentEvent],
+        "PercentageComplete": "n",
+        "StartedAt": "d",
+        "CompletedAt": "d",
+      },
+    }, await resp.json());
   }
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Tags: params["Tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
@@ -703,10 +667,10 @@ export default class AppConfig {
   async updateApplication(
     {abortSignal, ...params}: RequestConfig & UpdateApplicationRequest,
   ): Promise<Application> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       Description: params["Description"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateApplication",
@@ -714,27 +678,25 @@ export default class AppConfig {
       requestUri: cmnP.encodePath`/applications/${params["ApplicationId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Id": "s",
-          "Name": "s",
-          "Description": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Id": "s",
+        "Name": "s",
+        "Description": "s",
+      },
+    }, await resp.json());
   }
 
   async updateConfigurationProfile(
     {abortSignal, ...params}: RequestConfig & UpdateConfigurationProfileRequest,
   ): Promise<ConfigurationProfile> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       Description: params["Description"],
       RetrievalRoleArn: params["RetrievalRoleArn"],
       Validators: params["Validators"]?.map(x => fromValidator(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateConfigurationProfile",
@@ -742,32 +704,30 @@ export default class AppConfig {
       requestUri: cmnP.encodePath`/applications/${params["ApplicationId"]}/configurationprofiles/${params["ConfigurationProfileId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ApplicationId": "s",
-          "Id": "s",
-          "Name": "s",
-          "Description": "s",
-          "LocationUri": "s",
-          "RetrievalRoleArn": "s",
-          "Validators": [toValidator],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ApplicationId": "s",
+        "Id": "s",
+        "Name": "s",
+        "Description": "s",
+        "LocationUri": "s",
+        "RetrievalRoleArn": "s",
+        "Validators": [toValidator],
+      },
+    }, await resp.json());
   }
 
   async updateDeploymentStrategy(
     {abortSignal, ...params}: RequestConfig & UpdateDeploymentStrategyRequest,
   ): Promise<DeploymentStrategy> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Description: params["Description"],
       DeploymentDurationInMinutes: params["DeploymentDurationInMinutes"],
       FinalBakeTimeInMinutes: params["FinalBakeTimeInMinutes"],
       GrowthFactor: params["GrowthFactor"],
       GrowthType: params["GrowthType"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateDeploymentStrategy",
@@ -775,31 +735,29 @@ export default class AppConfig {
       requestUri: cmnP.encodePath`/deploymentstrategies/${params["DeploymentStrategyId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Id": "s",
-          "Name": "s",
-          "Description": "s",
-          "DeploymentDurationInMinutes": "n",
-          "GrowthType": (x: jsonP.JSONValue) => cmnP.readEnum<GrowthType>(x),
-          "GrowthFactor": "n",
-          "FinalBakeTimeInMinutes": "n",
-          "ReplicateTo": (x: jsonP.JSONValue) => cmnP.readEnum<ReplicateTo>(x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Id": "s",
+        "Name": "s",
+        "Description": "s",
+        "DeploymentDurationInMinutes": "n",
+        "GrowthType": (x: jsonP.JSONValue) => cmnP.readEnum<GrowthType>(x),
+        "GrowthFactor": "n",
+        "FinalBakeTimeInMinutes": "n",
+        "ReplicateTo": (x: jsonP.JSONValue) => cmnP.readEnum<ReplicateTo>(x),
+      },
+    }, await resp.json());
   }
 
   async updateEnvironment(
     {abortSignal, ...params}: RequestConfig & UpdateEnvironmentRequest,
   ): Promise<Environment> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       Description: params["Description"],
       Monitors: params["Monitors"]?.map(x => fromMonitor(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateEnvironment",
@@ -807,19 +765,17 @@ export default class AppConfig {
       requestUri: cmnP.encodePath`/applications/${params["ApplicationId"]}/environments/${params["EnvironmentId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ApplicationId": "s",
-          "Id": "s",
-          "Name": "s",
-          "Description": "s",
-          "State": (x: jsonP.JSONValue) => cmnP.readEnum<EnvironmentState>(x),
-          "Monitors": [toMonitor],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ApplicationId": "s",
+        "Id": "s",
+        "Name": "s",
+        "Description": "s",
+        "State": (x: jsonP.JSONValue) => cmnP.readEnum<EnvironmentState>(x),
+        "Monitors": [toMonitor],
+      },
+    }, await resp.json());
   }
 
   async validateConfiguration(

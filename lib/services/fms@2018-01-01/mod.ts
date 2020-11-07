@@ -30,9 +30,9 @@ export default class FMS {
   async associateAdminAccount(
     {abortSignal, ...params}: RequestConfig & AssociateAdminAccountRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AdminAccount: params["AdminAccount"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AssociateAdminAccount",
@@ -42,9 +42,9 @@ export default class FMS {
   async deleteAppsList(
     {abortSignal, ...params}: RequestConfig & DeleteAppsListRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ListId: params["ListId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteAppsList",
@@ -54,8 +54,8 @@ export default class FMS {
   async deleteNotificationChannel(
     {abortSignal, ...params}: RequestConfig & DeleteNotificationChannelRequest = {},
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
-    } : {};
+    const body: jsonP.JSONObject = {
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteNotificationChannel",
@@ -65,10 +65,10 @@ export default class FMS {
   async deletePolicy(
     {abortSignal, ...params}: RequestConfig & DeletePolicyRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       PolicyId: params["PolicyId"],
       DeleteAllPolicyResources: params["DeleteAllPolicyResources"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeletePolicy",
@@ -78,9 +78,9 @@ export default class FMS {
   async deleteProtocolsList(
     {abortSignal, ...params}: RequestConfig & DeleteProtocolsListRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ListId: params["ListId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteProtocolsList",
@@ -90,8 +90,8 @@ export default class FMS {
   async disassociateAdminAccount(
     {abortSignal, ...params}: RequestConfig & DisassociateAdminAccountRequest = {},
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
-    } : {};
+    const body: jsonP.JSONObject = {
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisassociateAdminAccount",
@@ -101,8 +101,8 @@ export default class FMS {
   async getAdminAccount(
     {abortSignal, ...params}: RequestConfig & GetAdminAccountRequest = {},
   ): Promise<GetAdminAccountResponse> {
-    const body: jsonP.JSONObject = params ? {
-    } : {};
+    const body: jsonP.JSONObject = {
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetAdminAccount",
@@ -119,10 +119,10 @@ export default class FMS {
   async getAppsList(
     {abortSignal, ...params}: RequestConfig & GetAppsListRequest,
   ): Promise<GetAppsListResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ListId: params["ListId"],
       DefaultList: params["DefaultList"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetAppsList",
@@ -139,10 +139,10 @@ export default class FMS {
   async getComplianceDetail(
     {abortSignal, ...params}: RequestConfig & GetComplianceDetailRequest,
   ): Promise<GetComplianceDetailResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       PolicyId: params["PolicyId"],
       MemberAccount: params["MemberAccount"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetComplianceDetail",
@@ -158,8 +158,8 @@ export default class FMS {
   async getNotificationChannel(
     {abortSignal, ...params}: RequestConfig & GetNotificationChannelRequest = {},
   ): Promise<GetNotificationChannelResponse> {
-    const body: jsonP.JSONObject = params ? {
-    } : {};
+    const body: jsonP.JSONObject = {
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetNotificationChannel",
@@ -176,9 +176,9 @@ export default class FMS {
   async getPolicy(
     {abortSignal, ...params}: RequestConfig & GetPolicyRequest,
   ): Promise<GetPolicyResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       PolicyId: params["PolicyId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetPolicy",
@@ -195,14 +195,14 @@ export default class FMS {
   async getProtectionStatus(
     {abortSignal, ...params}: RequestConfig & GetProtectionStatusRequest,
   ): Promise<GetProtectionStatusResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       PolicyId: params["PolicyId"],
       MemberAccountId: params["MemberAccountId"],
       StartTime: jsonP.serializeDate_unixTimestamp(params["StartTime"]),
       EndTime: jsonP.serializeDate_unixTimestamp(params["EndTime"]),
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetProtectionStatus",
@@ -221,10 +221,10 @@ export default class FMS {
   async getProtocolsList(
     {abortSignal, ...params}: RequestConfig & GetProtocolsListRequest,
   ): Promise<GetProtocolsListResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ListId: params["ListId"],
       DefaultList: params["DefaultList"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetProtocolsList",
@@ -241,12 +241,12 @@ export default class FMS {
   async getViolationDetails(
     {abortSignal, ...params}: RequestConfig & GetViolationDetailsRequest,
   ): Promise<GetViolationDetailsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       PolicyId: params["PolicyId"],
       MemberAccount: params["MemberAccount"],
       ResourceId: params["ResourceId"],
       ResourceType: params["ResourceType"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetViolationDetails",
@@ -262,11 +262,11 @@ export default class FMS {
   async listAppsLists(
     {abortSignal, ...params}: RequestConfig & ListAppsListsRequest,
   ): Promise<ListAppsListsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DefaultLists: params["DefaultLists"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListAppsLists",
@@ -283,11 +283,11 @@ export default class FMS {
   async listComplianceStatus(
     {abortSignal, ...params}: RequestConfig & ListComplianceStatusRequest,
   ): Promise<ListComplianceStatusResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       PolicyId: params["PolicyId"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListComplianceStatus",
@@ -304,10 +304,10 @@ export default class FMS {
   async listMemberAccounts(
     {abortSignal, ...params}: RequestConfig & ListMemberAccountsRequest = {},
   ): Promise<ListMemberAccountsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListMemberAccounts",
@@ -324,10 +324,10 @@ export default class FMS {
   async listPolicies(
     {abortSignal, ...params}: RequestConfig & ListPoliciesRequest = {},
   ): Promise<ListPoliciesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListPolicies",
@@ -344,11 +344,11 @@ export default class FMS {
   async listProtocolsLists(
     {abortSignal, ...params}: RequestConfig & ListProtocolsListsRequest,
   ): Promise<ListProtocolsListsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DefaultLists: params["DefaultLists"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListProtocolsLists",
@@ -365,9 +365,9 @@ export default class FMS {
   async listTagsForResource(
     {abortSignal, ...params}: RequestConfig & ListTagsForResourceRequest,
   ): Promise<ListTagsForResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForResource",
@@ -383,10 +383,10 @@ export default class FMS {
   async putAppsList(
     {abortSignal, ...params}: RequestConfig & PutAppsListRequest,
   ): Promise<PutAppsListResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AppsList: fromAppsListData(params["AppsList"]),
       TagList: params["TagList"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutAppsList",
@@ -403,10 +403,10 @@ export default class FMS {
   async putNotificationChannel(
     {abortSignal, ...params}: RequestConfig & PutNotificationChannelRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       SnsTopicArn: params["SnsTopicArn"],
       SnsRoleName: params["SnsRoleName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutNotificationChannel",
@@ -416,10 +416,10 @@ export default class FMS {
   async putPolicy(
     {abortSignal, ...params}: RequestConfig & PutPolicyRequest,
   ): Promise<PutPolicyResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Policy: fromPolicy(params["Policy"]),
       TagList: params["TagList"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutPolicy",
@@ -436,10 +436,10 @@ export default class FMS {
   async putProtocolsList(
     {abortSignal, ...params}: RequestConfig & PutProtocolsListRequest,
   ): Promise<PutProtocolsListResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ProtocolsList: fromProtocolsListData(params["ProtocolsList"]),
       TagList: params["TagList"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutProtocolsList",
@@ -456,10 +456,10 @@ export default class FMS {
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
       TagList: params["TagList"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
@@ -473,10 +473,10 @@ export default class FMS {
   async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceRequest,
   ): Promise<UntagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
       TagKeys: params["TagKeys"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResource",

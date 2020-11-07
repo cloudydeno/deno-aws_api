@@ -30,10 +30,10 @@ export default class MTurk {
   async acceptQualificationRequest(
     {abortSignal, ...params}: RequestConfig & AcceptQualificationRequestRequest,
   ): Promise<AcceptQualificationRequestResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       QualificationRequestId: params["QualificationRequestId"],
       IntegerValue: params["IntegerValue"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AcceptQualificationRequest",
@@ -47,11 +47,11 @@ export default class MTurk {
   async approveAssignment(
     {abortSignal, ...params}: RequestConfig & ApproveAssignmentRequest,
   ): Promise<ApproveAssignmentResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AssignmentId: params["AssignmentId"],
       RequesterFeedback: params["RequesterFeedback"],
       OverrideRejection: params["OverrideRejection"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ApproveAssignment",
@@ -65,12 +65,12 @@ export default class MTurk {
   async associateQualificationWithWorker(
     {abortSignal, ...params}: RequestConfig & AssociateQualificationWithWorkerRequest,
   ): Promise<AssociateQualificationWithWorkerResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       QualificationTypeId: params["QualificationTypeId"],
       WorkerId: params["WorkerId"],
       IntegerValue: params["IntegerValue"],
       SendNotification: params["SendNotification"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AssociateQualificationWithWorker",
@@ -84,11 +84,11 @@ export default class MTurk {
   async createAdditionalAssignmentsForHIT(
     {abortSignal, ...params}: RequestConfig & CreateAdditionalAssignmentsForHITRequest,
   ): Promise<CreateAdditionalAssignmentsForHITResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       HITId: params["HITId"],
       NumberOfAdditionalAssignments: params["NumberOfAdditionalAssignments"],
       UniqueRequestToken: params["UniqueRequestToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateAdditionalAssignmentsForHIT",
@@ -102,7 +102,7 @@ export default class MTurk {
   async createHIT(
     {abortSignal, ...params}: RequestConfig & CreateHITRequest,
   ): Promise<CreateHITResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       MaxAssignments: params["MaxAssignments"],
       AutoApprovalDelayInSeconds: params["AutoApprovalDelayInSeconds"],
       LifetimeInSeconds: params["LifetimeInSeconds"],
@@ -119,7 +119,7 @@ export default class MTurk {
       HITReviewPolicy: fromReviewPolicy(params["HITReviewPolicy"]),
       HITLayoutId: params["HITLayoutId"],
       HITLayoutParameters: params["HITLayoutParameters"]?.map(x => fromHITLayoutParameter(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateHIT",
@@ -135,7 +135,7 @@ export default class MTurk {
   async createHITType(
     {abortSignal, ...params}: RequestConfig & CreateHITTypeRequest,
   ): Promise<CreateHITTypeResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AutoApprovalDelayInSeconds: params["AutoApprovalDelayInSeconds"],
       AssignmentDurationInSeconds: params["AssignmentDurationInSeconds"],
       Reward: params["Reward"],
@@ -143,7 +143,7 @@ export default class MTurk {
       Keywords: params["Keywords"],
       Description: params["Description"],
       QualificationRequirements: params["QualificationRequirements"]?.map(x => fromQualificationRequirement(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateHITType",
@@ -159,7 +159,7 @@ export default class MTurk {
   async createHITWithHITType(
     {abortSignal, ...params}: RequestConfig & CreateHITWithHITTypeRequest,
   ): Promise<CreateHITWithHITTypeResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       HITTypeId: params["HITTypeId"],
       MaxAssignments: params["MaxAssignments"],
       LifetimeInSeconds: params["LifetimeInSeconds"],
@@ -170,7 +170,7 @@ export default class MTurk {
       HITReviewPolicy: fromReviewPolicy(params["HITReviewPolicy"]),
       HITLayoutId: params["HITLayoutId"],
       HITLayoutParameters: params["HITLayoutParameters"]?.map(x => fromHITLayoutParameter(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateHITWithHITType",
@@ -186,7 +186,7 @@ export default class MTurk {
   async createQualificationType(
     {abortSignal, ...params}: RequestConfig & CreateQualificationTypeRequest,
   ): Promise<CreateQualificationTypeResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       Keywords: params["Keywords"],
       Description: params["Description"],
@@ -197,7 +197,7 @@ export default class MTurk {
       TestDurationInSeconds: params["TestDurationInSeconds"],
       AutoGranted: params["AutoGranted"],
       AutoGrantedValue: params["AutoGrantedValue"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateQualificationType",
@@ -213,10 +213,10 @@ export default class MTurk {
   async createWorkerBlock(
     {abortSignal, ...params}: RequestConfig & CreateWorkerBlockRequest,
   ): Promise<CreateWorkerBlockResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       WorkerId: params["WorkerId"],
       Reason: params["Reason"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateWorkerBlock",
@@ -230,9 +230,9 @@ export default class MTurk {
   async deleteHIT(
     {abortSignal, ...params}: RequestConfig & DeleteHITRequest,
   ): Promise<DeleteHITResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       HITId: params["HITId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteHIT",
@@ -246,9 +246,9 @@ export default class MTurk {
   async deleteQualificationType(
     {abortSignal, ...params}: RequestConfig & DeleteQualificationTypeRequest,
   ): Promise<DeleteQualificationTypeResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       QualificationTypeId: params["QualificationTypeId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteQualificationType",
@@ -262,10 +262,10 @@ export default class MTurk {
   async deleteWorkerBlock(
     {abortSignal, ...params}: RequestConfig & DeleteWorkerBlockRequest,
   ): Promise<DeleteWorkerBlockResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       WorkerId: params["WorkerId"],
       Reason: params["Reason"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteWorkerBlock",
@@ -279,11 +279,11 @@ export default class MTurk {
   async disassociateQualificationFromWorker(
     {abortSignal, ...params}: RequestConfig & DisassociateQualificationFromWorkerRequest,
   ): Promise<DisassociateQualificationFromWorkerResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       WorkerId: params["WorkerId"],
       QualificationTypeId: params["QualificationTypeId"],
       Reason: params["Reason"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisassociateQualificationFromWorker",
@@ -297,8 +297,8 @@ export default class MTurk {
   async getAccountBalance(
     {abortSignal, ...params}: RequestConfig & GetAccountBalanceRequest = {},
   ): Promise<GetAccountBalanceResponse> {
-    const body: jsonP.JSONObject = params ? {
-    } : {};
+    const body: jsonP.JSONObject = {
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetAccountBalance",
@@ -315,9 +315,9 @@ export default class MTurk {
   async getAssignment(
     {abortSignal, ...params}: RequestConfig & GetAssignmentRequest,
   ): Promise<GetAssignmentResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AssignmentId: params["AssignmentId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetAssignment",
@@ -334,10 +334,10 @@ export default class MTurk {
   async getFileUploadURL(
     {abortSignal, ...params}: RequestConfig & GetFileUploadURLRequest,
   ): Promise<GetFileUploadURLResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AssignmentId: params["AssignmentId"],
       QuestionIdentifier: params["QuestionIdentifier"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetFileUploadURL",
@@ -353,9 +353,9 @@ export default class MTurk {
   async getHIT(
     {abortSignal, ...params}: RequestConfig & GetHITRequest,
   ): Promise<GetHITResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       HITId: params["HITId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetHIT",
@@ -371,10 +371,10 @@ export default class MTurk {
   async getQualificationScore(
     {abortSignal, ...params}: RequestConfig & GetQualificationScoreRequest,
   ): Promise<GetQualificationScoreResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       QualificationTypeId: params["QualificationTypeId"],
       WorkerId: params["WorkerId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetQualificationScore",
@@ -390,9 +390,9 @@ export default class MTurk {
   async getQualificationType(
     {abortSignal, ...params}: RequestConfig & GetQualificationTypeRequest,
   ): Promise<GetQualificationTypeResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       QualificationTypeId: params["QualificationTypeId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetQualificationType",
@@ -408,12 +408,12 @@ export default class MTurk {
   async listAssignmentsForHIT(
     {abortSignal, ...params}: RequestConfig & ListAssignmentsForHITRequest,
   ): Promise<ListAssignmentsForHITResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       HITId: params["HITId"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
       AssignmentStatuses: params["AssignmentStatuses"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListAssignmentsForHIT",
@@ -431,12 +431,12 @@ export default class MTurk {
   async listBonusPayments(
     {abortSignal, ...params}: RequestConfig & ListBonusPaymentsRequest = {},
   ): Promise<ListBonusPaymentsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       HITId: params["HITId"],
       AssignmentId: params["AssignmentId"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListBonusPayments",
@@ -454,10 +454,10 @@ export default class MTurk {
   async listHITs(
     {abortSignal, ...params}: RequestConfig & ListHITsRequest = {},
   ): Promise<ListHITsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListHITs",
@@ -475,11 +475,11 @@ export default class MTurk {
   async listHITsForQualificationType(
     {abortSignal, ...params}: RequestConfig & ListHITsForQualificationTypeRequest,
   ): Promise<ListHITsForQualificationTypeResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       QualificationTypeId: params["QualificationTypeId"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListHITsForQualificationType",
@@ -497,11 +497,11 @@ export default class MTurk {
   async listQualificationRequests(
     {abortSignal, ...params}: RequestConfig & ListQualificationRequestsRequest = {},
   ): Promise<ListQualificationRequestsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       QualificationTypeId: params["QualificationTypeId"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListQualificationRequests",
@@ -519,13 +519,13 @@ export default class MTurk {
   async listQualificationTypes(
     {abortSignal, ...params}: RequestConfig & ListQualificationTypesRequest,
   ): Promise<ListQualificationTypesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Query: params["Query"],
       MustBeRequestable: params["MustBeRequestable"],
       MustBeOwnedByCaller: params["MustBeOwnedByCaller"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListQualificationTypes",
@@ -543,14 +543,14 @@ export default class MTurk {
   async listReviewPolicyResultsForHIT(
     {abortSignal, ...params}: RequestConfig & ListReviewPolicyResultsForHITRequest,
   ): Promise<ListReviewPolicyResultsForHITResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       HITId: params["HITId"],
       PolicyLevels: params["PolicyLevels"],
       RetrieveActions: params["RetrieveActions"],
       RetrieveResults: params["RetrieveResults"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListReviewPolicyResultsForHIT",
@@ -571,12 +571,12 @@ export default class MTurk {
   async listReviewableHITs(
     {abortSignal, ...params}: RequestConfig & ListReviewableHITsRequest = {},
   ): Promise<ListReviewableHITsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       HITTypeId: params["HITTypeId"],
       Status: params["Status"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListReviewableHITs",
@@ -594,10 +594,10 @@ export default class MTurk {
   async listWorkerBlocks(
     {abortSignal, ...params}: RequestConfig & ListWorkerBlocksRequest = {},
   ): Promise<ListWorkerBlocksResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListWorkerBlocks",
@@ -615,12 +615,12 @@ export default class MTurk {
   async listWorkersWithQualificationType(
     {abortSignal, ...params}: RequestConfig & ListWorkersWithQualificationTypeRequest,
   ): Promise<ListWorkersWithQualificationTypeResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       QualificationTypeId: params["QualificationTypeId"],
       Status: params["Status"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListWorkersWithQualificationType",
@@ -638,11 +638,11 @@ export default class MTurk {
   async notifyWorkers(
     {abortSignal, ...params}: RequestConfig & NotifyWorkersRequest,
   ): Promise<NotifyWorkersResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Subject: params["Subject"],
       MessageText: params["MessageText"],
       WorkerIds: params["WorkerIds"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "NotifyWorkers",
@@ -658,10 +658,10 @@ export default class MTurk {
   async rejectAssignment(
     {abortSignal, ...params}: RequestConfig & RejectAssignmentRequest,
   ): Promise<RejectAssignmentResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AssignmentId: params["AssignmentId"],
       RequesterFeedback: params["RequesterFeedback"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RejectAssignment",
@@ -675,10 +675,10 @@ export default class MTurk {
   async rejectQualificationRequest(
     {abortSignal, ...params}: RequestConfig & RejectQualificationRequestRequest,
   ): Promise<RejectQualificationRequestResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       QualificationRequestId: params["QualificationRequestId"],
       Reason: params["Reason"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RejectQualificationRequest",
@@ -692,13 +692,13 @@ export default class MTurk {
   async sendBonus(
     {abortSignal, ...params}: RequestConfig & SendBonusRequest,
   ): Promise<SendBonusResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       WorkerId: params["WorkerId"],
       BonusAmount: params["BonusAmount"],
       AssignmentId: params["AssignmentId"],
       Reason: params["Reason"],
       UniqueRequestToken: params["UniqueRequestToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SendBonus",
@@ -712,10 +712,10 @@ export default class MTurk {
   async sendTestEventNotification(
     {abortSignal, ...params}: RequestConfig & SendTestEventNotificationRequest,
   ): Promise<SendTestEventNotificationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Notification: fromNotificationSpecification(params["Notification"]),
       TestEventType: params["TestEventType"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SendTestEventNotification",
@@ -729,10 +729,10 @@ export default class MTurk {
   async updateExpirationForHIT(
     {abortSignal, ...params}: RequestConfig & UpdateExpirationForHITRequest,
   ): Promise<UpdateExpirationForHITResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       HITId: params["HITId"],
       ExpireAt: jsonP.serializeDate_unixTimestamp(params["ExpireAt"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateExpirationForHIT",
@@ -746,10 +746,10 @@ export default class MTurk {
   async updateHITReviewStatus(
     {abortSignal, ...params}: RequestConfig & UpdateHITReviewStatusRequest,
   ): Promise<UpdateHITReviewStatusResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       HITId: params["HITId"],
       Revert: params["Revert"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateHITReviewStatus",
@@ -763,10 +763,10 @@ export default class MTurk {
   async updateHITTypeOfHIT(
     {abortSignal, ...params}: RequestConfig & UpdateHITTypeOfHITRequest,
   ): Promise<UpdateHITTypeOfHITResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       HITId: params["HITId"],
       HITTypeId: params["HITTypeId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateHITTypeOfHIT",
@@ -780,11 +780,11 @@ export default class MTurk {
   async updateNotificationSettings(
     {abortSignal, ...params}: RequestConfig & UpdateNotificationSettingsRequest,
   ): Promise<UpdateNotificationSettingsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       HITTypeId: params["HITTypeId"],
       Notification: fromNotificationSpecification(params["Notification"]),
       Active: params["Active"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateNotificationSettings",
@@ -798,7 +798,7 @@ export default class MTurk {
   async updateQualificationType(
     {abortSignal, ...params}: RequestConfig & UpdateQualificationTypeRequest,
   ): Promise<UpdateQualificationTypeResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       QualificationTypeId: params["QualificationTypeId"],
       Description: params["Description"],
       QualificationTypeStatus: params["QualificationTypeStatus"],
@@ -808,7 +808,7 @@ export default class MTurk {
       RetryDelayInSeconds: params["RetryDelayInSeconds"],
       AutoGranted: params["AutoGranted"],
       AutoGrantedValue: params["AutoGrantedValue"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateQualificationType",

@@ -27,34 +27,32 @@ export default class Lambda {
   async addEventSource(
     {abortSignal, ...params}: RequestConfig & AddEventSourceRequest,
   ): Promise<EventSourceConfiguration> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       EventSource: params["EventSource"],
       FunctionName: params["FunctionName"],
       Role: params["Role"],
       BatchSize: params["BatchSize"],
       Parameters: params["Parameters"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AddEventSource",
       requestUri: "/2014-11-13/event-source-mappings/",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "UUID": "s",
-          "BatchSize": "n",
-          "EventSource": "s",
-          "FunctionName": "s",
-          "Parameters": x => jsonP.readMap(String, String, x),
-          "Role": "s",
-          "LastModified": "d",
-          "IsActive": "b",
-          "Status": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "UUID": "s",
+        "BatchSize": "n",
+        "EventSource": "s",
+        "FunctionName": "s",
+        "Parameters": x => jsonP.readMap(String, String, x),
+        "Role": "s",
+        "LastModified": "d",
+        "IsActive": "b",
+        "Status": "s",
+      },
+    }, await resp.json());
   }
 
   async deleteFunction(
@@ -81,22 +79,20 @@ export default class Lambda {
       requestUri: cmnP.encodePath`/2014-11-13/event-source-mappings/${params["UUID"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "UUID": "s",
-          "BatchSize": "n",
-          "EventSource": "s",
-          "FunctionName": "s",
-          "Parameters": x => jsonP.readMap(String, String, x),
-          "Role": "s",
-          "LastModified": "d",
-          "IsActive": "b",
-          "Status": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "UUID": "s",
+        "BatchSize": "n",
+        "EventSource": "s",
+        "FunctionName": "s",
+        "Parameters": x => jsonP.readMap(String, String, x),
+        "Role": "s",
+        "LastModified": "d",
+        "IsActive": "b",
+        "Status": "s",
+      },
+    }, await resp.json());
   }
 
   async getFunction(
@@ -110,15 +106,13 @@ export default class Lambda {
       requestUri: cmnP.encodePath`/2014-11-13/functions/${params["FunctionName"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Configuration": toFunctionConfiguration,
-          "Code": toFunctionCodeLocation,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Configuration": toFunctionConfiguration,
+        "Code": toFunctionCodeLocation,
+      },
+    }, await resp.json());
   }
 
   async getFunctionConfiguration(
@@ -132,25 +126,23 @@ export default class Lambda {
       requestUri: cmnP.encodePath`/2014-11-13/functions/${params["FunctionName"]}/configuration`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "FunctionName": "s",
-          "FunctionARN": "s",
-          "ConfigurationId": "s",
-          "Runtime": (x: jsonP.JSONValue) => cmnP.readEnum<Runtime>(x),
-          "Role": "s",
-          "Handler": "s",
-          "Mode": (x: jsonP.JSONValue) => cmnP.readEnum<Mode>(x),
-          "CodeSize": "n",
-          "Description": "s",
-          "Timeout": "n",
-          "MemorySize": "n",
-          "LastModified": "d",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "FunctionName": "s",
+        "FunctionARN": "s",
+        "ConfigurationId": "s",
+        "Runtime": (x: jsonP.JSONValue) => cmnP.readEnum<Runtime>(x),
+        "Role": "s",
+        "Handler": "s",
+        "Mode": (x: jsonP.JSONValue) => cmnP.readEnum<Mode>(x),
+        "CodeSize": "n",
+        "Description": "s",
+        "Timeout": "n",
+        "MemorySize": "n",
+        "LastModified": "d",
+      },
+    }, await resp.json());
   }
 
   async invokeAsync(
@@ -163,13 +155,13 @@ export default class Lambda {
       requestUri: cmnP.encodePath`/2014-11-13/functions/${params["FunctionName"]}/invoke-async/`,
       responseCode: 202,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {},
       }, await resp.json()),
-  };
+    };
   }
 
   async listEventSources(
@@ -187,15 +179,13 @@ export default class Lambda {
       requestUri: "/2014-11-13/event-source-mappings/",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "NextMarker": "s",
-          "EventSources": [toEventSourceConfiguration],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "NextMarker": "s",
+        "EventSources": [toEventSourceConfiguration],
+      },
+    }, await resp.json());
   }
 
   async listFunctions(
@@ -211,15 +201,13 @@ export default class Lambda {
       requestUri: "/2014-11-13/functions/",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "NextMarker": "s",
-          "Functions": [toFunctionConfiguration],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "NextMarker": "s",
+        "Functions": [toFunctionConfiguration],
+      },
+    }, await resp.json());
   }
 
   async removeEventSource(
@@ -251,30 +239,29 @@ export default class Lambda {
       requestUri: cmnP.encodePath`/2014-11-13/functions/${params["FunctionName"]}/configuration`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "FunctionName": "s",
-          "FunctionARN": "s",
-          "ConfigurationId": "s",
-          "Runtime": (x: jsonP.JSONValue) => cmnP.readEnum<Runtime>(x),
-          "Role": "s",
-          "Handler": "s",
-          "Mode": (x: jsonP.JSONValue) => cmnP.readEnum<Mode>(x),
-          "CodeSize": "n",
-          "Description": "s",
-          "Timeout": "n",
-          "MemorySize": "n",
-          "LastModified": "d",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "FunctionName": "s",
+        "FunctionARN": "s",
+        "ConfigurationId": "s",
+        "Runtime": (x: jsonP.JSONValue) => cmnP.readEnum<Runtime>(x),
+        "Role": "s",
+        "Handler": "s",
+        "Mode": (x: jsonP.JSONValue) => cmnP.readEnum<Mode>(x),
+        "CodeSize": "n",
+        "Description": "s",
+        "Timeout": "n",
+        "MemorySize": "n",
+        "LastModified": "d",
+      },
+    }, await resp.json());
   }
 
   async uploadFunction(
     {abortSignal, ...params}: RequestConfig & UploadFunctionRequest,
   ): Promise<FunctionConfiguration> {
+    const body = typeof params["FunctionZip"] === 'string' ? new TextEncoder().encode(params["FunctionZip"]) : params["FunctionZip"];
     const query = new URLSearchParams;
     query.set("Runtime", params["Runtime"]?.toString() ?? "");
     query.set("Role", params["Role"]?.toString() ?? "");
@@ -283,7 +270,6 @@ export default class Lambda {
     if (params["Description"] != null) query.set("Description", params["Description"]?.toString() ?? "");
     if (params["Timeout"] != null) query.set("Timeout", params["Timeout"]?.toString() ?? "");
     if (params["MemorySize"] != null) query.set("MemorySize", params["MemorySize"]?.toString() ?? "");
-    const body = typeof params["FunctionZip"] === 'string' ? new TextEncoder().encode(params["FunctionZip"]) : params["FunctionZip"];
     const resp = await this.#client.performRequest({
       abortSignal, query, body,
       action: "UploadFunction",
@@ -291,25 +277,23 @@ export default class Lambda {
       requestUri: cmnP.encodePath`/2014-11-13/functions/${params["FunctionName"]}`,
       responseCode: 201,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "FunctionName": "s",
-          "FunctionARN": "s",
-          "ConfigurationId": "s",
-          "Runtime": (x: jsonP.JSONValue) => cmnP.readEnum<Runtime>(x),
-          "Role": "s",
-          "Handler": "s",
-          "Mode": (x: jsonP.JSONValue) => cmnP.readEnum<Mode>(x),
-          "CodeSize": "n",
-          "Description": "s",
-          "Timeout": "n",
-          "MemorySize": "n",
-          "LastModified": "d",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "FunctionName": "s",
+        "FunctionARN": "s",
+        "ConfigurationId": "s",
+        "Runtime": (x: jsonP.JSONValue) => cmnP.readEnum<Runtime>(x),
+        "Role": "s",
+        "Handler": "s",
+        "Mode": (x: jsonP.JSONValue) => cmnP.readEnum<Mode>(x),
+        "CodeSize": "n",
+        "Description": "s",
+        "Timeout": "n",
+        "MemorySize": "n",
+        "LastModified": "d",
+      },
+    }, await resp.json());
   }
 
 }

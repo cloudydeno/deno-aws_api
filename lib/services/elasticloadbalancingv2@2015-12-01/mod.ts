@@ -668,7 +668,7 @@ export default class ELBv2 {
         const resp = await this.describeLoadBalancers(params);
         return resp; // for status 200
       } catch (err) {
-        if (!["LoadBalancerNotFound"].includes(err.code)) throw err;
+        if (!["LoadBalancerNotFound"].includes(err.shortCode)) throw err;
       }
       await new Promise(r => setTimeout(r, 15000));
     }
@@ -687,7 +687,7 @@ export default class ELBv2 {
         if (field?.every(x => x === "active")) return resp;
         if (field?.some(x => x === "provisioning")) continue;
       } catch (err) {
-        if (!["LoadBalancerNotFound"].includes(err.code)) throw err;
+        if (!["LoadBalancerNotFound"].includes(err.shortCode)) throw err;
       }
       await new Promise(r => setTimeout(r, 15000));
     }
@@ -704,7 +704,7 @@ export default class ELBv2 {
         const resp = await this.describeLoadBalancers(params);
         if (resp?.LoadBalancers?.flatMap(x => x?.State?.Code)?.every(x => x === "active")) continue;
       } catch (err) {
-        if (["LoadBalancerNotFound"].includes(err.code)) return err;
+        if (["LoadBalancerNotFound"].includes(err.shortCode)) return err;
         throw err;
       }
       await new Promise(r => setTimeout(r, 15000));
@@ -722,7 +722,7 @@ export default class ELBv2 {
         const resp = await this.describeTargetHealth(params);
         if (resp?.TargetHealthDescriptions?.flatMap(x => x?.TargetHealth?.State)?.every(x => x === "healthy")) return resp;
       } catch (err) {
-        if (!["InvalidInstance"].includes(err.code)) throw err;
+        if (!["InvalidInstance"].includes(err.shortCode)) throw err;
       }
       await new Promise(r => setTimeout(r, 15000));
     }
@@ -739,7 +739,7 @@ export default class ELBv2 {
         const resp = await this.describeTargetHealth(params);
         if (resp?.TargetHealthDescriptions?.flatMap(x => x?.TargetHealth?.State)?.every(x => x === "unused")) return resp;
       } catch (err) {
-        if (["InvalidTarget"].includes(err.code)) return err;
+        if (["InvalidTarget"].includes(err.shortCode)) return err;
         throw err;
       }
       await new Promise(r => setTimeout(r, 15000));

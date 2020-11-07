@@ -35,9 +35,9 @@ export default class QuickSight {
       method: "DELETE",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}/data-sets/${params["DataSetId"]}/ingestions/${params["IngestionId"]}`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "Arn": "s",
@@ -45,26 +45,26 @@ export default class QuickSight {
           "RequestId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async createAccountCustomization(
     {abortSignal, ...params}: RequestConfig & CreateAccountCustomizationRequest,
   ): Promise<CreateAccountCustomizationResponse> {
     const query = new URLSearchParams;
-    if (params["Namespace"] != null) query.set("namespace", params["Namespace"]?.toString() ?? "");
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AccountCustomization: fromAccountCustomization(params["AccountCustomization"]),
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
+    if (params["Namespace"] != null) query.set("namespace", params["Namespace"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
       abortSignal, query, body,
       action: "CreateAccountCustomization",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}/customizations`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "Arn": "s",
@@ -74,28 +74,28 @@ export default class QuickSight {
           "RequestId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async createAnalysis(
     {abortSignal, ...params}: RequestConfig & CreateAnalysisRequest,
   ): Promise<CreateAnalysisResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       Parameters: fromParameters(params["Parameters"]),
       Permissions: params["Permissions"]?.map(x => fromResourcePermission(x)),
       SourceEntity: fromAnalysisSourceEntity(params["SourceEntity"]),
       ThemeArn: params["ThemeArn"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateAnalysis",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}/analyses/${params["AnalysisId"]}`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "Arn": "s",
@@ -104,13 +104,13 @@ export default class QuickSight {
           "RequestId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async createDashboard(
     {abortSignal, ...params}: RequestConfig & CreateDashboardRequest,
   ): Promise<CreateDashboardResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       Parameters: fromParameters(params["Parameters"]),
       Permissions: params["Permissions"]?.map(x => fromResourcePermission(x)),
@@ -119,15 +119,15 @@ export default class QuickSight {
       VersionDescription: params["VersionDescription"],
       DashboardPublishOptions: fromDashboardPublishOptions(params["DashboardPublishOptions"]),
       ThemeArn: params["ThemeArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDashboard",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}/dashboards/${params["DashboardId"]}`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "Arn": "s",
@@ -137,13 +137,13 @@ export default class QuickSight {
           "RequestId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async createDataSet(
     {abortSignal, ...params}: RequestConfig & CreateDataSetRequest,
   ): Promise<CreateDataSetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DataSetId: params["DataSetId"],
       Name: params["Name"],
       PhysicalTableMap: jsonP.serializeMap(params["PhysicalTableMap"], x => fromPhysicalTable(x)),
@@ -153,15 +153,15 @@ export default class QuickSight {
       Permissions: params["Permissions"]?.map(x => fromResourcePermission(x)),
       RowLevelPermissionDataSet: fromRowLevelPermissionDataSet(params["RowLevelPermissionDataSet"]),
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDataSet",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}/data-sets`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "Arn": "s",
@@ -171,13 +171,13 @@ export default class QuickSight {
           "RequestId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async createDataSource(
     {abortSignal, ...params}: RequestConfig & CreateDataSourceRequest,
   ): Promise<CreateDataSourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DataSourceId: params["DataSourceId"],
       Name: params["Name"],
       Type: params["Type"],
@@ -187,15 +187,15 @@ export default class QuickSight {
       VpcConnectionProperties: fromVpcConnectionProperties(params["VpcConnectionProperties"]),
       SslProperties: fromSslProperties(params["SslProperties"]),
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDataSource",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}/data-sources`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "Arn": "s",
@@ -204,31 +204,31 @@ export default class QuickSight {
           "RequestId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async createGroup(
     {abortSignal, ...params}: RequestConfig & CreateGroupRequest,
   ): Promise<CreateGroupResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       GroupName: params["GroupName"],
       Description: params["Description"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateGroup",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}/namespaces/${params["Namespace"]}/groups`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "Group": toGroup,
           "RequestId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async createGroupMembership(
@@ -241,35 +241,35 @@ export default class QuickSight {
       method: "PUT",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}/namespaces/${params["Namespace"]}/groups/${params["GroupName"]}/members/${params["MemberName"]}`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "GroupMember": toGroupMember,
           "RequestId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async createIAMPolicyAssignment(
     {abortSignal, ...params}: RequestConfig & CreateIAMPolicyAssignmentRequest,
   ): Promise<CreateIAMPolicyAssignmentResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AssignmentName: params["AssignmentName"],
       AssignmentStatus: params["AssignmentStatus"],
       PolicyArn: params["PolicyArn"],
       Identities: params["Identities"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateIAMPolicyAssignment",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}/namespaces/${params["Namespace"]}/iam-policy-assignments/`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "AssignmentName": "s",
@@ -280,7 +280,7 @@ export default class QuickSight {
           "RequestId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async createIngestion(
@@ -293,9 +293,9 @@ export default class QuickSight {
       method: "PUT",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}/data-sets/${params["DataSetId"]}/ingestions/${params["IngestionId"]}`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "Arn": "s",
@@ -304,25 +304,25 @@ export default class QuickSight {
           "RequestId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async createNamespace(
     {abortSignal, ...params}: RequestConfig & CreateNamespaceRequest,
   ): Promise<CreateNamespaceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Namespace: params["Namespace"],
       IdentityStore: params["IdentityStore"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateNamespace",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "Arn": "s",
@@ -333,27 +333,27 @@ export default class QuickSight {
           "RequestId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async createTemplate(
     {abortSignal, ...params}: RequestConfig & CreateTemplateRequest,
   ): Promise<CreateTemplateResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       Permissions: params["Permissions"]?.map(x => fromResourcePermission(x)),
       SourceEntity: fromTemplateSourceEntity(params["SourceEntity"]),
       Tags: params["Tags"]?.map(x => fromTag(x)),
       VersionDescription: params["VersionDescription"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateTemplate",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}/templates/${params["TemplateId"]}`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "Arn": "s",
@@ -363,51 +363,51 @@ export default class QuickSight {
           "RequestId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async createTemplateAlias(
     {abortSignal, ...params}: RequestConfig & CreateTemplateAliasRequest,
   ): Promise<CreateTemplateAliasResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TemplateVersionNumber: params["TemplateVersionNumber"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateTemplateAlias",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}/templates/${params["TemplateId"]}/aliases/${params["AliasName"]}`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "TemplateAlias": toTemplateAlias,
           "RequestId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async createTheme(
     {abortSignal, ...params}: RequestConfig & CreateThemeRequest,
   ): Promise<CreateThemeResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       BaseThemeId: params["BaseThemeId"],
       VersionDescription: params["VersionDescription"],
       Configuration: fromThemeConfiguration(params["Configuration"]),
       Permissions: params["Permissions"]?.map(x => fromResourcePermission(x)),
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateTheme",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}/themes/${params["ThemeId"]}`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "Arn": "s",
@@ -417,30 +417,30 @@ export default class QuickSight {
           "RequestId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async createThemeAlias(
     {abortSignal, ...params}: RequestConfig & CreateThemeAliasRequest,
   ): Promise<CreateThemeAliasResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ThemeVersionNumber: params["ThemeVersionNumber"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateThemeAlias",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}/themes/${params["ThemeId"]}/aliases/${params["AliasName"]}`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "ThemeAlias": toThemeAlias,
           "RequestId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async deleteAccountCustomization(
@@ -454,15 +454,15 @@ export default class QuickSight {
       method: "DELETE",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}/customizations`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "RequestId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async deleteAnalysis(
@@ -477,9 +477,9 @@ export default class QuickSight {
       method: "DELETE",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}/analyses/${params["AnalysisId"]}`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "Arn": "s",
@@ -488,7 +488,7 @@ export default class QuickSight {
           "RequestId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async deleteDashboard(
@@ -502,9 +502,9 @@ export default class QuickSight {
       method: "DELETE",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}/dashboards/${params["DashboardId"]}`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "Arn": "s",
@@ -512,7 +512,7 @@ export default class QuickSight {
           "RequestId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async deleteDataSet(
@@ -525,9 +525,9 @@ export default class QuickSight {
       method: "DELETE",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}/data-sets/${params["DataSetId"]}`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "Arn": "s",
@@ -535,7 +535,7 @@ export default class QuickSight {
           "RequestId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async deleteDataSource(
@@ -548,9 +548,9 @@ export default class QuickSight {
       method: "DELETE",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}/data-sources/${params["DataSourceId"]}`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "Arn": "s",
@@ -558,7 +558,7 @@ export default class QuickSight {
           "RequestId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async deleteGroup(
@@ -571,15 +571,15 @@ export default class QuickSight {
       method: "DELETE",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}/namespaces/${params["Namespace"]}/groups/${params["GroupName"]}`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "RequestId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async deleteGroupMembership(
@@ -592,15 +592,15 @@ export default class QuickSight {
       method: "DELETE",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}/namespaces/${params["Namespace"]}/groups/${params["GroupName"]}/members/${params["MemberName"]}`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "RequestId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async deleteIAMPolicyAssignment(
@@ -613,16 +613,16 @@ export default class QuickSight {
       method: "DELETE",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}/namespace/${params["Namespace"]}/iam-policy-assignments/${params["AssignmentName"]}`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "AssignmentName": "s",
           "RequestId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async deleteNamespace(
@@ -635,15 +635,15 @@ export default class QuickSight {
       method: "DELETE",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}/namespaces/${params["Namespace"]}`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "RequestId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async deleteTemplate(
@@ -657,9 +657,9 @@ export default class QuickSight {
       method: "DELETE",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}/templates/${params["TemplateId"]}`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "RequestId": "s",
@@ -667,7 +667,7 @@ export default class QuickSight {
           "TemplateId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async deleteTemplateAlias(
@@ -680,9 +680,9 @@ export default class QuickSight {
       method: "DELETE",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}/templates/${params["TemplateId"]}/aliases/${params["AliasName"]}`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "TemplateId": "s",
@@ -691,7 +691,7 @@ export default class QuickSight {
           "RequestId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async deleteTheme(
@@ -705,9 +705,9 @@ export default class QuickSight {
       method: "DELETE",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}/themes/${params["ThemeId"]}`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "Arn": "s",
@@ -715,7 +715,7 @@ export default class QuickSight {
           "ThemeId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async deleteThemeAlias(
@@ -728,9 +728,9 @@ export default class QuickSight {
       method: "DELETE",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}/themes/${params["ThemeId"]}/aliases/${params["AliasName"]}`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "AliasName": "s",
@@ -739,7 +739,7 @@ export default class QuickSight {
           "ThemeId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async deleteUser(
@@ -752,15 +752,15 @@ export default class QuickSight {
       method: "DELETE",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}/namespaces/${params["Namespace"]}/users/${params["UserName"]}`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "RequestId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async deleteUserByPrincipalId(
@@ -773,15 +773,15 @@ export default class QuickSight {
       method: "DELETE",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}/namespaces/${params["Namespace"]}/user-principals/${params["PrincipalId"]}`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "RequestId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async describeAccountCustomization(
@@ -796,9 +796,9 @@ export default class QuickSight {
       method: "GET",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}/customizations`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "Arn": "s",
@@ -808,7 +808,7 @@ export default class QuickSight {
           "RequestId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async describeAccountSettings(
@@ -821,16 +821,16 @@ export default class QuickSight {
       method: "GET",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}/settings`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "AccountSettings": toAccountSettings,
           "RequestId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async describeAnalysis(
@@ -843,16 +843,16 @@ export default class QuickSight {
       method: "GET",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}/analyses/${params["AnalysisId"]}`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "Analysis": toAnalysis,
           "RequestId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async describeAnalysisPermissions(
@@ -865,9 +865,9 @@ export default class QuickSight {
       method: "GET",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}/analyses/${params["AnalysisId"]}/permissions`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "AnalysisId": "s",
@@ -876,7 +876,7 @@ export default class QuickSight {
           "RequestId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async describeDashboard(
@@ -891,16 +891,16 @@ export default class QuickSight {
       method: "GET",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}/dashboards/${params["DashboardId"]}`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "Dashboard": toDashboard,
           "RequestId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async describeDashboardPermissions(
@@ -913,9 +913,9 @@ export default class QuickSight {
       method: "GET",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}/dashboards/${params["DashboardId"]}/permissions`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "DashboardId": "s",
@@ -924,7 +924,7 @@ export default class QuickSight {
           "RequestId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async describeDataSet(
@@ -937,16 +937,16 @@ export default class QuickSight {
       method: "GET",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}/data-sets/${params["DataSetId"]}`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "DataSet": toDataSet,
           "RequestId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async describeDataSetPermissions(
@@ -959,9 +959,9 @@ export default class QuickSight {
       method: "GET",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}/data-sets/${params["DataSetId"]}/permissions`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "DataSetArn": "s",
@@ -970,7 +970,7 @@ export default class QuickSight {
           "RequestId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async describeDataSource(
@@ -983,16 +983,16 @@ export default class QuickSight {
       method: "GET",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}/data-sources/${params["DataSourceId"]}`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "DataSource": toDataSource,
           "RequestId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async describeDataSourcePermissions(
@@ -1005,9 +1005,9 @@ export default class QuickSight {
       method: "GET",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}/data-sources/${params["DataSourceId"]}/permissions`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "DataSourceArn": "s",
@@ -1016,7 +1016,7 @@ export default class QuickSight {
           "RequestId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async describeGroup(
@@ -1029,16 +1029,16 @@ export default class QuickSight {
       method: "GET",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}/namespaces/${params["Namespace"]}/groups/${params["GroupName"]}`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "Group": toGroup,
           "RequestId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async describeIAMPolicyAssignment(
@@ -1051,16 +1051,16 @@ export default class QuickSight {
       method: "GET",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}/namespaces/${params["Namespace"]}/iam-policy-assignments/${params["AssignmentName"]}`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "IAMPolicyAssignment": toIAMPolicyAssignment,
           "RequestId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async describeIngestion(
@@ -1073,16 +1073,16 @@ export default class QuickSight {
       method: "GET",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}/data-sets/${params["DataSetId"]}/ingestions/${params["IngestionId"]}`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "Ingestion": toIngestion,
           "RequestId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async describeNamespace(
@@ -1095,16 +1095,16 @@ export default class QuickSight {
       method: "GET",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}/namespaces/${params["Namespace"]}`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "Namespace": toNamespaceInfoV2,
           "RequestId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async describeTemplate(
@@ -1119,16 +1119,16 @@ export default class QuickSight {
       method: "GET",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}/templates/${params["TemplateId"]}`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "Template": toTemplate,
           "RequestId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async describeTemplateAlias(
@@ -1141,16 +1141,16 @@ export default class QuickSight {
       method: "GET",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}/templates/${params["TemplateId"]}/aliases/${params["AliasName"]}`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "TemplateAlias": toTemplateAlias,
           "RequestId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async describeTemplatePermissions(
@@ -1163,9 +1163,9 @@ export default class QuickSight {
       method: "GET",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}/templates/${params["TemplateId"]}/permissions`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "TemplateId": "s",
@@ -1174,7 +1174,7 @@ export default class QuickSight {
           "RequestId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async describeTheme(
@@ -1189,16 +1189,16 @@ export default class QuickSight {
       method: "GET",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}/themes/${params["ThemeId"]}`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "Theme": toTheme,
           "RequestId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async describeThemeAlias(
@@ -1211,16 +1211,16 @@ export default class QuickSight {
       method: "GET",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}/themes/${params["ThemeId"]}/aliases/${params["AliasName"]}`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "ThemeAlias": toThemeAlias,
           "RequestId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async describeThemePermissions(
@@ -1233,9 +1233,9 @@ export default class QuickSight {
       method: "GET",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}/themes/${params["ThemeId"]}/permissions`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "ThemeId": "s",
@@ -1244,7 +1244,7 @@ export default class QuickSight {
           "RequestId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async describeUser(
@@ -1257,16 +1257,16 @@ export default class QuickSight {
       method: "GET",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}/namespaces/${params["Namespace"]}/users/${params["UserName"]}`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "User": toUser,
           "RequestId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async getDashboardEmbedUrl(
@@ -1284,16 +1284,16 @@ export default class QuickSight {
       method: "GET",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}/dashboards/${params["DashboardId"]}/embed-url`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "EmbedUrl": "s",
           "RequestId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async getSessionEmbedUrl(
@@ -1309,16 +1309,16 @@ export default class QuickSight {
       method: "GET",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}/session-embed-url`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "EmbedUrl": "s",
           "RequestId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async listAnalyses(
@@ -1333,9 +1333,9 @@ export default class QuickSight {
       method: "GET",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}/analyses`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "AnalysisSummaryList": [toAnalysisSummary],
@@ -1343,7 +1343,7 @@ export default class QuickSight {
           "RequestId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async listDashboardVersions(
@@ -1358,9 +1358,9 @@ export default class QuickSight {
       method: "GET",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}/dashboards/${params["DashboardId"]}/versions`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "DashboardVersionSummaryList": [toDashboardVersionSummary],
@@ -1368,7 +1368,7 @@ export default class QuickSight {
           "RequestId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async listDashboards(
@@ -1383,9 +1383,9 @@ export default class QuickSight {
       method: "GET",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}/dashboards`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "DashboardSummaryList": [toDashboardSummary],
@@ -1393,7 +1393,7 @@ export default class QuickSight {
           "RequestId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async listDataSets(
@@ -1408,9 +1408,9 @@ export default class QuickSight {
       method: "GET",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}/data-sets`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "DataSetSummaries": [toDataSetSummary],
@@ -1418,7 +1418,7 @@ export default class QuickSight {
           "RequestId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async listDataSources(
@@ -1433,9 +1433,9 @@ export default class QuickSight {
       method: "GET",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}/data-sources`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "DataSources": [toDataSource],
@@ -1443,7 +1443,7 @@ export default class QuickSight {
           "RequestId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async listGroupMemberships(
@@ -1458,9 +1458,9 @@ export default class QuickSight {
       method: "GET",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}/namespaces/${params["Namespace"]}/groups/${params["GroupName"]}/members`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "GroupMemberList": [toGroupMember],
@@ -1468,7 +1468,7 @@ export default class QuickSight {
           "RequestId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async listGroups(
@@ -1483,9 +1483,9 @@ export default class QuickSight {
       method: "GET",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}/namespaces/${params["Namespace"]}/groups`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "GroupList": [toGroup],
@@ -1493,27 +1493,27 @@ export default class QuickSight {
           "RequestId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async listIAMPolicyAssignments(
     {abortSignal, ...params}: RequestConfig & ListIAMPolicyAssignmentsRequest,
   ): Promise<ListIAMPolicyAssignmentsResponse> {
     const query = new URLSearchParams;
+    const body: jsonP.JSONObject = {
+      AssignmentStatus: params["AssignmentStatus"],
+    };
     if (params["NextToken"] != null) query.set("next-token", params["NextToken"]?.toString() ?? "");
     if (params["MaxResults"] != null) query.set("max-results", params["MaxResults"]?.toString() ?? "");
-    const body: jsonP.JSONObject = params ? {
-      AssignmentStatus: params["AssignmentStatus"],
-    } : {};
     const resp = await this.#client.performRequest({
       abortSignal, query, body,
       action: "ListIAMPolicyAssignments",
       method: "GET",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}/namespaces/${params["Namespace"]}/iam-policy-assignments`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "IAMPolicyAssignments": [toIAMPolicyAssignmentSummary],
@@ -1521,7 +1521,7 @@ export default class QuickSight {
           "RequestId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async listIAMPolicyAssignmentsForUser(
@@ -1536,9 +1536,9 @@ export default class QuickSight {
       method: "GET",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}/namespaces/${params["Namespace"]}/users/${params["UserName"]}/iam-policy-assignments`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "ActiveAssignments": [toActiveIAMPolicyAssignment],
@@ -1546,7 +1546,7 @@ export default class QuickSight {
           "NextToken": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async listIngestions(
@@ -1561,9 +1561,9 @@ export default class QuickSight {
       method: "GET",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}/data-sets/${params["DataSetId"]}/ingestions`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "Ingestions": [toIngestion],
@@ -1571,7 +1571,7 @@ export default class QuickSight {
           "RequestId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async listNamespaces(
@@ -1586,9 +1586,9 @@ export default class QuickSight {
       method: "GET",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}/namespaces`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "Namespaces": [toNamespaceInfoV2],
@@ -1596,7 +1596,7 @@ export default class QuickSight {
           "RequestId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async listTagsForResource(
@@ -1609,16 +1609,16 @@ export default class QuickSight {
       method: "GET",
       requestUri: cmnP.encodePath`/resources/${params["ResourceArn"]}/tags`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "Tags": [toTag],
           "RequestId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async listTemplateAliases(
@@ -1633,9 +1633,9 @@ export default class QuickSight {
       method: "GET",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}/templates/${params["TemplateId"]}/aliases`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "TemplateAliasList": [toTemplateAlias],
@@ -1643,7 +1643,7 @@ export default class QuickSight {
           "NextToken": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async listTemplateVersions(
@@ -1658,9 +1658,9 @@ export default class QuickSight {
       method: "GET",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}/templates/${params["TemplateId"]}/versions`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "TemplateVersionSummaryList": [toTemplateVersionSummary],
@@ -1668,7 +1668,7 @@ export default class QuickSight {
           "RequestId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async listTemplates(
@@ -1683,9 +1683,9 @@ export default class QuickSight {
       method: "GET",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}/templates`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "TemplateSummaryList": [toTemplateSummary],
@@ -1693,7 +1693,7 @@ export default class QuickSight {
           "RequestId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async listThemeAliases(
@@ -1708,9 +1708,9 @@ export default class QuickSight {
       method: "GET",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}/themes/${params["ThemeId"]}/aliases`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "ThemeAliasList": [toThemeAlias],
@@ -1718,7 +1718,7 @@ export default class QuickSight {
           "NextToken": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async listThemeVersions(
@@ -1733,9 +1733,9 @@ export default class QuickSight {
       method: "GET",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}/themes/${params["ThemeId"]}/versions`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "ThemeVersionSummaryList": [toThemeVersionSummary],
@@ -1743,7 +1743,7 @@ export default class QuickSight {
           "RequestId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async listThemes(
@@ -1759,9 +1759,9 @@ export default class QuickSight {
       method: "GET",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}/themes`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "ThemeSummaryList": [toThemeSummary],
@@ -1769,7 +1769,7 @@ export default class QuickSight {
           "RequestId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async listUserGroups(
@@ -1784,9 +1784,9 @@ export default class QuickSight {
       method: "GET",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}/namespaces/${params["Namespace"]}/users/${params["UserName"]}/groups`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "GroupList": [toGroup],
@@ -1794,7 +1794,7 @@ export default class QuickSight {
           "RequestId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async listUsers(
@@ -1809,9 +1809,9 @@ export default class QuickSight {
       method: "GET",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}/namespaces/${params["Namespace"]}/users`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "UserList": [toUser],
@@ -1819,13 +1819,13 @@ export default class QuickSight {
           "RequestId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async registerUser(
     {abortSignal, ...params}: RequestConfig & RegisterUserRequest,
   ): Promise<RegisterUserResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       IdentityType: params["IdentityType"],
       Email: params["Email"],
       UserRole: params["UserRole"],
@@ -1833,15 +1833,15 @@ export default class QuickSight {
       SessionName: params["SessionName"],
       UserName: params["UserName"],
       CustomPermissionsName: params["CustomPermissionsName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RegisterUser",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}/namespaces/${params["Namespace"]}/users`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "User": toUser,
@@ -1849,7 +1849,7 @@ export default class QuickSight {
           "RequestId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async restoreAnalysis(
@@ -1861,9 +1861,9 @@ export default class QuickSight {
       action: "RestoreAnalysis",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}/restore/analyses/${params["AnalysisId"]}`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "Arn": "s",
@@ -1871,25 +1871,25 @@ export default class QuickSight {
           "RequestId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async searchAnalyses(
     {abortSignal, ...params}: RequestConfig & SearchAnalysesRequest,
   ): Promise<SearchAnalysesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Filters: params["Filters"]?.map(x => fromAnalysisSearchFilter(x)),
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SearchAnalyses",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}/search/analyses`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "AnalysisSummaryList": [toAnalysisSummary],
@@ -1897,25 +1897,25 @@ export default class QuickSight {
           "RequestId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async searchDashboards(
     {abortSignal, ...params}: RequestConfig & SearchDashboardsRequest,
   ): Promise<SearchDashboardsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Filters: params["Filters"]?.map(x => fromDashboardSearchFilter(x)),
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SearchDashboards",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}/search/dashboards`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "DashboardSummaryList": [toDashboardSummary],
@@ -1923,29 +1923,29 @@ export default class QuickSight {
           "RequestId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
       requestUri: cmnP.encodePath`/resources/${params["ResourceArn"]}/tags`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "RequestId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async untagResource(
@@ -1961,34 +1961,34 @@ export default class QuickSight {
       method: "DELETE",
       requestUri: cmnP.encodePath`/resources/${params["ResourceArn"]}/tags`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "RequestId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async updateAccountCustomization(
     {abortSignal, ...params}: RequestConfig & UpdateAccountCustomizationRequest,
   ): Promise<UpdateAccountCustomizationResponse> {
     const query = new URLSearchParams;
-    if (params["Namespace"] != null) query.set("namespace", params["Namespace"]?.toString() ?? "");
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AccountCustomization: fromAccountCustomization(params["AccountCustomization"]),
-    } : {};
+    };
+    if (params["Namespace"] != null) query.set("namespace", params["Namespace"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
       abortSignal, query, body,
       action: "UpdateAccountCustomization",
       method: "PUT",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}/customizations`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "Arn": "s",
@@ -1998,51 +1998,51 @@ export default class QuickSight {
           "RequestId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async updateAccountSettings(
     {abortSignal, ...params}: RequestConfig & UpdateAccountSettingsRequest,
   ): Promise<UpdateAccountSettingsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DefaultNamespace: params["DefaultNamespace"],
       NotificationEmail: params["NotificationEmail"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateAccountSettings",
       method: "PUT",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}/settings`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "RequestId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async updateAnalysis(
     {abortSignal, ...params}: RequestConfig & UpdateAnalysisRequest,
   ): Promise<UpdateAnalysisResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       Parameters: fromParameters(params["Parameters"]),
       SourceEntity: fromAnalysisSourceEntity(params["SourceEntity"]),
       ThemeArn: params["ThemeArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateAnalysis",
       method: "PUT",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}/analyses/${params["AnalysisId"]}`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "Arn": "s",
@@ -2051,25 +2051,25 @@ export default class QuickSight {
           "RequestId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async updateAnalysisPermissions(
     {abortSignal, ...params}: RequestConfig & UpdateAnalysisPermissionsRequest,
   ): Promise<UpdateAnalysisPermissionsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       GrantPermissions: params["GrantPermissions"]?.map(x => fromResourcePermission(x)),
       RevokePermissions: params["RevokePermissions"]?.map(x => fromResourcePermission(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateAnalysisPermissions",
       method: "PUT",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}/analyses/${params["AnalysisId"]}/permissions`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "AnalysisArn": "s",
@@ -2078,57 +2078,55 @@ export default class QuickSight {
           "RequestId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async updateDashboard(
     {abortSignal, ...params}: RequestConfig & UpdateDashboardRequest,
   ): Promise<UpdateDashboardResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       SourceEntity: fromDashboardSourceEntity(params["SourceEntity"]),
       Parameters: fromParameters(params["Parameters"]),
       VersionDescription: params["VersionDescription"],
       DashboardPublishOptions: fromDashboardPublishOptions(params["DashboardPublishOptions"]),
       ThemeArn: params["ThemeArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateDashboard",
       method: "PUT",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}/dashboards/${params["DashboardId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Arn": "s",
-          "VersionArn": "s",
-          "DashboardId": "s",
-          "CreationStatus": (x: jsonP.JSONValue) => cmnP.readEnum<ResourceStatus>(x),
-          "Status": "n",
-          "RequestId": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+        "VersionArn": "s",
+        "DashboardId": "s",
+        "CreationStatus": (x: jsonP.JSONValue) => cmnP.readEnum<ResourceStatus>(x),
+        "Status": "n",
+        "RequestId": "s",
+      },
+    }, await resp.json());
   }
 
   async updateDashboardPermissions(
     {abortSignal, ...params}: RequestConfig & UpdateDashboardPermissionsRequest,
   ): Promise<UpdateDashboardPermissionsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       GrantPermissions: params["GrantPermissions"]?.map(x => fromResourcePermission(x)),
       RevokePermissions: params["RevokePermissions"]?.map(x => fromResourcePermission(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateDashboardPermissions",
       method: "PUT",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}/dashboards/${params["DashboardId"]}/permissions`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "DashboardArn": "s",
@@ -2137,7 +2135,7 @@ export default class QuickSight {
           "RequestId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async updateDashboardPublishedVersion(
@@ -2150,9 +2148,9 @@ export default class QuickSight {
       method: "PUT",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}/dashboards/${params["DashboardId"]}/versions/${params["VersionNumber"].toString()}`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "DashboardId": "s",
@@ -2160,29 +2158,29 @@ export default class QuickSight {
           "RequestId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async updateDataSet(
     {abortSignal, ...params}: RequestConfig & UpdateDataSetRequest,
   ): Promise<UpdateDataSetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       PhysicalTableMap: jsonP.serializeMap(params["PhysicalTableMap"], x => fromPhysicalTable(x)),
       LogicalTableMap: jsonP.serializeMap(params["LogicalTableMap"], x => fromLogicalTable(x)),
       ImportMode: params["ImportMode"],
       ColumnGroups: params["ColumnGroups"]?.map(x => fromColumnGroup(x)),
       RowLevelPermissionDataSet: fromRowLevelPermissionDataSet(params["RowLevelPermissionDataSet"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateDataSet",
       method: "PUT",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}/data-sets/${params["DataSetId"]}`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "Arn": "s",
@@ -2192,24 +2190,24 @@ export default class QuickSight {
           "RequestId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async updateDataSetPermissions(
     {abortSignal, ...params}: RequestConfig & UpdateDataSetPermissionsRequest,
   ): Promise<UpdateDataSetPermissionsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       GrantPermissions: params["GrantPermissions"]?.map(x => fromResourcePermission(x)),
       RevokePermissions: params["RevokePermissions"]?.map(x => fromResourcePermission(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateDataSetPermissions",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}/data-sets/${params["DataSetId"]}/permissions`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "DataSetArn": "s",
@@ -2217,28 +2215,28 @@ export default class QuickSight {
           "RequestId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async updateDataSource(
     {abortSignal, ...params}: RequestConfig & UpdateDataSourceRequest,
   ): Promise<UpdateDataSourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       DataSourceParameters: fromDataSourceParameters(params["DataSourceParameters"]),
       Credentials: fromDataSourceCredentials(params["Credentials"]),
       VpcConnectionProperties: fromVpcConnectionProperties(params["VpcConnectionProperties"]),
       SslProperties: fromSslProperties(params["SslProperties"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateDataSource",
       method: "PUT",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}/data-sources/${params["DataSourceId"]}`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "Arn": "s",
@@ -2247,24 +2245,24 @@ export default class QuickSight {
           "RequestId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async updateDataSourcePermissions(
     {abortSignal, ...params}: RequestConfig & UpdateDataSourcePermissionsRequest,
   ): Promise<UpdateDataSourcePermissionsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       GrantPermissions: params["GrantPermissions"]?.map(x => fromResourcePermission(x)),
       RevokePermissions: params["RevokePermissions"]?.map(x => fromResourcePermission(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateDataSourcePermissions",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}/data-sources/${params["DataSourceId"]}/permissions`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "DataSourceArn": "s",
@@ -2272,50 +2270,50 @@ export default class QuickSight {
           "RequestId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async updateGroup(
     {abortSignal, ...params}: RequestConfig & UpdateGroupRequest,
   ): Promise<UpdateGroupResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Description: params["Description"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateGroup",
       method: "PUT",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}/namespaces/${params["Namespace"]}/groups/${params["GroupName"]}`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "Group": toGroup,
           "RequestId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async updateIAMPolicyAssignment(
     {abortSignal, ...params}: RequestConfig & UpdateIAMPolicyAssignmentRequest,
   ): Promise<UpdateIAMPolicyAssignmentResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AssignmentStatus: params["AssignmentStatus"],
       PolicyArn: params["PolicyArn"],
       Identities: params["Identities"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateIAMPolicyAssignment",
       method: "PUT",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}/namespaces/${params["Namespace"]}/iam-policy-assignments/${params["AssignmentName"]}`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "AssignmentName": "s",
@@ -2326,26 +2324,26 @@ export default class QuickSight {
           "RequestId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async updateTemplate(
     {abortSignal, ...params}: RequestConfig & UpdateTemplateRequest,
   ): Promise<UpdateTemplateResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       SourceEntity: fromTemplateSourceEntity(params["SourceEntity"]),
       VersionDescription: params["VersionDescription"],
       Name: params["Name"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateTemplate",
       method: "PUT",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}/templates/${params["TemplateId"]}`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "TemplateId": "s",
@@ -2355,49 +2353,49 @@ export default class QuickSight {
           "RequestId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async updateTemplateAlias(
     {abortSignal, ...params}: RequestConfig & UpdateTemplateAliasRequest,
   ): Promise<UpdateTemplateAliasResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TemplateVersionNumber: params["TemplateVersionNumber"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateTemplateAlias",
       method: "PUT",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}/templates/${params["TemplateId"]}/aliases/${params["AliasName"]}`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "TemplateAlias": toTemplateAlias,
           "RequestId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async updateTemplatePermissions(
     {abortSignal, ...params}: RequestConfig & UpdateTemplatePermissionsRequest,
   ): Promise<UpdateTemplatePermissionsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       GrantPermissions: params["GrantPermissions"]?.map(x => fromResourcePermission(x)),
       RevokePermissions: params["RevokePermissions"]?.map(x => fromResourcePermission(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateTemplatePermissions",
       method: "PUT",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}/templates/${params["TemplateId"]}/permissions`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "TemplateId": "s",
@@ -2406,27 +2404,27 @@ export default class QuickSight {
           "RequestId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async updateTheme(
     {abortSignal, ...params}: RequestConfig & UpdateThemeRequest,
   ): Promise<UpdateThemeResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       BaseThemeId: params["BaseThemeId"],
       VersionDescription: params["VersionDescription"],
       Configuration: fromThemeConfiguration(params["Configuration"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateTheme",
       method: "PUT",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}/themes/${params["ThemeId"]}`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "ThemeId": "s",
@@ -2436,49 +2434,49 @@ export default class QuickSight {
           "RequestId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async updateThemeAlias(
     {abortSignal, ...params}: RequestConfig & UpdateThemeAliasRequest,
   ): Promise<UpdateThemeAliasResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ThemeVersionNumber: params["ThemeVersionNumber"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateThemeAlias",
       method: "PUT",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}/themes/${params["ThemeId"]}/aliases/${params["AliasName"]}`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "ThemeAlias": toThemeAlias,
           "RequestId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async updateThemePermissions(
     {abortSignal, ...params}: RequestConfig & UpdateThemePermissionsRequest,
   ): Promise<UpdateThemePermissionsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       GrantPermissions: params["GrantPermissions"]?.map(x => fromResourcePermission(x)),
       RevokePermissions: params["RevokePermissions"]?.map(x => fromResourcePermission(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateThemePermissions",
       method: "PUT",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}/themes/${params["ThemeId"]}/permissions`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "ThemeId": "s",
@@ -2487,34 +2485,34 @@ export default class QuickSight {
           "RequestId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async updateUser(
     {abortSignal, ...params}: RequestConfig & UpdateUserRequest,
   ): Promise<UpdateUserResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Email: params["Email"],
       Role: params["Role"],
       CustomPermissionsName: params["CustomPermissionsName"],
       UnapplyCustomPermissions: params["UnapplyCustomPermissions"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateUser",
       method: "PUT",
       requestUri: cmnP.encodePath`/accounts/${params["AwsAccountId"]}/namespaces/${params["Namespace"]}/users/${params["UserName"]}`,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {
           "User": toUser,
           "RequestId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
 }

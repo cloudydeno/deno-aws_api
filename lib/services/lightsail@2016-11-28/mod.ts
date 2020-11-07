@@ -29,9 +29,9 @@ export default class Lightsail {
   async allocateStaticIp(
     {abortSignal, ...params}: RequestConfig & AllocateStaticIpRequest,
   ): Promise<AllocateStaticIpResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       staticIpName: params["staticIpName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AllocateStaticIp",
@@ -47,10 +47,10 @@ export default class Lightsail {
   async attachCertificateToDistribution(
     {abortSignal, ...params}: RequestConfig & AttachCertificateToDistributionRequest,
   ): Promise<AttachCertificateToDistributionResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       distributionName: params["distributionName"],
       certificateName: params["certificateName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AttachCertificateToDistribution",
@@ -66,11 +66,11 @@ export default class Lightsail {
   async attachDisk(
     {abortSignal, ...params}: RequestConfig & AttachDiskRequest,
   ): Promise<AttachDiskResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       diskName: params["diskName"],
       instanceName: params["instanceName"],
       diskPath: params["diskPath"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AttachDisk",
@@ -86,10 +86,10 @@ export default class Lightsail {
   async attachInstancesToLoadBalancer(
     {abortSignal, ...params}: RequestConfig & AttachInstancesToLoadBalancerRequest,
   ): Promise<AttachInstancesToLoadBalancerResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       loadBalancerName: params["loadBalancerName"],
       instanceNames: params["instanceNames"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AttachInstancesToLoadBalancer",
@@ -105,10 +105,10 @@ export default class Lightsail {
   async attachLoadBalancerTlsCertificate(
     {abortSignal, ...params}: RequestConfig & AttachLoadBalancerTlsCertificateRequest,
   ): Promise<AttachLoadBalancerTlsCertificateResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       loadBalancerName: params["loadBalancerName"],
       certificateName: params["certificateName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AttachLoadBalancerTlsCertificate",
@@ -124,10 +124,10 @@ export default class Lightsail {
   async attachStaticIp(
     {abortSignal, ...params}: RequestConfig & AttachStaticIpRequest,
   ): Promise<AttachStaticIpResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       staticIpName: params["staticIpName"],
       instanceName: params["instanceName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AttachStaticIp",
@@ -143,10 +143,10 @@ export default class Lightsail {
   async closeInstancePublicPorts(
     {abortSignal, ...params}: RequestConfig & CloseInstancePublicPortsRequest,
   ): Promise<CloseInstancePublicPortsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       portInfo: fromPortInfo(params["portInfo"]),
       instanceName: params["instanceName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CloseInstancePublicPorts",
@@ -162,14 +162,14 @@ export default class Lightsail {
   async copySnapshot(
     {abortSignal, ...params}: RequestConfig & CopySnapshotRequest,
   ): Promise<CopySnapshotResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       sourceSnapshotName: params["sourceSnapshotName"],
       sourceResourceName: params["sourceResourceName"],
       restoreDate: params["restoreDate"],
       useLatestRestorableAutoSnapshot: params["useLatestRestorableAutoSnapshot"],
       targetSnapshotName: params["targetSnapshotName"],
       sourceRegion: params["sourceRegion"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CopySnapshot",
@@ -185,12 +185,12 @@ export default class Lightsail {
   async createCertificate(
     {abortSignal, ...params}: RequestConfig & CreateCertificateRequest,
   ): Promise<CreateCertificateResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       certificateName: params["certificateName"],
       domainName: params["domainName"],
       subjectAlternativeNames: params["subjectAlternativeNames"],
       tags: params["tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateCertificate",
@@ -207,9 +207,9 @@ export default class Lightsail {
   async createCloudFormationStack(
     {abortSignal, ...params}: RequestConfig & CreateCloudFormationStackRequest,
   ): Promise<CreateCloudFormationStackResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       instances: params["instances"]?.map(x => fromInstanceEntry(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateCloudFormationStack",
@@ -225,10 +225,10 @@ export default class Lightsail {
   async createContactMethod(
     {abortSignal, ...params}: RequestConfig & CreateContactMethodRequest,
   ): Promise<CreateContactMethodResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       protocol: params["protocol"],
       contactEndpoint: params["contactEndpoint"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateContactMethod",
@@ -244,13 +244,13 @@ export default class Lightsail {
   async createDisk(
     {abortSignal, ...params}: RequestConfig & CreateDiskRequest,
   ): Promise<CreateDiskResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       diskName: params["diskName"],
       availabilityZone: params["availabilityZone"],
       sizeInGb: params["sizeInGb"],
       tags: params["tags"]?.map(x => fromTag(x)),
       addOns: params["addOns"]?.map(x => fromAddOnRequest(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDisk",
@@ -266,7 +266,7 @@ export default class Lightsail {
   async createDiskFromSnapshot(
     {abortSignal, ...params}: RequestConfig & CreateDiskFromSnapshotRequest,
   ): Promise<CreateDiskFromSnapshotResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       diskName: params["diskName"],
       diskSnapshotName: params["diskSnapshotName"],
       availabilityZone: params["availabilityZone"],
@@ -276,7 +276,7 @@ export default class Lightsail {
       sourceDiskName: params["sourceDiskName"],
       restoreDate: params["restoreDate"],
       useLatestRestorableAutoSnapshot: params["useLatestRestorableAutoSnapshot"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDiskFromSnapshot",
@@ -292,12 +292,12 @@ export default class Lightsail {
   async createDiskSnapshot(
     {abortSignal, ...params}: RequestConfig & CreateDiskSnapshotRequest,
   ): Promise<CreateDiskSnapshotResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       diskName: params["diskName"],
       diskSnapshotName: params["diskSnapshotName"],
       instanceName: params["instanceName"],
       tags: params["tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDiskSnapshot",
@@ -313,7 +313,7 @@ export default class Lightsail {
   async createDistribution(
     {abortSignal, ...params}: RequestConfig & CreateDistributionRequest,
   ): Promise<CreateDistributionResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       distributionName: params["distributionName"],
       origin: fromInputOrigin(params["origin"]),
       defaultCacheBehavior: fromCacheBehavior(params["defaultCacheBehavior"]),
@@ -321,7 +321,7 @@ export default class Lightsail {
       cacheBehaviors: params["cacheBehaviors"]?.map(x => fromCacheBehaviorPerPath(x)),
       bundleId: params["bundleId"],
       tags: params["tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDistribution",
@@ -338,10 +338,10 @@ export default class Lightsail {
   async createDomain(
     {abortSignal, ...params}: RequestConfig & CreateDomainRequest,
   ): Promise<CreateDomainResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       domainName: params["domainName"],
       tags: params["tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDomain",
@@ -357,10 +357,10 @@ export default class Lightsail {
   async createDomainEntry(
     {abortSignal, ...params}: RequestConfig & CreateDomainEntryRequest,
   ): Promise<CreateDomainEntryResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       domainName: params["domainName"],
       domainEntry: fromDomainEntry(params["domainEntry"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDomainEntry",
@@ -376,11 +376,11 @@ export default class Lightsail {
   async createInstanceSnapshot(
     {abortSignal, ...params}: RequestConfig & CreateInstanceSnapshotRequest,
   ): Promise<CreateInstanceSnapshotResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       instanceSnapshotName: params["instanceSnapshotName"],
       instanceName: params["instanceName"],
       tags: params["tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateInstanceSnapshot",
@@ -396,7 +396,7 @@ export default class Lightsail {
   async createInstances(
     {abortSignal, ...params}: RequestConfig & CreateInstancesRequest,
   ): Promise<CreateInstancesResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       instanceNames: params["instanceNames"],
       availabilityZone: params["availabilityZone"],
       customImageName: params["customImageName"],
@@ -406,7 +406,7 @@ export default class Lightsail {
       keyPairName: params["keyPairName"],
       tags: params["tags"]?.map(x => fromTag(x)),
       addOns: params["addOns"]?.map(x => fromAddOnRequest(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateInstances",
@@ -422,7 +422,7 @@ export default class Lightsail {
   async createInstancesFromSnapshot(
     {abortSignal, ...params}: RequestConfig & CreateInstancesFromSnapshotRequest,
   ): Promise<CreateInstancesFromSnapshotResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       instanceNames: params["instanceNames"],
       attachedDiskMapping: jsonP.serializeMap(params["attachedDiskMapping"], x => x?.map(fromDiskMap)),
       availabilityZone: params["availabilityZone"],
@@ -435,7 +435,7 @@ export default class Lightsail {
       sourceInstanceName: params["sourceInstanceName"],
       restoreDate: params["restoreDate"],
       useLatestRestorableAutoSnapshot: params["useLatestRestorableAutoSnapshot"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateInstancesFromSnapshot",
@@ -451,10 +451,10 @@ export default class Lightsail {
   async createKeyPair(
     {abortSignal, ...params}: RequestConfig & CreateKeyPairRequest,
   ): Promise<CreateKeyPairResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       keyPairName: params["keyPairName"],
       tags: params["tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateKeyPair",
@@ -473,7 +473,7 @@ export default class Lightsail {
   async createLoadBalancer(
     {abortSignal, ...params}: RequestConfig & CreateLoadBalancerRequest,
   ): Promise<CreateLoadBalancerResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       loadBalancerName: params["loadBalancerName"],
       instancePort: params["instancePort"],
       healthCheckPath: params["healthCheckPath"],
@@ -481,7 +481,7 @@ export default class Lightsail {
       certificateDomainName: params["certificateDomainName"],
       certificateAlternativeNames: params["certificateAlternativeNames"],
       tags: params["tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateLoadBalancer",
@@ -497,13 +497,13 @@ export default class Lightsail {
   async createLoadBalancerTlsCertificate(
     {abortSignal, ...params}: RequestConfig & CreateLoadBalancerTlsCertificateRequest,
   ): Promise<CreateLoadBalancerTlsCertificateResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       loadBalancerName: params["loadBalancerName"],
       certificateName: params["certificateName"],
       certificateDomainName: params["certificateDomainName"],
       certificateAlternativeNames: params["certificateAlternativeNames"],
       tags: params["tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateLoadBalancerTlsCertificate",
@@ -519,7 +519,7 @@ export default class Lightsail {
   async createRelationalDatabase(
     {abortSignal, ...params}: RequestConfig & CreateRelationalDatabaseRequest,
   ): Promise<CreateRelationalDatabaseResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       relationalDatabaseName: params["relationalDatabaseName"],
       availabilityZone: params["availabilityZone"],
       relationalDatabaseBlueprintId: params["relationalDatabaseBlueprintId"],
@@ -531,7 +531,7 @@ export default class Lightsail {
       preferredMaintenanceWindow: params["preferredMaintenanceWindow"],
       publiclyAccessible: params["publiclyAccessible"],
       tags: params["tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateRelationalDatabase",
@@ -547,7 +547,7 @@ export default class Lightsail {
   async createRelationalDatabaseFromSnapshot(
     {abortSignal, ...params}: RequestConfig & CreateRelationalDatabaseFromSnapshotRequest,
   ): Promise<CreateRelationalDatabaseFromSnapshotResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       relationalDatabaseName: params["relationalDatabaseName"],
       availabilityZone: params["availabilityZone"],
       publiclyAccessible: params["publiclyAccessible"],
@@ -557,7 +557,7 @@ export default class Lightsail {
       restoreTime: jsonP.serializeDate_unixTimestamp(params["restoreTime"]),
       useLatestRestorableTime: params["useLatestRestorableTime"],
       tags: params["tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateRelationalDatabaseFromSnapshot",
@@ -573,11 +573,11 @@ export default class Lightsail {
   async createRelationalDatabaseSnapshot(
     {abortSignal, ...params}: RequestConfig & CreateRelationalDatabaseSnapshotRequest,
   ): Promise<CreateRelationalDatabaseSnapshotResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       relationalDatabaseName: params["relationalDatabaseName"],
       relationalDatabaseSnapshotName: params["relationalDatabaseSnapshotName"],
       tags: params["tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateRelationalDatabaseSnapshot",
@@ -593,9 +593,9 @@ export default class Lightsail {
   async deleteAlarm(
     {abortSignal, ...params}: RequestConfig & DeleteAlarmRequest,
   ): Promise<DeleteAlarmResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       alarmName: params["alarmName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteAlarm",
@@ -611,10 +611,10 @@ export default class Lightsail {
   async deleteAutoSnapshot(
     {abortSignal, ...params}: RequestConfig & DeleteAutoSnapshotRequest,
   ): Promise<DeleteAutoSnapshotResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       resourceName: params["resourceName"],
       date: params["date"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteAutoSnapshot",
@@ -630,9 +630,9 @@ export default class Lightsail {
   async deleteCertificate(
     {abortSignal, ...params}: RequestConfig & DeleteCertificateRequest,
   ): Promise<DeleteCertificateResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       certificateName: params["certificateName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteCertificate",
@@ -648,9 +648,9 @@ export default class Lightsail {
   async deleteContactMethod(
     {abortSignal, ...params}: RequestConfig & DeleteContactMethodRequest,
   ): Promise<DeleteContactMethodResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       protocol: params["protocol"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteContactMethod",
@@ -666,10 +666,10 @@ export default class Lightsail {
   async deleteDisk(
     {abortSignal, ...params}: RequestConfig & DeleteDiskRequest,
   ): Promise<DeleteDiskResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       diskName: params["diskName"],
       forceDeleteAddOns: params["forceDeleteAddOns"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteDisk",
@@ -685,9 +685,9 @@ export default class Lightsail {
   async deleteDiskSnapshot(
     {abortSignal, ...params}: RequestConfig & DeleteDiskSnapshotRequest,
   ): Promise<DeleteDiskSnapshotResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       diskSnapshotName: params["diskSnapshotName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteDiskSnapshot",
@@ -703,9 +703,9 @@ export default class Lightsail {
   async deleteDistribution(
     {abortSignal, ...params}: RequestConfig & DeleteDistributionRequest = {},
   ): Promise<DeleteDistributionResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       distributionName: params["distributionName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteDistribution",
@@ -721,9 +721,9 @@ export default class Lightsail {
   async deleteDomain(
     {abortSignal, ...params}: RequestConfig & DeleteDomainRequest,
   ): Promise<DeleteDomainResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       domainName: params["domainName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteDomain",
@@ -739,10 +739,10 @@ export default class Lightsail {
   async deleteDomainEntry(
     {abortSignal, ...params}: RequestConfig & DeleteDomainEntryRequest,
   ): Promise<DeleteDomainEntryResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       domainName: params["domainName"],
       domainEntry: fromDomainEntry(params["domainEntry"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteDomainEntry",
@@ -758,10 +758,10 @@ export default class Lightsail {
   async deleteInstance(
     {abortSignal, ...params}: RequestConfig & DeleteInstanceRequest,
   ): Promise<DeleteInstanceResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       instanceName: params["instanceName"],
       forceDeleteAddOns: params["forceDeleteAddOns"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteInstance",
@@ -777,9 +777,9 @@ export default class Lightsail {
   async deleteInstanceSnapshot(
     {abortSignal, ...params}: RequestConfig & DeleteInstanceSnapshotRequest,
   ): Promise<DeleteInstanceSnapshotResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       instanceSnapshotName: params["instanceSnapshotName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteInstanceSnapshot",
@@ -795,9 +795,9 @@ export default class Lightsail {
   async deleteKeyPair(
     {abortSignal, ...params}: RequestConfig & DeleteKeyPairRequest,
   ): Promise<DeleteKeyPairResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       keyPairName: params["keyPairName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteKeyPair",
@@ -813,9 +813,9 @@ export default class Lightsail {
   async deleteKnownHostKeys(
     {abortSignal, ...params}: RequestConfig & DeleteKnownHostKeysRequest,
   ): Promise<DeleteKnownHostKeysResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       instanceName: params["instanceName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteKnownHostKeys",
@@ -831,9 +831,9 @@ export default class Lightsail {
   async deleteLoadBalancer(
     {abortSignal, ...params}: RequestConfig & DeleteLoadBalancerRequest,
   ): Promise<DeleteLoadBalancerResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       loadBalancerName: params["loadBalancerName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteLoadBalancer",
@@ -849,11 +849,11 @@ export default class Lightsail {
   async deleteLoadBalancerTlsCertificate(
     {abortSignal, ...params}: RequestConfig & DeleteLoadBalancerTlsCertificateRequest,
   ): Promise<DeleteLoadBalancerTlsCertificateResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       loadBalancerName: params["loadBalancerName"],
       certificateName: params["certificateName"],
       force: params["force"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteLoadBalancerTlsCertificate",
@@ -869,11 +869,11 @@ export default class Lightsail {
   async deleteRelationalDatabase(
     {abortSignal, ...params}: RequestConfig & DeleteRelationalDatabaseRequest,
   ): Promise<DeleteRelationalDatabaseResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       relationalDatabaseName: params["relationalDatabaseName"],
       skipFinalSnapshot: params["skipFinalSnapshot"],
       finalRelationalDatabaseSnapshotName: params["finalRelationalDatabaseSnapshotName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteRelationalDatabase",
@@ -889,9 +889,9 @@ export default class Lightsail {
   async deleteRelationalDatabaseSnapshot(
     {abortSignal, ...params}: RequestConfig & DeleteRelationalDatabaseSnapshotRequest,
   ): Promise<DeleteRelationalDatabaseSnapshotResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       relationalDatabaseSnapshotName: params["relationalDatabaseSnapshotName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteRelationalDatabaseSnapshot",
@@ -907,9 +907,9 @@ export default class Lightsail {
   async detachCertificateFromDistribution(
     {abortSignal, ...params}: RequestConfig & DetachCertificateFromDistributionRequest,
   ): Promise<DetachCertificateFromDistributionResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       distributionName: params["distributionName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DetachCertificateFromDistribution",
@@ -925,9 +925,9 @@ export default class Lightsail {
   async detachDisk(
     {abortSignal, ...params}: RequestConfig & DetachDiskRequest,
   ): Promise<DetachDiskResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       diskName: params["diskName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DetachDisk",
@@ -943,10 +943,10 @@ export default class Lightsail {
   async detachInstancesFromLoadBalancer(
     {abortSignal, ...params}: RequestConfig & DetachInstancesFromLoadBalancerRequest,
   ): Promise<DetachInstancesFromLoadBalancerResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       loadBalancerName: params["loadBalancerName"],
       instanceNames: params["instanceNames"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DetachInstancesFromLoadBalancer",
@@ -962,9 +962,9 @@ export default class Lightsail {
   async detachStaticIp(
     {abortSignal, ...params}: RequestConfig & DetachStaticIpRequest,
   ): Promise<DetachStaticIpResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       staticIpName: params["staticIpName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DetachStaticIp",
@@ -980,10 +980,10 @@ export default class Lightsail {
   async disableAddOn(
     {abortSignal, ...params}: RequestConfig & DisableAddOnRequest,
   ): Promise<DisableAddOnResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       addOnType: params["addOnType"],
       resourceName: params["resourceName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisableAddOn",
@@ -999,8 +999,8 @@ export default class Lightsail {
   async downloadDefaultKeyPair(
     {abortSignal, ...params}: RequestConfig & DownloadDefaultKeyPairRequest = {},
   ): Promise<DownloadDefaultKeyPairResult> {
-    const body: jsonP.JSONObject = params ? {
-    } : {};
+    const body: jsonP.JSONObject = {
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DownloadDefaultKeyPair",
@@ -1017,10 +1017,10 @@ export default class Lightsail {
   async enableAddOn(
     {abortSignal, ...params}: RequestConfig & EnableAddOnRequest,
   ): Promise<EnableAddOnResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       resourceName: params["resourceName"],
       addOnRequest: fromAddOnRequest(params["addOnRequest"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "EnableAddOn",
@@ -1036,9 +1036,9 @@ export default class Lightsail {
   async exportSnapshot(
     {abortSignal, ...params}: RequestConfig & ExportSnapshotRequest,
   ): Promise<ExportSnapshotResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       sourceSnapshotName: params["sourceSnapshotName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ExportSnapshot",
@@ -1054,9 +1054,9 @@ export default class Lightsail {
   async getActiveNames(
     {abortSignal, ...params}: RequestConfig & GetActiveNamesRequest = {},
   ): Promise<GetActiveNamesResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       pageToken: params["pageToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetActiveNames",
@@ -1073,11 +1073,11 @@ export default class Lightsail {
   async getAlarms(
     {abortSignal, ...params}: RequestConfig & GetAlarmsRequest = {},
   ): Promise<GetAlarmsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       alarmName: params["alarmName"],
       pageToken: params["pageToken"],
       monitoredResourceName: params["monitoredResourceName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetAlarms",
@@ -1094,9 +1094,9 @@ export default class Lightsail {
   async getAutoSnapshots(
     {abortSignal, ...params}: RequestConfig & GetAutoSnapshotsRequest,
   ): Promise<GetAutoSnapshotsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       resourceName: params["resourceName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetAutoSnapshots",
@@ -1114,10 +1114,10 @@ export default class Lightsail {
   async getBlueprints(
     {abortSignal, ...params}: RequestConfig & GetBlueprintsRequest = {},
   ): Promise<GetBlueprintsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       includeInactive: params["includeInactive"],
       pageToken: params["pageToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetBlueprints",
@@ -1134,10 +1134,10 @@ export default class Lightsail {
   async getBundles(
     {abortSignal, ...params}: RequestConfig & GetBundlesRequest = {},
   ): Promise<GetBundlesResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       includeInactive: params["includeInactive"],
       pageToken: params["pageToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetBundles",
@@ -1154,11 +1154,11 @@ export default class Lightsail {
   async getCertificates(
     {abortSignal, ...params}: RequestConfig & GetCertificatesRequest = {},
   ): Promise<GetCertificatesResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       certificateStatuses: params["certificateStatuses"],
       includeCertificateDetails: params["includeCertificateDetails"],
       certificateName: params["certificateName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetCertificates",
@@ -1174,9 +1174,9 @@ export default class Lightsail {
   async getCloudFormationStackRecords(
     {abortSignal, ...params}: RequestConfig & GetCloudFormationStackRecordsRequest = {},
   ): Promise<GetCloudFormationStackRecordsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       pageToken: params["pageToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetCloudFormationStackRecords",
@@ -1193,9 +1193,9 @@ export default class Lightsail {
   async getContactMethods(
     {abortSignal, ...params}: RequestConfig & GetContactMethodsRequest = {},
   ): Promise<GetContactMethodsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       protocols: params["protocols"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetContactMethods",
@@ -1211,9 +1211,9 @@ export default class Lightsail {
   async getDisk(
     {abortSignal, ...params}: RequestConfig & GetDiskRequest,
   ): Promise<GetDiskResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       diskName: params["diskName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetDisk",
@@ -1229,9 +1229,9 @@ export default class Lightsail {
   async getDiskSnapshot(
     {abortSignal, ...params}: RequestConfig & GetDiskSnapshotRequest,
   ): Promise<GetDiskSnapshotResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       diskSnapshotName: params["diskSnapshotName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetDiskSnapshot",
@@ -1247,9 +1247,9 @@ export default class Lightsail {
   async getDiskSnapshots(
     {abortSignal, ...params}: RequestConfig & GetDiskSnapshotsRequest = {},
   ): Promise<GetDiskSnapshotsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       pageToken: params["pageToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetDiskSnapshots",
@@ -1266,9 +1266,9 @@ export default class Lightsail {
   async getDisks(
     {abortSignal, ...params}: RequestConfig & GetDisksRequest = {},
   ): Promise<GetDisksResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       pageToken: params["pageToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetDisks",
@@ -1285,8 +1285,8 @@ export default class Lightsail {
   async getDistributionBundles(
     {abortSignal, ...params}: RequestConfig & GetDistributionBundlesRequest = {},
   ): Promise<GetDistributionBundlesResult> {
-    const body: jsonP.JSONObject = params ? {
-    } : {};
+    const body: jsonP.JSONObject = {
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetDistributionBundles",
@@ -1302,9 +1302,9 @@ export default class Lightsail {
   async getDistributionLatestCacheReset(
     {abortSignal, ...params}: RequestConfig & GetDistributionLatestCacheResetRequest = {},
   ): Promise<GetDistributionLatestCacheResetResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       distributionName: params["distributionName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetDistributionLatestCacheReset",
@@ -1321,7 +1321,7 @@ export default class Lightsail {
   async getDistributionMetricData(
     {abortSignal, ...params}: RequestConfig & GetDistributionMetricDataRequest,
   ): Promise<GetDistributionMetricDataResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       distributionName: params["distributionName"],
       metricName: params["metricName"],
       startTime: jsonP.serializeDate_unixTimestamp(params["startTime"]),
@@ -1329,7 +1329,7 @@ export default class Lightsail {
       period: params["period"],
       unit: params["unit"],
       statistics: params["statistics"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetDistributionMetricData",
@@ -1346,10 +1346,10 @@ export default class Lightsail {
   async getDistributions(
     {abortSignal, ...params}: RequestConfig & GetDistributionsRequest = {},
   ): Promise<GetDistributionsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       distributionName: params["distributionName"],
       pageToken: params["pageToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetDistributions",
@@ -1366,9 +1366,9 @@ export default class Lightsail {
   async getDomain(
     {abortSignal, ...params}: RequestConfig & GetDomainRequest,
   ): Promise<GetDomainResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       domainName: params["domainName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetDomain",
@@ -1384,9 +1384,9 @@ export default class Lightsail {
   async getDomains(
     {abortSignal, ...params}: RequestConfig & GetDomainsRequest = {},
   ): Promise<GetDomainsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       pageToken: params["pageToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetDomains",
@@ -1403,9 +1403,9 @@ export default class Lightsail {
   async getExportSnapshotRecords(
     {abortSignal, ...params}: RequestConfig & GetExportSnapshotRecordsRequest = {},
   ): Promise<GetExportSnapshotRecordsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       pageToken: params["pageToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetExportSnapshotRecords",
@@ -1422,9 +1422,9 @@ export default class Lightsail {
   async getInstance(
     {abortSignal, ...params}: RequestConfig & GetInstanceRequest,
   ): Promise<GetInstanceResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       instanceName: params["instanceName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetInstance",
@@ -1440,10 +1440,10 @@ export default class Lightsail {
   async getInstanceAccessDetails(
     {abortSignal, ...params}: RequestConfig & GetInstanceAccessDetailsRequest,
   ): Promise<GetInstanceAccessDetailsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       instanceName: params["instanceName"],
       protocol: params["protocol"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetInstanceAccessDetails",
@@ -1459,7 +1459,7 @@ export default class Lightsail {
   async getInstanceMetricData(
     {abortSignal, ...params}: RequestConfig & GetInstanceMetricDataRequest,
   ): Promise<GetInstanceMetricDataResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       instanceName: params["instanceName"],
       metricName: params["metricName"],
       period: params["period"],
@@ -1467,7 +1467,7 @@ export default class Lightsail {
       endTime: jsonP.serializeDate_unixTimestamp(params["endTime"]),
       unit: params["unit"],
       statistics: params["statistics"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetInstanceMetricData",
@@ -1484,9 +1484,9 @@ export default class Lightsail {
   async getInstancePortStates(
     {abortSignal, ...params}: RequestConfig & GetInstancePortStatesRequest,
   ): Promise<GetInstancePortStatesResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       instanceName: params["instanceName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetInstancePortStates",
@@ -1502,9 +1502,9 @@ export default class Lightsail {
   async getInstanceSnapshot(
     {abortSignal, ...params}: RequestConfig & GetInstanceSnapshotRequest,
   ): Promise<GetInstanceSnapshotResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       instanceSnapshotName: params["instanceSnapshotName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetInstanceSnapshot",
@@ -1520,9 +1520,9 @@ export default class Lightsail {
   async getInstanceSnapshots(
     {abortSignal, ...params}: RequestConfig & GetInstanceSnapshotsRequest = {},
   ): Promise<GetInstanceSnapshotsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       pageToken: params["pageToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetInstanceSnapshots",
@@ -1539,9 +1539,9 @@ export default class Lightsail {
   async getInstanceState(
     {abortSignal, ...params}: RequestConfig & GetInstanceStateRequest,
   ): Promise<GetInstanceStateResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       instanceName: params["instanceName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetInstanceState",
@@ -1557,9 +1557,9 @@ export default class Lightsail {
   async getInstances(
     {abortSignal, ...params}: RequestConfig & GetInstancesRequest = {},
   ): Promise<GetInstancesResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       pageToken: params["pageToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetInstances",
@@ -1576,9 +1576,9 @@ export default class Lightsail {
   async getKeyPair(
     {abortSignal, ...params}: RequestConfig & GetKeyPairRequest,
   ): Promise<GetKeyPairResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       keyPairName: params["keyPairName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetKeyPair",
@@ -1594,9 +1594,9 @@ export default class Lightsail {
   async getKeyPairs(
     {abortSignal, ...params}: RequestConfig & GetKeyPairsRequest = {},
   ): Promise<GetKeyPairsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       pageToken: params["pageToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetKeyPairs",
@@ -1613,9 +1613,9 @@ export default class Lightsail {
   async getLoadBalancer(
     {abortSignal, ...params}: RequestConfig & GetLoadBalancerRequest,
   ): Promise<GetLoadBalancerResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       loadBalancerName: params["loadBalancerName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetLoadBalancer",
@@ -1631,7 +1631,7 @@ export default class Lightsail {
   async getLoadBalancerMetricData(
     {abortSignal, ...params}: RequestConfig & GetLoadBalancerMetricDataRequest,
   ): Promise<GetLoadBalancerMetricDataResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       loadBalancerName: params["loadBalancerName"],
       metricName: params["metricName"],
       period: params["period"],
@@ -1639,7 +1639,7 @@ export default class Lightsail {
       endTime: jsonP.serializeDate_unixTimestamp(params["endTime"]),
       unit: params["unit"],
       statistics: params["statistics"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetLoadBalancerMetricData",
@@ -1656,9 +1656,9 @@ export default class Lightsail {
   async getLoadBalancerTlsCertificates(
     {abortSignal, ...params}: RequestConfig & GetLoadBalancerTlsCertificatesRequest,
   ): Promise<GetLoadBalancerTlsCertificatesResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       loadBalancerName: params["loadBalancerName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetLoadBalancerTlsCertificates",
@@ -1674,9 +1674,9 @@ export default class Lightsail {
   async getLoadBalancers(
     {abortSignal, ...params}: RequestConfig & GetLoadBalancersRequest = {},
   ): Promise<GetLoadBalancersResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       pageToken: params["pageToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetLoadBalancers",
@@ -1693,9 +1693,9 @@ export default class Lightsail {
   async getOperation(
     {abortSignal, ...params}: RequestConfig & GetOperationRequest,
   ): Promise<GetOperationResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       operationId: params["operationId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetOperation",
@@ -1711,9 +1711,9 @@ export default class Lightsail {
   async getOperations(
     {abortSignal, ...params}: RequestConfig & GetOperationsRequest = {},
   ): Promise<GetOperationsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       pageToken: params["pageToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetOperations",
@@ -1730,10 +1730,10 @@ export default class Lightsail {
   async getOperationsForResource(
     {abortSignal, ...params}: RequestConfig & GetOperationsForResourceRequest,
   ): Promise<GetOperationsForResourceResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       resourceName: params["resourceName"],
       pageToken: params["pageToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetOperationsForResource",
@@ -1751,10 +1751,10 @@ export default class Lightsail {
   async getRegions(
     {abortSignal, ...params}: RequestConfig & GetRegionsRequest = {},
   ): Promise<GetRegionsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       includeAvailabilityZones: params["includeAvailabilityZones"],
       includeRelationalDatabaseAvailabilityZones: params["includeRelationalDatabaseAvailabilityZones"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetRegions",
@@ -1770,9 +1770,9 @@ export default class Lightsail {
   async getRelationalDatabase(
     {abortSignal, ...params}: RequestConfig & GetRelationalDatabaseRequest,
   ): Promise<GetRelationalDatabaseResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       relationalDatabaseName: params["relationalDatabaseName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetRelationalDatabase",
@@ -1788,9 +1788,9 @@ export default class Lightsail {
   async getRelationalDatabaseBlueprints(
     {abortSignal, ...params}: RequestConfig & GetRelationalDatabaseBlueprintsRequest = {},
   ): Promise<GetRelationalDatabaseBlueprintsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       pageToken: params["pageToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetRelationalDatabaseBlueprints",
@@ -1807,9 +1807,9 @@ export default class Lightsail {
   async getRelationalDatabaseBundles(
     {abortSignal, ...params}: RequestConfig & GetRelationalDatabaseBundlesRequest = {},
   ): Promise<GetRelationalDatabaseBundlesResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       pageToken: params["pageToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetRelationalDatabaseBundles",
@@ -1826,11 +1826,11 @@ export default class Lightsail {
   async getRelationalDatabaseEvents(
     {abortSignal, ...params}: RequestConfig & GetRelationalDatabaseEventsRequest,
   ): Promise<GetRelationalDatabaseEventsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       relationalDatabaseName: params["relationalDatabaseName"],
       durationInMinutes: params["durationInMinutes"],
       pageToken: params["pageToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetRelationalDatabaseEvents",
@@ -1847,14 +1847,14 @@ export default class Lightsail {
   async getRelationalDatabaseLogEvents(
     {abortSignal, ...params}: RequestConfig & GetRelationalDatabaseLogEventsRequest,
   ): Promise<GetRelationalDatabaseLogEventsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       relationalDatabaseName: params["relationalDatabaseName"],
       logStreamName: params["logStreamName"],
       startTime: jsonP.serializeDate_unixTimestamp(params["startTime"]),
       endTime: jsonP.serializeDate_unixTimestamp(params["endTime"]),
       startFromHead: params["startFromHead"],
       pageToken: params["pageToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetRelationalDatabaseLogEvents",
@@ -1872,9 +1872,9 @@ export default class Lightsail {
   async getRelationalDatabaseLogStreams(
     {abortSignal, ...params}: RequestConfig & GetRelationalDatabaseLogStreamsRequest,
   ): Promise<GetRelationalDatabaseLogStreamsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       relationalDatabaseName: params["relationalDatabaseName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetRelationalDatabaseLogStreams",
@@ -1890,10 +1890,10 @@ export default class Lightsail {
   async getRelationalDatabaseMasterUserPassword(
     {abortSignal, ...params}: RequestConfig & GetRelationalDatabaseMasterUserPasswordRequest,
   ): Promise<GetRelationalDatabaseMasterUserPasswordResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       relationalDatabaseName: params["relationalDatabaseName"],
       passwordVersion: params["passwordVersion"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetRelationalDatabaseMasterUserPassword",
@@ -1910,7 +1910,7 @@ export default class Lightsail {
   async getRelationalDatabaseMetricData(
     {abortSignal, ...params}: RequestConfig & GetRelationalDatabaseMetricDataRequest,
   ): Promise<GetRelationalDatabaseMetricDataResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       relationalDatabaseName: params["relationalDatabaseName"],
       metricName: params["metricName"],
       period: params["period"],
@@ -1918,7 +1918,7 @@ export default class Lightsail {
       endTime: jsonP.serializeDate_unixTimestamp(params["endTime"]),
       unit: params["unit"],
       statistics: params["statistics"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetRelationalDatabaseMetricData",
@@ -1935,10 +1935,10 @@ export default class Lightsail {
   async getRelationalDatabaseParameters(
     {abortSignal, ...params}: RequestConfig & GetRelationalDatabaseParametersRequest,
   ): Promise<GetRelationalDatabaseParametersResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       relationalDatabaseName: params["relationalDatabaseName"],
       pageToken: params["pageToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetRelationalDatabaseParameters",
@@ -1955,9 +1955,9 @@ export default class Lightsail {
   async getRelationalDatabaseSnapshot(
     {abortSignal, ...params}: RequestConfig & GetRelationalDatabaseSnapshotRequest,
   ): Promise<GetRelationalDatabaseSnapshotResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       relationalDatabaseSnapshotName: params["relationalDatabaseSnapshotName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetRelationalDatabaseSnapshot",
@@ -1973,9 +1973,9 @@ export default class Lightsail {
   async getRelationalDatabaseSnapshots(
     {abortSignal, ...params}: RequestConfig & GetRelationalDatabaseSnapshotsRequest = {},
   ): Promise<GetRelationalDatabaseSnapshotsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       pageToken: params["pageToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetRelationalDatabaseSnapshots",
@@ -1992,9 +1992,9 @@ export default class Lightsail {
   async getRelationalDatabases(
     {abortSignal, ...params}: RequestConfig & GetRelationalDatabasesRequest = {},
   ): Promise<GetRelationalDatabasesResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       pageToken: params["pageToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetRelationalDatabases",
@@ -2011,9 +2011,9 @@ export default class Lightsail {
   async getStaticIp(
     {abortSignal, ...params}: RequestConfig & GetStaticIpRequest,
   ): Promise<GetStaticIpResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       staticIpName: params["staticIpName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetStaticIp",
@@ -2029,9 +2029,9 @@ export default class Lightsail {
   async getStaticIps(
     {abortSignal, ...params}: RequestConfig & GetStaticIpsRequest = {},
   ): Promise<GetStaticIpsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       pageToken: params["pageToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetStaticIps",
@@ -2048,10 +2048,10 @@ export default class Lightsail {
   async importKeyPair(
     {abortSignal, ...params}: RequestConfig & ImportKeyPairRequest,
   ): Promise<ImportKeyPairResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       keyPairName: params["keyPairName"],
       publicKeyBase64: params["publicKeyBase64"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ImportKeyPair",
@@ -2067,8 +2067,8 @@ export default class Lightsail {
   async isVpcPeered(
     {abortSignal, ...params}: RequestConfig & IsVpcPeeredRequest = {},
   ): Promise<IsVpcPeeredResult> {
-    const body: jsonP.JSONObject = params ? {
-    } : {};
+    const body: jsonP.JSONObject = {
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "IsVpcPeered",
@@ -2084,10 +2084,10 @@ export default class Lightsail {
   async openInstancePublicPorts(
     {abortSignal, ...params}: RequestConfig & OpenInstancePublicPortsRequest,
   ): Promise<OpenInstancePublicPortsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       portInfo: fromPortInfo(params["portInfo"]),
       instanceName: params["instanceName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "OpenInstancePublicPorts",
@@ -2103,8 +2103,8 @@ export default class Lightsail {
   async peerVpc(
     {abortSignal, ...params}: RequestConfig & PeerVpcRequest = {},
   ): Promise<PeerVpcResult> {
-    const body: jsonP.JSONObject = params ? {
-    } : {};
+    const body: jsonP.JSONObject = {
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PeerVpc",
@@ -2120,7 +2120,7 @@ export default class Lightsail {
   async putAlarm(
     {abortSignal, ...params}: RequestConfig & PutAlarmRequest,
   ): Promise<PutAlarmResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       alarmName: params["alarmName"],
       metricName: params["metricName"],
       monitoredResourceName: params["monitoredResourceName"],
@@ -2132,7 +2132,7 @@ export default class Lightsail {
       contactProtocols: params["contactProtocols"],
       notificationTriggers: params["notificationTriggers"],
       notificationEnabled: params["notificationEnabled"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutAlarm",
@@ -2148,10 +2148,10 @@ export default class Lightsail {
   async putInstancePublicPorts(
     {abortSignal, ...params}: RequestConfig & PutInstancePublicPortsRequest,
   ): Promise<PutInstancePublicPortsResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       portInfos: params["portInfos"]?.map(x => fromPortInfo(x)),
       instanceName: params["instanceName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutInstancePublicPorts",
@@ -2167,9 +2167,9 @@ export default class Lightsail {
   async rebootInstance(
     {abortSignal, ...params}: RequestConfig & RebootInstanceRequest,
   ): Promise<RebootInstanceResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       instanceName: params["instanceName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RebootInstance",
@@ -2185,9 +2185,9 @@ export default class Lightsail {
   async rebootRelationalDatabase(
     {abortSignal, ...params}: RequestConfig & RebootRelationalDatabaseRequest,
   ): Promise<RebootRelationalDatabaseResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       relationalDatabaseName: params["relationalDatabaseName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RebootRelationalDatabase",
@@ -2203,9 +2203,9 @@ export default class Lightsail {
   async releaseStaticIp(
     {abortSignal, ...params}: RequestConfig & ReleaseStaticIpRequest,
   ): Promise<ReleaseStaticIpResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       staticIpName: params["staticIpName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ReleaseStaticIp",
@@ -2221,9 +2221,9 @@ export default class Lightsail {
   async resetDistributionCache(
     {abortSignal, ...params}: RequestConfig & ResetDistributionCacheRequest = {},
   ): Promise<ResetDistributionCacheResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       distributionName: params["distributionName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ResetDistributionCache",
@@ -2241,9 +2241,9 @@ export default class Lightsail {
   async sendContactMethodVerification(
     {abortSignal, ...params}: RequestConfig & SendContactMethodVerificationRequest,
   ): Promise<SendContactMethodVerificationResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       protocol: params["protocol"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SendContactMethodVerification",
@@ -2259,9 +2259,9 @@ export default class Lightsail {
   async startInstance(
     {abortSignal, ...params}: RequestConfig & StartInstanceRequest,
   ): Promise<StartInstanceResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       instanceName: params["instanceName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartInstance",
@@ -2277,9 +2277,9 @@ export default class Lightsail {
   async startRelationalDatabase(
     {abortSignal, ...params}: RequestConfig & StartRelationalDatabaseRequest,
   ): Promise<StartRelationalDatabaseResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       relationalDatabaseName: params["relationalDatabaseName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartRelationalDatabase",
@@ -2295,10 +2295,10 @@ export default class Lightsail {
   async stopInstance(
     {abortSignal, ...params}: RequestConfig & StopInstanceRequest,
   ): Promise<StopInstanceResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       instanceName: params["instanceName"],
       force: params["force"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopInstance",
@@ -2314,10 +2314,10 @@ export default class Lightsail {
   async stopRelationalDatabase(
     {abortSignal, ...params}: RequestConfig & StopRelationalDatabaseRequest,
   ): Promise<StopRelationalDatabaseResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       relationalDatabaseName: params["relationalDatabaseName"],
       relationalDatabaseSnapshotName: params["relationalDatabaseSnapshotName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopRelationalDatabase",
@@ -2333,11 +2333,11 @@ export default class Lightsail {
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       resourceName: params["resourceName"],
       resourceArn: params["resourceArn"],
       tags: params["tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
@@ -2353,10 +2353,10 @@ export default class Lightsail {
   async testAlarm(
     {abortSignal, ...params}: RequestConfig & TestAlarmRequest,
   ): Promise<TestAlarmResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       alarmName: params["alarmName"],
       state: params["state"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TestAlarm",
@@ -2372,8 +2372,8 @@ export default class Lightsail {
   async unpeerVpc(
     {abortSignal, ...params}: RequestConfig & UnpeerVpcRequest = {},
   ): Promise<UnpeerVpcResult> {
-    const body: jsonP.JSONObject = params ? {
-    } : {};
+    const body: jsonP.JSONObject = {
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UnpeerVpc",
@@ -2389,11 +2389,11 @@ export default class Lightsail {
   async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceRequest,
   ): Promise<UntagResourceResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       resourceName: params["resourceName"],
       resourceArn: params["resourceArn"],
       tagKeys: params["tagKeys"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResource",
@@ -2409,14 +2409,14 @@ export default class Lightsail {
   async updateDistribution(
     {abortSignal, ...params}: RequestConfig & UpdateDistributionRequest,
   ): Promise<UpdateDistributionResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       distributionName: params["distributionName"],
       origin: fromInputOrigin(params["origin"]),
       defaultCacheBehavior: fromCacheBehavior(params["defaultCacheBehavior"]),
       cacheBehaviorSettings: fromCacheSettings(params["cacheBehaviorSettings"]),
       cacheBehaviors: params["cacheBehaviors"]?.map(x => fromCacheBehaviorPerPath(x)),
       isEnabled: params["isEnabled"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateDistribution",
@@ -2432,10 +2432,10 @@ export default class Lightsail {
   async updateDistributionBundle(
     {abortSignal, ...params}: RequestConfig & UpdateDistributionBundleRequest = {},
   ): Promise<UpdateDistributionBundleResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       distributionName: params["distributionName"],
       bundleId: params["bundleId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateDistributionBundle",
@@ -2451,10 +2451,10 @@ export default class Lightsail {
   async updateDomainEntry(
     {abortSignal, ...params}: RequestConfig & UpdateDomainEntryRequest,
   ): Promise<UpdateDomainEntryResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       domainName: params["domainName"],
       domainEntry: fromDomainEntry(params["domainEntry"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateDomainEntry",
@@ -2470,11 +2470,11 @@ export default class Lightsail {
   async updateLoadBalancerAttribute(
     {abortSignal, ...params}: RequestConfig & UpdateLoadBalancerAttributeRequest,
   ): Promise<UpdateLoadBalancerAttributeResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       loadBalancerName: params["loadBalancerName"],
       attributeName: params["attributeName"],
       attributeValue: params["attributeValue"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateLoadBalancerAttribute",
@@ -2490,7 +2490,7 @@ export default class Lightsail {
   async updateRelationalDatabase(
     {abortSignal, ...params}: RequestConfig & UpdateRelationalDatabaseRequest,
   ): Promise<UpdateRelationalDatabaseResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       relationalDatabaseName: params["relationalDatabaseName"],
       masterUserPassword: params["masterUserPassword"],
       rotateMasterUserPassword: params["rotateMasterUserPassword"],
@@ -2501,7 +2501,7 @@ export default class Lightsail {
       publiclyAccessible: params["publiclyAccessible"],
       applyImmediately: params["applyImmediately"],
       caCertificateIdentifier: params["caCertificateIdentifier"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateRelationalDatabase",
@@ -2517,10 +2517,10 @@ export default class Lightsail {
   async updateRelationalDatabaseParameters(
     {abortSignal, ...params}: RequestConfig & UpdateRelationalDatabaseParametersRequest,
   ): Promise<UpdateRelationalDatabaseParametersResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       relationalDatabaseName: params["relationalDatabaseName"],
       parameters: params["parameters"]?.map(x => fromRelationalDatabaseParameter(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateRelationalDatabaseParameters",

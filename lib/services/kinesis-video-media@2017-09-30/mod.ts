@@ -28,11 +28,11 @@ export default class KinesisVideoMedia {
   async getMedia(
     {abortSignal, ...params}: RequestConfig & GetMediaInput,
   ): Promise<GetMediaOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       StreamName: params["StreamName"],
       StreamARN: params["StreamARN"],
       StartSelector: fromStartSelector(params["StartSelector"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetMedia",

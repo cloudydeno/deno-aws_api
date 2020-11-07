@@ -30,10 +30,10 @@ export default class CodeDeploy {
   async addTagsToOnPremisesInstances(
     {abortSignal, ...params}: RequestConfig & AddTagsToOnPremisesInstancesInput,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       tags: params["tags"]?.map(x => fromTag(x)),
       instanceNames: params["instanceNames"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AddTagsToOnPremisesInstances",
@@ -43,10 +43,10 @@ export default class CodeDeploy {
   async batchGetApplicationRevisions(
     {abortSignal, ...params}: RequestConfig & BatchGetApplicationRevisionsInput,
   ): Promise<BatchGetApplicationRevisionsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       applicationName: params["applicationName"],
       revisions: params["revisions"]?.map(x => fromRevisionLocation(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchGetApplicationRevisions",
@@ -64,9 +64,9 @@ export default class CodeDeploy {
   async batchGetApplications(
     {abortSignal, ...params}: RequestConfig & BatchGetApplicationsInput,
   ): Promise<BatchGetApplicationsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       applicationNames: params["applicationNames"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchGetApplications",
@@ -82,10 +82,10 @@ export default class CodeDeploy {
   async batchGetDeploymentGroups(
     {abortSignal, ...params}: RequestConfig & BatchGetDeploymentGroupsInput,
   ): Promise<BatchGetDeploymentGroupsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       applicationName: params["applicationName"],
       deploymentGroupNames: params["deploymentGroupNames"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchGetDeploymentGroups",
@@ -102,10 +102,10 @@ export default class CodeDeploy {
   async batchGetDeploymentInstances(
     {abortSignal, ...params}: RequestConfig & BatchGetDeploymentInstancesInput,
   ): Promise<BatchGetDeploymentInstancesOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       deploymentId: params["deploymentId"],
       instanceIds: params["instanceIds"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchGetDeploymentInstances",
@@ -122,10 +122,10 @@ export default class CodeDeploy {
   async batchGetDeploymentTargets(
     {abortSignal, ...params}: RequestConfig & BatchGetDeploymentTargetsInput = {},
   ): Promise<BatchGetDeploymentTargetsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       deploymentId: params["deploymentId"],
       targetIds: params["targetIds"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchGetDeploymentTargets",
@@ -141,9 +141,9 @@ export default class CodeDeploy {
   async batchGetDeployments(
     {abortSignal, ...params}: RequestConfig & BatchGetDeploymentsInput,
   ): Promise<BatchGetDeploymentsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       deploymentIds: params["deploymentIds"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchGetDeployments",
@@ -159,9 +159,9 @@ export default class CodeDeploy {
   async batchGetOnPremisesInstances(
     {abortSignal, ...params}: RequestConfig & BatchGetOnPremisesInstancesInput,
   ): Promise<BatchGetOnPremisesInstancesOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       instanceNames: params["instanceNames"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchGetOnPremisesInstances",
@@ -177,10 +177,10 @@ export default class CodeDeploy {
   async continueDeployment(
     {abortSignal, ...params}: RequestConfig & ContinueDeploymentInput = {},
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       deploymentId: params["deploymentId"],
       deploymentWaitType: params["deploymentWaitType"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ContinueDeployment",
@@ -190,11 +190,11 @@ export default class CodeDeploy {
   async createApplication(
     {abortSignal, ...params}: RequestConfig & CreateApplicationInput,
   ): Promise<CreateApplicationOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       applicationName: params["applicationName"],
       computePlatform: params["computePlatform"],
       tags: params["tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateApplication",
@@ -210,7 +210,7 @@ export default class CodeDeploy {
   async createDeployment(
     {abortSignal, ...params}: RequestConfig & CreateDeploymentInput,
   ): Promise<CreateDeploymentOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       applicationName: params["applicationName"],
       deploymentGroupName: params["deploymentGroupName"],
       revision: fromRevisionLocation(params["revision"]),
@@ -221,7 +221,7 @@ export default class CodeDeploy {
       autoRollbackConfiguration: fromAutoRollbackConfiguration(params["autoRollbackConfiguration"]),
       updateOutdatedInstancesOnly: params["updateOutdatedInstancesOnly"],
       fileExistsBehavior: params["fileExistsBehavior"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDeployment",
@@ -237,12 +237,12 @@ export default class CodeDeploy {
   async createDeploymentConfig(
     {abortSignal, ...params}: RequestConfig & CreateDeploymentConfigInput,
   ): Promise<CreateDeploymentConfigOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       deploymentConfigName: params["deploymentConfigName"],
       minimumHealthyHosts: fromMinimumHealthyHosts(params["minimumHealthyHosts"]),
       trafficRoutingConfig: fromTrafficRoutingConfig(params["trafficRoutingConfig"]),
       computePlatform: params["computePlatform"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDeploymentConfig",
@@ -258,7 +258,7 @@ export default class CodeDeploy {
   async createDeploymentGroup(
     {abortSignal, ...params}: RequestConfig & CreateDeploymentGroupInput,
   ): Promise<CreateDeploymentGroupOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       applicationName: params["applicationName"],
       deploymentGroupName: params["deploymentGroupName"],
       deploymentConfigName: params["deploymentConfigName"],
@@ -276,7 +276,7 @@ export default class CodeDeploy {
       ecsServices: params["ecsServices"]?.map(x => fromECSService(x)),
       onPremisesTagSet: fromOnPremisesTagSet(params["onPremisesTagSet"]),
       tags: params["tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDeploymentGroup",
@@ -292,9 +292,9 @@ export default class CodeDeploy {
   async deleteApplication(
     {abortSignal, ...params}: RequestConfig & DeleteApplicationInput,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       applicationName: params["applicationName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteApplication",
@@ -304,9 +304,9 @@ export default class CodeDeploy {
   async deleteDeploymentConfig(
     {abortSignal, ...params}: RequestConfig & DeleteDeploymentConfigInput,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       deploymentConfigName: params["deploymentConfigName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteDeploymentConfig",
@@ -316,10 +316,10 @@ export default class CodeDeploy {
   async deleteDeploymentGroup(
     {abortSignal, ...params}: RequestConfig & DeleteDeploymentGroupInput,
   ): Promise<DeleteDeploymentGroupOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       applicationName: params["applicationName"],
       deploymentGroupName: params["deploymentGroupName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteDeploymentGroup",
@@ -335,9 +335,9 @@ export default class CodeDeploy {
   async deleteGitHubAccountToken(
     {abortSignal, ...params}: RequestConfig & DeleteGitHubAccountTokenInput = {},
   ): Promise<DeleteGitHubAccountTokenOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       tokenName: params["tokenName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteGitHubAccountToken",
@@ -353,9 +353,9 @@ export default class CodeDeploy {
   async deleteResourcesByExternalId(
     {abortSignal, ...params}: RequestConfig & DeleteResourcesByExternalIdInput = {},
   ): Promise<DeleteResourcesByExternalIdOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       externalId: params["externalId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteResourcesByExternalId",
@@ -369,9 +369,9 @@ export default class CodeDeploy {
   async deregisterOnPremisesInstance(
     {abortSignal, ...params}: RequestConfig & DeregisterOnPremisesInstanceInput,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       instanceName: params["instanceName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeregisterOnPremisesInstance",
@@ -381,9 +381,9 @@ export default class CodeDeploy {
   async getApplication(
     {abortSignal, ...params}: RequestConfig & GetApplicationInput,
   ): Promise<GetApplicationOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       applicationName: params["applicationName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetApplication",
@@ -399,10 +399,10 @@ export default class CodeDeploy {
   async getApplicationRevision(
     {abortSignal, ...params}: RequestConfig & GetApplicationRevisionInput,
   ): Promise<GetApplicationRevisionOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       applicationName: params["applicationName"],
       revision: fromRevisionLocation(params["revision"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetApplicationRevision",
@@ -420,9 +420,9 @@ export default class CodeDeploy {
   async getDeployment(
     {abortSignal, ...params}: RequestConfig & GetDeploymentInput,
   ): Promise<GetDeploymentOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       deploymentId: params["deploymentId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetDeployment",
@@ -438,9 +438,9 @@ export default class CodeDeploy {
   async getDeploymentConfig(
     {abortSignal, ...params}: RequestConfig & GetDeploymentConfigInput,
   ): Promise<GetDeploymentConfigOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       deploymentConfigName: params["deploymentConfigName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetDeploymentConfig",
@@ -456,10 +456,10 @@ export default class CodeDeploy {
   async getDeploymentGroup(
     {abortSignal, ...params}: RequestConfig & GetDeploymentGroupInput,
   ): Promise<GetDeploymentGroupOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       applicationName: params["applicationName"],
       deploymentGroupName: params["deploymentGroupName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetDeploymentGroup",
@@ -475,10 +475,10 @@ export default class CodeDeploy {
   async getDeploymentInstance(
     {abortSignal, ...params}: RequestConfig & GetDeploymentInstanceInput,
   ): Promise<GetDeploymentInstanceOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       deploymentId: params["deploymentId"],
       instanceId: params["instanceId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetDeploymentInstance",
@@ -494,10 +494,10 @@ export default class CodeDeploy {
   async getDeploymentTarget(
     {abortSignal, ...params}: RequestConfig & GetDeploymentTargetInput = {},
   ): Promise<GetDeploymentTargetOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       deploymentId: params["deploymentId"],
       targetId: params["targetId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetDeploymentTarget",
@@ -513,9 +513,9 @@ export default class CodeDeploy {
   async getOnPremisesInstance(
     {abortSignal, ...params}: RequestConfig & GetOnPremisesInstanceInput,
   ): Promise<GetOnPremisesInstanceOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       instanceName: params["instanceName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetOnPremisesInstance",
@@ -531,7 +531,7 @@ export default class CodeDeploy {
   async listApplicationRevisions(
     {abortSignal, ...params}: RequestConfig & ListApplicationRevisionsInput,
   ): Promise<ListApplicationRevisionsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       applicationName: params["applicationName"],
       sortBy: params["sortBy"],
       sortOrder: params["sortOrder"],
@@ -539,7 +539,7 @@ export default class CodeDeploy {
       s3KeyPrefix: params["s3KeyPrefix"],
       deployed: params["deployed"],
       nextToken: params["nextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListApplicationRevisions",
@@ -556,9 +556,9 @@ export default class CodeDeploy {
   async listApplications(
     {abortSignal, ...params}: RequestConfig & ListApplicationsInput = {},
   ): Promise<ListApplicationsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       nextToken: params["nextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListApplications",
@@ -575,9 +575,9 @@ export default class CodeDeploy {
   async listDeploymentConfigs(
     {abortSignal, ...params}: RequestConfig & ListDeploymentConfigsInput = {},
   ): Promise<ListDeploymentConfigsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       nextToken: params["nextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListDeploymentConfigs",
@@ -594,10 +594,10 @@ export default class CodeDeploy {
   async listDeploymentGroups(
     {abortSignal, ...params}: RequestConfig & ListDeploymentGroupsInput,
   ): Promise<ListDeploymentGroupsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       applicationName: params["applicationName"],
       nextToken: params["nextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListDeploymentGroups",
@@ -615,12 +615,12 @@ export default class CodeDeploy {
   async listDeploymentInstances(
     {abortSignal, ...params}: RequestConfig & ListDeploymentInstancesInput,
   ): Promise<ListDeploymentInstancesOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       deploymentId: params["deploymentId"],
       nextToken: params["nextToken"],
       instanceStatusFilter: params["instanceStatusFilter"],
       instanceTypeFilter: params["instanceTypeFilter"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListDeploymentInstances",
@@ -637,11 +637,11 @@ export default class CodeDeploy {
   async listDeploymentTargets(
     {abortSignal, ...params}: RequestConfig & ListDeploymentTargetsInput = {},
   ): Promise<ListDeploymentTargetsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       deploymentId: params["deploymentId"],
       nextToken: params["nextToken"],
       targetFilters: params["targetFilters"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListDeploymentTargets",
@@ -658,14 +658,14 @@ export default class CodeDeploy {
   async listDeployments(
     {abortSignal, ...params}: RequestConfig & ListDeploymentsInput = {},
   ): Promise<ListDeploymentsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       applicationName: params["applicationName"],
       deploymentGroupName: params["deploymentGroupName"],
       externalId: params["externalId"],
       includeOnlyStatuses: params["includeOnlyStatuses"],
       createTimeRange: fromTimeRange(params["createTimeRange"]),
       nextToken: params["nextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListDeployments",
@@ -682,9 +682,9 @@ export default class CodeDeploy {
   async listGitHubAccountTokenNames(
     {abortSignal, ...params}: RequestConfig & ListGitHubAccountTokenNamesInput = {},
   ): Promise<ListGitHubAccountTokenNamesOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       nextToken: params["nextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListGitHubAccountTokenNames",
@@ -701,11 +701,11 @@ export default class CodeDeploy {
   async listOnPremisesInstances(
     {abortSignal, ...params}: RequestConfig & ListOnPremisesInstancesInput = {},
   ): Promise<ListOnPremisesInstancesOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       registrationStatus: params["registrationStatus"],
       tagFilters: params["tagFilters"]?.map(x => fromTagFilter(x)),
       nextToken: params["nextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListOnPremisesInstances",
@@ -722,10 +722,10 @@ export default class CodeDeploy {
   async listTagsForResource(
     {abortSignal, ...params}: RequestConfig & ListTagsForResourceInput,
   ): Promise<ListTagsForResourceOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForResource",
@@ -742,11 +742,11 @@ export default class CodeDeploy {
   async putLifecycleEventHookExecutionStatus(
     {abortSignal, ...params}: RequestConfig & PutLifecycleEventHookExecutionStatusInput = {},
   ): Promise<PutLifecycleEventHookExecutionStatusOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       deploymentId: params["deploymentId"],
       lifecycleEventHookExecutionId: params["lifecycleEventHookExecutionId"],
       status: params["status"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutLifecycleEventHookExecutionStatus",
@@ -762,11 +762,11 @@ export default class CodeDeploy {
   async registerApplicationRevision(
     {abortSignal, ...params}: RequestConfig & RegisterApplicationRevisionInput,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       applicationName: params["applicationName"],
       description: params["description"],
       revision: fromRevisionLocation(params["revision"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RegisterApplicationRevision",
@@ -776,11 +776,11 @@ export default class CodeDeploy {
   async registerOnPremisesInstance(
     {abortSignal, ...params}: RequestConfig & RegisterOnPremisesInstanceInput,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       instanceName: params["instanceName"],
       iamSessionArn: params["iamSessionArn"],
       iamUserArn: params["iamUserArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RegisterOnPremisesInstance",
@@ -790,10 +790,10 @@ export default class CodeDeploy {
   async removeTagsFromOnPremisesInstances(
     {abortSignal, ...params}: RequestConfig & RemoveTagsFromOnPremisesInstancesInput,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       tags: params["tags"]?.map(x => fromTag(x)),
       instanceNames: params["instanceNames"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RemoveTagsFromOnPremisesInstances",
@@ -803,9 +803,9 @@ export default class CodeDeploy {
   async skipWaitTimeForInstanceTermination(
     {abortSignal, ...params}: RequestConfig & SkipWaitTimeForInstanceTerminationInput = {},
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       deploymentId: params["deploymentId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SkipWaitTimeForInstanceTermination",
@@ -815,10 +815,10 @@ export default class CodeDeploy {
   async stopDeployment(
     {abortSignal, ...params}: RequestConfig & StopDeploymentInput,
   ): Promise<StopDeploymentOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       deploymentId: params["deploymentId"],
       autoRollbackEnabled: params["autoRollbackEnabled"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopDeployment",
@@ -835,10 +835,10 @@ export default class CodeDeploy {
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceInput,
   ): Promise<TagResourceOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
@@ -852,10 +852,10 @@ export default class CodeDeploy {
   async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceInput,
   ): Promise<UntagResourceOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
       TagKeys: params["TagKeys"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResource",
@@ -869,10 +869,10 @@ export default class CodeDeploy {
   async updateApplication(
     {abortSignal, ...params}: RequestConfig & UpdateApplicationInput = {},
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       applicationName: params["applicationName"],
       newApplicationName: params["newApplicationName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateApplication",
@@ -882,7 +882,7 @@ export default class CodeDeploy {
   async updateDeploymentGroup(
     {abortSignal, ...params}: RequestConfig & UpdateDeploymentGroupInput,
   ): Promise<UpdateDeploymentGroupOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       applicationName: params["applicationName"],
       currentDeploymentGroupName: params["currentDeploymentGroupName"],
       newDeploymentGroupName: params["newDeploymentGroupName"],
@@ -900,7 +900,7 @@ export default class CodeDeploy {
       ec2TagSet: fromEC2TagSet(params["ec2TagSet"]),
       ecsServices: params["ecsServices"]?.map(x => fromECSService(x)),
       onPremisesTagSet: fromOnPremisesTagSet(params["onPremisesTagSet"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateDeploymentGroup",

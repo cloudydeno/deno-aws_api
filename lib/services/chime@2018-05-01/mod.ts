@@ -31,343 +31,313 @@ export default class Chime {
   async associatePhoneNumberWithUser(
     {abortSignal, ...params}: RequestConfig & AssociatePhoneNumberWithUserRequest,
   ): Promise<AssociatePhoneNumberWithUserResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       E164PhoneNumber: params["E164PhoneNumber"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AssociatePhoneNumberWithUser",
       requestUri: cmnP.encodePath`/accounts/${params["AccountId"]}/users/${params["UserId"]}?operation=associate-phone-number`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async associatePhoneNumbersWithVoiceConnector(
     {abortSignal, ...params}: RequestConfig & AssociatePhoneNumbersWithVoiceConnectorRequest,
   ): Promise<AssociatePhoneNumbersWithVoiceConnectorResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       E164PhoneNumbers: params["E164PhoneNumbers"],
       ForceAssociate: params["ForceAssociate"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AssociatePhoneNumbersWithVoiceConnector",
       requestUri: cmnP.encodePath`/voice-connectors/${params["VoiceConnectorId"]}?operation=associate-phone-numbers`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "PhoneNumberErrors": [toPhoneNumberError],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "PhoneNumberErrors": [toPhoneNumberError],
+      },
+    }, await resp.json());
   }
 
   async associatePhoneNumbersWithVoiceConnectorGroup(
     {abortSignal, ...params}: RequestConfig & AssociatePhoneNumbersWithVoiceConnectorGroupRequest,
   ): Promise<AssociatePhoneNumbersWithVoiceConnectorGroupResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       E164PhoneNumbers: params["E164PhoneNumbers"],
       ForceAssociate: params["ForceAssociate"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AssociatePhoneNumbersWithVoiceConnectorGroup",
       requestUri: cmnP.encodePath`/voice-connector-groups/${params["VoiceConnectorGroupId"]}?operation=associate-phone-numbers`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "PhoneNumberErrors": [toPhoneNumberError],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "PhoneNumberErrors": [toPhoneNumberError],
+      },
+    }, await resp.json());
   }
 
   async associateSigninDelegateGroupsWithAccount(
     {abortSignal, ...params}: RequestConfig & AssociateSigninDelegateGroupsWithAccountRequest,
   ): Promise<AssociateSigninDelegateGroupsWithAccountResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       SigninDelegateGroups: params["SigninDelegateGroups"]?.map(x => fromSigninDelegateGroup(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AssociateSigninDelegateGroupsWithAccount",
       requestUri: cmnP.encodePath`/accounts/${params["AccountId"]}?operation=associate-signin-delegate-groups`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async batchCreateAttendee(
     {abortSignal, ...params}: RequestConfig & BatchCreateAttendeeRequest,
   ): Promise<BatchCreateAttendeeResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Attendees: params["Attendees"]?.map(x => fromCreateAttendeeRequestItem(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchCreateAttendee",
       requestUri: cmnP.encodePath`/meetings/${params["MeetingId"]}/attendees?operation=batch-create`,
       responseCode: 201,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Attendees": [toAttendee],
-          "Errors": [toCreateAttendeeError],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Attendees": [toAttendee],
+        "Errors": [toCreateAttendeeError],
+      },
+    }, await resp.json());
   }
 
   async batchCreateRoomMembership(
     {abortSignal, ...params}: RequestConfig & BatchCreateRoomMembershipRequest,
   ): Promise<BatchCreateRoomMembershipResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       MembershipItemList: params["MembershipItemList"]?.map(x => fromMembershipItem(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchCreateRoomMembership",
       requestUri: cmnP.encodePath`/accounts/${params["AccountId"]}/rooms/${params["RoomId"]}/memberships?operation=batch-create`,
       responseCode: 201,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Errors": [toMemberError],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Errors": [toMemberError],
+      },
+    }, await resp.json());
   }
 
   async batchDeletePhoneNumber(
     {abortSignal, ...params}: RequestConfig & BatchDeletePhoneNumberRequest,
   ): Promise<BatchDeletePhoneNumberResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       PhoneNumberIds: params["PhoneNumberIds"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchDeletePhoneNumber",
       requestUri: "/phone-numbers?operation=batch-delete",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "PhoneNumberErrors": [toPhoneNumberError],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "PhoneNumberErrors": [toPhoneNumberError],
+      },
+    }, await resp.json());
   }
 
   async batchSuspendUser(
     {abortSignal, ...params}: RequestConfig & BatchSuspendUserRequest,
   ): Promise<BatchSuspendUserResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       UserIdList: params["UserIdList"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchSuspendUser",
       requestUri: cmnP.encodePath`/accounts/${params["AccountId"]}/users?operation=suspend`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "UserErrors": [toUserError],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "UserErrors": [toUserError],
+      },
+    }, await resp.json());
   }
 
   async batchUnsuspendUser(
     {abortSignal, ...params}: RequestConfig & BatchUnsuspendUserRequest,
   ): Promise<BatchUnsuspendUserResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       UserIdList: params["UserIdList"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchUnsuspendUser",
       requestUri: cmnP.encodePath`/accounts/${params["AccountId"]}/users?operation=unsuspend`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "UserErrors": [toUserError],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "UserErrors": [toUserError],
+      },
+    }, await resp.json());
   }
 
   async batchUpdatePhoneNumber(
     {abortSignal, ...params}: RequestConfig & BatchUpdatePhoneNumberRequest,
   ): Promise<BatchUpdatePhoneNumberResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       UpdatePhoneNumberRequestItems: params["UpdatePhoneNumberRequestItems"]?.map(x => fromUpdatePhoneNumberRequestItem(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchUpdatePhoneNumber",
       requestUri: "/phone-numbers?operation=batch-update",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "PhoneNumberErrors": [toPhoneNumberError],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "PhoneNumberErrors": [toPhoneNumberError],
+      },
+    }, await resp.json());
   }
 
   async batchUpdateUser(
     {abortSignal, ...params}: RequestConfig & BatchUpdateUserRequest,
   ): Promise<BatchUpdateUserResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       UpdateUserRequestItems: params["UpdateUserRequestItems"]?.map(x => fromUpdateUserRequestItem(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchUpdateUser",
       requestUri: cmnP.encodePath`/accounts/${params["AccountId"]}/users`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "UserErrors": [toUserError],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "UserErrors": [toUserError],
+      },
+    }, await resp.json());
   }
 
   async createAccount(
     {abortSignal, ...params}: RequestConfig & CreateAccountRequest,
   ): Promise<CreateAccountResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateAccount",
       requestUri: "/accounts",
       responseCode: 201,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Account": toAccount,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Account": toAccount,
+      },
+    }, await resp.json());
   }
 
   async createAttendee(
     {abortSignal, ...params}: RequestConfig & CreateAttendeeRequest,
   ): Promise<CreateAttendeeResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ExternalUserId: params["ExternalUserId"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateAttendee",
       requestUri: cmnP.encodePath`/meetings/${params["MeetingId"]}/attendees`,
       responseCode: 201,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Attendee": toAttendee,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Attendee": toAttendee,
+      },
+    }, await resp.json());
   }
 
   async createBot(
     {abortSignal, ...params}: RequestConfig & CreateBotRequest,
   ): Promise<CreateBotResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DisplayName: params["DisplayName"],
       Domain: params["Domain"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateBot",
       requestUri: cmnP.encodePath`/accounts/${params["AccountId"]}/bots`,
       responseCode: 201,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Bot": toBot,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Bot": toBot,
+      },
+    }, await resp.json());
   }
 
   async createMeeting(
     {abortSignal, ...params}: RequestConfig & CreateMeetingRequest,
   ): Promise<CreateMeetingResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
       ExternalMeetingId: params["ExternalMeetingId"],
       MeetingHostId: params["MeetingHostId"],
       MediaRegion: params["MediaRegion"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
       NotificationsConfiguration: fromMeetingNotificationConfiguration(params["NotificationsConfiguration"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateMeeting",
       requestUri: "/meetings",
       responseCode: 201,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Meeting": toMeeting,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Meeting": toMeeting,
+      },
+    }, await resp.json());
   }
 
   async createMeetingWithAttendees(
     {abortSignal, ...params}: RequestConfig & CreateMeetingWithAttendeesRequest,
   ): Promise<CreateMeetingWithAttendeesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
       ExternalMeetingId: params["ExternalMeetingId"],
       MeetingHostId: params["MeetingHostId"],
@@ -375,52 +345,48 @@ export default class Chime {
       Tags: params["Tags"]?.map(x => fromTag(x)),
       NotificationsConfiguration: fromMeetingNotificationConfiguration(params["NotificationsConfiguration"]),
       Attendees: params["Attendees"]?.map(x => fromCreateAttendeeRequestItem(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateMeetingWithAttendees",
       requestUri: "/meetings?operation=create-attendees",
       responseCode: 201,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Meeting": toMeeting,
-          "Attendees": [toAttendee],
-          "Errors": [toCreateAttendeeError],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Meeting": toMeeting,
+        "Attendees": [toAttendee],
+        "Errors": [toCreateAttendeeError],
+      },
+    }, await resp.json());
   }
 
   async createPhoneNumberOrder(
     {abortSignal, ...params}: RequestConfig & CreatePhoneNumberOrderRequest,
   ): Promise<CreatePhoneNumberOrderResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ProductType: params["ProductType"],
       E164PhoneNumbers: params["E164PhoneNumbers"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreatePhoneNumberOrder",
       requestUri: "/phone-number-orders",
       responseCode: 201,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "PhoneNumberOrder": toPhoneNumberOrder,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "PhoneNumberOrder": toPhoneNumberOrder,
+      },
+    }, await resp.json());
   }
 
   async createProxySession(
     {abortSignal, ...params}: RequestConfig & CreateProxySessionRequest,
   ): Promise<CreateProxySessionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ParticipantPhoneNumbers: params["ParticipantPhoneNumbers"],
       Name: params["Name"],
       ExpiryMinutes: params["ExpiryMinutes"],
@@ -428,138 +394,126 @@ export default class Chime {
       NumberSelectionBehavior: params["NumberSelectionBehavior"],
       GeoMatchLevel: params["GeoMatchLevel"],
       GeoMatchParams: fromGeoMatchParams(params["GeoMatchParams"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateProxySession",
       requestUri: cmnP.encodePath`/voice-connectors/${params["VoiceConnectorId"]}/proxy-sessions`,
       responseCode: 201,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ProxySession": toProxySession,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ProxySession": toProxySession,
+      },
+    }, await resp.json());
   }
 
   async createRoom(
     {abortSignal, ...params}: RequestConfig & CreateRoomRequest,
   ): Promise<CreateRoomResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateRoom",
       requestUri: cmnP.encodePath`/accounts/${params["AccountId"]}/rooms`,
       responseCode: 201,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Room": toRoom,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Room": toRoom,
+      },
+    }, await resp.json());
   }
 
   async createRoomMembership(
     {abortSignal, ...params}: RequestConfig & CreateRoomMembershipRequest,
   ): Promise<CreateRoomMembershipResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       MemberId: params["MemberId"],
       Role: params["Role"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateRoomMembership",
       requestUri: cmnP.encodePath`/accounts/${params["AccountId"]}/rooms/${params["RoomId"]}/memberships`,
       responseCode: 201,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "RoomMembership": toRoomMembership,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "RoomMembership": toRoomMembership,
+      },
+    }, await resp.json());
   }
 
   async createUser(
     {abortSignal, ...params}: RequestConfig & CreateUserRequest,
   ): Promise<CreateUserResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Username: params["Username"],
       Email: params["Email"],
       UserType: params["UserType"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateUser",
       requestUri: cmnP.encodePath`/accounts/${params["AccountId"]}/users?operation=create`,
       responseCode: 201,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "User": toUser,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "User": toUser,
+      },
+    }, await resp.json());
   }
 
   async createVoiceConnector(
     {abortSignal, ...params}: RequestConfig & CreateVoiceConnectorRequest,
   ): Promise<CreateVoiceConnectorResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       AwsRegion: params["AwsRegion"],
       RequireEncryption: params["RequireEncryption"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateVoiceConnector",
       requestUri: "/voice-connectors",
       responseCode: 201,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "VoiceConnector": toVoiceConnector,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "VoiceConnector": toVoiceConnector,
+      },
+    }, await resp.json());
   }
 
   async createVoiceConnectorGroup(
     {abortSignal, ...params}: RequestConfig & CreateVoiceConnectorGroupRequest,
   ): Promise<CreateVoiceConnectorGroupResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       VoiceConnectorItems: params["VoiceConnectorItems"]?.map(x => fromVoiceConnectorItem(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateVoiceConnectorGroup",
       requestUri: "/voice-connector-groups",
       responseCode: 201,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "VoiceConnectorGroup": toVoiceConnectorGroup,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "VoiceConnectorGroup": toVoiceConnectorGroup,
+      },
+    }, await resp.json());
   }
 
   async deleteAccount(
@@ -573,12 +527,10 @@ export default class Chime {
       requestUri: cmnP.encodePath`/accounts/${params["AccountId"]}`,
       responseCode: 204,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async deleteAttendee(
@@ -766,9 +718,9 @@ export default class Chime {
   async deleteVoiceConnectorTerminationCredentials(
     {abortSignal, ...params}: RequestConfig & DeleteVoiceConnectorTerminationCredentialsRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Usernames: params["Usernames"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteVoiceConnectorTerminationCredentials",
@@ -787,76 +739,68 @@ export default class Chime {
       requestUri: cmnP.encodePath`/accounts/${params["AccountId"]}/users/${params["UserId"]}?operation=disassociate-phone-number`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async disassociatePhoneNumbersFromVoiceConnector(
     {abortSignal, ...params}: RequestConfig & DisassociatePhoneNumbersFromVoiceConnectorRequest,
   ): Promise<DisassociatePhoneNumbersFromVoiceConnectorResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       E164PhoneNumbers: params["E164PhoneNumbers"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisassociatePhoneNumbersFromVoiceConnector",
       requestUri: cmnP.encodePath`/voice-connectors/${params["VoiceConnectorId"]}?operation=disassociate-phone-numbers`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "PhoneNumberErrors": [toPhoneNumberError],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "PhoneNumberErrors": [toPhoneNumberError],
+      },
+    }, await resp.json());
   }
 
   async disassociatePhoneNumbersFromVoiceConnectorGroup(
     {abortSignal, ...params}: RequestConfig & DisassociatePhoneNumbersFromVoiceConnectorGroupRequest,
   ): Promise<DisassociatePhoneNumbersFromVoiceConnectorGroupResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       E164PhoneNumbers: params["E164PhoneNumbers"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisassociatePhoneNumbersFromVoiceConnectorGroup",
       requestUri: cmnP.encodePath`/voice-connector-groups/${params["VoiceConnectorGroupId"]}?operation=disassociate-phone-numbers`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "PhoneNumberErrors": [toPhoneNumberError],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "PhoneNumberErrors": [toPhoneNumberError],
+      },
+    }, await resp.json());
   }
 
   async disassociateSigninDelegateGroupsFromAccount(
     {abortSignal, ...params}: RequestConfig & DisassociateSigninDelegateGroupsFromAccountRequest,
   ): Promise<DisassociateSigninDelegateGroupsFromAccountResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       GroupNames: params["GroupNames"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisassociateSigninDelegateGroupsFromAccount",
       requestUri: cmnP.encodePath`/accounts/${params["AccountId"]}?operation=disassociate-signin-delegate-groups`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async getAccount(
@@ -869,14 +813,12 @@ export default class Chime {
       method: "GET",
       requestUri: cmnP.encodePath`/accounts/${params["AccountId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Account": toAccount,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Account": toAccount,
+      },
+    }, await resp.json());
   }
 
   async getAccountSettings(
@@ -889,14 +831,12 @@ export default class Chime {
       method: "GET",
       requestUri: cmnP.encodePath`/accounts/${params["AccountId"]}/settings`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "AccountSettings": toAccountSettings,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "AccountSettings": toAccountSettings,
+      },
+    }, await resp.json());
   }
 
   async getAttendee(
@@ -910,14 +850,12 @@ export default class Chime {
       requestUri: cmnP.encodePath`/meetings/${params["MeetingId"]}/attendees/${params["AttendeeId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Attendee": toAttendee,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Attendee": toAttendee,
+      },
+    }, await resp.json());
   }
 
   async getBot(
@@ -931,14 +869,12 @@ export default class Chime {
       requestUri: cmnP.encodePath`/accounts/${params["AccountId"]}/bots/${params["BotId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Bot": toBot,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Bot": toBot,
+      },
+    }, await resp.json());
   }
 
   async getEventsConfiguration(
@@ -952,14 +888,12 @@ export default class Chime {
       requestUri: cmnP.encodePath`/accounts/${params["AccountId"]}/bots/${params["BotId"]}/events-configuration`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "EventsConfiguration": toEventsConfiguration,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "EventsConfiguration": toEventsConfiguration,
+      },
+    }, await resp.json());
   }
 
   async getGlobalSettings(
@@ -972,15 +906,13 @@ export default class Chime {
       requestUri: "/settings",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "BusinessCalling": toBusinessCallingSettings,
-          "VoiceConnector": toVoiceConnectorSettings,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "BusinessCalling": toBusinessCallingSettings,
+        "VoiceConnector": toVoiceConnectorSettings,
+      },
+    }, await resp.json());
   }
 
   async getMeeting(
@@ -994,14 +926,12 @@ export default class Chime {
       requestUri: cmnP.encodePath`/meetings/${params["MeetingId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Meeting": toMeeting,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Meeting": toMeeting,
+      },
+    }, await resp.json());
   }
 
   async getPhoneNumber(
@@ -1014,14 +944,12 @@ export default class Chime {
       method: "GET",
       requestUri: cmnP.encodePath`/phone-numbers/${params["PhoneNumberId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "PhoneNumber": toPhoneNumber,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "PhoneNumber": toPhoneNumber,
+      },
+    }, await resp.json());
   }
 
   async getPhoneNumberOrder(
@@ -1035,14 +963,12 @@ export default class Chime {
       requestUri: cmnP.encodePath`/phone-number-orders/${params["PhoneNumberOrderId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "PhoneNumberOrder": toPhoneNumberOrder,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "PhoneNumberOrder": toPhoneNumberOrder,
+      },
+    }, await resp.json());
   }
 
   async getPhoneNumberSettings(
@@ -1055,15 +981,13 @@ export default class Chime {
       requestUri: "/settings/phone-number",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "CallingName": "s",
-          "CallingNameUpdatedTimestamp": "d",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "CallingName": "s",
+        "CallingNameUpdatedTimestamp": "d",
+      },
+    }, await resp.json());
   }
 
   async getProxySession(
@@ -1077,14 +1001,12 @@ export default class Chime {
       requestUri: cmnP.encodePath`/voice-connectors/${params["VoiceConnectorId"]}/proxy-sessions/${params["ProxySessionId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ProxySession": toProxySession,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ProxySession": toProxySession,
+      },
+    }, await resp.json());
   }
 
   async getRetentionSettings(
@@ -1097,15 +1019,13 @@ export default class Chime {
       method: "GET",
       requestUri: cmnP.encodePath`/accounts/${params["AccountId"]}/retention-settings`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "RetentionSettings": toRetentionSettings,
-          "InitiateDeletionTimestamp": "d",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "RetentionSettings": toRetentionSettings,
+        "InitiateDeletionTimestamp": "d",
+      },
+    }, await resp.json());
   }
 
   async getRoom(
@@ -1119,14 +1039,12 @@ export default class Chime {
       requestUri: cmnP.encodePath`/accounts/${params["AccountId"]}/rooms/${params["RoomId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Room": toRoom,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Room": toRoom,
+      },
+    }, await resp.json());
   }
 
   async getUser(
@@ -1140,14 +1058,12 @@ export default class Chime {
       requestUri: cmnP.encodePath`/accounts/${params["AccountId"]}/users/${params["UserId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "User": toUser,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "User": toUser,
+      },
+    }, await resp.json());
   }
 
   async getUserSettings(
@@ -1161,14 +1077,12 @@ export default class Chime {
       requestUri: cmnP.encodePath`/accounts/${params["AccountId"]}/users/${params["UserId"]}/settings`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "UserSettings": toUserSettings,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "UserSettings": toUserSettings,
+      },
+    }, await resp.json());
   }
 
   async getVoiceConnector(
@@ -1182,14 +1096,12 @@ export default class Chime {
       requestUri: cmnP.encodePath`/voice-connectors/${params["VoiceConnectorId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "VoiceConnector": toVoiceConnector,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "VoiceConnector": toVoiceConnector,
+      },
+    }, await resp.json());
   }
 
   async getVoiceConnectorEmergencyCallingConfiguration(
@@ -1203,14 +1115,12 @@ export default class Chime {
       requestUri: cmnP.encodePath`/voice-connectors/${params["VoiceConnectorId"]}/emergency-calling-configuration`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "EmergencyCallingConfiguration": toEmergencyCallingConfiguration,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "EmergencyCallingConfiguration": toEmergencyCallingConfiguration,
+      },
+    }, await resp.json());
   }
 
   async getVoiceConnectorGroup(
@@ -1224,14 +1134,12 @@ export default class Chime {
       requestUri: cmnP.encodePath`/voice-connector-groups/${params["VoiceConnectorGroupId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "VoiceConnectorGroup": toVoiceConnectorGroup,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "VoiceConnectorGroup": toVoiceConnectorGroup,
+      },
+    }, await resp.json());
   }
 
   async getVoiceConnectorLoggingConfiguration(
@@ -1245,14 +1153,12 @@ export default class Chime {
       requestUri: cmnP.encodePath`/voice-connectors/${params["VoiceConnectorId"]}/logging-configuration`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "LoggingConfiguration": toLoggingConfiguration,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "LoggingConfiguration": toLoggingConfiguration,
+      },
+    }, await resp.json());
   }
 
   async getVoiceConnectorOrigination(
@@ -1266,14 +1172,12 @@ export default class Chime {
       requestUri: cmnP.encodePath`/voice-connectors/${params["VoiceConnectorId"]}/origination`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Origination": toOrigination,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Origination": toOrigination,
+      },
+    }, await resp.json());
   }
 
   async getVoiceConnectorProxy(
@@ -1287,14 +1191,12 @@ export default class Chime {
       requestUri: cmnP.encodePath`/voice-connectors/${params["VoiceConnectorId"]}/programmable-numbers/proxy`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Proxy": toProxy,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Proxy": toProxy,
+      },
+    }, await resp.json());
   }
 
   async getVoiceConnectorStreamingConfiguration(
@@ -1308,14 +1210,12 @@ export default class Chime {
       requestUri: cmnP.encodePath`/voice-connectors/${params["VoiceConnectorId"]}/streaming-configuration`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "StreamingConfiguration": toStreamingConfiguration,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "StreamingConfiguration": toStreamingConfiguration,
+      },
+    }, await resp.json());
   }
 
   async getVoiceConnectorTermination(
@@ -1329,14 +1229,12 @@ export default class Chime {
       requestUri: cmnP.encodePath`/voice-connectors/${params["VoiceConnectorId"]}/termination`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Termination": toTermination,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Termination": toTermination,
+      },
+    }, await resp.json());
   }
 
   async getVoiceConnectorTerminationHealth(
@@ -1350,37 +1248,33 @@ export default class Chime {
       requestUri: cmnP.encodePath`/voice-connectors/${params["VoiceConnectorId"]}/termination/health`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "TerminationHealth": toTerminationHealth,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "TerminationHealth": toTerminationHealth,
+      },
+    }, await resp.json());
   }
 
   async inviteUsers(
     {abortSignal, ...params}: RequestConfig & InviteUsersRequest,
   ): Promise<InviteUsersResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       UserEmailList: params["UserEmailList"],
       UserType: params["UserType"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "InviteUsers",
       requestUri: cmnP.encodePath`/accounts/${params["AccountId"]}/users?operation=add`,
       responseCode: 201,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Invites": [toInvite],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Invites": [toInvite],
+      },
+    }, await resp.json());
   }
 
   async listAccounts(
@@ -1397,15 +1291,13 @@ export default class Chime {
       method: "GET",
       requestUri: "/accounts",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Accounts": [toAccount],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Accounts": [toAccount],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listAttendeeTags(
@@ -1419,14 +1311,12 @@ export default class Chime {
       requestUri: cmnP.encodePath`/meetings/${params["MeetingId"]}/attendees/${params["AttendeeId"]}/tags`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Tags": [toTag],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Tags": [toTag],
+      },
+    }, await resp.json());
   }
 
   async listAttendees(
@@ -1442,15 +1332,13 @@ export default class Chime {
       requestUri: cmnP.encodePath`/meetings/${params["MeetingId"]}/attendees`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Attendees": [toAttendee],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Attendees": [toAttendee],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listBots(
@@ -1466,15 +1354,13 @@ export default class Chime {
       requestUri: cmnP.encodePath`/accounts/${params["AccountId"]}/bots`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Bots": [toBot],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Bots": [toBot],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listMeetingTags(
@@ -1488,14 +1374,12 @@ export default class Chime {
       requestUri: cmnP.encodePath`/meetings/${params["MeetingId"]}/tags`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Tags": [toTag],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Tags": [toTag],
+      },
+    }, await resp.json());
   }
 
   async listMeetings(
@@ -1511,15 +1395,13 @@ export default class Chime {
       requestUri: "/meetings",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Meetings": [toMeeting],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Meetings": [toMeeting],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listPhoneNumberOrders(
@@ -1535,15 +1417,13 @@ export default class Chime {
       requestUri: "/phone-number-orders",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "PhoneNumberOrders": [toPhoneNumberOrder],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "PhoneNumberOrders": [toPhoneNumberOrder],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listPhoneNumbers(
@@ -1562,15 +1442,13 @@ export default class Chime {
       method: "GET",
       requestUri: "/phone-numbers",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "PhoneNumbers": [toPhoneNumber],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "PhoneNumbers": [toPhoneNumber],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listProxySessions(
@@ -1587,15 +1465,13 @@ export default class Chime {
       requestUri: cmnP.encodePath`/voice-connectors/${params["VoiceConnectorId"]}/proxy-sessions`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ProxySessions": [toProxySession],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ProxySessions": [toProxySession],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listRoomMemberships(
@@ -1611,15 +1487,13 @@ export default class Chime {
       requestUri: cmnP.encodePath`/accounts/${params["AccountId"]}/rooms/${params["RoomId"]}/memberships`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "RoomMemberships": [toRoomMembership],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "RoomMemberships": [toRoomMembership],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listRooms(
@@ -1636,15 +1510,13 @@ export default class Chime {
       requestUri: cmnP.encodePath`/accounts/${params["AccountId"]}/rooms`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Rooms": [toRoom],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Rooms": [toRoom],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listTagsForResource(
@@ -1658,14 +1530,12 @@ export default class Chime {
       method: "GET",
       requestUri: "/tags",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Tags": [toTag],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Tags": [toTag],
+      },
+    }, await resp.json());
   }
 
   async listUsers(
@@ -1683,15 +1553,13 @@ export default class Chime {
       requestUri: cmnP.encodePath`/accounts/${params["AccountId"]}/users`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Users": [toUser],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Users": [toUser],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listVoiceConnectorGroups(
@@ -1707,15 +1575,13 @@ export default class Chime {
       requestUri: "/voice-connector-groups",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "VoiceConnectorGroups": [toVoiceConnectorGroup],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "VoiceConnectorGroups": [toVoiceConnectorGroup],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listVoiceConnectorTerminationCredentials(
@@ -1729,14 +1595,12 @@ export default class Chime {
       requestUri: cmnP.encodePath`/voice-connectors/${params["VoiceConnectorId"]}/termination/credentials`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Usernames": ["s"],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Usernames": ["s"],
+      },
+    }, await resp.json());
   }
 
   async listVoiceConnectors(
@@ -1752,15 +1616,13 @@ export default class Chime {
       requestUri: "/voice-connectors",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "VoiceConnectors": [toVoiceConnector],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "VoiceConnectors": [toVoiceConnector],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async logoutUser(
@@ -1773,21 +1635,19 @@ export default class Chime {
       requestUri: cmnP.encodePath`/accounts/${params["AccountId"]}/users/${params["UserId"]}?operation=logout`,
       responseCode: 204,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async putEventsConfiguration(
     {abortSignal, ...params}: RequestConfig & PutEventsConfigurationRequest,
   ): Promise<PutEventsConfigurationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       OutboundEventsHTTPSEndpoint: params["OutboundEventsHTTPSEndpoint"],
       LambdaFunctionArn: params["LambdaFunctionArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutEventsConfiguration",
@@ -1795,22 +1655,20 @@ export default class Chime {
       requestUri: cmnP.encodePath`/accounts/${params["AccountId"]}/bots/${params["BotId"]}/events-configuration`,
       responseCode: 201,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "EventsConfiguration": toEventsConfiguration,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "EventsConfiguration": toEventsConfiguration,
+      },
+    }, await resp.json());
   }
 
   async putRetentionSettings(
     {abortSignal, ...params}: RequestConfig & PutRetentionSettingsRequest,
   ): Promise<PutRetentionSettingsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       RetentionSettings: fromRetentionSettings(params["RetentionSettings"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutRetentionSettings",
@@ -1818,23 +1676,21 @@ export default class Chime {
       requestUri: cmnP.encodePath`/accounts/${params["AccountId"]}/retention-settings`,
       responseCode: 204,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "RetentionSettings": toRetentionSettings,
-          "InitiateDeletionTimestamp": "d",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "RetentionSettings": toRetentionSettings,
+        "InitiateDeletionTimestamp": "d",
+      },
+    }, await resp.json());
   }
 
   async putVoiceConnectorEmergencyCallingConfiguration(
     {abortSignal, ...params}: RequestConfig & PutVoiceConnectorEmergencyCallingConfigurationRequest,
   ): Promise<PutVoiceConnectorEmergencyCallingConfigurationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       EmergencyCallingConfiguration: fromEmergencyCallingConfiguration(params["EmergencyCallingConfiguration"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutVoiceConnectorEmergencyCallingConfiguration",
@@ -1842,22 +1698,20 @@ export default class Chime {
       requestUri: cmnP.encodePath`/voice-connectors/${params["VoiceConnectorId"]}/emergency-calling-configuration`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "EmergencyCallingConfiguration": toEmergencyCallingConfiguration,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "EmergencyCallingConfiguration": toEmergencyCallingConfiguration,
+      },
+    }, await resp.json());
   }
 
   async putVoiceConnectorLoggingConfiguration(
     {abortSignal, ...params}: RequestConfig & PutVoiceConnectorLoggingConfigurationRequest,
   ): Promise<PutVoiceConnectorLoggingConfigurationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       LoggingConfiguration: fromLoggingConfiguration(params["LoggingConfiguration"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutVoiceConnectorLoggingConfiguration",
@@ -1865,22 +1719,20 @@ export default class Chime {
       requestUri: cmnP.encodePath`/voice-connectors/${params["VoiceConnectorId"]}/logging-configuration`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "LoggingConfiguration": toLoggingConfiguration,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "LoggingConfiguration": toLoggingConfiguration,
+      },
+    }, await resp.json());
   }
 
   async putVoiceConnectorOrigination(
     {abortSignal, ...params}: RequestConfig & PutVoiceConnectorOriginationRequest,
   ): Promise<PutVoiceConnectorOriginationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Origination: fromOrigination(params["Origination"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutVoiceConnectorOrigination",
@@ -1888,47 +1740,43 @@ export default class Chime {
       requestUri: cmnP.encodePath`/voice-connectors/${params["VoiceConnectorId"]}/origination`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Origination": toOrigination,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Origination": toOrigination,
+      },
+    }, await resp.json());
   }
 
   async putVoiceConnectorProxy(
     {abortSignal, ...params}: RequestConfig & PutVoiceConnectorProxyRequest,
   ): Promise<PutVoiceConnectorProxyResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DefaultSessionExpiryMinutes: params["DefaultSessionExpiryMinutes"],
       PhoneNumberPoolCountries: params["PhoneNumberPoolCountries"],
       FallBackPhoneNumber: params["FallBackPhoneNumber"],
       Disabled: params["Disabled"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutVoiceConnectorProxy",
       method: "PUT",
       requestUri: cmnP.encodePath`/voice-connectors/${params["VoiceConnectorId"]}/programmable-numbers/proxy`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Proxy": toProxy,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Proxy": toProxy,
+      },
+    }, await resp.json());
   }
 
   async putVoiceConnectorStreamingConfiguration(
     {abortSignal, ...params}: RequestConfig & PutVoiceConnectorStreamingConfigurationRequest,
   ): Promise<PutVoiceConnectorStreamingConfigurationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       StreamingConfiguration: fromStreamingConfiguration(params["StreamingConfiguration"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutVoiceConnectorStreamingConfiguration",
@@ -1936,22 +1784,20 @@ export default class Chime {
       requestUri: cmnP.encodePath`/voice-connectors/${params["VoiceConnectorId"]}/streaming-configuration`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "StreamingConfiguration": toStreamingConfiguration,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "StreamingConfiguration": toStreamingConfiguration,
+      },
+    }, await resp.json());
   }
 
   async putVoiceConnectorTermination(
     {abortSignal, ...params}: RequestConfig & PutVoiceConnectorTerminationRequest,
   ): Promise<PutVoiceConnectorTerminationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Termination: fromTermination(params["Termination"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutVoiceConnectorTermination",
@@ -1959,22 +1805,20 @@ export default class Chime {
       requestUri: cmnP.encodePath`/voice-connectors/${params["VoiceConnectorId"]}/termination`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Termination": toTermination,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Termination": toTermination,
+      },
+    }, await resp.json());
   }
 
   async putVoiceConnectorTerminationCredentials(
     {abortSignal, ...params}: RequestConfig & PutVoiceConnectorTerminationCredentialsRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Credentials: params["Credentials"]?.map(x => fromCredential(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutVoiceConnectorTerminationCredentials",
@@ -1993,12 +1837,10 @@ export default class Chime {
       requestUri: cmnP.encodePath`/accounts/${params["AccountId"]}/conversations/${params["ConversationId"]}/messages/${params["MessageId"]}?operation=redact`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async redactRoomMessage(
@@ -2011,12 +1853,10 @@ export default class Chime {
       requestUri: cmnP.encodePath`/accounts/${params["AccountId"]}/rooms/${params["RoomId"]}/messages/${params["MessageId"]}?operation=redact`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async regenerateSecurityToken(
@@ -2029,14 +1869,12 @@ export default class Chime {
       requestUri: cmnP.encodePath`/accounts/${params["AccountId"]}/bots/${params["BotId"]}?operation=regenerate-security-token`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Bot": toBot,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Bot": toBot,
+      },
+    }, await resp.json());
   }
 
   async resetPersonalPIN(
@@ -2049,14 +1887,12 @@ export default class Chime {
       requestUri: cmnP.encodePath`/accounts/${params["AccountId"]}/users/${params["UserId"]}?operation=reset-personal-pin`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "User": toUser,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "User": toUser,
+      },
+    }, await resp.json());
   }
 
   async restorePhoneNumber(
@@ -2069,14 +1905,12 @@ export default class Chime {
       requestUri: cmnP.encodePath`/phone-numbers/${params["PhoneNumberId"]}?operation=restore`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "PhoneNumber": toPhoneNumber,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "PhoneNumber": toPhoneNumber,
+      },
+    }, await resp.json());
   }
 
   async searchAvailablePhoneNumbers(
@@ -2096,22 +1930,20 @@ export default class Chime {
       method: "GET",
       requestUri: "/search?type=phone-numbers",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "E164PhoneNumbers": ["s"],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "E164PhoneNumbers": ["s"],
+      },
+    }, await resp.json());
   }
 
   async tagAttendee(
     {abortSignal, ...params}: RequestConfig & TagAttendeeRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagAttendee",
@@ -2123,9 +1955,9 @@ export default class Chime {
   async tagMeeting(
     {abortSignal, ...params}: RequestConfig & TagMeetingRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagMeeting",
@@ -2137,10 +1969,10 @@ export default class Chime {
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceARN: params["ResourceARN"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
@@ -2152,9 +1984,9 @@ export default class Chime {
   async untagAttendee(
     {abortSignal, ...params}: RequestConfig & UntagAttendeeRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TagKeys: params["TagKeys"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagAttendee",
@@ -2166,9 +1998,9 @@ export default class Chime {
   async untagMeeting(
     {abortSignal, ...params}: RequestConfig & UntagMeetingRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TagKeys: params["TagKeys"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagMeeting",
@@ -2180,10 +2012,10 @@ export default class Chime {
   async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceARN: params["ResourceARN"],
       TagKeys: params["TagKeys"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResource",
@@ -2195,31 +2027,29 @@ export default class Chime {
   async updateAccount(
     {abortSignal, ...params}: RequestConfig & UpdateAccountRequest,
   ): Promise<UpdateAccountResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateAccount",
       requestUri: cmnP.encodePath`/accounts/${params["AccountId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Account": toAccount,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Account": toAccount,
+      },
+    }, await resp.json());
   }
 
   async updateAccountSettings(
     {abortSignal, ...params}: RequestConfig & UpdateAccountSettingsRequest,
   ): Promise<UpdateAccountSettingsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AccountSettings: fromAccountSettings(params["AccountSettings"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateAccountSettings",
@@ -2227,43 +2057,39 @@ export default class Chime {
       requestUri: cmnP.encodePath`/accounts/${params["AccountId"]}/settings`,
       responseCode: 204,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async updateBot(
     {abortSignal, ...params}: RequestConfig & UpdateBotRequest,
   ): Promise<UpdateBotResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Disabled: params["Disabled"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateBot",
       requestUri: cmnP.encodePath`/accounts/${params["AccountId"]}/bots/${params["BotId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Bot": toBot,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Bot": toBot,
+      },
+    }, await resp.json());
   }
 
   async updateGlobalSettings(
     {abortSignal, ...params}: RequestConfig & UpdateGlobalSettingsRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       BusinessCalling: fromBusinessCallingSettings(params["BusinessCalling"]),
       VoiceConnector: fromVoiceConnectorSettings(params["VoiceConnector"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateGlobalSettings",
@@ -2276,32 +2102,30 @@ export default class Chime {
   async updatePhoneNumber(
     {abortSignal, ...params}: RequestConfig & UpdatePhoneNumberRequest,
   ): Promise<UpdatePhoneNumberResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ProductType: params["ProductType"],
       CallingName: params["CallingName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdatePhoneNumber",
       requestUri: cmnP.encodePath`/phone-numbers/${params["PhoneNumberId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "PhoneNumber": toPhoneNumber,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "PhoneNumber": toPhoneNumber,
+      },
+    }, await resp.json());
   }
 
   async updatePhoneNumberSettings(
     {abortSignal, ...params}: RequestConfig & UpdatePhoneNumberSettingsRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CallingName: params["CallingName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdatePhoneNumberSettings",
@@ -2314,100 +2138,92 @@ export default class Chime {
   async updateProxySession(
     {abortSignal, ...params}: RequestConfig & UpdateProxySessionRequest,
   ): Promise<UpdateProxySessionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Capabilities: params["Capabilities"],
       ExpiryMinutes: params["ExpiryMinutes"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateProxySession",
       requestUri: cmnP.encodePath`/voice-connectors/${params["VoiceConnectorId"]}/proxy-sessions/${params["ProxySessionId"]}`,
       responseCode: 201,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ProxySession": toProxySession,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ProxySession": toProxySession,
+      },
+    }, await resp.json());
   }
 
   async updateRoom(
     {abortSignal, ...params}: RequestConfig & UpdateRoomRequest,
   ): Promise<UpdateRoomResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateRoom",
       requestUri: cmnP.encodePath`/accounts/${params["AccountId"]}/rooms/${params["RoomId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Room": toRoom,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Room": toRoom,
+      },
+    }, await resp.json());
   }
 
   async updateRoomMembership(
     {abortSignal, ...params}: RequestConfig & UpdateRoomMembershipRequest,
   ): Promise<UpdateRoomMembershipResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Role: params["Role"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateRoomMembership",
       requestUri: cmnP.encodePath`/accounts/${params["AccountId"]}/rooms/${params["RoomId"]}/memberships/${params["MemberId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "RoomMembership": toRoomMembership,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "RoomMembership": toRoomMembership,
+      },
+    }, await resp.json());
   }
 
   async updateUser(
     {abortSignal, ...params}: RequestConfig & UpdateUserRequest,
   ): Promise<UpdateUserResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       LicenseType: params["LicenseType"],
       UserType: params["UserType"],
       AlexaForBusinessMetadata: fromAlexaForBusinessMetadata(params["AlexaForBusinessMetadata"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateUser",
       requestUri: cmnP.encodePath`/accounts/${params["AccountId"]}/users/${params["UserId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "User": toUser,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "User": toUser,
+      },
+    }, await resp.json());
   }
 
   async updateUserSettings(
     {abortSignal, ...params}: RequestConfig & UpdateUserSettingsRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       UserSettings: fromUserSettings(params["UserSettings"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateUserSettings",
@@ -2420,10 +2236,10 @@ export default class Chime {
   async updateVoiceConnector(
     {abortSignal, ...params}: RequestConfig & UpdateVoiceConnectorRequest,
   ): Promise<UpdateVoiceConnectorResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       RequireEncryption: params["RequireEncryption"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateVoiceConnector",
@@ -2431,23 +2247,21 @@ export default class Chime {
       requestUri: cmnP.encodePath`/voice-connectors/${params["VoiceConnectorId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "VoiceConnector": toVoiceConnector,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "VoiceConnector": toVoiceConnector,
+      },
+    }, await resp.json());
   }
 
   async updateVoiceConnectorGroup(
     {abortSignal, ...params}: RequestConfig & UpdateVoiceConnectorGroupRequest,
   ): Promise<UpdateVoiceConnectorGroupResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       VoiceConnectorItems: params["VoiceConnectorItems"]?.map(x => fromVoiceConnectorItem(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateVoiceConnectorGroup",
@@ -2455,14 +2269,12 @@ export default class Chime {
       requestUri: cmnP.encodePath`/voice-connector-groups/${params["VoiceConnectorGroupId"]}`,
       responseCode: 202,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "VoiceConnectorGroup": toVoiceConnectorGroup,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "VoiceConnectorGroup": toVoiceConnectorGroup,
+      },
+    }, await resp.json());
   }
 
 }

@@ -28,36 +28,33 @@ export default class Lambda {
     {abortSignal, ...params}: RequestConfig & AddLayerVersionPermissionRequest,
   ): Promise<AddLayerVersionPermissionResponse> {
     const query = new URLSearchParams;
-    if (params["RevisionId"] != null) query.set("RevisionId", params["RevisionId"]?.toString() ?? "");
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       StatementId: params["StatementId"],
       Action: params["Action"],
       Principal: params["Principal"],
       OrganizationId: params["OrganizationId"],
-    } : {};
+    };
+    if (params["RevisionId"] != null) query.set("RevisionId", params["RevisionId"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
       abortSignal, query, body,
       action: "AddLayerVersionPermission",
       requestUri: cmnP.encodePath`/2018-10-31/layers/${params["LayerName"]}/versions/${params["VersionNumber"].toString()}/policy`,
       responseCode: 201,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Statement": "s",
-          "RevisionId": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Statement": "s",
+        "RevisionId": "s",
+      },
+    }, await resp.json());
   }
 
   async addPermission(
     {abortSignal, ...params}: RequestConfig & AddPermissionRequest,
   ): Promise<AddPermissionResponse> {
     const query = new URLSearchParams;
-    if (params["Qualifier"] != null) query.set("Qualifier", params["Qualifier"]?.toString() ?? "");
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       StatementId: params["StatementId"],
       Action: params["Action"],
       Principal: params["Principal"],
@@ -65,57 +62,54 @@ export default class Lambda {
       SourceAccount: params["SourceAccount"],
       EventSourceToken: params["EventSourceToken"],
       RevisionId: params["RevisionId"],
-    } : {};
+    };
+    if (params["Qualifier"] != null) query.set("Qualifier", params["Qualifier"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
       abortSignal, query, body,
       action: "AddPermission",
       requestUri: cmnP.encodePath`/2015-03-31/functions/${params["FunctionName"]}/policy`,
       responseCode: 201,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Statement": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Statement": "s",
+      },
+    }, await resp.json());
   }
 
   async createAlias(
     {abortSignal, ...params}: RequestConfig & CreateAliasRequest,
   ): Promise<AliasConfiguration> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       FunctionVersion: params["FunctionVersion"],
       Description: params["Description"],
       RoutingConfig: fromAliasRoutingConfiguration(params["RoutingConfig"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateAlias",
       requestUri: cmnP.encodePath`/2015-03-31/functions/${params["FunctionName"]}/aliases`,
       responseCode: 201,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "AliasArn": "s",
-          "Name": "s",
-          "FunctionVersion": "s",
-          "Description": "s",
-          "RoutingConfig": toAliasRoutingConfiguration,
-          "RevisionId": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "AliasArn": "s",
+        "Name": "s",
+        "FunctionVersion": "s",
+        "Description": "s",
+        "RoutingConfig": toAliasRoutingConfiguration,
+        "RevisionId": "s",
+      },
+    }, await resp.json());
   }
 
   async createEventSourceMapping(
     {abortSignal, ...params}: RequestConfig & CreateEventSourceMappingRequest,
   ): Promise<EventSourceMappingConfiguration> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       EventSourceArn: params["EventSourceArn"],
       FunctionName: params["FunctionName"],
       Enabled: params["Enabled"],
@@ -129,41 +123,39 @@ export default class Lambda {
       BisectBatchOnFunctionError: params["BisectBatchOnFunctionError"],
       MaximumRetryAttempts: params["MaximumRetryAttempts"],
       Topics: params["Topics"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateEventSourceMapping",
       requestUri: "/2015-03-31/event-source-mappings/",
       responseCode: 202,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "UUID": "s",
-          "BatchSize": "n",
-          "MaximumBatchingWindowInSeconds": "n",
-          "ParallelizationFactor": "n",
-          "EventSourceArn": "s",
-          "FunctionArn": "s",
-          "LastModified": "d",
-          "LastProcessingResult": "s",
-          "State": "s",
-          "StateTransitionReason": "s",
-          "DestinationConfig": toDestinationConfig,
-          "Topics": ["s"],
-          "MaximumRecordAgeInSeconds": "n",
-          "BisectBatchOnFunctionError": "b",
-          "MaximumRetryAttempts": "n",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "UUID": "s",
+        "BatchSize": "n",
+        "MaximumBatchingWindowInSeconds": "n",
+        "ParallelizationFactor": "n",
+        "EventSourceArn": "s",
+        "FunctionArn": "s",
+        "LastModified": "d",
+        "LastProcessingResult": "s",
+        "State": "s",
+        "StateTransitionReason": "s",
+        "DestinationConfig": toDestinationConfig,
+        "Topics": ["s"],
+        "MaximumRecordAgeInSeconds": "n",
+        "BisectBatchOnFunctionError": "b",
+        "MaximumRetryAttempts": "n",
+      },
+    }, await resp.json());
   }
 
   async createFunction(
     {abortSignal, ...params}: RequestConfig & CreateFunctionRequest,
   ): Promise<FunctionConfiguration> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       FunctionName: params["FunctionName"],
       Runtime: params["Runtime"],
       Role: params["Role"],
@@ -181,47 +173,45 @@ export default class Lambda {
       Tags: params["Tags"],
       Layers: params["Layers"],
       FileSystemConfigs: params["FileSystemConfigs"]?.map(x => fromFileSystemConfig(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateFunction",
       requestUri: "/2015-03-31/functions",
       responseCode: 201,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "FunctionName": "s",
-          "FunctionArn": "s",
-          "Runtime": (x: jsonP.JSONValue) => cmnP.readEnum<Runtime>(x),
-          "Role": "s",
-          "Handler": "s",
-          "CodeSize": "n",
-          "Description": "s",
-          "Timeout": "n",
-          "MemorySize": "n",
-          "LastModified": "s",
-          "CodeSha256": "s",
-          "Version": "s",
-          "VpcConfig": toVpcConfigResponse,
-          "DeadLetterConfig": toDeadLetterConfig,
-          "Environment": toEnvironmentResponse,
-          "KMSKeyArn": "s",
-          "TracingConfig": toTracingConfigResponse,
-          "MasterArn": "s",
-          "RevisionId": "s",
-          "Layers": [toLayer],
-          "State": (x: jsonP.JSONValue) => cmnP.readEnum<State>(x),
-          "StateReason": "s",
-          "StateReasonCode": (x: jsonP.JSONValue) => cmnP.readEnum<StateReasonCode>(x),
-          "LastUpdateStatus": (x: jsonP.JSONValue) => cmnP.readEnum<LastUpdateStatus>(x),
-          "LastUpdateStatusReason": "s",
-          "LastUpdateStatusReasonCode": (x: jsonP.JSONValue) => cmnP.readEnum<LastUpdateStatusReasonCode>(x),
-          "FileSystemConfigs": [toFileSystemConfig],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "FunctionName": "s",
+        "FunctionArn": "s",
+        "Runtime": (x: jsonP.JSONValue) => cmnP.readEnum<Runtime>(x),
+        "Role": "s",
+        "Handler": "s",
+        "CodeSize": "n",
+        "Description": "s",
+        "Timeout": "n",
+        "MemorySize": "n",
+        "LastModified": "s",
+        "CodeSha256": "s",
+        "Version": "s",
+        "VpcConfig": toVpcConfigResponse,
+        "DeadLetterConfig": toDeadLetterConfig,
+        "Environment": toEnvironmentResponse,
+        "KMSKeyArn": "s",
+        "TracingConfig": toTracingConfigResponse,
+        "MasterArn": "s",
+        "RevisionId": "s",
+        "Layers": [toLayer],
+        "State": (x: jsonP.JSONValue) => cmnP.readEnum<State>(x),
+        "StateReason": "s",
+        "StateReasonCode": (x: jsonP.JSONValue) => cmnP.readEnum<StateReasonCode>(x),
+        "LastUpdateStatus": (x: jsonP.JSONValue) => cmnP.readEnum<LastUpdateStatus>(x),
+        "LastUpdateStatusReason": "s",
+        "LastUpdateStatusReasonCode": (x: jsonP.JSONValue) => cmnP.readEnum<LastUpdateStatusReasonCode>(x),
+        "FileSystemConfigs": [toFileSystemConfig],
+      },
+    }, await resp.json());
   }
 
   async deleteAlias(
@@ -248,28 +238,26 @@ export default class Lambda {
       requestUri: cmnP.encodePath`/2015-03-31/event-source-mappings/${params["UUID"]}`,
       responseCode: 202,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "UUID": "s",
-          "BatchSize": "n",
-          "MaximumBatchingWindowInSeconds": "n",
-          "ParallelizationFactor": "n",
-          "EventSourceArn": "s",
-          "FunctionArn": "s",
-          "LastModified": "d",
-          "LastProcessingResult": "s",
-          "State": "s",
-          "StateTransitionReason": "s",
-          "DestinationConfig": toDestinationConfig,
-          "Topics": ["s"],
-          "MaximumRecordAgeInSeconds": "n",
-          "BisectBatchOnFunctionError": "b",
-          "MaximumRetryAttempts": "n",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "UUID": "s",
+        "BatchSize": "n",
+        "MaximumBatchingWindowInSeconds": "n",
+        "ParallelizationFactor": "n",
+        "EventSourceArn": "s",
+        "FunctionArn": "s",
+        "LastModified": "d",
+        "LastProcessingResult": "s",
+        "State": "s",
+        "StateTransitionReason": "s",
+        "DestinationConfig": toDestinationConfig,
+        "Topics": ["s"],
+        "MaximumRecordAgeInSeconds": "n",
+        "BisectBatchOnFunctionError": "b",
+        "MaximumRetryAttempts": "n",
+      },
+    }, await resp.json());
   }
 
   async deleteFunction(
@@ -351,15 +339,13 @@ export default class Lambda {
       requestUri: "/2016-08-19/account-settings/",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "AccountLimit": toAccountLimit,
-          "AccountUsage": toAccountUsage,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "AccountLimit": toAccountLimit,
+        "AccountUsage": toAccountUsage,
+      },
+    }, await resp.json());
   }
 
   async getAlias(
@@ -373,19 +359,17 @@ export default class Lambda {
       requestUri: cmnP.encodePath`/2015-03-31/functions/${params["FunctionName"]}/aliases/${params["Name"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "AliasArn": "s",
-          "Name": "s",
-          "FunctionVersion": "s",
-          "Description": "s",
-          "RoutingConfig": toAliasRoutingConfiguration,
-          "RevisionId": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "AliasArn": "s",
+        "Name": "s",
+        "FunctionVersion": "s",
+        "Description": "s",
+        "RoutingConfig": toAliasRoutingConfiguration,
+        "RevisionId": "s",
+      },
+    }, await resp.json());
   }
 
   async getEventSourceMapping(
@@ -399,28 +383,26 @@ export default class Lambda {
       requestUri: cmnP.encodePath`/2015-03-31/event-source-mappings/${params["UUID"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "UUID": "s",
-          "BatchSize": "n",
-          "MaximumBatchingWindowInSeconds": "n",
-          "ParallelizationFactor": "n",
-          "EventSourceArn": "s",
-          "FunctionArn": "s",
-          "LastModified": "d",
-          "LastProcessingResult": "s",
-          "State": "s",
-          "StateTransitionReason": "s",
-          "DestinationConfig": toDestinationConfig,
-          "Topics": ["s"],
-          "MaximumRecordAgeInSeconds": "n",
-          "BisectBatchOnFunctionError": "b",
-          "MaximumRetryAttempts": "n",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "UUID": "s",
+        "BatchSize": "n",
+        "MaximumBatchingWindowInSeconds": "n",
+        "ParallelizationFactor": "n",
+        "EventSourceArn": "s",
+        "FunctionArn": "s",
+        "LastModified": "d",
+        "LastProcessingResult": "s",
+        "State": "s",
+        "StateTransitionReason": "s",
+        "DestinationConfig": toDestinationConfig,
+        "Topics": ["s"],
+        "MaximumRecordAgeInSeconds": "n",
+        "BisectBatchOnFunctionError": "b",
+        "MaximumRetryAttempts": "n",
+      },
+    }, await resp.json());
   }
 
   async getFunction(
@@ -435,17 +417,15 @@ export default class Lambda {
       requestUri: cmnP.encodePath`/2015-03-31/functions/${params["FunctionName"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Configuration": toFunctionConfiguration,
-          "Code": toFunctionCodeLocation,
-          "Tags": x => jsonP.readMap(String, String, x),
-          "Concurrency": toConcurrency,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Configuration": toFunctionConfiguration,
+        "Code": toFunctionCodeLocation,
+        "Tags": x => jsonP.readMap(String, String, x),
+        "Concurrency": toConcurrency,
+      },
+    }, await resp.json());
   }
 
   async getFunctionConcurrency(
@@ -459,14 +439,12 @@ export default class Lambda {
       requestUri: cmnP.encodePath`/2019-09-30/functions/${params["FunctionName"]}/concurrency`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ReservedConcurrentExecutions": "n",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ReservedConcurrentExecutions": "n",
+      },
+    }, await resp.json());
   }
 
   async getFunctionConfiguration(
@@ -481,40 +459,38 @@ export default class Lambda {
       requestUri: cmnP.encodePath`/2015-03-31/functions/${params["FunctionName"]}/configuration`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "FunctionName": "s",
-          "FunctionArn": "s",
-          "Runtime": (x: jsonP.JSONValue) => cmnP.readEnum<Runtime>(x),
-          "Role": "s",
-          "Handler": "s",
-          "CodeSize": "n",
-          "Description": "s",
-          "Timeout": "n",
-          "MemorySize": "n",
-          "LastModified": "s",
-          "CodeSha256": "s",
-          "Version": "s",
-          "VpcConfig": toVpcConfigResponse,
-          "DeadLetterConfig": toDeadLetterConfig,
-          "Environment": toEnvironmentResponse,
-          "KMSKeyArn": "s",
-          "TracingConfig": toTracingConfigResponse,
-          "MasterArn": "s",
-          "RevisionId": "s",
-          "Layers": [toLayer],
-          "State": (x: jsonP.JSONValue) => cmnP.readEnum<State>(x),
-          "StateReason": "s",
-          "StateReasonCode": (x: jsonP.JSONValue) => cmnP.readEnum<StateReasonCode>(x),
-          "LastUpdateStatus": (x: jsonP.JSONValue) => cmnP.readEnum<LastUpdateStatus>(x),
-          "LastUpdateStatusReason": "s",
-          "LastUpdateStatusReasonCode": (x: jsonP.JSONValue) => cmnP.readEnum<LastUpdateStatusReasonCode>(x),
-          "FileSystemConfigs": [toFileSystemConfig],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "FunctionName": "s",
+        "FunctionArn": "s",
+        "Runtime": (x: jsonP.JSONValue) => cmnP.readEnum<Runtime>(x),
+        "Role": "s",
+        "Handler": "s",
+        "CodeSize": "n",
+        "Description": "s",
+        "Timeout": "n",
+        "MemorySize": "n",
+        "LastModified": "s",
+        "CodeSha256": "s",
+        "Version": "s",
+        "VpcConfig": toVpcConfigResponse,
+        "DeadLetterConfig": toDeadLetterConfig,
+        "Environment": toEnvironmentResponse,
+        "KMSKeyArn": "s",
+        "TracingConfig": toTracingConfigResponse,
+        "MasterArn": "s",
+        "RevisionId": "s",
+        "Layers": [toLayer],
+        "State": (x: jsonP.JSONValue) => cmnP.readEnum<State>(x),
+        "StateReason": "s",
+        "StateReasonCode": (x: jsonP.JSONValue) => cmnP.readEnum<StateReasonCode>(x),
+        "LastUpdateStatus": (x: jsonP.JSONValue) => cmnP.readEnum<LastUpdateStatus>(x),
+        "LastUpdateStatusReason": "s",
+        "LastUpdateStatusReasonCode": (x: jsonP.JSONValue) => cmnP.readEnum<LastUpdateStatusReasonCode>(x),
+        "FileSystemConfigs": [toFileSystemConfig],
+      },
+    }, await resp.json());
   }
 
   async getFunctionEventInvokeConfig(
@@ -529,18 +505,16 @@ export default class Lambda {
       requestUri: cmnP.encodePath`/2019-09-25/functions/${params["FunctionName"]}/event-invoke-config`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "LastModified": "d",
-          "FunctionArn": "s",
-          "MaximumRetryAttempts": "n",
-          "MaximumEventAgeInSeconds": "n",
-          "DestinationConfig": toDestinationConfig,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "LastModified": "d",
+        "FunctionArn": "s",
+        "MaximumRetryAttempts": "n",
+        "MaximumEventAgeInSeconds": "n",
+        "DestinationConfig": toDestinationConfig,
+      },
+    }, await resp.json());
   }
 
   async getLayerVersion(
@@ -554,21 +528,19 @@ export default class Lambda {
       requestUri: cmnP.encodePath`/2018-10-31/layers/${params["LayerName"]}/versions/${params["VersionNumber"].toString()}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Content": toLayerVersionContentOutput,
-          "LayerArn": "s",
-          "LayerVersionArn": "s",
-          "Description": "s",
-          "CreatedDate": "s",
-          "Version": "n",
-          "CompatibleRuntimes": [(x: jsonP.JSONValue) => cmnP.readEnum<Runtime>(x)],
-          "LicenseInfo": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Content": toLayerVersionContentOutput,
+        "LayerArn": "s",
+        "LayerVersionArn": "s",
+        "Description": "s",
+        "CreatedDate": "s",
+        "Version": "n",
+        "CompatibleRuntimes": [(x: jsonP.JSONValue) => cmnP.readEnum<Runtime>(x)],
+        "LicenseInfo": "s",
+      },
+    }, await resp.json());
   }
 
   async getLayerVersionByArn(
@@ -583,21 +555,19 @@ export default class Lambda {
       requestUri: "/2018-10-31/layers?find=LayerVersion",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Content": toLayerVersionContentOutput,
-          "LayerArn": "s",
-          "LayerVersionArn": "s",
-          "Description": "s",
-          "CreatedDate": "s",
-          "Version": "n",
-          "CompatibleRuntimes": [(x: jsonP.JSONValue) => cmnP.readEnum<Runtime>(x)],
-          "LicenseInfo": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Content": toLayerVersionContentOutput,
+        "LayerArn": "s",
+        "LayerVersionArn": "s",
+        "Description": "s",
+        "CreatedDate": "s",
+        "Version": "n",
+        "CompatibleRuntimes": [(x: jsonP.JSONValue) => cmnP.readEnum<Runtime>(x)],
+        "LicenseInfo": "s",
+      },
+    }, await resp.json());
   }
 
   async getLayerVersionPolicy(
@@ -611,15 +581,13 @@ export default class Lambda {
       requestUri: cmnP.encodePath`/2018-10-31/layers/${params["LayerName"]}/versions/${params["VersionNumber"].toString()}/policy`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Policy": "s",
-          "RevisionId": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Policy": "s",
+        "RevisionId": "s",
+      },
+    }, await resp.json());
   }
 
   async getPolicy(
@@ -634,15 +602,13 @@ export default class Lambda {
       requestUri: cmnP.encodePath`/2015-03-31/functions/${params["FunctionName"]}/policy`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Policy": "s",
-          "RevisionId": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Policy": "s",
+        "RevisionId": "s",
+      },
+    }, await resp.json());
   }
 
   async getProvisionedConcurrencyConfig(
@@ -657,31 +623,29 @@ export default class Lambda {
       requestUri: cmnP.encodePath`/2019-09-30/functions/${params["FunctionName"]}/provisioned-concurrency`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "RequestedProvisionedConcurrentExecutions": "n",
-          "AvailableProvisionedConcurrentExecutions": "n",
-          "AllocatedProvisionedConcurrentExecutions": "n",
-          "Status": (x: jsonP.JSONValue) => cmnP.readEnum<ProvisionedConcurrencyStatusEnum>(x),
-          "StatusReason": "s",
-          "LastModified": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "RequestedProvisionedConcurrentExecutions": "n",
+        "AvailableProvisionedConcurrentExecutions": "n",
+        "AllocatedProvisionedConcurrentExecutions": "n",
+        "Status": (x: jsonP.JSONValue) => cmnP.readEnum<ProvisionedConcurrencyStatusEnum>(x),
+        "StatusReason": "s",
+        "LastModified": "s",
+      },
+    }, await resp.json());
   }
 
   async invoke(
     {abortSignal, ...params}: RequestConfig & InvocationRequest,
   ): Promise<InvocationResponse> {
+    const body = typeof params["Payload"] === 'string' ? new TextEncoder().encode(params["Payload"]) : params["Payload"];
     const headers = new Headers;
     const query = new URLSearchParams;
     if (params["InvocationType"] != null) headers.append("X-Amz-Invocation-Type", params["InvocationType"]);
     if (params["LogType"] != null) headers.append("X-Amz-Log-Type", params["LogType"]);
     if (params["ClientContext"] != null) headers.append("X-Amz-Client-Context", params["ClientContext"]);
     if (params["Qualifier"] != null) query.set("Qualifier", params["Qualifier"]?.toString() ?? "");
-    const body = typeof params["Payload"] === 'string' ? new TextEncoder().encode(params["Payload"]) : params["Payload"];
     const resp = await this.#client.performRequest({
       abortSignal, headers, query, body,
       action: "Invoke",
@@ -706,13 +670,13 @@ export default class Lambda {
       requestUri: cmnP.encodePath`/2014-11-13/functions/${params["FunctionName"]}/invoke-async/`,
       responseCode: 202,
     });
-  return {
-    Status: resp.status,
-    ...jsonP.readObj({
+    return {
+      Status: resp.status,
+      ...jsonP.readObj({
         required: {},
         optional: {},
       }, await resp.json()),
-  };
+    };
   }
 
   async listAliases(
@@ -729,15 +693,13 @@ export default class Lambda {
       requestUri: cmnP.encodePath`/2015-03-31/functions/${params["FunctionName"]}/aliases`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "NextMarker": "s",
-          "Aliases": [toAliasConfiguration],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "NextMarker": "s",
+        "Aliases": [toAliasConfiguration],
+      },
+    }, await resp.json());
   }
 
   async listEventSourceMappings(
@@ -755,15 +717,13 @@ export default class Lambda {
       requestUri: "/2015-03-31/event-source-mappings/",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "NextMarker": "s",
-          "EventSourceMappings": [toEventSourceMappingConfiguration],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "NextMarker": "s",
+        "EventSourceMappings": [toEventSourceMappingConfiguration],
+      },
+    }, await resp.json());
   }
 
   async listFunctionEventInvokeConfigs(
@@ -779,15 +739,13 @@ export default class Lambda {
       requestUri: cmnP.encodePath`/2019-09-25/functions/${params["FunctionName"]}/event-invoke-config/list`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "FunctionEventInvokeConfigs": [toFunctionEventInvokeConfig],
-          "NextMarker": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "FunctionEventInvokeConfigs": [toFunctionEventInvokeConfig],
+        "NextMarker": "s",
+      },
+    }, await resp.json());
   }
 
   async listFunctions(
@@ -805,15 +763,13 @@ export default class Lambda {
       requestUri: "/2015-03-31/functions/",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "NextMarker": "s",
-          "Functions": [toFunctionConfiguration],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "NextMarker": "s",
+        "Functions": [toFunctionConfiguration],
+      },
+    }, await resp.json());
   }
 
   async listLayerVersions(
@@ -830,15 +786,13 @@ export default class Lambda {
       requestUri: cmnP.encodePath`/2018-10-31/layers/${params["LayerName"]}/versions`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "NextMarker": "s",
-          "LayerVersions": [toLayerVersionsListItem],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "NextMarker": "s",
+        "LayerVersions": [toLayerVersionsListItem],
+      },
+    }, await resp.json());
   }
 
   async listLayers(
@@ -855,15 +809,13 @@ export default class Lambda {
       requestUri: "/2018-10-31/layers",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "NextMarker": "s",
-          "Layers": [toLayersListItem],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "NextMarker": "s",
+        "Layers": [toLayersListItem],
+      },
+    }, await resp.json());
   }
 
   async listProvisionedConcurrencyConfigs(
@@ -879,15 +831,13 @@ export default class Lambda {
       requestUri: cmnP.encodePath`/2019-09-30/functions/${params["FunctionName"]}/provisioned-concurrency?List=ALL`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ProvisionedConcurrencyConfigs": [toProvisionedConcurrencyConfigListItem],
-          "NextMarker": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ProvisionedConcurrencyConfigs": [toProvisionedConcurrencyConfigListItem],
+        "NextMarker": "s",
+      },
+    }, await resp.json());
   }
 
   async listTags(
@@ -900,14 +850,12 @@ export default class Lambda {
       method: "GET",
       requestUri: cmnP.encodePath`/2017-03-31/tags/${params["Resource"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async listVersionsByFunction(
@@ -923,105 +871,99 @@ export default class Lambda {
       requestUri: cmnP.encodePath`/2015-03-31/functions/${params["FunctionName"]}/versions`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "NextMarker": "s",
-          "Versions": [toFunctionConfiguration],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "NextMarker": "s",
+        "Versions": [toFunctionConfiguration],
+      },
+    }, await resp.json());
   }
 
   async publishLayerVersion(
     {abortSignal, ...params}: RequestConfig & PublishLayerVersionRequest,
   ): Promise<PublishLayerVersionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Description: params["Description"],
       Content: fromLayerVersionContentInput(params["Content"]),
       CompatibleRuntimes: params["CompatibleRuntimes"],
       LicenseInfo: params["LicenseInfo"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PublishLayerVersion",
       requestUri: cmnP.encodePath`/2018-10-31/layers/${params["LayerName"]}/versions`,
       responseCode: 201,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Content": toLayerVersionContentOutput,
-          "LayerArn": "s",
-          "LayerVersionArn": "s",
-          "Description": "s",
-          "CreatedDate": "s",
-          "Version": "n",
-          "CompatibleRuntimes": [(x: jsonP.JSONValue) => cmnP.readEnum<Runtime>(x)],
-          "LicenseInfo": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Content": toLayerVersionContentOutput,
+        "LayerArn": "s",
+        "LayerVersionArn": "s",
+        "Description": "s",
+        "CreatedDate": "s",
+        "Version": "n",
+        "CompatibleRuntimes": [(x: jsonP.JSONValue) => cmnP.readEnum<Runtime>(x)],
+        "LicenseInfo": "s",
+      },
+    }, await resp.json());
   }
 
   async publishVersion(
     {abortSignal, ...params}: RequestConfig & PublishVersionRequest,
   ): Promise<FunctionConfiguration> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CodeSha256: params["CodeSha256"],
       Description: params["Description"],
       RevisionId: params["RevisionId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PublishVersion",
       requestUri: cmnP.encodePath`/2015-03-31/functions/${params["FunctionName"]}/versions`,
       responseCode: 201,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "FunctionName": "s",
-          "FunctionArn": "s",
-          "Runtime": (x: jsonP.JSONValue) => cmnP.readEnum<Runtime>(x),
-          "Role": "s",
-          "Handler": "s",
-          "CodeSize": "n",
-          "Description": "s",
-          "Timeout": "n",
-          "MemorySize": "n",
-          "LastModified": "s",
-          "CodeSha256": "s",
-          "Version": "s",
-          "VpcConfig": toVpcConfigResponse,
-          "DeadLetterConfig": toDeadLetterConfig,
-          "Environment": toEnvironmentResponse,
-          "KMSKeyArn": "s",
-          "TracingConfig": toTracingConfigResponse,
-          "MasterArn": "s",
-          "RevisionId": "s",
-          "Layers": [toLayer],
-          "State": (x: jsonP.JSONValue) => cmnP.readEnum<State>(x),
-          "StateReason": "s",
-          "StateReasonCode": (x: jsonP.JSONValue) => cmnP.readEnum<StateReasonCode>(x),
-          "LastUpdateStatus": (x: jsonP.JSONValue) => cmnP.readEnum<LastUpdateStatus>(x),
-          "LastUpdateStatusReason": "s",
-          "LastUpdateStatusReasonCode": (x: jsonP.JSONValue) => cmnP.readEnum<LastUpdateStatusReasonCode>(x),
-          "FileSystemConfigs": [toFileSystemConfig],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "FunctionName": "s",
+        "FunctionArn": "s",
+        "Runtime": (x: jsonP.JSONValue) => cmnP.readEnum<Runtime>(x),
+        "Role": "s",
+        "Handler": "s",
+        "CodeSize": "n",
+        "Description": "s",
+        "Timeout": "n",
+        "MemorySize": "n",
+        "LastModified": "s",
+        "CodeSha256": "s",
+        "Version": "s",
+        "VpcConfig": toVpcConfigResponse,
+        "DeadLetterConfig": toDeadLetterConfig,
+        "Environment": toEnvironmentResponse,
+        "KMSKeyArn": "s",
+        "TracingConfig": toTracingConfigResponse,
+        "MasterArn": "s",
+        "RevisionId": "s",
+        "Layers": [toLayer],
+        "State": (x: jsonP.JSONValue) => cmnP.readEnum<State>(x),
+        "StateReason": "s",
+        "StateReasonCode": (x: jsonP.JSONValue) => cmnP.readEnum<StateReasonCode>(x),
+        "LastUpdateStatus": (x: jsonP.JSONValue) => cmnP.readEnum<LastUpdateStatus>(x),
+        "LastUpdateStatusReason": "s",
+        "LastUpdateStatusReasonCode": (x: jsonP.JSONValue) => cmnP.readEnum<LastUpdateStatusReasonCode>(x),
+        "FileSystemConfigs": [toFileSystemConfig],
+      },
+    }, await resp.json());
   }
 
   async putFunctionConcurrency(
     {abortSignal, ...params}: RequestConfig & PutFunctionConcurrencyRequest,
   ): Promise<Concurrency> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ReservedConcurrentExecutions: params["ReservedConcurrentExecutions"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutFunctionConcurrency",
@@ -1029,26 +971,24 @@ export default class Lambda {
       requestUri: cmnP.encodePath`/2017-10-31/functions/${params["FunctionName"]}/concurrency`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ReservedConcurrentExecutions": "n",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ReservedConcurrentExecutions": "n",
+      },
+    }, await resp.json());
   }
 
   async putFunctionEventInvokeConfig(
     {abortSignal, ...params}: RequestConfig & PutFunctionEventInvokeConfigRequest,
   ): Promise<FunctionEventInvokeConfig> {
     const query = new URLSearchParams;
-    if (params["Qualifier"] != null) query.set("Qualifier", params["Qualifier"]?.toString() ?? "");
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       MaximumRetryAttempts: params["MaximumRetryAttempts"],
       MaximumEventAgeInSeconds: params["MaximumEventAgeInSeconds"],
       DestinationConfig: fromDestinationConfig(params["DestinationConfig"]),
-    } : {};
+    };
+    if (params["Qualifier"] != null) query.set("Qualifier", params["Qualifier"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
       abortSignal, query, body,
       action: "PutFunctionEventInvokeConfig",
@@ -1056,28 +996,26 @@ export default class Lambda {
       requestUri: cmnP.encodePath`/2019-09-25/functions/${params["FunctionName"]}/event-invoke-config`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "LastModified": "d",
-          "FunctionArn": "s",
-          "MaximumRetryAttempts": "n",
-          "MaximumEventAgeInSeconds": "n",
-          "DestinationConfig": toDestinationConfig,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "LastModified": "d",
+        "FunctionArn": "s",
+        "MaximumRetryAttempts": "n",
+        "MaximumEventAgeInSeconds": "n",
+        "DestinationConfig": toDestinationConfig,
+      },
+    }, await resp.json());
   }
 
   async putProvisionedConcurrencyConfig(
     {abortSignal, ...params}: RequestConfig & PutProvisionedConcurrencyConfigRequest,
   ): Promise<PutProvisionedConcurrencyConfigResponse> {
     const query = new URLSearchParams;
-    query.set("Qualifier", params["Qualifier"]?.toString() ?? "");
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ProvisionedConcurrentExecutions: params["ProvisionedConcurrentExecutions"],
-    } : {};
+    };
+    query.set("Qualifier", params["Qualifier"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
       abortSignal, query, body,
       action: "PutProvisionedConcurrencyConfig",
@@ -1085,19 +1023,17 @@ export default class Lambda {
       requestUri: cmnP.encodePath`/2019-09-30/functions/${params["FunctionName"]}/provisioned-concurrency`,
       responseCode: 202,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "RequestedProvisionedConcurrentExecutions": "n",
-          "AvailableProvisionedConcurrentExecutions": "n",
-          "AllocatedProvisionedConcurrentExecutions": "n",
-          "Status": (x: jsonP.JSONValue) => cmnP.readEnum<ProvisionedConcurrencyStatusEnum>(x),
-          "StatusReason": "s",
-          "LastModified": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "RequestedProvisionedConcurrentExecutions": "n",
+        "AvailableProvisionedConcurrentExecutions": "n",
+        "AllocatedProvisionedConcurrentExecutions": "n",
+        "Status": (x: jsonP.JSONValue) => cmnP.readEnum<ProvisionedConcurrencyStatusEnum>(x),
+        "StatusReason": "s",
+        "LastModified": "s",
+      },
+    }, await resp.json());
   }
 
   async removeLayerVersionPermission(
@@ -1132,9 +1068,9 @@ export default class Lambda {
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Tags: params["Tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
@@ -1162,12 +1098,12 @@ export default class Lambda {
   async updateAlias(
     {abortSignal, ...params}: RequestConfig & UpdateAliasRequest,
   ): Promise<AliasConfiguration> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       FunctionVersion: params["FunctionVersion"],
       Description: params["Description"],
       RoutingConfig: fromAliasRoutingConfiguration(params["RoutingConfig"]),
       RevisionId: params["RevisionId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateAlias",
@@ -1175,25 +1111,23 @@ export default class Lambda {
       requestUri: cmnP.encodePath`/2015-03-31/functions/${params["FunctionName"]}/aliases/${params["Name"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "AliasArn": "s",
-          "Name": "s",
-          "FunctionVersion": "s",
-          "Description": "s",
-          "RoutingConfig": toAliasRoutingConfiguration,
-          "RevisionId": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "AliasArn": "s",
+        "Name": "s",
+        "FunctionVersion": "s",
+        "Description": "s",
+        "RoutingConfig": toAliasRoutingConfiguration,
+        "RevisionId": "s",
+      },
+    }, await resp.json());
   }
 
   async updateEventSourceMapping(
     {abortSignal, ...params}: RequestConfig & UpdateEventSourceMappingRequest,
   ): Promise<EventSourceMappingConfiguration> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       FunctionName: params["FunctionName"],
       Enabled: params["Enabled"],
       BatchSize: params["BatchSize"],
@@ -1203,7 +1137,7 @@ export default class Lambda {
       BisectBatchOnFunctionError: params["BisectBatchOnFunctionError"],
       MaximumRetryAttempts: params["MaximumRetryAttempts"],
       ParallelizationFactor: params["ParallelizationFactor"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateEventSourceMapping",
@@ -1211,34 +1145,32 @@ export default class Lambda {
       requestUri: cmnP.encodePath`/2015-03-31/event-source-mappings/${params["UUID"]}`,
       responseCode: 202,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "UUID": "s",
-          "BatchSize": "n",
-          "MaximumBatchingWindowInSeconds": "n",
-          "ParallelizationFactor": "n",
-          "EventSourceArn": "s",
-          "FunctionArn": "s",
-          "LastModified": "d",
-          "LastProcessingResult": "s",
-          "State": "s",
-          "StateTransitionReason": "s",
-          "DestinationConfig": toDestinationConfig,
-          "Topics": ["s"],
-          "MaximumRecordAgeInSeconds": "n",
-          "BisectBatchOnFunctionError": "b",
-          "MaximumRetryAttempts": "n",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "UUID": "s",
+        "BatchSize": "n",
+        "MaximumBatchingWindowInSeconds": "n",
+        "ParallelizationFactor": "n",
+        "EventSourceArn": "s",
+        "FunctionArn": "s",
+        "LastModified": "d",
+        "LastProcessingResult": "s",
+        "State": "s",
+        "StateTransitionReason": "s",
+        "DestinationConfig": toDestinationConfig,
+        "Topics": ["s"],
+        "MaximumRecordAgeInSeconds": "n",
+        "BisectBatchOnFunctionError": "b",
+        "MaximumRetryAttempts": "n",
+      },
+    }, await resp.json());
   }
 
   async updateFunctionCode(
     {abortSignal, ...params}: RequestConfig & UpdateFunctionCodeRequest,
   ): Promise<FunctionConfiguration> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ZipFile: jsonP.serializeBlob(params["ZipFile"]),
       S3Bucket: params["S3Bucket"],
       S3Key: params["S3Key"],
@@ -1246,7 +1178,7 @@ export default class Lambda {
       Publish: params["Publish"],
       DryRun: params["DryRun"],
       RevisionId: params["RevisionId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateFunctionCode",
@@ -1254,46 +1186,44 @@ export default class Lambda {
       requestUri: cmnP.encodePath`/2015-03-31/functions/${params["FunctionName"]}/code`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "FunctionName": "s",
-          "FunctionArn": "s",
-          "Runtime": (x: jsonP.JSONValue) => cmnP.readEnum<Runtime>(x),
-          "Role": "s",
-          "Handler": "s",
-          "CodeSize": "n",
-          "Description": "s",
-          "Timeout": "n",
-          "MemorySize": "n",
-          "LastModified": "s",
-          "CodeSha256": "s",
-          "Version": "s",
-          "VpcConfig": toVpcConfigResponse,
-          "DeadLetterConfig": toDeadLetterConfig,
-          "Environment": toEnvironmentResponse,
-          "KMSKeyArn": "s",
-          "TracingConfig": toTracingConfigResponse,
-          "MasterArn": "s",
-          "RevisionId": "s",
-          "Layers": [toLayer],
-          "State": (x: jsonP.JSONValue) => cmnP.readEnum<State>(x),
-          "StateReason": "s",
-          "StateReasonCode": (x: jsonP.JSONValue) => cmnP.readEnum<StateReasonCode>(x),
-          "LastUpdateStatus": (x: jsonP.JSONValue) => cmnP.readEnum<LastUpdateStatus>(x),
-          "LastUpdateStatusReason": "s",
-          "LastUpdateStatusReasonCode": (x: jsonP.JSONValue) => cmnP.readEnum<LastUpdateStatusReasonCode>(x),
-          "FileSystemConfigs": [toFileSystemConfig],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "FunctionName": "s",
+        "FunctionArn": "s",
+        "Runtime": (x: jsonP.JSONValue) => cmnP.readEnum<Runtime>(x),
+        "Role": "s",
+        "Handler": "s",
+        "CodeSize": "n",
+        "Description": "s",
+        "Timeout": "n",
+        "MemorySize": "n",
+        "LastModified": "s",
+        "CodeSha256": "s",
+        "Version": "s",
+        "VpcConfig": toVpcConfigResponse,
+        "DeadLetterConfig": toDeadLetterConfig,
+        "Environment": toEnvironmentResponse,
+        "KMSKeyArn": "s",
+        "TracingConfig": toTracingConfigResponse,
+        "MasterArn": "s",
+        "RevisionId": "s",
+        "Layers": [toLayer],
+        "State": (x: jsonP.JSONValue) => cmnP.readEnum<State>(x),
+        "StateReason": "s",
+        "StateReasonCode": (x: jsonP.JSONValue) => cmnP.readEnum<StateReasonCode>(x),
+        "LastUpdateStatus": (x: jsonP.JSONValue) => cmnP.readEnum<LastUpdateStatus>(x),
+        "LastUpdateStatusReason": "s",
+        "LastUpdateStatusReasonCode": (x: jsonP.JSONValue) => cmnP.readEnum<LastUpdateStatusReasonCode>(x),
+        "FileSystemConfigs": [toFileSystemConfig],
+      },
+    }, await resp.json());
   }
 
   async updateFunctionConfiguration(
     {abortSignal, ...params}: RequestConfig & UpdateFunctionConfigurationRequest,
   ): Promise<FunctionConfiguration> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Role: params["Role"],
       Handler: params["Handler"],
       Description: params["Description"],
@@ -1308,7 +1238,7 @@ export default class Lambda {
       RevisionId: params["RevisionId"],
       Layers: params["Layers"],
       FileSystemConfigs: params["FileSystemConfigs"]?.map(x => fromFileSystemConfig(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateFunctionConfiguration",
@@ -1316,70 +1246,66 @@ export default class Lambda {
       requestUri: cmnP.encodePath`/2015-03-31/functions/${params["FunctionName"]}/configuration`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "FunctionName": "s",
-          "FunctionArn": "s",
-          "Runtime": (x: jsonP.JSONValue) => cmnP.readEnum<Runtime>(x),
-          "Role": "s",
-          "Handler": "s",
-          "CodeSize": "n",
-          "Description": "s",
-          "Timeout": "n",
-          "MemorySize": "n",
-          "LastModified": "s",
-          "CodeSha256": "s",
-          "Version": "s",
-          "VpcConfig": toVpcConfigResponse,
-          "DeadLetterConfig": toDeadLetterConfig,
-          "Environment": toEnvironmentResponse,
-          "KMSKeyArn": "s",
-          "TracingConfig": toTracingConfigResponse,
-          "MasterArn": "s",
-          "RevisionId": "s",
-          "Layers": [toLayer],
-          "State": (x: jsonP.JSONValue) => cmnP.readEnum<State>(x),
-          "StateReason": "s",
-          "StateReasonCode": (x: jsonP.JSONValue) => cmnP.readEnum<StateReasonCode>(x),
-          "LastUpdateStatus": (x: jsonP.JSONValue) => cmnP.readEnum<LastUpdateStatus>(x),
-          "LastUpdateStatusReason": "s",
-          "LastUpdateStatusReasonCode": (x: jsonP.JSONValue) => cmnP.readEnum<LastUpdateStatusReasonCode>(x),
-          "FileSystemConfigs": [toFileSystemConfig],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "FunctionName": "s",
+        "FunctionArn": "s",
+        "Runtime": (x: jsonP.JSONValue) => cmnP.readEnum<Runtime>(x),
+        "Role": "s",
+        "Handler": "s",
+        "CodeSize": "n",
+        "Description": "s",
+        "Timeout": "n",
+        "MemorySize": "n",
+        "LastModified": "s",
+        "CodeSha256": "s",
+        "Version": "s",
+        "VpcConfig": toVpcConfigResponse,
+        "DeadLetterConfig": toDeadLetterConfig,
+        "Environment": toEnvironmentResponse,
+        "KMSKeyArn": "s",
+        "TracingConfig": toTracingConfigResponse,
+        "MasterArn": "s",
+        "RevisionId": "s",
+        "Layers": [toLayer],
+        "State": (x: jsonP.JSONValue) => cmnP.readEnum<State>(x),
+        "StateReason": "s",
+        "StateReasonCode": (x: jsonP.JSONValue) => cmnP.readEnum<StateReasonCode>(x),
+        "LastUpdateStatus": (x: jsonP.JSONValue) => cmnP.readEnum<LastUpdateStatus>(x),
+        "LastUpdateStatusReason": "s",
+        "LastUpdateStatusReasonCode": (x: jsonP.JSONValue) => cmnP.readEnum<LastUpdateStatusReasonCode>(x),
+        "FileSystemConfigs": [toFileSystemConfig],
+      },
+    }, await resp.json());
   }
 
   async updateFunctionEventInvokeConfig(
     {abortSignal, ...params}: RequestConfig & UpdateFunctionEventInvokeConfigRequest,
   ): Promise<FunctionEventInvokeConfig> {
     const query = new URLSearchParams;
-    if (params["Qualifier"] != null) query.set("Qualifier", params["Qualifier"]?.toString() ?? "");
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       MaximumRetryAttempts: params["MaximumRetryAttempts"],
       MaximumEventAgeInSeconds: params["MaximumEventAgeInSeconds"],
       DestinationConfig: fromDestinationConfig(params["DestinationConfig"]),
-    } : {};
+    };
+    if (params["Qualifier"] != null) query.set("Qualifier", params["Qualifier"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
       abortSignal, query, body,
       action: "UpdateFunctionEventInvokeConfig",
       requestUri: cmnP.encodePath`/2019-09-25/functions/${params["FunctionName"]}/event-invoke-config`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "LastModified": "d",
-          "FunctionArn": "s",
-          "MaximumRetryAttempts": "n",
-          "MaximumEventAgeInSeconds": "n",
-          "DestinationConfig": toDestinationConfig,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "LastModified": "d",
+        "FunctionArn": "s",
+        "MaximumRetryAttempts": "n",
+        "MaximumEventAgeInSeconds": "n",
+        "DestinationConfig": toDestinationConfig,
+      },
+    }, await resp.json());
   }
 
   // Resource State Waiters
@@ -1394,7 +1320,7 @@ export default class Lambda {
         const resp = await this.getFunction(params);
         return resp; // for status 200
       } catch (err) {
-        if (!["ResourceNotFoundException"].includes(err.code)) throw err;
+        if (!["ResourceNotFoundException"].includes(err.shortCode)) throw err;
       }
       await new Promise(r => setTimeout(r, 1000));
     }

@@ -2867,7 +2867,7 @@ export default class RDS {
         if (resp?.DBInstances?.flatMap(x => x?.DBInstanceStatus)?.some(x => x === "rebooting")) throw new Error(errMessage);
         if (resp?.DBInstances?.flatMap(x => x?.DBInstanceStatus)?.some(x => x === "resetting-master-credentials")) throw new Error(errMessage);
       } catch (err) {
-        if (["DBInstanceNotFound"].includes(err.code)) return err;
+        if (["DBInstanceNotFound"].includes(err.shortCode)) return err;
         throw err;
       }
       await new Promise(r => setTimeout(r, 30000));
@@ -2908,7 +2908,7 @@ export default class RDS {
         if (resp?.DBSnapshots?.flatMap(x => x?.Status)?.some(x => x === "rebooting")) throw new Error(errMessage);
         if (resp?.DBSnapshots?.flatMap(x => x?.Status)?.some(x => x === "resetting-master-credentials")) throw new Error(errMessage);
       } catch (err) {
-        if (["DBSnapshotNotFound"].includes(err.code)) return err;
+        if (["DBSnapshotNotFound"].includes(err.shortCode)) return err;
         throw err;
       }
       await new Promise(r => setTimeout(r, 30000));
@@ -2949,7 +2949,7 @@ export default class RDS {
         if (resp?.DBClusterSnapshots?.flatMap(x => x?.Status)?.some(x => x === "rebooting")) throw new Error(errMessage);
         if (resp?.DBClusterSnapshots?.flatMap(x => x?.Status)?.some(x => x === "resetting-master-credentials")) throw new Error(errMessage);
       } catch (err) {
-        if (["DBClusterSnapshotNotFoundFault"].includes(err.code)) return err;
+        if (["DBClusterSnapshotNotFoundFault"].includes(err.shortCode)) return err;
         throw err;
       }
       await new Promise(r => setTimeout(r, 30000));

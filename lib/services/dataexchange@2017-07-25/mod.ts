@@ -42,97 +42,91 @@ export default class DataExchange {
   async createDataSet(
     {abortSignal, ...params}: RequestConfig & CreateDataSetRequest,
   ): Promise<CreateDataSetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AssetType: params["AssetType"],
       Description: params["Description"],
       Name: params["Name"],
       Tags: params["Tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDataSet",
       requestUri: "/v1/data-sets",
       responseCode: 201,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Arn": "s",
-          "AssetType": (x: jsonP.JSONValue) => cmnP.readEnum<AssetType>(x),
-          "CreatedAt": "d",
-          "Description": "s",
-          "Id": "s",
-          "Name": "s",
-          "Origin": (x: jsonP.JSONValue) => cmnP.readEnum<Origin>(x),
-          "OriginDetails": toOriginDetails,
-          "SourceId": "s",
-          "Tags": x => jsonP.readMap(String, String, x),
-          "UpdatedAt": "d",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+        "AssetType": (x: jsonP.JSONValue) => cmnP.readEnum<AssetType>(x),
+        "CreatedAt": "d",
+        "Description": "s",
+        "Id": "s",
+        "Name": "s",
+        "Origin": (x: jsonP.JSONValue) => cmnP.readEnum<Origin>(x),
+        "OriginDetails": toOriginDetails,
+        "SourceId": "s",
+        "Tags": x => jsonP.readMap(String, String, x),
+        "UpdatedAt": "d",
+      },
+    }, await resp.json());
   }
 
   async createJob(
     {abortSignal, ...params}: RequestConfig & CreateJobRequest,
   ): Promise<CreateJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Details: fromRequestDetails(params["Details"]),
       Type: params["Type"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateJob",
       requestUri: "/v1/jobs",
       responseCode: 201,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Arn": "s",
-          "CreatedAt": "d",
-          "Details": toResponseDetails,
-          "Errors": [toJobError],
-          "Id": "s",
-          "State": (x: jsonP.JSONValue) => cmnP.readEnum<State>(x),
-          "Type": (x: jsonP.JSONValue) => cmnP.readEnum<Type>(x),
-          "UpdatedAt": "d",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+        "CreatedAt": "d",
+        "Details": toResponseDetails,
+        "Errors": [toJobError],
+        "Id": "s",
+        "State": (x: jsonP.JSONValue) => cmnP.readEnum<State>(x),
+        "Type": (x: jsonP.JSONValue) => cmnP.readEnum<Type>(x),
+        "UpdatedAt": "d",
+      },
+    }, await resp.json());
   }
 
   async createRevision(
     {abortSignal, ...params}: RequestConfig & CreateRevisionRequest,
   ): Promise<CreateRevisionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Comment: params["Comment"],
       Tags: params["Tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateRevision",
       requestUri: cmnP.encodePath`/v1/data-sets/${params["DataSetId"]}/revisions`,
       responseCode: 201,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Arn": "s",
-          "Comment": "s",
-          "CreatedAt": "d",
-          "DataSetId": "s",
-          "Finalized": "b",
-          "Id": "s",
-          "SourceId": "s",
-          "Tags": x => jsonP.readMap(String, String, x),
-          "UpdatedAt": "d",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+        "Comment": "s",
+        "CreatedAt": "d",
+        "DataSetId": "s",
+        "Finalized": "b",
+        "Id": "s",
+        "SourceId": "s",
+        "Tags": x => jsonP.readMap(String, String, x),
+        "UpdatedAt": "d",
+      },
+    }, await resp.json());
   }
 
   async deleteAsset(
@@ -185,23 +179,21 @@ export default class DataExchange {
       requestUri: cmnP.encodePath`/v1/data-sets/${params["DataSetId"]}/revisions/${params["RevisionId"]}/assets/${params["AssetId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Arn": "s",
-          "AssetDetails": toAssetDetails,
-          "AssetType": (x: jsonP.JSONValue) => cmnP.readEnum<AssetType>(x),
-          "CreatedAt": "d",
-          "DataSetId": "s",
-          "Id": "s",
-          "Name": "s",
-          "RevisionId": "s",
-          "SourceId": "s",
-          "UpdatedAt": "d",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+        "AssetDetails": toAssetDetails,
+        "AssetType": (x: jsonP.JSONValue) => cmnP.readEnum<AssetType>(x),
+        "CreatedAt": "d",
+        "DataSetId": "s",
+        "Id": "s",
+        "Name": "s",
+        "RevisionId": "s",
+        "SourceId": "s",
+        "UpdatedAt": "d",
+      },
+    }, await resp.json());
   }
 
   async getDataSet(
@@ -215,24 +207,22 @@ export default class DataExchange {
       requestUri: cmnP.encodePath`/v1/data-sets/${params["DataSetId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Arn": "s",
-          "AssetType": (x: jsonP.JSONValue) => cmnP.readEnum<AssetType>(x),
-          "CreatedAt": "d",
-          "Description": "s",
-          "Id": "s",
-          "Name": "s",
-          "Origin": (x: jsonP.JSONValue) => cmnP.readEnum<Origin>(x),
-          "OriginDetails": toOriginDetails,
-          "SourceId": "s",
-          "Tags": x => jsonP.readMap(String, String, x),
-          "UpdatedAt": "d",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+        "AssetType": (x: jsonP.JSONValue) => cmnP.readEnum<AssetType>(x),
+        "CreatedAt": "d",
+        "Description": "s",
+        "Id": "s",
+        "Name": "s",
+        "Origin": (x: jsonP.JSONValue) => cmnP.readEnum<Origin>(x),
+        "OriginDetails": toOriginDetails,
+        "SourceId": "s",
+        "Tags": x => jsonP.readMap(String, String, x),
+        "UpdatedAt": "d",
+      },
+    }, await resp.json());
   }
 
   async getJob(
@@ -246,21 +236,19 @@ export default class DataExchange {
       requestUri: cmnP.encodePath`/v1/jobs/${params["JobId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Arn": "s",
-          "CreatedAt": "d",
-          "Details": toResponseDetails,
-          "Errors": [toJobError],
-          "Id": "s",
-          "State": (x: jsonP.JSONValue) => cmnP.readEnum<State>(x),
-          "Type": (x: jsonP.JSONValue) => cmnP.readEnum<Type>(x),
-          "UpdatedAt": "d",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+        "CreatedAt": "d",
+        "Details": toResponseDetails,
+        "Errors": [toJobError],
+        "Id": "s",
+        "State": (x: jsonP.JSONValue) => cmnP.readEnum<State>(x),
+        "Type": (x: jsonP.JSONValue) => cmnP.readEnum<Type>(x),
+        "UpdatedAt": "d",
+      },
+    }, await resp.json());
   }
 
   async getRevision(
@@ -274,22 +262,20 @@ export default class DataExchange {
       requestUri: cmnP.encodePath`/v1/data-sets/${params["DataSetId"]}/revisions/${params["RevisionId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Arn": "s",
-          "Comment": "s",
-          "CreatedAt": "d",
-          "DataSetId": "s",
-          "Finalized": "b",
-          "Id": "s",
-          "SourceId": "s",
-          "Tags": x => jsonP.readMap(String, String, x),
-          "UpdatedAt": "d",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+        "Comment": "s",
+        "CreatedAt": "d",
+        "DataSetId": "s",
+        "Finalized": "b",
+        "Id": "s",
+        "SourceId": "s",
+        "Tags": x => jsonP.readMap(String, String, x),
+        "UpdatedAt": "d",
+      },
+    }, await resp.json());
   }
 
   async listDataSetRevisions(
@@ -305,15 +291,13 @@ export default class DataExchange {
       requestUri: cmnP.encodePath`/v1/data-sets/${params["DataSetId"]}/revisions`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "NextToken": "s",
-          "Revisions": [toRevisionEntry],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "NextToken": "s",
+        "Revisions": [toRevisionEntry],
+      },
+    }, await resp.json());
   }
 
   async listDataSets(
@@ -330,15 +314,13 @@ export default class DataExchange {
       requestUri: "/v1/data-sets",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "DataSets": [toDataSetEntry],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "DataSets": [toDataSetEntry],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listJobs(
@@ -356,15 +338,13 @@ export default class DataExchange {
       requestUri: "/v1/jobs",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Jobs": [toJobEntry],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Jobs": [toJobEntry],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listRevisionAssets(
@@ -380,15 +360,13 @@ export default class DataExchange {
       requestUri: cmnP.encodePath`/v1/data-sets/${params["DataSetId"]}/revisions/${params["RevisionId"]}/assets`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Assets": [toAssetEntry],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Assets": [toAssetEntry],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listTagsForResource(
@@ -402,14 +380,12 @@ export default class DataExchange {
       requestUri: cmnP.encodePath`/tags/${params["ResourceArn"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async startJob(
@@ -423,20 +399,18 @@ export default class DataExchange {
       requestUri: cmnP.encodePath`/v1/jobs/${params["JobId"]}`,
       responseCode: 202,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       tags: params["Tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
@@ -464,9 +438,9 @@ export default class DataExchange {
   async updateAsset(
     {abortSignal, ...params}: RequestConfig & UpdateAssetRequest,
   ): Promise<UpdateAssetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateAsset",
@@ -474,32 +448,30 @@ export default class DataExchange {
       requestUri: cmnP.encodePath`/v1/data-sets/${params["DataSetId"]}/revisions/${params["RevisionId"]}/assets/${params["AssetId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Arn": "s",
-          "AssetDetails": toAssetDetails,
-          "AssetType": (x: jsonP.JSONValue) => cmnP.readEnum<AssetType>(x),
-          "CreatedAt": "d",
-          "DataSetId": "s",
-          "Id": "s",
-          "Name": "s",
-          "RevisionId": "s",
-          "SourceId": "s",
-          "UpdatedAt": "d",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+        "AssetDetails": toAssetDetails,
+        "AssetType": (x: jsonP.JSONValue) => cmnP.readEnum<AssetType>(x),
+        "CreatedAt": "d",
+        "DataSetId": "s",
+        "Id": "s",
+        "Name": "s",
+        "RevisionId": "s",
+        "SourceId": "s",
+        "UpdatedAt": "d",
+      },
+    }, await resp.json());
   }
 
   async updateDataSet(
     {abortSignal, ...params}: RequestConfig & UpdateDataSetRequest,
   ): Promise<UpdateDataSetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Description: params["Description"],
       Name: params["Name"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateDataSet",
@@ -507,32 +479,30 @@ export default class DataExchange {
       requestUri: cmnP.encodePath`/v1/data-sets/${params["DataSetId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Arn": "s",
-          "AssetType": (x: jsonP.JSONValue) => cmnP.readEnum<AssetType>(x),
-          "CreatedAt": "d",
-          "Description": "s",
-          "Id": "s",
-          "Name": "s",
-          "Origin": (x: jsonP.JSONValue) => cmnP.readEnum<Origin>(x),
-          "OriginDetails": toOriginDetails,
-          "SourceId": "s",
-          "UpdatedAt": "d",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+        "AssetType": (x: jsonP.JSONValue) => cmnP.readEnum<AssetType>(x),
+        "CreatedAt": "d",
+        "Description": "s",
+        "Id": "s",
+        "Name": "s",
+        "Origin": (x: jsonP.JSONValue) => cmnP.readEnum<Origin>(x),
+        "OriginDetails": toOriginDetails,
+        "SourceId": "s",
+        "UpdatedAt": "d",
+      },
+    }, await resp.json());
   }
 
   async updateRevision(
     {abortSignal, ...params}: RequestConfig & UpdateRevisionRequest,
   ): Promise<UpdateRevisionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Comment: params["Comment"],
       Finalized: params["Finalized"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateRevision",
@@ -540,21 +510,19 @@ export default class DataExchange {
       requestUri: cmnP.encodePath`/v1/data-sets/${params["DataSetId"]}/revisions/${params["RevisionId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Arn": "s",
-          "Comment": "s",
-          "CreatedAt": "d",
-          "DataSetId": "s",
-          "Finalized": "b",
-          "Id": "s",
-          "SourceId": "s",
-          "UpdatedAt": "d",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+        "Comment": "s",
+        "CreatedAt": "d",
+        "DataSetId": "s",
+        "Finalized": "b",
+        "Id": "s",
+        "SourceId": "s",
+        "UpdatedAt": "d",
+      },
+    }, await resp.json());
   }
 
 }

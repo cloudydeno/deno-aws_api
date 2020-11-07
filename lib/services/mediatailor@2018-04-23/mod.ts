@@ -38,12 +38,10 @@ export default class MediaTailor {
       requestUri: cmnP.encodePath`/playbackConfiguration/${params["Name"]}`,
       responseCode: 204,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async getPlaybackConfiguration(
@@ -57,30 +55,28 @@ export default class MediaTailor {
       requestUri: cmnP.encodePath`/playbackConfiguration/${params["Name"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "AdDecisionServerUrl": "s",
-          "AvailSuppression": toAvailSuppression,
-          "Bumper": toBumper,
-          "CdnConfiguration": toCdnConfiguration,
-          "DashConfiguration": toDashConfiguration,
-          "HlsConfiguration": toHlsConfiguration,
-          "LivePreRollConfiguration": toLivePreRollConfiguration,
-          "ManifestProcessingRules": toManifestProcessingRules,
-          "Name": "s",
-          "PersonalizationThresholdSeconds": "n",
-          "PlaybackConfigurationArn": "s",
-          "PlaybackEndpointPrefix": "s",
-          "SessionInitializationEndpointPrefix": "s",
-          "SlateAdUrl": "s",
-          "Tags": x => jsonP.readMap(String, String, x),
-          "TranscodeProfileName": "s",
-          "VideoContentSourceUrl": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "AdDecisionServerUrl": "s",
+        "AvailSuppression": toAvailSuppression,
+        "Bumper": toBumper,
+        "CdnConfiguration": toCdnConfiguration,
+        "DashConfiguration": toDashConfiguration,
+        "HlsConfiguration": toHlsConfiguration,
+        "LivePreRollConfiguration": toLivePreRollConfiguration,
+        "ManifestProcessingRules": toManifestProcessingRules,
+        "Name": "s",
+        "PersonalizationThresholdSeconds": "n",
+        "PlaybackConfigurationArn": "s",
+        "PlaybackEndpointPrefix": "s",
+        "SessionInitializationEndpointPrefix": "s",
+        "SlateAdUrl": "s",
+        "Tags": x => jsonP.readMap(String, String, x),
+        "TranscodeProfileName": "s",
+        "VideoContentSourceUrl": "s",
+      },
+    }, await resp.json());
   }
 
   async listPlaybackConfigurations(
@@ -96,15 +92,13 @@ export default class MediaTailor {
       requestUri: "/playbackConfigurations",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Items": [toPlaybackConfiguration],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Items": [toPlaybackConfiguration],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listTagsForResource(
@@ -118,20 +112,18 @@ export default class MediaTailor {
       requestUri: cmnP.encodePath`/tags/${params["ResourceArn"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async putPlaybackConfiguration(
     {abortSignal, ...params}: RequestConfig & PutPlaybackConfigurationRequest = {},
   ): Promise<PutPlaybackConfigurationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       AdDecisionServerUrl: params["AdDecisionServerUrl"],
       AvailSuppression: fromAvailSuppression(params["AvailSuppression"]),
       Bumper: fromBumper(params["Bumper"]),
@@ -145,7 +137,7 @@ export default class MediaTailor {
       tags: params["Tags"],
       TranscodeProfileName: params["TranscodeProfileName"],
       VideoContentSourceUrl: params["VideoContentSourceUrl"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutPlaybackConfiguration",
@@ -153,38 +145,36 @@ export default class MediaTailor {
       requestUri: "/playbackConfiguration",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "AdDecisionServerUrl": "s",
-          "AvailSuppression": toAvailSuppression,
-          "Bumper": toBumper,
-          "CdnConfiguration": toCdnConfiguration,
-          "DashConfiguration": toDashConfiguration,
-          "HlsConfiguration": toHlsConfiguration,
-          "LivePreRollConfiguration": toLivePreRollConfiguration,
-          "ManifestProcessingRules": toManifestProcessingRules,
-          "Name": "s",
-          "PersonalizationThresholdSeconds": "n",
-          "PlaybackConfigurationArn": "s",
-          "PlaybackEndpointPrefix": "s",
-          "SessionInitializationEndpointPrefix": "s",
-          "SlateAdUrl": "s",
-          "Tags": x => jsonP.readMap(String, String, x),
-          "TranscodeProfileName": "s",
-          "VideoContentSourceUrl": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "AdDecisionServerUrl": "s",
+        "AvailSuppression": toAvailSuppression,
+        "Bumper": toBumper,
+        "CdnConfiguration": toCdnConfiguration,
+        "DashConfiguration": toDashConfiguration,
+        "HlsConfiguration": toHlsConfiguration,
+        "LivePreRollConfiguration": toLivePreRollConfiguration,
+        "ManifestProcessingRules": toManifestProcessingRules,
+        "Name": "s",
+        "PersonalizationThresholdSeconds": "n",
+        "PlaybackConfigurationArn": "s",
+        "PlaybackEndpointPrefix": "s",
+        "SessionInitializationEndpointPrefix": "s",
+        "SlateAdUrl": "s",
+        "Tags": x => jsonP.readMap(String, String, x),
+        "TranscodeProfileName": "s",
+        "VideoContentSourceUrl": "s",
+      },
+    }, await resp.json());
   }
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       tags: params["Tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",

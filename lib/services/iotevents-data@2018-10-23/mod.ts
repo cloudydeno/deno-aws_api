@@ -28,45 +28,41 @@ export default class IoTEventsData {
   async batchPutMessage(
     {abortSignal, ...params}: RequestConfig & BatchPutMessageRequest,
   ): Promise<BatchPutMessageResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       messages: params["messages"]?.map(x => fromMessage(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchPutMessage",
       requestUri: "/inputs/messages",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "BatchPutMessageErrorEntries": [toBatchPutMessageErrorEntry],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "BatchPutMessageErrorEntries": [toBatchPutMessageErrorEntry],
+      },
+    }, await resp.json());
   }
 
   async batchUpdateDetector(
     {abortSignal, ...params}: RequestConfig & BatchUpdateDetectorRequest,
   ): Promise<BatchUpdateDetectorResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       detectors: params["detectors"]?.map(x => fromUpdateDetectorRequest(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchUpdateDetector",
       requestUri: "/detectors",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "batchUpdateDetectorErrorEntries": [toBatchUpdateDetectorErrorEntry],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "batchUpdateDetectorErrorEntries": [toBatchUpdateDetectorErrorEntry],
+      },
+    }, await resp.json());
   }
 
   async describeDetector(
@@ -80,14 +76,12 @@ export default class IoTEventsData {
       method: "GET",
       requestUri: cmnP.encodePath`/detectors/${params["detectorModelName"]}/keyValues/`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "detector": toDetector,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "detector": toDetector,
+      },
+    }, await resp.json());
   }
 
   async listDetectors(
@@ -103,15 +97,13 @@ export default class IoTEventsData {
       method: "GET",
       requestUri: cmnP.encodePath`/detectors/${params["detectorModelName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "detectorSummaries": [toDetectorSummary],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "detectorSummaries": [toDetectorSummary],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
 }

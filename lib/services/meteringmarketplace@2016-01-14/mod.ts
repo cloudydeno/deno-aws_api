@@ -30,10 +30,10 @@ export default class MarketplaceMetering {
   async batchMeterUsage(
     {abortSignal, ...params}: RequestConfig & BatchMeterUsageRequest,
   ): Promise<BatchMeterUsageResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       UsageRecords: params["UsageRecords"]?.map(x => fromUsageRecord(x)),
       ProductCode: params["ProductCode"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchMeterUsage",
@@ -50,13 +50,13 @@ export default class MarketplaceMetering {
   async meterUsage(
     {abortSignal, ...params}: RequestConfig & MeterUsageRequest,
   ): Promise<MeterUsageResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ProductCode: params["ProductCode"],
       Timestamp: jsonP.serializeDate_unixTimestamp(params["Timestamp"]),
       UsageDimension: params["UsageDimension"],
       UsageQuantity: params["UsageQuantity"],
       DryRun: params["DryRun"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "MeterUsage",
@@ -72,11 +72,11 @@ export default class MarketplaceMetering {
   async registerUsage(
     {abortSignal, ...params}: RequestConfig & RegisterUsageRequest,
   ): Promise<RegisterUsageResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ProductCode: params["ProductCode"],
       PublicKeyVersion: params["PublicKeyVersion"],
       Nonce: params["Nonce"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RegisterUsage",
@@ -93,9 +93,9 @@ export default class MarketplaceMetering {
   async resolveCustomer(
     {abortSignal, ...params}: RequestConfig & ResolveCustomerRequest,
   ): Promise<ResolveCustomerResult> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       RegistrationToken: params["RegistrationToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ResolveCustomer",

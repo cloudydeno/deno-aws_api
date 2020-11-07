@@ -34,21 +34,19 @@ export default class MediaConvert {
   async associateCertificate(
     {abortSignal, ...params}: RequestConfig & AssociateCertificateRequest,
   ): Promise<AssociateCertificateResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       arn: params["Arn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AssociateCertificate",
       requestUri: "/2017-08-29/certificates",
       responseCode: 201,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async cancelJob(
@@ -62,18 +60,16 @@ export default class MediaConvert {
       requestUri: cmnP.encodePath`/2017-08-29/jobs/${params["Id"]}`,
       responseCode: 202,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async createJob(
     {abortSignal, ...params}: RequestConfig & CreateJobRequest,
   ): Promise<CreateJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       accelerationSettings: fromAccelerationSettings(params["AccelerationSettings"]),
       billingTagsSource: params["BillingTagsSource"],
       clientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
@@ -87,27 +83,25 @@ export default class MediaConvert {
       statusUpdateInterval: params["StatusUpdateInterval"],
       tags: params["Tags"],
       userMetadata: params["UserMetadata"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateJob",
       requestUri: "/2017-08-29/jobs",
       responseCode: 201,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Job": toJob,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Job": toJob,
+      },
+    }, await resp.json());
   }
 
   async createJobTemplate(
     {abortSignal, ...params}: RequestConfig & CreateJobTemplateRequest,
   ): Promise<CreateJobTemplateResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       accelerationSettings: fromAccelerationSettings(params["AccelerationSettings"]),
       category: params["Category"],
       description: params["Description"],
@@ -118,74 +112,68 @@ export default class MediaConvert {
       settings: fromJobTemplateSettings(params["Settings"]),
       statusUpdateInterval: params["StatusUpdateInterval"],
       tags: params["Tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateJobTemplate",
       requestUri: "/2017-08-29/jobTemplates",
       responseCode: 201,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "JobTemplate": toJobTemplate,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "JobTemplate": toJobTemplate,
+      },
+    }, await resp.json());
   }
 
   async createPreset(
     {abortSignal, ...params}: RequestConfig & CreatePresetRequest,
   ): Promise<CreatePresetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       category: params["Category"],
       description: params["Description"],
       name: params["Name"],
       settings: fromPresetSettings(params["Settings"]),
       tags: params["Tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreatePreset",
       requestUri: "/2017-08-29/presets",
       responseCode: 201,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Preset": toPreset,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Preset": toPreset,
+      },
+    }, await resp.json());
   }
 
   async createQueue(
     {abortSignal, ...params}: RequestConfig & CreateQueueRequest,
   ): Promise<CreateQueueResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       description: params["Description"],
       name: params["Name"],
       pricingPlan: params["PricingPlan"],
       reservationPlanSettings: fromReservationPlanSettings(params["ReservationPlanSettings"]),
       status: params["Status"],
       tags: params["Tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateQueue",
       requestUri: "/2017-08-29/queues",
       responseCode: 201,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Queue": toQueue,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Queue": toQueue,
+      },
+    }, await resp.json());
   }
 
   async deleteJobTemplate(
@@ -199,12 +187,10 @@ export default class MediaConvert {
       requestUri: cmnP.encodePath`/2017-08-29/jobTemplates/${params["Name"]}`,
       responseCode: 202,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async deletePreset(
@@ -218,12 +204,10 @@ export default class MediaConvert {
       requestUri: cmnP.encodePath`/2017-08-29/presets/${params["Name"]}`,
       responseCode: 202,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async deleteQueue(
@@ -237,37 +221,33 @@ export default class MediaConvert {
       requestUri: cmnP.encodePath`/2017-08-29/queues/${params["Name"]}`,
       responseCode: 202,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async describeEndpoints(
     {abortSignal, ...params}: RequestConfig & DescribeEndpointsRequest = {},
   ): Promise<DescribeEndpointsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       maxResults: params["MaxResults"],
       mode: params["Mode"],
       nextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeEndpoints",
       requestUri: "/2017-08-29/endpoints",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Endpoints": [toEndpoint],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Endpoints": [toEndpoint],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async disassociateCertificate(
@@ -281,12 +261,10 @@ export default class MediaConvert {
       requestUri: cmnP.encodePath`/2017-08-29/certificates/${params["Arn"]}`,
       responseCode: 202,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async getJob(
@@ -300,14 +278,12 @@ export default class MediaConvert {
       requestUri: cmnP.encodePath`/2017-08-29/jobs/${params["Id"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Job": toJob,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Job": toJob,
+      },
+    }, await resp.json());
   }
 
   async getJobTemplate(
@@ -321,14 +297,12 @@ export default class MediaConvert {
       requestUri: cmnP.encodePath`/2017-08-29/jobTemplates/${params["Name"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "JobTemplate": toJobTemplate,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "JobTemplate": toJobTemplate,
+      },
+    }, await resp.json());
   }
 
   async getPreset(
@@ -342,14 +316,12 @@ export default class MediaConvert {
       requestUri: cmnP.encodePath`/2017-08-29/presets/${params["Name"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Preset": toPreset,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Preset": toPreset,
+      },
+    }, await resp.json());
   }
 
   async getQueue(
@@ -363,14 +335,12 @@ export default class MediaConvert {
       requestUri: cmnP.encodePath`/2017-08-29/queues/${params["Name"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Queue": toQueue,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Queue": toQueue,
+      },
+    }, await resp.json());
   }
 
   async listJobTemplates(
@@ -389,15 +359,13 @@ export default class MediaConvert {
       requestUri: "/2017-08-29/jobTemplates",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "JobTemplates": [toJobTemplate],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "JobTemplates": [toJobTemplate],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listJobs(
@@ -416,15 +384,13 @@ export default class MediaConvert {
       requestUri: "/2017-08-29/jobs",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Jobs": [toJob],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Jobs": [toJob],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listPresets(
@@ -443,15 +409,13 @@ export default class MediaConvert {
       requestUri: "/2017-08-29/presets",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "NextToken": "s",
-          "Presets": [toPreset],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "NextToken": "s",
+        "Presets": [toPreset],
+      },
+    }, await resp.json());
   }
 
   async listQueues(
@@ -469,15 +433,13 @@ export default class MediaConvert {
       requestUri: "/2017-08-29/queues",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "NextToken": "s",
-          "Queues": [toQueue],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "NextToken": "s",
+        "Queues": [toQueue],
+      },
+    }, await resp.json());
   }
 
   async listTagsForResource(
@@ -491,43 +453,39 @@ export default class MediaConvert {
       requestUri: cmnP.encodePath`/2017-08-29/tags/${params["Arn"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ResourceTags": toResourceTags,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ResourceTags": toResourceTags,
+      },
+    }, await resp.json());
   }
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       arn: params["Arn"],
       tags: params["Tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
       requestUri: "/2017-08-29/tags",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceRequest,
   ): Promise<UntagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       tagKeys: params["TagKeys"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResource",
@@ -535,18 +493,16 @@ export default class MediaConvert {
       requestUri: cmnP.encodePath`/2017-08-29/tags/${params["Arn"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async updateJobTemplate(
     {abortSignal, ...params}: RequestConfig & UpdateJobTemplateRequest,
   ): Promise<UpdateJobTemplateResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       accelerationSettings: fromAccelerationSettings(params["AccelerationSettings"]),
       category: params["Category"],
       description: params["Description"],
@@ -555,7 +511,7 @@ export default class MediaConvert {
       queue: params["Queue"],
       settings: fromJobTemplateSettings(params["Settings"]),
       statusUpdateInterval: params["StatusUpdateInterval"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateJobTemplate",
@@ -563,24 +519,22 @@ export default class MediaConvert {
       requestUri: cmnP.encodePath`/2017-08-29/jobTemplates/${params["Name"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "JobTemplate": toJobTemplate,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "JobTemplate": toJobTemplate,
+      },
+    }, await resp.json());
   }
 
   async updatePreset(
     {abortSignal, ...params}: RequestConfig & UpdatePresetRequest,
   ): Promise<UpdatePresetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       category: params["Category"],
       description: params["Description"],
       settings: fromPresetSettings(params["Settings"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdatePreset",
@@ -588,24 +542,22 @@ export default class MediaConvert {
       requestUri: cmnP.encodePath`/2017-08-29/presets/${params["Name"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Preset": toPreset,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Preset": toPreset,
+      },
+    }, await resp.json());
   }
 
   async updateQueue(
     {abortSignal, ...params}: RequestConfig & UpdateQueueRequest,
   ): Promise<UpdateQueueResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       description: params["Description"],
       reservationPlanSettings: fromReservationPlanSettings(params["ReservationPlanSettings"]),
       status: params["Status"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateQueue",
@@ -613,14 +565,12 @@ export default class MediaConvert {
       requestUri: cmnP.encodePath`/2017-08-29/queues/${params["Name"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Queue": toQueue,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Queue": toQueue,
+      },
+    }, await resp.json());
   }
 
 }

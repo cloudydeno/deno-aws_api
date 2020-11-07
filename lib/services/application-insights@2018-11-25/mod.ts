@@ -31,13 +31,13 @@ export default class ApplicationInsights {
   async createApplication(
     {abortSignal, ...params}: RequestConfig & CreateApplicationRequest,
   ): Promise<CreateApplicationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceGroupName: params["ResourceGroupName"],
       OpsCenterEnabled: params["OpsCenterEnabled"],
       CWEMonitorEnabled: params["CWEMonitorEnabled"],
       OpsItemSNSTopicArn: params["OpsItemSNSTopicArn"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateApplication",
@@ -53,11 +53,11 @@ export default class ApplicationInsights {
   async createComponent(
     {abortSignal, ...params}: RequestConfig & CreateComponentRequest,
   ): Promise<CreateComponentResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceGroupName: params["ResourceGroupName"],
       ComponentName: params["ComponentName"],
       ResourceList: params["ResourceList"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateComponent",
@@ -71,13 +71,13 @@ export default class ApplicationInsights {
   async createLogPattern(
     {abortSignal, ...params}: RequestConfig & CreateLogPatternRequest,
   ): Promise<CreateLogPatternResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceGroupName: params["ResourceGroupName"],
       PatternSetName: params["PatternSetName"],
       PatternName: params["PatternName"],
       Pattern: params["Pattern"],
       Rank: params["Rank"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateLogPattern",
@@ -94,9 +94,9 @@ export default class ApplicationInsights {
   async deleteApplication(
     {abortSignal, ...params}: RequestConfig & DeleteApplicationRequest,
   ): Promise<DeleteApplicationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceGroupName: params["ResourceGroupName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteApplication",
@@ -110,10 +110,10 @@ export default class ApplicationInsights {
   async deleteComponent(
     {abortSignal, ...params}: RequestConfig & DeleteComponentRequest,
   ): Promise<DeleteComponentResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceGroupName: params["ResourceGroupName"],
       ComponentName: params["ComponentName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteComponent",
@@ -127,11 +127,11 @@ export default class ApplicationInsights {
   async deleteLogPattern(
     {abortSignal, ...params}: RequestConfig & DeleteLogPatternRequest,
   ): Promise<DeleteLogPatternResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceGroupName: params["ResourceGroupName"],
       PatternSetName: params["PatternSetName"],
       PatternName: params["PatternName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteLogPattern",
@@ -145,9 +145,9 @@ export default class ApplicationInsights {
   async describeApplication(
     {abortSignal, ...params}: RequestConfig & DescribeApplicationRequest,
   ): Promise<DescribeApplicationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceGroupName: params["ResourceGroupName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeApplication",
@@ -163,10 +163,10 @@ export default class ApplicationInsights {
   async describeComponent(
     {abortSignal, ...params}: RequestConfig & DescribeComponentRequest,
   ): Promise<DescribeComponentResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceGroupName: params["ResourceGroupName"],
       ComponentName: params["ComponentName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeComponent",
@@ -183,10 +183,10 @@ export default class ApplicationInsights {
   async describeComponentConfiguration(
     {abortSignal, ...params}: RequestConfig & DescribeComponentConfigurationRequest,
   ): Promise<DescribeComponentConfigurationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceGroupName: params["ResourceGroupName"],
       ComponentName: params["ComponentName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeComponentConfiguration",
@@ -204,11 +204,11 @@ export default class ApplicationInsights {
   async describeComponentConfigurationRecommendation(
     {abortSignal, ...params}: RequestConfig & DescribeComponentConfigurationRecommendationRequest,
   ): Promise<DescribeComponentConfigurationRecommendationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceGroupName: params["ResourceGroupName"],
       ComponentName: params["ComponentName"],
       Tier: params["Tier"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeComponentConfigurationRecommendation",
@@ -224,11 +224,11 @@ export default class ApplicationInsights {
   async describeLogPattern(
     {abortSignal, ...params}: RequestConfig & DescribeLogPatternRequest,
   ): Promise<DescribeLogPatternResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceGroupName: params["ResourceGroupName"],
       PatternSetName: params["PatternSetName"],
       PatternName: params["PatternName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeLogPattern",
@@ -245,9 +245,9 @@ export default class ApplicationInsights {
   async describeObservation(
     {abortSignal, ...params}: RequestConfig & DescribeObservationRequest,
   ): Promise<DescribeObservationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ObservationId: params["ObservationId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeObservation",
@@ -263,9 +263,9 @@ export default class ApplicationInsights {
   async describeProblem(
     {abortSignal, ...params}: RequestConfig & DescribeProblemRequest,
   ): Promise<DescribeProblemResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ProblemId: params["ProblemId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeProblem",
@@ -281,9 +281,9 @@ export default class ApplicationInsights {
   async describeProblemObservations(
     {abortSignal, ...params}: RequestConfig & DescribeProblemObservationsRequest,
   ): Promise<DescribeProblemObservationsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ProblemId: params["ProblemId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeProblemObservations",
@@ -299,10 +299,10 @@ export default class ApplicationInsights {
   async listApplications(
     {abortSignal, ...params}: RequestConfig & ListApplicationsRequest = {},
   ): Promise<ListApplicationsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListApplications",
@@ -319,11 +319,11 @@ export default class ApplicationInsights {
   async listComponents(
     {abortSignal, ...params}: RequestConfig & ListComponentsRequest,
   ): Promise<ListComponentsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceGroupName: params["ResourceGroupName"],
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListComponents",
@@ -340,14 +340,14 @@ export default class ApplicationInsights {
   async listConfigurationHistory(
     {abortSignal, ...params}: RequestConfig & ListConfigurationHistoryRequest = {},
   ): Promise<ListConfigurationHistoryResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceGroupName: params["ResourceGroupName"],
       StartTime: jsonP.serializeDate_unixTimestamp(params["StartTime"]),
       EndTime: jsonP.serializeDate_unixTimestamp(params["EndTime"]),
       EventStatus: params["EventStatus"],
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListConfigurationHistory",
@@ -364,11 +364,11 @@ export default class ApplicationInsights {
   async listLogPatternSets(
     {abortSignal, ...params}: RequestConfig & ListLogPatternSetsRequest,
   ): Promise<ListLogPatternSetsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceGroupName: params["ResourceGroupName"],
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListLogPatternSets",
@@ -386,12 +386,12 @@ export default class ApplicationInsights {
   async listLogPatterns(
     {abortSignal, ...params}: RequestConfig & ListLogPatternsRequest,
   ): Promise<ListLogPatternsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceGroupName: params["ResourceGroupName"],
       PatternSetName: params["PatternSetName"],
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListLogPatterns",
@@ -409,13 +409,13 @@ export default class ApplicationInsights {
   async listProblems(
     {abortSignal, ...params}: RequestConfig & ListProblemsRequest = {},
   ): Promise<ListProblemsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceGroupName: params["ResourceGroupName"],
       StartTime: jsonP.serializeDate_unixTimestamp(params["StartTime"]),
       EndTime: jsonP.serializeDate_unixTimestamp(params["EndTime"]),
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListProblems",
@@ -432,9 +432,9 @@ export default class ApplicationInsights {
   async listTagsForResource(
     {abortSignal, ...params}: RequestConfig & ListTagsForResourceRequest,
   ): Promise<ListTagsForResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceARN: params["ResourceARN"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForResource",
@@ -450,10 +450,10 @@ export default class ApplicationInsights {
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceARN: params["ResourceARN"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
@@ -467,10 +467,10 @@ export default class ApplicationInsights {
   async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceRequest,
   ): Promise<UntagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceARN: params["ResourceARN"],
       TagKeys: params["TagKeys"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResource",
@@ -484,13 +484,13 @@ export default class ApplicationInsights {
   async updateApplication(
     {abortSignal, ...params}: RequestConfig & UpdateApplicationRequest,
   ): Promise<UpdateApplicationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceGroupName: params["ResourceGroupName"],
       OpsCenterEnabled: params["OpsCenterEnabled"],
       CWEMonitorEnabled: params["CWEMonitorEnabled"],
       OpsItemSNSTopicArn: params["OpsItemSNSTopicArn"],
       RemoveSNSTopic: params["RemoveSNSTopic"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateApplication",
@@ -506,12 +506,12 @@ export default class ApplicationInsights {
   async updateComponent(
     {abortSignal, ...params}: RequestConfig & UpdateComponentRequest,
   ): Promise<UpdateComponentResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceGroupName: params["ResourceGroupName"],
       ComponentName: params["ComponentName"],
       NewComponentName: params["NewComponentName"],
       ResourceList: params["ResourceList"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateComponent",
@@ -525,13 +525,13 @@ export default class ApplicationInsights {
   async updateComponentConfiguration(
     {abortSignal, ...params}: RequestConfig & UpdateComponentConfigurationRequest,
   ): Promise<UpdateComponentConfigurationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceGroupName: params["ResourceGroupName"],
       ComponentName: params["ComponentName"],
       Monitor: params["Monitor"],
       Tier: params["Tier"],
       ComponentConfiguration: params["ComponentConfiguration"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateComponentConfiguration",
@@ -545,13 +545,13 @@ export default class ApplicationInsights {
   async updateLogPattern(
     {abortSignal, ...params}: RequestConfig & UpdateLogPatternRequest,
   ): Promise<UpdateLogPatternResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceGroupName: params["ResourceGroupName"],
       PatternSetName: params["PatternSetName"],
       PatternName: params["PatternName"],
       Pattern: params["Pattern"],
       Rank: params["Rank"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateLogPattern",

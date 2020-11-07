@@ -54,9 +54,9 @@ export default class Glacier {
   async addTagsToVault(
     {abortSignal, ...params}: RequestConfig & AddTagsToVaultInput,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Tags: params["Tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AddTagsToVault",
@@ -77,15 +77,15 @@ export default class Glacier {
       requestUri: cmnP.encodePath`/${params["accountId"]}/vaults/${params["vaultName"]}/multipart-uploads/${params["uploadId"]}`,
       responseCode: 201,
     });
-  return {
-    location: resp.headers.get("Location"),
-    checksum: resp.headers.get("x-amz-sha256-tree-hash"),
-    archiveId: resp.headers.get("x-amz-archive-id"),
-    ...jsonP.readObj({
+    return {
+      location: resp.headers.get("Location"),
+      checksum: resp.headers.get("x-amz-sha256-tree-hash"),
+      archiveId: resp.headers.get("x-amz-archive-id"),
+      ...jsonP.readObj({
         required: {},
         optional: {},
       }, await resp.json()),
-  };
+    };
   }
 
   async completeVaultLock(
@@ -111,13 +111,13 @@ export default class Glacier {
       requestUri: cmnP.encodePath`/${params["accountId"]}/vaults/${params["vaultName"]}`,
       responseCode: 201,
     });
-  return {
-    location: resp.headers.get("Location"),
-    ...jsonP.readObj({
+    return {
+      location: resp.headers.get("Location"),
+      ...jsonP.readObj({
         required: {},
         optional: {},
       }, await resp.json()),
-  };
+    };
   }
 
   async deleteArchive(
@@ -182,34 +182,32 @@ export default class Glacier {
       method: "GET",
       requestUri: cmnP.encodePath`/${params["accountId"]}/vaults/${params["vaultName"]}/jobs/${params["jobId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "JobId": "s",
-          "JobDescription": "s",
-          "Action": (x: jsonP.JSONValue) => cmnP.readEnum<ActionCode>(x),
-          "ArchiveId": "s",
-          "VaultARN": "s",
-          "CreationDate": "s",
-          "Completed": "b",
-          "StatusCode": (x: jsonP.JSONValue) => cmnP.readEnum<StatusCode>(x),
-          "StatusMessage": "s",
-          "ArchiveSizeInBytes": "n",
-          "InventorySizeInBytes": "n",
-          "SNSTopic": "s",
-          "CompletionDate": "s",
-          "SHA256TreeHash": "s",
-          "ArchiveSHA256TreeHash": "s",
-          "RetrievalByteRange": "s",
-          "Tier": "s",
-          "InventoryRetrievalParameters": toInventoryRetrievalJobDescription,
-          "JobOutputPath": "s",
-          "SelectParameters": toSelectParameters,
-          "OutputLocation": toOutputLocation,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "JobId": "s",
+        "JobDescription": "s",
+        "Action": (x: jsonP.JSONValue) => cmnP.readEnum<ActionCode>(x),
+        "ArchiveId": "s",
+        "VaultARN": "s",
+        "CreationDate": "s",
+        "Completed": "b",
+        "StatusCode": (x: jsonP.JSONValue) => cmnP.readEnum<StatusCode>(x),
+        "StatusMessage": "s",
+        "ArchiveSizeInBytes": "n",
+        "InventorySizeInBytes": "n",
+        "SNSTopic": "s",
+        "CompletionDate": "s",
+        "SHA256TreeHash": "s",
+        "ArchiveSHA256TreeHash": "s",
+        "RetrievalByteRange": "s",
+        "Tier": "s",
+        "InventoryRetrievalParameters": toInventoryRetrievalJobDescription,
+        "JobOutputPath": "s",
+        "SelectParameters": toSelectParameters,
+        "OutputLocation": toOutputLocation,
+      },
+    }, await resp.json());
   }
 
   async describeVault(
@@ -222,19 +220,17 @@ export default class Glacier {
       method: "GET",
       requestUri: cmnP.encodePath`/${params["accountId"]}/vaults/${params["vaultName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "VaultARN": "s",
-          "VaultName": "s",
-          "CreationDate": "s",
-          "LastInventoryDate": "s",
-          "NumberOfArchives": "n",
-          "SizeInBytes": "n",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "VaultARN": "s",
+        "VaultName": "s",
+        "CreationDate": "s",
+        "LastInventoryDate": "s",
+        "NumberOfArchives": "n",
+        "SizeInBytes": "n",
+      },
+    }, await resp.json());
   }
 
   async getDataRetrievalPolicy(
@@ -247,14 +243,12 @@ export default class Glacier {
       method: "GET",
       requestUri: cmnP.encodePath`/${params["accountId"]}/policies/data-retrieval`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Policy": toDataRetrievalPolicy,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Policy": toDataRetrievalPolicy,
+      },
+    }, await resp.json());
   }
 
   async getJobOutput(
@@ -304,17 +298,15 @@ export default class Glacier {
       method: "GET",
       requestUri: cmnP.encodePath`/${params["accountId"]}/vaults/${params["vaultName"]}/lock-policy`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Policy": "s",
-          "State": "s",
-          "ExpirationDate": "s",
-          "CreationDate": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Policy": "s",
+        "State": "s",
+        "ExpirationDate": "s",
+        "CreationDate": "s",
+      },
+    }, await resp.json());
   }
 
   async getVaultNotifications(
@@ -354,15 +346,15 @@ export default class Glacier {
       requestUri: cmnP.encodePath`/${params["accountId"]}/vaults/${params["vaultName"]}/jobs`,
       responseCode: 202,
     });
-  return {
-    location: resp.headers.get("Location"),
-    jobId: resp.headers.get("x-amz-job-id"),
-    jobOutputPath: resp.headers.get("x-amz-job-output-path"),
-    ...jsonP.readObj({
+    return {
+      location: resp.headers.get("Location"),
+      jobId: resp.headers.get("x-amz-job-id"),
+      jobOutputPath: resp.headers.get("x-amz-job-output-path"),
+      ...jsonP.readObj({
         required: {},
         optional: {},
       }, await resp.json()),
-  };
+    };
   }
 
   async initiateMultipartUpload(
@@ -377,14 +369,14 @@ export default class Glacier {
       requestUri: cmnP.encodePath`/${params["accountId"]}/vaults/${params["vaultName"]}/multipart-uploads`,
       responseCode: 201,
     });
-  return {
-    location: resp.headers.get("Location"),
-    uploadId: resp.headers.get("x-amz-multipart-upload-id"),
-    ...jsonP.readObj({
+    return {
+      location: resp.headers.get("Location"),
+      uploadId: resp.headers.get("x-amz-multipart-upload-id"),
+      ...jsonP.readObj({
         required: {},
         optional: {},
       }, await resp.json()),
-  };
+    };
   }
 
   async initiateVaultLock(
@@ -400,13 +392,13 @@ export default class Glacier {
       requestUri: cmnP.encodePath`/${params["accountId"]}/vaults/${params["vaultName"]}/lock-policy`,
       responseCode: 201,
     });
-  return {
-    lockId: resp.headers.get("x-amz-lock-id"),
-    ...jsonP.readObj({
+    return {
+      lockId: resp.headers.get("x-amz-lock-id"),
+      ...jsonP.readObj({
         required: {},
         optional: {},
       }, await resp.json()),
-  };
+    };
   }
 
   async listJobs(
@@ -423,15 +415,13 @@ export default class Glacier {
       method: "GET",
       requestUri: cmnP.encodePath`/${params["accountId"]}/vaults/${params["vaultName"]}/jobs`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "JobList": [toGlacierJobDescription],
-          "Marker": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "JobList": [toGlacierJobDescription],
+        "Marker": "s",
+      },
+    }, await resp.json());
   }
 
   async listMultipartUploads(
@@ -446,15 +436,13 @@ export default class Glacier {
       method: "GET",
       requestUri: cmnP.encodePath`/${params["accountId"]}/vaults/${params["vaultName"]}/multipart-uploads`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "UploadsList": [toUploadListElement],
-          "Marker": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "UploadsList": [toUploadListElement],
+        "Marker": "s",
+      },
+    }, await resp.json());
   }
 
   async listParts(
@@ -469,20 +457,18 @@ export default class Glacier {
       method: "GET",
       requestUri: cmnP.encodePath`/${params["accountId"]}/vaults/${params["vaultName"]}/multipart-uploads/${params["uploadId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "MultipartUploadId": "s",
-          "VaultARN": "s",
-          "ArchiveDescription": "s",
-          "PartSizeInBytes": "n",
-          "CreationDate": "s",
-          "Parts": [toPartListElement],
-          "Marker": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "MultipartUploadId": "s",
+        "VaultARN": "s",
+        "ArchiveDescription": "s",
+        "PartSizeInBytes": "n",
+        "CreationDate": "s",
+        "Parts": [toPartListElement],
+        "Marker": "s",
+      },
+    }, await resp.json());
   }
 
   async listProvisionedCapacity(
@@ -495,14 +481,12 @@ export default class Glacier {
       method: "GET",
       requestUri: cmnP.encodePath`/${params["accountId"]}/provisioned-capacity`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ProvisionedCapacityList": [toProvisionedCapacityDescription],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ProvisionedCapacityList": [toProvisionedCapacityDescription],
+      },
+    }, await resp.json());
   }
 
   async listTagsForVault(
@@ -515,14 +499,12 @@ export default class Glacier {
       method: "GET",
       requestUri: cmnP.encodePath`/${params["accountId"]}/vaults/${params["vaultName"]}/tags`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async listVaults(
@@ -537,15 +519,13 @@ export default class Glacier {
       method: "GET",
       requestUri: cmnP.encodePath`/${params["accountId"]}/vaults`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "VaultList": [toDescribeVaultOutput],
-          "Marker": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "VaultList": [toDescribeVaultOutput],
+        "Marker": "s",
+      },
+    }, await resp.json());
   }
 
   async purchaseProvisionedCapacity(
@@ -558,21 +538,21 @@ export default class Glacier {
       requestUri: cmnP.encodePath`/${params["accountId"]}/provisioned-capacity`,
       responseCode: 201,
     });
-  return {
-    capacityId: resp.headers.get("x-amz-capacity-id"),
-    ...jsonP.readObj({
+    return {
+      capacityId: resp.headers.get("x-amz-capacity-id"),
+      ...jsonP.readObj({
         required: {},
         optional: {},
       }, await resp.json()),
-  };
+    };
   }
 
   async removeTagsFromVault(
     {abortSignal, ...params}: RequestConfig & RemoveTagsFromVaultInput,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TagKeys: params["TagKeys"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RemoveTagsFromVault",
@@ -584,9 +564,9 @@ export default class Glacier {
   async setDataRetrievalPolicy(
     {abortSignal, ...params}: RequestConfig & SetDataRetrievalPolicyInput,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Policy: fromDataRetrievalPolicy(params["Policy"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SetDataRetrievalPolicy",
@@ -632,34 +612,34 @@ export default class Glacier {
   async uploadArchive(
     {abortSignal, ...params}: RequestConfig & UploadArchiveInput,
   ): Promise<ArchiveCreationOutput> {
+    const body = typeof params["body"] === 'string' ? new TextEncoder().encode(params["body"]) : params["body"];
     const headers = new Headers;
     if (params["archiveDescription"] != null) headers.append("x-amz-archive-description", params["archiveDescription"]);
     if (params["checksum"] != null) headers.append("x-amz-sha256-tree-hash", params["checksum"]);
-    const body = typeof params["body"] === 'string' ? new TextEncoder().encode(params["body"]) : params["body"];
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "UploadArchive",
       requestUri: cmnP.encodePath`/${params["accountId"]}/vaults/${params["vaultName"]}/archives`,
       responseCode: 201,
     });
-  return {
-    location: resp.headers.get("Location"),
-    checksum: resp.headers.get("x-amz-sha256-tree-hash"),
-    archiveId: resp.headers.get("x-amz-archive-id"),
-    ...jsonP.readObj({
+    return {
+      location: resp.headers.get("Location"),
+      checksum: resp.headers.get("x-amz-sha256-tree-hash"),
+      archiveId: resp.headers.get("x-amz-archive-id"),
+      ...jsonP.readObj({
         required: {},
         optional: {},
       }, await resp.json()),
-  };
+    };
   }
 
   async uploadMultipartPart(
     {abortSignal, ...params}: RequestConfig & UploadMultipartPartInput,
   ): Promise<UploadMultipartPartOutput> {
+    const body = typeof params["body"] === 'string' ? new TextEncoder().encode(params["body"]) : params["body"];
     const headers = new Headers;
     if (params["checksum"] != null) headers.append("x-amz-sha256-tree-hash", params["checksum"]);
     if (params["range"] != null) headers.append("Content-Range", params["range"]);
-    const body = typeof params["body"] === 'string' ? new TextEncoder().encode(params["body"]) : params["body"];
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "UploadMultipartPart",
@@ -667,13 +647,13 @@ export default class Glacier {
       requestUri: cmnP.encodePath`/${params["accountId"]}/vaults/${params["vaultName"]}/multipart-uploads/${params["uploadId"]}`,
       responseCode: 204,
     });
-  return {
-    checksum: resp.headers.get("x-amz-sha256-tree-hash"),
-    ...jsonP.readObj({
+    return {
+      checksum: resp.headers.get("x-amz-sha256-tree-hash"),
+      ...jsonP.readObj({
         required: {},
         optional: {},
       }, await resp.json()),
-  };
+    };
   }
 
   // Resource State Waiters
@@ -688,7 +668,7 @@ export default class Glacier {
         const resp = await this.describeVault(params);
         return resp; // for status 200
       } catch (err) {
-        if (!["ResourceNotFoundException"].includes(err.code)) throw err;
+        if (!["ResourceNotFoundException"].includes(err.shortCode)) throw err;
       }
       await new Promise(r => setTimeout(r, 3000));
     }
@@ -705,7 +685,7 @@ export default class Glacier {
         const resp = await this.describeVault(params);
         continue; // for status 200
       } catch (err) {
-        if (["ResourceNotFoundException"].includes(err.code)) return err;
+        if (["ResourceNotFoundException"].includes(err.shortCode)) return err;
         throw err;
       }
       await new Promise(r => setTimeout(r, 3000));

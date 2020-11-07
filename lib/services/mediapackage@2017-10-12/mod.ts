@@ -30,10 +30,10 @@ export default class MediaPackage {
   async configureLogs(
     {abortSignal, ...params}: RequestConfig & ConfigureLogsRequest,
   ): Promise<ConfigureLogsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       egressAccessLogs: fromEgressAccessLogs(params["EgressAccessLogs"]),
       ingressAccessLogs: fromIngressAccessLogs(params["IngressAccessLogs"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ConfigureLogs",
@@ -41,90 +41,84 @@ export default class MediaPackage {
       requestUri: cmnP.encodePath`/channels/${params["Id"]}/configure_logs`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Arn": "s",
-          "Description": "s",
-          "EgressAccessLogs": toEgressAccessLogs,
-          "HlsIngest": toHlsIngest,
-          "Id": "s",
-          "IngressAccessLogs": toIngressAccessLogs,
-          "Tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+        "Description": "s",
+        "EgressAccessLogs": toEgressAccessLogs,
+        "HlsIngest": toHlsIngest,
+        "Id": "s",
+        "IngressAccessLogs": toIngressAccessLogs,
+        "Tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async createChannel(
     {abortSignal, ...params}: RequestConfig & CreateChannelRequest,
   ): Promise<CreateChannelResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       description: params["Description"],
       id: params["Id"],
       tags: params["Tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateChannel",
       requestUri: "/channels",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Arn": "s",
-          "Description": "s",
-          "EgressAccessLogs": toEgressAccessLogs,
-          "HlsIngest": toHlsIngest,
-          "Id": "s",
-          "IngressAccessLogs": toIngressAccessLogs,
-          "Tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+        "Description": "s",
+        "EgressAccessLogs": toEgressAccessLogs,
+        "HlsIngest": toHlsIngest,
+        "Id": "s",
+        "IngressAccessLogs": toIngressAccessLogs,
+        "Tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async createHarvestJob(
     {abortSignal, ...params}: RequestConfig & CreateHarvestJobRequest,
   ): Promise<CreateHarvestJobResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       endTime: params["EndTime"],
       id: params["Id"],
       originEndpointId: params["OriginEndpointId"],
       s3Destination: fromS3Destination(params["S3Destination"]),
       startTime: params["StartTime"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateHarvestJob",
       requestUri: "/harvest_jobs",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Arn": "s",
-          "ChannelId": "s",
-          "CreatedAt": "s",
-          "EndTime": "s",
-          "Id": "s",
-          "OriginEndpointId": "s",
-          "S3Destination": toS3Destination,
-          "StartTime": "s",
-          "Status": (x: jsonP.JSONValue) => cmnP.readEnum<Status>(x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+        "ChannelId": "s",
+        "CreatedAt": "s",
+        "EndTime": "s",
+        "Id": "s",
+        "OriginEndpointId": "s",
+        "S3Destination": toS3Destination,
+        "StartTime": "s",
+        "Status": (x: jsonP.JSONValue) => cmnP.readEnum<Status>(x),
+      },
+    }, await resp.json());
   }
 
   async createOriginEndpoint(
     {abortSignal, ...params}: RequestConfig & CreateOriginEndpointRequest,
   ): Promise<CreateOriginEndpointResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       authorization: fromAuthorization(params["Authorization"]),
       channelId: params["ChannelId"],
       cmafPackage: fromCmafPackageCreateOrUpdateParameters(params["CmafPackage"]),
@@ -139,36 +133,34 @@ export default class MediaPackage {
       tags: params["Tags"],
       timeDelaySeconds: params["TimeDelaySeconds"],
       whitelist: params["Whitelist"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateOriginEndpoint",
       requestUri: "/origin_endpoints",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Arn": "s",
-          "Authorization": toAuthorization,
-          "ChannelId": "s",
-          "CmafPackage": toCmafPackage,
-          "DashPackage": toDashPackage,
-          "Description": "s",
-          "HlsPackage": toHlsPackage,
-          "Id": "s",
-          "ManifestName": "s",
-          "MssPackage": toMssPackage,
-          "Origination": (x: jsonP.JSONValue) => cmnP.readEnum<Origination>(x),
-          "StartoverWindowSeconds": "n",
-          "Tags": x => jsonP.readMap(String, String, x),
-          "TimeDelaySeconds": "n",
-          "Url": "s",
-          "Whitelist": ["s"],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+        "Authorization": toAuthorization,
+        "ChannelId": "s",
+        "CmafPackage": toCmafPackage,
+        "DashPackage": toDashPackage,
+        "Description": "s",
+        "HlsPackage": toHlsPackage,
+        "Id": "s",
+        "ManifestName": "s",
+        "MssPackage": toMssPackage,
+        "Origination": (x: jsonP.JSONValue) => cmnP.readEnum<Origination>(x),
+        "StartoverWindowSeconds": "n",
+        "Tags": x => jsonP.readMap(String, String, x),
+        "TimeDelaySeconds": "n",
+        "Url": "s",
+        "Whitelist": ["s"],
+      },
+    }, await resp.json());
   }
 
   async deleteChannel(
@@ -182,12 +174,10 @@ export default class MediaPackage {
       requestUri: cmnP.encodePath`/channels/${params["Id"]}`,
       responseCode: 202,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async deleteOriginEndpoint(
@@ -201,12 +191,10 @@ export default class MediaPackage {
       requestUri: cmnP.encodePath`/origin_endpoints/${params["Id"]}`,
       responseCode: 202,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async describeChannel(
@@ -220,20 +208,18 @@ export default class MediaPackage {
       requestUri: cmnP.encodePath`/channels/${params["Id"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Arn": "s",
-          "Description": "s",
-          "EgressAccessLogs": toEgressAccessLogs,
-          "HlsIngest": toHlsIngest,
-          "Id": "s",
-          "IngressAccessLogs": toIngressAccessLogs,
-          "Tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+        "Description": "s",
+        "EgressAccessLogs": toEgressAccessLogs,
+        "HlsIngest": toHlsIngest,
+        "Id": "s",
+        "IngressAccessLogs": toIngressAccessLogs,
+        "Tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async describeHarvestJob(
@@ -247,22 +233,20 @@ export default class MediaPackage {
       requestUri: cmnP.encodePath`/harvest_jobs/${params["Id"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Arn": "s",
-          "ChannelId": "s",
-          "CreatedAt": "s",
-          "EndTime": "s",
-          "Id": "s",
-          "OriginEndpointId": "s",
-          "S3Destination": toS3Destination,
-          "StartTime": "s",
-          "Status": (x: jsonP.JSONValue) => cmnP.readEnum<Status>(x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+        "ChannelId": "s",
+        "CreatedAt": "s",
+        "EndTime": "s",
+        "Id": "s",
+        "OriginEndpointId": "s",
+        "S3Destination": toS3Destination,
+        "StartTime": "s",
+        "Status": (x: jsonP.JSONValue) => cmnP.readEnum<Status>(x),
+      },
+    }, await resp.json());
   }
 
   async describeOriginEndpoint(
@@ -276,29 +260,27 @@ export default class MediaPackage {
       requestUri: cmnP.encodePath`/origin_endpoints/${params["Id"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Arn": "s",
-          "Authorization": toAuthorization,
-          "ChannelId": "s",
-          "CmafPackage": toCmafPackage,
-          "DashPackage": toDashPackage,
-          "Description": "s",
-          "HlsPackage": toHlsPackage,
-          "Id": "s",
-          "ManifestName": "s",
-          "MssPackage": toMssPackage,
-          "Origination": (x: jsonP.JSONValue) => cmnP.readEnum<Origination>(x),
-          "StartoverWindowSeconds": "n",
-          "Tags": x => jsonP.readMap(String, String, x),
-          "TimeDelaySeconds": "n",
-          "Url": "s",
-          "Whitelist": ["s"],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+        "Authorization": toAuthorization,
+        "ChannelId": "s",
+        "CmafPackage": toCmafPackage,
+        "DashPackage": toDashPackage,
+        "Description": "s",
+        "HlsPackage": toHlsPackage,
+        "Id": "s",
+        "ManifestName": "s",
+        "MssPackage": toMssPackage,
+        "Origination": (x: jsonP.JSONValue) => cmnP.readEnum<Origination>(x),
+        "StartoverWindowSeconds": "n",
+        "Tags": x => jsonP.readMap(String, String, x),
+        "TimeDelaySeconds": "n",
+        "Url": "s",
+        "Whitelist": ["s"],
+      },
+    }, await resp.json());
   }
 
   async listChannels(
@@ -314,15 +296,13 @@ export default class MediaPackage {
       requestUri: "/channels",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Channels": [toChannel],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Channels": [toChannel],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listHarvestJobs(
@@ -340,15 +320,13 @@ export default class MediaPackage {
       requestUri: "/harvest_jobs",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "HarvestJobs": [toHarvestJob],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "HarvestJobs": [toHarvestJob],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listOriginEndpoints(
@@ -365,15 +343,13 @@ export default class MediaPackage {
       requestUri: "/origin_endpoints",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "NextToken": "s",
-          "OriginEndpoints": [toOriginEndpoint],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "NextToken": "s",
+        "OriginEndpoints": [toOriginEndpoint],
+      },
+    }, await resp.json());
   }
 
   async listTagsForResource(
@@ -387,14 +363,12 @@ export default class MediaPackage {
       requestUri: cmnP.encodePath`/tags/${params["ResourceArn"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async rotateChannelCredentials(
@@ -408,20 +382,18 @@ export default class MediaPackage {
       requestUri: cmnP.encodePath`/channels/${params["Id"]}/credentials`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Arn": "s",
-          "Description": "s",
-          "EgressAccessLogs": toEgressAccessLogs,
-          "HlsIngest": toHlsIngest,
-          "Id": "s",
-          "IngressAccessLogs": toIngressAccessLogs,
-          "Tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+        "Description": "s",
+        "EgressAccessLogs": toEgressAccessLogs,
+        "HlsIngest": toHlsIngest,
+        "Id": "s",
+        "IngressAccessLogs": toIngressAccessLogs,
+        "Tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async rotateIngestEndpointCredentials(
@@ -435,28 +407,26 @@ export default class MediaPackage {
       requestUri: cmnP.encodePath`/channels/${params["Id"]}/ingest_endpoints/${params["IngestEndpointId"]}/credentials`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Arn": "s",
-          "Description": "s",
-          "EgressAccessLogs": toEgressAccessLogs,
-          "HlsIngest": toHlsIngest,
-          "Id": "s",
-          "IngressAccessLogs": toIngressAccessLogs,
-          "Tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+        "Description": "s",
+        "EgressAccessLogs": toEgressAccessLogs,
+        "HlsIngest": toHlsIngest,
+        "Id": "s",
+        "IngressAccessLogs": toIngressAccessLogs,
+        "Tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       tags: params["Tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
@@ -484,9 +454,9 @@ export default class MediaPackage {
   async updateChannel(
     {abortSignal, ...params}: RequestConfig & UpdateChannelRequest,
   ): Promise<UpdateChannelResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       description: params["Description"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateChannel",
@@ -494,26 +464,24 @@ export default class MediaPackage {
       requestUri: cmnP.encodePath`/channels/${params["Id"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Arn": "s",
-          "Description": "s",
-          "EgressAccessLogs": toEgressAccessLogs,
-          "HlsIngest": toHlsIngest,
-          "Id": "s",
-          "IngressAccessLogs": toIngressAccessLogs,
-          "Tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+        "Description": "s",
+        "EgressAccessLogs": toEgressAccessLogs,
+        "HlsIngest": toHlsIngest,
+        "Id": "s",
+        "IngressAccessLogs": toIngressAccessLogs,
+        "Tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async updateOriginEndpoint(
     {abortSignal, ...params}: RequestConfig & UpdateOriginEndpointRequest,
   ): Promise<UpdateOriginEndpointResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       authorization: fromAuthorization(params["Authorization"]),
       cmafPackage: fromCmafPackageCreateOrUpdateParameters(params["CmafPackage"]),
       dashPackage: fromDashPackage(params["DashPackage"]),
@@ -525,7 +493,7 @@ export default class MediaPackage {
       startoverWindowSeconds: params["StartoverWindowSeconds"],
       timeDelaySeconds: params["TimeDelaySeconds"],
       whitelist: params["Whitelist"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateOriginEndpoint",
@@ -533,29 +501,27 @@ export default class MediaPackage {
       requestUri: cmnP.encodePath`/origin_endpoints/${params["Id"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Arn": "s",
-          "Authorization": toAuthorization,
-          "ChannelId": "s",
-          "CmafPackage": toCmafPackage,
-          "DashPackage": toDashPackage,
-          "Description": "s",
-          "HlsPackage": toHlsPackage,
-          "Id": "s",
-          "ManifestName": "s",
-          "MssPackage": toMssPackage,
-          "Origination": (x: jsonP.JSONValue) => cmnP.readEnum<Origination>(x),
-          "StartoverWindowSeconds": "n",
-          "Tags": x => jsonP.readMap(String, String, x),
-          "TimeDelaySeconds": "n",
-          "Url": "s",
-          "Whitelist": ["s"],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+        "Authorization": toAuthorization,
+        "ChannelId": "s",
+        "CmafPackage": toCmafPackage,
+        "DashPackage": toDashPackage,
+        "Description": "s",
+        "HlsPackage": toHlsPackage,
+        "Id": "s",
+        "ManifestName": "s",
+        "MssPackage": toMssPackage,
+        "Origination": (x: jsonP.JSONValue) => cmnP.readEnum<Origination>(x),
+        "StartoverWindowSeconds": "n",
+        "Tags": x => jsonP.readMap(String, String, x),
+        "TimeDelaySeconds": "n",
+        "Url": "s",
+        "Whitelist": ["s"],
+      },
+    }, await resp.json());
   }
 
 }

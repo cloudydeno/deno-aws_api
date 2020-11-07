@@ -30,7 +30,7 @@ export default class SWF {
   async countClosedWorkflowExecutions(
     {abortSignal, ...params}: RequestConfig & CountClosedWorkflowExecutionsInput,
   ): Promise<WorkflowExecutionCount> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       domain: params["domain"],
       startTimeFilter: fromExecutionTimeFilter(params["startTimeFilter"]),
       closeTimeFilter: fromExecutionTimeFilter(params["closeTimeFilter"]),
@@ -38,7 +38,7 @@ export default class SWF {
       typeFilter: fromWorkflowTypeFilter(params["typeFilter"]),
       tagFilter: fromTagFilter(params["tagFilter"]),
       closeStatusFilter: fromCloseStatusFilter(params["closeStatusFilter"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CountClosedWorkflowExecutions",
@@ -56,13 +56,13 @@ export default class SWF {
   async countOpenWorkflowExecutions(
     {abortSignal, ...params}: RequestConfig & CountOpenWorkflowExecutionsInput,
   ): Promise<WorkflowExecutionCount> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       domain: params["domain"],
       startTimeFilter: fromExecutionTimeFilter(params["startTimeFilter"]),
       typeFilter: fromWorkflowTypeFilter(params["typeFilter"]),
       tagFilter: fromTagFilter(params["tagFilter"]),
       executionFilter: fromWorkflowExecutionFilter(params["executionFilter"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CountOpenWorkflowExecutions",
@@ -80,10 +80,10 @@ export default class SWF {
   async countPendingActivityTasks(
     {abortSignal, ...params}: RequestConfig & CountPendingActivityTasksInput,
   ): Promise<PendingTaskCount> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       domain: params["domain"],
       taskList: fromTaskList(params["taskList"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CountPendingActivityTasks",
@@ -101,10 +101,10 @@ export default class SWF {
   async countPendingDecisionTasks(
     {abortSignal, ...params}: RequestConfig & CountPendingDecisionTasksInput,
   ): Promise<PendingTaskCount> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       domain: params["domain"],
       taskList: fromTaskList(params["taskList"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CountPendingDecisionTasks",
@@ -122,10 +122,10 @@ export default class SWF {
   async deprecateActivityType(
     {abortSignal, ...params}: RequestConfig & DeprecateActivityTypeInput,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       domain: params["domain"],
       activityType: fromActivityType(params["activityType"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeprecateActivityType",
@@ -135,9 +135,9 @@ export default class SWF {
   async deprecateDomain(
     {abortSignal, ...params}: RequestConfig & DeprecateDomainInput,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       name: params["name"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeprecateDomain",
@@ -147,10 +147,10 @@ export default class SWF {
   async deprecateWorkflowType(
     {abortSignal, ...params}: RequestConfig & DeprecateWorkflowTypeInput,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       domain: params["domain"],
       workflowType: fromWorkflowType(params["workflowType"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeprecateWorkflowType",
@@ -160,10 +160,10 @@ export default class SWF {
   async describeActivityType(
     {abortSignal, ...params}: RequestConfig & DescribeActivityTypeInput,
   ): Promise<ActivityTypeDetail> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       domain: params["domain"],
       activityType: fromActivityType(params["activityType"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeActivityType",
@@ -180,9 +180,9 @@ export default class SWF {
   async describeDomain(
     {abortSignal, ...params}: RequestConfig & DescribeDomainInput,
   ): Promise<DomainDetail> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       name: params["name"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeDomain",
@@ -199,10 +199,10 @@ export default class SWF {
   async describeWorkflowExecution(
     {abortSignal, ...params}: RequestConfig & DescribeWorkflowExecutionInput,
   ): Promise<WorkflowExecutionDetail> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       domain: params["domain"],
       execution: fromWorkflowExecution(params["execution"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeWorkflowExecution",
@@ -223,10 +223,10 @@ export default class SWF {
   async describeWorkflowType(
     {abortSignal, ...params}: RequestConfig & DescribeWorkflowTypeInput,
   ): Promise<WorkflowTypeDetail> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       domain: params["domain"],
       workflowType: fromWorkflowType(params["workflowType"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeWorkflowType",
@@ -243,13 +243,13 @@ export default class SWF {
   async getWorkflowExecutionHistory(
     {abortSignal, ...params}: RequestConfig & GetWorkflowExecutionHistoryInput,
   ): Promise<History> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       domain: params["domain"],
       execution: fromWorkflowExecution(params["execution"]),
       nextPageToken: params["nextPageToken"],
       maximumPageSize: params["maximumPageSize"],
       reverseOrder: params["reverseOrder"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetWorkflowExecutionHistory",
@@ -267,14 +267,14 @@ export default class SWF {
   async listActivityTypes(
     {abortSignal, ...params}: RequestConfig & ListActivityTypesInput,
   ): Promise<ActivityTypeInfos> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       domain: params["domain"],
       name: params["name"],
       registrationStatus: params["registrationStatus"],
       nextPageToken: params["nextPageToken"],
       maximumPageSize: params["maximumPageSize"],
       reverseOrder: params["reverseOrder"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListActivityTypes",
@@ -292,7 +292,7 @@ export default class SWF {
   async listClosedWorkflowExecutions(
     {abortSignal, ...params}: RequestConfig & ListClosedWorkflowExecutionsInput,
   ): Promise<WorkflowExecutionInfos> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       domain: params["domain"],
       startTimeFilter: fromExecutionTimeFilter(params["startTimeFilter"]),
       closeTimeFilter: fromExecutionTimeFilter(params["closeTimeFilter"]),
@@ -303,7 +303,7 @@ export default class SWF {
       nextPageToken: params["nextPageToken"],
       maximumPageSize: params["maximumPageSize"],
       reverseOrder: params["reverseOrder"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListClosedWorkflowExecutions",
@@ -321,12 +321,12 @@ export default class SWF {
   async listDomains(
     {abortSignal, ...params}: RequestConfig & ListDomainsInput,
   ): Promise<DomainInfos> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       nextPageToken: params["nextPageToken"],
       registrationStatus: params["registrationStatus"],
       maximumPageSize: params["maximumPageSize"],
       reverseOrder: params["reverseOrder"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListDomains",
@@ -344,7 +344,7 @@ export default class SWF {
   async listOpenWorkflowExecutions(
     {abortSignal, ...params}: RequestConfig & ListOpenWorkflowExecutionsInput,
   ): Promise<WorkflowExecutionInfos> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       domain: params["domain"],
       startTimeFilter: fromExecutionTimeFilter(params["startTimeFilter"]),
       typeFilter: fromWorkflowTypeFilter(params["typeFilter"]),
@@ -353,7 +353,7 @@ export default class SWF {
       maximumPageSize: params["maximumPageSize"],
       reverseOrder: params["reverseOrder"],
       executionFilter: fromWorkflowExecutionFilter(params["executionFilter"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListOpenWorkflowExecutions",
@@ -371,9 +371,9 @@ export default class SWF {
   async listTagsForResource(
     {abortSignal, ...params}: RequestConfig & ListTagsForResourceInput,
   ): Promise<ListTagsForResourceOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       resourceArn: params["resourceArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForResource",
@@ -389,14 +389,14 @@ export default class SWF {
   async listWorkflowTypes(
     {abortSignal, ...params}: RequestConfig & ListWorkflowTypesInput,
   ): Promise<WorkflowTypeInfos> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       domain: params["domain"],
       name: params["name"],
       registrationStatus: params["registrationStatus"],
       nextPageToken: params["nextPageToken"],
       maximumPageSize: params["maximumPageSize"],
       reverseOrder: params["reverseOrder"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListWorkflowTypes",
@@ -414,11 +414,11 @@ export default class SWF {
   async pollForActivityTask(
     {abortSignal, ...params}: RequestConfig & PollForActivityTaskInput,
   ): Promise<ActivityTask> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       domain: params["domain"],
       taskList: fromTaskList(params["taskList"]),
       identity: params["identity"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PollForActivityTask",
@@ -440,14 +440,14 @@ export default class SWF {
   async pollForDecisionTask(
     {abortSignal, ...params}: RequestConfig & PollForDecisionTaskInput,
   ): Promise<DecisionTask> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       domain: params["domain"],
       taskList: fromTaskList(params["taskList"]),
       identity: params["identity"],
       nextPageToken: params["nextPageToken"],
       maximumPageSize: params["maximumPageSize"],
       reverseOrder: params["reverseOrder"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PollForDecisionTask",
@@ -470,10 +470,10 @@ export default class SWF {
   async recordActivityTaskHeartbeat(
     {abortSignal, ...params}: RequestConfig & RecordActivityTaskHeartbeatInput,
   ): Promise<ActivityTaskStatus> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       taskToken: params["taskToken"],
       details: params["details"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RecordActivityTaskHeartbeat",
@@ -489,7 +489,7 @@ export default class SWF {
   async registerActivityType(
     {abortSignal, ...params}: RequestConfig & RegisterActivityTypeInput,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       domain: params["domain"],
       name: params["name"],
       version: params["version"],
@@ -500,7 +500,7 @@ export default class SWF {
       defaultTaskPriority: params["defaultTaskPriority"],
       defaultTaskScheduleToStartTimeout: params["defaultTaskScheduleToStartTimeout"],
       defaultTaskScheduleToCloseTimeout: params["defaultTaskScheduleToCloseTimeout"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RegisterActivityType",
@@ -510,12 +510,12 @@ export default class SWF {
   async registerDomain(
     {abortSignal, ...params}: RequestConfig & RegisterDomainInput,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       name: params["name"],
       description: params["description"],
       workflowExecutionRetentionPeriodInDays: params["workflowExecutionRetentionPeriodInDays"],
       tags: params["tags"]?.map(x => fromResourceTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RegisterDomain",
@@ -525,7 +525,7 @@ export default class SWF {
   async registerWorkflowType(
     {abortSignal, ...params}: RequestConfig & RegisterWorkflowTypeInput,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       domain: params["domain"],
       name: params["name"],
       version: params["version"],
@@ -536,7 +536,7 @@ export default class SWF {
       defaultTaskPriority: params["defaultTaskPriority"],
       defaultChildPolicy: params["defaultChildPolicy"],
       defaultLambdaRole: params["defaultLambdaRole"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RegisterWorkflowType",
@@ -546,11 +546,11 @@ export default class SWF {
   async requestCancelWorkflowExecution(
     {abortSignal, ...params}: RequestConfig & RequestCancelWorkflowExecutionInput,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       domain: params["domain"],
       workflowId: params["workflowId"],
       runId: params["runId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RequestCancelWorkflowExecution",
@@ -560,10 +560,10 @@ export default class SWF {
   async respondActivityTaskCanceled(
     {abortSignal, ...params}: RequestConfig & RespondActivityTaskCanceledInput,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       taskToken: params["taskToken"],
       details: params["details"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RespondActivityTaskCanceled",
@@ -573,10 +573,10 @@ export default class SWF {
   async respondActivityTaskCompleted(
     {abortSignal, ...params}: RequestConfig & RespondActivityTaskCompletedInput,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       taskToken: params["taskToken"],
       result: params["result"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RespondActivityTaskCompleted",
@@ -586,11 +586,11 @@ export default class SWF {
   async respondActivityTaskFailed(
     {abortSignal, ...params}: RequestConfig & RespondActivityTaskFailedInput,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       taskToken: params["taskToken"],
       reason: params["reason"],
       details: params["details"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RespondActivityTaskFailed",
@@ -600,11 +600,11 @@ export default class SWF {
   async respondDecisionTaskCompleted(
     {abortSignal, ...params}: RequestConfig & RespondDecisionTaskCompletedInput,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       taskToken: params["taskToken"],
       decisions: params["decisions"]?.map(x => fromDecision(x)),
       executionContext: params["executionContext"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RespondDecisionTaskCompleted",
@@ -614,13 +614,13 @@ export default class SWF {
   async signalWorkflowExecution(
     {abortSignal, ...params}: RequestConfig & SignalWorkflowExecutionInput,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       domain: params["domain"],
       workflowId: params["workflowId"],
       runId: params["runId"],
       signalName: params["signalName"],
       input: params["input"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SignalWorkflowExecution",
@@ -630,7 +630,7 @@ export default class SWF {
   async startWorkflowExecution(
     {abortSignal, ...params}: RequestConfig & StartWorkflowExecutionInput,
   ): Promise<Run> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       domain: params["domain"],
       workflowId: params["workflowId"],
       workflowType: fromWorkflowType(params["workflowType"]),
@@ -642,7 +642,7 @@ export default class SWF {
       taskStartToCloseTimeout: params["taskStartToCloseTimeout"],
       childPolicy: params["childPolicy"],
       lambdaRole: params["lambdaRole"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartWorkflowExecution",
@@ -658,10 +658,10 @@ export default class SWF {
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceInput,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       resourceArn: params["resourceArn"],
       tags: params["tags"]?.map(x => fromResourceTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
@@ -671,14 +671,14 @@ export default class SWF {
   async terminateWorkflowExecution(
     {abortSignal, ...params}: RequestConfig & TerminateWorkflowExecutionInput,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       domain: params["domain"],
       workflowId: params["workflowId"],
       runId: params["runId"],
       reason: params["reason"],
       details: params["details"],
       childPolicy: params["childPolicy"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TerminateWorkflowExecution",
@@ -688,10 +688,10 @@ export default class SWF {
   async undeprecateActivityType(
     {abortSignal, ...params}: RequestConfig & UndeprecateActivityTypeInput,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       domain: params["domain"],
       activityType: fromActivityType(params["activityType"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UndeprecateActivityType",
@@ -701,9 +701,9 @@ export default class SWF {
   async undeprecateDomain(
     {abortSignal, ...params}: RequestConfig & UndeprecateDomainInput,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       name: params["name"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UndeprecateDomain",
@@ -713,10 +713,10 @@ export default class SWF {
   async undeprecateWorkflowType(
     {abortSignal, ...params}: RequestConfig & UndeprecateWorkflowTypeInput,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       domain: params["domain"],
       workflowType: fromWorkflowType(params["workflowType"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UndeprecateWorkflowType",
@@ -726,10 +726,10 @@ export default class SWF {
   async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceInput,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       resourceArn: params["resourceArn"],
       tagKeys: params["tagKeys"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResource",

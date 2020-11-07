@@ -29,54 +29,50 @@ export default class PersonalizeRuntime {
   async getPersonalizedRanking(
     {abortSignal, ...params}: RequestConfig & GetPersonalizedRankingRequest,
   ): Promise<GetPersonalizedRankingResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       campaignArn: params["campaignArn"],
       inputList: params["inputList"],
       userId: params["userId"],
       context: params["context"],
       filterArn: params["filterArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetPersonalizedRanking",
       requestUri: "/personalize-ranking",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "personalizedRanking": [toPredictedItem],
-          "recommendationId": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "personalizedRanking": [toPredictedItem],
+        "recommendationId": "s",
+      },
+    }, await resp.json());
   }
 
   async getRecommendations(
     {abortSignal, ...params}: RequestConfig & GetRecommendationsRequest,
   ): Promise<GetRecommendationsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       campaignArn: params["campaignArn"],
       itemId: params["itemId"],
       userId: params["userId"],
       numResults: params["numResults"],
       context: params["context"],
       filterArn: params["filterArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetRecommendations",
       requestUri: "/recommendations",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "itemList": [toPredictedItem],
-          "recommendationId": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "itemList": [toPredictedItem],
+        "recommendationId": "s",
+      },
+    }, await resp.json());
   }
 
 }

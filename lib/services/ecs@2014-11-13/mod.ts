@@ -30,11 +30,11 @@ export default class ECS {
   async createCapacityProvider(
     {abortSignal, ...params}: RequestConfig & CreateCapacityProviderRequest,
   ): Promise<CreateCapacityProviderResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       name: params["name"],
       autoScalingGroupProvider: fromAutoScalingGroupProvider(params["autoScalingGroupProvider"]),
       tags: params["tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateCapacityProvider",
@@ -50,13 +50,13 @@ export default class ECS {
   async createCluster(
     {abortSignal, ...params}: RequestConfig & CreateClusterRequest = {},
   ): Promise<CreateClusterResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       clusterName: params["clusterName"],
       tags: params["tags"]?.map(x => fromTag(x)),
       settings: params["settings"]?.map(x => fromClusterSetting(x)),
       capacityProviders: params["capacityProviders"],
       defaultCapacityProviderStrategy: params["defaultCapacityProviderStrategy"]?.map(x => fromCapacityProviderStrategyItem(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateCluster",
@@ -72,7 +72,7 @@ export default class ECS {
   async createService(
     {abortSignal, ...params}: RequestConfig & CreateServiceRequest,
   ): Promise<CreateServiceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       cluster: params["cluster"],
       serviceName: params["serviceName"],
       taskDefinition: params["taskDefinition"],
@@ -94,7 +94,7 @@ export default class ECS {
       tags: params["tags"]?.map(x => fromTag(x)),
       enableECSManagedTags: params["enableECSManagedTags"],
       propagateTags: params["propagateTags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateService",
@@ -110,7 +110,7 @@ export default class ECS {
   async createTaskSet(
     {abortSignal, ...params}: RequestConfig & CreateTaskSetRequest,
   ): Promise<CreateTaskSetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       service: params["service"],
       cluster: params["cluster"],
       externalId: params["externalId"],
@@ -124,7 +124,7 @@ export default class ECS {
       scale: fromScale(params["scale"]),
       clientToken: params["clientToken"],
       tags: params["tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateTaskSet",
@@ -140,10 +140,10 @@ export default class ECS {
   async deleteAccountSetting(
     {abortSignal, ...params}: RequestConfig & DeleteAccountSettingRequest,
   ): Promise<DeleteAccountSettingResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       name: params["name"],
       principalArn: params["principalArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteAccountSetting",
@@ -159,10 +159,10 @@ export default class ECS {
   async deleteAttributes(
     {abortSignal, ...params}: RequestConfig & DeleteAttributesRequest,
   ): Promise<DeleteAttributesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       cluster: params["cluster"],
       attributes: params["attributes"]?.map(x => fromAttribute(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteAttributes",
@@ -178,9 +178,9 @@ export default class ECS {
   async deleteCapacityProvider(
     {abortSignal, ...params}: RequestConfig & DeleteCapacityProviderRequest,
   ): Promise<DeleteCapacityProviderResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       capacityProvider: params["capacityProvider"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteCapacityProvider",
@@ -196,9 +196,9 @@ export default class ECS {
   async deleteCluster(
     {abortSignal, ...params}: RequestConfig & DeleteClusterRequest,
   ): Promise<DeleteClusterResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       cluster: params["cluster"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteCluster",
@@ -214,11 +214,11 @@ export default class ECS {
   async deleteService(
     {abortSignal, ...params}: RequestConfig & DeleteServiceRequest,
   ): Promise<DeleteServiceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       cluster: params["cluster"],
       service: params["service"],
       force: params["force"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteService",
@@ -234,12 +234,12 @@ export default class ECS {
   async deleteTaskSet(
     {abortSignal, ...params}: RequestConfig & DeleteTaskSetRequest,
   ): Promise<DeleteTaskSetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       cluster: params["cluster"],
       service: params["service"],
       taskSet: params["taskSet"],
       force: params["force"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteTaskSet",
@@ -255,11 +255,11 @@ export default class ECS {
   async deregisterContainerInstance(
     {abortSignal, ...params}: RequestConfig & DeregisterContainerInstanceRequest,
   ): Promise<DeregisterContainerInstanceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       cluster: params["cluster"],
       containerInstance: params["containerInstance"],
       force: params["force"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeregisterContainerInstance",
@@ -275,9 +275,9 @@ export default class ECS {
   async deregisterTaskDefinition(
     {abortSignal, ...params}: RequestConfig & DeregisterTaskDefinitionRequest,
   ): Promise<DeregisterTaskDefinitionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       taskDefinition: params["taskDefinition"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeregisterTaskDefinition",
@@ -293,12 +293,12 @@ export default class ECS {
   async describeCapacityProviders(
     {abortSignal, ...params}: RequestConfig & DescribeCapacityProvidersRequest = {},
   ): Promise<DescribeCapacityProvidersResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       capacityProviders: params["capacityProviders"],
       include: params["include"],
       maxResults: params["maxResults"],
       nextToken: params["nextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeCapacityProviders",
@@ -316,10 +316,10 @@ export default class ECS {
   async describeClusters(
     {abortSignal, ...params}: RequestConfig & DescribeClustersRequest = {},
   ): Promise<DescribeClustersResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       clusters: params["clusters"],
       include: params["include"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeClusters",
@@ -336,11 +336,11 @@ export default class ECS {
   async describeContainerInstances(
     {abortSignal, ...params}: RequestConfig & DescribeContainerInstancesRequest,
   ): Promise<DescribeContainerInstancesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       cluster: params["cluster"],
       containerInstances: params["containerInstances"],
       include: params["include"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeContainerInstances",
@@ -357,11 +357,11 @@ export default class ECS {
   async describeServices(
     {abortSignal, ...params}: RequestConfig & DescribeServicesRequest,
   ): Promise<DescribeServicesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       cluster: params["cluster"],
       services: params["services"],
       include: params["include"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeServices",
@@ -378,10 +378,10 @@ export default class ECS {
   async describeTaskDefinition(
     {abortSignal, ...params}: RequestConfig & DescribeTaskDefinitionRequest,
   ): Promise<DescribeTaskDefinitionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       taskDefinition: params["taskDefinition"],
       include: params["include"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeTaskDefinition",
@@ -398,12 +398,12 @@ export default class ECS {
   async describeTaskSets(
     {abortSignal, ...params}: RequestConfig & DescribeTaskSetsRequest,
   ): Promise<DescribeTaskSetsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       cluster: params["cluster"],
       service: params["service"],
       taskSets: params["taskSets"],
       include: params["include"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeTaskSets",
@@ -420,11 +420,11 @@ export default class ECS {
   async describeTasks(
     {abortSignal, ...params}: RequestConfig & DescribeTasksRequest,
   ): Promise<DescribeTasksResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       cluster: params["cluster"],
       tasks: params["tasks"],
       include: params["include"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeTasks",
@@ -441,10 +441,10 @@ export default class ECS {
   async discoverPollEndpoint(
     {abortSignal, ...params}: RequestConfig & DiscoverPollEndpointRequest = {},
   ): Promise<DiscoverPollEndpointResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       containerInstance: params["containerInstance"],
       cluster: params["cluster"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DiscoverPollEndpoint",
@@ -461,14 +461,14 @@ export default class ECS {
   async listAccountSettings(
     {abortSignal, ...params}: RequestConfig & ListAccountSettingsRequest = {},
   ): Promise<ListAccountSettingsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       name: params["name"],
       value: params["value"],
       principalArn: params["principalArn"],
       effectiveSettings: params["effectiveSettings"],
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListAccountSettings",
@@ -485,14 +485,14 @@ export default class ECS {
   async listAttributes(
     {abortSignal, ...params}: RequestConfig & ListAttributesRequest,
   ): Promise<ListAttributesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       cluster: params["cluster"],
       targetType: params["targetType"],
       attributeName: params["attributeName"],
       attributeValue: params["attributeValue"],
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListAttributes",
@@ -509,10 +509,10 @@ export default class ECS {
   async listClusters(
     {abortSignal, ...params}: RequestConfig & ListClustersRequest = {},
   ): Promise<ListClustersResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListClusters",
@@ -529,13 +529,13 @@ export default class ECS {
   async listContainerInstances(
     {abortSignal, ...params}: RequestConfig & ListContainerInstancesRequest = {},
   ): Promise<ListContainerInstancesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       cluster: params["cluster"],
       filter: params["filter"],
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
       status: params["status"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListContainerInstances",
@@ -552,13 +552,13 @@ export default class ECS {
   async listServices(
     {abortSignal, ...params}: RequestConfig & ListServicesRequest = {},
   ): Promise<ListServicesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       cluster: params["cluster"],
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
       launchType: params["launchType"],
       schedulingStrategy: params["schedulingStrategy"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListServices",
@@ -575,9 +575,9 @@ export default class ECS {
   async listTagsForResource(
     {abortSignal, ...params}: RequestConfig & ListTagsForResourceRequest,
   ): Promise<ListTagsForResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       resourceArn: params["resourceArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForResource",
@@ -593,12 +593,12 @@ export default class ECS {
   async listTaskDefinitionFamilies(
     {abortSignal, ...params}: RequestConfig & ListTaskDefinitionFamiliesRequest = {},
   ): Promise<ListTaskDefinitionFamiliesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       familyPrefix: params["familyPrefix"],
       status: params["status"],
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTaskDefinitionFamilies",
@@ -615,13 +615,13 @@ export default class ECS {
   async listTaskDefinitions(
     {abortSignal, ...params}: RequestConfig & ListTaskDefinitionsRequest = {},
   ): Promise<ListTaskDefinitionsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       familyPrefix: params["familyPrefix"],
       status: params["status"],
       sort: params["sort"],
       nextToken: params["nextToken"],
       maxResults: params["maxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTaskDefinitions",
@@ -638,7 +638,7 @@ export default class ECS {
   async listTasks(
     {abortSignal, ...params}: RequestConfig & ListTasksRequest = {},
   ): Promise<ListTasksResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       cluster: params["cluster"],
       containerInstance: params["containerInstance"],
       family: params["family"],
@@ -648,7 +648,7 @@ export default class ECS {
       serviceName: params["serviceName"],
       desiredStatus: params["desiredStatus"],
       launchType: params["launchType"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTasks",
@@ -665,11 +665,11 @@ export default class ECS {
   async putAccountSetting(
     {abortSignal, ...params}: RequestConfig & PutAccountSettingRequest,
   ): Promise<PutAccountSettingResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       name: params["name"],
       value: params["value"],
       principalArn: params["principalArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutAccountSetting",
@@ -685,10 +685,10 @@ export default class ECS {
   async putAccountSettingDefault(
     {abortSignal, ...params}: RequestConfig & PutAccountSettingDefaultRequest,
   ): Promise<PutAccountSettingDefaultResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       name: params["name"],
       value: params["value"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutAccountSettingDefault",
@@ -704,10 +704,10 @@ export default class ECS {
   async putAttributes(
     {abortSignal, ...params}: RequestConfig & PutAttributesRequest,
   ): Promise<PutAttributesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       cluster: params["cluster"],
       attributes: params["attributes"]?.map(x => fromAttribute(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutAttributes",
@@ -723,11 +723,11 @@ export default class ECS {
   async putClusterCapacityProviders(
     {abortSignal, ...params}: RequestConfig & PutClusterCapacityProvidersRequest,
   ): Promise<PutClusterCapacityProvidersResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       cluster: params["cluster"],
       capacityProviders: params["capacityProviders"],
       defaultCapacityProviderStrategy: params["defaultCapacityProviderStrategy"]?.map(x => fromCapacityProviderStrategyItem(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutClusterCapacityProviders",
@@ -743,7 +743,7 @@ export default class ECS {
   async registerContainerInstance(
     {abortSignal, ...params}: RequestConfig & RegisterContainerInstanceRequest = {},
   ): Promise<RegisterContainerInstanceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       cluster: params["cluster"],
       instanceIdentityDocument: params["instanceIdentityDocument"],
       instanceIdentityDocumentSignature: params["instanceIdentityDocumentSignature"],
@@ -753,7 +753,7 @@ export default class ECS {
       attributes: params["attributes"]?.map(x => fromAttribute(x)),
       platformDevices: params["platformDevices"]?.map(x => fromPlatformDevice(x)),
       tags: params["tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RegisterContainerInstance",
@@ -769,7 +769,7 @@ export default class ECS {
   async registerTaskDefinition(
     {abortSignal, ...params}: RequestConfig & RegisterTaskDefinitionRequest,
   ): Promise<RegisterTaskDefinitionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       family: params["family"],
       taskRoleArn: params["taskRoleArn"],
       executionRoleArn: params["executionRoleArn"],
@@ -785,7 +785,7 @@ export default class ECS {
       ipcMode: params["ipcMode"],
       proxyConfiguration: fromProxyConfiguration(params["proxyConfiguration"]),
       inferenceAccelerators: params["inferenceAccelerators"]?.map(x => fromInferenceAccelerator(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RegisterTaskDefinition",
@@ -802,7 +802,7 @@ export default class ECS {
   async runTask(
     {abortSignal, ...params}: RequestConfig & RunTaskRequest,
   ): Promise<RunTaskResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       capacityProviderStrategy: params["capacityProviderStrategy"]?.map(x => fromCapacityProviderStrategyItem(x)),
       cluster: params["cluster"],
       count: params["count"],
@@ -819,7 +819,7 @@ export default class ECS {
       startedBy: params["startedBy"],
       tags: params["tags"]?.map(x => fromTag(x)),
       taskDefinition: params["taskDefinition"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RunTask",
@@ -836,7 +836,7 @@ export default class ECS {
   async startTask(
     {abortSignal, ...params}: RequestConfig & StartTaskRequest,
   ): Promise<StartTaskResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       cluster: params["cluster"],
       containerInstances: params["containerInstances"],
       enableECSManagedTags: params["enableECSManagedTags"],
@@ -848,7 +848,7 @@ export default class ECS {
       startedBy: params["startedBy"],
       tags: params["tags"]?.map(x => fromTag(x)),
       taskDefinition: params["taskDefinition"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartTask",
@@ -865,11 +865,11 @@ export default class ECS {
   async stopTask(
     {abortSignal, ...params}: RequestConfig & StopTaskRequest,
   ): Promise<StopTaskResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       cluster: params["cluster"],
       task: params["task"],
       reason: params["reason"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopTask",
@@ -885,10 +885,10 @@ export default class ECS {
   async submitAttachmentStateChanges(
     {abortSignal, ...params}: RequestConfig & SubmitAttachmentStateChangesRequest,
   ): Promise<SubmitAttachmentStateChangesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       cluster: params["cluster"],
       attachments: params["attachments"]?.map(x => fromAttachmentStateChange(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SubmitAttachmentStateChanges",
@@ -904,7 +904,7 @@ export default class ECS {
   async submitContainerStateChange(
     {abortSignal, ...params}: RequestConfig & SubmitContainerStateChangeRequest = {},
   ): Promise<SubmitContainerStateChangeResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       cluster: params["cluster"],
       task: params["task"],
       containerName: params["containerName"],
@@ -913,7 +913,7 @@ export default class ECS {
       exitCode: params["exitCode"],
       reason: params["reason"],
       networkBindings: params["networkBindings"]?.map(x => fromNetworkBinding(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SubmitContainerStateChange",
@@ -929,7 +929,7 @@ export default class ECS {
   async submitTaskStateChange(
     {abortSignal, ...params}: RequestConfig & SubmitTaskStateChangeRequest = {},
   ): Promise<SubmitTaskStateChangeResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       cluster: params["cluster"],
       task: params["task"],
       status: params["status"],
@@ -939,7 +939,7 @@ export default class ECS {
       pullStartedAt: jsonP.serializeDate_unixTimestamp(params["pullStartedAt"]),
       pullStoppedAt: jsonP.serializeDate_unixTimestamp(params["pullStoppedAt"]),
       executionStoppedAt: jsonP.serializeDate_unixTimestamp(params["executionStoppedAt"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SubmitTaskStateChange",
@@ -955,10 +955,10 @@ export default class ECS {
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       resourceArn: params["resourceArn"],
       tags: params["tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
@@ -972,10 +972,10 @@ export default class ECS {
   async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceRequest,
   ): Promise<UntagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       resourceArn: params["resourceArn"],
       tagKeys: params["tagKeys"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResource",
@@ -989,10 +989,10 @@ export default class ECS {
   async updateClusterSettings(
     {abortSignal, ...params}: RequestConfig & UpdateClusterSettingsRequest,
   ): Promise<UpdateClusterSettingsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       cluster: params["cluster"],
       settings: params["settings"]?.map(x => fromClusterSetting(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateClusterSettings",
@@ -1008,10 +1008,10 @@ export default class ECS {
   async updateContainerAgent(
     {abortSignal, ...params}: RequestConfig & UpdateContainerAgentRequest,
   ): Promise<UpdateContainerAgentResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       cluster: params["cluster"],
       containerInstance: params["containerInstance"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateContainerAgent",
@@ -1027,11 +1027,11 @@ export default class ECS {
   async updateContainerInstancesState(
     {abortSignal, ...params}: RequestConfig & UpdateContainerInstancesStateRequest,
   ): Promise<UpdateContainerInstancesStateResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       cluster: params["cluster"],
       containerInstances: params["containerInstances"],
       status: params["status"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateContainerInstancesState",
@@ -1048,7 +1048,7 @@ export default class ECS {
   async updateService(
     {abortSignal, ...params}: RequestConfig & UpdateServiceRequest,
   ): Promise<UpdateServiceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       cluster: params["cluster"],
       service: params["service"],
       desiredCount: params["desiredCount"],
@@ -1061,7 +1061,7 @@ export default class ECS {
       platformVersion: params["platformVersion"],
       forceNewDeployment: params["forceNewDeployment"],
       healthCheckGracePeriodSeconds: params["healthCheckGracePeriodSeconds"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateService",
@@ -1077,11 +1077,11 @@ export default class ECS {
   async updateServicePrimaryTaskSet(
     {abortSignal, ...params}: RequestConfig & UpdateServicePrimaryTaskSetRequest,
   ): Promise<UpdateServicePrimaryTaskSetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       cluster: params["cluster"],
       service: params["service"],
       primaryTaskSet: params["primaryTaskSet"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateServicePrimaryTaskSet",
@@ -1097,12 +1097,12 @@ export default class ECS {
   async updateTaskSet(
     {abortSignal, ...params}: RequestConfig & UpdateTaskSetRequest,
   ): Promise<UpdateTaskSetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       cluster: params["cluster"],
       service: params["service"],
       taskSet: params["taskSet"],
       scale: fromScale(params["scale"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateTaskSet",

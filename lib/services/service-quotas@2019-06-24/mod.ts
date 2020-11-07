@@ -29,8 +29,8 @@ export default class ServiceQuotas {
   async associateServiceQuotaTemplate(
     {abortSignal, ...params}: RequestConfig & AssociateServiceQuotaTemplateRequest = {},
   ): Promise<AssociateServiceQuotaTemplateResponse> {
-    const body: jsonP.JSONObject = params ? {
-    } : {};
+    const body: jsonP.JSONObject = {
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AssociateServiceQuotaTemplate",
@@ -44,11 +44,11 @@ export default class ServiceQuotas {
   async deleteServiceQuotaIncreaseRequestFromTemplate(
     {abortSignal, ...params}: RequestConfig & DeleteServiceQuotaIncreaseRequestFromTemplateRequest,
   ): Promise<DeleteServiceQuotaIncreaseRequestFromTemplateResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ServiceCode: params["ServiceCode"],
       QuotaCode: params["QuotaCode"],
       AwsRegion: params["AwsRegion"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteServiceQuotaIncreaseRequestFromTemplate",
@@ -62,8 +62,8 @@ export default class ServiceQuotas {
   async disassociateServiceQuotaTemplate(
     {abortSignal, ...params}: RequestConfig & DisassociateServiceQuotaTemplateRequest = {},
   ): Promise<DisassociateServiceQuotaTemplateResponse> {
-    const body: jsonP.JSONObject = params ? {
-    } : {};
+    const body: jsonP.JSONObject = {
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisassociateServiceQuotaTemplate",
@@ -77,10 +77,10 @@ export default class ServiceQuotas {
   async getAWSDefaultServiceQuota(
     {abortSignal, ...params}: RequestConfig & GetAWSDefaultServiceQuotaRequest,
   ): Promise<GetAWSDefaultServiceQuotaResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ServiceCode: params["ServiceCode"],
       QuotaCode: params["QuotaCode"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetAWSDefaultServiceQuota",
@@ -96,8 +96,8 @@ export default class ServiceQuotas {
   async getAssociationForServiceQuotaTemplate(
     {abortSignal, ...params}: RequestConfig & GetAssociationForServiceQuotaTemplateRequest = {},
   ): Promise<GetAssociationForServiceQuotaTemplateResponse> {
-    const body: jsonP.JSONObject = params ? {
-    } : {};
+    const body: jsonP.JSONObject = {
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetAssociationForServiceQuotaTemplate",
@@ -113,9 +113,9 @@ export default class ServiceQuotas {
   async getRequestedServiceQuotaChange(
     {abortSignal, ...params}: RequestConfig & GetRequestedServiceQuotaChangeRequest,
   ): Promise<GetRequestedServiceQuotaChangeResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       RequestId: params["RequestId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetRequestedServiceQuotaChange",
@@ -131,10 +131,10 @@ export default class ServiceQuotas {
   async getServiceQuota(
     {abortSignal, ...params}: RequestConfig & GetServiceQuotaRequest,
   ): Promise<GetServiceQuotaResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ServiceCode: params["ServiceCode"],
       QuotaCode: params["QuotaCode"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetServiceQuota",
@@ -150,11 +150,11 @@ export default class ServiceQuotas {
   async getServiceQuotaIncreaseRequestFromTemplate(
     {abortSignal, ...params}: RequestConfig & GetServiceQuotaIncreaseRequestFromTemplateRequest,
   ): Promise<GetServiceQuotaIncreaseRequestFromTemplateResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ServiceCode: params["ServiceCode"],
       QuotaCode: params["QuotaCode"],
       AwsRegion: params["AwsRegion"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetServiceQuotaIncreaseRequestFromTemplate",
@@ -170,11 +170,11 @@ export default class ServiceQuotas {
   async listAWSDefaultServiceQuotas(
     {abortSignal, ...params}: RequestConfig & ListAWSDefaultServiceQuotasRequest,
   ): Promise<ListAWSDefaultServiceQuotasResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ServiceCode: params["ServiceCode"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListAWSDefaultServiceQuotas",
@@ -191,12 +191,12 @@ export default class ServiceQuotas {
   async listRequestedServiceQuotaChangeHistory(
     {abortSignal, ...params}: RequestConfig & ListRequestedServiceQuotaChangeHistoryRequest = {},
   ): Promise<ListRequestedServiceQuotaChangeHistoryResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ServiceCode: params["ServiceCode"],
       Status: params["Status"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListRequestedServiceQuotaChangeHistory",
@@ -213,13 +213,13 @@ export default class ServiceQuotas {
   async listRequestedServiceQuotaChangeHistoryByQuota(
     {abortSignal, ...params}: RequestConfig & ListRequestedServiceQuotaChangeHistoryByQuotaRequest,
   ): Promise<ListRequestedServiceQuotaChangeHistoryByQuotaResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ServiceCode: params["ServiceCode"],
       QuotaCode: params["QuotaCode"],
       Status: params["Status"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListRequestedServiceQuotaChangeHistoryByQuota",
@@ -236,12 +236,12 @@ export default class ServiceQuotas {
   async listServiceQuotaIncreaseRequestsInTemplate(
     {abortSignal, ...params}: RequestConfig & ListServiceQuotaIncreaseRequestsInTemplateRequest = {},
   ): Promise<ListServiceQuotaIncreaseRequestsInTemplateResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ServiceCode: params["ServiceCode"],
       AwsRegion: params["AwsRegion"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListServiceQuotaIncreaseRequestsInTemplate",
@@ -258,11 +258,11 @@ export default class ServiceQuotas {
   async listServiceQuotas(
     {abortSignal, ...params}: RequestConfig & ListServiceQuotasRequest,
   ): Promise<ListServiceQuotasResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ServiceCode: params["ServiceCode"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListServiceQuotas",
@@ -279,10 +279,10 @@ export default class ServiceQuotas {
   async listServices(
     {abortSignal, ...params}: RequestConfig & ListServicesRequest = {},
   ): Promise<ListServicesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListServices",
@@ -299,12 +299,12 @@ export default class ServiceQuotas {
   async putServiceQuotaIncreaseRequestIntoTemplate(
     {abortSignal, ...params}: RequestConfig & PutServiceQuotaIncreaseRequestIntoTemplateRequest,
   ): Promise<PutServiceQuotaIncreaseRequestIntoTemplateResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       QuotaCode: params["QuotaCode"],
       ServiceCode: params["ServiceCode"],
       AwsRegion: params["AwsRegion"],
       DesiredValue: params["DesiredValue"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutServiceQuotaIncreaseRequestIntoTemplate",
@@ -320,11 +320,11 @@ export default class ServiceQuotas {
   async requestServiceQuotaIncrease(
     {abortSignal, ...params}: RequestConfig & RequestServiceQuotaIncreaseRequest,
   ): Promise<RequestServiceQuotaIncreaseResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ServiceCode: params["ServiceCode"],
       QuotaCode: params["QuotaCode"],
       DesiredValue: params["DesiredValue"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RequestServiceQuotaIncrease",

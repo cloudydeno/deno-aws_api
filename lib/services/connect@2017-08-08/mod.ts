@@ -34,9 +34,9 @@ export default class Connect {
   async associateRoutingProfileQueues(
     {abortSignal, ...params}: RequestConfig & AssociateRoutingProfileQueuesRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       QueueConfigs: params["QueueConfigs"]?.map(x => fromRoutingProfileQueueConfig(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AssociateRoutingProfileQueues",
@@ -47,62 +47,58 @@ export default class Connect {
   async createContactFlow(
     {abortSignal, ...params}: RequestConfig & CreateContactFlowRequest,
   ): Promise<CreateContactFlowResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       Type: params["Type"],
       Description: params["Description"],
       Content: params["Content"],
       Tags: params["Tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateContactFlow",
       method: "PUT",
       requestUri: cmnP.encodePath`/contact-flows/${params["InstanceId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ContactFlowId": "s",
-          "ContactFlowArn": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ContactFlowId": "s",
+        "ContactFlowArn": "s",
+      },
+    }, await resp.json());
   }
 
   async createRoutingProfile(
     {abortSignal, ...params}: RequestConfig & CreateRoutingProfileRequest,
   ): Promise<CreateRoutingProfileResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       Description: params["Description"],
       DefaultOutboundQueueId: params["DefaultOutboundQueueId"],
       QueueConfigs: params["QueueConfigs"]?.map(x => fromRoutingProfileQueueConfig(x)),
       MediaConcurrencies: params["MediaConcurrencies"]?.map(x => fromMediaConcurrency(x)),
       Tags: params["Tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateRoutingProfile",
       method: "PUT",
       requestUri: cmnP.encodePath`/routing-profiles/${params["InstanceId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "RoutingProfileArn": "s",
-          "RoutingProfileId": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "RoutingProfileArn": "s",
+        "RoutingProfileId": "s",
+      },
+    }, await resp.json());
   }
 
   async createUser(
     {abortSignal, ...params}: RequestConfig & CreateUserRequest,
   ): Promise<CreateUserResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Username: params["Username"],
       Password: params["Password"],
       IdentityInfo: fromUserIdentityInfo(params["IdentityInfo"]),
@@ -112,22 +108,20 @@ export default class Connect {
       RoutingProfileId: params["RoutingProfileId"],
       HierarchyGroupId: params["HierarchyGroupId"],
       Tags: params["Tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateUser",
       method: "PUT",
       requestUri: cmnP.encodePath`/users/${params["InstanceId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "UserId": "s",
-          "UserArn": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "UserId": "s",
+        "UserArn": "s",
+      },
+    }, await resp.json());
   }
 
   async deleteUser(
@@ -152,14 +146,12 @@ export default class Connect {
       method: "GET",
       requestUri: cmnP.encodePath`/contact-flows/${params["InstanceId"]}/${params["ContactFlowId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ContactFlow": toContactFlow,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ContactFlow": toContactFlow,
+      },
+    }, await resp.json());
   }
 
   async describeRoutingProfile(
@@ -172,14 +164,12 @@ export default class Connect {
       method: "GET",
       requestUri: cmnP.encodePath`/routing-profiles/${params["InstanceId"]}/${params["RoutingProfileId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "RoutingProfile": toRoutingProfile,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "RoutingProfile": toRoutingProfile,
+      },
+    }, await resp.json());
   }
 
   async describeUser(
@@ -192,14 +182,12 @@ export default class Connect {
       method: "GET",
       requestUri: cmnP.encodePath`/users/${params["InstanceId"]}/${params["UserId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "User": toUser,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "User": toUser,
+      },
+    }, await resp.json());
   }
 
   async describeUserHierarchyGroup(
@@ -212,14 +200,12 @@ export default class Connect {
       method: "GET",
       requestUri: cmnP.encodePath`/user-hierarchy-groups/${params["InstanceId"]}/${params["HierarchyGroupId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "HierarchyGroup": toHierarchyGroup,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "HierarchyGroup": toHierarchyGroup,
+      },
+    }, await resp.json());
   }
 
   async describeUserHierarchyStructure(
@@ -232,22 +218,20 @@ export default class Connect {
       method: "GET",
       requestUri: cmnP.encodePath`/user-hierarchy-structure/${params["InstanceId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "HierarchyStructure": toHierarchyStructure,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "HierarchyStructure": toHierarchyStructure,
+      },
+    }, await resp.json());
   }
 
   async disassociateRoutingProfileQueues(
     {abortSignal, ...params}: RequestConfig & DisassociateRoutingProfileQueuesRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       QueueReferences: params["QueueReferences"]?.map(x => fromRoutingProfileQueueReference(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisassociateRoutingProfileQueues",
@@ -265,41 +249,37 @@ export default class Connect {
       method: "GET",
       requestUri: cmnP.encodePath`/contact/attributes/${params["InstanceId"]}/${params["InitialContactId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Attributes": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Attributes": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async getCurrentMetricData(
     {abortSignal, ...params}: RequestConfig & GetCurrentMetricDataRequest,
   ): Promise<GetCurrentMetricDataResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Filters: fromFilters(params["Filters"]),
       Groupings: params["Groupings"],
       CurrentMetrics: params["CurrentMetrics"]?.map(x => fromCurrentMetric(x)),
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetCurrentMetricData",
       requestUri: cmnP.encodePath`/metrics/current/${params["InstanceId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "NextToken": "s",
-          "MetricResults": [toCurrentMetricResult],
-          "DataSnapshotTime": "d",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "NextToken": "s",
+        "MetricResults": [toCurrentMetricResult],
+        "DataSnapshotTime": "d",
+      },
+    }, await resp.json());
   }
 
   async getFederationToken(
@@ -312,20 +292,18 @@ export default class Connect {
       method: "GET",
       requestUri: cmnP.encodePath`/user/federate/${params["InstanceId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Credentials": toCredentials,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Credentials": toCredentials,
+      },
+    }, await resp.json());
   }
 
   async getMetricData(
     {abortSignal, ...params}: RequestConfig & GetMetricDataRequest,
   ): Promise<GetMetricDataResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       StartTime: jsonP.serializeDate_unixTimestamp(params["StartTime"]),
       EndTime: jsonP.serializeDate_unixTimestamp(params["EndTime"]),
       Filters: fromFilters(params["Filters"]),
@@ -333,21 +311,19 @@ export default class Connect {
       HistoricalMetrics: params["HistoricalMetrics"]?.map(x => fromHistoricalMetric(x)),
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetMetricData",
       requestUri: cmnP.encodePath`/metrics/historical/${params["InstanceId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "NextToken": "s",
-          "MetricResults": [toHistoricalMetricResult],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "NextToken": "s",
+        "MetricResults": [toHistoricalMetricResult],
+      },
+    }, await resp.json());
   }
 
   async listContactFlows(
@@ -365,15 +341,13 @@ export default class Connect {
       method: "GET",
       requestUri: cmnP.encodePath`/contact-flows-summary/${params["InstanceId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ContactFlowSummaryList": [toContactFlowSummary],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ContactFlowSummaryList": [toContactFlowSummary],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listHoursOfOperations(
@@ -388,15 +362,13 @@ export default class Connect {
       method: "GET",
       requestUri: cmnP.encodePath`/hours-of-operations-summary/${params["InstanceId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "HoursOfOperationSummaryList": [toHoursOfOperationSummary],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "HoursOfOperationSummaryList": [toHoursOfOperationSummary],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listPhoneNumbers(
@@ -417,15 +389,13 @@ export default class Connect {
       method: "GET",
       requestUri: cmnP.encodePath`/phone-numbers-summary/${params["InstanceId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "PhoneNumberSummaryList": [toPhoneNumberSummary],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "PhoneNumberSummaryList": [toPhoneNumberSummary],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listPrompts(
@@ -440,15 +410,13 @@ export default class Connect {
       method: "GET",
       requestUri: cmnP.encodePath`/prompts-summary/${params["InstanceId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "PromptSummaryList": [toPromptSummary],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "PromptSummaryList": [toPromptSummary],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listQueues(
@@ -466,15 +434,13 @@ export default class Connect {
       method: "GET",
       requestUri: cmnP.encodePath`/queues-summary/${params["InstanceId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "QueueSummaryList": [toQueueSummary],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "QueueSummaryList": [toQueueSummary],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listRoutingProfileQueues(
@@ -489,15 +455,13 @@ export default class Connect {
       method: "GET",
       requestUri: cmnP.encodePath`/routing-profiles/${params["InstanceId"]}/${params["RoutingProfileId"]}/queues`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "NextToken": "s",
-          "RoutingProfileQueueConfigSummaryList": [toRoutingProfileQueueConfigSummary],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "NextToken": "s",
+        "RoutingProfileQueueConfigSummaryList": [toRoutingProfileQueueConfigSummary],
+      },
+    }, await resp.json());
   }
 
   async listRoutingProfiles(
@@ -512,15 +476,13 @@ export default class Connect {
       method: "GET",
       requestUri: cmnP.encodePath`/routing-profiles-summary/${params["InstanceId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "RoutingProfileSummaryList": [toRoutingProfileSummary],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "RoutingProfileSummaryList": [toRoutingProfileSummary],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listSecurityProfiles(
@@ -535,15 +497,13 @@ export default class Connect {
       method: "GET",
       requestUri: cmnP.encodePath`/security-profiles-summary/${params["InstanceId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "SecurityProfileSummaryList": [toSecurityProfileSummary],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "SecurityProfileSummaryList": [toSecurityProfileSummary],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listTagsForResource(
@@ -556,14 +516,12 @@ export default class Connect {
       method: "GET",
       requestUri: cmnP.encodePath`/tags/${params["resourceArn"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async listUserHierarchyGroups(
@@ -578,15 +536,13 @@ export default class Connect {
       method: "GET",
       requestUri: cmnP.encodePath`/user-hierarchy-groups-summary/${params["InstanceId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "UserHierarchyGroupSummaryList": [toHierarchyGroupSummary],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "UserHierarchyGroupSummaryList": [toHierarchyGroupSummary],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listUsers(
@@ -601,93 +557,85 @@ export default class Connect {
       method: "GET",
       requestUri: cmnP.encodePath`/users-summary/${params["InstanceId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "UserSummaryList": [toUserSummary],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "UserSummaryList": [toUserSummary],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async resumeContactRecording(
     {abortSignal, ...params}: RequestConfig & ResumeContactRecordingRequest,
   ): Promise<ResumeContactRecordingResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       InstanceId: params["InstanceId"],
       ContactId: params["ContactId"],
       InitialContactId: params["InitialContactId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ResumeContactRecording",
       requestUri: "/contact/resume-recording",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async startChatContact(
     {abortSignal, ...params}: RequestConfig & StartChatContactRequest,
   ): Promise<StartChatContactResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       InstanceId: params["InstanceId"],
       ContactFlowId: params["ContactFlowId"],
       Attributes: params["Attributes"],
       ParticipantDetails: fromParticipantDetails(params["ParticipantDetails"]),
       InitialMessage: fromChatMessage(params["InitialMessage"]),
       ClientToken: params["ClientToken"] ?? generateIdemptToken(),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartChatContact",
       method: "PUT",
       requestUri: "/contact/chat",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ContactId": "s",
-          "ParticipantId": "s",
-          "ParticipantToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ContactId": "s",
+        "ParticipantId": "s",
+        "ParticipantToken": "s",
+      },
+    }, await resp.json());
   }
 
   async startContactRecording(
     {abortSignal, ...params}: RequestConfig & StartContactRecordingRequest,
   ): Promise<StartContactRecordingResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       InstanceId: params["InstanceId"],
       ContactId: params["ContactId"],
       InitialContactId: params["InitialContactId"],
       VoiceRecordingConfiguration: fromVoiceRecordingConfiguration(params["VoiceRecordingConfiguration"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartContactRecording",
       requestUri: "/contact/start-recording",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async startOutboundVoiceContact(
     {abortSignal, ...params}: RequestConfig & StartOutboundVoiceContactRequest,
   ): Promise<StartOutboundVoiceContactResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DestinationPhoneNumber: params["DestinationPhoneNumber"],
       ContactFlowId: params["ContactFlowId"],
       InstanceId: params["InstanceId"],
@@ -695,91 +643,83 @@ export default class Connect {
       SourcePhoneNumber: params["SourcePhoneNumber"],
       QueueId: params["QueueId"],
       Attributes: params["Attributes"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartOutboundVoiceContact",
       method: "PUT",
       requestUri: "/contact/outbound-voice",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ContactId": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ContactId": "s",
+      },
+    }, await resp.json());
   }
 
   async stopContact(
     {abortSignal, ...params}: RequestConfig & StopContactRequest,
   ): Promise<StopContactResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ContactId: params["ContactId"],
       InstanceId: params["InstanceId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopContact",
       requestUri: "/contact/stop",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async stopContactRecording(
     {abortSignal, ...params}: RequestConfig & StopContactRecordingRequest,
   ): Promise<StopContactRecordingResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       InstanceId: params["InstanceId"],
       ContactId: params["ContactId"],
       InitialContactId: params["InitialContactId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopContactRecording",
       requestUri: "/contact/stop-recording",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async suspendContactRecording(
     {abortSignal, ...params}: RequestConfig & SuspendContactRecordingRequest,
   ): Promise<SuspendContactRecordingResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       InstanceId: params["InstanceId"],
       ContactId: params["ContactId"],
       InitialContactId: params["InitialContactId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SuspendContactRecording",
       requestUri: "/contact/suspend-recording",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       tags: params["tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
@@ -805,30 +745,28 @@ export default class Connect {
   async updateContactAttributes(
     {abortSignal, ...params}: RequestConfig & UpdateContactAttributesRequest,
   ): Promise<UpdateContactAttributesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       InitialContactId: params["InitialContactId"],
       InstanceId: params["InstanceId"],
       Attributes: params["Attributes"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateContactAttributes",
       requestUri: "/contact/attributes",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async updateContactFlowContent(
     {abortSignal, ...params}: RequestConfig & UpdateContactFlowContentRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Content: params["Content"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateContactFlowContent",
@@ -839,10 +777,10 @@ export default class Connect {
   async updateContactFlowName(
     {abortSignal, ...params}: RequestConfig & UpdateContactFlowNameRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       Description: params["Description"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateContactFlowName",
@@ -853,9 +791,9 @@ export default class Connect {
   async updateRoutingProfileConcurrency(
     {abortSignal, ...params}: RequestConfig & UpdateRoutingProfileConcurrencyRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       MediaConcurrencies: params["MediaConcurrencies"]?.map(x => fromMediaConcurrency(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateRoutingProfileConcurrency",
@@ -866,9 +804,9 @@ export default class Connect {
   async updateRoutingProfileDefaultOutboundQueue(
     {abortSignal, ...params}: RequestConfig & UpdateRoutingProfileDefaultOutboundQueueRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DefaultOutboundQueueId: params["DefaultOutboundQueueId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateRoutingProfileDefaultOutboundQueue",
@@ -879,10 +817,10 @@ export default class Connect {
   async updateRoutingProfileName(
     {abortSignal, ...params}: RequestConfig & UpdateRoutingProfileNameRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       Description: params["Description"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateRoutingProfileName",
@@ -893,9 +831,9 @@ export default class Connect {
   async updateRoutingProfileQueues(
     {abortSignal, ...params}: RequestConfig & UpdateRoutingProfileQueuesRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       QueueConfigs: params["QueueConfigs"]?.map(x => fromRoutingProfileQueueConfig(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateRoutingProfileQueues",
@@ -906,9 +844,9 @@ export default class Connect {
   async updateUserHierarchy(
     {abortSignal, ...params}: RequestConfig & UpdateUserHierarchyRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       HierarchyGroupId: params["HierarchyGroupId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateUserHierarchy",
@@ -919,9 +857,9 @@ export default class Connect {
   async updateUserIdentityInfo(
     {abortSignal, ...params}: RequestConfig & UpdateUserIdentityInfoRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       IdentityInfo: fromUserIdentityInfo(params["IdentityInfo"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateUserIdentityInfo",
@@ -932,9 +870,9 @@ export default class Connect {
   async updateUserPhoneConfig(
     {abortSignal, ...params}: RequestConfig & UpdateUserPhoneConfigRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       PhoneConfig: fromUserPhoneConfig(params["PhoneConfig"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateUserPhoneConfig",
@@ -945,9 +883,9 @@ export default class Connect {
   async updateUserRoutingProfile(
     {abortSignal, ...params}: RequestConfig & UpdateUserRoutingProfileRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       RoutingProfileId: params["RoutingProfileId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateUserRoutingProfile",
@@ -958,9 +896,9 @@ export default class Connect {
   async updateUserSecurityProfiles(
     {abortSignal, ...params}: RequestConfig & UpdateUserSecurityProfilesRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       SecurityProfileIds: params["SecurityProfileIds"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateUserSecurityProfiles",

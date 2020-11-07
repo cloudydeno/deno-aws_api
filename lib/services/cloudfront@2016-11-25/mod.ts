@@ -30,13 +30,13 @@ export default class CloudFront {
     {abortSignal, ...params}: RequestConfig & CreateCloudFrontOriginAccessIdentityRequest,
   ): Promise<CreateCloudFrontOriginAccessIdentityResult> {
     const inner = params["CloudFrontOriginAccessIdentityConfig"];
-    const body = xmlP.stringify({
+    const body = inner ? xmlP.stringify({
       name: "CloudFrontOriginAccessIdentityConfig",
       attributes: {"xmlns":"http://cloudfront.amazonaws.com/doc/2016-11-25/"},
-      children: inner ? [
+      children: [
         {name: "CallerReference", content: inner["CallerReference"]?.toString()},
         {name: "Comment", content: inner["Comment"]?.toString()},
-      ] : []});
+      ]}) : "";
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateCloudFrontOriginAccessIdentity2016_11_25",
@@ -55,10 +55,10 @@ export default class CloudFront {
     {abortSignal, ...params}: RequestConfig & CreateDistributionRequest,
   ): Promise<CreateDistributionResult> {
     const inner = params["DistributionConfig"];
-    const body = xmlP.stringify({
+    const body = inner ? xmlP.stringify({
       name: "DistributionConfig",
       attributes: {"xmlns":"http://cloudfront.amazonaws.com/doc/2016-11-25/"},
-      children: inner ? [
+      children: [
         {name: "CallerReference", content: inner["CallerReference"]?.toString()},
         {name: "Aliases", ...Aliases_Serialize(inner["Aliases"])},
         {name: "DefaultRootObject", content: inner["DefaultRootObject"]?.toString()},
@@ -75,7 +75,7 @@ export default class CloudFront {
         {name: "WebACLId", content: inner["WebACLId"]?.toString()},
         {name: "HttpVersion", content: inner["HttpVersion"]?.toString()},
         {name: "IsIPV6Enabled", content: inner["IsIPV6Enabled"]?.toString()},
-      ] : []});
+      ]}) : "";
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDistribution2016_11_25",
@@ -94,13 +94,13 @@ export default class CloudFront {
     {abortSignal, ...params}: RequestConfig & CreateDistributionWithTagsRequest,
   ): Promise<CreateDistributionWithTagsResult> {
     const inner = params["DistributionConfigWithTags"];
-    const body = xmlP.stringify({
+    const body = inner ? xmlP.stringify({
       name: "DistributionConfigWithTags",
       attributes: {"xmlns":"http://cloudfront.amazonaws.com/doc/2016-11-25/"},
-      children: inner ? [
+      children: [
         {name: "DistributionConfig", ...DistributionConfig_Serialize(inner["DistributionConfig"])},
         {name: "Tags", ...Tags_Serialize(inner["Tags"])},
-      ] : []});
+      ]}) : "";
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDistributionWithTags2016_11_25",
@@ -119,13 +119,13 @@ export default class CloudFront {
     {abortSignal, ...params}: RequestConfig & CreateInvalidationRequest,
   ): Promise<CreateInvalidationResult> {
     const inner = params["InvalidationBatch"];
-    const body = xmlP.stringify({
+    const body = inner ? xmlP.stringify({
       name: "InvalidationBatch",
       attributes: {"xmlns":"http://cloudfront.amazonaws.com/doc/2016-11-25/"},
-      children: inner ? [
+      children: [
         {name: "Paths", ...Paths_Serialize(inner["Paths"])},
         {name: "CallerReference", content: inner["CallerReference"]?.toString()},
-      ] : []});
+      ]}) : "";
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateInvalidation2016_11_25",
@@ -143,10 +143,10 @@ export default class CloudFront {
     {abortSignal, ...params}: RequestConfig & CreateStreamingDistributionRequest,
   ): Promise<CreateStreamingDistributionResult> {
     const inner = params["StreamingDistributionConfig"];
-    const body = xmlP.stringify({
+    const body = inner ? xmlP.stringify({
       name: "StreamingDistributionConfig",
       attributes: {"xmlns":"http://cloudfront.amazonaws.com/doc/2016-11-25/"},
-      children: inner ? [
+      children: [
         {name: "CallerReference", content: inner["CallerReference"]?.toString()},
         {name: "S3Origin", ...S3Origin_Serialize(inner["S3Origin"])},
         {name: "Aliases", ...Aliases_Serialize(inner["Aliases"])},
@@ -155,7 +155,7 @@ export default class CloudFront {
         {name: "TrustedSigners", ...TrustedSigners_Serialize(inner["TrustedSigners"])},
         {name: "PriceClass", content: inner["PriceClass"]?.toString()},
         {name: "Enabled", content: inner["Enabled"]?.toString()},
-      ] : []});
+      ]}) : "";
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateStreamingDistribution2016_11_25",
@@ -174,13 +174,13 @@ export default class CloudFront {
     {abortSignal, ...params}: RequestConfig & CreateStreamingDistributionWithTagsRequest,
   ): Promise<CreateStreamingDistributionWithTagsResult> {
     const inner = params["StreamingDistributionConfigWithTags"];
-    const body = xmlP.stringify({
+    const body = inner ? xmlP.stringify({
       name: "StreamingDistributionConfigWithTags",
       attributes: {"xmlns":"http://cloudfront.amazonaws.com/doc/2016-11-25/"},
-      children: inner ? [
+      children: [
         {name: "StreamingDistributionConfig", ...StreamingDistributionConfig_Serialize(inner["StreamingDistributionConfig"])},
         {name: "Tags", ...Tags_Serialize(inner["Tags"])},
-      ] : []});
+      ]}) : "";
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateStreamingDistributionWithTags2016_11_25",
@@ -492,15 +492,15 @@ export default class CloudFront {
   async tagResource2016_11_25(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<void> {
-    const query = new URLSearchParams;
-    query.set("Resource", params["Resource"]?.toString() ?? "");
     const inner = params["Tags"];
-    const body = xmlP.stringify({
+    const body = inner ? xmlP.stringify({
       name: "Tags",
       attributes: {"xmlns":"http://cloudfront.amazonaws.com/doc/2016-11-25/"},
-      children: inner ? [
+      children: [
         {name: "Items", children: inner["Items"]?.map(x => ({name: "Tag", ...Tag_Serialize(x)}))},
-      ] : []});
+      ]}) : "";
+    const query = new URLSearchParams;
+    query.set("Resource", params["Resource"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
       abortSignal, query, body,
       action: "TagResource2016_11_25",
@@ -512,15 +512,15 @@ export default class CloudFront {
   async untagResource2016_11_25(
     {abortSignal, ...params}: RequestConfig & UntagResourceRequest,
   ): Promise<void> {
-    const query = new URLSearchParams;
-    query.set("Resource", params["Resource"]?.toString() ?? "");
     const inner = params["TagKeys"];
-    const body = xmlP.stringify({
+    const body = inner ? xmlP.stringify({
       name: "TagKeys",
       attributes: {"xmlns":"http://cloudfront.amazonaws.com/doc/2016-11-25/"},
-      children: inner ? [
+      children: [
         {name: "Items", children: inner["Items"]?.map(x => ({name: "Key", content: x}))},
-      ] : []});
+      ]}) : "";
+    const query = new URLSearchParams;
+    query.set("Resource", params["Resource"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
       abortSignal, query, body,
       action: "UntagResource2016_11_25",
@@ -532,16 +532,16 @@ export default class CloudFront {
   async updateCloudFrontOriginAccessIdentity2016_11_25(
     {abortSignal, ...params}: RequestConfig & UpdateCloudFrontOriginAccessIdentityRequest,
   ): Promise<UpdateCloudFrontOriginAccessIdentityResult> {
-    const headers = new Headers;
-    if (params["IfMatch"] != null) headers.append("If-Match", params["IfMatch"]);
     const inner = params["CloudFrontOriginAccessIdentityConfig"];
-    const body = xmlP.stringify({
+    const body = inner ? xmlP.stringify({
       name: "CloudFrontOriginAccessIdentityConfig",
       attributes: {"xmlns":"http://cloudfront.amazonaws.com/doc/2016-11-25/"},
-      children: inner ? [
+      children: [
         {name: "CallerReference", content: inner["CallerReference"]?.toString()},
         {name: "Comment", content: inner["Comment"]?.toString()},
-      ] : []});
+      ]}) : "";
+    const headers = new Headers;
+    if (params["IfMatch"] != null) headers.append("If-Match", params["IfMatch"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "UpdateCloudFrontOriginAccessIdentity2016_11_25",
@@ -558,13 +558,11 @@ export default class CloudFront {
   async updateDistribution2016_11_25(
     {abortSignal, ...params}: RequestConfig & UpdateDistributionRequest,
   ): Promise<UpdateDistributionResult> {
-    const headers = new Headers;
-    if (params["IfMatch"] != null) headers.append("If-Match", params["IfMatch"]);
     const inner = params["DistributionConfig"];
-    const body = xmlP.stringify({
+    const body = inner ? xmlP.stringify({
       name: "DistributionConfig",
       attributes: {"xmlns":"http://cloudfront.amazonaws.com/doc/2016-11-25/"},
-      children: inner ? [
+      children: [
         {name: "CallerReference", content: inner["CallerReference"]?.toString()},
         {name: "Aliases", ...Aliases_Serialize(inner["Aliases"])},
         {name: "DefaultRootObject", content: inner["DefaultRootObject"]?.toString()},
@@ -581,7 +579,9 @@ export default class CloudFront {
         {name: "WebACLId", content: inner["WebACLId"]?.toString()},
         {name: "HttpVersion", content: inner["HttpVersion"]?.toString()},
         {name: "IsIPV6Enabled", content: inner["IsIPV6Enabled"]?.toString()},
-      ] : []});
+      ]}) : "";
+    const headers = new Headers;
+    if (params["IfMatch"] != null) headers.append("If-Match", params["IfMatch"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "UpdateDistribution2016_11_25",
@@ -598,13 +598,11 @@ export default class CloudFront {
   async updateStreamingDistribution2016_11_25(
     {abortSignal, ...params}: RequestConfig & UpdateStreamingDistributionRequest,
   ): Promise<UpdateStreamingDistributionResult> {
-    const headers = new Headers;
-    if (params["IfMatch"] != null) headers.append("If-Match", params["IfMatch"]);
     const inner = params["StreamingDistributionConfig"];
-    const body = xmlP.stringify({
+    const body = inner ? xmlP.stringify({
       name: "StreamingDistributionConfig",
       attributes: {"xmlns":"http://cloudfront.amazonaws.com/doc/2016-11-25/"},
-      children: inner ? [
+      children: [
         {name: "CallerReference", content: inner["CallerReference"]?.toString()},
         {name: "S3Origin", ...S3Origin_Serialize(inner["S3Origin"])},
         {name: "Aliases", ...Aliases_Serialize(inner["Aliases"])},
@@ -613,7 +611,9 @@ export default class CloudFront {
         {name: "TrustedSigners", ...TrustedSigners_Serialize(inner["TrustedSigners"])},
         {name: "PriceClass", content: inner["PriceClass"]?.toString()},
         {name: "Enabled", content: inner["Enabled"]?.toString()},
-      ] : []});
+      ]}) : "";
+    const headers = new Headers;
+    if (params["IfMatch"] != null) headers.append("If-Match", params["IfMatch"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "UpdateStreamingDistribution2016_11_25",

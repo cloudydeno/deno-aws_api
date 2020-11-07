@@ -34,32 +34,30 @@ export default class Imagebuilder {
   async cancelImageCreation(
     {abortSignal, ...params}: RequestConfig & CancelImageCreationRequest,
   ): Promise<CancelImageCreationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       imageBuildVersionArn: params["imageBuildVersionArn"],
       clientToken: params["clientToken"] ?? generateIdemptToken(),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CancelImageCreation",
       method: "PUT",
       requestUri: "/CancelImageCreation",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "requestId": "s",
-          "clientToken": "s",
-          "imageBuildVersionArn": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "requestId": "s",
+        "clientToken": "s",
+        "imageBuildVersionArn": "s",
+      },
+    }, await resp.json());
   }
 
   async createComponent(
     {abortSignal, ...params}: RequestConfig & CreateComponentRequest,
   ): Promise<CreateComponentResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       name: params["name"],
       semanticVersion: params["semanticVersion"],
       description: params["description"],
@@ -71,57 +69,53 @@ export default class Imagebuilder {
       kmsKeyId: params["kmsKeyId"],
       tags: params["tags"],
       clientToken: params["clientToken"] ?? generateIdemptToken(),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateComponent",
       method: "PUT",
       requestUri: "/CreateComponent",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "requestId": "s",
-          "clientToken": "s",
-          "componentBuildVersionArn": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "requestId": "s",
+        "clientToken": "s",
+        "componentBuildVersionArn": "s",
+      },
+    }, await resp.json());
   }
 
   async createDistributionConfiguration(
     {abortSignal, ...params}: RequestConfig & CreateDistributionConfigurationRequest,
   ): Promise<CreateDistributionConfigurationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       name: params["name"],
       description: params["description"],
       distributions: params["distributions"]?.map(x => fromDistribution(x)),
       tags: params["tags"],
       clientToken: params["clientToken"] ?? generateIdemptToken(),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDistributionConfiguration",
       method: "PUT",
       requestUri: "/CreateDistributionConfiguration",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "requestId": "s",
-          "clientToken": "s",
-          "distributionConfigurationArn": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "requestId": "s",
+        "clientToken": "s",
+        "distributionConfigurationArn": "s",
+      },
+    }, await resp.json());
   }
 
   async createImage(
     {abortSignal, ...params}: RequestConfig & CreateImageRequest,
   ): Promise<CreateImageResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       imageRecipeArn: params["imageRecipeArn"],
       distributionConfigurationArn: params["distributionConfigurationArn"],
       infrastructureConfigurationArn: params["infrastructureConfigurationArn"],
@@ -129,29 +123,27 @@ export default class Imagebuilder {
       enhancedImageMetadataEnabled: params["enhancedImageMetadataEnabled"],
       tags: params["tags"],
       clientToken: params["clientToken"] ?? generateIdemptToken(),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateImage",
       method: "PUT",
       requestUri: "/CreateImage",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "requestId": "s",
-          "clientToken": "s",
-          "imageBuildVersionArn": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "requestId": "s",
+        "clientToken": "s",
+        "imageBuildVersionArn": "s",
+      },
+    }, await resp.json());
   }
 
   async createImagePipeline(
     {abortSignal, ...params}: RequestConfig & CreateImagePipelineRequest,
   ): Promise<CreateImagePipelineResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       name: params["name"],
       description: params["description"],
       imageRecipeArn: params["imageRecipeArn"],
@@ -163,29 +155,27 @@ export default class Imagebuilder {
       status: params["status"],
       tags: params["tags"],
       clientToken: params["clientToken"] ?? generateIdemptToken(),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateImagePipeline",
       method: "PUT",
       requestUri: "/CreateImagePipeline",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "requestId": "s",
-          "clientToken": "s",
-          "imagePipelineArn": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "requestId": "s",
+        "clientToken": "s",
+        "imagePipelineArn": "s",
+      },
+    }, await resp.json());
   }
 
   async createImageRecipe(
     {abortSignal, ...params}: RequestConfig & CreateImageRecipeRequest,
   ): Promise<CreateImageRecipeResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       name: params["name"],
       description: params["description"],
       semanticVersion: params["semanticVersion"],
@@ -195,29 +185,27 @@ export default class Imagebuilder {
       tags: params["tags"],
       workingDirectory: params["workingDirectory"],
       clientToken: params["clientToken"] ?? generateIdemptToken(),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateImageRecipe",
       method: "PUT",
       requestUri: "/CreateImageRecipe",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "requestId": "s",
-          "clientToken": "s",
-          "imageRecipeArn": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "requestId": "s",
+        "clientToken": "s",
+        "imageRecipeArn": "s",
+      },
+    }, await resp.json());
   }
 
   async createInfrastructureConfiguration(
     {abortSignal, ...params}: RequestConfig & CreateInfrastructureConfigurationRequest,
   ): Promise<CreateInfrastructureConfigurationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       name: params["name"],
       description: params["description"],
       instanceTypes: params["instanceTypes"],
@@ -231,23 +219,21 @@ export default class Imagebuilder {
       resourceTags: params["resourceTags"],
       tags: params["tags"],
       clientToken: params["clientToken"] ?? generateIdemptToken(),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateInfrastructureConfiguration",
       method: "PUT",
       requestUri: "/CreateInfrastructureConfiguration",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "requestId": "s",
-          "clientToken": "s",
-          "infrastructureConfigurationArn": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "requestId": "s",
+        "clientToken": "s",
+        "infrastructureConfigurationArn": "s",
+      },
+    }, await resp.json());
   }
 
   async deleteComponent(
@@ -261,15 +247,13 @@ export default class Imagebuilder {
       method: "DELETE",
       requestUri: "/DeleteComponent",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "requestId": "s",
-          "componentBuildVersionArn": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "requestId": "s",
+        "componentBuildVersionArn": "s",
+      },
+    }, await resp.json());
   }
 
   async deleteDistributionConfiguration(
@@ -283,15 +267,13 @@ export default class Imagebuilder {
       method: "DELETE",
       requestUri: "/DeleteDistributionConfiguration",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "requestId": "s",
-          "distributionConfigurationArn": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "requestId": "s",
+        "distributionConfigurationArn": "s",
+      },
+    }, await resp.json());
   }
 
   async deleteImage(
@@ -305,15 +287,13 @@ export default class Imagebuilder {
       method: "DELETE",
       requestUri: "/DeleteImage",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "requestId": "s",
-          "imageBuildVersionArn": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "requestId": "s",
+        "imageBuildVersionArn": "s",
+      },
+    }, await resp.json());
   }
 
   async deleteImagePipeline(
@@ -327,15 +307,13 @@ export default class Imagebuilder {
       method: "DELETE",
       requestUri: "/DeleteImagePipeline",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "requestId": "s",
-          "imagePipelineArn": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "requestId": "s",
+        "imagePipelineArn": "s",
+      },
+    }, await resp.json());
   }
 
   async deleteImageRecipe(
@@ -349,15 +327,13 @@ export default class Imagebuilder {
       method: "DELETE",
       requestUri: "/DeleteImageRecipe",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "requestId": "s",
-          "imageRecipeArn": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "requestId": "s",
+        "imageRecipeArn": "s",
+      },
+    }, await resp.json());
   }
 
   async deleteInfrastructureConfiguration(
@@ -371,15 +347,13 @@ export default class Imagebuilder {
       method: "DELETE",
       requestUri: "/DeleteInfrastructureConfiguration",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "requestId": "s",
-          "infrastructureConfigurationArn": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "requestId": "s",
+        "infrastructureConfigurationArn": "s",
+      },
+    }, await resp.json());
   }
 
   async getComponent(
@@ -393,15 +367,13 @@ export default class Imagebuilder {
       method: "GET",
       requestUri: "/GetComponent",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "requestId": "s",
-          "component": toComponent,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "requestId": "s",
+        "component": toComponent,
+      },
+    }, await resp.json());
   }
 
   async getComponentPolicy(
@@ -415,15 +387,13 @@ export default class Imagebuilder {
       method: "GET",
       requestUri: "/GetComponentPolicy",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "requestId": "s",
-          "policy": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "requestId": "s",
+        "policy": "s",
+      },
+    }, await resp.json());
   }
 
   async getDistributionConfiguration(
@@ -437,15 +407,13 @@ export default class Imagebuilder {
       method: "GET",
       requestUri: "/GetDistributionConfiguration",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "requestId": "s",
-          "distributionConfiguration": toDistributionConfiguration,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "requestId": "s",
+        "distributionConfiguration": toDistributionConfiguration,
+      },
+    }, await resp.json());
   }
 
   async getImage(
@@ -459,15 +427,13 @@ export default class Imagebuilder {
       method: "GET",
       requestUri: "/GetImage",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "requestId": "s",
-          "image": toImage,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "requestId": "s",
+        "image": toImage,
+      },
+    }, await resp.json());
   }
 
   async getImagePipeline(
@@ -481,15 +447,13 @@ export default class Imagebuilder {
       method: "GET",
       requestUri: "/GetImagePipeline",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "requestId": "s",
-          "imagePipeline": toImagePipeline,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "requestId": "s",
+        "imagePipeline": toImagePipeline,
+      },
+    }, await resp.json());
   }
 
   async getImagePolicy(
@@ -503,15 +467,13 @@ export default class Imagebuilder {
       method: "GET",
       requestUri: "/GetImagePolicy",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "requestId": "s",
-          "policy": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "requestId": "s",
+        "policy": "s",
+      },
+    }, await resp.json());
   }
 
   async getImageRecipe(
@@ -525,15 +487,13 @@ export default class Imagebuilder {
       method: "GET",
       requestUri: "/GetImageRecipe",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "requestId": "s",
-          "imageRecipe": toImageRecipe,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "requestId": "s",
+        "imageRecipe": toImageRecipe,
+      },
+    }, await resp.json());
   }
 
   async getImageRecipePolicy(
@@ -547,15 +507,13 @@ export default class Imagebuilder {
       method: "GET",
       requestUri: "/GetImageRecipePolicy",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "requestId": "s",
-          "policy": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "requestId": "s",
+        "policy": "s",
+      },
+    }, await resp.json());
   }
 
   async getInfrastructureConfiguration(
@@ -569,21 +527,19 @@ export default class Imagebuilder {
       method: "GET",
       requestUri: "/GetInfrastructureConfiguration",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "requestId": "s",
-          "infrastructureConfiguration": toInfrastructureConfiguration,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "requestId": "s",
+        "infrastructureConfiguration": toInfrastructureConfiguration,
+      },
+    }, await resp.json());
   }
 
   async importComponent(
     {abortSignal, ...params}: RequestConfig & ImportComponentRequest,
   ): Promise<ImportComponentResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       name: params["name"],
       semanticVersion: params["semanticVersion"],
       description: params["description"],
@@ -596,253 +552,233 @@ export default class Imagebuilder {
       kmsKeyId: params["kmsKeyId"],
       tags: params["tags"],
       clientToken: params["clientToken"] ?? generateIdemptToken(),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ImportComponent",
       method: "PUT",
       requestUri: "/ImportComponent",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "requestId": "s",
-          "clientToken": "s",
-          "componentBuildVersionArn": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "requestId": "s",
+        "clientToken": "s",
+        "componentBuildVersionArn": "s",
+      },
+    }, await resp.json());
   }
 
   async listComponentBuildVersions(
     {abortSignal, ...params}: RequestConfig & ListComponentBuildVersionsRequest,
   ): Promise<ListComponentBuildVersionsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       componentVersionArn: params["componentVersionArn"],
       maxResults: params["maxResults"],
       nextToken: params["nextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListComponentBuildVersions",
       requestUri: "/ListComponentBuildVersions",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "requestId": "s",
-          "componentSummaryList": [toComponentSummary],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "requestId": "s",
+        "componentSummaryList": [toComponentSummary],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listComponents(
     {abortSignal, ...params}: RequestConfig & ListComponentsRequest = {},
   ): Promise<ListComponentsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       owner: params["owner"],
       filters: params["filters"]?.map(x => fromFilter(x)),
       maxResults: params["maxResults"],
       nextToken: params["nextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListComponents",
       requestUri: "/ListComponents",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "requestId": "s",
-          "componentVersionList": [toComponentVersion],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "requestId": "s",
+        "componentVersionList": [toComponentVersion],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listDistributionConfigurations(
     {abortSignal, ...params}: RequestConfig & ListDistributionConfigurationsRequest = {},
   ): Promise<ListDistributionConfigurationsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       filters: params["filters"]?.map(x => fromFilter(x)),
       maxResults: params["maxResults"],
       nextToken: params["nextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListDistributionConfigurations",
       requestUri: "/ListDistributionConfigurations",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "requestId": "s",
-          "distributionConfigurationSummaryList": [toDistributionConfigurationSummary],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "requestId": "s",
+        "distributionConfigurationSummaryList": [toDistributionConfigurationSummary],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listImageBuildVersions(
     {abortSignal, ...params}: RequestConfig & ListImageBuildVersionsRequest,
   ): Promise<ListImageBuildVersionsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       imageVersionArn: params["imageVersionArn"],
       filters: params["filters"]?.map(x => fromFilter(x)),
       maxResults: params["maxResults"],
       nextToken: params["nextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListImageBuildVersions",
       requestUri: "/ListImageBuildVersions",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "requestId": "s",
-          "imageSummaryList": [toImageSummary],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "requestId": "s",
+        "imageSummaryList": [toImageSummary],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listImagePipelineImages(
     {abortSignal, ...params}: RequestConfig & ListImagePipelineImagesRequest,
   ): Promise<ListImagePipelineImagesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       imagePipelineArn: params["imagePipelineArn"],
       filters: params["filters"]?.map(x => fromFilter(x)),
       maxResults: params["maxResults"],
       nextToken: params["nextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListImagePipelineImages",
       requestUri: "/ListImagePipelineImages",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "requestId": "s",
-          "imageSummaryList": [toImageSummary],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "requestId": "s",
+        "imageSummaryList": [toImageSummary],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listImagePipelines(
     {abortSignal, ...params}: RequestConfig & ListImagePipelinesRequest = {},
   ): Promise<ListImagePipelinesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       filters: params["filters"]?.map(x => fromFilter(x)),
       maxResults: params["maxResults"],
       nextToken: params["nextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListImagePipelines",
       requestUri: "/ListImagePipelines",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "requestId": "s",
-          "imagePipelineList": [toImagePipeline],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "requestId": "s",
+        "imagePipelineList": [toImagePipeline],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listImageRecipes(
     {abortSignal, ...params}: RequestConfig & ListImageRecipesRequest = {},
   ): Promise<ListImageRecipesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       owner: params["owner"],
       filters: params["filters"]?.map(x => fromFilter(x)),
       maxResults: params["maxResults"],
       nextToken: params["nextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListImageRecipes",
       requestUri: "/ListImageRecipes",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "requestId": "s",
-          "imageRecipeSummaryList": [toImageRecipeSummary],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "requestId": "s",
+        "imageRecipeSummaryList": [toImageRecipeSummary],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listImages(
     {abortSignal, ...params}: RequestConfig & ListImagesRequest = {},
   ): Promise<ListImagesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       owner: params["owner"],
       filters: params["filters"]?.map(x => fromFilter(x)),
       maxResults: params["maxResults"],
       nextToken: params["nextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListImages",
       requestUri: "/ListImages",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "requestId": "s",
-          "imageVersionList": [toImageVersion],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "requestId": "s",
+        "imageVersionList": [toImageVersion],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listInfrastructureConfigurations(
     {abortSignal, ...params}: RequestConfig & ListInfrastructureConfigurationsRequest = {},
   ): Promise<ListInfrastructureConfigurationsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       filters: params["filters"]?.map(x => fromFilter(x)),
       maxResults: params["maxResults"],
       nextToken: params["nextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListInfrastructureConfigurations",
       requestUri: "/ListInfrastructureConfigurations",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "requestId": "s",
-          "infrastructureConfigurationSummaryList": [toInfrastructureConfigurationSummary],
-          "nextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "requestId": "s",
+        "infrastructureConfigurationSummaryList": [toInfrastructureConfigurationSummary],
+        "nextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listTagsForResource(
@@ -855,130 +791,118 @@ export default class Imagebuilder {
       method: "GET",
       requestUri: cmnP.encodePath`/tags/${params["resourceArn"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "tags": x => jsonP.readMap(String, String, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async putComponentPolicy(
     {abortSignal, ...params}: RequestConfig & PutComponentPolicyRequest,
   ): Promise<PutComponentPolicyResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       componentArn: params["componentArn"],
       policy: params["policy"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutComponentPolicy",
       method: "PUT",
       requestUri: "/PutComponentPolicy",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "requestId": "s",
-          "componentArn": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "requestId": "s",
+        "componentArn": "s",
+      },
+    }, await resp.json());
   }
 
   async putImagePolicy(
     {abortSignal, ...params}: RequestConfig & PutImagePolicyRequest,
   ): Promise<PutImagePolicyResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       imageArn: params["imageArn"],
       policy: params["policy"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutImagePolicy",
       method: "PUT",
       requestUri: "/PutImagePolicy",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "requestId": "s",
-          "imageArn": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "requestId": "s",
+        "imageArn": "s",
+      },
+    }, await resp.json());
   }
 
   async putImageRecipePolicy(
     {abortSignal, ...params}: RequestConfig & PutImageRecipePolicyRequest,
   ): Promise<PutImageRecipePolicyResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       imageRecipeArn: params["imageRecipeArn"],
       policy: params["policy"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutImageRecipePolicy",
       method: "PUT",
       requestUri: "/PutImageRecipePolicy",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "requestId": "s",
-          "imageRecipeArn": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "requestId": "s",
+        "imageRecipeArn": "s",
+      },
+    }, await resp.json());
   }
 
   async startImagePipelineExecution(
     {abortSignal, ...params}: RequestConfig & StartImagePipelineExecutionRequest,
   ): Promise<StartImagePipelineExecutionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       imagePipelineArn: params["imagePipelineArn"],
       clientToken: params["clientToken"] ?? generateIdemptToken(),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartImagePipelineExecution",
       method: "PUT",
       requestUri: "/StartImagePipelineExecution",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "requestId": "s",
-          "clientToken": "s",
-          "imageBuildVersionArn": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "requestId": "s",
+        "clientToken": "s",
+        "imageBuildVersionArn": "s",
+      },
+    }, await resp.json());
   }
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       tags: params["tags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
       requestUri: cmnP.encodePath`/tags/${params["resourceArn"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async untagResource(
@@ -994,45 +918,41 @@ export default class Imagebuilder {
       method: "DELETE",
       requestUri: cmnP.encodePath`/tags/${params["resourceArn"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
   }
 
   async updateDistributionConfiguration(
     {abortSignal, ...params}: RequestConfig & UpdateDistributionConfigurationRequest,
   ): Promise<UpdateDistributionConfigurationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       distributionConfigurationArn: params["distributionConfigurationArn"],
       description: params["description"],
       distributions: params["distributions"]?.map(x => fromDistribution(x)),
       clientToken: params["clientToken"] ?? generateIdemptToken(),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateDistributionConfiguration",
       method: "PUT",
       requestUri: "/UpdateDistributionConfiguration",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "requestId": "s",
-          "clientToken": "s",
-          "distributionConfigurationArn": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "requestId": "s",
+        "clientToken": "s",
+        "distributionConfigurationArn": "s",
+      },
+    }, await resp.json());
   }
 
   async updateImagePipeline(
     {abortSignal, ...params}: RequestConfig & UpdateImagePipelineRequest,
   ): Promise<UpdateImagePipelineResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       imagePipelineArn: params["imagePipelineArn"],
       description: params["description"],
       imageRecipeArn: params["imageRecipeArn"],
@@ -1043,29 +963,27 @@ export default class Imagebuilder {
       schedule: fromSchedule(params["schedule"]),
       status: params["status"],
       clientToken: params["clientToken"] ?? generateIdemptToken(),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateImagePipeline",
       method: "PUT",
       requestUri: "/UpdateImagePipeline",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "requestId": "s",
-          "clientToken": "s",
-          "imagePipelineArn": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "requestId": "s",
+        "clientToken": "s",
+        "imagePipelineArn": "s",
+      },
+    }, await resp.json());
   }
 
   async updateInfrastructureConfiguration(
     {abortSignal, ...params}: RequestConfig & UpdateInfrastructureConfigurationRequest,
   ): Promise<UpdateInfrastructureConfigurationResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       infrastructureConfigurationArn: params["infrastructureConfigurationArn"],
       description: params["description"],
       instanceTypes: params["instanceTypes"],
@@ -1078,23 +996,21 @@ export default class Imagebuilder {
       snsTopicArn: params["snsTopicArn"],
       clientToken: params["clientToken"] ?? generateIdemptToken(),
       resourceTags: params["resourceTags"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateInfrastructureConfiguration",
       method: "PUT",
       requestUri: "/UpdateInfrastructureConfiguration",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "requestId": "s",
-          "clientToken": "s",
-          "infrastructureConfigurationArn": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "requestId": "s",
+        "clientToken": "s",
+        "infrastructureConfigurationArn": "s",
+      },
+    }, await resp.json());
   }
 
 }

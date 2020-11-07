@@ -33,9 +33,9 @@ export default class Athena {
   async batchGetNamedQuery(
     {abortSignal, ...params}: RequestConfig & BatchGetNamedQueryInput,
   ): Promise<BatchGetNamedQueryOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NamedQueryIds: params["NamedQueryIds"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchGetNamedQuery",
@@ -52,9 +52,9 @@ export default class Athena {
   async batchGetQueryExecution(
     {abortSignal, ...params}: RequestConfig & BatchGetQueryExecutionInput,
   ): Promise<BatchGetQueryExecutionOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       QueryExecutionIds: params["QueryExecutionIds"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "BatchGetQueryExecution",
@@ -71,13 +71,13 @@ export default class Athena {
   async createDataCatalog(
     {abortSignal, ...params}: RequestConfig & CreateDataCatalogInput,
   ): Promise<CreateDataCatalogOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       Type: params["Type"],
       Description: params["Description"],
       Parameters: params["Parameters"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDataCatalog",
@@ -91,14 +91,14 @@ export default class Athena {
   async createNamedQuery(
     {abortSignal, ...params}: RequestConfig & CreateNamedQueryInput,
   ): Promise<CreateNamedQueryOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       Description: params["Description"],
       Database: params["Database"],
       QueryString: params["QueryString"],
       ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
       WorkGroup: params["WorkGroup"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateNamedQuery",
@@ -114,12 +114,12 @@ export default class Athena {
   async createWorkGroup(
     {abortSignal, ...params}: RequestConfig & CreateWorkGroupInput,
   ): Promise<CreateWorkGroupOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       Configuration: fromWorkGroupConfiguration(params["Configuration"]),
       Description: params["Description"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateWorkGroup",
@@ -133,9 +133,9 @@ export default class Athena {
   async deleteDataCatalog(
     {abortSignal, ...params}: RequestConfig & DeleteDataCatalogInput,
   ): Promise<DeleteDataCatalogOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteDataCatalog",
@@ -149,9 +149,9 @@ export default class Athena {
   async deleteNamedQuery(
     {abortSignal, ...params}: RequestConfig & DeleteNamedQueryInput,
   ): Promise<DeleteNamedQueryOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NamedQueryId: params["NamedQueryId"] ?? generateIdemptToken(),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteNamedQuery",
@@ -165,10 +165,10 @@ export default class Athena {
   async deleteWorkGroup(
     {abortSignal, ...params}: RequestConfig & DeleteWorkGroupInput,
   ): Promise<DeleteWorkGroupOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       WorkGroup: params["WorkGroup"],
       RecursiveDeleteOption: params["RecursiveDeleteOption"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteWorkGroup",
@@ -182,9 +182,9 @@ export default class Athena {
   async getDataCatalog(
     {abortSignal, ...params}: RequestConfig & GetDataCatalogInput,
   ): Promise<GetDataCatalogOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetDataCatalog",
@@ -200,10 +200,10 @@ export default class Athena {
   async getDatabase(
     {abortSignal, ...params}: RequestConfig & GetDatabaseInput,
   ): Promise<GetDatabaseOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CatalogName: params["CatalogName"],
       DatabaseName: params["DatabaseName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetDatabase",
@@ -219,9 +219,9 @@ export default class Athena {
   async getNamedQuery(
     {abortSignal, ...params}: RequestConfig & GetNamedQueryInput,
   ): Promise<GetNamedQueryOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NamedQueryId: params["NamedQueryId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetNamedQuery",
@@ -237,9 +237,9 @@ export default class Athena {
   async getQueryExecution(
     {abortSignal, ...params}: RequestConfig & GetQueryExecutionInput,
   ): Promise<GetQueryExecutionOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       QueryExecutionId: params["QueryExecutionId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetQueryExecution",
@@ -255,11 +255,11 @@ export default class Athena {
   async getQueryResults(
     {abortSignal, ...params}: RequestConfig & GetQueryResultsInput,
   ): Promise<GetQueryResultsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       QueryExecutionId: params["QueryExecutionId"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetQueryResults",
@@ -277,11 +277,11 @@ export default class Athena {
   async getTableMetadata(
     {abortSignal, ...params}: RequestConfig & GetTableMetadataInput,
   ): Promise<GetTableMetadataOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CatalogName: params["CatalogName"],
       DatabaseName: params["DatabaseName"],
       TableName: params["TableName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetTableMetadata",
@@ -297,9 +297,9 @@ export default class Athena {
   async getWorkGroup(
     {abortSignal, ...params}: RequestConfig & GetWorkGroupInput,
   ): Promise<GetWorkGroupOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       WorkGroup: params["WorkGroup"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetWorkGroup",
@@ -315,10 +315,10 @@ export default class Athena {
   async listDataCatalogs(
     {abortSignal, ...params}: RequestConfig & ListDataCatalogsInput = {},
   ): Promise<ListDataCatalogsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListDataCatalogs",
@@ -335,11 +335,11 @@ export default class Athena {
   async listDatabases(
     {abortSignal, ...params}: RequestConfig & ListDatabasesInput,
   ): Promise<ListDatabasesOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CatalogName: params["CatalogName"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListDatabases",
@@ -356,11 +356,11 @@ export default class Athena {
   async listNamedQueries(
     {abortSignal, ...params}: RequestConfig & ListNamedQueriesInput = {},
   ): Promise<ListNamedQueriesOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
       WorkGroup: params["WorkGroup"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListNamedQueries",
@@ -377,11 +377,11 @@ export default class Athena {
   async listQueryExecutions(
     {abortSignal, ...params}: RequestConfig & ListQueryExecutionsInput = {},
   ): Promise<ListQueryExecutionsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
       WorkGroup: params["WorkGroup"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListQueryExecutions",
@@ -398,13 +398,13 @@ export default class Athena {
   async listTableMetadata(
     {abortSignal, ...params}: RequestConfig & ListTableMetadataInput,
   ): Promise<ListTableMetadataOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CatalogName: params["CatalogName"],
       DatabaseName: params["DatabaseName"],
       Expression: params["Expression"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTableMetadata",
@@ -421,11 +421,11 @@ export default class Athena {
   async listTagsForResource(
     {abortSignal, ...params}: RequestConfig & ListTagsForResourceInput,
   ): Promise<ListTagsForResourceOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceARN: params["ResourceARN"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForResource",
@@ -442,10 +442,10 @@ export default class Athena {
   async listWorkGroups(
     {abortSignal, ...params}: RequestConfig & ListWorkGroupsInput = {},
   ): Promise<ListWorkGroupsOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListWorkGroups",
@@ -462,13 +462,13 @@ export default class Athena {
   async startQueryExecution(
     {abortSignal, ...params}: RequestConfig & StartQueryExecutionInput,
   ): Promise<StartQueryExecutionOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       QueryString: params["QueryString"],
       ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
       QueryExecutionContext: fromQueryExecutionContext(params["QueryExecutionContext"]),
       ResultConfiguration: fromResultConfiguration(params["ResultConfiguration"]),
       WorkGroup: params["WorkGroup"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartQueryExecution",
@@ -484,9 +484,9 @@ export default class Athena {
   async stopQueryExecution(
     {abortSignal, ...params}: RequestConfig & StopQueryExecutionInput,
   ): Promise<StopQueryExecutionOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       QueryExecutionId: params["QueryExecutionId"] ?? generateIdemptToken(),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopQueryExecution",
@@ -500,10 +500,10 @@ export default class Athena {
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceInput,
   ): Promise<TagResourceOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceARN: params["ResourceARN"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
@@ -517,10 +517,10 @@ export default class Athena {
   async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceInput,
   ): Promise<UntagResourceOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceARN: params["ResourceARN"],
       TagKeys: params["TagKeys"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResource",
@@ -534,12 +534,12 @@ export default class Athena {
   async updateDataCatalog(
     {abortSignal, ...params}: RequestConfig & UpdateDataCatalogInput,
   ): Promise<UpdateDataCatalogOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       Type: params["Type"],
       Description: params["Description"],
       Parameters: params["Parameters"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateDataCatalog",
@@ -553,12 +553,12 @@ export default class Athena {
   async updateWorkGroup(
     {abortSignal, ...params}: RequestConfig & UpdateWorkGroupInput,
   ): Promise<UpdateWorkGroupOutput> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       WorkGroup: params["WorkGroup"],
       Description: params["Description"],
       ConfigurationUpdates: fromWorkGroupConfigurationUpdates(params["ConfigurationUpdates"]),
       State: params["State"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateWorkGroup",

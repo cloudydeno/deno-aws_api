@@ -34,9 +34,9 @@ export default class FSx {
   async cancelDataRepositoryTask(
     {abortSignal, ...params}: RequestConfig & CancelDataRepositoryTaskRequest,
   ): Promise<CancelDataRepositoryTaskResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TaskId: params["TaskId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CancelDataRepositoryTask",
@@ -53,11 +53,11 @@ export default class FSx {
   async createBackup(
     {abortSignal, ...params}: RequestConfig & CreateBackupRequest,
   ): Promise<CreateBackupResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       FileSystemId: params["FileSystemId"],
       ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateBackup",
@@ -73,14 +73,14 @@ export default class FSx {
   async createDataRepositoryTask(
     {abortSignal, ...params}: RequestConfig & CreateDataRepositoryTaskRequest,
   ): Promise<CreateDataRepositoryTaskResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Type: params["Type"],
       Paths: params["Paths"],
       FileSystemId: params["FileSystemId"],
       Report: fromCompletionReport(params["Report"]),
       ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDataRepositoryTask",
@@ -96,7 +96,7 @@ export default class FSx {
   async createFileSystem(
     {abortSignal, ...params}: RequestConfig & CreateFileSystemRequest,
   ): Promise<CreateFileSystemResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
       FileSystemType: params["FileSystemType"],
       StorageCapacity: params["StorageCapacity"],
@@ -107,7 +107,7 @@ export default class FSx {
       KmsKeyId: params["KmsKeyId"],
       WindowsConfiguration: fromCreateFileSystemWindowsConfiguration(params["WindowsConfiguration"]),
       LustreConfiguration: fromCreateFileSystemLustreConfiguration(params["LustreConfiguration"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateFileSystem",
@@ -123,7 +123,7 @@ export default class FSx {
   async createFileSystemFromBackup(
     {abortSignal, ...params}: RequestConfig & CreateFileSystemFromBackupRequest,
   ): Promise<CreateFileSystemFromBackupResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       BackupId: params["BackupId"],
       ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
       SubnetIds: params["SubnetIds"],
@@ -132,7 +132,7 @@ export default class FSx {
       WindowsConfiguration: fromCreateFileSystemWindowsConfiguration(params["WindowsConfiguration"]),
       LustreConfiguration: fromCreateFileSystemLustreConfiguration(params["LustreConfiguration"]),
       StorageType: params["StorageType"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateFileSystemFromBackup",
@@ -148,10 +148,10 @@ export default class FSx {
   async deleteBackup(
     {abortSignal, ...params}: RequestConfig & DeleteBackupRequest,
   ): Promise<DeleteBackupResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       BackupId: params["BackupId"],
       ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteBackup",
@@ -168,12 +168,12 @@ export default class FSx {
   async deleteFileSystem(
     {abortSignal, ...params}: RequestConfig & DeleteFileSystemRequest,
   ): Promise<DeleteFileSystemResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       FileSystemId: params["FileSystemId"],
       ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
       WindowsConfiguration: fromDeleteFileSystemWindowsConfiguration(params["WindowsConfiguration"]),
       LustreConfiguration: fromDeleteFileSystemLustreConfiguration(params["LustreConfiguration"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteFileSystem",
@@ -192,12 +192,12 @@ export default class FSx {
   async describeBackups(
     {abortSignal, ...params}: RequestConfig & DescribeBackupsRequest = {},
   ): Promise<DescribeBackupsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       BackupIds: params["BackupIds"],
       Filters: params["Filters"]?.map(x => fromFilter(x)),
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeBackups",
@@ -214,12 +214,12 @@ export default class FSx {
   async describeDataRepositoryTasks(
     {abortSignal, ...params}: RequestConfig & DescribeDataRepositoryTasksRequest = {},
   ): Promise<DescribeDataRepositoryTasksResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TaskIds: params["TaskIds"],
       Filters: params["Filters"]?.map(x => fromDataRepositoryTaskFilter(x)),
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeDataRepositoryTasks",
@@ -236,11 +236,11 @@ export default class FSx {
   async describeFileSystems(
     {abortSignal, ...params}: RequestConfig & DescribeFileSystemsRequest = {},
   ): Promise<DescribeFileSystemsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       FileSystemIds: params["FileSystemIds"],
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeFileSystems",
@@ -257,11 +257,11 @@ export default class FSx {
   async listTagsForResource(
     {abortSignal, ...params}: RequestConfig & ListTagsForResourceRequest,
   ): Promise<ListTagsForResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceARN: params["ResourceARN"],
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForResource",
@@ -278,10 +278,10 @@ export default class FSx {
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceARN: params["ResourceARN"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
@@ -295,10 +295,10 @@ export default class FSx {
   async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceRequest,
   ): Promise<UntagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ResourceARN: params["ResourceARN"],
       TagKeys: params["TagKeys"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResource",
@@ -312,13 +312,13 @@ export default class FSx {
   async updateFileSystem(
     {abortSignal, ...params}: RequestConfig & UpdateFileSystemRequest,
   ): Promise<UpdateFileSystemResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       FileSystemId: params["FileSystemId"],
       ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
       StorageCapacity: params["StorageCapacity"],
       WindowsConfiguration: fromUpdateFileSystemWindowsConfiguration(params["WindowsConfiguration"]),
       LustreConfiguration: fromUpdateFileSystemLustreConfiguration(params["LustreConfiguration"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateFileSystem",

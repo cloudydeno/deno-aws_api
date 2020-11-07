@@ -34,23 +34,21 @@ export default class ES {
       method: "PUT",
       requestUri: cmnP.encodePath`/2015-01-01/es/ccs/inboundConnection/${params["CrossClusterSearchConnectionId"]}/accept`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "CrossClusterSearchConnection": toInboundCrossClusterSearchConnection,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "CrossClusterSearchConnection": toInboundCrossClusterSearchConnection,
+      },
+    }, await resp.json());
   }
 
   async addTags(
     {abortSignal, ...params}: RequestConfig & AddTagsRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ARN: params["ARN"],
       TagList: params["TagList"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AddTags",
@@ -67,41 +65,37 @@ export default class ES {
       action: "AssociatePackage",
       requestUri: cmnP.encodePath`/2015-01-01/packages/associate/${params["PackageID"]}/${params["DomainName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "DomainPackageDetails": toDomainPackageDetails,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "DomainPackageDetails": toDomainPackageDetails,
+      },
+    }, await resp.json());
   }
 
   async cancelElasticsearchServiceSoftwareUpdate(
     {abortSignal, ...params}: RequestConfig & CancelElasticsearchServiceSoftwareUpdateRequest,
   ): Promise<CancelElasticsearchServiceSoftwareUpdateResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DomainName: params["DomainName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CancelElasticsearchServiceSoftwareUpdate",
       requestUri: "/2015-01-01/es/serviceSoftwareUpdate/cancel",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ServiceSoftwareOptions": toServiceSoftwareOptions,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ServiceSoftwareOptions": toServiceSoftwareOptions,
+      },
+    }, await resp.json());
   }
 
   async createElasticsearchDomain(
     {abortSignal, ...params}: RequestConfig & CreateElasticsearchDomainRequest,
   ): Promise<CreateElasticsearchDomainResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DomainName: params["DomainName"],
       ElasticsearchVersion: params["ElasticsearchVersion"],
       ElasticsearchClusterConfig: fromElasticsearchClusterConfig(params["ElasticsearchClusterConfig"]),
@@ -116,71 +110,65 @@ export default class ES {
       LogPublishingOptions: jsonP.serializeMap(params["LogPublishingOptions"], x => fromLogPublishingOption(x)),
       DomainEndpointOptions: fromDomainEndpointOptions(params["DomainEndpointOptions"]),
       AdvancedSecurityOptions: fromAdvancedSecurityOptionsInput(params["AdvancedSecurityOptions"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateElasticsearchDomain",
       requestUri: "/2015-01-01/es/domain",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "DomainStatus": toElasticsearchDomainStatus,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "DomainStatus": toElasticsearchDomainStatus,
+      },
+    }, await resp.json());
   }
 
   async createOutboundCrossClusterSearchConnection(
     {abortSignal, ...params}: RequestConfig & CreateOutboundCrossClusterSearchConnectionRequest,
   ): Promise<CreateOutboundCrossClusterSearchConnectionResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       SourceDomainInfo: fromDomainInformation(params["SourceDomainInfo"]),
       DestinationDomainInfo: fromDomainInformation(params["DestinationDomainInfo"]),
       ConnectionAlias: params["ConnectionAlias"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateOutboundCrossClusterSearchConnection",
       requestUri: "/2015-01-01/es/ccs/outboundConnection",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "SourceDomainInfo": toDomainInformation,
-          "DestinationDomainInfo": toDomainInformation,
-          "ConnectionAlias": "s",
-          "ConnectionStatus": toOutboundCrossClusterSearchConnectionStatus,
-          "CrossClusterSearchConnectionId": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "SourceDomainInfo": toDomainInformation,
+        "DestinationDomainInfo": toDomainInformation,
+        "ConnectionAlias": "s",
+        "ConnectionStatus": toOutboundCrossClusterSearchConnectionStatus,
+        "CrossClusterSearchConnectionId": "s",
+      },
+    }, await resp.json());
   }
 
   async createPackage(
     {abortSignal, ...params}: RequestConfig & CreatePackageRequest,
   ): Promise<CreatePackageResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       PackageName: params["PackageName"],
       PackageType: params["PackageType"],
       PackageDescription: params["PackageDescription"],
       PackageSource: fromPackageSource(params["PackageSource"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreatePackage",
       requestUri: "/2015-01-01/packages",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "PackageDetails": toPackageDetails,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "PackageDetails": toPackageDetails,
+      },
+    }, await resp.json());
   }
 
   async deleteElasticsearchDomain(
@@ -193,14 +181,12 @@ export default class ES {
       method: "DELETE",
       requestUri: cmnP.encodePath`/2015-01-01/es/domain/${params["DomainName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "DomainStatus": toElasticsearchDomainStatus,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "DomainStatus": toElasticsearchDomainStatus,
+      },
+    }, await resp.json());
   }
 
   async deleteElasticsearchServiceRole(
@@ -224,14 +210,12 @@ export default class ES {
       method: "DELETE",
       requestUri: cmnP.encodePath`/2015-01-01/es/ccs/inboundConnection/${params["CrossClusterSearchConnectionId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "CrossClusterSearchConnection": toInboundCrossClusterSearchConnection,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "CrossClusterSearchConnection": toInboundCrossClusterSearchConnection,
+      },
+    }, await resp.json());
   }
 
   async deleteOutboundCrossClusterSearchConnection(
@@ -244,14 +228,12 @@ export default class ES {
       method: "DELETE",
       requestUri: cmnP.encodePath`/2015-01-01/es/ccs/outboundConnection/${params["CrossClusterSearchConnectionId"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "CrossClusterSearchConnection": toOutboundCrossClusterSearchConnection,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "CrossClusterSearchConnection": toOutboundCrossClusterSearchConnection,
+      },
+    }, await resp.json());
   }
 
   async deletePackage(
@@ -264,14 +246,12 @@ export default class ES {
       method: "DELETE",
       requestUri: cmnP.encodePath`/2015-01-01/packages/${params["PackageID"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "PackageDetails": toPackageDetails,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "PackageDetails": toPackageDetails,
+      },
+    }, await resp.json());
   }
 
   async describeElasticsearchDomain(
@@ -284,14 +264,12 @@ export default class ES {
       method: "GET",
       requestUri: cmnP.encodePath`/2015-01-01/es/domain/${params["DomainName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "DomainStatus": toElasticsearchDomainStatus,
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "DomainStatus": toElasticsearchDomainStatus,
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async describeElasticsearchDomainConfig(
@@ -304,35 +282,31 @@ export default class ES {
       method: "GET",
       requestUri: cmnP.encodePath`/2015-01-01/es/domain/${params["DomainName"]}/config`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "DomainConfig": toElasticsearchDomainConfig,
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "DomainConfig": toElasticsearchDomainConfig,
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async describeElasticsearchDomains(
     {abortSignal, ...params}: RequestConfig & DescribeElasticsearchDomainsRequest,
   ): Promise<DescribeElasticsearchDomainsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DomainNames: params["DomainNames"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeElasticsearchDomains",
       requestUri: "/2015-01-01/es/domain-info",
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "DomainStatusList": [toElasticsearchDomainStatus],
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "DomainStatusList": [toElasticsearchDomainStatus],
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async describeElasticsearchInstanceTypeLimits(
@@ -346,86 +320,78 @@ export default class ES {
       method: "GET",
       requestUri: cmnP.encodePath`/2015-01-01/es/instanceTypeLimits/${params["ElasticsearchVersion"]}/${params["InstanceType"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "LimitsByRole": x => jsonP.readMap(String, toLimits, x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "LimitsByRole": x => jsonP.readMap(String, toLimits, x),
+      },
+    }, await resp.json());
   }
 
   async describeInboundCrossClusterSearchConnections(
     {abortSignal, ...params}: RequestConfig & DescribeInboundCrossClusterSearchConnectionsRequest = {},
   ): Promise<DescribeInboundCrossClusterSearchConnectionsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Filters: params["Filters"]?.map(x => fromFilter(x)),
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeInboundCrossClusterSearchConnections",
       requestUri: "/2015-01-01/es/ccs/inboundConnection/search",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "CrossClusterSearchConnections": [toInboundCrossClusterSearchConnection],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "CrossClusterSearchConnections": [toInboundCrossClusterSearchConnection],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async describeOutboundCrossClusterSearchConnections(
     {abortSignal, ...params}: RequestConfig & DescribeOutboundCrossClusterSearchConnectionsRequest = {},
   ): Promise<DescribeOutboundCrossClusterSearchConnectionsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Filters: params["Filters"]?.map(x => fromFilter(x)),
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeOutboundCrossClusterSearchConnections",
       requestUri: "/2015-01-01/es/ccs/outboundConnection/search",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "CrossClusterSearchConnections": [toOutboundCrossClusterSearchConnection],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "CrossClusterSearchConnections": [toOutboundCrossClusterSearchConnection],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async describePackages(
     {abortSignal, ...params}: RequestConfig & DescribePackagesRequest = {},
   ): Promise<DescribePackagesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Filters: params["Filters"]?.map(x => fromDescribePackagesFilter(x)),
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribePackages",
       requestUri: "/2015-01-01/packages/describe",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "PackageDetailsList": [toPackageDetails],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "PackageDetailsList": [toPackageDetails],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async describeReservedElasticsearchInstanceOfferings(
@@ -441,15 +407,13 @@ export default class ES {
       method: "GET",
       requestUri: "/2015-01-01/es/reservedInstanceOfferings",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "NextToken": "s",
-          "ReservedElasticsearchInstanceOfferings": [toReservedElasticsearchInstanceOffering],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "NextToken": "s",
+        "ReservedElasticsearchInstanceOfferings": [toReservedElasticsearchInstanceOffering],
+      },
+    }, await resp.json());
   }
 
   async describeReservedElasticsearchInstances(
@@ -465,15 +429,13 @@ export default class ES {
       method: "GET",
       requestUri: "/2015-01-01/es/reservedInstances",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "NextToken": "s",
-          "ReservedElasticsearchInstances": [toReservedElasticsearchInstance],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "NextToken": "s",
+        "ReservedElasticsearchInstances": [toReservedElasticsearchInstance],
+      },
+    }, await resp.json());
   }
 
   async dissociatePackage(
@@ -485,14 +447,12 @@ export default class ES {
       action: "DissociatePackage",
       requestUri: cmnP.encodePath`/2015-01-01/packages/dissociate/${params["PackageID"]}/${params["DomainName"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "DomainPackageDetails": toDomainPackageDetails,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "DomainPackageDetails": toDomainPackageDetails,
+      },
+    }, await resp.json());
   }
 
   async getCompatibleElasticsearchVersions(
@@ -506,14 +466,12 @@ export default class ES {
       method: "GET",
       requestUri: "/2015-01-01/es/compatibleVersions",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "CompatibleElasticsearchVersions": [toCompatibleVersionsMap],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "CompatibleElasticsearchVersions": [toCompatibleVersionsMap],
+      },
+    }, await resp.json());
   }
 
   async getUpgradeHistory(
@@ -528,15 +486,13 @@ export default class ES {
       method: "GET",
       requestUri: cmnP.encodePath`/2015-01-01/es/upgradeDomain/${params["DomainName"]}/history`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "UpgradeHistories": [toUpgradeHistory],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "UpgradeHistories": [toUpgradeHistory],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async getUpgradeStatus(
@@ -549,16 +505,14 @@ export default class ES {
       method: "GET",
       requestUri: cmnP.encodePath`/2015-01-01/es/upgradeDomain/${params["DomainName"]}/status`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "UpgradeStep": (x: jsonP.JSONValue) => cmnP.readEnum<UpgradeStep>(x),
-          "StepStatus": (x: jsonP.JSONValue) => cmnP.readEnum<UpgradeStatus>(x),
-          "UpgradeName": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "UpgradeStep": (x: jsonP.JSONValue) => cmnP.readEnum<UpgradeStep>(x),
+        "StepStatus": (x: jsonP.JSONValue) => cmnP.readEnum<UpgradeStatus>(x),
+        "UpgradeName": "s",
+      },
+    }, await resp.json());
   }
 
   async listDomainNames(
@@ -570,14 +524,12 @@ export default class ES {
       method: "GET",
       requestUri: "/2015-01-01/domain",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "DomainNames": [toDomainInfo],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "DomainNames": [toDomainInfo],
+      },
+    }, await resp.json());
   }
 
   async listDomainsForPackage(
@@ -592,15 +544,13 @@ export default class ES {
       method: "GET",
       requestUri: cmnP.encodePath`/2015-01-01/packages/${params["PackageID"]}/domains`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "DomainPackageDetailsList": [toDomainPackageDetails],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "DomainPackageDetailsList": [toDomainPackageDetails],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listElasticsearchInstanceTypes(
@@ -616,15 +566,13 @@ export default class ES {
       method: "GET",
       requestUri: cmnP.encodePath`/2015-01-01/es/instanceTypes/${params["ElasticsearchVersion"]}`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ElasticsearchInstanceTypes": [(x: jsonP.JSONValue) => cmnP.readEnum<ESPartitionInstanceType>(x)],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ElasticsearchInstanceTypes": [(x: jsonP.JSONValue) => cmnP.readEnum<ESPartitionInstanceType>(x)],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listElasticsearchVersions(
@@ -639,15 +587,13 @@ export default class ES {
       method: "GET",
       requestUri: "/2015-01-01/es/versions",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ElasticsearchVersions": ["s"],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ElasticsearchVersions": ["s"],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listPackagesForDomain(
@@ -662,15 +608,13 @@ export default class ES {
       method: "GET",
       requestUri: cmnP.encodePath`/2015-01-01/domain/${params["DomainName"]}/packages`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "DomainPackageDetailsList": [toDomainPackageDetails],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "DomainPackageDetailsList": [toDomainPackageDetails],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listTags(
@@ -684,38 +628,34 @@ export default class ES {
       method: "GET",
       requestUri: "/2015-01-01/tags/",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "TagList": [toTag],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "TagList": [toTag],
+      },
+    }, await resp.json());
   }
 
   async purchaseReservedElasticsearchInstanceOffering(
     {abortSignal, ...params}: RequestConfig & PurchaseReservedElasticsearchInstanceOfferingRequest,
   ): Promise<PurchaseReservedElasticsearchInstanceOfferingResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ReservedElasticsearchInstanceOfferingId: params["ReservedElasticsearchInstanceOfferingId"],
       ReservationName: params["ReservationName"],
       InstanceCount: params["InstanceCount"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PurchaseReservedElasticsearchInstanceOffering",
       requestUri: "/2015-01-01/es/purchaseReservedInstanceOffering",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ReservedElasticsearchInstanceId": "s",
-          "ReservationName": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ReservedElasticsearchInstanceId": "s",
+        "ReservationName": "s",
+      },
+    }, await resp.json());
   }
 
   async rejectInboundCrossClusterSearchConnection(
@@ -728,23 +668,21 @@ export default class ES {
       method: "PUT",
       requestUri: cmnP.encodePath`/2015-01-01/es/ccs/inboundConnection/${params["CrossClusterSearchConnectionId"]}/reject`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "CrossClusterSearchConnection": toInboundCrossClusterSearchConnection,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "CrossClusterSearchConnection": toInboundCrossClusterSearchConnection,
+      },
+    }, await resp.json());
   }
 
   async removeTags(
     {abortSignal, ...params}: RequestConfig & RemoveTagsRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ARN: params["ARN"],
       TagKeys: params["TagKeys"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RemoveTags",
@@ -755,28 +693,26 @@ export default class ES {
   async startElasticsearchServiceSoftwareUpdate(
     {abortSignal, ...params}: RequestConfig & StartElasticsearchServiceSoftwareUpdateRequest,
   ): Promise<StartElasticsearchServiceSoftwareUpdateResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DomainName: params["DomainName"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StartElasticsearchServiceSoftwareUpdate",
       requestUri: "/2015-01-01/es/serviceSoftwareUpdate/start",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ServiceSoftwareOptions": toServiceSoftwareOptions,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ServiceSoftwareOptions": toServiceSoftwareOptions,
+      },
+    }, await resp.json());
   }
 
   async updateElasticsearchDomainConfig(
     {abortSignal, ...params}: RequestConfig & UpdateElasticsearchDomainConfigRequest,
   ): Promise<UpdateElasticsearchDomainConfigResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ElasticsearchClusterConfig: fromElasticsearchClusterConfig(params["ElasticsearchClusterConfig"]),
       EBSOptions: fromEBSOptions(params["EBSOptions"]),
       SnapshotOptions: fromSnapshotOptions(params["SnapshotOptions"]),
@@ -787,45 +723,41 @@ export default class ES {
       LogPublishingOptions: jsonP.serializeMap(params["LogPublishingOptions"], x => fromLogPublishingOption(x)),
       DomainEndpointOptions: fromDomainEndpointOptions(params["DomainEndpointOptions"]),
       AdvancedSecurityOptions: fromAdvancedSecurityOptionsInput(params["AdvancedSecurityOptions"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateElasticsearchDomainConfig",
       requestUri: cmnP.encodePath`/2015-01-01/es/domain/${params["DomainName"]}/config`,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "DomainConfig": toElasticsearchDomainConfig,
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "DomainConfig": toElasticsearchDomainConfig,
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async upgradeElasticsearchDomain(
     {abortSignal, ...params}: RequestConfig & UpgradeElasticsearchDomainRequest,
   ): Promise<UpgradeElasticsearchDomainResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       DomainName: params["DomainName"],
       TargetVersion: params["TargetVersion"],
       PerformCheckOnly: params["PerformCheckOnly"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpgradeElasticsearchDomain",
       requestUri: "/2015-01-01/es/upgradeDomain",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "DomainName": "s",
-          "TargetVersion": "s",
-          "PerformCheckOnly": "b",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "DomainName": "s",
+        "TargetVersion": "s",
+        "PerformCheckOnly": "b",
+      },
+    }, await resp.json());
   }
 
 }

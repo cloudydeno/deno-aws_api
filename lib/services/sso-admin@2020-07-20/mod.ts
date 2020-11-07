@@ -31,11 +31,11 @@ export default class SSOAdmin {
   async attachManagedPolicyToPermissionSet(
     {abortSignal, ...params}: RequestConfig & AttachManagedPolicyToPermissionSetRequest,
   ): Promise<AttachManagedPolicyToPermissionSetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       InstanceArn: params["InstanceArn"],
       PermissionSetArn: params["PermissionSetArn"],
       ManagedPolicyArn: params["ManagedPolicyArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AttachManagedPolicyToPermissionSet",
@@ -49,14 +49,14 @@ export default class SSOAdmin {
   async createAccountAssignment(
     {abortSignal, ...params}: RequestConfig & CreateAccountAssignmentRequest,
   ): Promise<CreateAccountAssignmentResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       InstanceArn: params["InstanceArn"],
       TargetId: params["TargetId"],
       TargetType: params["TargetType"],
       PermissionSetArn: params["PermissionSetArn"],
       PrincipalType: params["PrincipalType"],
       PrincipalId: params["PrincipalId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateAccountAssignment",
@@ -72,14 +72,14 @@ export default class SSOAdmin {
   async createPermissionSet(
     {abortSignal, ...params}: RequestConfig & CreatePermissionSetRequest,
   ): Promise<CreatePermissionSetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Name: params["Name"],
       Description: params["Description"],
       InstanceArn: params["InstanceArn"],
       SessionDuration: params["SessionDuration"],
       RelayState: params["RelayState"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreatePermissionSet",
@@ -95,14 +95,14 @@ export default class SSOAdmin {
   async deleteAccountAssignment(
     {abortSignal, ...params}: RequestConfig & DeleteAccountAssignmentRequest,
   ): Promise<DeleteAccountAssignmentResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       InstanceArn: params["InstanceArn"],
       TargetId: params["TargetId"],
       TargetType: params["TargetType"],
       PermissionSetArn: params["PermissionSetArn"],
       PrincipalType: params["PrincipalType"],
       PrincipalId: params["PrincipalId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteAccountAssignment",
@@ -118,10 +118,10 @@ export default class SSOAdmin {
   async deleteInlinePolicyFromPermissionSet(
     {abortSignal, ...params}: RequestConfig & DeleteInlinePolicyFromPermissionSetRequest,
   ): Promise<DeleteInlinePolicyFromPermissionSetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       InstanceArn: params["InstanceArn"],
       PermissionSetArn: params["PermissionSetArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteInlinePolicyFromPermissionSet",
@@ -135,10 +135,10 @@ export default class SSOAdmin {
   async deletePermissionSet(
     {abortSignal, ...params}: RequestConfig & DeletePermissionSetRequest,
   ): Promise<DeletePermissionSetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       InstanceArn: params["InstanceArn"],
       PermissionSetArn: params["PermissionSetArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeletePermissionSet",
@@ -152,10 +152,10 @@ export default class SSOAdmin {
   async describeAccountAssignmentCreationStatus(
     {abortSignal, ...params}: RequestConfig & DescribeAccountAssignmentCreationStatusRequest,
   ): Promise<DescribeAccountAssignmentCreationStatusResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       InstanceArn: params["InstanceArn"],
       AccountAssignmentCreationRequestId: params["AccountAssignmentCreationRequestId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeAccountAssignmentCreationStatus",
@@ -171,10 +171,10 @@ export default class SSOAdmin {
   async describeAccountAssignmentDeletionStatus(
     {abortSignal, ...params}: RequestConfig & DescribeAccountAssignmentDeletionStatusRequest,
   ): Promise<DescribeAccountAssignmentDeletionStatusResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       InstanceArn: params["InstanceArn"],
       AccountAssignmentDeletionRequestId: params["AccountAssignmentDeletionRequestId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeAccountAssignmentDeletionStatus",
@@ -190,10 +190,10 @@ export default class SSOAdmin {
   async describePermissionSet(
     {abortSignal, ...params}: RequestConfig & DescribePermissionSetRequest,
   ): Promise<DescribePermissionSetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       InstanceArn: params["InstanceArn"],
       PermissionSetArn: params["PermissionSetArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribePermissionSet",
@@ -209,10 +209,10 @@ export default class SSOAdmin {
   async describePermissionSetProvisioningStatus(
     {abortSignal, ...params}: RequestConfig & DescribePermissionSetProvisioningStatusRequest,
   ): Promise<DescribePermissionSetProvisioningStatusResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       InstanceArn: params["InstanceArn"],
       ProvisionPermissionSetRequestId: params["ProvisionPermissionSetRequestId"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribePermissionSetProvisioningStatus",
@@ -228,11 +228,11 @@ export default class SSOAdmin {
   async detachManagedPolicyFromPermissionSet(
     {abortSignal, ...params}: RequestConfig & DetachManagedPolicyFromPermissionSetRequest,
   ): Promise<DetachManagedPolicyFromPermissionSetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       InstanceArn: params["InstanceArn"],
       PermissionSetArn: params["PermissionSetArn"],
       ManagedPolicyArn: params["ManagedPolicyArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DetachManagedPolicyFromPermissionSet",
@@ -246,10 +246,10 @@ export default class SSOAdmin {
   async getInlinePolicyForPermissionSet(
     {abortSignal, ...params}: RequestConfig & GetInlinePolicyForPermissionSetRequest,
   ): Promise<GetInlinePolicyForPermissionSetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       InstanceArn: params["InstanceArn"],
       PermissionSetArn: params["PermissionSetArn"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetInlinePolicyForPermissionSet",
@@ -265,12 +265,12 @@ export default class SSOAdmin {
   async listAccountAssignmentCreationStatus(
     {abortSignal, ...params}: RequestConfig & ListAccountAssignmentCreationStatusRequest,
   ): Promise<ListAccountAssignmentCreationStatusResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       InstanceArn: params["InstanceArn"],
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
       Filter: fromOperationStatusFilter(params["Filter"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListAccountAssignmentCreationStatus",
@@ -287,12 +287,12 @@ export default class SSOAdmin {
   async listAccountAssignmentDeletionStatus(
     {abortSignal, ...params}: RequestConfig & ListAccountAssignmentDeletionStatusRequest,
   ): Promise<ListAccountAssignmentDeletionStatusResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       InstanceArn: params["InstanceArn"],
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
       Filter: fromOperationStatusFilter(params["Filter"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListAccountAssignmentDeletionStatus",
@@ -309,13 +309,13 @@ export default class SSOAdmin {
   async listAccountAssignments(
     {abortSignal, ...params}: RequestConfig & ListAccountAssignmentsRequest,
   ): Promise<ListAccountAssignmentsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       InstanceArn: params["InstanceArn"],
       AccountId: params["AccountId"],
       PermissionSetArn: params["PermissionSetArn"],
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListAccountAssignments",
@@ -332,13 +332,13 @@ export default class SSOAdmin {
   async listAccountsForProvisionedPermissionSet(
     {abortSignal, ...params}: RequestConfig & ListAccountsForProvisionedPermissionSetRequest,
   ): Promise<ListAccountsForProvisionedPermissionSetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       InstanceArn: params["InstanceArn"],
       PermissionSetArn: params["PermissionSetArn"],
       ProvisioningStatus: params["ProvisioningStatus"],
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListAccountsForProvisionedPermissionSet",
@@ -355,10 +355,10 @@ export default class SSOAdmin {
   async listInstances(
     {abortSignal, ...params}: RequestConfig & ListInstancesRequest = {},
   ): Promise<ListInstancesResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListInstances",
@@ -375,12 +375,12 @@ export default class SSOAdmin {
   async listManagedPoliciesInPermissionSet(
     {abortSignal, ...params}: RequestConfig & ListManagedPoliciesInPermissionSetRequest,
   ): Promise<ListManagedPoliciesInPermissionSetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       InstanceArn: params["InstanceArn"],
       PermissionSetArn: params["PermissionSetArn"],
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListManagedPoliciesInPermissionSet",
@@ -397,12 +397,12 @@ export default class SSOAdmin {
   async listPermissionSetProvisioningStatus(
     {abortSignal, ...params}: RequestConfig & ListPermissionSetProvisioningStatusRequest,
   ): Promise<ListPermissionSetProvisioningStatusResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       InstanceArn: params["InstanceArn"],
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
       Filter: fromOperationStatusFilter(params["Filter"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListPermissionSetProvisioningStatus",
@@ -419,11 +419,11 @@ export default class SSOAdmin {
   async listPermissionSets(
     {abortSignal, ...params}: RequestConfig & ListPermissionSetsRequest,
   ): Promise<ListPermissionSetsResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       InstanceArn: params["InstanceArn"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListPermissionSets",
@@ -440,13 +440,13 @@ export default class SSOAdmin {
   async listPermissionSetsProvisionedToAccount(
     {abortSignal, ...params}: RequestConfig & ListPermissionSetsProvisionedToAccountRequest,
   ): Promise<ListPermissionSetsProvisionedToAccountResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       InstanceArn: params["InstanceArn"],
       AccountId: params["AccountId"],
       ProvisioningStatus: params["ProvisioningStatus"],
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListPermissionSetsProvisionedToAccount",
@@ -463,11 +463,11 @@ export default class SSOAdmin {
   async listTagsForResource(
     {abortSignal, ...params}: RequestConfig & ListTagsForResourceRequest,
   ): Promise<ListTagsForResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       InstanceArn: params["InstanceArn"],
       ResourceArn: params["ResourceArn"],
       NextToken: params["NextToken"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListTagsForResource",
@@ -484,12 +484,12 @@ export default class SSOAdmin {
   async provisionPermissionSet(
     {abortSignal, ...params}: RequestConfig & ProvisionPermissionSetRequest,
   ): Promise<ProvisionPermissionSetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       InstanceArn: params["InstanceArn"],
       PermissionSetArn: params["PermissionSetArn"],
       TargetId: params["TargetId"],
       TargetType: params["TargetType"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ProvisionPermissionSet",
@@ -505,11 +505,11 @@ export default class SSOAdmin {
   async putInlinePolicyToPermissionSet(
     {abortSignal, ...params}: RequestConfig & PutInlinePolicyToPermissionSetRequest,
   ): Promise<PutInlinePolicyToPermissionSetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       InstanceArn: params["InstanceArn"],
       PermissionSetArn: params["PermissionSetArn"],
       InlinePolicy: params["InlinePolicy"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutInlinePolicyToPermissionSet",
@@ -523,11 +523,11 @@ export default class SSOAdmin {
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       InstanceArn: params["InstanceArn"],
       ResourceArn: params["ResourceArn"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
@@ -541,11 +541,11 @@ export default class SSOAdmin {
   async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceRequest,
   ): Promise<UntagResourceResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       InstanceArn: params["InstanceArn"],
       ResourceArn: params["ResourceArn"],
       TagKeys: params["TagKeys"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagResource",
@@ -559,13 +559,13 @@ export default class SSOAdmin {
   async updatePermissionSet(
     {abortSignal, ...params}: RequestConfig & UpdatePermissionSetRequest,
   ): Promise<UpdatePermissionSetResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       InstanceArn: params["InstanceArn"],
       PermissionSetArn: params["PermissionSetArn"],
       Description: params["Description"],
       SessionDuration: params["SessionDuration"],
       RelayState: params["RelayState"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdatePermissionSet",

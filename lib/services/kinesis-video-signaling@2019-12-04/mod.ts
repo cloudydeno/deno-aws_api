@@ -28,48 +28,44 @@ export default class KinesisVideoSignalingChannels {
   async getIceServerConfig(
     {abortSignal, ...params}: RequestConfig & GetIceServerConfigRequest,
   ): Promise<GetIceServerConfigResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ChannelARN: params["ChannelARN"],
       ClientId: params["ClientId"],
       Service: params["Service"],
       Username: params["Username"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetIceServerConfig",
       requestUri: "/v1/get-ice-server-config",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "IceServerList": [toIceServer],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "IceServerList": [toIceServer],
+      },
+    }, await resp.json());
   }
 
   async sendAlexaOfferToMaster(
     {abortSignal, ...params}: RequestConfig & SendAlexaOfferToMasterRequest,
   ): Promise<SendAlexaOfferToMasterResponse> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ChannelARN: params["ChannelARN"],
       SenderClientId: params["SenderClientId"],
       MessagePayload: params["MessagePayload"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SendAlexaOfferToMaster",
       requestUri: "/v1/send-alexa-offer-to-master",
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Answer": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Answer": "s",
+      },
+    }, await resp.json());
   }
 
 }

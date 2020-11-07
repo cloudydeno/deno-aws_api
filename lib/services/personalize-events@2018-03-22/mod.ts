@@ -29,12 +29,12 @@ export default class PersonalizeEvents {
   async putEvents(
     {abortSignal, ...params}: RequestConfig & PutEventsRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       trackingId: params["trackingId"],
       userId: params["userId"],
       sessionId: params["sessionId"],
       eventList: params["eventList"]?.map(x => fromEvent(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutEvents",
@@ -45,10 +45,10 @@ export default class PersonalizeEvents {
   async putItems(
     {abortSignal, ...params}: RequestConfig & PutItemsRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       datasetArn: params["datasetArn"],
       items: params["items"]?.map(x => fromItem(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutItems",
@@ -59,10 +59,10 @@ export default class PersonalizeEvents {
   async putUsers(
     {abortSignal, ...params}: RequestConfig & PutUsersRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       datasetArn: params["datasetArn"],
       users: params["users"]?.map(x => fromUser(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutUsers",

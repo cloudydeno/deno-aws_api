@@ -32,42 +32,40 @@ export default class EFS {
   async createAccessPoint(
     {abortSignal, ...params}: RequestConfig & CreateAccessPointRequest,
   ): Promise<AccessPointDescription> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ClientToken: params["ClientToken"] ?? generateIdemptToken(),
       Tags: params["Tags"]?.map(x => fromTag(x)),
       FileSystemId: params["FileSystemId"],
       PosixUser: fromPosixUser(params["PosixUser"]),
       RootDirectory: fromRootDirectory(params["RootDirectory"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateAccessPoint",
       requestUri: "/2015-02-01/access-points",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "ClientToken": "s",
-          "Name": "s",
-          "Tags": [toTag],
-          "AccessPointId": "s",
-          "AccessPointArn": "s",
-          "FileSystemId": "s",
-          "PosixUser": toPosixUser,
-          "RootDirectory": toRootDirectory,
-          "OwnerId": "s",
-          "LifeCycleState": (x: jsonP.JSONValue) => cmnP.readEnum<LifeCycleState>(x),
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ClientToken": "s",
+        "Name": "s",
+        "Tags": [toTag],
+        "AccessPointId": "s",
+        "AccessPointArn": "s",
+        "FileSystemId": "s",
+        "PosixUser": toPosixUser,
+        "RootDirectory": toRootDirectory,
+        "OwnerId": "s",
+        "LifeCycleState": (x: jsonP.JSONValue) => cmnP.readEnum<LifeCycleState>(x),
+      },
+    }, await resp.json());
   }
 
   async createFileSystem(
     {abortSignal, ...params}: RequestConfig & CreateFileSystemRequest,
   ): Promise<FileSystemDescription> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       CreationToken: params["CreationToken"] ?? generateIdemptToken(),
       PerformanceMode: params["PerformanceMode"],
       Encrypted: params["Encrypted"],
@@ -75,79 +73,75 @@ export default class EFS {
       ThroughputMode: params["ThroughputMode"],
       ProvisionedThroughputInMibps: params["ProvisionedThroughputInMibps"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateFileSystem",
       requestUri: "/2015-02-01/file-systems",
       responseCode: 201,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "OwnerId": "s",
-          "CreationToken": "s",
-          "FileSystemId": "s",
-          "CreationTime": "d",
-          "LifeCycleState": (x: jsonP.JSONValue) => cmnP.readEnum<LifeCycleState>(x),
-          "NumberOfMountTargets": "n",
-          "SizeInBytes": toFileSystemSize,
-          "PerformanceMode": (x: jsonP.JSONValue) => cmnP.readEnum<PerformanceMode>(x),
-          "Tags": [toTag],
-        },
-        optional: {
-          "FileSystemArn": "s",
-          "Name": "s",
-          "Encrypted": "b",
-          "KmsKeyId": "s",
-          "ThroughputMode": (x: jsonP.JSONValue) => cmnP.readEnum<ThroughputMode>(x),
-          "ProvisionedThroughputInMibps": "n",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "OwnerId": "s",
+        "CreationToken": "s",
+        "FileSystemId": "s",
+        "CreationTime": "d",
+        "LifeCycleState": (x: jsonP.JSONValue) => cmnP.readEnum<LifeCycleState>(x),
+        "NumberOfMountTargets": "n",
+        "SizeInBytes": toFileSystemSize,
+        "PerformanceMode": (x: jsonP.JSONValue) => cmnP.readEnum<PerformanceMode>(x),
+        "Tags": [toTag],
+      },
+      optional: {
+        "FileSystemArn": "s",
+        "Name": "s",
+        "Encrypted": "b",
+        "KmsKeyId": "s",
+        "ThroughputMode": (x: jsonP.JSONValue) => cmnP.readEnum<ThroughputMode>(x),
+        "ProvisionedThroughputInMibps": "n",
+      },
+    }, await resp.json());
   }
 
   async createMountTarget(
     {abortSignal, ...params}: RequestConfig & CreateMountTargetRequest,
   ): Promise<MountTargetDescription> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       FileSystemId: params["FileSystemId"],
       SubnetId: params["SubnetId"],
       IpAddress: params["IpAddress"],
       SecurityGroups: params["SecurityGroups"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateMountTarget",
       requestUri: "/2015-02-01/mount-targets",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "MountTargetId": "s",
-          "FileSystemId": "s",
-          "SubnetId": "s",
-          "LifeCycleState": (x: jsonP.JSONValue) => cmnP.readEnum<LifeCycleState>(x),
-        },
-        optional: {
-          "OwnerId": "s",
-          "IpAddress": "s",
-          "NetworkInterfaceId": "s",
-          "AvailabilityZoneId": "s",
-          "AvailabilityZoneName": "s",
-          "VpcId": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "MountTargetId": "s",
+        "FileSystemId": "s",
+        "SubnetId": "s",
+        "LifeCycleState": (x: jsonP.JSONValue) => cmnP.readEnum<LifeCycleState>(x),
+      },
+      optional: {
+        "OwnerId": "s",
+        "IpAddress": "s",
+        "NetworkInterfaceId": "s",
+        "AvailabilityZoneId": "s",
+        "AvailabilityZoneName": "s",
+        "VpcId": "s",
+      },
+    }, await resp.json());
   }
 
   async createTags(
     {abortSignal, ...params}: RequestConfig & CreateTagsRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateTags",
@@ -211,9 +205,9 @@ export default class EFS {
   async deleteTags(
     {abortSignal, ...params}: RequestConfig & DeleteTagsRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       TagKeys: params["TagKeys"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteTags",
@@ -237,15 +231,13 @@ export default class EFS {
       requestUri: "/2015-02-01/access-points",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "AccessPoints": [toAccessPointDescription],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "AccessPoints": [toAccessPointDescription],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async describeBackupPolicy(
@@ -259,14 +251,12 @@ export default class EFS {
       requestUri: cmnP.encodePath`/2015-02-01/file-systems/${params["FileSystemId"]}/backup-policy`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "BackupPolicy": toBackupPolicy,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "BackupPolicy": toBackupPolicy,
+      },
+    }, await resp.json());
   }
 
   async describeFileSystemPolicy(
@@ -280,15 +270,13 @@ export default class EFS {
       requestUri: cmnP.encodePath`/2015-02-01/file-systems/${params["FileSystemId"]}/policy`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "FileSystemId": "s",
-          "Policy": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "FileSystemId": "s",
+        "Policy": "s",
+      },
+    }, await resp.json());
   }
 
   async describeFileSystems(
@@ -306,16 +294,14 @@ export default class EFS {
       requestUri: "/2015-02-01/file-systems",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Marker": "s",
-          "FileSystems": [toFileSystemDescription],
-          "NextMarker": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Marker": "s",
+        "FileSystems": [toFileSystemDescription],
+        "NextMarker": "s",
+      },
+    }, await resp.json());
   }
 
   async describeLifecycleConfiguration(
@@ -329,14 +315,12 @@ export default class EFS {
       requestUri: cmnP.encodePath`/2015-02-01/file-systems/${params["FileSystemId"]}/lifecycle-configuration`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "LifecyclePolicies": [toLifecyclePolicy],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "LifecyclePolicies": [toLifecyclePolicy],
+      },
+    }, await resp.json());
   }
 
   async describeMountTargetSecurityGroups(
@@ -350,14 +334,12 @@ export default class EFS {
       requestUri: cmnP.encodePath`/2015-02-01/mount-targets/${params["MountTargetId"]}/security-groups`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "SecurityGroups": ["s"],
-        },
-        optional: {},
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "SecurityGroups": ["s"],
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async describeMountTargets(
@@ -376,16 +358,14 @@ export default class EFS {
       requestUri: "/2015-02-01/mount-targets",
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Marker": "s",
-          "MountTargets": [toMountTargetDescription],
-          "NextMarker": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Marker": "s",
+        "MountTargets": [toMountTargetDescription],
+        "NextMarker": "s",
+      },
+    }, await resp.json());
   }
 
   async describeTags(
@@ -401,17 +381,15 @@ export default class EFS {
       requestUri: cmnP.encodePath`/2015-02-01/tags/${params["FileSystemId"]}/`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "Tags": [toTag],
-        },
-        optional: {
-          "Marker": "s",
-          "NextMarker": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "Tags": [toTag],
+      },
+      optional: {
+        "Marker": "s",
+        "NextMarker": "s",
+      },
+    }, await resp.json());
   }
 
   async listTagsForResource(
@@ -427,23 +405,21 @@ export default class EFS {
       requestUri: cmnP.encodePath`/2015-02-01/resource-tags/${params["ResourceId"]}`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "Tags": [toTag],
-          "NextToken": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Tags": [toTag],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async modifyMountTargetSecurityGroups(
     {abortSignal, ...params}: RequestConfig & ModifyMountTargetSecurityGroupsRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       SecurityGroups: params["SecurityGroups"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ModifyMountTargetSecurityGroups",
@@ -456,9 +432,9 @@ export default class EFS {
   async putBackupPolicy(
     {abortSignal, ...params}: RequestConfig & PutBackupPolicyRequest,
   ): Promise<BackupPolicyDescription> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       BackupPolicy: fromBackupPolicy(params["BackupPolicy"]),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutBackupPolicy",
@@ -466,23 +442,21 @@ export default class EFS {
       requestUri: cmnP.encodePath`/2015-02-01/file-systems/${params["FileSystemId"]}/backup-policy`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "BackupPolicy": toBackupPolicy,
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "BackupPolicy": toBackupPolicy,
+      },
+    }, await resp.json());
   }
 
   async putFileSystemPolicy(
     {abortSignal, ...params}: RequestConfig & PutFileSystemPolicyRequest,
   ): Promise<FileSystemPolicyDescription> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Policy: params["Policy"],
       BypassPolicyLockoutSafetyCheck: params["BypassPolicyLockoutSafetyCheck"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutFileSystemPolicy",
@@ -490,23 +464,21 @@ export default class EFS {
       requestUri: cmnP.encodePath`/2015-02-01/file-systems/${params["FileSystemId"]}/policy`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "FileSystemId": "s",
-          "Policy": "s",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "FileSystemId": "s",
+        "Policy": "s",
+      },
+    }, await resp.json());
   }
 
   async putLifecycleConfiguration(
     {abortSignal, ...params}: RequestConfig & PutLifecycleConfigurationRequest,
   ): Promise<LifecycleConfigurationDescription> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       LifecyclePolicies: params["LifecyclePolicies"]?.map(x => fromLifecyclePolicy(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutLifecycleConfiguration",
@@ -514,22 +486,20 @@ export default class EFS {
       requestUri: cmnP.encodePath`/2015-02-01/file-systems/${params["FileSystemId"]}/lifecycle-configuration`,
       responseCode: 200,
     });
-  return {
-    ...jsonP.readObj({
-        required: {},
-        optional: {
-          "LifecyclePolicies": [toLifecyclePolicy],
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "LifecyclePolicies": [toLifecyclePolicy],
+      },
+    }, await resp.json());
   }
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<void> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       Tags: params["Tags"]?.map(x => fromTag(x)),
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagResource",
@@ -557,10 +527,10 @@ export default class EFS {
   async updateFileSystem(
     {abortSignal, ...params}: RequestConfig & UpdateFileSystemRequest,
   ): Promise<FileSystemDescription> {
-    const body: jsonP.JSONObject = params ? {
+    const body: jsonP.JSONObject = {
       ThroughputMode: params["ThroughputMode"],
       ProvisionedThroughputInMibps: params["ProvisionedThroughputInMibps"],
-    } : {};
+    };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateFileSystem",
@@ -568,29 +538,27 @@ export default class EFS {
       requestUri: cmnP.encodePath`/2015-02-01/file-systems/${params["FileSystemId"]}`,
       responseCode: 202,
     });
-  return {
-    ...jsonP.readObj({
-        required: {
-          "OwnerId": "s",
-          "CreationToken": "s",
-          "FileSystemId": "s",
-          "CreationTime": "d",
-          "LifeCycleState": (x: jsonP.JSONValue) => cmnP.readEnum<LifeCycleState>(x),
-          "NumberOfMountTargets": "n",
-          "SizeInBytes": toFileSystemSize,
-          "PerformanceMode": (x: jsonP.JSONValue) => cmnP.readEnum<PerformanceMode>(x),
-          "Tags": [toTag],
-        },
-        optional: {
-          "FileSystemArn": "s",
-          "Name": "s",
-          "Encrypted": "b",
-          "KmsKeyId": "s",
-          "ThroughputMode": (x: jsonP.JSONValue) => cmnP.readEnum<ThroughputMode>(x),
-          "ProvisionedThroughputInMibps": "n",
-        },
-      }, await resp.json()),
-  };
+    return jsonP.readObj({
+      required: {
+        "OwnerId": "s",
+        "CreationToken": "s",
+        "FileSystemId": "s",
+        "CreationTime": "d",
+        "LifeCycleState": (x: jsonP.JSONValue) => cmnP.readEnum<LifeCycleState>(x),
+        "NumberOfMountTargets": "n",
+        "SizeInBytes": toFileSystemSize,
+        "PerformanceMode": (x: jsonP.JSONValue) => cmnP.readEnum<PerformanceMode>(x),
+        "Tags": [toTag],
+      },
+      optional: {
+        "FileSystemArn": "s",
+        "Name": "s",
+        "Encrypted": "b",
+        "KmsKeyId": "s",
+        "ThroughputMode": (x: jsonP.JSONValue) => cmnP.readEnum<ThroughputMode>(x),
+        "ProvisionedThroughputInMibps": "n",
+      },
+    }, await resp.json());
   }
 
 }
