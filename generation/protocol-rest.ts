@@ -331,12 +331,14 @@ export default class ProtocolRestCodegen {
       const frameSpec: Schema.ShapeStructure = {...shape.spec, members: {}};
 
       const chunks = new Array<string>();
-      chunks.push(`  return {`);
+      chunks.push(`    return {`);
+      let hasFraming = false;
       for (const [field, spec] of Object.entries(shape.spec.members)) {
         const fieldShape = this.shapes.get(spec);
         if (spec.location ?? fieldShape.spec.location) {
           const isRequired = (shape.spec.required ?? []).map(x => x.toLowerCase()).includes(field.toLowerCase());
-          chunks.push(this.describeOutputField(field, spec, isRequired));
+          chunks.push(this.describeOutputField(field, spec, isRequired).replace(/^/gm, '  '));
+          hasFraming = true;
         } else {
           frameSpec.members[field] = spec;
         }
@@ -348,15 +350,19 @@ export default class ProtocolRestCodegen {
       const retLine = bodyGenLines.findIndex(x => x.match(/^ +return +/));
       const bodyGenReturns = bodyGenLines.slice(retLine).join('\n');
       let payloadHeader = bodyGenLines.slice(0, retLine);
-      const payloadChunk = bodyGenReturns.replace(/^ +return +/, '').replace(/;$/, '').replace(/\n/g, '\n  ');
+      const payloadChunk = bodyGenReturns.replace(/^ +return +/, '').replace(/;$/, '');
 
       if (payloadChunk === '{}') {
         payloadHeader = [];
+        chunks.push(`    };`);
+      } else if (!hasFraming) {
+        chunks.pop();
+        chunks.push(`    return ${payloadChunk};`);
       } else {
-        chunks.push(`    ...${payloadChunk},`);
+        chunks.push(`      ...${payloadChunk.replace(/\n/g, '\n  ')},`);
+        chunks.push(`    };`);
       }
 
-      chunks.push(`  };`);
       return {
         outputParsingCode: [...payloadHeader, ...chunks].join('\n'),
         outputVariables: bodyGen.outputVariables,
