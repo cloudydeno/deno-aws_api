@@ -82,7 +82,8 @@ export class AwsServiceError extends Error {
   requestId: string;
   constructor(resp: Response, error: ServiceError, requestId?: string | null) {
     requestId = requestId ?? "MISSING REQUEST ID";
-    super(`${error.Code}: ${error.Message} [Type: ${error.Type}, Request ID: ${requestId}]`);
+    const typePart = error.Type ? `Type: ${error.Type}, ` : '';
+    super(`${error.Code}: ${error.Message} [${typePart}Request ID: ${requestId}]`);
 
     this.origResponse = resp;
     this.name = new.target.name;

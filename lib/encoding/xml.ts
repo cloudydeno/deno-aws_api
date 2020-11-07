@@ -288,7 +288,7 @@ export function stringify(root: Node): string {
       .join('')
     : '';
 
-  if (root.children) {
+  if (root.children && !root.content) {
     const contents = root.children.map(x => stringify(x)).filter(x => x);
     if (contents.length < 1) {
       // if (!attrs) return '';

@@ -7,7 +7,7 @@ import {
 } from './common.ts';
 import { DefaultCredentialsProvider, CredentialsProviderChain } from "./credentials.ts";
 
-import { readXmlResult } from "../encoding/xml.ts";
+import { readXmlResult, stringify } from "../encoding/xml.ts";
 
 type FetchOpts = {
   urlPath: string,
@@ -309,6 +309,19 @@ async function handleErrorResponse(response: ApiResponse, reqMethod: string): Pr
           optional: { 'Token-0': true, HostId: true },
         }), xml.first('RequestId', false, x => x.content));
     }
+
+    // eg <AccessDeniedException><Message>...
+    if (xml.name.endsWith('Exception')) {
+      throw new AwsServiceError(response, {
+        Code: xml.name,
+        ...xml.strings({
+          required: { Message: true },
+          optional: { Type: true },
+        }),
+      }, response.requestId);
+    }
+
+    console.log('Error DOM:', stringify(xml) );
 
   } else if (contentType?.startsWith('application/json')) {
     const data = await response.json();
