@@ -130,7 +130,8 @@ async function* readAllTestFixtures() {
 }
 const allTestRuns = readAllTestFixtures();
 
-const results = pooledMap(3, allTestRuns, async function (run): Promise<TestRunResult> {
+const concurrency = Deno.env.get('CI') ? 1 : 3;
+const results = pooledMap(concurrency, allTestRuns, async function (run): Promise<TestRunResult> {
 
   // QUIRK
   if (run.description.endsWith('Enum with params {}')) {
