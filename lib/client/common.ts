@@ -76,6 +76,7 @@ export interface ServiceError {
 export class AwsServiceError extends Error {
   origResponse: Response;
   code: string;
+  shortCode: string;
   originalMessage: string;
   errorType: string;
   requestId: string;
@@ -86,6 +87,7 @@ export class AwsServiceError extends Error {
     this.origResponse = resp;
     this.name = new.target.name;
     this.code = error.Code;
+    this.shortCode = error.Code.split('#').slice(-1)[0];
     this.originalMessage = error.Message;
     this.errorType = error.Type ?? 'Unknown';
     this.requestId = requestId;

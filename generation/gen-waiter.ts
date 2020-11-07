@@ -163,13 +163,13 @@ export default class GenWaiter {
       chunks.push(...innerChunks.map(x => '  '+x));
       chunks.push(`      } catch (err) {`);
       if (goodErrs.length > 0) {
-        chunks.push(`        if (${JSON.stringify(goodErrs)}.includes(err.code)) return err;`);
+        chunks.push(`        if (${JSON.stringify(goodErrs)}.includes(err.shortCode)) return err;`);
       }
       if (badErrs.length > 0) {
-        chunks.push(`        if (${JSON.stringify(badErrs)}.includes(err.code)) throw err;`);
+        chunks.push(`        if (${JSON.stringify(badErrs)}.includes(err.shortCode)) throw err;`);
       }
       if (retryErrs.length > 0) {
-        chunks.push(`        if (!${JSON.stringify(retryErrs)}.includes(err.code)) throw err;`);
+        chunks.push(`        if (!${JSON.stringify(retryErrs)}.includes(err.shortCode)) throw err;`);
       } else {
         chunks.push(`        throw err;`);
       }
