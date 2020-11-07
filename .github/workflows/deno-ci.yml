@@ -1,0 +1,32 @@
+name: Deno CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request: {}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    name: Deno ${{ matrix.deno-version }}
+    strategy:
+      matrix:
+        deno-version: ["v1.x", "nightly"]
+
+    steps:
+    - name: Checkout source, incl aws-sdk-js
+      uses: actions/checkout@v2
+      with:
+        submodules: true
+
+    - name: Use Deno ${{ matrix.deno-version }}
+      uses: denolib/setup-deno@v2
+      with:
+        deno-version: ${{ matrix.deno-version }}
+
+    - name: Create test folders
+      run: mkdir -p lib/testgen/fixtures
+
+    - name: Validate aws-sdk fixtures
+      run: deno run -A generation/script/validate-fixtures.ts
