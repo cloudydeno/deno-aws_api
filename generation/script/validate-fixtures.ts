@@ -293,7 +293,7 @@ for await (const result of results) {
 console.log('Passed:', passed);
 console.log('Failed:', failed);
 console.log('Total:', passed+failed);
-
+Deno.exit(failed > 0 ? 15 : 0);
 
 // Our comparing doesn't respect different orders, but order is often right so just fudge for now
 function fixExpectedJson(json: string): string {
