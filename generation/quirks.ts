@@ -31,6 +31,15 @@ export function fixupApiSpec(spec: Schema.Api) {
       break;
     }
 
+    case "Route 53": {
+      // Pagination isn't including a marker when there's not a further page
+      const listZoneResp = spec.shapes["ListHostedZonesResponse"];
+      if (listZoneResp?.type === 'structure' && listZoneResp.required) {
+        listZoneResp.required = listZoneResp.required.filter(x => x !== 'Marker');
+      }
+      break;
+    }
+
     case "SQS": {
       // ReceiveMessage is asking for queue attribute names, should be message system-attribute names.
       const receiveReqShape = spec.shapes["ReceiveMessageRequest"];
