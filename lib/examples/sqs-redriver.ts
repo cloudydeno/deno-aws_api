@@ -101,8 +101,11 @@ while (true) {
     die(`Received no further messages from queue. Maybe it's empty?`, 0)
   }
 
-  const sentTime = new Date(parseInt(message.Attributes.SentTimestamp));
-  console.log('==> Received dead letter from', Math.floor((new Date().valueOf() - sentTime.valueOf()) / 1000 / 60 / 60), 'hours ago -', sentTime.toISOString(), '- receive #', parseInt(message.Attributes.ApproximateReceiveCount));
+  const sentTime = new Date(parseInt(message.Attributes.SentTimestamp ?? '0'));
+  console.log('==> Received dead letter',
+    'from', Math.floor((new Date().valueOf() - sentTime.valueOf()) / 1000 / 60 / 60), 'hours ago',
+    '-', sentTime.toISOString(),
+    '- receive #', parseInt(message.Attributes.ApproximateReceiveCount ?? '-1'));
   const { MessageGroupId, MessageDeduplicationId } = message.Attributes;
 
   console.log({ MessageGroupId, MessageDeduplicationId });
