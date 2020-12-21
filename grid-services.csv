@@ -14,7 +14,7 @@ appconfig,2019-10-09,Amazon AppConfig,AppConfig,AppConfig,rest-json,ok,ok,42815,
 appflow,2020-08-23,Amazon Appflow,Appflow,Appflow,rest-json,ok,ok,92186,1216
 appintegrations,2020-07-29,Amazon AppIntegrations Service,AppIntegrations,AppIntegrations,rest-json,ok,ok,11176,757
 application-autoscaling,2016-02-06,Application Auto Scaling,Application Auto Scaling,ApplicationAutoScaling,json,ok,ok,26316,2302
-application-insights,2018-11-25,Amazon CloudWatch Application Insights,Application Insights,ApplicationInsights,json,fail,ok,33072,905
+application-insights,2018-11-25,Amazon CloudWatch Application Insights,Application Insights,ApplicationInsights,json,ok,ok,34373,821
 appmesh,2018-10-01,AWS App Mesh,App Mesh,AppMesh,rest-json,ok,ok,30314,885
 appmesh,2019-01-25,AWS App Mesh,App Mesh,AppMesh,rest-json,ok,ok,113905,1356
 appstream,2016-12-01,Amazon AppStream,AppStream,AppStream,json,ok,ok,70488,1109
@@ -158,7 +158,7 @@ lambda,2015-03-31,AWS Lambda,Lambda,Lambda,rest-json,ok,ok,101272,1263
 lex-models,2017-04-19,Amazon Lex Model Building Service,Lex Model Building Service,LexModelBuildingService,rest-json,ok,ok,70269,1163
 license-manager,2018-08-01,AWS License Manager,License Manager,LicenseManager,json,ok,ok,66251,1060
 lightsail,2016-11-28,Amazon Lightsail,Lightsail,Lightsail,json,ok,ok,202413,1782
-location,2020-11-19,Amazon Location Service,Location,Location,rest-json,fail,,,
+location,2020-11-19,Amazon Location Service,Location,Location,rest-json,ok,ok,45985,932
 logs,2014-03-28,Amazon CloudWatch Logs,CloudWatch Logs,CloudWatchLogs,json,ok,ok,44005,923
 lookoutvision,2020-11-20,Amazon Lookout for Vision,LookoutVision,LookoutVision,rest-json,ok,ok,27075,850
 machinelearning,2014-12-12,Amazon Machine Learning,Machine Learning,MachineLearning,json,ok,ok,48512,984

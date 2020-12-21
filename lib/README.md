@@ -141,6 +141,7 @@ All API definitions are current as of aws-sdk-js `v2.814.0`.
 | Appflow | `appflow@2020-08-23` | 90 KiB | 1.2 sec |
 | AppIntegrations | `appintegrations@2020-07-29` | 11 KiB | 0.8 sec |
 | ApplicationAutoScaling | `application-autoscaling@2016-02-06` | 26 KiB | 2.3 sec |
+| ApplicationInsights | `application-insights@2018-11-25` | 34 KiB | 0.8 sec |
 | AppMesh | `appmesh@2018-10-01` | 30 KiB | 0.9 sec |
 | AppMesh | `appmesh@2019-01-25` | 111 KiB | 1.4 sec |
 | AppStream | `appstream@2016-12-01` | 69 KiB | 1.1 sec |
@@ -284,6 +285,7 @@ All API definitions are current as of aws-sdk-js `v2.814.0`.
 | LexModelBuildingService | `lex-models@2017-04-19` | 69 KiB | 1.2 sec |
 | LicenseManager | `license-manager@2018-08-01` | 65 KiB | 1.1 sec |
 | Lightsail | `lightsail@2016-11-28` | 198 KiB | 1.8 sec |
+| Location | `location@2020-11-19` | 45 KiB | 0.9 sec |
 | CloudWatchLogs | `logs@2014-03-28` | 43 KiB | 0.9 sec |
 | LookoutVision | `lookoutvision@2020-11-20` | 26 KiB | 0.9 sec |
 | MachineLearning | `machinelearning@2014-12-12` | 47 KiB | 1.0 sec |

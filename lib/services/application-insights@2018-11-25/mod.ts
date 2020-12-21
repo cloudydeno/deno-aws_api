@@ -918,13 +918,20 @@ function toTag(root: jsonP.JSONValue): Tag {
   }, root);
 }
 
-// refs: 5 - tags: input, named, enum, output
+// refs: 7 - tags: input, named, enum, output
 export type Tier =
+| "CUSTOM"
 | "DEFAULT"
 | "DOT_NET_CORE"
 | "DOT_NET_WORKER"
+| "DOT_NET_WEB_TIER"
 | "DOT_NET_WEB"
 | "SQL_SERVER"
+| "SQL_SERVER_ALWAYSON_AVAILABILITY_GROUP"
+| "MYSQL"
+| "POSTGRESQL"
+| "JAVA_JMX"
+| "ORACLE"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, enum, output
@@ -979,21 +986,33 @@ function toLogPattern(root: jsonP.JSONValue): LogPattern {
 // refs: 2 - tags: output, named, interface
 export interface ApplicationComponent {
   ComponentName?: string | null;
+  ComponentRemarks?: string | null;
   ResourceType?: string | null;
+  OsType?: OsType | null;
   Tier?: Tier | null;
   Monitor?: boolean | null;
+  DetectedWorkload?: { [key in Tier]: { [key: string]: string | null | undefined } | null | undefined } | null;
 }
 function toApplicationComponent(root: jsonP.JSONValue): ApplicationComponent {
   return jsonP.readObj({
     required: {},
     optional: {
       "ComponentName": "s",
+      "ComponentRemarks": "s",
       "ResourceType": "s",
+      "OsType": (x: jsonP.JSONValue) => cmnP.readEnum<OsType>(x),
       "Tier": (x: jsonP.JSONValue) => cmnP.readEnum<Tier>(x),
       "Monitor": "b",
+      "DetectedWorkload": x => jsonP.readMap(x => cmnP.readEnumReq<Tier>(x), y => jsonP.readMap(String, String, y)!, x),
     },
   }, root);
 }
+
+// refs: 2 - tags: output, named, enum
+export type OsType =
+| "WINDOWS"
+| "LINUX"
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface Observation {
@@ -1024,6 +1043,17 @@ export interface Observation {
   CodeDeployApplication?: string | null;
   CodeDeployInstanceGroupId?: string | null;
   Ec2State?: string | null;
+  RdsEventCategories?: string | null;
+  RdsEventMessage?: string | null;
+  S3EventName?: string | null;
+  StatesExecutionArn?: string | null;
+  StatesArn?: string | null;
+  StatesStatus?: string | null;
+  StatesInput?: string | null;
+  EbsEvent?: string | null;
+  EbsResult?: string | null;
+  EbsCause?: string | null;
+  EbsRequestId?: string | null;
   XRayFaultPercent?: number | null;
   XRayThrottlePercent?: number | null;
   XRayErrorPercent?: number | null;
@@ -1063,6 +1093,17 @@ function toObservation(root: jsonP.JSONValue): Observation {
       "CodeDeployApplication": "s",
       "CodeDeployInstanceGroupId": "s",
       "Ec2State": "s",
+      "RdsEventCategories": "s",
+      "RdsEventMessage": "s",
+      "S3EventName": "s",
+      "StatesExecutionArn": "s",
+      "StatesArn": "s",
+      "StatesStatus": "s",
+      "StatesInput": "s",
+      "EbsEvent": "s",
+      "EbsResult": "s",
+      "EbsCause": "s",
+      "EbsRequestId": "s",
       "XRayFaultPercent": "n",
       "XRayThrottlePercent": "n",
       "XRayErrorPercent": "n",
@@ -1086,6 +1127,7 @@ export type CloudWatchEventSource =
 | "EC2"
 | "CODE_DEPLOY"
 | "HEALTH"
+| "RDS"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
@@ -1184,6 +1226,7 @@ function toConfigurationEvent(root: jsonP.JSONValue): ConfigurationEvent {
 // refs: 1 - tags: output, named, enum
 export type ConfigurationEventResourceType =
 | "CLOUDWATCH_ALARM"
+| "CLOUDWATCH_LOG"
 | "CLOUDFORMATION"
 | "SSM_ASSOCIATION"
 | cmnP.UnexpectedEnumValue;

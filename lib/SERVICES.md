@@ -21,7 +21,7 @@ All API definitions are current as of aws-sdk-js `v2.814.0`.
 | `appflow@2020-08-23` | rest-json | ✔️ | 90 KiB | ✔️ | 1.2 sec |
 | `appintegrations@2020-07-29` | rest-json | ✔️ | 11 KiB | ✔️ | 0.8 sec |
 | `application-autoscaling@2016-02-06` | json | ✔️ | 26 KiB | ✔️ | 2.3 sec |
-| `application-insights@2018-11-25` | json | 🚫 |  | ✔️ | 0.9 sec |
+| `application-insights@2018-11-25` | json | ✔️ | 34 KiB | ✔️ | 0.8 sec |
 | `appmesh@2018-10-01` | rest-json | ✔️ | 30 KiB | ✔️ | 0.9 sec |
 | `appmesh@2019-01-25` | rest-json | ✔️ | 111 KiB | ✔️ | 1.4 sec |
 | `appstream@2016-12-01` | json | ✔️ | 69 KiB | ✔️ | 1.1 sec |
@@ -165,7 +165,7 @@ All API definitions are current as of aws-sdk-js `v2.814.0`.
 | `lex-models@2017-04-19` | rest-json | ✔️ | 69 KiB | ✔️ | 1.2 sec |
 | `license-manager@2018-08-01` | json | ✔️ | 65 KiB | ✔️ | 1.1 sec |
 | `lightsail@2016-11-28` | json | ✔️ | 198 KiB | ✔️ | 1.8 sec |
-| `location@2020-11-19` | rest-json | 🚫 |  |  |  |
+| `location@2020-11-19` | rest-json | ✔️ | 45 KiB | ✔️ | 0.9 sec |
 | `logs@2014-03-28` | json | ✔️ | 43 KiB | ✔️ | 0.9 sec |
 | `lookoutvision@2020-11-20` | rest-json | ✔️ | 26 KiB | ✔️ | 0.9 sec |
 | `machinelearning@2014-12-12` | json | ✔️ | 47 KiB | ✔️ | 1.0 sec |
