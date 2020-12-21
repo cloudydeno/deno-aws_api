@@ -337,6 +337,11 @@ async function handleErrorResponse(response: ApiResponse, reqMethod: string): Pr
         Code: data.__type,
         Message: data.message,
       }, response.requestId);
+    } else if (data.__type && data.Message) {
+      throw new AwsServiceError(response, {
+        Code: data.__type,
+        Message: data.Message,
+      }, response.requestId);
     }
     console.log('Error from server:', response, data);
 
