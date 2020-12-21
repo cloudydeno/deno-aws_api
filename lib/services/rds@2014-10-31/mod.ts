@@ -226,6 +226,7 @@ export default class RDS {
     if ("CopyTags" in params) body.append(prefix+"CopyTags", (params["CopyTags"] ?? '').toString());
     if ("PreSignedUrl" in params) body.append(prefix+"PreSignedUrl", (params["PreSignedUrl"] ?? '').toString());
     if ("OptionGroupName" in params) body.append(prefix+"OptionGroupName", (params["OptionGroupName"] ?? '').toString());
+    if ("TargetCustomAvailabilityZone" in params) body.append(prefix+"TargetCustomAvailabilityZone", (params["TargetCustomAvailabilityZone"] ?? '').toString());
     if ("SourceRegion" in params) body.append(prefix+"SourceRegion", (params["SourceRegion"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -478,6 +479,7 @@ export default class RDS {
     if ("Domain" in params) body.append(prefix+"Domain", (params["Domain"] ?? '').toString());
     if ("DomainIAMRoleName" in params) body.append(prefix+"DomainIAMRoleName", (params["DomainIAMRoleName"] ?? '').toString());
     if ("ReplicaMode" in params) body.append(prefix+"ReplicaMode", (params["ReplicaMode"] ?? '').toString());
+    if ("MaxAllocatedStorage" in params) body.append(prefix+"MaxAllocatedStorage", (params["MaxAllocatedStorage"] ?? '').toString());
     if ("SourceRegion" in params) body.append(prefix+"SourceRegion", (params["SourceRegion"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -748,11 +750,12 @@ export default class RDS {
   }
 
   async deleteDBInstanceAutomatedBackup(
-    {abortSignal, ...params}: RequestConfig & DeleteDBInstanceAutomatedBackupMessage,
+    {abortSignal, ...params}: RequestConfig & DeleteDBInstanceAutomatedBackupMessage = {},
   ): Promise<DeleteDBInstanceAutomatedBackupResult> {
     const body = new URLSearchParams;
     const prefix = '';
-    body.append(prefix+"DbiResourceId", (params["DbiResourceId"] ?? '').toString());
+    if ("DbiResourceId" in params) body.append(prefix+"DbiResourceId", (params["DbiResourceId"] ?? '').toString());
+    if ("DBInstanceAutomatedBackupsArn" in params) body.append(prefix+"DBInstanceAutomatedBackupsArn", (params["DBInstanceAutomatedBackupsArn"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteDBInstanceAutomatedBackup",
@@ -1160,6 +1163,7 @@ export default class RDS {
     if (params["Filters"]) qsP.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
+    if ("DBInstanceAutomatedBackupsArn" in params) body.append(prefix+"DBInstanceAutomatedBackupsArn", (params["DBInstanceAutomatedBackupsArn"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeDBInstanceAutomatedBackups",
@@ -2673,6 +2677,7 @@ export default class RDS {
     if ("DeletionProtection" in params) body.append(prefix+"DeletionProtection", (params["DeletionProtection"] ?? '').toString());
     if ("SourceDbiResourceId" in params) body.append(prefix+"SourceDbiResourceId", (params["SourceDbiResourceId"] ?? '').toString());
     if ("MaxAllocatedStorage" in params) body.append(prefix+"MaxAllocatedStorage", (params["MaxAllocatedStorage"] ?? '').toString());
+    if ("SourceDBInstanceAutomatedBackupsArn" in params) body.append(prefix+"SourceDBInstanceAutomatedBackupsArn", (params["SourceDBInstanceAutomatedBackupsArn"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RestoreDBInstanceToPointInTime",
@@ -2759,6 +2764,25 @@ export default class RDS {
     };
   }
 
+  async startDBInstanceAutomatedBackupsReplication(
+    {abortSignal, ...params}: RequestConfig & StartDBInstanceAutomatedBackupsReplicationMessage,
+  ): Promise<StartDBInstanceAutomatedBackupsReplicationResult> {
+    const body = new URLSearchParams;
+    const prefix = '';
+    body.append(prefix+"SourceDBInstanceArn", (params["SourceDBInstanceArn"] ?? '').toString());
+    if ("BackupRetentionPeriod" in params) body.append(prefix+"BackupRetentionPeriod", (params["BackupRetentionPeriod"] ?? '').toString());
+    if ("KmsKeyId" in params) body.append(prefix+"KmsKeyId", (params["KmsKeyId"] ?? '').toString());
+    if ("PreSignedUrl" in params) body.append(prefix+"PreSignedUrl", (params["PreSignedUrl"] ?? '').toString());
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "StartDBInstanceAutomatedBackupsReplication",
+    });
+    const xml = xmlP.readXmlResult(await resp.text(), "StartDBInstanceAutomatedBackupsReplicationResult");
+    return {
+      DBInstanceAutomatedBackup: xml.first("DBInstanceAutomatedBackup", false, DBInstanceAutomatedBackup_Parse),
+    };
+  }
+
   async startExportTask(
     {abortSignal, ...params}: RequestConfig & StartExportTaskMessage,
   ): Promise<ExportTask> {
@@ -2829,6 +2853,22 @@ export default class RDS {
     const xml = xmlP.readXmlResult(await resp.text(), "StopDBInstanceResult");
     return {
       DBInstance: xml.first("DBInstance", false, DBInstance_Parse),
+    };
+  }
+
+  async stopDBInstanceAutomatedBackupsReplication(
+    {abortSignal, ...params}: RequestConfig & StopDBInstanceAutomatedBackupsReplicationMessage,
+  ): Promise<StopDBInstanceAutomatedBackupsReplicationResult> {
+    const body = new URLSearchParams;
+    const prefix = '';
+    body.append(prefix+"SourceDBInstanceArn", (params["SourceDBInstanceArn"] ?? '').toString());
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "StopDBInstanceAutomatedBackupsReplication",
+    });
+    const xml = xmlP.readXmlResult(await resp.text(), "StopDBInstanceAutomatedBackupsReplicationResult");
+    return {
+      DBInstanceAutomatedBackup: xml.first("DBInstanceAutomatedBackup", false, DBInstanceAutomatedBackup_Parse),
     };
   }
 
@@ -3050,6 +3090,7 @@ export interface CopyDBSnapshotMessage {
   CopyTags?: boolean | null;
   PreSignedUrl?: string | null;
   OptionGroupName?: string | null;
+  TargetCustomAvailabilityZone?: string | null;
   SourceRegion?: string | null;
 }
 
@@ -3216,6 +3257,7 @@ export interface CreateDBInstanceReadReplicaMessage {
   Domain?: string | null;
   DomainIAMRoleName?: string | null;
   ReplicaMode?: ReplicaMode | null;
+  MaxAllocatedStorage?: number | null;
   SourceRegion?: string | null;
 }
 
@@ -3331,7 +3373,8 @@ export interface DeleteDBInstanceMessage {
 
 // refs: 1 - tags: named, input
 export interface DeleteDBInstanceAutomatedBackupMessage {
-  DbiResourceId: string;
+  DbiResourceId?: string | null;
+  DBInstanceAutomatedBackupsArn?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -3489,6 +3532,7 @@ export interface DescribeDBInstanceAutomatedBackupsMessage {
   Filters?: Filter[] | null;
   MaxRecords?: number | null;
   Marker?: string | null;
+  DBInstanceAutomatedBackupsArn?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -4226,6 +4270,7 @@ export interface RestoreDBInstanceToPointInTimeMessage {
   DeletionProtection?: boolean | null;
   SourceDbiResourceId?: string | null;
   MaxAllocatedStorage?: number | null;
+  SourceDBInstanceAutomatedBackupsArn?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -4256,6 +4301,14 @@ export interface StartDBInstanceMessage {
 }
 
 // refs: 1 - tags: named, input
+export interface StartDBInstanceAutomatedBackupsReplicationMessage {
+  SourceDBInstanceArn: string;
+  BackupRetentionPeriod?: number | null;
+  KmsKeyId?: string | null;
+  PreSignedUrl?: string | null;
+}
+
+// refs: 1 - tags: named, input
 export interface StartExportTaskMessage {
   ExportTaskIdentifier: string;
   SourceArn: string;
@@ -4281,6 +4334,11 @@ export interface StopDBClusterMessage {
 export interface StopDBInstanceMessage {
   DBInstanceIdentifier: string;
   DBSnapshotIdentifier?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface StopDBInstanceAutomatedBackupsReplicationMessage {
+  SourceDBInstanceArn: string;
 }
 
 // refs: 1 - tags: named, output
@@ -4950,6 +5008,11 @@ export interface StartDBInstanceResult {
 }
 
 // refs: 1 - tags: named, output
+export interface StartDBInstanceAutomatedBackupsReplicationResult {
+  DBInstanceAutomatedBackup?: DBInstanceAutomatedBackup | null;
+}
+
+// refs: 1 - tags: named, output
 export interface StopActivityStreamResponse {
   KmsKeyId?: string | null;
   KinesisStreamName?: string | null;
@@ -4964,6 +5027,11 @@ export interface StopDBClusterResult {
 // refs: 1 - tags: named, output
 export interface StopDBInstanceResult {
   DBInstance?: DBInstance | null;
+}
+
+// refs: 1 - tags: named, output
+export interface StopDBInstanceAutomatedBackupsReplicationResult {
+  DBInstanceAutomatedBackup?: DBInstanceAutomatedBackup | null;
 }
 
 // refs: 59 - tags: input, named, interface, output
@@ -5574,6 +5642,7 @@ export interface DBCluster {
   TagList: Tag[];
   GlobalWriteForwardingStatus?: WriteForwardingStatus | null;
   GlobalWriteForwardingRequested?: boolean | null;
+  PendingModifiedValues?: ClusterPendingModifiedValues | null;
 }
 function DBCluster_Parse(node: xmlP.XmlNode): DBCluster {
   return {
@@ -5612,6 +5681,7 @@ function DBCluster_Parse(node: xmlP.XmlNode): DBCluster {
     TagList: node.getList("TagList", "Tag").map(Tag_Parse),
     GlobalWriteForwardingStatus: node.first("GlobalWriteForwardingStatus", false, x => (x.content ?? '') as WriteForwardingStatus),
     GlobalWriteForwardingRequested: node.first("GlobalWriteForwardingRequested", false, x => x.content === 'true'),
+    PendingModifiedValues: node.first("PendingModifiedValues", false, ClusterPendingModifiedValues_Parse),
   };
 }
 
@@ -5705,6 +5775,36 @@ export type WriteForwardingStatus =
 | "unknown"
 | cmnP.UnexpectedEnumValue;
 
+// refs: 11 - tags: output, named, interface
+export interface ClusterPendingModifiedValues {
+  PendingCloudwatchLogsExports?: PendingCloudwatchLogsExports | null;
+  DBClusterIdentifier?: string | null;
+  MasterUserPassword?: string | null;
+  IAMDatabaseAuthenticationEnabled?: boolean | null;
+  EngineVersion?: string | null;
+}
+function ClusterPendingModifiedValues_Parse(node: xmlP.XmlNode): ClusterPendingModifiedValues {
+  return {
+    ...node.strings({
+      optional: {"DBClusterIdentifier":true,"MasterUserPassword":true,"EngineVersion":true},
+    }),
+    PendingCloudwatchLogsExports: node.first("PendingCloudwatchLogsExports", false, PendingCloudwatchLogsExports_Parse),
+    IAMDatabaseAuthenticationEnabled: node.first("IAMDatabaseAuthenticationEnabled", false, x => x.content === 'true'),
+  };
+}
+
+// refs: 23 - tags: output, named, interface
+export interface PendingCloudwatchLogsExports {
+  LogTypesToEnable: string[];
+  LogTypesToDisable: string[];
+}
+function PendingCloudwatchLogsExports_Parse(node: xmlP.XmlNode): PendingCloudwatchLogsExports {
+  return {
+    LogTypesToEnable: node.getList("LogTypesToEnable", "member").map(x => x.content ?? ''),
+    LogTypesToDisable: node.getList("LogTypesToDisable", "member").map(x => x.content ?? ''),
+  };
+}
+
 // refs: 12 - tags: output, named, interface
 export interface DBInstance {
   DBInstanceIdentifier?: string | null;
@@ -5768,6 +5868,7 @@ export interface DBInstance {
   ListenerEndpoint?: Endpoint | null;
   MaxAllocatedStorage?: number | null;
   TagList: Tag[];
+  DBInstanceAutomatedBackupsReplications: DBInstanceAutomatedBackupsReplication[];
 }
 function DBInstance_Parse(node: xmlP.XmlNode): DBInstance {
   return {
@@ -5809,6 +5910,7 @@ function DBInstance_Parse(node: xmlP.XmlNode): DBInstance {
     ListenerEndpoint: node.first("ListenerEndpoint", false, Endpoint_Parse),
     MaxAllocatedStorage: node.first("MaxAllocatedStorage", false, x => parseInt(x.content ?? '0')),
     TagList: node.getList("TagList", "Tag").map(Tag_Parse),
+    DBInstanceAutomatedBackupsReplications: node.getList("DBInstanceAutomatedBackupsReplications", "DBInstanceAutomatedBackupsReplication").map(DBInstanceAutomatedBackupsReplication_Parse),
   };
 }
 
@@ -5910,6 +6012,7 @@ export interface PendingModifiedValues {
   DBSubnetGroupName?: string | null;
   PendingCloudwatchLogsExports?: PendingCloudwatchLogsExports | null;
   ProcessorFeatures: ProcessorFeature[];
+  IAMDatabaseAuthenticationEnabled?: boolean | null;
 }
 function PendingModifiedValues_Parse(node: xmlP.XmlNode): PendingModifiedValues {
   return {
@@ -5923,18 +6026,7 @@ function PendingModifiedValues_Parse(node: xmlP.XmlNode): PendingModifiedValues 
     Iops: node.first("Iops", false, x => parseInt(x.content ?? '0')),
     PendingCloudwatchLogsExports: node.first("PendingCloudwatchLogsExports", false, PendingCloudwatchLogsExports_Parse),
     ProcessorFeatures: node.getList("ProcessorFeatures", "ProcessorFeature").map(ProcessorFeature_Parse),
-  };
-}
-
-// refs: 12 - tags: output, named, interface
-export interface PendingCloudwatchLogsExports {
-  LogTypesToEnable: string[];
-  LogTypesToDisable: string[];
-}
-function PendingCloudwatchLogsExports_Parse(node: xmlP.XmlNode): PendingCloudwatchLogsExports {
-  return {
-    LogTypesToEnable: node.getList("LogTypesToEnable", "member").map(x => x.content ?? ''),
-    LogTypesToDisable: node.getList("LogTypesToDisable", "member").map(x => x.content ?? ''),
+    IAMDatabaseAuthenticationEnabled: node.first("IAMDatabaseAuthenticationEnabled", false, x => x.content === 'true'),
   };
 }
 
@@ -5974,6 +6066,16 @@ export interface DBInstanceRole {
 function DBInstanceRole_Parse(node: xmlP.XmlNode): DBInstanceRole {
   return node.strings({
     optional: {"RoleArn":true,"FeatureName":true,"Status":true},
+  });
+}
+
+// refs: 16 - tags: output, named, interface
+export interface DBInstanceAutomatedBackupsReplication {
+  DBInstanceAutomatedBackupsArn?: string | null;
+}
+function DBInstanceAutomatedBackupsReplication_Parse(node: xmlP.XmlNode): DBInstanceAutomatedBackupsReplication {
+  return node.strings({
+    optional: {"DBInstanceAutomatedBackupsArn":true},
   });
 }
 
@@ -6084,7 +6186,7 @@ function GlobalClusterMember_Parse(node: xmlP.XmlNode): GlobalClusterMember {
   };
 }
 
-// refs: 2 - tags: output, named, interface
+// refs: 4 - tags: output, named, interface
 export interface DBInstanceAutomatedBackup {
   DBInstanceArn?: string | null;
   DbiResourceId?: string | null;
@@ -6109,11 +6211,14 @@ export interface DBInstanceAutomatedBackup {
   KmsKeyId?: string | null;
   Timezone?: string | null;
   IAMDatabaseAuthenticationEnabled?: boolean | null;
+  BackupRetentionPeriod?: number | null;
+  DBInstanceAutomatedBackupsArn?: string | null;
+  DBInstanceAutomatedBackupsReplications: DBInstanceAutomatedBackupsReplication[];
 }
 function DBInstanceAutomatedBackup_Parse(node: xmlP.XmlNode): DBInstanceAutomatedBackup {
   return {
     ...node.strings({
-      optional: {"DBInstanceArn":true,"DbiResourceId":true,"Region":true,"DBInstanceIdentifier":true,"Status":true,"AvailabilityZone":true,"VpcId":true,"MasterUsername":true,"Engine":true,"EngineVersion":true,"LicenseModel":true,"OptionGroupName":true,"TdeCredentialArn":true,"StorageType":true,"KmsKeyId":true,"Timezone":true},
+      optional: {"DBInstanceArn":true,"DbiResourceId":true,"Region":true,"DBInstanceIdentifier":true,"Status":true,"AvailabilityZone":true,"VpcId":true,"MasterUsername":true,"Engine":true,"EngineVersion":true,"LicenseModel":true,"OptionGroupName":true,"TdeCredentialArn":true,"StorageType":true,"KmsKeyId":true,"Timezone":true,"DBInstanceAutomatedBackupsArn":true},
     }),
     RestoreWindow: node.first("RestoreWindow", false, RestoreWindow_Parse),
     AllocatedStorage: node.first("AllocatedStorage", false, x => parseInt(x.content ?? '0')),
@@ -6122,10 +6227,12 @@ function DBInstanceAutomatedBackup_Parse(node: xmlP.XmlNode): DBInstanceAutomate
     Iops: node.first("Iops", false, x => parseInt(x.content ?? '0')),
     Encrypted: node.first("Encrypted", false, x => x.content === 'true'),
     IAMDatabaseAuthenticationEnabled: node.first("IAMDatabaseAuthenticationEnabled", false, x => x.content === 'true'),
+    BackupRetentionPeriod: node.first("BackupRetentionPeriod", false, x => parseInt(x.content ?? '0')),
+    DBInstanceAutomatedBackupsReplications: node.getList("DBInstanceAutomatedBackupsReplications", "DBInstanceAutomatedBackupsReplication").map(DBInstanceAutomatedBackupsReplication_Parse),
   };
 }
 
-// refs: 2 - tags: output, named, interface
+// refs: 4 - tags: output, named, interface
 export interface RestoreWindow {
   EarliestTime?: Date | number | null;
   LatestTime?: Date | number | null;
@@ -6724,11 +6831,15 @@ export interface SourceRegion {
   RegionName?: string | null;
   Endpoint?: string | null;
   Status?: string | null;
+  SupportsDBInstanceAutomatedBackupsReplication?: boolean | null;
 }
 function SourceRegion_Parse(node: xmlP.XmlNode): SourceRegion {
-  return node.strings({
-    optional: {"RegionName":true,"Endpoint":true,"Status":true},
-  });
+  return {
+    ...node.strings({
+      optional: {"RegionName":true,"Endpoint":true,"Status":true},
+    }),
+    SupportsDBInstanceAutomatedBackupsReplication: node.first("SupportsDBInstanceAutomatedBackupsReplication", false, x => x.content === 'true'),
+  };
 }
 
 // refs: 1 - tags: output, named, interface

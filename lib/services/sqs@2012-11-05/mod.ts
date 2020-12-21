@@ -585,6 +585,8 @@ export type QueueAttributeName =
 | "ContentBasedDeduplication"
 | "KmsMasterKeyId"
 | "KmsDataKeyReusePeriodSeconds"
+| "DeduplicationScope"
+| "FifoThroughputLimit"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface

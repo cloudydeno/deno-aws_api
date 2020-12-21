@@ -198,6 +198,7 @@ export default class Redshift {
     if (params["IamRoles"]) qsP.appendList(body, prefix+"IamRoles", params["IamRoles"], {"entryPrefix":".IamRoleArn."})
     if ("MaintenanceTrackName" in params) body.append(prefix+"MaintenanceTrackName", (params["MaintenanceTrackName"] ?? '').toString());
     if ("SnapshotScheduleIdentifier" in params) body.append(prefix+"SnapshotScheduleIdentifier", (params["SnapshotScheduleIdentifier"] ?? '').toString());
+    if ("AvailabilityZoneRelocation" in params) body.append(prefix+"AvailabilityZoneRelocation", (params["AvailabilityZoneRelocation"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateCluster",
@@ -1405,6 +1406,9 @@ export default class Redshift {
     if ("MaintenanceTrackName" in params) body.append(prefix+"MaintenanceTrackName", (params["MaintenanceTrackName"] ?? '').toString());
     if ("Encrypted" in params) body.append(prefix+"Encrypted", (params["Encrypted"] ?? '').toString());
     if ("KmsKeyId" in params) body.append(prefix+"KmsKeyId", (params["KmsKeyId"] ?? '').toString());
+    if ("AvailabilityZoneRelocation" in params) body.append(prefix+"AvailabilityZoneRelocation", (params["AvailabilityZoneRelocation"] ?? '').toString());
+    if ("AvailabilityZone" in params) body.append(prefix+"AvailabilityZone", (params["AvailabilityZone"] ?? '').toString());
+    if ("Port" in params) body.append(prefix+"Port", (params["Port"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ModifyCluster",
@@ -1748,6 +1752,7 @@ export default class Redshift {
     if ("MaintenanceTrackName" in params) body.append(prefix+"MaintenanceTrackName", (params["MaintenanceTrackName"] ?? '').toString());
     if ("SnapshotScheduleIdentifier" in params) body.append(prefix+"SnapshotScheduleIdentifier", (params["SnapshotScheduleIdentifier"] ?? '').toString());
     if ("NumberOfNodes" in params) body.append(prefix+"NumberOfNodes", (params["NumberOfNodes"] ?? '').toString());
+    if ("AvailabilityZoneRelocation" in params) body.append(prefix+"AvailabilityZoneRelocation", (params["AvailabilityZoneRelocation"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RestoreFromClusterSnapshot",
@@ -2001,6 +2006,7 @@ export interface CreateClusterMessage {
   IamRoles?: string[] | null;
   MaintenanceTrackName?: string | null;
   SnapshotScheduleIdentifier?: string | null;
+  AvailabilityZoneRelocation?: boolean | null;
 }
 
 // refs: 1 - tags: named, input
@@ -2490,6 +2496,9 @@ export interface ModifyClusterMessage {
   MaintenanceTrackName?: string | null;
   Encrypted?: boolean | null;
   KmsKeyId?: string | null;
+  AvailabilityZoneRelocation?: boolean | null;
+  AvailabilityZone?: string | null;
+  Port?: number | null;
 }
 
 // refs: 1 - tags: named, input
@@ -2670,6 +2679,7 @@ export interface RestoreFromClusterSnapshotMessage {
   MaintenanceTrackName?: string | null;
   SnapshotScheduleIdentifier?: string | null;
   NumberOfNodes?: number | null;
+  AvailabilityZoneRelocation?: boolean | null;
 }
 
 // refs: 1 - tags: named, input
@@ -3489,6 +3499,7 @@ export interface Snapshot {
   ClusterCreateTime?: Date | number | null;
   MasterUsername?: string | null;
   ClusterVersion?: string | null;
+  EngineFullVersion?: string | null;
   SnapshotType?: string | null;
   NodeType?: string | null;
   NumberOfNodes?: number | null;
@@ -3517,7 +3528,7 @@ export interface Snapshot {
 function Snapshot_Parse(node: xmlP.XmlNode): Snapshot {
   return {
     ...node.strings({
-      optional: {"SnapshotIdentifier":true,"ClusterIdentifier":true,"Status":true,"AvailabilityZone":true,"MasterUsername":true,"ClusterVersion":true,"SnapshotType":true,"NodeType":true,"DBName":true,"VpcId":true,"KmsKeyId":true,"OwnerAccount":true,"SourceRegion":true,"MaintenanceTrackName":true},
+      optional: {"SnapshotIdentifier":true,"ClusterIdentifier":true,"Status":true,"AvailabilityZone":true,"MasterUsername":true,"ClusterVersion":true,"EngineFullVersion":true,"SnapshotType":true,"NodeType":true,"DBName":true,"VpcId":true,"KmsKeyId":true,"OwnerAccount":true,"SourceRegion":true,"MaintenanceTrackName":true},
     }),
     SnapshotCreateTime: node.first("SnapshotCreateTime", false, x => xmlP.parseTimestamp(x.content)),
     Port: node.first("Port", false, x => parseInt(x.content ?? '0')),
@@ -3613,11 +3624,13 @@ export interface Cluster {
   ExpectedNextSnapshotScheduleTimeStatus?: string | null;
   NextMaintenanceWindowStartTime?: Date | number | null;
   ResizeInfo?: ResizeInfo | null;
+  AvailabilityZoneRelocationStatus?: string | null;
+  ClusterNamespaceArn?: string | null;
 }
 function Cluster_Parse(node: xmlP.XmlNode): Cluster {
   return {
     ...node.strings({
-      optional: {"ClusterIdentifier":true,"NodeType":true,"ClusterStatus":true,"ClusterAvailabilityStatus":true,"ModifyStatus":true,"MasterUsername":true,"DBName":true,"ClusterSubnetGroupName":true,"VpcId":true,"AvailabilityZone":true,"PreferredMaintenanceWindow":true,"ClusterVersion":true,"ClusterPublicKey":true,"ClusterRevisionNumber":true,"KmsKeyId":true,"MaintenanceTrackName":true,"ElasticResizeNumberOfNodeOptions":true,"SnapshotScheduleIdentifier":true,"ExpectedNextSnapshotScheduleTimeStatus":true},
+      optional: {"ClusterIdentifier":true,"NodeType":true,"ClusterStatus":true,"ClusterAvailabilityStatus":true,"ModifyStatus":true,"MasterUsername":true,"DBName":true,"ClusterSubnetGroupName":true,"VpcId":true,"AvailabilityZone":true,"PreferredMaintenanceWindow":true,"ClusterVersion":true,"ClusterPublicKey":true,"ClusterRevisionNumber":true,"KmsKeyId":true,"MaintenanceTrackName":true,"ElasticResizeNumberOfNodeOptions":true,"SnapshotScheduleIdentifier":true,"ExpectedNextSnapshotScheduleTimeStatus":true,"AvailabilityZoneRelocationStatus":true,"ClusterNamespaceArn":true},
     }),
     Endpoint: node.first("Endpoint", false, Endpoint_Parse),
     ClusterCreateTime: node.first("ClusterCreateTime", false, x => xmlP.parseTimestamp(x.content)),
@@ -3653,6 +3666,7 @@ function Cluster_Parse(node: xmlP.XmlNode): Cluster {
 export interface Endpoint {
   Address?: string | null;
   Port?: number | null;
+  VpcEndpoints: SpartaProxyVpcEndpoint[];
 }
 function Endpoint_Parse(node: xmlP.XmlNode): Endpoint {
   return {
@@ -3660,7 +3674,18 @@ function Endpoint_Parse(node: xmlP.XmlNode): Endpoint {
       optional: {"Address":true},
     }),
     Port: node.first("Port", false, x => parseInt(x.content ?? '0')),
+    VpcEndpoints: node.getList("VpcEndpoints", "SpartaProxyVpcEndpoint").map(SpartaProxyVpcEndpoint_Parse),
   };
+}
+
+// refs: 16 - tags: output, named, interface
+export interface SpartaProxyVpcEndpoint {
+  VpcEndpointId?: string | null;
+}
+function SpartaProxyVpcEndpoint_Parse(node: xmlP.XmlNode): SpartaProxyVpcEndpoint {
+  return node.strings({
+    optional: {"VpcEndpointId":true},
+  });
 }
 
 // refs: 16 - tags: output, named, interface

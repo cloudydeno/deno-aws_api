@@ -5,7 +5,7 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import * as uuidv4 from "https://deno.land/std@0.71.0/uuid/v4.ts";
+import * as uuidv4 from "https://deno.land/std@0.75.0/uuid/v4.ts";
 import * as cmnP from "../../encoding/common.ts";
 import * as jsonP from "../../encoding/json.ts";
 function generateIdemptToken() {
@@ -86,6 +86,42 @@ export default class Imagebuilder {
     }, await resp.json());
   }
 
+  async createContainerRecipe(
+    {abortSignal, ...params}: RequestConfig & CreateContainerRecipeRequest,
+  ): Promise<CreateContainerRecipeResponse> {
+    const body: jsonP.JSONObject = {
+      containerType: params["containerType"],
+      name: params["name"],
+      description: params["description"],
+      semanticVersion: params["semanticVersion"],
+      components: params["components"]?.map(x => fromComponentConfiguration(x)),
+      dockerfileTemplateData: params["dockerfileTemplateData"],
+      dockerfileTemplateUri: params["dockerfileTemplateUri"],
+      platformOverride: params["platformOverride"],
+      imageOsVersionOverride: params["imageOsVersionOverride"],
+      parentImage: params["parentImage"],
+      tags: params["tags"],
+      workingDirectory: params["workingDirectory"],
+      targetRepository: fromTargetContainerRepository(params["targetRepository"]),
+      kmsKeyId: params["kmsKeyId"],
+      clientToken: params["clientToken"] ?? generateIdemptToken(),
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "CreateContainerRecipe",
+      method: "PUT",
+      requestUri: "/CreateContainerRecipe",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "requestId": "s",
+        "clientToken": "s",
+        "containerRecipeArn": "s",
+      },
+    }, await resp.json());
+  }
+
   async createDistributionConfiguration(
     {abortSignal, ...params}: RequestConfig & CreateDistributionConfigurationRequest,
   ): Promise<CreateDistributionConfigurationResponse> {
@@ -117,6 +153,7 @@ export default class Imagebuilder {
   ): Promise<CreateImageResponse> {
     const body: jsonP.JSONObject = {
       imageRecipeArn: params["imageRecipeArn"],
+      containerRecipeArn: params["containerRecipeArn"],
       distributionConfigurationArn: params["distributionConfigurationArn"],
       infrastructureConfigurationArn: params["infrastructureConfigurationArn"],
       imageTestsConfiguration: fromImageTestsConfiguration(params["imageTestsConfiguration"]),
@@ -147,6 +184,7 @@ export default class Imagebuilder {
       name: params["name"],
       description: params["description"],
       imageRecipeArn: params["imageRecipeArn"],
+      containerRecipeArn: params["containerRecipeArn"],
       infrastructureConfigurationArn: params["infrastructureConfigurationArn"],
       distributionConfigurationArn: params["distributionConfigurationArn"],
       imageTestsConfiguration: fromImageTestsConfiguration(params["imageTestsConfiguration"]),
@@ -252,6 +290,26 @@ export default class Imagebuilder {
       optional: {
         "requestId": "s",
         "componentBuildVersionArn": "s",
+      },
+    }, await resp.json());
+  }
+
+  async deleteContainerRecipe(
+    {abortSignal, ...params}: RequestConfig & DeleteContainerRecipeRequest,
+  ): Promise<DeleteContainerRecipeResponse> {
+    const query = new URLSearchParams;
+    query.set("containerRecipeArn", params["containerRecipeArn"]?.toString() ?? "");
+    const resp = await this.#client.performRequest({
+      abortSignal, query,
+      action: "DeleteContainerRecipe",
+      method: "DELETE",
+      requestUri: "/DeleteContainerRecipe",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "requestId": "s",
+        "containerRecipeArn": "s",
       },
     }, await resp.json());
   }
@@ -386,6 +444,46 @@ export default class Imagebuilder {
       action: "GetComponentPolicy",
       method: "GET",
       requestUri: "/GetComponentPolicy",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "requestId": "s",
+        "policy": "s",
+      },
+    }, await resp.json());
+  }
+
+  async getContainerRecipe(
+    {abortSignal, ...params}: RequestConfig & GetContainerRecipeRequest,
+  ): Promise<GetContainerRecipeResponse> {
+    const query = new URLSearchParams;
+    query.set("containerRecipeArn", params["containerRecipeArn"]?.toString() ?? "");
+    const resp = await this.#client.performRequest({
+      abortSignal, query,
+      action: "GetContainerRecipe",
+      method: "GET",
+      requestUri: "/GetContainerRecipe",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "requestId": "s",
+        "containerRecipe": toContainerRecipe,
+      },
+    }, await resp.json());
+  }
+
+  async getContainerRecipePolicy(
+    {abortSignal, ...params}: RequestConfig & GetContainerRecipePolicyRequest,
+  ): Promise<GetContainerRecipePolicyResponse> {
+    const query = new URLSearchParams;
+    query.set("containerRecipeArn", params["containerRecipeArn"]?.toString() ?? "");
+    const resp = await this.#client.performRequest({
+      abortSignal, query,
+      action: "GetContainerRecipePolicy",
+      method: "GET",
+      requestUri: "/GetContainerRecipePolicy",
     });
     return jsonP.readObj({
       required: {},
@@ -598,6 +696,7 @@ export default class Imagebuilder {
     const body: jsonP.JSONObject = {
       owner: params["owner"],
       filters: params["filters"]?.map(x => fromFilter(x)),
+      byName: params["byName"],
       maxResults: params["maxResults"],
       nextToken: params["nextToken"],
     };
@@ -611,6 +710,30 @@ export default class Imagebuilder {
       optional: {
         "requestId": "s",
         "componentVersionList": [toComponentVersion],
+        "nextToken": "s",
+      },
+    }, await resp.json());
+  }
+
+  async listContainerRecipes(
+    {abortSignal, ...params}: RequestConfig & ListContainerRecipesRequest = {},
+  ): Promise<ListContainerRecipesResponse> {
+    const body: jsonP.JSONObject = {
+      owner: params["owner"],
+      filters: params["filters"]?.map(x => fromFilter(x)),
+      maxResults: params["maxResults"],
+      nextToken: params["nextToken"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "ListContainerRecipes",
+      requestUri: "/ListContainerRecipes",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "requestId": "s",
+        "containerRecipeSummaryList": [toContainerRecipeSummary],
         "nextToken": "s",
       },
     }, await resp.json());
@@ -740,8 +863,10 @@ export default class Imagebuilder {
     const body: jsonP.JSONObject = {
       owner: params["owner"],
       filters: params["filters"]?.map(x => fromFilter(x)),
+      byName: params["byName"],
       maxResults: params["maxResults"],
       nextToken: params["nextToken"],
+      includeDeprecated: params["includeDeprecated"],
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -817,6 +942,28 @@ export default class Imagebuilder {
       optional: {
         "requestId": "s",
         "componentArn": "s",
+      },
+    }, await resp.json());
+  }
+
+  async putContainerRecipePolicy(
+    {abortSignal, ...params}: RequestConfig & PutContainerRecipePolicyRequest,
+  ): Promise<PutContainerRecipePolicyResponse> {
+    const body: jsonP.JSONObject = {
+      containerRecipeArn: params["containerRecipeArn"],
+      policy: params["policy"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "PutContainerRecipePolicy",
+      method: "PUT",
+      requestUri: "/PutContainerRecipePolicy",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "requestId": "s",
+        "containerRecipeArn": "s",
       },
     }, await resp.json());
   }
@@ -956,6 +1103,7 @@ export default class Imagebuilder {
       imagePipelineArn: params["imagePipelineArn"],
       description: params["description"],
       imageRecipeArn: params["imageRecipeArn"],
+      containerRecipeArn: params["containerRecipeArn"],
       infrastructureConfigurationArn: params["infrastructureConfigurationArn"],
       distributionConfigurationArn: params["distributionConfigurationArn"],
       imageTestsConfiguration: fromImageTestsConfiguration(params["imageTestsConfiguration"]),
@@ -1037,6 +1185,25 @@ export interface CreateComponentRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface CreateContainerRecipeRequest {
+  containerType: ContainerType;
+  name: string;
+  description?: string | null;
+  semanticVersion: string;
+  components: ComponentConfiguration[];
+  dockerfileTemplateData: string;
+  dockerfileTemplateUri?: string | null;
+  platformOverride?: Platform | null;
+  imageOsVersionOverride?: string | null;
+  parentImage: string;
+  tags?: { [key: string]: string | null | undefined } | null;
+  workingDirectory?: string | null;
+  targetRepository: TargetContainerRepository;
+  kmsKeyId?: string | null;
+  clientToken: string;
+}
+
+// refs: 1 - tags: named, input
 export interface CreateDistributionConfigurationRequest {
   name: string;
   description?: string | null;
@@ -1047,7 +1214,8 @@ export interface CreateDistributionConfigurationRequest {
 
 // refs: 1 - tags: named, input
 export interface CreateImageRequest {
-  imageRecipeArn: string;
+  imageRecipeArn?: string | null;
+  containerRecipeArn?: string | null;
   distributionConfigurationArn?: string | null;
   infrastructureConfigurationArn: string;
   imageTestsConfiguration?: ImageTestsConfiguration | null;
@@ -1060,7 +1228,8 @@ export interface CreateImageRequest {
 export interface CreateImagePipelineRequest {
   name: string;
   description?: string | null;
-  imageRecipeArn: string;
+  imageRecipeArn?: string | null;
+  containerRecipeArn?: string | null;
   infrastructureConfigurationArn: string;
   distributionConfigurationArn?: string | null;
   imageTestsConfiguration?: ImageTestsConfiguration | null;
@@ -1107,6 +1276,11 @@ export interface DeleteComponentRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface DeleteContainerRecipeRequest {
+  containerRecipeArn: string;
+}
+
+// refs: 1 - tags: named, input
 export interface DeleteDistributionConfigurationRequest {
   distributionConfigurationArn: string;
 }
@@ -1139,6 +1313,16 @@ export interface GetComponentRequest {
 // refs: 1 - tags: named, input
 export interface GetComponentPolicyRequest {
   componentArn: string;
+}
+
+// refs: 1 - tags: named, input
+export interface GetContainerRecipeRequest {
+  containerRecipeArn: string;
+}
+
+// refs: 1 - tags: named, input
+export interface GetContainerRecipePolicyRequest {
+  containerRecipeArn: string;
 }
 
 // refs: 1 - tags: named, input
@@ -1203,6 +1387,15 @@ export interface ListComponentBuildVersionsRequest {
 export interface ListComponentsRequest {
   owner?: Ownership | null;
   filters?: Filter[] | null;
+  byName?: boolean | null;
+  maxResults?: number | null;
+  nextToken?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface ListContainerRecipesRequest {
+  owner?: Ownership | null;
+  filters?: Filter[] | null;
   maxResults?: number | null;
   nextToken?: string | null;
 }
@@ -1249,8 +1442,10 @@ export interface ListImageRecipesRequest {
 export interface ListImagesRequest {
   owner?: Ownership | null;
   filters?: Filter[] | null;
+  byName?: boolean | null;
   maxResults?: number | null;
   nextToken?: string | null;
+  includeDeprecated?: boolean | null;
 }
 
 // refs: 1 - tags: named, input
@@ -1268,6 +1463,12 @@ export interface ListTagsForResourceRequest {
 // refs: 1 - tags: named, input
 export interface PutComponentPolicyRequest {
   componentArn: string;
+  policy: string;
+}
+
+// refs: 1 - tags: named, input
+export interface PutContainerRecipePolicyRequest {
+  containerRecipeArn: string;
   policy: string;
 }
 
@@ -1313,7 +1514,8 @@ export interface UpdateDistributionConfigurationRequest {
 export interface UpdateImagePipelineRequest {
   imagePipelineArn: string;
   description?: string | null;
-  imageRecipeArn: string;
+  imageRecipeArn?: string | null;
+  containerRecipeArn?: string | null;
   infrastructureConfigurationArn: string;
   distributionConfigurationArn?: string | null;
   imageTestsConfiguration?: ImageTestsConfiguration | null;
@@ -1351,6 +1553,13 @@ export interface CreateComponentResponse {
   requestId?: string | null;
   clientToken?: string | null;
   componentBuildVersionArn?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface CreateContainerRecipeResponse {
+  requestId?: string | null;
+  clientToken?: string | null;
+  containerRecipeArn?: string | null;
 }
 
 // refs: 1 - tags: named, output
@@ -1395,6 +1604,12 @@ export interface DeleteComponentResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface DeleteContainerRecipeResponse {
+  requestId?: string | null;
+  containerRecipeArn?: string | null;
+}
+
+// refs: 1 - tags: named, output
 export interface DeleteDistributionConfigurationResponse {
   requestId?: string | null;
   distributionConfigurationArn?: string | null;
@@ -1432,6 +1647,18 @@ export interface GetComponentResponse {
 
 // refs: 1 - tags: named, output
 export interface GetComponentPolicyResponse {
+  requestId?: string | null;
+  policy?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface GetContainerRecipeResponse {
+  requestId?: string | null;
+  containerRecipe?: ContainerRecipe | null;
+}
+
+// refs: 1 - tags: named, output
+export interface GetContainerRecipePolicyResponse {
   requestId?: string | null;
   policy?: string | null;
 }
@@ -1500,6 +1727,13 @@ export interface ListComponentsResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface ListContainerRecipesResponse {
+  requestId?: string | null;
+  containerRecipeSummaryList?: ContainerRecipeSummary[] | null;
+  nextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
 export interface ListDistributionConfigurationsResponse {
   requestId?: string | null;
   distributionConfigurationSummaryList?: DistributionConfigurationSummary[] | null;
@@ -1560,6 +1794,12 @@ export interface PutComponentPolicyResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface PutContainerRecipePolicyResponse {
+  requestId?: string | null;
+  containerRecipeArn?: string | null;
+}
+
+// refs: 1 - tags: named, output
 export interface PutImagePolicyResponse {
   requestId?: string | null;
   imageArn?: string | null;
@@ -1607,16 +1847,68 @@ export interface UpdateInfrastructureConfigurationResponse {
   infrastructureConfigurationArn?: string | null;
 }
 
-// refs: 14 - tags: input, named, enum, output
+// refs: 18 - tags: input, named, enum, output
 export type Platform =
 | "Windows"
 | "Linux"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 4 - tags: input, named, enum, output
+export type ContainerType =
+| "DOCKER"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 6 - tags: input, named, interface, output
+export interface ComponentConfiguration {
+  componentArn: string;
+}
+function fromComponentConfiguration(input?: ComponentConfiguration | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    componentArn: input["componentArn"],
+  }
+}
+function toComponentConfiguration(root: jsonP.JSONValue): ComponentConfiguration {
+  return jsonP.readObj({
+    required: {
+      "componentArn": "s",
+    },
+    optional: {},
+  }, root);
+}
+
+// refs: 7 - tags: input, named, interface, output
+export interface TargetContainerRepository {
+  service: ContainerRepositoryService;
+  repositoryName: string;
+}
+function fromTargetContainerRepository(input?: TargetContainerRepository | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    service: input["service"],
+    repositoryName: input["repositoryName"],
+  }
+}
+function toTargetContainerRepository(root: jsonP.JSONValue): TargetContainerRepository {
+  return jsonP.readObj({
+    required: {
+      "service": (x: jsonP.JSONValue) => cmnP.readEnum<ContainerRepositoryService>(x),
+      "repositoryName": "s",
+    },
+    optional: {},
+  }, root);
+}
+
+// refs: 7 - tags: input, named, enum, output
+export type ContainerRepositoryService =
+| "ECR"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, interface, output
 export interface Distribution {
   region: string;
   amiDistributionConfiguration?: AmiDistributionConfiguration | null;
+  containerDistributionConfiguration?: ContainerDistributionConfiguration | null;
   licenseConfigurationArns?: string[] | null;
 }
 function fromDistribution(input?: Distribution | null): jsonP.JSONValue {
@@ -1624,6 +1916,7 @@ function fromDistribution(input?: Distribution | null): jsonP.JSONValue {
   return {
     region: input["region"],
     amiDistributionConfiguration: fromAmiDistributionConfiguration(input["amiDistributionConfiguration"]),
+    containerDistributionConfiguration: fromContainerDistributionConfiguration(input["containerDistributionConfiguration"]),
     licenseConfigurationArns: input["licenseConfigurationArns"],
   }
 }
@@ -1634,6 +1927,7 @@ function toDistribution(root: jsonP.JSONValue): Distribution {
     },
     optional: {
       "amiDistributionConfiguration": toAmiDistributionConfiguration,
+      "containerDistributionConfiguration": toContainerDistributionConfiguration,
       "licenseConfigurationArns": ["s"],
     },
   }, root);
@@ -1695,6 +1989,32 @@ function toLaunchPermissionConfiguration(root: jsonP.JSONValue): LaunchPermissio
   }, root);
 }
 
+// refs: 4 - tags: input, named, interface, output
+export interface ContainerDistributionConfiguration {
+  description?: string | null;
+  containerTags?: string[] | null;
+  targetRepository: TargetContainerRepository;
+}
+function fromContainerDistributionConfiguration(input?: ContainerDistributionConfiguration | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    description: input["description"],
+    containerTags: input["containerTags"],
+    targetRepository: fromTargetContainerRepository(input["targetRepository"]),
+  }
+}
+function toContainerDistributionConfiguration(root: jsonP.JSONValue): ContainerDistributionConfiguration {
+  return jsonP.readObj({
+    required: {
+      "targetRepository": toTargetContainerRepository,
+    },
+    optional: {
+      "description": "s",
+      "containerTags": ["s"],
+    },
+  }, root);
+}
+
 // refs: 6 - tags: input, named, interface, output
 export interface ImageTestsConfiguration {
   imageTestsEnabled?: boolean | null;
@@ -1750,25 +2070,6 @@ export type PipelineStatus =
 | "DISABLED"
 | "ENABLED"
 | cmnP.UnexpectedEnumValue;
-
-// refs: 3 - tags: input, named, interface, output
-export interface ComponentConfiguration {
-  componentArn: string;
-}
-function fromComponentConfiguration(input?: ComponentConfiguration | null): jsonP.JSONValue {
-  if (!input) return input;
-  return {
-    componentArn: input["componentArn"],
-  }
-}
-function toComponentConfiguration(root: jsonP.JSONValue): ComponentConfiguration {
-  return jsonP.readObj({
-    required: {
-      "componentArn": "s",
-    },
-    optional: {},
-  }, root);
-}
 
 // refs: 3 - tags: input, named, interface, output
 export interface InstanceBlockDeviceMapping {
@@ -1897,14 +2198,14 @@ export type ComponentFormat =
 | "SHELL"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 3 - tags: input, named, enum
+// refs: 4 - tags: input, named, enum
 export type Ownership =
 | "Self"
 | "Shared"
 | "Amazon"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 8 - tags: input, named, interface
+// refs: 9 - tags: input, named, interface
 export interface Filter {
   name?: string | null;
   values?: string[] | null;
@@ -1957,6 +2258,49 @@ function toComponent(root: jsonP.JSONValue): Component {
 }
 
 // refs: 2 - tags: output, named, interface
+export interface ContainerRecipe {
+  arn?: string | null;
+  containerType?: ContainerType | null;
+  name?: string | null;
+  description?: string | null;
+  platform?: Platform | null;
+  owner?: string | null;
+  version?: string | null;
+  components?: ComponentConfiguration[] | null;
+  dockerfileTemplateData?: string | null;
+  kmsKeyId?: string | null;
+  encrypted?: boolean | null;
+  parentImage?: string | null;
+  dateCreated?: string | null;
+  tags?: { [key: string]: string | null | undefined } | null;
+  workingDirectory?: string | null;
+  targetRepository?: TargetContainerRepository | null;
+}
+function toContainerRecipe(root: jsonP.JSONValue): ContainerRecipe {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "arn": "s",
+      "containerType": (x: jsonP.JSONValue) => cmnP.readEnum<ContainerType>(x),
+      "name": "s",
+      "description": "s",
+      "platform": (x: jsonP.JSONValue) => cmnP.readEnum<Platform>(x),
+      "owner": "s",
+      "version": "s",
+      "components": [toComponentConfiguration],
+      "dockerfileTemplateData": "s",
+      "kmsKeyId": "s",
+      "encrypted": "b",
+      "parentImage": "s",
+      "dateCreated": "s",
+      "tags": x => jsonP.readMap(String, String, x),
+      "workingDirectory": "s",
+      "targetRepository": toTargetContainerRepository,
+    },
+  }, root);
+}
+
+// refs: 2 - tags: output, named, interface
 export interface DistributionConfiguration {
   arn?: string | null;
   name?: string | null;
@@ -1987,6 +2331,7 @@ function toDistributionConfiguration(root: jsonP.JSONValue): DistributionConfigu
 // refs: 1 - tags: output, named, interface
 export interface Image {
   arn?: string | null;
+  type?: ImageType | null;
   name?: string | null;
   version?: string | null;
   platform?: Platform | null;
@@ -1994,6 +2339,7 @@ export interface Image {
   osVersion?: string | null;
   state?: ImageState | null;
   imageRecipe?: ImageRecipe | null;
+  containerRecipe?: ContainerRecipe | null;
   sourcePipelineName?: string | null;
   sourcePipelineArn?: string | null;
   infrastructureConfiguration?: InfrastructureConfiguration | null;
@@ -2008,6 +2354,7 @@ function toImage(root: jsonP.JSONValue): Image {
     required: {},
     optional: {
       "arn": "s",
+      "type": (x: jsonP.JSONValue) => cmnP.readEnum<ImageType>(x),
       "name": "s",
       "version": "s",
       "platform": (x: jsonP.JSONValue) => cmnP.readEnum<Platform>(x),
@@ -2015,6 +2362,7 @@ function toImage(root: jsonP.JSONValue): Image {
       "osVersion": "s",
       "state": toImageState,
       "imageRecipe": toImageRecipe,
+      "containerRecipe": toContainerRecipe,
       "sourcePipelineName": "s",
       "sourcePipelineArn": "s",
       "infrastructureConfiguration": toInfrastructureConfiguration,
@@ -2026,6 +2374,12 @@ function toImage(root: jsonP.JSONValue): Image {
     },
   }, root);
 }
+
+// refs: 6 - tags: output, named, enum
+export type ImageType =
+| "AMI"
+| "DOCKER"
+| cmnP.UnexpectedEnumValue;
 
 // refs: 6 - tags: output, named, interface
 export interface ImageState {
@@ -2060,6 +2414,7 @@ export type ImageStatus =
 // refs: 2 - tags: output, named, interface
 export interface ImageRecipe {
   arn?: string | null;
+  type?: ImageType | null;
   name?: string | null;
   description?: string | null;
   platform?: Platform | null;
@@ -2077,6 +2432,7 @@ function toImageRecipe(root: jsonP.JSONValue): ImageRecipe {
     required: {},
     optional: {
       "arn": "s",
+      "type": (x: jsonP.JSONValue) => cmnP.readEnum<ImageType>(x),
       "name": "s",
       "description": "s",
       "platform": (x: jsonP.JSONValue) => cmnP.readEnum<Platform>(x),
@@ -2136,12 +2492,14 @@ function toInfrastructureConfiguration(root: jsonP.JSONValue): InfrastructureCon
 // refs: 3 - tags: output, named, interface
 export interface OutputResources {
   amis?: Ami[] | null;
+  containers?: Container[] | null;
 }
 function toOutputResources(root: jsonP.JSONValue): OutputResources {
   return jsonP.readObj({
     required: {},
     optional: {
       "amis": [toAmi],
+      "containers": [toContainer],
     },
   }, root);
 }
@@ -2169,6 +2527,21 @@ function toAmi(root: jsonP.JSONValue): Ami {
   }, root);
 }
 
+// refs: 3 - tags: output, named, interface
+export interface Container {
+  region?: string | null;
+  imageUris?: string[] | null;
+}
+function toContainer(root: jsonP.JSONValue): Container {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "region": "s",
+      "imageUris": ["s"],
+    },
+  }, root);
+}
+
 // refs: 2 - tags: output, named, interface
 export interface ImagePipeline {
   arn?: string | null;
@@ -2177,6 +2550,7 @@ export interface ImagePipeline {
   platform?: Platform | null;
   enhancedImageMetadataEnabled?: boolean | null;
   imageRecipeArn?: string | null;
+  containerRecipeArn?: string | null;
   infrastructureConfigurationArn?: string | null;
   distributionConfigurationArn?: string | null;
   imageTestsConfiguration?: ImageTestsConfiguration | null;
@@ -2198,6 +2572,7 @@ function toImagePipeline(root: jsonP.JSONValue): ImagePipeline {
       "platform": (x: jsonP.JSONValue) => cmnP.readEnum<Platform>(x),
       "enhancedImageMetadataEnabled": "b",
       "imageRecipeArn": "s",
+      "containerRecipeArn": "s",
       "infrastructureConfigurationArn": "s",
       "distributionConfigurationArn": "s",
       "imageTestsConfiguration": toImageTestsConfiguration,
@@ -2275,6 +2650,33 @@ function toComponentVersion(root: jsonP.JSONValue): ComponentVersion {
 }
 
 // refs: 1 - tags: output, named, interface
+export interface ContainerRecipeSummary {
+  arn?: string | null;
+  containerType?: ContainerType | null;
+  name?: string | null;
+  platform?: Platform | null;
+  owner?: string | null;
+  parentImage?: string | null;
+  dateCreated?: string | null;
+  tags?: { [key: string]: string | null | undefined } | null;
+}
+function toContainerRecipeSummary(root: jsonP.JSONValue): ContainerRecipeSummary {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "arn": "s",
+      "containerType": (x: jsonP.JSONValue) => cmnP.readEnum<ContainerType>(x),
+      "name": "s",
+      "platform": (x: jsonP.JSONValue) => cmnP.readEnum<Platform>(x),
+      "owner": "s",
+      "parentImage": "s",
+      "dateCreated": "s",
+      "tags": x => jsonP.readMap(String, String, x),
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
 export interface DistributionConfigurationSummary {
   arn?: string | null;
   name?: string | null;
@@ -2282,6 +2684,7 @@ export interface DistributionConfigurationSummary {
   dateCreated?: string | null;
   dateUpdated?: string | null;
   tags?: { [key: string]: string | null | undefined } | null;
+  regions?: string[] | null;
 }
 function toDistributionConfigurationSummary(root: jsonP.JSONValue): DistributionConfigurationSummary {
   return jsonP.readObj({
@@ -2293,6 +2696,7 @@ function toDistributionConfigurationSummary(root: jsonP.JSONValue): Distribution
       "dateCreated": "s",
       "dateUpdated": "s",
       "tags": x => jsonP.readMap(String, String, x),
+      "regions": ["s"],
     },
   }, root);
 }
@@ -2301,6 +2705,7 @@ function toDistributionConfigurationSummary(root: jsonP.JSONValue): Distribution
 export interface ImageSummary {
   arn?: string | null;
   name?: string | null;
+  type?: ImageType | null;
   version?: string | null;
   platform?: Platform | null;
   osVersion?: string | null;
@@ -2316,6 +2721,7 @@ function toImageSummary(root: jsonP.JSONValue): ImageSummary {
     optional: {
       "arn": "s",
       "name": "s",
+      "type": (x: jsonP.JSONValue) => cmnP.readEnum<ImageType>(x),
       "version": "s",
       "platform": (x: jsonP.JSONValue) => cmnP.readEnum<Platform>(x),
       "osVersion": "s",
@@ -2357,6 +2763,7 @@ function toImageRecipeSummary(root: jsonP.JSONValue): ImageRecipeSummary {
 export interface ImageVersion {
   arn?: string | null;
   name?: string | null;
+  type?: ImageType | null;
   version?: string | null;
   platform?: Platform | null;
   osVersion?: string | null;
@@ -2369,6 +2776,7 @@ function toImageVersion(root: jsonP.JSONValue): ImageVersion {
     optional: {
       "arn": "s",
       "name": "s",
+      "type": (x: jsonP.JSONValue) => cmnP.readEnum<ImageType>(x),
       "version": "s",
       "platform": (x: jsonP.JSONValue) => cmnP.readEnum<Platform>(x),
       "osVersion": "s",

@@ -237,6 +237,24 @@ export default class CodeStarconnections {
     }, await resp.json());
   }
 
+  async updateHost(
+    {abortSignal, ...params}: RequestConfig & UpdateHostInput,
+  ): Promise<UpdateHostOutput> {
+    const body: jsonP.JSONObject = {
+      HostArn: params["HostArn"],
+      ProviderEndpoint: params["ProviderEndpoint"],
+      VpcConfiguration: fromVpcConfiguration(params["VpcConfiguration"]),
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "UpdateHost",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
+  }
+
 }
 
 // refs: 1 - tags: named, input
@@ -306,6 +324,13 @@ export interface UntagResourceInput {
   TagKeys: string[];
 }
 
+// refs: 1 - tags: named, input
+export interface UpdateHostInput {
+  HostArn: string;
+  ProviderEndpoint?: string | null;
+  VpcConfiguration?: VpcConfiguration | null;
+}
+
 // refs: 1 - tags: named, output
 export interface CreateConnectionOutput {
   ConnectionArn: string;
@@ -364,6 +389,10 @@ export interface TagResourceOutput {
 export interface UntagResourceOutput {
 }
 
+// refs: 1 - tags: named, output
+export interface UpdateHostOutput {
+}
+
 // refs: 7 - tags: input, named, enum, output
 export type ProviderType =
 | "Bitbucket"
@@ -393,7 +422,7 @@ function toTag(root: jsonP.JSONValue): Tag {
   }, root);
 }
 
-// refs: 3 - tags: input, named, interface, output
+// refs: 4 - tags: input, named, interface, output
 export interface VpcConfiguration {
   VpcId: string;
   SubnetIds: string[];

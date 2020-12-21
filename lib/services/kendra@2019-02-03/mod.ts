@@ -5,7 +5,7 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import * as uuidv4 from "https://deno.land/std@0.71.0/uuid/v4.ts";
+import * as uuidv4 from "https://deno.land/std@0.75.0/uuid/v4.ts";
 import * as cmnP from "../../encoding/common.ts";
 import * as jsonP from "../../encoding/json.ts";
 function generateIdemptToken() {
@@ -134,10 +134,36 @@ export default class Kendra {
       Description: params["Description"],
       ClientToken: params["ClientToken"] ?? generateIdemptToken(),
       Tags: params["Tags"]?.map(x => fromTag(x)),
+      UserTokenConfigurations: params["UserTokenConfigurations"]?.map(x => fromUserTokenConfiguration(x)),
+      UserContextPolicy: params["UserContextPolicy"],
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateIndex",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Id": "s",
+      },
+    }, await resp.json());
+  }
+
+  async createThesaurus(
+    {abortSignal, ...params}: RequestConfig & CreateThesaurusRequest,
+  ): Promise<CreateThesaurusResponse> {
+    const body: jsonP.JSONObject = {
+      IndexId: params["IndexId"],
+      Name: params["Name"],
+      Description: params["Description"],
+      RoleArn: params["RoleArn"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+      SourceS3Path: fromS3Path(params["SourceS3Path"]),
+      ClientToken: params["ClientToken"] ?? generateIdemptToken(),
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "CreateThesaurus",
     });
     return jsonP.readObj({
       required: {},
@@ -182,6 +208,19 @@ export default class Kendra {
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteIndex",
+    });
+  }
+
+  async deleteThesaurus(
+    {abortSignal, ...params}: RequestConfig & DeleteThesaurusRequest,
+  ): Promise<void> {
+    const body: jsonP.JSONObject = {
+      Id: params["Id"],
+      IndexId: params["IndexId"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DeleteThesaurus",
     });
   }
 
@@ -270,6 +309,39 @@ export default class Kendra {
         "IndexStatistics": toIndexStatistics,
         "ErrorMessage": "s",
         "CapacityUnits": toCapacityUnitsConfiguration,
+        "UserTokenConfigurations": [toUserTokenConfiguration],
+        "UserContextPolicy": (x: jsonP.JSONValue) => cmnP.readEnum<UserContextPolicy>(x),
+      },
+    }, await resp.json());
+  }
+
+  async describeThesaurus(
+    {abortSignal, ...params}: RequestConfig & DescribeThesaurusRequest,
+  ): Promise<DescribeThesaurusResponse> {
+    const body: jsonP.JSONObject = {
+      Id: params["Id"],
+      IndexId: params["IndexId"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DescribeThesaurus",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Id": "s",
+        "IndexId": "s",
+        "Name": "s",
+        "Description": "s",
+        "Status": (x: jsonP.JSONValue) => cmnP.readEnum<ThesaurusStatus>(x),
+        "ErrorMessage": "s",
+        "CreatedAt": "d",
+        "UpdatedAt": "d",
+        "RoleArn": "s",
+        "SourceS3Path": toS3Path,
+        "FileSizeBytes": "n",
+        "TermCount": "n",
+        "SynonymRuleCount": "n",
       },
     }, await resp.json());
   }
@@ -378,6 +450,27 @@ export default class Kendra {
     }, await resp.json());
   }
 
+  async listThesauri(
+    {abortSignal, ...params}: RequestConfig & ListThesauriRequest,
+  ): Promise<ListThesauriResponse> {
+    const body: jsonP.JSONObject = {
+      IndexId: params["IndexId"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "ListThesauri",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "NextToken": "s",
+        "ThesaurusSummaryItems": [toThesaurusSummary],
+      },
+    }, await resp.json());
+  }
+
   async query(
     {abortSignal, ...params}: RequestConfig & QueryRequest,
   ): Promise<QueryResult> {
@@ -391,6 +484,8 @@ export default class Kendra {
       PageNumber: params["PageNumber"],
       PageSize: params["PageSize"],
       SortingConfiguration: fromSortingConfiguration(params["SortingConfiguration"]),
+      UserContext: fromUserContext(params["UserContext"]),
+      VisitorId: params["VisitorId"],
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -516,10 +611,29 @@ export default class Kendra {
       Description: params["Description"],
       DocumentMetadataConfigurationUpdates: params["DocumentMetadataConfigurationUpdates"]?.map(x => fromDocumentMetadataConfiguration(x)),
       CapacityUnits: fromCapacityUnitsConfiguration(params["CapacityUnits"]),
+      UserTokenConfigurations: params["UserTokenConfigurations"]?.map(x => fromUserTokenConfiguration(x)),
+      UserContextPolicy: params["UserContextPolicy"],
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateIndex",
+    });
+  }
+
+  async updateThesaurus(
+    {abortSignal, ...params}: RequestConfig & UpdateThesaurusRequest,
+  ): Promise<void> {
+    const body: jsonP.JSONObject = {
+      Id: params["Id"],
+      Name: params["Name"],
+      IndexId: params["IndexId"],
+      Description: params["Description"],
+      RoleArn: params["RoleArn"],
+      SourceS3Path: fromS3Path(params["SourceS3Path"]),
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "UpdateThesaurus",
     });
   }
 
@@ -573,6 +687,19 @@ export interface CreateIndexRequest {
   Description?: string | null;
   ClientToken?: string | null;
   Tags?: Tag[] | null;
+  UserTokenConfigurations?: UserTokenConfiguration[] | null;
+  UserContextPolicy?: UserContextPolicy | null;
+}
+
+// refs: 1 - tags: named, input
+export interface CreateThesaurusRequest {
+  IndexId: string;
+  Name: string;
+  Description?: string | null;
+  RoleArn: string;
+  Tags?: Tag[] | null;
+  SourceS3Path: S3Path;
+  ClientToken?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -593,6 +720,12 @@ export interface DeleteIndexRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface DeleteThesaurusRequest {
+  Id: string;
+  IndexId: string;
+}
+
+// refs: 1 - tags: named, input
 export interface DescribeDataSourceRequest {
   Id: string;
   IndexId: string;
@@ -607,6 +740,12 @@ export interface DescribeFaqRequest {
 // refs: 1 - tags: named, input
 export interface DescribeIndexRequest {
   Id: string;
+}
+
+// refs: 1 - tags: named, input
+export interface DescribeThesaurusRequest {
+  Id: string;
+  IndexId: string;
 }
 
 // refs: 1 - tags: named, input
@@ -645,6 +784,13 @@ export interface ListTagsForResourceRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface ListThesauriRequest {
+  IndexId: string;
+  NextToken?: string | null;
+  MaxResults?: number | null;
+}
+
+// refs: 1 - tags: named, input
 export interface QueryRequest {
   IndexId: string;
   QueryText: string;
@@ -655,6 +801,8 @@ export interface QueryRequest {
   PageNumber?: number | null;
   PageSize?: number | null;
   SortingConfiguration?: SortingConfiguration | null;
+  UserContext?: UserContext | null;
+  VisitorId?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -708,6 +856,18 @@ export interface UpdateIndexRequest {
   Description?: string | null;
   DocumentMetadataConfigurationUpdates?: DocumentMetadataConfiguration[] | null;
   CapacityUnits?: CapacityUnitsConfiguration | null;
+  UserTokenConfigurations?: UserTokenConfiguration[] | null;
+  UserContextPolicy?: UserContextPolicy | null;
+}
+
+// refs: 1 - tags: named, input
+export interface UpdateThesaurusRequest {
+  Id: string;
+  Name?: string | null;
+  IndexId: string;
+  Description?: string | null;
+  RoleArn?: string | null;
+  SourceS3Path?: S3Path | null;
 }
 
 // refs: 1 - tags: named, output
@@ -732,6 +892,11 @@ export interface CreateFaqResponse {
 
 // refs: 1 - tags: named, output
 export interface CreateIndexResponse {
+  Id?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface CreateThesaurusResponse {
   Id?: string | null;
 }
 
@@ -781,6 +946,25 @@ export interface DescribeIndexResponse {
   IndexStatistics?: IndexStatistics | null;
   ErrorMessage?: string | null;
   CapacityUnits?: CapacityUnitsConfiguration | null;
+  UserTokenConfigurations?: UserTokenConfiguration[] | null;
+  UserContextPolicy?: UserContextPolicy | null;
+}
+
+// refs: 1 - tags: named, output
+export interface DescribeThesaurusResponse {
+  Id?: string | null;
+  IndexId?: string | null;
+  Name?: string | null;
+  Description?: string | null;
+  Status?: ThesaurusStatus | null;
+  ErrorMessage?: string | null;
+  CreatedAt?: Date | number | null;
+  UpdatedAt?: Date | number | null;
+  RoleArn?: string | null;
+  SourceS3Path?: S3Path | null;
+  FileSizeBytes?: number | null;
+  TermCount?: number | null;
+  SynonymRuleCount?: number | null;
 }
 
 // refs: 1 - tags: named, output
@@ -810,6 +994,12 @@ export interface ListIndicesResponse {
 // refs: 1 - tags: named, output
 export interface ListTagsForResourceResponse {
   Tags?: Tag[] | null;
+}
+
+// refs: 1 - tags: named, output
+export interface ListThesauriResponse {
+  NextToken?: string | null;
+  ThesaurusSummaryItems?: ThesaurusSummary[] | null;
 }
 
 // refs: 1 - tags: named, output
@@ -869,7 +1059,7 @@ function fromDocument(input?: Document | null): jsonP.JSONValue {
   }
 }
 
-// refs: 6 - tags: input, named, interface, output
+// refs: 9 - tags: input, named, interface, output
 export interface S3Path {
   Bucket: string;
   Key: string;
@@ -987,6 +1177,7 @@ export type DataSourceType =
 | "SERVICENOW"
 | "CUSTOM"
 | "CONFLUENCE"
+| "GOOGLEDRIVE"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface, output
@@ -998,6 +1189,7 @@ export interface DataSourceConfiguration {
   OneDriveConfiguration?: OneDriveConfiguration | null;
   ServiceNowConfiguration?: ServiceNowConfiguration | null;
   ConfluenceConfiguration?: ConfluenceConfiguration | null;
+  GoogleDriveConfiguration?: GoogleDriveConfiguration | null;
 }
 function fromDataSourceConfiguration(input?: DataSourceConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
@@ -1009,6 +1201,7 @@ function fromDataSourceConfiguration(input?: DataSourceConfiguration | null): js
     OneDriveConfiguration: fromOneDriveConfiguration(input["OneDriveConfiguration"]),
     ServiceNowConfiguration: fromServiceNowConfiguration(input["ServiceNowConfiguration"]),
     ConfluenceConfiguration: fromConfluenceConfiguration(input["ConfluenceConfiguration"]),
+    GoogleDriveConfiguration: fromGoogleDriveConfiguration(input["GoogleDriveConfiguration"]),
   }
 }
 function toDataSourceConfiguration(root: jsonP.JSONValue): DataSourceConfiguration {
@@ -1022,6 +1215,7 @@ function toDataSourceConfiguration(root: jsonP.JSONValue): DataSourceConfigurati
       "OneDriveConfiguration": toOneDriveConfiguration,
       "ServiceNowConfiguration": toServiceNowConfiguration,
       "ConfluenceConfiguration": toConfluenceConfiguration,
+      "GoogleDriveConfiguration": toGoogleDriveConfiguration,
     },
   }, root);
 }
@@ -1111,6 +1305,7 @@ export interface SharePointConfiguration {
   VpcConfiguration?: DataSourceVpcConfiguration | null;
   FieldMappings?: DataSourceToIndexFieldMapping[] | null;
   DocumentTitleFieldName?: string | null;
+  DisableLocalGroups?: boolean | null;
 }
 function fromSharePointConfiguration(input?: SharePointConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
@@ -1125,6 +1320,7 @@ function fromSharePointConfiguration(input?: SharePointConfiguration | null): js
     VpcConfiguration: fromDataSourceVpcConfiguration(input["VpcConfiguration"]),
     FieldMappings: input["FieldMappings"]?.map(x => fromDataSourceToIndexFieldMapping(x)),
     DocumentTitleFieldName: input["DocumentTitleFieldName"],
+    DisableLocalGroups: input["DisableLocalGroups"],
   }
 }
 function toSharePointConfiguration(root: jsonP.JSONValue): SharePointConfiguration {
@@ -1142,6 +1338,7 @@ function toSharePointConfiguration(root: jsonP.JSONValue): SharePointConfigurati
       "VpcConfiguration": toDataSourceVpcConfiguration,
       "FieldMappings": [toDataSourceToIndexFieldMapping],
       "DocumentTitleFieldName": "s",
+      "DisableLocalGroups": "b",
     },
   }, root);
 }
@@ -1173,7 +1370,7 @@ function toDataSourceVpcConfiguration(root: jsonP.JSONValue): DataSourceVpcConfi
   }, root);
 }
 
-// refs: 30 - tags: input, named, interface, output
+// refs: 33 - tags: input, named, interface, output
 export interface DataSourceToIndexFieldMapping {
   DataSourceFieldName: string;
   DateFieldFormat?: string | null;
@@ -1596,6 +1793,7 @@ export interface OneDriveConfiguration {
   InclusionPatterns?: string[] | null;
   ExclusionPatterns?: string[] | null;
   FieldMappings?: DataSourceToIndexFieldMapping[] | null;
+  DisableLocalGroups?: boolean | null;
 }
 function fromOneDriveConfiguration(input?: OneDriveConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
@@ -1606,6 +1804,7 @@ function fromOneDriveConfiguration(input?: OneDriveConfiguration | null): jsonP.
     InclusionPatterns: input["InclusionPatterns"],
     ExclusionPatterns: input["ExclusionPatterns"],
     FieldMappings: input["FieldMappings"]?.map(x => fromDataSourceToIndexFieldMapping(x)),
+    DisableLocalGroups: input["DisableLocalGroups"],
   }
 }
 function toOneDriveConfiguration(root: jsonP.JSONValue): OneDriveConfiguration {
@@ -1619,6 +1818,7 @@ function toOneDriveConfiguration(root: jsonP.JSONValue): OneDriveConfiguration {
       "InclusionPatterns": ["s"],
       "ExclusionPatterns": ["s"],
       "FieldMappings": [toDataSourceToIndexFieldMapping],
+      "DisableLocalGroups": "b",
     },
   }, root);
 }
@@ -1802,6 +2002,7 @@ function toConfluenceConfiguration(root: jsonP.JSONValue): ConfluenceConfigurati
 
 // refs: 3 - tags: input, named, enum, output
 export type ConfluenceVersion =
+| "CLOUD"
 | "SERVER"
 | cmnP.UnexpectedEnumValue;
 
@@ -2048,7 +2249,45 @@ export type ConfluenceAttachmentFieldName =
 | "VERSION"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 5 - tags: input, named, interface, output
+// refs: 3 - tags: input, named, interface, output
+export interface GoogleDriveConfiguration {
+  SecretArn: string;
+  InclusionPatterns?: string[] | null;
+  ExclusionPatterns?: string[] | null;
+  FieldMappings?: DataSourceToIndexFieldMapping[] | null;
+  ExcludeMimeTypes?: string[] | null;
+  ExcludeUserAccounts?: string[] | null;
+  ExcludeSharedDrives?: string[] | null;
+}
+function fromGoogleDriveConfiguration(input?: GoogleDriveConfiguration | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    SecretArn: input["SecretArn"],
+    InclusionPatterns: input["InclusionPatterns"],
+    ExclusionPatterns: input["ExclusionPatterns"],
+    FieldMappings: input["FieldMappings"]?.map(x => fromDataSourceToIndexFieldMapping(x)),
+    ExcludeMimeTypes: input["ExcludeMimeTypes"],
+    ExcludeUserAccounts: input["ExcludeUserAccounts"],
+    ExcludeSharedDrives: input["ExcludeSharedDrives"],
+  }
+}
+function toGoogleDriveConfiguration(root: jsonP.JSONValue): GoogleDriveConfiguration {
+  return jsonP.readObj({
+    required: {
+      "SecretArn": "s",
+    },
+    optional: {
+      "InclusionPatterns": ["s"],
+      "ExclusionPatterns": ["s"],
+      "FieldMappings": [toDataSourceToIndexFieldMapping],
+      "ExcludeMimeTypes": ["s"],
+      "ExcludeUserAccounts": ["s"],
+      "ExcludeSharedDrives": ["s"],
+    },
+  }, root);
+}
+
+// refs: 6 - tags: input, named, interface, output
 export interface Tag {
   Key: string;
   Value: string;
@@ -2101,6 +2340,100 @@ function toServerSideEncryptionConfiguration(root: jsonP.JSONValue): ServerSideE
     },
   }, root);
 }
+
+// refs: 3 - tags: input, named, interface, output
+export interface UserTokenConfiguration {
+  JwtTokenTypeConfiguration?: JwtTokenTypeConfiguration | null;
+  JsonTokenTypeConfiguration?: JsonTokenTypeConfiguration | null;
+}
+function fromUserTokenConfiguration(input?: UserTokenConfiguration | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    JwtTokenTypeConfiguration: fromJwtTokenTypeConfiguration(input["JwtTokenTypeConfiguration"]),
+    JsonTokenTypeConfiguration: fromJsonTokenTypeConfiguration(input["JsonTokenTypeConfiguration"]),
+  }
+}
+function toUserTokenConfiguration(root: jsonP.JSONValue): UserTokenConfiguration {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "JwtTokenTypeConfiguration": toJwtTokenTypeConfiguration,
+      "JsonTokenTypeConfiguration": toJsonTokenTypeConfiguration,
+    },
+  }, root);
+}
+
+// refs: 3 - tags: input, named, interface, output
+export interface JwtTokenTypeConfiguration {
+  KeyLocation: KeyLocation;
+  URL?: string | null;
+  SecretManagerArn?: string | null;
+  UserNameAttributeField?: string | null;
+  GroupAttributeField?: string | null;
+  Issuer?: string | null;
+  ClaimRegex?: string | null;
+}
+function fromJwtTokenTypeConfiguration(input?: JwtTokenTypeConfiguration | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    KeyLocation: input["KeyLocation"],
+    URL: input["URL"],
+    SecretManagerArn: input["SecretManagerArn"],
+    UserNameAttributeField: input["UserNameAttributeField"],
+    GroupAttributeField: input["GroupAttributeField"],
+    Issuer: input["Issuer"],
+    ClaimRegex: input["ClaimRegex"],
+  }
+}
+function toJwtTokenTypeConfiguration(root: jsonP.JSONValue): JwtTokenTypeConfiguration {
+  return jsonP.readObj({
+    required: {
+      "KeyLocation": (x: jsonP.JSONValue) => cmnP.readEnum<KeyLocation>(x),
+    },
+    optional: {
+      "URL": "s",
+      "SecretManagerArn": "s",
+      "UserNameAttributeField": "s",
+      "GroupAttributeField": "s",
+      "Issuer": "s",
+      "ClaimRegex": "s",
+    },
+  }, root);
+}
+
+// refs: 3 - tags: input, named, enum, output
+export type KeyLocation =
+| "URL"
+| "SECRET_MANAGER"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 3 - tags: input, named, interface, output
+export interface JsonTokenTypeConfiguration {
+  UserNameAttributeField: string;
+  GroupAttributeField: string;
+}
+function fromJsonTokenTypeConfiguration(input?: JsonTokenTypeConfiguration | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    UserNameAttributeField: input["UserNameAttributeField"],
+    GroupAttributeField: input["GroupAttributeField"],
+  }
+}
+function toJsonTokenTypeConfiguration(root: jsonP.JSONValue): JsonTokenTypeConfiguration {
+  return jsonP.readObj({
+    required: {
+      "UserNameAttributeField": "s",
+      "GroupAttributeField": "s",
+    },
+    optional: {},
+  }, root);
+}
+
+// refs: 3 - tags: input, named, enum, output
+export type UserContextPolicy =
+| "ATTRIBUTE_FILTER"
+| "USER_TOKEN"
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface TimeRange {
@@ -2191,6 +2524,17 @@ export type SortOrder =
 | "DESC"
 | "ASC"
 | cmnP.UnexpectedEnumValue;
+
+// refs: 1 - tags: input, named, interface
+export interface UserContext {
+  Token?: string | null;
+}
+function fromUserContext(input?: UserContext | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    Token: input["Token"],
+  }
+}
 
 // refs: 1 - tags: input, named, interface
 export interface ClickFeedback {
@@ -2459,6 +2803,16 @@ function toTextDocumentStatistics(root: jsonP.JSONValue): TextDocumentStatistics
   }, root);
 }
 
+// refs: 2 - tags: output, named, enum
+export type ThesaurusStatus =
+| "CREATING"
+| "ACTIVE"
+| "DELETING"
+| "UPDATING"
+| "ACTIVE_BUT_UPDATE_FAILED"
+| "FAILED"
+| cmnP.UnexpectedEnumValue;
+
 // refs: 1 - tags: output, named, interface
 export interface DataSourceSyncJob {
   ExecutionId?: string | null;
@@ -2578,6 +2932,27 @@ function toIndexConfigurationSummary(root: jsonP.JSONValue): IndexConfigurationS
 }
 
 // refs: 1 - tags: output, named, interface
+export interface ThesaurusSummary {
+  Id?: string | null;
+  Name?: string | null;
+  Status?: ThesaurusStatus | null;
+  CreatedAt?: Date | number | null;
+  UpdatedAt?: Date | number | null;
+}
+function toThesaurusSummary(root: jsonP.JSONValue): ThesaurusSummary {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "Id": "s",
+      "Name": "s",
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<ThesaurusStatus>(x),
+      "CreatedAt": "d",
+      "UpdatedAt": "d",
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
 export interface QueryResultItem {
   Id?: string | null;
   Type?: QueryResultType | null;
@@ -2588,6 +2963,7 @@ export interface QueryResultItem {
   DocumentURI?: string | null;
   DocumentAttributes?: DocumentAttribute[] | null;
   ScoreAttributes?: ScoreAttributes | null;
+  FeedbackToken?: string | null;
 }
 function toQueryResultItem(root: jsonP.JSONValue): QueryResultItem {
   return jsonP.readObj({
@@ -2602,6 +2978,7 @@ function toQueryResultItem(root: jsonP.JSONValue): QueryResultItem {
       "DocumentURI": "s",
       "DocumentAttributes": [toDocumentAttribute],
       "ScoreAttributes": toScoreAttributes,
+      "FeedbackToken": "s",
     },
   }, root);
 }
@@ -2661,6 +3038,7 @@ export interface Highlight {
   BeginOffset: number;
   EndOffset: number;
   TopAnswer?: boolean | null;
+  Type?: HighlightType | null;
 }
 function toHighlight(root: jsonP.JSONValue): Highlight {
   return jsonP.readObj({
@@ -2670,9 +3048,16 @@ function toHighlight(root: jsonP.JSONValue): Highlight {
     },
     optional: {
       "TopAnswer": "b",
+      "Type": (x: jsonP.JSONValue) => cmnP.readEnum<HighlightType>(x),
     },
   }, root);
 }
+
+// refs: 3 - tags: output, named, enum
+export type HighlightType =
+| "STANDARD"
+| "THESAURUS_SYNONYM"
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface ScoreAttributes {

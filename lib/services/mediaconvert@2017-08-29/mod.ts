@@ -5,7 +5,7 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import * as uuidv4 from "https://deno.land/std@0.71.0/uuid/v4.ts";
+import * as uuidv4 from "https://deno.land/std@0.75.0/uuid/v4.ts";
 import * as cmnP from "../../encoding/common.ts";
 import * as jsonP from "../../encoding/json.ts";
 function generateIdemptToken() {
@@ -2244,6 +2244,7 @@ export type NielsenUniqueTicPerAudioTrackType =
 
 // refs: 10 - tags: input, named, interface, output
 export interface OutputGroup {
+  AutomatedEncodingSettings?: AutomatedEncodingSettings | null;
   CustomName?: string | null;
   Name?: string | null;
   OutputGroupSettings?: OutputGroupSettings | null;
@@ -2252,6 +2253,7 @@ export interface OutputGroup {
 function fromOutputGroup(input?: OutputGroup | null): jsonP.JSONValue {
   if (!input) return input;
   return {
+    automatedEncodingSettings: fromAutomatedEncodingSettings(input["AutomatedEncodingSettings"]),
     customName: input["CustomName"],
     name: input["Name"],
     outputGroupSettings: fromOutputGroupSettings(input["OutputGroupSettings"]),
@@ -2262,10 +2264,55 @@ function toOutputGroup(root: jsonP.JSONValue): OutputGroup {
   return jsonP.readObj({
     required: {},
     optional: {
+      "AutomatedEncodingSettings": toAutomatedEncodingSettings,
       "CustomName": "s",
       "Name": "s",
       "OutputGroupSettings": toOutputGroupSettings,
       "Outputs": [toOutput],
+    },
+  }, root);
+}
+
+// refs: 10 - tags: input, named, interface, output
+export interface AutomatedEncodingSettings {
+  AbrSettings?: AutomatedAbrSettings | null;
+}
+function fromAutomatedEncodingSettings(input?: AutomatedEncodingSettings | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    abrSettings: fromAutomatedAbrSettings(input["AbrSettings"]),
+  }
+}
+function toAutomatedEncodingSettings(root: jsonP.JSONValue): AutomatedEncodingSettings {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "AbrSettings": toAutomatedAbrSettings,
+    },
+  }, root);
+}
+
+// refs: 10 - tags: input, named, interface, output
+export interface AutomatedAbrSettings {
+  MaxAbrBitrate?: number | null;
+  MaxRenditions?: number | null;
+  MinAbrBitrate?: number | null;
+}
+function fromAutomatedAbrSettings(input?: AutomatedAbrSettings | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    maxAbrBitrate: input["MaxAbrBitrate"],
+    maxRenditions: input["MaxRenditions"],
+    minAbrBitrate: input["MinAbrBitrate"],
+  }
+}
+function toAutomatedAbrSettings(root: jsonP.JSONValue): AutomatedAbrSettings {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "MaxAbrBitrate": "n",
+      "MaxRenditions": "n",
+      "MinAbrBitrate": "n",
     },
   }, root);
 }
@@ -2676,6 +2723,7 @@ export interface DashIsoGroupSettings {
   FragmentLength?: number | null;
   HbbtvCompliance?: DashIsoHbbtvCompliance | null;
   MinBufferTime?: number | null;
+  MinFinalSegmentLength?: number | null;
   MpdProfile?: DashIsoMpdProfile | null;
   SegmentControl?: DashIsoSegmentControl | null;
   SegmentLength?: number | null;
@@ -2692,6 +2740,7 @@ function fromDashIsoGroupSettings(input?: DashIsoGroupSettings | null): jsonP.JS
     fragmentLength: input["FragmentLength"],
     hbbtvCompliance: input["HbbtvCompliance"],
     minBufferTime: input["MinBufferTime"],
+    minFinalSegmentLength: input["MinFinalSegmentLength"],
     mpdProfile: input["MpdProfile"],
     segmentControl: input["SegmentControl"],
     segmentLength: input["SegmentLength"],
@@ -2710,6 +2759,7 @@ function toDashIsoGroupSettings(root: jsonP.JSONValue): DashIsoGroupSettings {
       "FragmentLength": "n",
       "HbbtvCompliance": (x: jsonP.JSONValue) => cmnP.readEnum<DashIsoHbbtvCompliance>(x),
       "MinBufferTime": "n",
+      "MinFinalSegmentLength": "n",
       "MpdProfile": (x: jsonP.JSONValue) => cmnP.readEnum<DashIsoMpdProfile>(x),
       "SegmentControl": (x: jsonP.JSONValue) => cmnP.readEnum<DashIsoSegmentControl>(x),
       "SegmentLength": "n",
@@ -4634,12 +4684,14 @@ function toContainerSettings(root: jsonP.JSONValue): ContainerSettings {
 
 // refs: 16 - tags: input, named, interface, output
 export interface CmfcSettings {
+  AudioDuration?: CmfcAudioDuration | null;
   Scte35Esam?: CmfcScte35Esam | null;
   Scte35Source?: CmfcScte35Source | null;
 }
 function fromCmfcSettings(input?: CmfcSettings | null): jsonP.JSONValue {
   if (!input) return input;
   return {
+    audioDuration: input["AudioDuration"],
     scte35Esam: input["Scte35Esam"],
     scte35Source: input["Scte35Source"],
   }
@@ -4648,11 +4700,18 @@ function toCmfcSettings(root: jsonP.JSONValue): CmfcSettings {
   return jsonP.readObj({
     required: {},
     optional: {
+      "AudioDuration": (x: jsonP.JSONValue) => cmnP.readEnum<CmfcAudioDuration>(x),
       "Scte35Esam": (x: jsonP.JSONValue) => cmnP.readEnum<CmfcScte35Esam>(x),
       "Scte35Source": (x: jsonP.JSONValue) => cmnP.readEnum<CmfcScte35Source>(x),
     },
   }, root);
 }
+
+// refs: 32 - tags: input, named, enum, output
+export type CmfcAudioDuration =
+| "DEFAULT_CODEC_DURATION"
+| "MATCH_VIDEO_DURATION"
+| cmnP.UnexpectedEnumValue;
 
 // refs: 16 - tags: input, named, enum, output
 export type CmfcScte35Esam =
@@ -4709,6 +4768,7 @@ export type F4vMoovPlacement =
 // refs: 16 - tags: input, named, interface, output
 export interface M2tsSettings {
   AudioBufferModel?: M2tsAudioBufferModel | null;
+  AudioDuration?: M2tsAudioDuration | null;
   AudioFramesPerPes?: number | null;
   AudioPids?: number[] | null;
   Bitrate?: number | null;
@@ -4749,6 +4809,7 @@ function fromM2tsSettings(input?: M2tsSettings | null): jsonP.JSONValue {
   if (!input) return input;
   return {
     audioBufferModel: input["AudioBufferModel"],
+    audioDuration: input["AudioDuration"],
     audioFramesPerPes: input["AudioFramesPerPes"],
     audioPids: input["AudioPids"],
     bitrate: input["Bitrate"],
@@ -4791,6 +4852,7 @@ function toM2tsSettings(root: jsonP.JSONValue): M2tsSettings {
     required: {},
     optional: {
       "AudioBufferModel": (x: jsonP.JSONValue) => cmnP.readEnum<M2tsAudioBufferModel>(x),
+      "AudioDuration": (x: jsonP.JSONValue) => cmnP.readEnum<M2tsAudioDuration>(x),
       "AudioFramesPerPes": "n",
       "AudioPids": ["n"],
       "Bitrate": "n",
@@ -4834,6 +4896,12 @@ function toM2tsSettings(root: jsonP.JSONValue): M2tsSettings {
 export type M2tsAudioBufferModel =
 | "DVB"
 | "ATSC"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 16 - tags: input, named, enum, output
+export type M2tsAudioDuration =
+| "DEFAULT_CODEC_DURATION"
+| "MATCH_VIDEO_DURATION"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 16 - tags: input, named, enum, output
@@ -5007,6 +5075,7 @@ export type M2tsSegmentationStyle =
 
 // refs: 16 - tags: input, named, interface, output
 export interface M3u8Settings {
+  AudioDuration?: M3u8AudioDuration | null;
   AudioFramesPerPes?: number | null;
   AudioPids?: number[] | null;
   NielsenId3?: M3u8NielsenId3 | null;
@@ -5027,6 +5096,7 @@ export interface M3u8Settings {
 function fromM3u8Settings(input?: M3u8Settings | null): jsonP.JSONValue {
   if (!input) return input;
   return {
+    audioDuration: input["AudioDuration"],
     audioFramesPerPes: input["AudioFramesPerPes"],
     audioPids: input["AudioPids"],
     nielsenId3: input["NielsenId3"],
@@ -5049,6 +5119,7 @@ function toM3u8Settings(root: jsonP.JSONValue): M3u8Settings {
   return jsonP.readObj({
     required: {},
     optional: {
+      "AudioDuration": (x: jsonP.JSONValue) => cmnP.readEnum<M3u8AudioDuration>(x),
       "AudioFramesPerPes": "n",
       "AudioPids": ["n"],
       "NielsenId3": (x: jsonP.JSONValue) => cmnP.readEnum<M3u8NielsenId3>(x),
@@ -5068,6 +5139,12 @@ function toM3u8Settings(root: jsonP.JSONValue): M3u8Settings {
     },
   }, root);
 }
+
+// refs: 16 - tags: input, named, enum, output
+export type M3u8AudioDuration =
+| "DEFAULT_CODEC_DURATION"
+| "MATCH_VIDEO_DURATION"
+| cmnP.UnexpectedEnumValue;
 
 // refs: 16 - tags: input, named, enum, output
 export type M3u8NielsenId3 =
@@ -5156,6 +5233,7 @@ export type MovReference =
 
 // refs: 16 - tags: input, named, interface, output
 export interface Mp4Settings {
+  AudioDuration?: CmfcAudioDuration | null;
   CslgAtom?: Mp4CslgAtom | null;
   CttsVersion?: number | null;
   FreeSpaceBox?: Mp4FreeSpaceBox | null;
@@ -5165,6 +5243,7 @@ export interface Mp4Settings {
 function fromMp4Settings(input?: Mp4Settings | null): jsonP.JSONValue {
   if (!input) return input;
   return {
+    audioDuration: input["AudioDuration"],
     cslgAtom: input["CslgAtom"],
     cttsVersion: input["CttsVersion"],
     freeSpaceBox: input["FreeSpaceBox"],
@@ -5176,6 +5255,7 @@ function toMp4Settings(root: jsonP.JSONValue): Mp4Settings {
   return jsonP.readObj({
     required: {},
     optional: {
+      "AudioDuration": (x: jsonP.JSONValue) => cmnP.readEnum<CmfcAudioDuration>(x),
       "CslgAtom": (x: jsonP.JSONValue) => cmnP.readEnum<Mp4CslgAtom>(x),
       "CttsVersion": "n",
       "FreeSpaceBox": (x: jsonP.JSONValue) => cmnP.readEnum<Mp4FreeSpaceBox>(x),
@@ -5205,6 +5285,8 @@ export type Mp4MoovPlacement =
 
 // refs: 16 - tags: input, named, interface, output
 export interface MpdSettings {
+  AccessibilityCaptionHints?: MpdAccessibilityCaptionHints | null;
+  AudioDuration?: MpdAudioDuration | null;
   CaptionContainerType?: MpdCaptionContainerType | null;
   Scte35Esam?: MpdScte35Esam | null;
   Scte35Source?: MpdScte35Source | null;
@@ -5212,6 +5294,8 @@ export interface MpdSettings {
 function fromMpdSettings(input?: MpdSettings | null): jsonP.JSONValue {
   if (!input) return input;
   return {
+    accessibilityCaptionHints: input["AccessibilityCaptionHints"],
+    audioDuration: input["AudioDuration"],
     captionContainerType: input["CaptionContainerType"],
     scte35Esam: input["Scte35Esam"],
     scte35Source: input["Scte35Source"],
@@ -5221,12 +5305,26 @@ function toMpdSettings(root: jsonP.JSONValue): MpdSettings {
   return jsonP.readObj({
     required: {},
     optional: {
+      "AccessibilityCaptionHints": (x: jsonP.JSONValue) => cmnP.readEnum<MpdAccessibilityCaptionHints>(x),
+      "AudioDuration": (x: jsonP.JSONValue) => cmnP.readEnum<MpdAudioDuration>(x),
       "CaptionContainerType": (x: jsonP.JSONValue) => cmnP.readEnum<MpdCaptionContainerType>(x),
       "Scte35Esam": (x: jsonP.JSONValue) => cmnP.readEnum<MpdScte35Esam>(x),
       "Scte35Source": (x: jsonP.JSONValue) => cmnP.readEnum<MpdScte35Source>(x),
     },
   }, root);
 }
+
+// refs: 16 - tags: input, named, enum, output
+export type MpdAccessibilityCaptionHints =
+| "INCLUDE"
+| "EXCLUDE"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 16 - tags: input, named, enum, output
+export type MpdAudioDuration =
+| "DEFAULT_CODEC_DURATION"
+| "MATCH_VIDEO_DURATION"
+| cmnP.UnexpectedEnumValue;
 
 // refs: 16 - tags: input, named, enum, output
 export type MpdCaptionContainerType =
@@ -5844,6 +5942,7 @@ function toH264Settings(root: jsonP.JSONValue): H264Settings {
 // refs: 16 - tags: input, named, enum, output
 export type H264AdaptiveQuantization =
 | "OFF"
+| "AUTO"
 | "LOW"
 | "MEDIUM"
 | "HIGH"

@@ -69,6 +69,23 @@ export default class SSOAdmin {
     }, await resp.json());
   }
 
+  async createInstanceAccessControlAttributeConfiguration(
+    {abortSignal, ...params}: RequestConfig & CreateInstanceAccessControlAttributeConfigurationRequest,
+  ): Promise<CreateInstanceAccessControlAttributeConfigurationResponse> {
+    const body: jsonP.JSONObject = {
+      InstanceArn: params["InstanceArn"],
+      InstanceAccessControlAttributeConfiguration: fromInstanceAccessControlAttributeConfiguration(params["InstanceAccessControlAttributeConfiguration"]),
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "CreateInstanceAccessControlAttributeConfiguration",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
+  }
+
   async createPermissionSet(
     {abortSignal, ...params}: RequestConfig & CreatePermissionSetRequest,
   ): Promise<CreatePermissionSetResponse> {
@@ -132,6 +149,22 @@ export default class SSOAdmin {
     }, await resp.json());
   }
 
+  async deleteInstanceAccessControlAttributeConfiguration(
+    {abortSignal, ...params}: RequestConfig & DeleteInstanceAccessControlAttributeConfigurationRequest,
+  ): Promise<DeleteInstanceAccessControlAttributeConfigurationResponse> {
+    const body: jsonP.JSONObject = {
+      InstanceArn: params["InstanceArn"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DeleteInstanceAccessControlAttributeConfiguration",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
+  }
+
   async deletePermissionSet(
     {abortSignal, ...params}: RequestConfig & DeletePermissionSetRequest,
   ): Promise<DeletePermissionSetResponse> {
@@ -183,6 +216,26 @@ export default class SSOAdmin {
       required: {},
       optional: {
         "AccountAssignmentDeletionStatus": toAccountAssignmentOperationStatus,
+      },
+    }, await resp.json());
+  }
+
+  async describeInstanceAccessControlAttributeConfiguration(
+    {abortSignal, ...params}: RequestConfig & DescribeInstanceAccessControlAttributeConfigurationRequest,
+  ): Promise<DescribeInstanceAccessControlAttributeConfigurationResponse> {
+    const body: jsonP.JSONObject = {
+      InstanceArn: params["InstanceArn"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DescribeInstanceAccessControlAttributeConfiguration",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Status": (x: jsonP.JSONValue) => cmnP.readEnum<InstanceAccessControlAttributeConfigurationStatus>(x),
+        "StatusReason": "s",
+        "InstanceAccessControlAttributeConfiguration": toInstanceAccessControlAttributeConfiguration,
       },
     }, await resp.json());
   }
@@ -556,6 +609,23 @@ export default class SSOAdmin {
     }, await resp.json());
   }
 
+  async updateInstanceAccessControlAttributeConfiguration(
+    {abortSignal, ...params}: RequestConfig & UpdateInstanceAccessControlAttributeConfigurationRequest,
+  ): Promise<UpdateInstanceAccessControlAttributeConfigurationResponse> {
+    const body: jsonP.JSONObject = {
+      InstanceArn: params["InstanceArn"],
+      InstanceAccessControlAttributeConfiguration: fromInstanceAccessControlAttributeConfiguration(params["InstanceAccessControlAttributeConfiguration"]),
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "UpdateInstanceAccessControlAttributeConfiguration",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
+  }
+
   async updatePermissionSet(
     {abortSignal, ...params}: RequestConfig & UpdatePermissionSetRequest,
   ): Promise<UpdatePermissionSetResponse> {
@@ -596,6 +666,12 @@ export interface CreateAccountAssignmentRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface CreateInstanceAccessControlAttributeConfigurationRequest {
+  InstanceArn: string;
+  InstanceAccessControlAttributeConfiguration: InstanceAccessControlAttributeConfiguration;
+}
+
+// refs: 1 - tags: named, input
 export interface CreatePermissionSetRequest {
   Name: string;
   Description?: string | null;
@@ -622,6 +698,11 @@ export interface DeleteInlinePolicyFromPermissionSetRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface DeleteInstanceAccessControlAttributeConfigurationRequest {
+  InstanceArn: string;
+}
+
+// refs: 1 - tags: named, input
 export interface DeletePermissionSetRequest {
   InstanceArn: string;
   PermissionSetArn: string;
@@ -637,6 +718,11 @@ export interface DescribeAccountAssignmentCreationStatusRequest {
 export interface DescribeAccountAssignmentDeletionStatusRequest {
   InstanceArn: string;
   AccountAssignmentDeletionRequestId: string;
+}
+
+// refs: 1 - tags: named, input
+export interface DescribeInstanceAccessControlAttributeConfigurationRequest {
+  InstanceArn: string;
 }
 
 // refs: 1 - tags: named, input
@@ -773,6 +859,12 @@ export interface UntagResourceRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface UpdateInstanceAccessControlAttributeConfigurationRequest {
+  InstanceArn: string;
+  InstanceAccessControlAttributeConfiguration: InstanceAccessControlAttributeConfiguration;
+}
+
+// refs: 1 - tags: named, input
 export interface UpdatePermissionSetRequest {
   InstanceArn: string;
   PermissionSetArn: string;
@@ -791,6 +883,10 @@ export interface CreateAccountAssignmentResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface CreateInstanceAccessControlAttributeConfigurationResponse {
+}
+
+// refs: 1 - tags: named, output
 export interface CreatePermissionSetResponse {
   PermissionSet?: PermissionSet | null;
 }
@@ -805,6 +901,10 @@ export interface DeleteInlinePolicyFromPermissionSetResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface DeleteInstanceAccessControlAttributeConfigurationResponse {
+}
+
+// refs: 1 - tags: named, output
 export interface DeletePermissionSetResponse {
 }
 
@@ -816,6 +916,13 @@ export interface DescribeAccountAssignmentCreationStatusResponse {
 // refs: 1 - tags: named, output
 export interface DescribeAccountAssignmentDeletionStatusResponse {
   AccountAssignmentDeletionStatus?: AccountAssignmentOperationStatus | null;
+}
+
+// refs: 1 - tags: named, output
+export interface DescribeInstanceAccessControlAttributeConfigurationResponse {
+  Status?: InstanceAccessControlAttributeConfigurationStatus | null;
+  StatusReason?: string | null;
+  InstanceAccessControlAttributeConfiguration?: InstanceAccessControlAttributeConfiguration | null;
 }
 
 // refs: 1 - tags: named, output
@@ -915,6 +1022,10 @@ export interface UntagResourceResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface UpdateInstanceAccessControlAttributeConfigurationResponse {
+}
+
+// refs: 1 - tags: named, output
 export interface UpdatePermissionSetResponse {
 }
 
@@ -928,6 +1039,66 @@ export type PrincipalType =
 | "USER"
 | "GROUP"
 | cmnP.UnexpectedEnumValue;
+
+// refs: 3 - tags: input, named, interface, output
+export interface InstanceAccessControlAttributeConfiguration {
+  AccessControlAttributes: AccessControlAttribute[];
+}
+function fromInstanceAccessControlAttributeConfiguration(input?: InstanceAccessControlAttributeConfiguration | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    AccessControlAttributes: input["AccessControlAttributes"]?.map(x => fromAccessControlAttribute(x)),
+  }
+}
+function toInstanceAccessControlAttributeConfiguration(root: jsonP.JSONValue): InstanceAccessControlAttributeConfiguration {
+  return jsonP.readObj({
+    required: {
+      "AccessControlAttributes": [toAccessControlAttribute],
+    },
+    optional: {},
+  }, root);
+}
+
+// refs: 3 - tags: input, named, interface, output
+export interface AccessControlAttribute {
+  Key: string;
+  Value: AccessControlAttributeValue;
+}
+function fromAccessControlAttribute(input?: AccessControlAttribute | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    Key: input["Key"],
+    Value: fromAccessControlAttributeValue(input["Value"]),
+  }
+}
+function toAccessControlAttribute(root: jsonP.JSONValue): AccessControlAttribute {
+  return jsonP.readObj({
+    required: {
+      "Key": "s",
+      "Value": toAccessControlAttributeValue,
+    },
+    optional: {},
+  }, root);
+}
+
+// refs: 3 - tags: input, named, interface, output
+export interface AccessControlAttributeValue {
+  Source: string[];
+}
+function fromAccessControlAttributeValue(input?: AccessControlAttributeValue | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    Source: input["Source"],
+  }
+}
+function toAccessControlAttributeValue(root: jsonP.JSONValue): AccessControlAttributeValue {
+  return jsonP.readObj({
+    required: {
+      "Source": ["s"],
+    },
+    optional: {},
+  }, root);
+}
 
 // refs: 3 - tags: input, named, interface, output
 export interface Tag {
@@ -1032,6 +1203,13 @@ function toPermissionSet(root: jsonP.JSONValue): PermissionSet {
     },
   }, root);
 }
+
+// refs: 1 - tags: output, named, enum
+export type InstanceAccessControlAttributeConfigurationStatus =
+| "ENABLED"
+| "CREATION_IN_PROGRESS"
+| "CREATION_FAILED"
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface PermissionSetProvisioningStatus {

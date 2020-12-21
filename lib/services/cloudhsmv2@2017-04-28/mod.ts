@@ -52,9 +52,10 @@ export default class CloudHSMV2 {
     {abortSignal, ...params}: RequestConfig & CreateClusterRequest,
   ): Promise<CreateClusterResponse> {
     const body: jsonP.JSONObject = {
-      SubnetIds: params["SubnetIds"],
+      BackupRetentionPolicy: fromBackupRetentionPolicy(params["BackupRetentionPolicy"]),
       HsmType: params["HsmType"],
       SourceBackupId: params["SourceBackupId"],
+      SubnetIds: params["SubnetIds"],
       TagList: params["TagList"]?.map(x => fromTag(x)),
     };
     const resp = await this.#client.performRequest({
@@ -232,6 +233,44 @@ export default class CloudHSMV2 {
     }, await resp.json());
   }
 
+  async modifyBackupAttributes(
+    {abortSignal, ...params}: RequestConfig & ModifyBackupAttributesRequest,
+  ): Promise<ModifyBackupAttributesResponse> {
+    const body: jsonP.JSONObject = {
+      BackupId: params["BackupId"],
+      NeverExpires: params["NeverExpires"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "ModifyBackupAttributes",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Backup": toBackup,
+      },
+    }, await resp.json());
+  }
+
+  async modifyCluster(
+    {abortSignal, ...params}: RequestConfig & ModifyClusterRequest,
+  ): Promise<ModifyClusterResponse> {
+    const body: jsonP.JSONObject = {
+      BackupRetentionPolicy: fromBackupRetentionPolicy(params["BackupRetentionPolicy"]),
+      ClusterId: params["ClusterId"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "ModifyCluster",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Cluster": toCluster,
+      },
+    }, await resp.json());
+  }
+
   async restoreBackup(
     {abortSignal, ...params}: RequestConfig & RestoreBackupRequest,
   ): Promise<RestoreBackupResponse> {
@@ -295,9 +334,10 @@ export interface CopyBackupToRegionRequest {
 
 // refs: 1 - tags: named, input
 export interface CreateClusterRequest {
-  SubnetIds: string[];
+  BackupRetentionPolicy?: BackupRetentionPolicy | null;
   HsmType: string;
   SourceBackupId?: string | null;
+  SubnetIds: string[];
   TagList?: Tag[] | null;
 }
 
@@ -353,6 +393,18 @@ export interface ListTagsRequest {
   ResourceId: string;
   NextToken?: string | null;
   MaxResults?: number | null;
+}
+
+// refs: 1 - tags: named, input
+export interface ModifyBackupAttributesRequest {
+  BackupId: string;
+  NeverExpires: boolean;
+}
+
+// refs: 1 - tags: named, input
+export interface ModifyClusterRequest {
+  BackupRetentionPolicy: BackupRetentionPolicy;
+  ClusterId: string;
 }
 
 // refs: 1 - tags: named, input
@@ -427,6 +479,16 @@ export interface ListTagsResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface ModifyBackupAttributesResponse {
+  Backup?: Backup | null;
+}
+
+// refs: 1 - tags: named, output
+export interface ModifyClusterResponse {
+  Cluster?: Cluster | null;
+}
+
+// refs: 1 - tags: named, output
 export interface RestoreBackupResponse {
   Backup?: Backup | null;
 }
@@ -439,7 +501,7 @@ export interface TagResourceResponse {
 export interface UntagResourceResponse {
 }
 
-// refs: 10 - tags: input, named, interface, output
+// refs: 12 - tags: input, named, interface, output
 export interface Tag {
   Key: string;
   Value: string;
@@ -461,6 +523,33 @@ function toTag(root: jsonP.JSONValue): Tag {
   }, root);
 }
 
+// refs: 6 - tags: input, named, interface, output
+export interface BackupRetentionPolicy {
+  Type?: BackupRetentionType | null;
+  Value?: string | null;
+}
+function fromBackupRetentionPolicy(input?: BackupRetentionPolicy | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    Type: input["Type"],
+    Value: input["Value"],
+  }
+}
+function toBackupRetentionPolicy(root: jsonP.JSONValue): BackupRetentionPolicy {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "Type": (x: jsonP.JSONValue) => cmnP.readEnum<BackupRetentionType>(x),
+      "Value": "s",
+    },
+  }, root);
+}
+
+// refs: 6 - tags: input, named, enum, output
+export type BackupRetentionType =
+| "DAYS"
+| cmnP.UnexpectedEnumValue;
+
 // refs: 1 - tags: output, named, interface
 export interface DestinationBackup {
   CreateTimestamp?: Date | number | null;
@@ -480,9 +569,10 @@ function toDestinationBackup(root: jsonP.JSONValue): DestinationBackup {
   }, root);
 }
 
-// refs: 3 - tags: output, named, interface
+// refs: 4 - tags: output, named, interface
 export interface Cluster {
   BackupPolicy?: BackupPolicy | null;
+  BackupRetentionPolicy?: BackupRetentionPolicy | null;
   ClusterId?: string | null;
   CreateTimestamp?: Date | number | null;
   Hsms?: Hsm[] | null;
@@ -502,6 +592,7 @@ function toCluster(root: jsonP.JSONValue): Cluster {
     required: {},
     optional: {
       "BackupPolicy": (x: jsonP.JSONValue) => cmnP.readEnum<BackupPolicy>(x),
+      "BackupRetentionPolicy": toBackupRetentionPolicy,
       "ClusterId": "s",
       "CreateTimestamp": "d",
       "Hsms": [toHsm],
@@ -519,12 +610,12 @@ function toCluster(root: jsonP.JSONValue): Cluster {
   }, root);
 }
 
-// refs: 3 - tags: output, named, enum
+// refs: 4 - tags: output, named, enum
 export type BackupPolicy =
 | "DEFAULT"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 4 - tags: output, named, interface
+// refs: 5 - tags: output, named, interface
 export interface Hsm {
   AvailabilityZone?: string | null;
   ClusterId?: string | null;
@@ -552,7 +643,7 @@ function toHsm(root: jsonP.JSONValue): Hsm {
   }, root);
 }
 
-// refs: 4 - tags: output, named, enum
+// refs: 5 - tags: output, named, enum
 export type HsmState =
 | "CREATE_IN_PROGRESS"
 | "ACTIVE"
@@ -561,7 +652,7 @@ export type HsmState =
 | "DELETED"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 4 - tags: output, named, enum
+// refs: 5 - tags: output, named, enum
 export type ClusterState =
 | "CREATE_IN_PROGRESS"
 | "UNINITIALIZED"
@@ -574,7 +665,7 @@ export type ClusterState =
 | "DEGRADED"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 3 - tags: output, named, interface
+// refs: 4 - tags: output, named, interface
 export interface Certificates {
   ClusterCsr?: string | null;
   HsmCertificate?: string | null;
@@ -595,13 +686,14 @@ function toCertificates(root: jsonP.JSONValue): Certificates {
   }, root);
 }
 
-// refs: 3 - tags: output, named, interface
+// refs: 4 - tags: output, named, interface
 export interface Backup {
   BackupId: string;
   BackupState?: BackupState | null;
   ClusterId?: string | null;
   CreateTimestamp?: Date | number | null;
   CopyTimestamp?: Date | number | null;
+  NeverExpires?: boolean | null;
   SourceRegion?: string | null;
   SourceBackup?: string | null;
   SourceCluster?: string | null;
@@ -618,6 +710,7 @@ function toBackup(root: jsonP.JSONValue): Backup {
       "ClusterId": "s",
       "CreateTimestamp": "d",
       "CopyTimestamp": "d",
+      "NeverExpires": "b",
       "SourceRegion": "s",
       "SourceBackup": "s",
       "SourceCluster": "s",
@@ -627,7 +720,7 @@ function toBackup(root: jsonP.JSONValue): Backup {
   }, root);
 }
 
-// refs: 3 - tags: output, named, enum
+// refs: 4 - tags: output, named, enum
 export type BackupState =
 | "CREATE_IN_PROGRESS"
 | "READY"

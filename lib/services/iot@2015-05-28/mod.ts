@@ -5,7 +5,7 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import * as uuidv4 from "https://deno.land/std@0.71.0/uuid/v4.ts";
+import * as uuidv4 from "https://deno.land/std@0.75.0/uuid/v4.ts";
 import * as cmnP from "../../encoding/common.ts";
 import * as jsonP from "../../encoding/json.ts";
 function generateIdemptToken() {
@@ -214,6 +214,22 @@ export default class Iot {
     });
   }
 
+  async cancelDetectMitigationActionsTask(
+    {abortSignal, ...params}: RequestConfig & CancelDetectMitigationActionsTaskRequest,
+  ): Promise<CancelDetectMitigationActionsTaskResponse> {
+
+    const resp = await this.#client.performRequest({
+      abortSignal,
+      action: "CancelDetectMitigationActionsTask",
+      method: "PUT",
+      requestUri: cmnP.encodePath`/detect/mitigationactions/tasks/${params["taskId"]}/cancel`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
+  }
+
   async cancelJob(
     {abortSignal, ...params}: RequestConfig & CancelJobRequest,
   ): Promise<CancelJobResponse> {
@@ -376,6 +392,29 @@ export default class Iot {
         "certificateArn": "s",
         "certificateId": "s",
         "certificatePem": "s",
+      },
+    }, await resp.json());
+  }
+
+  async createCustomMetric(
+    {abortSignal, ...params}: RequestConfig & CreateCustomMetricRequest,
+  ): Promise<CreateCustomMetricResponse> {
+    const body: jsonP.JSONObject = {
+      displayName: params["displayName"],
+      metricType: params["metricType"],
+      tags: params["tags"]?.map(x => fromTag(x)),
+      clientRequestToken: params["clientRequestToken"] ?? generateIdemptToken(),
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "CreateCustomMetric",
+      requestUri: cmnP.encodePath`/custom-metric/${params["metricName"]}`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "metricName": "s",
+        "metricArn": "s",
       },
     }, await resp.json());
   }
@@ -983,6 +1022,22 @@ export default class Iot {
     });
   }
 
+  async deleteCustomMetric(
+    {abortSignal, ...params}: RequestConfig & DeleteCustomMetricRequest,
+  ): Promise<DeleteCustomMetricResponse> {
+
+    const resp = await this.#client.performRequest({
+      abortSignal,
+      action: "DeleteCustomMetric",
+      method: "DELETE",
+      requestUri: cmnP.encodePath`/custom-metric/${params["metricName"]}`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
+  }
+
   async deleteDimension(
     {abortSignal, ...params}: RequestConfig & DeleteDimensionRequest,
   ): Promise<DeleteDimensionResponse> {
@@ -1527,6 +1582,29 @@ export default class Iot {
     }, await resp.json());
   }
 
+  async describeCustomMetric(
+    {abortSignal, ...params}: RequestConfig & DescribeCustomMetricRequest,
+  ): Promise<DescribeCustomMetricResponse> {
+
+    const resp = await this.#client.performRequest({
+      abortSignal,
+      action: "DescribeCustomMetric",
+      method: "GET",
+      requestUri: cmnP.encodePath`/custom-metric/${params["metricName"]}`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "metricName": "s",
+        "metricArn": "s",
+        "metricType": (x: jsonP.JSONValue) => cmnP.readEnum<CustomMetricType>(x),
+        "displayName": "s",
+        "creationDate": "d",
+        "lastModifiedDate": "d",
+      },
+    }, await resp.json());
+  }
+
   async describeDefaultAuthorizer(
     {abortSignal, ...params}: RequestConfig & DescribeDefaultAuthorizerRequest = {},
   ): Promise<DescribeDefaultAuthorizerResponse> {
@@ -1541,6 +1619,24 @@ export default class Iot {
       required: {},
       optional: {
         "authorizerDescription": toAuthorizerDescription,
+      },
+    }, await resp.json());
+  }
+
+  async describeDetectMitigationActionsTask(
+    {abortSignal, ...params}: RequestConfig & DescribeDetectMitigationActionsTaskRequest,
+  ): Promise<DescribeDetectMitigationActionsTaskResponse> {
+
+    const resp = await this.#client.performRequest({
+      abortSignal,
+      action: "DescribeDetectMitigationActionsTask",
+      method: "GET",
+      requestUri: cmnP.encodePath`/detect/mitigationactions/tasks/${params["taskId"]}`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "taskSummary": toDetectMitigationActionsTaskSummary,
       },
     }, await resp.json());
   }
@@ -2035,6 +2131,28 @@ export default class Iot {
     });
   }
 
+  async getBehaviorModelTrainingSummaries(
+    {abortSignal, ...params}: RequestConfig & GetBehaviorModelTrainingSummariesRequest = {},
+  ): Promise<GetBehaviorModelTrainingSummariesResponse> {
+    const query = new URLSearchParams;
+    if (params["securityProfileName"] != null) query.set("securityProfileName", params["securityProfileName"]?.toString() ?? "");
+    if (params["maxResults"] != null) query.set("maxResults", params["maxResults"]?.toString() ?? "");
+    if (params["nextToken"] != null) query.set("nextToken", params["nextToken"]?.toString() ?? "");
+    const resp = await this.#client.performRequest({
+      abortSignal, query,
+      action: "GetBehaviorModelTrainingSummaries",
+      method: "GET",
+      requestUri: "/behavior-model-training/summaries",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "summaries": [toBehaviorModelTrainingSummary],
+        "nextToken": "s",
+      },
+    }, await resp.json());
+  }
+
   async getCardinality(
     {abortSignal, ...params}: RequestConfig & GetCardinalityRequest,
   ): Promise<GetCardinalityResponse> {
@@ -2328,6 +2446,8 @@ export default class Iot {
     const query = new URLSearchParams;
     if (params["thingName"] != null) query.set("thingName", params["thingName"]?.toString() ?? "");
     if (params["securityProfileName"] != null) query.set("securityProfileName", params["securityProfileName"]?.toString() ?? "");
+    if (params["behaviorCriteriaType"] != null) query.set("behaviorCriteriaType", params["behaviorCriteriaType"]?.toString() ?? "");
+    if (params["listSuppressedAlerts"] != null) query.set("listSuppressedAlerts", params["listSuppressedAlerts"]?.toString() ?? "");
     if (params["nextToken"] != null) query.set("nextToken", params["nextToken"]?.toString() ?? "");
     if (params["maxResults"] != null) query.set("maxResults", params["maxResults"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
@@ -2599,6 +2719,76 @@ export default class Iot {
       optional: {
         "certificates": [toCertificate],
         "nextMarker": "s",
+      },
+    }, await resp.json());
+  }
+
+  async listCustomMetrics(
+    {abortSignal, ...params}: RequestConfig & ListCustomMetricsRequest = {},
+  ): Promise<ListCustomMetricsResponse> {
+    const query = new URLSearchParams;
+    if (params["nextToken"] != null) query.set("nextToken", params["nextToken"]?.toString() ?? "");
+    if (params["maxResults"] != null) query.set("maxResults", params["maxResults"]?.toString() ?? "");
+    const resp = await this.#client.performRequest({
+      abortSignal, query,
+      action: "ListCustomMetrics",
+      method: "GET",
+      requestUri: "/custom-metrics",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "metricNames": ["s"],
+        "nextToken": "s",
+      },
+    }, await resp.json());
+  }
+
+  async listDetectMitigationActionsExecutions(
+    {abortSignal, ...params}: RequestConfig & ListDetectMitigationActionsExecutionsRequest = {},
+  ): Promise<ListDetectMitigationActionsExecutionsResponse> {
+    const query = new URLSearchParams;
+    if (params["taskId"] != null) query.set("taskId", params["taskId"]?.toString() ?? "");
+    if (params["violationId"] != null) query.set("violationId", params["violationId"]?.toString() ?? "");
+    if (params["thingName"] != null) query.set("thingName", params["thingName"]?.toString() ?? "");
+    if (params["startTime"] != null) query.set("startTime", cmnP.serializeDate_iso8601(params["startTime"]) ?? "");
+    if (params["endTime"] != null) query.set("endTime", cmnP.serializeDate_iso8601(params["endTime"]) ?? "");
+    if (params["maxResults"] != null) query.set("maxResults", params["maxResults"]?.toString() ?? "");
+    if (params["nextToken"] != null) query.set("nextToken", params["nextToken"]?.toString() ?? "");
+    const resp = await this.#client.performRequest({
+      abortSignal, query,
+      action: "ListDetectMitigationActionsExecutions",
+      method: "GET",
+      requestUri: "/detect/mitigationactions/executions",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "actionsExecutions": [toDetectMitigationActionExecution],
+        "nextToken": "s",
+      },
+    }, await resp.json());
+  }
+
+  async listDetectMitigationActionsTasks(
+    {abortSignal, ...params}: RequestConfig & ListDetectMitigationActionsTasksRequest,
+  ): Promise<ListDetectMitigationActionsTasksResponse> {
+    const query = new URLSearchParams;
+    if (params["maxResults"] != null) query.set("maxResults", params["maxResults"]?.toString() ?? "");
+    if (params["nextToken"] != null) query.set("nextToken", params["nextToken"]?.toString() ?? "");
+    query.set("startTime", cmnP.serializeDate_iso8601(params["startTime"]) ?? "");
+    query.set("endTime", cmnP.serializeDate_iso8601(params["endTime"]) ?? "");
+    const resp = await this.#client.performRequest({
+      abortSignal, query,
+      action: "ListDetectMitigationActionsTasks",
+      method: "GET",
+      requestUri: "/detect/mitigationactions/tasks",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "tasks": [toDetectMitigationActionsTaskSummary],
+        "nextToken": "s",
       },
     }, await resp.json());
   }
@@ -3007,6 +3197,7 @@ export default class Iot {
     if (params["nextToken"] != null) query.set("nextToken", params["nextToken"]?.toString() ?? "");
     if (params["maxResults"] != null) query.set("maxResults", params["maxResults"]?.toString() ?? "");
     if (params["dimensionName"] != null) query.set("dimensionName", params["dimensionName"]?.toString() ?? "");
+    if (params["metricName"] != null) query.set("metricName", params["metricName"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
       abortSignal, query,
       action: "ListSecurityProfiles",
@@ -3177,9 +3368,11 @@ export default class Iot {
   async listThingPrincipals(
     {abortSignal, ...params}: RequestConfig & ListThingPrincipalsRequest,
   ): Promise<ListThingPrincipalsResponse> {
-
+    const query = new URLSearchParams;
+    if (params["nextToken"] != null) query.set("nextToken", params["nextToken"]?.toString() ?? "");
+    if (params["maxResults"] != null) query.set("maxResults", params["maxResults"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
-      abortSignal,
+      abortSignal, query,
       action: "ListThingPrincipals",
       method: "GET",
       requestUri: cmnP.encodePath`/things/${params["thingName"]}/principals`,
@@ -3188,6 +3381,7 @@ export default class Iot {
       required: {},
       optional: {
         "principals": ["s"],
+        "nextToken": "s",
       },
     }, await resp.json());
   }
@@ -3400,6 +3594,8 @@ export default class Iot {
     query.set("endTime", cmnP.serializeDate_iso8601(params["endTime"]) ?? "");
     if (params["thingName"] != null) query.set("thingName", params["thingName"]?.toString() ?? "");
     if (params["securityProfileName"] != null) query.set("securityProfileName", params["securityProfileName"]?.toString() ?? "");
+    if (params["behaviorCriteriaType"] != null) query.set("behaviorCriteriaType", params["behaviorCriteriaType"]?.toString() ?? "");
+    if (params["listSuppressedAlerts"] != null) query.set("listSuppressedAlerts", params["listSuppressedAlerts"]?.toString() ?? "");
     if (params["nextToken"] != null) query.set("nextToken", params["nextToken"]?.toString() ?? "");
     if (params["maxResults"] != null) query.set("maxResults", params["maxResults"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
@@ -3707,6 +3903,31 @@ export default class Iot {
     }, await resp.json());
   }
 
+  async startDetectMitigationActionsTask(
+    {abortSignal, ...params}: RequestConfig & StartDetectMitigationActionsTaskRequest,
+  ): Promise<StartDetectMitigationActionsTaskResponse> {
+    const body: jsonP.JSONObject = {
+      target: fromDetectMitigationActionsTaskTarget(params["target"]),
+      actions: params["actions"],
+      violationEventOccurrenceRange: fromViolationEventOccurrenceRange(params["violationEventOccurrenceRange"]),
+      includeOnlyActiveViolations: params["includeOnlyActiveViolations"],
+      includeSuppressedAlerts: params["includeSuppressedAlerts"],
+      clientRequestToken: params["clientRequestToken"] ?? generateIdemptToken(),
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "StartDetectMitigationActionsTask",
+      method: "PUT",
+      requestUri: cmnP.encodePath`/detect/mitigationactions/tasks/${params["taskId"]}`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "taskId": "s",
+      },
+    }, await resp.json());
+  }
+
   async startOnDemandAuditTask(
     {abortSignal, ...params}: RequestConfig & StartOnDemandAuditTaskRequest,
   ): Promise<StartOnDemandAuditTaskResponse> {
@@ -3990,6 +4211,31 @@ export default class Iot {
       method: "PUT",
       requestUri: cmnP.encodePath`/certificates/${params["certificateId"]}`,
     });
+  }
+
+  async updateCustomMetric(
+    {abortSignal, ...params}: RequestConfig & UpdateCustomMetricRequest,
+  ): Promise<UpdateCustomMetricResponse> {
+    const body: jsonP.JSONObject = {
+      displayName: params["displayName"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "UpdateCustomMetric",
+      method: "PATCH",
+      requestUri: cmnP.encodePath`/custom-metric/${params["metricName"]}`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "metricName": "s",
+        "metricArn": "s",
+        "metricType": (x: jsonP.JSONValue) => cmnP.readEnum<CustomMetricType>(x),
+        "displayName": "s",
+        "creationDate": "d",
+        "lastModifiedDate": "d",
+      },
+    }, await resp.json());
   }
 
   async updateDimension(
@@ -4448,6 +4694,11 @@ export interface CancelCertificateTransferRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface CancelDetectMitigationActionsTaskRequest {
+  taskId: string;
+}
+
+// refs: 1 - tags: named, input
 export interface CancelJobRequest {
   jobId: string;
   reasonCode?: string | null;
@@ -4505,6 +4756,15 @@ export interface CreateBillingGroupRequest {
 export interface CreateCertificateFromCsrRequest {
   certificateSigningRequest: string;
   setAsActive?: boolean | null;
+}
+
+// refs: 1 - tags: named, input
+export interface CreateCustomMetricRequest {
+  metricName: string;
+  displayName?: string | null;
+  metricType: CustomMetricType;
+  tags?: Tag[] | null;
+  clientRequestToken: string;
 }
 
 // refs: 1 - tags: named, input
@@ -4727,6 +4987,11 @@ export interface DeleteCertificateRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface DeleteCustomMetricRequest {
+  metricName: string;
+}
+
+// refs: 1 - tags: named, input
 export interface DeleteDimensionRequest {
   name: string;
 }
@@ -4902,7 +5167,17 @@ export interface DescribeCertificateRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface DescribeCustomMetricRequest {
+  metricName: string;
+}
+
+// refs: 1 - tags: named, input
 export interface DescribeDefaultAuthorizerRequest {
+}
+
+// refs: 1 - tags: named, input
+export interface DescribeDetectMitigationActionsTaskRequest {
+  taskId: string;
 }
 
 // refs: 1 - tags: named, input
@@ -5032,6 +5307,13 @@ export interface EnableTopicRuleRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface GetBehaviorModelTrainingSummariesRequest {
+  securityProfileName?: string | null;
+  maxResults?: number | null;
+  nextToken?: string | null;
+}
+
+// refs: 1 - tags: named, input
 export interface GetCardinalityRequest {
   indexName?: string | null;
   queryString: string;
@@ -5114,6 +5396,8 @@ export interface GetV2LoggingOptionsRequest {
 export interface ListActiveViolationsRequest {
   thingName?: string | null;
   securityProfileName?: string | null;
+  behaviorCriteriaType?: BehaviorCriteriaType | null;
+  listSuppressedAlerts?: boolean | null;
   nextToken?: string | null;
   maxResults?: number | null;
 }
@@ -5212,6 +5496,31 @@ export interface ListCertificatesByCARequest {
   pageSize?: number | null;
   marker?: string | null;
   ascendingOrder?: boolean | null;
+}
+
+// refs: 1 - tags: named, input
+export interface ListCustomMetricsRequest {
+  nextToken?: string | null;
+  maxResults?: number | null;
+}
+
+// refs: 1 - tags: named, input
+export interface ListDetectMitigationActionsExecutionsRequest {
+  taskId?: string | null;
+  violationId?: string | null;
+  thingName?: string | null;
+  startTime?: Date | number | null;
+  endTime?: Date | number | null;
+  maxResults?: number | null;
+  nextToken?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface ListDetectMitigationActionsTasksRequest {
+  maxResults?: number | null;
+  nextToken?: string | null;
+  startTime: Date | number;
+  endTime: Date | number;
 }
 
 // refs: 1 - tags: named, input
@@ -5348,6 +5657,7 @@ export interface ListSecurityProfilesRequest {
   nextToken?: string | null;
   maxResults?: number | null;
   dimensionName?: string | null;
+  metricName?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -5403,6 +5713,8 @@ export interface ListThingGroupsForThingRequest {
 
 // refs: 1 - tags: named, input
 export interface ListThingPrincipalsRequest {
+  nextToken?: string | null;
+  maxResults?: number | null;
   thingName: string;
 }
 
@@ -5479,6 +5791,8 @@ export interface ListViolationEventsRequest {
   endTime: Date | number;
   thingName?: string | null;
   securityProfileName?: string | null;
+  behaviorCriteriaType?: BehaviorCriteriaType | null;
+  listSuppressedAlerts?: boolean | null;
   nextToken?: string | null;
   maxResults?: number | null;
 }
@@ -5588,6 +5902,17 @@ export interface StartAuditMitigationActionsTaskRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface StartDetectMitigationActionsTaskRequest {
+  taskId: string;
+  target: DetectMitigationActionsTaskTarget;
+  actions: string[];
+  violationEventOccurrenceRange?: ViolationEventOccurrenceRange | null;
+  includeOnlyActiveViolations?: boolean | null;
+  includeSuppressedAlerts?: boolean | null;
+  clientRequestToken: string;
+}
+
+// refs: 1 - tags: named, input
 export interface StartOnDemandAuditTaskRequest {
   targetCheckNames: string[];
 }
@@ -5689,6 +6014,12 @@ export interface UpdateCACertificateRequest {
 export interface UpdateCertificateRequest {
   certificateId: string;
   newStatus: CertificateStatus;
+}
+
+// refs: 1 - tags: named, input
+export interface UpdateCustomMetricRequest {
+  metricName: string;
+  displayName: string;
 }
 
 // refs: 1 - tags: named, input
@@ -5860,6 +6191,10 @@ export interface CancelAuditTaskResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface CancelDetectMitigationActionsTaskResponse {
+}
+
+// refs: 1 - tags: named, output
 export interface CancelJobResponse {
   jobArn?: string | null;
   jobId?: string | null;
@@ -5896,6 +6231,12 @@ export interface CreateCertificateFromCsrResponse {
   certificateArn?: string | null;
   certificateId?: string | null;
   certificatePem?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface CreateCustomMetricResponse {
+  metricName?: string | null;
+  metricArn?: string | null;
 }
 
 // refs: 1 - tags: named, output
@@ -6061,6 +6402,10 @@ export interface DeleteCACertificateResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface DeleteCustomMetricResponse {
+}
+
+// refs: 1 - tags: named, output
 export interface DeleteDimensionResponse {
 }
 
@@ -6197,8 +6542,23 @@ export interface DescribeCertificateResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface DescribeCustomMetricResponse {
+  metricName?: string | null;
+  metricArn?: string | null;
+  metricType?: CustomMetricType | null;
+  displayName?: string | null;
+  creationDate?: Date | number | null;
+  lastModifiedDate?: Date | number | null;
+}
+
+// refs: 1 - tags: named, output
 export interface DescribeDefaultAuthorizerResponse {
   authorizerDescription?: AuthorizerDescription | null;
+}
+
+// refs: 1 - tags: named, output
+export interface DescribeDetectMitigationActionsTaskResponse {
+  taskSummary?: DetectMitigationActionsTaskSummary | null;
 }
 
 // refs: 1 - tags: named, output
@@ -6382,6 +6742,12 @@ export interface DetachThingPrincipalResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface GetBehaviorModelTrainingSummariesResponse {
+  summaries?: BehaviorModelTrainingSummary[] | null;
+  nextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
 export interface GetCardinalityResponse {
   cardinality?: number | null;
 }
@@ -6542,6 +6908,24 @@ export interface ListCertificatesByCAResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface ListCustomMetricsResponse {
+  metricNames?: string[] | null;
+  nextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface ListDetectMitigationActionsExecutionsResponse {
+  actionsExecutions?: DetectMitigationActionExecution[] | null;
+  nextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface ListDetectMitigationActionsTasksResponse {
+  tasks?: DetectMitigationActionsTaskSummary[] | null;
+  nextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
 export interface ListDimensionsResponse {
   dimensionNames?: string[] | null;
   nextToken?: string | null;
@@ -6699,6 +7083,7 @@ export interface ListThingGroupsForThingResponse {
 // refs: 1 - tags: named, output
 export interface ListThingPrincipalsResponse {
   principals?: string[] | null;
+  nextToken?: string | null;
 }
 
 // refs: 1 - tags: named, output
@@ -6813,6 +7198,11 @@ export interface StartAuditMitigationActionsTaskResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface StartDetectMitigationActionsTaskResponse {
+  taskId?: string | null;
+}
+
+// refs: 1 - tags: named, output
 export interface StartOnDemandAuditTaskResponse {
   taskId?: string | null;
 }
@@ -6870,6 +7260,16 @@ export interface UpdateAuthorizerResponse {
 // refs: 1 - tags: named, output
 export interface UpdateBillingGroupResponse {
   version?: number | null;
+}
+
+// refs: 1 - tags: named, output
+export interface UpdateCustomMetricResponse {
+  metricName?: string | null;
+  metricArn?: string | null;
+  metricType?: CustomMetricType | null;
+  displayName?: string | null;
+  creationDate?: Date | number | null;
+  lastModifiedDate?: Date | number | null;
 }
 
 // refs: 1 - tags: named, output
@@ -7035,7 +7435,7 @@ export type AuthorizerStatus =
 | "INACTIVE"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 19 - tags: input, named, interface, output
+// refs: 20 - tags: input, named, interface, output
 export interface Tag {
   Key: string;
   Value?: string | null;
@@ -7076,6 +7476,14 @@ function toBillingGroupProperties(root: jsonP.JSONValue): BillingGroupProperties
     },
   }, root);
 }
+
+// refs: 3 - tags: input, named, enum, output
+export type CustomMetricType =
+| "string-list"
+| "ip-address-list"
+| "number-list"
+| "number"
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, enum, output
 export type DimensionType =
@@ -7331,7 +7739,7 @@ function toTimeoutConfig(root: jsonP.JSONValue): TimeoutConfig {
   }, root);
 }
 
-// refs: 4 - tags: input, named, interface, output
+// refs: 6 - tags: input, named, interface, output
 export interface MitigationActionParams {
   updateDeviceCertificateParams?: UpdateDeviceCertificateParams | null;
   updateCACertificateParams?: UpdateCACertificateParams | null;
@@ -7365,7 +7773,7 @@ function toMitigationActionParams(root: jsonP.JSONValue): MitigationActionParams
   }, root);
 }
 
-// refs: 4 - tags: input, named, interface, output
+// refs: 6 - tags: input, named, interface, output
 export interface UpdateDeviceCertificateParams {
   action: DeviceCertificateUpdateAction;
 }
@@ -7384,12 +7792,12 @@ function toUpdateDeviceCertificateParams(root: jsonP.JSONValue): UpdateDeviceCer
   }, root);
 }
 
-// refs: 4 - tags: input, named, enum, output
+// refs: 6 - tags: input, named, enum, output
 export type DeviceCertificateUpdateAction =
 | "DEACTIVATE"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 4 - tags: input, named, interface, output
+// refs: 6 - tags: input, named, interface, output
 export interface UpdateCACertificateParams {
   action: CACertificateUpdateAction;
 }
@@ -7408,12 +7816,12 @@ function toUpdateCACertificateParams(root: jsonP.JSONValue): UpdateCACertificate
   }, root);
 }
 
-// refs: 4 - tags: input, named, enum, output
+// refs: 6 - tags: input, named, enum, output
 export type CACertificateUpdateAction =
 | "DEACTIVATE"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 4 - tags: input, named, interface, output
+// refs: 6 - tags: input, named, interface, output
 export interface AddThingsToThingGroupParams {
   thingGroupNames: string[];
   overrideDynamicGroups?: boolean | null;
@@ -7436,7 +7844,7 @@ function toAddThingsToThingGroupParams(root: jsonP.JSONValue): AddThingsToThingG
   }, root);
 }
 
-// refs: 4 - tags: input, named, interface, output
+// refs: 6 - tags: input, named, interface, output
 export interface ReplaceDefaultPolicyVersionParams {
   templateName: PolicyTemplateName;
 }
@@ -7455,12 +7863,12 @@ function toReplaceDefaultPolicyVersionParams(root: jsonP.JSONValue): ReplaceDefa
   }, root);
 }
 
-// refs: 4 - tags: input, named, enum, output
+// refs: 6 - tags: input, named, enum, output
 export type PolicyTemplateName =
 | "BLANK_POLICY"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 4 - tags: input, named, interface, output
+// refs: 6 - tags: input, named, interface, output
 export interface EnableIoTLoggingParams {
   roleArnForLogging: string;
   logLevel: LogLevel;
@@ -7482,7 +7890,7 @@ function toEnableIoTLoggingParams(root: jsonP.JSONValue): EnableIoTLoggingParams
   }, root);
 }
 
-// refs: 10 - tags: input, named, enum, output
+// refs: 12 - tags: input, named, enum, output
 export type LogLevel =
 | "DEBUG"
 | "INFO"
@@ -7491,7 +7899,7 @@ export type LogLevel =
 | "DISABLED"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 4 - tags: input, named, interface, output
+// refs: 6 - tags: input, named, interface, output
 export interface PublishFindingToSnsParams {
   topicArn: string;
 }
@@ -7659,6 +8067,7 @@ function fromAwsJobTimeoutConfig(input?: AwsJobTimeoutConfig | null): jsonP.JSON
 // refs: 2 - tags: input, named, interface, output
 export interface OTAUpdateFile {
   fileName?: string | null;
+  fileType?: number | null;
   fileVersion?: string | null;
   fileLocation?: FileLocation | null;
   codeSigning?: CodeSigning | null;
@@ -7668,6 +8077,7 @@ function fromOTAUpdateFile(input?: OTAUpdateFile | null): jsonP.JSONValue {
   if (!input) return input;
   return {
     fileName: input["fileName"],
+    fileType: input["fileType"],
     fileVersion: input["fileVersion"],
     fileLocation: fromFileLocation(input["fileLocation"]),
     codeSigning: fromCodeSigning(input["codeSigning"]),
@@ -7679,6 +8089,7 @@ function toOTAUpdateFile(root: jsonP.JSONValue): OTAUpdateFile {
     required: {},
     optional: {
       "fileName": "s",
+      "fileType": "n",
       "fileVersion": "s",
       "fileLocation": toFileLocation,
       "codeSigning": toCodeSigning,
@@ -7989,6 +8400,7 @@ export interface Behavior {
   metric?: string | null;
   metricDimension?: MetricDimension | null;
   criteria?: BehaviorCriteria | null;
+  suppressAlerts?: boolean | null;
 }
 function fromBehavior(input?: Behavior | null): jsonP.JSONValue {
   if (!input) return input;
@@ -7997,6 +8409,7 @@ function fromBehavior(input?: Behavior | null): jsonP.JSONValue {
     metric: input["metric"],
     metricDimension: fromMetricDimension(input["metricDimension"]),
     criteria: fromBehaviorCriteria(input["criteria"]),
+    suppressAlerts: input["suppressAlerts"],
   }
 }
 function toBehavior(root: jsonP.JSONValue): Behavior {
@@ -8008,6 +8421,7 @@ function toBehavior(root: jsonP.JSONValue): Behavior {
       "metric": "s",
       "metricDimension": toMetricDimension,
       "criteria": toBehaviorCriteria,
+      "suppressAlerts": "b",
     },
   }, root);
 }
@@ -8049,6 +8463,7 @@ export interface BehaviorCriteria {
   consecutiveDatapointsToAlarm?: number | null;
   consecutiveDatapointsToClear?: number | null;
   statisticalThreshold?: StatisticalThreshold | null;
+  mlDetectionConfig?: MachineLearningDetectionConfig | null;
 }
 function fromBehaviorCriteria(input?: BehaviorCriteria | null): jsonP.JSONValue {
   if (!input) return input;
@@ -8059,6 +8474,7 @@ function fromBehaviorCriteria(input?: BehaviorCriteria | null): jsonP.JSONValue 
     consecutiveDatapointsToAlarm: input["consecutiveDatapointsToAlarm"],
     consecutiveDatapointsToClear: input["consecutiveDatapointsToClear"],
     statisticalThreshold: fromStatisticalThreshold(input["statisticalThreshold"]),
+    mlDetectionConfig: fromMachineLearningDetectionConfig(input["mlDetectionConfig"]),
   }
 }
 function toBehaviorCriteria(root: jsonP.JSONValue): BehaviorCriteria {
@@ -8071,6 +8487,7 @@ function toBehaviorCriteria(root: jsonP.JSONValue): BehaviorCriteria {
       "consecutiveDatapointsToAlarm": "n",
       "consecutiveDatapointsToClear": "n",
       "statisticalThreshold": toStatisticalThreshold,
+      "mlDetectionConfig": toMachineLearningDetectionConfig,
     },
   }, root);
 }
@@ -8085,6 +8502,8 @@ export type ComparisonOperator =
 | "not-in-cidr-set"
 | "in-port-set"
 | "not-in-port-set"
+| "in-set"
+| "not-in-set"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 9 - tags: input, named, interface, output
@@ -8092,6 +8511,9 @@ export interface MetricValue {
   count?: number | null;
   cidrs?: string[] | null;
   ports?: number[] | null;
+  number?: number | null;
+  numbers?: number[] | null;
+  strings?: string[] | null;
 }
 function fromMetricValue(input?: MetricValue | null): jsonP.JSONValue {
   if (!input) return input;
@@ -8099,6 +8521,9 @@ function fromMetricValue(input?: MetricValue | null): jsonP.JSONValue {
     count: input["count"],
     cidrs: input["cidrs"],
     ports: input["ports"],
+    number: input["number"],
+    numbers: input["numbers"],
+    strings: input["strings"],
   }
 }
 function toMetricValue(root: jsonP.JSONValue): MetricValue {
@@ -8108,6 +8533,9 @@ function toMetricValue(root: jsonP.JSONValue): MetricValue {
       "count": "n",
       "cidrs": ["s"],
       "ports": ["n"],
+      "number": "n",
+      "numbers": ["n"],
+      "strings": ["s"],
     },
   }, root);
 }
@@ -8130,6 +8558,32 @@ function toStatisticalThreshold(root: jsonP.JSONValue): StatisticalThreshold {
     },
   }, root);
 }
+
+// refs: 7 - tags: input, named, interface, output
+export interface MachineLearningDetectionConfig {
+  confidenceLevel: ConfidenceLevel;
+}
+function fromMachineLearningDetectionConfig(input?: MachineLearningDetectionConfig | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    confidenceLevel: input["confidenceLevel"],
+  }
+}
+function toMachineLearningDetectionConfig(root: jsonP.JSONValue): MachineLearningDetectionConfig {
+  return jsonP.readObj({
+    required: {
+      "confidenceLevel": (x: jsonP.JSONValue) => cmnP.readEnum<ConfidenceLevel>(x),
+    },
+    optional: {},
+  }, root);
+}
+
+// refs: 9 - tags: input, named, enum, output
+export type ConfidenceLevel =
+| "LOW"
+| "MEDIUM"
+| "HIGH"
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, enum, output
 export type AlertTargetType =
@@ -8268,6 +8722,7 @@ export interface Action {
   stepFunctions?: StepFunctionsAction | null;
   timestream?: TimestreamAction | null;
   http?: HttpAction | null;
+  kafka?: KafkaAction | null;
 }
 function fromAction(input?: Action | null): jsonP.JSONValue {
   if (!input) return input;
@@ -8292,6 +8747,7 @@ function fromAction(input?: Action | null): jsonP.JSONValue {
     stepFunctions: fromStepFunctionsAction(input["stepFunctions"]),
     timestream: fromTimestreamAction(input["timestream"]),
     http: fromHttpAction(input["http"]),
+    kafka: fromKafkaAction(input["kafka"]),
   }
 }
 function toAction(root: jsonP.JSONValue): Action {
@@ -8318,6 +8774,7 @@ function toAction(root: jsonP.JSONValue): Action {
       "stepFunctions": toStepFunctionsAction,
       "timestream": toTimestreamAction,
       "http": toHttpAction,
+      "kafka": toKafkaAction,
     },
   }, root);
 }
@@ -8591,6 +9048,7 @@ export interface FirehoseAction {
   roleArn: string;
   deliveryStreamName: string;
   separator?: string | null;
+  batchMode?: boolean | null;
 }
 function fromFirehoseAction(input?: FirehoseAction | null): jsonP.JSONValue {
   if (!input) return input;
@@ -8598,6 +9056,7 @@ function fromFirehoseAction(input?: FirehoseAction | null): jsonP.JSONValue {
     roleArn: input["roleArn"],
     deliveryStreamName: input["deliveryStreamName"],
     separator: input["separator"],
+    batchMode: input["batchMode"],
   }
 }
 function toFirehoseAction(root: jsonP.JSONValue): FirehoseAction {
@@ -8608,6 +9067,7 @@ function toFirehoseAction(root: jsonP.JSONValue): FirehoseAction {
     },
     optional: {
       "separator": "s",
+      "batchMode": "b",
     },
   }, root);
 }
@@ -8754,6 +9214,7 @@ function toSalesforceAction(root: jsonP.JSONValue): SalesforceAction {
 export interface IotAnalyticsAction {
   channelArn?: string | null;
   channelName?: string | null;
+  batchMode?: boolean | null;
   roleArn?: string | null;
 }
 function fromIotAnalyticsAction(input?: IotAnalyticsAction | null): jsonP.JSONValue {
@@ -8761,6 +9222,7 @@ function fromIotAnalyticsAction(input?: IotAnalyticsAction | null): jsonP.JSONVa
   return {
     channelArn: input["channelArn"],
     channelName: input["channelName"],
+    batchMode: input["batchMode"],
     roleArn: input["roleArn"],
   }
 }
@@ -8770,6 +9232,7 @@ function toIotAnalyticsAction(root: jsonP.JSONValue): IotAnalyticsAction {
     optional: {
       "channelArn": "s",
       "channelName": "s",
+      "batchMode": "b",
       "roleArn": "s",
     },
   }, root);
@@ -8779,6 +9242,7 @@ function toIotAnalyticsAction(root: jsonP.JSONValue): IotAnalyticsAction {
 export interface IotEventsAction {
   inputName: string;
   messageId?: string | null;
+  batchMode?: boolean | null;
   roleArn: string;
 }
 function fromIotEventsAction(input?: IotEventsAction | null): jsonP.JSONValue {
@@ -8786,6 +9250,7 @@ function fromIotEventsAction(input?: IotEventsAction | null): jsonP.JSONValue {
   return {
     inputName: input["inputName"],
     messageId: input["messageId"],
+    batchMode: input["batchMode"],
     roleArn: input["roleArn"],
   }
 }
@@ -8797,6 +9262,7 @@ function toIotEventsAction(root: jsonP.JSONValue): IotEventsAction {
     },
     optional: {
       "messageId": "s",
+      "batchMode": "b",
     },
   }, root);
 }
@@ -9129,14 +9595,48 @@ function toSigV4Authorization(root: jsonP.JSONValue): SigV4Authorization {
   }, root);
 }
 
+// refs: 6 - tags: input, named, interface, output
+export interface KafkaAction {
+  destinationArn: string;
+  topic: string;
+  key?: string | null;
+  partition?: string | null;
+  clientProperties: { [key: string]: string | null | undefined };
+}
+function fromKafkaAction(input?: KafkaAction | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    destinationArn: input["destinationArn"],
+    topic: input["topic"],
+    key: input["key"],
+    partition: input["partition"],
+    clientProperties: input["clientProperties"],
+  }
+}
+function toKafkaAction(root: jsonP.JSONValue): KafkaAction {
+  return jsonP.readObj({
+    required: {
+      "destinationArn": "s",
+      "topic": "s",
+      "clientProperties": x => jsonP.readMap(String, String, x),
+    },
+    optional: {
+      "key": "s",
+      "partition": "s",
+    },
+  }, root);
+}
+
 // refs: 1 - tags: input, named, interface
 export interface TopicRuleDestinationConfiguration {
   httpUrlConfiguration?: HttpUrlDestinationConfiguration | null;
+  vpcConfiguration?: VpcDestinationConfiguration | null;
 }
 function fromTopicRuleDestinationConfiguration(input?: TopicRuleDestinationConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
   return {
     httpUrlConfiguration: fromHttpUrlDestinationConfiguration(input["httpUrlConfiguration"]),
+    vpcConfiguration: fromVpcDestinationConfiguration(input["vpcConfiguration"]),
   }
 }
 
@@ -9151,10 +9651,34 @@ function fromHttpUrlDestinationConfiguration(input?: HttpUrlDestinationConfigura
   }
 }
 
+// refs: 1 - tags: input, named, interface
+export interface VpcDestinationConfiguration {
+  subnetIds: string[];
+  securityGroups?: string[] | null;
+  vpcId: string;
+  roleArn: string;
+}
+function fromVpcDestinationConfiguration(input?: VpcDestinationConfiguration | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    subnetIds: input["subnetIds"],
+    securityGroups: input["securityGroups"],
+    vpcId: input["vpcId"],
+    roleArn: input["roleArn"],
+  }
+}
+
 // refs: 4 - tags: input, named, enum, output
 export type LogTargetType =
 | "DEFAULT"
 | "THING_GROUP"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 2 - tags: input, named, enum
+export type BehaviorCriteriaType =
+| "STATIC"
+| "STATISTICAL"
+| "MACHINE_LEARNING"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, enum, output
@@ -9332,6 +9856,53 @@ function toAuditMitigationActionsTaskTarget(root: jsonP.JSONValue): AuditMitigat
       "findingIds": ["s"],
       "auditCheckToReasonCodeFilter": x => jsonP.readMap(String, l => Array.isArray(l) ? l.map(String) : [], x),
     },
+  }, root);
+}
+
+// refs: 3 - tags: input, named, interface, output
+export interface DetectMitigationActionsTaskTarget {
+  violationIds?: string[] | null;
+  securityProfileName?: string | null;
+  behaviorName?: string | null;
+}
+function fromDetectMitigationActionsTaskTarget(input?: DetectMitigationActionsTaskTarget | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    violationIds: input["violationIds"],
+    securityProfileName: input["securityProfileName"],
+    behaviorName: input["behaviorName"],
+  }
+}
+function toDetectMitigationActionsTaskTarget(root: jsonP.JSONValue): DetectMitigationActionsTaskTarget {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "violationIds": ["s"],
+      "securityProfileName": "s",
+      "behaviorName": "s",
+    },
+  }, root);
+}
+
+// refs: 3 - tags: input, named, interface, output
+export interface ViolationEventOccurrenceRange {
+  startTime: Date | number;
+  endTime: Date | number;
+}
+function fromViolationEventOccurrenceRange(input?: ViolationEventOccurrenceRange | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    startTime: jsonP.serializeDate_unixTimestamp(input["startTime"]),
+    endTime: jsonP.serializeDate_unixTimestamp(input["endTime"]),
+  }
+}
+function toViolationEventOccurrenceRange(root: jsonP.JSONValue): ViolationEventOccurrenceRange {
+  return jsonP.readObj({
+    required: {
+      "startTime": "d",
+      "endTime": "d",
+    },
+    optional: {},
   }, root);
 }
 
@@ -9615,6 +10186,7 @@ export type TopicRuleDestinationStatus =
 | "IN_PROGRESS"
 | "DISABLED"
 | "ERROR"
+| "DELETING"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
@@ -9636,8 +10208,11 @@ function toKeyPair(root: jsonP.JSONValue): KeyPair {
 export interface TopicRuleDestination {
   arn?: string | null;
   status?: TopicRuleDestinationStatus | null;
+  createdAt?: Date | number | null;
+  lastUpdatedAt?: Date | number | null;
   statusReason?: string | null;
   httpUrlProperties?: HttpUrlDestinationProperties | null;
+  vpcProperties?: VpcDestinationProperties | null;
 }
 function toTopicRuleDestination(root: jsonP.JSONValue): TopicRuleDestination {
   return jsonP.readObj({
@@ -9645,8 +10220,11 @@ function toTopicRuleDestination(root: jsonP.JSONValue): TopicRuleDestination {
     optional: {
       "arn": "s",
       "status": (x: jsonP.JSONValue) => cmnP.readEnum<TopicRuleDestinationStatus>(x),
+      "createdAt": "d",
+      "lastUpdatedAt": "d",
       "statusReason": "s",
       "httpUrlProperties": toHttpUrlDestinationProperties,
+      "vpcProperties": toVpcDestinationProperties,
     },
   }, root);
 }
@@ -9660,6 +10238,25 @@ function toHttpUrlDestinationProperties(root: jsonP.JSONValue): HttpUrlDestinati
     required: {},
     optional: {
       "confirmationUrl": "s",
+    },
+  }, root);
+}
+
+// refs: 2 - tags: output, named, interface
+export interface VpcDestinationProperties {
+  subnetIds?: string[] | null;
+  securityGroups?: string[] | null;
+  vpcId?: string | null;
+  roleArn?: string | null;
+}
+function toVpcDestinationProperties(root: jsonP.JSONValue): VpcDestinationProperties {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "subnetIds": ["s"],
+      "securityGroups": ["s"],
+      "vpcId": "s",
+      "roleArn": "s",
     },
   }, root);
 }
@@ -9772,7 +10369,7 @@ function toTaskStatisticsForAuditCheck(root: jsonP.JSONValue): TaskStatisticsFor
   }, root);
 }
 
-// refs: 1 - tags: output, named, interface
+// refs: 3 - tags: output, named, interface
 export interface MitigationAction {
   name?: string | null;
   id?: string | null;
@@ -10006,6 +10603,62 @@ export type CertificateMode =
 | "DEFAULT"
 | "SNI_ONLY"
 | cmnP.UnexpectedEnumValue;
+
+// refs: 2 - tags: output, named, interface
+export interface DetectMitigationActionsTaskSummary {
+  taskId?: string | null;
+  taskStatus?: DetectMitigationActionsTaskStatus | null;
+  taskStartTime?: Date | number | null;
+  taskEndTime?: Date | number | null;
+  target?: DetectMitigationActionsTaskTarget | null;
+  violationEventOccurrenceRange?: ViolationEventOccurrenceRange | null;
+  onlyActiveViolationsIncluded?: boolean | null;
+  suppressedAlertsIncluded?: boolean | null;
+  actionsDefinition?: MitigationAction[] | null;
+  taskStatistics?: DetectMitigationActionsTaskStatistics | null;
+}
+function toDetectMitigationActionsTaskSummary(root: jsonP.JSONValue): DetectMitigationActionsTaskSummary {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "taskId": "s",
+      "taskStatus": (x: jsonP.JSONValue) => cmnP.readEnum<DetectMitigationActionsTaskStatus>(x),
+      "taskStartTime": "d",
+      "taskEndTime": "d",
+      "target": toDetectMitigationActionsTaskTarget,
+      "violationEventOccurrenceRange": toViolationEventOccurrenceRange,
+      "onlyActiveViolationsIncluded": "b",
+      "suppressedAlertsIncluded": "b",
+      "actionsDefinition": [toMitigationAction],
+      "taskStatistics": toDetectMitigationActionsTaskStatistics,
+    },
+  }, root);
+}
+
+// refs: 2 - tags: output, named, enum
+export type DetectMitigationActionsTaskStatus =
+| "IN_PROGRESS"
+| "SUCCESSFUL"
+| "FAILED"
+| "CANCELED"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 2 - tags: output, named, interface
+export interface DetectMitigationActionsTaskStatistics {
+  actionsExecuted?: number | null;
+  actionsSkipped?: number | null;
+  actionsFailed?: number | null;
+}
+function toDetectMitigationActionsTaskStatistics(root: jsonP.JSONValue): DetectMitigationActionsTaskStatistics {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "actionsExecuted": "n",
+      "actionsSkipped": "n",
+      "actionsFailed": "n",
+    },
+  }, root);
+}
 
 // refs: 1 - tags: output, named, interface
 export interface ServerCertificateSummary {
@@ -10275,6 +10928,36 @@ function toThingTypeMetadata(root: jsonP.JSONValue): ThingTypeMetadata {
 }
 
 // refs: 1 - tags: output, named, interface
+export interface BehaviorModelTrainingSummary {
+  securityProfileName?: string | null;
+  behaviorName?: string | null;
+  trainingDataCollectionStartDate?: Date | number | null;
+  modelStatus?: ModelStatus | null;
+  datapointsCollectionPercentage?: number | null;
+  lastModelRefreshDate?: Date | number | null;
+}
+function toBehaviorModelTrainingSummary(root: jsonP.JSONValue): BehaviorModelTrainingSummary {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "securityProfileName": "s",
+      "behaviorName": "s",
+      "trainingDataCollectionStartDate": "d",
+      "modelStatus": (x: jsonP.JSONValue) => cmnP.readEnum<ModelStatus>(x),
+      "datapointsCollectionPercentage": "n",
+      "lastModelRefreshDate": "d",
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, enum
+export type ModelStatus =
+| "PENDING_BUILD"
+| "ACTIVE"
+| "EXPIRED"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 1 - tags: output, named, interface
 export interface EffectivePolicy {
   policyName?: string | null;
   policyArn?: string | null;
@@ -10425,6 +11108,7 @@ export interface ActiveViolation {
   securityProfileName?: string | null;
   behavior?: Behavior | null;
   lastViolationValue?: MetricValue | null;
+  violationEventAdditionalInfo?: ViolationEventAdditionalInfo | null;
   lastViolationTime?: Date | number | null;
   violationStartTime?: Date | number | null;
 }
@@ -10437,8 +11121,22 @@ function toActiveViolation(root: jsonP.JSONValue): ActiveViolation {
       "securityProfileName": "s",
       "behavior": toBehavior,
       "lastViolationValue": toMetricValue,
+      "violationEventAdditionalInfo": toViolationEventAdditionalInfo,
       "lastViolationTime": "d",
       "violationStartTime": "d",
+    },
+  }, root);
+}
+
+// refs: 2 - tags: output, named, interface
+export interface ViolationEventAdditionalInfo {
+  confidenceLevel?: ConfidenceLevel | null;
+}
+function toViolationEventAdditionalInfo(root: jsonP.JSONValue): ViolationEventAdditionalInfo {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "confidenceLevel": (x: jsonP.JSONValue) => cmnP.readEnum<ConfidenceLevel>(x),
     },
   }, root);
 }
@@ -10597,6 +11295,43 @@ function toCertificate(root: jsonP.JSONValue): Certificate {
     },
   }, root);
 }
+
+// refs: 1 - tags: output, named, interface
+export interface DetectMitigationActionExecution {
+  taskId?: string | null;
+  violationId?: string | null;
+  actionName?: string | null;
+  thingName?: string | null;
+  executionStartDate?: Date | number | null;
+  executionEndDate?: Date | number | null;
+  status?: DetectMitigationActionExecutionStatus | null;
+  errorCode?: string | null;
+  message?: string | null;
+}
+function toDetectMitigationActionExecution(root: jsonP.JSONValue): DetectMitigationActionExecution {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "taskId": "s",
+      "violationId": "s",
+      "actionName": "s",
+      "thingName": "s",
+      "executionStartDate": "d",
+      "executionEndDate": "d",
+      "status": (x: jsonP.JSONValue) => cmnP.readEnum<DetectMitigationActionExecutionStatus>(x),
+      "errorCode": "s",
+      "message": "s",
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, enum
+export type DetectMitigationActionExecutionStatus =
+| "IN_PROGRESS"
+| "SUCCESSFUL"
+| "FAILED"
+| "SKIPPED"
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface DomainConfigurationSummary {
@@ -10934,8 +11669,11 @@ function toThingAttribute(root: jsonP.JSONValue): ThingAttribute {
 export interface TopicRuleDestinationSummary {
   arn?: string | null;
   status?: TopicRuleDestinationStatus | null;
+  createdAt?: Date | number | null;
+  lastUpdatedAt?: Date | number | null;
   statusReason?: string | null;
   httpUrlSummary?: HttpUrlDestinationSummary | null;
+  vpcDestinationSummary?: VpcDestinationSummary | null;
 }
 function toTopicRuleDestinationSummary(root: jsonP.JSONValue): TopicRuleDestinationSummary {
   return jsonP.readObj({
@@ -10943,8 +11681,11 @@ function toTopicRuleDestinationSummary(root: jsonP.JSONValue): TopicRuleDestinat
     optional: {
       "arn": "s",
       "status": (x: jsonP.JSONValue) => cmnP.readEnum<TopicRuleDestinationStatus>(x),
+      "createdAt": "d",
+      "lastUpdatedAt": "d",
       "statusReason": "s",
       "httpUrlSummary": toHttpUrlDestinationSummary,
+      "vpcDestinationSummary": toVpcDestinationSummary,
     },
   }, root);
 }
@@ -10958,6 +11699,25 @@ function toHttpUrlDestinationSummary(root: jsonP.JSONValue): HttpUrlDestinationS
     required: {},
     optional: {
       "confirmationUrl": "s",
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
+export interface VpcDestinationSummary {
+  subnetIds?: string[] | null;
+  securityGroups?: string[] | null;
+  vpcId?: string | null;
+  roleArn?: string | null;
+}
+function toVpcDestinationSummary(root: jsonP.JSONValue): VpcDestinationSummary {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "subnetIds": ["s"],
+      "securityGroups": ["s"],
+      "vpcId": "s",
+      "roleArn": "s",
     },
   }, root);
 }
@@ -11005,6 +11765,7 @@ export interface ViolationEvent {
   securityProfileName?: string | null;
   behavior?: Behavior | null;
   metricValue?: MetricValue | null;
+  violationEventAdditionalInfo?: ViolationEventAdditionalInfo | null;
   violationEventType?: ViolationEventType | null;
   violationEventTime?: Date | number | null;
 }
@@ -11017,6 +11778,7 @@ function toViolationEvent(root: jsonP.JSONValue): ViolationEvent {
       "securityProfileName": "s",
       "behavior": toBehavior,
       "metricValue": toMetricValue,
+      "violationEventAdditionalInfo": toViolationEventAdditionalInfo,
       "violationEventType": (x: jsonP.JSONValue) => cmnP.readEnum<ViolationEventType>(x),
       "violationEventTime": "d",
     },

@@ -121,6 +121,30 @@ export default class ComputeOptimizer {
     }, await resp.json());
   }
 
+  async getEBSVolumeRecommendations(
+    {abortSignal, ...params}: RequestConfig & GetEBSVolumeRecommendationsRequest = {},
+  ): Promise<GetEBSVolumeRecommendationsResponse> {
+    const body: jsonP.JSONObject = {
+      volumeArns: params["volumeArns"],
+      nextToken: params["nextToken"],
+      maxResults: params["maxResults"],
+      filters: params["filters"]?.map(x => fromEBSFilter(x)),
+      accountIds: params["accountIds"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "GetEBSVolumeRecommendations",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "nextToken": "s",
+        "volumeRecommendations": [toVolumeRecommendation],
+        "errors": [toGetRecommendationError],
+      },
+    }, await resp.json());
+  }
+
   async getEC2InstanceRecommendations(
     {abortSignal, ...params}: RequestConfig & GetEC2InstanceRecommendationsRequest = {},
   ): Promise<GetEC2InstanceRecommendationsResponse> {
@@ -267,6 +291,15 @@ export interface GetAutoScalingGroupRecommendationsRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface GetEBSVolumeRecommendationsRequest {
+  volumeArns?: string[] | null;
+  nextToken?: string | null;
+  maxResults?: number | null;
+  filters?: EBSFilter[] | null;
+  accountIds?: string[] | null;
+}
+
+// refs: 1 - tags: named, input
 export interface GetEC2InstanceRecommendationsRequest {
   instanceArns?: string[] | null;
   nextToken?: string | null;
@@ -323,6 +356,13 @@ export interface ExportEC2InstanceRecommendationsResponse {
 export interface GetAutoScalingGroupRecommendationsResponse {
   nextToken?: string | null;
   autoScalingGroupRecommendations?: AutoScalingGroupRecommendation[] | null;
+  errors?: GetRecommendationError[] | null;
+}
+
+// refs: 1 - tags: named, output
+export interface GetEBSVolumeRecommendationsResponse {
+  nextToken?: string | null;
+  volumeRecommendations?: VolumeRecommendation[] | null;
   errors?: GetRecommendationError[] | null;
 }
 
@@ -491,7 +531,25 @@ export type ExportableInstanceField =
 | "LastRefreshTimestamp"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 5 - tags: input, named, enum, output
+// refs: 1 - tags: input, named, interface
+export interface EBSFilter {
+  name?: EBSFilterName | null;
+  values?: string[] | null;
+}
+function fromEBSFilter(input?: EBSFilter | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    name: input["name"],
+    values: input["values"],
+  }
+}
+
+// refs: 1 - tags: input, named, enum
+export type EBSFilterName =
+| "Finding"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 6 - tags: input, named, enum, output
 export type MetricStatistic =
 | "Maximum"
 | "Average"
@@ -676,7 +734,7 @@ function toAutoScalingGroupRecommendationOption(root: jsonP.JSONValue): AutoScal
   }, root);
 }
 
-// refs: 2 - tags: output, named, interface
+// refs: 3 - tags: output, named, interface
 export interface GetRecommendationError {
   identifier?: string | null;
   code?: string | null;
@@ -689,6 +747,104 @@ function toGetRecommendationError(root: jsonP.JSONValue): GetRecommendationError
       "identifier": "s",
       "code": "s",
       "message": "s",
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
+export interface VolumeRecommendation {
+  volumeArn?: string | null;
+  accountId?: string | null;
+  currentConfiguration?: VolumeConfiguration | null;
+  finding?: EBSFinding | null;
+  utilizationMetrics?: EBSUtilizationMetric[] | null;
+  lookBackPeriodInDays?: number | null;
+  volumeRecommendationOptions?: VolumeRecommendationOption[] | null;
+  lastRefreshTimestamp?: Date | number | null;
+}
+function toVolumeRecommendation(root: jsonP.JSONValue): VolumeRecommendation {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "volumeArn": "s",
+      "accountId": "s",
+      "currentConfiguration": toVolumeConfiguration,
+      "finding": (x: jsonP.JSONValue) => cmnP.readEnum<EBSFinding>(x),
+      "utilizationMetrics": [toEBSUtilizationMetric],
+      "lookBackPeriodInDays": "n",
+      "volumeRecommendationOptions": [toVolumeRecommendationOption],
+      "lastRefreshTimestamp": "d",
+    },
+  }, root);
+}
+
+// refs: 2 - tags: output, named, interface
+export interface VolumeConfiguration {
+  volumeType?: string | null;
+  volumeSize?: number | null;
+  volumeBaselineIOPS?: number | null;
+  volumeBurstIOPS?: number | null;
+  volumeBaselineThroughput?: number | null;
+  volumeBurstThroughput?: number | null;
+}
+function toVolumeConfiguration(root: jsonP.JSONValue): VolumeConfiguration {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "volumeType": "s",
+      "volumeSize": "n",
+      "volumeBaselineIOPS": "n",
+      "volumeBurstIOPS": "n",
+      "volumeBaselineThroughput": "n",
+      "volumeBurstThroughput": "n",
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, enum
+export type EBSFinding =
+| "Optimized"
+| "NotOptimized"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 1 - tags: output, named, interface
+export interface EBSUtilizationMetric {
+  name?: EBSMetricName | null;
+  statistic?: MetricStatistic | null;
+  value?: number | null;
+}
+function toEBSUtilizationMetric(root: jsonP.JSONValue): EBSUtilizationMetric {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "name": (x: jsonP.JSONValue) => cmnP.readEnum<EBSMetricName>(x),
+      "statistic": (x: jsonP.JSONValue) => cmnP.readEnum<MetricStatistic>(x),
+      "value": "n",
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, enum
+export type EBSMetricName =
+| "VolumeReadOpsPerSecond"
+| "VolumeWriteOpsPerSecond"
+| "VolumeReadBytesPerSecond"
+| "VolumeWriteBytesPerSecond"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 1 - tags: output, named, interface
+export interface VolumeRecommendationOption {
+  configuration?: VolumeConfiguration | null;
+  performanceRisk?: number | null;
+  rank?: number | null;
+}
+function toVolumeRecommendationOption(root: jsonP.JSONValue): VolumeRecommendationOption {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "configuration": toVolumeConfiguration,
+      "performanceRisk": "n",
+      "rank": "n",
     },
   }, root);
 }
@@ -762,6 +918,7 @@ function toRecommendationSource(root: jsonP.JSONValue): RecommendationSource {
 export type RecommendationSourceType =
 | "Ec2Instance"
 | "AutoScalingGroup"
+| "EbsVolume"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface

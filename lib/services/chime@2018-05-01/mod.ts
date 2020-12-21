@@ -5,7 +5,7 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import * as uuidv4 from "https://deno.land/std@0.71.0/uuid/v4.ts";
+import * as uuidv4 from "https://deno.land/std@0.75.0/uuid/v4.ts";
 import * as cmnP from "../../encoding/common.ts";
 import * as jsonP from "../../encoding/json.ts";
 function generateIdemptToken() {
@@ -267,6 +267,76 @@ export default class Chime {
     }, await resp.json());
   }
 
+  async createAppInstance(
+    {abortSignal, ...params}: RequestConfig & CreateAppInstanceRequest,
+  ): Promise<CreateAppInstanceResponse> {
+    const body: jsonP.JSONObject = {
+      Name: params["Name"],
+      Metadata: params["Metadata"],
+      ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "CreateAppInstance",
+      requestUri: "/app-instances",
+      responseCode: 201,
+      hostPrefix: `identity-`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "AppInstanceArn": "s",
+      },
+    }, await resp.json());
+  }
+
+  async createAppInstanceAdmin(
+    {abortSignal, ...params}: RequestConfig & CreateAppInstanceAdminRequest,
+  ): Promise<CreateAppInstanceAdminResponse> {
+    const body: jsonP.JSONObject = {
+      AppInstanceAdminArn: params["AppInstanceAdminArn"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "CreateAppInstanceAdmin",
+      requestUri: cmnP.encodePath`/app-instances/${params["AppInstanceArn"]}/admins`,
+      responseCode: 201,
+      hostPrefix: `identity-`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "AppInstanceAdmin": toIdentity,
+        "AppInstanceArn": "s",
+      },
+    }, await resp.json());
+  }
+
+  async createAppInstanceUser(
+    {abortSignal, ...params}: RequestConfig & CreateAppInstanceUserRequest,
+  ): Promise<CreateAppInstanceUserResponse> {
+    const body: jsonP.JSONObject = {
+      AppInstanceArn: params["AppInstanceArn"],
+      AppInstanceUserId: params["AppInstanceUserId"],
+      Name: params["Name"],
+      Metadata: params["Metadata"],
+      ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "CreateAppInstanceUser",
+      requestUri: "/app-instance-users",
+      responseCode: 201,
+      hostPrefix: `identity-`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "AppInstanceUserArn": "s",
+      },
+    }, await resp.json());
+  }
+
   async createAttendee(
     {abortSignal, ...params}: RequestConfig & CreateAttendeeRequest,
   ): Promise<CreateAttendeeResponse> {
@@ -309,6 +379,100 @@ export default class Chime {
     }, await resp.json());
   }
 
+  async createChannel(
+    {abortSignal, ...params}: RequestConfig & CreateChannelRequest,
+  ): Promise<CreateChannelResponse> {
+    const body: jsonP.JSONObject = {
+      AppInstanceArn: params["AppInstanceArn"],
+      Name: params["Name"],
+      Mode: params["Mode"],
+      Privacy: params["Privacy"],
+      Metadata: params["Metadata"],
+      ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "CreateChannel",
+      requestUri: "/channels",
+      responseCode: 201,
+      hostPrefix: `messaging-`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ChannelArn": "s",
+      },
+    }, await resp.json());
+  }
+
+  async createChannelBan(
+    {abortSignal, ...params}: RequestConfig & CreateChannelBanRequest,
+  ): Promise<CreateChannelBanResponse> {
+    const body: jsonP.JSONObject = {
+      MemberArn: params["MemberArn"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "CreateChannelBan",
+      requestUri: cmnP.encodePath`/channels/${params["ChannelArn"]}/bans`,
+      responseCode: 201,
+      hostPrefix: `messaging-`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ChannelArn": "s",
+        "Member": toIdentity,
+      },
+    }, await resp.json());
+  }
+
+  async createChannelMembership(
+    {abortSignal, ...params}: RequestConfig & CreateChannelMembershipRequest,
+  ): Promise<CreateChannelMembershipResponse> {
+    const body: jsonP.JSONObject = {
+      MemberArn: params["MemberArn"],
+      Type: params["Type"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "CreateChannelMembership",
+      requestUri: cmnP.encodePath`/channels/${params["ChannelArn"]}/memberships`,
+      responseCode: 201,
+      hostPrefix: `messaging-`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ChannelArn": "s",
+        "Member": toIdentity,
+      },
+    }, await resp.json());
+  }
+
+  async createChannelModerator(
+    {abortSignal, ...params}: RequestConfig & CreateChannelModeratorRequest,
+  ): Promise<CreateChannelModeratorResponse> {
+    const body: jsonP.JSONObject = {
+      ChannelModeratorArn: params["ChannelModeratorArn"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "CreateChannelModerator",
+      requestUri: cmnP.encodePath`/channels/${params["ChannelArn"]}/moderators`,
+      responseCode: 201,
+      hostPrefix: `messaging-`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ChannelArn": "s",
+        "ChannelModerator": toIdentity,
+      },
+    }, await resp.json());
+  }
+
   async createMeeting(
     {abortSignal, ...params}: RequestConfig & CreateMeetingRequest,
   ): Promise<CreateMeetingResponse> {
@@ -330,6 +494,28 @@ export default class Chime {
       required: {},
       optional: {
         "Meeting": toMeeting,
+      },
+    }, await resp.json());
+  }
+
+  async createMeetingDialOut(
+    {abortSignal, ...params}: RequestConfig & CreateMeetingDialOutRequest,
+  ): Promise<CreateMeetingDialOutResponse> {
+    const body: jsonP.JSONObject = {
+      FromPhoneNumber: params["FromPhoneNumber"],
+      ToPhoneNumber: params["ToPhoneNumber"],
+      JoinToken: params["JoinToken"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "CreateMeetingDialOut",
+      requestUri: cmnP.encodePath`/meetings/${params["MeetingId"]}/dial-outs`,
+      responseCode: 201,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "TransactionId": "s",
       },
     }, await resp.json());
   }
@@ -451,6 +637,73 @@ export default class Chime {
     }, await resp.json());
   }
 
+  async createSipMediaApplication(
+    {abortSignal, ...params}: RequestConfig & CreateSipMediaApplicationRequest,
+  ): Promise<CreateSipMediaApplicationResponse> {
+    const body: jsonP.JSONObject = {
+      AwsRegion: params["AwsRegion"],
+      Name: params["Name"],
+      Endpoints: params["Endpoints"]?.map(x => fromSipMediaApplicationEndpoint(x)),
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "CreateSipMediaApplication",
+      requestUri: "/sip-media-applications",
+      responseCode: 201,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "SipMediaApplication": toSipMediaApplication,
+      },
+    }, await resp.json());
+  }
+
+  async createSipMediaApplicationCall(
+    {abortSignal, ...params}: RequestConfig & CreateSipMediaApplicationCallRequest,
+  ): Promise<CreateSipMediaApplicationCallResponse> {
+    const body: jsonP.JSONObject = {
+      FromPhoneNumber: params["FromPhoneNumber"],
+      ToPhoneNumber: params["ToPhoneNumber"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "CreateSipMediaApplicationCall",
+      requestUri: cmnP.encodePath`/sip-media-applications/${params["SipMediaApplicationId"]}/calls`,
+      responseCode: 201,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "SipMediaApplicationCall": toSipMediaApplicationCall,
+      },
+    }, await resp.json());
+  }
+
+  async createSipRule(
+    {abortSignal, ...params}: RequestConfig & CreateSipRuleRequest,
+  ): Promise<CreateSipRuleResponse> {
+    const body: jsonP.JSONObject = {
+      Name: params["Name"],
+      TriggerType: params["TriggerType"],
+      TriggerValue: params["TriggerValue"],
+      Disabled: params["Disabled"],
+      TargetApplications: params["TargetApplications"]?.map(x => fromSipRuleTargetApplication(x)),
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "CreateSipRule",
+      requestUri: "/sip-rules",
+      responseCode: 201,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "SipRule": toSipRule,
+      },
+    }, await resp.json());
+  }
+
   async createUser(
     {abortSignal, ...params}: RequestConfig & CreateUserRequest,
   ): Promise<CreateUserResponse> {
@@ -533,6 +786,61 @@ export default class Chime {
     }, await resp.json());
   }
 
+  async deleteAppInstance(
+    {abortSignal, ...params}: RequestConfig & DeleteAppInstanceRequest,
+  ): Promise<void> {
+
+    const resp = await this.#client.performRequest({
+      abortSignal,
+      action: "DeleteAppInstance",
+      method: "DELETE",
+      requestUri: cmnP.encodePath`/app-instances/${params["AppInstanceArn"]}`,
+      responseCode: 204,
+      hostPrefix: `identity-`,
+    });
+  }
+
+  async deleteAppInstanceAdmin(
+    {abortSignal, ...params}: RequestConfig & DeleteAppInstanceAdminRequest,
+  ): Promise<void> {
+
+    const resp = await this.#client.performRequest({
+      abortSignal,
+      action: "DeleteAppInstanceAdmin",
+      method: "DELETE",
+      requestUri: cmnP.encodePath`/app-instances/${params["AppInstanceArn"]}/admins/${params["AppInstanceAdminArn"]}`,
+      responseCode: 204,
+      hostPrefix: `identity-`,
+    });
+  }
+
+  async deleteAppInstanceStreamingConfigurations(
+    {abortSignal, ...params}: RequestConfig & DeleteAppInstanceStreamingConfigurationsRequest,
+  ): Promise<void> {
+
+    const resp = await this.#client.performRequest({
+      abortSignal,
+      action: "DeleteAppInstanceStreamingConfigurations",
+      method: "DELETE",
+      requestUri: cmnP.encodePath`/app-instances/${params["AppInstanceArn"]}/streaming-configurations`,
+      responseCode: 204,
+    });
+  }
+
+  async deleteAppInstanceUser(
+    {abortSignal, ...params}: RequestConfig & DeleteAppInstanceUserRequest,
+  ): Promise<void> {
+
+    const resp = await this.#client.performRequest({
+      abortSignal,
+      action: "DeleteAppInstanceUser",
+      method: "DELETE",
+      requestUri: cmnP.encodePath`/app-instance-users/${params["AppInstanceUserArn"]}`,
+      responseCode: 204,
+      hostPrefix: `identity-`,
+    });
+  }
+
   async deleteAttendee(
     {abortSignal, ...params}: RequestConfig & DeleteAttendeeRequest,
   ): Promise<void> {
@@ -543,6 +851,76 @@ export default class Chime {
       method: "DELETE",
       requestUri: cmnP.encodePath`/meetings/${params["MeetingId"]}/attendees/${params["AttendeeId"]}`,
       responseCode: 204,
+    });
+  }
+
+  async deleteChannel(
+    {abortSignal, ...params}: RequestConfig & DeleteChannelRequest,
+  ): Promise<void> {
+
+    const resp = await this.#client.performRequest({
+      abortSignal,
+      action: "DeleteChannel",
+      method: "DELETE",
+      requestUri: cmnP.encodePath`/channels/${params["ChannelArn"]}`,
+      responseCode: 204,
+      hostPrefix: `messaging-`,
+    });
+  }
+
+  async deleteChannelBan(
+    {abortSignal, ...params}: RequestConfig & DeleteChannelBanRequest,
+  ): Promise<void> {
+
+    const resp = await this.#client.performRequest({
+      abortSignal,
+      action: "DeleteChannelBan",
+      method: "DELETE",
+      requestUri: cmnP.encodePath`/channels/${params["ChannelArn"]}/bans/${params["MemberArn"]}`,
+      responseCode: 204,
+      hostPrefix: `messaging-`,
+    });
+  }
+
+  async deleteChannelMembership(
+    {abortSignal, ...params}: RequestConfig & DeleteChannelMembershipRequest,
+  ): Promise<void> {
+
+    const resp = await this.#client.performRequest({
+      abortSignal,
+      action: "DeleteChannelMembership",
+      method: "DELETE",
+      requestUri: cmnP.encodePath`/channels/${params["ChannelArn"]}/memberships/${params["MemberArn"]}`,
+      responseCode: 204,
+      hostPrefix: `messaging-`,
+    });
+  }
+
+  async deleteChannelMessage(
+    {abortSignal, ...params}: RequestConfig & DeleteChannelMessageRequest,
+  ): Promise<void> {
+
+    const resp = await this.#client.performRequest({
+      abortSignal,
+      action: "DeleteChannelMessage",
+      method: "DELETE",
+      requestUri: cmnP.encodePath`/channels/${params["ChannelArn"]}/messages/${params["MessageId"]}`,
+      responseCode: 204,
+      hostPrefix: `messaging-`,
+    });
+  }
+
+  async deleteChannelModerator(
+    {abortSignal, ...params}: RequestConfig & DeleteChannelModeratorRequest,
+  ): Promise<void> {
+
+    const resp = await this.#client.performRequest({
+      abortSignal,
+      action: "DeleteChannelModerator",
+      method: "DELETE",
+      requestUri: cmnP.encodePath`/channels/${params["ChannelArn"]}/moderators/${params["ChannelModeratorArn"]}`,
+      responseCode: 204,
+      hostPrefix: `messaging-`,
     });
   }
 
@@ -620,6 +998,32 @@ export default class Chime {
       action: "DeleteRoomMembership",
       method: "DELETE",
       requestUri: cmnP.encodePath`/accounts/${params["AccountId"]}/rooms/${params["RoomId"]}/memberships/${params["MemberId"]}`,
+      responseCode: 204,
+    });
+  }
+
+  async deleteSipMediaApplication(
+    {abortSignal, ...params}: RequestConfig & DeleteSipMediaApplicationRequest,
+  ): Promise<void> {
+
+    const resp = await this.#client.performRequest({
+      abortSignal,
+      action: "DeleteSipMediaApplication",
+      method: "DELETE",
+      requestUri: cmnP.encodePath`/sip-media-applications/${params["SipMediaApplicationId"]}`,
+      responseCode: 204,
+    });
+  }
+
+  async deleteSipRule(
+    {abortSignal, ...params}: RequestConfig & DeleteSipRuleRequest,
+  ): Promise<void> {
+
+    const resp = await this.#client.performRequest({
+      abortSignal,
+      action: "DeleteSipRule",
+      method: "DELETE",
+      requestUri: cmnP.encodePath`/sip-rules/${params["SipRuleId"]}`,
       responseCode: 204,
     });
   }
@@ -727,6 +1131,188 @@ export default class Chime {
       requestUri: cmnP.encodePath`/voice-connectors/${params["VoiceConnectorId"]}/termination/credentials?operation=delete`,
       responseCode: 204,
     });
+  }
+
+  async describeAppInstance(
+    {abortSignal, ...params}: RequestConfig & DescribeAppInstanceRequest,
+  ): Promise<DescribeAppInstanceResponse> {
+
+    const resp = await this.#client.performRequest({
+      abortSignal,
+      action: "DescribeAppInstance",
+      method: "GET",
+      requestUri: cmnP.encodePath`/app-instances/${params["AppInstanceArn"]}`,
+      responseCode: 200,
+      hostPrefix: `identity-`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "AppInstance": toAppInstance,
+      },
+    }, await resp.json());
+  }
+
+  async describeAppInstanceAdmin(
+    {abortSignal, ...params}: RequestConfig & DescribeAppInstanceAdminRequest,
+  ): Promise<DescribeAppInstanceAdminResponse> {
+
+    const resp = await this.#client.performRequest({
+      abortSignal,
+      action: "DescribeAppInstanceAdmin",
+      method: "GET",
+      requestUri: cmnP.encodePath`/app-instances/${params["AppInstanceArn"]}/admins/${params["AppInstanceAdminArn"]}`,
+      responseCode: 200,
+      hostPrefix: `identity-`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "AppInstanceAdmin": toAppInstanceAdmin,
+      },
+    }, await resp.json());
+  }
+
+  async describeAppInstanceUser(
+    {abortSignal, ...params}: RequestConfig & DescribeAppInstanceUserRequest,
+  ): Promise<DescribeAppInstanceUserResponse> {
+
+    const resp = await this.#client.performRequest({
+      abortSignal,
+      action: "DescribeAppInstanceUser",
+      method: "GET",
+      requestUri: cmnP.encodePath`/app-instance-users/${params["AppInstanceUserArn"]}`,
+      responseCode: 200,
+      hostPrefix: `identity-`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "AppInstanceUser": toAppInstanceUser,
+      },
+    }, await resp.json());
+  }
+
+  async describeChannel(
+    {abortSignal, ...params}: RequestConfig & DescribeChannelRequest,
+  ): Promise<DescribeChannelResponse> {
+
+    const resp = await this.#client.performRequest({
+      abortSignal,
+      action: "DescribeChannel",
+      method: "GET",
+      requestUri: cmnP.encodePath`/channels/${params["ChannelArn"]}`,
+      responseCode: 200,
+      hostPrefix: `messaging-`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Channel": toChannel,
+      },
+    }, await resp.json());
+  }
+
+  async describeChannelBan(
+    {abortSignal, ...params}: RequestConfig & DescribeChannelBanRequest,
+  ): Promise<DescribeChannelBanResponse> {
+
+    const resp = await this.#client.performRequest({
+      abortSignal,
+      action: "DescribeChannelBan",
+      method: "GET",
+      requestUri: cmnP.encodePath`/channels/${params["ChannelArn"]}/bans/${params["MemberArn"]}`,
+      responseCode: 200,
+      hostPrefix: `messaging-`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ChannelBan": toChannelBan,
+      },
+    }, await resp.json());
+  }
+
+  async describeChannelMembership(
+    {abortSignal, ...params}: RequestConfig & DescribeChannelMembershipRequest,
+  ): Promise<DescribeChannelMembershipResponse> {
+
+    const resp = await this.#client.performRequest({
+      abortSignal,
+      action: "DescribeChannelMembership",
+      method: "GET",
+      requestUri: cmnP.encodePath`/channels/${params["ChannelArn"]}/memberships/${params["MemberArn"]}`,
+      responseCode: 200,
+      hostPrefix: `messaging-`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ChannelMembership": toChannelMembership,
+      },
+    }, await resp.json());
+  }
+
+  async describeChannelMembershipForAppInstanceUser(
+    {abortSignal, ...params}: RequestConfig & DescribeChannelMembershipForAppInstanceUserRequest,
+  ): Promise<DescribeChannelMembershipForAppInstanceUserResponse> {
+    const query = new URLSearchParams;
+    query.set("app-instance-user-arn", params["AppInstanceUserArn"]?.toString() ?? "");
+    const resp = await this.#client.performRequest({
+      abortSignal, query,
+      action: "DescribeChannelMembershipForAppInstanceUser",
+      method: "GET",
+      requestUri: cmnP.encodePath`/channels/${params["ChannelArn"]}?scope=app-instance-user-membership`,
+      responseCode: 200,
+      hostPrefix: `messaging-`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ChannelMembership": toChannelMembershipForAppInstanceUserSummary,
+      },
+    }, await resp.json());
+  }
+
+  async describeChannelModeratedByAppInstanceUser(
+    {abortSignal, ...params}: RequestConfig & DescribeChannelModeratedByAppInstanceUserRequest,
+  ): Promise<DescribeChannelModeratedByAppInstanceUserResponse> {
+    const query = new URLSearchParams;
+    query.set("app-instance-user-arn", params["AppInstanceUserArn"]?.toString() ?? "");
+    const resp = await this.#client.performRequest({
+      abortSignal, query,
+      action: "DescribeChannelModeratedByAppInstanceUser",
+      method: "GET",
+      requestUri: cmnP.encodePath`/channels/${params["ChannelArn"]}?scope=app-instance-user-moderated-channel`,
+      responseCode: 200,
+      hostPrefix: `messaging-`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Channel": toChannelModeratedByAppInstanceUserSummary,
+      },
+    }, await resp.json());
+  }
+
+  async describeChannelModerator(
+    {abortSignal, ...params}: RequestConfig & DescribeChannelModeratorRequest,
+  ): Promise<DescribeChannelModeratorResponse> {
+
+    const resp = await this.#client.performRequest({
+      abortSignal,
+      action: "DescribeChannelModerator",
+      method: "GET",
+      requestUri: cmnP.encodePath`/channels/${params["ChannelArn"]}/moderators/${params["ChannelModeratorArn"]}`,
+      responseCode: 200,
+      hostPrefix: `messaging-`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ChannelModerator": toChannelModerator,
+      },
+    }, await resp.json());
   }
 
   async disassociatePhoneNumberFromUser(
@@ -839,6 +1425,46 @@ export default class Chime {
     }, await resp.json());
   }
 
+  async getAppInstanceRetentionSettings(
+    {abortSignal, ...params}: RequestConfig & GetAppInstanceRetentionSettingsRequest,
+  ): Promise<GetAppInstanceRetentionSettingsResponse> {
+
+    const resp = await this.#client.performRequest({
+      abortSignal,
+      action: "GetAppInstanceRetentionSettings",
+      method: "GET",
+      requestUri: cmnP.encodePath`/app-instances/${params["AppInstanceArn"]}/retention-settings`,
+      responseCode: 200,
+      hostPrefix: `identity-`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "AppInstanceRetentionSettings": toAppInstanceRetentionSettings,
+        "InitiateDeletionTimestamp": "d",
+      },
+    }, await resp.json());
+  }
+
+  async getAppInstanceStreamingConfigurations(
+    {abortSignal, ...params}: RequestConfig & GetAppInstanceStreamingConfigurationsRequest,
+  ): Promise<GetAppInstanceStreamingConfigurationsResponse> {
+
+    const resp = await this.#client.performRequest({
+      abortSignal,
+      action: "GetAppInstanceStreamingConfigurations",
+      method: "GET",
+      requestUri: cmnP.encodePath`/app-instances/${params["AppInstanceArn"]}/streaming-configurations`,
+      responseCode: 200,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "AppInstanceStreamingConfigurations": [toAppInstanceStreamingConfiguration],
+      },
+    }, await resp.json());
+  }
+
   async getAttendee(
     {abortSignal, ...params}: RequestConfig & GetAttendeeRequest,
   ): Promise<GetAttendeeResponse> {
@@ -873,6 +1499,26 @@ export default class Chime {
       required: {},
       optional: {
         "Bot": toBot,
+      },
+    }, await resp.json());
+  }
+
+  async getChannelMessage(
+    {abortSignal, ...params}: RequestConfig & GetChannelMessageRequest,
+  ): Promise<GetChannelMessageResponse> {
+
+    const resp = await this.#client.performRequest({
+      abortSignal,
+      action: "GetChannelMessage",
+      method: "GET",
+      requestUri: cmnP.encodePath`/channels/${params["ChannelArn"]}/messages/${params["MessageId"]}`,
+      responseCode: 200,
+      hostPrefix: `messaging-`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ChannelMessage": toChannelMessage,
       },
     }, await resp.json());
   }
@@ -930,6 +1576,26 @@ export default class Chime {
       required: {},
       optional: {
         "Meeting": toMeeting,
+      },
+    }, await resp.json());
+  }
+
+  async getMessagingSessionEndpoint(
+    {abortSignal, ...params}: RequestConfig & GetMessagingSessionEndpointRequest = {},
+  ): Promise<GetMessagingSessionEndpointResponse> {
+
+    const resp = await this.#client.performRequest({
+      abortSignal,
+      action: "GetMessagingSessionEndpoint",
+      method: "GET",
+      requestUri: "/endpoints/messaging-session",
+      responseCode: 200,
+      hostPrefix: `messaging-`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Endpoint": toMessagingSessionEndpoint,
       },
     }, await resp.json());
   }
@@ -1043,6 +1709,63 @@ export default class Chime {
       required: {},
       optional: {
         "Room": toRoom,
+      },
+    }, await resp.json());
+  }
+
+  async getSipMediaApplication(
+    {abortSignal, ...params}: RequestConfig & GetSipMediaApplicationRequest,
+  ): Promise<GetSipMediaApplicationResponse> {
+
+    const resp = await this.#client.performRequest({
+      abortSignal,
+      action: "GetSipMediaApplication",
+      method: "GET",
+      requestUri: cmnP.encodePath`/sip-media-applications/${params["SipMediaApplicationId"]}`,
+      responseCode: 200,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "SipMediaApplication": toSipMediaApplication,
+      },
+    }, await resp.json());
+  }
+
+  async getSipMediaApplicationLoggingConfiguration(
+    {abortSignal, ...params}: RequestConfig & GetSipMediaApplicationLoggingConfigurationRequest,
+  ): Promise<GetSipMediaApplicationLoggingConfigurationResponse> {
+
+    const resp = await this.#client.performRequest({
+      abortSignal,
+      action: "GetSipMediaApplicationLoggingConfiguration",
+      method: "GET",
+      requestUri: cmnP.encodePath`/sip-media-applications/${params["SipMediaApplicationId"]}/logging-configuration`,
+      responseCode: 200,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "SipMediaApplicationLoggingConfiguration": toSipMediaApplicationLoggingConfiguration,
+      },
+    }, await resp.json());
+  }
+
+  async getSipRule(
+    {abortSignal, ...params}: RequestConfig & GetSipRuleRequest,
+  ): Promise<GetSipRuleResponse> {
+
+    const resp = await this.#client.performRequest({
+      abortSignal,
+      action: "GetSipRule",
+      method: "GET",
+      requestUri: cmnP.encodePath`/sip-rules/${params["SipRuleId"]}`,
+      responseCode: 200,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "SipRule": toSipRule,
       },
     }, await resp.json());
   }
@@ -1300,6 +2023,78 @@ export default class Chime {
     }, await resp.json());
   }
 
+  async listAppInstanceAdmins(
+    {abortSignal, ...params}: RequestConfig & ListAppInstanceAdminsRequest,
+  ): Promise<ListAppInstanceAdminsResponse> {
+    const query = new URLSearchParams;
+    if (params["MaxResults"] != null) query.set("max-results", params["MaxResults"]?.toString() ?? "");
+    if (params["NextToken"] != null) query.set("next-token", params["NextToken"]?.toString() ?? "");
+    const resp = await this.#client.performRequest({
+      abortSignal, query,
+      action: "ListAppInstanceAdmins",
+      method: "GET",
+      requestUri: cmnP.encodePath`/app-instances/${params["AppInstanceArn"]}/admins`,
+      responseCode: 200,
+      hostPrefix: `identity-`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "AppInstanceArn": "s",
+        "AppInstanceAdmins": [toAppInstanceAdminSummary],
+        "NextToken": "s",
+      },
+    }, await resp.json());
+  }
+
+  async listAppInstanceUsers(
+    {abortSignal, ...params}: RequestConfig & ListAppInstanceUsersRequest,
+  ): Promise<ListAppInstanceUsersResponse> {
+    const query = new URLSearchParams;
+    query.set("app-instance-arn", params["AppInstanceArn"]?.toString() ?? "");
+    if (params["MaxResults"] != null) query.set("max-results", params["MaxResults"]?.toString() ?? "");
+    if (params["NextToken"] != null) query.set("next-token", params["NextToken"]?.toString() ?? "");
+    const resp = await this.#client.performRequest({
+      abortSignal, query,
+      action: "ListAppInstanceUsers",
+      method: "GET",
+      requestUri: "/app-instance-users",
+      responseCode: 200,
+      hostPrefix: `identity-`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "AppInstanceArn": "s",
+        "AppInstanceUsers": [toAppInstanceUserSummary],
+        "NextToken": "s",
+      },
+    }, await resp.json());
+  }
+
+  async listAppInstances(
+    {abortSignal, ...params}: RequestConfig & ListAppInstancesRequest = {},
+  ): Promise<ListAppInstancesResponse> {
+    const query = new URLSearchParams;
+    if (params["MaxResults"] != null) query.set("max-results", params["MaxResults"]?.toString() ?? "");
+    if (params["NextToken"] != null) query.set("next-token", params["NextToken"]?.toString() ?? "");
+    const resp = await this.#client.performRequest({
+      abortSignal, query,
+      action: "ListAppInstances",
+      method: "GET",
+      requestUri: "/app-instances",
+      responseCode: 200,
+      hostPrefix: `identity-`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "AppInstances": [toAppInstanceSummary],
+        "NextToken": "s",
+      },
+    }, await resp.json());
+  }
+
   async listAttendeeTags(
     {abortSignal, ...params}: RequestConfig & ListAttendeeTagsRequest,
   ): Promise<ListAttendeeTagsResponse> {
@@ -1358,6 +2153,179 @@ export default class Chime {
       required: {},
       optional: {
         "Bots": [toBot],
+        "NextToken": "s",
+      },
+    }, await resp.json());
+  }
+
+  async listChannelBans(
+    {abortSignal, ...params}: RequestConfig & ListChannelBansRequest,
+  ): Promise<ListChannelBansResponse> {
+    const query = new URLSearchParams;
+    if (params["MaxResults"] != null) query.set("max-results", params["MaxResults"]?.toString() ?? "");
+    if (params["NextToken"] != null) query.set("next-token", params["NextToken"]?.toString() ?? "");
+    const resp = await this.#client.performRequest({
+      abortSignal, query,
+      action: "ListChannelBans",
+      method: "GET",
+      requestUri: cmnP.encodePath`/channels/${params["ChannelArn"]}/bans`,
+      responseCode: 200,
+      hostPrefix: `messaging-`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ChannelArn": "s",
+        "NextToken": "s",
+        "ChannelBans": [toChannelBanSummary],
+      },
+    }, await resp.json());
+  }
+
+  async listChannelMemberships(
+    {abortSignal, ...params}: RequestConfig & ListChannelMembershipsRequest,
+  ): Promise<ListChannelMembershipsResponse> {
+    const query = new URLSearchParams;
+    if (params["Type"] != null) query.set("type", params["Type"]?.toString() ?? "");
+    if (params["MaxResults"] != null) query.set("max-results", params["MaxResults"]?.toString() ?? "");
+    if (params["NextToken"] != null) query.set("next-token", params["NextToken"]?.toString() ?? "");
+    const resp = await this.#client.performRequest({
+      abortSignal, query,
+      action: "ListChannelMemberships",
+      method: "GET",
+      requestUri: cmnP.encodePath`/channels/${params["ChannelArn"]}/memberships`,
+      responseCode: 200,
+      hostPrefix: `messaging-`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ChannelArn": "s",
+        "ChannelMemberships": [toChannelMembershipSummary],
+        "NextToken": "s",
+      },
+    }, await resp.json());
+  }
+
+  async listChannelMembershipsForAppInstanceUser(
+    {abortSignal, ...params}: RequestConfig & ListChannelMembershipsForAppInstanceUserRequest = {},
+  ): Promise<ListChannelMembershipsForAppInstanceUserResponse> {
+    const query = new URLSearchParams;
+    if (params["AppInstanceUserArn"] != null) query.set("app-instance-user-arn", params["AppInstanceUserArn"]?.toString() ?? "");
+    if (params["MaxResults"] != null) query.set("max-results", params["MaxResults"]?.toString() ?? "");
+    if (params["NextToken"] != null) query.set("next-token", params["NextToken"]?.toString() ?? "");
+    const resp = await this.#client.performRequest({
+      abortSignal, query,
+      action: "ListChannelMembershipsForAppInstanceUser",
+      method: "GET",
+      requestUri: "/channels?scope=app-instance-user-memberships",
+      responseCode: 200,
+      hostPrefix: `messaging-`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ChannelMemberships": [toChannelMembershipForAppInstanceUserSummary],
+        "NextToken": "s",
+      },
+    }, await resp.json());
+  }
+
+  async listChannelMessages(
+    {abortSignal, ...params}: RequestConfig & ListChannelMessagesRequest,
+  ): Promise<ListChannelMessagesResponse> {
+    const query = new URLSearchParams;
+    if (params["SortOrder"] != null) query.set("sort-order", params["SortOrder"]?.toString() ?? "");
+    if (params["NotBefore"] != null) query.set("not-before", cmnP.serializeDate_iso8601(params["NotBefore"]) ?? "");
+    if (params["NotAfter"] != null) query.set("not-after", cmnP.serializeDate_iso8601(params["NotAfter"]) ?? "");
+    if (params["MaxResults"] != null) query.set("max-results", params["MaxResults"]?.toString() ?? "");
+    if (params["NextToken"] != null) query.set("next-token", params["NextToken"]?.toString() ?? "");
+    const resp = await this.#client.performRequest({
+      abortSignal, query,
+      action: "ListChannelMessages",
+      method: "GET",
+      requestUri: cmnP.encodePath`/channels/${params["ChannelArn"]}/messages`,
+      responseCode: 200,
+      hostPrefix: `messaging-`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ChannelArn": "s",
+        "NextToken": "s",
+        "ChannelMessages": [toChannelMessageSummary],
+      },
+    }, await resp.json());
+  }
+
+  async listChannelModerators(
+    {abortSignal, ...params}: RequestConfig & ListChannelModeratorsRequest,
+  ): Promise<ListChannelModeratorsResponse> {
+    const query = new URLSearchParams;
+    if (params["MaxResults"] != null) query.set("max-results", params["MaxResults"]?.toString() ?? "");
+    if (params["NextToken"] != null) query.set("next-token", params["NextToken"]?.toString() ?? "");
+    const resp = await this.#client.performRequest({
+      abortSignal, query,
+      action: "ListChannelModerators",
+      method: "GET",
+      requestUri: cmnP.encodePath`/channels/${params["ChannelArn"]}/moderators`,
+      responseCode: 200,
+      hostPrefix: `messaging-`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ChannelArn": "s",
+        "NextToken": "s",
+        "ChannelModerators": [toChannelModeratorSummary],
+      },
+    }, await resp.json());
+  }
+
+  async listChannels(
+    {abortSignal, ...params}: RequestConfig & ListChannelsRequest,
+  ): Promise<ListChannelsResponse> {
+    const query = new URLSearchParams;
+    query.set("app-instance-arn", params["AppInstanceArn"]?.toString() ?? "");
+    if (params["Privacy"] != null) query.set("privacy", params["Privacy"]?.toString() ?? "");
+    if (params["MaxResults"] != null) query.set("max-results", params["MaxResults"]?.toString() ?? "");
+    if (params["NextToken"] != null) query.set("next-token", params["NextToken"]?.toString() ?? "");
+    const resp = await this.#client.performRequest({
+      abortSignal, query,
+      action: "ListChannels",
+      method: "GET",
+      requestUri: "/channels",
+      responseCode: 200,
+      hostPrefix: `messaging-`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Channels": [toChannelSummary],
+        "NextToken": "s",
+      },
+    }, await resp.json());
+  }
+
+  async listChannelsModeratedByAppInstanceUser(
+    {abortSignal, ...params}: RequestConfig & ListChannelsModeratedByAppInstanceUserRequest = {},
+  ): Promise<ListChannelsModeratedByAppInstanceUserResponse> {
+    const query = new URLSearchParams;
+    if (params["AppInstanceUserArn"] != null) query.set("app-instance-user-arn", params["AppInstanceUserArn"]?.toString() ?? "");
+    if (params["MaxResults"] != null) query.set("max-results", params["MaxResults"]?.toString() ?? "");
+    if (params["NextToken"] != null) query.set("next-token", params["NextToken"]?.toString() ?? "");
+    const resp = await this.#client.performRequest({
+      abortSignal, query,
+      action: "ListChannelsModeratedByAppInstanceUser",
+      method: "GET",
+      requestUri: "/channels?scope=app-instance-user-moderated-channels",
+      responseCode: 200,
+      hostPrefix: `messaging-`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Channels": [toChannelModeratedByAppInstanceUserSummary],
         "NextToken": "s",
       },
     }, await resp.json());
@@ -1519,6 +2487,51 @@ export default class Chime {
     }, await resp.json());
   }
 
+  async listSipMediaApplications(
+    {abortSignal, ...params}: RequestConfig & ListSipMediaApplicationsRequest = {},
+  ): Promise<ListSipMediaApplicationsResponse> {
+    const query = new URLSearchParams;
+    if (params["MaxResults"] != null) query.set("max-results", params["MaxResults"]?.toString() ?? "");
+    if (params["NextToken"] != null) query.set("next-token", params["NextToken"]?.toString() ?? "");
+    const resp = await this.#client.performRequest({
+      abortSignal, query,
+      action: "ListSipMediaApplications",
+      method: "GET",
+      requestUri: "/sip-media-applications",
+      responseCode: 200,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "SipMediaApplications": [toSipMediaApplication],
+        "NextToken": "s",
+      },
+    }, await resp.json());
+  }
+
+  async listSipRules(
+    {abortSignal, ...params}: RequestConfig & ListSipRulesRequest = {},
+  ): Promise<ListSipRulesResponse> {
+    const query = new URLSearchParams;
+    if (params["SipMediaApplicationId"] != null) query.set("sip-media-application", params["SipMediaApplicationId"]?.toString() ?? "");
+    if (params["MaxResults"] != null) query.set("max-results", params["MaxResults"]?.toString() ?? "");
+    if (params["NextToken"] != null) query.set("next-token", params["NextToken"]?.toString() ?? "");
+    const resp = await this.#client.performRequest({
+      abortSignal, query,
+      action: "ListSipRules",
+      method: "GET",
+      requestUri: "/sip-rules",
+      responseCode: 200,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "SipRules": [toSipRule],
+        "NextToken": "s",
+      },
+    }, await resp.json());
+  }
+
   async listTagsForResource(
     {abortSignal, ...params}: RequestConfig & ListTagsForResourceRequest,
   ): Promise<ListTagsForResourceResponse> {
@@ -1641,6 +2654,50 @@ export default class Chime {
     }, await resp.json());
   }
 
+  async putAppInstanceRetentionSettings(
+    {abortSignal, ...params}: RequestConfig & PutAppInstanceRetentionSettingsRequest,
+  ): Promise<PutAppInstanceRetentionSettingsResponse> {
+    const body: jsonP.JSONObject = {
+      AppInstanceRetentionSettings: fromAppInstanceRetentionSettings(params["AppInstanceRetentionSettings"]),
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "PutAppInstanceRetentionSettings",
+      method: "PUT",
+      requestUri: cmnP.encodePath`/app-instances/${params["AppInstanceArn"]}/retention-settings`,
+      responseCode: 200,
+      hostPrefix: `identity-`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "AppInstanceRetentionSettings": toAppInstanceRetentionSettings,
+        "InitiateDeletionTimestamp": "d",
+      },
+    }, await resp.json());
+  }
+
+  async putAppInstanceStreamingConfigurations(
+    {abortSignal, ...params}: RequestConfig & PutAppInstanceStreamingConfigurationsRequest,
+  ): Promise<PutAppInstanceStreamingConfigurationsResponse> {
+    const body: jsonP.JSONObject = {
+      AppInstanceStreamingConfigurations: params["AppInstanceStreamingConfigurations"]?.map(x => fromAppInstanceStreamingConfiguration(x)),
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "PutAppInstanceStreamingConfigurations",
+      method: "PUT",
+      requestUri: cmnP.encodePath`/app-instances/${params["AppInstanceArn"]}/streaming-configurations`,
+      responseCode: 200,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "AppInstanceStreamingConfigurations": [toAppInstanceStreamingConfiguration],
+      },
+    }, await resp.json());
+  }
+
   async putEventsConfiguration(
     {abortSignal, ...params}: RequestConfig & PutEventsConfigurationRequest,
   ): Promise<PutEventsConfigurationResponse> {
@@ -1681,6 +2738,27 @@ export default class Chime {
       optional: {
         "RetentionSettings": toRetentionSettings,
         "InitiateDeletionTimestamp": "d",
+      },
+    }, await resp.json());
+  }
+
+  async putSipMediaApplicationLoggingConfiguration(
+    {abortSignal, ...params}: RequestConfig & PutSipMediaApplicationLoggingConfigurationRequest,
+  ): Promise<PutSipMediaApplicationLoggingConfigurationResponse> {
+    const body: jsonP.JSONObject = {
+      SipMediaApplicationLoggingConfiguration: fromSipMediaApplicationLoggingConfiguration(params["SipMediaApplicationLoggingConfiguration"]),
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "PutSipMediaApplicationLoggingConfiguration",
+      method: "PUT",
+      requestUri: cmnP.encodePath`/sip-media-applications/${params["SipMediaApplicationId"]}/logging-configuration`,
+      responseCode: 200,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "SipMediaApplicationLoggingConfiguration": toSipMediaApplicationLoggingConfiguration,
       },
     }, await resp.json());
   }
@@ -1827,6 +2905,26 @@ export default class Chime {
     });
   }
 
+  async redactChannelMessage(
+    {abortSignal, ...params}: RequestConfig & RedactChannelMessageRequest,
+  ): Promise<RedactChannelMessageResponse> {
+
+    const resp = await this.#client.performRequest({
+      abortSignal,
+      action: "RedactChannelMessage",
+      requestUri: cmnP.encodePath`/channels/${params["ChannelArn"]}/messages/${params["MessageId"]}?operation=redact`,
+      responseCode: 200,
+      hostPrefix: `messaging-`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ChannelArn": "s",
+        "MessageId": "s",
+      },
+    }, await resp.json());
+  }
+
   async redactConversationMessage(
     {abortSignal, ...params}: RequestConfig & RedactConversationMessageRequest,
   ): Promise<RedactConversationMessageResponse> {
@@ -1934,6 +3032,32 @@ export default class Chime {
       required: {},
       optional: {
         "E164PhoneNumbers": ["s"],
+      },
+    }, await resp.json());
+  }
+
+  async sendChannelMessage(
+    {abortSignal, ...params}: RequestConfig & SendChannelMessageRequest,
+  ): Promise<SendChannelMessageResponse> {
+    const body: jsonP.JSONObject = {
+      Content: params["Content"],
+      Type: params["Type"],
+      Persistence: params["Persistence"],
+      Metadata: params["Metadata"],
+      ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "SendChannelMessage",
+      requestUri: cmnP.encodePath`/channels/${params["ChannelArn"]}/messages`,
+      responseCode: 201,
+      hostPrefix: `messaging-`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ChannelArn": "s",
+        "MessageId": "s",
       },
     }, await resp.json());
   }
@@ -2063,6 +3187,52 @@ export default class Chime {
     }, await resp.json());
   }
 
+  async updateAppInstance(
+    {abortSignal, ...params}: RequestConfig & UpdateAppInstanceRequest,
+  ): Promise<UpdateAppInstanceResponse> {
+    const body: jsonP.JSONObject = {
+      Name: params["Name"],
+      Metadata: params["Metadata"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "UpdateAppInstance",
+      method: "PUT",
+      requestUri: cmnP.encodePath`/app-instances/${params["AppInstanceArn"]}`,
+      responseCode: 200,
+      hostPrefix: `identity-`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "AppInstanceArn": "s",
+      },
+    }, await resp.json());
+  }
+
+  async updateAppInstanceUser(
+    {abortSignal, ...params}: RequestConfig & UpdateAppInstanceUserRequest,
+  ): Promise<UpdateAppInstanceUserResponse> {
+    const body: jsonP.JSONObject = {
+      Name: params["Name"],
+      Metadata: params["Metadata"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "UpdateAppInstanceUser",
+      method: "PUT",
+      requestUri: cmnP.encodePath`/app-instance-users/${params["AppInstanceUserArn"]}`,
+      responseCode: 200,
+      hostPrefix: `identity-`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "AppInstanceUserArn": "s",
+      },
+    }, await resp.json());
+  }
+
   async updateBot(
     {abortSignal, ...params}: RequestConfig & UpdateBotRequest,
   ): Promise<UpdateBotResponse> {
@@ -2079,6 +3249,74 @@ export default class Chime {
       required: {},
       optional: {
         "Bot": toBot,
+      },
+    }, await resp.json());
+  }
+
+  async updateChannel(
+    {abortSignal, ...params}: RequestConfig & UpdateChannelRequest,
+  ): Promise<UpdateChannelResponse> {
+    const body: jsonP.JSONObject = {
+      Name: params["Name"],
+      Mode: params["Mode"],
+      Metadata: params["Metadata"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "UpdateChannel",
+      method: "PUT",
+      requestUri: cmnP.encodePath`/channels/${params["ChannelArn"]}`,
+      responseCode: 200,
+      hostPrefix: `messaging-`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ChannelArn": "s",
+      },
+    }, await resp.json());
+  }
+
+  async updateChannelMessage(
+    {abortSignal, ...params}: RequestConfig & UpdateChannelMessageRequest,
+  ): Promise<UpdateChannelMessageResponse> {
+    const body: jsonP.JSONObject = {
+      Content: params["Content"],
+      Metadata: params["Metadata"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "UpdateChannelMessage",
+      method: "PUT",
+      requestUri: cmnP.encodePath`/channels/${params["ChannelArn"]}/messages/${params["MessageId"]}`,
+      responseCode: 200,
+      hostPrefix: `messaging-`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ChannelArn": "s",
+        "MessageId": "s",
+      },
+    }, await resp.json());
+  }
+
+  async updateChannelReadMarker(
+    {abortSignal, ...params}: RequestConfig & UpdateChannelReadMarkerRequest,
+  ): Promise<UpdateChannelReadMarkerResponse> {
+
+    const resp = await this.#client.performRequest({
+      abortSignal,
+      action: "UpdateChannelReadMarker",
+      method: "PUT",
+      requestUri: cmnP.encodePath`/channels/${params["ChannelArn"]}/readMarker`,
+      responseCode: 200,
+      hostPrefix: `messaging-`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ChannelArn": "s",
       },
     }, await resp.json());
   }
@@ -2192,6 +3430,51 @@ export default class Chime {
       required: {},
       optional: {
         "RoomMembership": toRoomMembership,
+      },
+    }, await resp.json());
+  }
+
+  async updateSipMediaApplication(
+    {abortSignal, ...params}: RequestConfig & UpdateSipMediaApplicationRequest,
+  ): Promise<UpdateSipMediaApplicationResponse> {
+    const body: jsonP.JSONObject = {
+      Name: params["Name"],
+      Endpoints: params["Endpoints"]?.map(x => fromSipMediaApplicationEndpoint(x)),
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "UpdateSipMediaApplication",
+      method: "PUT",
+      requestUri: cmnP.encodePath`/sip-media-applications/${params["SipMediaApplicationId"]}`,
+      responseCode: 200,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "SipMediaApplication": toSipMediaApplication,
+      },
+    }, await resp.json());
+  }
+
+  async updateSipRule(
+    {abortSignal, ...params}: RequestConfig & UpdateSipRuleRequest,
+  ): Promise<UpdateSipRuleResponse> {
+    const body: jsonP.JSONObject = {
+      Name: params["Name"],
+      Disabled: params["Disabled"],
+      TargetApplications: params["TargetApplications"]?.map(x => fromSipRuleTargetApplication(x)),
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "UpdateSipRule",
+      method: "PUT",
+      requestUri: cmnP.encodePath`/sip-rules/${params["SipRuleId"]}`,
+      responseCode: 202,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "SipRule": toSipRule,
       },
     }, await resp.json());
   }
@@ -2353,6 +3636,28 @@ export interface CreateAccountRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface CreateAppInstanceRequest {
+  Name: string;
+  Metadata?: string | null;
+  ClientRequestToken: string;
+}
+
+// refs: 1 - tags: named, input
+export interface CreateAppInstanceAdminRequest {
+  AppInstanceAdminArn: string;
+  AppInstanceArn: string;
+}
+
+// refs: 1 - tags: named, input
+export interface CreateAppInstanceUserRequest {
+  AppInstanceArn: string;
+  AppInstanceUserId: string;
+  Name: string;
+  Metadata?: string | null;
+  ClientRequestToken: string;
+}
+
+// refs: 1 - tags: named, input
 export interface CreateAttendeeRequest {
   MeetingId: string;
   ExternalUserId: string;
@@ -2367,6 +3672,36 @@ export interface CreateBotRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface CreateChannelRequest {
+  AppInstanceArn: string;
+  Name: string;
+  Mode?: ChannelMode | null;
+  Privacy?: ChannelPrivacy | null;
+  Metadata?: string | null;
+  ClientRequestToken: string;
+  Tags?: Tag[] | null;
+}
+
+// refs: 1 - tags: named, input
+export interface CreateChannelBanRequest {
+  ChannelArn: string;
+  MemberArn: string;
+}
+
+// refs: 1 - tags: named, input
+export interface CreateChannelMembershipRequest {
+  ChannelArn: string;
+  MemberArn: string;
+  Type: ChannelMembershipType;
+}
+
+// refs: 1 - tags: named, input
+export interface CreateChannelModeratorRequest {
+  ChannelArn: string;
+  ChannelModeratorArn: string;
+}
+
+// refs: 1 - tags: named, input
 export interface CreateMeetingRequest {
   ClientRequestToken: string;
   ExternalMeetingId?: string | null;
@@ -2374,6 +3709,14 @@ export interface CreateMeetingRequest {
   MediaRegion?: string | null;
   Tags?: Tag[] | null;
   NotificationsConfiguration?: MeetingNotificationConfiguration | null;
+}
+
+// refs: 1 - tags: named, input
+export interface CreateMeetingDialOutRequest {
+  MeetingId: string;
+  FromPhoneNumber: string;
+  ToPhoneNumber: string;
+  JoinToken: string;
 }
 
 // refs: 1 - tags: named, input
@@ -2421,6 +3764,29 @@ export interface CreateRoomMembershipRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface CreateSipMediaApplicationRequest {
+  AwsRegion: string;
+  Name?: string | null;
+  Endpoints: SipMediaApplicationEndpoint[];
+}
+
+// refs: 1 - tags: named, input
+export interface CreateSipMediaApplicationCallRequest {
+  FromPhoneNumber?: string | null;
+  ToPhoneNumber?: string | null;
+  SipMediaApplicationId: string;
+}
+
+// refs: 1 - tags: named, input
+export interface CreateSipRuleRequest {
+  Name: string;
+  TriggerType: SipRuleTriggerType;
+  TriggerValue: string;
+  Disabled?: boolean | null;
+  TargetApplications: SipRuleTargetApplication[];
+}
+
+// refs: 1 - tags: named, input
 export interface CreateUserRequest {
   AccountId: string;
   Username?: string | null;
@@ -2447,9 +3813,59 @@ export interface DeleteAccountRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface DeleteAppInstanceRequest {
+  AppInstanceArn: string;
+}
+
+// refs: 1 - tags: named, input
+export interface DeleteAppInstanceAdminRequest {
+  AppInstanceAdminArn: string;
+  AppInstanceArn: string;
+}
+
+// refs: 1 - tags: named, input
+export interface DeleteAppInstanceStreamingConfigurationsRequest {
+  AppInstanceArn: string;
+}
+
+// refs: 1 - tags: named, input
+export interface DeleteAppInstanceUserRequest {
+  AppInstanceUserArn: string;
+}
+
+// refs: 1 - tags: named, input
 export interface DeleteAttendeeRequest {
   MeetingId: string;
   AttendeeId: string;
+}
+
+// refs: 1 - tags: named, input
+export interface DeleteChannelRequest {
+  ChannelArn: string;
+}
+
+// refs: 1 - tags: named, input
+export interface DeleteChannelBanRequest {
+  ChannelArn: string;
+  MemberArn: string;
+}
+
+// refs: 1 - tags: named, input
+export interface DeleteChannelMembershipRequest {
+  ChannelArn: string;
+  MemberArn: string;
+}
+
+// refs: 1 - tags: named, input
+export interface DeleteChannelMessageRequest {
+  ChannelArn: string;
+  MessageId: string;
+}
+
+// refs: 1 - tags: named, input
+export interface DeleteChannelModeratorRequest {
+  ChannelArn: string;
+  ChannelModeratorArn: string;
 }
 
 // refs: 1 - tags: named, input
@@ -2485,6 +3901,16 @@ export interface DeleteRoomMembershipRequest {
   AccountId: string;
   RoomId: string;
   MemberId: string;
+}
+
+// refs: 1 - tags: named, input
+export interface DeleteSipMediaApplicationRequest {
+  SipMediaApplicationId: string;
+}
+
+// refs: 1 - tags: named, input
+export interface DeleteSipRuleRequest {
+  SipRuleId: string;
 }
 
 // refs: 1 - tags: named, input
@@ -2529,6 +3955,57 @@ export interface DeleteVoiceConnectorTerminationCredentialsRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface DescribeAppInstanceRequest {
+  AppInstanceArn: string;
+}
+
+// refs: 1 - tags: named, input
+export interface DescribeAppInstanceAdminRequest {
+  AppInstanceAdminArn: string;
+  AppInstanceArn: string;
+}
+
+// refs: 1 - tags: named, input
+export interface DescribeAppInstanceUserRequest {
+  AppInstanceUserArn: string;
+}
+
+// refs: 1 - tags: named, input
+export interface DescribeChannelRequest {
+  ChannelArn: string;
+}
+
+// refs: 1 - tags: named, input
+export interface DescribeChannelBanRequest {
+  ChannelArn: string;
+  MemberArn: string;
+}
+
+// refs: 1 - tags: named, input
+export interface DescribeChannelMembershipRequest {
+  ChannelArn: string;
+  MemberArn: string;
+}
+
+// refs: 1 - tags: named, input
+export interface DescribeChannelMembershipForAppInstanceUserRequest {
+  ChannelArn: string;
+  AppInstanceUserArn: string;
+}
+
+// refs: 1 - tags: named, input
+export interface DescribeChannelModeratedByAppInstanceUserRequest {
+  ChannelArn: string;
+  AppInstanceUserArn: string;
+}
+
+// refs: 1 - tags: named, input
+export interface DescribeChannelModeratorRequest {
+  ChannelArn: string;
+  ChannelModeratorArn: string;
+}
+
+// refs: 1 - tags: named, input
 export interface DisassociatePhoneNumberFromUserRequest {
   AccountId: string;
   UserId: string;
@@ -2563,6 +4040,16 @@ export interface GetAccountSettingsRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface GetAppInstanceRetentionSettingsRequest {
+  AppInstanceArn: string;
+}
+
+// refs: 1 - tags: named, input
+export interface GetAppInstanceStreamingConfigurationsRequest {
+  AppInstanceArn: string;
+}
+
+// refs: 1 - tags: named, input
 export interface GetAttendeeRequest {
   MeetingId: string;
   AttendeeId: string;
@@ -2575,6 +4062,12 @@ export interface GetBotRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface GetChannelMessageRequest {
+  ChannelArn: string;
+  MessageId: string;
+}
+
+// refs: 1 - tags: named, input
 export interface GetEventsConfigurationRequest {
   AccountId: string;
   BotId: string;
@@ -2583,6 +4076,10 @@ export interface GetEventsConfigurationRequest {
 // refs: 1 - tags: named, input
 export interface GetMeetingRequest {
   MeetingId: string;
+}
+
+// refs: 1 - tags: named, input
+export interface GetMessagingSessionEndpointRequest {
 }
 
 // refs: 1 - tags: named, input
@@ -2610,6 +4107,21 @@ export interface GetRetentionSettingsRequest {
 export interface GetRoomRequest {
   AccountId: string;
   RoomId: string;
+}
+
+// refs: 1 - tags: named, input
+export interface GetSipMediaApplicationRequest {
+  SipMediaApplicationId: string;
+}
+
+// refs: 1 - tags: named, input
+export interface GetSipMediaApplicationLoggingConfigurationRequest {
+  SipMediaApplicationId: string;
+}
+
+// refs: 1 - tags: named, input
+export interface GetSipRuleRequest {
+  SipRuleId: string;
 }
 
 // refs: 1 - tags: named, input
@@ -2685,6 +4197,26 @@ export interface ListAccountsRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface ListAppInstanceAdminsRequest {
+  AppInstanceArn: string;
+  MaxResults?: number | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface ListAppInstanceUsersRequest {
+  AppInstanceArn: string;
+  MaxResults?: number | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface ListAppInstancesRequest {
+  MaxResults?: number | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, input
 export interface ListAttendeeTagsRequest {
   MeetingId: string;
   AttendeeId: string;
@@ -2700,6 +4232,60 @@ export interface ListAttendeesRequest {
 // refs: 1 - tags: named, input
 export interface ListBotsRequest {
   AccountId: string;
+  MaxResults?: number | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface ListChannelBansRequest {
+  ChannelArn: string;
+  MaxResults?: number | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface ListChannelMembershipsRequest {
+  ChannelArn: string;
+  Type?: ChannelMembershipType | null;
+  MaxResults?: number | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface ListChannelMembershipsForAppInstanceUserRequest {
+  AppInstanceUserArn?: string | null;
+  MaxResults?: number | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface ListChannelMessagesRequest {
+  ChannelArn: string;
+  SortOrder?: SortOrder | null;
+  NotBefore?: Date | number | null;
+  NotAfter?: Date | number | null;
+  MaxResults?: number | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface ListChannelModeratorsRequest {
+  ChannelArn: string;
+  MaxResults?: number | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface ListChannelsRequest {
+  AppInstanceArn: string;
+  Privacy?: ChannelPrivacy | null;
+  MaxResults?: number | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface ListChannelsModeratedByAppInstanceUserRequest {
+  AppInstanceUserArn?: string | null;
   MaxResults?: number | null;
   NextToken?: string | null;
 }
@@ -2756,6 +4342,19 @@ export interface ListRoomsRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface ListSipMediaApplicationsRequest {
+  MaxResults?: number | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface ListSipRulesRequest {
+  SipMediaApplicationId?: string | null;
+  MaxResults?: number | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, input
 export interface ListTagsForResourceRequest {
   ResourceARN: string;
 }
@@ -2793,6 +4392,18 @@ export interface LogoutUserRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface PutAppInstanceRetentionSettingsRequest {
+  AppInstanceArn: string;
+  AppInstanceRetentionSettings: AppInstanceRetentionSettings;
+}
+
+// refs: 1 - tags: named, input
+export interface PutAppInstanceStreamingConfigurationsRequest {
+  AppInstanceArn: string;
+  AppInstanceStreamingConfigurations: AppInstanceStreamingConfiguration[];
+}
+
+// refs: 1 - tags: named, input
 export interface PutEventsConfigurationRequest {
   AccountId: string;
   BotId: string;
@@ -2804,6 +4415,12 @@ export interface PutEventsConfigurationRequest {
 export interface PutRetentionSettingsRequest {
   AccountId: string;
   RetentionSettings: RetentionSettings;
+}
+
+// refs: 1 - tags: named, input
+export interface PutSipMediaApplicationLoggingConfigurationRequest {
+  SipMediaApplicationId: string;
+  SipMediaApplicationLoggingConfiguration?: SipMediaApplicationLoggingConfiguration | null;
 }
 
 // refs: 1 - tags: named, input
@@ -2852,6 +4469,12 @@ export interface PutVoiceConnectorTerminationCredentialsRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface RedactChannelMessageRequest {
+  ChannelArn: string;
+  MessageId: string;
+}
+
+// refs: 1 - tags: named, input
 export interface RedactConversationMessageRequest {
   AccountId: string;
   ConversationId: string;
@@ -2891,6 +4514,16 @@ export interface SearchAvailablePhoneNumbersRequest {
   TollFreePrefix?: string | null;
   MaxResults?: number | null;
   NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface SendChannelMessageRequest {
+  ChannelArn: string;
+  Content: string;
+  Type: ChannelMessageType;
+  Persistence: ChannelMessagePersistenceType;
+  Metadata?: string | null;
+  ClientRequestToken: string;
 }
 
 // refs: 1 - tags: named, input
@@ -2944,10 +4577,45 @@ export interface UpdateAccountSettingsRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface UpdateAppInstanceRequest {
+  AppInstanceArn: string;
+  Name: string;
+  Metadata?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface UpdateAppInstanceUserRequest {
+  AppInstanceUserArn: string;
+  Name: string;
+  Metadata?: string | null;
+}
+
+// refs: 1 - tags: named, input
 export interface UpdateBotRequest {
   AccountId: string;
   BotId: string;
   Disabled?: boolean | null;
+}
+
+// refs: 1 - tags: named, input
+export interface UpdateChannelRequest {
+  ChannelArn: string;
+  Name: string;
+  Mode: ChannelMode;
+  Metadata?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface UpdateChannelMessageRequest {
+  ChannelArn: string;
+  MessageId: string;
+  Content?: string | null;
+  Metadata?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface UpdateChannelReadMarkerRequest {
+  ChannelArn: string;
 }
 
 // refs: 1 - tags: named, input
@@ -2989,6 +4657,21 @@ export interface UpdateRoomMembershipRequest {
   RoomId: string;
   MemberId: string;
   Role?: RoomMembershipRole | null;
+}
+
+// refs: 1 - tags: named, input
+export interface UpdateSipMediaApplicationRequest {
+  SipMediaApplicationId: string;
+  Name?: string | null;
+  Endpoints?: SipMediaApplicationEndpoint[] | null;
+}
+
+// refs: 1 - tags: named, input
+export interface UpdateSipRuleRequest {
+  SipRuleId: string;
+  Name: string;
+  Disabled?: boolean | null;
+  TargetApplications?: SipRuleTargetApplication[] | null;
 }
 
 // refs: 1 - tags: named, input
@@ -3081,6 +4764,22 @@ export interface CreateAccountResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface CreateAppInstanceResponse {
+  AppInstanceArn?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface CreateAppInstanceAdminResponse {
+  AppInstanceAdmin?: Identity | null;
+  AppInstanceArn?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface CreateAppInstanceUserResponse {
+  AppInstanceUserArn?: string | null;
+}
+
+// refs: 1 - tags: named, output
 export interface CreateAttendeeResponse {
   Attendee?: Attendee | null;
 }
@@ -3091,8 +4790,36 @@ export interface CreateBotResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface CreateChannelResponse {
+  ChannelArn?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface CreateChannelBanResponse {
+  ChannelArn?: string | null;
+  Member?: Identity | null;
+}
+
+// refs: 1 - tags: named, output
+export interface CreateChannelMembershipResponse {
+  ChannelArn?: string | null;
+  Member?: Identity | null;
+}
+
+// refs: 1 - tags: named, output
+export interface CreateChannelModeratorResponse {
+  ChannelArn?: string | null;
+  ChannelModerator?: Identity | null;
+}
+
+// refs: 1 - tags: named, output
 export interface CreateMeetingResponse {
   Meeting?: Meeting | null;
+}
+
+// refs: 1 - tags: named, output
+export interface CreateMeetingDialOutResponse {
+  TransactionId?: string | null;
 }
 
 // refs: 1 - tags: named, output
@@ -3123,6 +4850,21 @@ export interface CreateRoomMembershipResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface CreateSipMediaApplicationResponse {
+  SipMediaApplication?: SipMediaApplication | null;
+}
+
+// refs: 1 - tags: named, output
+export interface CreateSipMediaApplicationCallResponse {
+  SipMediaApplicationCall?: SipMediaApplicationCall | null;
+}
+
+// refs: 1 - tags: named, output
+export interface CreateSipRuleResponse {
+  SipRule?: SipRule | null;
+}
+
+// refs: 1 - tags: named, output
 export interface CreateUserResponse {
   User?: User | null;
 }
@@ -3139,6 +4881,51 @@ export interface CreateVoiceConnectorGroupResponse {
 
 // refs: 1 - tags: named, output
 export interface DeleteAccountResponse {
+}
+
+// refs: 1 - tags: named, output
+export interface DescribeAppInstanceResponse {
+  AppInstance?: AppInstance | null;
+}
+
+// refs: 1 - tags: named, output
+export interface DescribeAppInstanceAdminResponse {
+  AppInstanceAdmin?: AppInstanceAdmin | null;
+}
+
+// refs: 1 - tags: named, output
+export interface DescribeAppInstanceUserResponse {
+  AppInstanceUser?: AppInstanceUser | null;
+}
+
+// refs: 1 - tags: named, output
+export interface DescribeChannelResponse {
+  Channel?: Channel | null;
+}
+
+// refs: 1 - tags: named, output
+export interface DescribeChannelBanResponse {
+  ChannelBan?: ChannelBan | null;
+}
+
+// refs: 1 - tags: named, output
+export interface DescribeChannelMembershipResponse {
+  ChannelMembership?: ChannelMembership | null;
+}
+
+// refs: 1 - tags: named, output
+export interface DescribeChannelMembershipForAppInstanceUserResponse {
+  ChannelMembership?: ChannelMembershipForAppInstanceUserSummary | null;
+}
+
+// refs: 1 - tags: named, output
+export interface DescribeChannelModeratedByAppInstanceUserResponse {
+  Channel?: ChannelModeratedByAppInstanceUserSummary | null;
+}
+
+// refs: 1 - tags: named, output
+export interface DescribeChannelModeratorResponse {
+  ChannelModerator?: ChannelModerator | null;
 }
 
 // refs: 1 - tags: named, output
@@ -3170,6 +4957,17 @@ export interface GetAccountSettingsResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface GetAppInstanceRetentionSettingsResponse {
+  AppInstanceRetentionSettings?: AppInstanceRetentionSettings | null;
+  InitiateDeletionTimestamp?: Date | number | null;
+}
+
+// refs: 1 - tags: named, output
+export interface GetAppInstanceStreamingConfigurationsResponse {
+  AppInstanceStreamingConfigurations?: AppInstanceStreamingConfiguration[] | null;
+}
+
+// refs: 1 - tags: named, output
 export interface GetAttendeeResponse {
   Attendee?: Attendee | null;
 }
@@ -3177,6 +4975,11 @@ export interface GetAttendeeResponse {
 // refs: 1 - tags: named, output
 export interface GetBotResponse {
   Bot?: Bot | null;
+}
+
+// refs: 1 - tags: named, output
+export interface GetChannelMessageResponse {
+  ChannelMessage?: ChannelMessage | null;
 }
 
 // refs: 1 - tags: named, output
@@ -3193,6 +4996,11 @@ export interface GetGlobalSettingsResponse {
 // refs: 1 - tags: named, output
 export interface GetMeetingResponse {
   Meeting?: Meeting | null;
+}
+
+// refs: 1 - tags: named, output
+export interface GetMessagingSessionEndpointResponse {
+  Endpoint?: MessagingSessionEndpoint | null;
 }
 
 // refs: 1 - tags: named, output
@@ -3225,6 +5033,21 @@ export interface GetRetentionSettingsResponse {
 // refs: 1 - tags: named, output
 export interface GetRoomResponse {
   Room?: Room | null;
+}
+
+// refs: 1 - tags: named, output
+export interface GetSipMediaApplicationResponse {
+  SipMediaApplication?: SipMediaApplication | null;
+}
+
+// refs: 1 - tags: named, output
+export interface GetSipMediaApplicationLoggingConfigurationResponse {
+  SipMediaApplicationLoggingConfiguration?: SipMediaApplicationLoggingConfiguration | null;
+}
+
+// refs: 1 - tags: named, output
+export interface GetSipRuleResponse {
+  SipRule?: SipRule | null;
 }
 
 // refs: 1 - tags: named, output
@@ -3294,6 +5117,26 @@ export interface ListAccountsResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface ListAppInstanceAdminsResponse {
+  AppInstanceArn?: string | null;
+  AppInstanceAdmins?: AppInstanceAdminSummary[] | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface ListAppInstanceUsersResponse {
+  AppInstanceArn?: string | null;
+  AppInstanceUsers?: AppInstanceUserSummary[] | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface ListAppInstancesResponse {
+  AppInstances?: AppInstanceSummary[] | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
 export interface ListAttendeeTagsResponse {
   Tags?: Tag[] | null;
 }
@@ -3307,6 +5150,52 @@ export interface ListAttendeesResponse {
 // refs: 1 - tags: named, output
 export interface ListBotsResponse {
   Bots?: Bot[] | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface ListChannelBansResponse {
+  ChannelArn?: string | null;
+  NextToken?: string | null;
+  ChannelBans?: ChannelBanSummary[] | null;
+}
+
+// refs: 1 - tags: named, output
+export interface ListChannelMembershipsResponse {
+  ChannelArn?: string | null;
+  ChannelMemberships?: ChannelMembershipSummary[] | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface ListChannelMembershipsForAppInstanceUserResponse {
+  ChannelMemberships?: ChannelMembershipForAppInstanceUserSummary[] | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface ListChannelMessagesResponse {
+  ChannelArn?: string | null;
+  NextToken?: string | null;
+  ChannelMessages?: ChannelMessageSummary[] | null;
+}
+
+// refs: 1 - tags: named, output
+export interface ListChannelModeratorsResponse {
+  ChannelArn?: string | null;
+  NextToken?: string | null;
+  ChannelModerators?: ChannelModeratorSummary[] | null;
+}
+
+// refs: 1 - tags: named, output
+export interface ListChannelsResponse {
+  Channels?: ChannelSummary[] | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface ListChannelsModeratedByAppInstanceUserResponse {
+  Channels?: ChannelModeratedByAppInstanceUserSummary[] | null;
   NextToken?: string | null;
 }
 
@@ -3352,6 +5241,18 @@ export interface ListRoomsResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface ListSipMediaApplicationsResponse {
+  SipMediaApplications?: SipMediaApplication[] | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface ListSipRulesResponse {
+  SipRules?: SipRule[] | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
 export interface ListTagsForResourceResponse {
   Tags?: Tag[] | null;
 }
@@ -3384,6 +5285,17 @@ export interface LogoutUserResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface PutAppInstanceRetentionSettingsResponse {
+  AppInstanceRetentionSettings?: AppInstanceRetentionSettings | null;
+  InitiateDeletionTimestamp?: Date | number | null;
+}
+
+// refs: 1 - tags: named, output
+export interface PutAppInstanceStreamingConfigurationsResponse {
+  AppInstanceStreamingConfigurations?: AppInstanceStreamingConfiguration[] | null;
+}
+
+// refs: 1 - tags: named, output
 export interface PutEventsConfigurationResponse {
   EventsConfiguration?: EventsConfiguration | null;
 }
@@ -3392,6 +5304,11 @@ export interface PutEventsConfigurationResponse {
 export interface PutRetentionSettingsResponse {
   RetentionSettings?: RetentionSettings | null;
   InitiateDeletionTimestamp?: Date | number | null;
+}
+
+// refs: 1 - tags: named, output
+export interface PutSipMediaApplicationLoggingConfigurationResponse {
+  SipMediaApplicationLoggingConfiguration?: SipMediaApplicationLoggingConfiguration | null;
 }
 
 // refs: 1 - tags: named, output
@@ -3425,6 +5342,12 @@ export interface PutVoiceConnectorTerminationResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface RedactChannelMessageResponse {
+  ChannelArn?: string | null;
+  MessageId?: string | null;
+}
+
+// refs: 1 - tags: named, output
 export interface RedactConversationMessageResponse {
 }
 
@@ -3453,6 +5376,12 @@ export interface SearchAvailablePhoneNumbersResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface SendChannelMessageResponse {
+  ChannelArn?: string | null;
+  MessageId?: string | null;
+}
+
+// refs: 1 - tags: named, output
 export interface UpdateAccountResponse {
   Account?: Account | null;
 }
@@ -3462,8 +5391,34 @@ export interface UpdateAccountSettingsResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface UpdateAppInstanceResponse {
+  AppInstanceArn?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface UpdateAppInstanceUserResponse {
+  AppInstanceUserArn?: string | null;
+}
+
+// refs: 1 - tags: named, output
 export interface UpdateBotResponse {
   Bot?: Bot | null;
+}
+
+// refs: 1 - tags: named, output
+export interface UpdateChannelResponse {
+  ChannelArn?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface UpdateChannelMessageResponse {
+  ChannelArn?: string | null;
+  MessageId?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface UpdateChannelReadMarkerResponse {
+  ChannelArn?: string | null;
 }
 
 // refs: 1 - tags: named, output
@@ -3484,6 +5439,16 @@ export interface UpdateRoomResponse {
 // refs: 1 - tags: named, output
 export interface UpdateRoomMembershipResponse {
   RoomMembership?: RoomMembership | null;
+}
+
+// refs: 1 - tags: named, output
+export interface UpdateSipMediaApplicationResponse {
+  SipMediaApplication?: SipMediaApplication | null;
+}
+
+// refs: 1 - tags: named, output
+export interface UpdateSipRuleResponse {
+  SipRule?: SipRule | null;
 }
 
 // refs: 1 - tags: named, output
@@ -3533,7 +5498,7 @@ function fromCreateAttendeeRequestItem(input?: CreateAttendeeRequestItem | null)
   }
 }
 
-// refs: 11 - tags: input, named, interface, output
+// refs: 12 - tags: input, named, interface, output
 export interface Tag {
   Key: string;
   Value: string;
@@ -3648,6 +5613,24 @@ function toAlexaForBusinessMetadata(root: jsonP.JSONValue): AlexaForBusinessMeta
   }, root);
 }
 
+// refs: 8 - tags: input, named, enum, output
+export type ChannelMode =
+| "UNRESTRICTED"
+| "RESTRICTED"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 8 - tags: input, named, enum, output
+export type ChannelPrivacy =
+| "PUBLIC"
+| "PRIVATE"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 5 - tags: input, named, enum, output
+export type ChannelMembershipType =
+| "DEFAULT"
+| "HIDDEN"
+| cmnP.UnexpectedEnumValue;
+
 // refs: 2 - tags: input, named, interface
 export interface MeetingNotificationConfiguration {
   SnsTopicArn?: string | null;
@@ -3701,6 +5684,56 @@ function toGeoMatchParams(root: jsonP.JSONValue): GeoMatchParams {
   }, root);
 }
 
+// refs: 6 - tags: input, named, interface, output
+export interface SipMediaApplicationEndpoint {
+  LambdaArn?: string | null;
+}
+function fromSipMediaApplicationEndpoint(input?: SipMediaApplicationEndpoint | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    LambdaArn: input["LambdaArn"],
+  }
+}
+function toSipMediaApplicationEndpoint(root: jsonP.JSONValue): SipMediaApplicationEndpoint {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "LambdaArn": "s",
+    },
+  }, root);
+}
+
+// refs: 5 - tags: input, named, enum, output
+export type SipRuleTriggerType =
+| "ToPhoneNumber"
+| "RequestUriHostname"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 6 - tags: input, named, interface, output
+export interface SipRuleTargetApplication {
+  SipMediaApplicationId?: string | null;
+  Priority?: number | null;
+  AwsRegion?: string | null;
+}
+function fromSipRuleTargetApplication(input?: SipRuleTargetApplication | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    SipMediaApplicationId: input["SipMediaApplicationId"],
+    Priority: input["Priority"],
+    AwsRegion: input["AwsRegion"],
+  }
+}
+function toSipRuleTargetApplication(root: jsonP.JSONValue): SipRuleTargetApplication {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "SipMediaApplicationId": "s",
+      "Priority": "n",
+      "AwsRegion": "s",
+    },
+  }, root);
+}
+
 // refs: 5 - tags: input, named, enum, output
 export type VoiceConnectorAwsRegion =
 | "us-east-1"
@@ -3729,6 +5762,12 @@ function toVoiceConnectorItem(root: jsonP.JSONValue): VoiceConnectorItem {
   }, root);
 }
 
+// refs: 1 - tags: input, named, enum
+export type SortOrder =
+| "ASCENDING"
+| "DESCENDING"
+| cmnP.UnexpectedEnumValue;
+
 // refs: 5 - tags: input, named, enum, output
 export type PhoneNumberStatus =
 | "AcquireInProgress"
@@ -3747,6 +5786,7 @@ export type PhoneNumberAssociationName =
 | "UserId"
 | "VoiceConnectorId"
 | "VoiceConnectorGroupId"
+| "SipRuleId"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 5 - tags: input, named, enum, output
@@ -3754,6 +5794,72 @@ export type ProxySessionStatus =
 | "Open"
 | "InProgress"
 | "Closed"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 3 - tags: input, named, interface, output
+export interface AppInstanceRetentionSettings {
+  ChannelRetentionSettings?: ChannelRetentionSettings | null;
+}
+function fromAppInstanceRetentionSettings(input?: AppInstanceRetentionSettings | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    ChannelRetentionSettings: fromChannelRetentionSettings(input["ChannelRetentionSettings"]),
+  }
+}
+function toAppInstanceRetentionSettings(root: jsonP.JSONValue): AppInstanceRetentionSettings {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "ChannelRetentionSettings": toChannelRetentionSettings,
+    },
+  }, root);
+}
+
+// refs: 3 - tags: input, named, interface, output
+export interface ChannelRetentionSettings {
+  RetentionDays?: number | null;
+}
+function fromChannelRetentionSettings(input?: ChannelRetentionSettings | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    RetentionDays: input["RetentionDays"],
+  }
+}
+function toChannelRetentionSettings(root: jsonP.JSONValue): ChannelRetentionSettings {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "RetentionDays": "n",
+    },
+  }, root);
+}
+
+// refs: 3 - tags: input, named, interface, output
+export interface AppInstanceStreamingConfiguration {
+  AppInstanceDataType: AppInstanceDataType;
+  ResourceArn: string;
+}
+function fromAppInstanceStreamingConfiguration(input?: AppInstanceStreamingConfiguration | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    AppInstanceDataType: input["AppInstanceDataType"],
+    ResourceArn: input["ResourceArn"],
+  }
+}
+function toAppInstanceStreamingConfiguration(root: jsonP.JSONValue): AppInstanceStreamingConfiguration {
+  return jsonP.readObj({
+    required: {
+      "AppInstanceDataType": (x: jsonP.JSONValue) => cmnP.readEnum<AppInstanceDataType>(x),
+      "ResourceArn": "s",
+    },
+    optional: {},
+  }, root);
+}
+
+// refs: 3 - tags: input, named, enum, output
+export type AppInstanceDataType =
+| "Channel"
+| "ChannelMessage"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface, output
@@ -3812,6 +5918,25 @@ function toConversationRetentionSettings(root: jsonP.JSONValue): ConversationRet
     required: {},
     optional: {
       "RetentionDays": "n",
+    },
+  }, root);
+}
+
+// refs: 3 - tags: input, named, interface, output
+export interface SipMediaApplicationLoggingConfiguration {
+  EnableSipMediaApplicationMessageLogs?: boolean | null;
+}
+function fromSipMediaApplicationLoggingConfiguration(input?: SipMediaApplicationLoggingConfiguration | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    EnableSipMediaApplicationMessageLogs: input["EnableSipMediaApplicationMessageLogs"],
+  }
+}
+function toSipMediaApplicationLoggingConfiguration(root: jsonP.JSONValue): SipMediaApplicationLoggingConfiguration {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "EnableSipMediaApplicationMessageLogs": "b",
     },
   }, root);
 }
@@ -4034,6 +6159,18 @@ function fromCredential(input?: Credential | null): jsonP.JSONValue {
     Password: input["Password"],
   }
 }
+
+// refs: 3 - tags: input, named, enum, output
+export type ChannelMessageType =
+| "STANDARD"
+| "CONTROL"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 2 - tags: input, named, enum, output
+export type ChannelMessagePersistenceType =
+| "PERSISTENT"
+| "NON_PERSISTENT"
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface, output
 export interface AccountSettings {
@@ -4278,6 +6415,21 @@ export type AccountType =
 | "EnterpriseLWA"
 | "EnterpriseOIDC"
 | cmnP.UnexpectedEnumValue;
+
+// refs: 18 - tags: output, named, interface
+export interface Identity {
+  Arn?: string | null;
+  Name?: string | null;
+}
+function toIdentity(root: jsonP.JSONValue): Identity {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "Arn": "s",
+      "Name": "s",
+    },
+  }, root);
+}
 
 // refs: 5 - tags: output, named, interface
 export interface Bot {
@@ -4534,6 +6686,69 @@ export type MemberType =
 | "Webhook"
 | cmnP.UnexpectedEnumValue;
 
+// refs: 4 - tags: output, named, interface
+export interface SipMediaApplication {
+  SipMediaApplicationId?: string | null;
+  AwsRegion?: string | null;
+  Name?: string | null;
+  Endpoints?: SipMediaApplicationEndpoint[] | null;
+  CreatedTimestamp?: Date | number | null;
+  UpdatedTimestamp?: Date | number | null;
+}
+function toSipMediaApplication(root: jsonP.JSONValue): SipMediaApplication {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "SipMediaApplicationId": "s",
+      "AwsRegion": "s",
+      "Name": "s",
+      "Endpoints": [toSipMediaApplicationEndpoint],
+      "CreatedTimestamp": "d",
+      "UpdatedTimestamp": "d",
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
+export interface SipMediaApplicationCall {
+  TransactionId?: string | null;
+}
+function toSipMediaApplicationCall(root: jsonP.JSONValue): SipMediaApplicationCall {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "TransactionId": "s",
+    },
+  }, root);
+}
+
+// refs: 4 - tags: output, named, interface
+export interface SipRule {
+  SipRuleId?: string | null;
+  Name?: string | null;
+  Disabled?: boolean | null;
+  TriggerType?: SipRuleTriggerType | null;
+  TriggerValue?: string | null;
+  TargetApplications?: SipRuleTargetApplication[] | null;
+  CreatedTimestamp?: Date | number | null;
+  UpdatedTimestamp?: Date | number | null;
+}
+function toSipRule(root: jsonP.JSONValue): SipRule {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "SipRuleId": "s",
+      "Name": "s",
+      "Disabled": "b",
+      "TriggerType": (x: jsonP.JSONValue) => cmnP.readEnum<SipRuleTriggerType>(x),
+      "TriggerValue": "s",
+      "TargetApplications": [toSipRuleTargetApplication],
+      "CreatedTimestamp": "d",
+      "UpdatedTimestamp": "d",
+    },
+  }, root);
+}
+
 // refs: 5 - tags: output, named, interface
 export interface User {
   UserId: string;
@@ -4632,6 +6847,254 @@ function toVoiceConnectorGroup(root: jsonP.JSONValue): VoiceConnectorGroup {
   }, root);
 }
 
+// refs: 1 - tags: output, named, interface
+export interface AppInstance {
+  AppInstanceArn?: string | null;
+  Name?: string | null;
+  Metadata?: string | null;
+  CreatedTimestamp?: Date | number | null;
+  LastUpdatedTimestamp?: Date | number | null;
+}
+function toAppInstance(root: jsonP.JSONValue): AppInstance {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "AppInstanceArn": "s",
+      "Name": "s",
+      "Metadata": "s",
+      "CreatedTimestamp": "d",
+      "LastUpdatedTimestamp": "d",
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
+export interface AppInstanceAdmin {
+  Admin?: Identity | null;
+  AppInstanceArn?: string | null;
+  CreatedTimestamp?: Date | number | null;
+}
+function toAppInstanceAdmin(root: jsonP.JSONValue): AppInstanceAdmin {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "Admin": toIdentity,
+      "AppInstanceArn": "s",
+      "CreatedTimestamp": "d",
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
+export interface AppInstanceUser {
+  AppInstanceUserArn?: string | null;
+  Name?: string | null;
+  CreatedTimestamp?: Date | number | null;
+  Metadata?: string | null;
+  LastUpdatedTimestamp?: Date | number | null;
+}
+function toAppInstanceUser(root: jsonP.JSONValue): AppInstanceUser {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "AppInstanceUserArn": "s",
+      "Name": "s",
+      "CreatedTimestamp": "d",
+      "Metadata": "s",
+      "LastUpdatedTimestamp": "d",
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
+export interface Channel {
+  Name?: string | null;
+  ChannelArn?: string | null;
+  Mode?: ChannelMode | null;
+  Privacy?: ChannelPrivacy | null;
+  Metadata?: string | null;
+  CreatedBy?: Identity | null;
+  CreatedTimestamp?: Date | number | null;
+  LastMessageTimestamp?: Date | number | null;
+  LastUpdatedTimestamp?: Date | number | null;
+}
+function toChannel(root: jsonP.JSONValue): Channel {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "Name": "s",
+      "ChannelArn": "s",
+      "Mode": (x: jsonP.JSONValue) => cmnP.readEnum<ChannelMode>(x),
+      "Privacy": (x: jsonP.JSONValue) => cmnP.readEnum<ChannelPrivacy>(x),
+      "Metadata": "s",
+      "CreatedBy": toIdentity,
+      "CreatedTimestamp": "d",
+      "LastMessageTimestamp": "d",
+      "LastUpdatedTimestamp": "d",
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
+export interface ChannelBan {
+  Member?: Identity | null;
+  ChannelArn?: string | null;
+  CreatedTimestamp?: Date | number | null;
+  CreatedBy?: Identity | null;
+}
+function toChannelBan(root: jsonP.JSONValue): ChannelBan {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "Member": toIdentity,
+      "ChannelArn": "s",
+      "CreatedTimestamp": "d",
+      "CreatedBy": toIdentity,
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
+export interface ChannelMembership {
+  InvitedBy?: Identity | null;
+  Type?: ChannelMembershipType | null;
+  Member?: Identity | null;
+  ChannelArn?: string | null;
+  CreatedTimestamp?: Date | number | null;
+  LastUpdatedTimestamp?: Date | number | null;
+}
+function toChannelMembership(root: jsonP.JSONValue): ChannelMembership {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "InvitedBy": toIdentity,
+      "Type": (x: jsonP.JSONValue) => cmnP.readEnum<ChannelMembershipType>(x),
+      "Member": toIdentity,
+      "ChannelArn": "s",
+      "CreatedTimestamp": "d",
+      "LastUpdatedTimestamp": "d",
+    },
+  }, root);
+}
+
+// refs: 2 - tags: output, named, interface
+export interface ChannelMembershipForAppInstanceUserSummary {
+  ChannelSummary?: ChannelSummary | null;
+  AppInstanceUserMembershipSummary?: AppInstanceUserMembershipSummary | null;
+}
+function toChannelMembershipForAppInstanceUserSummary(root: jsonP.JSONValue): ChannelMembershipForAppInstanceUserSummary {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "ChannelSummary": toChannelSummary,
+      "AppInstanceUserMembershipSummary": toAppInstanceUserMembershipSummary,
+    },
+  }, root);
+}
+
+// refs: 5 - tags: output, named, interface
+export interface ChannelSummary {
+  Name?: string | null;
+  ChannelArn?: string | null;
+  Mode?: ChannelMode | null;
+  Privacy?: ChannelPrivacy | null;
+  Metadata?: string | null;
+  LastMessageTimestamp?: Date | number | null;
+}
+function toChannelSummary(root: jsonP.JSONValue): ChannelSummary {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "Name": "s",
+      "ChannelArn": "s",
+      "Mode": (x: jsonP.JSONValue) => cmnP.readEnum<ChannelMode>(x),
+      "Privacy": (x: jsonP.JSONValue) => cmnP.readEnum<ChannelPrivacy>(x),
+      "Metadata": "s",
+      "LastMessageTimestamp": "d",
+    },
+  }, root);
+}
+
+// refs: 2 - tags: output, named, interface
+export interface AppInstanceUserMembershipSummary {
+  Type?: ChannelMembershipType | null;
+  ReadMarkerTimestamp?: Date | number | null;
+}
+function toAppInstanceUserMembershipSummary(root: jsonP.JSONValue): AppInstanceUserMembershipSummary {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "Type": (x: jsonP.JSONValue) => cmnP.readEnum<ChannelMembershipType>(x),
+      "ReadMarkerTimestamp": "d",
+    },
+  }, root);
+}
+
+// refs: 2 - tags: output, named, interface
+export interface ChannelModeratedByAppInstanceUserSummary {
+  ChannelSummary?: ChannelSummary | null;
+}
+function toChannelModeratedByAppInstanceUserSummary(root: jsonP.JSONValue): ChannelModeratedByAppInstanceUserSummary {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "ChannelSummary": toChannelSummary,
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
+export interface ChannelModerator {
+  Moderator?: Identity | null;
+  ChannelArn?: string | null;
+  CreatedTimestamp?: Date | number | null;
+  CreatedBy?: Identity | null;
+}
+function toChannelModerator(root: jsonP.JSONValue): ChannelModerator {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "Moderator": toIdentity,
+      "ChannelArn": "s",
+      "CreatedTimestamp": "d",
+      "CreatedBy": toIdentity,
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
+export interface ChannelMessage {
+  ChannelArn?: string | null;
+  MessageId?: string | null;
+  Content?: string | null;
+  Metadata?: string | null;
+  Type?: ChannelMessageType | null;
+  CreatedTimestamp?: Date | number | null;
+  LastEditedTimestamp?: Date | number | null;
+  LastUpdatedTimestamp?: Date | number | null;
+  Sender?: Identity | null;
+  Redacted?: boolean | null;
+  Persistence?: ChannelMessagePersistenceType | null;
+}
+function toChannelMessage(root: jsonP.JSONValue): ChannelMessage {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "ChannelArn": "s",
+      "MessageId": "s",
+      "Content": "s",
+      "Metadata": "s",
+      "Type": (x: jsonP.JSONValue) => cmnP.readEnum<ChannelMessageType>(x),
+      "CreatedTimestamp": "d",
+      "LastEditedTimestamp": "d",
+      "LastUpdatedTimestamp": "d",
+      "Sender": toIdentity,
+      "Redacted": "b",
+      "Persistence": (x: jsonP.JSONValue) => cmnP.readEnum<ChannelMessagePersistenceType>(x),
+    },
+  }, root);
+}
+
 // refs: 2 - tags: output, named, interface
 export interface EventsConfiguration {
   BotId?: string | null;
@@ -4645,6 +7108,19 @@ function toEventsConfiguration(root: jsonP.JSONValue): EventsConfiguration {
       "BotId": "s",
       "OutboundEventsHTTPSEndpoint": "s",
       "LambdaFunctionArn": "s",
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
+export interface MessagingSessionEndpoint {
+  Url?: string | null;
+}
+function toMessagingSessionEndpoint(root: jsonP.JSONValue): MessagingSessionEndpoint {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "Url": "s",
     },
   }, root);
 }
@@ -4797,3 +7273,118 @@ export type EmailStatus =
 | "Sent"
 | "Failed"
 | cmnP.UnexpectedEnumValue;
+
+// refs: 1 - tags: output, named, interface
+export interface AppInstanceAdminSummary {
+  Admin?: Identity | null;
+}
+function toAppInstanceAdminSummary(root: jsonP.JSONValue): AppInstanceAdminSummary {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "Admin": toIdentity,
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
+export interface AppInstanceUserSummary {
+  AppInstanceUserArn?: string | null;
+  Name?: string | null;
+  Metadata?: string | null;
+}
+function toAppInstanceUserSummary(root: jsonP.JSONValue): AppInstanceUserSummary {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "AppInstanceUserArn": "s",
+      "Name": "s",
+      "Metadata": "s",
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
+export interface AppInstanceSummary {
+  AppInstanceArn?: string | null;
+  Name?: string | null;
+  Metadata?: string | null;
+}
+function toAppInstanceSummary(root: jsonP.JSONValue): AppInstanceSummary {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "AppInstanceArn": "s",
+      "Name": "s",
+      "Metadata": "s",
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
+export interface ChannelBanSummary {
+  Member?: Identity | null;
+}
+function toChannelBanSummary(root: jsonP.JSONValue): ChannelBanSummary {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "Member": toIdentity,
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
+export interface ChannelMembershipSummary {
+  Member?: Identity | null;
+}
+function toChannelMembershipSummary(root: jsonP.JSONValue): ChannelMembershipSummary {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "Member": toIdentity,
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
+export interface ChannelMessageSummary {
+  MessageId?: string | null;
+  Content?: string | null;
+  Metadata?: string | null;
+  Type?: ChannelMessageType | null;
+  CreatedTimestamp?: Date | number | null;
+  LastUpdatedTimestamp?: Date | number | null;
+  LastEditedTimestamp?: Date | number | null;
+  Sender?: Identity | null;
+  Redacted?: boolean | null;
+}
+function toChannelMessageSummary(root: jsonP.JSONValue): ChannelMessageSummary {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "MessageId": "s",
+      "Content": "s",
+      "Metadata": "s",
+      "Type": (x: jsonP.JSONValue) => cmnP.readEnum<ChannelMessageType>(x),
+      "CreatedTimestamp": "d",
+      "LastUpdatedTimestamp": "d",
+      "LastEditedTimestamp": "d",
+      "Sender": toIdentity,
+      "Redacted": "b",
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
+export interface ChannelModeratorSummary {
+  Moderator?: Identity | null;
+}
+function toChannelModeratorSummary(root: jsonP.JSONValue): ChannelModeratorSummary {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "Moderator": toIdentity,
+    },
+  }, root);
+}

@@ -63,6 +63,24 @@ export default class DirectoryService {
     }, await resp.json());
   }
 
+  async addRegion(
+    {abortSignal, ...params}: RequestConfig & AddRegionRequest,
+  ): Promise<AddRegionResult> {
+    const body: jsonP.JSONObject = {
+      DirectoryId: params["DirectoryId"],
+      RegionName: params["RegionName"],
+      VPCSettings: fromDirectoryVpcSettings(params["VPCSettings"]),
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "AddRegion",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
+  }
+
   async addTagsToResource(
     {abortSignal, ...params}: RequestConfig & AddTagsToResourceRequest,
   ): Promise<AddTagsToResourceResult> {
@@ -533,6 +551,27 @@ export default class DirectoryService {
     }, await resp.json());
   }
 
+  async describeRegions(
+    {abortSignal, ...params}: RequestConfig & DescribeRegionsRequest,
+  ): Promise<DescribeRegionsResult> {
+    const body: jsonP.JSONObject = {
+      DirectoryId: params["DirectoryId"],
+      RegionName: params["RegionName"],
+      NextToken: params["NextToken"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DescribeRegions",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "RegionsDescription": [toRegionDescription],
+        "NextToken": "s",
+      },
+    }, await resp.json());
+  }
+
   async describeSharedDirectories(
     {abortSignal, ...params}: RequestConfig & DescribeSharedDirectoriesRequest,
   ): Promise<DescribeSharedDirectoriesResult> {
@@ -599,6 +638,23 @@ export default class DirectoryService {
     }, await resp.json());
   }
 
+  async disableClientAuthentication(
+    {abortSignal, ...params}: RequestConfig & DisableClientAuthenticationRequest,
+  ): Promise<DisableClientAuthenticationResult> {
+    const body: jsonP.JSONObject = {
+      DirectoryId: params["DirectoryId"],
+      Type: params["Type"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DisableClientAuthentication",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
+  }
+
   async disableLDAPS(
     {abortSignal, ...params}: RequestConfig & DisableLDAPSRequest,
   ): Promise<DisableLDAPSResult> {
@@ -643,6 +699,23 @@ export default class DirectoryService {
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisableSso",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
+  }
+
+  async enableClientAuthentication(
+    {abortSignal, ...params}: RequestConfig & EnableClientAuthenticationRequest,
+  ): Promise<EnableClientAuthenticationResult> {
+    const body: jsonP.JSONObject = {
+      DirectoryId: params["DirectoryId"],
+      Type: params["Type"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "EnableClientAuthentication",
     });
     return jsonP.readObj({
       required: {},
@@ -848,6 +921,8 @@ export default class DirectoryService {
     const body: jsonP.JSONObject = {
       DirectoryId: params["DirectoryId"],
       CertificateData: params["CertificateData"],
+      Type: params["Type"],
+      ClientCertAuthSettings: fromClientCertAuthSettings(params["ClientCertAuthSettings"]),
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -906,6 +981,22 @@ export default class DirectoryService {
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RemoveIpRoutes",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
+  }
+
+  async removeRegion(
+    {abortSignal, ...params}: RequestConfig & RemoveRegionRequest,
+  ): Promise<RemoveRegionResult> {
+    const body: jsonP.JSONObject = {
+      DirectoryId: params["DirectoryId"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "RemoveRegion",
     });
     return jsonP.readObj({
       required: {},
@@ -1130,6 +1221,13 @@ export interface AddIpRoutesRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface AddRegionRequest {
+  DirectoryId: string;
+  RegionName: string;
+  VPCSettings: DirectoryVpcSettings;
+}
+
+// refs: 1 - tags: named, input
 export interface AddTagsToResourceRequest {
   ResourceId: string;
   Tags: Tag[];
@@ -1300,6 +1398,13 @@ export interface DescribeLDAPSSettingsRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface DescribeRegionsRequest {
+  DirectoryId: string;
+  RegionName?: string | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, input
 export interface DescribeSharedDirectoriesRequest {
   OwnerDirectoryId: string;
   SharedDirectoryIds?: string[] | null;
@@ -1324,6 +1429,12 @@ export interface DescribeTrustsRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface DisableClientAuthenticationRequest {
+  DirectoryId: string;
+  Type: ClientAuthenticationType;
+}
+
+// refs: 1 - tags: named, input
 export interface DisableLDAPSRequest {
   DirectoryId: string;
   Type: LDAPSType;
@@ -1339,6 +1450,12 @@ export interface DisableSsoRequest {
   DirectoryId: string;
   UserName?: string | null;
   Password?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface EnableClientAuthenticationRequest {
+  DirectoryId: string;
+  Type: ClientAuthenticationType;
 }
 
 // refs: 1 - tags: named, input
@@ -1408,6 +1525,8 @@ export interface ListTagsForResourceRequest {
 export interface RegisterCertificateRequest {
   DirectoryId: string;
   CertificateData: string;
+  Type?: CertificateType | null;
+  ClientCertAuthSettings?: ClientCertAuthSettings | null;
 }
 
 // refs: 1 - tags: named, input
@@ -1425,6 +1544,11 @@ export interface RejectSharedDirectoryRequest {
 export interface RemoveIpRoutesRequest {
   DirectoryId: string;
   CidrIps: string[];
+}
+
+// refs: 1 - tags: named, input
+export interface RemoveRegionRequest {
+  DirectoryId: string;
 }
 
 // refs: 1 - tags: named, input
@@ -1504,6 +1628,10 @@ export interface AcceptSharedDirectoryResult {
 
 // refs: 1 - tags: named, output
 export interface AddIpRoutesResult {
+}
+
+// refs: 1 - tags: named, output
+export interface AddRegionResult {
 }
 
 // refs: 1 - tags: named, output
@@ -1623,6 +1751,12 @@ export interface DescribeLDAPSSettingsResult {
 }
 
 // refs: 1 - tags: named, output
+export interface DescribeRegionsResult {
+  RegionsDescription?: RegionDescription[] | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
 export interface DescribeSharedDirectoriesResult {
   SharedDirectories?: SharedDirectory[] | null;
   NextToken?: string | null;
@@ -1641,6 +1775,10 @@ export interface DescribeTrustsResult {
 }
 
 // refs: 1 - tags: named, output
+export interface DisableClientAuthenticationResult {
+}
+
+// refs: 1 - tags: named, output
 export interface DisableLDAPSResult {
 }
 
@@ -1650,6 +1788,10 @@ export interface DisableRadiusResult {
 
 // refs: 1 - tags: named, output
 export interface DisableSsoResult {
+}
+
+// refs: 1 - tags: named, output
+export interface EnableClientAuthenticationResult {
 }
 
 // refs: 1 - tags: named, output
@@ -1723,6 +1865,10 @@ export interface RemoveIpRoutesResult {
 }
 
 // refs: 1 - tags: named, output
+export interface RemoveRegionResult {
+}
+
+// refs: 1 - tags: named, output
 export interface RemoveTagsFromResourceResult {
 }
 
@@ -1783,6 +1929,28 @@ function fromIpRoute(input?: IpRoute | null): jsonP.JSONValue {
     CidrIp: input["CidrIp"],
     Description: input["Description"],
   }
+}
+
+// refs: 4 - tags: input, named, interface, output
+export interface DirectoryVpcSettings {
+  VpcId: string;
+  SubnetIds: string[];
+}
+function fromDirectoryVpcSettings(input?: DirectoryVpcSettings | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    VpcId: input["VpcId"],
+    SubnetIds: input["SubnetIds"],
+  }
+}
+function toDirectoryVpcSettings(root: jsonP.JSONValue): DirectoryVpcSettings {
+  return jsonP.readObj({
+    required: {
+      "VpcId": "s",
+      "SubnetIds": ["s"],
+    },
+    optional: {},
+  }, root);
 }
 
 // refs: 5 - tags: input, named, interface, output
@@ -1852,19 +2020,6 @@ function toAttribute(root: jsonP.JSONValue): Attribute {
   }, root);
 }
 
-// refs: 2 - tags: input, named, interface
-export interface DirectoryVpcSettings {
-  VpcId: string;
-  SubnetIds: string[];
-}
-function fromDirectoryVpcSettings(input?: DirectoryVpcSettings | null): jsonP.JSONValue {
-  if (!input) return input;
-  return {
-    VpcId: input["VpcId"],
-    SubnetIds: input["SubnetIds"],
-  }
-}
-
 // refs: 2 - tags: input, named, enum, output
 export type DirectoryEdition =
 | "Enterprise"
@@ -1893,6 +2048,11 @@ export type SelectiveAuth =
 // refs: 3 - tags: input, named, enum
 export type LDAPSType =
 | "Client"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 2 - tags: input, named, enum
+export type ClientAuthenticationType =
+| "SmartCard"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, interface, output
@@ -1942,6 +2102,31 @@ export type RadiusAuthenticationProtocol =
 | "MS-CHAPv1"
 | "MS-CHAPv2"
 | cmnP.UnexpectedEnumValue;
+
+// refs: 3 - tags: input, named, enum, output
+export type CertificateType =
+| "ClientCertAuth"
+| "ClientLDAPS"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 2 - tags: input, named, interface, output
+export interface ClientCertAuthSettings {
+  OCSPUrl?: string | null;
+}
+function fromClientCertAuthSettings(input?: ClientCertAuthSettings | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    OCSPUrl: input["OCSPUrl"],
+  }
+}
+function toClientCertAuthSettings(root: jsonP.JSONValue): ClientCertAuthSettings {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "OCSPUrl": "s",
+    },
+  }, root);
+}
 
 // refs: 1 - tags: input, named, interface
 export interface ShareTarget {
@@ -2047,6 +2232,8 @@ export interface Certificate {
   CommonName?: string | null;
   RegisteredDateTime?: Date | number | null;
   ExpiryDateTime?: Date | number | null;
+  Type?: CertificateType | null;
+  ClientCertAuthSettings?: ClientCertAuthSettings | null;
 }
 function toCertificate(root: jsonP.JSONValue): Certificate {
   return jsonP.readObj({
@@ -2058,6 +2245,8 @@ function toCertificate(root: jsonP.JSONValue): Certificate {
       "CommonName": "s",
       "RegisteredDateTime": "d",
       "ExpiryDateTime": "d",
+      "Type": (x: jsonP.JSONValue) => cmnP.readEnum<CertificateType>(x),
+      "ClientCertAuthSettings": toClientCertAuthSettings,
     },
   }, root);
 }
@@ -2120,6 +2309,7 @@ export interface DirectoryDescription {
   SsoEnabled?: boolean | null;
   DesiredNumberOfDomainControllers?: number | null;
   OwnerDirectoryDescription?: OwnerDirectoryDescription | null;
+  RegionsInfo?: RegionsInfo | null;
 }
 function toDirectoryDescription(root: jsonP.JSONValue): DirectoryDescription {
   return jsonP.readObj({
@@ -2149,11 +2339,12 @@ function toDirectoryDescription(root: jsonP.JSONValue): DirectoryDescription {
       "SsoEnabled": "b",
       "DesiredNumberOfDomainControllers": "n",
       "OwnerDirectoryDescription": toOwnerDirectoryDescription,
+      "RegionsInfo": toRegionsInfo,
     },
   }, root);
 }
 
-// refs: 1 - tags: output, named, enum
+// refs: 2 - tags: output, named, enum
 export type DirectoryStage =
 | "Requested"
 | "Creating"
@@ -2244,6 +2435,21 @@ function toOwnerDirectoryDescription(root: jsonP.JSONValue): OwnerDirectoryDescr
       "VpcSettings": toDirectoryVpcSettingsDescription,
       "RadiusSettings": toRadiusSettings,
       "RadiusStatus": (x: jsonP.JSONValue) => cmnP.readEnum<RadiusStatus>(x),
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
+export interface RegionsInfo {
+  PrimaryRegion?: string | null;
+  AdditionalRegions?: string[] | null;
+}
+function toRegionsInfo(root: jsonP.JSONValue): RegionsInfo {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "PrimaryRegion": "s",
+      "AdditionalRegions": ["s"],
     },
   }, root);
 }
@@ -2342,6 +2548,41 @@ export type LDAPSStatus =
 | "Enabled"
 | "EnableFailed"
 | "Disabled"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 1 - tags: output, named, interface
+export interface RegionDescription {
+  DirectoryId?: string | null;
+  RegionName?: string | null;
+  RegionType?: RegionType | null;
+  Status?: DirectoryStage | null;
+  VpcSettings?: DirectoryVpcSettings | null;
+  DesiredNumberOfDomainControllers?: number | null;
+  LaunchTime?: Date | number | null;
+  StatusLastUpdatedDateTime?: Date | number | null;
+  LastUpdatedDateTime?: Date | number | null;
+}
+function toRegionDescription(root: jsonP.JSONValue): RegionDescription {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "DirectoryId": "s",
+      "RegionName": "s",
+      "RegionType": (x: jsonP.JSONValue) => cmnP.readEnum<RegionType>(x),
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<DirectoryStage>(x),
+      "VpcSettings": toDirectoryVpcSettings,
+      "DesiredNumberOfDomainControllers": "n",
+      "LaunchTime": "d",
+      "StatusLastUpdatedDateTime": "d",
+      "LastUpdatedDateTime": "d",
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, enum
+export type RegionType =
+| "Primary"
+| "Additional"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
@@ -2480,6 +2721,7 @@ export interface CertificateInfo {
   CommonName?: string | null;
   State?: CertificateState | null;
   ExpiryDateTime?: Date | number | null;
+  Type?: CertificateType | null;
 }
 function toCertificateInfo(root: jsonP.JSONValue): CertificateInfo {
   return jsonP.readObj({
@@ -2489,6 +2731,7 @@ function toCertificateInfo(root: jsonP.JSONValue): CertificateInfo {
       "CommonName": "s",
       "State": (x: jsonP.JSONValue) => cmnP.readEnum<CertificateState>(x),
       "ExpiryDateTime": "d",
+      "Type": (x: jsonP.JSONValue) => cmnP.readEnum<CertificateType>(x),
     },
   }, root);
 }

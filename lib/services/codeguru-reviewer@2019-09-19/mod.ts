@@ -5,7 +5,7 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import * as uuidv4 from "https://deno.land/std@0.71.0/uuid/v4.ts";
+import * as uuidv4 from "https://deno.land/std@0.75.0/uuid/v4.ts";
 import * as cmnP from "../../encoding/common.ts";
 import * as jsonP from "../../encoding/json.ts";
 function generateIdemptToken() {
@@ -37,6 +37,7 @@ export default class CodeGuruReviewer {
     const body: jsonP.JSONObject = {
       Repository: fromRepository(params["Repository"]),
       ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
+      Tags: params["Tags"],
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -47,6 +48,7 @@ export default class CodeGuruReviewer {
       required: {},
       optional: {
         "RepositoryAssociation": toRepositoryAssociation,
+        "Tags": x => jsonP.readMap(String, String, x),
       },
     }, await resp.json());
   }
@@ -125,6 +127,7 @@ export default class CodeGuruReviewer {
       required: {},
       optional: {
         "RepositoryAssociation": toRepositoryAssociation,
+        "Tags": x => jsonP.readMap(String, String, x),
       },
     }, await resp.json());
   }
@@ -143,6 +146,7 @@ export default class CodeGuruReviewer {
       required: {},
       optional: {
         "RepositoryAssociation": toRepositoryAssociation,
+        "Tags": x => jsonP.readMap(String, String, x),
       },
     }, await resp.json());
   }
@@ -259,6 +263,24 @@ export default class CodeGuruReviewer {
     }, await resp.json());
   }
 
+  async listTagsForResource(
+    {abortSignal, ...params}: RequestConfig & ListTagsForResourceRequest,
+  ): Promise<ListTagsForResourceResponse> {
+
+    const resp = await this.#client.performRequest({
+      abortSignal,
+      action: "ListTagsForResource",
+      method: "GET",
+      requestUri: cmnP.encodePath`/tags/${params["resourceArn"]}`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
+  }
+
   async putRecommendationFeedback(
     {abortSignal, ...params}: RequestConfig & PutRecommendationFeedbackRequest,
   ): Promise<PutRecommendationFeedbackResponse> {
@@ -279,12 +301,49 @@ export default class CodeGuruReviewer {
     }, await resp.json());
   }
 
+  async tagResource(
+    {abortSignal, ...params}: RequestConfig & TagResourceRequest,
+  ): Promise<TagResourceResponse> {
+    const body: jsonP.JSONObject = {
+      Tags: params["Tags"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "TagResource",
+      requestUri: cmnP.encodePath`/tags/${params["resourceArn"]}`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
+  }
+
+  async untagResource(
+    {abortSignal, ...params}: RequestConfig & UntagResourceRequest,
+  ): Promise<UntagResourceResponse> {
+    const query = new URLSearchParams;
+    for (const item of params["TagKeys"]) {
+      query.append("tagKeys", item?.toString() ?? "");
+    }
+    const resp = await this.#client.performRequest({
+      abortSignal, query,
+      action: "UntagResource",
+      method: "DELETE",
+      requestUri: cmnP.encodePath`/tags/${params["resourceArn"]}`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
+  }
+
 }
 
 // refs: 1 - tags: named, input
 export interface AssociateRepositoryRequest {
   Repository: Repository;
   ClientRequestToken?: string | null;
+  Tags?: { [key: string]: string | null | undefined } | null;
 }
 
 // refs: 1 - tags: named, input
@@ -354,15 +413,33 @@ export interface ListRepositoryAssociationsRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface ListTagsForResourceRequest {
+  resourceArn: string;
+}
+
+// refs: 1 - tags: named, input
 export interface PutRecommendationFeedbackRequest {
   CodeReviewArn: string;
   RecommendationId: string;
   Reactions: Reaction[];
 }
 
+// refs: 1 - tags: named, input
+export interface TagResourceRequest {
+  resourceArn: string;
+  Tags: { [key: string]: string | null | undefined };
+}
+
+// refs: 1 - tags: named, input
+export interface UntagResourceRequest {
+  resourceArn: string;
+  TagKeys: string[];
+}
+
 // refs: 1 - tags: named, output
 export interface AssociateRepositoryResponse {
   RepositoryAssociation?: RepositoryAssociation | null;
+  Tags?: { [key: string]: string | null | undefined } | null;
 }
 
 // refs: 1 - tags: named, output
@@ -383,11 +460,13 @@ export interface DescribeRecommendationFeedbackResponse {
 // refs: 1 - tags: named, output
 export interface DescribeRepositoryAssociationResponse {
   RepositoryAssociation?: RepositoryAssociation | null;
+  Tags?: { [key: string]: string | null | undefined } | null;
 }
 
 // refs: 1 - tags: named, output
 export interface DisassociateRepositoryResponse {
   RepositoryAssociation?: RepositoryAssociation | null;
+  Tags?: { [key: string]: string | null | undefined } | null;
 }
 
 // refs: 1 - tags: named, output
@@ -415,7 +494,20 @@ export interface ListRepositoryAssociationsResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface ListTagsForResourceResponse {
+  Tags?: { [key: string]: string | null | undefined } | null;
+}
+
+// refs: 1 - tags: named, output
 export interface PutRecommendationFeedbackResponse {
+}
+
+// refs: 1 - tags: named, output
+export interface TagResourceResponse {
+}
+
+// refs: 1 - tags: named, output
+export interface UntagResourceResponse {
 }
 
 // refs: 1 - tags: input, named, interface
@@ -528,6 +620,7 @@ export type RepositoryAssociationState =
 | "Associating"
 | "Failed"
 | "Disassociating"
+| "Disassociated"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, enum, output
@@ -581,6 +674,7 @@ export interface CodeReview {
   Type?: Type | null;
   PullRequestId?: string | null;
   SourceCodeType?: SourceCodeType | null;
+  AssociationArn?: string | null;
   Metrics?: Metrics | null;
 }
 function toCodeReview(root: jsonP.JSONValue): CodeReview {
@@ -599,6 +693,7 @@ function toCodeReview(root: jsonP.JSONValue): CodeReview {
       "Type": (x: jsonP.JSONValue) => cmnP.readEnum<Type>(x),
       "PullRequestId": "s",
       "SourceCodeType": toSourceCodeType,
+      "AssociationArn": "s",
       "Metrics": toMetrics,
     },
   }, root);

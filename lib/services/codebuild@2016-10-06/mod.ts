@@ -385,6 +385,27 @@ export default class CodeBuild {
     }, await resp.json());
   }
 
+  async getReportGroupTrend(
+    {abortSignal, ...params}: RequestConfig & GetReportGroupTrendInput,
+  ): Promise<GetReportGroupTrendOutput> {
+    const body: jsonP.JSONObject = {
+      reportGroupArn: params["reportGroupArn"],
+      numOfReports: params["numOfReports"],
+      trendField: params["trendField"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "GetReportGroupTrend",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "stats": toReportGroupTrendStats,
+        "rawData": [toReportWithRawData],
+      },
+    }, await resp.json());
+  }
+
   async getResourcePolicy(
     {abortSignal, ...params}: RequestConfig & GetResourcePolicyInput,
   ): Promise<GetResourcePolicyOutput> {
@@ -1089,6 +1110,13 @@ export interface DescribeTestCasesInput {
 }
 
 // refs: 1 - tags: named, input
+export interface GetReportGroupTrendInput {
+  reportGroupArn: string;
+  numOfReports?: number | null;
+  trendField: ReportGroupTrendFieldType;
+}
+
+// refs: 1 - tags: named, input
 export interface GetResourcePolicyInput {
   resourceArn: string;
 }
@@ -1424,6 +1452,12 @@ export interface DescribeCodeCoveragesOutput {
 export interface DescribeTestCasesOutput {
   nextToken?: string | null;
   testCases?: TestCase[] | null;
+}
+
+// refs: 1 - tags: named, output
+export interface GetReportGroupTrendOutput {
+  stats?: ReportGroupTrendStats | null;
+  rawData?: ReportWithRawData[] | null;
 }
 
 // refs: 1 - tags: named, output
@@ -2287,6 +2321,19 @@ function fromTestCaseFilter(input?: TestCaseFilter | null): jsonP.JSONValue {
   }
 }
 
+// refs: 1 - tags: input, named, enum
+export type ReportGroupTrendFieldType =
+| "PASS_RATE"
+| "DURATION"
+| "TOTAL"
+| "LINE_COVERAGE"
+| "LINES_COVERED"
+| "LINES_MISSED"
+| "BRANCH_COVERAGE"
+| "BRANCHES_COVERED"
+| "BRANCHES_MISSED"
+| cmnP.UnexpectedEnumValue;
+
 // refs: 2 - tags: input, named, enum, output
 export type ServerType =
 | "GITHUB"
@@ -2876,6 +2923,7 @@ export interface ReportGroup {
   created?: Date | number | null;
   lastModified?: Date | number | null;
   tags?: Tag[] | null;
+  status?: ReportGroupStatusType | null;
 }
 function toReportGroup(root: jsonP.JSONValue): ReportGroup {
   return jsonP.readObj({
@@ -2888,9 +2936,16 @@ function toReportGroup(root: jsonP.JSONValue): ReportGroup {
       "created": "d",
       "lastModified": "d",
       "tags": [toTag],
+      "status": (x: jsonP.JSONValue) => cmnP.readEnum<ReportGroupStatusType>(x),
     },
   }, root);
 }
+
+// refs: 3 - tags: output, named, enum
+export type ReportGroupStatusType =
+| "ACTIVE"
+| "DELETING"
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface Report {
@@ -3021,6 +3076,38 @@ function toTestCase(root: jsonP.JSONValue): TestCase {
       "durationInNanoSeconds": "n",
       "message": "s",
       "expired": "d",
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
+export interface ReportGroupTrendStats {
+  average?: string | null;
+  max?: string | null;
+  min?: string | null;
+}
+function toReportGroupTrendStats(root: jsonP.JSONValue): ReportGroupTrendStats {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "average": "s",
+      "max": "s",
+      "min": "s",
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
+export interface ReportWithRawData {
+  reportArn?: string | null;
+  data?: string | null;
+}
+function toReportWithRawData(root: jsonP.JSONValue): ReportWithRawData {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "reportArn": "s",
+      "data": "s",
     },
   }, root);
 }

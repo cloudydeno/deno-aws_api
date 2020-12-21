@@ -474,6 +474,28 @@ export default class ES {
     }, await resp.json());
   }
 
+  async getPackageVersionHistory(
+    {abortSignal, ...params}: RequestConfig & GetPackageVersionHistoryRequest,
+  ): Promise<GetPackageVersionHistoryResponse> {
+    const query = new URLSearchParams;
+    if (params["MaxResults"] != null) query.set("maxResults", params["MaxResults"]?.toString() ?? "");
+    if (params["NextToken"] != null) query.set("nextToken", params["NextToken"]?.toString() ?? "");
+    const resp = await this.#client.performRequest({
+      abortSignal, query,
+      action: "GetPackageVersionHistory",
+      method: "GET",
+      requestUri: cmnP.encodePath`/2015-01-01/packages/${params["PackageID"]}/history`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "PackageID": "s",
+        "PackageVersionHistoryList": [toPackageVersionHistory],
+        "NextToken": "s",
+      },
+    }, await resp.json());
+  }
+
   async getUpgradeHistory(
     {abortSignal, ...params}: RequestConfig & GetUpgradeHistoryRequest,
   ): Promise<GetUpgradeHistoryResponse> {
@@ -737,6 +759,28 @@ export default class ES {
     }, await resp.json());
   }
 
+  async updatePackage(
+    {abortSignal, ...params}: RequestConfig & UpdatePackageRequest,
+  ): Promise<UpdatePackageResponse> {
+    const body: jsonP.JSONObject = {
+      PackageID: params["PackageID"],
+      PackageSource: fromPackageSource(params["PackageSource"]),
+      PackageDescription: params["PackageDescription"],
+      CommitMessage: params["CommitMessage"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "UpdatePackage",
+      requestUri: "/2015-01-01/packages/update",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "PackageDetails": toPackageDetails,
+      },
+    }, await resp.json());
+  }
+
   async upgradeElasticsearchDomain(
     {abortSignal, ...params}: RequestConfig & UpgradeElasticsearchDomainRequest,
   ): Promise<UpgradeElasticsearchDomainResponse> {
@@ -906,6 +950,13 @@ export interface GetCompatibleElasticsearchVersionsRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface GetPackageVersionHistoryRequest {
+  PackageID: string;
+  MaxResults?: number | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, input
 export interface GetUpgradeHistoryRequest {
   DomainName: string;
   MaxResults?: number | null;
@@ -986,6 +1037,14 @@ export interface UpdateElasticsearchDomainConfigRequest {
   LogPublishingOptions?: { [key in LogType]: LogPublishingOption | null | undefined } | null;
   DomainEndpointOptions?: DomainEndpointOptions | null;
   AdvancedSecurityOptions?: AdvancedSecurityOptionsInput | null;
+}
+
+// refs: 1 - tags: named, input
+export interface UpdatePackageRequest {
+  PackageID: string;
+  PackageSource: PackageSource;
+  PackageDescription?: string | null;
+  CommitMessage?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -1110,6 +1169,13 @@ export interface GetCompatibleElasticsearchVersionsResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface GetPackageVersionHistoryResponse {
+  PackageID?: string | null;
+  PackageVersionHistoryList?: PackageVersionHistory[] | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
 export interface GetUpgradeHistoryResponse {
   UpgradeHistories?: UpgradeHistory[] | null;
   NextToken?: string | null;
@@ -1175,6 +1241,11 @@ export interface StartElasticsearchServiceSoftwareUpdateResponse {
 // refs: 1 - tags: named, output
 export interface UpdateElasticsearchDomainConfigResponse {
   DomainConfig: ElasticsearchDomainConfig;
+}
+
+// refs: 1 - tags: named, output
+export interface UpdatePackageResponse {
+  PackageDetails?: PackageDetails | null;
 }
 
 // refs: 1 - tags: named, output
@@ -1509,12 +1580,18 @@ function toLogPublishingOption(root: jsonP.JSONValue): LogPublishingOption {
 export interface DomainEndpointOptions {
   EnforceHTTPS?: boolean | null;
   TLSSecurityPolicy?: TLSSecurityPolicy | null;
+  CustomEndpointEnabled?: boolean | null;
+  CustomEndpoint?: string | null;
+  CustomEndpointCertificateArn?: string | null;
 }
 function fromDomainEndpointOptions(input?: DomainEndpointOptions | null): jsonP.JSONValue {
   if (!input) return input;
   return {
     EnforceHTTPS: input["EnforceHTTPS"],
     TLSSecurityPolicy: input["TLSSecurityPolicy"],
+    CustomEndpointEnabled: input["CustomEndpointEnabled"],
+    CustomEndpoint: input["CustomEndpoint"],
+    CustomEndpointCertificateArn: input["CustomEndpointCertificateArn"],
   }
 }
 function toDomainEndpointOptions(root: jsonP.JSONValue): DomainEndpointOptions {
@@ -1523,6 +1600,9 @@ function toDomainEndpointOptions(root: jsonP.JSONValue): DomainEndpointOptions {
     optional: {
       "EnforceHTTPS": "b",
       "TLSSecurityPolicy": (x: jsonP.JSONValue) => cmnP.readEnum<TLSSecurityPolicy>(x),
+      "CustomEndpointEnabled": "b",
+      "CustomEndpoint": "s",
+      "CustomEndpointCertificateArn": "s",
     },
   }, root);
 }
@@ -1538,6 +1618,7 @@ export interface AdvancedSecurityOptionsInput {
   Enabled?: boolean | null;
   InternalUserDatabaseEnabled?: boolean | null;
   MasterUserOptions?: MasterUserOptions | null;
+  SAMLOptions?: SAMLOptionsInput | null;
 }
 function fromAdvancedSecurityOptionsInput(input?: AdvancedSecurityOptionsInput | null): jsonP.JSONValue {
   if (!input) return input;
@@ -1545,6 +1626,7 @@ function fromAdvancedSecurityOptionsInput(input?: AdvancedSecurityOptionsInput |
     Enabled: input["Enabled"],
     InternalUserDatabaseEnabled: input["InternalUserDatabaseEnabled"],
     MasterUserOptions: fromMasterUserOptions(input["MasterUserOptions"]),
+    SAMLOptions: fromSAMLOptionsInput(input["SAMLOptions"]),
   }
 }
 
@@ -1561,6 +1643,51 @@ function fromMasterUserOptions(input?: MasterUserOptions | null): jsonP.JSONValu
     MasterUserName: input["MasterUserName"],
     MasterUserPassword: input["MasterUserPassword"],
   }
+}
+
+// refs: 2 - tags: input, named, interface
+export interface SAMLOptionsInput {
+  Enabled?: boolean | null;
+  Idp?: SAMLIdp | null;
+  MasterUserName?: string | null;
+  MasterBackendRole?: string | null;
+  SubjectKey?: string | null;
+  RolesKey?: string | null;
+  SessionTimeoutMinutes?: number | null;
+}
+function fromSAMLOptionsInput(input?: SAMLOptionsInput | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    Enabled: input["Enabled"],
+    Idp: fromSAMLIdp(input["Idp"]),
+    MasterUserName: input["MasterUserName"],
+    MasterBackendRole: input["MasterBackendRole"],
+    SubjectKey: input["SubjectKey"],
+    RolesKey: input["RolesKey"],
+    SessionTimeoutMinutes: input["SessionTimeoutMinutes"],
+  }
+}
+
+// refs: 8 - tags: input, named, interface, output
+export interface SAMLIdp {
+  MetadataContent: string;
+  EntityId: string;
+}
+function fromSAMLIdp(input?: SAMLIdp | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    MetadataContent: input["MetadataContent"],
+    EntityId: input["EntityId"],
+  }
+}
+function toSAMLIdp(root: jsonP.JSONValue): SAMLIdp {
+  return jsonP.readObj({
+    required: {
+      "MetadataContent": "s",
+      "EntityId": "s",
+    },
+    optional: {},
+  }, root);
 }
 
 // refs: 16 - tags: input, named, interface, output
@@ -1589,12 +1716,12 @@ function toDomainInformation(root: jsonP.JSONValue): DomainInformation {
   }, root);
 }
 
-// refs: 8 - tags: input, named, enum, output
+// refs: 9 - tags: input, named, enum, output
 export type PackageType =
 | "TXT-DICTIONARY"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 1 - tags: input, named, interface
+// refs: 2 - tags: input, named, interface
 export interface PackageSource {
   S3BucketName?: string | null;
   S3Key?: string | null;
@@ -1692,6 +1819,7 @@ export interface DomainPackageDetails {
   LastUpdated?: Date | number | null;
   DomainName?: string | null;
   DomainPackageStatus?: DomainPackageStatus | null;
+  PackageVersion?: string | null;
   ReferencePath?: string | null;
   ErrorDetails?: ErrorDetails | null;
 }
@@ -1705,6 +1833,7 @@ function toDomainPackageDetails(root: jsonP.JSONValue): DomainPackageDetails {
       "LastUpdated": "d",
       "DomainName": "s",
       "DomainPackageStatus": (x: jsonP.JSONValue) => cmnP.readEnum<DomainPackageStatus>(x),
+      "PackageVersion": "s",
       "ReferencePath": "s",
       "ErrorDetails": toErrorDetails,
     },
@@ -1720,7 +1849,7 @@ export type DomainPackageStatus =
 | "DISSOCIATION_FAILED"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 7 - tags: output, named, interface
+// refs: 8 - tags: output, named, interface
 export interface ErrorDetails {
   ErrorType?: string | null;
   ErrorMessage?: string | null;
@@ -1852,6 +1981,7 @@ function toVPCDerivedInfo(root: jsonP.JSONValue): VPCDerivedInfo {
 export interface AdvancedSecurityOptions {
   Enabled?: boolean | null;
   InternalUserDatabaseEnabled?: boolean | null;
+  SAMLOptions?: SAMLOptionsOutput | null;
 }
 function toAdvancedSecurityOptions(root: jsonP.JSONValue): AdvancedSecurityOptions {
   return jsonP.readObj({
@@ -1859,6 +1989,28 @@ function toAdvancedSecurityOptions(root: jsonP.JSONValue): AdvancedSecurityOptio
     optional: {
       "Enabled": "b",
       "InternalUserDatabaseEnabled": "b",
+      "SAMLOptions": toSAMLOptionsOutput,
+    },
+  }, root);
+}
+
+// refs: 6 - tags: output, named, interface
+export interface SAMLOptionsOutput {
+  Enabled?: boolean | null;
+  Idp?: SAMLIdp | null;
+  SubjectKey?: string | null;
+  RolesKey?: string | null;
+  SessionTimeoutMinutes?: number | null;
+}
+function toSAMLOptionsOutput(root: jsonP.JSONValue): SAMLOptionsOutput {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "Enabled": "b",
+      "Idp": toSAMLIdp,
+      "SubjectKey": "s",
+      "RolesKey": "s",
+      "SessionTimeoutMinutes": "n",
     },
   }, root);
 }
@@ -1890,7 +2042,7 @@ export type OutboundCrossClusterSearchConnectionStatusCode =
 | "DELETED"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 3 - tags: output, named, interface
+// refs: 4 - tags: output, named, interface
 export interface PackageDetails {
   PackageID?: string | null;
   PackageName?: string | null;
@@ -1898,6 +2050,8 @@ export interface PackageDetails {
   PackageDescription?: string | null;
   PackageStatus?: PackageStatus | null;
   CreatedAt?: Date | number | null;
+  LastUpdatedAt?: Date | number | null;
+  AvailablePackageVersion?: string | null;
   ErrorDetails?: ErrorDetails | null;
 }
 function toPackageDetails(root: jsonP.JSONValue): PackageDetails {
@@ -1910,12 +2064,14 @@ function toPackageDetails(root: jsonP.JSONValue): PackageDetails {
       "PackageDescription": "s",
       "PackageStatus": (x: jsonP.JSONValue) => cmnP.readEnum<PackageStatus>(x),
       "CreatedAt": "d",
+      "LastUpdatedAt": "d",
+      "AvailablePackageVersion": "s",
       "ErrorDetails": toErrorDetails,
     },
   }, root);
 }
 
-// refs: 3 - tags: output, named, enum
+// refs: 4 - tags: output, named, enum
 export type PackageStatus =
 | "COPYING"
 | "COPY_FAILED"
@@ -2398,6 +2554,23 @@ function toCompatibleVersionsMap(root: jsonP.JSONValue): CompatibleVersionsMap {
     optional: {
       "SourceVersion": "s",
       "TargetVersions": ["s"],
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
+export interface PackageVersionHistory {
+  PackageVersion?: string | null;
+  CommitMessage?: string | null;
+  CreatedAt?: Date | number | null;
+}
+function toPackageVersionHistory(root: jsonP.JSONValue): PackageVersionHistory {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "PackageVersion": "s",
+      "CommitMessage": "s",
+      "CreatedAt": "d",
     },
   }, root);
 }

@@ -699,6 +699,23 @@ export default class DataSync {
     }, await resp.json());
   }
 
+  async updateTaskExecution(
+    {abortSignal, ...params}: RequestConfig & UpdateTaskExecutionRequest,
+  ): Promise<UpdateTaskExecutionResponse> {
+    const body: jsonP.JSONObject = {
+      TaskExecutionArn: params["TaskExecutionArn"],
+      Options: fromOptions(params["Options"]),
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "UpdateTaskExecution",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
+  }
+
 }
 
 // refs: 1 - tags: named, input
@@ -920,6 +937,12 @@ export interface UpdateTaskRequest {
   CloudWatchLogGroupArn?: string | null;
 }
 
+// refs: 1 - tags: named, input
+export interface UpdateTaskExecutionRequest {
+  TaskExecutionArn: string;
+  Options: Options;
+}
+
 // refs: 1 - tags: named, output
 export interface CancelTaskExecutionResponse {
 }
@@ -1132,6 +1155,10 @@ export interface UpdateAgentResponse {
 export interface UpdateTaskResponse {
 }
 
+// refs: 1 - tags: named, output
+export interface UpdateTaskExecutionResponse {
+}
+
 // refs: 10 - tags: input, named, interface, output
 export interface TagListEntry {
   Key: string;
@@ -1285,7 +1312,7 @@ export type SmbVersion =
 | "SMB3"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 5 - tags: input, named, interface, output
+// refs: 6 - tags: input, named, interface, output
 export interface Options {
   VerifyMode?: VerifyMode | null;
   OverwriteMode?: OverwriteMode | null;
@@ -1340,32 +1367,32 @@ function toOptions(root: jsonP.JSONValue): Options {
   }, root);
 }
 
-// refs: 5 - tags: input, named, enum, output
+// refs: 6 - tags: input, named, enum, output
 export type VerifyMode =
 | "POINT_IN_TIME_CONSISTENT"
 | "ONLY_FILES_TRANSFERRED"
 | "NONE"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 5 - tags: input, named, enum, output
+// refs: 6 - tags: input, named, enum, output
 export type OverwriteMode =
 | "ALWAYS"
 | "NEVER"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 5 - tags: input, named, enum, output
+// refs: 6 - tags: input, named, enum, output
 export type Atime =
 | "NONE"
 | "BEST_EFFORT"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 5 - tags: input, named, enum, output
+// refs: 6 - tags: input, named, enum, output
 export type Mtime =
 | "NONE"
 | "PRESERVE"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 5 - tags: input, named, enum, output
+// refs: 6 - tags: input, named, enum, output
 export type Uid =
 | "NONE"
 | "INT_VALUE"
@@ -1373,7 +1400,7 @@ export type Uid =
 | "BOTH"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 5 - tags: input, named, enum, output
+// refs: 6 - tags: input, named, enum, output
 export type Gid =
 | "NONE"
 | "INT_VALUE"
@@ -1381,38 +1408,38 @@ export type Gid =
 | "BOTH"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 5 - tags: input, named, enum, output
+// refs: 6 - tags: input, named, enum, output
 export type PreserveDeletedFiles =
 | "PRESERVE"
 | "REMOVE"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 5 - tags: input, named, enum, output
+// refs: 6 - tags: input, named, enum, output
 export type PreserveDevices =
 | "NONE"
 | "PRESERVE"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 5 - tags: input, named, enum, output
+// refs: 6 - tags: input, named, enum, output
 export type PosixPermissions =
 | "NONE"
 | "PRESERVE"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 5 - tags: input, named, enum, output
+// refs: 6 - tags: input, named, enum, output
 export type TaskQueueing =
 | "ENABLED"
 | "DISABLED"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 5 - tags: input, named, enum, output
+// refs: 6 - tags: input, named, enum, output
 export type LogLevel =
 | "OFF"
 | "BASIC"
 | "TRANSFER"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 5 - tags: input, named, enum, output
+// refs: 6 - tags: input, named, enum, output
 export type TransferMode =
 | "CHANGED"
 | "ALL"

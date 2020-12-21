@@ -46,6 +46,7 @@ export default class Amplify {
       customRules: params["customRules"]?.map(x => fromCustomRule(x)),
       tags: params["tags"],
       buildSpec: params["buildSpec"],
+      customHeaders: params["customHeaders"],
       enableAutoBranchCreation: params["enableAutoBranchCreation"],
       autoBranchCreationPatterns: params["autoBranchCreationPatterns"],
       autoBranchCreationConfig: fromAutoBranchCreationConfig(params["autoBranchCreationConfig"]),
@@ -726,6 +727,7 @@ export default class Amplify {
       basicAuthCredentials: params["basicAuthCredentials"],
       customRules: params["customRules"]?.map(x => fromCustomRule(x)),
       buildSpec: params["buildSpec"],
+      customHeaders: params["customHeaders"],
       enableAutoBranchCreation: params["enableAutoBranchCreation"],
       autoBranchCreationPatterns: params["autoBranchCreationPatterns"],
       autoBranchCreationConfig: fromAutoBranchCreationConfig(params["autoBranchCreationConfig"]),
@@ -840,6 +842,7 @@ export interface CreateAppRequest {
   customRules?: CustomRule[] | null;
   tags?: { [key: string]: string | null | undefined } | null;
   buildSpec?: string | null;
+  customHeaders?: string | null;
   enableAutoBranchCreation?: boolean | null;
   autoBranchCreationPatterns?: string[] | null;
   autoBranchCreationConfig?: AutoBranchCreationConfig | null;
@@ -1092,6 +1095,7 @@ export interface UpdateAppRequest {
   basicAuthCredentials?: string | null;
   customRules?: CustomRule[] | null;
   buildSpec?: string | null;
+  customHeaders?: string | null;
   enableAutoBranchCreation?: boolean | null;
   autoBranchCreationPatterns?: string[] | null;
   autoBranchCreationConfig?: AutoBranchCreationConfig | null;
@@ -1471,6 +1475,7 @@ export interface App {
   customRules?: CustomRule[] | null;
   productionBranch?: ProductionBranch | null;
   buildSpec?: string | null;
+  customHeaders?: string | null;
   enableAutoBranchCreation?: boolean | null;
   autoBranchCreationPatterns?: string[] | null;
   autoBranchCreationConfig?: AutoBranchCreationConfig | null;
@@ -1499,6 +1504,7 @@ function toApp(root: jsonP.JSONValue): App {
       "customRules": [toCustomRule],
       "productionBranch": toProductionBranch,
       "buildSpec": "s",
+      "customHeaders": "s",
       "enableAutoBranchCreation": "b",
       "autoBranchCreationPatterns": ["s"],
       "autoBranchCreationConfig": toAutoBranchCreationConfig,

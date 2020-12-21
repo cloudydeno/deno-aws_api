@@ -5,7 +5,7 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import * as uuidv4 from "https://deno.land/std@0.71.0/uuid/v4.ts";
+import * as uuidv4 from "https://deno.land/std@0.75.0/uuid/v4.ts";
 import * as cmnP from "../../encoding/common.ts";
 import * as jsonP from "../../encoding/json.ts";
 function generateIdemptToken() {
@@ -31,6 +31,69 @@ export default class Connect {
     "uid": "connect-2017-08-08"
   };
 
+  async associateApprovedOrigin(
+    {abortSignal, ...params}: RequestConfig & AssociateApprovedOriginRequest,
+  ): Promise<void> {
+    const body: jsonP.JSONObject = {
+      Origin: params["Origin"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "AssociateApprovedOrigin",
+      method: "PUT",
+      requestUri: cmnP.encodePath`/instance/${params["InstanceId"]}/approved-origin`,
+    });
+  }
+
+  async associateInstanceStorageConfig(
+    {abortSignal, ...params}: RequestConfig & AssociateInstanceStorageConfigRequest,
+  ): Promise<AssociateInstanceStorageConfigResponse> {
+    const body: jsonP.JSONObject = {
+      ResourceType: params["ResourceType"],
+      StorageConfig: fromInstanceStorageConfig(params["StorageConfig"]),
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "AssociateInstanceStorageConfig",
+      method: "PUT",
+      requestUri: cmnP.encodePath`/instance/${params["InstanceId"]}/storage-config`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "AssociationId": "s",
+      },
+    }, await resp.json());
+  }
+
+  async associateLambdaFunction(
+    {abortSignal, ...params}: RequestConfig & AssociateLambdaFunctionRequest,
+  ): Promise<void> {
+    const body: jsonP.JSONObject = {
+      FunctionArn: params["FunctionArn"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "AssociateLambdaFunction",
+      method: "PUT",
+      requestUri: cmnP.encodePath`/instance/${params["InstanceId"]}/lambda-function`,
+    });
+  }
+
+  async associateLexBot(
+    {abortSignal, ...params}: RequestConfig & AssociateLexBotRequest,
+  ): Promise<void> {
+    const body: jsonP.JSONObject = {
+      LexBot: fromLexBot(params["LexBot"]),
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "AssociateLexBot",
+      method: "PUT",
+      requestUri: cmnP.encodePath`/instance/${params["InstanceId"]}/lex-bot`,
+    });
+  }
+
   async associateRoutingProfileQueues(
     {abortSignal, ...params}: RequestConfig & AssociateRoutingProfileQueuesRequest,
   ): Promise<void> {
@@ -42,6 +105,26 @@ export default class Connect {
       action: "AssociateRoutingProfileQueues",
       requestUri: cmnP.encodePath`/routing-profiles/${params["InstanceId"]}/${params["RoutingProfileId"]}/associate-queues`,
     });
+  }
+
+  async associateSecurityKey(
+    {abortSignal, ...params}: RequestConfig & AssociateSecurityKeyRequest,
+  ): Promise<AssociateSecurityKeyResponse> {
+    const body: jsonP.JSONObject = {
+      Key: params["Key"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "AssociateSecurityKey",
+      method: "PUT",
+      requestUri: cmnP.encodePath`/instance/${params["InstanceId"]}/security-key`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "AssociationId": "s",
+      },
+    }, await resp.json());
   }
 
   async createContactFlow(
@@ -69,6 +152,57 @@ export default class Connect {
     }, await resp.json());
   }
 
+  async createInstance(
+    {abortSignal, ...params}: RequestConfig & CreateInstanceRequest,
+  ): Promise<CreateInstanceResponse> {
+    const body: jsonP.JSONObject = {
+      ClientToken: params["ClientToken"],
+      IdentityManagementType: params["IdentityManagementType"],
+      InstanceAlias: params["InstanceAlias"],
+      DirectoryId: params["DirectoryId"],
+      InboundCallsEnabled: params["InboundCallsEnabled"],
+      OutboundCallsEnabled: params["OutboundCallsEnabled"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "CreateInstance",
+      method: "PUT",
+      requestUri: "/instance",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Id": "s",
+        "Arn": "s",
+      },
+    }, await resp.json());
+  }
+
+  async createIntegrationAssociation(
+    {abortSignal, ...params}: RequestConfig & CreateIntegrationAssociationRequest,
+  ): Promise<CreateIntegrationAssociationResponse> {
+    const body: jsonP.JSONObject = {
+      IntegrationType: params["IntegrationType"],
+      IntegrationArn: params["IntegrationArn"],
+      SourceApplicationUrl: params["SourceApplicationUrl"],
+      SourceApplicationName: params["SourceApplicationName"],
+      SourceType: params["SourceType"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "CreateIntegrationAssociation",
+      method: "PUT",
+      requestUri: cmnP.encodePath`/instance/${params["InstanceId"]}/integration-associations`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "IntegrationAssociationId": "s",
+        "IntegrationAssociationArn": "s",
+      },
+    }, await resp.json());
+  }
+
   async createRoutingProfile(
     {abortSignal, ...params}: RequestConfig & CreateRoutingProfileRequest,
   ): Promise<CreateRoutingProfileResponse> {
@@ -91,6 +225,27 @@ export default class Connect {
       optional: {
         "RoutingProfileArn": "s",
         "RoutingProfileId": "s",
+      },
+    }, await resp.json());
+  }
+
+  async createUseCase(
+    {abortSignal, ...params}: RequestConfig & CreateUseCaseRequest,
+  ): Promise<CreateUseCaseResponse> {
+    const body: jsonP.JSONObject = {
+      UseCaseType: params["UseCaseType"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "CreateUseCase",
+      method: "PUT",
+      requestUri: cmnP.encodePath`/instance/${params["InstanceId"]}/integration-associations/${params["IntegrationAssociationId"]}/use-cases`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "UseCaseId": "s",
+        "UseCaseArn": "s",
       },
     }, await resp.json());
   }
@@ -124,6 +279,64 @@ export default class Connect {
     }, await resp.json());
   }
 
+  async createUserHierarchyGroup(
+    {abortSignal, ...params}: RequestConfig & CreateUserHierarchyGroupRequest,
+  ): Promise<CreateUserHierarchyGroupResponse> {
+    const body: jsonP.JSONObject = {
+      Name: params["Name"],
+      ParentGroupId: params["ParentGroupId"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "CreateUserHierarchyGroup",
+      method: "PUT",
+      requestUri: cmnP.encodePath`/user-hierarchy-groups/${params["InstanceId"]}`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "HierarchyGroupId": "s",
+        "HierarchyGroupArn": "s",
+      },
+    }, await resp.json());
+  }
+
+  async deleteInstance(
+    {abortSignal, ...params}: RequestConfig & DeleteInstanceRequest,
+  ): Promise<void> {
+
+    const resp = await this.#client.performRequest({
+      abortSignal,
+      action: "DeleteInstance",
+      method: "DELETE",
+      requestUri: cmnP.encodePath`/instance/${params["InstanceId"]}`,
+    });
+  }
+
+  async deleteIntegrationAssociation(
+    {abortSignal, ...params}: RequestConfig & DeleteIntegrationAssociationRequest,
+  ): Promise<void> {
+
+    const resp = await this.#client.performRequest({
+      abortSignal,
+      action: "DeleteIntegrationAssociation",
+      method: "DELETE",
+      requestUri: cmnP.encodePath`/instance/${params["InstanceId"]}/integration-associations/${params["IntegrationAssociationId"]}`,
+    });
+  }
+
+  async deleteUseCase(
+    {abortSignal, ...params}: RequestConfig & DeleteUseCaseRequest,
+  ): Promise<void> {
+
+    const resp = await this.#client.performRequest({
+      abortSignal,
+      action: "DeleteUseCase",
+      method: "DELETE",
+      requestUri: cmnP.encodePath`/instance/${params["InstanceId"]}/integration-associations/${params["IntegrationAssociationId"]}/use-cases/${params["UseCaseId"]}`,
+    });
+  }
+
   async deleteUser(
     {abortSignal, ...params}: RequestConfig & DeleteUserRequest,
   ): Promise<void> {
@@ -133,6 +346,18 @@ export default class Connect {
       action: "DeleteUser",
       method: "DELETE",
       requestUri: cmnP.encodePath`/users/${params["InstanceId"]}/${params["UserId"]}`,
+    });
+  }
+
+  async deleteUserHierarchyGroup(
+    {abortSignal, ...params}: RequestConfig & DeleteUserHierarchyGroupRequest,
+  ): Promise<void> {
+
+    const resp = await this.#client.performRequest({
+      abortSignal,
+      action: "DeleteUserHierarchyGroup",
+      method: "DELETE",
+      requestUri: cmnP.encodePath`/user-hierarchy-groups/${params["InstanceId"]}/${params["HierarchyGroupId"]}`,
     });
   }
 
@@ -150,6 +375,61 @@ export default class Connect {
       required: {},
       optional: {
         "ContactFlow": toContactFlow,
+      },
+    }, await resp.json());
+  }
+
+  async describeInstance(
+    {abortSignal, ...params}: RequestConfig & DescribeInstanceRequest,
+  ): Promise<DescribeInstanceResponse> {
+
+    const resp = await this.#client.performRequest({
+      abortSignal,
+      action: "DescribeInstance",
+      method: "GET",
+      requestUri: cmnP.encodePath`/instance/${params["InstanceId"]}`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Instance": toInstance,
+      },
+    }, await resp.json());
+  }
+
+  async describeInstanceAttribute(
+    {abortSignal, ...params}: RequestConfig & DescribeInstanceAttributeRequest,
+  ): Promise<DescribeInstanceAttributeResponse> {
+
+    const resp = await this.#client.performRequest({
+      abortSignal,
+      action: "DescribeInstanceAttribute",
+      method: "GET",
+      requestUri: cmnP.encodePath`/instance/${params["InstanceId"]}/attribute/${params["AttributeType"]}`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Attribute": toAttribute,
+      },
+    }, await resp.json());
+  }
+
+  async describeInstanceStorageConfig(
+    {abortSignal, ...params}: RequestConfig & DescribeInstanceStorageConfigRequest,
+  ): Promise<DescribeInstanceStorageConfigResponse> {
+    const query = new URLSearchParams;
+    query.set("resourceType", params["ResourceType"]?.toString() ?? "");
+    const resp = await this.#client.performRequest({
+      abortSignal, query,
+      action: "DescribeInstanceStorageConfig",
+      method: "GET",
+      requestUri: cmnP.encodePath`/instance/${params["InstanceId"]}/storage-config/${params["AssociationId"]}`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "StorageConfig": toInstanceStorageConfig,
       },
     }, await resp.json());
   }
@@ -226,6 +506,59 @@ export default class Connect {
     }, await resp.json());
   }
 
+  async disassociateApprovedOrigin(
+    {abortSignal, ...params}: RequestConfig & DisassociateApprovedOriginRequest,
+  ): Promise<void> {
+    const query = new URLSearchParams;
+    query.set("origin", params["Origin"]?.toString() ?? "");
+    const resp = await this.#client.performRequest({
+      abortSignal, query,
+      action: "DisassociateApprovedOrigin",
+      method: "DELETE",
+      requestUri: cmnP.encodePath`/instance/${params["InstanceId"]}/approved-origin`,
+    });
+  }
+
+  async disassociateInstanceStorageConfig(
+    {abortSignal, ...params}: RequestConfig & DisassociateInstanceStorageConfigRequest,
+  ): Promise<void> {
+    const query = new URLSearchParams;
+    query.set("resourceType", params["ResourceType"]?.toString() ?? "");
+    const resp = await this.#client.performRequest({
+      abortSignal, query,
+      action: "DisassociateInstanceStorageConfig",
+      method: "DELETE",
+      requestUri: cmnP.encodePath`/instance/${params["InstanceId"]}/storage-config/${params["AssociationId"]}`,
+    });
+  }
+
+  async disassociateLambdaFunction(
+    {abortSignal, ...params}: RequestConfig & DisassociateLambdaFunctionRequest,
+  ): Promise<void> {
+    const query = new URLSearchParams;
+    query.set("functionArn", params["FunctionArn"]?.toString() ?? "");
+    const resp = await this.#client.performRequest({
+      abortSignal, query,
+      action: "DisassociateLambdaFunction",
+      method: "DELETE",
+      requestUri: cmnP.encodePath`/instance/${params["InstanceId"]}/lambda-function`,
+    });
+  }
+
+  async disassociateLexBot(
+    {abortSignal, ...params}: RequestConfig & DisassociateLexBotRequest,
+  ): Promise<void> {
+    const query = new URLSearchParams;
+    query.set("botName", params["BotName"]?.toString() ?? "");
+    query.set("lexRegion", params["LexRegion"]?.toString() ?? "");
+    const resp = await this.#client.performRequest({
+      abortSignal, query,
+      action: "DisassociateLexBot",
+      method: "DELETE",
+      requestUri: cmnP.encodePath`/instance/${params["InstanceId"]}/lex-bot`,
+    });
+  }
+
   async disassociateRoutingProfileQueues(
     {abortSignal, ...params}: RequestConfig & DisassociateRoutingProfileQueuesRequest,
   ): Promise<void> {
@@ -236,6 +569,18 @@ export default class Connect {
       abortSignal, body,
       action: "DisassociateRoutingProfileQueues",
       requestUri: cmnP.encodePath`/routing-profiles/${params["InstanceId"]}/${params["RoutingProfileId"]}/disassociate-queues`,
+    });
+  }
+
+  async disassociateSecurityKey(
+    {abortSignal, ...params}: RequestConfig & DisassociateSecurityKeyRequest,
+  ): Promise<void> {
+
+    const resp = await this.#client.performRequest({
+      abortSignal,
+      action: "DisassociateSecurityKey",
+      method: "DELETE",
+      requestUri: cmnP.encodePath`/instance/${params["InstanceId"]}/security-key/${params["AssociationId"]}`,
     });
   }
 
@@ -326,6 +671,27 @@ export default class Connect {
     }, await resp.json());
   }
 
+  async listApprovedOrigins(
+    {abortSignal, ...params}: RequestConfig & ListApprovedOriginsRequest,
+  ): Promise<ListApprovedOriginsResponse> {
+    const query = new URLSearchParams;
+    if (params["NextToken"] != null) query.set("nextToken", params["NextToken"]?.toString() ?? "");
+    if (params["MaxResults"] != null) query.set("maxResults", params["MaxResults"]?.toString() ?? "");
+    const resp = await this.#client.performRequest({
+      abortSignal, query,
+      action: "ListApprovedOrigins",
+      method: "GET",
+      requestUri: cmnP.encodePath`/instance/${params["InstanceId"]}/approved-origins`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Origins": ["s"],
+        "NextToken": "s",
+      },
+    }, await resp.json());
+  }
+
   async listContactFlows(
     {abortSignal, ...params}: RequestConfig & ListContactFlowsRequest,
   ): Promise<ListContactFlowsResponse> {
@@ -366,6 +732,133 @@ export default class Connect {
       required: {},
       optional: {
         "HoursOfOperationSummaryList": [toHoursOfOperationSummary],
+        "NextToken": "s",
+      },
+    }, await resp.json());
+  }
+
+  async listInstanceAttributes(
+    {abortSignal, ...params}: RequestConfig & ListInstanceAttributesRequest,
+  ): Promise<ListInstanceAttributesResponse> {
+    const query = new URLSearchParams;
+    if (params["NextToken"] != null) query.set("nextToken", params["NextToken"]?.toString() ?? "");
+    if (params["MaxResults"] != null) query.set("maxResults", params["MaxResults"]?.toString() ?? "");
+    const resp = await this.#client.performRequest({
+      abortSignal, query,
+      action: "ListInstanceAttributes",
+      method: "GET",
+      requestUri: cmnP.encodePath`/instance/${params["InstanceId"]}/attributes`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Attributes": [toAttribute],
+        "NextToken": "s",
+      },
+    }, await resp.json());
+  }
+
+  async listInstanceStorageConfigs(
+    {abortSignal, ...params}: RequestConfig & ListInstanceStorageConfigsRequest,
+  ): Promise<ListInstanceStorageConfigsResponse> {
+    const query = new URLSearchParams;
+    query.set("resourceType", params["ResourceType"]?.toString() ?? "");
+    if (params["NextToken"] != null) query.set("nextToken", params["NextToken"]?.toString() ?? "");
+    if (params["MaxResults"] != null) query.set("maxResults", params["MaxResults"]?.toString() ?? "");
+    const resp = await this.#client.performRequest({
+      abortSignal, query,
+      action: "ListInstanceStorageConfigs",
+      method: "GET",
+      requestUri: cmnP.encodePath`/instance/${params["InstanceId"]}/storage-configs`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "StorageConfigs": [toInstanceStorageConfig],
+        "NextToken": "s",
+      },
+    }, await resp.json());
+  }
+
+  async listInstances(
+    {abortSignal, ...params}: RequestConfig & ListInstancesRequest = {},
+  ): Promise<ListInstancesResponse> {
+    const query = new URLSearchParams;
+    if (params["NextToken"] != null) query.set("nextToken", params["NextToken"]?.toString() ?? "");
+    if (params["MaxResults"] != null) query.set("maxResults", params["MaxResults"]?.toString() ?? "");
+    const resp = await this.#client.performRequest({
+      abortSignal, query,
+      action: "ListInstances",
+      method: "GET",
+      requestUri: "/instance",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "InstanceSummaryList": [toInstanceSummary],
+        "NextToken": "s",
+      },
+    }, await resp.json());
+  }
+
+  async listIntegrationAssociations(
+    {abortSignal, ...params}: RequestConfig & ListIntegrationAssociationsRequest,
+  ): Promise<ListIntegrationAssociationsResponse> {
+    const query = new URLSearchParams;
+    if (params["NextToken"] != null) query.set("nextToken", params["NextToken"]?.toString() ?? "");
+    if (params["MaxResults"] != null) query.set("maxResults", params["MaxResults"]?.toString() ?? "");
+    const resp = await this.#client.performRequest({
+      abortSignal, query,
+      action: "ListIntegrationAssociations",
+      method: "GET",
+      requestUri: cmnP.encodePath`/instance/${params["InstanceId"]}/integration-associations`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "IntegrationAssociationSummaryList": [toIntegrationAssociationSummary],
+        "NextToken": "s",
+      },
+    }, await resp.json());
+  }
+
+  async listLambdaFunctions(
+    {abortSignal, ...params}: RequestConfig & ListLambdaFunctionsRequest,
+  ): Promise<ListLambdaFunctionsResponse> {
+    const query = new URLSearchParams;
+    if (params["NextToken"] != null) query.set("nextToken", params["NextToken"]?.toString() ?? "");
+    if (params["MaxResults"] != null) query.set("maxResults", params["MaxResults"]?.toString() ?? "");
+    const resp = await this.#client.performRequest({
+      abortSignal, query,
+      action: "ListLambdaFunctions",
+      method: "GET",
+      requestUri: cmnP.encodePath`/instance/${params["InstanceId"]}/lambda-functions`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "LambdaFunctions": ["s"],
+        "NextToken": "s",
+      },
+    }, await resp.json());
+  }
+
+  async listLexBots(
+    {abortSignal, ...params}: RequestConfig & ListLexBotsRequest,
+  ): Promise<ListLexBotsResponse> {
+    const query = new URLSearchParams;
+    if (params["NextToken"] != null) query.set("nextToken", params["NextToken"]?.toString() ?? "");
+    if (params["MaxResults"] != null) query.set("maxResults", params["MaxResults"]?.toString() ?? "");
+    const resp = await this.#client.performRequest({
+      abortSignal, query,
+      action: "ListLexBots",
+      method: "GET",
+      requestUri: cmnP.encodePath`/instance/${params["InstanceId"]}/lex-bots`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "LexBots": [toLexBot],
         "NextToken": "s",
       },
     }, await resp.json());
@@ -485,6 +978,27 @@ export default class Connect {
     }, await resp.json());
   }
 
+  async listSecurityKeys(
+    {abortSignal, ...params}: RequestConfig & ListSecurityKeysRequest,
+  ): Promise<ListSecurityKeysResponse> {
+    const query = new URLSearchParams;
+    if (params["NextToken"] != null) query.set("nextToken", params["NextToken"]?.toString() ?? "");
+    if (params["MaxResults"] != null) query.set("maxResults", params["MaxResults"]?.toString() ?? "");
+    const resp = await this.#client.performRequest({
+      abortSignal, query,
+      action: "ListSecurityKeys",
+      method: "GET",
+      requestUri: cmnP.encodePath`/instance/${params["InstanceId"]}/security-keys`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "SecurityKeys": [toSecurityKey],
+        "NextToken": "s",
+      },
+    }, await resp.json());
+  }
+
   async listSecurityProfiles(
     {abortSignal, ...params}: RequestConfig & ListSecurityProfilesRequest,
   ): Promise<ListSecurityProfilesResponse> {
@@ -520,6 +1034,27 @@ export default class Connect {
       required: {},
       optional: {
         "tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
+  }
+
+  async listUseCases(
+    {abortSignal, ...params}: RequestConfig & ListUseCasesRequest,
+  ): Promise<ListUseCasesResponse> {
+    const query = new URLSearchParams;
+    if (params["NextToken"] != null) query.set("nextToken", params["NextToken"]?.toString() ?? "");
+    if (params["MaxResults"] != null) query.set("maxResults", params["MaxResults"]?.toString() ?? "");
+    const resp = await this.#client.performRequest({
+      abortSignal, query,
+      action: "ListUseCases",
+      method: "GET",
+      requestUri: cmnP.encodePath`/instance/${params["InstanceId"]}/integration-associations/${params["IntegrationAssociationId"]}/use-cases`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "UseCaseSummaryList": [toUseCase],
+        "NextToken": "s",
       },
     }, await resp.json());
   }
@@ -649,6 +1184,33 @@ export default class Connect {
       action: "StartOutboundVoiceContact",
       method: "PUT",
       requestUri: "/contact/outbound-voice",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ContactId": "s",
+      },
+    }, await resp.json());
+  }
+
+  async startTaskContact(
+    {abortSignal, ...params}: RequestConfig & StartTaskContactRequest,
+  ): Promise<StartTaskContactResponse> {
+    const body: jsonP.JSONObject = {
+      InstanceId: params["InstanceId"],
+      PreviousContactId: params["PreviousContactId"],
+      ContactFlowId: params["ContactFlowId"],
+      Attributes: params["Attributes"],
+      Name: params["Name"],
+      References: jsonP.serializeMap(params["References"], x => fromReference(x)),
+      Description: params["Description"],
+      ClientToken: params["ClientToken"] ?? generateIdemptToken(),
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "StartTaskContact",
+      method: "PUT",
+      requestUri: "/contact/task",
     });
     return jsonP.readObj({
       required: {},
@@ -788,6 +1350,34 @@ export default class Connect {
     });
   }
 
+  async updateInstanceAttribute(
+    {abortSignal, ...params}: RequestConfig & UpdateInstanceAttributeRequest,
+  ): Promise<void> {
+    const body: jsonP.JSONObject = {
+      Value: params["Value"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "UpdateInstanceAttribute",
+      requestUri: cmnP.encodePath`/instance/${params["InstanceId"]}/attribute/${params["AttributeType"]}`,
+    });
+  }
+
+  async updateInstanceStorageConfig(
+    {abortSignal, ...params}: RequestConfig & UpdateInstanceStorageConfigRequest,
+  ): Promise<void> {
+    const query = new URLSearchParams;
+    const body: jsonP.JSONObject = {
+      StorageConfig: fromInstanceStorageConfig(params["StorageConfig"]),
+    };
+    query.set("resourceType", params["ResourceType"]?.toString() ?? "");
+    const resp = await this.#client.performRequest({
+      abortSignal, query, body,
+      action: "UpdateInstanceStorageConfig",
+      requestUri: cmnP.encodePath`/instance/${params["InstanceId"]}/storage-config/${params["AssociationId"]}`,
+    });
+  }
+
   async updateRoutingProfileConcurrency(
     {abortSignal, ...params}: RequestConfig & UpdateRoutingProfileConcurrencyRequest,
   ): Promise<void> {
@@ -854,6 +1444,32 @@ export default class Connect {
     });
   }
 
+  async updateUserHierarchyGroupName(
+    {abortSignal, ...params}: RequestConfig & UpdateUserHierarchyGroupNameRequest,
+  ): Promise<void> {
+    const body: jsonP.JSONObject = {
+      Name: params["Name"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "UpdateUserHierarchyGroupName",
+      requestUri: cmnP.encodePath`/user-hierarchy-groups/${params["InstanceId"]}/${params["HierarchyGroupId"]}/name`,
+    });
+  }
+
+  async updateUserHierarchyStructure(
+    {abortSignal, ...params}: RequestConfig & UpdateUserHierarchyStructureRequest,
+  ): Promise<void> {
+    const body: jsonP.JSONObject = {
+      HierarchyStructure: fromHierarchyStructureUpdate(params["HierarchyStructure"]),
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "UpdateUserHierarchyStructure",
+      requestUri: cmnP.encodePath`/user-hierarchy-structure/${params["InstanceId"]}`,
+    });
+  }
+
   async updateUserIdentityInfo(
     {abortSignal, ...params}: RequestConfig & UpdateUserIdentityInfoRequest,
   ): Promise<void> {
@@ -909,10 +1525,41 @@ export default class Connect {
 }
 
 // refs: 1 - tags: named, input
+export interface AssociateApprovedOriginRequest {
+  InstanceId: string;
+  Origin: string;
+}
+
+// refs: 1 - tags: named, input
+export interface AssociateInstanceStorageConfigRequest {
+  InstanceId: string;
+  ResourceType: InstanceStorageResourceType;
+  StorageConfig: InstanceStorageConfig;
+}
+
+// refs: 1 - tags: named, input
+export interface AssociateLambdaFunctionRequest {
+  InstanceId: string;
+  FunctionArn: string;
+}
+
+// refs: 1 - tags: named, input
+export interface AssociateLexBotRequest {
+  InstanceId: string;
+  LexBot: LexBot;
+}
+
+// refs: 1 - tags: named, input
 export interface AssociateRoutingProfileQueuesRequest {
   InstanceId: string;
   RoutingProfileId: string;
   QueueConfigs: RoutingProfileQueueConfig[];
+}
+
+// refs: 1 - tags: named, input
+export interface AssociateSecurityKeyRequest {
+  InstanceId: string;
+  Key: string;
 }
 
 // refs: 1 - tags: named, input
@@ -926,6 +1573,26 @@ export interface CreateContactFlowRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface CreateInstanceRequest {
+  ClientToken?: string | null;
+  IdentityManagementType: DirectoryType;
+  InstanceAlias?: string | null;
+  DirectoryId?: string | null;
+  InboundCallsEnabled: boolean;
+  OutboundCallsEnabled: boolean;
+}
+
+// refs: 1 - tags: named, input
+export interface CreateIntegrationAssociationRequest {
+  InstanceId: string;
+  IntegrationType: IntegrationType;
+  IntegrationArn: string;
+  SourceApplicationUrl: string;
+  SourceApplicationName: string;
+  SourceType: SourceType;
+}
+
+// refs: 1 - tags: named, input
 export interface CreateRoutingProfileRequest {
   InstanceId: string;
   Name: string;
@@ -934,6 +1601,13 @@ export interface CreateRoutingProfileRequest {
   QueueConfigs?: RoutingProfileQueueConfig[] | null;
   MediaConcurrencies: MediaConcurrency[];
   Tags?: { [key: string]: string | null | undefined } | null;
+}
+
+// refs: 1 - tags: named, input
+export interface CreateUseCaseRequest {
+  InstanceId: string;
+  IntegrationAssociationId: string;
+  UseCaseType: UseCaseType;
 }
 
 // refs: 1 - tags: named, input
@@ -951,15 +1625,64 @@ export interface CreateUserRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface CreateUserHierarchyGroupRequest {
+  Name: string;
+  ParentGroupId?: string | null;
+  InstanceId: string;
+}
+
+// refs: 1 - tags: named, input
+export interface DeleteInstanceRequest {
+  InstanceId: string;
+}
+
+// refs: 1 - tags: named, input
+export interface DeleteIntegrationAssociationRequest {
+  InstanceId: string;
+  IntegrationAssociationId: string;
+}
+
+// refs: 1 - tags: named, input
+export interface DeleteUseCaseRequest {
+  InstanceId: string;
+  IntegrationAssociationId: string;
+  UseCaseId: string;
+}
+
+// refs: 1 - tags: named, input
 export interface DeleteUserRequest {
   InstanceId: string;
   UserId: string;
 }
 
 // refs: 1 - tags: named, input
+export interface DeleteUserHierarchyGroupRequest {
+  HierarchyGroupId: string;
+  InstanceId: string;
+}
+
+// refs: 1 - tags: named, input
 export interface DescribeContactFlowRequest {
   InstanceId: string;
   ContactFlowId: string;
+}
+
+// refs: 1 - tags: named, input
+export interface DescribeInstanceRequest {
+  InstanceId: string;
+}
+
+// refs: 1 - tags: named, input
+export interface DescribeInstanceAttributeRequest {
+  InstanceId: string;
+  AttributeType: InstanceAttributeType;
+}
+
+// refs: 1 - tags: named, input
+export interface DescribeInstanceStorageConfigRequest {
+  InstanceId: string;
+  AssociationId: string;
+  ResourceType: InstanceStorageResourceType;
 }
 
 // refs: 1 - tags: named, input
@@ -986,10 +1709,42 @@ export interface DescribeUserHierarchyStructureRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface DisassociateApprovedOriginRequest {
+  InstanceId: string;
+  Origin: string;
+}
+
+// refs: 1 - tags: named, input
+export interface DisassociateInstanceStorageConfigRequest {
+  InstanceId: string;
+  AssociationId: string;
+  ResourceType: InstanceStorageResourceType;
+}
+
+// refs: 1 - tags: named, input
+export interface DisassociateLambdaFunctionRequest {
+  InstanceId: string;
+  FunctionArn: string;
+}
+
+// refs: 1 - tags: named, input
+export interface DisassociateLexBotRequest {
+  InstanceId: string;
+  BotName: string;
+  LexRegion: string;
+}
+
+// refs: 1 - tags: named, input
 export interface DisassociateRoutingProfileQueuesRequest {
   InstanceId: string;
   RoutingProfileId: string;
   QueueReferences: RoutingProfileQueueReference[];
+}
+
+// refs: 1 - tags: named, input
+export interface DisassociateSecurityKeyRequest {
+  InstanceId: string;
+  AssociationId: string;
 }
 
 // refs: 1 - tags: named, input
@@ -1026,6 +1781,13 @@ export interface GetMetricDataRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface ListApprovedOriginsRequest {
+  InstanceId: string;
+  NextToken?: string | null;
+  MaxResults?: number | null;
+}
+
+// refs: 1 - tags: named, input
 export interface ListContactFlowsRequest {
   InstanceId: string;
   ContactFlowTypes?: ContactFlowType[] | null;
@@ -1035,6 +1797,48 @@ export interface ListContactFlowsRequest {
 
 // refs: 1 - tags: named, input
 export interface ListHoursOfOperationsRequest {
+  InstanceId: string;
+  NextToken?: string | null;
+  MaxResults?: number | null;
+}
+
+// refs: 1 - tags: named, input
+export interface ListInstanceAttributesRequest {
+  InstanceId: string;
+  NextToken?: string | null;
+  MaxResults?: number | null;
+}
+
+// refs: 1 - tags: named, input
+export interface ListInstanceStorageConfigsRequest {
+  InstanceId: string;
+  ResourceType: InstanceStorageResourceType;
+  NextToken?: string | null;
+  MaxResults?: number | null;
+}
+
+// refs: 1 - tags: named, input
+export interface ListInstancesRequest {
+  NextToken?: string | null;
+  MaxResults?: number | null;
+}
+
+// refs: 1 - tags: named, input
+export interface ListIntegrationAssociationsRequest {
+  InstanceId: string;
+  NextToken?: string | null;
+  MaxResults?: number | null;
+}
+
+// refs: 1 - tags: named, input
+export interface ListLambdaFunctionsRequest {
+  InstanceId: string;
+  NextToken?: string | null;
+  MaxResults?: number | null;
+}
+
+// refs: 1 - tags: named, input
+export interface ListLexBotsRequest {
   InstanceId: string;
   NextToken?: string | null;
   MaxResults?: number | null;
@@ -1080,6 +1884,13 @@ export interface ListRoutingProfilesRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface ListSecurityKeysRequest {
+  InstanceId: string;
+  NextToken?: string | null;
+  MaxResults?: number | null;
+}
+
+// refs: 1 - tags: named, input
 export interface ListSecurityProfilesRequest {
   InstanceId: string;
   NextToken?: string | null;
@@ -1089,6 +1900,14 @@ export interface ListSecurityProfilesRequest {
 // refs: 1 - tags: named, input
 export interface ListTagsForResourceRequest {
   resourceArn: string;
+}
+
+// refs: 1 - tags: named, input
+export interface ListUseCasesRequest {
+  InstanceId: string;
+  IntegrationAssociationId: string;
+  NextToken?: string | null;
+  MaxResults?: number | null;
 }
 
 // refs: 1 - tags: named, input
@@ -1139,6 +1958,18 @@ export interface StartOutboundVoiceContactRequest {
   SourcePhoneNumber?: string | null;
   QueueId?: string | null;
   Attributes?: { [key: string]: string | null | undefined } | null;
+}
+
+// refs: 1 - tags: named, input
+export interface StartTaskContactRequest {
+  InstanceId: string;
+  PreviousContactId?: string | null;
+  ContactFlowId: string;
+  Attributes?: { [key: string]: string | null | undefined } | null;
+  Name: string;
+  References?: { [key: string]: Reference | null | undefined } | null;
+  Description?: string | null;
+  ClientToken?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -1196,6 +2027,21 @@ export interface UpdateContactFlowNameRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface UpdateInstanceAttributeRequest {
+  InstanceId: string;
+  AttributeType: InstanceAttributeType;
+  Value: string;
+}
+
+// refs: 1 - tags: named, input
+export interface UpdateInstanceStorageConfigRequest {
+  InstanceId: string;
+  AssociationId: string;
+  ResourceType: InstanceStorageResourceType;
+  StorageConfig: InstanceStorageConfig;
+}
+
+// refs: 1 - tags: named, input
 export interface UpdateRoutingProfileConcurrencyRequest {
   InstanceId: string;
   RoutingProfileId: string;
@@ -1232,6 +2078,19 @@ export interface UpdateUserHierarchyRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface UpdateUserHierarchyGroupNameRequest {
+  Name: string;
+  HierarchyGroupId: string;
+  InstanceId: string;
+}
+
+// refs: 1 - tags: named, input
+export interface UpdateUserHierarchyStructureRequest {
+  HierarchyStructure: HierarchyStructureUpdate;
+  InstanceId: string;
+}
+
+// refs: 1 - tags: named, input
 export interface UpdateUserIdentityInfoRequest {
   IdentityInfo: UserIdentityInfo;
   UserId: string;
@@ -1260,9 +2119,31 @@ export interface UpdateUserSecurityProfilesRequest {
 }
 
 // refs: 1 - tags: named, output
+export interface AssociateInstanceStorageConfigResponse {
+  AssociationId?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface AssociateSecurityKeyResponse {
+  AssociationId?: string | null;
+}
+
+// refs: 1 - tags: named, output
 export interface CreateContactFlowResponse {
   ContactFlowId?: string | null;
   ContactFlowArn?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface CreateInstanceResponse {
+  Id?: string | null;
+  Arn?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface CreateIntegrationAssociationResponse {
+  IntegrationAssociationId?: string | null;
+  IntegrationAssociationArn?: string | null;
 }
 
 // refs: 1 - tags: named, output
@@ -1272,14 +2153,41 @@ export interface CreateRoutingProfileResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface CreateUseCaseResponse {
+  UseCaseId?: string | null;
+  UseCaseArn?: string | null;
+}
+
+// refs: 1 - tags: named, output
 export interface CreateUserResponse {
   UserId?: string | null;
   UserArn?: string | null;
 }
 
 // refs: 1 - tags: named, output
+export interface CreateUserHierarchyGroupResponse {
+  HierarchyGroupId?: string | null;
+  HierarchyGroupArn?: string | null;
+}
+
+// refs: 1 - tags: named, output
 export interface DescribeContactFlowResponse {
   ContactFlow?: ContactFlow | null;
+}
+
+// refs: 1 - tags: named, output
+export interface DescribeInstanceResponse {
+  Instance?: Instance | null;
+}
+
+// refs: 1 - tags: named, output
+export interface DescribeInstanceAttributeResponse {
+  Attribute?: Attribute | null;
+}
+
+// refs: 1 - tags: named, output
+export interface DescribeInstanceStorageConfigResponse {
+  StorageConfig?: InstanceStorageConfig | null;
 }
 
 // refs: 1 - tags: named, output
@@ -1326,6 +2234,12 @@ export interface GetMetricDataResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface ListApprovedOriginsResponse {
+  Origins?: string[] | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
 export interface ListContactFlowsResponse {
   ContactFlowSummaryList?: ContactFlowSummary[] | null;
   NextToken?: string | null;
@@ -1334,6 +2248,42 @@ export interface ListContactFlowsResponse {
 // refs: 1 - tags: named, output
 export interface ListHoursOfOperationsResponse {
   HoursOfOperationSummaryList?: HoursOfOperationSummary[] | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface ListInstanceAttributesResponse {
+  Attributes?: Attribute[] | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface ListInstanceStorageConfigsResponse {
+  StorageConfigs?: InstanceStorageConfig[] | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface ListInstancesResponse {
+  InstanceSummaryList?: InstanceSummary[] | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface ListIntegrationAssociationsResponse {
+  IntegrationAssociationSummaryList?: IntegrationAssociationSummary[] | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface ListLambdaFunctionsResponse {
+  LambdaFunctions?: string[] | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface ListLexBotsResponse {
+  LexBots?: LexBot[] | null;
   NextToken?: string | null;
 }
 
@@ -1368,6 +2318,12 @@ export interface ListRoutingProfilesResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface ListSecurityKeysResponse {
+  SecurityKeys?: SecurityKey[] | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
 export interface ListSecurityProfilesResponse {
   SecurityProfileSummaryList?: SecurityProfileSummary[] | null;
   NextToken?: string | null;
@@ -1376,6 +2332,12 @@ export interface ListSecurityProfilesResponse {
 // refs: 1 - tags: named, output
 export interface ListTagsForResourceResponse {
   tags?: { [key: string]: string | null | undefined } | null;
+}
+
+// refs: 1 - tags: named, output
+export interface ListUseCasesResponse {
+  UseCaseSummaryList?: UseCase[] | null;
+  NextToken?: string | null;
 }
 
 // refs: 1 - tags: named, output
@@ -1411,6 +2373,11 @@ export interface StartOutboundVoiceContactResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface StartTaskContactResponse {
+  ContactId?: string | null;
+}
+
+// refs: 1 - tags: named, output
 export interface StopContactResponse {
 }
 
@@ -1424,6 +2391,197 @@ export interface SuspendContactRecordingResponse {
 
 // refs: 1 - tags: named, output
 export interface UpdateContactAttributesResponse {
+}
+
+// refs: 5 - tags: input, named, enum
+export type InstanceStorageResourceType =
+| "CHAT_TRANSCRIPTS"
+| "CALL_RECORDINGS"
+| "SCHEDULED_REPORTS"
+| "MEDIA_STREAMS"
+| "CONTACT_TRACE_RECORDS"
+| "AGENT_EVENTS"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 4 - tags: input, named, interface, output
+export interface InstanceStorageConfig {
+  AssociationId?: string | null;
+  StorageType: StorageType;
+  S3Config?: S3Config | null;
+  KinesisVideoStreamConfig?: KinesisVideoStreamConfig | null;
+  KinesisStreamConfig?: KinesisStreamConfig | null;
+  KinesisFirehoseConfig?: KinesisFirehoseConfig | null;
+}
+function fromInstanceStorageConfig(input?: InstanceStorageConfig | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    AssociationId: input["AssociationId"],
+    StorageType: input["StorageType"],
+    S3Config: fromS3Config(input["S3Config"]),
+    KinesisVideoStreamConfig: fromKinesisVideoStreamConfig(input["KinesisVideoStreamConfig"]),
+    KinesisStreamConfig: fromKinesisStreamConfig(input["KinesisStreamConfig"]),
+    KinesisFirehoseConfig: fromKinesisFirehoseConfig(input["KinesisFirehoseConfig"]),
+  }
+}
+function toInstanceStorageConfig(root: jsonP.JSONValue): InstanceStorageConfig {
+  return jsonP.readObj({
+    required: {
+      "StorageType": (x: jsonP.JSONValue) => cmnP.readEnum<StorageType>(x),
+    },
+    optional: {
+      "AssociationId": "s",
+      "S3Config": toS3Config,
+      "KinesisVideoStreamConfig": toKinesisVideoStreamConfig,
+      "KinesisStreamConfig": toKinesisStreamConfig,
+      "KinesisFirehoseConfig": toKinesisFirehoseConfig,
+    },
+  }, root);
+}
+
+// refs: 4 - tags: input, named, enum, output
+export type StorageType =
+| "S3"
+| "KINESIS_VIDEO_STREAM"
+| "KINESIS_STREAM"
+| "KINESIS_FIREHOSE"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 4 - tags: input, named, interface, output
+export interface S3Config {
+  BucketName: string;
+  BucketPrefix: string;
+  EncryptionConfig?: EncryptionConfig | null;
+}
+function fromS3Config(input?: S3Config | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    BucketName: input["BucketName"],
+    BucketPrefix: input["BucketPrefix"],
+    EncryptionConfig: fromEncryptionConfig(input["EncryptionConfig"]),
+  }
+}
+function toS3Config(root: jsonP.JSONValue): S3Config {
+  return jsonP.readObj({
+    required: {
+      "BucketName": "s",
+      "BucketPrefix": "s",
+    },
+    optional: {
+      "EncryptionConfig": toEncryptionConfig,
+    },
+  }, root);
+}
+
+// refs: 8 - tags: input, named, interface, output
+export interface EncryptionConfig {
+  EncryptionType: EncryptionType;
+  KeyId: string;
+}
+function fromEncryptionConfig(input?: EncryptionConfig | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    EncryptionType: input["EncryptionType"],
+    KeyId: input["KeyId"],
+  }
+}
+function toEncryptionConfig(root: jsonP.JSONValue): EncryptionConfig {
+  return jsonP.readObj({
+    required: {
+      "EncryptionType": (x: jsonP.JSONValue) => cmnP.readEnum<EncryptionType>(x),
+      "KeyId": "s",
+    },
+    optional: {},
+  }, root);
+}
+
+// refs: 8 - tags: input, named, enum, output
+export type EncryptionType =
+| "KMS"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 4 - tags: input, named, interface, output
+export interface KinesisVideoStreamConfig {
+  Prefix: string;
+  RetentionPeriodHours: number;
+  EncryptionConfig: EncryptionConfig;
+}
+function fromKinesisVideoStreamConfig(input?: KinesisVideoStreamConfig | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    Prefix: input["Prefix"],
+    RetentionPeriodHours: input["RetentionPeriodHours"],
+    EncryptionConfig: fromEncryptionConfig(input["EncryptionConfig"]),
+  }
+}
+function toKinesisVideoStreamConfig(root: jsonP.JSONValue): KinesisVideoStreamConfig {
+  return jsonP.readObj({
+    required: {
+      "Prefix": "s",
+      "RetentionPeriodHours": "n",
+      "EncryptionConfig": toEncryptionConfig,
+    },
+    optional: {},
+  }, root);
+}
+
+// refs: 4 - tags: input, named, interface, output
+export interface KinesisStreamConfig {
+  StreamArn: string;
+}
+function fromKinesisStreamConfig(input?: KinesisStreamConfig | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    StreamArn: input["StreamArn"],
+  }
+}
+function toKinesisStreamConfig(root: jsonP.JSONValue): KinesisStreamConfig {
+  return jsonP.readObj({
+    required: {
+      "StreamArn": "s",
+    },
+    optional: {},
+  }, root);
+}
+
+// refs: 4 - tags: input, named, interface, output
+export interface KinesisFirehoseConfig {
+  FirehoseArn: string;
+}
+function fromKinesisFirehoseConfig(input?: KinesisFirehoseConfig | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    FirehoseArn: input["FirehoseArn"],
+  }
+}
+function toKinesisFirehoseConfig(root: jsonP.JSONValue): KinesisFirehoseConfig {
+  return jsonP.readObj({
+    required: {
+      "FirehoseArn": "s",
+    },
+    optional: {},
+  }, root);
+}
+
+// refs: 2 - tags: input, named, interface, output
+export interface LexBot {
+  Name?: string | null;
+  LexRegion?: string | null;
+}
+function fromLexBot(input?: LexBot | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    Name: input["Name"],
+    LexRegion: input["LexRegion"],
+  }
+}
+function toLexBot(root: jsonP.JSONValue): LexBot {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "Name": "s",
+      "LexRegion": "s",
+    },
+  }, root);
 }
 
 // refs: 3 - tags: input, named, interface
@@ -1458,6 +2616,7 @@ function fromRoutingProfileQueueReference(input?: RoutingProfileQueueReference |
 export type Channel =
 | "VOICE"
 | "CHAT"
+| "TASK"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, enum, output
@@ -1471,6 +2630,24 @@ export type ContactFlowType =
 | "OUTBOUND_WHISPER"
 | "AGENT_TRANSFER"
 | "QUEUE_TRANSFER"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 3 - tags: input, named, enum, output
+export type DirectoryType =
+| "SAML"
+| "CONNECT_MANAGED"
+| "EXISTING_DIRECTORY"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 2 - tags: input, named, enum, output
+export type IntegrationType =
+| "EVENT"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 2 - tags: input, named, enum, output
+export type SourceType =
+| "SALESFORCE"
+| "ZENDESK"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface, output
@@ -1494,6 +2671,11 @@ function toMediaConcurrency(root: jsonP.JSONValue): MediaConcurrency {
     optional: {},
   }, root);
 }
+
+// refs: 2 - tags: input, named, enum, output
+export type UseCaseType =
+| "RULES_EVALUATION"
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface, output
 export interface UserIdentityInfo {
@@ -1553,6 +2735,17 @@ function toUserPhoneConfig(root: jsonP.JSONValue): UserPhoneConfig {
 export type PhoneType =
 | "SOFT_PHONE"
 | "DESK_PHONE"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 4 - tags: input, named, enum, output
+export type InstanceAttributeType =
+| "INBOUND_CALLS"
+| "OUTBOUND_CALLS"
+| "CONTACTFLOW_LOGS"
+| "CONTACT_LENS"
+| "AUTO_RESOLVE_BEST_VOICES"
+| "USE_CUSTOM_TTS_VOICES"
+| "EARLY_MEDIA"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface
@@ -2006,6 +3199,54 @@ export type VoiceRecordingTrack =
 | "ALL"
 | cmnP.UnexpectedEnumValue;
 
+// refs: 1 - tags: input, named, interface
+export interface Reference {
+  Value: string;
+  Type: ReferenceType;
+}
+function fromReference(input?: Reference | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    Value: input["Value"],
+    Type: input["Type"],
+  }
+}
+
+// refs: 1 - tags: input, named, enum
+export type ReferenceType =
+| "URL"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 1 - tags: input, named, interface
+export interface HierarchyStructureUpdate {
+  LevelOne?: HierarchyLevelUpdate | null;
+  LevelTwo?: HierarchyLevelUpdate | null;
+  LevelThree?: HierarchyLevelUpdate | null;
+  LevelFour?: HierarchyLevelUpdate | null;
+  LevelFive?: HierarchyLevelUpdate | null;
+}
+function fromHierarchyStructureUpdate(input?: HierarchyStructureUpdate | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    LevelOne: fromHierarchyLevelUpdate(input["LevelOne"]),
+    LevelTwo: fromHierarchyLevelUpdate(input["LevelTwo"]),
+    LevelThree: fromHierarchyLevelUpdate(input["LevelThree"]),
+    LevelFour: fromHierarchyLevelUpdate(input["LevelFour"]),
+    LevelFive: fromHierarchyLevelUpdate(input["LevelFive"]),
+  }
+}
+
+// refs: 5 - tags: input, named, interface
+export interface HierarchyLevelUpdate {
+  Name: string;
+}
+function fromHierarchyLevelUpdate(input?: HierarchyLevelUpdate | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    Name: input["Name"],
+  }
+}
+
 // refs: 1 - tags: output, named, interface
 export interface ContactFlow {
   Arn?: string | null;
@@ -2027,6 +3268,72 @@ function toContactFlow(root: jsonP.JSONValue): ContactFlow {
       "Description": "s",
       "Content": "s",
       "Tags": x => jsonP.readMap(String, String, x),
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
+export interface Instance {
+  Id?: string | null;
+  Arn?: string | null;
+  IdentityManagementType?: DirectoryType | null;
+  InstanceAlias?: string | null;
+  CreatedTime?: Date | number | null;
+  ServiceRole?: string | null;
+  InstanceStatus?: InstanceStatus | null;
+  StatusReason?: InstanceStatusReason | null;
+  InboundCallsEnabled?: boolean | null;
+  OutboundCallsEnabled?: boolean | null;
+}
+function toInstance(root: jsonP.JSONValue): Instance {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "Id": "s",
+      "Arn": "s",
+      "IdentityManagementType": (x: jsonP.JSONValue) => cmnP.readEnum<DirectoryType>(x),
+      "InstanceAlias": "s",
+      "CreatedTime": "d",
+      "ServiceRole": "s",
+      "InstanceStatus": (x: jsonP.JSONValue) => cmnP.readEnum<InstanceStatus>(x),
+      "StatusReason": toInstanceStatusReason,
+      "InboundCallsEnabled": "b",
+      "OutboundCallsEnabled": "b",
+    },
+  }, root);
+}
+
+// refs: 2 - tags: output, named, enum
+export type InstanceStatus =
+| "CREATION_IN_PROGRESS"
+| "ACTIVE"
+| "CREATION_FAILED"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 1 - tags: output, named, interface
+export interface InstanceStatusReason {
+  Message?: string | null;
+}
+function toInstanceStatusReason(root: jsonP.JSONValue): InstanceStatusReason {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "Message": "s",
+    },
+  }, root);
+}
+
+// refs: 2 - tags: output, named, interface
+export interface Attribute {
+  AttributeType?: InstanceAttributeType | null;
+  Value?: string | null;
+}
+function toAttribute(root: jsonP.JSONValue): Attribute {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "AttributeType": (x: jsonP.JSONValue) => cmnP.readEnum<InstanceAttributeType>(x),
+      "Value": "s",
     },
   }, root);
 }
@@ -2332,6 +3639,62 @@ function toHoursOfOperationSummary(root: jsonP.JSONValue): HoursOfOperationSumma
 }
 
 // refs: 1 - tags: output, named, interface
+export interface InstanceSummary {
+  Id?: string | null;
+  Arn?: string | null;
+  IdentityManagementType?: DirectoryType | null;
+  InstanceAlias?: string | null;
+  CreatedTime?: Date | number | null;
+  ServiceRole?: string | null;
+  InstanceStatus?: InstanceStatus | null;
+  InboundCallsEnabled?: boolean | null;
+  OutboundCallsEnabled?: boolean | null;
+}
+function toInstanceSummary(root: jsonP.JSONValue): InstanceSummary {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "Id": "s",
+      "Arn": "s",
+      "IdentityManagementType": (x: jsonP.JSONValue) => cmnP.readEnum<DirectoryType>(x),
+      "InstanceAlias": "s",
+      "CreatedTime": "d",
+      "ServiceRole": "s",
+      "InstanceStatus": (x: jsonP.JSONValue) => cmnP.readEnum<InstanceStatus>(x),
+      "InboundCallsEnabled": "b",
+      "OutboundCallsEnabled": "b",
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
+export interface IntegrationAssociationSummary {
+  IntegrationAssociationId?: string | null;
+  IntegrationAssociationArn?: string | null;
+  InstanceId?: string | null;
+  IntegrationType?: IntegrationType | null;
+  IntegrationArn?: string | null;
+  SourceApplicationUrl?: string | null;
+  SourceApplicationName?: string | null;
+  SourceType?: SourceType | null;
+}
+function toIntegrationAssociationSummary(root: jsonP.JSONValue): IntegrationAssociationSummary {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "IntegrationAssociationId": "s",
+      "IntegrationAssociationArn": "s",
+      "InstanceId": "s",
+      "IntegrationType": (x: jsonP.JSONValue) => cmnP.readEnum<IntegrationType>(x),
+      "IntegrationArn": "s",
+      "SourceApplicationUrl": "s",
+      "SourceApplicationName": "s",
+      "SourceType": (x: jsonP.JSONValue) => cmnP.readEnum<SourceType>(x),
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
 export interface PhoneNumberSummary {
   Id?: string | null;
   Arn?: string | null;
@@ -2429,6 +3792,23 @@ function toRoutingProfileSummary(root: jsonP.JSONValue): RoutingProfileSummary {
 }
 
 // refs: 1 - tags: output, named, interface
+export interface SecurityKey {
+  AssociationId?: string | null;
+  Key?: string | null;
+  CreationTime?: Date | number | null;
+}
+function toSecurityKey(root: jsonP.JSONValue): SecurityKey {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "AssociationId": "s",
+      "Key": "s",
+      "CreationTime": "d",
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
 export interface SecurityProfileSummary {
   Id?: string | null;
   Arn?: string | null;
@@ -2441,6 +3821,23 @@ function toSecurityProfileSummary(root: jsonP.JSONValue): SecurityProfileSummary
       "Id": "s",
       "Arn": "s",
       "Name": "s",
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
+export interface UseCase {
+  UseCaseId?: string | null;
+  UseCaseArn?: string | null;
+  UseCaseType?: UseCaseType | null;
+}
+function toUseCase(root: jsonP.JSONValue): UseCase {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "UseCaseId": "s",
+      "UseCaseArn": "s",
+      "UseCaseType": (x: jsonP.JSONValue) => cmnP.readEnum<UseCaseType>(x),
     },
   }, root);
 }

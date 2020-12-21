@@ -183,6 +183,101 @@ export default class XRay {
     }, await resp.json());
   }
 
+  async getInsight(
+    {abortSignal, ...params}: RequestConfig & GetInsightRequest,
+  ): Promise<GetInsightResult> {
+    const body: jsonP.JSONObject = {
+      InsightId: params["InsightId"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "GetInsight",
+      requestUri: "/Insight",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Insight": toInsight,
+      },
+    }, await resp.json());
+  }
+
+  async getInsightEvents(
+    {abortSignal, ...params}: RequestConfig & GetInsightEventsRequest,
+  ): Promise<GetInsightEventsResult> {
+    const body: jsonP.JSONObject = {
+      InsightId: params["InsightId"],
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "GetInsightEvents",
+      requestUri: "/InsightEvents",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "InsightEvents": [toInsightEvent],
+        "NextToken": "s",
+      },
+    }, await resp.json());
+  }
+
+  async getInsightImpactGraph(
+    {abortSignal, ...params}: RequestConfig & GetInsightImpactGraphRequest,
+  ): Promise<GetInsightImpactGraphResult> {
+    const body: jsonP.JSONObject = {
+      InsightId: params["InsightId"],
+      StartTime: jsonP.serializeDate_unixTimestamp(params["StartTime"]),
+      EndTime: jsonP.serializeDate_unixTimestamp(params["EndTime"]),
+      NextToken: params["NextToken"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "GetInsightImpactGraph",
+      requestUri: "/InsightImpactGraph",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "InsightId": "s",
+        "StartTime": "d",
+        "EndTime": "d",
+        "ServiceGraphStartTime": "d",
+        "ServiceGraphEndTime": "d",
+        "Services": [toInsightImpactGraphService],
+        "NextToken": "s",
+      },
+    }, await resp.json());
+  }
+
+  async getInsightSummaries(
+    {abortSignal, ...params}: RequestConfig & GetInsightSummariesRequest,
+  ): Promise<GetInsightSummariesResult> {
+    const body: jsonP.JSONObject = {
+      States: params["States"],
+      GroupARN: params["GroupARN"],
+      GroupName: params["GroupName"],
+      StartTime: jsonP.serializeDate_unixTimestamp(params["StartTime"]),
+      EndTime: jsonP.serializeDate_unixTimestamp(params["EndTime"]),
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "GetInsightSummaries",
+      requestUri: "/InsightSummaries",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "InsightSummaries": [toInsightSummary],
+        "NextToken": "s",
+      },
+    }, await resp.json());
+  }
+
   async getSamplingRules(
     {abortSignal, ...params}: RequestConfig & GetSamplingRulesRequest = {},
   ): Promise<GetSamplingRulesResult> {
@@ -281,6 +376,7 @@ export default class XRay {
       GroupARN: params["GroupARN"],
       EntitySelectorExpression: params["EntitySelectorExpression"],
       Period: params["Period"],
+      ForecastStatistics: params["ForecastStatistics"],
       NextToken: params["NextToken"],
     };
     const resp = await this.#client.performRequest({
@@ -554,6 +650,37 @@ export interface GetGroupsRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface GetInsightRequest {
+  InsightId: string;
+}
+
+// refs: 1 - tags: named, input
+export interface GetInsightEventsRequest {
+  InsightId: string;
+  MaxResults?: number | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface GetInsightImpactGraphRequest {
+  InsightId: string;
+  StartTime: Date | number;
+  EndTime: Date | number;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface GetInsightSummariesRequest {
+  States?: InsightState[] | null;
+  GroupARN?: string | null;
+  GroupName?: string | null;
+  StartTime: Date | number;
+  EndTime: Date | number;
+  MaxResults?: number | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, input
 export interface GetSamplingRulesRequest {
   NextToken?: string | null;
 }
@@ -585,6 +712,7 @@ export interface GetTimeSeriesServiceStatisticsRequest {
   GroupARN?: string | null;
   EntitySelectorExpression?: string | null;
   Period?: number | null;
+  ForecastStatistics?: boolean | null;
   NextToken?: string | null;
 }
 
@@ -694,6 +822,34 @@ export interface GetGroupResult {
 // refs: 1 - tags: named, output
 export interface GetGroupsResult {
   Groups?: GroupSummary[] | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface GetInsightResult {
+  Insight?: Insight | null;
+}
+
+// refs: 1 - tags: named, output
+export interface GetInsightEventsResult {
+  InsightEvents?: InsightEvent[] | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface GetInsightImpactGraphResult {
+  InsightId?: string | null;
+  StartTime?: Date | number | null;
+  EndTime?: Date | number | null;
+  ServiceGraphStartTime?: Date | number | null;
+  ServiceGraphEndTime?: Date | number | null;
+  Services?: InsightImpactGraphService[] | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface GetInsightSummariesResult {
+  InsightSummaries?: InsightSummary[] | null;
   NextToken?: string | null;
 }
 
@@ -883,6 +1039,12 @@ function toSamplingRule(root: jsonP.JSONValue): SamplingRule {
     },
   }, root);
 }
+
+// refs: 3 - tags: input, named, enum, output
+export type InsightState =
+| "ACTIVE"
+| "CLOSED"
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface SamplingStatisticsDocument {
@@ -1124,6 +1286,189 @@ function toGroupSummary(root: jsonP.JSONValue): GroupSummary {
 }
 
 // refs: 1 - tags: output, named, interface
+export interface Insight {
+  InsightId?: string | null;
+  GroupARN?: string | null;
+  GroupName?: string | null;
+  RootCauseServiceId?: ServiceId | null;
+  Categories?: InsightCategory[] | null;
+  State?: InsightState | null;
+  StartTime?: Date | number | null;
+  EndTime?: Date | number | null;
+  Summary?: string | null;
+  ClientRequestImpactStatistics?: RequestImpactStatistics | null;
+  RootCauseServiceRequestImpactStatistics?: RequestImpactStatistics | null;
+  TopAnomalousServices?: AnomalousService[] | null;
+}
+function toInsight(root: jsonP.JSONValue): Insight {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "InsightId": "s",
+      "GroupARN": "s",
+      "GroupName": "s",
+      "RootCauseServiceId": toServiceId,
+      "Categories": [(x: jsonP.JSONValue) => cmnP.readEnum<InsightCategory>(x)],
+      "State": (x: jsonP.JSONValue) => cmnP.readEnum<InsightState>(x),
+      "StartTime": "d",
+      "EndTime": "d",
+      "Summary": "s",
+      "ClientRequestImpactStatistics": toRequestImpactStatistics,
+      "RootCauseServiceRequestImpactStatistics": toRequestImpactStatistics,
+      "TopAnomalousServices": [toAnomalousService],
+    },
+  }, root);
+}
+
+// refs: 9 - tags: output, named, interface
+export interface ServiceId {
+  Name?: string | null;
+  Names?: string[] | null;
+  AccountId?: string | null;
+  Type?: string | null;
+}
+function toServiceId(root: jsonP.JSONValue): ServiceId {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "Name": "s",
+      "Names": ["s"],
+      "AccountId": "s",
+      "Type": "s",
+    },
+  }, root);
+}
+
+// refs: 2 - tags: output, named, enum
+export type InsightCategory =
+| "FAULT"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 6 - tags: output, named, interface
+export interface RequestImpactStatistics {
+  FaultCount?: number | null;
+  OkCount?: number | null;
+  TotalCount?: number | null;
+}
+function toRequestImpactStatistics(root: jsonP.JSONValue): RequestImpactStatistics {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "FaultCount": "n",
+      "OkCount": "n",
+      "TotalCount": "n",
+    },
+  }, root);
+}
+
+// refs: 3 - tags: output, named, interface
+export interface AnomalousService {
+  ServiceId?: ServiceId | null;
+}
+function toAnomalousService(root: jsonP.JSONValue): AnomalousService {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "ServiceId": toServiceId,
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
+export interface InsightEvent {
+  Summary?: string | null;
+  EventTime?: Date | number | null;
+  ClientRequestImpactStatistics?: RequestImpactStatistics | null;
+  RootCauseServiceRequestImpactStatistics?: RequestImpactStatistics | null;
+  TopAnomalousServices?: AnomalousService[] | null;
+}
+function toInsightEvent(root: jsonP.JSONValue): InsightEvent {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "Summary": "s",
+      "EventTime": "d",
+      "ClientRequestImpactStatistics": toRequestImpactStatistics,
+      "RootCauseServiceRequestImpactStatistics": toRequestImpactStatistics,
+      "TopAnomalousServices": [toAnomalousService],
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
+export interface InsightImpactGraphService {
+  ReferenceId?: number | null;
+  Type?: string | null;
+  Name?: string | null;
+  Names?: string[] | null;
+  AccountId?: string | null;
+  Edges?: InsightImpactGraphEdge[] | null;
+}
+function toInsightImpactGraphService(root: jsonP.JSONValue): InsightImpactGraphService {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "ReferenceId": "n",
+      "Type": "s",
+      "Name": "s",
+      "Names": ["s"],
+      "AccountId": "s",
+      "Edges": [toInsightImpactGraphEdge],
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
+export interface InsightImpactGraphEdge {
+  ReferenceId?: number | null;
+}
+function toInsightImpactGraphEdge(root: jsonP.JSONValue): InsightImpactGraphEdge {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "ReferenceId": "n",
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
+export interface InsightSummary {
+  InsightId?: string | null;
+  GroupARN?: string | null;
+  GroupName?: string | null;
+  RootCauseServiceId?: ServiceId | null;
+  Categories?: InsightCategory[] | null;
+  State?: InsightState | null;
+  StartTime?: Date | number | null;
+  EndTime?: Date | number | null;
+  Summary?: string | null;
+  ClientRequestImpactStatistics?: RequestImpactStatistics | null;
+  RootCauseServiceRequestImpactStatistics?: RequestImpactStatistics | null;
+  TopAnomalousServices?: AnomalousService[] | null;
+  LastUpdateTime?: Date | number | null;
+}
+function toInsightSummary(root: jsonP.JSONValue): InsightSummary {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "InsightId": "s",
+      "GroupARN": "s",
+      "GroupName": "s",
+      "RootCauseServiceId": toServiceId,
+      "Categories": [(x: jsonP.JSONValue) => cmnP.readEnum<InsightCategory>(x)],
+      "State": (x: jsonP.JSONValue) => cmnP.readEnum<InsightState>(x),
+      "StartTime": "d",
+      "EndTime": "d",
+      "Summary": "s",
+      "ClientRequestImpactStatistics": toRequestImpactStatistics,
+      "RootCauseServiceRequestImpactStatistics": toRequestImpactStatistics,
+      "TopAnomalousServices": [toAnomalousService],
+      "LastUpdateTime": "d",
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
 export interface SamplingStatisticSummary {
   RuleName?: string | null;
   Timestamp?: Date | number | null;
@@ -1353,6 +1698,7 @@ export interface TimeSeriesServiceStatistics {
   Timestamp?: Date | number | null;
   EdgeSummaryStatistics?: EdgeStatistics | null;
   ServiceSummaryStatistics?: ServiceStatistics | null;
+  ServiceForecastStatistics?: ForecastStatistics | null;
   ResponseTimeHistogram?: HistogramEntry[] | null;
 }
 function toTimeSeriesServiceStatistics(root: jsonP.JSONValue): TimeSeriesServiceStatistics {
@@ -1362,7 +1708,23 @@ function toTimeSeriesServiceStatistics(root: jsonP.JSONValue): TimeSeriesService
       "Timestamp": "d",
       "EdgeSummaryStatistics": toEdgeStatistics,
       "ServiceSummaryStatistics": toServiceStatistics,
+      "ServiceForecastStatistics": toForecastStatistics,
       "ResponseTimeHistogram": [toHistogramEntry],
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
+export interface ForecastStatistics {
+  FaultCountHigh?: number | null;
+  FaultCountLow?: number | null;
+}
+function toForecastStatistics(root: jsonP.JSONValue): ForecastStatistics {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "FaultCountHigh": "n",
+      "FaultCountLow": "n",
     },
   }, root);
 }
@@ -1467,25 +1829,6 @@ function toAnnotationValue(root: jsonP.JSONValue): AnnotationValue {
       "NumberValue": "n",
       "BooleanValue": "b",
       "StringValue": "s",
-    },
-  }, root);
-}
-
-// refs: 4 - tags: output, named, interface
-export interface ServiceId {
-  Name?: string | null;
-  Names?: string[] | null;
-  AccountId?: string | null;
-  Type?: string | null;
-}
-function toServiceId(root: jsonP.JSONValue): ServiceId {
-  return jsonP.readObj({
-    required: {},
-    optional: {
-      "Name": "s",
-      "Names": ["s"],
-      "AccountId": "s",
-      "Type": "s",
     },
   }, root);
 }

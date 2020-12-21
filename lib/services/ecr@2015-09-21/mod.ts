@@ -160,6 +160,24 @@ export default class ECR {
     }, await resp.json());
   }
 
+  async deleteRegistryPolicy(
+    {abortSignal, ...params}: RequestConfig & DeleteRegistryPolicyRequest = {},
+  ): Promise<DeleteRegistryPolicyResponse> {
+    const body: jsonP.JSONObject = {
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DeleteRegistryPolicy",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "registryId": "s",
+        "policyText": "s",
+      },
+    }, await resp.json());
+  }
+
   async deleteRepository(
     {abortSignal, ...params}: RequestConfig & DeleteRepositoryRequest,
   ): Promise<DeleteRepositoryResponse> {
@@ -248,6 +266,24 @@ export default class ECR {
       optional: {
         "imageDetails": [toImageDetail],
         "nextToken": "s",
+      },
+    }, await resp.json());
+  }
+
+  async describeRegistry(
+    {abortSignal, ...params}: RequestConfig & DescribeRegistryRequest = {},
+  ): Promise<DescribeRegistryResponse> {
+    const body: jsonP.JSONObject = {
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DescribeRegistry",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "registryId": "s",
+        "replicationConfiguration": toReplicationConfiguration,
       },
     }, await resp.json());
   }
@@ -360,6 +396,24 @@ export default class ECR {
         "nextToken": "s",
         "previewResults": [toLifecyclePolicyPreviewResult],
         "summary": toLifecyclePolicyPreviewSummary,
+      },
+    }, await resp.json());
+  }
+
+  async getRegistryPolicy(
+    {abortSignal, ...params}: RequestConfig & GetRegistryPolicyRequest = {},
+  ): Promise<GetRegistryPolicyResponse> {
+    const body: jsonP.JSONObject = {
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "GetRegistryPolicy",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "registryId": "s",
+        "policyText": "s",
       },
     }, await resp.json());
   }
@@ -531,6 +585,43 @@ export default class ECR {
         "registryId": "s",
         "repositoryName": "s",
         "lifecyclePolicyText": "s",
+      },
+    }, await resp.json());
+  }
+
+  async putRegistryPolicy(
+    {abortSignal, ...params}: RequestConfig & PutRegistryPolicyRequest,
+  ): Promise<PutRegistryPolicyResponse> {
+    const body: jsonP.JSONObject = {
+      policyText: params["policyText"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "PutRegistryPolicy",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "registryId": "s",
+        "policyText": "s",
+      },
+    }, await resp.json());
+  }
+
+  async putReplicationConfiguration(
+    {abortSignal, ...params}: RequestConfig & PutReplicationConfigurationRequest,
+  ): Promise<PutReplicationConfigurationResponse> {
+    const body: jsonP.JSONObject = {
+      replicationConfiguration: fromReplicationConfiguration(params["replicationConfiguration"]),
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "PutReplicationConfiguration",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "replicationConfiguration": toReplicationConfiguration,
       },
     }, await resp.json());
   }
@@ -750,6 +841,10 @@ export interface DeleteLifecyclePolicyRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface DeleteRegistryPolicyRequest {
+}
+
+// refs: 1 - tags: named, input
 export interface DeleteRepositoryRequest {
   registryId?: string | null;
   repositoryName: string;
@@ -779,6 +874,10 @@ export interface DescribeImagesRequest {
   nextToken?: string | null;
   maxResults?: number | null;
   filter?: DescribeImagesFilter | null;
+}
+
+// refs: 1 - tags: named, input
+export interface DescribeRegistryRequest {
 }
 
 // refs: 1 - tags: named, input
@@ -815,6 +914,10 @@ export interface GetLifecyclePolicyPreviewRequest {
   nextToken?: string | null;
   maxResults?: number | null;
   filter?: LifecyclePolicyPreviewFilter | null;
+}
+
+// refs: 1 - tags: named, input
+export interface GetRegistryPolicyRequest {
 }
 
 // refs: 1 - tags: named, input
@@ -872,6 +975,16 @@ export interface PutLifecyclePolicyRequest {
   registryId?: string | null;
   repositoryName: string;
   lifecyclePolicyText: string;
+}
+
+// refs: 1 - tags: named, input
+export interface PutRegistryPolicyRequest {
+  policyText: string;
+}
+
+// refs: 1 - tags: named, input
+export interface PutReplicationConfigurationRequest {
+  replicationConfiguration: ReplicationConfiguration;
 }
 
 // refs: 1 - tags: named, input
@@ -958,6 +1071,12 @@ export interface DeleteLifecyclePolicyResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface DeleteRegistryPolicyResponse {
+  registryId?: string | null;
+  policyText?: string | null;
+}
+
+// refs: 1 - tags: named, output
 export interface DeleteRepositoryResponse {
   repository?: Repository | null;
 }
@@ -983,6 +1102,12 @@ export interface DescribeImageScanFindingsResponse {
 export interface DescribeImagesResponse {
   imageDetails?: ImageDetail[] | null;
   nextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface DescribeRegistryResponse {
+  registryId?: string | null;
+  replicationConfiguration?: ReplicationConfiguration | null;
 }
 
 // refs: 1 - tags: named, output
@@ -1019,6 +1144,12 @@ export interface GetLifecyclePolicyPreviewResponse {
   nextToken?: string | null;
   previewResults?: LifecyclePolicyPreviewResult[] | null;
   summary?: LifecyclePolicyPreviewSummary | null;
+}
+
+// refs: 1 - tags: named, output
+export interface GetRegistryPolicyResponse {
+  registryId?: string | null;
+  policyText?: string | null;
 }
 
 // refs: 1 - tags: named, output
@@ -1069,6 +1200,17 @@ export interface PutLifecyclePolicyResponse {
   registryId?: string | null;
   repositoryName?: string | null;
   lifecyclePolicyText?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface PutRegistryPolicyResponse {
+  registryId?: string | null;
+  policyText?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface PutReplicationConfigurationResponse {
+  replicationConfiguration?: ReplicationConfiguration | null;
 }
 
 // refs: 1 - tags: named, output
@@ -1246,6 +1388,66 @@ function fromListImagesFilter(input?: ListImagesFilter | null): jsonP.JSONValue 
   return {
     tagStatus: input["tagStatus"],
   }
+}
+
+// refs: 3 - tags: input, named, interface, output
+export interface ReplicationConfiguration {
+  rules: ReplicationRule[];
+}
+function fromReplicationConfiguration(input?: ReplicationConfiguration | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    rules: input["rules"]?.map(x => fromReplicationRule(x)),
+  }
+}
+function toReplicationConfiguration(root: jsonP.JSONValue): ReplicationConfiguration {
+  return jsonP.readObj({
+    required: {
+      "rules": [toReplicationRule],
+    },
+    optional: {},
+  }, root);
+}
+
+// refs: 3 - tags: input, named, interface, output
+export interface ReplicationRule {
+  destinations: ReplicationDestination[];
+}
+function fromReplicationRule(input?: ReplicationRule | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    destinations: input["destinations"]?.map(x => fromReplicationDestination(x)),
+  }
+}
+function toReplicationRule(root: jsonP.JSONValue): ReplicationRule {
+  return jsonP.readObj({
+    required: {
+      "destinations": [toReplicationDestination],
+    },
+    optional: {},
+  }, root);
+}
+
+// refs: 3 - tags: input, named, interface, output
+export interface ReplicationDestination {
+  region: string;
+  registryId: string;
+}
+function fromReplicationDestination(input?: ReplicationDestination | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    region: input["region"],
+    registryId: input["registryId"],
+  }
+}
+function toReplicationDestination(root: jsonP.JSONValue): ReplicationDestination {
+  return jsonP.readObj({
+    required: {
+      "region": "s",
+      "registryId": "s",
+    },
+    optional: {},
+  }, root);
 }
 
 // refs: 1 - tags: output, named, interface

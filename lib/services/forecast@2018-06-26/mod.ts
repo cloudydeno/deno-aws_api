@@ -80,6 +80,9 @@ export default class ForecastService {
       DatasetArn: params["DatasetArn"],
       DataSource: fromDataSource(params["DataSource"]),
       TimestampFormat: params["TimestampFormat"],
+      TimeZone: params["TimeZone"],
+      UseGeolocationForTimeZone: params["UseGeolocationForTimeZone"],
+      GeolocationFormat: params["GeolocationFormat"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
     };
     const resp = await this.#client.performRequest({
@@ -143,6 +146,7 @@ export default class ForecastService {
       PredictorName: params["PredictorName"],
       AlgorithmArn: params["AlgorithmArn"],
       ForecastHorizon: params["ForecastHorizon"],
+      ForecastTypes: params["ForecastTypes"],
       PerformAutoML: params["PerformAutoML"],
       PerformHPO: params["PerformHPO"],
       TrainingParameters: params["TrainingParameters"],
@@ -161,6 +165,27 @@ export default class ForecastService {
       required: {},
       optional: {
         "PredictorArn": "s",
+      },
+    }, await resp.json());
+  }
+
+  async createPredictorBacktestExportJob(
+    {abortSignal, ...params}: RequestConfig & CreatePredictorBacktestExportJobRequest,
+  ): Promise<CreatePredictorBacktestExportJobResponse> {
+    const body: jsonP.JSONObject = {
+      PredictorBacktestExportJobName: params["PredictorBacktestExportJobName"],
+      PredictorArn: params["PredictorArn"],
+      Destination: fromDataDestination(params["Destination"]),
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "CreatePredictorBacktestExportJob",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "PredictorBacktestExportJobArn": "s",
       },
     }, await resp.json());
   }
@@ -237,6 +262,18 @@ export default class ForecastService {
     });
   }
 
+  async deletePredictorBacktestExportJob(
+    {abortSignal, ...params}: RequestConfig & DeletePredictorBacktestExportJobRequest,
+  ): Promise<void> {
+    const body: jsonP.JSONObject = {
+      PredictorBacktestExportJobArn: params["PredictorBacktestExportJobArn"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DeletePredictorBacktestExportJob",
+    });
+  }
+
   async describeDataset(
     {abortSignal, ...params}: RequestConfig & DescribeDatasetRequest,
   ): Promise<DescribeDatasetResponse> {
@@ -305,6 +342,9 @@ export default class ForecastService {
         "DatasetImportJobArn": "s",
         "DatasetArn": "s",
         "TimestampFormat": "s",
+        "TimeZone": "s",
+        "UseGeolocationForTimeZone": "b",
+        "GeolocationFormat": "s",
         "DataSource": toDataSource,
         "FieldStatistics": x => jsonP.readMap(String, toStatistics, x),
         "DataSize": "n",
@@ -384,6 +424,7 @@ export default class ForecastService {
         "PredictorName": "s",
         "AlgorithmArn": "s",
         "ForecastHorizon": "n",
+        "ForecastTypes": ["s"],
         "PerformAutoML": "b",
         "PerformHPO": "b",
         "TrainingParameters": x => jsonP.readMap(String, String, x),
@@ -397,6 +438,31 @@ export default class ForecastService {
         "AutoMLAlgorithmArns": ["s"],
         "Status": "s",
         "Message": "s",
+        "CreationTime": "d",
+        "LastModificationTime": "d",
+      },
+    }, await resp.json());
+  }
+
+  async describePredictorBacktestExportJob(
+    {abortSignal, ...params}: RequestConfig & DescribePredictorBacktestExportJobRequest,
+  ): Promise<DescribePredictorBacktestExportJobResponse> {
+    const body: jsonP.JSONObject = {
+      PredictorBacktestExportJobArn: params["PredictorBacktestExportJobArn"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DescribePredictorBacktestExportJob",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "PredictorBacktestExportJobArn": "s",
+        "PredictorBacktestExportJobName": "s",
+        "PredictorArn": "s",
+        "Destination": toDataDestination,
+        "Message": "s",
+        "Status": "s",
         "CreationTime": "d",
         "LastModificationTime": "d",
       },
@@ -524,6 +590,27 @@ export default class ForecastService {
     }, await resp.json());
   }
 
+  async listPredictorBacktestExportJobs(
+    {abortSignal, ...params}: RequestConfig & ListPredictorBacktestExportJobsRequest = {},
+  ): Promise<ListPredictorBacktestExportJobsResponse> {
+    const body: jsonP.JSONObject = {
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+      Filters: params["Filters"]?.map(x => fromFilter(x)),
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "ListPredictorBacktestExportJobs",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "PredictorBacktestExportJobs": [toPredictorBacktestExportJobSummary],
+        "NextToken": "s",
+      },
+    }, await resp.json());
+  }
+
   async listPredictors(
     {abortSignal, ...params}: RequestConfig & ListPredictorsRequest = {},
   ): Promise<ListPredictorsResponse> {
@@ -641,6 +728,9 @@ export interface CreateDatasetImportJobRequest {
   DatasetArn: string;
   DataSource: DataSource;
   TimestampFormat?: string | null;
+  TimeZone?: string | null;
+  UseGeolocationForTimeZone?: boolean | null;
+  GeolocationFormat?: string | null;
   Tags?: Tag[] | null;
 }
 
@@ -665,6 +755,7 @@ export interface CreatePredictorRequest {
   PredictorName: string;
   AlgorithmArn?: string | null;
   ForecastHorizon: number;
+  ForecastTypes?: string[] | null;
   PerformAutoML?: boolean | null;
   PerformHPO?: boolean | null;
   TrainingParameters?: { [key: string]: string | null | undefined } | null;
@@ -673,6 +764,14 @@ export interface CreatePredictorRequest {
   InputDataConfig: InputDataConfig;
   FeaturizationConfig: FeaturizationConfig;
   EncryptionConfig?: EncryptionConfig | null;
+  Tags?: Tag[] | null;
+}
+
+// refs: 1 - tags: named, input
+export interface CreatePredictorBacktestExportJobRequest {
+  PredictorBacktestExportJobName: string;
+  PredictorArn: string;
+  Destination: DataDestination;
   Tags?: Tag[] | null;
 }
 
@@ -707,6 +806,11 @@ export interface DeletePredictorRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface DeletePredictorBacktestExportJobRequest {
+  PredictorBacktestExportJobArn: string;
+}
+
+// refs: 1 - tags: named, input
 export interface DescribeDatasetRequest {
   DatasetArn: string;
 }
@@ -734,6 +838,11 @@ export interface DescribeForecastExportJobRequest {
 // refs: 1 - tags: named, input
 export interface DescribePredictorRequest {
   PredictorArn: string;
+}
+
+// refs: 1 - tags: named, input
+export interface DescribePredictorBacktestExportJobRequest {
+  PredictorBacktestExportJobArn: string;
 }
 
 // refs: 1 - tags: named, input
@@ -769,6 +878,13 @@ export interface ListForecastExportJobsRequest {
 
 // refs: 1 - tags: named, input
 export interface ListForecastsRequest {
+  NextToken?: string | null;
+  MaxResults?: number | null;
+  Filters?: Filter[] | null;
+}
+
+// refs: 1 - tags: named, input
+export interface ListPredictorBacktestExportJobsRequest {
   NextToken?: string | null;
   MaxResults?: number | null;
   Filters?: Filter[] | null;
@@ -835,6 +951,11 @@ export interface CreatePredictorResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface CreatePredictorBacktestExportJobResponse {
+  PredictorBacktestExportJobArn?: string | null;
+}
+
+// refs: 1 - tags: named, output
 export interface DescribeDatasetResponse {
   DatasetArn?: string | null;
   DatasetName?: string | null;
@@ -865,6 +986,9 @@ export interface DescribeDatasetImportJobResponse {
   DatasetImportJobArn?: string | null;
   DatasetArn?: string | null;
   TimestampFormat?: string | null;
+  TimeZone?: string | null;
+  UseGeolocationForTimeZone?: boolean | null;
+  GeolocationFormat?: string | null;
   DataSource?: DataSource | null;
   FieldStatistics?: { [key: string]: Statistics | null | undefined } | null;
   DataSize?: number | null;
@@ -905,6 +1029,7 @@ export interface DescribePredictorResponse {
   PredictorName?: string | null;
   AlgorithmArn?: string | null;
   ForecastHorizon?: number | null;
+  ForecastTypes?: string[] | null;
   PerformAutoML?: boolean | null;
   PerformHPO?: boolean | null;
   TrainingParameters?: { [key: string]: string | null | undefined } | null;
@@ -918,6 +1043,18 @@ export interface DescribePredictorResponse {
   AutoMLAlgorithmArns?: string[] | null;
   Status?: string | null;
   Message?: string | null;
+  CreationTime?: Date | number | null;
+  LastModificationTime?: Date | number | null;
+}
+
+// refs: 1 - tags: named, output
+export interface DescribePredictorBacktestExportJobResponse {
+  PredictorBacktestExportJobArn?: string | null;
+  PredictorBacktestExportJobName?: string | null;
+  PredictorArn?: string | null;
+  Destination?: DataDestination | null;
+  Message?: string | null;
+  Status?: string | null;
   CreationTime?: Date | number | null;
   LastModificationTime?: Date | number | null;
 }
@@ -954,6 +1091,12 @@ export interface ListForecastExportJobsResponse {
 // refs: 1 - tags: named, output
 export interface ListForecastsResponse {
   Forecasts?: ForecastSummary[] | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface ListPredictorBacktestExportJobsResponse {
+  PredictorBacktestExportJobs?: PredictorBacktestExportJobSummary[] | null;
   NextToken?: string | null;
 }
 
@@ -1045,6 +1188,7 @@ export type AttributeType =
 | "integer"
 | "float"
 | "timestamp"
+| "geolocation"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, interface, output
@@ -1069,7 +1213,7 @@ function toEncryptionConfig(root: jsonP.JSONValue): EncryptionConfig {
   }, root);
 }
 
-// refs: 8 - tags: input, named, interface, output
+// refs: 9 - tags: input, named, interface, output
 export interface Tag {
   Key: string;
   Value: string;
@@ -1110,7 +1254,7 @@ function toDataSource(root: jsonP.JSONValue): DataSource {
   }, root);
 }
 
-// refs: 6 - tags: input, named, interface, output
+// refs: 9 - tags: input, named, interface, output
 export interface S3Config {
   Path: string;
   RoleArn: string;
@@ -1136,7 +1280,7 @@ function toS3Config(root: jsonP.JSONValue): S3Config {
   }, root);
 }
 
-// refs: 3 - tags: input, named, interface, output
+// refs: 6 - tags: input, named, interface, output
 export interface DataDestination {
   S3Config: S3Config;
 }
@@ -1431,7 +1575,7 @@ export type FeaturizationMethodName =
 | "filling"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 4 - tags: input, named, interface
+// refs: 5 - tags: input, named, interface
 export interface Filter {
   Key: string;
   Value: string;
@@ -1446,7 +1590,7 @@ function fromFilter(input?: Filter | null): jsonP.JSONValue {
   }
 }
 
-// refs: 4 - tags: input, named, enum
+// refs: 5 - tags: input, named, enum
 export type FilterConditionString =
 | "IS"
 | "IS_NOT"
@@ -1572,6 +1716,7 @@ export type EvaluationType =
 export interface Metrics {
   RMSE?: number | null;
   WeightedQuantileLosses?: WeightedQuantileLoss[] | null;
+  ErrorMetrics?: ErrorMetric[] | null;
 }
 function toMetrics(root: jsonP.JSONValue): Metrics {
   return jsonP.readObj({
@@ -1579,6 +1724,7 @@ function toMetrics(root: jsonP.JSONValue): Metrics {
     optional: {
       "RMSE": "n",
       "WeightedQuantileLosses": [toWeightedQuantileLoss],
+      "ErrorMetrics": [toErrorMetric],
     },
   }, root);
 }
@@ -1594,6 +1740,23 @@ function toWeightedQuantileLoss(root: jsonP.JSONValue): WeightedQuantileLoss {
     optional: {
       "Quantile": "n",
       "LossValue": "n",
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
+export interface ErrorMetric {
+  ForecastType?: string | null;
+  WAPE?: number | null;
+  RMSE?: number | null;
+}
+function toErrorMetric(root: jsonP.JSONValue): ErrorMetric {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "ForecastType": "s",
+      "WAPE": "n",
+      "RMSE": "n",
     },
   }, root);
 }
@@ -1709,6 +1872,31 @@ function toForecastSummary(root: jsonP.JSONValue): ForecastSummary {
       "ForecastName": "s",
       "PredictorArn": "s",
       "DatasetGroupArn": "s",
+      "Status": "s",
+      "Message": "s",
+      "CreationTime": "d",
+      "LastModificationTime": "d",
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
+export interface PredictorBacktestExportJobSummary {
+  PredictorBacktestExportJobArn?: string | null;
+  PredictorBacktestExportJobName?: string | null;
+  Destination?: DataDestination | null;
+  Status?: string | null;
+  Message?: string | null;
+  CreationTime?: Date | number | null;
+  LastModificationTime?: Date | number | null;
+}
+function toPredictorBacktestExportJobSummary(root: jsonP.JSONValue): PredictorBacktestExportJobSummary {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "PredictorBacktestExportJobArn": "s",
+      "PredictorBacktestExportJobName": "s",
+      "Destination": toDataDestination,
       "Status": "s",
       "Message": "s",
       "CreationTime": "d",

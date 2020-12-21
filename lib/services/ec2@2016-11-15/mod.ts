@@ -5,7 +5,7 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import * as uuidv4 from "https://deno.land/std@0.71.0/uuid/v4.ts";
+import * as uuidv4 from "https://deno.land/std@0.75.0/uuid/v4.ts";
 import * as cmnP from "../../encoding/common.ts";
 import * as xmlP from "../../encoding/xml.ts";
 import * as qsP from "../../encoding/querystring.ts";
@@ -47,6 +47,25 @@ export default class EC2 {
     const xml = xmlP.readXmlResult(await resp.text());
     return {
       ExchangeId: xml.first("exchangeId", false, x => x.content ?? ''),
+    };
+  }
+
+  async acceptTransitGatewayMulticastDomainAssociations(
+    {abortSignal, ...params}: RequestConfig & AcceptTransitGatewayMulticastDomainAssociationsRequest = {},
+  ): Promise<AcceptTransitGatewayMulticastDomainAssociationsResult> {
+    const body = new URLSearchParams;
+    const prefix = '';
+    if ("TransitGatewayMulticastDomainId" in params) body.append(prefix+"TransitGatewayMulticastDomainId", (params["TransitGatewayMulticastDomainId"] ?? '').toString());
+    if ("TransitGatewayAttachmentId" in params) body.append(prefix+"TransitGatewayAttachmentId", (params["TransitGatewayAttachmentId"] ?? '').toString());
+    if (params["SubnetIds"]) qsP.appendList(body, prefix+"item", params["SubnetIds"], {"entryPrefix":"."})
+    if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "AcceptTransitGatewayMulticastDomainAssociations",
+    });
+    const xml = xmlP.readXmlResult(await resp.text());
+    return {
+      Associations: xml.first("associations", false, TransitGatewayMulticastDomainAssociations_Parse),
     };
   }
 
@@ -894,6 +913,7 @@ export default class EC2 {
     if (params["SecurityGroupIds"]) qsP.appendList(body, prefix+"SecurityGroupId", params["SecurityGroupIds"], {"entryPrefix":"."})
     if ("VpcId" in params) body.append(prefix+"VpcId", (params["VpcId"] ?? '').toString());
     if ("SelfServicePortal" in params) body.append(prefix+"SelfServicePortal", (params["SelfServicePortal"] ?? '').toString());
+    if (params["ClientConnectOptions"] != null) ClientConnectOptions_Serialize(body, prefix+"ClientConnectOptions", params["ClientConnectOptions"]);
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateClientVpnEndpoint",
@@ -1113,6 +1133,7 @@ export default class EC2 {
     body.append(prefix+"InstanceId", (params["InstanceId"] ?? '').toString());
     body.append(prefix+"Name", (params["Name"] ?? '').toString());
     if ("NoReboot" in params) body.append(prefix+"NoReboot", (params["NoReboot"] ?? '').toString());
+    if (params["TagSpecifications"]) qsP.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateImage",
@@ -1129,9 +1150,9 @@ export default class EC2 {
     const body = new URLSearchParams;
     const prefix = '';
     if ("Description" in params) body.append(prefix+"Description", (params["Description"] ?? '').toString());
-    if (params["ExportToS3Task"] != null) ExportToS3TaskSpecification_Serialize(body, prefix+"ExportToS3", params["ExportToS3Task"]);
+    ExportToS3TaskSpecification_Serialize(body, prefix+"ExportToS3", params["ExportToS3Task"]);
     body.append(prefix+"InstanceId", (params["InstanceId"] ?? '').toString());
-    if ("TargetEnvironment" in params) body.append(prefix+"TargetEnvironment", (params["TargetEnvironment"] ?? '').toString());
+    body.append(prefix+"TargetEnvironment", (params["TargetEnvironment"] ?? '').toString());
     if (params["TagSpecifications"]) qsP.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -1347,6 +1368,30 @@ export default class EC2 {
     });
   }
 
+  async createNetworkInsightsPath(
+    {abortSignal, ...params}: RequestConfig & CreateNetworkInsightsPathRequest,
+  ): Promise<CreateNetworkInsightsPathResult> {
+    const body = new URLSearchParams;
+    const prefix = '';
+    if ("SourceIp" in params) body.append(prefix+"SourceIp", (params["SourceIp"] ?? '').toString());
+    if ("DestinationIp" in params) body.append(prefix+"DestinationIp", (params["DestinationIp"] ?? '').toString());
+    body.append(prefix+"Source", (params["Source"] ?? '').toString());
+    body.append(prefix+"Destination", (params["Destination"] ?? '').toString());
+    body.append(prefix+"Protocol", (params["Protocol"] ?? '').toString());
+    if ("DestinationPort" in params) body.append(prefix+"DestinationPort", (params["DestinationPort"] ?? '').toString());
+    if (params["TagSpecifications"]) qsP.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
+    if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
+    body.append(prefix+"ClientToken", (params["ClientToken"] ?? generateIdemptToken()).toString());
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "CreateNetworkInsightsPath",
+    });
+    const xml = xmlP.readXmlResult(await resp.text());
+    return {
+      NetworkInsightsPath: xml.first("networkInsightsPath", false, NetworkInsightsPath_Parse),
+    };
+  }
+
   async createNetworkInterface(
     {abortSignal, ...params}: RequestConfig & CreateNetworkInterfaceRequest,
   ): Promise<CreateNetworkInterfaceResult> {
@@ -1441,6 +1486,7 @@ export default class EC2 {
     if ("DestinationIpv6CidrBlock" in params) body.append(prefix+"DestinationIpv6CidrBlock", (params["DestinationIpv6CidrBlock"] ?? '').toString());
     if ("DestinationPrefixListId" in params) body.append(prefix+"DestinationPrefixListId", (params["DestinationPrefixListId"] ?? '').toString());
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
+    if ("VpcEndpointId" in params) body.append(prefix+"VpcEndpointId", (params["VpcEndpointId"] ?? '').toString());
     if ("EgressOnlyInternetGatewayId" in params) body.append(prefix+"EgressOnlyInternetGatewayId", (params["EgressOnlyInternetGatewayId"] ?? '').toString());
     if ("GatewayId" in params) body.append(prefix+"GatewayId", (params["GatewayId"] ?? '').toString());
     if ("InstanceId" in params) body.append(prefix+"InstanceId", (params["InstanceId"] ?? '').toString());
@@ -1707,12 +1753,54 @@ export default class EC2 {
     };
   }
 
+  async createTransitGatewayConnect(
+    {abortSignal, ...params}: RequestConfig & CreateTransitGatewayConnectRequest,
+  ): Promise<CreateTransitGatewayConnectResult> {
+    const body = new URLSearchParams;
+    const prefix = '';
+    body.append(prefix+"TransportTransitGatewayAttachmentId", (params["TransportTransitGatewayAttachmentId"] ?? '').toString());
+    CreateTransitGatewayConnectRequestOptions_Serialize(body, prefix+"Options", params["Options"]);
+    if (params["TagSpecifications"]) qsP.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
+    if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "CreateTransitGatewayConnect",
+    });
+    const xml = xmlP.readXmlResult(await resp.text());
+    return {
+      TransitGatewayConnect: xml.first("transitGatewayConnect", false, TransitGatewayConnect_Parse),
+    };
+  }
+
+  async createTransitGatewayConnectPeer(
+    {abortSignal, ...params}: RequestConfig & CreateTransitGatewayConnectPeerRequest,
+  ): Promise<CreateTransitGatewayConnectPeerResult> {
+    const body = new URLSearchParams;
+    const prefix = '';
+    body.append(prefix+"TransitGatewayAttachmentId", (params["TransitGatewayAttachmentId"] ?? '').toString());
+    if ("TransitGatewayAddress" in params) body.append(prefix+"TransitGatewayAddress", (params["TransitGatewayAddress"] ?? '').toString());
+    body.append(prefix+"PeerAddress", (params["PeerAddress"] ?? '').toString());
+    if (params["BgpOptions"] != null) TransitGatewayConnectRequestBgpOptions_Serialize(body, prefix+"BgpOptions", params["BgpOptions"]);
+    if (params["InsideCidrBlocks"]) qsP.appendList(body, prefix+"item", params["InsideCidrBlocks"], {"entryPrefix":"."})
+    if (params["TagSpecifications"]) qsP.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
+    if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "CreateTransitGatewayConnectPeer",
+    });
+    const xml = xmlP.readXmlResult(await resp.text());
+    return {
+      TransitGatewayConnectPeer: xml.first("transitGatewayConnectPeer", false, TransitGatewayConnectPeer_Parse),
+    };
+  }
+
   async createTransitGatewayMulticastDomain(
     {abortSignal, ...params}: RequestConfig & CreateTransitGatewayMulticastDomainRequest,
   ): Promise<CreateTransitGatewayMulticastDomainResult> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"TransitGatewayId", (params["TransitGatewayId"] ?? '').toString());
+    if (params["Options"] != null) CreateTransitGatewayMulticastDomainRequestOptions_Serialize(body, prefix+"Options", params["Options"]);
     if (params["TagSpecifications"]) qsP.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     const resp = await this.#client.performRequest({
@@ -1841,6 +1929,7 @@ export default class EC2 {
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     if (params["TagSpecifications"]) qsP.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
     if ("MultiAttachEnabled" in params) body.append(prefix+"MultiAttachEnabled", (params["MultiAttachEnabled"] ?? '').toString());
+    if ("Throughput" in params) body.append(prefix+"Throughput", (params["Throughput"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateVolume",
@@ -1922,7 +2011,7 @@ export default class EC2 {
   }
 
   async createVpcEndpointServiceConfiguration(
-    {abortSignal, ...params}: RequestConfig & CreateVpcEndpointServiceConfigurationRequest,
+    {abortSignal, ...params}: RequestConfig & CreateVpcEndpointServiceConfigurationRequest = {},
   ): Promise<CreateVpcEndpointServiceConfigurationResult> {
     const body = new URLSearchParams;
     const prefix = '';
@@ -1930,6 +2019,7 @@ export default class EC2 {
     if ("AcceptanceRequired" in params) body.append(prefix+"AcceptanceRequired", (params["AcceptanceRequired"] ?? '').toString());
     if ("PrivateDnsName" in params) body.append(prefix+"PrivateDnsName", (params["PrivateDnsName"] ?? '').toString());
     if (params["NetworkLoadBalancerArns"]) qsP.appendList(body, prefix+"NetworkLoadBalancerArn", params["NetworkLoadBalancerArns"], {"entryPrefix":"."})
+    if (params["GatewayLoadBalancerArns"]) qsP.appendList(body, prefix+"GatewayLoadBalancerArn", params["GatewayLoadBalancerArns"], {"entryPrefix":"."})
     if ("ClientToken" in params) body.append(prefix+"ClientToken", (params["ClientToken"] ?? '').toString());
     if (params["TagSpecifications"]) qsP.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
     const resp = await this.#client.performRequest({
@@ -2330,6 +2420,40 @@ export default class EC2 {
     });
   }
 
+  async deleteNetworkInsightsAnalysis(
+    {abortSignal, ...params}: RequestConfig & DeleteNetworkInsightsAnalysisRequest,
+  ): Promise<DeleteNetworkInsightsAnalysisResult> {
+    const body = new URLSearchParams;
+    const prefix = '';
+    if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
+    body.append(prefix+"NetworkInsightsAnalysisId", (params["NetworkInsightsAnalysisId"] ?? '').toString());
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DeleteNetworkInsightsAnalysis",
+    });
+    const xml = xmlP.readXmlResult(await resp.text());
+    return {
+      NetworkInsightsAnalysisId: xml.first("networkInsightsAnalysisId", false, x => x.content ?? ''),
+    };
+  }
+
+  async deleteNetworkInsightsPath(
+    {abortSignal, ...params}: RequestConfig & DeleteNetworkInsightsPathRequest,
+  ): Promise<DeleteNetworkInsightsPathResult> {
+    const body = new URLSearchParams;
+    const prefix = '';
+    if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
+    body.append(prefix+"NetworkInsightsPathId", (params["NetworkInsightsPathId"] ?? '').toString());
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DeleteNetworkInsightsPath",
+    });
+    const xml = xmlP.readXmlResult(await resp.text());
+    return {
+      NetworkInsightsPathId: xml.first("networkInsightsPathId", false, x => x.content ?? ''),
+    };
+  }
+
   async deleteNetworkInterface(
     {abortSignal, ...params}: RequestConfig & DeleteNetworkInterfaceRequest,
   ): Promise<void> {
@@ -2569,6 +2693,40 @@ export default class EC2 {
     const xml = xmlP.readXmlResult(await resp.text());
     return {
       TransitGateway: xml.first("transitGateway", false, TransitGateway_Parse),
+    };
+  }
+
+  async deleteTransitGatewayConnect(
+    {abortSignal, ...params}: RequestConfig & DeleteTransitGatewayConnectRequest,
+  ): Promise<DeleteTransitGatewayConnectResult> {
+    const body = new URLSearchParams;
+    const prefix = '';
+    body.append(prefix+"TransitGatewayAttachmentId", (params["TransitGatewayAttachmentId"] ?? '').toString());
+    if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DeleteTransitGatewayConnect",
+    });
+    const xml = xmlP.readXmlResult(await resp.text());
+    return {
+      TransitGatewayConnect: xml.first("transitGatewayConnect", false, TransitGatewayConnect_Parse),
+    };
+  }
+
+  async deleteTransitGatewayConnectPeer(
+    {abortSignal, ...params}: RequestConfig & DeleteTransitGatewayConnectPeerRequest,
+  ): Promise<DeleteTransitGatewayConnectPeerResult> {
+    const body = new URLSearchParams;
+    const prefix = '';
+    body.append(prefix+"TransitGatewayConnectPeerId", (params["TransitGatewayConnectPeerId"] ?? '').toString());
+    if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DeleteTransitGatewayConnectPeer",
+    });
+    const xml = xmlP.readXmlResult(await resp.text());
+    return {
+      TransitGatewayConnectPeer: xml.first("transitGatewayConnectPeer", false, TransitGatewayConnectPeer_Parse),
     };
   }
 
@@ -4155,6 +4313,51 @@ export default class EC2 {
     };
   }
 
+  async describeNetworkInsightsAnalyses(
+    {abortSignal, ...params}: RequestConfig & DescribeNetworkInsightsAnalysesRequest = {},
+  ): Promise<DescribeNetworkInsightsAnalysesResult> {
+    const body = new URLSearchParams;
+    const prefix = '';
+    if (params["NetworkInsightsAnalysisIds"]) qsP.appendList(body, prefix+"NetworkInsightsAnalysisId", params["NetworkInsightsAnalysisIds"], {"entryPrefix":"."})
+    if ("NetworkInsightsPathId" in params) body.append(prefix+"NetworkInsightsPathId", (params["NetworkInsightsPathId"] ?? '').toString());
+    if ("AnalysisStartTime" in params) body.append(prefix+"AnalysisStartTime", qsP.encodeDate_iso8601(params["AnalysisStartTime"]));
+    if ("AnalysisEndTime" in params) body.append(prefix+"AnalysisEndTime", qsP.encodeDate_iso8601(params["AnalysisEndTime"]));
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
+    if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
+    if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DescribeNetworkInsightsAnalyses",
+    });
+    const xml = xmlP.readXmlResult(await resp.text());
+    return {
+      NetworkInsightsAnalyses: xml.getList("networkInsightsAnalysisSet", "item").map(NetworkInsightsAnalysis_Parse),
+      NextToken: xml.first("nextToken", false, x => x.content ?? ''),
+    };
+  }
+
+  async describeNetworkInsightsPaths(
+    {abortSignal, ...params}: RequestConfig & DescribeNetworkInsightsPathsRequest = {},
+  ): Promise<DescribeNetworkInsightsPathsResult> {
+    const body = new URLSearchParams;
+    const prefix = '';
+    if (params["NetworkInsightsPathIds"]) qsP.appendList(body, prefix+"NetworkInsightsPathId", params["NetworkInsightsPathIds"], {"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
+    if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
+    if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DescribeNetworkInsightsPaths",
+    });
+    const xml = xmlP.readXmlResult(await resp.text());
+    return {
+      NetworkInsightsPaths: xml.getList("networkInsightsPathSet", "item").map(NetworkInsightsPath_Parse),
+      NextToken: xml.first("nextToken", false, x => x.content ?? ''),
+    };
+  }
+
   async describeNetworkInterfaceAttribute(
     {abortSignal, ...params}: RequestConfig & DescribeNetworkInterfaceAttributeRequest,
   ): Promise<DescribeNetworkInterfaceAttributeResult> {
@@ -4823,6 +5026,48 @@ export default class EC2 {
     const xml = xmlP.readXmlResult(await resp.text());
     return {
       TransitGatewayAttachments: xml.getList("transitGatewayAttachments", "item").map(TransitGatewayAttachment_Parse),
+      NextToken: xml.first("nextToken", false, x => x.content ?? ''),
+    };
+  }
+
+  async describeTransitGatewayConnectPeers(
+    {abortSignal, ...params}: RequestConfig & DescribeTransitGatewayConnectPeersRequest = {},
+  ): Promise<DescribeTransitGatewayConnectPeersResult> {
+    const body = new URLSearchParams;
+    const prefix = '';
+    if (params["TransitGatewayConnectPeerIds"]) qsP.appendList(body, prefix+"item", params["TransitGatewayConnectPeerIds"], {"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
+    if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
+    if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DescribeTransitGatewayConnectPeers",
+    });
+    const xml = xmlP.readXmlResult(await resp.text());
+    return {
+      TransitGatewayConnectPeers: xml.getList("transitGatewayConnectPeerSet", "item").map(TransitGatewayConnectPeer_Parse),
+      NextToken: xml.first("nextToken", false, x => x.content ?? ''),
+    };
+  }
+
+  async describeTransitGatewayConnects(
+    {abortSignal, ...params}: RequestConfig & DescribeTransitGatewayConnectsRequest = {},
+  ): Promise<DescribeTransitGatewayConnectsResult> {
+    const body = new URLSearchParams;
+    const prefix = '';
+    if (params["TransitGatewayAttachmentIds"]) qsP.appendList(body, prefix+"TransitGatewayAttachmentIds", params["TransitGatewayAttachmentIds"], {"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
+    if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
+    if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DescribeTransitGatewayConnects",
+    });
+    const xml = xmlP.readXmlResult(await resp.text());
+    return {
+      TransitGatewayConnects: xml.getList("transitGatewayConnectSet", "item").map(TransitGatewayConnect_Parse),
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
     };
   }
@@ -6429,6 +6674,7 @@ export default class EC2 {
     if (params["SecurityGroupIds"]) qsP.appendList(body, prefix+"SecurityGroupId", params["SecurityGroupIds"], {"entryPrefix":"."})
     if ("VpcId" in params) body.append(prefix+"VpcId", (params["VpcId"] ?? '').toString());
     if ("SelfServicePortal" in params) body.append(prefix+"SelfServicePortal", (params["SelfServicePortal"] ?? '').toString());
+    if (params["ClientConnectOptions"] != null) ClientConnectOptions_Serialize(body, prefix+"ClientConnectOptions", params["ClientConnectOptions"]);
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ModifyClientVpnEndpoint",
@@ -6483,7 +6729,7 @@ export default class EC2 {
     if ("ExcessCapacityTerminationPolicy" in params) body.append(prefix+"ExcessCapacityTerminationPolicy", (params["ExcessCapacityTerminationPolicy"] ?? '').toString());
     if (params["LaunchTemplateConfigs"]) qsP.appendList(body, prefix+"LaunchTemplateConfig", params["LaunchTemplateConfigs"], {"appender":FleetLaunchTemplateConfigRequest_Serialize,"entryPrefix":"."})
     body.append(prefix+"FleetId", (params["FleetId"] ?? '').toString());
-    TargetCapacitySpecificationRequest_Serialize(body, prefix+"TargetCapacitySpecification", params["TargetCapacitySpecification"]);
+    if (params["TargetCapacitySpecification"] != null) TargetCapacitySpecificationRequest_Serialize(body, prefix+"TargetCapacitySpecification", params["TargetCapacitySpecification"]);
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ModifyFleet",
@@ -6983,6 +7229,8 @@ export default class EC2 {
     if ("Size" in params) body.append(prefix+"Size", (params["Size"] ?? '').toString());
     if ("VolumeType" in params) body.append(prefix+"VolumeType", (params["VolumeType"] ?? '').toString());
     if ("Iops" in params) body.append(prefix+"Iops", (params["Iops"] ?? '').toString());
+    if ("Throughput" in params) body.append(prefix+"Throughput", (params["Throughput"] ?? '').toString());
+    if ("MultiAttachEnabled" in params) body.append(prefix+"MultiAttachEnabled", (params["MultiAttachEnabled"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ModifyVolume",
@@ -7078,6 +7326,8 @@ export default class EC2 {
     if ("AcceptanceRequired" in params) body.append(prefix+"AcceptanceRequired", (params["AcceptanceRequired"] ?? '').toString());
     if (params["AddNetworkLoadBalancerArns"]) qsP.appendList(body, prefix+"AddNetworkLoadBalancerArn", params["AddNetworkLoadBalancerArns"], {"entryPrefix":"."})
     if (params["RemoveNetworkLoadBalancerArns"]) qsP.appendList(body, prefix+"RemoveNetworkLoadBalancerArn", params["RemoveNetworkLoadBalancerArns"], {"entryPrefix":"."})
+    if (params["AddGatewayLoadBalancerArns"]) qsP.appendList(body, prefix+"AddGatewayLoadBalancerArn", params["AddGatewayLoadBalancerArns"], {"entryPrefix":"."})
+    if (params["RemoveGatewayLoadBalancerArns"]) qsP.appendList(body, prefix+"RemoveGatewayLoadBalancerArn", params["RemoveGatewayLoadBalancerArns"], {"entryPrefix":"."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ModifyVpcEndpointServiceConfiguration",
@@ -7438,6 +7688,25 @@ export default class EC2 {
     };
   }
 
+  async rejectTransitGatewayMulticastDomainAssociations(
+    {abortSignal, ...params}: RequestConfig & RejectTransitGatewayMulticastDomainAssociationsRequest = {},
+  ): Promise<RejectTransitGatewayMulticastDomainAssociationsResult> {
+    const body = new URLSearchParams;
+    const prefix = '';
+    if ("TransitGatewayMulticastDomainId" in params) body.append(prefix+"TransitGatewayMulticastDomainId", (params["TransitGatewayMulticastDomainId"] ?? '').toString());
+    if ("TransitGatewayAttachmentId" in params) body.append(prefix+"TransitGatewayAttachmentId", (params["TransitGatewayAttachmentId"] ?? '').toString());
+    if (params["SubnetIds"]) qsP.appendList(body, prefix+"item", params["SubnetIds"], {"entryPrefix":"."})
+    if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "RejectTransitGatewayMulticastDomainAssociations",
+    });
+    const xml = xmlP.readXmlResult(await resp.text());
+    return {
+      Associations: xml.first("associations", false, TransitGatewayMulticastDomainAssociations_Parse),
+    };
+  }
+
   async rejectTransitGatewayPeeringAttachment(
     {abortSignal, ...params}: RequestConfig & RejectTransitGatewayPeeringAttachmentRequest,
   ): Promise<RejectTransitGatewayPeeringAttachmentResult> {
@@ -7604,6 +7873,7 @@ export default class EC2 {
     if ("DestinationIpv6CidrBlock" in params) body.append(prefix+"DestinationIpv6CidrBlock", (params["DestinationIpv6CidrBlock"] ?? '').toString());
     if ("DestinationPrefixListId" in params) body.append(prefix+"DestinationPrefixListId", (params["DestinationPrefixListId"] ?? '').toString());
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
+    if ("VpcEndpointId" in params) body.append(prefix+"VpcEndpointId", (params["VpcEndpointId"] ?? '').toString());
     if ("EgressOnlyInternetGatewayId" in params) body.append(prefix+"EgressOnlyInternetGatewayId", (params["EgressOnlyInternetGatewayId"] ?? '').toString());
     if ("GatewayId" in params) body.append(prefix+"GatewayId", (params["GatewayId"] ?? '').toString());
     if ("InstanceId" in params) body.append(prefix+"InstanceId", (params["InstanceId"] ?? '').toString());
@@ -8081,6 +8351,26 @@ export default class EC2 {
     const xml = xmlP.readXmlResult(await resp.text());
     return {
       StartingInstances: xml.getList("instancesSet", "item").map(InstanceStateChange_Parse),
+    };
+  }
+
+  async startNetworkInsightsAnalysis(
+    {abortSignal, ...params}: RequestConfig & StartNetworkInsightsAnalysisRequest,
+  ): Promise<StartNetworkInsightsAnalysisResult> {
+    const body = new URLSearchParams;
+    const prefix = '';
+    body.append(prefix+"NetworkInsightsPathId", (params["NetworkInsightsPathId"] ?? '').toString());
+    if (params["FilterInArns"]) qsP.appendList(body, prefix+"FilterInArn", params["FilterInArns"], {"entryPrefix":"."})
+    if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
+    if (params["TagSpecifications"]) qsP.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
+    body.append(prefix+"ClientToken", (params["ClientToken"] ?? generateIdemptToken()).toString());
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "StartNetworkInsightsAnalysis",
+    });
+    const xml = xmlP.readXmlResult(await resp.text());
+    return {
+      NetworkInsightsAnalysis: xml.first("networkInsightsAnalysis", false, NetworkInsightsAnalysis_Parse),
     };
   }
 
@@ -8783,6 +9073,14 @@ export interface AcceptReservedInstancesExchangeQuoteRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface AcceptTransitGatewayMulticastDomainAssociationsRequest {
+  TransitGatewayMulticastDomainId?: string | null;
+  TransitGatewayAttachmentId?: string | null;
+  SubnetIds?: string[] | null;
+  DryRun?: boolean | null;
+}
+
+// refs: 1 - tags: named, input
 export interface AcceptTransitGatewayPeeringAttachmentRequest {
   TransitGatewayAttachmentId: string;
   DryRun?: boolean | null;
@@ -9154,6 +9452,7 @@ export interface CreateClientVpnEndpointRequest {
   SecurityGroupIds?: string[] | null;
   VpcId?: string | null;
   SelfServicePortal?: SelfServicePortal | null;
+  ClientConnectOptions?: ClientConnectOptions | null;
 }
 
 // refs: 1 - tags: named, input
@@ -9255,14 +9554,15 @@ export interface CreateImageRequest {
   InstanceId: string;
   Name: string;
   NoReboot?: boolean | null;
+  TagSpecifications?: TagSpecification[] | null;
 }
 
 // refs: 1 - tags: named, input
 export interface CreateInstanceExportTaskRequest {
   Description?: string | null;
-  ExportToS3Task?: ExportToS3TaskSpecification | null;
+  ExportToS3Task: ExportToS3TaskSpecification;
   InstanceId: string;
-  TargetEnvironment?: ExportEnvironment | null;
+  TargetEnvironment: ExportEnvironment;
   TagSpecifications?: TagSpecification[] | null;
 }
 
@@ -9358,6 +9658,19 @@ export interface CreateNetworkAclEntryRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface CreateNetworkInsightsPathRequest {
+  SourceIp?: string | null;
+  DestinationIp?: string | null;
+  Source: string;
+  Destination: string;
+  Protocol: Protocol;
+  DestinationPort?: number | null;
+  TagSpecifications?: TagSpecification[] | null;
+  DryRun?: boolean | null;
+  ClientToken: string;
+}
+
+// refs: 1 - tags: named, input
 export interface CreateNetworkInterfaceRequest {
   Description?: string | null;
   DryRun?: boolean | null;
@@ -9404,6 +9717,7 @@ export interface CreateRouteRequest {
   DestinationIpv6CidrBlock?: string | null;
   DestinationPrefixListId?: string | null;
   DryRun?: boolean | null;
+  VpcEndpointId?: string | null;
   EgressOnlyInternetGatewayId?: string | null;
   GatewayId?: string | null;
   InstanceId?: string | null;
@@ -9532,8 +9846,28 @@ export interface CreateTransitGatewayRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface CreateTransitGatewayConnectRequest {
+  TransportTransitGatewayAttachmentId: string;
+  Options: CreateTransitGatewayConnectRequestOptions;
+  TagSpecifications?: TagSpecification[] | null;
+  DryRun?: boolean | null;
+}
+
+// refs: 1 - tags: named, input
+export interface CreateTransitGatewayConnectPeerRequest {
+  TransitGatewayAttachmentId: string;
+  TransitGatewayAddress?: string | null;
+  PeerAddress: string;
+  BgpOptions?: TransitGatewayConnectRequestBgpOptions | null;
+  InsideCidrBlocks: string[];
+  TagSpecifications?: TagSpecification[] | null;
+  DryRun?: boolean | null;
+}
+
+// refs: 1 - tags: named, input
 export interface CreateTransitGatewayMulticastDomainRequest {
   TransitGatewayId: string;
+  Options?: CreateTransitGatewayMulticastDomainRequestOptions | null;
   TagSpecifications?: TagSpecification[] | null;
   DryRun?: boolean | null;
 }
@@ -9596,6 +9930,7 @@ export interface CreateVolumeRequest {
   DryRun?: boolean | null;
   TagSpecifications?: TagSpecification[] | null;
   MultiAttachEnabled?: boolean | null;
+  Throughput?: number | null;
 }
 
 // refs: 1 - tags: named, input
@@ -9640,7 +9975,8 @@ export interface CreateVpcEndpointServiceConfigurationRequest {
   DryRun?: boolean | null;
   AcceptanceRequired?: boolean | null;
   PrivateDnsName?: string | null;
-  NetworkLoadBalancerArns: string[];
+  NetworkLoadBalancerArns?: string[] | null;
+  GatewayLoadBalancerArns?: string[] | null;
   ClientToken?: string | null;
   TagSpecifications?: TagSpecification[] | null;
 }
@@ -9806,6 +10142,18 @@ export interface DeleteNetworkAclEntryRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface DeleteNetworkInsightsAnalysisRequest {
+  DryRun?: boolean | null;
+  NetworkInsightsAnalysisId: string;
+}
+
+// refs: 1 - tags: named, input
+export interface DeleteNetworkInsightsPathRequest {
+  DryRun?: boolean | null;
+  NetworkInsightsPathId: string;
+}
+
+// refs: 1 - tags: named, input
 export interface DeleteNetworkInterfaceRequest {
   DryRun?: boolean | null;
   NetworkInterfaceId: string;
@@ -9903,6 +10251,18 @@ export interface DeleteTrafficMirrorTargetRequest {
 // refs: 1 - tags: named, input
 export interface DeleteTransitGatewayRequest {
   TransitGatewayId: string;
+  DryRun?: boolean | null;
+}
+
+// refs: 1 - tags: named, input
+export interface DeleteTransitGatewayConnectRequest {
+  TransitGatewayAttachmentId: string;
+  DryRun?: boolean | null;
+}
+
+// refs: 1 - tags: named, input
+export interface DeleteTransitGatewayConnectPeerRequest {
+  TransitGatewayConnectPeerId: string;
   DryRun?: boolean | null;
 }
 
@@ -10550,6 +10910,27 @@ export interface DescribeNetworkAclsRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface DescribeNetworkInsightsAnalysesRequest {
+  NetworkInsightsAnalysisIds?: string[] | null;
+  NetworkInsightsPathId?: string | null;
+  AnalysisStartTime?: Date | number | null;
+  AnalysisEndTime?: Date | number | null;
+  Filters?: Filter[] | null;
+  MaxResults?: number | null;
+  DryRun?: boolean | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface DescribeNetworkInsightsPathsRequest {
+  NetworkInsightsPathIds?: string[] | null;
+  Filters?: Filter[] | null;
+  MaxResults?: number | null;
+  DryRun?: boolean | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, input
 export interface DescribeNetworkInterfaceAttributeRequest {
   Attribute?: NetworkInterfaceAttribute | null;
   DryRun?: boolean | null;
@@ -10828,6 +11209,24 @@ export interface DescribeTrafficMirrorTargetsRequest {
 
 // refs: 1 - tags: named, input
 export interface DescribeTransitGatewayAttachmentsRequest {
+  TransitGatewayAttachmentIds?: string[] | null;
+  Filters?: Filter[] | null;
+  MaxResults?: number | null;
+  NextToken?: string | null;
+  DryRun?: boolean | null;
+}
+
+// refs: 1 - tags: named, input
+export interface DescribeTransitGatewayConnectPeersRequest {
+  TransitGatewayConnectPeerIds?: string[] | null;
+  Filters?: Filter[] | null;
+  MaxResults?: number | null;
+  NextToken?: string | null;
+  DryRun?: boolean | null;
+}
+
+// refs: 1 - tags: named, input
+export interface DescribeTransitGatewayConnectsRequest {
   TransitGatewayAttachmentIds?: string[] | null;
   Filters?: Filter[] | null;
   MaxResults?: number | null;
@@ -11475,6 +11874,7 @@ export interface ModifyClientVpnEndpointRequest {
   SecurityGroupIds?: string[] | null;
   VpcId?: string | null;
   SelfServicePortal?: SelfServicePortal | null;
+  ClientConnectOptions?: ClientConnectOptions | null;
 }
 
 // refs: 1 - tags: named, input
@@ -11496,7 +11896,7 @@ export interface ModifyFleetRequest {
   ExcessCapacityTerminationPolicy?: FleetExcessCapacityTerminationPolicy | null;
   LaunchTemplateConfigs?: FleetLaunchTemplateConfigRequest[] | null;
   FleetId: string;
-  TargetCapacitySpecification: TargetCapacitySpecificationRequest;
+  TargetCapacitySpecification?: TargetCapacitySpecificationRequest | null;
 }
 
 // refs: 1 - tags: named, input
@@ -11746,6 +12146,8 @@ export interface ModifyVolumeRequest {
   Size?: number | null;
   VolumeType?: VolumeType | null;
   Iops?: number | null;
+  Throughput?: number | null;
+  MultiAttachEnabled?: boolean | null;
 }
 
 // refs: 1 - tags: named, input
@@ -11794,6 +12196,8 @@ export interface ModifyVpcEndpointServiceConfigurationRequest {
   AcceptanceRequired?: boolean | null;
   AddNetworkLoadBalancerArns?: string[] | null;
   RemoveNetworkLoadBalancerArns?: string[] | null;
+  AddGatewayLoadBalancerArns?: string[] | null;
+  RemoveGatewayLoadBalancerArns?: string[] | null;
 }
 
 // refs: 1 - tags: named, input
@@ -11947,6 +12351,14 @@ export interface RegisterTransitGatewayMulticastGroupSourcesRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface RejectTransitGatewayMulticastDomainAssociationsRequest {
+  TransitGatewayMulticastDomainId?: string | null;
+  TransitGatewayAttachmentId?: string | null;
+  SubnetIds?: string[] | null;
+  DryRun?: boolean | null;
+}
+
+// refs: 1 - tags: named, input
 export interface RejectTransitGatewayPeeringAttachmentRequest {
   TransitGatewayAttachmentId: string;
   DryRun?: boolean | null;
@@ -12017,6 +12429,7 @@ export interface ReplaceRouteRequest {
   DestinationIpv6CidrBlock?: string | null;
   DestinationPrefixListId?: string | null;
   DryRun?: boolean | null;
+  VpcEndpointId?: string | null;
   EgressOnlyInternetGatewayId?: string | null;
   GatewayId?: string | null;
   InstanceId?: string | null;
@@ -12260,6 +12673,15 @@ export interface StartInstancesRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface StartNetworkInsightsAnalysisRequest {
+  NetworkInsightsPathId: string;
+  FilterInArns?: string[] | null;
+  DryRun?: boolean | null;
+  TagSpecifications?: TagSpecification[] | null;
+  ClientToken: string;
+}
+
+// refs: 1 - tags: named, input
 export interface StartVpcEndpointServicePrivateDnsVerificationRequest {
   DryRun?: boolean | null;
   ServiceId: string;
@@ -12330,6 +12752,11 @@ export interface WithdrawByoipCidrRequest {
 // refs: 1 - tags: named, output
 export interface AcceptReservedInstancesExchangeQuoteResult {
   ExchangeId?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface AcceptTransitGatewayMulticastDomainAssociationsResult {
+  Associations?: TransitGatewayMulticastDomainAssociations | null;
 }
 
 // refs: 1 - tags: named, output
@@ -12675,6 +13102,11 @@ export interface CreateNetworkAclResult {
 }
 
 // refs: 1 - tags: named, output
+export interface CreateNetworkInsightsPathResult {
+  NetworkInsightsPath?: NetworkInsightsPath | null;
+}
+
+// refs: 1 - tags: named, output
 export interface CreateNetworkInterfaceResult {
   NetworkInterface?: NetworkInterface | null;
 }
@@ -12791,6 +13223,16 @@ export interface CreateTransitGatewayResult {
 }
 
 // refs: 1 - tags: named, output
+export interface CreateTransitGatewayConnectResult {
+  TransitGatewayConnect?: TransitGatewayConnect | null;
+}
+
+// refs: 1 - tags: named, output
+export interface CreateTransitGatewayConnectPeerResult {
+  TransitGatewayConnectPeer?: TransitGatewayConnectPeer | null;
+}
+
+// refs: 1 - tags: named, output
 export interface CreateTransitGatewayMulticastDomainResult {
   TransitGatewayMulticastDomain?: TransitGatewayMulticastDomain | null;
 }
@@ -12837,6 +13279,7 @@ export interface Volume {
   VolumeType?: VolumeType | null;
   FastRestored?: boolean | null;
   MultiAttachEnabled?: boolean | null;
+  Throughput?: number | null;
 }
 function Volume_Parse(node: xmlP.XmlNode): Volume {
   return {
@@ -12855,6 +13298,7 @@ function Volume_Parse(node: xmlP.XmlNode): Volume {
     VolumeType: node.first("volumeType", false, x => (x.content ?? '') as VolumeType),
     FastRestored: node.first("fastRestored", false, x => x.content === 'true'),
     MultiAttachEnabled: node.first("multiAttachEnabled", false, x => x.content === 'true'),
+    Throughput: node.first("throughput", false, x => parseInt(x.content ?? '0')),
   };
 }
 
@@ -12964,6 +13408,16 @@ export interface DeleteNatGatewayResult {
 }
 
 // refs: 1 - tags: named, output
+export interface DeleteNetworkInsightsAnalysisResult {
+  NetworkInsightsAnalysisId?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface DeleteNetworkInsightsPathResult {
+  NetworkInsightsPathId?: string | null;
+}
+
+// refs: 1 - tags: named, output
 export interface DeleteNetworkInterfacePermissionResult {
   Return?: boolean | null;
 }
@@ -12997,6 +13451,16 @@ export interface DeleteTrafficMirrorTargetResult {
 // refs: 1 - tags: named, output
 export interface DeleteTransitGatewayResult {
   TransitGateway?: TransitGateway | null;
+}
+
+// refs: 1 - tags: named, output
+export interface DeleteTransitGatewayConnectResult {
+  TransitGatewayConnect?: TransitGatewayConnect | null;
+}
+
+// refs: 1 - tags: named, output
+export interface DeleteTransitGatewayConnectPeerResult {
+  TransitGatewayConnectPeer?: TransitGatewayConnectPeer | null;
 }
 
 // refs: 1 - tags: named, output
@@ -13448,6 +13912,18 @@ export interface DescribeNetworkAclsResult {
 }
 
 // refs: 1 - tags: named, output
+export interface DescribeNetworkInsightsAnalysesResult {
+  NetworkInsightsAnalyses: NetworkInsightsAnalysis[];
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface DescribeNetworkInsightsPathsResult {
+  NetworkInsightsPaths: NetworkInsightsPath[];
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
 export interface DescribeNetworkInterfaceAttributeResult {
   Attachment?: NetworkInterfaceAttachment | null;
   Description?: AttributeValue | null;
@@ -13638,6 +14114,18 @@ export interface DescribeTrafficMirrorTargetsResult {
 // refs: 1 - tags: named, output
 export interface DescribeTransitGatewayAttachmentsResult {
   TransitGatewayAttachments: TransitGatewayAttachment[];
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface DescribeTransitGatewayConnectPeersResult {
+  TransitGatewayConnectPeers: TransitGatewayConnectPeer[];
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface DescribeTransitGatewayConnectsResult {
+  TransitGatewayConnects: TransitGatewayConnect[];
   NextToken?: string | null;
 }
 
@@ -14317,6 +14805,11 @@ export interface RegisterTransitGatewayMulticastGroupSourcesResult {
 }
 
 // refs: 1 - tags: named, output
+export interface RejectTransitGatewayMulticastDomainAssociationsResult {
+  Associations?: TransitGatewayMulticastDomainAssociations | null;
+}
+
+// refs: 1 - tags: named, output
 export interface RejectTransitGatewayPeeringAttachmentResult {
   TransitGatewayPeeringAttachment?: TransitGatewayPeeringAttachment | null;
 }
@@ -14458,6 +14951,11 @@ export interface StartInstancesResult {
 }
 
 // refs: 1 - tags: named, output
+export interface StartNetworkInsightsAnalysisResult {
+  NetworkInsightsAnalysis?: NetworkInsightsAnalysis | null;
+}
+
+// refs: 1 - tags: named, output
 export interface StartVpcEndpointServicePrivateDnsVerificationResult {
   ReturnValue?: boolean | null;
 }
@@ -14527,7 +15025,7 @@ export type AutoPlacement =
 | "off"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 51 - tags: input, named, interface, output
+// refs: 56 - tags: input, named, interface, output
 export interface TagSpecification {
   ResourceType?: ResourceType | null;
   Tags: Tag[];
@@ -14543,7 +15041,7 @@ function TagSpecification_Parse(node: xmlP.XmlNode): TagSpecification {
   };
 }
 
-// refs: 59 - tags: input, named, enum, output
+// refs: 64 - tags: input, named, enum, output
 export type ResourceType =
 | "client-vpn-endpoint"
 | "customer-gateway"
@@ -14568,6 +15066,8 @@ export type ResourceType =
 | "natgateway"
 | "network-acl"
 | "network-interface"
+| "network-insights-analysis"
+| "network-insights-path"
 | "placement-group"
 | "reserved-instances"
 | "route-table"
@@ -14581,6 +15081,7 @@ export type ResourceType =
 | "traffic-mirror-target"
 | "transit-gateway"
 | "transit-gateway-attachment"
+| "transit-gateway-connect-peer"
 | "transit-gateway-multicast-domain"
 | "transit-gateway-route-table"
 | "volume"
@@ -14591,7 +15092,7 @@ export type ResourceType =
 | "vpc-flow-log"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 197 - tags: input, named, interface, output
+// refs: 212 - tags: input, named, interface, output
 export interface Tag {
   Key?: string | null;
   Value?: string | null;
@@ -14883,6 +15384,16 @@ export type SelfServicePortal =
 | "disabled"
 | cmnP.UnexpectedEnumValue;
 
+// refs: 2 - tags: input, named, interface
+export interface ClientConnectOptions {
+  Enabled?: boolean | null;
+  LambdaFunctionArn?: string | null;
+}
+function ClientConnectOptions_Serialize(body: URLSearchParams, prefix: string, params: ClientConnectOptions) {
+    if ("Enabled" in params) body.append(prefix+".Enabled", (params["Enabled"] ?? '').toString());
+    if ("LambdaFunctionArn" in params) body.append(prefix+".LambdaFunctionArn", (params["LambdaFunctionArn"] ?? '').toString());
+}
+
 // refs: 10 - tags: input, named, enum, output
 export type GatewayType =
 | "ipsec.1"
@@ -14901,6 +15412,7 @@ function NewDhcpConfiguration_Serialize(body: URLSearchParams, prefix: string, p
 // refs: 1 - tags: input, named, interface
 export interface SpotOptionsRequest {
   AllocationStrategy?: SpotAllocationStrategy | null;
+  MaintenanceStrategies?: FleetSpotMaintenanceStrategiesRequest | null;
   InstanceInterruptionBehavior?: SpotInstanceInterruptionBehavior | null;
   InstancePoolsToUseCount?: number | null;
   SingleInstanceType?: boolean | null;
@@ -14910,6 +15422,7 @@ export interface SpotOptionsRequest {
 }
 function SpotOptionsRequest_Serialize(body: URLSearchParams, prefix: string, params: SpotOptionsRequest) {
     if ("AllocationStrategy" in params) body.append(prefix+".AllocationStrategy", (params["AllocationStrategy"] ?? '').toString());
+    if (params["MaintenanceStrategies"] != null) FleetSpotMaintenanceStrategiesRequest_Serialize(body, prefix+".MaintenanceStrategies", params["MaintenanceStrategies"]);
     if ("InstanceInterruptionBehavior" in params) body.append(prefix+".InstanceInterruptionBehavior", (params["InstanceInterruptionBehavior"] ?? '').toString());
     if ("InstancePoolsToUseCount" in params) body.append(prefix+".InstancePoolsToUseCount", (params["InstancePoolsToUseCount"] ?? '').toString());
     if ("SingleInstanceType" in params) body.append(prefix+".SingleInstanceType", (params["SingleInstanceType"] ?? '').toString());
@@ -14923,6 +15436,27 @@ export type SpotAllocationStrategy =
 | "lowest-price"
 | "diversified"
 | "capacity-optimized"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 1 - tags: input, named, interface
+export interface FleetSpotMaintenanceStrategiesRequest {
+  CapacityRebalance?: FleetSpotCapacityRebalanceRequest | null;
+}
+function FleetSpotMaintenanceStrategiesRequest_Serialize(body: URLSearchParams, prefix: string, params: FleetSpotMaintenanceStrategiesRequest) {
+    if (params["CapacityRebalance"] != null) FleetSpotCapacityRebalanceRequest_Serialize(body, prefix+".CapacityRebalance", params["CapacityRebalance"]);
+}
+
+// refs: 1 - tags: input, named, interface
+export interface FleetSpotCapacityRebalanceRequest {
+  ReplacementStrategy?: FleetReplacementStrategy | null;
+}
+function FleetSpotCapacityRebalanceRequest_Serialize(body: URLSearchParams, prefix: string, params: FleetSpotCapacityRebalanceRequest) {
+    if ("ReplacementStrategy" in params) body.append(prefix+".ReplacementStrategy", (params["ReplacementStrategy"] ?? '').toString());
+}
+
+// refs: 2 - tags: input, named, enum, output
+export type FleetReplacementStrategy =
+| "launch"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, enum, output
@@ -15094,6 +15628,15 @@ export type InstanceType =
 | "r5a.12xlarge"
 | "r5a.16xlarge"
 | "r5a.24xlarge"
+| "r5b.large"
+| "r5b.xlarge"
+| "r5b.2xlarge"
+| "r5b.4xlarge"
+| "r5b.8xlarge"
+| "r5b.12xlarge"
+| "r5b.16xlarge"
+| "r5b.24xlarge"
+| "r5b.metal"
 | "r5d.large"
 | "r5d.xlarge"
 | "r5d.2xlarge"
@@ -15210,6 +15753,7 @@ export type InstanceType =
 | "c5n.4xlarge"
 | "c5n.9xlarge"
 | "c5n.18xlarge"
+| "c5n.metal"
 | "c6g.metal"
 | "c6g.medium"
 | "c6g.large"
@@ -15228,6 +15772,14 @@ export type InstanceType =
 | "c6gd.8xlarge"
 | "c6gd.12xlarge"
 | "c6gd.16xlarge"
+| "c6gn.medium"
+| "c6gn.large"
+| "c6gn.xlarge"
+| "c6gn.2xlarge"
+| "c6gn.4xlarge"
+| "c6gn.8xlarge"
+| "c6gn.12xlarge"
+| "c6gn.16xlarge"
 | "cc1.4xlarge"
 | "cc2.8xlarge"
 | "g2.2xlarge"
@@ -15236,6 +15788,9 @@ export type InstanceType =
 | "g3.8xlarge"
 | "g3.16xlarge"
 | "g3s.xlarge"
+| "g4ad.4xlarge"
+| "g4ad.8xlarge"
+| "g4ad.16xlarge"
 | "g4dn.xlarge"
 | "g4dn.2xlarge"
 | "g4dn.4xlarge"
@@ -15256,6 +15811,16 @@ export type InstanceType =
 | "d2.2xlarge"
 | "d2.4xlarge"
 | "d2.8xlarge"
+| "d3.xlarge"
+| "d3.2xlarge"
+| "d3.4xlarge"
+| "d3.8xlarge"
+| "d3en.xlarge"
+| "d3en.2xlarge"
+| "d3en.4xlarge"
+| "d3en.6xlarge"
+| "d3en.8xlarge"
+| "d3en.12xlarge"
 | "f1.2xlarge"
 | "f1.4xlarge"
 | "f1.16xlarge"
@@ -15293,6 +15858,13 @@ export type InstanceType =
 | "m5ad.12xlarge"
 | "m5ad.16xlarge"
 | "m5ad.24xlarge"
+| "m5zn.large"
+| "m5zn.xlarge"
+| "m5zn.2xlarge"
+| "m5zn.3xlarge"
+| "m5zn.6xlarge"
+| "m5zn.12xlarge"
+| "m5zn.metal"
 | "h1.2xlarge"
 | "h1.4xlarge"
 | "h1.8xlarge"
@@ -15369,6 +15941,7 @@ export type InstanceType =
 | "m6gd.8xlarge"
 | "m6gd.12xlarge"
 | "m6gd.16xlarge"
+| "mac1.metal"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 6 - tags: input, named, interface, output
@@ -15499,6 +16072,7 @@ export interface EbsBlockDevice {
   VolumeSize?: number | null;
   VolumeType?: VolumeType | null;
   KmsKeyId?: string | null;
+  Throughput?: number | null;
   Encrypted?: boolean | null;
 }
 function EbsBlockDevice_Serialize(body: URLSearchParams, prefix: string, params: EbsBlockDevice) {
@@ -15508,6 +16082,7 @@ function EbsBlockDevice_Serialize(body: URLSearchParams, prefix: string, params:
     if ("VolumeSize" in params) body.append(prefix+".VolumeSize", (params["VolumeSize"] ?? '').toString());
     if ("VolumeType" in params) body.append(prefix+".VolumeType", (params["VolumeType"] ?? '').toString());
     if ("KmsKeyId" in params) body.append(prefix+".KmsKeyId", (params["KmsKeyId"] ?? '').toString());
+    if ("Throughput" in params) body.append(prefix+".Throughput", (params["Throughput"] ?? '').toString());
     if ("Encrypted" in params) body.append(prefix+".Encrypted", (params["Encrypted"] ?? '').toString());
 }
 function EbsBlockDevice_Parse(node: xmlP.XmlNode): EbsBlockDevice {
@@ -15520,6 +16095,7 @@ function EbsBlockDevice_Parse(node: xmlP.XmlNode): EbsBlockDevice {
     SnapshotId: node.first("snapshotId", false, x => x.content ?? ''),
     VolumeSize: node.first("volumeSize", false, x => parseInt(x.content ?? '0')),
     VolumeType: node.first("volumeType", false, x => (x.content ?? '') as VolumeType),
+    Throughput: node.first("throughput", false, x => parseInt(x.content ?? '0')),
     Encrypted: node.first("encrypted", false, x => x.content === 'true'),
   };
 }
@@ -15532,6 +16108,7 @@ export type VolumeType =
 | "gp2"
 | "sc1"
 | "st1"
+| "gp3"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
@@ -15660,6 +16237,7 @@ export interface LaunchTemplateEbsBlockDeviceRequest {
   SnapshotId?: string | null;
   VolumeSize?: number | null;
   VolumeType?: VolumeType | null;
+  Throughput?: number | null;
 }
 function LaunchTemplateEbsBlockDeviceRequest_Serialize(body: URLSearchParams, prefix: string, params: LaunchTemplateEbsBlockDeviceRequest) {
     if ("Encrypted" in params) body.append(prefix+".Encrypted", (params["Encrypted"] ?? '').toString());
@@ -15669,6 +16247,7 @@ function LaunchTemplateEbsBlockDeviceRequest_Serialize(body: URLSearchParams, pr
     if ("SnapshotId" in params) body.append(prefix+".SnapshotId", (params["SnapshotId"] ?? '').toString());
     if ("VolumeSize" in params) body.append(prefix+".VolumeSize", (params["VolumeSize"] ?? '').toString());
     if ("VolumeType" in params) body.append(prefix+".VolumeType", (params["VolumeType"] ?? '').toString());
+    if ("Throughput" in params) body.append(prefix+".Throughput", (params["Throughput"] ?? '').toString());
 }
 
 // refs: 2 - tags: input, named, interface
@@ -15957,7 +16536,7 @@ function IcmpTypeCode_Parse(node: xmlP.XmlNode): IcmpTypeCode {
   };
 }
 
-// refs: 4 - tags: input, named, interface, output
+// refs: 34 - tags: input, named, interface, output
 export interface PortRange {
   From?: number | null;
   To?: number | null;
@@ -15977,6 +16556,12 @@ function PortRange_Parse(node: xmlP.XmlNode): PortRange {
 export type RuleAction =
 | "allow"
 | "deny"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 3 - tags: input, named, enum, output
+export type Protocol =
+| "tcp"
+| "udp"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 13 - tags: input, named, interface, output
@@ -16073,6 +16658,7 @@ export interface TransitGatewayRequestOptions {
   VpnEcmpSupport?: VpnEcmpSupportValue | null;
   DnsSupport?: DnsSupportValue | null;
   MulticastSupport?: MulticastSupportValue | null;
+  TransitGatewayCidrBlocks?: string[] | null;
 }
 function TransitGatewayRequestOptions_Serialize(body: URLSearchParams, prefix: string, params: TransitGatewayRequestOptions) {
     if ("AmazonSideAsn" in params) body.append(prefix+".AmazonSideAsn", (params["AmazonSideAsn"] ?? '').toString());
@@ -16082,6 +16668,7 @@ function TransitGatewayRequestOptions_Serialize(body: URLSearchParams, prefix: s
     if ("VpnEcmpSupport" in params) body.append(prefix+".VpnEcmpSupport", (params["VpnEcmpSupport"] ?? '').toString());
     if ("DnsSupport" in params) body.append(prefix+".DnsSupport", (params["DnsSupport"] ?? '').toString());
     if ("MulticastSupport" in params) body.append(prefix+".MulticastSupport", (params["MulticastSupport"] ?? '').toString());
+    if (params["TransitGatewayCidrBlocks"]) qsP.appendList(body, prefix+".item", params["TransitGatewayCidrBlocks"], {"entryPrefix":"."})
 }
 
 // refs: 6 - tags: input, named, enum, output
@@ -16121,6 +16708,57 @@ export type MulticastSupportValue =
 | cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
+export interface CreateTransitGatewayConnectRequestOptions {
+  Protocol: ProtocolValue;
+}
+function CreateTransitGatewayConnectRequestOptions_Serialize(body: URLSearchParams, prefix: string, params: CreateTransitGatewayConnectRequestOptions) {
+    body.append(prefix+".Protocol", (params["Protocol"] ?? '').toString());
+}
+
+// refs: 7 - tags: input, named, enum, output
+export type ProtocolValue =
+| "gre"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 1 - tags: input, named, interface
+export interface TransitGatewayConnectRequestBgpOptions {
+  PeerAsn?: number | null;
+}
+function TransitGatewayConnectRequestBgpOptions_Serialize(body: URLSearchParams, prefix: string, params: TransitGatewayConnectRequestBgpOptions) {
+    if ("PeerAsn" in params) body.append(prefix+".PeerAsn", (params["PeerAsn"] ?? '').toString());
+}
+
+// refs: 1 - tags: input, named, interface
+export interface CreateTransitGatewayMulticastDomainRequestOptions {
+  Igmpv2Support?: Igmpv2SupportValue | null;
+  StaticSourcesSupport?: StaticSourcesSupportValue | null;
+  AutoAcceptSharedAssociations?: AutoAcceptSharedAssociationsValue | null;
+}
+function CreateTransitGatewayMulticastDomainRequestOptions_Serialize(body: URLSearchParams, prefix: string, params: CreateTransitGatewayMulticastDomainRequestOptions) {
+    if ("Igmpv2Support" in params) body.append(prefix+".Igmpv2Support", (params["Igmpv2Support"] ?? '').toString());
+    if ("StaticSourcesSupport" in params) body.append(prefix+".StaticSourcesSupport", (params["StaticSourcesSupport"] ?? '').toString());
+    if ("AutoAcceptSharedAssociations" in params) body.append(prefix+".AutoAcceptSharedAssociations", (params["AutoAcceptSharedAssociations"] ?? '').toString());
+}
+
+// refs: 4 - tags: input, named, enum, output
+export type Igmpv2SupportValue =
+| "enable"
+| "disable"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 4 - tags: input, named, enum, output
+export type StaticSourcesSupportValue =
+| "enable"
+| "disable"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 4 - tags: input, named, enum, output
+export type AutoAcceptSharedAssociationsValue =
+| "enable"
+| "disable"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 1 - tags: input, named, interface
 export interface CreateTransitGatewayVpcAttachmentRequestOptions {
   DnsSupport?: DnsSupportValue | null;
   Ipv6Support?: Ipv6SupportValue | null;
@@ -16148,6 +16786,7 @@ export type ApplianceModeSupportValue =
 export type VpcEndpointType =
 | "Interface"
 | "Gateway"
+| "GatewayLoadBalancer"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
@@ -16292,7 +16931,7 @@ export type AccountAttributeName =
 | "default-vpc"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 102 - tags: input, named, interface
+// refs: 106 - tags: input, named, interface
 export interface Filter {
   Name?: string | null;
   Values?: string[] | null;
@@ -16951,6 +17590,8 @@ export type TrafficMirrorSessionField =
 
 // refs: 1 - tags: input, named, interface
 export interface ModifyTransitGatewayOptions {
+  AddTransitGatewayCidrBlocks?: string[] | null;
+  RemoveTransitGatewayCidrBlocks?: string[] | null;
   VpnEcmpSupport?: VpnEcmpSupportValue | null;
   DnsSupport?: DnsSupportValue | null;
   AutoAcceptSharedAttachments?: AutoAcceptSharedAttachmentsValue | null;
@@ -16960,6 +17601,8 @@ export interface ModifyTransitGatewayOptions {
   PropagationDefaultRouteTableId?: string | null;
 }
 function ModifyTransitGatewayOptions_Serialize(body: URLSearchParams, prefix: string, params: ModifyTransitGatewayOptions) {
+    if (params["AddTransitGatewayCidrBlocks"]) qsP.appendList(body, prefix+".item", params["AddTransitGatewayCidrBlocks"], {"entryPrefix":"."})
+    if (params["RemoveTransitGatewayCidrBlocks"]) qsP.appendList(body, prefix+".item", params["RemoveTransitGatewayCidrBlocks"], {"entryPrefix":"."})
     if ("VpnEcmpSupport" in params) body.append(prefix+".VpnEcmpSupport", (params["VpnEcmpSupport"] ?? '').toString());
     if ("DnsSupport" in params) body.append(prefix+".DnsSupport", (params["DnsSupport"] ?? '').toString());
     if ("AutoAcceptSharedAttachments" in params) body.append(prefix+".AutoAcceptSharedAttachments", (params["AutoAcceptSharedAttachments"] ?? '').toString());
@@ -17103,6 +17746,7 @@ export type ReportStatusType =
 export interface SpotFleetRequestConfigData {
   AllocationStrategy?: AllocationStrategy | null;
   OnDemandAllocationStrategy?: OnDemandAllocationStrategy | null;
+  SpotMaintenanceStrategies?: SpotMaintenanceStrategies | null;
   ClientToken?: string | null;
   ExcessCapacityTerminationPolicy?: ExcessCapacityTerminationPolicy | null;
   FulfilledCapacity?: number | null;
@@ -17128,6 +17772,7 @@ export interface SpotFleetRequestConfigData {
 function SpotFleetRequestConfigData_Serialize(body: URLSearchParams, prefix: string, params: SpotFleetRequestConfigData) {
     if ("AllocationStrategy" in params) body.append(prefix+".AllocationStrategy", (params["AllocationStrategy"] ?? '').toString());
     if ("OnDemandAllocationStrategy" in params) body.append(prefix+".OnDemandAllocationStrategy", (params["OnDemandAllocationStrategy"] ?? '').toString());
+    if (params["SpotMaintenanceStrategies"] != null) SpotMaintenanceStrategies_Serialize(body, prefix+".SpotMaintenanceStrategies", params["SpotMaintenanceStrategies"]);
     if ("ClientToken" in params) body.append(prefix+".ClientToken", (params["ClientToken"] ?? '').toString());
     if ("ExcessCapacityTerminationPolicy" in params) body.append(prefix+".ExcessCapacityTerminationPolicy", (params["ExcessCapacityTerminationPolicy"] ?? '').toString());
     if ("FulfilledCapacity" in params) body.append(prefix+".FulfilledCapacity", (params["FulfilledCapacity"] ?? '').toString());
@@ -17154,6 +17799,7 @@ function SpotFleetRequestConfigData_Parse(node: xmlP.XmlNode): SpotFleetRequestC
   return {
     AllocationStrategy: node.first("allocationStrategy", false, x => (x.content ?? '') as AllocationStrategy),
     OnDemandAllocationStrategy: node.first("onDemandAllocationStrategy", false, x => (x.content ?? '') as OnDemandAllocationStrategy),
+    SpotMaintenanceStrategies: node.first("spotMaintenanceStrategies", false, SpotMaintenanceStrategies_Parse),
     ClientToken: node.first("clientToken", false, x => x.content ?? ''),
     ExcessCapacityTerminationPolicy: node.first("excessCapacityTerminationPolicy", false, x => (x.content ?? '') as ExcessCapacityTerminationPolicy),
     FulfilledCapacity: node.first("fulfilledCapacity", false, x => parseFloat(x.content ?? '0')),
@@ -17189,6 +17835,37 @@ export type AllocationStrategy =
 export type OnDemandAllocationStrategy =
 | "lowestPrice"
 | "prioritized"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 2 - tags: input, named, interface, output
+export interface SpotMaintenanceStrategies {
+  CapacityRebalance?: SpotCapacityRebalance | null;
+}
+function SpotMaintenanceStrategies_Serialize(body: URLSearchParams, prefix: string, params: SpotMaintenanceStrategies) {
+    if (params["CapacityRebalance"] != null) SpotCapacityRebalance_Serialize(body, prefix+".CapacityRebalance", params["CapacityRebalance"]);
+}
+function SpotMaintenanceStrategies_Parse(node: xmlP.XmlNode): SpotMaintenanceStrategies {
+  return {
+    CapacityRebalance: node.first("capacityRebalance", false, SpotCapacityRebalance_Parse),
+  };
+}
+
+// refs: 2 - tags: input, named, interface, output
+export interface SpotCapacityRebalance {
+  ReplacementStrategy?: ReplacementStrategy | null;
+}
+function SpotCapacityRebalance_Serialize(body: URLSearchParams, prefix: string, params: SpotCapacityRebalance) {
+    if ("ReplacementStrategy" in params) body.append(prefix+".ReplacementStrategy", (params["ReplacementStrategy"] ?? '').toString());
+}
+function SpotCapacityRebalance_Parse(node: xmlP.XmlNode): SpotCapacityRebalance {
+  return {
+    ReplacementStrategy: node.first("replacementStrategy", false, x => (x.content ?? '') as ReplacementStrategy),
+  };
+}
+
+// refs: 2 - tags: input, named, enum, output
+export type ReplacementStrategy =
+| "launch"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface, output
@@ -17741,6 +18418,59 @@ function ScheduledInstancesPlacement_Serialize(body: URLSearchParams, prefix: st
     if ("GroupName" in params) body.append(prefix+".GroupName", (params["GroupName"] ?? '').toString());
 }
 
+// refs: 4 - tags: output, named, interface
+export interface TransitGatewayMulticastDomainAssociations {
+  TransitGatewayMulticastDomainId?: string | null;
+  TransitGatewayAttachmentId?: string | null;
+  ResourceId?: string | null;
+  ResourceType?: TransitGatewayAttachmentResourceType | null;
+  ResourceOwnerId?: string | null;
+  Subnets: SubnetAssociation[];
+}
+function TransitGatewayMulticastDomainAssociations_Parse(node: xmlP.XmlNode): TransitGatewayMulticastDomainAssociations {
+  return {
+    TransitGatewayMulticastDomainId: node.first("transitGatewayMulticastDomainId", false, x => x.content ?? ''),
+    TransitGatewayAttachmentId: node.first("transitGatewayAttachmentId", false, x => x.content ?? ''),
+    ResourceId: node.first("resourceId", false, x => x.content ?? ''),
+    ResourceType: node.first("resourceType", false, x => (x.content ?? '') as TransitGatewayAttachmentResourceType),
+    ResourceOwnerId: node.first("resourceOwnerId", false, x => x.content ?? ''),
+    Subnets: node.getList("subnets", "item").map(SubnetAssociation_Parse),
+  };
+}
+
+// refs: 21 - tags: output, named, enum
+export type TransitGatewayAttachmentResourceType =
+| "vpc"
+| "vpn"
+| "direct-connect-gateway"
+| "connect"
+| "peering"
+| "tgw-peering"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 5 - tags: output, named, interface
+export interface SubnetAssociation {
+  SubnetId?: string | null;
+  State?: TransitGatewayMulitcastDomainAssociationState | null;
+}
+function SubnetAssociation_Parse(node: xmlP.XmlNode): SubnetAssociation {
+  return {
+    SubnetId: node.first("subnetId", false, x => x.content ?? ''),
+    State: node.first("state", false, x => (x.content ?? '') as TransitGatewayMulitcastDomainAssociationState),
+  };
+}
+
+// refs: 5 - tags: output, named, enum
+export type TransitGatewayMulitcastDomainAssociationState =
+| "pendingAcceptance"
+| "associating"
+| "associated"
+| "disassociating"
+| "disassociated"
+| "rejected"
+| "failed"
+| cmnP.UnexpectedEnumValue;
+
 // refs: 5 - tags: output, named, interface
 export interface TransitGatewayPeeringAttachment {
   TransitGatewayAttachmentId?: string | null;
@@ -17789,7 +18519,7 @@ function PeeringAttachmentStatus_Parse(node: xmlP.XmlNode): PeeringAttachmentSta
   };
 }
 
-// refs: 12 - tags: output, named, enum
+// refs: 15 - tags: output, named, enum
 export type TransitGatewayAttachmentState =
 | "initiating"
 | "initiatingRequest"
@@ -18123,53 +18853,6 @@ export type SubnetCidrBlockStateCode =
 | "disassociated"
 | "failing"
 | "failed"
-| cmnP.UnexpectedEnumValue;
-
-// refs: 2 - tags: output, named, interface
-export interface TransitGatewayMulticastDomainAssociations {
-  TransitGatewayMulticastDomainId?: string | null;
-  TransitGatewayAttachmentId?: string | null;
-  ResourceId?: string | null;
-  ResourceType?: TransitGatewayAttachmentResourceType | null;
-  Subnets: SubnetAssociation[];
-}
-function TransitGatewayMulticastDomainAssociations_Parse(node: xmlP.XmlNode): TransitGatewayMulticastDomainAssociations {
-  return {
-    TransitGatewayMulticastDomainId: node.first("transitGatewayMulticastDomainId", false, x => x.content ?? ''),
-    TransitGatewayAttachmentId: node.first("transitGatewayAttachmentId", false, x => x.content ?? ''),
-    ResourceId: node.first("resourceId", false, x => x.content ?? ''),
-    ResourceType: node.first("resourceType", false, x => (x.content ?? '') as TransitGatewayAttachmentResourceType),
-    Subnets: node.getList("subnets", "item").map(SubnetAssociation_Parse),
-  };
-}
-
-// refs: 19 - tags: output, named, enum
-export type TransitGatewayAttachmentResourceType =
-| "vpc"
-| "vpn"
-| "direct-connect-gateway"
-| "peering"
-| "tgw-peering"
-| cmnP.UnexpectedEnumValue;
-
-// refs: 3 - tags: output, named, interface
-export interface SubnetAssociation {
-  SubnetId?: string | null;
-  State?: TransitGatewayMulitcastDomainAssociationState | null;
-}
-function SubnetAssociation_Parse(node: xmlP.XmlNode): SubnetAssociation {
-  return {
-    SubnetId: node.first("subnetId", false, x => x.content ?? ''),
-    State: node.first("state", false, x => (x.content ?? '') as TransitGatewayMulitcastDomainAssociationState),
-  };
-}
-
-// refs: 3 - tags: output, named, enum
-export type TransitGatewayMulitcastDomainAssociationState =
-| "associating"
-| "associated"
-| "disassociating"
-| "disassociated"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
@@ -19102,6 +19785,7 @@ export interface LaunchTemplateEbsBlockDevice {
   SnapshotId?: string | null;
   VolumeSize?: number | null;
   VolumeType?: VolumeType | null;
+  Throughput?: number | null;
 }
 function LaunchTemplateEbsBlockDevice_Parse(node: xmlP.XmlNode): LaunchTemplateEbsBlockDevice {
   return {
@@ -19112,6 +19796,7 @@ function LaunchTemplateEbsBlockDevice_Parse(node: xmlP.XmlNode): LaunchTemplateE
     SnapshotId: node.first("snapshotId", false, x => x.content ?? ''),
     VolumeSize: node.first("volumeSize", false, x => parseInt(x.content ?? '0')),
     VolumeType: node.first("volumeType", false, x => (x.content ?? '') as VolumeType),
+    Throughput: node.first("throughput", false, x => parseInt(x.content ?? '0')),
   };
 }
 
@@ -19584,6 +20269,34 @@ function NetworkAclEntry_Parse(node: xmlP.XmlNode): NetworkAclEntry {
     Protocol: node.first("protocol", false, x => x.content ?? ''),
     RuleAction: node.first("ruleAction", false, x => (x.content ?? '') as RuleAction),
     RuleNumber: node.first("ruleNumber", false, x => parseInt(x.content ?? '0')),
+  };
+}
+
+// refs: 2 - tags: output, named, interface
+export interface NetworkInsightsPath {
+  NetworkInsightsPathId?: string | null;
+  NetworkInsightsPathArn?: string | null;
+  CreatedDate?: Date | number | null;
+  Source?: string | null;
+  Destination?: string | null;
+  SourceIp?: string | null;
+  DestinationIp?: string | null;
+  Protocol?: Protocol | null;
+  DestinationPort?: number | null;
+  Tags: Tag[];
+}
+function NetworkInsightsPath_Parse(node: xmlP.XmlNode): NetworkInsightsPath {
+  return {
+    NetworkInsightsPathId: node.first("networkInsightsPathId", false, x => x.content ?? ''),
+    NetworkInsightsPathArn: node.first("networkInsightsPathArn", false, x => x.content ?? ''),
+    CreatedDate: node.first("createdDate", false, x => xmlP.parseTimestamp(x.content)),
+    Source: node.first("source", false, x => x.content ?? ''),
+    Destination: node.first("destination", false, x => x.content ?? ''),
+    SourceIp: node.first("sourceIp", false, x => x.content ?? ''),
+    DestinationIp: node.first("destinationIp", false, x => x.content ?? ''),
+    Protocol: node.first("protocol", false, x => (x.content ?? '') as Protocol),
+    DestinationPort: node.first("destinationPort", false, x => parseInt(x.content ?? '0')),
+    Tags: node.getList("tagSet", "item").map(Tag_Parse),
   };
 }
 
@@ -20121,6 +20834,7 @@ export type TransitGatewayState =
 // refs: 4 - tags: output, named, interface
 export interface TransitGatewayOptions {
   AmazonSideAsn?: number | null;
+  TransitGatewayCidrBlocks: string[];
   AutoAcceptSharedAttachments?: AutoAcceptSharedAttachmentsValue | null;
   DefaultRouteTableAssociation?: DefaultRouteTableAssociationValue | null;
   AssociationDefaultRouteTableId?: string | null;
@@ -20133,6 +20847,7 @@ export interface TransitGatewayOptions {
 function TransitGatewayOptions_Parse(node: xmlP.XmlNode): TransitGatewayOptions {
   return {
     AmazonSideAsn: node.first("amazonSideAsn", false, x => parseInt(x.content ?? '0')),
+    TransitGatewayCidrBlocks: node.getList("transitGatewayCidrBlocks", "item").map(x => x.content ?? ''),
     AutoAcceptSharedAttachments: node.first("autoAcceptSharedAttachments", false, x => (x.content ?? '') as AutoAcceptSharedAttachmentsValue),
     DefaultRouteTableAssociation: node.first("defaultRouteTableAssociation", false, x => (x.content ?? '') as DefaultRouteTableAssociationValue),
     AssociationDefaultRouteTableId: node.first("associationDefaultRouteTableId", false, x => x.content ?? ''),
@@ -20145,9 +20860,114 @@ function TransitGatewayOptions_Parse(node: xmlP.XmlNode): TransitGatewayOptions 
 }
 
 // refs: 3 - tags: output, named, interface
+export interface TransitGatewayConnect {
+  TransitGatewayAttachmentId?: string | null;
+  TransportTransitGatewayAttachmentId?: string | null;
+  TransitGatewayId?: string | null;
+  State?: TransitGatewayAttachmentState | null;
+  CreationTime?: Date | number | null;
+  Options?: TransitGatewayConnectOptions | null;
+  Tags: Tag[];
+}
+function TransitGatewayConnect_Parse(node: xmlP.XmlNode): TransitGatewayConnect {
+  return {
+    TransitGatewayAttachmentId: node.first("transitGatewayAttachmentId", false, x => x.content ?? ''),
+    TransportTransitGatewayAttachmentId: node.first("transportTransitGatewayAttachmentId", false, x => x.content ?? ''),
+    TransitGatewayId: node.first("transitGatewayId", false, x => x.content ?? ''),
+    State: node.first("state", false, x => (x.content ?? '') as TransitGatewayAttachmentState),
+    CreationTime: node.first("creationTime", false, x => xmlP.parseTimestamp(x.content)),
+    Options: node.first("options", false, TransitGatewayConnectOptions_Parse),
+    Tags: node.getList("tagSet", "item").map(Tag_Parse),
+  };
+}
+
+// refs: 3 - tags: output, named, interface
+export interface TransitGatewayConnectOptions {
+  Protocol?: ProtocolValue | null;
+}
+function TransitGatewayConnectOptions_Parse(node: xmlP.XmlNode): TransitGatewayConnectOptions {
+  return {
+    Protocol: node.first("protocol", false, x => (x.content ?? '') as ProtocolValue),
+  };
+}
+
+// refs: 3 - tags: output, named, interface
+export interface TransitGatewayConnectPeer {
+  TransitGatewayAttachmentId?: string | null;
+  TransitGatewayConnectPeerId?: string | null;
+  State?: TransitGatewayConnectPeerState | null;
+  CreationTime?: Date | number | null;
+  ConnectPeerConfiguration?: TransitGatewayConnectPeerConfiguration | null;
+  Tags: Tag[];
+}
+function TransitGatewayConnectPeer_Parse(node: xmlP.XmlNode): TransitGatewayConnectPeer {
+  return {
+    TransitGatewayAttachmentId: node.first("transitGatewayAttachmentId", false, x => x.content ?? ''),
+    TransitGatewayConnectPeerId: node.first("transitGatewayConnectPeerId", false, x => x.content ?? ''),
+    State: node.first("state", false, x => (x.content ?? '') as TransitGatewayConnectPeerState),
+    CreationTime: node.first("creationTime", false, x => xmlP.parseTimestamp(x.content)),
+    ConnectPeerConfiguration: node.first("connectPeerConfiguration", false, TransitGatewayConnectPeerConfiguration_Parse),
+    Tags: node.getList("tagSet", "item").map(Tag_Parse),
+  };
+}
+
+// refs: 3 - tags: output, named, enum
+export type TransitGatewayConnectPeerState =
+| "pending"
+| "available"
+| "deleting"
+| "deleted"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 3 - tags: output, named, interface
+export interface TransitGatewayConnectPeerConfiguration {
+  TransitGatewayAddress?: string | null;
+  PeerAddress?: string | null;
+  InsideCidrBlocks: string[];
+  Protocol?: ProtocolValue | null;
+  BgpConfigurations: TransitGatewayAttachmentBgpConfiguration[];
+}
+function TransitGatewayConnectPeerConfiguration_Parse(node: xmlP.XmlNode): TransitGatewayConnectPeerConfiguration {
+  return {
+    TransitGatewayAddress: node.first("transitGatewayAddress", false, x => x.content ?? ''),
+    PeerAddress: node.first("peerAddress", false, x => x.content ?? ''),
+    InsideCidrBlocks: node.getList("insideCidrBlocks", "item").map(x => x.content ?? ''),
+    Protocol: node.first("protocol", false, x => (x.content ?? '') as ProtocolValue),
+    BgpConfigurations: node.getList("bgpConfigurations", "item").map(TransitGatewayAttachmentBgpConfiguration_Parse),
+  };
+}
+
+// refs: 3 - tags: output, named, interface
+export interface TransitGatewayAttachmentBgpConfiguration {
+  TransitGatewayAsn?: number | null;
+  PeerAsn?: number | null;
+  TransitGatewayAddress?: string | null;
+  PeerAddress?: string | null;
+  BgpStatus?: BgpStatus | null;
+}
+function TransitGatewayAttachmentBgpConfiguration_Parse(node: xmlP.XmlNode): TransitGatewayAttachmentBgpConfiguration {
+  return {
+    TransitGatewayAsn: node.first("transitGatewayAsn", false, x => parseInt(x.content ?? '0')),
+    PeerAsn: node.first("peerAsn", false, x => parseInt(x.content ?? '0')),
+    TransitGatewayAddress: node.first("transitGatewayAddress", false, x => x.content ?? ''),
+    PeerAddress: node.first("peerAddress", false, x => x.content ?? ''),
+    BgpStatus: node.first("bgpStatus", false, x => (x.content ?? '') as BgpStatus),
+  };
+}
+
+// refs: 3 - tags: output, named, enum
+export type BgpStatus =
+| "up"
+| "down"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 3 - tags: output, named, interface
 export interface TransitGatewayMulticastDomain {
   TransitGatewayMulticastDomainId?: string | null;
   TransitGatewayId?: string | null;
+  TransitGatewayMulticastDomainArn?: string | null;
+  OwnerId?: string | null;
+  Options?: TransitGatewayMulticastDomainOptions | null;
   State?: TransitGatewayMulticastDomainState | null;
   CreationTime?: Date | number | null;
   Tags: Tag[];
@@ -20156,9 +20976,26 @@ function TransitGatewayMulticastDomain_Parse(node: xmlP.XmlNode): TransitGateway
   return {
     TransitGatewayMulticastDomainId: node.first("transitGatewayMulticastDomainId", false, x => x.content ?? ''),
     TransitGatewayId: node.first("transitGatewayId", false, x => x.content ?? ''),
+    TransitGatewayMulticastDomainArn: node.first("transitGatewayMulticastDomainArn", false, x => x.content ?? ''),
+    OwnerId: node.first("ownerId", false, x => x.content ?? ''),
+    Options: node.first("options", false, TransitGatewayMulticastDomainOptions_Parse),
     State: node.first("state", false, x => (x.content ?? '') as TransitGatewayMulticastDomainState),
     CreationTime: node.first("creationTime", false, x => xmlP.parseTimestamp(x.content)),
     Tags: node.getList("tagSet", "item").map(Tag_Parse),
+  };
+}
+
+// refs: 3 - tags: output, named, interface
+export interface TransitGatewayMulticastDomainOptions {
+  Igmpv2Support?: Igmpv2SupportValue | null;
+  StaticSourcesSupport?: StaticSourcesSupportValue | null;
+  AutoAcceptSharedAssociations?: AutoAcceptSharedAssociationsValue | null;
+}
+function TransitGatewayMulticastDomainOptions_Parse(node: xmlP.XmlNode): TransitGatewayMulticastDomainOptions {
+  return {
+    Igmpv2Support: node.first("igmpv2Support", false, x => (x.content ?? '') as Igmpv2SupportValue),
+    StaticSourcesSupport: node.first("staticSourcesSupport", false, x => (x.content ?? '') as StaticSourcesSupportValue),
+    AutoAcceptSharedAssociations: node.first("autoAcceptSharedAssociations", false, x => (x.content ?? '') as AutoAcceptSharedAssociationsValue),
   };
 }
 
@@ -20432,6 +21269,7 @@ export interface ServiceConfiguration {
   AcceptanceRequired?: boolean | null;
   ManagesVpcEndpoints?: boolean | null;
   NetworkLoadBalancerArns: string[];
+  GatewayLoadBalancerArns: string[];
   BaseEndpointDnsNames: string[];
   PrivateDnsName?: string | null;
   PrivateDnsNameConfiguration?: PrivateDnsNameConfiguration | null;
@@ -20447,6 +21285,7 @@ function ServiceConfiguration_Parse(node: xmlP.XmlNode): ServiceConfiguration {
     AcceptanceRequired: node.first("acceptanceRequired", false, x => x.content === 'true'),
     ManagesVpcEndpoints: node.first("managesVpcEndpoints", false, x => x.content === 'true'),
     NetworkLoadBalancerArns: node.getList("networkLoadBalancerArnSet", "item").map(x => x.content ?? ''),
+    GatewayLoadBalancerArns: node.getList("gatewayLoadBalancerArnSet", "item").map(x => x.content ?? ''),
     BaseEndpointDnsNames: node.getList("baseEndpointDnsNameSet", "item").map(x => x.content ?? ''),
     PrivateDnsName: node.first("privateDnsName", false, x => x.content ?? ''),
     PrivateDnsNameConfiguration: node.first("privateDnsNameConfiguration", false, PrivateDnsNameConfiguration_Parse),
@@ -20468,6 +21307,7 @@ function ServiceTypeDetail_Parse(node: xmlP.XmlNode): ServiceTypeDetail {
 export type ServiceType =
 | "Interface"
 | "Gateway"
+| "GatewayLoadBalancer"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, enum
@@ -21117,6 +21957,7 @@ export interface ClientVpnConnection {
   CommonName?: string | null;
   Status?: ClientVpnConnectionStatus | null;
   ConnectionEndTime?: string | null;
+  PostureComplianceStatuses: string[];
 }
 function ClientVpnConnection_Parse(node: xmlP.XmlNode): ClientVpnConnection {
   return {
@@ -21133,6 +21974,7 @@ function ClientVpnConnection_Parse(node: xmlP.XmlNode): ClientVpnConnection {
     CommonName: node.first("commonName", false, x => x.content ?? ''),
     Status: node.first("status", false, ClientVpnConnectionStatus_Parse),
     ConnectionEndTime: node.first("connectionEndTime", false, x => x.content ?? ''),
+    PostureComplianceStatuses: node.getList("postureComplianceStatusSet", "item").map(x => x.content ?? ''),
   };
 }
 
@@ -21178,6 +22020,7 @@ export interface ClientVpnEndpoint {
   SecurityGroupIds: string[];
   VpcId?: string | null;
   SelfServicePortalUrl?: string | null;
+  ClientConnectOptions?: ClientConnectResponseOptions | null;
 }
 function ClientVpnEndpoint_Parse(node: xmlP.XmlNode): ClientVpnEndpoint {
   return {
@@ -21201,6 +22044,7 @@ function ClientVpnEndpoint_Parse(node: xmlP.XmlNode): ClientVpnEndpoint {
     SecurityGroupIds: node.getList("securityGroupIdSet", "item").map(x => x.content ?? ''),
     VpcId: node.first("vpcId", false, x => x.content ?? ''),
     SelfServicePortalUrl: node.first("selfServicePortalUrl", false, x => x.content ?? ''),
+    ClientConnectOptions: node.first("clientConnectOptions", false, ClientConnectResponseOptions_Parse),
   };
 }
 
@@ -21288,6 +22132,38 @@ function ConnectionLogResponseOptions_Parse(node: xmlP.XmlNode): ConnectionLogRe
     Enabled: node.first("Enabled", false, x => x.content === 'true'),
   };
 }
+
+// refs: 1 - tags: output, named, interface
+export interface ClientConnectResponseOptions {
+  Enabled?: boolean | null;
+  LambdaFunctionArn?: string | null;
+  Status?: ClientVpnEndpointAttributeStatus | null;
+}
+function ClientConnectResponseOptions_Parse(node: xmlP.XmlNode): ClientConnectResponseOptions {
+  return {
+    Enabled: node.first("enabled", false, x => x.content === 'true'),
+    LambdaFunctionArn: node.first("lambdaFunctionArn", false, x => x.content ?? ''),
+    Status: node.first("status", false, ClientVpnEndpointAttributeStatus_Parse),
+  };
+}
+
+// refs: 1 - tags: output, named, interface
+export interface ClientVpnEndpointAttributeStatus {
+  Code?: ClientVpnEndpointAttributeStatusCode | null;
+  Message?: string | null;
+}
+function ClientVpnEndpointAttributeStatus_Parse(node: xmlP.XmlNode): ClientVpnEndpointAttributeStatus {
+  return {
+    Code: node.first("code", false, x => (x.content ?? '') as ClientVpnEndpointAttributeStatusCode),
+    Message: node.first("message", false, x => x.content ?? ''),
+  };
+}
+
+// refs: 1 - tags: output, named, enum
+export type ClientVpnEndpointAttributeStatusCode =
+| "applying"
+| "applied"
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface ClientVpnRoute {
@@ -21718,6 +22594,7 @@ function TargetCapacitySpecification_Parse(node: xmlP.XmlNode): TargetCapacitySp
 // refs: 1 - tags: output, named, interface
 export interface SpotOptions {
   AllocationStrategy?: SpotAllocationStrategy | null;
+  MaintenanceStrategies?: FleetSpotMaintenanceStrategies | null;
   InstanceInterruptionBehavior?: SpotInstanceInterruptionBehavior | null;
   InstancePoolsToUseCount?: number | null;
   SingleInstanceType?: boolean | null;
@@ -21728,12 +22605,33 @@ export interface SpotOptions {
 function SpotOptions_Parse(node: xmlP.XmlNode): SpotOptions {
   return {
     AllocationStrategy: node.first("allocationStrategy", false, x => (x.content ?? '') as SpotAllocationStrategy),
+    MaintenanceStrategies: node.first("maintenanceStrategies", false, FleetSpotMaintenanceStrategies_Parse),
     InstanceInterruptionBehavior: node.first("instanceInterruptionBehavior", false, x => (x.content ?? '') as SpotInstanceInterruptionBehavior),
     InstancePoolsToUseCount: node.first("instancePoolsToUseCount", false, x => parseInt(x.content ?? '0')),
     SingleInstanceType: node.first("singleInstanceType", false, x => x.content === 'true'),
     SingleAvailabilityZone: node.first("singleAvailabilityZone", false, x => x.content === 'true'),
     MinTargetCapacity: node.first("minTargetCapacity", false, x => parseInt(x.content ?? '0')),
     MaxTotalPrice: node.first("maxTotalPrice", false, x => x.content ?? ''),
+  };
+}
+
+// refs: 1 - tags: output, named, interface
+export interface FleetSpotMaintenanceStrategies {
+  CapacityRebalance?: FleetSpotCapacityRebalance | null;
+}
+function FleetSpotMaintenanceStrategies_Parse(node: xmlP.XmlNode): FleetSpotMaintenanceStrategies {
+  return {
+    CapacityRebalance: node.first("capacityRebalance", false, FleetSpotCapacityRebalance_Parse),
+  };
+}
+
+// refs: 1 - tags: output, named, interface
+export interface FleetSpotCapacityRebalance {
+  ReplacementStrategy?: FleetReplacementStrategy | null;
+}
+function FleetSpotCapacityRebalance_Parse(node: xmlP.XmlNode): FleetSpotCapacityRebalance {
+  return {
+    ReplacementStrategy: node.first("replacementStrategy", false, x => (x.content ?? '') as FleetReplacementStrategy),
   };
 }
 
@@ -22792,6 +23690,9 @@ export type EbsNvmeSupport =
 export interface NetworkInfo {
   NetworkPerformance?: string | null;
   MaximumNetworkInterfaces?: number | null;
+  MaximumNetworkCards?: number | null;
+  DefaultNetworkCardIndex?: number | null;
+  NetworkCards: NetworkCardInfo[];
   Ipv4AddressesPerInterface?: number | null;
   Ipv6AddressesPerInterface?: number | null;
   Ipv6Supported?: boolean | null;
@@ -22802,11 +23703,28 @@ function NetworkInfo_Parse(node: xmlP.XmlNode): NetworkInfo {
   return {
     NetworkPerformance: node.first("networkPerformance", false, x => x.content ?? ''),
     MaximumNetworkInterfaces: node.first("maximumNetworkInterfaces", false, x => parseInt(x.content ?? '0')),
+    MaximumNetworkCards: node.first("maximumNetworkCards", false, x => parseInt(x.content ?? '0')),
+    DefaultNetworkCardIndex: node.first("defaultNetworkCardIndex", false, x => parseInt(x.content ?? '0')),
+    NetworkCards: node.getList("networkCards", "item").map(NetworkCardInfo_Parse),
     Ipv4AddressesPerInterface: node.first("ipv4AddressesPerInterface", false, x => parseInt(x.content ?? '0')),
     Ipv6AddressesPerInterface: node.first("ipv6AddressesPerInterface", false, x => parseInt(x.content ?? '0')),
     Ipv6Supported: node.first("ipv6Supported", false, x => x.content === 'true'),
     EnaSupport: node.first("enaSupport", false, x => (x.content ?? '') as EnaSupport),
     EfaSupported: node.first("efaSupported", false, x => x.content === 'true'),
+  };
+}
+
+// refs: 1 - tags: output, named, interface
+export interface NetworkCardInfo {
+  NetworkCardIndex?: number | null;
+  NetworkPerformance?: string | null;
+  MaximumNetworkInterfaces?: number | null;
+}
+function NetworkCardInfo_Parse(node: xmlP.XmlNode): NetworkCardInfo {
+  return {
+    NetworkCardIndex: node.first("networkCardIndex", false, x => parseInt(x.content ?? '0')),
+    NetworkPerformance: node.first("networkPerformance", false, x => x.content ?? ''),
+    MaximumNetworkInterfaces: node.first("maximumNetworkInterfaces", false, x => parseInt(x.content ?? '0')),
   };
 }
 
@@ -23419,6 +24337,313 @@ export type MoveStatus =
 | "movingToVpc"
 | "restoringToClassic"
 | cmnP.UnexpectedEnumValue;
+
+// refs: 2 - tags: output, named, interface
+export interface NetworkInsightsAnalysis {
+  NetworkInsightsAnalysisId?: string | null;
+  NetworkInsightsAnalysisArn?: string | null;
+  NetworkInsightsPathId?: string | null;
+  FilterInArns: string[];
+  StartDate?: Date | number | null;
+  Status?: AnalysisStatus | null;
+  StatusMessage?: string | null;
+  NetworkPathFound?: boolean | null;
+  ForwardPathComponents: PathComponent[];
+  ReturnPathComponents: PathComponent[];
+  Explanations: Explanation[];
+  AlternatePathHints: AlternatePathHint[];
+  Tags: Tag[];
+}
+function NetworkInsightsAnalysis_Parse(node: xmlP.XmlNode): NetworkInsightsAnalysis {
+  return {
+    NetworkInsightsAnalysisId: node.first("networkInsightsAnalysisId", false, x => x.content ?? ''),
+    NetworkInsightsAnalysisArn: node.first("networkInsightsAnalysisArn", false, x => x.content ?? ''),
+    NetworkInsightsPathId: node.first("networkInsightsPathId", false, x => x.content ?? ''),
+    FilterInArns: node.getList("filterInArnSet", "item").map(x => x.content ?? ''),
+    StartDate: node.first("startDate", false, x => xmlP.parseTimestamp(x.content)),
+    Status: node.first("status", false, x => (x.content ?? '') as AnalysisStatus),
+    StatusMessage: node.first("statusMessage", false, x => x.content ?? ''),
+    NetworkPathFound: node.first("networkPathFound", false, x => x.content === 'true'),
+    ForwardPathComponents: node.getList("forwardPathComponentSet", "item").map(PathComponent_Parse),
+    ReturnPathComponents: node.getList("returnPathComponentSet", "item").map(PathComponent_Parse),
+    Explanations: node.getList("explanationSet", "item").map(Explanation_Parse),
+    AlternatePathHints: node.getList("alternatePathHintSet", "item").map(AlternatePathHint_Parse),
+    Tags: node.getList("tagSet", "item").map(Tag_Parse),
+  };
+}
+
+// refs: 2 - tags: output, named, enum
+export type AnalysisStatus =
+| "running"
+| "succeeded"
+| "failed"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 4 - tags: output, named, interface
+export interface PathComponent {
+  SequenceNumber?: number | null;
+  AclRule?: AnalysisAclRule | null;
+  Component?: AnalysisComponent | null;
+  DestinationVpc?: AnalysisComponent | null;
+  OutboundHeader?: AnalysisPacketHeader | null;
+  InboundHeader?: AnalysisPacketHeader | null;
+  RouteTableRoute?: AnalysisRouteTableRoute | null;
+  SecurityGroupRule?: AnalysisSecurityGroupRule | null;
+  SourceVpc?: AnalysisComponent | null;
+  Subnet?: AnalysisComponent | null;
+  Vpc?: AnalysisComponent | null;
+}
+function PathComponent_Parse(node: xmlP.XmlNode): PathComponent {
+  return {
+    SequenceNumber: node.first("sequenceNumber", false, x => parseInt(x.content ?? '0')),
+    AclRule: node.first("aclRule", false, AnalysisAclRule_Parse),
+    Component: node.first("component", false, AnalysisComponent_Parse),
+    DestinationVpc: node.first("destinationVpc", false, AnalysisComponent_Parse),
+    OutboundHeader: node.first("outboundHeader", false, AnalysisPacketHeader_Parse),
+    InboundHeader: node.first("inboundHeader", false, AnalysisPacketHeader_Parse),
+    RouteTableRoute: node.first("routeTableRoute", false, AnalysisRouteTableRoute_Parse),
+    SecurityGroupRule: node.first("securityGroupRule", false, AnalysisSecurityGroupRule_Parse),
+    SourceVpc: node.first("sourceVpc", false, AnalysisComponent_Parse),
+    Subnet: node.first("subnet", false, AnalysisComponent_Parse),
+    Vpc: node.first("vpc", false, AnalysisComponent_Parse),
+  };
+}
+
+// refs: 6 - tags: output, named, interface
+export interface AnalysisAclRule {
+  Cidr?: string | null;
+  Egress?: boolean | null;
+  PortRange?: PortRange | null;
+  Protocol?: string | null;
+  RuleAction?: string | null;
+  RuleNumber?: number | null;
+}
+function AnalysisAclRule_Parse(node: xmlP.XmlNode): AnalysisAclRule {
+  return {
+    Cidr: node.first("cidr", false, x => x.content ?? ''),
+    Egress: node.first("egress", false, x => x.content === 'true'),
+    PortRange: node.first("portRange", false, PortRange_Parse),
+    Protocol: node.first("protocol", false, x => x.content ?? ''),
+    RuleAction: node.first("ruleAction", false, x => x.content ?? ''),
+    RuleNumber: node.first("ruleNumber", false, x => parseInt(x.content ?? '0')),
+  };
+}
+
+// refs: 72 - tags: output, named, interface
+export interface AnalysisComponent {
+  Id?: string | null;
+  Arn?: string | null;
+}
+function AnalysisComponent_Parse(node: xmlP.XmlNode): AnalysisComponent {
+  return {
+    Id: node.first("id", false, x => x.content ?? ''),
+    Arn: node.first("arn", false, x => x.content ?? ''),
+  };
+}
+
+// refs: 8 - tags: output, named, interface
+export interface AnalysisPacketHeader {
+  DestinationAddresses: string[];
+  DestinationPortRanges: PortRange[];
+  Protocol?: string | null;
+  SourceAddresses: string[];
+  SourcePortRanges: PortRange[];
+}
+function AnalysisPacketHeader_Parse(node: xmlP.XmlNode): AnalysisPacketHeader {
+  return {
+    DestinationAddresses: node.getList("destinationAddressSet", "item").map(x => x.content ?? ''),
+    DestinationPortRanges: node.getList("destinationPortRangeSet", "item").map(PortRange_Parse),
+    Protocol: node.first("protocol", false, x => x.content ?? ''),
+    SourceAddresses: node.getList("sourceAddressSet", "item").map(x => x.content ?? ''),
+    SourcePortRanges: node.getList("sourcePortRangeSet", "item").map(PortRange_Parse),
+  };
+}
+
+// refs: 6 - tags: output, named, interface
+export interface AnalysisRouteTableRoute {
+  DestinationCidr?: string | null;
+  DestinationPrefixListId?: string | null;
+  EgressOnlyInternetGatewayId?: string | null;
+  GatewayId?: string | null;
+  InstanceId?: string | null;
+  NatGatewayId?: string | null;
+  NetworkInterfaceId?: string | null;
+  Origin?: string | null;
+  TransitGatewayId?: string | null;
+  VpcPeeringConnectionId?: string | null;
+}
+function AnalysisRouteTableRoute_Parse(node: xmlP.XmlNode): AnalysisRouteTableRoute {
+  return {
+    DestinationCidr: node.first("destinationCidr", false, x => x.content ?? ''),
+    DestinationPrefixListId: node.first("destinationPrefixListId", false, x => x.content ?? ''),
+    EgressOnlyInternetGatewayId: node.first("egressOnlyInternetGatewayId", false, x => x.content ?? ''),
+    GatewayId: node.first("gatewayId", false, x => x.content ?? ''),
+    InstanceId: node.first("instanceId", false, x => x.content ?? ''),
+    NatGatewayId: node.first("natGatewayId", false, x => x.content ?? ''),
+    NetworkInterfaceId: node.first("networkInterfaceId", false, x => x.content ?? ''),
+    Origin: node.first("origin", false, x => x.content ?? ''),
+    TransitGatewayId: node.first("transitGatewayId", false, x => x.content ?? ''),
+    VpcPeeringConnectionId: node.first("vpcPeeringConnectionId", false, x => x.content ?? ''),
+  };
+}
+
+// refs: 6 - tags: output, named, interface
+export interface AnalysisSecurityGroupRule {
+  Cidr?: string | null;
+  Direction?: string | null;
+  SecurityGroupId?: string | null;
+  PortRange?: PortRange | null;
+  PrefixListId?: string | null;
+  Protocol?: string | null;
+}
+function AnalysisSecurityGroupRule_Parse(node: xmlP.XmlNode): AnalysisSecurityGroupRule {
+  return {
+    Cidr: node.first("cidr", false, x => x.content ?? ''),
+    Direction: node.first("direction", false, x => x.content ?? ''),
+    SecurityGroupId: node.first("securityGroupId", false, x => x.content ?? ''),
+    PortRange: node.first("portRange", false, PortRange_Parse),
+    PrefixListId: node.first("prefixListId", false, x => x.content ?? ''),
+    Protocol: node.first("protocol", false, x => x.content ?? ''),
+  };
+}
+
+// refs: 2 - tags: output, named, interface
+export interface Explanation {
+  Acl?: AnalysisComponent | null;
+  AclRule?: AnalysisAclRule | null;
+  Address?: string | null;
+  Addresses: string[];
+  AttachedTo?: AnalysisComponent | null;
+  AvailabilityZones: string[];
+  Cidrs: string[];
+  Component?: AnalysisComponent | null;
+  CustomerGateway?: AnalysisComponent | null;
+  Destination?: AnalysisComponent | null;
+  DestinationVpc?: AnalysisComponent | null;
+  Direction?: string | null;
+  ExplanationCode?: string | null;
+  IngressRouteTable?: AnalysisComponent | null;
+  InternetGateway?: AnalysisComponent | null;
+  LoadBalancerArn?: string | null;
+  ClassicLoadBalancerListener?: AnalysisLoadBalancerListener | null;
+  LoadBalancerListenerPort?: number | null;
+  LoadBalancerTarget?: AnalysisLoadBalancerTarget | null;
+  LoadBalancerTargetGroup?: AnalysisComponent | null;
+  LoadBalancerTargetGroups: AnalysisComponent[];
+  LoadBalancerTargetPort?: number | null;
+  ElasticLoadBalancerListener?: AnalysisComponent | null;
+  MissingComponent?: string | null;
+  NatGateway?: AnalysisComponent | null;
+  NetworkInterface?: AnalysisComponent | null;
+  PacketField?: string | null;
+  VpcPeeringConnection?: AnalysisComponent | null;
+  Port?: number | null;
+  PortRanges: PortRange[];
+  PrefixList?: AnalysisComponent | null;
+  Protocols: string[];
+  RouteTableRoute?: AnalysisRouteTableRoute | null;
+  RouteTable?: AnalysisComponent | null;
+  SecurityGroup?: AnalysisComponent | null;
+  SecurityGroupRule?: AnalysisSecurityGroupRule | null;
+  SecurityGroups: AnalysisComponent[];
+  SourceVpc?: AnalysisComponent | null;
+  State?: string | null;
+  Subnet?: AnalysisComponent | null;
+  SubnetRouteTable?: AnalysisComponent | null;
+  Vpc?: AnalysisComponent | null;
+  VpcEndpoint?: AnalysisComponent | null;
+  VpnConnection?: AnalysisComponent | null;
+  VpnGateway?: AnalysisComponent | null;
+}
+function Explanation_Parse(node: xmlP.XmlNode): Explanation {
+  return {
+    Acl: node.first("acl", false, AnalysisComponent_Parse),
+    AclRule: node.first("aclRule", false, AnalysisAclRule_Parse),
+    Address: node.first("address", false, x => x.content ?? ''),
+    Addresses: node.getList("addressSet", "item").map(x => x.content ?? ''),
+    AttachedTo: node.first("attachedTo", false, AnalysisComponent_Parse),
+    AvailabilityZones: node.getList("availabilityZoneSet", "item").map(x => x.content ?? ''),
+    Cidrs: node.getList("cidrSet", "item").map(x => x.content ?? ''),
+    Component: node.first("component", false, AnalysisComponent_Parse),
+    CustomerGateway: node.first("customerGateway", false, AnalysisComponent_Parse),
+    Destination: node.first("destination", false, AnalysisComponent_Parse),
+    DestinationVpc: node.first("destinationVpc", false, AnalysisComponent_Parse),
+    Direction: node.first("direction", false, x => x.content ?? ''),
+    ExplanationCode: node.first("explanationCode", false, x => x.content ?? ''),
+    IngressRouteTable: node.first("ingressRouteTable", false, AnalysisComponent_Parse),
+    InternetGateway: node.first("internetGateway", false, AnalysisComponent_Parse),
+    LoadBalancerArn: node.first("loadBalancerArn", false, x => x.content ?? ''),
+    ClassicLoadBalancerListener: node.first("classicLoadBalancerListener", false, AnalysisLoadBalancerListener_Parse),
+    LoadBalancerListenerPort: node.first("loadBalancerListenerPort", false, x => parseInt(x.content ?? '0')),
+    LoadBalancerTarget: node.first("loadBalancerTarget", false, AnalysisLoadBalancerTarget_Parse),
+    LoadBalancerTargetGroup: node.first("loadBalancerTargetGroup", false, AnalysisComponent_Parse),
+    LoadBalancerTargetGroups: node.getList("loadBalancerTargetGroupSet", "item").map(AnalysisComponent_Parse),
+    LoadBalancerTargetPort: node.first("loadBalancerTargetPort", false, x => parseInt(x.content ?? '0')),
+    ElasticLoadBalancerListener: node.first("elasticLoadBalancerListener", false, AnalysisComponent_Parse),
+    MissingComponent: node.first("missingComponent", false, x => x.content ?? ''),
+    NatGateway: node.first("natGateway", false, AnalysisComponent_Parse),
+    NetworkInterface: node.first("networkInterface", false, AnalysisComponent_Parse),
+    PacketField: node.first("packetField", false, x => x.content ?? ''),
+    VpcPeeringConnection: node.first("vpcPeeringConnection", false, AnalysisComponent_Parse),
+    Port: node.first("port", false, x => parseInt(x.content ?? '0')),
+    PortRanges: node.getList("portRangeSet", "item").map(PortRange_Parse),
+    PrefixList: node.first("prefixList", false, AnalysisComponent_Parse),
+    Protocols: node.getList("protocolSet", "item").map(x => x.content ?? ''),
+    RouteTableRoute: node.first("routeTableRoute", false, AnalysisRouteTableRoute_Parse),
+    RouteTable: node.first("routeTable", false, AnalysisComponent_Parse),
+    SecurityGroup: node.first("securityGroup", false, AnalysisComponent_Parse),
+    SecurityGroupRule: node.first("securityGroupRule", false, AnalysisSecurityGroupRule_Parse),
+    SecurityGroups: node.getList("securityGroupSet", "item").map(AnalysisComponent_Parse),
+    SourceVpc: node.first("sourceVpc", false, AnalysisComponent_Parse),
+    State: node.first("state", false, x => x.content ?? ''),
+    Subnet: node.first("subnet", false, AnalysisComponent_Parse),
+    SubnetRouteTable: node.first("subnetRouteTable", false, AnalysisComponent_Parse),
+    Vpc: node.first("vpc", false, AnalysisComponent_Parse),
+    VpcEndpoint: node.first("vpcEndpoint", false, AnalysisComponent_Parse),
+    VpnConnection: node.first("vpnConnection", false, AnalysisComponent_Parse),
+    VpnGateway: node.first("vpnGateway", false, AnalysisComponent_Parse),
+  };
+}
+
+// refs: 2 - tags: output, named, interface
+export interface AnalysisLoadBalancerListener {
+  LoadBalancerPort?: number | null;
+  InstancePort?: number | null;
+}
+function AnalysisLoadBalancerListener_Parse(node: xmlP.XmlNode): AnalysisLoadBalancerListener {
+  return {
+    LoadBalancerPort: node.first("loadBalancerPort", false, x => parseInt(x.content ?? '0')),
+    InstancePort: node.first("instancePort", false, x => parseInt(x.content ?? '0')),
+  };
+}
+
+// refs: 2 - tags: output, named, interface
+export interface AnalysisLoadBalancerTarget {
+  Address?: string | null;
+  AvailabilityZone?: string | null;
+  Instance?: AnalysisComponent | null;
+  Port?: number | null;
+}
+function AnalysisLoadBalancerTarget_Parse(node: xmlP.XmlNode): AnalysisLoadBalancerTarget {
+  return {
+    Address: node.first("address", false, x => x.content ?? ''),
+    AvailabilityZone: node.first("availabilityZone", false, x => x.content ?? ''),
+    Instance: node.first("instance", false, AnalysisComponent_Parse),
+    Port: node.first("port", false, x => parseInt(x.content ?? '0')),
+  };
+}
+
+// refs: 2 - tags: output, named, interface
+export interface AlternatePathHint {
+  ComponentId?: string | null;
+  ComponentArn?: string | null;
+}
+function AlternatePathHint_Parse(node: xmlP.XmlNode): AlternatePathHint {
+  return {
+    ComponentId: node.first("componentId", false, x => x.content ?? ''),
+    ComponentArn: node.first("componentArn", false, x => x.content ?? ''),
+  };
+}
 
 // refs: 1 - tags: output, named, interface
 export interface PrefixList {
@@ -24173,9 +25398,13 @@ export interface VolumeModification {
   TargetSize?: number | null;
   TargetIops?: number | null;
   TargetVolumeType?: VolumeType | null;
+  TargetThroughput?: number | null;
+  TargetMultiAttachEnabled?: boolean | null;
   OriginalSize?: number | null;
   OriginalIops?: number | null;
   OriginalVolumeType?: VolumeType | null;
+  OriginalThroughput?: number | null;
+  OriginalMultiAttachEnabled?: boolean | null;
   Progress?: number | null;
   StartTime?: Date | number | null;
   EndTime?: Date | number | null;
@@ -24188,9 +25417,13 @@ function VolumeModification_Parse(node: xmlP.XmlNode): VolumeModification {
     TargetSize: node.first("targetSize", false, x => parseInt(x.content ?? '0')),
     TargetIops: node.first("targetIops", false, x => parseInt(x.content ?? '0')),
     TargetVolumeType: node.first("targetVolumeType", false, x => (x.content ?? '') as VolumeType),
+    TargetThroughput: node.first("targetThroughput", false, x => parseInt(x.content ?? '0')),
+    TargetMultiAttachEnabled: node.first("targetMultiAttachEnabled", false, x => x.content === 'true'),
     OriginalSize: node.first("originalSize", false, x => parseInt(x.content ?? '0')),
     OriginalIops: node.first("originalIops", false, x => parseInt(x.content ?? '0')),
     OriginalVolumeType: node.first("originalVolumeType", false, x => (x.content ?? '') as VolumeType),
+    OriginalThroughput: node.first("originalThroughput", false, x => parseInt(x.content ?? '0')),
+    OriginalMultiAttachEnabled: node.first("originalMultiAttachEnabled", false, x => x.content === 'true'),
     Progress: node.first("progress", false, x => parseInt(x.content ?? '0')),
     StartTime: node.first("startTime", false, x => xmlP.parseTimestamp(x.content)),
     EndTime: node.first("endTime", false, x => xmlP.parseTimestamp(x.content)),
@@ -24240,6 +25473,7 @@ export interface VpcEndpointConnection {
   CreationTimestamp?: Date | number | null;
   DnsEntries: DnsEntry[];
   NetworkLoadBalancerArns: string[];
+  GatewayLoadBalancerArns: string[];
 }
 function VpcEndpointConnection_Parse(node: xmlP.XmlNode): VpcEndpointConnection {
   return {
@@ -24250,6 +25484,7 @@ function VpcEndpointConnection_Parse(node: xmlP.XmlNode): VpcEndpointConnection 
     CreationTimestamp: node.first("creationTimestamp", false, x => xmlP.parseTimestamp(x.content)),
     DnsEntries: node.getList("dnsEntrySet", "item").map(DnsEntry_Parse),
     NetworkLoadBalancerArns: node.getList("networkLoadBalancerArnSet", "item").map(x => x.content ?? ''),
+    GatewayLoadBalancerArns: node.getList("gatewayLoadBalancerArnSet", "item").map(x => x.content ?? ''),
   };
 }
 
@@ -24284,6 +25519,7 @@ export interface ServiceDetail {
   Owner?: string | null;
   BaseEndpointDnsNames: string[];
   PrivateDnsName?: string | null;
+  PrivateDnsNames: PrivateDnsDetails[];
   VpcEndpointPolicySupported?: boolean | null;
   AcceptanceRequired?: boolean | null;
   ManagesVpcEndpoints?: boolean | null;
@@ -24299,11 +25535,22 @@ function ServiceDetail_Parse(node: xmlP.XmlNode): ServiceDetail {
     Owner: node.first("owner", false, x => x.content ?? ''),
     BaseEndpointDnsNames: node.getList("baseEndpointDnsNameSet", "item").map(x => x.content ?? ''),
     PrivateDnsName: node.first("privateDnsName", false, x => x.content ?? ''),
+    PrivateDnsNames: node.getList("privateDnsNameSet", "item").map(PrivateDnsDetails_Parse),
     VpcEndpointPolicySupported: node.first("vpcEndpointPolicySupported", false, x => x.content === 'true'),
     AcceptanceRequired: node.first("acceptanceRequired", false, x => x.content === 'true'),
     ManagesVpcEndpoints: node.first("managesVpcEndpoints", false, x => x.content === 'true'),
     Tags: node.getList("tagSet", "item").map(Tag_Parse),
     PrivateDnsNameVerificationState: node.first("privateDnsNameVerificationState", false, x => (x.content ?? '') as DnsNameState),
+  };
+}
+
+// refs: 1 - tags: output, named, interface
+export interface PrivateDnsDetails {
+  PrivateDnsName?: string | null;
+}
+function PrivateDnsDetails_Parse(node: xmlP.XmlNode): PrivateDnsDetails {
+  return {
+    PrivateDnsName: node.first("privateDnsName", false, x => x.content ?? ''),
   };
 }
 
@@ -24678,6 +25925,7 @@ export interface TransitGatewayMulticastDomainAssociation {
   TransitGatewayAttachmentId?: string | null;
   ResourceId?: string | null;
   ResourceType?: TransitGatewayAttachmentResourceType | null;
+  ResourceOwnerId?: string | null;
   Subnet?: SubnetAssociation | null;
 }
 function TransitGatewayMulticastDomainAssociation_Parse(node: xmlP.XmlNode): TransitGatewayMulticastDomainAssociation {
@@ -24685,6 +25933,7 @@ function TransitGatewayMulticastDomainAssociation_Parse(node: xmlP.XmlNode): Tra
     TransitGatewayAttachmentId: node.first("transitGatewayAttachmentId", false, x => x.content ?? ''),
     ResourceId: node.first("resourceId", false, x => x.content ?? ''),
     ResourceType: node.first("resourceType", false, x => (x.content ?? '') as TransitGatewayAttachmentResourceType),
+    ResourceOwnerId: node.first("resourceOwnerId", false, x => x.content ?? ''),
     Subnet: node.first("subnet", false, SubnetAssociation_Parse),
   };
 }
@@ -24831,6 +26080,7 @@ export interface TransitGatewayMulticastGroup {
   SubnetId?: string | null;
   ResourceId?: string | null;
   ResourceType?: TransitGatewayAttachmentResourceType | null;
+  ResourceOwnerId?: string | null;
   NetworkInterfaceId?: string | null;
   GroupMember?: boolean | null;
   GroupSource?: boolean | null;
@@ -24844,6 +26094,7 @@ function TransitGatewayMulticastGroup_Parse(node: xmlP.XmlNode): TransitGatewayM
     SubnetId: node.first("subnetId", false, x => x.content ?? ''),
     ResourceId: node.first("resourceId", false, x => x.content ?? ''),
     ResourceType: node.first("resourceType", false, x => (x.content ?? '') as TransitGatewayAttachmentResourceType),
+    ResourceOwnerId: node.first("resourceOwnerId", false, x => x.content ?? ''),
     NetworkInterfaceId: node.first("networkInterfaceId", false, x => x.content ?? ''),
     GroupMember: node.first("groupMember", false, x => x.content === 'true'),
     GroupSource: node.first("groupSource", false, x => x.content === 'true'),

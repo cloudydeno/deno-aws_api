@@ -26,6 +26,183 @@ export default class LicenseManager {
     "uid": "license-manager-2018-08-01"
   };
 
+  async acceptGrant(
+    {abortSignal, ...params}: RequestConfig & AcceptGrantRequest,
+  ): Promise<AcceptGrantResponse> {
+    const body: jsonP.JSONObject = {
+      GrantArn: params["GrantArn"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "AcceptGrant",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "GrantArn": "s",
+        "Status": (x: jsonP.JSONValue) => cmnP.readEnum<GrantStatus>(x),
+        "Version": "s",
+      },
+    }, await resp.json());
+  }
+
+  async checkInLicense(
+    {abortSignal, ...params}: RequestConfig & CheckInLicenseRequest,
+  ): Promise<CheckInLicenseResponse> {
+    const body: jsonP.JSONObject = {
+      LicenseConsumptionToken: params["LicenseConsumptionToken"],
+      Beneficiary: params["Beneficiary"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "CheckInLicense",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
+  }
+
+  async checkoutBorrowLicense(
+    {abortSignal, ...params}: RequestConfig & CheckoutBorrowLicenseRequest,
+  ): Promise<CheckoutBorrowLicenseResponse> {
+    const body: jsonP.JSONObject = {
+      LicenseArn: params["LicenseArn"],
+      Entitlements: params["Entitlements"]?.map(x => fromEntitlementData(x)),
+      DigitalSignatureMethod: params["DigitalSignatureMethod"],
+      NodeId: params["NodeId"],
+      CheckoutMetadata: params["CheckoutMetadata"]?.map(x => fromMetadata(x)),
+      ClientToken: params["ClientToken"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "CheckoutBorrowLicense",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "LicenseArn": "s",
+        "LicenseConsumptionToken": "s",
+        "EntitlementsAllowed": [toEntitlementData],
+        "NodeId": "s",
+        "SignedToken": "s",
+        "IssuedAt": "s",
+        "Expiration": "s",
+        "CheckoutMetadata": [toMetadata],
+      },
+    }, await resp.json());
+  }
+
+  async checkoutLicense(
+    {abortSignal, ...params}: RequestConfig & CheckoutLicenseRequest,
+  ): Promise<CheckoutLicenseResponse> {
+    const body: jsonP.JSONObject = {
+      ProductSKU: params["ProductSKU"],
+      CheckoutType: params["CheckoutType"],
+      KeyFingerprint: params["KeyFingerprint"],
+      Entitlements: params["Entitlements"]?.map(x => fromEntitlementData(x)),
+      ClientToken: params["ClientToken"],
+      Beneficiary: params["Beneficiary"],
+      NodeId: params["NodeId"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "CheckoutLicense",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "CheckoutType": (x: jsonP.JSONValue) => cmnP.readEnum<CheckoutType>(x),
+        "LicenseConsumptionToken": "s",
+        "EntitlementsAllowed": [toEntitlementData],
+        "SignedToken": "s",
+        "NodeId": "s",
+        "IssuedAt": "s",
+        "Expiration": "s",
+      },
+    }, await resp.json());
+  }
+
+  async createGrant(
+    {abortSignal, ...params}: RequestConfig & CreateGrantRequest,
+  ): Promise<CreateGrantResponse> {
+    const body: jsonP.JSONObject = {
+      ClientToken: params["ClientToken"],
+      GrantName: params["GrantName"],
+      LicenseArn: params["LicenseArn"],
+      Principals: params["Principals"],
+      HomeRegion: params["HomeRegion"],
+      AllowedOperations: params["AllowedOperations"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "CreateGrant",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "GrantArn": "s",
+        "Status": (x: jsonP.JSONValue) => cmnP.readEnum<GrantStatus>(x),
+        "Version": "s",
+      },
+    }, await resp.json());
+  }
+
+  async createGrantVersion(
+    {abortSignal, ...params}: RequestConfig & CreateGrantVersionRequest,
+  ): Promise<CreateGrantVersionResponse> {
+    const body: jsonP.JSONObject = {
+      ClientToken: params["ClientToken"],
+      GrantArn: params["GrantArn"],
+      GrantName: params["GrantName"],
+      AllowedOperations: params["AllowedOperations"],
+      Status: params["Status"],
+      SourceVersion: params["SourceVersion"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "CreateGrantVersion",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "GrantArn": "s",
+        "Status": (x: jsonP.JSONValue) => cmnP.readEnum<GrantStatus>(x),
+        "Version": "s",
+      },
+    }, await resp.json());
+  }
+
+  async createLicense(
+    {abortSignal, ...params}: RequestConfig & CreateLicenseRequest,
+  ): Promise<CreateLicenseResponse> {
+    const body: jsonP.JSONObject = {
+      LicenseName: params["LicenseName"],
+      ProductName: params["ProductName"],
+      ProductSKU: params["ProductSKU"],
+      Issuer: fromIssuer(params["Issuer"]),
+      HomeRegion: params["HomeRegion"],
+      Validity: fromDatetimeRange(params["Validity"]),
+      Entitlements: params["Entitlements"]?.map(x => fromEntitlement(x)),
+      Beneficiary: params["Beneficiary"],
+      ConsumptionConfiguration: fromConsumptionConfiguration(params["ConsumptionConfiguration"]),
+      LicenseMetadata: params["LicenseMetadata"]?.map(x => fromMetadata(x)),
+      ClientToken: params["ClientToken"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "CreateLicense",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "LicenseArn": "s",
+        "Status": (x: jsonP.JSONValue) => cmnP.readEnum<LicenseStatus>(x),
+        "Version": "s",
+      },
+    }, await resp.json());
+  }
+
   async createLicenseConfiguration(
     {abortSignal, ...params}: RequestConfig & CreateLicenseConfigurationRequest,
   ): Promise<CreateLicenseConfigurationResponse> {
@@ -37,6 +214,7 @@ export default class LicenseManager {
       LicenseCountHardLimit: params["LicenseCountHardLimit"],
       LicenseRules: params["LicenseRules"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
+      DisassociateWhenNotFound: params["DisassociateWhenNotFound"],
       ProductInformationList: params["ProductInformationList"]?.map(x => fromProductInformation(x)),
     };
     const resp = await this.#client.performRequest({
@@ -47,6 +225,102 @@ export default class LicenseManager {
       required: {},
       optional: {
         "LicenseConfigurationArn": "s",
+      },
+    }, await resp.json());
+  }
+
+  async createLicenseVersion(
+    {abortSignal, ...params}: RequestConfig & CreateLicenseVersionRequest,
+  ): Promise<CreateLicenseVersionResponse> {
+    const body: jsonP.JSONObject = {
+      LicenseArn: params["LicenseArn"],
+      LicenseName: params["LicenseName"],
+      ProductName: params["ProductName"],
+      Issuer: fromIssuer(params["Issuer"]),
+      HomeRegion: params["HomeRegion"],
+      Validity: fromDatetimeRange(params["Validity"]),
+      LicenseMetadata: params["LicenseMetadata"]?.map(x => fromMetadata(x)),
+      Entitlements: params["Entitlements"]?.map(x => fromEntitlement(x)),
+      ConsumptionConfiguration: fromConsumptionConfiguration(params["ConsumptionConfiguration"]),
+      Status: params["Status"],
+      ClientToken: params["ClientToken"],
+      SourceVersion: params["SourceVersion"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "CreateLicenseVersion",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "LicenseArn": "s",
+        "Version": "s",
+        "Status": (x: jsonP.JSONValue) => cmnP.readEnum<LicenseStatus>(x),
+      },
+    }, await resp.json());
+  }
+
+  async createToken(
+    {abortSignal, ...params}: RequestConfig & CreateTokenRequest,
+  ): Promise<CreateTokenResponse> {
+    const body: jsonP.JSONObject = {
+      LicenseArn: params["LicenseArn"],
+      RoleArns: params["RoleArns"],
+      ExpirationInDays: params["ExpirationInDays"],
+      TokenProperties: params["TokenProperties"],
+      ClientToken: params["ClientToken"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "CreateToken",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "TokenId": "s",
+        "TokenType": (x: jsonP.JSONValue) => cmnP.readEnum<TokenType>(x),
+        "Token": "s",
+      },
+    }, await resp.json());
+  }
+
+  async deleteGrant(
+    {abortSignal, ...params}: RequestConfig & DeleteGrantRequest,
+  ): Promise<DeleteGrantResponse> {
+    const body: jsonP.JSONObject = {
+      GrantArn: params["GrantArn"],
+      Version: params["Version"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DeleteGrant",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "GrantArn": "s",
+        "Status": (x: jsonP.JSONValue) => cmnP.readEnum<GrantStatus>(x),
+        "Version": "s",
+      },
+    }, await resp.json());
+  }
+
+  async deleteLicense(
+    {abortSignal, ...params}: RequestConfig & DeleteLicenseRequest,
+  ): Promise<DeleteLicenseResponse> {
+    const body: jsonP.JSONObject = {
+      LicenseArn: params["LicenseArn"],
+      SourceVersion: params["SourceVersion"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DeleteLicense",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Status": (x: jsonP.JSONValue) => cmnP.readEnum<LicenseDeletionStatus>(x),
+        "DeletionDate": "s",
       },
     }, await resp.json());
   }
@@ -64,6 +338,99 @@ export default class LicenseManager {
     return jsonP.readObj({
       required: {},
       optional: {},
+    }, await resp.json());
+  }
+
+  async deleteToken(
+    {abortSignal, ...params}: RequestConfig & DeleteTokenRequest,
+  ): Promise<DeleteTokenResponse> {
+    const body: jsonP.JSONObject = {
+      TokenId: params["TokenId"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DeleteToken",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
+  }
+
+  async extendLicenseConsumption(
+    {abortSignal, ...params}: RequestConfig & ExtendLicenseConsumptionRequest,
+  ): Promise<ExtendLicenseConsumptionResponse> {
+    const body: jsonP.JSONObject = {
+      LicenseConsumptionToken: params["LicenseConsumptionToken"],
+      DryRun: params["DryRun"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "ExtendLicenseConsumption",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "LicenseConsumptionToken": "s",
+        "Expiration": "s",
+      },
+    }, await resp.json());
+  }
+
+  async getAccessToken(
+    {abortSignal, ...params}: RequestConfig & GetAccessTokenRequest,
+  ): Promise<GetAccessTokenResponse> {
+    const body: jsonP.JSONObject = {
+      Token: params["Token"],
+      TokenProperties: params["TokenProperties"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "GetAccessToken",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "AccessToken": "s",
+      },
+    }, await resp.json());
+  }
+
+  async getGrant(
+    {abortSignal, ...params}: RequestConfig & GetGrantRequest,
+  ): Promise<GetGrantResponse> {
+    const body: jsonP.JSONObject = {
+      GrantArn: params["GrantArn"],
+      Version: params["Version"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "GetGrant",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Grant": toGrant,
+      },
+    }, await resp.json());
+  }
+
+  async getLicense(
+    {abortSignal, ...params}: RequestConfig & GetLicenseRequest,
+  ): Promise<GetLicenseResponse> {
+    const body: jsonP.JSONObject = {
+      LicenseArn: params["LicenseArn"],
+      Version: params["Version"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "GetLicense",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "License": toLicense,
+      },
     }, await resp.json());
   }
 
@@ -96,6 +463,25 @@ export default class LicenseManager {
         "Tags": [toTag],
         "ProductInformationList": [toProductInformation],
         "AutomatedDiscoveryInformation": toAutomatedDiscoveryInformation,
+        "DisassociateWhenNotFound": "b",
+      },
+    }, await resp.json());
+  }
+
+  async getLicenseUsage(
+    {abortSignal, ...params}: RequestConfig & GetLicenseUsageRequest,
+  ): Promise<GetLicenseUsageResponse> {
+    const body: jsonP.JSONObject = {
+      LicenseArn: params["LicenseArn"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "GetLicenseUsage",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "LicenseUsage": toLicenseUsage,
       },
     }, await resp.json());
   }
@@ -137,6 +523,28 @@ export default class LicenseManager {
       required: {},
       optional: {
         "LicenseConfigurationAssociations": [toLicenseConfigurationAssociation],
+        "NextToken": "s",
+      },
+    }, await resp.json());
+  }
+
+  async listDistributedGrants(
+    {abortSignal, ...params}: RequestConfig & ListDistributedGrantsRequest = {},
+  ): Promise<ListDistributedGrantsResponse> {
+    const body: jsonP.JSONObject = {
+      GrantArns: params["GrantArns"],
+      Filters: params["Filters"]?.map(x => fromFilter(x)),
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "ListDistributedGrants",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Grants": [toGrant],
         "NextToken": "s",
       },
     }, await resp.json());
@@ -206,6 +614,93 @@ export default class LicenseManager {
     }, await resp.json());
   }
 
+  async listLicenseVersions(
+    {abortSignal, ...params}: RequestConfig & ListLicenseVersionsRequest,
+  ): Promise<ListLicenseVersionsResponse> {
+    const body: jsonP.JSONObject = {
+      LicenseArn: params["LicenseArn"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "ListLicenseVersions",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Licenses": [toLicense],
+        "NextToken": "s",
+      },
+    }, await resp.json());
+  }
+
+  async listLicenses(
+    {abortSignal, ...params}: RequestConfig & ListLicensesRequest = {},
+  ): Promise<ListLicensesResponse> {
+    const body: jsonP.JSONObject = {
+      LicenseArns: params["LicenseArns"],
+      Filters: params["Filters"]?.map(x => fromFilter(x)),
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "ListLicenses",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Licenses": [toLicense],
+        "NextToken": "s",
+      },
+    }, await resp.json());
+  }
+
+  async listReceivedGrants(
+    {abortSignal, ...params}: RequestConfig & ListReceivedGrantsRequest = {},
+  ): Promise<ListReceivedGrantsResponse> {
+    const body: jsonP.JSONObject = {
+      GrantArns: params["GrantArns"],
+      Filters: params["Filters"]?.map(x => fromFilter(x)),
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "ListReceivedGrants",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Grants": [toGrant],
+        "NextToken": "s",
+      },
+    }, await resp.json());
+  }
+
+  async listReceivedLicenses(
+    {abortSignal, ...params}: RequestConfig & ListReceivedLicensesRequest = {},
+  ): Promise<ListReceivedLicensesResponse> {
+    const body: jsonP.JSONObject = {
+      LicenseArns: params["LicenseArns"],
+      Filters: params["Filters"]?.map(x => fromFilter(x)),
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "ListReceivedLicenses",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Licenses": [toGrantedLicense],
+        "NextToken": "s",
+      },
+    }, await resp.json());
+  }
+
   async listResourceInventory(
     {abortSignal, ...params}: RequestConfig & ListResourceInventoryRequest = {},
   ): Promise<ListResourceInventoryResponse> {
@@ -245,6 +740,28 @@ export default class LicenseManager {
     }, await resp.json());
   }
 
+  async listTokens(
+    {abortSignal, ...params}: RequestConfig & ListTokensRequest = {},
+  ): Promise<ListTokensResponse> {
+    const body: jsonP.JSONObject = {
+      TokenIds: params["TokenIds"],
+      Filters: params["Filters"]?.map(x => fromFilter(x)),
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "ListTokens",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Tokens": [toTokenData],
+        "NextToken": "s",
+      },
+    }, await resp.json());
+  }
+
   async listUsageForLicenseConfiguration(
     {abortSignal, ...params}: RequestConfig & ListUsageForLicenseConfigurationRequest,
   ): Promise<ListUsageForLicenseConfigurationResponse> {
@@ -263,6 +780,26 @@ export default class LicenseManager {
       optional: {
         "LicenseConfigurationUsageList": [toLicenseConfigurationUsage],
         "NextToken": "s",
+      },
+    }, await resp.json());
+  }
+
+  async rejectGrant(
+    {abortSignal, ...params}: RequestConfig & RejectGrantRequest,
+  ): Promise<RejectGrantResponse> {
+    const body: jsonP.JSONObject = {
+      GrantArn: params["GrantArn"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "RejectGrant",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "GrantArn": "s",
+        "Status": (x: jsonP.JSONValue) => cmnP.readEnum<GrantStatus>(x),
+        "Version": "s",
       },
     }, await resp.json());
   }
@@ -313,6 +850,7 @@ export default class LicenseManager {
       Name: params["Name"],
       Description: params["Description"],
       ProductInformationList: params["ProductInformationList"]?.map(x => fromProductInformation(x)),
+      DisassociateWhenNotFound: params["DisassociateWhenNotFound"],
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -364,6 +902,73 @@ export default class LicenseManager {
 }
 
 // refs: 1 - tags: named, input
+export interface AcceptGrantRequest {
+  GrantArn: string;
+}
+
+// refs: 1 - tags: named, input
+export interface CheckInLicenseRequest {
+  LicenseConsumptionToken: string;
+  Beneficiary?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface CheckoutBorrowLicenseRequest {
+  LicenseArn: string;
+  Entitlements: EntitlementData[];
+  DigitalSignatureMethod: DigitalSignatureMethod;
+  NodeId?: string | null;
+  CheckoutMetadata?: Metadata[] | null;
+  ClientToken: string;
+}
+
+// refs: 1 - tags: named, input
+export interface CheckoutLicenseRequest {
+  ProductSKU: string;
+  CheckoutType: CheckoutType;
+  KeyFingerprint: string;
+  Entitlements: EntitlementData[];
+  ClientToken: string;
+  Beneficiary?: string | null;
+  NodeId?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface CreateGrantRequest {
+  ClientToken: string;
+  GrantName: string;
+  LicenseArn: string;
+  Principals: string[];
+  HomeRegion: string;
+  AllowedOperations: AllowedOperation[];
+}
+
+// refs: 1 - tags: named, input
+export interface CreateGrantVersionRequest {
+  ClientToken: string;
+  GrantArn: string;
+  GrantName?: string | null;
+  AllowedOperations?: AllowedOperation[] | null;
+  Status?: GrantStatus | null;
+  SourceVersion?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface CreateLicenseRequest {
+  LicenseName: string;
+  ProductName: string;
+  ProductSKU: string;
+  Issuer: Issuer;
+  HomeRegion: string;
+  Validity: DatetimeRange;
+  Entitlements: Entitlement[];
+  Beneficiary: string;
+  ConsumptionConfiguration: ConsumptionConfiguration;
+  LicenseMetadata?: Metadata[] | null;
+  ClientToken: string;
+}
+
+// refs: 1 - tags: named, input
 export interface CreateLicenseConfigurationRequest {
   Name: string;
   Description?: string | null;
@@ -372,7 +977,45 @@ export interface CreateLicenseConfigurationRequest {
   LicenseCountHardLimit?: boolean | null;
   LicenseRules?: string[] | null;
   Tags?: Tag[] | null;
+  DisassociateWhenNotFound?: boolean | null;
   ProductInformationList?: ProductInformation[] | null;
+}
+
+// refs: 1 - tags: named, input
+export interface CreateLicenseVersionRequest {
+  LicenseArn: string;
+  LicenseName: string;
+  ProductName: string;
+  Issuer: Issuer;
+  HomeRegion: string;
+  Validity: DatetimeRange;
+  LicenseMetadata?: Metadata[] | null;
+  Entitlements: Entitlement[];
+  ConsumptionConfiguration: ConsumptionConfiguration;
+  Status: LicenseStatus;
+  ClientToken: string;
+  SourceVersion?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface CreateTokenRequest {
+  LicenseArn: string;
+  RoleArns?: string[] | null;
+  ExpirationInDays?: number | null;
+  TokenProperties?: string[] | null;
+  ClientToken: string;
+}
+
+// refs: 1 - tags: named, input
+export interface DeleteGrantRequest {
+  GrantArn: string;
+  Version: string;
+}
+
+// refs: 1 - tags: named, input
+export interface DeleteLicenseRequest {
+  LicenseArn: string;
+  SourceVersion: string;
 }
 
 // refs: 1 - tags: named, input
@@ -381,8 +1024,42 @@ export interface DeleteLicenseConfigurationRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface DeleteTokenRequest {
+  TokenId: string;
+}
+
+// refs: 1 - tags: named, input
+export interface ExtendLicenseConsumptionRequest {
+  LicenseConsumptionToken: string;
+  DryRun?: boolean | null;
+}
+
+// refs: 1 - tags: named, input
+export interface GetAccessTokenRequest {
+  Token: string;
+  TokenProperties?: string[] | null;
+}
+
+// refs: 1 - tags: named, input
+export interface GetGrantRequest {
+  GrantArn: string;
+  Version?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface GetLicenseRequest {
+  LicenseArn: string;
+  Version?: string | null;
+}
+
+// refs: 1 - tags: named, input
 export interface GetLicenseConfigurationRequest {
   LicenseConfigurationArn: string;
+}
+
+// refs: 1 - tags: named, input
+export interface GetLicenseUsageRequest {
+  LicenseArn: string;
 }
 
 // refs: 1 - tags: named, input
@@ -394,6 +1071,14 @@ export interface ListAssociationsForLicenseConfigurationRequest {
   LicenseConfigurationArn: string;
   MaxResults?: number | null;
   NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface ListDistributedGrantsRequest {
+  GrantArns?: string[] | null;
+  Filters?: Filter[] | null;
+  NextToken?: string | null;
+  MaxResults?: number | null;
 }
 
 // refs: 1 - tags: named, input
@@ -419,6 +1104,37 @@ export interface ListLicenseSpecificationsForResourceRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface ListLicenseVersionsRequest {
+  LicenseArn: string;
+  NextToken?: string | null;
+  MaxResults?: number | null;
+}
+
+// refs: 1 - tags: named, input
+export interface ListLicensesRequest {
+  LicenseArns?: string[] | null;
+  Filters?: Filter[] | null;
+  NextToken?: string | null;
+  MaxResults?: number | null;
+}
+
+// refs: 1 - tags: named, input
+export interface ListReceivedGrantsRequest {
+  GrantArns?: string[] | null;
+  Filters?: Filter[] | null;
+  NextToken?: string | null;
+  MaxResults?: number | null;
+}
+
+// refs: 1 - tags: named, input
+export interface ListReceivedLicensesRequest {
+  LicenseArns?: string[] | null;
+  Filters?: Filter[] | null;
+  NextToken?: string | null;
+  MaxResults?: number | null;
+}
+
+// refs: 1 - tags: named, input
 export interface ListResourceInventoryRequest {
   MaxResults?: number | null;
   NextToken?: string | null;
@@ -431,11 +1147,24 @@ export interface ListTagsForResourceRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface ListTokensRequest {
+  TokenIds?: string[] | null;
+  Filters?: Filter[] | null;
+  NextToken?: string | null;
+  MaxResults?: number | null;
+}
+
+// refs: 1 - tags: named, input
 export interface ListUsageForLicenseConfigurationRequest {
   LicenseConfigurationArn: string;
   MaxResults?: number | null;
   NextToken?: string | null;
   Filters?: Filter[] | null;
+}
+
+// refs: 1 - tags: named, input
+export interface RejectGrantRequest {
+  GrantArn: string;
 }
 
 // refs: 1 - tags: named, input
@@ -460,6 +1189,7 @@ export interface UpdateLicenseConfigurationRequest {
   Name?: string | null;
   Description?: string | null;
   ProductInformationList?: ProductInformation[] | null;
+  DisassociateWhenNotFound?: boolean | null;
 }
 
 // refs: 1 - tags: named, input
@@ -478,12 +1208,119 @@ export interface UpdateServiceSettingsRequest {
 }
 
 // refs: 1 - tags: named, output
+export interface AcceptGrantResponse {
+  GrantArn?: string | null;
+  Status?: GrantStatus | null;
+  Version?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface CheckInLicenseResponse {
+}
+
+// refs: 1 - tags: named, output
+export interface CheckoutBorrowLicenseResponse {
+  LicenseArn?: string | null;
+  LicenseConsumptionToken?: string | null;
+  EntitlementsAllowed?: EntitlementData[] | null;
+  NodeId?: string | null;
+  SignedToken?: string | null;
+  IssuedAt?: string | null;
+  Expiration?: string | null;
+  CheckoutMetadata?: Metadata[] | null;
+}
+
+// refs: 1 - tags: named, output
+export interface CheckoutLicenseResponse {
+  CheckoutType?: CheckoutType | null;
+  LicenseConsumptionToken?: string | null;
+  EntitlementsAllowed?: EntitlementData[] | null;
+  SignedToken?: string | null;
+  NodeId?: string | null;
+  IssuedAt?: string | null;
+  Expiration?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface CreateGrantResponse {
+  GrantArn?: string | null;
+  Status?: GrantStatus | null;
+  Version?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface CreateGrantVersionResponse {
+  GrantArn?: string | null;
+  Status?: GrantStatus | null;
+  Version?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface CreateLicenseResponse {
+  LicenseArn?: string | null;
+  Status?: LicenseStatus | null;
+  Version?: string | null;
+}
+
+// refs: 1 - tags: named, output
 export interface CreateLicenseConfigurationResponse {
   LicenseConfigurationArn?: string | null;
 }
 
 // refs: 1 - tags: named, output
+export interface CreateLicenseVersionResponse {
+  LicenseArn?: string | null;
+  Version?: string | null;
+  Status?: LicenseStatus | null;
+}
+
+// refs: 1 - tags: named, output
+export interface CreateTokenResponse {
+  TokenId?: string | null;
+  TokenType?: TokenType | null;
+  Token?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface DeleteGrantResponse {
+  GrantArn?: string | null;
+  Status?: GrantStatus | null;
+  Version?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface DeleteLicenseResponse {
+  Status?: LicenseDeletionStatus | null;
+  DeletionDate?: string | null;
+}
+
+// refs: 1 - tags: named, output
 export interface DeleteLicenseConfigurationResponse {
+}
+
+// refs: 1 - tags: named, output
+export interface DeleteTokenResponse {
+}
+
+// refs: 1 - tags: named, output
+export interface ExtendLicenseConsumptionResponse {
+  LicenseConsumptionToken?: string | null;
+  Expiration?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface GetAccessTokenResponse {
+  AccessToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface GetGrantResponse {
+  Grant?: Grant | null;
+}
+
+// refs: 1 - tags: named, output
+export interface GetLicenseResponse {
+  License?: License | null;
 }
 
 // refs: 1 - tags: named, output
@@ -504,6 +1341,12 @@ export interface GetLicenseConfigurationResponse {
   Tags?: Tag[] | null;
   ProductInformationList?: ProductInformation[] | null;
   AutomatedDiscoveryInformation?: AutomatedDiscoveryInformation | null;
+  DisassociateWhenNotFound?: boolean | null;
+}
+
+// refs: 1 - tags: named, output
+export interface GetLicenseUsageResponse {
+  LicenseUsage?: LicenseUsage | null;
 }
 
 // refs: 1 - tags: named, output
@@ -518,6 +1361,12 @@ export interface GetServiceSettingsResponse {
 // refs: 1 - tags: named, output
 export interface ListAssociationsForLicenseConfigurationResponse {
   LicenseConfigurationAssociations?: LicenseConfigurationAssociation[] | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface ListDistributedGrantsResponse {
+  Grants?: Grant[] | null;
   NextToken?: string | null;
 }
 
@@ -540,6 +1389,30 @@ export interface ListLicenseSpecificationsForResourceResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface ListLicenseVersionsResponse {
+  Licenses?: License[] | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface ListLicensesResponse {
+  Licenses?: License[] | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface ListReceivedGrantsResponse {
+  Grants?: Grant[] | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface ListReceivedLicensesResponse {
+  Licenses?: GrantedLicense[] | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
 export interface ListResourceInventoryResponse {
   ResourceInventoryList?: ResourceInventory[] | null;
   NextToken?: string | null;
@@ -551,9 +1424,22 @@ export interface ListTagsForResourceResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface ListTokensResponse {
+  Tokens?: TokenData[] | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
 export interface ListUsageForLicenseConfigurationResponse {
   LicenseConfigurationUsageList?: LicenseConfigurationUsage[] | null;
   NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface RejectGrantResponse {
+  GrantArn?: string | null;
+  Status?: GrantStatus | null;
+  Version?: string | null;
 }
 
 // refs: 1 - tags: named, output
@@ -574,6 +1460,293 @@ export interface UpdateLicenseSpecificationsForResourceResponse {
 
 // refs: 1 - tags: named, output
 export interface UpdateServiceSettingsResponse {
+}
+
+// refs: 4 - tags: input, named, interface, output
+export interface EntitlementData {
+  Name: string;
+  Value?: string | null;
+  Unit: EntitlementDataUnit;
+}
+function fromEntitlementData(input?: EntitlementData | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    Name: input["Name"],
+    Value: input["Value"],
+    Unit: input["Unit"],
+  }
+}
+function toEntitlementData(root: jsonP.JSONValue): EntitlementData {
+  return jsonP.readObj({
+    required: {
+      "Name": "s",
+      "Unit": (x: jsonP.JSONValue) => cmnP.readEnum<EntitlementDataUnit>(x),
+    },
+    optional: {
+      "Value": "s",
+    },
+  }, root);
+}
+
+// refs: 5 - tags: input, named, enum, output
+export type EntitlementDataUnit =
+| "Count"
+| "None"
+| "Seconds"
+| "Microseconds"
+| "Milliseconds"
+| "Bytes"
+| "Kilobytes"
+| "Megabytes"
+| "Gigabytes"
+| "Terabytes"
+| "Bits"
+| "Kilobits"
+| "Megabits"
+| "Gigabits"
+| "Terabits"
+| "Percent"
+| "Bytes/Second"
+| "Kilobytes/Second"
+| "Megabytes/Second"
+| "Gigabytes/Second"
+| "Terabytes/Second"
+| "Bits/Second"
+| "Kilobits/Second"
+| "Megabits/Second"
+| "Gigabits/Second"
+| "Terabits/Second"
+| "Count/Second"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 1 - tags: input, named, enum
+export type DigitalSignatureMethod =
+| "JWT_PS384"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 9 - tags: input, named, interface, output
+export interface Metadata {
+  Name?: string | null;
+  Value?: string | null;
+}
+function fromMetadata(input?: Metadata | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    Name: input["Name"],
+    Value: input["Value"],
+  }
+}
+function toMetadata(root: jsonP.JSONValue): Metadata {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "Name": "s",
+      "Value": "s",
+    },
+  }, root);
+}
+
+// refs: 2 - tags: input, named, enum, output
+export type CheckoutType =
+| "PROVISIONAL"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 6 - tags: input, named, enum, output
+export type AllowedOperation =
+| "CreateGrant"
+| "CheckoutLicense"
+| "CheckoutBorrowLicense"
+| "CheckInLicense"
+| "ExtendConsumptionLicense"
+| "ListPurchasedLicenses"
+| "CreateToken"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 9 - tags: input, named, enum, output
+export type GrantStatus =
+| "PENDING_WORKFLOW"
+| "PENDING_ACCEPT"
+| "REJECTED"
+| "ACTIVE"
+| "FAILED_WORKFLOW"
+| "DELETED"
+| "PENDING_DELETE"
+| "DISABLED"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 2 - tags: input, named, interface
+export interface Issuer {
+  Name: string;
+  SignKey?: string | null;
+}
+function fromIssuer(input?: Issuer | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    Name: input["Name"],
+    SignKey: input["SignKey"],
+  }
+}
+
+// refs: 6 - tags: input, named, interface, output
+export interface DatetimeRange {
+  Begin: string;
+  End?: string | null;
+}
+function fromDatetimeRange(input?: DatetimeRange | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    Begin: input["Begin"],
+    End: input["End"],
+  }
+}
+function toDatetimeRange(root: jsonP.JSONValue): DatetimeRange {
+  return jsonP.readObj({
+    required: {
+      "Begin": "s",
+    },
+    optional: {
+      "End": "s",
+    },
+  }, root);
+}
+
+// refs: 6 - tags: input, named, interface, output
+export interface Entitlement {
+  Name: string;
+  Value?: string | null;
+  MaxCount?: number | null;
+  Overage?: boolean | null;
+  Unit: EntitlementUnit;
+  AllowCheckIn?: boolean | null;
+}
+function fromEntitlement(input?: Entitlement | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    Name: input["Name"],
+    Value: input["Value"],
+    MaxCount: input["MaxCount"],
+    Overage: input["Overage"],
+    Unit: input["Unit"],
+    AllowCheckIn: input["AllowCheckIn"],
+  }
+}
+function toEntitlement(root: jsonP.JSONValue): Entitlement {
+  return jsonP.readObj({
+    required: {
+      "Name": "s",
+      "Unit": (x: jsonP.JSONValue) => cmnP.readEnum<EntitlementUnit>(x),
+    },
+    optional: {
+      "Value": "s",
+      "MaxCount": "n",
+      "Overage": "b",
+      "AllowCheckIn": "b",
+    },
+  }, root);
+}
+
+// refs: 6 - tags: input, named, enum, output
+export type EntitlementUnit =
+| "Count"
+| "None"
+| "Seconds"
+| "Microseconds"
+| "Milliseconds"
+| "Bytes"
+| "Kilobytes"
+| "Megabytes"
+| "Gigabytes"
+| "Terabytes"
+| "Bits"
+| "Kilobits"
+| "Megabits"
+| "Gigabits"
+| "Terabits"
+| "Percent"
+| "Bytes/Second"
+| "Kilobytes/Second"
+| "Megabytes/Second"
+| "Gigabytes/Second"
+| "Terabytes/Second"
+| "Bits/Second"
+| "Kilobits/Second"
+| "Megabits/Second"
+| "Gigabits/Second"
+| "Terabits/Second"
+| "Count/Second"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 6 - tags: input, named, interface, output
+export interface ConsumptionConfiguration {
+  RenewType?: RenewType | null;
+  ProvisionalConfiguration?: ProvisionalConfiguration | null;
+  BorrowConfiguration?: BorrowConfiguration | null;
+}
+function fromConsumptionConfiguration(input?: ConsumptionConfiguration | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    RenewType: input["RenewType"],
+    ProvisionalConfiguration: fromProvisionalConfiguration(input["ProvisionalConfiguration"]),
+    BorrowConfiguration: fromBorrowConfiguration(input["BorrowConfiguration"]),
+  }
+}
+function toConsumptionConfiguration(root: jsonP.JSONValue): ConsumptionConfiguration {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "RenewType": (x: jsonP.JSONValue) => cmnP.readEnum<RenewType>(x),
+      "ProvisionalConfiguration": toProvisionalConfiguration,
+      "BorrowConfiguration": toBorrowConfiguration,
+    },
+  }, root);
+}
+
+// refs: 6 - tags: input, named, enum, output
+export type RenewType =
+| "None"
+| "Weekly"
+| "Monthly"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 6 - tags: input, named, interface, output
+export interface ProvisionalConfiguration {
+  MaxTimeToLiveInMinutes: number;
+}
+function fromProvisionalConfiguration(input?: ProvisionalConfiguration | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    MaxTimeToLiveInMinutes: input["MaxTimeToLiveInMinutes"],
+  }
+}
+function toProvisionalConfiguration(root: jsonP.JSONValue): ProvisionalConfiguration {
+  return jsonP.readObj({
+    required: {
+      "MaxTimeToLiveInMinutes": "n",
+    },
+    optional: {},
+  }, root);
+}
+
+// refs: 6 - tags: input, named, interface, output
+export interface BorrowConfiguration {
+  AllowEarlyCheckIn: boolean;
+  MaxTimeToLiveInMinutes: number;
+}
+function fromBorrowConfiguration(input?: BorrowConfiguration | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    AllowEarlyCheckIn: input["AllowEarlyCheckIn"],
+    MaxTimeToLiveInMinutes: input["MaxTimeToLiveInMinutes"],
+  }
+}
+function toBorrowConfiguration(root: jsonP.JSONValue): BorrowConfiguration {
+  return jsonP.readObj({
+    required: {
+      "AllowEarlyCheckIn": "b",
+      "MaxTimeToLiveInMinutes": "n",
+    },
+    optional: {},
+  }, root);
 }
 
 // refs: 3 - tags: input, named, enum, output
@@ -653,7 +1826,18 @@ function toProductInformationFilter(root: jsonP.JSONValue): ProductInformationFi
   }, root);
 }
 
-// refs: 2 - tags: input, named, interface
+// refs: 7 - tags: input, named, enum, output
+export type LicenseStatus =
+| "AVAILABLE"
+| "PENDING_AVAILABLE"
+| "DEACTIVATED"
+| "SUSPENDED"
+| "EXPIRED"
+| "PENDING_DELETE"
+| "DELETED"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 7 - tags: input, named, interface
 export interface Filter {
   Name?: string | null;
   Values?: string[] | null;
@@ -698,11 +1882,13 @@ export type LicenseConfigurationStatus =
 // refs: 3 - tags: input, named, interface, output
 export interface LicenseSpecification {
   LicenseConfigurationArn: string;
+  AmiAssociationScope?: string | null;
 }
 function fromLicenseSpecification(input?: LicenseSpecification | null): jsonP.JSONValue {
   if (!input) return input;
   return {
     LicenseConfigurationArn: input["LicenseConfigurationArn"],
+    AmiAssociationScope: input["AmiAssociationScope"],
   }
 }
 function toLicenseSpecification(root: jsonP.JSONValue): LicenseSpecification {
@@ -710,7 +1896,9 @@ function toLicenseSpecification(root: jsonP.JSONValue): LicenseSpecification {
     required: {
       "LicenseConfigurationArn": "s",
     },
-    optional: {},
+    optional: {
+      "AmiAssociationScope": "s",
+    },
   }, root);
 }
 
@@ -730,6 +1918,105 @@ function toOrganizationConfiguration(root: jsonP.JSONValue): OrganizationConfigu
       "EnableIntegration": "b",
     },
     optional: {},
+  }, root);
+}
+
+// refs: 1 - tags: output, named, enum
+export type TokenType =
+| "REFRESH_TOKEN"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 1 - tags: output, named, enum
+export type LicenseDeletionStatus =
+| "PENDING_DELETE"
+| "DELETED"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 3 - tags: output, named, interface
+export interface Grant {
+  GrantArn: string;
+  GrantName: string;
+  ParentArn: string;
+  LicenseArn: string;
+  GranteePrincipalArn: string;
+  HomeRegion: string;
+  GrantStatus: GrantStatus;
+  StatusReason?: string | null;
+  Version: string;
+  GrantedOperations: AllowedOperation[];
+}
+function toGrant(root: jsonP.JSONValue): Grant {
+  return jsonP.readObj({
+    required: {
+      "GrantArn": "s",
+      "GrantName": "s",
+      "ParentArn": "s",
+      "LicenseArn": "s",
+      "GranteePrincipalArn": "s",
+      "HomeRegion": "s",
+      "GrantStatus": (x: jsonP.JSONValue) => cmnP.readEnum<GrantStatus>(x),
+      "Version": "s",
+      "GrantedOperations": [(x: jsonP.JSONValue) => cmnP.readEnum<AllowedOperation>(x)],
+    },
+    optional: {
+      "StatusReason": "s",
+    },
+  }, root);
+}
+
+// refs: 3 - tags: output, named, interface
+export interface License {
+  LicenseArn?: string | null;
+  LicenseName?: string | null;
+  ProductName?: string | null;
+  ProductSKU?: string | null;
+  Issuer?: IssuerDetails | null;
+  HomeRegion?: string | null;
+  Status?: LicenseStatus | null;
+  Validity?: DatetimeRange | null;
+  Beneficiary?: string | null;
+  Entitlements?: Entitlement[] | null;
+  ConsumptionConfiguration?: ConsumptionConfiguration | null;
+  LicenseMetadata?: Metadata[] | null;
+  CreateTime?: string | null;
+  Version?: string | null;
+}
+function toLicense(root: jsonP.JSONValue): License {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "LicenseArn": "s",
+      "LicenseName": "s",
+      "ProductName": "s",
+      "ProductSKU": "s",
+      "Issuer": toIssuerDetails,
+      "HomeRegion": "s",
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<LicenseStatus>(x),
+      "Validity": toDatetimeRange,
+      "Beneficiary": "s",
+      "Entitlements": [toEntitlement],
+      "ConsumptionConfiguration": toConsumptionConfiguration,
+      "LicenseMetadata": [toMetadata],
+      "CreateTime": "s",
+      "Version": "s",
+    },
+  }, root);
+}
+
+// refs: 4 - tags: output, named, interface
+export interface IssuerDetails {
+  Name?: string | null;
+  SignKey?: string | null;
+  KeyFingerprint?: string | null;
+}
+function toIssuerDetails(root: jsonP.JSONValue): IssuerDetails {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "Name": "s",
+      "SignKey": "s",
+      "KeyFingerprint": "s",
+    },
   }, root);
 }
 
@@ -786,11 +2073,45 @@ function toAutomatedDiscoveryInformation(root: jsonP.JSONValue): AutomatedDiscov
 }
 
 // refs: 1 - tags: output, named, interface
+export interface LicenseUsage {
+  EntitlementUsages?: EntitlementUsage[] | null;
+}
+function toLicenseUsage(root: jsonP.JSONValue): LicenseUsage {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "EntitlementUsages": [toEntitlementUsage],
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
+export interface EntitlementUsage {
+  Name: string;
+  ConsumedValue: string;
+  MaxCount?: string | null;
+  Unit: EntitlementDataUnit;
+}
+function toEntitlementUsage(root: jsonP.JSONValue): EntitlementUsage {
+  return jsonP.readObj({
+    required: {
+      "Name": "s",
+      "ConsumedValue": "s",
+      "Unit": (x: jsonP.JSONValue) => cmnP.readEnum<EntitlementDataUnit>(x),
+    },
+    optional: {
+      "MaxCount": "s",
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
 export interface LicenseConfigurationAssociation {
   ResourceArn?: string | null;
   ResourceType?: ResourceType | null;
   ResourceOwnerId?: string | null;
   AssociationTime?: Date | number | null;
+  AmiAssociationScope?: string | null;
 }
 function toLicenseConfigurationAssociation(root: jsonP.JSONValue): LicenseConfigurationAssociation {
   return jsonP.readObj({
@@ -800,6 +2121,7 @@ function toLicenseConfigurationAssociation(root: jsonP.JSONValue): LicenseConfig
       "ResourceType": (x: jsonP.JSONValue) => cmnP.readEnum<ResourceType>(x),
       "ResourceOwnerId": "s",
       "AssociationTime": "d",
+      "AmiAssociationScope": "s",
     },
   }, root);
 }
@@ -832,21 +2154,6 @@ function toLicenseOperationFailure(root: jsonP.JSONValue): LicenseOperationFailu
 }
 
 // refs: 1 - tags: output, named, interface
-export interface Metadata {
-  Name?: string | null;
-  Value?: string | null;
-}
-function toMetadata(root: jsonP.JSONValue): Metadata {
-  return jsonP.readObj({
-    required: {},
-    optional: {
-      "Name": "s",
-      "Value": "s",
-    },
-  }, root);
-}
-
-// refs: 1 - tags: output, named, interface
 export interface LicenseConfiguration {
   LicenseConfigurationId?: string | null;
   LicenseConfigurationArn?: string | null;
@@ -856,6 +2163,7 @@ export interface LicenseConfiguration {
   LicenseRules?: string[] | null;
   LicenseCount?: number | null;
   LicenseCountHardLimit?: boolean | null;
+  DisassociateWhenNotFound?: boolean | null;
   ConsumedLicenses?: number | null;
   Status?: string | null;
   OwnerAccountId?: string | null;
@@ -876,6 +2184,7 @@ function toLicenseConfiguration(root: jsonP.JSONValue): LicenseConfiguration {
       "LicenseRules": ["s"],
       "LicenseCount": "n",
       "LicenseCountHardLimit": "b",
+      "DisassociateWhenNotFound": "b",
       "ConsumedLicenses": "n",
       "Status": "s",
       "OwnerAccountId": "s",
@@ -886,6 +2195,73 @@ function toLicenseConfiguration(root: jsonP.JSONValue): LicenseConfiguration {
     },
   }, root);
 }
+
+// refs: 1 - tags: output, named, interface
+export interface GrantedLicense {
+  LicenseArn?: string | null;
+  LicenseName?: string | null;
+  ProductName?: string | null;
+  ProductSKU?: string | null;
+  Issuer?: IssuerDetails | null;
+  HomeRegion?: string | null;
+  Status?: LicenseStatus | null;
+  Validity?: DatetimeRange | null;
+  Beneficiary?: string | null;
+  Entitlements?: Entitlement[] | null;
+  ConsumptionConfiguration?: ConsumptionConfiguration | null;
+  LicenseMetadata?: Metadata[] | null;
+  CreateTime?: string | null;
+  Version?: string | null;
+  ReceivedMetadata?: ReceivedMetadata | null;
+}
+function toGrantedLicense(root: jsonP.JSONValue): GrantedLicense {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "LicenseArn": "s",
+      "LicenseName": "s",
+      "ProductName": "s",
+      "ProductSKU": "s",
+      "Issuer": toIssuerDetails,
+      "HomeRegion": "s",
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<LicenseStatus>(x),
+      "Validity": toDatetimeRange,
+      "Beneficiary": "s",
+      "Entitlements": [toEntitlement],
+      "ConsumptionConfiguration": toConsumptionConfiguration,
+      "LicenseMetadata": [toMetadata],
+      "CreateTime": "s",
+      "Version": "s",
+      "ReceivedMetadata": toReceivedMetadata,
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
+export interface ReceivedMetadata {
+  ReceivedStatus?: ReceivedStatus | null;
+  AllowedOperations?: AllowedOperation[] | null;
+}
+function toReceivedMetadata(root: jsonP.JSONValue): ReceivedMetadata {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "ReceivedStatus": (x: jsonP.JSONValue) => cmnP.readEnum<ReceivedStatus>(x),
+      "AllowedOperations": [(x: jsonP.JSONValue) => cmnP.readEnum<AllowedOperation>(x)],
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, enum
+export type ReceivedStatus =
+| "PENDING_WORKFLOW"
+| "PENDING_ACCEPT"
+| "REJECTED"
+| "ACTIVE"
+| "FAILED_WORKFLOW"
+| "DELETED"
+| "DISABLED"
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface ResourceInventory {
@@ -906,6 +2282,31 @@ function toResourceInventory(root: jsonP.JSONValue): ResourceInventory {
       "Platform": "s",
       "PlatformVersion": "s",
       "ResourceOwningAccountId": "s",
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
+export interface TokenData {
+  TokenId?: string | null;
+  TokenType?: string | null;
+  LicenseArn?: string | null;
+  ExpirationTime?: string | null;
+  TokenProperties?: string[] | null;
+  RoleArns?: string[] | null;
+  Status?: string | null;
+}
+function toTokenData(root: jsonP.JSONValue): TokenData {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "TokenId": "s",
+      "TokenType": "s",
+      "LicenseArn": "s",
+      "ExpirationTime": "s",
+      "TokenProperties": ["s"],
+      "RoleArns": ["s"],
+      "Status": "s",
     },
   }, root);
 }

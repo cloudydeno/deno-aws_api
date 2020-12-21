@@ -36,6 +36,7 @@ export default class SageMakerRuntime {
     if (params["CustomAttributes"] != null) headers.append("X-Amzn-SageMaker-Custom-Attributes", params["CustomAttributes"]);
     if (params["TargetModel"] != null) headers.append("X-Amzn-SageMaker-Target-Model", params["TargetModel"]);
     if (params["TargetVariant"] != null) headers.append("X-Amzn-SageMaker-Target-Variant", params["TargetVariant"]);
+    if (params["InferenceId"] != null) headers.append("X-Amzn-SageMaker-Inference-Id", params["InferenceId"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "InvokeEndpoint",
@@ -60,6 +61,7 @@ export interface InvokeEndpointInput {
   CustomAttributes?: string | null;
   TargetModel?: string | null;
   TargetVariant?: string | null;
+  InferenceId?: string | null;
 }
 
 // refs: 1 - tags: named, output

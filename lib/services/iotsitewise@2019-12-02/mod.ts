@@ -5,7 +5,7 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import * as uuidv4 from "https://deno.land/std@0.71.0/uuid/v4.ts";
+import * as uuidv4 from "https://deno.land/std@0.75.0/uuid/v4.ts";
 import * as cmnP from "../../encoding/common.ts";
 import * as jsonP from "../../encoding/json.ts";
 function generateIdemptToken() {
@@ -170,6 +170,7 @@ export default class IoTSiteWise {
       assetModelDescription: params["assetModelDescription"],
       assetModelProperties: params["assetModelProperties"]?.map(x => fromAssetModelPropertyDefinition(x)),
       assetModelHierarchies: params["assetModelHierarchies"]?.map(x => fromAssetModelHierarchyDefinition(x)),
+      assetModelCompositeModels: params["assetModelCompositeModels"]?.map(x => fromAssetModelCompositeModelDefinition(x)),
       clientToken: params["clientToken"] ?? generateIdemptToken(),
       tags: params["tags"],
     };
@@ -268,27 +269,6 @@ export default class IoTSiteWise {
         "portalStartUrl": "s",
         "portalStatus": toPortalStatus,
         "ssoApplicationId": "s",
-      },
-      optional: {},
-    }, await resp.json());
-  }
-
-  async createPresignedPortalUrl(
-    {abortSignal, ...params}: RequestConfig & CreatePresignedPortalUrlRequest,
-  ): Promise<CreatePresignedPortalUrlResponse> {
-    const query = new URLSearchParams;
-    if (params["sessionDurationSeconds"] != null) query.set("sessionDurationSeconds", params["sessionDurationSeconds"]?.toString() ?? "");
-    const resp = await this.#client.performRequest({
-      abortSignal, query,
-      action: "CreatePresignedPortalUrl",
-      method: "GET",
-      requestUri: cmnP.encodePath`/portals/${params["portalId"]}/presigned-url`,
-      responseCode: 200,
-      hostPrefix: `monitor.`,
-    });
-    return jsonP.readObj({
-      required: {
-        "presignedPortalUrl": "s",
       },
       optional: {},
     }, await resp.json());
@@ -502,7 +482,9 @@ export default class IoTSiteWise {
         "assetLastUpdateDate": "d",
         "assetStatus": toAssetStatus,
       },
-      optional: {},
+      optional: {
+        "assetCompositeModels": [toAssetCompositeModel],
+      },
     }, await resp.json());
   }
 
@@ -529,7 +511,9 @@ export default class IoTSiteWise {
         "assetModelLastUpdateDate": "d",
         "assetModelStatus": toAssetModelStatus,
       },
-      optional: {},
+      optional: {
+        "assetModelCompositeModels": [toAssetModelCompositeModel],
+      },
     }, await resp.json());
   }
 
@@ -549,9 +533,11 @@ export default class IoTSiteWise {
         "assetId": "s",
         "assetName": "s",
         "assetModelId": "s",
-        "assetProperty": toProperty,
       },
-      optional: {},
+      optional: {
+        "assetProperty": toProperty,
+        "compositeModel": toCompositeModelProperty,
+      },
     }, await resp.json());
   }
 
@@ -579,6 +565,27 @@ export default class IoTSiteWise {
       },
       optional: {
         "dashboardDescription": "s",
+      },
+    }, await resp.json());
+  }
+
+  async describeDefaultEncryptionConfiguration(
+    {abortSignal, ...params}: RequestConfig & DescribeDefaultEncryptionConfigurationRequest = {},
+  ): Promise<DescribeDefaultEncryptionConfigurationResponse> {
+
+    const resp = await this.#client.performRequest({
+      abortSignal,
+      action: "DescribeDefaultEncryptionConfiguration",
+      method: "GET",
+      requestUri: "/configuration/account/encryption",
+    });
+    return jsonP.readObj({
+      required: {
+        "encryptionType": (x: jsonP.JSONValue) => cmnP.readEnum<EncryptionType>(x),
+        "configurationStatus": toConfigurationStatus,
+      },
+      optional: {
+        "kmsKeyArn": "s",
       },
     }, await resp.json());
   }
@@ -868,6 +875,30 @@ export default class IoTSiteWise {
     }, await resp.json());
   }
 
+  async listAssetRelationships(
+    {abortSignal, ...params}: RequestConfig & ListAssetRelationshipsRequest,
+  ): Promise<ListAssetRelationshipsResponse> {
+    const query = new URLSearchParams;
+    query.set("traversalType", params["traversalType"]?.toString() ?? "");
+    if (params["nextToken"] != null) query.set("nextToken", params["nextToken"]?.toString() ?? "");
+    if (params["maxResults"] != null) query.set("maxResults", params["maxResults"]?.toString() ?? "");
+    const resp = await this.#client.performRequest({
+      abortSignal, query,
+      action: "ListAssetRelationships",
+      method: "GET",
+      requestUri: cmnP.encodePath`/assets/${params["assetId"]}/assetRelationships`,
+      hostPrefix: `model.`,
+    });
+    return jsonP.readObj({
+      required: {
+        "assetRelationshipSummaries": [toAssetRelationshipSummary],
+      },
+      optional: {
+        "nextToken": "s",
+      },
+    }, await resp.json());
+  }
+
   async listAssets(
     {abortSignal, ...params}: RequestConfig & ListAssetsRequest = {},
   ): Promise<ListAssetsResponse> {
@@ -1057,6 +1088,29 @@ export default class IoTSiteWise {
     }, await resp.json());
   }
 
+  async putDefaultEncryptionConfiguration(
+    {abortSignal, ...params}: RequestConfig & PutDefaultEncryptionConfigurationRequest,
+  ): Promise<PutDefaultEncryptionConfigurationResponse> {
+    const body: jsonP.JSONObject = {
+      encryptionType: params["encryptionType"],
+      kmsKeyId: params["kmsKeyId"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "PutDefaultEncryptionConfiguration",
+      requestUri: "/configuration/account/encryption",
+    });
+    return jsonP.readObj({
+      required: {
+        "encryptionType": (x: jsonP.JSONValue) => cmnP.readEnum<EncryptionType>(x),
+        "configurationStatus": toConfigurationStatus,
+      },
+      optional: {
+        "kmsKeyArn": "s",
+      },
+    }, await resp.json());
+  }
+
   async putLoggingOptions(
     {abortSignal, ...params}: RequestConfig & PutLoggingOptionsRequest,
   ): Promise<PutLoggingOptionsResponse> {
@@ -1169,6 +1223,7 @@ export default class IoTSiteWise {
       assetModelDescription: params["assetModelDescription"],
       assetModelProperties: params["assetModelProperties"]?.map(x => fromAssetModelProperty(x)),
       assetModelHierarchies: params["assetModelHierarchies"]?.map(x => fromAssetModelHierarchy(x)),
+      assetModelCompositeModels: params["assetModelCompositeModels"]?.map(x => fromAssetModelCompositeModel(x)),
       clientToken: params["clientToken"] ?? generateIdemptToken(),
     };
     const resp = await this.#client.performRequest({
@@ -1462,6 +1517,7 @@ export interface CreateAssetModelRequest {
   assetModelDescription?: string | null;
   assetModelProperties?: AssetModelPropertyDefinition[] | null;
   assetModelHierarchies?: AssetModelHierarchyDefinition[] | null;
+  assetModelCompositeModels?: AssetModelCompositeModelDefinition[] | null;
   clientToken?: string | null;
   tags?: { [key: string]: string | null | undefined } | null;
 }
@@ -1493,12 +1549,6 @@ export interface CreatePortalRequest {
   roleArn: string;
   tags?: { [key: string]: string | null | undefined } | null;
   portalAuthMode?: AuthMode | null;
-}
-
-// refs: 1 - tags: named, input
-export interface CreatePresignedPortalUrlRequest {
-  portalId: string;
-  sessionDurationSeconds?: number | null;
 }
 
 // refs: 1 - tags: named, input
@@ -1575,6 +1625,10 @@ export interface DescribeAssetPropertyRequest {
 // refs: 1 - tags: named, input
 export interface DescribeDashboardRequest {
   dashboardId: string;
+}
+
+// refs: 1 - tags: named, input
+export interface DescribeDefaultEncryptionConfigurationRequest {
 }
 
 // refs: 1 - tags: named, input
@@ -1663,6 +1717,14 @@ export interface ListAssetModelsRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface ListAssetRelationshipsRequest {
+  assetId: string;
+  traversalType: TraversalType;
+  nextToken?: string | null;
+  maxResults?: number | null;
+}
+
+// refs: 1 - tags: named, input
 export interface ListAssetsRequest {
   nextToken?: string | null;
   maxResults?: number | null;
@@ -1718,6 +1780,12 @@ export interface ListTagsForResourceRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface PutDefaultEncryptionConfigurationRequest {
+  encryptionType: EncryptionType;
+  kmsKeyId?: string | null;
+}
+
+// refs: 1 - tags: named, input
 export interface PutLoggingOptionsRequest {
   loggingOptions: LoggingOptions;
 }
@@ -1757,6 +1825,7 @@ export interface UpdateAssetModelRequest {
   assetModelDescription?: string | null;
   assetModelProperties?: AssetModelProperty[] | null;
   assetModelHierarchies?: AssetModelHierarchy[] | null;
+  assetModelCompositeModels?: AssetModelCompositeModel[] | null;
   clientToken?: string | null;
 }
 
@@ -1867,11 +1936,6 @@ export interface CreatePortalResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface CreatePresignedPortalUrlResponse {
-  presignedPortalUrl: string;
-}
-
-// refs: 1 - tags: named, output
 export interface CreateProjectResponse {
   projectId: string;
   projectArn: string;
@@ -1923,6 +1987,7 @@ export interface DescribeAssetResponse {
   assetModelId: string;
   assetProperties: AssetProperty[];
   assetHierarchies: AssetHierarchy[];
+  assetCompositeModels?: AssetCompositeModel[] | null;
   assetCreationDate: Date | number;
   assetLastUpdateDate: Date | number;
   assetStatus: AssetStatus;
@@ -1936,6 +2001,7 @@ export interface DescribeAssetModelResponse {
   assetModelDescription: string;
   assetModelProperties: AssetModelProperty[];
   assetModelHierarchies: AssetModelHierarchy[];
+  assetModelCompositeModels?: AssetModelCompositeModel[] | null;
   assetModelCreationDate: Date | number;
   assetModelLastUpdateDate: Date | number;
   assetModelStatus: AssetModelStatus;
@@ -1946,7 +2012,8 @@ export interface DescribeAssetPropertyResponse {
   assetId: string;
   assetName: string;
   assetModelId: string;
-  assetProperty: Property;
+  assetProperty?: Property | null;
+  compositeModel?: CompositeModelProperty | null;
 }
 
 // refs: 1 - tags: named, output
@@ -1959,6 +2026,13 @@ export interface DescribeDashboardResponse {
   dashboardDefinition: string;
   dashboardCreationDate: Date | number;
   dashboardLastUpdateDate: Date | number;
+}
+
+// refs: 1 - tags: named, output
+export interface DescribeDefaultEncryptionConfigurationResponse {
+  encryptionType: EncryptionType;
+  kmsKeyArn?: string | null;
+  configurationStatus: ConfigurationStatus;
 }
 
 // refs: 1 - tags: named, output
@@ -2043,6 +2117,12 @@ export interface ListAssetModelsResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface ListAssetRelationshipsResponse {
+  assetRelationshipSummaries: AssetRelationshipSummary[];
+  nextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
 export interface ListAssetsResponse {
   assetSummaries: AssetSummary[];
   nextToken?: string | null;
@@ -2087,6 +2167,13 @@ export interface ListProjectsResponse {
 // refs: 1 - tags: named, output
 export interface ListTagsForResourceResponse {
   tags?: { [key: string]: string | null | undefined } | null;
+}
+
+// refs: 1 - tags: named, output
+export interface PutDefaultEncryptionConfigurationResponse {
+  encryptionType: EncryptionType;
+  kmsKeyArn?: string | null;
+  configurationStatus: ConfigurationStatus;
 }
 
 // refs: 1 - tags: named, output
@@ -2385,10 +2472,11 @@ export type Permission =
 | "VIEWER"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 1 - tags: input, named, interface
+// refs: 2 - tags: input, named, interface
 export interface AssetModelPropertyDefinition {
   name: string;
   dataType: PropertyDataType;
+  dataTypeSpec?: string | null;
   unit?: string | null;
   type: PropertyType;
 }
@@ -2397,20 +2485,22 @@ function fromAssetModelPropertyDefinition(input?: AssetModelPropertyDefinition |
   return {
     name: input["name"],
     dataType: input["dataType"],
+    dataTypeSpec: input["dataTypeSpec"],
     unit: input["unit"],
     type: fromPropertyType(input["type"]),
   }
 }
 
-// refs: 5 - tags: input, named, enum, output
+// refs: 10 - tags: input, named, enum, output
 export type PropertyDataType =
 | "STRING"
 | "INTEGER"
 | "DOUBLE"
 | "BOOLEAN"
+| "STRUCT"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 4 - tags: input, named, interface, output
+// refs: 8 - tags: input, named, interface, output
 export interface PropertyType {
   attribute?: Attribute | null;
   measurement?: Measurement | null;
@@ -2438,7 +2528,7 @@ function toPropertyType(root: jsonP.JSONValue): PropertyType {
   }, root);
 }
 
-// refs: 4 - tags: input, named, interface, output
+// refs: 8 - tags: input, named, interface, output
 export interface Attribute {
   defaultValue?: string | null;
 }
@@ -2457,7 +2547,7 @@ function toAttribute(root: jsonP.JSONValue): Attribute {
   }, root);
 }
 
-// refs: 4 - tags: input, named, interface, output
+// refs: 8 - tags: input, named, interface, output
 export interface Measurement {
 }
 function fromMeasurement(input?: Measurement | null): jsonP.JSONValue {
@@ -2472,7 +2562,7 @@ function toMeasurement(root: jsonP.JSONValue): Measurement {
   }, root);
 }
 
-// refs: 4 - tags: input, named, interface, output
+// refs: 8 - tags: input, named, interface, output
 export interface Transform {
   expression: string;
   variables: ExpressionVariable[];
@@ -2494,7 +2584,7 @@ function toTransform(root: jsonP.JSONValue): Transform {
   }, root);
 }
 
-// refs: 8 - tags: input, named, interface, output
+// refs: 16 - tags: input, named, interface, output
 export interface ExpressionVariable {
   name: string;
   value: VariableValue;
@@ -2516,7 +2606,7 @@ function toExpressionVariable(root: jsonP.JSONValue): ExpressionVariable {
   }, root);
 }
 
-// refs: 8 - tags: input, named, interface, output
+// refs: 16 - tags: input, named, interface, output
 export interface VariableValue {
   propertyId: string;
   hierarchyId?: string | null;
@@ -2539,7 +2629,7 @@ function toVariableValue(root: jsonP.JSONValue): VariableValue {
   }, root);
 }
 
-// refs: 4 - tags: input, named, interface, output
+// refs: 8 - tags: input, named, interface, output
 export interface Metric {
   expression: string;
   variables: ExpressionVariable[];
@@ -2564,7 +2654,7 @@ function toMetric(root: jsonP.JSONValue): Metric {
   }, root);
 }
 
-// refs: 4 - tags: input, named, interface, output
+// refs: 8 - tags: input, named, interface, output
 export interface MetricWindow {
   tumbling?: TumblingWindow | null;
 }
@@ -2583,7 +2673,7 @@ function toMetricWindow(root: jsonP.JSONValue): MetricWindow {
   }, root);
 }
 
-// refs: 4 - tags: input, named, interface, output
+// refs: 8 - tags: input, named, interface, output
 export interface TumblingWindow {
   interval: string;
 }
@@ -2612,6 +2702,23 @@ function fromAssetModelHierarchyDefinition(input?: AssetModelHierarchyDefinition
   return {
     name: input["name"],
     childAssetModelId: input["childAssetModelId"],
+  }
+}
+
+// refs: 1 - tags: input, named, interface
+export interface AssetModelCompositeModelDefinition {
+  name: string;
+  description?: string | null;
+  type: string;
+  properties?: AssetModelPropertyDefinition[] | null;
+}
+function fromAssetModelCompositeModelDefinition(input?: AssetModelCompositeModelDefinition | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    name: input["name"],
+    description: input["description"],
+    type: input["type"],
+    properties: input["properties"]?.map(x => fromAssetModelPropertyDefinition(x)),
   }
 }
 
@@ -2707,6 +2814,11 @@ export type ResourceType =
 | cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
+export type TraversalType =
+| "PATH_TO_ROOT"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 1 - tags: input, named, enum
 export type ListAssetsFilter =
 | "ALL"
 | "TOP_LEVEL"
@@ -2716,6 +2828,12 @@ export type ListAssetsFilter =
 export type TraversalDirection =
 | "PARENT"
 | "CHILD"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 3 - tags: input, named, enum, output
+export type EncryptionType =
+| "SITEWISE_DEFAULT_ENCRYPTION"
+| "KMS_BASED_ENCRYPTION"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface, output
@@ -2744,11 +2862,12 @@ export type LoggingLevel =
 | "OFF"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 2 - tags: input, named, interface, output
+// refs: 4 - tags: input, named, interface, output
 export interface AssetModelProperty {
   id?: string | null;
   name: string;
   dataType: PropertyDataType;
+  dataTypeSpec?: string | null;
   unit?: string | null;
   type: PropertyType;
 }
@@ -2758,6 +2877,7 @@ function fromAssetModelProperty(input?: AssetModelProperty | null): jsonP.JSONVa
     id: input["id"],
     name: input["name"],
     dataType: input["dataType"],
+    dataTypeSpec: input["dataTypeSpec"],
     unit: input["unit"],
     type: fromPropertyType(input["type"]),
   }
@@ -2771,6 +2891,7 @@ function toAssetModelProperty(root: jsonP.JSONValue): AssetModelProperty {
     },
     optional: {
       "id": "s",
+      "dataTypeSpec": "s",
       "unit": "s",
     },
   }, root);
@@ -2802,7 +2923,36 @@ function toAssetModelHierarchy(root: jsonP.JSONValue): AssetModelHierarchy {
   }, root);
 }
 
-// refs: 3 - tags: input, named, enum, output
+// refs: 2 - tags: input, named, interface, output
+export interface AssetModelCompositeModel {
+  name: string;
+  description?: string | null;
+  type: string;
+  properties?: AssetModelProperty[] | null;
+}
+function fromAssetModelCompositeModel(input?: AssetModelCompositeModel | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    name: input["name"],
+    description: input["description"],
+    type: input["type"],
+    properties: input["properties"]?.map(x => fromAssetModelProperty(x)),
+  }
+}
+function toAssetModelCompositeModel(root: jsonP.JSONValue): AssetModelCompositeModel {
+  return jsonP.readObj({
+    required: {
+      "name": "s",
+      "type": "s",
+    },
+    optional: {
+      "description": "s",
+      "properties": [toAssetModelProperty],
+    },
+  }, root);
+}
+
+// refs: 5 - tags: input, named, enum, output
 export type PropertyNotificationState =
 | "ENABLED"
 | "DISABLED"
@@ -2928,7 +3078,7 @@ function toErrorDetails(root: jsonP.JSONValue): ErrorDetails {
   }, root);
 }
 
-// refs: 11 - tags: output, named, enum
+// refs: 13 - tags: output, named, enum
 export type ErrorCode =
 | "VALIDATION_ERROR"
 | "INTERNAL_FAILURE"
@@ -3007,13 +3157,14 @@ export type MonitorErrorCode =
 | "LIMIT_EXCEEDED"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 1 - tags: output, named, interface
+// refs: 2 - tags: output, named, interface
 export interface AssetProperty {
   id: string;
   name: string;
   alias?: string | null;
   notification?: PropertyNotification | null;
   dataType: PropertyDataType;
+  dataTypeSpec?: string | null;
   unit?: string | null;
 }
 function toAssetProperty(root: jsonP.JSONValue): AssetProperty {
@@ -3026,12 +3177,13 @@ function toAssetProperty(root: jsonP.JSONValue): AssetProperty {
     optional: {
       "alias": "s",
       "notification": toPropertyNotification,
+      "dataTypeSpec": "s",
       "unit": "s",
     },
   }, root);
 }
 
-// refs: 2 - tags: output, named, interface
+// refs: 4 - tags: output, named, interface
 export interface PropertyNotification {
   topic: string;
   state: PropertyNotificationState;
@@ -3063,6 +3215,26 @@ function toAssetHierarchy(root: jsonP.JSONValue): AssetHierarchy {
 }
 
 // refs: 1 - tags: output, named, interface
+export interface AssetCompositeModel {
+  name: string;
+  description?: string | null;
+  type: string;
+  properties: AssetProperty[];
+}
+function toAssetCompositeModel(root: jsonP.JSONValue): AssetCompositeModel {
+  return jsonP.readObj({
+    required: {
+      "name": "s",
+      "type": "s",
+      "properties": [toAssetProperty],
+    },
+    optional: {
+      "description": "s",
+    },
+  }, root);
+}
+
+// refs: 2 - tags: output, named, interface
 export interface Property {
   id: string;
   name: string;
@@ -3085,6 +3257,61 @@ function toProperty(root: jsonP.JSONValue): Property {
       "unit": "s",
       "type": toPropertyType,
     },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
+export interface CompositeModelProperty {
+  name: string;
+  type: string;
+  assetProperty: Property;
+}
+function toCompositeModelProperty(root: jsonP.JSONValue): CompositeModelProperty {
+  return jsonP.readObj({
+    required: {
+      "name": "s",
+      "type": "s",
+      "assetProperty": toProperty,
+    },
+    optional: {},
+  }, root);
+}
+
+// refs: 2 - tags: output, named, interface
+export interface ConfigurationStatus {
+  state: ConfigurationState;
+  error?: ConfigurationErrorDetails | null;
+}
+function toConfigurationStatus(root: jsonP.JSONValue): ConfigurationStatus {
+  return jsonP.readObj({
+    required: {
+      "state": (x: jsonP.JSONValue) => cmnP.readEnum<ConfigurationState>(x),
+    },
+    optional: {
+      "error": toConfigurationErrorDetails,
+    },
+  }, root);
+}
+
+// refs: 2 - tags: output, named, enum
+export type ConfigurationState =
+| "ACTIVE"
+| "UPDATE_IN_PROGRESS"
+| "UPDATE_FAILED"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 2 - tags: output, named, interface
+export interface ConfigurationErrorDetails {
+  code: ErrorCode;
+  message: string;
+}
+function toConfigurationErrorDetails(root: jsonP.JSONValue): ConfigurationErrorDetails {
+  return jsonP.readObj({
+    required: {
+      "code": (x: jsonP.JSONValue) => cmnP.readEnum<ErrorCode>(x),
+      "message": "s",
+    },
+    optional: {},
   }, root);
 }
 
@@ -3214,6 +3441,42 @@ function toAssetModelSummary(root: jsonP.JSONValue): AssetModelSummary {
     optional: {},
   }, root);
 }
+
+// refs: 1 - tags: output, named, interface
+export interface AssetRelationshipSummary {
+  hierarchyInfo?: AssetHierarchyInfo | null;
+  relationshipType: AssetRelationshipType;
+}
+function toAssetRelationshipSummary(root: jsonP.JSONValue): AssetRelationshipSummary {
+  return jsonP.readObj({
+    required: {
+      "relationshipType": (x: jsonP.JSONValue) => cmnP.readEnum<AssetRelationshipType>(x),
+    },
+    optional: {
+      "hierarchyInfo": toAssetHierarchyInfo,
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
+export interface AssetHierarchyInfo {
+  parentAssetId?: string | null;
+  childAssetId?: string | null;
+}
+function toAssetHierarchyInfo(root: jsonP.JSONValue): AssetHierarchyInfo {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "parentAssetId": "s",
+      "childAssetId": "s",
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, enum
+export type AssetRelationshipType =
+| "HIERARCHY"
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface AssetSummary {

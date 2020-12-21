@@ -1011,6 +1011,25 @@ export default class DMS {
     }, await resp.json());
   }
 
+  async moveReplicationTask(
+    {abortSignal, ...params}: RequestConfig & MoveReplicationTaskMessage,
+  ): Promise<MoveReplicationTaskResponse> {
+    const body: jsonP.JSONObject = {
+      ReplicationTaskArn: params["ReplicationTaskArn"],
+      TargetReplicationInstanceArn: params["TargetReplicationInstanceArn"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "MoveReplicationTask",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ReplicationTask": toReplicationTask,
+      },
+    }, await resp.json());
+  }
+
   async rebootReplicationInstance(
     {abortSignal, ...params}: RequestConfig & RebootReplicationInstanceMessage,
   ): Promise<RebootReplicationInstanceResponse> {
@@ -1773,6 +1792,12 @@ export interface ModifyReplicationTaskMessage {
 }
 
 // refs: 1 - tags: named, input
+export interface MoveReplicationTaskMessage {
+  ReplicationTaskArn: string;
+  TargetReplicationInstanceArn: string;
+}
+
+// refs: 1 - tags: named, input
 export interface RebootReplicationInstanceMessage {
   ReplicationInstanceArn: string;
   ForceFailover?: boolean | null;
@@ -2076,6 +2101,11 @@ export interface ModifyReplicationTaskResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface MoveReplicationTaskResponse {
+  ReplicationTask?: ReplicationTask | null;
+}
+
+// refs: 1 - tags: named, output
 export interface RebootReplicationInstanceResponse {
   ReplicationInstance?: ReplicationInstance | null;
 }
@@ -2200,6 +2230,10 @@ export interface S3Settings {
   DatePartitionEnabled?: boolean | null;
   DatePartitionSequence?: DatePartitionSequenceValue | null;
   DatePartitionDelimiter?: DatePartitionDelimiterValue | null;
+  UseCsvNoSupValue?: boolean | null;
+  CsvNoSupValue?: string | null;
+  PreserveTransactions?: boolean | null;
+  CdcPath?: string | null;
 }
 function fromS3Settings(input?: S3Settings | null): jsonP.JSONValue {
   if (!input) return input;
@@ -2228,6 +2262,10 @@ function fromS3Settings(input?: S3Settings | null): jsonP.JSONValue {
     DatePartitionEnabled: input["DatePartitionEnabled"],
     DatePartitionSequence: input["DatePartitionSequence"],
     DatePartitionDelimiter: input["DatePartitionDelimiter"],
+    UseCsvNoSupValue: input["UseCsvNoSupValue"],
+    CsvNoSupValue: input["CsvNoSupValue"],
+    PreserveTransactions: input["PreserveTransactions"],
+    CdcPath: input["CdcPath"],
   }
 }
 function toS3Settings(root: jsonP.JSONValue): S3Settings {
@@ -2258,6 +2296,10 @@ function toS3Settings(root: jsonP.JSONValue): S3Settings {
       "DatePartitionEnabled": "b",
       "DatePartitionSequence": (x: jsonP.JSONValue) => cmnP.readEnum<DatePartitionSequenceValue>(x),
       "DatePartitionDelimiter": (x: jsonP.JSONValue) => cmnP.readEnum<DatePartitionDelimiterValue>(x),
+      "UseCsvNoSupValue": "b",
+      "CsvNoSupValue": "s",
+      "PreserveTransactions": "b",
+      "CdcPath": "s",
     },
   }, root);
 }
@@ -3052,7 +3094,7 @@ function toDocDbSettings(root: jsonP.JSONValue): DocDbSettings {
   }, root);
 }
 
-// refs: 10 - tags: input, named, enum, output
+// refs: 11 - tags: input, named, enum, output
 export type MigrationTypeValue =
 | "full-load"
 | "cdc"
@@ -3439,7 +3481,7 @@ function toReplicationPendingModifiedValues(root: jsonP.JSONValue): ReplicationP
   }, root);
 }
 
-// refs: 7 - tags: output, named, interface
+// refs: 8 - tags: output, named, interface
 export interface ReplicationTask {
   ReplicationTaskIdentifier?: string | null;
   SourceEndpointArn?: string | null;
@@ -3459,6 +3501,7 @@ export interface ReplicationTask {
   ReplicationTaskArn?: string | null;
   ReplicationTaskStats?: ReplicationTaskStats | null;
   TaskData?: string | null;
+  TargetReplicationInstanceArn?: string | null;
 }
 function toReplicationTask(root: jsonP.JSONValue): ReplicationTask {
   return jsonP.readObj({
@@ -3482,11 +3525,12 @@ function toReplicationTask(root: jsonP.JSONValue): ReplicationTask {
       "ReplicationTaskArn": "s",
       "ReplicationTaskStats": toReplicationTaskStats,
       "TaskData": "s",
+      "TargetReplicationInstanceArn": "s",
     },
   }, root);
 }
 
-// refs: 7 - tags: output, named, interface
+// refs: 8 - tags: output, named, interface
 export interface ReplicationTaskStats {
   FullLoadProgressPercent?: number | null;
   ElapsedTimeMillis?: number | null;

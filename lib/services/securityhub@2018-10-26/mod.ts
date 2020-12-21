@@ -177,7 +177,7 @@ export default class SecurityHub {
   }
 
   async createMembers(
-    {abortSignal, ...params}: RequestConfig & CreateMembersRequest = {},
+    {abortSignal, ...params}: RequestConfig & CreateMembersRequest,
   ): Promise<CreateMembersResponse> {
     const body: jsonP.JSONObject = {
       AccountDetails: params["AccountDetails"]?.map(x => fromAccountDetails(x)),
@@ -270,7 +270,7 @@ export default class SecurityHub {
   }
 
   async deleteMembers(
-    {abortSignal, ...params}: RequestConfig & DeleteMembersRequest = {},
+    {abortSignal, ...params}: RequestConfig & DeleteMembersRequest,
   ): Promise<DeleteMembersResponse> {
     const body: jsonP.JSONObject = {
       AccountIds: params["AccountIds"],
@@ -328,6 +328,25 @@ export default class SecurityHub {
         "HubArn": "s",
         "SubscribedAt": "s",
         "AutoEnableControls": "b",
+      },
+    }, await resp.json());
+  }
+
+  async describeOrganizationConfiguration(
+    {abortSignal, ...params}: RequestConfig & DescribeOrganizationConfigurationRequest = {},
+  ): Promise<DescribeOrganizationConfigurationResponse> {
+
+    const resp = await this.#client.performRequest({
+      abortSignal,
+      action: "DescribeOrganizationConfiguration",
+      method: "GET",
+      requestUri: "/organization/configuration",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "AutoEnable": "b",
+        "MemberAccountLimitReached": "b",
       },
     }, await resp.json());
   }
@@ -412,6 +431,23 @@ export default class SecurityHub {
     }, await resp.json());
   }
 
+  async disableOrganizationAdminAccount(
+    {abortSignal, ...params}: RequestConfig & DisableOrganizationAdminAccountRequest,
+  ): Promise<DisableOrganizationAdminAccountResponse> {
+    const body: jsonP.JSONObject = {
+      AdminAccountId: params["AdminAccountId"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DisableOrganizationAdminAccount",
+      requestUri: "/organization/admin/disable",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
+  }
+
   async disableSecurityHub(
     {abortSignal, ...params}: RequestConfig & DisableSecurityHubRequest = {},
   ): Promise<DisableSecurityHubResponse> {
@@ -444,7 +480,7 @@ export default class SecurityHub {
   }
 
   async disassociateMembers(
-    {abortSignal, ...params}: RequestConfig & DisassociateMembersRequest = {},
+    {abortSignal, ...params}: RequestConfig & DisassociateMembersRequest,
   ): Promise<DisassociateMembersResponse> {
     const body: jsonP.JSONObject = {
       AccountIds: params["AccountIds"],
@@ -476,6 +512,23 @@ export default class SecurityHub {
       optional: {
         "ProductSubscriptionArn": "s",
       },
+    }, await resp.json());
+  }
+
+  async enableOrganizationAdminAccount(
+    {abortSignal, ...params}: RequestConfig & EnableOrganizationAdminAccountRequest,
+  ): Promise<EnableOrganizationAdminAccountResponse> {
+    const body: jsonP.JSONObject = {
+      AdminAccountId: params["AdminAccountId"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "EnableOrganizationAdminAccount",
+      requestUri: "/organization/admin/enable",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {},
     }, await resp.json());
   }
 
@@ -641,7 +694,7 @@ export default class SecurityHub {
   }
 
   async inviteMembers(
-    {abortSignal, ...params}: RequestConfig & InviteMembersRequest = {},
+    {abortSignal, ...params}: RequestConfig & InviteMembersRequest,
   ): Promise<InviteMembersResponse> {
     const body: jsonP.JSONObject = {
       AccountIds: params["AccountIds"],
@@ -718,6 +771,27 @@ export default class SecurityHub {
       required: {},
       optional: {
         "Members": [toMember],
+        "NextToken": "s",
+      },
+    }, await resp.json());
+  }
+
+  async listOrganizationAdminAccounts(
+    {abortSignal, ...params}: RequestConfig & ListOrganizationAdminAccountsRequest = {},
+  ): Promise<ListOrganizationAdminAccountsResponse> {
+    const query = new URLSearchParams;
+    if (params["MaxResults"] != null) query.set("MaxResults", params["MaxResults"]?.toString() ?? "");
+    if (params["NextToken"] != null) query.set("NextToken", params["NextToken"]?.toString() ?? "");
+    const resp = await this.#client.performRequest({
+      abortSignal, query,
+      action: "ListOrganizationAdminAccounts",
+      method: "GET",
+      requestUri: "/organization/admin",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "AdminAccounts": [toAdminAccount],
         "NextToken": "s",
       },
     }, await resp.json());
@@ -836,6 +910,23 @@ export default class SecurityHub {
     }, await resp.json());
   }
 
+  async updateOrganizationConfiguration(
+    {abortSignal, ...params}: RequestConfig & UpdateOrganizationConfigurationRequest,
+  ): Promise<UpdateOrganizationConfigurationResponse> {
+    const body: jsonP.JSONObject = {
+      AutoEnable: params["AutoEnable"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "UpdateOrganizationConfiguration",
+      requestUri: "/organization/configuration",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
+  }
+
   async updateSecurityHubConfiguration(
     {abortSignal, ...params}: RequestConfig & UpdateSecurityHubConfigurationRequest = {},
   ): Promise<UpdateSecurityHubConfigurationResponse> {
@@ -926,7 +1017,7 @@ export interface CreateInsightRequest {
 
 // refs: 1 - tags: named, input
 export interface CreateMembersRequest {
-  AccountDetails?: AccountDetails[] | null;
+  AccountDetails: AccountDetails[];
 }
 
 // refs: 1 - tags: named, input
@@ -951,7 +1042,7 @@ export interface DeleteInvitationsRequest {
 
 // refs: 1 - tags: named, input
 export interface DeleteMembersRequest {
-  AccountIds?: string[] | null;
+  AccountIds: string[];
 }
 
 // refs: 1 - tags: named, input
@@ -964,6 +1055,10 @@ export interface DescribeActionTargetsRequest {
 // refs: 1 - tags: named, input
 export interface DescribeHubRequest {
   HubArn?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface DescribeOrganizationConfigurationRequest {
 }
 
 // refs: 1 - tags: named, input
@@ -991,6 +1086,11 @@ export interface DisableImportFindingsForProductRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface DisableOrganizationAdminAccountRequest {
+  AdminAccountId: string;
+}
+
+// refs: 1 - tags: named, input
 export interface DisableSecurityHubRequest {
 }
 
@@ -1000,12 +1100,17 @@ export interface DisassociateFromMasterAccountRequest {
 
 // refs: 1 - tags: named, input
 export interface DisassociateMembersRequest {
-  AccountIds?: string[] | null;
+  AccountIds: string[];
 }
 
 // refs: 1 - tags: named, input
 export interface EnableImportFindingsForProductRequest {
   ProductArn: string;
+}
+
+// refs: 1 - tags: named, input
+export interface EnableOrganizationAdminAccountRequest {
+  AdminAccountId: string;
 }
 
 // refs: 1 - tags: named, input
@@ -1056,7 +1161,7 @@ export interface GetMembersRequest {
 
 // refs: 1 - tags: named, input
 export interface InviteMembersRequest {
-  AccountIds?: string[] | null;
+  AccountIds: string[];
 }
 
 // refs: 1 - tags: named, input
@@ -1074,6 +1179,12 @@ export interface ListInvitationsRequest {
 // refs: 1 - tags: named, input
 export interface ListMembersRequest {
   OnlyAssociated?: boolean | null;
+  MaxResults?: number | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface ListOrganizationAdminAccountsRequest {
   MaxResults?: number | null;
   NextToken?: string | null;
 }
@@ -1115,6 +1226,11 @@ export interface UpdateInsightRequest {
   Name?: string | null;
   Filters?: AwsSecurityFindingFilters | null;
   GroupByAttribute?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface UpdateOrganizationConfigurationRequest {
+  AutoEnable: boolean;
 }
 
 // refs: 1 - tags: named, input
@@ -1210,6 +1326,12 @@ export interface DescribeHubResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface DescribeOrganizationConfigurationResponse {
+  AutoEnable?: boolean | null;
+  MemberAccountLimitReached?: boolean | null;
+}
+
+// refs: 1 - tags: named, output
 export interface DescribeProductsResponse {
   Products: Product[];
   NextToken?: string | null;
@@ -1232,6 +1354,10 @@ export interface DisableImportFindingsForProductResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface DisableOrganizationAdminAccountResponse {
+}
+
+// refs: 1 - tags: named, output
 export interface DisableSecurityHubResponse {
 }
 
@@ -1246,6 +1372,10 @@ export interface DisassociateMembersResponse {
 // refs: 1 - tags: named, output
 export interface EnableImportFindingsForProductResponse {
   ProductSubscriptionArn?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface EnableOrganizationAdminAccountResponse {
 }
 
 // refs: 1 - tags: named, output
@@ -1315,6 +1445,12 @@ export interface ListMembersResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface ListOrganizationAdminAccountsResponse {
+  AdminAccounts?: AdminAccount[] | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
 export interface ListTagsForResourceResponse {
   Tags?: { [key: string]: string | null | undefined } | null;
 }
@@ -1337,6 +1473,10 @@ export interface UpdateFindingsResponse {
 
 // refs: 1 - tags: named, output
 export interface UpdateInsightResponse {
+}
+
+// refs: 1 - tags: named, output
+export interface UpdateOrganizationConfigurationResponse {
 }
 
 // refs: 1 - tags: named, output
@@ -8131,7 +8271,7 @@ function toKeywordFilter(root: jsonP.JSONValue): KeywordFilter {
 
 // refs: 1 - tags: input, named, interface
 export interface AccountDetails {
-  AccountId?: string | null;
+  AccountId: string;
   Email?: string | null;
 }
 function fromAccountDetails(input?: AccountDetails | null): jsonP.JSONValue {
@@ -8447,3 +8587,24 @@ function toMember(root: jsonP.JSONValue): Member {
     },
   }, root);
 }
+
+// refs: 1 - tags: output, named, interface
+export interface AdminAccount {
+  AccountId?: string | null;
+  Status?: AdminStatus | null;
+}
+function toAdminAccount(root: jsonP.JSONValue): AdminAccount {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "AccountId": "s",
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<AdminStatus>(x),
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, enum
+export type AdminStatus =
+| "ENABLED"
+| "DISABLE_IN_PROGRESS"
+| cmnP.UnexpectedEnumValue;

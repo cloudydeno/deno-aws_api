@@ -683,6 +683,25 @@ export default class StorageGateway {
     }, await resp.json());
   }
 
+  async describeBandwidthRateLimitSchedule(
+    {abortSignal, ...params}: RequestConfig & DescribeBandwidthRateLimitScheduleInput,
+  ): Promise<DescribeBandwidthRateLimitScheduleOutput> {
+    const body: jsonP.JSONObject = {
+      GatewayARN: params["GatewayARN"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DescribeBandwidthRateLimitSchedule",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "GatewayARN": "s",
+        "BandwidthRateLimitIntervals": [toBandwidthRateLimitInterval],
+      },
+    }, await resp.json());
+  }
+
   async describeCache(
     {abortSignal, ...params}: RequestConfig & DescribeCacheInput,
   ): Promise<DescribeCacheOutput> {
@@ -1541,6 +1560,25 @@ export default class StorageGateway {
     }, await resp.json());
   }
 
+  async updateBandwidthRateLimitSchedule(
+    {abortSignal, ...params}: RequestConfig & UpdateBandwidthRateLimitScheduleInput,
+  ): Promise<UpdateBandwidthRateLimitScheduleOutput> {
+    const body: jsonP.JSONObject = {
+      GatewayARN: params["GatewayARN"],
+      BandwidthRateLimitIntervals: params["BandwidthRateLimitIntervals"]?.map(x => fromBandwidthRateLimitInterval(x)),
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "UpdateBandwidthRateLimitSchedule",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "GatewayARN": "s",
+      },
+    }, await resp.json());
+  }
+
   async updateChapCredentials(
     {abortSignal, ...params}: RequestConfig & UpdateChapCredentialsInput,
   ): Promise<UpdateChapCredentialsOutput> {
@@ -2028,6 +2066,11 @@ export interface DescribeBandwidthRateLimitInput {
 }
 
 // refs: 1 - tags: named, input
+export interface DescribeBandwidthRateLimitScheduleInput {
+  GatewayARN: string;
+}
+
+// refs: 1 - tags: named, input
 export interface DescribeCacheInput {
   GatewayARN: string;
 }
@@ -2273,6 +2316,12 @@ export interface UpdateBandwidthRateLimitInput {
   GatewayARN: string;
   AverageUploadRateLimitInBitsPerSec?: number | null;
   AverageDownloadRateLimitInBitsPerSec?: number | null;
+}
+
+// refs: 1 - tags: named, input
+export interface UpdateBandwidthRateLimitScheduleInput {
+  GatewayARN: string;
+  BandwidthRateLimitIntervals: BandwidthRateLimitInterval[];
 }
 
 // refs: 1 - tags: named, input
@@ -2532,6 +2581,12 @@ export interface DescribeBandwidthRateLimitOutput {
   GatewayARN?: string | null;
   AverageUploadRateLimitInBitsPerSec?: number | null;
   AverageDownloadRateLimitInBitsPerSec?: number | null;
+}
+
+// refs: 1 - tags: named, output
+export interface DescribeBandwidthRateLimitScheduleOutput {
+  GatewayARN?: string | null;
+  BandwidthRateLimitIntervals?: BandwidthRateLimitInterval[] | null;
 }
 
 // refs: 1 - tags: named, output
@@ -2809,6 +2864,11 @@ export interface UpdateBandwidthRateLimitOutput {
 }
 
 // refs: 1 - tags: named, output
+export interface UpdateBandwidthRateLimitScheduleOutput {
+  GatewayARN?: string | null;
+}
+
+// refs: 1 - tags: named, output
 export interface UpdateChapCredentialsOutput {
   TargetARN?: string | null;
   InitiatorName?: string | null;
@@ -2987,6 +3047,44 @@ function toAutomaticTapeCreationRule(root: jsonP.JSONValue): AutomaticTapeCreati
     },
     optional: {
       "Worm": "b",
+    },
+  }, root);
+}
+
+// refs: 2 - tags: input, named, interface, output
+export interface BandwidthRateLimitInterval {
+  StartHourOfDay: number;
+  StartMinuteOfHour: number;
+  EndHourOfDay: number;
+  EndMinuteOfHour: number;
+  DaysOfWeek: number[];
+  AverageUploadRateLimitInBitsPerSec?: number | null;
+  AverageDownloadRateLimitInBitsPerSec?: number | null;
+}
+function fromBandwidthRateLimitInterval(input?: BandwidthRateLimitInterval | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    StartHourOfDay: input["StartHourOfDay"],
+    StartMinuteOfHour: input["StartMinuteOfHour"],
+    EndHourOfDay: input["EndHourOfDay"],
+    EndMinuteOfHour: input["EndMinuteOfHour"],
+    DaysOfWeek: input["DaysOfWeek"],
+    AverageUploadRateLimitInBitsPerSec: input["AverageUploadRateLimitInBitsPerSec"],
+    AverageDownloadRateLimitInBitsPerSec: input["AverageDownloadRateLimitInBitsPerSec"],
+  }
+}
+function toBandwidthRateLimitInterval(root: jsonP.JSONValue): BandwidthRateLimitInterval {
+  return jsonP.readObj({
+    required: {
+      "StartHourOfDay": "n",
+      "StartMinuteOfHour": "n",
+      "EndHourOfDay": "n",
+      "EndMinuteOfHour": "n",
+      "DaysOfWeek": ["n"],
+    },
+    optional: {
+      "AverageUploadRateLimitInBitsPerSec": "n",
+      "AverageDownloadRateLimitInBitsPerSec": "n",
     },
   }, root);
 }

@@ -5,7 +5,7 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import * as uuidv4 from "https://deno.land/std@0.71.0/uuid/v4.ts";
+import * as uuidv4 from "https://deno.land/std@0.75.0/uuid/v4.ts";
 import * as cmnP from "../../encoding/common.ts";
 import * as jsonP from "../../encoding/json.ts";
 function generateIdemptToken() {
@@ -30,6 +30,30 @@ export default class EKS {
     "signingName": "eks",
     "uid": "eks-2017-11-01"
   };
+
+  async createAddon(
+    {abortSignal, ...params}: RequestConfig & CreateAddonRequest,
+  ): Promise<CreateAddonResponse> {
+    const body: jsonP.JSONObject = {
+      addonName: params["addonName"],
+      addonVersion: params["addonVersion"],
+      serviceAccountRoleArn: params["serviceAccountRoleArn"],
+      resolveConflicts: params["resolveConflicts"],
+      clientRequestToken: params["clientRequestToken"] ?? generateIdemptToken(),
+      tags: params["tags"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "CreateAddon",
+      requestUri: cmnP.encodePath`/clusters/${params["clusterName"]}/addons`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "addon": toAddon,
+      },
+    }, await resp.json());
+  }
 
   async createCluster(
     {abortSignal, ...params}: RequestConfig & CreateClusterRequest,
@@ -98,6 +122,7 @@ export default class EKS {
       tags: params["tags"],
       clientRequestToken: params["clientRequestToken"] ?? generateIdemptToken(),
       launchTemplate: fromLaunchTemplateSpecification(params["launchTemplate"]),
+      capacityType: params["capacityType"],
       version: params["version"],
       releaseVersion: params["releaseVersion"],
     };
@@ -110,6 +135,24 @@ export default class EKS {
       required: {},
       optional: {
         "nodegroup": toNodegroup,
+      },
+    }, await resp.json());
+  }
+
+  async deleteAddon(
+    {abortSignal, ...params}: RequestConfig & DeleteAddonRequest,
+  ): Promise<DeleteAddonResponse> {
+
+    const resp = await this.#client.performRequest({
+      abortSignal,
+      action: "DeleteAddon",
+      method: "DELETE",
+      requestUri: cmnP.encodePath`/clusters/${params["clusterName"]}/addons/${params["addonName"]}`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "addon": toAddon,
       },
     }, await resp.json());
   }
@@ -164,6 +207,47 @@ export default class EKS {
       required: {},
       optional: {
         "nodegroup": toNodegroup,
+      },
+    }, await resp.json());
+  }
+
+  async describeAddon(
+    {abortSignal, ...params}: RequestConfig & DescribeAddonRequest,
+  ): Promise<DescribeAddonResponse> {
+
+    const resp = await this.#client.performRequest({
+      abortSignal,
+      action: "DescribeAddon",
+      method: "GET",
+      requestUri: cmnP.encodePath`/clusters/${params["clusterName"]}/addons/${params["addonName"]}`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "addon": toAddon,
+      },
+    }, await resp.json());
+  }
+
+  async describeAddonVersions(
+    {abortSignal, ...params}: RequestConfig & DescribeAddonVersionsRequest = {},
+  ): Promise<DescribeAddonVersionsResponse> {
+    const query = new URLSearchParams;
+    if (params["kubernetesVersion"] != null) query.set("kubernetesVersion", params["kubernetesVersion"]?.toString() ?? "");
+    if (params["maxResults"] != null) query.set("maxResults", params["maxResults"]?.toString() ?? "");
+    if (params["nextToken"] != null) query.set("nextToken", params["nextToken"]?.toString() ?? "");
+    if (params["addonName"] != null) query.set("addonName", params["addonName"]?.toString() ?? "");
+    const resp = await this.#client.performRequest({
+      abortSignal, query,
+      action: "DescribeAddonVersions",
+      method: "GET",
+      requestUri: "/addons/supported-versions",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "addons": [toAddonInfo],
+        "nextToken": "s",
       },
     }, await resp.json());
   }
@@ -227,6 +311,7 @@ export default class EKS {
   ): Promise<DescribeUpdateResponse> {
     const query = new URLSearchParams;
     if (params["nodegroupName"] != null) query.set("nodegroupName", params["nodegroupName"]?.toString() ?? "");
+    if (params["addonName"] != null) query.set("addonName", params["addonName"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
       abortSignal, query,
       action: "DescribeUpdate",
@@ -237,6 +322,27 @@ export default class EKS {
       required: {},
       optional: {
         "update": toUpdate,
+      },
+    }, await resp.json());
+  }
+
+  async listAddons(
+    {abortSignal, ...params}: RequestConfig & ListAddonsRequest,
+  ): Promise<ListAddonsResponse> {
+    const query = new URLSearchParams;
+    if (params["maxResults"] != null) query.set("maxResults", params["maxResults"]?.toString() ?? "");
+    if (params["nextToken"] != null) query.set("nextToken", params["nextToken"]?.toString() ?? "");
+    const resp = await this.#client.performRequest({
+      abortSignal, query,
+      action: "ListAddons",
+      method: "GET",
+      requestUri: cmnP.encodePath`/clusters/${params["clusterName"]}/addons`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "addons": ["s"],
+        "nextToken": "s",
       },
     }, await resp.json());
   }
@@ -327,6 +433,7 @@ export default class EKS {
   ): Promise<ListUpdatesResponse> {
     const query = new URLSearchParams;
     if (params["nodegroupName"] != null) query.set("nodegroupName", params["nodegroupName"]?.toString() ?? "");
+    if (params["addonName"] != null) query.set("addonName", params["addonName"]?.toString() ?? "");
     if (params["nextToken"] != null) query.set("nextToken", params["nextToken"]?.toString() ?? "");
     if (params["maxResults"] != null) query.set("maxResults", params["maxResults"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
@@ -377,6 +484,28 @@ export default class EKS {
     return jsonP.readObj({
       required: {},
       optional: {},
+    }, await resp.json());
+  }
+
+  async updateAddon(
+    {abortSignal, ...params}: RequestConfig & UpdateAddonRequest,
+  ): Promise<UpdateAddonResponse> {
+    const body: jsonP.JSONObject = {
+      addonVersion: params["addonVersion"],
+      serviceAccountRoleArn: params["serviceAccountRoleArn"],
+      resolveConflicts: params["resolveConflicts"],
+      clientRequestToken: params["clientRequestToken"] ?? generateIdemptToken(),
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "UpdateAddon",
+      requestUri: cmnP.encodePath`/clusters/${params["clusterName"]}/addons/${params["addonName"]}/update`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "update": toUpdate,
+      },
     }, await resp.json());
   }
 
@@ -536,6 +665,50 @@ export default class EKS {
     throw new Error(errMessage);
   }
 
+  /** Checks state up to 60 times, 10 seconds apart (about 10 minutes max wait time). */
+  async waitForAddonActive(
+    params: RequestConfig & DescribeAddonRequest,
+  ): Promise<DescribeAddonResponse> {
+    const errMessage = 'ResourceNotReady: Resource is not in the state AddonActive';
+    for (let i = 0; i < 60; i++) {
+      const resp = await this.describeAddon(params);
+      const field = resp?.addon?.status;
+      if (field === "CREATE_FAILED") throw new Error(errMessage);
+      if (field === "ACTIVE") return resp;
+      await new Promise(r => setTimeout(r, 10000));
+    }
+    throw new Error(errMessage);
+  }
+
+  /** Checks state up to 60 times, 10 seconds apart (about 10 minutes max wait time). */
+  async waitForAddonDeleted(
+    params: RequestConfig & DescribeAddonRequest,
+  ): Promise<Error | DescribeAddonResponse> {
+    const errMessage = 'ResourceNotReady: Resource is not in the state AddonDeleted';
+    for (let i = 0; i < 60; i++) {
+      try {
+        const resp = await this.describeAddon(params);
+        if (resp?.addon?.status === "DELETE_FAILED") throw new Error(errMessage);
+      } catch (err) {
+        if (["ResourceNotFoundException"].includes(err.shortCode)) return err;
+        throw err;
+      }
+      await new Promise(r => setTimeout(r, 10000));
+    }
+    throw new Error(errMessage);
+  }
+
+}
+
+// refs: 1 - tags: named, input
+export interface CreateAddonRequest {
+  clusterName: string;
+  addonName: string;
+  addonVersion?: string | null;
+  serviceAccountRoleArn?: string | null;
+  resolveConflicts?: ResolveConflicts | null;
+  clientRequestToken?: string | null;
+  tags?: { [key: string]: string | null | undefined } | null;
 }
 
 // refs: 1 - tags: named, input
@@ -577,8 +750,15 @@ export interface CreateNodegroupRequest {
   tags?: { [key: string]: string | null | undefined } | null;
   clientRequestToken?: string | null;
   launchTemplate?: LaunchTemplateSpecification | null;
+  capacityType?: CapacityTypes | null;
   version?: string | null;
   releaseVersion?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface DeleteAddonRequest {
+  clusterName: string;
+  addonName: string;
 }
 
 // refs: 1 - tags: named, input
@@ -596,6 +776,20 @@ export interface DeleteFargateProfileRequest {
 export interface DeleteNodegroupRequest {
   clusterName: string;
   nodegroupName: string;
+}
+
+// refs: 1 - tags: named, input
+export interface DescribeAddonRequest {
+  clusterName: string;
+  addonName: string;
+}
+
+// refs: 1 - tags: named, input
+export interface DescribeAddonVersionsRequest {
+  kubernetesVersion?: string | null;
+  maxResults?: number | null;
+  nextToken?: string | null;
+  addonName?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -620,6 +814,14 @@ export interface DescribeUpdateRequest {
   name: string;
   updateId: string;
   nodegroupName?: string | null;
+  addonName?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface ListAddonsRequest {
+  clusterName: string;
+  maxResults?: number | null;
+  nextToken?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -651,6 +853,7 @@ export interface ListTagsForResourceRequest {
 export interface ListUpdatesRequest {
   name: string;
   nodegroupName?: string | null;
+  addonName?: string | null;
   nextToken?: string | null;
   maxResults?: number | null;
 }
@@ -665,6 +868,16 @@ export interface TagResourceRequest {
 export interface UntagResourceRequest {
   resourceArn: string;
   tagKeys: string[];
+}
+
+// refs: 1 - tags: named, input
+export interface UpdateAddonRequest {
+  clusterName: string;
+  addonName: string;
+  addonVersion?: string | null;
+  serviceAccountRoleArn?: string | null;
+  resolveConflicts?: ResolveConflicts | null;
+  clientRequestToken?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -703,6 +916,11 @@ export interface UpdateNodegroupVersionRequest {
 }
 
 // refs: 1 - tags: named, output
+export interface CreateAddonResponse {
+  addon?: Addon | null;
+}
+
+// refs: 1 - tags: named, output
 export interface CreateClusterResponse {
   cluster?: Cluster | null;
 }
@@ -718,6 +936,11 @@ export interface CreateNodegroupResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface DeleteAddonResponse {
+  addon?: Addon | null;
+}
+
+// refs: 1 - tags: named, output
 export interface DeleteClusterResponse {
   cluster?: Cluster | null;
 }
@@ -730,6 +953,17 @@ export interface DeleteFargateProfileResponse {
 // refs: 1 - tags: named, output
 export interface DeleteNodegroupResponse {
   nodegroup?: Nodegroup | null;
+}
+
+// refs: 1 - tags: named, output
+export interface DescribeAddonResponse {
+  addon?: Addon | null;
+}
+
+// refs: 1 - tags: named, output
+export interface DescribeAddonVersionsResponse {
+  addons?: AddonInfo[] | null;
+  nextToken?: string | null;
 }
 
 // refs: 1 - tags: named, output
@@ -750,6 +984,12 @@ export interface DescribeNodegroupResponse {
 // refs: 1 - tags: named, output
 export interface DescribeUpdateResponse {
   update?: Update | null;
+}
+
+// refs: 1 - tags: named, output
+export interface ListAddonsResponse {
+  addons?: string[] | null;
+  nextToken?: string | null;
 }
 
 // refs: 1 - tags: named, output
@@ -790,6 +1030,11 @@ export interface UntagResourceResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface UpdateAddonResponse {
+  update?: Update | null;
+}
+
+// refs: 1 - tags: named, output
 export interface UpdateClusterConfigResponse {
   update?: Update | null;
 }
@@ -808,6 +1053,12 @@ export interface UpdateNodegroupConfigResponse {
 export interface UpdateNodegroupVersionResponse {
   update?: Update | null;
 }
+
+// refs: 2 - tags: input, named, enum
+export type ResolveConflicts =
+| "OVERWRITE"
+| "NONE"
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface
 export interface VpcConfigRequest {
@@ -1031,6 +1282,12 @@ function toLaunchTemplateSpecification(root: jsonP.JSONValue): LaunchTemplateSpe
   }, root);
 }
 
+// refs: 4 - tags: input, named, enum, output
+export type CapacityTypes =
+| "ON_DEMAND"
+| "SPOT"
+| cmnP.UnexpectedEnumValue;
+
 // refs: 1 - tags: input, named, interface
 export interface UpdateLabelsPayload {
   addOrUpdateLabels?: { [key: string]: string | null | undefined } | null;
@@ -1043,6 +1300,87 @@ function fromUpdateLabelsPayload(input?: UpdateLabelsPayload | null): jsonP.JSON
     removeLabels: input["removeLabels"],
   }
 }
+
+// refs: 3 - tags: output, named, interface
+export interface Addon {
+  addonName?: string | null;
+  clusterName?: string | null;
+  status?: AddonStatus | null;
+  addonVersion?: string | null;
+  health?: AddonHealth | null;
+  addonArn?: string | null;
+  createdAt?: Date | number | null;
+  modifiedAt?: Date | number | null;
+  serviceAccountRoleArn?: string | null;
+  tags?: { [key: string]: string | null | undefined } | null;
+}
+function toAddon(root: jsonP.JSONValue): Addon {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "addonName": "s",
+      "clusterName": "s",
+      "status": (x: jsonP.JSONValue) => cmnP.readEnum<AddonStatus>(x),
+      "addonVersion": "s",
+      "health": toAddonHealth,
+      "addonArn": "s",
+      "createdAt": "d",
+      "modifiedAt": "d",
+      "serviceAccountRoleArn": "s",
+      "tags": x => jsonP.readMap(String, String, x),
+    },
+  }, root);
+}
+
+// refs: 3 - tags: output, named, enum
+export type AddonStatus =
+| "CREATING"
+| "ACTIVE"
+| "CREATE_FAILED"
+| "UPDATING"
+| "DELETING"
+| "DELETE_FAILED"
+| "DEGRADED"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 3 - tags: output, named, interface
+export interface AddonHealth {
+  issues?: AddonIssue[] | null;
+}
+function toAddonHealth(root: jsonP.JSONValue): AddonHealth {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "issues": [toAddonIssue],
+    },
+  }, root);
+}
+
+// refs: 3 - tags: output, named, interface
+export interface AddonIssue {
+  code?: AddonIssueCode | null;
+  message?: string | null;
+  resourceIds?: string[] | null;
+}
+function toAddonIssue(root: jsonP.JSONValue): AddonIssue {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "code": (x: jsonP.JSONValue) => cmnP.readEnum<AddonIssueCode>(x),
+      "message": "s",
+      "resourceIds": ["s"],
+    },
+  }, root);
+}
+
+// refs: 3 - tags: output, named, enum
+export type AddonIssueCode =
+| "AccessDenied"
+| "InternalFailure"
+| "ClusterUnreachable"
+| "InsufficientNumberOfReplicas"
+| "ConfigurationConflict"
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: output, named, interface
 export interface Cluster {
@@ -1221,6 +1559,7 @@ export interface Nodegroup {
   createdAt?: Date | number | null;
   modifiedAt?: Date | number | null;
   status?: NodegroupStatus | null;
+  capacityType?: CapacityTypes | null;
   scalingConfig?: NodegroupScalingConfig | null;
   instanceTypes?: string[] | null;
   subnets?: string[] | null;
@@ -1246,6 +1585,7 @@ function toNodegroup(root: jsonP.JSONValue): Nodegroup {
       "createdAt": "d",
       "modifiedAt": "d",
       "status": (x: jsonP.JSONValue) => cmnP.readEnum<NodegroupStatus>(x),
+      "capacityType": (x: jsonP.JSONValue) => cmnP.readEnum<CapacityTypes>(x),
       "scalingConfig": toNodegroupScalingConfig,
       "instanceTypes": ["s"],
       "subnets": ["s"],
@@ -1353,7 +1693,58 @@ export type NodegroupIssueCode =
 | "ClusterUnreachable"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 5 - tags: output, named, interface
+// refs: 1 - tags: output, named, interface
+export interface AddonInfo {
+  addonName?: string | null;
+  type?: string | null;
+  addonVersions?: AddonVersionInfo[] | null;
+}
+function toAddonInfo(root: jsonP.JSONValue): AddonInfo {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "addonName": "s",
+      "type": "s",
+      "addonVersions": [toAddonVersionInfo],
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
+export interface AddonVersionInfo {
+  addonVersion?: string | null;
+  architecture?: string[] | null;
+  compatibilities?: Compatibility[] | null;
+}
+function toAddonVersionInfo(root: jsonP.JSONValue): AddonVersionInfo {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "addonVersion": "s",
+      "architecture": ["s"],
+      "compatibilities": [toCompatibility],
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
+export interface Compatibility {
+  clusterVersion?: string | null;
+  platformVersions?: string[] | null;
+  defaultVersion?: boolean | null;
+}
+function toCompatibility(root: jsonP.JSONValue): Compatibility {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "clusterVersion": "s",
+      "platformVersions": ["s"],
+      "defaultVersion": "b",
+    },
+  }, root);
+}
+
+// refs: 6 - tags: output, named, interface
 export interface Update {
   id?: string | null;
   status?: UpdateStatus | null;
@@ -1376,7 +1767,7 @@ function toUpdate(root: jsonP.JSONValue): Update {
   }, root);
 }
 
-// refs: 5 - tags: output, named, enum
+// refs: 6 - tags: output, named, enum
 export type UpdateStatus =
 | "InProgress"
 | "Failed"
@@ -1384,15 +1775,16 @@ export type UpdateStatus =
 | "Successful"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 5 - tags: output, named, enum
+// refs: 6 - tags: output, named, enum
 export type UpdateType =
 | "VersionUpdate"
 | "EndpointAccessUpdate"
 | "LoggingUpdate"
 | "ConfigUpdate"
+| "AddonUpdate"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 5 - tags: output, named, interface
+// refs: 6 - tags: output, named, interface
 export interface UpdateParam {
   type?: UpdateParamType | null;
   value?: string | null;
@@ -1407,7 +1799,7 @@ function toUpdateParam(root: jsonP.JSONValue): UpdateParam {
   }, root);
 }
 
-// refs: 5 - tags: output, named, enum
+// refs: 6 - tags: output, named, enum
 export type UpdateParamType =
 | "Version"
 | "PlatformVersion"
@@ -1421,9 +1813,12 @@ export type UpdateParamType =
 | "MinSize"
 | "ReleaseVersion"
 | "PublicAccessCidrs"
+| "AddonVersion"
+| "ServiceAccountRoleArn"
+| "ResolveConflicts"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 5 - tags: output, named, interface
+// refs: 6 - tags: output, named, interface
 export interface ErrorDetail {
   errorCode?: ErrorCode | null;
   errorMessage?: string | null;
@@ -1440,7 +1835,7 @@ function toErrorDetail(root: jsonP.JSONValue): ErrorDetail {
   }, root);
 }
 
-// refs: 5 - tags: output, named, enum
+// refs: 6 - tags: output, named, enum
 export type ErrorCode =
 | "SubnetNotFound"
 | "SecurityGroupNotFound"
@@ -1454,4 +1849,6 @@ export type ErrorCode =
 | "PodEvictionFailure"
 | "InsufficientFreeAddresses"
 | "ClusterUnreachable"
+| "InsufficientNumberOfReplicas"
+| "ConfigurationConflict"
 | cmnP.UnexpectedEnumValue;

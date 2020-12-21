@@ -5,7 +5,7 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import * as uuidv4 from "https://deno.land/std@0.71.0/uuid/v4.ts";
+import * as uuidv4 from "https://deno.land/std@0.75.0/uuid/v4.ts";
 import * as cmnP from "../../encoding/common.ts";
 import * as jsonP from "../../encoding/json.ts";
 function generateIdemptToken() {
@@ -30,6 +30,29 @@ export default class Signer {
     "signingName": "signer",
     "uid": "signer-2017-08-25"
   };
+
+  async addProfilePermission(
+    {abortSignal, ...params}: RequestConfig & AddProfilePermissionRequest,
+  ): Promise<AddProfilePermissionResponse> {
+    const body: jsonP.JSONObject = {
+      profileVersion: params["profileVersion"],
+      action: params["action"],
+      principal: params["principal"],
+      revisionId: params["revisionId"],
+      statementId: params["statementId"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "AddProfilePermission",
+      requestUri: cmnP.encodePath`/signing-profiles/${params["profileName"]}/permissions`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "revisionId": "s",
+      },
+    }, await resp.json());
+  }
 
   async cancelSigningProfile(
     {abortSignal, ...params}: RequestConfig & CancelSigningProfileRequest,
@@ -60,15 +83,21 @@ export default class Signer {
         "source": toSource,
         "signingMaterial": toSigningMaterial,
         "platformId": "s",
+        "platformDisplayName": "s",
         "profileName": "s",
+        "profileVersion": "s",
         "overrides": toSigningPlatformOverrides,
         "signingParameters": x => jsonP.readMap(String, String, x),
         "createdAt": "d",
         "completedAt": "d",
+        "signatureExpiresAt": "d",
         "requestedBy": "s",
         "status": (x: jsonP.JSONValue) => cmnP.readEnum<SigningStatus>(x),
         "statusReason": "s",
+        "revocationRecord": toSigningJobRevocationRecord,
         "signedObject": toSignedObject,
+        "jobOwner": "s",
+        "jobInvoker": "s",
       },
     }, await resp.json());
   }
@@ -94,6 +123,7 @@ export default class Signer {
         "signingConfiguration": toSigningConfiguration,
         "signingImageFormat": toSigningImageFormat,
         "maxSizeInMB": "n",
+        "revocationSupported": "b",
       },
     }, await resp.json());
   }
@@ -101,9 +131,10 @@ export default class Signer {
   async getSigningProfile(
     {abortSignal, ...params}: RequestConfig & GetSigningProfileRequest,
   ): Promise<GetSigningProfileResponse> {
-
+    const query = new URLSearchParams;
+    if (params["profileOwner"] != null) query.set("profileOwner", params["profileOwner"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
-      abortSignal,
+      abortSignal, query,
       action: "GetSigningProfile",
       method: "GET",
       requestUri: cmnP.encodePath`/signing-profiles/${params["profileName"]}`,
@@ -112,13 +143,41 @@ export default class Signer {
       required: {},
       optional: {
         "profileName": "s",
+        "profileVersion": "s",
+        "profileVersionArn": "s",
+        "revocationRecord": toSigningProfileRevocationRecord,
         "signingMaterial": toSigningMaterial,
         "platformId": "s",
+        "platformDisplayName": "s",
+        "signatureValidityPeriod": toSignatureValidityPeriod,
         "overrides": toSigningPlatformOverrides,
         "signingParameters": x => jsonP.readMap(String, String, x),
         "status": (x: jsonP.JSONValue) => cmnP.readEnum<SigningProfileStatus>(x),
+        "statusReason": "s",
         "arn": "s",
         "tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
+  }
+
+  async listProfilePermissions(
+    {abortSignal, ...params}: RequestConfig & ListProfilePermissionsRequest,
+  ): Promise<ListProfilePermissionsResponse> {
+    const query = new URLSearchParams;
+    if (params["nextToken"] != null) query.set("nextToken", params["nextToken"]?.toString() ?? "");
+    const resp = await this.#client.performRequest({
+      abortSignal, query,
+      action: "ListProfilePermissions",
+      method: "GET",
+      requestUri: cmnP.encodePath`/signing-profiles/${params["profileName"]}/permissions`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "revisionId": "s",
+        "policySizeBytes": "n",
+        "permissions": [toPermission],
+        "nextToken": "s",
       },
     }, await resp.json());
   }
@@ -132,6 +191,10 @@ export default class Signer {
     if (params["requestedBy"] != null) query.set("requestedBy", params["requestedBy"]?.toString() ?? "");
     if (params["maxResults"] != null) query.set("maxResults", params["maxResults"]?.toString() ?? "");
     if (params["nextToken"] != null) query.set("nextToken", params["nextToken"]?.toString() ?? "");
+    if (params["isRevoked"] != null) query.set("isRevoked", params["isRevoked"]?.toString() ?? "");
+    if (params["signatureExpiresBefore"] != null) query.set("signatureExpiresBefore", cmnP.serializeDate_iso8601(params["signatureExpiresBefore"]) ?? "");
+    if (params["signatureExpiresAfter"] != null) query.set("signatureExpiresAfter", cmnP.serializeDate_iso8601(params["signatureExpiresAfter"]) ?? "");
+    if (params["jobInvoker"] != null) query.set("jobInvoker", params["jobInvoker"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
       abortSignal, query,
       action: "ListSigningJobs",
@@ -178,6 +241,10 @@ export default class Signer {
     if (params["includeCanceled"] != null) query.set("includeCanceled", params["includeCanceled"]?.toString() ?? "");
     if (params["maxResults"] != null) query.set("maxResults", params["maxResults"]?.toString() ?? "");
     if (params["nextToken"] != null) query.set("nextToken", params["nextToken"]?.toString() ?? "");
+    if (params["platformId"] != null) query.set("platformId", params["platformId"]?.toString() ?? "");
+    for (const item of params["statuses"] ?? []) {
+      query.append("statuses", item?.toString() ?? "");
+    }
     const resp = await this.#client.performRequest({
       abortSignal, query,
       action: "ListSigningProfiles",
@@ -216,6 +283,7 @@ export default class Signer {
   ): Promise<PutSigningProfileResponse> {
     const body: jsonP.JSONObject = {
       signingMaterial: fromSigningMaterial(params["signingMaterial"]),
+      signatureValidityPeriod: fromSignatureValidityPeriod(params["signatureValidityPeriod"]),
       platformId: params["platformId"],
       overrides: fromSigningPlatformOverrides(params["overrides"]),
       signingParameters: params["signingParameters"],
@@ -231,8 +299,60 @@ export default class Signer {
       required: {},
       optional: {
         "arn": "s",
+        "profileVersion": "s",
+        "profileVersionArn": "s",
       },
     }, await resp.json());
+  }
+
+  async removeProfilePermission(
+    {abortSignal, ...params}: RequestConfig & RemoveProfilePermissionRequest,
+  ): Promise<RemoveProfilePermissionResponse> {
+    const query = new URLSearchParams;
+    query.set("revisionId", params["revisionId"]?.toString() ?? "");
+    const resp = await this.#client.performRequest({
+      abortSignal, query,
+      action: "RemoveProfilePermission",
+      method: "DELETE",
+      requestUri: cmnP.encodePath`/signing-profiles/${params["profileName"]}/permissions/${params["statementId"]}`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "revisionId": "s",
+      },
+    }, await resp.json());
+  }
+
+  async revokeSignature(
+    {abortSignal, ...params}: RequestConfig & RevokeSignatureRequest,
+  ): Promise<void> {
+    const body: jsonP.JSONObject = {
+      jobOwner: params["jobOwner"],
+      reason: params["reason"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "RevokeSignature",
+      method: "PUT",
+      requestUri: cmnP.encodePath`/signing-jobs/${params["jobId"]}/revoke`,
+    });
+  }
+
+  async revokeSigningProfile(
+    {abortSignal, ...params}: RequestConfig & RevokeSigningProfileRequest,
+  ): Promise<void> {
+    const body: jsonP.JSONObject = {
+      profileVersion: params["profileVersion"],
+      reason: params["reason"],
+      effectiveTime: jsonP.serializeDate_unixTimestamp(params["effectiveTime"]),
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "RevokeSigningProfile",
+      method: "PUT",
+      requestUri: cmnP.encodePath`/signing-profiles/${params["profileName"]}/revoke`,
+    });
   }
 
   async startSigningJob(
@@ -243,6 +363,7 @@ export default class Signer {
       destination: fromDestination(params["destination"]),
       profileName: params["profileName"],
       clientRequestToken: params["clientRequestToken"] ?? generateIdemptToken(),
+      profileOwner: params["profileOwner"],
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -253,6 +374,7 @@ export default class Signer {
       required: {},
       optional: {
         "jobId": "s",
+        "jobOwner": "s",
       },
     }, await resp.json());
   }
@@ -318,6 +440,16 @@ export default class Signer {
 }
 
 // refs: 1 - tags: named, input
+export interface AddProfilePermissionRequest {
+  profileName: string;
+  profileVersion?: string | null;
+  action: string;
+  principal: string;
+  revisionId?: string | null;
+  statementId: string;
+}
+
+// refs: 1 - tags: named, input
 export interface CancelSigningProfileRequest {
   profileName: string;
 }
@@ -335,6 +467,13 @@ export interface GetSigningPlatformRequest {
 // refs: 1 - tags: named, input
 export interface GetSigningProfileRequest {
   profileName: string;
+  profileOwner?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface ListProfilePermissionsRequest {
+  profileName: string;
+  nextToken?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -344,6 +483,10 @@ export interface ListSigningJobsRequest {
   requestedBy?: string | null;
   maxResults?: number | null;
   nextToken?: string | null;
+  isRevoked?: boolean | null;
+  signatureExpiresBefore?: Date | number | null;
+  signatureExpiresAfter?: Date | number | null;
+  jobInvoker?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -360,6 +503,8 @@ export interface ListSigningProfilesRequest {
   includeCanceled?: boolean | null;
   maxResults?: number | null;
   nextToken?: string | null;
+  platformId?: string | null;
+  statuses?: SigningProfileStatus[] | null;
 }
 
 // refs: 1 - tags: named, input
@@ -370,7 +515,8 @@ export interface ListTagsForResourceRequest {
 // refs: 1 - tags: named, input
 export interface PutSigningProfileRequest {
   profileName: string;
-  signingMaterial: SigningMaterial;
+  signingMaterial?: SigningMaterial | null;
+  signatureValidityPeriod?: SignatureValidityPeriod | null;
   platformId: string;
   overrides?: SigningPlatformOverrides | null;
   signingParameters?: { [key: string]: string | null | undefined } | null;
@@ -378,11 +524,34 @@ export interface PutSigningProfileRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface RemoveProfilePermissionRequest {
+  profileName: string;
+  revisionId: string;
+  statementId: string;
+}
+
+// refs: 1 - tags: named, input
+export interface RevokeSignatureRequest {
+  jobId: string;
+  jobOwner?: string | null;
+  reason: string;
+}
+
+// refs: 1 - tags: named, input
+export interface RevokeSigningProfileRequest {
+  profileName: string;
+  profileVersion: string;
+  reason: string;
+  effectiveTime: Date | number;
+}
+
+// refs: 1 - tags: named, input
 export interface StartSigningJobRequest {
   source: Source;
   destination: Destination;
-  profileName?: string | null;
+  profileName: string;
   clientRequestToken: string;
+  profileOwner?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -398,20 +567,31 @@ export interface UntagResourceRequest {
 }
 
 // refs: 1 - tags: named, output
+export interface AddProfilePermissionResponse {
+  revisionId?: string | null;
+}
+
+// refs: 1 - tags: named, output
 export interface DescribeSigningJobResponse {
   jobId?: string | null;
   source?: Source | null;
   signingMaterial?: SigningMaterial | null;
   platformId?: string | null;
+  platformDisplayName?: string | null;
   profileName?: string | null;
+  profileVersion?: string | null;
   overrides?: SigningPlatformOverrides | null;
   signingParameters?: { [key: string]: string | null | undefined } | null;
   createdAt?: Date | number | null;
   completedAt?: Date | number | null;
+  signatureExpiresAt?: Date | number | null;
   requestedBy?: string | null;
   status?: SigningStatus | null;
   statusReason?: string | null;
+  revocationRecord?: SigningJobRevocationRecord | null;
   signedObject?: SignedObject | null;
+  jobOwner?: string | null;
+  jobInvoker?: string | null;
 }
 
 // refs: 1 - tags: named, output
@@ -424,18 +604,33 @@ export interface GetSigningPlatformResponse {
   signingConfiguration?: SigningConfiguration | null;
   signingImageFormat?: SigningImageFormat | null;
   maxSizeInMB?: number | null;
+  revocationSupported?: boolean | null;
 }
 
 // refs: 1 - tags: named, output
 export interface GetSigningProfileResponse {
   profileName?: string | null;
+  profileVersion?: string | null;
+  profileVersionArn?: string | null;
+  revocationRecord?: SigningProfileRevocationRecord | null;
   signingMaterial?: SigningMaterial | null;
   platformId?: string | null;
+  platformDisplayName?: string | null;
+  signatureValidityPeriod?: SignatureValidityPeriod | null;
   overrides?: SigningPlatformOverrides | null;
   signingParameters?: { [key: string]: string | null | undefined } | null;
   status?: SigningProfileStatus | null;
+  statusReason?: string | null;
   arn?: string | null;
   tags?: { [key: string]: string | null | undefined } | null;
+}
+
+// refs: 1 - tags: named, output
+export interface ListProfilePermissionsResponse {
+  revisionId?: string | null;
+  policySizeBytes?: number | null;
+  permissions?: Permission[] | null;
+  nextToken?: string | null;
 }
 
 // refs: 1 - tags: named, output
@@ -464,11 +659,19 @@ export interface ListTagsForResourceResponse {
 // refs: 1 - tags: named, output
 export interface PutSigningProfileResponse {
   arn?: string | null;
+  profileVersion?: string | null;
+  profileVersionArn?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface RemoveProfilePermissionResponse {
+  revisionId?: string | null;
 }
 
 // refs: 1 - tags: named, output
 export interface StartSigningJobResponse {
   jobId?: string | null;
+  jobOwner?: string | null;
 }
 
 // refs: 1 - tags: named, output
@@ -484,6 +687,13 @@ export type SigningStatus =
 | "InProgress"
 | "Failed"
 | "Succeeded"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 3 - tags: input, named, enum, output
+export type SigningProfileStatus =
+| "Active"
+| "Canceled"
+| "Revoked"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 5 - tags: input, named, interface, output
@@ -504,6 +714,35 @@ function toSigningMaterial(root: jsonP.JSONValue): SigningMaterial {
     optional: {},
   }, root);
 }
+
+// refs: 3 - tags: input, named, interface, output
+export interface SignatureValidityPeriod {
+  value?: number | null;
+  type?: ValidityType | null;
+}
+function fromSignatureValidityPeriod(input?: SignatureValidityPeriod | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    value: input["value"],
+    type: input["type"],
+  }
+}
+function toSignatureValidityPeriod(root: jsonP.JSONValue): SignatureValidityPeriod {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "value": "n",
+      "type": (x: jsonP.JSONValue) => cmnP.readEnum<ValidityType>(x),
+    },
+  }, root);
+}
+
+// refs: 3 - tags: input, named, enum, output
+export type ValidityType =
+| "DAYS"
+| "MONTHS"
+| "YEARS"
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface, output
 export interface SigningPlatformOverrides {
@@ -636,6 +875,23 @@ function fromS3Destination(input?: S3Destination | null): jsonP.JSONValue {
   }
 }
 
+// refs: 1 - tags: output, named, interface
+export interface SigningJobRevocationRecord {
+  reason?: string | null;
+  revokedAt?: Date | number | null;
+  revokedBy?: string | null;
+}
+function toSigningJobRevocationRecord(root: jsonP.JSONValue): SigningJobRevocationRecord {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "reason": "s",
+      "revokedAt": "d",
+      "revokedBy": "s",
+    },
+  }, root);
+}
+
 // refs: 2 - tags: output, named, interface
 export interface SignedObject {
   s3?: S3SignedObject | null;
@@ -729,11 +985,41 @@ function toSigningImageFormat(root: jsonP.JSONValue): SigningImageFormat {
   }, root);
 }
 
-// refs: 2 - tags: output, named, enum
-export type SigningProfileStatus =
-| "Active"
-| "Canceled"
-| cmnP.UnexpectedEnumValue;
+// refs: 1 - tags: output, named, interface
+export interface SigningProfileRevocationRecord {
+  revocationEffectiveFrom?: Date | number | null;
+  revokedAt?: Date | number | null;
+  revokedBy?: string | null;
+}
+function toSigningProfileRevocationRecord(root: jsonP.JSONValue): SigningProfileRevocationRecord {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "revocationEffectiveFrom": "d",
+      "revokedAt": "d",
+      "revokedBy": "s",
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
+export interface Permission {
+  action?: string | null;
+  principal?: string | null;
+  statementId?: string | null;
+  profileVersion?: string | null;
+}
+function toPermission(root: jsonP.JSONValue): Permission {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "action": "s",
+      "principal": "s",
+      "statementId": "s",
+      "profileVersion": "s",
+    },
+  }, root);
+}
 
 // refs: 1 - tags: output, named, interface
 export interface SigningJob {
@@ -743,6 +1029,14 @@ export interface SigningJob {
   signingMaterial?: SigningMaterial | null;
   createdAt?: Date | number | null;
   status?: SigningStatus | null;
+  isRevoked?: boolean | null;
+  profileName?: string | null;
+  profileVersion?: string | null;
+  platformId?: string | null;
+  platformDisplayName?: string | null;
+  signatureExpiresAt?: Date | number | null;
+  jobOwner?: string | null;
+  jobInvoker?: string | null;
 }
 function toSigningJob(root: jsonP.JSONValue): SigningJob {
   return jsonP.readObj({
@@ -754,6 +1048,14 @@ function toSigningJob(root: jsonP.JSONValue): SigningJob {
       "signingMaterial": toSigningMaterial,
       "createdAt": "d",
       "status": (x: jsonP.JSONValue) => cmnP.readEnum<SigningStatus>(x),
+      "isRevoked": "b",
+      "profileName": "s",
+      "profileVersion": "s",
+      "platformId": "s",
+      "platformDisplayName": "s",
+      "signatureExpiresAt": "d",
+      "jobOwner": "s",
+      "jobInvoker": "s",
     },
   }, root);
 }
@@ -768,6 +1070,7 @@ export interface SigningPlatform {
   signingConfiguration?: SigningConfiguration | null;
   signingImageFormat?: SigningImageFormat | null;
   maxSizeInMB?: number | null;
+  revocationSupported?: boolean | null;
 }
 function toSigningPlatform(root: jsonP.JSONValue): SigningPlatform {
   return jsonP.readObj({
@@ -781,6 +1084,7 @@ function toSigningPlatform(root: jsonP.JSONValue): SigningPlatform {
       "signingConfiguration": toSigningConfiguration,
       "signingImageFormat": toSigningImageFormat,
       "maxSizeInMB": "n",
+      "revocationSupported": "b",
     },
   }, root);
 }
@@ -788,8 +1092,12 @@ function toSigningPlatform(root: jsonP.JSONValue): SigningPlatform {
 // refs: 1 - tags: output, named, interface
 export interface SigningProfile {
   profileName?: string | null;
+  profileVersion?: string | null;
+  profileVersionArn?: string | null;
   signingMaterial?: SigningMaterial | null;
+  signatureValidityPeriod?: SignatureValidityPeriod | null;
   platformId?: string | null;
+  platformDisplayName?: string | null;
   signingParameters?: { [key: string]: string | null | undefined } | null;
   status?: SigningProfileStatus | null;
   arn?: string | null;
@@ -800,8 +1108,12 @@ function toSigningProfile(root: jsonP.JSONValue): SigningProfile {
     required: {},
     optional: {
       "profileName": "s",
+      "profileVersion": "s",
+      "profileVersionArn": "s",
       "signingMaterial": toSigningMaterial,
+      "signatureValidityPeriod": toSignatureValidityPeriod,
       "platformId": "s",
+      "platformDisplayName": "s",
       "signingParameters": x => jsonP.readMap(String, String, x),
       "status": (x: jsonP.JSONValue) => cmnP.readEnum<SigningProfileStatus>(x),
       "arn": "s",

@@ -5,7 +5,7 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import * as uuidv4 from "https://deno.land/std@0.71.0/uuid/v4.ts";
+import * as uuidv4 from "https://deno.land/std@0.75.0/uuid/v4.ts";
 import * as cmnP from "../../encoding/common.ts";
 import * as jsonP from "../../encoding/json.ts";
 function generateIdemptToken() {
@@ -88,6 +88,7 @@ export default class TimestreamQuery {
       },
       optional: {
         "NextToken": "s",
+        "QueryStatus": toQueryStatus,
       },
     }, await resp.json());
   }
@@ -127,6 +128,7 @@ export interface QueryResponse {
   NextToken?: string | null;
   Rows: Row[];
   ColumnInfo: ColumnInfo[];
+  QueryStatus?: QueryStatus | null;
 }
 
 // refs: 1 - tags: output, named, interface
@@ -242,3 +244,20 @@ export type ScalarType =
 | "UNKNOWN"
 | "INTEGER"
 | cmnP.UnexpectedEnumValue;
+
+// refs: 1 - tags: output, named, interface
+export interface QueryStatus {
+  ProgressPercentage?: number | null;
+  CumulativeBytesScanned?: number | null;
+  CumulativeBytesMetered?: number | null;
+}
+function toQueryStatus(root: jsonP.JSONValue): QueryStatus {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "ProgressPercentage": "n",
+      "CumulativeBytesScanned": "n",
+      "CumulativeBytesMetered": "n",
+    },
+  }, root);
+}

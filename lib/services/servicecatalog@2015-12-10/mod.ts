@@ -5,7 +5,7 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import * as uuidv4 from "https://deno.land/std@0.71.0/uuid/v4.ts";
+import * as uuidv4 from "https://deno.land/std@0.75.0/uuid/v4.ts";
 import * as cmnP from "../../encoding/common.ts";
 import * as jsonP from "../../encoding/json.ts";
 function generateIdemptToken() {
@@ -259,6 +259,7 @@ export default class ServiceCatalog {
       PortfolioId: params["PortfolioId"],
       AccountId: params["AccountId"],
       OrganizationNode: fromOrganizationNode(params["OrganizationNode"]),
+      ShareTagOptions: params["ShareTagOptions"],
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -627,6 +628,28 @@ export default class ServiceCatalog {
     }, await resp.json());
   }
 
+  async describePortfolioShares(
+    {abortSignal, ...params}: RequestConfig & DescribePortfolioSharesInput,
+  ): Promise<DescribePortfolioSharesOutput> {
+    const body: jsonP.JSONObject = {
+      PortfolioId: params["PortfolioId"],
+      Type: params["Type"],
+      PageToken: params["PageToken"],
+      PageSize: params["PageSize"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DescribePortfolioShares",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "NextPageToken": "s",
+        "PortfolioShareDetails": [toPortfolioShareDetail],
+      },
+    }, await resp.json());
+  }
+
   async describeProduct(
     {abortSignal, ...params}: RequestConfig & DescribeProductInput = {},
   ): Promise<DescribeProductOutput> {
@@ -657,6 +680,7 @@ export default class ServiceCatalog {
       AcceptLanguage: params["AcceptLanguage"],
       Id: params["Id"],
       Name: params["Name"],
+      SourcePortfolioId: params["SourcePortfolioId"],
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -1070,6 +1094,29 @@ export default class ServiceCatalog {
       optional: {
         "Outputs": [toRecordOutput],
         "NextPageToken": "s",
+      },
+    }, await resp.json());
+  }
+
+  async importAsProvisionedProduct(
+    {abortSignal, ...params}: RequestConfig & ImportAsProvisionedProductInput,
+  ): Promise<ImportAsProvisionedProductOutput> {
+    const body: jsonP.JSONObject = {
+      AcceptLanguage: params["AcceptLanguage"],
+      ProductId: params["ProductId"],
+      ProvisioningArtifactId: params["ProvisioningArtifactId"],
+      ProvisionedProductName: params["ProvisionedProductName"],
+      PhysicalId: params["PhysicalId"],
+      IdempotencyToken: params["IdempotencyToken"] ?? generateIdemptToken(),
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "ImportAsProvisionedProduct",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "RecordDetail": toRecordDetail,
       },
     }, await resp.json());
   }
@@ -1627,6 +1674,7 @@ export default class ServiceCatalog {
       TerminateToken: params["TerminateToken"] ?? generateIdemptToken(),
       IgnoreErrors: params["IgnoreErrors"],
       AcceptLanguage: params["AcceptLanguage"],
+      RetainPhysicalResources: params["RetainPhysicalResources"],
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -1684,6 +1732,29 @@ export default class ServiceCatalog {
       optional: {
         "PortfolioDetail": toPortfolioDetail,
         "Tags": [toTag],
+      },
+    }, await resp.json());
+  }
+
+  async updatePortfolioShare(
+    {abortSignal, ...params}: RequestConfig & UpdatePortfolioShareInput,
+  ): Promise<UpdatePortfolioShareOutput> {
+    const body: jsonP.JSONObject = {
+      AcceptLanguage: params["AcceptLanguage"],
+      PortfolioId: params["PortfolioId"],
+      AccountId: params["AccountId"],
+      OrganizationNode: fromOrganizationNode(params["OrganizationNode"]),
+      ShareTagOptions: params["ShareTagOptions"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "UpdatePortfolioShare",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "PortfolioShareToken": "s",
+        "Status": (x: jsonP.JSONValue) => cmnP.readEnum<ShareStatus>(x),
       },
     }, await resp.json());
   }
@@ -1934,6 +2005,7 @@ export interface CreatePortfolioShareInput {
   PortfolioId: string;
   AccountId?: string | null;
   OrganizationNode?: OrganizationNode | null;
+  ShareTagOptions?: boolean | null;
 }
 
 // refs: 1 - tags: named, input
@@ -2066,6 +2138,14 @@ export interface DescribePortfolioShareStatusInput {
 }
 
 // refs: 1 - tags: named, input
+export interface DescribePortfolioSharesInput {
+  PortfolioId: string;
+  Type: DescribePortfolioShareType;
+  PageToken?: string | null;
+  PageSize?: number | null;
+}
+
+// refs: 1 - tags: named, input
 export interface DescribeProductInput {
   AcceptLanguage?: string | null;
   Id?: string | null;
@@ -2077,6 +2157,7 @@ export interface DescribeProductAsAdminInput {
   AcceptLanguage?: string | null;
   Id?: string | null;
   Name?: string | null;
+  SourcePortfolioId?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -2217,6 +2298,16 @@ export interface GetProvisionedProductOutputsInput {
   OutputKeys?: string[] | null;
   PageSize?: number | null;
   PageToken?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface ImportAsProvisionedProductInput {
+  AcceptLanguage?: string | null;
+  ProductId: string;
+  ProvisioningArtifactId: string;
+  ProvisionedProductName: string;
+  PhysicalId: string;
+  IdempotencyToken: string;
 }
 
 // refs: 1 - tags: named, input
@@ -2436,6 +2527,7 @@ export interface TerminateProvisionedProductInput {
   TerminateToken: string;
   IgnoreErrors?: boolean | null;
   AcceptLanguage?: string | null;
+  RetainPhysicalResources?: boolean | null;
 }
 
 // refs: 1 - tags: named, input
@@ -2455,6 +2547,15 @@ export interface UpdatePortfolioInput {
   ProviderName?: string | null;
   AddTags?: Tag[] | null;
   RemoveTags?: string[] | null;
+}
+
+// refs: 1 - tags: named, input
+export interface UpdatePortfolioShareInput {
+  AcceptLanguage?: string | null;
+  PortfolioId: string;
+  AccountId?: string | null;
+  OrganizationNode?: OrganizationNode | null;
+  ShareTagOptions?: boolean | null;
 }
 
 // refs: 1 - tags: named, input
@@ -2679,6 +2780,12 @@ export interface DescribePortfolioShareStatusOutput {
 }
 
 // refs: 1 - tags: named, output
+export interface DescribePortfolioSharesOutput {
+  NextPageToken?: string | null;
+  PortfolioShareDetails?: PortfolioShareDetail[] | null;
+}
+
+// refs: 1 - tags: named, output
 export interface DescribeProductOutput {
   ProductViewSummary?: ProductViewSummary | null;
   ProvisioningArtifacts?: ProvisioningArtifact[] | null;
@@ -2800,6 +2907,11 @@ export interface GetAWSOrganizationsAccessStatusOutput {
 export interface GetProvisionedProductOutputsOutput {
   Outputs?: RecordOutput[] | null;
   NextPageToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface ImportAsProvisionedProductOutput {
+  RecordDetail?: RecordDetail | null;
 }
 
 // refs: 1 - tags: named, output
@@ -2964,6 +3076,12 @@ export interface UpdatePortfolioOutput {
 }
 
 // refs: 1 - tags: named, output
+export interface UpdatePortfolioShareOutput {
+  PortfolioShareToken?: string | null;
+  Status?: ShareStatus | null;
+}
+
+// refs: 1 - tags: named, output
 export interface UpdateProductOutput {
   ProductViewDetail?: ProductViewDetail | null;
   Tags?: Tag[] | null;
@@ -3058,7 +3176,7 @@ function toTag(root: jsonP.JSONValue): Tag {
   }, root);
 }
 
-// refs: 3 - tags: input, named, interface, output
+// refs: 4 - tags: input, named, interface, output
 export interface OrganizationNode {
   Type?: OrganizationNodeType | null;
   Value?: string | null;
@@ -3080,7 +3198,7 @@ function toOrganizationNode(root: jsonP.JSONValue): OrganizationNode {
   }, root);
 }
 
-// refs: 4 - tags: input, named, enum, output
+// refs: 5 - tags: input, named, enum, output
 export type OrganizationNodeType =
 | "ORGANIZATION"
 | "ORGANIZATIONAL_UNIT"
@@ -3160,6 +3278,14 @@ export type ServiceActionDefinitionKey =
 | "Version"
 | "AssumeRole"
 | "Parameters"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 2 - tags: input, named, enum, output
+export type DescribePortfolioShareType =
+| "ACCOUNT"
+| "ORGANIZATION"
+| "ORGANIZATIONAL_UNIT"
+| "ORGANIZATION_MEMBER_ACCOUNT"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, interface
@@ -3517,6 +3643,7 @@ export interface TagOptionDetail {
   Value?: string | null;
   Active?: boolean | null;
   Id?: string | null;
+  Owner?: string | null;
 }
 function toTagOptionDetail(root: jsonP.JSONValue): TagOptionDetail {
   return jsonP.readObj({
@@ -3526,6 +3653,7 @@ function toTagOptionDetail(root: jsonP.JSONValue): TagOptionDetail {
       "Value": "s",
       "Active": "b",
       "Id": "s",
+      "Owner": "s",
     },
   }, root);
 }
@@ -3550,7 +3678,7 @@ function toBudgetDetail(root: jsonP.JSONValue): BudgetDetail {
   }, root);
 }
 
-// refs: 1 - tags: output, named, enum
+// refs: 2 - tags: output, named, enum
 export type ShareStatus =
 | "NOT_STARTED"
 | "IN_PROGRESS"
@@ -3587,6 +3715,25 @@ function toShareError(root: jsonP.JSONValue): ShareError {
       "Accounts": ["s"],
       "Message": "s",
       "Error": "s",
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
+export interface PortfolioShareDetail {
+  PrincipalId?: string | null;
+  Type?: DescribePortfolioShareType | null;
+  Accepted?: boolean | null;
+  ShareTagOptions?: boolean | null;
+}
+function toPortfolioShareDetail(root: jsonP.JSONValue): PortfolioShareDetail {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "PrincipalId": "s",
+      "Type": (x: jsonP.JSONValue) => cmnP.readEnum<DescribePortfolioShareType>(x),
+      "Accepted": "b",
+      "ShareTagOptions": "b",
     },
   }, root);
 }
@@ -3967,7 +4114,7 @@ function toProvisioningArtifactOutput(root: jsonP.JSONValue): ProvisioningArtifa
   }, root);
 }
 
-// refs: 7 - tags: output, named, interface
+// refs: 8 - tags: output, named, interface
 export interface RecordDetail {
   RecordId?: string | null;
   ProvisionedProductName?: string | null;
@@ -4006,7 +4153,7 @@ function toRecordDetail(root: jsonP.JSONValue): RecordDetail {
   }, root);
 }
 
-// refs: 8 - tags: output, named, enum
+// refs: 9 - tags: output, named, enum
 export type RecordStatus =
 | "CREATED"
 | "IN_PROGRESS"
@@ -4015,7 +4162,7 @@ export type RecordStatus =
 | "FAILED"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 7 - tags: output, named, interface
+// refs: 8 - tags: output, named, interface
 export interface RecordError {
   Code?: string | null;
   Description?: string | null;
@@ -4030,7 +4177,7 @@ function toRecordError(root: jsonP.JSONValue): RecordError {
   }, root);
 }
 
-// refs: 7 - tags: output, named, interface
+// refs: 8 - tags: output, named, interface
 export interface RecordTag {
   Key?: string | null;
   Value?: string | null;

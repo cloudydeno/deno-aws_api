@@ -5,7 +5,7 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import * as uuidv4 from "https://deno.land/std@0.71.0/uuid/v4.ts";
+import * as uuidv4 from "https://deno.land/std@0.75.0/uuid/v4.ts";
 import * as cmnP from "../../encoding/common.ts";
 import * as jsonP from "../../encoding/json.ts";
 function generateIdemptToken() {
@@ -1495,7 +1495,7 @@ function toHttpGatewayRouteMatch(root: jsonP.JSONValue): HttpGatewayRouteMatch {
 // refs: 9 - tags: input, named, interface, output
 export interface TagRef {
   key: string;
-  value?: string | null;
+  value: string;
 }
 function fromTagRef(input?: TagRef | null): jsonP.JSONValue {
   if (!input) return input;
@@ -1508,10 +1508,9 @@ function toTagRef(root: jsonP.JSONValue): TagRef {
   return jsonP.readObj({
     required: {
       "key": "s",
-    },
-    optional: {
       "value": "s",
     },
+    optional: {},
   }, root);
 }
 
@@ -1805,7 +1804,7 @@ export type GrpcRetryPolicyEvent =
 | "unavailable"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 102 - tags: input, named, interface, output
+// refs: 114 - tags: input, named, interface, output
 export interface Duration {
   unit?: DurationUnit | null;
   value?: number | null;
@@ -1827,10 +1826,10 @@ function toDuration(root: jsonP.JSONValue): Duration {
   }, root);
 }
 
-// refs: 102 - tags: input, named, enum, output
+// refs: 114 - tags: input, named, enum, output
 export type DurationUnit =
-| "ms"
 | "s"
+| "ms"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 18 - tags: input, named, enum, output
@@ -1996,15 +1995,15 @@ function toHeaderMatchMethod(root: jsonP.JSONValue): HeaderMatchMethod {
 
 // refs: 12 - tags: input, named, enum, output
 export type HttpMethod =
-| "CONNECT"
-| "DELETE"
 | "GET"
 | "HEAD"
-| "OPTIONS"
-| "PATCH"
 | "POST"
 | "PUT"
+| "DELETE"
+| "CONNECT"
+| "OPTIONS"
 | "TRACE"
+| "PATCH"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 12 - tags: input, named, enum, output
@@ -2296,6 +2295,7 @@ function toVirtualGatewayTlsValidationContextFileTrust(root: jsonP.JSONValue): V
 
 // refs: 6 - tags: input, named, interface, output
 export interface VirtualGatewayListener {
+  connectionPool?: VirtualGatewayConnectionPool | null;
   healthCheck?: VirtualGatewayHealthCheckPolicy | null;
   portMapping: VirtualGatewayPortMapping;
   tls?: VirtualGatewayListenerTls | null;
@@ -2303,6 +2303,7 @@ export interface VirtualGatewayListener {
 function fromVirtualGatewayListener(input?: VirtualGatewayListener | null): jsonP.JSONValue {
   if (!input) return input;
   return {
+    connectionPool: fromVirtualGatewayConnectionPool(input["connectionPool"]),
     healthCheck: fromVirtualGatewayHealthCheckPolicy(input["healthCheck"]),
     portMapping: fromVirtualGatewayPortMapping(input["portMapping"]),
     tls: fromVirtualGatewayListenerTls(input["tls"]),
@@ -2314,9 +2315,96 @@ function toVirtualGatewayListener(root: jsonP.JSONValue): VirtualGatewayListener
       "portMapping": toVirtualGatewayPortMapping,
     },
     optional: {
+      "connectionPool": toVirtualGatewayConnectionPool,
       "healthCheck": toVirtualGatewayHealthCheckPolicy,
       "tls": toVirtualGatewayListenerTls,
     },
+  }, root);
+}
+
+// refs: 6 - tags: input, named, interface, output
+export interface VirtualGatewayConnectionPool {
+  grpc?: VirtualGatewayGrpcConnectionPool | null;
+  http?: VirtualGatewayHttpConnectionPool | null;
+  http2?: VirtualGatewayHttp2ConnectionPool | null;
+}
+function fromVirtualGatewayConnectionPool(input?: VirtualGatewayConnectionPool | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    grpc: fromVirtualGatewayGrpcConnectionPool(input["grpc"]),
+    http: fromVirtualGatewayHttpConnectionPool(input["http"]),
+    http2: fromVirtualGatewayHttp2ConnectionPool(input["http2"]),
+  }
+}
+function toVirtualGatewayConnectionPool(root: jsonP.JSONValue): VirtualGatewayConnectionPool {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "grpc": toVirtualGatewayGrpcConnectionPool,
+      "http": toVirtualGatewayHttpConnectionPool,
+      "http2": toVirtualGatewayHttp2ConnectionPool,
+    },
+  }, root);
+}
+
+// refs: 6 - tags: input, named, interface, output
+export interface VirtualGatewayGrpcConnectionPool {
+  maxRequests: number;
+}
+function fromVirtualGatewayGrpcConnectionPool(input?: VirtualGatewayGrpcConnectionPool | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    maxRequests: input["maxRequests"],
+  }
+}
+function toVirtualGatewayGrpcConnectionPool(root: jsonP.JSONValue): VirtualGatewayGrpcConnectionPool {
+  return jsonP.readObj({
+    required: {
+      "maxRequests": "n",
+    },
+    optional: {},
+  }, root);
+}
+
+// refs: 6 - tags: input, named, interface, output
+export interface VirtualGatewayHttpConnectionPool {
+  maxConnections: number;
+  maxPendingRequests?: number | null;
+}
+function fromVirtualGatewayHttpConnectionPool(input?: VirtualGatewayHttpConnectionPool | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    maxConnections: input["maxConnections"],
+    maxPendingRequests: input["maxPendingRequests"],
+  }
+}
+function toVirtualGatewayHttpConnectionPool(root: jsonP.JSONValue): VirtualGatewayHttpConnectionPool {
+  return jsonP.readObj({
+    required: {
+      "maxConnections": "n",
+    },
+    optional: {
+      "maxPendingRequests": "n",
+    },
+  }, root);
+}
+
+// refs: 6 - tags: input, named, interface, output
+export interface VirtualGatewayHttp2ConnectionPool {
+  maxRequests: number;
+}
+function fromVirtualGatewayHttp2ConnectionPool(input?: VirtualGatewayHttp2ConnectionPool | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    maxRequests: input["maxRequests"],
+  }
+}
+function toVirtualGatewayHttp2ConnectionPool(root: jsonP.JSONValue): VirtualGatewayHttp2ConnectionPool {
+  return jsonP.readObj({
+    required: {
+      "maxRequests": "n",
+    },
+    optional: {},
   }, root);
 }
 
@@ -2360,9 +2448,9 @@ function toVirtualGatewayHealthCheckPolicy(root: jsonP.JSONValue): VirtualGatewa
 
 // refs: 12 - tags: input, named, enum, output
 export type VirtualGatewayPortProtocol =
-| "grpc"
 | "http"
 | "http2"
+| "grpc"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 6 - tags: input, named, interface, output
@@ -2474,9 +2562,9 @@ function toVirtualGatewayListenerTlsFileCertificate(root: jsonP.JSONValue): Virt
 
 // refs: 6 - tags: input, named, enum, output
 export type VirtualGatewayListenerTlsMode =
-| "DISABLED"
-| "PERMISSIVE"
 | "STRICT"
+| "PERMISSIVE"
+| "DISABLED"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 6 - tags: input, named, interface, output
@@ -2754,7 +2842,9 @@ function toVirtualServiceBackend(root: jsonP.JSONValue): VirtualServiceBackend {
 
 // refs: 6 - tags: input, named, interface, output
 export interface Listener {
+  connectionPool?: VirtualNodeConnectionPool | null;
   healthCheck?: HealthCheckPolicy | null;
+  outlierDetection?: OutlierDetection | null;
   portMapping: PortMapping;
   timeout?: ListenerTimeout | null;
   tls?: ListenerTls | null;
@@ -2762,7 +2852,9 @@ export interface Listener {
 function fromListener(input?: Listener | null): jsonP.JSONValue {
   if (!input) return input;
   return {
+    connectionPool: fromVirtualNodeConnectionPool(input["connectionPool"]),
     healthCheck: fromHealthCheckPolicy(input["healthCheck"]),
+    outlierDetection: fromOutlierDetection(input["outlierDetection"]),
     portMapping: fromPortMapping(input["portMapping"]),
     timeout: fromListenerTimeout(input["timeout"]),
     tls: fromListenerTls(input["tls"]),
@@ -2774,10 +2866,120 @@ function toListener(root: jsonP.JSONValue): Listener {
       "portMapping": toPortMapping,
     },
     optional: {
+      "connectionPool": toVirtualNodeConnectionPool,
       "healthCheck": toHealthCheckPolicy,
+      "outlierDetection": toOutlierDetection,
       "timeout": toListenerTimeout,
       "tls": toListenerTls,
     },
+  }, root);
+}
+
+// refs: 6 - tags: input, named, interface, output
+export interface VirtualNodeConnectionPool {
+  grpc?: VirtualNodeGrpcConnectionPool | null;
+  http?: VirtualNodeHttpConnectionPool | null;
+  http2?: VirtualNodeHttp2ConnectionPool | null;
+  tcp?: VirtualNodeTcpConnectionPool | null;
+}
+function fromVirtualNodeConnectionPool(input?: VirtualNodeConnectionPool | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    grpc: fromVirtualNodeGrpcConnectionPool(input["grpc"]),
+    http: fromVirtualNodeHttpConnectionPool(input["http"]),
+    http2: fromVirtualNodeHttp2ConnectionPool(input["http2"]),
+    tcp: fromVirtualNodeTcpConnectionPool(input["tcp"]),
+  }
+}
+function toVirtualNodeConnectionPool(root: jsonP.JSONValue): VirtualNodeConnectionPool {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "grpc": toVirtualNodeGrpcConnectionPool,
+      "http": toVirtualNodeHttpConnectionPool,
+      "http2": toVirtualNodeHttp2ConnectionPool,
+      "tcp": toVirtualNodeTcpConnectionPool,
+    },
+  }, root);
+}
+
+// refs: 6 - tags: input, named, interface, output
+export interface VirtualNodeGrpcConnectionPool {
+  maxRequests: number;
+}
+function fromVirtualNodeGrpcConnectionPool(input?: VirtualNodeGrpcConnectionPool | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    maxRequests: input["maxRequests"],
+  }
+}
+function toVirtualNodeGrpcConnectionPool(root: jsonP.JSONValue): VirtualNodeGrpcConnectionPool {
+  return jsonP.readObj({
+    required: {
+      "maxRequests": "n",
+    },
+    optional: {},
+  }, root);
+}
+
+// refs: 6 - tags: input, named, interface, output
+export interface VirtualNodeHttpConnectionPool {
+  maxConnections: number;
+  maxPendingRequests?: number | null;
+}
+function fromVirtualNodeHttpConnectionPool(input?: VirtualNodeHttpConnectionPool | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    maxConnections: input["maxConnections"],
+    maxPendingRequests: input["maxPendingRequests"],
+  }
+}
+function toVirtualNodeHttpConnectionPool(root: jsonP.JSONValue): VirtualNodeHttpConnectionPool {
+  return jsonP.readObj({
+    required: {
+      "maxConnections": "n",
+    },
+    optional: {
+      "maxPendingRequests": "n",
+    },
+  }, root);
+}
+
+// refs: 6 - tags: input, named, interface, output
+export interface VirtualNodeHttp2ConnectionPool {
+  maxRequests: number;
+}
+function fromVirtualNodeHttp2ConnectionPool(input?: VirtualNodeHttp2ConnectionPool | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    maxRequests: input["maxRequests"],
+  }
+}
+function toVirtualNodeHttp2ConnectionPool(root: jsonP.JSONValue): VirtualNodeHttp2ConnectionPool {
+  return jsonP.readObj({
+    required: {
+      "maxRequests": "n",
+    },
+    optional: {},
+  }, root);
+}
+
+// refs: 6 - tags: input, named, interface, output
+export interface VirtualNodeTcpConnectionPool {
+  maxConnections: number;
+}
+function fromVirtualNodeTcpConnectionPool(input?: VirtualNodeTcpConnectionPool | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    maxConnections: input["maxConnections"],
+  }
+}
+function toVirtualNodeTcpConnectionPool(root: jsonP.JSONValue): VirtualNodeTcpConnectionPool {
+  return jsonP.readObj({
+    required: {
+      "maxConnections": "n",
+    },
+    optional: {},
   }, root);
 }
 
@@ -2821,11 +3023,39 @@ function toHealthCheckPolicy(root: jsonP.JSONValue): HealthCheckPolicy {
 
 // refs: 18 - tags: input, named, enum, output
 export type PortProtocol =
-| "grpc"
 | "http"
-| "http2"
 | "tcp"
+| "http2"
+| "grpc"
 | cmnP.UnexpectedEnumValue;
+
+// refs: 6 - tags: input, named, interface, output
+export interface OutlierDetection {
+  baseEjectionDuration: Duration;
+  interval: Duration;
+  maxEjectionPercent: number;
+  maxServerErrors: number;
+}
+function fromOutlierDetection(input?: OutlierDetection | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    baseEjectionDuration: fromDuration(input["baseEjectionDuration"]),
+    interval: fromDuration(input["interval"]),
+    maxEjectionPercent: input["maxEjectionPercent"],
+    maxServerErrors: input["maxServerErrors"],
+  }
+}
+function toOutlierDetection(root: jsonP.JSONValue): OutlierDetection {
+  return jsonP.readObj({
+    required: {
+      "baseEjectionDuration": toDuration,
+      "interval": toDuration,
+      "maxEjectionPercent": "n",
+      "maxServerErrors": "n",
+    },
+    optional: {},
+  }, root);
+}
 
 // refs: 12 - tags: input, named, interface, output
 export interface PortMapping {
@@ -2964,9 +3194,9 @@ function toListenerTlsFileCertificate(root: jsonP.JSONValue): ListenerTlsFileCer
 
 // refs: 6 - tags: input, named, enum, output
 export type ListenerTlsMode =
-| "DISABLED"
-| "PERMISSIVE"
 | "STRICT"
+| "PERMISSIVE"
+| "DISABLED"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 6 - tags: input, named, interface, output
@@ -3296,8 +3526,8 @@ function toGatewayRouteStatus(root: jsonP.JSONValue): GatewayRouteStatus {
 // refs: 4 - tags: output, named, enum
 export type GatewayRouteStatusCode =
 | "ACTIVE"
-| "DELETED"
 | "INACTIVE"
+| "DELETED"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: output, named, interface
@@ -3335,8 +3565,8 @@ function toMeshStatus(root: jsonP.JSONValue): MeshStatus {
 // refs: 4 - tags: output, named, enum
 export type MeshStatusCode =
 | "ACTIVE"
-| "DELETED"
 | "INACTIVE"
+| "DELETED"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: output, named, interface
@@ -3378,8 +3608,8 @@ function toRouteStatus(root: jsonP.JSONValue): RouteStatus {
 // refs: 4 - tags: output, named, enum
 export type RouteStatusCode =
 | "ACTIVE"
-| "DELETED"
 | "INACTIVE"
+| "DELETED"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: output, named, interface
@@ -3419,8 +3649,8 @@ function toVirtualGatewayStatus(root: jsonP.JSONValue): VirtualGatewayStatus {
 // refs: 4 - tags: output, named, enum
 export type VirtualGatewayStatusCode =
 | "ACTIVE"
-| "DELETED"
 | "INACTIVE"
+| "DELETED"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: output, named, interface
@@ -3460,8 +3690,8 @@ function toVirtualNodeStatus(root: jsonP.JSONValue): VirtualNodeStatus {
 // refs: 4 - tags: output, named, enum
 export type VirtualNodeStatusCode =
 | "ACTIVE"
-| "DELETED"
 | "INACTIVE"
+| "DELETED"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: output, named, interface
@@ -3501,8 +3731,8 @@ function toVirtualRouterStatus(root: jsonP.JSONValue): VirtualRouterStatus {
 // refs: 4 - tags: output, named, enum
 export type VirtualRouterStatusCode =
 | "ACTIVE"
-| "DELETED"
 | "INACTIVE"
+| "DELETED"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: output, named, interface
@@ -3542,8 +3772,8 @@ function toVirtualServiceStatus(root: jsonP.JSONValue): VirtualServiceStatus {
 // refs: 4 - tags: output, named, enum
 export type VirtualServiceStatusCode =
 | "ACTIVE"
-| "DELETED"
 | "INACTIVE"
+| "DELETED"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface

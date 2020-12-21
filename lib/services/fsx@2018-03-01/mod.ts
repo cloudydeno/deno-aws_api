@@ -5,7 +5,7 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import * as uuidv4 from "https://deno.land/std@0.71.0/uuid/v4.ts";
+import * as uuidv4 from "https://deno.land/std@0.75.0/uuid/v4.ts";
 import * as cmnP from "../../encoding/common.ts";
 import * as jsonP from "../../encoding/json.ts";
 function generateIdemptToken() {
@@ -30,6 +30,26 @@ export default class FSx {
     "targetPrefix": "AWSSimbaAPIService_v20180301",
     "uid": "fsx-2018-03-01"
   };
+
+  async associateFileSystemAliases(
+    {abortSignal, ...params}: RequestConfig & AssociateFileSystemAliasesRequest,
+  ): Promise<AssociateFileSystemAliasesResponse> {
+    const body: jsonP.JSONObject = {
+      ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
+      FileSystemId: params["FileSystemId"],
+      Aliases: params["Aliases"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "AssociateFileSystemAliases",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Aliases": [toAlias],
+      },
+    }, await resp.json());
+  }
 
   async cancelDataRepositoryTask(
     {abortSignal, ...params}: RequestConfig & CancelDataRepositoryTaskRequest,
@@ -233,6 +253,28 @@ export default class FSx {
     }, await resp.json());
   }
 
+  async describeFileSystemAliases(
+    {abortSignal, ...params}: RequestConfig & DescribeFileSystemAliasesRequest,
+  ): Promise<DescribeFileSystemAliasesResponse> {
+    const body: jsonP.JSONObject = {
+      ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
+      FileSystemId: params["FileSystemId"],
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DescribeFileSystemAliases",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Aliases": [toAlias],
+        "NextToken": "s",
+      },
+    }, await resp.json());
+  }
+
   async describeFileSystems(
     {abortSignal, ...params}: RequestConfig & DescribeFileSystemsRequest = {},
   ): Promise<DescribeFileSystemsResponse> {
@@ -250,6 +292,26 @@ export default class FSx {
       optional: {
         "FileSystems": [toFileSystem],
         "NextToken": "s",
+      },
+    }, await resp.json());
+  }
+
+  async disassociateFileSystemAliases(
+    {abortSignal, ...params}: RequestConfig & DisassociateFileSystemAliasesRequest,
+  ): Promise<DisassociateFileSystemAliasesResponse> {
+    const body: jsonP.JSONObject = {
+      ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
+      FileSystemId: params["FileSystemId"],
+      Aliases: params["Aliases"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DisassociateFileSystemAliases",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Aliases": [toAlias],
       },
     }, await resp.json());
   }
@@ -334,6 +396,13 @@ export default class FSx {
 }
 
 // refs: 1 - tags: named, input
+export interface AssociateFileSystemAliasesRequest {
+  ClientRequestToken?: string | null;
+  FileSystemId: string;
+  Aliases: string[];
+}
+
+// refs: 1 - tags: named, input
 export interface CancelDataRepositoryTaskRequest {
   TaskId: string;
 }
@@ -412,10 +481,25 @@ export interface DescribeDataRepositoryTasksRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface DescribeFileSystemAliasesRequest {
+  ClientRequestToken?: string | null;
+  FileSystemId: string;
+  MaxResults?: number | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, input
 export interface DescribeFileSystemsRequest {
   FileSystemIds?: string[] | null;
   MaxResults?: number | null;
   NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface DisassociateFileSystemAliasesRequest {
+  ClientRequestToken?: string | null;
+  FileSystemId: string;
+  Aliases: string[];
 }
 
 // refs: 1 - tags: named, input
@@ -444,6 +528,11 @@ export interface UpdateFileSystemRequest {
   StorageCapacity?: number | null;
   WindowsConfiguration?: UpdateFileSystemWindowsConfiguration | null;
   LustreConfiguration?: UpdateFileSystemLustreConfiguration | null;
+}
+
+// refs: 1 - tags: named, output
+export interface AssociateFileSystemAliasesResponse {
+  Aliases?: Alias[] | null;
 }
 
 // refs: 1 - tags: named, output
@@ -499,9 +588,20 @@ export interface DescribeDataRepositoryTasksResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface DescribeFileSystemAliasesResponse {
+  Aliases?: Alias[] | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
 export interface DescribeFileSystemsResponse {
   FileSystems?: FileSystem[] | null;
   NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface DisassociateFileSystemAliasesResponse {
+  Aliases?: Alias[] | null;
 }
 
 // refs: 1 - tags: named, output
@@ -612,6 +712,7 @@ export interface CreateFileSystemWindowsConfiguration {
   DailyAutomaticBackupStartTime?: string | null;
   AutomaticBackupRetentionDays?: number | null;
   CopyTagsToBackups?: boolean | null;
+  Aliases?: string[] | null;
 }
 function fromCreateFileSystemWindowsConfiguration(input?: CreateFileSystemWindowsConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
@@ -625,6 +726,7 @@ function fromCreateFileSystemWindowsConfiguration(input?: CreateFileSystemWindow
     DailyAutomaticBackupStartTime: input["DailyAutomaticBackupStartTime"],
     AutomaticBackupRetentionDays: input["AutomaticBackupRetentionDays"],
     CopyTagsToBackups: input["CopyTagsToBackups"],
+    Aliases: input["Aliases"],
   }
 }
 
@@ -823,6 +925,30 @@ function fromUpdateFileSystemLustreConfiguration(input?: UpdateFileSystemLustreC
   }
 }
 
+// refs: 9 - tags: output, named, interface
+export interface Alias {
+  Name?: string | null;
+  Lifecycle?: AliasLifecycle | null;
+}
+function toAlias(root: jsonP.JSONValue): Alias {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "Name": "s",
+      "Lifecycle": (x: jsonP.JSONValue) => cmnP.readEnum<AliasLifecycle>(x),
+    },
+  }, root);
+}
+
+// refs: 9 - tags: output, named, enum
+export type AliasLifecycle =
+| "AVAILABLE"
+| "CREATING"
+| "DELETING"
+| "CREATE_FAILED"
+| "DELETE_FAILED"
+| cmnP.UnexpectedEnumValue;
+
 // refs: 3 - tags: output, named, enum
 export type DataRepositoryTaskLifecycle =
 | "PENDING"
@@ -874,6 +1000,7 @@ export type BackupLifecycle =
 | "TRANSFERRING"
 | "DELETED"
 | "FAILED"
+| "PENDING"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
@@ -893,6 +1020,7 @@ function toBackupFailureDetails(root: jsonP.JSONValue): BackupFailureDetails {
 export type BackupType =
 | "AUTOMATIC"
 | "USER_INITIATED"
+| "AWS_BACKUP"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 12 - tags: output, named, interface, recursed
@@ -979,6 +1107,7 @@ export interface WindowsFileSystemConfiguration {
   DailyAutomaticBackupStartTime?: string | null;
   AutomaticBackupRetentionDays?: number | null;
   CopyTagsToBackups?: boolean | null;
+  Aliases?: Alias[] | null;
 }
 function toWindowsFileSystemConfiguration(root: jsonP.JSONValue): WindowsFileSystemConfiguration {
   return jsonP.readObj({
@@ -996,6 +1125,7 @@ function toWindowsFileSystemConfiguration(root: jsonP.JSONValue): WindowsFileSys
       "DailyAutomaticBackupStartTime": "s",
       "AutomaticBackupRetentionDays": "n",
       "CopyTagsToBackups": "b",
+      "Aliases": [toAlias],
     },
   }, root);
 }
@@ -1128,6 +1258,8 @@ function toAdministrativeAction(root: jsonP.JSONValue): AdministrativeAction {
 export type AdministrativeActionType =
 | "FILE_SYSTEM_UPDATE"
 | "STORAGE_OPTIMIZATION"
+| "FILE_SYSTEM_ALIAS_ASSOCIATION"
+| "FILE_SYSTEM_ALIAS_DISASSOCIATION"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 6 - tags: output, named, enum

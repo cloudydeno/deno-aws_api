@@ -2556,6 +2556,7 @@ function toSavingsPlansCoverageData(root: jsonP.JSONValue): SavingsPlansCoverage
 export interface SavingsPlansPurchaseRecommendationMetadata {
   RecommendationId?: string | null;
   GenerationTimestamp?: string | null;
+  AdditionalMetadata?: string | null;
 }
 function toSavingsPlansPurchaseRecommendationMetadata(root: jsonP.JSONValue): SavingsPlansPurchaseRecommendationMetadata {
   return jsonP.readObj({
@@ -2563,6 +2564,7 @@ function toSavingsPlansPurchaseRecommendationMetadata(root: jsonP.JSONValue): Sa
     optional: {
       "RecommendationId": "s",
       "GenerationTimestamp": "s",
+      "AdditionalMetadata": "s",
     },
   }, root);
 }

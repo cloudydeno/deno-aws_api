@@ -501,6 +501,7 @@ export interface Record {
   MeasureValueType?: MeasureValueType | null;
   Time?: string | null;
   TimeUnit?: TimeUnit | null;
+  Version?: number | null;
 }
 function fromRecord(input?: Record | null): jsonP.JSONValue {
   if (!input) return input;
@@ -511,6 +512,7 @@ function fromRecord(input?: Record | null): jsonP.JSONValue {
     MeasureValueType: input["MeasureValueType"],
     Time: input["Time"],
     TimeUnit: input["TimeUnit"],
+    Version: input["Version"],
   }
 }
 

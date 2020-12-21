@@ -5,7 +5,7 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import * as uuidv4 from "https://deno.land/std@0.71.0/uuid/v4.ts";
+import * as uuidv4 from "https://deno.land/std@0.75.0/uuid/v4.ts";
 import * as cmnP from "../../encoding/common.ts";
 import * as jsonP from "../../encoding/json.ts";
 function generateIdemptToken() {
@@ -437,6 +437,7 @@ export default class RoboMaker {
       template: params["template"],
       worldCount: fromWorldCount(params["worldCount"]),
       tags: params["tags"],
+      worldTags: params["worldTags"],
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -454,6 +455,7 @@ export default class RoboMaker {
         "template": "s",
         "worldCount": toWorldCount,
         "tags": x => jsonP.readMap(String, String, x),
+        "worldTags": x => jsonP.readMap(String, String, x),
       },
     }, await resp.json());
   }
@@ -875,6 +877,7 @@ export default class RoboMaker {
         "worldCount": toWorldCount,
         "finishedWorldsSummary": toFinishedWorldsSummary,
         "tags": x => jsonP.readMap(String, String, x),
+        "worldTags": x => jsonP.readMap(String, String, x),
       },
     }, await resp.json());
   }
@@ -1526,6 +1529,7 @@ export interface CreateWorldGenerationJobRequest {
   template: string;
   worldCount: WorldCount;
   tags?: { [key: string]: string | null | undefined } | null;
+  worldTags?: { [key: string]: string | null | undefined } | null;
 }
 
 // refs: 1 - tags: named, input
@@ -1935,6 +1939,7 @@ export interface CreateWorldGenerationJobResponse {
   template?: string | null;
   worldCount?: WorldCount | null;
   tags?: { [key: string]: string | null | undefined } | null;
+  worldTags?: { [key: string]: string | null | undefined } | null;
 }
 
 // refs: 1 - tags: named, output
@@ -2114,6 +2119,7 @@ export interface DescribeWorldGenerationJobResponse {
   worldCount?: WorldCount | null;
   finishedWorldsSummary?: FinishedWorldsSummary | null;
   tags?: { [key: string]: string | null | undefined } | null;
+  worldTags?: { [key: string]: string | null | undefined } | null;
 }
 
 // refs: 1 - tags: named, output

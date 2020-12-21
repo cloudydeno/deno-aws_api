@@ -5,7 +5,7 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import * as uuidv4 from "https://deno.land/std@0.71.0/uuid/v4.ts";
+import * as uuidv4 from "https://deno.land/std@0.75.0/uuid/v4.ts";
 import * as cmnP from "../../encoding/common.ts";
 import * as jsonP from "../../encoding/json.ts";
 function generateIdemptToken() {
@@ -937,6 +937,7 @@ function toConfigurationId(root: jsonP.JSONValue): ConfigurationId {
 export type DeploymentMode =
 | "SINGLE_INSTANCE"
 | "ACTIVE_STANDBY_MULTI_AZ"
+| "CLUSTER_MULTI_AZ"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface, output
@@ -962,9 +963,10 @@ function toEncryptionOptions(root: jsonP.JSONValue): EncryptionOptions {
   }, root);
 }
 
-// refs: 7 - tags: input, named, enum, output
+// refs: 8 - tags: input, named, enum, output
 export type EngineType =
 | "ACTIVEMQ"
+| "RABBITMQ"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface
@@ -1317,6 +1319,7 @@ export interface BrokerSummary {
   BrokerState?: BrokerState | null;
   Created?: Date | number | null;
   DeploymentMode?: DeploymentMode | null;
+  EngineType?: EngineType | null;
   HostInstanceType?: string | null;
 }
 function toBrokerSummary(root: jsonP.JSONValue): BrokerSummary {
@@ -1329,6 +1332,7 @@ function toBrokerSummary(root: jsonP.JSONValue): BrokerSummary {
       "BrokerState": (x: jsonP.JSONValue) => cmnP.readEnum<BrokerState>(x),
       "Created": "d",
       "DeploymentMode": (x: jsonP.JSONValue) => cmnP.readEnum<DeploymentMode>(x),
+      "EngineType": (x: jsonP.JSONValue) => cmnP.readEnum<EngineType>(x),
       "HostInstanceType": "s",
     },
   }, root);

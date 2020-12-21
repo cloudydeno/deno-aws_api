@@ -26,6 +26,21 @@ export default class Route53 {
     "uid": "route53-2013-04-01"
   };
 
+  async activateKeySigningKey(
+    {abortSignal, ...params}: RequestConfig & ActivateKeySigningKeyRequest,
+  ): Promise<ActivateKeySigningKeyResponse> {
+
+    const resp = await this.#client.performRequest({
+      abortSignal,
+      action: "ActivateKeySigningKey",
+      requestUri: cmnP.encodePath`/2013-04-01/keysigningkey/${params["HostedZoneId"]}/${params["Name"]}/activate`,
+    });
+    const xml = xmlP.readXmlResult(await resp.text());
+    return {
+      ChangeInfo: xml.first("ChangeInfo", true, ChangeInfo_Parse),
+    };
+  }
+
   async associateVPCWithHostedZone(
     {abortSignal, ...params}: RequestConfig & AssociateVPCWithHostedZoneRequest,
   ): Promise<AssociateVPCWithHostedZoneResponse> {
@@ -138,6 +153,35 @@ export default class Route53 {
         ChangeInfo: xml.first("ChangeInfo", true, ChangeInfo_Parse),
         DelegationSet: xml.first("DelegationSet", true, DelegationSet_Parse),
         VPC: xml.first("VPC", false, VPC_Parse),
+      },
+    };
+  }
+
+  async createKeySigningKey(
+    {abortSignal, ...params}: RequestConfig & CreateKeySigningKeyRequest,
+  ): Promise<CreateKeySigningKeyResponse> {
+    const body = xmlP.stringify({
+      name: "CreateKeySigningKeyRequest",
+      attributes: {"xmlns":"https://route53.amazonaws.com/doc/2013-04-01/"},
+      children: [
+        {name: "CallerReference", content: params["CallerReference"]?.toString()},
+        {name: "HostedZoneId", content: params["HostedZoneId"]?.toString()},
+        {name: "KeyManagementServiceArn", content: params["KeyManagementServiceArn"]?.toString()},
+        {name: "Name", content: params["Name"]?.toString()},
+        {name: "Status", content: params["Status"]?.toString()},
+      ]});
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "CreateKeySigningKey",
+      requestUri: "/2013-04-01/keysigningkey",
+      responseCode: 201,
+    });
+    const xml = xmlP.readXmlResult(await resp.text());
+    return {
+      Location: resp.headers.get("Location") ?? "",
+      ...{
+        ChangeInfo: xml.first("ChangeInfo", true, ChangeInfo_Parse),
+        KeySigningKey: xml.first("KeySigningKey", true, KeySigningKey_Parse),
       },
     };
   }
@@ -294,6 +338,21 @@ export default class Route53 {
     };
   }
 
+  async deactivateKeySigningKey(
+    {abortSignal, ...params}: RequestConfig & DeactivateKeySigningKeyRequest,
+  ): Promise<DeactivateKeySigningKeyResponse> {
+
+    const resp = await this.#client.performRequest({
+      abortSignal,
+      action: "DeactivateKeySigningKey",
+      requestUri: cmnP.encodePath`/2013-04-01/keysigningkey/${params["HostedZoneId"]}/${params["Name"]}/deactivate`,
+    });
+    const xml = xmlP.readXmlResult(await resp.text());
+    return {
+      ChangeInfo: xml.first("ChangeInfo", true, ChangeInfo_Parse),
+    };
+  }
+
   async deleteHealthCheck(
     {abortSignal, ...params}: RequestConfig & DeleteHealthCheckRequest,
   ): Promise<DeleteHealthCheckResponse> {
@@ -317,6 +376,22 @@ export default class Route53 {
       action: "DeleteHostedZone",
       method: "DELETE",
       requestUri: cmnP.encodePath`/2013-04-01/hostedzone/${params["Id"]}`,
+    });
+    const xml = xmlP.readXmlResult(await resp.text());
+    return {
+      ChangeInfo: xml.first("ChangeInfo", true, ChangeInfo_Parse),
+    };
+  }
+
+  async deleteKeySigningKey(
+    {abortSignal, ...params}: RequestConfig & DeleteKeySigningKeyRequest,
+  ): Promise<DeleteKeySigningKeyResponse> {
+
+    const resp = await this.#client.performRequest({
+      abortSignal,
+      action: "DeleteKeySigningKey",
+      method: "DELETE",
+      requestUri: cmnP.encodePath`/2013-04-01/keysigningkey/${params["HostedZoneId"]}/${params["Name"]}`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
     return {
@@ -398,6 +473,21 @@ export default class Route53 {
     };
   }
 
+  async disableHostedZoneDNSSEC(
+    {abortSignal, ...params}: RequestConfig & DisableHostedZoneDNSSECRequest,
+  ): Promise<DisableHostedZoneDNSSECResponse> {
+
+    const resp = await this.#client.performRequest({
+      abortSignal,
+      action: "DisableHostedZoneDNSSEC",
+      requestUri: cmnP.encodePath`/2013-04-01/hostedzone/${params["HostedZoneId"]}/disable-dnssec`,
+    });
+    const xml = xmlP.readXmlResult(await resp.text());
+    return {
+      ChangeInfo: xml.first("ChangeInfo", true, ChangeInfo_Parse),
+    };
+  }
+
   async disassociateVPCFromHostedZone(
     {abortSignal, ...params}: RequestConfig & DisassociateVPCFromHostedZoneRequest,
   ): Promise<DisassociateVPCFromHostedZoneResponse> {
@@ -412,6 +502,21 @@ export default class Route53 {
       abortSignal, body,
       action: "DisassociateVPCFromHostedZone",
       requestUri: cmnP.encodePath`/2013-04-01/hostedzone/${params["HostedZoneId"]}/disassociatevpc`,
+    });
+    const xml = xmlP.readXmlResult(await resp.text());
+    return {
+      ChangeInfo: xml.first("ChangeInfo", true, ChangeInfo_Parse),
+    };
+  }
+
+  async enableHostedZoneDNSSEC(
+    {abortSignal, ...params}: RequestConfig & EnableHostedZoneDNSSECRequest,
+  ): Promise<EnableHostedZoneDNSSECResponse> {
+
+    const resp = await this.#client.performRequest({
+      abortSignal,
+      action: "EnableHostedZoneDNSSEC",
+      requestUri: cmnP.encodePath`/2013-04-01/hostedzone/${params["HostedZoneId"]}/enable-dnssec`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
     return {
@@ -465,6 +570,23 @@ export default class Route53 {
     const xml = xmlP.readXmlResult(await resp.text());
     return {
       CheckerIpRanges: xml.getList("CheckerIpRanges", "member").map(x => x.content ?? ''),
+    };
+  }
+
+  async getDNSSEC(
+    {abortSignal, ...params}: RequestConfig & GetDNSSECRequest,
+  ): Promise<GetDNSSECResponse> {
+
+    const resp = await this.#client.performRequest({
+      abortSignal,
+      action: "GetDNSSEC",
+      method: "GET",
+      requestUri: cmnP.encodePath`/2013-04-01/hostedzone/${params["HostedZoneId"]}/dnssec`,
+    });
+    const xml = xmlP.readXmlResult(await resp.text());
+    return {
+      Status: xml.first("Status", true, DNSSECStatus_Parse),
+      KeySigningKeys: xml.getList("KeySigningKeys", "member").map(KeySigningKey_Parse),
     };
   }
 
@@ -1213,6 +1335,12 @@ export default class Route53 {
 }
 
 // refs: 1 - tags: named, input
+export interface ActivateKeySigningKeyRequest {
+  HostedZoneId: string;
+  Name: string;
+}
+
+// refs: 1 - tags: named, input
 export interface AssociateVPCWithHostedZoneRequest {
   HostedZoneId: string;
   VPC: VPC;
@@ -1246,6 +1374,15 @@ export interface CreateHostedZoneRequest {
   CallerReference: string;
   HostedZoneConfig?: HostedZoneConfig | null;
   DelegationSetId?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface CreateKeySigningKeyRequest {
+  CallerReference: string;
+  HostedZoneId: string;
+  KeyManagementServiceArn: string;
+  Name: string;
+  Status: string;
 }
 
 // refs: 1 - tags: named, input
@@ -1290,6 +1427,12 @@ export interface CreateVPCAssociationAuthorizationRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface DeactivateKeySigningKeyRequest {
+  HostedZoneId: string;
+  Name: string;
+}
+
+// refs: 1 - tags: named, input
 export interface DeleteHealthCheckRequest {
   HealthCheckId: string;
 }
@@ -1297,6 +1440,12 @@ export interface DeleteHealthCheckRequest {
 // refs: 1 - tags: named, input
 export interface DeleteHostedZoneRequest {
   Id: string;
+}
+
+// refs: 1 - tags: named, input
+export interface DeleteKeySigningKeyRequest {
+  HostedZoneId: string;
+  Name: string;
 }
 
 // refs: 1 - tags: named, input
@@ -1327,10 +1476,20 @@ export interface DeleteVPCAssociationAuthorizationRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface DisableHostedZoneDNSSECRequest {
+  HostedZoneId: string;
+}
+
+// refs: 1 - tags: named, input
 export interface DisassociateVPCFromHostedZoneRequest {
   HostedZoneId: string;
   VPC: VPC;
   Comment?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface EnableHostedZoneDNSSECRequest {
+  HostedZoneId: string;
 }
 
 // refs: 1 - tags: named, input
@@ -1345,6 +1504,11 @@ export interface GetChangeRequest {
 
 // refs: 1 - tags: named, input
 export interface GetCheckerIpRangesRequest {
+}
+
+// refs: 1 - tags: named, input
+export interface GetDNSSECRequest {
+  HostedZoneId: string;
 }
 
 // refs: 1 - tags: named, input
@@ -1588,6 +1752,11 @@ export interface UpdateTrafficPolicyInstanceRequest {
 }
 
 // refs: 1 - tags: named, output
+export interface ActivateKeySigningKeyResponse {
+  ChangeInfo: ChangeInfo;
+}
+
+// refs: 1 - tags: named, output
 export interface AssociateVPCWithHostedZoneResponse {
   ChangeInfo: ChangeInfo;
 }
@@ -1613,6 +1782,13 @@ export interface CreateHostedZoneResponse {
   ChangeInfo: ChangeInfo;
   DelegationSet: DelegationSet;
   VPC?: VPC | null;
+  Location: string;
+}
+
+// refs: 1 - tags: named, output
+export interface CreateKeySigningKeyResponse {
+  ChangeInfo: ChangeInfo;
+  KeySigningKey: KeySigningKey;
   Location: string;
 }
 
@@ -1653,11 +1829,21 @@ export interface CreateVPCAssociationAuthorizationResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface DeactivateKeySigningKeyResponse {
+  ChangeInfo: ChangeInfo;
+}
+
+// refs: 1 - tags: named, output
 export interface DeleteHealthCheckResponse {
 }
 
 // refs: 1 - tags: named, output
 export interface DeleteHostedZoneResponse {
+  ChangeInfo: ChangeInfo;
+}
+
+// refs: 1 - tags: named, output
+export interface DeleteKeySigningKeyResponse {
   ChangeInfo: ChangeInfo;
 }
 
@@ -1682,7 +1868,17 @@ export interface DeleteVPCAssociationAuthorizationResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface DisableHostedZoneDNSSECResponse {
+  ChangeInfo: ChangeInfo;
+}
+
+// refs: 1 - tags: named, output
 export interface DisassociateVPCFromHostedZoneResponse {
+  ChangeInfo: ChangeInfo;
+}
+
+// refs: 1 - tags: named, output
+export interface EnableHostedZoneDNSSECResponse {
   ChangeInfo: ChangeInfo;
 }
 
@@ -1700,6 +1896,12 @@ export interface GetChangeResponse {
 // refs: 1 - tags: named, output
 export interface GetCheckerIpRangesResponse {
   CheckerIpRanges: string[];
+}
+
+// refs: 1 - tags: named, output
+export interface GetDNSSECResponse {
+  Status: DNSSECStatus;
+  KeySigningKeys: KeySigningKey[];
 }
 
 // refs: 1 - tags: named, output
@@ -2089,6 +2291,7 @@ export type RRType =
 | "SPF"
 | "AAAA"
 | "CAA"
+| "DS"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, enum, output
@@ -2401,7 +2604,7 @@ export type ResettableElementName =
 | "ChildHealthChecks"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 6 - tags: output, named, interface
+// refs: 12 - tags: output, named, interface
 export interface ChangeInfo {
   Id: string;
   Status: ChangeStatus;
@@ -2419,7 +2622,7 @@ function ChangeInfo_Parse(node: xmlP.XmlNode): ChangeInfo {
   };
 }
 
-// refs: 6 - tags: output, named, enum
+// refs: 12 - tags: output, named, enum
 export type ChangeStatus =
 | "PENDING"
 | "INSYNC"
@@ -2545,6 +2748,39 @@ function DelegationSet_Parse(node: xmlP.XmlNode): DelegationSet {
   };
 }
 
+// refs: 2 - tags: output, named, interface
+export interface KeySigningKey {
+  Name?: string | null;
+  KmsArn?: string | null;
+  Flag?: number | null;
+  SigningAlgorithmMnemonic?: string | null;
+  SigningAlgorithmType?: number | null;
+  DigestAlgorithmMnemonic?: string | null;
+  DigestAlgorithmType?: number | null;
+  KeyTag?: number | null;
+  DigestValue?: string | null;
+  PublicKey?: string | null;
+  DSRecord?: string | null;
+  DNSKEYRecord?: string | null;
+  Status?: string | null;
+  StatusMessage?: string | null;
+  CreatedDate?: Date | number | null;
+  LastModifiedDate?: Date | number | null;
+}
+function KeySigningKey_Parse(node: xmlP.XmlNode): KeySigningKey {
+  return {
+    ...node.strings({
+      optional: {"Name":true,"KmsArn":true,"SigningAlgorithmMnemonic":true,"DigestAlgorithmMnemonic":true,"DigestValue":true,"PublicKey":true,"DSRecord":true,"DNSKEYRecord":true,"Status":true,"StatusMessage":true},
+    }),
+    Flag: node.first("Flag", false, x => parseInt(x.content ?? '0')),
+    SigningAlgorithmType: node.first("SigningAlgorithmType", false, x => parseInt(x.content ?? '0')),
+    DigestAlgorithmType: node.first("DigestAlgorithmType", false, x => parseInt(x.content ?? '0')),
+    KeyTag: node.first("KeyTag", false, x => parseInt(x.content ?? '0')),
+    CreatedDate: node.first("CreatedDate", false, x => xmlP.parseTimestamp(x.content)),
+    LastModifiedDate: node.first("LastModifiedDate", false, x => xmlP.parseTimestamp(x.content)),
+  };
+}
+
 // refs: 3 - tags: output, named, interface
 export interface QueryLoggingConfig {
   Id: string;
@@ -2610,6 +2846,17 @@ function AccountLimit_Parse(node: xmlP.XmlNode): AccountLimit {
     Type: node.first("Type", true, x => (x.content ?? '') as AccountLimitType),
     Value: node.first("Value", true, x => parseInt(x.content ?? '0')),
   };
+}
+
+// refs: 1 - tags: output, named, interface
+export interface DNSSECStatus {
+  ServeSignature?: string | null;
+  StatusMessage?: string | null;
+}
+function DNSSECStatus_Parse(node: xmlP.XmlNode): DNSSECStatus {
+  return node.strings({
+    optional: {"ServeSignature":true,"StatusMessage":true},
+  });
 }
 
 // refs: 2 - tags: output, named, interface

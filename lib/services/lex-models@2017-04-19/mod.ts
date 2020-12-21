@@ -93,6 +93,8 @@ export default class LexModelBuildingService {
         "version": "s",
         "checksum": "s",
         "kendraConfiguration": toKendraConfiguration,
+        "inputContexts": [toInputContext],
+        "outputContexts": [toOutputContext],
       },
     }, await resp.json());
   }
@@ -576,6 +578,8 @@ export default class LexModelBuildingService {
         "version": "s",
         "checksum": "s",
         "kendraConfiguration": toKendraConfiguration,
+        "inputContexts": [toInputContext],
+        "outputContexts": [toOutputContext],
       },
     }, await resp.json());
   }
@@ -845,6 +849,8 @@ export default class LexModelBuildingService {
       checksum: params["checksum"],
       createVersion: params["createVersion"],
       kendraConfiguration: fromKendraConfiguration(params["kendraConfiguration"]),
+      inputContexts: params["inputContexts"]?.map(x => fromInputContext(x)),
+      outputContexts: params["outputContexts"]?.map(x => fromOutputContext(x)),
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -873,6 +879,8 @@ export default class LexModelBuildingService {
         "checksum": "s",
         "createVersion": "b",
         "kendraConfiguration": toKendraConfiguration,
+        "inputContexts": [toInputContext],
+        "outputContexts": [toOutputContext],
       },
     }, await resp.json());
   }
@@ -1236,6 +1244,8 @@ export interface PutIntentRequest {
   checksum?: string | null;
   createVersion?: boolean | null;
   kendraConfiguration?: KendraConfiguration | null;
+  inputContexts?: InputContext[] | null;
+  outputContexts?: OutputContext[] | null;
 }
 
 // refs: 1 - tags: named, input
@@ -1309,6 +1319,8 @@ export interface CreateIntentVersionResponse {
   version?: string | null;
   checksum?: string | null;
   kendraConfiguration?: KendraConfiguration | null;
+  inputContexts?: InputContext[] | null;
+  outputContexts?: OutputContext[] | null;
 }
 
 // refs: 1 - tags: named, output
@@ -1455,6 +1467,8 @@ export interface GetIntentResponse {
   version?: string | null;
   checksum?: string | null;
   kendraConfiguration?: KendraConfiguration | null;
+  inputContexts?: InputContext[] | null;
+  outputContexts?: OutputContext[] | null;
 }
 
 // refs: 1 - tags: named, output
@@ -1562,6 +1576,8 @@ export interface PutIntentResponse {
   checksum?: string | null;
   createVersion?: boolean | null;
   kendraConfiguration?: KendraConfiguration | null;
+  inputContexts?: InputContext[] | null;
+  outputContexts?: OutputContext[] | null;
 }
 
 // refs: 1 - tags: named, output
@@ -1604,7 +1620,12 @@ export type Locale =
 | "en-AU"
 | "en-GB"
 | "en-US"
+| "es-419"
+| "es-ES"
 | "es-US"
+| "fr-FR"
+| "fr-CA"
+| "it-IT"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 5 - tags: input, named, enum, output
@@ -1812,6 +1833,7 @@ export interface Slot {
   sampleUtterances?: string[] | null;
   responseCard?: string | null;
   obfuscationSetting?: ObfuscationSetting | null;
+  defaultValueSpec?: SlotDefaultValueSpec | null;
 }
 function fromSlot(input?: Slot | null): jsonP.JSONValue {
   if (!input) return input;
@@ -1826,6 +1848,7 @@ function fromSlot(input?: Slot | null): jsonP.JSONValue {
     sampleUtterances: input["sampleUtterances"],
     responseCard: input["responseCard"],
     obfuscationSetting: input["obfuscationSetting"],
+    defaultValueSpec: fromSlotDefaultValueSpec(input["defaultValueSpec"]),
   }
 }
 function toSlot(root: jsonP.JSONValue): Slot {
@@ -1843,6 +1866,7 @@ function toSlot(root: jsonP.JSONValue): Slot {
       "sampleUtterances": ["s"],
       "responseCard": "s",
       "obfuscationSetting": (x: jsonP.JSONValue) => cmnP.readEnum<ObfuscationSetting>(x),
+      "defaultValueSpec": toSlotDefaultValueSpec,
     },
   }, root);
 }
@@ -1858,6 +1882,44 @@ export type ObfuscationSetting =
 | "NONE"
 | "DEFAULT_OBFUSCATION"
 | cmnP.UnexpectedEnumValue;
+
+// refs: 4 - tags: input, named, interface, output
+export interface SlotDefaultValueSpec {
+  defaultValueList: SlotDefaultValue[];
+}
+function fromSlotDefaultValueSpec(input?: SlotDefaultValueSpec | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    defaultValueList: input["defaultValueList"]?.map(x => fromSlotDefaultValue(x)),
+  }
+}
+function toSlotDefaultValueSpec(root: jsonP.JSONValue): SlotDefaultValueSpec {
+  return jsonP.readObj({
+    required: {
+      "defaultValueList": [toSlotDefaultValue],
+    },
+    optional: {},
+  }, root);
+}
+
+// refs: 4 - tags: input, named, interface, output
+export interface SlotDefaultValue {
+  defaultValue: string;
+}
+function fromSlotDefaultValue(input?: SlotDefaultValue | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    defaultValue: input["defaultValue"],
+  }
+}
+function toSlotDefaultValue(root: jsonP.JSONValue): SlotDefaultValue {
+  return jsonP.readObj({
+    required: {
+      "defaultValue": "s",
+    },
+    optional: {},
+  }, root);
+}
 
 // refs: 4 - tags: input, named, interface, output
 export interface FollowUpPrompt {
@@ -1955,6 +2017,50 @@ function toKendraConfiguration(root: jsonP.JSONValue): KendraConfiguration {
     optional: {
       "queryFilterString": "s",
     },
+  }, root);
+}
+
+// refs: 4 - tags: input, named, interface, output
+export interface InputContext {
+  name: string;
+}
+function fromInputContext(input?: InputContext | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    name: input["name"],
+  }
+}
+function toInputContext(root: jsonP.JSONValue): InputContext {
+  return jsonP.readObj({
+    required: {
+      "name": "s",
+    },
+    optional: {},
+  }, root);
+}
+
+// refs: 4 - tags: input, named, interface, output
+export interface OutputContext {
+  name: string;
+  timeToLiveInSeconds: number;
+  turnsToLive: number;
+}
+function fromOutputContext(input?: OutputContext | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    name: input["name"],
+    timeToLiveInSeconds: input["timeToLiveInSeconds"],
+    turnsToLive: input["turnsToLive"],
+  }
+}
+function toOutputContext(root: jsonP.JSONValue): OutputContext {
+  return jsonP.readObj({
+    required: {
+      "name": "s",
+      "timeToLiveInSeconds": "n",
+      "turnsToLive": "n",
+    },
+    optional: {},
   }, root);
 }
 

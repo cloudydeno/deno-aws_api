@@ -986,6 +986,25 @@ export default class ECS {
     }, await resp.json());
   }
 
+  async updateCapacityProvider(
+    {abortSignal, ...params}: RequestConfig & UpdateCapacityProviderRequest,
+  ): Promise<UpdateCapacityProviderResponse> {
+    const body: jsonP.JSONObject = {
+      name: params["name"],
+      autoScalingGroupProvider: fromAutoScalingGroupProviderUpdate(params["autoScalingGroupProvider"]),
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "UpdateCapacityProvider",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "capacityProvider": toCapacityProvider,
+      },
+    }, await resp.json());
+  }
+
   async updateClusterSettings(
     {abortSignal, ...params}: RequestConfig & UpdateClusterSettingsRequest,
   ): Promise<UpdateClusterSettingsResponse> {
@@ -1562,6 +1581,12 @@ export interface UntagResourceRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface UpdateCapacityProviderRequest {
+  name: string;
+  autoScalingGroupProvider: AutoScalingGroupProviderUpdate;
+}
+
+// refs: 1 - tags: named, input
 export interface UpdateClusterSettingsRequest {
   cluster: string;
   settings: ClusterSetting[];
@@ -1845,6 +1870,11 @@ export interface UntagResourceResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface UpdateCapacityProviderResponse {
+  capacityProvider?: CapacityProvider | null;
+}
+
+// refs: 1 - tags: named, output
 export interface UpdateClusterSettingsResponse {
   cluster?: Cluster | null;
 }
@@ -1875,7 +1905,7 @@ export interface UpdateTaskSetResponse {
   taskSet?: TaskSet | null;
 }
 
-// refs: 4 - tags: input, named, interface, output
+// refs: 5 - tags: input, named, interface, output
 export interface AutoScalingGroupProvider {
   autoScalingGroupArn: string;
   managedScaling?: ManagedScaling | null;
@@ -1901,12 +1931,13 @@ function toAutoScalingGroupProvider(root: jsonP.JSONValue): AutoScalingGroupProv
   }, root);
 }
 
-// refs: 4 - tags: input, named, interface, output
+// refs: 6 - tags: input, named, interface, output
 export interface ManagedScaling {
   status?: ManagedScalingStatus | null;
   targetCapacity?: number | null;
   minimumScalingStepSize?: number | null;
   maximumScalingStepSize?: number | null;
+  instanceWarmupPeriod?: number | null;
 }
 function fromManagedScaling(input?: ManagedScaling | null): jsonP.JSONValue {
   if (!input) return input;
@@ -1915,6 +1946,7 @@ function fromManagedScaling(input?: ManagedScaling | null): jsonP.JSONValue {
     targetCapacity: input["targetCapacity"],
     minimumScalingStepSize: input["minimumScalingStepSize"],
     maximumScalingStepSize: input["maximumScalingStepSize"],
+    instanceWarmupPeriod: input["instanceWarmupPeriod"],
   }
 }
 function toManagedScaling(root: jsonP.JSONValue): ManagedScaling {
@@ -1925,23 +1957,24 @@ function toManagedScaling(root: jsonP.JSONValue): ManagedScaling {
       "targetCapacity": "n",
       "minimumScalingStepSize": "n",
       "maximumScalingStepSize": "n",
+      "instanceWarmupPeriod": "n",
     },
   }, root);
 }
 
-// refs: 4 - tags: input, named, enum, output
+// refs: 6 - tags: input, named, enum, output
 export type ManagedScalingStatus =
 | "ENABLED"
 | "DISABLED"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 4 - tags: input, named, enum, output
+// refs: 6 - tags: input, named, enum, output
 export type ManagedTerminationProtection =
 | "ENABLED"
 | "DISABLED"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 42 - tags: input, named, interface, output
+// refs: 43 - tags: input, named, interface, output
 export interface Tag {
   key?: string | null;
   value?: string | null;
@@ -2080,12 +2113,14 @@ export type LaunchType =
 
 // refs: 6 - tags: input, named, interface, output
 export interface DeploymentConfiguration {
+  deploymentCircuitBreaker?: DeploymentCircuitBreaker | null;
   maximumPercent?: number | null;
   minimumHealthyPercent?: number | null;
 }
 function fromDeploymentConfiguration(input?: DeploymentConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
   return {
+    deploymentCircuitBreaker: fromDeploymentCircuitBreaker(input["deploymentCircuitBreaker"]),
     maximumPercent: input["maximumPercent"],
     minimumHealthyPercent: input["minimumHealthyPercent"],
   }
@@ -2094,9 +2129,32 @@ function toDeploymentConfiguration(root: jsonP.JSONValue): DeploymentConfigurati
   return jsonP.readObj({
     required: {},
     optional: {
+      "deploymentCircuitBreaker": toDeploymentCircuitBreaker,
       "maximumPercent": "n",
       "minimumHealthyPercent": "n",
     },
+  }, root);
+}
+
+// refs: 6 - tags: input, named, interface, output
+export interface DeploymentCircuitBreaker {
+  enable: boolean;
+  rollback: boolean;
+}
+function fromDeploymentCircuitBreaker(input?: DeploymentCircuitBreaker | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    enable: input["enable"],
+    rollback: input["rollback"],
+  }
+}
+function toDeploymentCircuitBreaker(root: jsonP.JSONValue): DeploymentCircuitBreaker {
+  return jsonP.readObj({
+    required: {
+      "enable": "b",
+      "rollback": "b",
+    },
+    optional: {},
   }, root);
 }
 
@@ -3144,6 +3202,7 @@ export interface Volume {
   host?: HostVolumeProperties | null;
   dockerVolumeConfiguration?: DockerVolumeConfiguration | null;
   efsVolumeConfiguration?: EFSVolumeConfiguration | null;
+  fsxWindowsFileServerVolumeConfiguration?: FSxWindowsFileServerVolumeConfiguration | null;
 }
 function fromVolume(input?: Volume | null): jsonP.JSONValue {
   if (!input) return input;
@@ -3152,6 +3211,7 @@ function fromVolume(input?: Volume | null): jsonP.JSONValue {
     host: fromHostVolumeProperties(input["host"]),
     dockerVolumeConfiguration: fromDockerVolumeConfiguration(input["dockerVolumeConfiguration"]),
     efsVolumeConfiguration: fromEFSVolumeConfiguration(input["efsVolumeConfiguration"]),
+    fsxWindowsFileServerVolumeConfiguration: fromFSxWindowsFileServerVolumeConfiguration(input["fsxWindowsFileServerVolumeConfiguration"]),
   }
 }
 function toVolume(root: jsonP.JSONValue): Volume {
@@ -3162,6 +3222,7 @@ function toVolume(root: jsonP.JSONValue): Volume {
       "host": toHostVolumeProperties,
       "dockerVolumeConfiguration": toDockerVolumeConfiguration,
       "efsVolumeConfiguration": toEFSVolumeConfiguration,
+      "fsxWindowsFileServerVolumeConfiguration": toFSxWindowsFileServerVolumeConfiguration,
     },
   }, root);
 }
@@ -3287,6 +3348,53 @@ export type EFSAuthorizationConfigIAM =
 | "ENABLED"
 | "DISABLED"
 | cmnP.UnexpectedEnumValue;
+
+// refs: 4 - tags: input, named, interface, output
+export interface FSxWindowsFileServerVolumeConfiguration {
+  fileSystemId: string;
+  rootDirectory: string;
+  authorizationConfig: FSxWindowsFileServerAuthorizationConfig;
+}
+function fromFSxWindowsFileServerVolumeConfiguration(input?: FSxWindowsFileServerVolumeConfiguration | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    fileSystemId: input["fileSystemId"],
+    rootDirectory: input["rootDirectory"],
+    authorizationConfig: fromFSxWindowsFileServerAuthorizationConfig(input["authorizationConfig"]),
+  }
+}
+function toFSxWindowsFileServerVolumeConfiguration(root: jsonP.JSONValue): FSxWindowsFileServerVolumeConfiguration {
+  return jsonP.readObj({
+    required: {
+      "fileSystemId": "s",
+      "rootDirectory": "s",
+      "authorizationConfig": toFSxWindowsFileServerAuthorizationConfig,
+    },
+    optional: {},
+  }, root);
+}
+
+// refs: 4 - tags: input, named, interface, output
+export interface FSxWindowsFileServerAuthorizationConfig {
+  credentialsParameter: string;
+  domain: string;
+}
+function fromFSxWindowsFileServerAuthorizationConfig(input?: FSxWindowsFileServerAuthorizationConfig | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    credentialsParameter: input["credentialsParameter"],
+    domain: input["domain"],
+  }
+}
+function toFSxWindowsFileServerAuthorizationConfig(root: jsonP.JSONValue): FSxWindowsFileServerAuthorizationConfig {
+  return jsonP.readObj({
+    required: {
+      "credentialsParameter": "s",
+      "domain": "s",
+    },
+    optional: {},
+  }, root);
+}
 
 // refs: 4 - tags: input, named, interface, output
 export interface TaskDefinitionPlacementConstraint {
@@ -3547,7 +3655,20 @@ function fromContainerStateChange(input?: ContainerStateChange | null): jsonP.JS
   }
 }
 
-// refs: 3 - tags: output, named, interface
+// refs: 1 - tags: input, named, interface
+export interface AutoScalingGroupProviderUpdate {
+  managedScaling?: ManagedScaling | null;
+  managedTerminationProtection?: ManagedTerminationProtection | null;
+}
+function fromAutoScalingGroupProviderUpdate(input?: AutoScalingGroupProviderUpdate | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    managedScaling: fromManagedScaling(input["managedScaling"]),
+    managedTerminationProtection: input["managedTerminationProtection"],
+  }
+}
+
+// refs: 4 - tags: output, named, interface
 export interface CapacityProvider {
   capacityProviderArn?: string | null;
   name?: string | null;
@@ -3572,17 +3693,20 @@ function toCapacityProvider(root: jsonP.JSONValue): CapacityProvider {
   }, root);
 }
 
-// refs: 3 - tags: output, named, enum
+// refs: 4 - tags: output, named, enum
 export type CapacityProviderStatus =
 | "ACTIVE"
 | "INACTIVE"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 3 - tags: output, named, enum
+// refs: 4 - tags: output, named, enum
 export type CapacityProviderUpdateStatus =
 | "DELETE_IN_PROGRESS"
 | "DELETE_COMPLETE"
 | "DELETE_FAILED"
+| "UPDATE_IN_PROGRESS"
+| "UPDATE_COMPLETE"
+| "UPDATE_FAILED"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 5 - tags: output, named, interface
@@ -3783,12 +3907,15 @@ export interface Deployment {
   desiredCount?: number | null;
   pendingCount?: number | null;
   runningCount?: number | null;
+  failedTasks?: number | null;
   createdAt?: Date | number | null;
   updatedAt?: Date | number | null;
   capacityProviderStrategy?: CapacityProviderStrategyItem[] | null;
   launchType?: LaunchType | null;
   platformVersion?: string | null;
   networkConfiguration?: NetworkConfiguration | null;
+  rolloutState?: DeploymentRolloutState | null;
+  rolloutStateReason?: string | null;
 }
 function toDeployment(root: jsonP.JSONValue): Deployment {
   return jsonP.readObj({
@@ -3800,15 +3927,25 @@ function toDeployment(root: jsonP.JSONValue): Deployment {
       "desiredCount": "n",
       "pendingCount": "n",
       "runningCount": "n",
+      "failedTasks": "n",
       "createdAt": "d",
       "updatedAt": "d",
       "capacityProviderStrategy": [toCapacityProviderStrategyItem],
       "launchType": (x: jsonP.JSONValue) => cmnP.readEnum<LaunchType>(x),
       "platformVersion": "s",
       "networkConfiguration": toNetworkConfiguration,
+      "rolloutState": (x: jsonP.JSONValue) => cmnP.readEnum<DeploymentRolloutState>(x),
+      "rolloutStateReason": "s",
     },
   }, root);
 }
+
+// refs: 4 - tags: output, named, enum
+export type DeploymentRolloutState =
+| "COMPLETED"
+| "FAILED"
+| "IN_PROGRESS"
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: output, named, interface
 export interface ServiceEvent {

@@ -5,7 +5,7 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import * as uuidv4 from "https://deno.land/std@0.71.0/uuid/v4.ts";
+import * as uuidv4 from "https://deno.land/std@0.75.0/uuid/v4.ts";
 import * as cmnP from "../../encoding/common.ts";
 import * as jsonP from "../../encoding/json.ts";
 function generateIdemptToken() {
@@ -1999,6 +1999,7 @@ function toArtifactRevision(root: jsonP.JSONValue): ArtifactRevision {
 // refs: 1 - tags: output, named, interface
 export interface StageState {
   stageName?: string | null;
+  inboundExecution?: StageExecution | null;
   inboundTransitionState?: TransitionState | null;
   actionStates?: ActionState[] | null;
   latestExecution?: StageExecution | null;
@@ -2008,12 +2009,37 @@ function toStageState(root: jsonP.JSONValue): StageState {
     required: {},
     optional: {
       "stageName": "s",
+      "inboundExecution": toStageExecution,
       "inboundTransitionState": toTransitionState,
       "actionStates": [toActionState],
       "latestExecution": toStageExecution,
     },
   }, root);
 }
+
+// refs: 2 - tags: output, named, interface
+export interface StageExecution {
+  pipelineExecutionId: string;
+  status: StageExecutionStatus;
+}
+function toStageExecution(root: jsonP.JSONValue): StageExecution {
+  return jsonP.readObj({
+    required: {
+      "pipelineExecutionId": "s",
+      "status": (x: jsonP.JSONValue) => cmnP.readEnum<StageExecutionStatus>(x),
+    },
+    optional: {},
+  }, root);
+}
+
+// refs: 2 - tags: output, named, enum
+export type StageExecutionStatus =
+| "InProgress"
+| "Failed"
+| "Stopped"
+| "Stopping"
+| "Succeeded"
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface TransitionState {
@@ -2057,6 +2083,7 @@ function toActionState(root: jsonP.JSONValue): ActionState {
 
 // refs: 1 - tags: output, named, interface
 export interface ActionExecution {
+  actionExecutionId?: string | null;
   status?: ActionExecutionStatus | null;
   summary?: string | null;
   lastStatusChange?: Date | number | null;
@@ -2071,6 +2098,7 @@ function toActionExecution(root: jsonP.JSONValue): ActionExecution {
   return jsonP.readObj({
     required: {},
     optional: {
+      "actionExecutionId": "s",
       "status": (x: jsonP.JSONValue) => cmnP.readEnum<ActionExecutionStatus>(x),
       "summary": "s",
       "lastStatusChange": "d",
@@ -2106,30 +2134,6 @@ function toErrorDetails(root: jsonP.JSONValue): ErrorDetails {
     },
   }, root);
 }
-
-// refs: 1 - tags: output, named, interface
-export interface StageExecution {
-  pipelineExecutionId: string;
-  status: StageExecutionStatus;
-}
-function toStageExecution(root: jsonP.JSONValue): StageExecution {
-  return jsonP.readObj({
-    required: {
-      "pipelineExecutionId": "s",
-      "status": (x: jsonP.JSONValue) => cmnP.readEnum<StageExecutionStatus>(x),
-    },
-    optional: {},
-  }, root);
-}
-
-// refs: 1 - tags: output, named, enum
-export type StageExecutionStatus =
-| "InProgress"
-| "Failed"
-| "Stopped"
-| "Stopping"
-| "Succeeded"
-| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface ThirdPartyJobDetails {

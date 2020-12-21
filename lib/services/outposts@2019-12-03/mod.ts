@@ -36,6 +36,7 @@ export default class Outposts {
       SiteId: params["SiteId"],
       AvailabilityZone: params["AvailabilityZone"],
       AvailabilityZoneId: params["AvailabilityZoneId"],
+      Tags: params["Tags"],
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -169,11 +170,12 @@ export default class Outposts {
 
 // refs: 1 - tags: named, input
 export interface CreateOutpostInput {
-  Name?: string | null;
+  Name: string;
   Description?: string | null;
   SiteId: string;
   AvailabilityZone?: string | null;
   AvailabilityZoneId?: string | null;
+  Tags?: { [key: string]: string | null | undefined } | null;
 }
 
 // refs: 1 - tags: named, input
@@ -259,6 +261,7 @@ export interface Outpost {
   LifeCycleStatus?: string | null;
   AvailabilityZone?: string | null;
   AvailabilityZoneId?: string | null;
+  Tags?: { [key: string]: string | null | undefined } | null;
 }
 function toOutpost(root: jsonP.JSONValue): Outpost {
   return jsonP.readObj({
@@ -273,6 +276,7 @@ function toOutpost(root: jsonP.JSONValue): Outpost {
       "LifeCycleStatus": "s",
       "AvailabilityZone": "s",
       "AvailabilityZoneId": "s",
+      "Tags": x => jsonP.readMap(String, String, x),
     },
   }, root);
 }
@@ -296,6 +300,7 @@ export interface Site {
   AccountId?: string | null;
   Name?: string | null;
   Description?: string | null;
+  Tags?: { [key: string]: string | null | undefined } | null;
 }
 function toSite(root: jsonP.JSONValue): Site {
   return jsonP.readObj({
@@ -305,6 +310,7 @@ function toSite(root: jsonP.JSONValue): Site {
       "AccountId": "s",
       "Name": "s",
       "Description": "s",
+      "Tags": x => jsonP.readMap(String, String, x),
     },
   }, root);
 }

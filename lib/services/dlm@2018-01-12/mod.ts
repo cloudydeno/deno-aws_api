@@ -295,6 +295,8 @@ export interface PolicyDetails {
   TargetTags?: Tag[] | null;
   Schedules?: Schedule[] | null;
   Parameters?: Parameters | null;
+  EventSource?: EventSource | null;
+  Actions?: Action[] | null;
 }
 function fromPolicyDetails(input?: PolicyDetails | null): jsonP.JSONValue {
   if (!input) return input;
@@ -304,6 +306,8 @@ function fromPolicyDetails(input?: PolicyDetails | null): jsonP.JSONValue {
     TargetTags: input["TargetTags"]?.map(x => fromTag(x)),
     Schedules: input["Schedules"]?.map(x => fromSchedule(x)),
     Parameters: fromParameters(input["Parameters"]),
+    EventSource: fromEventSource(input["EventSource"]),
+    Actions: input["Actions"]?.map(x => fromAction(x)),
   }
 }
 function toPolicyDetails(root: jsonP.JSONValue): PolicyDetails {
@@ -315,13 +319,17 @@ function toPolicyDetails(root: jsonP.JSONValue): PolicyDetails {
       "TargetTags": [toTag],
       "Schedules": [toSchedule],
       "Parameters": toParameters,
+      "EventSource": toEventSource,
+      "Actions": [toAction],
     },
   }, root);
 }
 
-// refs: 3 - tags: input, named, enum, output
+// refs: 4 - tags: input, named, enum, output
 export type PolicyTypeValues =
 | "EBS_SNAPSHOT_MANAGEMENT"
+| "IMAGE_MANAGEMENT"
+| "EVENT_BASED_POLICY"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, enum, output
@@ -362,6 +370,7 @@ export interface Schedule {
   RetainRule?: RetainRule | null;
   FastRestoreRule?: FastRestoreRule | null;
   CrossRegionCopyRules?: CrossRegionCopyRule[] | null;
+  ShareRules?: ShareRule[] | null;
 }
 function fromSchedule(input?: Schedule | null): jsonP.JSONValue {
   if (!input) return input;
@@ -374,6 +383,7 @@ function fromSchedule(input?: Schedule | null): jsonP.JSONValue {
     RetainRule: fromRetainRule(input["RetainRule"]),
     FastRestoreRule: fromFastRestoreRule(input["FastRestoreRule"]),
     CrossRegionCopyRules: input["CrossRegionCopyRules"]?.map(x => fromCrossRegionCopyRule(x)),
+    ShareRules: input["ShareRules"]?.map(x => fromShareRule(x)),
   }
 }
 function toSchedule(root: jsonP.JSONValue): Schedule {
@@ -388,6 +398,7 @@ function toSchedule(root: jsonP.JSONValue): Schedule {
       "RetainRule": toRetainRule,
       "FastRestoreRule": toFastRestoreRule,
       "CrossRegionCopyRules": [toCrossRegionCopyRule],
+      "ShareRules": [toShareRule],
     },
   }, root);
 }
@@ -450,7 +461,7 @@ function toRetainRule(root: jsonP.JSONValue): RetainRule {
   }, root);
 }
 
-// refs: 9 - tags: input, named, enum, output
+// refs: 15 - tags: input, named, enum, output
 export type RetentionIntervalUnitValues =
 | "DAYS"
 | "WEEKS"
@@ -519,7 +530,7 @@ function toCrossRegionCopyRule(root: jsonP.JSONValue): CrossRegionCopyRule {
   }, root);
 }
 
-// refs: 3 - tags: input, named, interface, output
+// refs: 6 - tags: input, named, interface, output
 export interface CrossRegionCopyRetainRule {
   Interval?: number | null;
   IntervalUnit?: RetentionIntervalUnitValues | null;
@@ -542,13 +553,41 @@ function toCrossRegionCopyRetainRule(root: jsonP.JSONValue): CrossRegionCopyReta
 }
 
 // refs: 3 - tags: input, named, interface, output
+export interface ShareRule {
+  TargetAccounts: string[];
+  UnshareInterval?: number | null;
+  UnshareIntervalUnit?: RetentionIntervalUnitValues | null;
+}
+function fromShareRule(input?: ShareRule | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    TargetAccounts: input["TargetAccounts"],
+    UnshareInterval: input["UnshareInterval"],
+    UnshareIntervalUnit: input["UnshareIntervalUnit"],
+  }
+}
+function toShareRule(root: jsonP.JSONValue): ShareRule {
+  return jsonP.readObj({
+    required: {
+      "TargetAccounts": ["s"],
+    },
+    optional: {
+      "UnshareInterval": "n",
+      "UnshareIntervalUnit": (x: jsonP.JSONValue) => cmnP.readEnum<RetentionIntervalUnitValues>(x),
+    },
+  }, root);
+}
+
+// refs: 3 - tags: input, named, interface, output
 export interface Parameters {
   ExcludeBootVolume?: boolean | null;
+  NoReboot?: boolean | null;
 }
 function fromParameters(input?: Parameters | null): jsonP.JSONValue {
   if (!input) return input;
   return {
     ExcludeBootVolume: input["ExcludeBootVolume"],
+    NoReboot: input["NoReboot"],
   }
 }
 function toParameters(root: jsonP.JSONValue): Parameters {
@@ -556,6 +595,136 @@ function toParameters(root: jsonP.JSONValue): Parameters {
     required: {},
     optional: {
       "ExcludeBootVolume": "b",
+      "NoReboot": "b",
+    },
+  }, root);
+}
+
+// refs: 3 - tags: input, named, interface, output
+export interface EventSource {
+  Type: EventSourceValues;
+  Parameters?: EventParameters | null;
+}
+function fromEventSource(input?: EventSource | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    Type: input["Type"],
+    Parameters: fromEventParameters(input["Parameters"]),
+  }
+}
+function toEventSource(root: jsonP.JSONValue): EventSource {
+  return jsonP.readObj({
+    required: {
+      "Type": (x: jsonP.JSONValue) => cmnP.readEnum<EventSourceValues>(x),
+    },
+    optional: {
+      "Parameters": toEventParameters,
+    },
+  }, root);
+}
+
+// refs: 3 - tags: input, named, enum, output
+export type EventSourceValues =
+| "MANAGED_CWE"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 3 - tags: input, named, interface, output
+export interface EventParameters {
+  EventType: EventTypeValues;
+  SnapshotOwner: string[];
+  DescriptionRegex: string;
+}
+function fromEventParameters(input?: EventParameters | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    EventType: input["EventType"],
+    SnapshotOwner: input["SnapshotOwner"],
+    DescriptionRegex: input["DescriptionRegex"],
+  }
+}
+function toEventParameters(root: jsonP.JSONValue): EventParameters {
+  return jsonP.readObj({
+    required: {
+      "EventType": (x: jsonP.JSONValue) => cmnP.readEnum<EventTypeValues>(x),
+      "SnapshotOwner": ["s"],
+      "DescriptionRegex": "s",
+    },
+    optional: {},
+  }, root);
+}
+
+// refs: 3 - tags: input, named, enum, output
+export type EventTypeValues =
+| "shareSnapshot"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 3 - tags: input, named, interface, output
+export interface Action {
+  Name: string;
+  CrossRegionCopy: CrossRegionCopyAction[];
+}
+function fromAction(input?: Action | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    Name: input["Name"],
+    CrossRegionCopy: input["CrossRegionCopy"]?.map(x => fromCrossRegionCopyAction(x)),
+  }
+}
+function toAction(root: jsonP.JSONValue): Action {
+  return jsonP.readObj({
+    required: {
+      "Name": "s",
+      "CrossRegionCopy": [toCrossRegionCopyAction],
+    },
+    optional: {},
+  }, root);
+}
+
+// refs: 3 - tags: input, named, interface, output
+export interface CrossRegionCopyAction {
+  Target: string;
+  EncryptionConfiguration: EncryptionConfiguration;
+  RetainRule?: CrossRegionCopyRetainRule | null;
+}
+function fromCrossRegionCopyAction(input?: CrossRegionCopyAction | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    Target: input["Target"],
+    EncryptionConfiguration: fromEncryptionConfiguration(input["EncryptionConfiguration"]),
+    RetainRule: fromCrossRegionCopyRetainRule(input["RetainRule"]),
+  }
+}
+function toCrossRegionCopyAction(root: jsonP.JSONValue): CrossRegionCopyAction {
+  return jsonP.readObj({
+    required: {
+      "Target": "s",
+      "EncryptionConfiguration": toEncryptionConfiguration,
+    },
+    optional: {
+      "RetainRule": toCrossRegionCopyRetainRule,
+    },
+  }, root);
+}
+
+// refs: 3 - tags: input, named, interface, output
+export interface EncryptionConfiguration {
+  Encrypted: boolean;
+  CmkArn?: string | null;
+}
+function fromEncryptionConfiguration(input?: EncryptionConfiguration | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    Encrypted: input["Encrypted"],
+    CmkArn: input["CmkArn"],
+  }
+}
+function toEncryptionConfiguration(root: jsonP.JSONValue): EncryptionConfiguration {
+  return jsonP.readObj({
+    required: {
+      "Encrypted": "b",
+    },
+    optional: {
+      "CmkArn": "s",
     },
   }, root);
 }
@@ -573,6 +742,7 @@ export interface LifecyclePolicySummary {
   Description?: string | null;
   State?: GettablePolicyStateValues | null;
   Tags?: { [key: string]: string | null | undefined } | null;
+  PolicyType?: PolicyTypeValues | null;
 }
 function toLifecyclePolicySummary(root: jsonP.JSONValue): LifecyclePolicySummary {
   return jsonP.readObj({
@@ -582,6 +752,7 @@ function toLifecyclePolicySummary(root: jsonP.JSONValue): LifecyclePolicySummary
       "Description": "s",
       "State": (x: jsonP.JSONValue) => cmnP.readEnum<GettablePolicyStateValues>(x),
       "Tags": x => jsonP.readMap(String, String, x),
+      "PolicyType": (x: jsonP.JSONValue) => cmnP.readEnum<PolicyTypeValues>(x),
     },
   }, root);
 }

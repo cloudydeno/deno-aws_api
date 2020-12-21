@@ -1280,6 +1280,7 @@ export type EnhancedMonitoring =
 | "DEFAULT"
 | "PER_BROKER"
 | "PER_TOPIC_PER_BROKER"
+| "PER_TOPIC_PER_PARTITION"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface
@@ -1487,9 +1488,12 @@ function toUnprocessedScramSecret(root: jsonP.JSONValue): UnprocessedScramSecret
 export type ClusterState =
 | "ACTIVE"
 | "CREATING"
-| "UPDATING"
 | "DELETING"
 | "FAILED"
+| "HEALING"
+| "MAINTENANCE"
+| "REBOOTING_BROKER"
+| "UPDATING"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 5 - tags: output, named, interface

@@ -215,6 +215,22 @@ export default class FraudDetector {
     }, await resp.json());
   }
 
+  async deleteEntityType(
+    {abortSignal, ...params}: RequestConfig & DeleteEntityTypeRequest,
+  ): Promise<DeleteEntityTypeResult> {
+    const body: jsonP.JSONObject = {
+      name: params["name"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DeleteEntityType",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
+  }
+
   async deleteEvent(
     {abortSignal, ...params}: RequestConfig & DeleteEventRequest,
   ): Promise<DeleteEventResult> {
@@ -232,6 +248,105 @@ export default class FraudDetector {
     }, await resp.json());
   }
 
+  async deleteEventType(
+    {abortSignal, ...params}: RequestConfig & DeleteEventTypeRequest,
+  ): Promise<DeleteEventTypeResult> {
+    const body: jsonP.JSONObject = {
+      name: params["name"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DeleteEventType",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
+  }
+
+  async deleteExternalModel(
+    {abortSignal, ...params}: RequestConfig & DeleteExternalModelRequest,
+  ): Promise<DeleteExternalModelResult> {
+    const body: jsonP.JSONObject = {
+      modelEndpoint: params["modelEndpoint"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DeleteExternalModel",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
+  }
+
+  async deleteLabel(
+    {abortSignal, ...params}: RequestConfig & DeleteLabelRequest,
+  ): Promise<DeleteLabelResult> {
+    const body: jsonP.JSONObject = {
+      name: params["name"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DeleteLabel",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
+  }
+
+  async deleteModel(
+    {abortSignal, ...params}: RequestConfig & DeleteModelRequest,
+  ): Promise<DeleteModelResult> {
+    const body: jsonP.JSONObject = {
+      modelId: params["modelId"],
+      modelType: params["modelType"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DeleteModel",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
+  }
+
+  async deleteModelVersion(
+    {abortSignal, ...params}: RequestConfig & DeleteModelVersionRequest,
+  ): Promise<DeleteModelVersionResult> {
+    const body: jsonP.JSONObject = {
+      modelId: params["modelId"],
+      modelType: params["modelType"],
+      modelVersionNumber: params["modelVersionNumber"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DeleteModelVersion",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
+  }
+
+  async deleteOutcome(
+    {abortSignal, ...params}: RequestConfig & DeleteOutcomeRequest,
+  ): Promise<DeleteOutcomeResult> {
+    const body: jsonP.JSONObject = {
+      name: params["name"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DeleteOutcome",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
+  }
+
   async deleteRule(
     {abortSignal, ...params}: RequestConfig & DeleteRuleRequest,
   ): Promise<DeleteRuleResult> {
@@ -241,6 +356,22 @@ export default class FraudDetector {
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteRule",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
+  }
+
+  async deleteVariable(
+    {abortSignal, ...params}: RequestConfig & DeleteVariableRequest,
+  ): Promise<DeleteVariableResult> {
+    const body: jsonP.JSONObject = {
+      name: params["name"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DeleteVariable",
     });
     return jsonP.readObj({
       required: {},
@@ -1026,14 +1157,57 @@ export interface DeleteDetectorVersionRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface DeleteEntityTypeRequest {
+  name: string;
+}
+
+// refs: 1 - tags: named, input
 export interface DeleteEventRequest {
   eventId: string;
   eventTypeName: string;
 }
 
 // refs: 1 - tags: named, input
+export interface DeleteEventTypeRequest {
+  name: string;
+}
+
+// refs: 1 - tags: named, input
+export interface DeleteExternalModelRequest {
+  modelEndpoint: string;
+}
+
+// refs: 1 - tags: named, input
+export interface DeleteLabelRequest {
+  name: string;
+}
+
+// refs: 1 - tags: named, input
+export interface DeleteModelRequest {
+  modelId: string;
+  modelType: ModelTypeEnum;
+}
+
+// refs: 1 - tags: named, input
+export interface DeleteModelVersionRequest {
+  modelId: string;
+  modelType: ModelTypeEnum;
+  modelVersionNumber: string;
+}
+
+// refs: 1 - tags: named, input
+export interface DeleteOutcomeRequest {
+  name: string;
+}
+
+// refs: 1 - tags: named, input
 export interface DeleteRuleRequest {
   rule: Rule;
+}
+
+// refs: 1 - tags: named, input
+export interface DeleteVariableRequest {
+  name: string;
 }
 
 // refs: 1 - tags: named, input
@@ -1338,11 +1512,43 @@ export interface DeleteDetectorVersionResult {
 }
 
 // refs: 1 - tags: named, output
+export interface DeleteEntityTypeResult {
+}
+
+// refs: 1 - tags: named, output
 export interface DeleteEventResult {
 }
 
 // refs: 1 - tags: named, output
+export interface DeleteEventTypeResult {
+}
+
+// refs: 1 - tags: named, output
+export interface DeleteExternalModelResult {
+}
+
+// refs: 1 - tags: named, output
+export interface DeleteLabelResult {
+}
+
+// refs: 1 - tags: named, output
+export interface DeleteModelResult {
+}
+
+// refs: 1 - tags: named, output
+export interface DeleteModelVersionResult {
+}
+
+// refs: 1 - tags: named, output
+export interface DeleteOutcomeResult {
+}
+
+// refs: 1 - tags: named, output
 export interface DeleteRuleResult {
+}
+
+// refs: 1 - tags: named, output
+export interface DeleteVariableResult {
 }
 
 // refs: 1 - tags: named, output
@@ -1631,7 +1837,7 @@ function toModelVersion(root: jsonP.JSONValue): ModelVersion {
   }, root);
 }
 
-// refs: 17 - tags: input, named, enum, output
+// refs: 19 - tags: input, named, enum, output
 export type ModelTypeEnum =
 | "ONLINE_FRAUD_INSIGHTS"
 | cmnP.UnexpectedEnumValue;

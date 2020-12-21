@@ -241,6 +241,66 @@ export default class Lightsail {
     }, await resp.json());
   }
 
+  async createContainerService(
+    {abortSignal, ...params}: RequestConfig & CreateContainerServiceRequest,
+  ): Promise<CreateContainerServiceResult> {
+    const body: jsonP.JSONObject = {
+      serviceName: params["serviceName"],
+      power: params["power"],
+      scale: params["scale"],
+      tags: params["tags"]?.map(x => fromTag(x)),
+      publicDomainNames: params["publicDomainNames"],
+      deployment: fromContainerServiceDeploymentRequest(params["deployment"]),
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "CreateContainerService",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "containerService": toContainerService,
+      },
+    }, await resp.json());
+  }
+
+  async createContainerServiceDeployment(
+    {abortSignal, ...params}: RequestConfig & CreateContainerServiceDeploymentRequest,
+  ): Promise<CreateContainerServiceDeploymentResult> {
+    const body: jsonP.JSONObject = {
+      serviceName: params["serviceName"],
+      containers: jsonP.serializeMap(params["containers"], x => fromContainer(x)),
+      publicEndpoint: fromEndpointRequest(params["publicEndpoint"]),
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "CreateContainerServiceDeployment",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "containerService": toContainerService,
+      },
+    }, await resp.json());
+  }
+
+  async createContainerServiceRegistryLogin(
+    {abortSignal, ...params}: RequestConfig & CreateContainerServiceRegistryLoginRequest = {},
+  ): Promise<CreateContainerServiceRegistryLoginResult> {
+    const body: jsonP.JSONObject = {
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "CreateContainerServiceRegistryLogin",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "registryLogin": toContainerServiceRegistryLogin,
+      },
+    }, await resp.json());
+  }
+
   async createDisk(
     {abortSignal, ...params}: RequestConfig & CreateDiskRequest,
   ): Promise<CreateDiskResult> {
@@ -660,6 +720,39 @@ export default class Lightsail {
       optional: {
         "operations": [toOperation],
       },
+    }, await resp.json());
+  }
+
+  async deleteContainerImage(
+    {abortSignal, ...params}: RequestConfig & DeleteContainerImageRequest,
+  ): Promise<DeleteContainerImageResult> {
+    const body: jsonP.JSONObject = {
+      serviceName: params["serviceName"],
+      image: params["image"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DeleteContainerImage",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
+  }
+
+  async deleteContainerService(
+    {abortSignal, ...params}: RequestConfig & DeleteContainerServiceRequest,
+  ): Promise<DeleteContainerServiceResult> {
+    const body: jsonP.JSONObject = {
+      serviceName: params["serviceName"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DeleteContainerService",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {},
     }, await resp.json());
   }
 
@@ -1204,6 +1297,142 @@ export default class Lightsail {
       required: {},
       optional: {
         "contactMethods": [toContactMethod],
+      },
+    }, await resp.json());
+  }
+
+  async getContainerAPIMetadata(
+    {abortSignal, ...params}: RequestConfig & GetContainerAPIMetadataRequest = {},
+  ): Promise<GetContainerAPIMetadataResult> {
+    const body: jsonP.JSONObject = {
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "GetContainerAPIMetadata",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "metadata": [x => jsonP.readMap(String, String, x)],
+      },
+    }, await resp.json());
+  }
+
+  async getContainerImages(
+    {abortSignal, ...params}: RequestConfig & GetContainerImagesRequest,
+  ): Promise<GetContainerImagesResult> {
+    const body: jsonP.JSONObject = {
+      serviceName: params["serviceName"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "GetContainerImages",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "containerImages": [toContainerImage],
+      },
+    }, await resp.json());
+  }
+
+  async getContainerLog(
+    {abortSignal, ...params}: RequestConfig & GetContainerLogRequest,
+  ): Promise<GetContainerLogResult> {
+    const body: jsonP.JSONObject = {
+      serviceName: params["serviceName"],
+      containerName: params["containerName"],
+      startTime: jsonP.serializeDate_unixTimestamp(params["startTime"]),
+      endTime: jsonP.serializeDate_unixTimestamp(params["endTime"]),
+      filterPattern: params["filterPattern"],
+      pageToken: params["pageToken"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "GetContainerLog",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "logEvents": [toContainerServiceLogEvent],
+        "nextPageToken": "s",
+      },
+    }, await resp.json());
+  }
+
+  async getContainerServiceDeployments(
+    {abortSignal, ...params}: RequestConfig & GetContainerServiceDeploymentsRequest,
+  ): Promise<GetContainerServiceDeploymentsResult> {
+    const body: jsonP.JSONObject = {
+      serviceName: params["serviceName"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "GetContainerServiceDeployments",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "deployments": [toContainerServiceDeployment],
+      },
+    }, await resp.json());
+  }
+
+  async getContainerServiceMetricData(
+    {abortSignal, ...params}: RequestConfig & GetContainerServiceMetricDataRequest,
+  ): Promise<GetContainerServiceMetricDataResult> {
+    const body: jsonP.JSONObject = {
+      serviceName: params["serviceName"],
+      metricName: params["metricName"],
+      startTime: jsonP.serializeDate_unixTimestamp(params["startTime"]),
+      endTime: jsonP.serializeDate_unixTimestamp(params["endTime"]),
+      period: params["period"],
+      statistics: params["statistics"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "GetContainerServiceMetricData",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "metricName": (x: jsonP.JSONValue) => cmnP.readEnum<ContainerServiceMetricName>(x),
+        "metricData": [toMetricDatapoint],
+      },
+    }, await resp.json());
+  }
+
+  async getContainerServicePowers(
+    {abortSignal, ...params}: RequestConfig & GetContainerServicePowersRequest = {},
+  ): Promise<GetContainerServicePowersResult> {
+    const body: jsonP.JSONObject = {
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "GetContainerServicePowers",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "powers": [toContainerServicePower],
+      },
+    }, await resp.json());
+  }
+
+  async getContainerServices(
+    {abortSignal, ...params}: RequestConfig & GetContainerServicesRequest = {},
+  ): Promise<ContainerServicesListResult> {
+    const body: jsonP.JSONObject = {
+      serviceName: params["serviceName"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "GetContainerServices",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "containerServices": [toContainerService],
       },
     }, await resp.json());
   }
@@ -2200,6 +2429,26 @@ export default class Lightsail {
     }, await resp.json());
   }
 
+  async registerContainerImage(
+    {abortSignal, ...params}: RequestConfig & RegisterContainerImageRequest,
+  ): Promise<RegisterContainerImageResult> {
+    const body: jsonP.JSONObject = {
+      serviceName: params["serviceName"],
+      label: params["label"],
+      digest: params["digest"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "RegisterContainerImage",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "containerImage": toContainerImage,
+      },
+    }, await resp.json());
+  }
+
   async releaseStaticIp(
     {abortSignal, ...params}: RequestConfig & ReleaseStaticIpRequest,
   ): Promise<ReleaseStaticIpResult> {
@@ -2406,6 +2655,28 @@ export default class Lightsail {
     }, await resp.json());
   }
 
+  async updateContainerService(
+    {abortSignal, ...params}: RequestConfig & UpdateContainerServiceRequest,
+  ): Promise<UpdateContainerServiceResult> {
+    const body: jsonP.JSONObject = {
+      serviceName: params["serviceName"],
+      power: params["power"],
+      scale: params["scale"],
+      isDisabled: params["isDisabled"],
+      publicDomainNames: params["publicDomainNames"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "UpdateContainerService",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "containerService": toContainerService,
+      },
+    }, await resp.json());
+  }
+
   async updateDistribution(
     {abortSignal, ...params}: RequestConfig & UpdateDistributionRequest,
   ): Promise<UpdateDistributionResult> {
@@ -2607,6 +2878,27 @@ export interface CreateContactMethodRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface CreateContainerServiceRequest {
+  serviceName: string;
+  power: ContainerServicePowerName;
+  scale: number;
+  tags?: Tag[] | null;
+  publicDomainNames?: { [key: string]: string[] | null | undefined } | null;
+  deployment?: ContainerServiceDeploymentRequest | null;
+}
+
+// refs: 1 - tags: named, input
+export interface CreateContainerServiceDeploymentRequest {
+  serviceName: string;
+  containers?: { [key: string]: Container | null | undefined } | null;
+  publicEndpoint?: EndpointRequest | null;
+}
+
+// refs: 1 - tags: named, input
+export interface CreateContainerServiceRegistryLoginRequest {
+}
+
+// refs: 1 - tags: named, input
 export interface CreateDiskRequest {
   diskName: string;
   availabilityZone: string;
@@ -2778,6 +3070,17 @@ export interface DeleteContactMethodRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface DeleteContainerImageRequest {
+  serviceName: string;
+  image: string;
+}
+
+// refs: 1 - tags: named, input
+export interface DeleteContainerServiceRequest {
+  serviceName: string;
+}
+
+// refs: 1 - tags: named, input
 export interface DeleteDiskRequest {
   diskName: string;
   forceDeleteAddOns?: boolean | null;
@@ -2935,6 +3238,49 @@ export interface GetCloudFormationStackRecordsRequest {
 // refs: 1 - tags: named, input
 export interface GetContactMethodsRequest {
   protocols?: ContactProtocol[] | null;
+}
+
+// refs: 1 - tags: named, input
+export interface GetContainerAPIMetadataRequest {
+}
+
+// refs: 1 - tags: named, input
+export interface GetContainerImagesRequest {
+  serviceName: string;
+}
+
+// refs: 1 - tags: named, input
+export interface GetContainerLogRequest {
+  serviceName: string;
+  containerName: string;
+  startTime?: Date | number | null;
+  endTime?: Date | number | null;
+  filterPattern?: string | null;
+  pageToken?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface GetContainerServiceDeploymentsRequest {
+  serviceName: string;
+}
+
+// refs: 1 - tags: named, input
+export interface GetContainerServiceMetricDataRequest {
+  serviceName: string;
+  metricName: ContainerServiceMetricName;
+  startTime: Date | number;
+  endTime: Date | number;
+  period: number;
+  statistics: MetricStatistic[];
+}
+
+// refs: 1 - tags: named, input
+export interface GetContainerServicePowersRequest {
+}
+
+// refs: 1 - tags: named, input
+export interface GetContainerServicesRequest {
+  serviceName?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -3240,6 +3586,13 @@ export interface RebootRelationalDatabaseRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface RegisterContainerImageRequest {
+  serviceName: string;
+  label: string;
+  digest: string;
+}
+
+// refs: 1 - tags: named, input
 export interface ReleaseStaticIpRequest {
   staticIpName: string;
 }
@@ -3298,6 +3651,15 @@ export interface UntagResourceRequest {
   resourceName: string;
   resourceArn?: string | null;
   tagKeys: string[];
+}
+
+// refs: 1 - tags: named, input
+export interface UpdateContainerServiceRequest {
+  serviceName: string;
+  power?: ContainerServicePowerName | null;
+  scale?: number | null;
+  isDisabled?: boolean | null;
+  publicDomainNames?: { [key: string]: string[] | null | undefined } | null;
 }
 
 // refs: 1 - tags: named, input
@@ -3406,6 +3768,21 @@ export interface CreateContactMethodResult {
 }
 
 // refs: 1 - tags: named, output
+export interface CreateContainerServiceResult {
+  containerService?: ContainerService | null;
+}
+
+// refs: 1 - tags: named, output
+export interface CreateContainerServiceDeploymentResult {
+  containerService?: ContainerService | null;
+}
+
+// refs: 1 - tags: named, output
+export interface CreateContainerServiceRegistryLoginResult {
+  registryLogin?: ContainerServiceRegistryLogin | null;
+}
+
+// refs: 1 - tags: named, output
 export interface CreateDiskResult {
   operations?: Operation[] | null;
 }
@@ -3502,6 +3879,14 @@ export interface DeleteCertificateResult {
 // refs: 1 - tags: named, output
 export interface DeleteContactMethodResult {
   operations?: Operation[] | null;
+}
+
+// refs: 1 - tags: named, output
+export interface DeleteContainerImageResult {
+}
+
+// refs: 1 - tags: named, output
+export interface DeleteContainerServiceResult {
 }
 
 // refs: 1 - tags: named, output
@@ -3655,6 +4040,43 @@ export interface GetCloudFormationStackRecordsResult {
 // refs: 1 - tags: named, output
 export interface GetContactMethodsResult {
   contactMethods?: ContactMethod[] | null;
+}
+
+// refs: 1 - tags: named, output
+export interface GetContainerAPIMetadataResult {
+  metadata?: ({ [key: string]: string | null | undefined })[] | null;
+}
+
+// refs: 1 - tags: named, output
+export interface GetContainerImagesResult {
+  containerImages?: ContainerImage[] | null;
+}
+
+// refs: 1 - tags: named, output
+export interface GetContainerLogResult {
+  logEvents?: ContainerServiceLogEvent[] | null;
+  nextPageToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface GetContainerServiceDeploymentsResult {
+  deployments?: ContainerServiceDeployment[] | null;
+}
+
+// refs: 1 - tags: named, output
+export interface GetContainerServiceMetricDataResult {
+  metricName?: ContainerServiceMetricName | null;
+  metricData?: MetricDatapoint[] | null;
+}
+
+// refs: 1 - tags: named, output
+export interface GetContainerServicePowersResult {
+  powers?: ContainerServicePower[] | null;
+}
+
+// refs: 1 - tags: named, output
+export interface ContainerServicesListResult {
+  containerServices?: ContainerService[] | null;
 }
 
 // refs: 1 - tags: named, output
@@ -3940,6 +4362,11 @@ export interface RebootRelationalDatabaseResult {
 }
 
 // refs: 1 - tags: named, output
+export interface RegisterContainerImageResult {
+  containerImage?: ContainerImage | null;
+}
+
+// refs: 1 - tags: named, output
 export interface ReleaseStaticIpResult {
   operations?: Operation[] | null;
 }
@@ -3994,6 +4421,11 @@ export interface UnpeerVpcResult {
 // refs: 1 - tags: named, output
 export interface UntagResourceResult {
   operations?: Operation[] | null;
+}
+
+// refs: 1 - tags: named, output
+export interface UpdateContainerServiceResult {
+  containerService?: ContainerService | null;
 }
 
 // refs: 1 - tags: named, output
@@ -4053,7 +4485,7 @@ export type NetworkProtocol =
 | "icmp"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 115 - tags: input, named, enum, output
+// refs: 119 - tags: input, named, enum, output
 export type RegionName =
 | "us-east-1"
 | "us-east-2"
@@ -4071,7 +4503,7 @@ export type RegionName =
 | "ap-northeast-2"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 46 - tags: input, named, interface, output
+// refs: 51 - tags: input, named, interface, output
 export interface Tag {
   key?: string | null;
   value?: string | null;
@@ -4125,6 +4557,114 @@ export type ContactProtocol =
 | "Email"
 | "SMS"
 | cmnP.UnexpectedEnumValue;
+
+// refs: 6 - tags: input, named, enum, output
+export type ContainerServicePowerName =
+| "nano"
+| "micro"
+| "small"
+| "medium"
+| "large"
+| "xlarge"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 1 - tags: input, named, interface
+export interface ContainerServiceDeploymentRequest {
+  containers?: { [key: string]: Container | null | undefined } | null;
+  publicEndpoint?: EndpointRequest | null;
+}
+function fromContainerServiceDeploymentRequest(input?: ContainerServiceDeploymentRequest | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    containers: jsonP.serializeMap(input["containers"], x => fromContainer(x)),
+    publicEndpoint: fromEndpointRequest(input["publicEndpoint"]),
+  }
+}
+
+// refs: 11 - tags: input, named, interface, output
+export interface Container {
+  image?: string | null;
+  command?: string[] | null;
+  environment?: { [key: string]: string | null | undefined } | null;
+  ports?: { [key: string]: ContainerServiceProtocol | null | undefined } | null;
+}
+function fromContainer(input?: Container | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    image: input["image"],
+    command: input["command"],
+    environment: input["environment"],
+    ports: input["ports"],
+  }
+}
+function toContainer(root: jsonP.JSONValue): Container {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "image": "s",
+      "command": ["s"],
+      "environment": x => jsonP.readMap(String, String, x),
+      "ports": x => jsonP.readMap(String, y => cmnP.readEnum<ContainerServiceProtocol>(y), x),
+    },
+  }, root);
+}
+
+// refs: 11 - tags: input, named, enum, output
+export type ContainerServiceProtocol =
+| "HTTP"
+| "HTTPS"
+| "TCP"
+| "UDP"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 2 - tags: input, named, interface
+export interface EndpointRequest {
+  containerName: string;
+  containerPort: number;
+  healthCheck?: ContainerServiceHealthCheckConfig | null;
+}
+function fromEndpointRequest(input?: EndpointRequest | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    containerName: input["containerName"],
+    containerPort: input["containerPort"],
+    healthCheck: fromContainerServiceHealthCheckConfig(input["healthCheck"]),
+  }
+}
+
+// refs: 11 - tags: input, named, interface, output
+export interface ContainerServiceHealthCheckConfig {
+  healthyThreshold?: number | null;
+  unhealthyThreshold?: number | null;
+  timeoutSeconds?: number | null;
+  intervalSeconds?: number | null;
+  path?: string | null;
+  successCodes?: string | null;
+}
+function fromContainerServiceHealthCheckConfig(input?: ContainerServiceHealthCheckConfig | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    healthyThreshold: input["healthyThreshold"],
+    unhealthyThreshold: input["unhealthyThreshold"],
+    timeoutSeconds: input["timeoutSeconds"],
+    intervalSeconds: input["intervalSeconds"],
+    path: input["path"],
+    successCodes: input["successCodes"],
+  }
+}
+function toContainerServiceHealthCheckConfig(root: jsonP.JSONValue): ContainerServiceHealthCheckConfig {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "healthyThreshold": "n",
+      "unhealthyThreshold": "n",
+      "timeoutSeconds": "n",
+      "intervalSeconds": "n",
+      "path": "s",
+      "successCodes": "s",
+    },
+  }, root);
+}
 
 // refs: 5 - tags: input, named, interface
 export interface AddOnRequest {
@@ -4414,6 +4954,21 @@ export type CertificateStatus =
 | cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, enum, output
+export type ContainerServiceMetricName =
+| "CPUUtilization"
+| "MemoryUtilization"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 6 - tags: input, named, enum, output
+export type MetricStatistic =
+| "Minimum"
+| "Maximum"
+| "Sum"
+| "Average"
+| "SampleCount"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 2 - tags: input, named, enum, output
 export type DistributionMetricName =
 | "Requests"
 | "BytesDownloaded"
@@ -4423,7 +4978,7 @@ export type DistributionMetricName =
 | "Http5xxErrorRate"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 9 - tags: input, named, enum, output
+// refs: 10 - tags: input, named, enum, output
 export type MetricUnit =
 | "Seconds"
 | "Microseconds"
@@ -4452,15 +5007,6 @@ export type MetricUnit =
 | "Terabits/Second"
 | "Count/Second"
 | "None"
-| cmnP.UnexpectedEnumValue;
-
-// refs: 5 - tags: input, named, enum, output
-export type MetricStatistic =
-| "Minimum"
-| "Maximum"
-| "Sum"
-| "Average"
-| "SampleCount"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, enum, output
@@ -4653,8 +5199,9 @@ function toOperation(root: jsonP.JSONValue): Operation {
   }, root);
 }
 
-// refs: 113 - tags: output, named, enum
+// refs: 117 - tags: output, named, enum
 export type ResourceType =
+| "ContainerService"
 | "Instance"
 | "StaticIp"
 | "KeyPair"
@@ -4675,7 +5222,7 @@ export type ResourceType =
 | "Certificate"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 109 - tags: output, named, interface
+// refs: 113 - tags: output, named, interface
 export interface ResourceLocation {
   availabilityZone?: string | null;
   regionName?: RegionName | null;
@@ -4756,6 +5303,13 @@ export type OperationType =
 | "UpdateDistributionBundle"
 | "CreateCertificate"
 | "DeleteCertificate"
+| "CreateContainerService"
+| "UpdateContainerService"
+| "DeleteContainerService"
+| "CreateContainerServiceDeployment"
+| "CreateContainerServiceRegistryLogin"
+| "RegisterContainerImage"
+| "DeleteContainerImage"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 77 - tags: output, named, enum
@@ -4899,6 +5453,126 @@ export type RenewalStatus =
 | "Success"
 | "Failed"
 | cmnP.UnexpectedEnumValue;
+
+// refs: 4 - tags: output, named, interface
+export interface ContainerService {
+  containerServiceName?: string | null;
+  arn?: string | null;
+  createdAt?: Date | number | null;
+  location?: ResourceLocation | null;
+  resourceType?: ResourceType | null;
+  tags?: Tag[] | null;
+  power?: ContainerServicePowerName | null;
+  powerId?: string | null;
+  state?: ContainerServiceState | null;
+  scale?: number | null;
+  currentDeployment?: ContainerServiceDeployment | null;
+  nextDeployment?: ContainerServiceDeployment | null;
+  isDisabled?: boolean | null;
+  principalArn?: string | null;
+  privateDomainName?: string | null;
+  publicDomainNames?: { [key: string]: string[] | null | undefined } | null;
+  url?: string | null;
+}
+function toContainerService(root: jsonP.JSONValue): ContainerService {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "containerServiceName": "s",
+      "arn": "s",
+      "createdAt": "d",
+      "location": toResourceLocation,
+      "resourceType": (x: jsonP.JSONValue) => cmnP.readEnum<ResourceType>(x),
+      "tags": [toTag],
+      "power": (x: jsonP.JSONValue) => cmnP.readEnum<ContainerServicePowerName>(x),
+      "powerId": "s",
+      "state": (x: jsonP.JSONValue) => cmnP.readEnum<ContainerServiceState>(x),
+      "scale": "n",
+      "currentDeployment": toContainerServiceDeployment,
+      "nextDeployment": toContainerServiceDeployment,
+      "isDisabled": "b",
+      "principalArn": "s",
+      "privateDomainName": "s",
+      "publicDomainNames": x => jsonP.readMap(String, l => Array.isArray(l) ? l.map(String) : [], x),
+      "url": "s",
+    },
+  }, root);
+}
+
+// refs: 4 - tags: output, named, enum
+export type ContainerServiceState =
+| "PENDING"
+| "READY"
+| "RUNNING"
+| "UPDATING"
+| "DELETING"
+| "DISABLED"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 9 - tags: output, named, interface
+export interface ContainerServiceDeployment {
+  version?: number | null;
+  state?: ContainerServiceDeploymentState | null;
+  containers?: { [key: string]: Container | null | undefined } | null;
+  publicEndpoint?: ContainerServiceEndpoint | null;
+  createdAt?: Date | number | null;
+}
+function toContainerServiceDeployment(root: jsonP.JSONValue): ContainerServiceDeployment {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "version": "n",
+      "state": (x: jsonP.JSONValue) => cmnP.readEnum<ContainerServiceDeploymentState>(x),
+      "containers": x => jsonP.readMap(String, toContainer, x),
+      "publicEndpoint": toContainerServiceEndpoint,
+      "createdAt": "d",
+    },
+  }, root);
+}
+
+// refs: 9 - tags: output, named, enum
+export type ContainerServiceDeploymentState =
+| "ACTIVATING"
+| "ACTIVE"
+| "INACTIVE"
+| "FAILED"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 9 - tags: output, named, interface
+export interface ContainerServiceEndpoint {
+  containerName?: string | null;
+  containerPort?: number | null;
+  healthCheck?: ContainerServiceHealthCheckConfig | null;
+}
+function toContainerServiceEndpoint(root: jsonP.JSONValue): ContainerServiceEndpoint {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "containerName": "s",
+      "containerPort": "n",
+      "healthCheck": toContainerServiceHealthCheckConfig,
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
+export interface ContainerServiceRegistryLogin {
+  username?: string | null;
+  password?: string | null;
+  expiresAt?: Date | number | null;
+  registry?: string | null;
+}
+function toContainerServiceRegistryLogin(root: jsonP.JSONValue): ContainerServiceRegistryLogin {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "username": "s",
+      "password": "s",
+      "expiresAt": "d",
+      "registry": "s",
+    },
+  }, root);
+}
 
 // refs: 2 - tags: output, named, interface
 export interface LightsailDistribution {
@@ -5292,6 +5966,86 @@ export type ContactMethodStatus =
 | "Invalid"
 | cmnP.UnexpectedEnumValue;
 
+// refs: 2 - tags: output, named, interface
+export interface ContainerImage {
+  image?: string | null;
+  digest?: string | null;
+  createdAt?: Date | number | null;
+}
+function toContainerImage(root: jsonP.JSONValue): ContainerImage {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "image": "s",
+      "digest": "s",
+      "createdAt": "d",
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
+export interface ContainerServiceLogEvent {
+  createdAt?: Date | number | null;
+  message?: string | null;
+}
+function toContainerServiceLogEvent(root: jsonP.JSONValue): ContainerServiceLogEvent {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "createdAt": "d",
+      "message": "s",
+    },
+  }, root);
+}
+
+// refs: 5 - tags: output, named, interface
+export interface MetricDatapoint {
+  average?: number | null;
+  maximum?: number | null;
+  minimum?: number | null;
+  sampleCount?: number | null;
+  sum?: number | null;
+  timestamp?: Date | number | null;
+  unit?: MetricUnit | null;
+}
+function toMetricDatapoint(root: jsonP.JSONValue): MetricDatapoint {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "average": "n",
+      "maximum": "n",
+      "minimum": "n",
+      "sampleCount": "n",
+      "sum": "n",
+      "timestamp": "d",
+      "unit": (x: jsonP.JSONValue) => cmnP.readEnum<MetricUnit>(x),
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
+export interface ContainerServicePower {
+  powerId?: string | null;
+  price?: number | null;
+  cpuCount?: number | null;
+  ramSizeInGb?: number | null;
+  name?: string | null;
+  isActive?: boolean | null;
+}
+function toContainerServicePower(root: jsonP.JSONValue): ContainerServicePower {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "powerId": "s",
+      "price": "n",
+      "cpuCount": "n",
+      "ramSizeInGb": "n",
+      "name": "s",
+      "isActive": "b",
+    },
+  }, root);
+}
+
 // refs: 6 - tags: output, named, interface
 export interface Disk {
   name?: string | null;
@@ -5431,31 +6185,6 @@ function toDistributionBundle(root: jsonP.JSONValue): DistributionBundle {
       "price": "n",
       "transferPerMonthInGb": "n",
       "isActive": "b",
-    },
-  }, root);
-}
-
-// refs: 4 - tags: output, named, interface
-export interface MetricDatapoint {
-  average?: number | null;
-  maximum?: number | null;
-  minimum?: number | null;
-  sampleCount?: number | null;
-  sum?: number | null;
-  timestamp?: Date | number | null;
-  unit?: MetricUnit | null;
-}
-function toMetricDatapoint(root: jsonP.JSONValue): MetricDatapoint {
-  return jsonP.readObj({
-    required: {},
-    optional: {
-      "average": "n",
-      "maximum": "n",
-      "minimum": "n",
-      "sampleCount": "n",
-      "sum": "n",
-      "timestamp": "d",
-      "unit": (x: jsonP.JSONValue) => cmnP.readEnum<MetricUnit>(x),
     },
   }, root);
 }

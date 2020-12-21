@@ -186,6 +186,26 @@ export default class KinesisAnalyticsV2 {
     }, await resp.json());
   }
 
+  async createApplicationPresignedUrl(
+    {abortSignal, ...params}: RequestConfig & CreateApplicationPresignedUrlRequest,
+  ): Promise<CreateApplicationPresignedUrlResponse> {
+    const body: jsonP.JSONObject = {
+      ApplicationName: params["ApplicationName"],
+      UrlType: params["UrlType"],
+      SessionExpirationDurationInSeconds: params["SessionExpirationDurationInSeconds"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "CreateApplicationPresignedUrl",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "AuthorizedUrl": "s",
+      },
+    }, await resp.json());
+  }
+
   async createApplicationSnapshot(
     {abortSignal, ...params}: RequestConfig & CreateApplicationSnapshotRequest,
   ): Promise<CreateApplicationSnapshotResponse> {
@@ -615,6 +635,13 @@ export interface CreateApplicationRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface CreateApplicationPresignedUrlRequest {
+  ApplicationName: string;
+  UrlType: UrlType;
+  SessionExpirationDurationInSeconds?: number | null;
+}
+
+// refs: 1 - tags: named, input
 export interface CreateApplicationSnapshotRequest {
   ApplicationName: string;
   SnapshotName: string;
@@ -787,6 +814,11 @@ export interface AddApplicationVpcConfigurationResponse {
 // refs: 1 - tags: named, output
 export interface CreateApplicationResponse {
   ApplicationDetail: ApplicationDetail;
+}
+
+// refs: 1 - tags: named, output
+export interface CreateApplicationPresignedUrlResponse {
+  AuthorizedUrl?: string | null;
 }
 
 // refs: 1 - tags: named, output
@@ -1244,6 +1276,7 @@ export type RuntimeEnvironment =
 | "SQL-1_0"
 | "FLINK-1_6"
 | "FLINK-1_8"
+| "FLINK-1_11"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
@@ -1483,6 +1516,11 @@ function toTag(root: jsonP.JSONValue): Tag {
     },
   }, root);
 }
+
+// refs: 1 - tags: input, named, enum
+export type UrlType =
+| "FLINK_DASHBOARD_URL"
+| cmnP.UnexpectedEnumValue;
 
 // refs: 6 - tags: input, named, interface, output
 export interface InputStartingPositionConfiguration {

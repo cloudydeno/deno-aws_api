@@ -309,6 +309,26 @@ export default class Glue {
     }, await resp.json());
   }
 
+  async checkSchemaVersionValidity(
+    {abortSignal, ...params}: RequestConfig & CheckSchemaVersionValidityInput,
+  ): Promise<CheckSchemaVersionValidityResponse> {
+    const body: jsonP.JSONObject = {
+      DataFormat: params["DataFormat"],
+      SchemaDefinition: params["SchemaDefinition"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "CheckSchemaVersionValidity",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Valid": "b",
+        "Error": "s",
+      },
+    }, await resp.json());
+  }
+
   async createClassifier(
     {abortSignal, ...params}: RequestConfig & CreateClassifierRequest = {},
   ): Promise<CreateClassifierResponse> {
@@ -359,6 +379,7 @@ export default class Glue {
       TablePrefix: params["TablePrefix"],
       SchemaChangePolicy: fromSchemaChangePolicy(params["SchemaChangePolicy"]),
       RecrawlPolicy: fromRecrawlPolicy(params["RecrawlPolicy"]),
+      LineageConfiguration: fromLineageConfiguration(params["LineageConfiguration"]),
       Configuration: params["Configuration"],
       CrawlerSecurityConfiguration: params["CrawlerSecurityConfiguration"],
       Tags: params["Tags"],
@@ -522,6 +543,85 @@ export default class Glue {
     return jsonP.readObj({
       required: {},
       optional: {},
+    }, await resp.json());
+  }
+
+  async createPartitionIndex(
+    {abortSignal, ...params}: RequestConfig & CreatePartitionIndexRequest,
+  ): Promise<CreatePartitionIndexResponse> {
+    const body: jsonP.JSONObject = {
+      CatalogId: params["CatalogId"],
+      DatabaseName: params["DatabaseName"],
+      TableName: params["TableName"],
+      PartitionIndex: fromPartitionIndex(params["PartitionIndex"]),
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "CreatePartitionIndex",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
+  }
+
+  async createRegistry(
+    {abortSignal, ...params}: RequestConfig & CreateRegistryInput,
+  ): Promise<CreateRegistryResponse> {
+    const body: jsonP.JSONObject = {
+      RegistryName: params["RegistryName"],
+      Description: params["Description"],
+      Tags: params["Tags"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "CreateRegistry",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "RegistryArn": "s",
+        "RegistryName": "s",
+        "Description": "s",
+        "Tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
+  }
+
+  async createSchema(
+    {abortSignal, ...params}: RequestConfig & CreateSchemaInput,
+  ): Promise<CreateSchemaResponse> {
+    const body: jsonP.JSONObject = {
+      RegistryId: fromRegistryId(params["RegistryId"]),
+      SchemaName: params["SchemaName"],
+      DataFormat: params["DataFormat"],
+      Compatibility: params["Compatibility"],
+      Description: params["Description"],
+      Tags: params["Tags"],
+      SchemaDefinition: params["SchemaDefinition"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "CreateSchema",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "RegistryName": "s",
+        "RegistryArn": "s",
+        "SchemaName": "s",
+        "SchemaArn": "s",
+        "Description": "s",
+        "DataFormat": (x: jsonP.JSONValue) => cmnP.readEnum<DataFormat>(x),
+        "Compatibility": (x: jsonP.JSONValue) => cmnP.readEnum<Compatibility>(x),
+        "SchemaCheckpoint": "n",
+        "LatestSchemaVersion": "n",
+        "NextSchemaVersion": "n",
+        "SchemaStatus": (x: jsonP.JSONValue) => cmnP.readEnum<SchemaStatus>(x),
+        "Tags": x => jsonP.readMap(String, String, x),
+        "SchemaVersionId": "s",
+        "SchemaVersionStatus": (x: jsonP.JSONValue) => cmnP.readEnum<SchemaVersionStatus>(x),
+      },
     }, await resp.json());
   }
 
@@ -827,6 +927,45 @@ export default class Glue {
     }, await resp.json());
   }
 
+  async deletePartitionIndex(
+    {abortSignal, ...params}: RequestConfig & DeletePartitionIndexRequest,
+  ): Promise<DeletePartitionIndexResponse> {
+    const body: jsonP.JSONObject = {
+      CatalogId: params["CatalogId"],
+      DatabaseName: params["DatabaseName"],
+      TableName: params["TableName"],
+      IndexName: params["IndexName"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DeletePartitionIndex",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
+  }
+
+  async deleteRegistry(
+    {abortSignal, ...params}: RequestConfig & DeleteRegistryInput,
+  ): Promise<DeleteRegistryResponse> {
+    const body: jsonP.JSONObject = {
+      RegistryId: fromRegistryId(params["RegistryId"]),
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DeleteRegistry",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "RegistryName": "s",
+        "RegistryArn": "s",
+        "Status": (x: jsonP.JSONValue) => cmnP.readEnum<RegistryStatus>(x),
+      },
+    }, await resp.json());
+  }
+
   async deleteResourcePolicy(
     {abortSignal, ...params}: RequestConfig & DeleteResourcePolicyRequest = {},
   ): Promise<DeleteResourcePolicyResponse> {
@@ -841,6 +980,45 @@ export default class Glue {
     return jsonP.readObj({
       required: {},
       optional: {},
+    }, await resp.json());
+  }
+
+  async deleteSchema(
+    {abortSignal, ...params}: RequestConfig & DeleteSchemaInput,
+  ): Promise<DeleteSchemaResponse> {
+    const body: jsonP.JSONObject = {
+      SchemaId: fromSchemaId(params["SchemaId"]),
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DeleteSchema",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "SchemaArn": "s",
+        "SchemaName": "s",
+        "Status": (x: jsonP.JSONValue) => cmnP.readEnum<SchemaStatus>(x),
+      },
+    }, await resp.json());
+  }
+
+  async deleteSchemaVersions(
+    {abortSignal, ...params}: RequestConfig & DeleteSchemaVersionsInput,
+  ): Promise<DeleteSchemaVersionsResponse> {
+    const body: jsonP.JSONObject = {
+      SchemaId: fromSchemaId(params["SchemaId"]),
+      Versions: params["Versions"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DeleteSchemaVersions",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "SchemaVersionErrors": [toSchemaVersionErrorItem],
+      },
     }, await resp.json());
   }
 
@@ -1591,6 +1769,29 @@ export default class Glue {
     }, await resp.json());
   }
 
+  async getRegistry(
+    {abortSignal, ...params}: RequestConfig & GetRegistryInput,
+  ): Promise<GetRegistryResponse> {
+    const body: jsonP.JSONObject = {
+      RegistryId: fromRegistryId(params["RegistryId"]),
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "GetRegistry",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "RegistryName": "s",
+        "RegistryArn": "s",
+        "Description": "s",
+        "Status": (x: jsonP.JSONValue) => cmnP.readEnum<RegistryStatus>(x),
+        "CreatedTime": "s",
+        "UpdatedTime": "s",
+      },
+    }, await resp.json());
+  }
+
   async getResourcePolicies(
     {abortSignal, ...params}: RequestConfig & GetResourcePoliciesRequest = {},
   ): Promise<GetResourcePoliciesResponse> {
@@ -1628,6 +1829,106 @@ export default class Glue {
         "PolicyHash": "s",
         "CreateTime": "d",
         "UpdateTime": "d",
+      },
+    }, await resp.json());
+  }
+
+  async getSchema(
+    {abortSignal, ...params}: RequestConfig & GetSchemaInput,
+  ): Promise<GetSchemaResponse> {
+    const body: jsonP.JSONObject = {
+      SchemaId: fromSchemaId(params["SchemaId"]),
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "GetSchema",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "RegistryName": "s",
+        "RegistryArn": "s",
+        "SchemaName": "s",
+        "SchemaArn": "s",
+        "Description": "s",
+        "DataFormat": (x: jsonP.JSONValue) => cmnP.readEnum<DataFormat>(x),
+        "Compatibility": (x: jsonP.JSONValue) => cmnP.readEnum<Compatibility>(x),
+        "SchemaCheckpoint": "n",
+        "LatestSchemaVersion": "n",
+        "NextSchemaVersion": "n",
+        "SchemaStatus": (x: jsonP.JSONValue) => cmnP.readEnum<SchemaStatus>(x),
+        "CreatedTime": "s",
+        "UpdatedTime": "s",
+      },
+    }, await resp.json());
+  }
+
+  async getSchemaByDefinition(
+    {abortSignal, ...params}: RequestConfig & GetSchemaByDefinitionInput,
+  ): Promise<GetSchemaByDefinitionResponse> {
+    const body: jsonP.JSONObject = {
+      SchemaId: fromSchemaId(params["SchemaId"]),
+      SchemaDefinition: params["SchemaDefinition"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "GetSchemaByDefinition",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "SchemaVersionId": "s",
+        "SchemaArn": "s",
+        "DataFormat": (x: jsonP.JSONValue) => cmnP.readEnum<DataFormat>(x),
+        "Status": (x: jsonP.JSONValue) => cmnP.readEnum<SchemaVersionStatus>(x),
+        "CreatedTime": "s",
+      },
+    }, await resp.json());
+  }
+
+  async getSchemaVersion(
+    {abortSignal, ...params}: RequestConfig & GetSchemaVersionInput = {},
+  ): Promise<GetSchemaVersionResponse> {
+    const body: jsonP.JSONObject = {
+      SchemaId: fromSchemaId(params["SchemaId"]),
+      SchemaVersionId: params["SchemaVersionId"],
+      SchemaVersionNumber: fromSchemaVersionNumber(params["SchemaVersionNumber"]),
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "GetSchemaVersion",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "SchemaVersionId": "s",
+        "SchemaDefinition": "s",
+        "DataFormat": (x: jsonP.JSONValue) => cmnP.readEnum<DataFormat>(x),
+        "SchemaArn": "s",
+        "VersionNumber": "n",
+        "Status": (x: jsonP.JSONValue) => cmnP.readEnum<SchemaVersionStatus>(x),
+        "CreatedTime": "s",
+      },
+    }, await resp.json());
+  }
+
+  async getSchemaVersionsDiff(
+    {abortSignal, ...params}: RequestConfig & GetSchemaVersionsDiffInput,
+  ): Promise<GetSchemaVersionsDiffResponse> {
+    const body: jsonP.JSONObject = {
+      SchemaId: fromSchemaId(params["SchemaId"]),
+      FirstSchemaVersionNumber: fromSchemaVersionNumber(params["FirstSchemaVersionNumber"]),
+      SecondSchemaVersionNumber: fromSchemaVersionNumber(params["SecondSchemaVersionNumber"]),
+      SchemaDiffType: params["SchemaDiffType"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "GetSchemaVersionsDiff",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Diff": "s",
       },
     }, await resp.json());
   }
@@ -2040,6 +2341,68 @@ export default class Glue {
     }, await resp.json());
   }
 
+  async listRegistries(
+    {abortSignal, ...params}: RequestConfig & ListRegistriesInput = {},
+  ): Promise<ListRegistriesResponse> {
+    const body: jsonP.JSONObject = {
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "ListRegistries",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Registries": [toRegistryListItem],
+        "NextToken": "s",
+      },
+    }, await resp.json());
+  }
+
+  async listSchemaVersions(
+    {abortSignal, ...params}: RequestConfig & ListSchemaVersionsInput,
+  ): Promise<ListSchemaVersionsResponse> {
+    const body: jsonP.JSONObject = {
+      SchemaId: fromSchemaId(params["SchemaId"]),
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "ListSchemaVersions",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Schemas": [toSchemaVersionListItem],
+        "NextToken": "s",
+      },
+    }, await resp.json());
+  }
+
+  async listSchemas(
+    {abortSignal, ...params}: RequestConfig & ListSchemasInput = {},
+  ): Promise<ListSchemasResponse> {
+    const body: jsonP.JSONObject = {
+      RegistryId: fromRegistryId(params["RegistryId"]),
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "ListSchemas",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Schemas": [toSchemaListItem],
+        "NextToken": "s",
+      },
+    }, await resp.json());
+  }
+
   async listTriggers(
     {abortSignal, ...params}: RequestConfig & ListTriggersRequest = {},
   ): Promise<ListTriggersResponse> {
@@ -2121,6 +2484,34 @@ export default class Glue {
     }, await resp.json());
   }
 
+  async putSchemaVersionMetadata(
+    {abortSignal, ...params}: RequestConfig & PutSchemaVersionMetadataInput,
+  ): Promise<PutSchemaVersionMetadataResponse> {
+    const body: jsonP.JSONObject = {
+      SchemaId: fromSchemaId(params["SchemaId"]),
+      SchemaVersionNumber: fromSchemaVersionNumber(params["SchemaVersionNumber"]),
+      SchemaVersionId: params["SchemaVersionId"],
+      MetadataKeyValue: fromMetadataKeyValuePair(params["MetadataKeyValue"]),
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "PutSchemaVersionMetadata",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "SchemaArn": "s",
+        "SchemaName": "s",
+        "RegistryName": "s",
+        "LatestVersion": "b",
+        "VersionNumber": "n",
+        "SchemaVersionId": "s",
+        "MetadataKey": "s",
+        "MetadataValue": "s",
+      },
+    }, await resp.json());
+  }
+
   async putWorkflowRunProperties(
     {abortSignal, ...params}: RequestConfig & PutWorkflowRunPropertiesRequest,
   ): Promise<PutWorkflowRunPropertiesResponse> {
@@ -2136,6 +2527,80 @@ export default class Glue {
     return jsonP.readObj({
       required: {},
       optional: {},
+    }, await resp.json());
+  }
+
+  async querySchemaVersionMetadata(
+    {abortSignal, ...params}: RequestConfig & QuerySchemaVersionMetadataInput = {},
+  ): Promise<QuerySchemaVersionMetadataResponse> {
+    const body: jsonP.JSONObject = {
+      SchemaId: fromSchemaId(params["SchemaId"]),
+      SchemaVersionNumber: fromSchemaVersionNumber(params["SchemaVersionNumber"]),
+      SchemaVersionId: params["SchemaVersionId"],
+      MetadataList: params["MetadataList"]?.map(x => fromMetadataKeyValuePair(x)),
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "QuerySchemaVersionMetadata",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "MetadataInfoMap": x => jsonP.readMap(String, toMetadataInfo, x),
+        "SchemaVersionId": "s",
+        "NextToken": "s",
+      },
+    }, await resp.json());
+  }
+
+  async registerSchemaVersion(
+    {abortSignal, ...params}: RequestConfig & RegisterSchemaVersionInput,
+  ): Promise<RegisterSchemaVersionResponse> {
+    const body: jsonP.JSONObject = {
+      SchemaId: fromSchemaId(params["SchemaId"]),
+      SchemaDefinition: params["SchemaDefinition"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "RegisterSchemaVersion",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "SchemaVersionId": "s",
+        "VersionNumber": "n",
+        "Status": (x: jsonP.JSONValue) => cmnP.readEnum<SchemaVersionStatus>(x),
+      },
+    }, await resp.json());
+  }
+
+  async removeSchemaVersionMetadata(
+    {abortSignal, ...params}: RequestConfig & RemoveSchemaVersionMetadataInput,
+  ): Promise<RemoveSchemaVersionMetadataResponse> {
+    const body: jsonP.JSONObject = {
+      SchemaId: fromSchemaId(params["SchemaId"]),
+      SchemaVersionNumber: fromSchemaVersionNumber(params["SchemaVersionNumber"]),
+      SchemaVersionId: params["SchemaVersionId"],
+      MetadataKeyValue: fromMetadataKeyValuePair(params["MetadataKeyValue"]),
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "RemoveSchemaVersionMetadata",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "SchemaArn": "s",
+        "SchemaName": "s",
+        "RegistryName": "s",
+        "LatestVersion": "b",
+        "VersionNumber": "n",
+        "SchemaVersionId": "s",
+        "MetadataKey": "s",
+        "MetadataValue": "s",
+      },
     }, await resp.json());
   }
 
@@ -2570,6 +3035,7 @@ export default class Glue {
       TablePrefix: params["TablePrefix"],
       SchemaChangePolicy: fromSchemaChangePolicy(params["SchemaChangePolicy"]),
       RecrawlPolicy: fromRecrawlPolicy(params["RecrawlPolicy"]),
+      LineageConfiguration: fromLineageConfiguration(params["LineageConfiguration"]),
       Configuration: params["Configuration"],
       CrawlerSecurityConfiguration: params["CrawlerSecurityConfiguration"],
     };
@@ -2705,6 +3171,49 @@ export default class Glue {
     return jsonP.readObj({
       required: {},
       optional: {},
+    }, await resp.json());
+  }
+
+  async updateRegistry(
+    {abortSignal, ...params}: RequestConfig & UpdateRegistryInput,
+  ): Promise<UpdateRegistryResponse> {
+    const body: jsonP.JSONObject = {
+      RegistryId: fromRegistryId(params["RegistryId"]),
+      Description: params["Description"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "UpdateRegistry",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "RegistryName": "s",
+        "RegistryArn": "s",
+      },
+    }, await resp.json());
+  }
+
+  async updateSchema(
+    {abortSignal, ...params}: RequestConfig & UpdateSchemaInput,
+  ): Promise<UpdateSchemaResponse> {
+    const body: jsonP.JSONObject = {
+      SchemaId: fromSchemaId(params["SchemaId"]),
+      SchemaVersionNumber: fromSchemaVersionNumber(params["SchemaVersionNumber"]),
+      Compatibility: params["Compatibility"],
+      Description: params["Description"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "UpdateSchema",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "SchemaArn": "s",
+        "SchemaName": "s",
+        "RegistryName": "s",
+      },
     }, await resp.json());
   }
 
@@ -2880,6 +3389,12 @@ export interface CancelMLTaskRunRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface CheckSchemaVersionValidityInput {
+  DataFormat: DataFormat;
+  SchemaDefinition: string;
+}
+
+// refs: 1 - tags: named, input
 export interface CreateClassifierRequest {
   GrokClassifier?: CreateGrokClassifierRequest | null;
   XMLClassifier?: CreateXMLClassifierRequest | null;
@@ -2905,6 +3420,7 @@ export interface CreateCrawlerRequest {
   TablePrefix?: string | null;
   SchemaChangePolicy?: SchemaChangePolicy | null;
   RecrawlPolicy?: RecrawlPolicy | null;
+  LineageConfiguration?: LineageConfiguration | null;
   Configuration?: string | null;
   CrawlerSecurityConfiguration?: string | null;
   Tags?: { [key: string]: string | null | undefined } | null;
@@ -2981,6 +3497,32 @@ export interface CreatePartitionRequest {
   DatabaseName: string;
   TableName: string;
   PartitionInput: PartitionInput;
+}
+
+// refs: 1 - tags: named, input
+export interface CreatePartitionIndexRequest {
+  CatalogId?: string | null;
+  DatabaseName: string;
+  TableName: string;
+  PartitionIndex: PartitionIndex;
+}
+
+// refs: 1 - tags: named, input
+export interface CreateRegistryInput {
+  RegistryName: string;
+  Description?: string | null;
+  Tags?: { [key: string]: string | null | undefined } | null;
+}
+
+// refs: 1 - tags: named, input
+export interface CreateSchemaInput {
+  RegistryId?: RegistryId | null;
+  SchemaName: string;
+  DataFormat: DataFormat;
+  Compatibility?: Compatibility | null;
+  Description?: string | null;
+  Tags?: { [key: string]: string | null | undefined } | null;
+  SchemaDefinition?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -3096,9 +3638,33 @@ export interface DeletePartitionRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface DeletePartitionIndexRequest {
+  CatalogId?: string | null;
+  DatabaseName: string;
+  TableName: string;
+  IndexName: string;
+}
+
+// refs: 1 - tags: named, input
+export interface DeleteRegistryInput {
+  RegistryId: RegistryId;
+}
+
+// refs: 1 - tags: named, input
 export interface DeleteResourcePolicyRequest {
   PolicyHashCondition?: string | null;
   ResourceArn?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface DeleteSchemaInput {
+  SchemaId: SchemaId;
+}
+
+// refs: 1 - tags: named, input
+export interface DeleteSchemaVersionsInput {
+  SchemaId: SchemaId;
+  Versions: string;
 }
 
 // refs: 1 - tags: named, input
@@ -3344,6 +3910,11 @@ export interface GetPlanRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface GetRegistryInput {
+  RegistryId: RegistryId;
+}
+
+// refs: 1 - tags: named, input
 export interface GetResourcePoliciesRequest {
   NextToken?: string | null;
   MaxResults?: number | null;
@@ -3352,6 +3923,32 @@ export interface GetResourcePoliciesRequest {
 // refs: 1 - tags: named, input
 export interface GetResourcePolicyRequest {
   ResourceArn?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface GetSchemaInput {
+  SchemaId: SchemaId;
+}
+
+// refs: 1 - tags: named, input
+export interface GetSchemaByDefinitionInput {
+  SchemaId: SchemaId;
+  SchemaDefinition: string;
+}
+
+// refs: 1 - tags: named, input
+export interface GetSchemaVersionInput {
+  SchemaId?: SchemaId | null;
+  SchemaVersionId?: string | null;
+  SchemaVersionNumber?: SchemaVersionNumber | null;
+}
+
+// refs: 1 - tags: named, input
+export interface GetSchemaVersionsDiffInput {
+  SchemaId: SchemaId;
+  FirstSchemaVersionNumber: SchemaVersionNumber;
+  SecondSchemaVersionNumber: SchemaVersionNumber;
+  SchemaDiffType: SchemaDiffType;
 }
 
 // refs: 1 - tags: named, input
@@ -3494,6 +4091,26 @@ export interface ListMLTransformsRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface ListRegistriesInput {
+  MaxResults?: number | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface ListSchemaVersionsInput {
+  SchemaId: SchemaId;
+  MaxResults?: number | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface ListSchemasInput {
+  RegistryId?: RegistryId | null;
+  MaxResults?: number | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, input
 export interface ListTriggersRequest {
   NextToken?: string | null;
   DependentJobName?: string | null;
@@ -3523,10 +4140,42 @@ export interface PutResourcePolicyRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface PutSchemaVersionMetadataInput {
+  SchemaId?: SchemaId | null;
+  SchemaVersionNumber?: SchemaVersionNumber | null;
+  SchemaVersionId?: string | null;
+  MetadataKeyValue: MetadataKeyValuePair;
+}
+
+// refs: 1 - tags: named, input
 export interface PutWorkflowRunPropertiesRequest {
   Name: string;
   RunId: string;
   RunProperties: { [key: string]: string | null | undefined };
+}
+
+// refs: 1 - tags: named, input
+export interface QuerySchemaVersionMetadataInput {
+  SchemaId?: SchemaId | null;
+  SchemaVersionNumber?: SchemaVersionNumber | null;
+  SchemaVersionId?: string | null;
+  MetadataList?: MetadataKeyValuePair[] | null;
+  MaxResults?: number | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface RegisterSchemaVersionInput {
+  SchemaId: SchemaId;
+  SchemaDefinition: string;
+}
+
+// refs: 1 - tags: named, input
+export interface RemoveSchemaVersionMetadataInput {
+  SchemaId?: SchemaId | null;
+  SchemaVersionNumber?: SchemaVersionNumber | null;
+  SchemaVersionId?: string | null;
+  MetadataKeyValue: MetadataKeyValuePair;
 }
 
 // refs: 1 - tags: named, input
@@ -3688,6 +4337,7 @@ export interface UpdateCrawlerRequest {
   TablePrefix?: string | null;
   SchemaChangePolicy?: SchemaChangePolicy | null;
   RecrawlPolicy?: RecrawlPolicy | null;
+  LineageConfiguration?: LineageConfiguration | null;
   Configuration?: string | null;
   CrawlerSecurityConfiguration?: string | null;
 }
@@ -3745,6 +4395,20 @@ export interface UpdatePartitionRequest {
   TableName: string;
   PartitionValueList: string[];
   PartitionInput: PartitionInput;
+}
+
+// refs: 1 - tags: named, input
+export interface UpdateRegistryInput {
+  RegistryId: RegistryId;
+  Description: string;
+}
+
+// refs: 1 - tags: named, input
+export interface UpdateSchemaInput {
+  SchemaId: SchemaId;
+  SchemaVersionNumber?: SchemaVersionNumber | null;
+  Compatibility?: Compatibility | null;
+  Description?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -3858,6 +4522,12 @@ export interface CancelMLTaskRunResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface CheckSchemaVersionValidityResponse {
+  Valid?: boolean | null;
+  Error?: string | null;
+}
+
+// refs: 1 - tags: named, output
 export interface CreateClassifierResponse {
 }
 
@@ -3908,6 +4578,36 @@ export interface CreateMLTransformResponse {
 
 // refs: 1 - tags: named, output
 export interface CreatePartitionResponse {
+}
+
+// refs: 1 - tags: named, output
+export interface CreatePartitionIndexResponse {
+}
+
+// refs: 1 - tags: named, output
+export interface CreateRegistryResponse {
+  RegistryArn?: string | null;
+  RegistryName?: string | null;
+  Description?: string | null;
+  Tags?: { [key: string]: string | null | undefined } | null;
+}
+
+// refs: 1 - tags: named, output
+export interface CreateSchemaResponse {
+  RegistryName?: string | null;
+  RegistryArn?: string | null;
+  SchemaName?: string | null;
+  SchemaArn?: string | null;
+  Description?: string | null;
+  DataFormat?: DataFormat | null;
+  Compatibility?: Compatibility | null;
+  SchemaCheckpoint?: number | null;
+  LatestSchemaVersion?: number | null;
+  NextSchemaVersion?: number | null;
+  SchemaStatus?: SchemaStatus | null;
+  Tags?: { [key: string]: string | null | undefined } | null;
+  SchemaVersionId?: string | null;
+  SchemaVersionStatus?: SchemaVersionStatus | null;
 }
 
 // refs: 1 - tags: named, output
@@ -3983,7 +4683,30 @@ export interface DeletePartitionResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface DeletePartitionIndexResponse {
+}
+
+// refs: 1 - tags: named, output
+export interface DeleteRegistryResponse {
+  RegistryName?: string | null;
+  RegistryArn?: string | null;
+  Status?: RegistryStatus | null;
+}
+
+// refs: 1 - tags: named, output
 export interface DeleteResourcePolicyResponse {
+}
+
+// refs: 1 - tags: named, output
+export interface DeleteSchemaResponse {
+  SchemaArn?: string | null;
+  SchemaName?: string | null;
+  Status?: SchemaStatus | null;
+}
+
+// refs: 1 - tags: named, output
+export interface DeleteSchemaVersionsResponse {
+  SchemaVersionErrors?: SchemaVersionErrorItem[] | null;
 }
 
 // refs: 1 - tags: named, output
@@ -4206,6 +4929,16 @@ export interface GetPlanResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface GetRegistryResponse {
+  RegistryName?: string | null;
+  RegistryArn?: string | null;
+  Description?: string | null;
+  Status?: RegistryStatus | null;
+  CreatedTime?: string | null;
+  UpdatedTime?: string | null;
+}
+
+// refs: 1 - tags: named, output
 export interface GetResourcePoliciesResponse {
   GetResourcePoliciesResponseList?: GluePolicy[] | null;
   NextToken?: string | null;
@@ -4217,6 +4950,48 @@ export interface GetResourcePolicyResponse {
   PolicyHash?: string | null;
   CreateTime?: Date | number | null;
   UpdateTime?: Date | number | null;
+}
+
+// refs: 1 - tags: named, output
+export interface GetSchemaResponse {
+  RegistryName?: string | null;
+  RegistryArn?: string | null;
+  SchemaName?: string | null;
+  SchemaArn?: string | null;
+  Description?: string | null;
+  DataFormat?: DataFormat | null;
+  Compatibility?: Compatibility | null;
+  SchemaCheckpoint?: number | null;
+  LatestSchemaVersion?: number | null;
+  NextSchemaVersion?: number | null;
+  SchemaStatus?: SchemaStatus | null;
+  CreatedTime?: string | null;
+  UpdatedTime?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface GetSchemaByDefinitionResponse {
+  SchemaVersionId?: string | null;
+  SchemaArn?: string | null;
+  DataFormat?: DataFormat | null;
+  Status?: SchemaVersionStatus | null;
+  CreatedTime?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface GetSchemaVersionResponse {
+  SchemaVersionId?: string | null;
+  SchemaDefinition?: string | null;
+  DataFormat?: DataFormat | null;
+  SchemaArn?: string | null;
+  VersionNumber?: number | null;
+  Status?: SchemaVersionStatus | null;
+  CreatedTime?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface GetSchemaVersionsDiffResponse {
+  Diff?: string | null;
 }
 
 // refs: 1 - tags: named, output
@@ -4329,6 +5104,24 @@ export interface ListMLTransformsResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface ListRegistriesResponse {
+  Registries?: RegistryListItem[] | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface ListSchemaVersionsResponse {
+  Schemas?: SchemaVersionListItem[] | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface ListSchemasResponse {
+  Schemas?: SchemaListItem[] | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
 export interface ListTriggersResponse {
   TriggerNames?: string[] | null;
   NextToken?: string | null;
@@ -4350,7 +5143,45 @@ export interface PutResourcePolicyResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface PutSchemaVersionMetadataResponse {
+  SchemaArn?: string | null;
+  SchemaName?: string | null;
+  RegistryName?: string | null;
+  LatestVersion?: boolean | null;
+  VersionNumber?: number | null;
+  SchemaVersionId?: string | null;
+  MetadataKey?: string | null;
+  MetadataValue?: string | null;
+}
+
+// refs: 1 - tags: named, output
 export interface PutWorkflowRunPropertiesResponse {
+}
+
+// refs: 1 - tags: named, output
+export interface QuerySchemaVersionMetadataResponse {
+  MetadataInfoMap?: { [key: string]: MetadataInfo | null | undefined } | null;
+  SchemaVersionId?: string | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface RegisterSchemaVersionResponse {
+  SchemaVersionId?: string | null;
+  VersionNumber?: number | null;
+  Status?: SchemaVersionStatus | null;
+}
+
+// refs: 1 - tags: named, output
+export interface RemoveSchemaVersionMetadataResponse {
+  SchemaArn?: string | null;
+  SchemaName?: string | null;
+  RegistryName?: string | null;
+  LatestVersion?: boolean | null;
+  VersionNumber?: number | null;
+  SchemaVersionId?: string | null;
+  MetadataKey?: string | null;
+  MetadataValue?: string | null;
 }
 
 // refs: 1 - tags: named, output
@@ -4487,6 +5318,19 @@ export interface UpdatePartitionResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface UpdateRegistryResponse {
+  RegistryName?: string | null;
+  RegistryArn?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface UpdateSchemaResponse {
+  SchemaArn?: string | null;
+  SchemaName?: string | null;
+  RegistryName?: string | null;
+}
+
+// refs: 1 - tags: named, output
 export interface UpdateTableResponse {
 }
 
@@ -4537,6 +5381,7 @@ export interface StorageDescriptor {
   Parameters?: { [key: string]: string | null | undefined } | null;
   SkewedInfo?: SkewedInfo | null;
   StoredAsSubDirectories?: boolean | null;
+  SchemaReference?: SchemaReference | null;
 }
 function fromStorageDescriptor(input?: StorageDescriptor | null): jsonP.JSONValue {
   if (!input) return input;
@@ -4553,6 +5398,7 @@ function fromStorageDescriptor(input?: StorageDescriptor | null): jsonP.JSONValu
     Parameters: input["Parameters"],
     SkewedInfo: fromSkewedInfo(input["SkewedInfo"]),
     StoredAsSubDirectories: input["StoredAsSubDirectories"],
+    SchemaReference: fromSchemaReference(input["SchemaReference"]),
   }
 }
 function toStorageDescriptor(root: jsonP.JSONValue): StorageDescriptor {
@@ -4571,6 +5417,7 @@ function toStorageDescriptor(root: jsonP.JSONValue): StorageDescriptor {
       "Parameters": x => jsonP.readMap(String, String, x),
       "SkewedInfo": toSkewedInfo,
       "StoredAsSubDirectories": "b",
+      "SchemaReference": toSchemaReference,
     },
   }, root);
 }
@@ -4676,7 +5523,57 @@ function toSkewedInfo(root: jsonP.JSONValue): SkewedInfo {
   }, root);
 }
 
-// refs: 3 - tags: input, named, interface, output
+// refs: 14 - tags: input, named, interface, output
+export interface SchemaReference {
+  SchemaId?: SchemaId | null;
+  SchemaVersionId?: string | null;
+  SchemaVersionNumber?: number | null;
+}
+function fromSchemaReference(input?: SchemaReference | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    SchemaId: fromSchemaId(input["SchemaId"]),
+    SchemaVersionId: input["SchemaVersionId"],
+    SchemaVersionNumber: input["SchemaVersionNumber"],
+  }
+}
+function toSchemaReference(root: jsonP.JSONValue): SchemaReference {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "SchemaId": toSchemaId,
+      "SchemaVersionId": "s",
+      "SchemaVersionNumber": "n",
+    },
+  }, root);
+}
+
+// refs: 26 - tags: input, named, interface, output
+export interface SchemaId {
+  SchemaArn?: string | null;
+  SchemaName?: string | null;
+  RegistryName?: string | null;
+}
+function fromSchemaId(input?: SchemaId | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    SchemaArn: input["SchemaArn"],
+    SchemaName: input["SchemaName"],
+    RegistryName: input["RegistryName"],
+  }
+}
+function toSchemaId(root: jsonP.JSONValue): SchemaId {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "SchemaArn": "s",
+      "SchemaName": "s",
+      "RegistryName": "s",
+    },
+  }, root);
+}
+
+// refs: 4 - tags: input, named, interface, output
 export interface PartitionValueList {
   Values: string[];
 }
@@ -4707,6 +5604,11 @@ function fromBatchUpdatePartitionRequestEntry(input?: BatchUpdatePartitionReques
     PartitionInput: fromPartitionInput(input["PartitionInput"]),
   }
 }
+
+// refs: 6 - tags: input, named, enum, output
+export type DataFormat =
+| "AVRO"
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface CreateGrokClassifierRequest {
@@ -5076,6 +5978,31 @@ export type RecrawlBehavior =
 | "CRAWL_NEW_FOLDERS_ONLY"
 | cmnP.UnexpectedEnumValue;
 
+// refs: 5 - tags: input, named, interface, output
+export interface LineageConfiguration {
+  CrawlerLineageSettings?: CrawlerLineageSettings | null;
+}
+function fromLineageConfiguration(input?: LineageConfiguration | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    CrawlerLineageSettings: input["CrawlerLineageSettings"],
+  }
+}
+function toLineageConfiguration(root: jsonP.JSONValue): LineageConfiguration {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "CrawlerLineageSettings": (x: jsonP.JSONValue) => cmnP.readEnum<CrawlerLineageSettings>(x),
+    },
+  }, root);
+}
+
+// refs: 5 - tags: input, named, enum, output
+export type CrawlerLineageSettings =
+| "ENABLE"
+| "DISABLE"
+| cmnP.UnexpectedEnumValue;
+
 // refs: 2 - tags: input, named, interface
 export interface DatabaseInput {
   Name: string;
@@ -5398,6 +6325,44 @@ export type MLUserDataEncryptionModeString =
 | "SSE-KMS"
 | cmnP.UnexpectedEnumValue;
 
+// refs: 2 - tags: input, named, interface
+export interface PartitionIndex {
+  Keys: string[];
+  IndexName: string;
+}
+function fromPartitionIndex(input?: PartitionIndex | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    Keys: input["Keys"],
+    IndexName: input["IndexName"],
+  }
+}
+
+// refs: 5 - tags: input, named, interface
+export interface RegistryId {
+  RegistryName?: string | null;
+  RegistryArn?: string | null;
+}
+function fromRegistryId(input?: RegistryId | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    RegistryName: input["RegistryName"],
+    RegistryArn: input["RegistryArn"],
+  }
+}
+
+// refs: 4 - tags: input, named, enum, output
+export type Compatibility =
+| "NONE"
+| "DISABLED"
+| "BACKWARD"
+| "BACKWARD_ALL"
+| "FORWARD"
+| "FORWARD_ALL"
+| "FULL"
+| "FULL_ALL"
+| cmnP.UnexpectedEnumValue;
+
 // refs: 2 - tags: input, named, interface, output
 export interface CodeGenNode {
   Id: string;
@@ -5653,19 +6618,6 @@ function toTableIdentifier(root: jsonP.JSONValue): TableIdentifier {
       "Name": "s",
     },
   }, root);
-}
-
-// refs: 1 - tags: input, named, interface
-export interface PartitionIndex {
-  Keys: string[];
-  IndexName: string;
-}
-function fromPartitionIndex(input?: PartitionIndex | null): jsonP.JSONValue {
-  if (!input) return input;
-  return {
-    Keys: input["Keys"],
-    IndexName: input["IndexName"],
-  }
 }
 
 // refs: 11 - tags: input, named, enum, output
@@ -6083,6 +7035,24 @@ function toMappingEntry(root: jsonP.JSONValue): MappingEntry {
   }, root);
 }
 
+// refs: 7 - tags: input, named, interface
+export interface SchemaVersionNumber {
+  LatestVersion?: boolean | null;
+  VersionNumber?: number | null;
+}
+function fromSchemaVersionNumber(input?: SchemaVersionNumber | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    LatestVersion: input["LatestVersion"],
+    VersionNumber: input["VersionNumber"],
+  }
+}
+
+// refs: 1 - tags: input, named, enum
+export type SchemaDiffType =
+| "SYNTAX_DIFF"
+| cmnP.UnexpectedEnumValue;
+
 // refs: 2 - tags: input, named, interface, output
 export interface DataCatalogEncryptionSettings {
   EncryptionAtRest?: EncryptionAtRest | null;
@@ -6169,6 +7139,19 @@ export type EnableHybridValues =
 | "TRUE"
 | "FALSE"
 | cmnP.UnexpectedEnumValue;
+
+// refs: 3 - tags: input, named, interface
+export interface MetadataKeyValuePair {
+  MetadataKey?: string | null;
+  MetadataValue?: string | null;
+}
+function fromMetadataKeyValuePair(input?: MetadataKeyValuePair | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    MetadataKey: input["MetadataKey"],
+    MetadataValue: input["MetadataValue"],
+  }
+}
 
 // refs: 1 - tags: input, named, interface
 export interface PropertyPredicate {
@@ -6724,6 +7707,7 @@ export interface Crawler {
   Classifiers?: string[] | null;
   RecrawlPolicy?: RecrawlPolicy | null;
   SchemaChangePolicy?: SchemaChangePolicy | null;
+  LineageConfiguration?: LineageConfiguration | null;
   State?: CrawlerState | null;
   TablePrefix?: string | null;
   Schedule?: Schedule | null;
@@ -6747,6 +7731,7 @@ function toCrawler(root: jsonP.JSONValue): Crawler {
       "Classifiers": ["s"],
       "RecrawlPolicy": toRecrawlPolicy,
       "SchemaChangePolicy": toSchemaChangePolicy,
+      "LineageConfiguration": toLineageConfiguration,
       "State": (x: jsonP.JSONValue) => cmnP.readEnum<CrawlerState>(x),
       "TablePrefix": "s",
       "Schedule": toSchedule,
@@ -7331,6 +8316,57 @@ function toBatchUpdatePartitionFailureEntry(root: jsonP.JSONValue): BatchUpdateP
   }, root);
 }
 
+// refs: 4 - tags: output, named, enum
+export type SchemaStatus =
+| "AVAILABLE"
+| "PENDING"
+| "DELETING"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 5 - tags: output, named, enum
+export type SchemaVersionStatus =
+| "AVAILABLE"
+| "PENDING"
+| "FAILURE"
+| "DELETING"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 3 - tags: output, named, enum
+export type RegistryStatus =
+| "AVAILABLE"
+| "DELETING"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 1 - tags: output, named, interface
+export interface SchemaVersionErrorItem {
+  VersionNumber?: number | null;
+  ErrorDetails?: ErrorDetails | null;
+}
+function toSchemaVersionErrorItem(root: jsonP.JSONValue): SchemaVersionErrorItem {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "VersionNumber": "n",
+      "ErrorDetails": toErrorDetails,
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
+export interface ErrorDetails {
+  ErrorCode?: string | null;
+  ErrorMessage?: string | null;
+}
+function toErrorDetails(root: jsonP.JSONValue): ErrorDetails {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "ErrorCode": "s",
+      "ErrorMessage": "s",
+    },
+  }, root);
+}
+
 // refs: 1 - tags: output, named, interface
 export interface CatalogImportStatus {
   ImportCompleted?: boolean | null;
@@ -7815,6 +8851,7 @@ export interface PartitionIndexDescriptor {
   IndexName: string;
   Keys: KeySchemaElement[];
   IndexStatus: PartitionIndexStatus;
+  BackfillErrors?: BackfillError[] | null;
 }
 function toPartitionIndexDescriptor(root: jsonP.JSONValue): PartitionIndexDescriptor {
   return jsonP.readObj({
@@ -7823,7 +8860,9 @@ function toPartitionIndexDescriptor(root: jsonP.JSONValue): PartitionIndexDescri
       "Keys": [toKeySchemaElement],
       "IndexStatus": (x: jsonP.JSONValue) => cmnP.readEnum<PartitionIndexStatus>(x),
     },
-    optional: {},
+    optional: {
+      "BackfillErrors": [toBackfillError],
+    },
   }, root);
 }
 
@@ -7844,7 +8883,34 @@ function toKeySchemaElement(root: jsonP.JSONValue): KeySchemaElement {
 
 // refs: 1 - tags: output, named, enum
 export type PartitionIndexStatus =
+| "CREATING"
 | "ACTIVE"
+| "DELETING"
+| "FAILED"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 1 - tags: output, named, interface
+export interface BackfillError {
+  Code?: BackfillErrorCode | null;
+  Partitions?: PartitionValueList[] | null;
+}
+function toBackfillError(root: jsonP.JSONValue): BackfillError {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "Code": (x: jsonP.JSONValue) => cmnP.readEnum<BackfillErrorCode>(x),
+      "Partitions": [toPartitionValueList],
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, enum
+export type BackfillErrorCode =
+| "ENCRYPTED_PARTITION_ERROR"
+| "INTERNAL_ERROR"
+| "INVALID_PARTITION_TYPE_DATA_ERROR"
+| "MISSING_PARTITION_VALUE_ERROR"
+| "UNSUPPORTED_PARTITION_CHARACTER_ERROR"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
@@ -7971,6 +9037,90 @@ function toUserDefinedFunction(root: jsonP.JSONValue): UserDefinedFunction {
       "CreateTime": "d",
       "ResourceUris": [toResourceUri],
       "CatalogId": "s",
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
+export interface RegistryListItem {
+  RegistryName?: string | null;
+  RegistryArn?: string | null;
+  Description?: string | null;
+  Status?: RegistryStatus | null;
+  CreatedTime?: string | null;
+  UpdatedTime?: string | null;
+}
+function toRegistryListItem(root: jsonP.JSONValue): RegistryListItem {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "RegistryName": "s",
+      "RegistryArn": "s",
+      "Description": "s",
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<RegistryStatus>(x),
+      "CreatedTime": "s",
+      "UpdatedTime": "s",
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
+export interface SchemaVersionListItem {
+  SchemaArn?: string | null;
+  SchemaVersionId?: string | null;
+  VersionNumber?: number | null;
+  Status?: SchemaVersionStatus | null;
+  CreatedTime?: string | null;
+}
+function toSchemaVersionListItem(root: jsonP.JSONValue): SchemaVersionListItem {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "SchemaArn": "s",
+      "SchemaVersionId": "s",
+      "VersionNumber": "n",
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<SchemaVersionStatus>(x),
+      "CreatedTime": "s",
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
+export interface SchemaListItem {
+  RegistryName?: string | null;
+  SchemaName?: string | null;
+  SchemaArn?: string | null;
+  Description?: string | null;
+  SchemaStatus?: SchemaStatus | null;
+  CreatedTime?: string | null;
+  UpdatedTime?: string | null;
+}
+function toSchemaListItem(root: jsonP.JSONValue): SchemaListItem {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "RegistryName": "s",
+      "SchemaName": "s",
+      "SchemaArn": "s",
+      "Description": "s",
+      "SchemaStatus": (x: jsonP.JSONValue) => cmnP.readEnum<SchemaStatus>(x),
+      "CreatedTime": "s",
+      "UpdatedTime": "s",
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
+export interface MetadataInfo {
+  MetadataValue?: string | null;
+  CreatedTime?: string | null;
+}
+function toMetadataInfo(root: jsonP.JSONValue): MetadataInfo {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "MetadataValue": "s",
+      "CreatedTime": "s",
     },
   }, root);
 }

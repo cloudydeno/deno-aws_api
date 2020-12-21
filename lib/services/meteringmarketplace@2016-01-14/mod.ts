@@ -56,6 +56,7 @@ export default class MarketplaceMetering {
       UsageDimension: params["UsageDimension"],
       UsageQuantity: params["UsageQuantity"],
       DryRun: params["DryRun"],
+      UsageAllocations: params["UsageAllocations"]?.map(x => fromUsageAllocation(x)),
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -124,6 +125,7 @@ export interface MeterUsageRequest {
   UsageDimension: string;
   UsageQuantity?: number | null;
   DryRun?: boolean | null;
+  UsageAllocations?: UsageAllocation[] | null;
 }
 
 // refs: 1 - tags: named, input
@@ -167,6 +169,7 @@ export interface UsageRecord {
   CustomerIdentifier: string;
   Dimension: string;
   Quantity?: number | null;
+  UsageAllocations?: UsageAllocation[] | null;
 }
 function fromUsageRecord(input?: UsageRecord | null): jsonP.JSONValue {
   if (!input) return input;
@@ -175,6 +178,7 @@ function fromUsageRecord(input?: UsageRecord | null): jsonP.JSONValue {
     CustomerIdentifier: input["CustomerIdentifier"],
     Dimension: input["Dimension"],
     Quantity: input["Quantity"],
+    UsageAllocations: input["UsageAllocations"]?.map(x => fromUsageAllocation(x)),
   }
 }
 function toUsageRecord(root: jsonP.JSONValue): UsageRecord {
@@ -186,7 +190,53 @@ function toUsageRecord(root: jsonP.JSONValue): UsageRecord {
     },
     optional: {
       "Quantity": "n",
+      "UsageAllocations": [toUsageAllocation],
     },
+  }, root);
+}
+
+// refs: 4 - tags: input, named, interface, output
+export interface UsageAllocation {
+  AllocatedUsageQuantity: number;
+  Tags?: Tag[] | null;
+}
+function fromUsageAllocation(input?: UsageAllocation | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    AllocatedUsageQuantity: input["AllocatedUsageQuantity"],
+    Tags: input["Tags"]?.map(x => fromTag(x)),
+  }
+}
+function toUsageAllocation(root: jsonP.JSONValue): UsageAllocation {
+  return jsonP.readObj({
+    required: {
+      "AllocatedUsageQuantity": "n",
+    },
+    optional: {
+      "Tags": [toTag],
+    },
+  }, root);
+}
+
+// refs: 4 - tags: input, named, interface, output
+export interface Tag {
+  Key: string;
+  Value: string;
+}
+function fromTag(input?: Tag | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    Key: input["Key"],
+    Value: input["Value"],
+  }
+}
+function toTag(root: jsonP.JSONValue): Tag {
+  return jsonP.readObj({
+    required: {
+      "Key": "s",
+      "Value": "s",
+    },
+    optional: {},
   }, root);
 }
 

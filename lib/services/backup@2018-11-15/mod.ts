@@ -257,6 +257,25 @@ export default class Backup {
     }, await resp.json());
   }
 
+  async describeGlobalSettings(
+    {abortSignal, ...params}: RequestConfig & DescribeGlobalSettingsInput = {},
+  ): Promise<DescribeGlobalSettingsOutput> {
+
+    const resp = await this.#client.performRequest({
+      abortSignal,
+      action: "DescribeGlobalSettings",
+      method: "GET",
+      requestUri: "/global-settings",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "GlobalSettings": x => jsonP.readMap(String, String, x),
+        "LastUpdateTime": "d",
+      },
+    }, await resp.json());
+  }
+
   async describeProtectedResource(
     {abortSignal, ...params}: RequestConfig & DescribeProtectedResourceInput,
   ): Promise<DescribeProtectedResourceOutput> {
@@ -293,6 +312,7 @@ export default class Backup {
         "RecoveryPointArn": "s",
         "BackupVaultName": "s",
         "BackupVaultArn": "s",
+        "SourceBackupVaultArn": "s",
         "ResourceArn": "s",
         "ResourceType": "s",
         "CreatedBy": toRecoveryPointCreator,
@@ -986,6 +1006,20 @@ export default class Backup {
     }, await resp.json());
   }
 
+  async updateGlobalSettings(
+    {abortSignal, ...params}: RequestConfig & UpdateGlobalSettingsInput = {},
+  ): Promise<void> {
+    const body: jsonP.JSONObject = {
+      GlobalSettings: params["GlobalSettings"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "UpdateGlobalSettings",
+      method: "PUT",
+      requestUri: "/global-settings",
+    });
+  }
+
   async updateRecoveryPointLifecycle(
     {abortSignal, ...params}: RequestConfig & UpdateRecoveryPointLifecycleInput,
   ): Promise<UpdateRecoveryPointLifecycleOutput> {
@@ -1091,6 +1125,10 @@ export interface DescribeBackupVaultInput {
 // refs: 1 - tags: named, input
 export interface DescribeCopyJobInput {
   CopyJobId: string;
+}
+
+// refs: 1 - tags: named, input
+export interface DescribeGlobalSettingsInput {
 }
 
 // refs: 1 - tags: named, input
@@ -1326,6 +1364,11 @@ export interface UpdateBackupPlanInput {
 }
 
 // refs: 1 - tags: named, input
+export interface UpdateGlobalSettingsInput {
+  GlobalSettings?: { [key: string]: string | null | undefined } | null;
+}
+
+// refs: 1 - tags: named, input
 export interface UpdateRecoveryPointLifecycleInput {
   BackupVaultName: string;
   RecoveryPointArn: string;
@@ -1408,6 +1451,12 @@ export interface DescribeCopyJobOutput {
 }
 
 // refs: 1 - tags: named, output
+export interface DescribeGlobalSettingsOutput {
+  GlobalSettings?: { [key: string]: string | null | undefined } | null;
+  LastUpdateTime?: Date | number | null;
+}
+
+// refs: 1 - tags: named, output
 export interface DescribeProtectedResourceOutput {
   ResourceArn?: string | null;
   ResourceType?: string | null;
@@ -1419,6 +1468,7 @@ export interface DescribeRecoveryPointOutput {
   RecoveryPointArn?: string | null;
   BackupVaultName?: string | null;
   BackupVaultArn?: string | null;
+  SourceBackupVaultArn?: string | null;
   ResourceArn?: string | null;
   ResourceType?: string | null;
   CreatedBy?: RecoveryPointCreator | null;
@@ -2143,6 +2193,7 @@ export interface RecoveryPointByBackupVault {
   RecoveryPointArn?: string | null;
   BackupVaultName?: string | null;
   BackupVaultArn?: string | null;
+  SourceBackupVaultArn?: string | null;
   ResourceArn?: string | null;
   ResourceType?: string | null;
   CreatedBy?: RecoveryPointCreator | null;
@@ -2164,6 +2215,7 @@ function toRecoveryPointByBackupVault(root: jsonP.JSONValue): RecoveryPointByBac
       "RecoveryPointArn": "s",
       "BackupVaultName": "s",
       "BackupVaultArn": "s",
+      "SourceBackupVaultArn": "s",
       "ResourceArn": "s",
       "ResourceType": "s",
       "CreatedBy": toRecoveryPointCreator,

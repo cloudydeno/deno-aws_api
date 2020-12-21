@@ -5,7 +5,7 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import * as uuidv4 from "https://deno.land/std@0.71.0/uuid/v4.ts";
+import * as uuidv4 from "https://deno.land/std@0.75.0/uuid/v4.ts";
 import * as cmnP from "../../encoding/common.ts";
 import * as jsonP from "../../encoding/json.ts";
 function generateIdemptToken() {
@@ -30,6 +30,48 @@ export default class Translate {
     "targetPrefix": "AWSShineFrontendService_20170701",
     "uid": "translate-2017-07-01"
   };
+
+  async createParallelData(
+    {abortSignal, ...params}: RequestConfig & CreateParallelDataRequest,
+  ): Promise<CreateParallelDataResponse> {
+    const body: jsonP.JSONObject = {
+      Name: params["Name"],
+      Description: params["Description"],
+      ParallelDataConfig: fromParallelDataConfig(params["ParallelDataConfig"]),
+      EncryptionKey: fromEncryptionKey(params["EncryptionKey"]),
+      ClientToken: params["ClientToken"] ?? generateIdemptToken(),
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "CreateParallelData",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Name": "s",
+        "Status": (x: jsonP.JSONValue) => cmnP.readEnum<ParallelDataStatus>(x),
+      },
+    }, await resp.json());
+  }
+
+  async deleteParallelData(
+    {abortSignal, ...params}: RequestConfig & DeleteParallelDataRequest,
+  ): Promise<DeleteParallelDataResponse> {
+    const body: jsonP.JSONObject = {
+      Name: params["Name"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DeleteParallelData",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Name": "s",
+        "Status": (x: jsonP.JSONValue) => cmnP.readEnum<ParallelDataStatus>(x),
+      },
+    }, await resp.json());
+  }
 
   async deleteTerminology(
     {abortSignal, ...params}: RequestConfig & DeleteTerminologyRequest,
@@ -57,6 +99,27 @@ export default class Translate {
       required: {},
       optional: {
         "TextTranslationJobProperties": toTextTranslationJobProperties,
+      },
+    }, await resp.json());
+  }
+
+  async getParallelData(
+    {abortSignal, ...params}: RequestConfig & GetParallelDataRequest,
+  ): Promise<GetParallelDataResponse> {
+    const body: jsonP.JSONObject = {
+      Name: params["Name"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "GetParallelData",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ParallelDataProperties": toParallelDataProperties,
+        "DataLocation": toParallelDataDataLocation,
+        "AuxiliaryDataLocation": toParallelDataDataLocation,
+        "LatestUpdateAttemptAuxiliaryDataLocation": toParallelDataDataLocation,
       },
     }, await resp.json());
   }
@@ -99,6 +162,26 @@ export default class Translate {
       required: {},
       optional: {
         "TerminologyProperties": toTerminologyProperties,
+      },
+    }, await resp.json());
+  }
+
+  async listParallelData(
+    {abortSignal, ...params}: RequestConfig & ListParallelDataRequest = {},
+  ): Promise<ListParallelDataResponse> {
+    const body: jsonP.JSONObject = {
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "ListParallelData",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ParallelDataPropertiesList": [toParallelDataProperties],
+        "NextToken": "s",
       },
     }, await resp.json());
   }
@@ -155,6 +238,7 @@ export default class Translate {
       SourceLanguageCode: params["SourceLanguageCode"],
       TargetLanguageCodes: params["TargetLanguageCodes"],
       TerminologyNames: params["TerminologyNames"],
+      ParallelDataNames: params["ParallelDataNames"],
       ClientToken: params["ClientToken"] ?? generateIdemptToken(),
     };
     const resp = await this.#client.performRequest({
@@ -214,6 +298,44 @@ export default class Translate {
     }, await resp.json());
   }
 
+  async updateParallelData(
+    {abortSignal, ...params}: RequestConfig & UpdateParallelDataRequest,
+  ): Promise<UpdateParallelDataResponse> {
+    const body: jsonP.JSONObject = {
+      Name: params["Name"],
+      Description: params["Description"],
+      ParallelDataConfig: fromParallelDataConfig(params["ParallelDataConfig"]),
+      ClientToken: params["ClientToken"] ?? generateIdemptToken(),
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "UpdateParallelData",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Name": "s",
+        "Status": (x: jsonP.JSONValue) => cmnP.readEnum<ParallelDataStatus>(x),
+        "LatestUpdateAttemptStatus": (x: jsonP.JSONValue) => cmnP.readEnum<ParallelDataStatus>(x),
+        "LatestUpdateAttemptAt": "d",
+      },
+    }, await resp.json());
+  }
+
+}
+
+// refs: 1 - tags: named, input
+export interface CreateParallelDataRequest {
+  Name: string;
+  Description?: string | null;
+  ParallelDataConfig: ParallelDataConfig;
+  EncryptionKey?: EncryptionKey | null;
+  ClientToken: string;
+}
+
+// refs: 1 - tags: named, input
+export interface DeleteParallelDataRequest {
+  Name: string;
 }
 
 // refs: 1 - tags: named, input
@@ -224,6 +346,11 @@ export interface DeleteTerminologyRequest {
 // refs: 1 - tags: named, input
 export interface DescribeTextTranslationJobRequest {
   JobId: string;
+}
+
+// refs: 1 - tags: named, input
+export interface GetParallelDataRequest {
+  Name: string;
 }
 
 // refs: 1 - tags: named, input
@@ -239,6 +366,12 @@ export interface ImportTerminologyRequest {
   Description?: string | null;
   TerminologyData: TerminologyData;
   EncryptionKey?: EncryptionKey | null;
+}
+
+// refs: 1 - tags: named, input
+export interface ListParallelDataRequest {
+  NextToken?: string | null;
+  MaxResults?: number | null;
 }
 
 // refs: 1 - tags: named, input
@@ -263,6 +396,7 @@ export interface StartTextTranslationJobRequest {
   SourceLanguageCode: string;
   TargetLanguageCodes: string[];
   TerminologyNames?: string[] | null;
+  ParallelDataNames?: string[] | null;
   ClientToken: string;
 }
 
@@ -279,9 +413,37 @@ export interface TranslateTextRequest {
   TargetLanguageCode: string;
 }
 
+// refs: 1 - tags: named, input
+export interface UpdateParallelDataRequest {
+  Name: string;
+  Description?: string | null;
+  ParallelDataConfig: ParallelDataConfig;
+  ClientToken: string;
+}
+
+// refs: 1 - tags: named, output
+export interface CreateParallelDataResponse {
+  Name?: string | null;
+  Status?: ParallelDataStatus | null;
+}
+
+// refs: 1 - tags: named, output
+export interface DeleteParallelDataResponse {
+  Name?: string | null;
+  Status?: ParallelDataStatus | null;
+}
+
 // refs: 1 - tags: named, output
 export interface DescribeTextTranslationJobResponse {
   TextTranslationJobProperties?: TextTranslationJobProperties | null;
+}
+
+// refs: 1 - tags: named, output
+export interface GetParallelDataResponse {
+  ParallelDataProperties?: ParallelDataProperties | null;
+  DataLocation?: ParallelDataDataLocation | null;
+  AuxiliaryDataLocation?: ParallelDataDataLocation | null;
+  LatestUpdateAttemptAuxiliaryDataLocation?: ParallelDataDataLocation | null;
 }
 
 // refs: 1 - tags: named, output
@@ -293,6 +455,12 @@ export interface GetTerminologyResponse {
 // refs: 1 - tags: named, output
 export interface ImportTerminologyResponse {
   TerminologyProperties?: TerminologyProperties | null;
+}
+
+// refs: 1 - tags: named, output
+export interface ListParallelDataResponse {
+  ParallelDataPropertiesList?: ParallelDataProperties[] | null;
+  NextToken?: string | null;
 }
 
 // refs: 1 - tags: named, output
@@ -327,6 +495,70 @@ export interface TranslateTextResponse {
   AppliedTerminologies?: AppliedTerminology[] | null;
 }
 
+// refs: 1 - tags: named, output
+export interface UpdateParallelDataResponse {
+  Name?: string | null;
+  Status?: ParallelDataStatus | null;
+  LatestUpdateAttemptStatus?: ParallelDataStatus | null;
+  LatestUpdateAttemptAt?: Date | number | null;
+}
+
+// refs: 4 - tags: input, named, interface, output
+export interface ParallelDataConfig {
+  S3Uri: string;
+  Format: ParallelDataFormat;
+}
+function fromParallelDataConfig(input?: ParallelDataConfig | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    S3Uri: input["S3Uri"],
+    Format: input["Format"],
+  }
+}
+function toParallelDataConfig(root: jsonP.JSONValue): ParallelDataConfig {
+  return jsonP.readObj({
+    required: {
+      "S3Uri": "s",
+      "Format": (x: jsonP.JSONValue) => cmnP.readEnum<ParallelDataFormat>(x),
+    },
+    optional: {},
+  }, root);
+}
+
+// refs: 4 - tags: input, named, enum, output
+export type ParallelDataFormat =
+| "TSV"
+| "CSV"
+| "TMX"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 7 - tags: input, named, interface, output
+export interface EncryptionKey {
+  Type: EncryptionKeyType;
+  Id: string;
+}
+function fromEncryptionKey(input?: EncryptionKey | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    Type: input["Type"],
+    Id: input["Id"],
+  }
+}
+function toEncryptionKey(root: jsonP.JSONValue): EncryptionKey {
+  return jsonP.readObj({
+    required: {
+      "Type": (x: jsonP.JSONValue) => cmnP.readEnum<EncryptionKeyType>(x),
+      "Id": "s",
+    },
+    optional: {},
+  }, root);
+}
+
+// refs: 7 - tags: input, named, enum, output
+export type EncryptionKeyType =
+| "KMS"
+| cmnP.UnexpectedEnumValue;
+
 // refs: 2 - tags: input, named, enum
 export type TerminologyDataFormat =
 | "CSV"
@@ -350,33 +582,6 @@ function fromTerminologyData(input?: TerminologyData | null): jsonP.JSONValue {
     Format: input["Format"],
   }
 }
-
-// refs: 4 - tags: input, named, interface, output
-export interface EncryptionKey {
-  Type: EncryptionKeyType;
-  Id: string;
-}
-function fromEncryptionKey(input?: EncryptionKey | null): jsonP.JSONValue {
-  if (!input) return input;
-  return {
-    Type: input["Type"],
-    Id: input["Id"],
-  }
-}
-function toEncryptionKey(root: jsonP.JSONValue): EncryptionKey {
-  return jsonP.readObj({
-    required: {
-      "Type": (x: jsonP.JSONValue) => cmnP.readEnum<EncryptionKeyType>(x),
-      "Id": "s",
-    },
-    optional: {},
-  }, root);
-}
-
-// refs: 4 - tags: input, named, enum, output
-export type EncryptionKeyType =
-| "KMS"
-| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface TextTranslationJobFilter {
@@ -447,6 +652,15 @@ function toOutputDataConfig(root: jsonP.JSONValue): OutputDataConfig {
   }, root);
 }
 
+// refs: 8 - tags: output, named, enum
+export type ParallelDataStatus =
+| "CREATING"
+| "UPDATING"
+| "ACTIVE"
+| "DELETING"
+| "FAILED"
+| cmnP.UnexpectedEnumValue;
+
 // refs: 2 - tags: output, named, interface
 export interface TextTranslationJobProperties {
   JobId?: string | null;
@@ -456,6 +670,7 @@ export interface TextTranslationJobProperties {
   SourceLanguageCode?: string | null;
   TargetLanguageCodes?: string[] | null;
   TerminologyNames?: string[] | null;
+  ParallelDataNames?: string[] | null;
   Message?: string | null;
   SubmittedTime?: Date | number | null;
   EndTime?: Date | number | null;
@@ -474,6 +689,7 @@ function toTextTranslationJobProperties(root: jsonP.JSONValue): TextTranslationJ
       "SourceLanguageCode": "s",
       "TargetLanguageCodes": ["s"],
       "TerminologyNames": ["s"],
+      "ParallelDataNames": ["s"],
       "Message": "s",
       "SubmittedTime": "d",
       "EndTime": "d",
@@ -498,6 +714,66 @@ function toJobDetails(root: jsonP.JSONValue): JobDetails {
       "DocumentsWithErrorsCount": "n",
       "InputDocumentsCount": "n",
     },
+  }, root);
+}
+
+// refs: 2 - tags: output, named, interface
+export interface ParallelDataProperties {
+  Name?: string | null;
+  Arn?: string | null;
+  Description?: string | null;
+  Status?: ParallelDataStatus | null;
+  SourceLanguageCode?: string | null;
+  TargetLanguageCodes?: string[] | null;
+  ParallelDataConfig?: ParallelDataConfig | null;
+  Message?: string | null;
+  ImportedDataSize?: number | null;
+  ImportedRecordCount?: number | null;
+  FailedRecordCount?: number | null;
+  SkippedRecordCount?: number | null;
+  EncryptionKey?: EncryptionKey | null;
+  CreatedAt?: Date | number | null;
+  LastUpdatedAt?: Date | number | null;
+  LatestUpdateAttemptStatus?: ParallelDataStatus | null;
+  LatestUpdateAttemptAt?: Date | number | null;
+}
+function toParallelDataProperties(root: jsonP.JSONValue): ParallelDataProperties {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "Name": "s",
+      "Arn": "s",
+      "Description": "s",
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<ParallelDataStatus>(x),
+      "SourceLanguageCode": "s",
+      "TargetLanguageCodes": ["s"],
+      "ParallelDataConfig": toParallelDataConfig,
+      "Message": "s",
+      "ImportedDataSize": "n",
+      "ImportedRecordCount": "n",
+      "FailedRecordCount": "n",
+      "SkippedRecordCount": "n",
+      "EncryptionKey": toEncryptionKey,
+      "CreatedAt": "d",
+      "LastUpdatedAt": "d",
+      "LatestUpdateAttemptStatus": (x: jsonP.JSONValue) => cmnP.readEnum<ParallelDataStatus>(x),
+      "LatestUpdateAttemptAt": "d",
+    },
+  }, root);
+}
+
+// refs: 3 - tags: output, named, interface
+export interface ParallelDataDataLocation {
+  RepositoryType: string;
+  Location: string;
+}
+function toParallelDataDataLocation(root: jsonP.JSONValue): ParallelDataDataLocation {
+  return jsonP.readObj({
+    required: {
+      "RepositoryType": "s",
+      "Location": "s",
+    },
+    optional: {},
   }, root);
 }
 

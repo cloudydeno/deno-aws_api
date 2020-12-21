@@ -465,6 +465,7 @@ export type VoiceId =
 | "Mizuki"
 | "Naja"
 | "Nicole"
+| "Olivia"
 | "Penelope"
 | "Raveena"
 | "Ricardo"

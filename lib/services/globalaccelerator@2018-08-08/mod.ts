@@ -5,7 +5,7 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import * as uuidv4 from "https://deno.land/std@0.71.0/uuid/v4.ts";
+import * as uuidv4 from "https://deno.land/std@0.75.0/uuid/v4.ts";
 import * as cmnP from "../../encoding/common.ts";
 import * as jsonP from "../../encoding/json.ts";
 function generateIdemptToken() {
@@ -31,6 +31,26 @@ export default class GlobalAccelerator {
     "uid": "globalaccelerator-2018-08-08"
   };
 
+  async addCustomRoutingEndpoints(
+    {abortSignal, ...params}: RequestConfig & AddCustomRoutingEndpointsRequest,
+  ): Promise<AddCustomRoutingEndpointsResponse> {
+    const body: jsonP.JSONObject = {
+      EndpointConfigurations: params["EndpointConfigurations"]?.map(x => fromCustomRoutingEndpointConfiguration(x)),
+      EndpointGroupArn: params["EndpointGroupArn"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "AddCustomRoutingEndpoints",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "EndpointDescriptions": [toCustomRoutingEndpointDescription],
+        "EndpointGroupArn": "s",
+      },
+    }, await resp.json());
+  }
+
   async advertiseByoipCidr(
     {abortSignal, ...params}: RequestConfig & AdvertiseByoipCidrRequest,
   ): Promise<AdvertiseByoipCidrResponse> {
@@ -47,6 +67,22 @@ export default class GlobalAccelerator {
         "ByoipCidr": toByoipCidr,
       },
     }, await resp.json());
+  }
+
+  async allowCustomRoutingTraffic(
+    {abortSignal, ...params}: RequestConfig & AllowCustomRoutingTrafficRequest,
+  ): Promise<void> {
+    const body: jsonP.JSONObject = {
+      EndpointGroupArn: params["EndpointGroupArn"],
+      EndpointId: params["EndpointId"],
+      DestinationAddresses: params["DestinationAddresses"],
+      DestinationPorts: params["DestinationPorts"],
+      AllowAllTrafficToEndpoint: params["AllowAllTrafficToEndpoint"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "AllowCustomRoutingTraffic",
+    });
   }
 
   async createAccelerator(
@@ -68,6 +104,69 @@ export default class GlobalAccelerator {
       required: {},
       optional: {
         "Accelerator": toAccelerator,
+      },
+    }, await resp.json());
+  }
+
+  async createCustomRoutingAccelerator(
+    {abortSignal, ...params}: RequestConfig & CreateCustomRoutingAcceleratorRequest,
+  ): Promise<CreateCustomRoutingAcceleratorResponse> {
+    const body: jsonP.JSONObject = {
+      Name: params["Name"],
+      IpAddressType: params["IpAddressType"],
+      Enabled: params["Enabled"],
+      IdempotencyToken: params["IdempotencyToken"] ?? generateIdemptToken(),
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "CreateCustomRoutingAccelerator",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Accelerator": toCustomRoutingAccelerator,
+      },
+    }, await resp.json());
+  }
+
+  async createCustomRoutingEndpointGroup(
+    {abortSignal, ...params}: RequestConfig & CreateCustomRoutingEndpointGroupRequest,
+  ): Promise<CreateCustomRoutingEndpointGroupResponse> {
+    const body: jsonP.JSONObject = {
+      ListenerArn: params["ListenerArn"],
+      EndpointGroupRegion: params["EndpointGroupRegion"],
+      DestinationConfigurations: params["DestinationConfigurations"]?.map(x => fromCustomRoutingDestinationConfiguration(x)),
+      IdempotencyToken: params["IdempotencyToken"] ?? generateIdemptToken(),
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "CreateCustomRoutingEndpointGroup",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "EndpointGroup": toCustomRoutingEndpointGroup,
+      },
+    }, await resp.json());
+  }
+
+  async createCustomRoutingListener(
+    {abortSignal, ...params}: RequestConfig & CreateCustomRoutingListenerRequest,
+  ): Promise<CreateCustomRoutingListenerResponse> {
+    const body: jsonP.JSONObject = {
+      AcceleratorArn: params["AcceleratorArn"],
+      PortRanges: params["PortRanges"]?.map(x => fromPortRange(x)),
+      IdempotencyToken: params["IdempotencyToken"] ?? generateIdemptToken(),
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "CreateCustomRoutingListener",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Listener": toCustomRoutingListener,
       },
     }, await resp.json());
   }
@@ -134,6 +233,42 @@ export default class GlobalAccelerator {
     });
   }
 
+  async deleteCustomRoutingAccelerator(
+    {abortSignal, ...params}: RequestConfig & DeleteCustomRoutingAcceleratorRequest,
+  ): Promise<void> {
+    const body: jsonP.JSONObject = {
+      AcceleratorArn: params["AcceleratorArn"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DeleteCustomRoutingAccelerator",
+    });
+  }
+
+  async deleteCustomRoutingEndpointGroup(
+    {abortSignal, ...params}: RequestConfig & DeleteCustomRoutingEndpointGroupRequest,
+  ): Promise<void> {
+    const body: jsonP.JSONObject = {
+      EndpointGroupArn: params["EndpointGroupArn"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DeleteCustomRoutingEndpointGroup",
+    });
+  }
+
+  async deleteCustomRoutingListener(
+    {abortSignal, ...params}: RequestConfig & DeleteCustomRoutingListenerRequest,
+  ): Promise<void> {
+    const body: jsonP.JSONObject = {
+      ListenerArn: params["ListenerArn"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DeleteCustomRoutingListener",
+    });
+  }
+
   async deleteEndpointGroup(
     {abortSignal, ...params}: RequestConfig & DeleteEndpointGroupRequest,
   ): Promise<void> {
@@ -155,6 +290,22 @@ export default class GlobalAccelerator {
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteListener",
+    });
+  }
+
+  async denyCustomRoutingTraffic(
+    {abortSignal, ...params}: RequestConfig & DenyCustomRoutingTrafficRequest,
+  ): Promise<void> {
+    const body: jsonP.JSONObject = {
+      EndpointGroupArn: params["EndpointGroupArn"],
+      EndpointId: params["EndpointId"],
+      DestinationAddresses: params["DestinationAddresses"],
+      DestinationPorts: params["DestinationPorts"],
+      DenyAllTrafficToEndpoint: params["DenyAllTrafficToEndpoint"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DenyCustomRoutingTraffic",
     });
   }
 
@@ -208,6 +359,78 @@ export default class GlobalAccelerator {
       required: {},
       optional: {
         "AcceleratorAttributes": toAcceleratorAttributes,
+      },
+    }, await resp.json());
+  }
+
+  async describeCustomRoutingAccelerator(
+    {abortSignal, ...params}: RequestConfig & DescribeCustomRoutingAcceleratorRequest,
+  ): Promise<DescribeCustomRoutingAcceleratorResponse> {
+    const body: jsonP.JSONObject = {
+      AcceleratorArn: params["AcceleratorArn"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DescribeCustomRoutingAccelerator",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Accelerator": toCustomRoutingAccelerator,
+      },
+    }, await resp.json());
+  }
+
+  async describeCustomRoutingAcceleratorAttributes(
+    {abortSignal, ...params}: RequestConfig & DescribeCustomRoutingAcceleratorAttributesRequest,
+  ): Promise<DescribeCustomRoutingAcceleratorAttributesResponse> {
+    const body: jsonP.JSONObject = {
+      AcceleratorArn: params["AcceleratorArn"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DescribeCustomRoutingAcceleratorAttributes",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "AcceleratorAttributes": toCustomRoutingAcceleratorAttributes,
+      },
+    }, await resp.json());
+  }
+
+  async describeCustomRoutingEndpointGroup(
+    {abortSignal, ...params}: RequestConfig & DescribeCustomRoutingEndpointGroupRequest,
+  ): Promise<DescribeCustomRoutingEndpointGroupResponse> {
+    const body: jsonP.JSONObject = {
+      EndpointGroupArn: params["EndpointGroupArn"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DescribeCustomRoutingEndpointGroup",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "EndpointGroup": toCustomRoutingEndpointGroup,
+      },
+    }, await resp.json());
+  }
+
+  async describeCustomRoutingListener(
+    {abortSignal, ...params}: RequestConfig & DescribeCustomRoutingListenerRequest,
+  ): Promise<DescribeCustomRoutingListenerResponse> {
+    const body: jsonP.JSONObject = {
+      ListenerArn: params["ListenerArn"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DescribeCustomRoutingListener",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Listener": toCustomRoutingListener,
       },
     }, await resp.json());
   }
@@ -283,6 +506,112 @@ export default class GlobalAccelerator {
       required: {},
       optional: {
         "ByoipCidrs": [toByoipCidr],
+        "NextToken": "s",
+      },
+    }, await resp.json());
+  }
+
+  async listCustomRoutingAccelerators(
+    {abortSignal, ...params}: RequestConfig & ListCustomRoutingAcceleratorsRequest = {},
+  ): Promise<ListCustomRoutingAcceleratorsResponse> {
+    const body: jsonP.JSONObject = {
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "ListCustomRoutingAccelerators",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Accelerators": [toCustomRoutingAccelerator],
+        "NextToken": "s",
+      },
+    }, await resp.json());
+  }
+
+  async listCustomRoutingEndpointGroups(
+    {abortSignal, ...params}: RequestConfig & ListCustomRoutingEndpointGroupsRequest,
+  ): Promise<ListCustomRoutingEndpointGroupsResponse> {
+    const body: jsonP.JSONObject = {
+      ListenerArn: params["ListenerArn"],
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "ListCustomRoutingEndpointGroups",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "EndpointGroups": [toCustomRoutingEndpointGroup],
+        "NextToken": "s",
+      },
+    }, await resp.json());
+  }
+
+  async listCustomRoutingListeners(
+    {abortSignal, ...params}: RequestConfig & ListCustomRoutingListenersRequest,
+  ): Promise<ListCustomRoutingListenersResponse> {
+    const body: jsonP.JSONObject = {
+      AcceleratorArn: params["AcceleratorArn"],
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "ListCustomRoutingListeners",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Listeners": [toCustomRoutingListener],
+        "NextToken": "s",
+      },
+    }, await resp.json());
+  }
+
+  async listCustomRoutingPortMappings(
+    {abortSignal, ...params}: RequestConfig & ListCustomRoutingPortMappingsRequest,
+  ): Promise<ListCustomRoutingPortMappingsResponse> {
+    const body: jsonP.JSONObject = {
+      AcceleratorArn: params["AcceleratorArn"],
+      EndpointGroupArn: params["EndpointGroupArn"],
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "ListCustomRoutingPortMappings",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "PortMappings": [toPortMapping],
+        "NextToken": "s",
+      },
+    }, await resp.json());
+  }
+
+  async listCustomRoutingPortMappingsByDestination(
+    {abortSignal, ...params}: RequestConfig & ListCustomRoutingPortMappingsByDestinationRequest,
+  ): Promise<ListCustomRoutingPortMappingsByDestinationResponse> {
+    const body: jsonP.JSONObject = {
+      EndpointId: params["EndpointId"],
+      DestinationAddress: params["DestinationAddress"],
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "ListCustomRoutingPortMappingsByDestination",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "DestinationPortMappings": [toDestinationPortMapping],
         "NextToken": "s",
       },
     }, await resp.json());
@@ -367,6 +696,19 @@ export default class GlobalAccelerator {
     }, await resp.json());
   }
 
+  async removeCustomRoutingEndpoints(
+    {abortSignal, ...params}: RequestConfig & RemoveCustomRoutingEndpointsRequest,
+  ): Promise<void> {
+    const body: jsonP.JSONObject = {
+      EndpointIds: params["EndpointIds"],
+      EndpointGroupArn: params["EndpointGroupArn"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "RemoveCustomRoutingEndpoints",
+    });
+  }
+
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResponse> {
@@ -443,6 +785,67 @@ export default class GlobalAccelerator {
     }, await resp.json());
   }
 
+  async updateCustomRoutingAccelerator(
+    {abortSignal, ...params}: RequestConfig & UpdateCustomRoutingAcceleratorRequest,
+  ): Promise<UpdateCustomRoutingAcceleratorResponse> {
+    const body: jsonP.JSONObject = {
+      AcceleratorArn: params["AcceleratorArn"],
+      Name: params["Name"],
+      IpAddressType: params["IpAddressType"],
+      Enabled: params["Enabled"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "UpdateCustomRoutingAccelerator",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Accelerator": toCustomRoutingAccelerator,
+      },
+    }, await resp.json());
+  }
+
+  async updateCustomRoutingAcceleratorAttributes(
+    {abortSignal, ...params}: RequestConfig & UpdateCustomRoutingAcceleratorAttributesRequest,
+  ): Promise<UpdateCustomRoutingAcceleratorAttributesResponse> {
+    const body: jsonP.JSONObject = {
+      AcceleratorArn: params["AcceleratorArn"],
+      FlowLogsEnabled: params["FlowLogsEnabled"],
+      FlowLogsS3Bucket: params["FlowLogsS3Bucket"],
+      FlowLogsS3Prefix: params["FlowLogsS3Prefix"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "UpdateCustomRoutingAcceleratorAttributes",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "AcceleratorAttributes": toCustomRoutingAcceleratorAttributes,
+      },
+    }, await resp.json());
+  }
+
+  async updateCustomRoutingListener(
+    {abortSignal, ...params}: RequestConfig & UpdateCustomRoutingListenerRequest,
+  ): Promise<UpdateCustomRoutingListenerResponse> {
+    const body: jsonP.JSONObject = {
+      ListenerArn: params["ListenerArn"],
+      PortRanges: params["PortRanges"]?.map(x => fromPortRange(x)),
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "UpdateCustomRoutingListener",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Listener": toCustomRoutingListener,
+      },
+    }, await resp.json());
+  }
+
   async updateEndpointGroup(
     {abortSignal, ...params}: RequestConfig & UpdateEndpointGroupRequest,
   ): Promise<UpdateEndpointGroupResponse> {
@@ -511,8 +914,23 @@ export default class GlobalAccelerator {
 }
 
 // refs: 1 - tags: named, input
+export interface AddCustomRoutingEndpointsRequest {
+  EndpointConfigurations: CustomRoutingEndpointConfiguration[];
+  EndpointGroupArn: string;
+}
+
+// refs: 1 - tags: named, input
 export interface AdvertiseByoipCidrRequest {
   Cidr: string;
+}
+
+// refs: 1 - tags: named, input
+export interface AllowCustomRoutingTrafficRequest {
+  EndpointGroupArn: string;
+  EndpointId: string;
+  DestinationAddresses?: string[] | null;
+  DestinationPorts?: number[] | null;
+  AllowAllTrafficToEndpoint?: boolean | null;
 }
 
 // refs: 1 - tags: named, input
@@ -523,6 +941,30 @@ export interface CreateAcceleratorRequest {
   Enabled?: boolean | null;
   IdempotencyToken: string;
   Tags?: Tag[] | null;
+}
+
+// refs: 1 - tags: named, input
+export interface CreateCustomRoutingAcceleratorRequest {
+  Name: string;
+  IpAddressType?: IpAddressType | null;
+  Enabled?: boolean | null;
+  IdempotencyToken: string;
+  Tags?: Tag[] | null;
+}
+
+// refs: 1 - tags: named, input
+export interface CreateCustomRoutingEndpointGroupRequest {
+  ListenerArn: string;
+  EndpointGroupRegion: string;
+  DestinationConfigurations: CustomRoutingDestinationConfiguration[];
+  IdempotencyToken: string;
+}
+
+// refs: 1 - tags: named, input
+export interface CreateCustomRoutingListenerRequest {
+  AcceleratorArn: string;
+  PortRanges: PortRange[];
+  IdempotencyToken: string;
 }
 
 // refs: 1 - tags: named, input
@@ -555,6 +997,21 @@ export interface DeleteAcceleratorRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface DeleteCustomRoutingAcceleratorRequest {
+  AcceleratorArn: string;
+}
+
+// refs: 1 - tags: named, input
+export interface DeleteCustomRoutingEndpointGroupRequest {
+  EndpointGroupArn: string;
+}
+
+// refs: 1 - tags: named, input
+export interface DeleteCustomRoutingListenerRequest {
+  ListenerArn: string;
+}
+
+// refs: 1 - tags: named, input
 export interface DeleteEndpointGroupRequest {
   EndpointGroupArn: string;
 }
@@ -562,6 +1019,15 @@ export interface DeleteEndpointGroupRequest {
 // refs: 1 - tags: named, input
 export interface DeleteListenerRequest {
   ListenerArn: string;
+}
+
+// refs: 1 - tags: named, input
+export interface DenyCustomRoutingTrafficRequest {
+  EndpointGroupArn: string;
+  EndpointId: string;
+  DestinationAddresses?: string[] | null;
+  DestinationPorts?: number[] | null;
+  DenyAllTrafficToEndpoint?: boolean | null;
 }
 
 // refs: 1 - tags: named, input
@@ -577,6 +1043,26 @@ export interface DescribeAcceleratorRequest {
 // refs: 1 - tags: named, input
 export interface DescribeAcceleratorAttributesRequest {
   AcceleratorArn: string;
+}
+
+// refs: 1 - tags: named, input
+export interface DescribeCustomRoutingAcceleratorRequest {
+  AcceleratorArn: string;
+}
+
+// refs: 1 - tags: named, input
+export interface DescribeCustomRoutingAcceleratorAttributesRequest {
+  AcceleratorArn: string;
+}
+
+// refs: 1 - tags: named, input
+export interface DescribeCustomRoutingEndpointGroupRequest {
+  EndpointGroupArn: string;
+}
+
+// refs: 1 - tags: named, input
+export interface DescribeCustomRoutingListenerRequest {
+  ListenerArn: string;
 }
 
 // refs: 1 - tags: named, input
@@ -597,6 +1083,42 @@ export interface ListAcceleratorsRequest {
 
 // refs: 1 - tags: named, input
 export interface ListByoipCidrsRequest {
+  MaxResults?: number | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface ListCustomRoutingAcceleratorsRequest {
+  MaxResults?: number | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface ListCustomRoutingEndpointGroupsRequest {
+  ListenerArn: string;
+  MaxResults?: number | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface ListCustomRoutingListenersRequest {
+  AcceleratorArn: string;
+  MaxResults?: number | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface ListCustomRoutingPortMappingsRequest {
+  AcceleratorArn: string;
+  EndpointGroupArn?: string | null;
+  MaxResults?: number | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface ListCustomRoutingPortMappingsByDestinationRequest {
+  EndpointId: string;
+  DestinationAddress: string;
   MaxResults?: number | null;
   NextToken?: string | null;
 }
@@ -624,6 +1146,12 @@ export interface ListTagsForResourceRequest {
 export interface ProvisionByoipCidrRequest {
   Cidr: string;
   CidrAuthorizationContext: CidrAuthorizationContext;
+}
+
+// refs: 1 - tags: named, input
+export interface RemoveCustomRoutingEndpointsRequest {
+  EndpointIds: string[];
+  EndpointGroupArn: string;
 }
 
 // refs: 1 - tags: named, input
@@ -655,6 +1183,28 @@ export interface UpdateAcceleratorAttributesRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface UpdateCustomRoutingAcceleratorRequest {
+  AcceleratorArn: string;
+  Name?: string | null;
+  IpAddressType?: IpAddressType | null;
+  Enabled?: boolean | null;
+}
+
+// refs: 1 - tags: named, input
+export interface UpdateCustomRoutingAcceleratorAttributesRequest {
+  AcceleratorArn: string;
+  FlowLogsEnabled?: boolean | null;
+  FlowLogsS3Bucket?: string | null;
+  FlowLogsS3Prefix?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface UpdateCustomRoutingListenerRequest {
+  ListenerArn: string;
+  PortRanges: PortRange[];
+}
+
+// refs: 1 - tags: named, input
 export interface UpdateEndpointGroupRequest {
   EndpointGroupArn: string;
   EndpointConfigurations?: EndpointConfiguration[] | null;
@@ -681,6 +1231,12 @@ export interface WithdrawByoipCidrRequest {
 }
 
 // refs: 1 - tags: named, output
+export interface AddCustomRoutingEndpointsResponse {
+  EndpointDescriptions?: CustomRoutingEndpointDescription[] | null;
+  EndpointGroupArn?: string | null;
+}
+
+// refs: 1 - tags: named, output
 export interface AdvertiseByoipCidrResponse {
   ByoipCidr?: ByoipCidr | null;
 }
@@ -688,6 +1244,21 @@ export interface AdvertiseByoipCidrResponse {
 // refs: 1 - tags: named, output
 export interface CreateAcceleratorResponse {
   Accelerator?: Accelerator | null;
+}
+
+// refs: 1 - tags: named, output
+export interface CreateCustomRoutingAcceleratorResponse {
+  Accelerator?: CustomRoutingAccelerator | null;
+}
+
+// refs: 1 - tags: named, output
+export interface CreateCustomRoutingEndpointGroupResponse {
+  EndpointGroup?: CustomRoutingEndpointGroup | null;
+}
+
+// refs: 1 - tags: named, output
+export interface CreateCustomRoutingListenerResponse {
+  Listener?: CustomRoutingListener | null;
 }
 
 // refs: 1 - tags: named, output
@@ -716,6 +1287,26 @@ export interface DescribeAcceleratorAttributesResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface DescribeCustomRoutingAcceleratorResponse {
+  Accelerator?: CustomRoutingAccelerator | null;
+}
+
+// refs: 1 - tags: named, output
+export interface DescribeCustomRoutingAcceleratorAttributesResponse {
+  AcceleratorAttributes?: CustomRoutingAcceleratorAttributes | null;
+}
+
+// refs: 1 - tags: named, output
+export interface DescribeCustomRoutingEndpointGroupResponse {
+  EndpointGroup?: CustomRoutingEndpointGroup | null;
+}
+
+// refs: 1 - tags: named, output
+export interface DescribeCustomRoutingListenerResponse {
+  Listener?: CustomRoutingListener | null;
+}
+
+// refs: 1 - tags: named, output
 export interface DescribeEndpointGroupResponse {
   EndpointGroup?: EndpointGroup | null;
 }
@@ -734,6 +1325,36 @@ export interface ListAcceleratorsResponse {
 // refs: 1 - tags: named, output
 export interface ListByoipCidrsResponse {
   ByoipCidrs?: ByoipCidr[] | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface ListCustomRoutingAcceleratorsResponse {
+  Accelerators?: CustomRoutingAccelerator[] | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface ListCustomRoutingEndpointGroupsResponse {
+  EndpointGroups?: CustomRoutingEndpointGroup[] | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface ListCustomRoutingListenersResponse {
+  Listeners?: CustomRoutingListener[] | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface ListCustomRoutingPortMappingsResponse {
+  PortMappings?: PortMapping[] | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface ListCustomRoutingPortMappingsByDestinationResponse {
+  DestinationPortMappings?: DestinationPortMapping[] | null;
   NextToken?: string | null;
 }
 
@@ -778,6 +1399,21 @@ export interface UpdateAcceleratorAttributesResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface UpdateCustomRoutingAcceleratorResponse {
+  Accelerator?: CustomRoutingAccelerator | null;
+}
+
+// refs: 1 - tags: named, output
+export interface UpdateCustomRoutingAcceleratorAttributesResponse {
+  AcceleratorAttributes?: CustomRoutingAcceleratorAttributes | null;
+}
+
+// refs: 1 - tags: named, output
+export interface UpdateCustomRoutingListenerResponse {
+  Listener?: CustomRoutingListener | null;
+}
+
+// refs: 1 - tags: named, output
 export interface UpdateEndpointGroupResponse {
   EndpointGroup?: EndpointGroup | null;
 }
@@ -792,12 +1428,23 @@ export interface WithdrawByoipCidrResponse {
   ByoipCidr?: ByoipCidr | null;
 }
 
-// refs: 6 - tags: input, named, enum, output
+// refs: 1 - tags: input, named, interface
+export interface CustomRoutingEndpointConfiguration {
+  EndpointId?: string | null;
+}
+function fromCustomRoutingEndpointConfiguration(input?: CustomRoutingEndpointConfiguration | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    EndpointId: input["EndpointId"],
+  }
+}
+
+// refs: 13 - tags: input, named, enum, output
 export type IpAddressType =
 | "IPV4"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 3 - tags: input, named, interface, output
+// refs: 4 - tags: input, named, interface, output
 export interface Tag {
   Key: string;
   Value: string;
@@ -816,6 +1463,49 @@ function toTag(root: jsonP.JSONValue): Tag {
       "Value": "s",
     },
     optional: {},
+  }, root);
+}
+
+// refs: 1 - tags: input, named, interface
+export interface CustomRoutingDestinationConfiguration {
+  FromPort: number;
+  ToPort: number;
+  Protocols: CustomRoutingProtocol[];
+}
+function fromCustomRoutingDestinationConfiguration(input?: CustomRoutingDestinationConfiguration | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    FromPort: input["FromPort"],
+    ToPort: input["ToPort"],
+    Protocols: input["Protocols"],
+  }
+}
+
+// refs: 2 - tags: input, named, enum, output
+export type CustomRoutingProtocol =
+| "TCP"
+| "UDP"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 12 - tags: input, named, interface, output
+export interface PortRange {
+  FromPort?: number | null;
+  ToPort?: number | null;
+}
+function fromPortRange(input?: PortRange | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    FromPort: input["FromPort"],
+    ToPort: input["ToPort"],
+  }
+}
+function toPortRange(root: jsonP.JSONValue): PortRange {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "FromPort": "n",
+      "ToPort": "n",
+    },
   }, root);
 }
 
@@ -863,29 +1553,7 @@ function toPortOverride(root: jsonP.JSONValue): PortOverride {
   }, root);
 }
 
-// refs: 6 - tags: input, named, interface, output
-export interface PortRange {
-  FromPort?: number | null;
-  ToPort?: number | null;
-}
-function fromPortRange(input?: PortRange | null): jsonP.JSONValue {
-  if (!input) return input;
-  return {
-    FromPort: input["FromPort"],
-    ToPort: input["ToPort"],
-  }
-}
-function toPortRange(root: jsonP.JSONValue): PortRange {
-  return jsonP.readObj({
-    required: {},
-    optional: {
-      "FromPort": "n",
-      "ToPort": "n",
-    },
-  }, root);
-}
-
-// refs: 6 - tags: input, named, enum, output
+// refs: 9 - tags: input, named, enum, output
 export type Protocol =
 | "TCP"
 | "UDP"
@@ -908,6 +1576,19 @@ function fromCidrAuthorizationContext(input?: CidrAuthorizationContext | null): 
     Message: input["Message"],
     Signature: input["Signature"],
   }
+}
+
+// refs: 4 - tags: output, named, interface
+export interface CustomRoutingEndpointDescription {
+  EndpointId?: string | null;
+}
+function toCustomRoutingEndpointDescription(root: jsonP.JSONValue): CustomRoutingEndpointDescription {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "EndpointId": "s",
+    },
+  }, root);
 }
 
 // refs: 5 - tags: output, named, interface
@@ -986,7 +1667,7 @@ function toAccelerator(root: jsonP.JSONValue): Accelerator {
   }, root);
 }
 
-// refs: 4 - tags: output, named, interface
+// refs: 8 - tags: output, named, interface
 export interface IpSet {
   IpFamily?: string | null;
   IpAddresses?: string[] | null;
@@ -1006,6 +1687,92 @@ export type AcceleratorStatus =
 | "DEPLOYED"
 | "IN_PROGRESS"
 | cmnP.UnexpectedEnumValue;
+
+// refs: 4 - tags: output, named, interface
+export interface CustomRoutingAccelerator {
+  AcceleratorArn?: string | null;
+  Name?: string | null;
+  IpAddressType?: IpAddressType | null;
+  Enabled?: boolean | null;
+  IpSets?: IpSet[] | null;
+  DnsName?: string | null;
+  Status?: CustomRoutingAcceleratorStatus | null;
+  CreatedTime?: Date | number | null;
+  LastModifiedTime?: Date | number | null;
+}
+function toCustomRoutingAccelerator(root: jsonP.JSONValue): CustomRoutingAccelerator {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "AcceleratorArn": "s",
+      "Name": "s",
+      "IpAddressType": (x: jsonP.JSONValue) => cmnP.readEnum<IpAddressType>(x),
+      "Enabled": "b",
+      "IpSets": [toIpSet],
+      "DnsName": "s",
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<CustomRoutingAcceleratorStatus>(x),
+      "CreatedTime": "d",
+      "LastModifiedTime": "d",
+    },
+  }, root);
+}
+
+// refs: 4 - tags: output, named, enum
+export type CustomRoutingAcceleratorStatus =
+| "DEPLOYED"
+| "IN_PROGRESS"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 3 - tags: output, named, interface
+export interface CustomRoutingEndpointGroup {
+  EndpointGroupArn?: string | null;
+  EndpointGroupRegion?: string | null;
+  DestinationDescriptions?: CustomRoutingDestinationDescription[] | null;
+  EndpointDescriptions?: CustomRoutingEndpointDescription[] | null;
+}
+function toCustomRoutingEndpointGroup(root: jsonP.JSONValue): CustomRoutingEndpointGroup {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "EndpointGroupArn": "s",
+      "EndpointGroupRegion": "s",
+      "DestinationDescriptions": [toCustomRoutingDestinationDescription],
+      "EndpointDescriptions": [toCustomRoutingEndpointDescription],
+    },
+  }, root);
+}
+
+// refs: 3 - tags: output, named, interface
+export interface CustomRoutingDestinationDescription {
+  FromPort?: number | null;
+  ToPort?: number | null;
+  Protocols?: Protocol[] | null;
+}
+function toCustomRoutingDestinationDescription(root: jsonP.JSONValue): CustomRoutingDestinationDescription {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "FromPort": "n",
+      "ToPort": "n",
+      "Protocols": [(x: jsonP.JSONValue) => cmnP.readEnum<Protocol>(x)],
+    },
+  }, root);
+}
+
+// refs: 4 - tags: output, named, interface
+export interface CustomRoutingListener {
+  ListenerArn?: string | null;
+  PortRanges?: PortRange[] | null;
+}
+function toCustomRoutingListener(root: jsonP.JSONValue): CustomRoutingListener {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "ListenerArn": "s",
+      "PortRanges": [toPortRange],
+    },
+  }, root);
+}
 
 // refs: 4 - tags: output, named, interface
 export interface EndpointGroup {
@@ -1098,6 +1865,94 @@ function toAcceleratorAttributes(root: jsonP.JSONValue): AcceleratorAttributes {
       "FlowLogsEnabled": "b",
       "FlowLogsS3Bucket": "s",
       "FlowLogsS3Prefix": "s",
+    },
+  }, root);
+}
+
+// refs: 2 - tags: output, named, interface
+export interface CustomRoutingAcceleratorAttributes {
+  FlowLogsEnabled?: boolean | null;
+  FlowLogsS3Bucket?: string | null;
+  FlowLogsS3Prefix?: string | null;
+}
+function toCustomRoutingAcceleratorAttributes(root: jsonP.JSONValue): CustomRoutingAcceleratorAttributes {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "FlowLogsEnabled": "b",
+      "FlowLogsS3Bucket": "s",
+      "FlowLogsS3Prefix": "s",
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
+export interface PortMapping {
+  AcceleratorPort?: number | null;
+  EndpointGroupArn?: string | null;
+  EndpointId?: string | null;
+  DestinationSocketAddress?: SocketAddress | null;
+  Protocols?: CustomRoutingProtocol[] | null;
+  DestinationTrafficState?: CustomRoutingDestinationTrafficState | null;
+}
+function toPortMapping(root: jsonP.JSONValue): PortMapping {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "AcceleratorPort": "n",
+      "EndpointGroupArn": "s",
+      "EndpointId": "s",
+      "DestinationSocketAddress": toSocketAddress,
+      "Protocols": [(x: jsonP.JSONValue) => cmnP.readEnum<CustomRoutingProtocol>(x)],
+      "DestinationTrafficState": (x: jsonP.JSONValue) => cmnP.readEnum<CustomRoutingDestinationTrafficState>(x),
+    },
+  }, root);
+}
+
+// refs: 3 - tags: output, named, interface
+export interface SocketAddress {
+  IpAddress?: string | null;
+  Port?: number | null;
+}
+function toSocketAddress(root: jsonP.JSONValue): SocketAddress {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "IpAddress": "s",
+      "Port": "n",
+    },
+  }, root);
+}
+
+// refs: 2 - tags: output, named, enum
+export type CustomRoutingDestinationTrafficState =
+| "ALLOW"
+| "DENY"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 1 - tags: output, named, interface
+export interface DestinationPortMapping {
+  AcceleratorArn?: string | null;
+  AcceleratorSocketAddresses?: SocketAddress[] | null;
+  EndpointGroupArn?: string | null;
+  EndpointId?: string | null;
+  EndpointGroupRegion?: string | null;
+  DestinationSocketAddress?: SocketAddress | null;
+  IpAddressType?: IpAddressType | null;
+  DestinationTrafficState?: CustomRoutingDestinationTrafficState | null;
+}
+function toDestinationPortMapping(root: jsonP.JSONValue): DestinationPortMapping {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "AcceleratorArn": "s",
+      "AcceleratorSocketAddresses": [toSocketAddress],
+      "EndpointGroupArn": "s",
+      "EndpointId": "s",
+      "EndpointGroupRegion": "s",
+      "DestinationSocketAddress": toSocketAddress,
+      "IpAddressType": (x: jsonP.JSONValue) => cmnP.readEnum<IpAddressType>(x),
+      "DestinationTrafficState": (x: jsonP.JSONValue) => cmnP.readEnum<CustomRoutingDestinationTrafficState>(x),
     },
   }, root);
 }

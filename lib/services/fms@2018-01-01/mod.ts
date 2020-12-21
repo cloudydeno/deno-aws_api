@@ -916,6 +916,7 @@ export type SecurityServiceType =
 | "SECURITY_GROUPS_COMMON"
 | "SECURITY_GROUPS_CONTENT_AUDIT"
 | "SECURITY_GROUPS_USAGE_AUDIT"
+| "NETWORK_FIREWALL"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface, output
@@ -1047,6 +1048,10 @@ export type ViolationReason =
 | "RESOURCE_VIOLATES_AUDIT_SECURITY_GROUP"
 | "SECURITY_GROUP_UNUSED"
 | "SECURITY_GROUP_REDUNDANT"
+| "MISSING_FIREWALL"
+| "MISSING_FIREWALL_SUBNET_IN_AZ"
+| "MISSING_EXPECTED_ROUTE_TABLE"
+| "NETWORK_FIREWALL_POLICY_MODIFIED"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, enum
@@ -1088,6 +1093,10 @@ export interface ResourceViolation {
   AwsVPCSecurityGroupViolation?: AwsVPCSecurityGroupViolation | null;
   AwsEc2NetworkInterfaceViolation?: AwsEc2NetworkInterfaceViolation | null;
   AwsEc2InstanceViolation?: AwsEc2InstanceViolation | null;
+  NetworkFirewallMissingFirewallViolation?: NetworkFirewallMissingFirewallViolation | null;
+  NetworkFirewallMissingSubnetViolation?: NetworkFirewallMissingSubnetViolation | null;
+  NetworkFirewallMissingExpectedRTViolation?: NetworkFirewallMissingExpectedRTViolation | null;
+  NetworkFirewallPolicyModifiedViolation?: NetworkFirewallPolicyModifiedViolation | null;
 }
 function toResourceViolation(root: jsonP.JSONValue): ResourceViolation {
   return jsonP.readObj({
@@ -1096,6 +1105,10 @@ function toResourceViolation(root: jsonP.JSONValue): ResourceViolation {
       "AwsVPCSecurityGroupViolation": toAwsVPCSecurityGroupViolation,
       "AwsEc2NetworkInterfaceViolation": toAwsEc2NetworkInterfaceViolation,
       "AwsEc2InstanceViolation": toAwsEc2InstanceViolation,
+      "NetworkFirewallMissingFirewallViolation": toNetworkFirewallMissingFirewallViolation,
+      "NetworkFirewallMissingSubnetViolation": toNetworkFirewallMissingSubnetViolation,
+      "NetworkFirewallMissingExpectedRTViolation": toNetworkFirewallMissingExpectedRTViolation,
+      "NetworkFirewallPolicyModifiedViolation": toNetworkFirewallPolicyModifiedViolation,
     },
   }, root);
 }
@@ -1208,6 +1221,135 @@ function toAwsEc2InstanceViolation(root: jsonP.JSONValue): AwsEc2InstanceViolati
     optional: {
       "ViolationTarget": "s",
       "AwsEc2NetworkInterfaceViolations": [toAwsEc2NetworkInterfaceViolation],
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
+export interface NetworkFirewallMissingFirewallViolation {
+  ViolationTarget?: string | null;
+  VPC?: string | null;
+  AvailabilityZone?: string | null;
+  TargetViolationReason?: string | null;
+}
+function toNetworkFirewallMissingFirewallViolation(root: jsonP.JSONValue): NetworkFirewallMissingFirewallViolation {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "ViolationTarget": "s",
+      "VPC": "s",
+      "AvailabilityZone": "s",
+      "TargetViolationReason": "s",
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
+export interface NetworkFirewallMissingSubnetViolation {
+  ViolationTarget?: string | null;
+  VPC?: string | null;
+  AvailabilityZone?: string | null;
+  TargetViolationReason?: string | null;
+}
+function toNetworkFirewallMissingSubnetViolation(root: jsonP.JSONValue): NetworkFirewallMissingSubnetViolation {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "ViolationTarget": "s",
+      "VPC": "s",
+      "AvailabilityZone": "s",
+      "TargetViolationReason": "s",
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
+export interface NetworkFirewallMissingExpectedRTViolation {
+  ViolationTarget?: string | null;
+  VPC?: string | null;
+  AvailabilityZone?: string | null;
+  CurrentRouteTable?: string | null;
+  ExpectedRouteTable?: string | null;
+}
+function toNetworkFirewallMissingExpectedRTViolation(root: jsonP.JSONValue): NetworkFirewallMissingExpectedRTViolation {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "ViolationTarget": "s",
+      "VPC": "s",
+      "AvailabilityZone": "s",
+      "CurrentRouteTable": "s",
+      "ExpectedRouteTable": "s",
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
+export interface NetworkFirewallPolicyModifiedViolation {
+  ViolationTarget?: string | null;
+  CurrentPolicyDescription?: NetworkFirewallPolicyDescription | null;
+  ExpectedPolicyDescription?: NetworkFirewallPolicyDescription | null;
+}
+function toNetworkFirewallPolicyModifiedViolation(root: jsonP.JSONValue): NetworkFirewallPolicyModifiedViolation {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "ViolationTarget": "s",
+      "CurrentPolicyDescription": toNetworkFirewallPolicyDescription,
+      "ExpectedPolicyDescription": toNetworkFirewallPolicyDescription,
+    },
+  }, root);
+}
+
+// refs: 2 - tags: output, named, interface
+export interface NetworkFirewallPolicyDescription {
+  StatelessRuleGroups?: StatelessRuleGroup[] | null;
+  StatelessDefaultActions?: string[] | null;
+  StatelessFragmentDefaultActions?: string[] | null;
+  StatelessCustomActions?: string[] | null;
+  StatefulRuleGroups?: StatefulRuleGroup[] | null;
+}
+function toNetworkFirewallPolicyDescription(root: jsonP.JSONValue): NetworkFirewallPolicyDescription {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "StatelessRuleGroups": [toStatelessRuleGroup],
+      "StatelessDefaultActions": ["s"],
+      "StatelessFragmentDefaultActions": ["s"],
+      "StatelessCustomActions": ["s"],
+      "StatefulRuleGroups": [toStatefulRuleGroup],
+    },
+  }, root);
+}
+
+// refs: 2 - tags: output, named, interface
+export interface StatelessRuleGroup {
+  RuleGroupName?: string | null;
+  ResourceId?: string | null;
+  Priority?: number | null;
+}
+function toStatelessRuleGroup(root: jsonP.JSONValue): StatelessRuleGroup {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "RuleGroupName": "s",
+      "ResourceId": "s",
+      "Priority": "n",
+    },
+  }, root);
+}
+
+// refs: 2 - tags: output, named, interface
+export interface StatefulRuleGroup {
+  RuleGroupName?: string | null;
+  ResourceId?: string | null;
+}
+function toStatefulRuleGroup(root: jsonP.JSONValue): StatefulRuleGroup {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "RuleGroupName": "s",
+      "ResourceId": "s",
     },
   }, root);
 }

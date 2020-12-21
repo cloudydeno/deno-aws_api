@@ -238,6 +238,7 @@ export default class GameLift {
       GameProperties: params["GameProperties"]?.map(x => fromGameProperty(x)),
       GameSessionData: params["GameSessionData"],
       BackfillMode: params["BackfillMode"],
+      FlexMatchMode: params["FlexMatchMode"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
     };
     const resp = await this.#client.performRequest({
@@ -1759,6 +1760,7 @@ export default class GameLift {
       GameProperties: params["GameProperties"]?.map(x => fromGameProperty(x)),
       GameSessionData: params["GameSessionData"],
       BackfillMode: params["BackfillMode"],
+      FlexMatchMode: params["FlexMatchMode"],
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -1928,7 +1930,7 @@ export interface CreateGameSessionQueueInput {
 export interface CreateMatchmakingConfigurationInput {
   Name: string;
   Description?: string | null;
-  GameSessionQueueArns: string[];
+  GameSessionQueueArns?: string[] | null;
   RequestTimeoutSeconds: number;
   AcceptanceTimeoutSeconds?: number | null;
   AcceptanceRequired: boolean;
@@ -1939,6 +1941,7 @@ export interface CreateMatchmakingConfigurationInput {
   GameProperties?: GameProperty[] | null;
   GameSessionData?: string | null;
   BackfillMode?: BackfillMode | null;
+  FlexMatchMode?: FlexMatchMode | null;
   Tags?: Tag[] | null;
 }
 
@@ -2346,7 +2349,7 @@ export interface StartGameSessionPlacementInput {
 export interface StartMatchBackfillInput {
   TicketId?: string | null;
   ConfigurationName: string;
-  GameSessionArn: string;
+  GameSessionArn?: string | null;
   Players: Player[];
 }
 
@@ -2481,6 +2484,7 @@ export interface UpdateMatchmakingConfigurationInput {
   GameProperties?: GameProperty[] | null;
   GameSessionData?: string | null;
   BackfillMode?: BackfillMode | null;
+  FlexMatchMode?: FlexMatchMode | null;
 }
 
 // refs: 1 - tags: named, input
@@ -3053,6 +3057,14 @@ export type EC2InstanceType =
 | "c5.12xlarge"
 | "c5.18xlarge"
 | "c5.24xlarge"
+| "c5a.large"
+| "c5a.xlarge"
+| "c5a.2xlarge"
+| "c5a.4xlarge"
+| "c5a.8xlarge"
+| "c5a.12xlarge"
+| "c5a.16xlarge"
+| "c5a.24xlarge"
 | "r3.large"
 | "r3.xlarge"
 | "r3.2xlarge"
@@ -3072,6 +3084,14 @@ export type EC2InstanceType =
 | "r5.12xlarge"
 | "r5.16xlarge"
 | "r5.24xlarge"
+| "r5a.large"
+| "r5a.xlarge"
+| "r5a.2xlarge"
+| "r5a.4xlarge"
+| "r5a.8xlarge"
+| "r5a.12xlarge"
+| "r5a.16xlarge"
+| "r5a.24xlarge"
 | "m3.medium"
 | "m3.large"
 | "m3.xlarge"
@@ -3089,6 +3109,14 @@ export type EC2InstanceType =
 | "m5.12xlarge"
 | "m5.16xlarge"
 | "m5.24xlarge"
+| "m5a.large"
+| "m5a.xlarge"
+| "m5a.2xlarge"
+| "m5a.4xlarge"
+| "m5a.8xlarge"
+| "m5a.12xlarge"
+| "m5a.16xlarge"
+| "m5a.24xlarge"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, interface, output
@@ -3421,6 +3449,12 @@ function toGameSessionQueueDestination(root: jsonP.JSONValue): GameSessionQueueD
 export type BackfillMode =
 | "AUTOMATIC"
 | "MANUAL"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 5 - tags: input, named, enum, output
+export type FlexMatchMode =
+| "STANDALONE"
+| "WITH_QUEUE"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
@@ -3953,6 +3987,7 @@ export interface MatchmakingConfiguration {
   GameProperties?: GameProperty[] | null;
   GameSessionData?: string | null;
   BackfillMode?: BackfillMode | null;
+  FlexMatchMode?: FlexMatchMode | null;
 }
 function toMatchmakingConfiguration(root: jsonP.JSONValue): MatchmakingConfiguration {
   return jsonP.readObj({
@@ -3974,6 +4009,7 @@ function toMatchmakingConfiguration(root: jsonP.JSONValue): MatchmakingConfigura
       "GameProperties": [toGameProperty],
       "GameSessionData": "s",
       "BackfillMode": (x: jsonP.JSONValue) => cmnP.readEnum<BackfillMode>(x),
+      "FlexMatchMode": (x: jsonP.JSONValue) => cmnP.readEnum<FlexMatchMode>(x),
     },
   }, root);
 }

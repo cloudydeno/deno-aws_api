@@ -131,6 +131,7 @@ export default class Textract {
       JobTag: params["JobTag"],
       NotificationChannel: fromNotificationChannel(params["NotificationChannel"]),
       OutputConfig: fromOutputConfig(params["OutputConfig"]),
+      KMSKeyId: params["KMSKeyId"],
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -153,6 +154,7 @@ export default class Textract {
       JobTag: params["JobTag"],
       NotificationChannel: fromNotificationChannel(params["NotificationChannel"]),
       OutputConfig: fromOutputConfig(params["OutputConfig"]),
+      KMSKeyId: params["KMSKeyId"],
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -202,6 +204,7 @@ export interface StartDocumentAnalysisRequest {
   JobTag?: string | null;
   NotificationChannel?: NotificationChannel | null;
   OutputConfig?: OutputConfig | null;
+  KMSKeyId?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -211,6 +214,7 @@ export interface StartDocumentTextDetectionRequest {
   JobTag?: string | null;
   NotificationChannel?: NotificationChannel | null;
   OutputConfig?: OutputConfig | null;
+  KMSKeyId?: string | null;
 }
 
 // refs: 1 - tags: named, output
@@ -381,6 +385,7 @@ export interface Block {
   BlockType?: BlockType | null;
   Confidence?: number | null;
   Text?: string | null;
+  TextType?: TextType | null;
   RowIndex?: number | null;
   ColumnIndex?: number | null;
   RowSpan?: number | null;
@@ -399,6 +404,7 @@ function toBlock(root: jsonP.JSONValue): Block {
       "BlockType": (x: jsonP.JSONValue) => cmnP.readEnum<BlockType>(x),
       "Confidence": "n",
       "Text": "s",
+      "TextType": (x: jsonP.JSONValue) => cmnP.readEnum<TextType>(x),
       "RowIndex": "n",
       "ColumnIndex": "n",
       "RowSpan": "n",
@@ -422,6 +428,12 @@ export type BlockType =
 | "TABLE"
 | "CELL"
 | "SELECTION_ELEMENT"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 4 - tags: output, named, enum
+export type TextType =
+| "HANDWRITING"
+| "PRINTED"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: output, named, interface

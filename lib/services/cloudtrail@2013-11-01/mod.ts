@@ -135,6 +135,7 @@ export default class CloudTrail {
       optional: {
         "TrailARN": "s",
         "EventSelectors": [toEventSelector],
+        "AdvancedEventSelectors": [toAdvancedEventSelector],
       },
     }, await resp.json());
   }
@@ -300,6 +301,7 @@ export default class CloudTrail {
     const body: jsonP.JSONObject = {
       TrailName: params["TrailName"],
       EventSelectors: params["EventSelectors"]?.map(x => fromEventSelector(x)),
+      AdvancedEventSelectors: params["AdvancedEventSelectors"]?.map(x => fromAdvancedEventSelector(x)),
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -310,6 +312,7 @@ export default class CloudTrail {
       optional: {
         "TrailARN": "s",
         "EventSelectors": [toEventSelector],
+        "AdvancedEventSelectors": [toAdvancedEventSelector],
       },
     }, await resp.json());
   }
@@ -509,7 +512,8 @@ export interface LookupEventsRequest {
 // refs: 1 - tags: named, input
 export interface PutEventSelectorsRequest {
   TrailName: string;
-  EventSelectors: EventSelector[];
+  EventSelectors?: EventSelector[] | null;
+  AdvancedEventSelectors?: AdvancedEventSelector[] | null;
 }
 
 // refs: 1 - tags: named, input
@@ -583,6 +587,7 @@ export interface DescribeTrailsResponse {
 export interface GetEventSelectorsResponse {
   TrailARN?: string | null;
   EventSelectors?: EventSelector[] | null;
+  AdvancedEventSelectors?: AdvancedEventSelector[] | null;
 }
 
 // refs: 1 - tags: named, output
@@ -645,6 +650,7 @@ export interface LookupEventsResponse {
 export interface PutEventSelectorsResponse {
   TrailARN?: string | null;
   EventSelectors?: EventSelector[] | null;
+  AdvancedEventSelectors?: AdvancedEventSelector[] | null;
 }
 
 // refs: 1 - tags: named, output
@@ -788,6 +794,67 @@ function toDataResource(root: jsonP.JSONValue): DataResource {
     optional: {
       "Type": "s",
       "Values": ["s"],
+    },
+  }, root);
+}
+
+// refs: 3 - tags: input, named, interface, output
+export interface AdvancedEventSelector {
+  Name?: string | null;
+  FieldSelectors: AdvancedFieldSelector[];
+}
+function fromAdvancedEventSelector(input?: AdvancedEventSelector | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    Name: input["Name"],
+    FieldSelectors: input["FieldSelectors"]?.map(x => fromAdvancedFieldSelector(x)),
+  }
+}
+function toAdvancedEventSelector(root: jsonP.JSONValue): AdvancedEventSelector {
+  return jsonP.readObj({
+    required: {
+      "FieldSelectors": [toAdvancedFieldSelector],
+    },
+    optional: {
+      "Name": "s",
+    },
+  }, root);
+}
+
+// refs: 3 - tags: input, named, interface, output
+export interface AdvancedFieldSelector {
+  Field: string;
+  Equals?: string[] | null;
+  StartsWith?: string[] | null;
+  EndsWith?: string[] | null;
+  NotEquals?: string[] | null;
+  NotStartsWith?: string[] | null;
+  NotEndsWith?: string[] | null;
+}
+function fromAdvancedFieldSelector(input?: AdvancedFieldSelector | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    Field: input["Field"],
+    Equals: input["Equals"],
+    StartsWith: input["StartsWith"],
+    EndsWith: input["EndsWith"],
+    NotEquals: input["NotEquals"],
+    NotStartsWith: input["NotStartsWith"],
+    NotEndsWith: input["NotEndsWith"],
+  }
+}
+function toAdvancedFieldSelector(root: jsonP.JSONValue): AdvancedFieldSelector {
+  return jsonP.readObj({
+    required: {
+      "Field": "s",
+    },
+    optional: {
+      "Equals": ["s"],
+      "StartsWith": ["s"],
+      "EndsWith": ["s"],
+      "NotEquals": ["s"],
+      "NotStartsWith": ["s"],
+      "NotEndsWith": ["s"],
     },
   }, root);
 }

@@ -111,6 +111,26 @@ export default class Shield {
     }, await resp.json());
   }
 
+  async createProtectionGroup(
+    {abortSignal, ...params}: RequestConfig & CreateProtectionGroupRequest,
+  ): Promise<CreateProtectionGroupResponse> {
+    const body: jsonP.JSONObject = {
+      ProtectionGroupId: params["ProtectionGroupId"],
+      Aggregation: params["Aggregation"],
+      Pattern: params["Pattern"],
+      ResourceType: params["ResourceType"],
+      Members: params["Members"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "CreateProtectionGroup",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
+  }
+
   async createSubscription(
     {abortSignal, ...params}: RequestConfig & CreateSubscriptionRequest = {},
   ): Promise<CreateSubscriptionResponse> {
@@ -135,6 +155,22 @@ export default class Shield {
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteProtection",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
+  }
+
+  async deleteProtectionGroup(
+    {abortSignal, ...params}: RequestConfig & DeleteProtectionGroupRequest,
+  ): Promise<DeleteProtectionGroupResponse> {
+    const body: jsonP.JSONObject = {
+      ProtectionGroupId: params["ProtectionGroupId"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DeleteProtectionGroup",
     });
     return jsonP.readObj({
       required: {},
@@ -172,6 +208,24 @@ export default class Shield {
       optional: {
         "Attack": toAttackDetail,
       },
+    }, await resp.json());
+  }
+
+  async describeAttackStatistics(
+    {abortSignal, ...params}: RequestConfig & DescribeAttackStatisticsRequest = {},
+  ): Promise<DescribeAttackStatisticsResponse> {
+    const body: jsonP.JSONObject = {
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DescribeAttackStatistics",
+    });
+    return jsonP.readObj({
+      required: {
+        "TimeRange": toTimeRange,
+        "DataItems": [toAttackStatisticsDataItem],
+      },
+      optional: {},
     }, await resp.json());
   }
 
@@ -226,6 +280,24 @@ export default class Shield {
       optional: {
         "Protection": toProtection,
       },
+    }, await resp.json());
+  }
+
+  async describeProtectionGroup(
+    {abortSignal, ...params}: RequestConfig & DescribeProtectionGroupRequest,
+  ): Promise<DescribeProtectionGroupResponse> {
+    const body: jsonP.JSONObject = {
+      ProtectionGroupId: params["ProtectionGroupId"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DescribeProtectionGroup",
+    });
+    return jsonP.readObj({
+      required: {
+        "ProtectionGroup": toProtectionGroup,
+      },
+      optional: {},
     }, await resp.json());
   }
 
@@ -364,6 +436,27 @@ export default class Shield {
     }, await resp.json());
   }
 
+  async listProtectionGroups(
+    {abortSignal, ...params}: RequestConfig & ListProtectionGroupsRequest = {},
+  ): Promise<ListProtectionGroupsResponse> {
+    const body: jsonP.JSONObject = {
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "ListProtectionGroups",
+    });
+    return jsonP.readObj({
+      required: {
+        "ProtectionGroups": [toProtectionGroup],
+      },
+      optional: {
+        "NextToken": "s",
+      },
+    }, await resp.json());
+  }
+
   async listProtections(
     {abortSignal, ...params}: RequestConfig & ListProtectionsRequest = {},
   ): Promise<ListProtectionsResponse> {
@@ -384,6 +477,28 @@ export default class Shield {
     }, await resp.json());
   }
 
+  async listResourcesInProtectionGroup(
+    {abortSignal, ...params}: RequestConfig & ListResourcesInProtectionGroupRequest,
+  ): Promise<ListResourcesInProtectionGroupResponse> {
+    const body: jsonP.JSONObject = {
+      ProtectionGroupId: params["ProtectionGroupId"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "ListResourcesInProtectionGroup",
+    });
+    return jsonP.readObj({
+      required: {
+        "ResourceArns": ["s"],
+      },
+      optional: {
+        "NextToken": "s",
+      },
+    }, await resp.json());
+  }
+
   async updateEmergencyContactSettings(
     {abortSignal, ...params}: RequestConfig & UpdateEmergencyContactSettingsRequest = {},
   ): Promise<UpdateEmergencyContactSettingsResponse> {
@@ -393,6 +508,26 @@ export default class Shield {
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateEmergencyContactSettings",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
+  }
+
+  async updateProtectionGroup(
+    {abortSignal, ...params}: RequestConfig & UpdateProtectionGroupRequest,
+  ): Promise<UpdateProtectionGroupResponse> {
+    const body: jsonP.JSONObject = {
+      ProtectionGroupId: params["ProtectionGroupId"],
+      Aggregation: params["Aggregation"],
+      Pattern: params["Pattern"],
+      ResourceType: params["ResourceType"],
+      Members: params["Members"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "UpdateProtectionGroup",
     });
     return jsonP.readObj({
       required: {},
@@ -446,6 +581,15 @@ export interface CreateProtectionRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface CreateProtectionGroupRequest {
+  ProtectionGroupId: string;
+  Aggregation: ProtectionGroupAggregation;
+  Pattern: ProtectionGroupPattern;
+  ResourceType?: ProtectedResourceType | null;
+  Members?: string[] | null;
+}
+
+// refs: 1 - tags: named, input
 export interface CreateSubscriptionRequest {
 }
 
@@ -455,12 +599,21 @@ export interface DeleteProtectionRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface DeleteProtectionGroupRequest {
+  ProtectionGroupId: string;
+}
+
+// refs: 1 - tags: named, input
 export interface DeleteSubscriptionRequest {
 }
 
 // refs: 1 - tags: named, input
 export interface DescribeAttackRequest {
   AttackId: string;
+}
+
+// refs: 1 - tags: named, input
+export interface DescribeAttackStatisticsRequest {
 }
 
 // refs: 1 - tags: named, input
@@ -475,6 +628,11 @@ export interface DescribeEmergencyContactSettingsRequest {
 export interface DescribeProtectionRequest {
   ProtectionId?: string | null;
   ResourceArn?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface DescribeProtectionGroupRequest {
+  ProtectionGroupId: string;
 }
 
 // refs: 1 - tags: named, input
@@ -518,7 +676,20 @@ export interface ListAttacksRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface ListProtectionGroupsRequest {
+  NextToken?: string | null;
+  MaxResults?: number | null;
+}
+
+// refs: 1 - tags: named, input
 export interface ListProtectionsRequest {
+  NextToken?: string | null;
+  MaxResults?: number | null;
+}
+
+// refs: 1 - tags: named, input
+export interface ListResourcesInProtectionGroupRequest {
+  ProtectionGroupId: string;
   NextToken?: string | null;
   MaxResults?: number | null;
 }
@@ -526,6 +697,15 @@ export interface ListProtectionsRequest {
 // refs: 1 - tags: named, input
 export interface UpdateEmergencyContactSettingsRequest {
   EmergencyContactList?: EmergencyContact[] | null;
+}
+
+// refs: 1 - tags: named, input
+export interface UpdateProtectionGroupRequest {
+  ProtectionGroupId: string;
+  Aggregation: ProtectionGroupAggregation;
+  Pattern: ProtectionGroupPattern;
+  ResourceType?: ProtectedResourceType | null;
+  Members?: string[] | null;
 }
 
 // refs: 1 - tags: named, input
@@ -555,11 +735,19 @@ export interface CreateProtectionResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface CreateProtectionGroupResponse {
+}
+
+// refs: 1 - tags: named, output
 export interface CreateSubscriptionResponse {
 }
 
 // refs: 1 - tags: named, output
 export interface DeleteProtectionResponse {
+}
+
+// refs: 1 - tags: named, output
+export interface DeleteProtectionGroupResponse {
 }
 
 // refs: 1 - tags: named, output
@@ -569,6 +757,12 @@ export interface DeleteSubscriptionResponse {
 // refs: 1 - tags: named, output
 export interface DescribeAttackResponse {
   Attack?: AttackDetail | null;
+}
+
+// refs: 1 - tags: named, output
+export interface DescribeAttackStatisticsResponse {
+  TimeRange: TimeRange;
+  DataItems: AttackStatisticsDataItem[];
 }
 
 // refs: 1 - tags: named, output
@@ -585,6 +779,11 @@ export interface DescribeEmergencyContactSettingsResponse {
 // refs: 1 - tags: named, output
 export interface DescribeProtectionResponse {
   Protection?: Protection | null;
+}
+
+// refs: 1 - tags: named, output
+export interface DescribeProtectionGroupResponse {
+  ProtectionGroup: ProtectionGroup;
 }
 
 // refs: 1 - tags: named, output
@@ -624,13 +823,29 @@ export interface ListAttacksResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface ListProtectionGroupsResponse {
+  ProtectionGroups: ProtectionGroup[];
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
 export interface ListProtectionsResponse {
   Protections?: Protection[] | null;
   NextToken?: string | null;
 }
 
 // refs: 1 - tags: named, output
+export interface ListResourcesInProtectionGroupResponse {
+  ResourceArns: string[];
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
 export interface UpdateEmergencyContactSettingsResponse {
+}
+
+// refs: 1 - tags: named, output
+export interface UpdateProtectionGroupResponse {
 }
 
 // refs: 1 - tags: named, output
@@ -663,7 +878,31 @@ function toEmergencyContact(root: jsonP.JSONValue): EmergencyContact {
   }, root);
 }
 
-// refs: 2 - tags: input, named, interface
+// refs: 4 - tags: input, named, enum, output
+export type ProtectionGroupAggregation =
+| "SUM"
+| "MEAN"
+| "MAX"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 4 - tags: input, named, enum, output
+export type ProtectionGroupPattern =
+| "ALL"
+| "ARBITRARY"
+| "BY_RESOURCE_TYPE"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 4 - tags: input, named, enum, output
+export type ProtectedResourceType =
+| "CLOUDFRONT_DISTRIBUTION"
+| "ROUTE_53_HOSTED_ZONE"
+| "ELASTIC_IP_ALLOCATION"
+| "CLASSIC_LOAD_BALANCER"
+| "APPLICATION_LOAD_BALANCER"
+| "GLOBAL_ACCELERATOR"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 3 - tags: input, named, interface, output
 export interface TimeRange {
   FromInclusive?: Date | number | null;
   ToExclusive?: Date | number | null;
@@ -674,6 +913,15 @@ function fromTimeRange(input?: TimeRange | null): jsonP.JSONValue {
     FromInclusive: jsonP.serializeDate_unixTimestamp(input["FromInclusive"]),
     ToExclusive: jsonP.serializeDate_unixTimestamp(input["ToExclusive"]),
   }
+}
+function toTimeRange(root: jsonP.JSONValue): TimeRange {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "FromInclusive": "d",
+      "ToExclusive": "d",
+    },
+  }, root);
 }
 
 // refs: 2 - tags: input, named, enum, output
@@ -848,6 +1096,52 @@ function toMitigation(root: jsonP.JSONValue): Mitigation {
   }, root);
 }
 
+// refs: 1 - tags: output, named, interface
+export interface AttackStatisticsDataItem {
+  AttackVolume?: AttackVolume | null;
+  AttackCount: number;
+}
+function toAttackStatisticsDataItem(root: jsonP.JSONValue): AttackStatisticsDataItem {
+  return jsonP.readObj({
+    required: {
+      "AttackCount": "n",
+    },
+    optional: {
+      "AttackVolume": toAttackVolume,
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
+export interface AttackVolume {
+  BitsPerSecond?: AttackVolumeStatistics | null;
+  PacketsPerSecond?: AttackVolumeStatistics | null;
+  RequestsPerSecond?: AttackVolumeStatistics | null;
+}
+function toAttackVolume(root: jsonP.JSONValue): AttackVolume {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "BitsPerSecond": toAttackVolumeStatistics,
+      "PacketsPerSecond": toAttackVolumeStatistics,
+      "RequestsPerSecond": toAttackVolumeStatistics,
+    },
+  }, root);
+}
+
+// refs: 3 - tags: output, named, interface
+export interface AttackVolumeStatistics {
+  Max: number;
+}
+function toAttackVolumeStatistics(root: jsonP.JSONValue): AttackVolumeStatistics {
+  return jsonP.readObj({
+    required: {
+      "Max": "n",
+    },
+    optional: {},
+  }, root);
+}
+
 // refs: 2 - tags: output, named, interface
 export interface Protection {
   Id?: string | null;
@@ -867,6 +1161,28 @@ function toProtection(root: jsonP.JSONValue): Protection {
   }, root);
 }
 
+// refs: 2 - tags: output, named, interface
+export interface ProtectionGroup {
+  ProtectionGroupId: string;
+  Aggregation: ProtectionGroupAggregation;
+  Pattern: ProtectionGroupPattern;
+  ResourceType?: ProtectedResourceType | null;
+  Members: string[];
+}
+function toProtectionGroup(root: jsonP.JSONValue): ProtectionGroup {
+  return jsonP.readObj({
+    required: {
+      "ProtectionGroupId": "s",
+      "Aggregation": (x: jsonP.JSONValue) => cmnP.readEnum<ProtectionGroupAggregation>(x),
+      "Pattern": (x: jsonP.JSONValue) => cmnP.readEnum<ProtectionGroupPattern>(x),
+      "Members": ["s"],
+    },
+    optional: {
+      "ResourceType": (x: jsonP.JSONValue) => cmnP.readEnum<ProtectedResourceType>(x),
+    },
+  }, root);
+}
+
 // refs: 1 - tags: output, named, interface
 export interface Subscription {
   StartTime?: Date | number | null;
@@ -875,10 +1191,13 @@ export interface Subscription {
   AutoRenew?: AutoRenew | null;
   Limits?: Limit[] | null;
   ProactiveEngagementStatus?: ProactiveEngagementStatus | null;
+  SubscriptionLimits: SubscriptionLimits;
 }
 function toSubscription(root: jsonP.JSONValue): Subscription {
   return jsonP.readObj({
-    required: {},
+    required: {
+      "SubscriptionLimits": toSubscriptionLimits,
+    },
     optional: {
       "StartTime": "d",
       "EndTime": "d",
@@ -890,7 +1209,7 @@ function toSubscription(root: jsonP.JSONValue): Subscription {
   }, root);
 }
 
-// refs: 1 - tags: output, named, interface
+// refs: 2 - tags: output, named, interface
 export interface Limit {
   Type?: string | null;
   Max?: number | null;
@@ -911,6 +1230,75 @@ export type ProactiveEngagementStatus =
 | "DISABLED"
 | "PENDING"
 | cmnP.UnexpectedEnumValue;
+
+// refs: 1 - tags: output, named, interface
+export interface SubscriptionLimits {
+  ProtectionLimits: ProtectionLimits;
+  ProtectionGroupLimits: ProtectionGroupLimits;
+}
+function toSubscriptionLimits(root: jsonP.JSONValue): SubscriptionLimits {
+  return jsonP.readObj({
+    required: {
+      "ProtectionLimits": toProtectionLimits,
+      "ProtectionGroupLimits": toProtectionGroupLimits,
+    },
+    optional: {},
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
+export interface ProtectionLimits {
+  ProtectedResourceTypeLimits: Limit[];
+}
+function toProtectionLimits(root: jsonP.JSONValue): ProtectionLimits {
+  return jsonP.readObj({
+    required: {
+      "ProtectedResourceTypeLimits": [toLimit],
+    },
+    optional: {},
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
+export interface ProtectionGroupLimits {
+  MaxProtectionGroups: number;
+  PatternTypeLimits: ProtectionGroupPatternTypeLimits;
+}
+function toProtectionGroupLimits(root: jsonP.JSONValue): ProtectionGroupLimits {
+  return jsonP.readObj({
+    required: {
+      "MaxProtectionGroups": "n",
+      "PatternTypeLimits": toProtectionGroupPatternTypeLimits,
+    },
+    optional: {},
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
+export interface ProtectionGroupPatternTypeLimits {
+  ArbitraryPatternLimits: ProtectionGroupArbitraryPatternLimits;
+}
+function toProtectionGroupPatternTypeLimits(root: jsonP.JSONValue): ProtectionGroupPatternTypeLimits {
+  return jsonP.readObj({
+    required: {
+      "ArbitraryPatternLimits": toProtectionGroupArbitraryPatternLimits,
+    },
+    optional: {},
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
+export interface ProtectionGroupArbitraryPatternLimits {
+  MaxMembers: number;
+}
+function toProtectionGroupArbitraryPatternLimits(root: jsonP.JSONValue): ProtectionGroupArbitraryPatternLimits {
+  return jsonP.readObj({
+    required: {
+      "MaxMembers": "n",
+    },
+    optional: {},
+  }, root);
+}
 
 // refs: 1 - tags: output, named, enum
 export type SubscriptionState =

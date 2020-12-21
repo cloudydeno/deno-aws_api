@@ -68,10 +68,56 @@ export default class NetworkManager {
     }, await resp.json());
   }
 
+  async associateTransitGatewayConnectPeer(
+    {abortSignal, ...params}: RequestConfig & AssociateTransitGatewayConnectPeerRequest,
+  ): Promise<AssociateTransitGatewayConnectPeerResponse> {
+    const body: jsonP.JSONObject = {
+      TransitGatewayConnectPeerArn: params["TransitGatewayConnectPeerArn"],
+      DeviceId: params["DeviceId"],
+      LinkId: params["LinkId"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "AssociateTransitGatewayConnectPeer",
+      requestUri: cmnP.encodePath`/global-networks/${params["GlobalNetworkId"]}/transit-gateway-connect-peer-associations`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "TransitGatewayConnectPeerAssociation": toTransitGatewayConnectPeerAssociation,
+      },
+    }, await resp.json());
+  }
+
+  async createConnection(
+    {abortSignal, ...params}: RequestConfig & CreateConnectionRequest,
+  ): Promise<CreateConnectionResponse> {
+    const body: jsonP.JSONObject = {
+      DeviceId: params["DeviceId"],
+      ConnectedDeviceId: params["ConnectedDeviceId"],
+      LinkId: params["LinkId"],
+      ConnectedLinkId: params["ConnectedLinkId"],
+      Description: params["Description"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "CreateConnection",
+      requestUri: cmnP.encodePath`/global-networks/${params["GlobalNetworkId"]}/connections`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Connection": toConnection,
+      },
+    }, await resp.json());
+  }
+
   async createDevice(
     {abortSignal, ...params}: RequestConfig & CreateDeviceRequest,
   ): Promise<CreateDeviceResponse> {
     const body: jsonP.JSONObject = {
+      AWSLocation: fromAWSLocation(params["AWSLocation"]),
       Description: params["Description"],
       Type: params["Type"],
       Vendor: params["Vendor"],
@@ -155,6 +201,24 @@ export default class NetworkManager {
       required: {},
       optional: {
         "Site": toSite,
+      },
+    }, await resp.json());
+  }
+
+  async deleteConnection(
+    {abortSignal, ...params}: RequestConfig & DeleteConnectionRequest,
+  ): Promise<DeleteConnectionResponse> {
+
+    const resp = await this.#client.performRequest({
+      abortSignal,
+      action: "DeleteConnection",
+      method: "DELETE",
+      requestUri: cmnP.encodePath`/global-networks/${params["GlobalNetworkId"]}/connections/${params["ConnectionId"]}`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Connection": toConnection,
       },
     }, await resp.json());
   }
@@ -311,6 +375,49 @@ export default class NetworkManager {
     }, await resp.json());
   }
 
+  async disassociateTransitGatewayConnectPeer(
+    {abortSignal, ...params}: RequestConfig & DisassociateTransitGatewayConnectPeerRequest,
+  ): Promise<DisassociateTransitGatewayConnectPeerResponse> {
+
+    const resp = await this.#client.performRequest({
+      abortSignal,
+      action: "DisassociateTransitGatewayConnectPeer",
+      method: "DELETE",
+      requestUri: cmnP.encodePath`/global-networks/${params["GlobalNetworkId"]}/transit-gateway-connect-peer-associations/${params["TransitGatewayConnectPeerArn"]}`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "TransitGatewayConnectPeerAssociation": toTransitGatewayConnectPeerAssociation,
+      },
+    }, await resp.json());
+  }
+
+  async getConnections(
+    {abortSignal, ...params}: RequestConfig & GetConnectionsRequest,
+  ): Promise<GetConnectionsResponse> {
+    const query = new URLSearchParams;
+    for (const item of params["ConnectionIds"] ?? []) {
+      query.append("connectionIds", item?.toString() ?? "");
+    }
+    if (params["DeviceId"] != null) query.set("deviceId", params["DeviceId"]?.toString() ?? "");
+    if (params["MaxResults"] != null) query.set("maxResults", params["MaxResults"]?.toString() ?? "");
+    if (params["NextToken"] != null) query.set("nextToken", params["NextToken"]?.toString() ?? "");
+    const resp = await this.#client.performRequest({
+      abortSignal, query,
+      action: "GetConnections",
+      method: "GET",
+      requestUri: cmnP.encodePath`/global-networks/${params["GlobalNetworkId"]}/connections`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Connections": [toConnection],
+        "NextToken": "s",
+      },
+    }, await resp.json());
+  }
+
   async getCustomerGatewayAssociations(
     {abortSignal, ...params}: RequestConfig & GetCustomerGatewayAssociationsRequest,
   ): Promise<GetCustomerGatewayAssociationsResponse> {
@@ -434,6 +541,30 @@ export default class NetworkManager {
     }, await resp.json());
   }
 
+  async getTransitGatewayConnectPeerAssociations(
+    {abortSignal, ...params}: RequestConfig & GetTransitGatewayConnectPeerAssociationsRequest,
+  ): Promise<GetTransitGatewayConnectPeerAssociationsResponse> {
+    const query = new URLSearchParams;
+    for (const item of params["TransitGatewayConnectPeerArns"] ?? []) {
+      query.append("transitGatewayConnectPeerArns", item?.toString() ?? "");
+    }
+    if (params["MaxResults"] != null) query.set("maxResults", params["MaxResults"]?.toString() ?? "");
+    if (params["NextToken"] != null) query.set("nextToken", params["NextToken"]?.toString() ?? "");
+    const resp = await this.#client.performRequest({
+      abortSignal, query,
+      action: "GetTransitGatewayConnectPeerAssociations",
+      method: "GET",
+      requestUri: cmnP.encodePath`/global-networks/${params["GlobalNetworkId"]}/transit-gateway-connect-peer-associations`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "TransitGatewayConnectPeerAssociations": [toTransitGatewayConnectPeerAssociation],
+        "NextToken": "s",
+      },
+    }, await resp.json());
+  }
+
   async getTransitGatewayRegistrations(
     {abortSignal, ...params}: RequestConfig & GetTransitGatewayRegistrationsRequest,
   ): Promise<GetTransitGatewayRegistrationsResponse> {
@@ -531,10 +662,33 @@ export default class NetworkManager {
     }, await resp.json());
   }
 
+  async updateConnection(
+    {abortSignal, ...params}: RequestConfig & UpdateConnectionRequest,
+  ): Promise<UpdateConnectionResponse> {
+    const body: jsonP.JSONObject = {
+      LinkId: params["LinkId"],
+      ConnectedLinkId: params["ConnectedLinkId"],
+      Description: params["Description"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "UpdateConnection",
+      method: "PATCH",
+      requestUri: cmnP.encodePath`/global-networks/${params["GlobalNetworkId"]}/connections/${params["ConnectionId"]}`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Connection": toConnection,
+      },
+    }, await resp.json());
+  }
+
   async updateDevice(
     {abortSignal, ...params}: RequestConfig & UpdateDeviceRequest,
   ): Promise<UpdateDeviceResponse> {
     const body: jsonP.JSONObject = {
+      AWSLocation: fromAWSLocation(params["AWSLocation"]),
       Description: params["Description"],
       Type: params["Type"],
       Vendor: params["Vendor"],
@@ -639,8 +793,28 @@ export interface AssociateLinkRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface AssociateTransitGatewayConnectPeerRequest {
+  GlobalNetworkId: string;
+  TransitGatewayConnectPeerArn: string;
+  DeviceId: string;
+  LinkId?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface CreateConnectionRequest {
+  GlobalNetworkId: string;
+  DeviceId: string;
+  ConnectedDeviceId: string;
+  LinkId?: string | null;
+  ConnectedLinkId?: string | null;
+  Description?: string | null;
+  Tags?: Tag[] | null;
+}
+
+// refs: 1 - tags: named, input
 export interface CreateDeviceRequest {
   GlobalNetworkId: string;
+  AWSLocation?: AWSLocation | null;
   Description?: string | null;
   Type?: string | null;
   Vendor?: string | null;
@@ -674,6 +848,12 @@ export interface CreateSiteRequest {
   Description?: string | null;
   Location?: Location | null;
   Tags?: Tag[] | null;
+}
+
+// refs: 1 - tags: named, input
+export interface DeleteConnectionRequest {
+  GlobalNetworkId: string;
+  ConnectionId: string;
 }
 
 // refs: 1 - tags: named, input
@@ -726,6 +906,21 @@ export interface DisassociateLinkRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface DisassociateTransitGatewayConnectPeerRequest {
+  GlobalNetworkId: string;
+  TransitGatewayConnectPeerArn: string;
+}
+
+// refs: 1 - tags: named, input
+export interface GetConnectionsRequest {
+  GlobalNetworkId: string;
+  ConnectionIds?: string[] | null;
+  DeviceId?: string | null;
+  MaxResults?: number | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, input
 export interface GetCustomerGatewayAssociationsRequest {
   GlobalNetworkId: string;
   CustomerGatewayArns?: string[] | null;
@@ -771,6 +966,14 @@ export interface GetSitesRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface GetTransitGatewayConnectPeerAssociationsRequest {
+  GlobalNetworkId: string;
+  TransitGatewayConnectPeerArns?: string[] | null;
+  MaxResults?: number | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, input
 export interface GetTransitGatewayRegistrationsRequest {
   GlobalNetworkId: string;
   TransitGatewayArns?: string[] | null;
@@ -802,9 +1005,19 @@ export interface UntagResourceRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface UpdateConnectionRequest {
+  GlobalNetworkId: string;
+  ConnectionId: string;
+  LinkId?: string | null;
+  ConnectedLinkId?: string | null;
+  Description?: string | null;
+}
+
+// refs: 1 - tags: named, input
 export interface UpdateDeviceRequest {
   GlobalNetworkId: string;
   DeviceId: string;
+  AWSLocation?: AWSLocation | null;
   Description?: string | null;
   Type?: string | null;
   Vendor?: string | null;
@@ -849,6 +1062,16 @@ export interface AssociateLinkResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface AssociateTransitGatewayConnectPeerResponse {
+  TransitGatewayConnectPeerAssociation?: TransitGatewayConnectPeerAssociation | null;
+}
+
+// refs: 1 - tags: named, output
+export interface CreateConnectionResponse {
+  Connection?: Connection | null;
+}
+
+// refs: 1 - tags: named, output
 export interface CreateDeviceResponse {
   Device?: Device | null;
 }
@@ -866,6 +1089,11 @@ export interface CreateLinkResponse {
 // refs: 1 - tags: named, output
 export interface CreateSiteResponse {
   Site?: Site | null;
+}
+
+// refs: 1 - tags: named, output
+export interface DeleteConnectionResponse {
+  Connection?: Connection | null;
 }
 
 // refs: 1 - tags: named, output
@@ -910,6 +1138,17 @@ export interface DisassociateLinkResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface DisassociateTransitGatewayConnectPeerResponse {
+  TransitGatewayConnectPeerAssociation?: TransitGatewayConnectPeerAssociation | null;
+}
+
+// refs: 1 - tags: named, output
+export interface GetConnectionsResponse {
+  Connections?: Connection[] | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
 export interface GetCustomerGatewayAssociationsResponse {
   CustomerGatewayAssociations?: CustomerGatewayAssociation[] | null;
   NextToken?: string | null;
@@ -940,6 +1179,12 @@ export interface GetSitesResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface GetTransitGatewayConnectPeerAssociationsResponse {
+  TransitGatewayConnectPeerAssociations?: TransitGatewayConnectPeerAssociation[] | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
 export interface GetTransitGatewayRegistrationsResponse {
   TransitGatewayRegistrations?: TransitGatewayRegistration[] | null;
   NextToken?: string | null;
@@ -964,6 +1209,11 @@ export interface UntagResourceResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface UpdateConnectionResponse {
+  Connection?: Connection | null;
+}
+
+// refs: 1 - tags: named, output
 export interface UpdateDeviceResponse {
   Device?: Device | null;
 }
@@ -981,6 +1231,50 @@ export interface UpdateLinkResponse {
 // refs: 1 - tags: named, output
 export interface UpdateSiteResponse {
   Site?: Site | null;
+}
+
+// refs: 27 - tags: input, named, interface, output
+export interface Tag {
+  Key?: string | null;
+  Value?: string | null;
+}
+function fromTag(input?: Tag | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    Key: input["Key"],
+    Value: input["Value"],
+  }
+}
+function toTag(root: jsonP.JSONValue): Tag {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "Key": "s",
+      "Value": "s",
+    },
+  }, root);
+}
+
+// refs: 6 - tags: input, named, interface, output
+export interface AWSLocation {
+  Zone?: string | null;
+  SubnetArn?: string | null;
+}
+function fromAWSLocation(input?: AWSLocation | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    Zone: input["Zone"],
+    SubnetArn: input["SubnetArn"],
+  }
+}
+function toAWSLocation(root: jsonP.JSONValue): AWSLocation {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "Zone": "s",
+      "SubnetArn": "s",
+    },
+  }, root);
 }
 
 // refs: 12 - tags: input, named, interface, output
@@ -1004,28 +1298,6 @@ function toLocation(root: jsonP.JSONValue): Location {
       "Address": "s",
       "Latitude": "s",
       "Longitude": "s",
-    },
-  }, root);
-}
-
-// refs: 22 - tags: input, named, interface, output
-export interface Tag {
-  Key?: string | null;
-  Value?: string | null;
-}
-function fromTag(input?: Tag | null): jsonP.JSONValue {
-  if (!input) return input;
-  return {
-    Key: input["Key"],
-    Value: input["Value"],
-  }
-}
-function toTag(root: jsonP.JSONValue): Tag {
-  return jsonP.readObj({
-    required: {},
-    optional: {
-      "Key": "s",
-      "Value": "s",
     },
   }, root);
 }
@@ -1108,11 +1380,82 @@ export type LinkAssociationState =
 | "DELETED"
 | cmnP.UnexpectedEnumValue;
 
+// refs: 3 - tags: output, named, interface
+export interface TransitGatewayConnectPeerAssociation {
+  TransitGatewayConnectPeerArn?: string | null;
+  GlobalNetworkId?: string | null;
+  DeviceId?: string | null;
+  LinkId?: string | null;
+  State?: TransitGatewayConnectPeerAssociationState | null;
+}
+function toTransitGatewayConnectPeerAssociation(root: jsonP.JSONValue): TransitGatewayConnectPeerAssociation {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "TransitGatewayConnectPeerArn": "s",
+      "GlobalNetworkId": "s",
+      "DeviceId": "s",
+      "LinkId": "s",
+      "State": (x: jsonP.JSONValue) => cmnP.readEnum<TransitGatewayConnectPeerAssociationState>(x),
+    },
+  }, root);
+}
+
+// refs: 3 - tags: output, named, enum
+export type TransitGatewayConnectPeerAssociationState =
+| "PENDING"
+| "AVAILABLE"
+| "DELETING"
+| "DELETED"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 4 - tags: output, named, interface
+export interface Connection {
+  ConnectionId?: string | null;
+  ConnectionArn?: string | null;
+  GlobalNetworkId?: string | null;
+  DeviceId?: string | null;
+  ConnectedDeviceId?: string | null;
+  LinkId?: string | null;
+  ConnectedLinkId?: string | null;
+  Description?: string | null;
+  CreatedAt?: Date | number | null;
+  State?: ConnectionState | null;
+  Tags?: Tag[] | null;
+}
+function toConnection(root: jsonP.JSONValue): Connection {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "ConnectionId": "s",
+      "ConnectionArn": "s",
+      "GlobalNetworkId": "s",
+      "DeviceId": "s",
+      "ConnectedDeviceId": "s",
+      "LinkId": "s",
+      "ConnectedLinkId": "s",
+      "Description": "s",
+      "CreatedAt": "d",
+      "State": (x: jsonP.JSONValue) => cmnP.readEnum<ConnectionState>(x),
+      "Tags": [toTag],
+    },
+  }, root);
+}
+
+// refs: 4 - tags: output, named, enum
+export type ConnectionState =
+| "PENDING"
+| "AVAILABLE"
+| "DELETING"
+| "UPDATING"
+| cmnP.UnexpectedEnumValue;
+
 // refs: 4 - tags: output, named, interface
 export interface Device {
   DeviceId?: string | null;
   DeviceArn?: string | null;
   GlobalNetworkId?: string | null;
+  AWSLocation?: AWSLocation | null;
   Description?: string | null;
   Type?: string | null;
   Vendor?: string | null;
@@ -1131,6 +1474,7 @@ function toDevice(root: jsonP.JSONValue): Device {
       "DeviceId": "s",
       "DeviceArn": "s",
       "GlobalNetworkId": "s",
+      "AWSLocation": toAWSLocation,
       "Description": "s",
       "Type": "s",
       "Vendor": "s",

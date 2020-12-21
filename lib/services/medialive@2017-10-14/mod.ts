@@ -5,7 +5,7 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import * as uuidv4 from "https://deno.land/std@0.71.0/uuid/v4.ts";
+import * as uuidv4 from "https://deno.land/std@0.75.0/uuid/v4.ts";
 import * as cmnP from "../../encoding/common.ts";
 import * as jsonP from "../../encoding/json.ts";
 function generateIdemptToken() {
@@ -568,6 +568,7 @@ export default class MediaLive {
         "Arn": "s",
         "ConnectionState": (x: jsonP.JSONValue) => cmnP.readEnum<InputDeviceConnectionState>(x),
         "DeviceSettingsSyncState": (x: jsonP.JSONValue) => cmnP.readEnum<DeviceSettingsSyncState>(x),
+        "DeviceUpdateStatus": (x: jsonP.JSONValue) => cmnP.readEnum<DeviceUpdateStatus>(x),
         "HdDeviceSettings": toInputDeviceHdSettings,
         "Id": "s",
         "MacAddress": "s",
@@ -575,6 +576,7 @@ export default class MediaLive {
         "NetworkSettings": toInputDeviceNetworkSettings,
         "SerialNumber": "s",
         "Type": (x: jsonP.JSONValue) => cmnP.readEnum<InputDeviceType>(x),
+        "UhdDeviceSettings": toInputDeviceUhdSettings,
       },
     }, await resp.json());
   }
@@ -1260,6 +1262,7 @@ export default class MediaLive {
     const body: jsonP.JSONObject = {
       hdDeviceSettings: fromInputDeviceConfigurableSettings(params["HdDeviceSettings"]),
       name: params["Name"],
+      uhdDeviceSettings: fromInputDeviceConfigurableSettings(params["UhdDeviceSettings"]),
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -1274,6 +1277,7 @@ export default class MediaLive {
         "Arn": "s",
         "ConnectionState": (x: jsonP.JSONValue) => cmnP.readEnum<InputDeviceConnectionState>(x),
         "DeviceSettingsSyncState": (x: jsonP.JSONValue) => cmnP.readEnum<DeviceSettingsSyncState>(x),
+        "DeviceUpdateStatus": (x: jsonP.JSONValue) => cmnP.readEnum<DeviceUpdateStatus>(x),
         "HdDeviceSettings": toInputDeviceHdSettings,
         "Id": "s",
         "MacAddress": "s",
@@ -1281,6 +1285,7 @@ export default class MediaLive {
         "NetworkSettings": toInputDeviceNetworkSettings,
         "SerialNumber": "s",
         "Type": (x: jsonP.JSONValue) => cmnP.readEnum<InputDeviceType>(x),
+        "UhdDeviceSettings": toInputDeviceUhdSettings,
       },
     }, await resp.json());
   }
@@ -1971,6 +1976,7 @@ export interface UpdateInputDeviceRequest {
   HdDeviceSettings?: InputDeviceConfigurableSettings | null;
   InputDeviceId: string;
   Name?: string | null;
+  UhdDeviceSettings?: InputDeviceConfigurableSettings | null;
 }
 
 // refs: 1 - tags: named, input
@@ -2178,6 +2184,7 @@ export interface DescribeInputDeviceResponse {
   Arn?: string | null;
   ConnectionState?: InputDeviceConnectionState | null;
   DeviceSettingsSyncState?: DeviceSettingsSyncState | null;
+  DeviceUpdateStatus?: DeviceUpdateStatus | null;
   HdDeviceSettings?: InputDeviceHdSettings | null;
   Id?: string | null;
   MacAddress?: string | null;
@@ -2185,6 +2192,7 @@ export interface DescribeInputDeviceResponse {
   NetworkSettings?: InputDeviceNetworkSettings | null;
   SerialNumber?: string | null;
   Type?: InputDeviceType | null;
+  UhdDeviceSettings?: InputDeviceUhdSettings | null;
 }
 
 // refs: 1 - tags: named, output
@@ -2432,6 +2440,7 @@ export interface UpdateInputDeviceResponse {
   Arn?: string | null;
   ConnectionState?: InputDeviceConnectionState | null;
   DeviceSettingsSyncState?: DeviceSettingsSyncState | null;
+  DeviceUpdateStatus?: DeviceUpdateStatus | null;
   HdDeviceSettings?: InputDeviceHdSettings | null;
   Id?: string | null;
   MacAddress?: string | null;
@@ -2439,6 +2448,7 @@ export interface UpdateInputDeviceResponse {
   NetworkSettings?: InputDeviceNetworkSettings | null;
   SerialNumber?: string | null;
   Type?: InputDeviceType | null;
+  UhdDeviceSettings?: InputDeviceUhdSettings | null;
 }
 
 // refs: 1 - tags: named, output
@@ -5628,6 +5638,7 @@ function toMultiplexGroupSettings(root: jsonP.JSONValue): MultiplexGroupSettings
 
 // refs: 9 - tags: input, named, interface, output
 export interface RtmpGroupSettings {
+  AdMarkers?: RtmpAdMarkers[] | null;
   AuthenticationScheme?: AuthenticationScheme | null;
   CacheFullBehavior?: RtmpCacheFullBehavior | null;
   CacheLength?: number | null;
@@ -5638,6 +5649,7 @@ export interface RtmpGroupSettings {
 function fromRtmpGroupSettings(input?: RtmpGroupSettings | null): jsonP.JSONValue {
   if (!input) return input;
   return {
+    adMarkers: input["AdMarkers"],
     authenticationScheme: input["AuthenticationScheme"],
     cacheFullBehavior: input["CacheFullBehavior"],
     cacheLength: input["CacheLength"],
@@ -5650,6 +5662,7 @@ function toRtmpGroupSettings(root: jsonP.JSONValue): RtmpGroupSettings {
   return jsonP.readObj({
     required: {},
     optional: {
+      "AdMarkers": [(x: jsonP.JSONValue) => cmnP.readEnum<RtmpAdMarkers>(x)],
       "AuthenticationScheme": (x: jsonP.JSONValue) => cmnP.readEnum<AuthenticationScheme>(x),
       "CacheFullBehavior": (x: jsonP.JSONValue) => cmnP.readEnum<RtmpCacheFullBehavior>(x),
       "CacheLength": "n",
@@ -5659,6 +5672,11 @@ function toRtmpGroupSettings(root: jsonP.JSONValue): RtmpGroupSettings {
     },
   }, root);
 }
+
+// refs: 9 - tags: input, named, enum, output
+export type RtmpAdMarkers =
+| "ON_CUE_POINT_SCTE35"
+| cmnP.UnexpectedEnumValue;
 
 // refs: 9 - tags: input, named, enum, output
 export type AuthenticationScheme =
@@ -7735,19 +7753,48 @@ function toFailoverCondition(root: jsonP.JSONValue): FailoverCondition {
 
 // refs: 10 - tags: input, named, interface, output
 export interface FailoverConditionSettings {
+  AudioSilenceSettings?: AudioSilenceFailoverSettings | null;
   InputLossSettings?: InputLossFailoverSettings | null;
+  VideoBlackSettings?: VideoBlackFailoverSettings | null;
 }
 function fromFailoverConditionSettings(input?: FailoverConditionSettings | null): jsonP.JSONValue {
   if (!input) return input;
   return {
+    audioSilenceSettings: fromAudioSilenceFailoverSettings(input["AudioSilenceSettings"]),
     inputLossSettings: fromInputLossFailoverSettings(input["InputLossSettings"]),
+    videoBlackSettings: fromVideoBlackFailoverSettings(input["VideoBlackSettings"]),
   }
 }
 function toFailoverConditionSettings(root: jsonP.JSONValue): FailoverConditionSettings {
   return jsonP.readObj({
     required: {},
     optional: {
+      "AudioSilenceSettings": toAudioSilenceFailoverSettings,
       "InputLossSettings": toInputLossFailoverSettings,
+      "VideoBlackSettings": toVideoBlackFailoverSettings,
+    },
+  }, root);
+}
+
+// refs: 10 - tags: input, named, interface, output
+export interface AudioSilenceFailoverSettings {
+  AudioSelectorName: string;
+  AudioSilenceThresholdMsec?: number | null;
+}
+function fromAudioSilenceFailoverSettings(input?: AudioSilenceFailoverSettings | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    audioSelectorName: input["AudioSelectorName"],
+    audioSilenceThresholdMsec: input["AudioSilenceThresholdMsec"],
+  }
+}
+function toAudioSilenceFailoverSettings(root: jsonP.JSONValue): AudioSilenceFailoverSettings {
+  return jsonP.readObj({
+    required: {
+      "AudioSelectorName": "s",
+    },
+    optional: {
+      "AudioSilenceThresholdMsec": "n",
     },
   }, root);
 }
@@ -7767,6 +7814,28 @@ function toInputLossFailoverSettings(root: jsonP.JSONValue): InputLossFailoverSe
     required: {},
     optional: {
       "InputLossThresholdMsec": "n",
+    },
+  }, root);
+}
+
+// refs: 10 - tags: input, named, interface, output
+export interface VideoBlackFailoverSettings {
+  BlackDetectThreshold?: number | null;
+  VideoBlackThresholdMsec?: number | null;
+}
+function fromVideoBlackFailoverSettings(input?: VideoBlackFailoverSettings | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    blackDetectThreshold: input["BlackDetectThreshold"],
+    videoBlackThresholdMsec: input["VideoBlackThresholdMsec"],
+  }
+}
+function toVideoBlackFailoverSettings(root: jsonP.JSONValue): VideoBlackFailoverSettings {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "BlackDetectThreshold": "n",
+      "VideoBlackThresholdMsec": "n",
     },
   }, root);
 }
@@ -8662,7 +8731,7 @@ function fromInputDeviceRequest(input?: InputDeviceRequest | null): jsonP.JSONVa
   }
 }
 
-// refs: 1 - tags: input, named, interface
+// refs: 2 - tags: input, named, interface
 export interface InputDeviceConfigurableSettings {
   ConfiguredInput?: InputDeviceConfiguredInput | null;
   MaxBitrate?: number | null;
@@ -8675,7 +8744,7 @@ function fromInputDeviceConfigurableSettings(input?: InputDeviceConfigurableSett
   }
 }
 
-// refs: 4 - tags: input, named, enum, output
+// refs: 8 - tags: input, named, enum, output
 export type InputDeviceConfiguredInput =
 | "AUTO"
 | "HDMI"
@@ -9253,6 +9322,12 @@ export type DeviceSettingsSyncState =
 | "SYNCING"
 | cmnP.UnexpectedEnumValue;
 
+// refs: 3 - tags: output, named, enum
+export type DeviceUpdateStatus =
+| "UP_TO_DATE"
+| "NOT_UP_TO_DATE"
+| cmnP.UnexpectedEnumValue;
+
 // refs: 3 - tags: output, named, interface
 export interface InputDeviceHdSettings {
   ActiveInput?: InputDeviceActiveInput | null;
@@ -9280,19 +9355,19 @@ function toInputDeviceHdSettings(root: jsonP.JSONValue): InputDeviceHdSettings {
   }, root);
 }
 
-// refs: 3 - tags: output, named, enum
+// refs: 6 - tags: output, named, enum
 export type InputDeviceActiveInput =
 | "HDMI"
 | "SDI"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 3 - tags: output, named, enum
+// refs: 6 - tags: output, named, enum
 export type InputDeviceState =
 | "IDLE"
 | "STREAMING"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 3 - tags: output, named, enum
+// refs: 6 - tags: output, named, enum
 export type InputDeviceScanType =
 | "INTERLACED"
 | "PROGRESSIVE"
@@ -9329,6 +9404,33 @@ export type InputDeviceIpScheme =
 export type InputDeviceType =
 | "HD"
 | cmnP.UnexpectedEnumValue;
+
+// refs: 3 - tags: output, named, interface
+export interface InputDeviceUhdSettings {
+  ActiveInput?: InputDeviceActiveInput | null;
+  ConfiguredInput?: InputDeviceConfiguredInput | null;
+  DeviceState?: InputDeviceState | null;
+  Framerate?: number | null;
+  Height?: number | null;
+  MaxBitrate?: number | null;
+  ScanType?: InputDeviceScanType | null;
+  Width?: number | null;
+}
+function toInputDeviceUhdSettings(root: jsonP.JSONValue): InputDeviceUhdSettings {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "ActiveInput": (x: jsonP.JSONValue) => cmnP.readEnum<InputDeviceActiveInput>(x),
+      "ConfiguredInput": (x: jsonP.JSONValue) => cmnP.readEnum<InputDeviceConfiguredInput>(x),
+      "DeviceState": (x: jsonP.JSONValue) => cmnP.readEnum<InputDeviceState>(x),
+      "Framerate": "n",
+      "Height": "n",
+      "MaxBitrate": "n",
+      "ScanType": (x: jsonP.JSONValue) => cmnP.readEnum<InputDeviceScanType>(x),
+      "Width": "n",
+    },
+  }, root);
+}
 
 // refs: 1 - tags: output, named, enum
 export type ContentType =
@@ -9404,6 +9506,7 @@ export interface InputDeviceSummary {
   Arn?: string | null;
   ConnectionState?: InputDeviceConnectionState | null;
   DeviceSettingsSyncState?: DeviceSettingsSyncState | null;
+  DeviceUpdateStatus?: DeviceUpdateStatus | null;
   HdDeviceSettings?: InputDeviceHdSettings | null;
   Id?: string | null;
   MacAddress?: string | null;
@@ -9411,6 +9514,7 @@ export interface InputDeviceSummary {
   NetworkSettings?: InputDeviceNetworkSettings | null;
   SerialNumber?: string | null;
   Type?: InputDeviceType | null;
+  UhdDeviceSettings?: InputDeviceUhdSettings | null;
 }
 function toInputDeviceSummary(root: jsonP.JSONValue): InputDeviceSummary {
   return jsonP.readObj({
@@ -9419,6 +9523,7 @@ function toInputDeviceSummary(root: jsonP.JSONValue): InputDeviceSummary {
       "Arn": "s",
       "ConnectionState": (x: jsonP.JSONValue) => cmnP.readEnum<InputDeviceConnectionState>(x),
       "DeviceSettingsSyncState": (x: jsonP.JSONValue) => cmnP.readEnum<DeviceSettingsSyncState>(x),
+      "DeviceUpdateStatus": (x: jsonP.JSONValue) => cmnP.readEnum<DeviceUpdateStatus>(x),
       "HdDeviceSettings": toInputDeviceHdSettings,
       "Id": "s",
       "MacAddress": "s",
@@ -9426,6 +9531,7 @@ function toInputDeviceSummary(root: jsonP.JSONValue): InputDeviceSummary {
       "NetworkSettings": toInputDeviceNetworkSettings,
       "SerialNumber": "s",
       "Type": (x: jsonP.JSONValue) => cmnP.readEnum<InputDeviceType>(x),
+      "UhdDeviceSettings": toInputDeviceUhdSettings,
     },
   }, root);
 }

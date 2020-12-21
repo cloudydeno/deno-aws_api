@@ -27,6 +27,116 @@ export default class Honeycode {
     "uid": "honeycode-2020-03-01"
   };
 
+  async batchCreateTableRows(
+    {abortSignal, ...params}: RequestConfig & BatchCreateTableRowsRequest,
+  ): Promise<BatchCreateTableRowsResult> {
+    const body: jsonP.JSONObject = {
+      rowsToCreate: params["rowsToCreate"]?.map(x => fromCreateRowData(x)),
+      clientRequestToken: params["clientRequestToken"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "BatchCreateTableRows",
+      requestUri: cmnP.encodePath`/workbooks/${params["workbookId"]}/tables/${params["tableId"]}/rows/batchcreate`,
+    });
+    return jsonP.readObj({
+      required: {
+        "workbookCursor": "n",
+        "createdRows": x => jsonP.readMap(String, String, x),
+      },
+      optional: {
+        "failedBatchItems": [toFailedBatchItem],
+      },
+    }, await resp.json());
+  }
+
+  async batchDeleteTableRows(
+    {abortSignal, ...params}: RequestConfig & BatchDeleteTableRowsRequest,
+  ): Promise<BatchDeleteTableRowsResult> {
+    const body: jsonP.JSONObject = {
+      rowIds: params["rowIds"],
+      clientRequestToken: params["clientRequestToken"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "BatchDeleteTableRows",
+      requestUri: cmnP.encodePath`/workbooks/${params["workbookId"]}/tables/${params["tableId"]}/rows/batchdelete`,
+    });
+    return jsonP.readObj({
+      required: {
+        "workbookCursor": "n",
+      },
+      optional: {
+        "failedBatchItems": [toFailedBatchItem],
+      },
+    }, await resp.json());
+  }
+
+  async batchUpdateTableRows(
+    {abortSignal, ...params}: RequestConfig & BatchUpdateTableRowsRequest,
+  ): Promise<BatchUpdateTableRowsResult> {
+    const body: jsonP.JSONObject = {
+      rowsToUpdate: params["rowsToUpdate"]?.map(x => fromUpdateRowData(x)),
+      clientRequestToken: params["clientRequestToken"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "BatchUpdateTableRows",
+      requestUri: cmnP.encodePath`/workbooks/${params["workbookId"]}/tables/${params["tableId"]}/rows/batchupdate`,
+    });
+    return jsonP.readObj({
+      required: {
+        "workbookCursor": "n",
+      },
+      optional: {
+        "failedBatchItems": [toFailedBatchItem],
+      },
+    }, await resp.json());
+  }
+
+  async batchUpsertTableRows(
+    {abortSignal, ...params}: RequestConfig & BatchUpsertTableRowsRequest,
+  ): Promise<BatchUpsertTableRowsResult> {
+    const body: jsonP.JSONObject = {
+      rowsToUpsert: params["rowsToUpsert"]?.map(x => fromUpsertRowData(x)),
+      clientRequestToken: params["clientRequestToken"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "BatchUpsertTableRows",
+      requestUri: cmnP.encodePath`/workbooks/${params["workbookId"]}/tables/${params["tableId"]}/rows/batchupsert`,
+    });
+    return jsonP.readObj({
+      required: {
+        "rows": x => jsonP.readMap(String, toUpsertRowsResult, x),
+        "workbookCursor": "n",
+      },
+      optional: {
+        "failedBatchItems": [toFailedBatchItem],
+      },
+    }, await resp.json());
+  }
+
+  async describeTableDataImportJob(
+    {abortSignal, ...params}: RequestConfig & DescribeTableDataImportJobRequest,
+  ): Promise<DescribeTableDataImportJobResult> {
+
+    const resp = await this.#client.performRequest({
+      abortSignal,
+      action: "DescribeTableDataImportJob",
+      method: "GET",
+      requestUri: cmnP.encodePath`/workbooks/${params["workbookId"]}/tables/${params["tableId"]}/import/${params["jobId"]}`,
+    });
+    return jsonP.readObj({
+      required: {
+        "jobStatus": (x: jsonP.JSONValue) => cmnP.readEnum<TableDataImportJobStatus>(x),
+        "message": "s",
+        "jobMetadata": toTableDataImportJobMetadata,
+      },
+      optional: {},
+    }, await resp.json());
+  }
+
   async getScreenData(
     {abortSignal, ...params}: RequestConfig & GetScreenDataRequest,
   ): Promise<GetScreenDataResult> {
@@ -75,6 +185,164 @@ export default class Honeycode {
     }, await resp.json());
   }
 
+  async listTableColumns(
+    {abortSignal, ...params}: RequestConfig & ListTableColumnsRequest,
+  ): Promise<ListTableColumnsResult> {
+    const query = new URLSearchParams;
+    if (params["nextToken"] != null) query.set("nextToken", params["nextToken"]?.toString() ?? "");
+    const resp = await this.#client.performRequest({
+      abortSignal, query,
+      action: "ListTableColumns",
+      method: "GET",
+      requestUri: cmnP.encodePath`/workbooks/${params["workbookId"]}/tables/${params["tableId"]}/columns`,
+    });
+    return jsonP.readObj({
+      required: {
+        "tableColumns": [toTableColumn],
+      },
+      optional: {
+        "nextToken": "s",
+        "workbookCursor": "n",
+      },
+    }, await resp.json());
+  }
+
+  async listTableRows(
+    {abortSignal, ...params}: RequestConfig & ListTableRowsRequest,
+  ): Promise<ListTableRowsResult> {
+    const body: jsonP.JSONObject = {
+      rowIds: params["rowIds"],
+      maxResults: params["maxResults"],
+      nextToken: params["nextToken"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "ListTableRows",
+      requestUri: cmnP.encodePath`/workbooks/${params["workbookId"]}/tables/${params["tableId"]}/rows/list`,
+    });
+    return jsonP.readObj({
+      required: {
+        "columnIds": ["s"],
+        "rows": [toTableRow],
+        "workbookCursor": "n",
+      },
+      optional: {
+        "rowIdsNotFound": ["s"],
+        "nextToken": "s",
+      },
+    }, await resp.json());
+  }
+
+  async listTables(
+    {abortSignal, ...params}: RequestConfig & ListTablesRequest,
+  ): Promise<ListTablesResult> {
+    const query = new URLSearchParams;
+    if (params["maxResults"] != null) query.set("maxResults", params["maxResults"]?.toString() ?? "");
+    if (params["nextToken"] != null) query.set("nextToken", params["nextToken"]?.toString() ?? "");
+    const resp = await this.#client.performRequest({
+      abortSignal, query,
+      action: "ListTables",
+      method: "GET",
+      requestUri: cmnP.encodePath`/workbooks/${params["workbookId"]}/tables`,
+    });
+    return jsonP.readObj({
+      required: {
+        "tables": [toTable],
+      },
+      optional: {
+        "nextToken": "s",
+        "workbookCursor": "n",
+      },
+    }, await resp.json());
+  }
+
+  async queryTableRows(
+    {abortSignal, ...params}: RequestConfig & QueryTableRowsRequest,
+  ): Promise<QueryTableRowsResult> {
+    const body: jsonP.JSONObject = {
+      filterFormula: fromFilter(params["filterFormula"]),
+      maxResults: params["maxResults"],
+      nextToken: params["nextToken"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "QueryTableRows",
+      requestUri: cmnP.encodePath`/workbooks/${params["workbookId"]}/tables/${params["tableId"]}/rows/query`,
+    });
+    return jsonP.readObj({
+      required: {
+        "columnIds": ["s"],
+        "rows": [toTableRow],
+        "workbookCursor": "n",
+      },
+      optional: {
+        "nextToken": "s",
+      },
+    }, await resp.json());
+  }
+
+  async startTableDataImportJob(
+    {abortSignal, ...params}: RequestConfig & StartTableDataImportJobRequest,
+  ): Promise<StartTableDataImportJobResult> {
+    const body: jsonP.JSONObject = {
+      dataSource: fromImportDataSource(params["dataSource"]),
+      dataFormat: params["dataFormat"],
+      importOptions: fromImportOptions(params["importOptions"]),
+      clientRequestToken: params["clientRequestToken"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "StartTableDataImportJob",
+      requestUri: cmnP.encodePath`/workbooks/${params["workbookId"]}/tables/${params["destinationTableId"]}/import`,
+    });
+    return jsonP.readObj({
+      required: {
+        "jobId": "s",
+        "jobStatus": (x: jsonP.JSONValue) => cmnP.readEnum<TableDataImportJobStatus>(x),
+      },
+      optional: {},
+    }, await resp.json());
+  }
+
+}
+
+// refs: 1 - tags: named, input
+export interface BatchCreateTableRowsRequest {
+  workbookId: string;
+  tableId: string;
+  rowsToCreate: CreateRowData[];
+  clientRequestToken?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface BatchDeleteTableRowsRequest {
+  workbookId: string;
+  tableId: string;
+  rowIds: string[];
+  clientRequestToken?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface BatchUpdateTableRowsRequest {
+  workbookId: string;
+  tableId: string;
+  rowsToUpdate: UpdateRowData[];
+  clientRequestToken?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface BatchUpsertTableRowsRequest {
+  workbookId: string;
+  tableId: string;
+  rowsToUpsert: UpsertRowData[];
+  clientRequestToken?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface DescribeTableDataImportJobRequest {
+  workbookId: string;
+  tableId: string;
+  jobId: string;
 }
 
 // refs: 1 - tags: named, input
@@ -98,6 +366,81 @@ export interface InvokeScreenAutomationRequest {
   clientRequestToken?: string | null;
 }
 
+// refs: 1 - tags: named, input
+export interface ListTableColumnsRequest {
+  workbookId: string;
+  tableId: string;
+  nextToken?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface ListTableRowsRequest {
+  workbookId: string;
+  tableId: string;
+  rowIds?: string[] | null;
+  maxResults?: number | null;
+  nextToken?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface ListTablesRequest {
+  workbookId: string;
+  maxResults?: number | null;
+  nextToken?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface QueryTableRowsRequest {
+  workbookId: string;
+  tableId: string;
+  filterFormula: Filter;
+  maxResults?: number | null;
+  nextToken?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface StartTableDataImportJobRequest {
+  workbookId: string;
+  dataSource: ImportDataSource;
+  dataFormat: ImportSourceDataFormat;
+  destinationTableId: string;
+  importOptions: ImportOptions;
+  clientRequestToken: string;
+}
+
+// refs: 1 - tags: named, output
+export interface BatchCreateTableRowsResult {
+  workbookCursor: number;
+  createdRows: { [key: string]: string | null | undefined };
+  failedBatchItems?: FailedBatchItem[] | null;
+}
+
+// refs: 1 - tags: named, output
+export interface BatchDeleteTableRowsResult {
+  workbookCursor: number;
+  failedBatchItems?: FailedBatchItem[] | null;
+}
+
+// refs: 1 - tags: named, output
+export interface BatchUpdateTableRowsResult {
+  workbookCursor: number;
+  failedBatchItems?: FailedBatchItem[] | null;
+}
+
+// refs: 1 - tags: named, output
+export interface BatchUpsertTableRowsResult {
+  rows: { [key: string]: UpsertRowsResult | null | undefined };
+  workbookCursor: number;
+  failedBatchItems?: FailedBatchItem[] | null;
+}
+
+// refs: 1 - tags: named, output
+export interface DescribeTableDataImportJobResult {
+  jobStatus: TableDataImportJobStatus;
+  message: string;
+  jobMetadata: TableDataImportJobMetadata;
+}
+
 // refs: 1 - tags: named, output
 export interface GetScreenDataResult {
   results: { [key: string]: ResultSet | null | undefined };
@@ -110,6 +453,108 @@ export interface InvokeScreenAutomationResult {
   workbookCursor: number;
 }
 
+// refs: 1 - tags: named, output
+export interface ListTableColumnsResult {
+  tableColumns: TableColumn[];
+  nextToken?: string | null;
+  workbookCursor?: number | null;
+}
+
+// refs: 1 - tags: named, output
+export interface ListTableRowsResult {
+  columnIds: string[];
+  rows: TableRow[];
+  rowIdsNotFound?: string[] | null;
+  nextToken?: string | null;
+  workbookCursor: number;
+}
+
+// refs: 1 - tags: named, output
+export interface ListTablesResult {
+  tables: Table[];
+  nextToken?: string | null;
+  workbookCursor?: number | null;
+}
+
+// refs: 1 - tags: named, output
+export interface QueryTableRowsResult {
+  columnIds: string[];
+  rows: TableRow[];
+  nextToken?: string | null;
+  workbookCursor: number;
+}
+
+// refs: 1 - tags: named, output
+export interface StartTableDataImportJobResult {
+  jobId: string;
+  jobStatus: TableDataImportJobStatus;
+}
+
+// refs: 1 - tags: input, named, interface
+export interface CreateRowData {
+  batchItemId: string;
+  cellsToCreate: { [key: string]: CellInput | null | undefined };
+}
+function fromCreateRowData(input?: CreateRowData | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    batchItemId: input["batchItemId"],
+    cellsToCreate: jsonP.serializeMap(input["cellsToCreate"], x => fromCellInput(x)),
+  }
+}
+
+// refs: 3 - tags: input, named, interface
+export interface CellInput {
+  fact?: string | null;
+}
+function fromCellInput(input?: CellInput | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    fact: input["fact"],
+  }
+}
+
+// refs: 1 - tags: input, named, interface
+export interface UpdateRowData {
+  rowId: string;
+  cellsToUpdate: { [key: string]: CellInput | null | undefined };
+}
+function fromUpdateRowData(input?: UpdateRowData | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    rowId: input["rowId"],
+    cellsToUpdate: jsonP.serializeMap(input["cellsToUpdate"], x => fromCellInput(x)),
+  }
+}
+
+// refs: 1 - tags: input, named, interface
+export interface UpsertRowData {
+  batchItemId: string;
+  filter: Filter;
+  cellsToUpdate: { [key: string]: CellInput | null | undefined };
+}
+function fromUpsertRowData(input?: UpsertRowData | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    batchItemId: input["batchItemId"],
+    filter: fromFilter(input["filter"]),
+    cellsToUpdate: jsonP.serializeMap(input["cellsToUpdate"], x => fromCellInput(x)),
+  }
+}
+
+// refs: 2 - tags: input, named, interface
+export interface Filter {
+  formula: string;
+  contextRowId?: string | null;
+}
+function fromFilter(input?: Filter | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    formula: input["formula"],
+    contextRowId: input["contextRowId"],
+  }
+}
+
 // refs: 2 - tags: input, named, interface
 export interface VariableValue {
   rawValue: string;
@@ -119,6 +564,226 @@ function fromVariableValue(input?: VariableValue | null): jsonP.JSONValue {
   return {
     rawValue: input["rawValue"],
   }
+}
+
+// refs: 2 - tags: input, named, interface, output
+export interface ImportDataSource {
+  dataSourceConfig: ImportDataSourceConfig;
+}
+function fromImportDataSource(input?: ImportDataSource | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    dataSourceConfig: fromImportDataSourceConfig(input["dataSourceConfig"]),
+  }
+}
+function toImportDataSource(root: jsonP.JSONValue): ImportDataSource {
+  return jsonP.readObj({
+    required: {
+      "dataSourceConfig": toImportDataSourceConfig,
+    },
+    optional: {},
+  }, root);
+}
+
+// refs: 2 - tags: input, named, interface, output
+export interface ImportDataSourceConfig {
+  dataSourceUrl?: string | null;
+}
+function fromImportDataSourceConfig(input?: ImportDataSourceConfig | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    dataSourceUrl: input["dataSourceUrl"],
+  }
+}
+function toImportDataSourceConfig(root: jsonP.JSONValue): ImportDataSourceConfig {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "dataSourceUrl": "s",
+    },
+  }, root);
+}
+
+// refs: 1 - tags: input, named, enum
+export type ImportSourceDataFormat =
+| "DELIMITED_TEXT"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 2 - tags: input, named, interface, output
+export interface ImportOptions {
+  destinationOptions?: DestinationOptions | null;
+  delimitedTextOptions?: DelimitedTextImportOptions | null;
+}
+function fromImportOptions(input?: ImportOptions | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    destinationOptions: fromDestinationOptions(input["destinationOptions"]),
+    delimitedTextOptions: fromDelimitedTextImportOptions(input["delimitedTextOptions"]),
+  }
+}
+function toImportOptions(root: jsonP.JSONValue): ImportOptions {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "destinationOptions": toDestinationOptions,
+      "delimitedTextOptions": toDelimitedTextImportOptions,
+    },
+  }, root);
+}
+
+// refs: 2 - tags: input, named, interface, output
+export interface DestinationOptions {
+  columnMap?: { [key: string]: SourceDataColumnProperties | null | undefined } | null;
+}
+function fromDestinationOptions(input?: DestinationOptions | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    columnMap: jsonP.serializeMap(input["columnMap"], x => fromSourceDataColumnProperties(x)),
+  }
+}
+function toDestinationOptions(root: jsonP.JSONValue): DestinationOptions {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "columnMap": x => jsonP.readMap(String, toSourceDataColumnProperties, x),
+    },
+  }, root);
+}
+
+// refs: 2 - tags: input, named, interface, output
+export interface SourceDataColumnProperties {
+  columnIndex?: number | null;
+}
+function fromSourceDataColumnProperties(input?: SourceDataColumnProperties | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    columnIndex: input["columnIndex"],
+  }
+}
+function toSourceDataColumnProperties(root: jsonP.JSONValue): SourceDataColumnProperties {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "columnIndex": "n",
+    },
+  }, root);
+}
+
+// refs: 2 - tags: input, named, interface, output
+export interface DelimitedTextImportOptions {
+  delimiter: string;
+  hasHeaderRow?: boolean | null;
+  ignoreEmptyRows?: boolean | null;
+  dataCharacterEncoding?: ImportDataCharacterEncoding | null;
+}
+function fromDelimitedTextImportOptions(input?: DelimitedTextImportOptions | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    delimiter: input["delimiter"],
+    hasHeaderRow: input["hasHeaderRow"],
+    ignoreEmptyRows: input["ignoreEmptyRows"],
+    dataCharacterEncoding: input["dataCharacterEncoding"],
+  }
+}
+function toDelimitedTextImportOptions(root: jsonP.JSONValue): DelimitedTextImportOptions {
+  return jsonP.readObj({
+    required: {
+      "delimiter": "s",
+    },
+    optional: {
+      "hasHeaderRow": "b",
+      "ignoreEmptyRows": "b",
+      "dataCharacterEncoding": (x: jsonP.JSONValue) => cmnP.readEnum<ImportDataCharacterEncoding>(x),
+    },
+  }, root);
+}
+
+// refs: 2 - tags: input, named, enum, output
+export type ImportDataCharacterEncoding =
+| "UTF-8"
+| "US-ASCII"
+| "ISO-8859-1"
+| "UTF-16BE"
+| "UTF-16LE"
+| "UTF-16"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 4 - tags: output, named, interface
+export interface FailedBatchItem {
+  id: string;
+  errorMessage: string;
+}
+function toFailedBatchItem(root: jsonP.JSONValue): FailedBatchItem {
+  return jsonP.readObj({
+    required: {
+      "id": "s",
+      "errorMessage": "s",
+    },
+    optional: {},
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
+export interface UpsertRowsResult {
+  rowIds: string[];
+  upsertAction: UpsertAction;
+}
+function toUpsertRowsResult(root: jsonP.JSONValue): UpsertRowsResult {
+  return jsonP.readObj({
+    required: {
+      "rowIds": ["s"],
+      "upsertAction": (x: jsonP.JSONValue) => cmnP.readEnum<UpsertAction>(x),
+    },
+    optional: {},
+  }, root);
+}
+
+// refs: 1 - tags: output, named, enum
+export type UpsertAction =
+| "UPDATED"
+| "APPENDED"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 2 - tags: output, named, enum
+export type TableDataImportJobStatus =
+| "SUBMITTED"
+| "IN_PROGRESS"
+| "COMPLETED"
+| "FAILED"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 1 - tags: output, named, interface
+export interface TableDataImportJobMetadata {
+  submitter: ImportJobSubmitter;
+  submitTime: Date | number;
+  importOptions: ImportOptions;
+  dataSource: ImportDataSource;
+}
+function toTableDataImportJobMetadata(root: jsonP.JSONValue): TableDataImportJobMetadata {
+  return jsonP.readObj({
+    required: {
+      "submitter": toImportJobSubmitter,
+      "submitTime": "d",
+      "importOptions": toImportOptions,
+      "dataSource": toImportDataSource,
+    },
+    optional: {},
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
+export interface ImportJobSubmitter {
+  email?: string | null;
+  userArn?: string | null;
+}
+function toImportJobSubmitter(root: jsonP.JSONValue): ImportJobSubmitter {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "email": "s",
+      "userArn": "s",
+    },
+  }, root);
 }
 
 // refs: 1 - tags: output, named, interface
@@ -151,7 +816,7 @@ function toColumnMetadata(root: jsonP.JSONValue): ColumnMetadata {
   }, root);
 }
 
-// refs: 2 - tags: output, named, enum
+// refs: 5 - tags: output, named, enum
 export type Format =
 | "AUTO"
 | "NUMBER"
@@ -195,6 +860,72 @@ function toDataItem(root: jsonP.JSONValue): DataItem {
       "overrideFormat": (x: jsonP.JSONValue) => cmnP.readEnum<Format>(x),
       "rawValue": "s",
       "formattedValue": "s",
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
+export interface TableColumn {
+  tableColumnId?: string | null;
+  tableColumnName?: string | null;
+  format?: Format | null;
+}
+function toTableColumn(root: jsonP.JSONValue): TableColumn {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "tableColumnId": "s",
+      "tableColumnName": "s",
+      "format": (x: jsonP.JSONValue) => cmnP.readEnum<Format>(x),
+    },
+  }, root);
+}
+
+// refs: 2 - tags: output, named, interface
+export interface TableRow {
+  rowId: string;
+  cells: Cell[];
+}
+function toTableRow(root: jsonP.JSONValue): TableRow {
+  return jsonP.readObj({
+    required: {
+      "rowId": "s",
+      "cells": [toCell],
+    },
+    optional: {},
+  }, root);
+}
+
+// refs: 2 - tags: output, named, interface
+export interface Cell {
+  formula?: string | null;
+  format?: Format | null;
+  rawValue?: string | null;
+  formattedValue?: string | null;
+}
+function toCell(root: jsonP.JSONValue): Cell {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "formula": "s",
+      "format": (x: jsonP.JSONValue) => cmnP.readEnum<Format>(x),
+      "rawValue": "s",
+      "formattedValue": "s",
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
+export interface Table {
+  tableId?: string | null;
+  tableName?: string | null;
+}
+function toTable(root: jsonP.JSONValue): Table {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "tableId": "s",
+      "tableName": "s",
     },
   }, root);
 }

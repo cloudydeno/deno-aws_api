@@ -5,7 +5,7 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import * as uuidv4 from "https://deno.land/std@0.71.0/uuid/v4.ts";
+import * as uuidv4 from "https://deno.land/std@0.75.0/uuid/v4.ts";
 import * as cmnP from "../../encoding/common.ts";
 import * as jsonP from "../../encoding/json.ts";
 function generateIdemptToken() {
@@ -353,6 +353,7 @@ export default class Macie2 {
         "jobId": "s",
         "jobStatus": (x: jsonP.JSONValue) => cmnP.readEnum<JobStatus>(x),
         "jobType": (x: jsonP.JSONValue) => cmnP.readEnum<JobType>(x),
+        "lastRunErrorStatus": toLastRunErrorStatus,
         "lastRunTime": "d",
         "name": "s",
         "s3JobDefinition": toS3JobDefinition,
@@ -1528,6 +1529,7 @@ export interface DescribeClassificationJobResponse {
   jobId?: string | null;
   jobStatus?: JobStatus | null;
   jobType?: JobType | null;
+  lastRunErrorStatus?: LastRunErrorStatus | null;
   lastRunTime?: Date | number | null;
   name?: string | null;
   s3JobDefinition?: S3JobDefinition | null;
@@ -2462,6 +2464,7 @@ export interface BucketMetadata {
   bucketName?: string | null;
   classifiableObjectCount?: number | null;
   classifiableSizeInBytes?: number | null;
+  jobDetails?: JobDetails | null;
   lastUpdated?: Date | number | null;
   objectCount?: number | null;
   objectCountByEncryptionType?: ObjectCountByEncryptionType | null;
@@ -2486,6 +2489,7 @@ function toBucketMetadata(root: jsonP.JSONValue): BucketMetadata {
       "bucketName": "s",
       "classifiableObjectCount": "n",
       "classifiableSizeInBytes": "n",
+      "jobDetails": toJobDetails,
       "lastUpdated": "d",
       "objectCount": "n",
       "objectCountByEncryptionType": toObjectCountByEncryptionType,
@@ -2502,6 +2506,39 @@ function toBucketMetadata(root: jsonP.JSONValue): BucketMetadata {
     },
   }, root);
 }
+
+// refs: 1 - tags: output, named, interface
+export interface JobDetails {
+  isDefinedInJob?: IsDefinedInJob | null;
+  isMonitoredByJob?: IsMonitoredByJob | null;
+  lastJobId?: string | null;
+  lastJobRunTime?: Date | number | null;
+}
+function toJobDetails(root: jsonP.JSONValue): JobDetails {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "isDefinedInJob": (x: jsonP.JSONValue) => cmnP.readEnum<IsDefinedInJob>(x),
+      "isMonitoredByJob": (x: jsonP.JSONValue) => cmnP.readEnum<IsMonitoredByJob>(x),
+      "lastJobId": "s",
+      "lastJobRunTime": "d",
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, enum
+export type IsDefinedInJob =
+| "TRUE"
+| "FALSE"
+| "UNKNOWN"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 1 - tags: output, named, enum
+export type IsMonitoredByJob =
+| "TRUE"
+| "FALSE"
+| "UNKNOWN"
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface ObjectCountByEncryptionType {
@@ -2694,6 +2731,25 @@ function toObjectLevelStatistics(root: jsonP.JSONValue): ObjectLevelStatistics {
     },
   }, root);
 }
+
+// refs: 2 - tags: output, named, interface
+export interface LastRunErrorStatus {
+  code?: LastRunErrorStatusCode | null;
+}
+function toLastRunErrorStatus(root: jsonP.JSONValue): LastRunErrorStatus {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "code": (x: jsonP.JSONValue) => cmnP.readEnum<LastRunErrorStatusCode>(x),
+    },
+  }, root);
+}
+
+// refs: 2 - tags: output, named, enum
+export type LastRunErrorStatusCode =
+| "NONE"
+| "ERROR"
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface Statistics {
@@ -3002,12 +3058,14 @@ function toPage(root: jsonP.JSONValue): Page {
 
 // refs: 2 - tags: output, named, interface
 export interface Record {
+  jsonPath?: string | null;
   recordIndex?: number | null;
 }
 function toRecord(root: jsonP.JSONValue): Record {
   return jsonP.readObj({
     required: {},
     optional: {
+      "jsonPath": "s",
       "recordIndex": "n",
     },
   }, root);
@@ -3701,6 +3759,7 @@ export interface JobSummary {
   jobId?: string | null;
   jobStatus?: JobStatus | null;
   jobType?: JobType | null;
+  lastRunErrorStatus?: LastRunErrorStatus | null;
   name?: string | null;
   userPausedDetails?: UserPausedDetails | null;
 }
@@ -3713,6 +3772,7 @@ function toJobSummary(root: jsonP.JSONValue): JobSummary {
       "jobId": "s",
       "jobStatus": (x: jsonP.JSONValue) => cmnP.readEnum<JobStatus>(x),
       "jobType": (x: jsonP.JSONValue) => cmnP.readEnum<JobType>(x),
+      "lastRunErrorStatus": toLastRunErrorStatus,
       "name": "s",
       "userPausedDetails": toUserPausedDetails,
     },

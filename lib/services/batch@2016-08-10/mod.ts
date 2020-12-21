@@ -285,8 +285,10 @@ export default class Batch {
       containerProperties: fromContainerProperties(params["containerProperties"]),
       nodeProperties: fromNodeProperties(params["nodeProperties"]),
       retryStrategy: fromRetryStrategy(params["retryStrategy"]),
+      propagateTags: params["propagateTags"],
       timeout: fromJobTimeout(params["timeout"]),
       tags: params["tags"],
+      platformCapabilities: params["platformCapabilities"],
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -316,6 +318,7 @@ export default class Batch {
       containerOverrides: fromContainerOverrides(params["containerOverrides"]),
       nodeOverrides: fromNodeOverrides(params["nodeOverrides"]),
       retryStrategy: fromRetryStrategy(params["retryStrategy"]),
+      propagateTags: params["propagateTags"],
       timeout: fromJobTimeout(params["timeout"]),
       tags: params["tags"],
     };
@@ -528,8 +531,10 @@ export interface RegisterJobDefinitionRequest {
   containerProperties?: ContainerProperties | null;
   nodeProperties?: NodeProperties | null;
   retryStrategy?: RetryStrategy | null;
+  propagateTags?: boolean | null;
   timeout?: JobTimeout | null;
   tags?: { [key: string]: string | null | undefined } | null;
+  platformCapabilities?: PlatformCapability[] | null;
 }
 
 // refs: 1 - tags: named, input
@@ -543,6 +548,7 @@ export interface SubmitJobRequest {
   containerOverrides?: ContainerOverrides | null;
   nodeOverrides?: NodeOverrides | null;
   retryStrategy?: RetryStrategy | null;
+  propagateTags?: boolean | null;
   timeout?: JobTimeout | null;
   tags?: { [key: string]: string | null | undefined } | null;
 }
@@ -697,20 +703,21 @@ export type CEState =
 export interface ComputeResource {
   type: CRType;
   allocationStrategy?: CRAllocationStrategy | null;
-  minvCpus: number;
+  minvCpus?: number | null;
   maxvCpus: number;
   desiredvCpus?: number | null;
-  instanceTypes: string[];
+  instanceTypes?: string[] | null;
   imageId?: string | null;
   subnets: string[];
   securityGroupIds?: string[] | null;
   ec2KeyPair?: string | null;
-  instanceRole: string;
+  instanceRole?: string | null;
   tags?: { [key: string]: string | null | undefined } | null;
   placementGroup?: string | null;
   bidPercentage?: number | null;
   spotIamFleetRole?: string | null;
   launchTemplate?: LaunchTemplateSpecification | null;
+  ec2Configuration?: Ec2Configuration[] | null;
 }
 function fromComputeResource(input?: ComputeResource | null): jsonP.JSONValue {
   if (!input) return input;
@@ -731,29 +738,31 @@ function fromComputeResource(input?: ComputeResource | null): jsonP.JSONValue {
     bidPercentage: input["bidPercentage"],
     spotIamFleetRole: input["spotIamFleetRole"],
     launchTemplate: fromLaunchTemplateSpecification(input["launchTemplate"]),
+    ec2Configuration: input["ec2Configuration"]?.map(x => fromEc2Configuration(x)),
   }
 }
 function toComputeResource(root: jsonP.JSONValue): ComputeResource {
   return jsonP.readObj({
     required: {
       "type": (x: jsonP.JSONValue) => cmnP.readEnum<CRType>(x),
-      "minvCpus": "n",
       "maxvCpus": "n",
-      "instanceTypes": ["s"],
       "subnets": ["s"],
-      "instanceRole": "s",
     },
     optional: {
       "allocationStrategy": (x: jsonP.JSONValue) => cmnP.readEnum<CRAllocationStrategy>(x),
+      "minvCpus": "n",
       "desiredvCpus": "n",
+      "instanceTypes": ["s"],
       "imageId": "s",
       "securityGroupIds": ["s"],
       "ec2KeyPair": "s",
+      "instanceRole": "s",
       "tags": x => jsonP.readMap(String, String, x),
       "placementGroup": "s",
       "bidPercentage": "n",
       "spotIamFleetRole": "s",
       "launchTemplate": toLaunchTemplateSpecification,
+      "ec2Configuration": [toEc2Configuration],
     },
   }, root);
 }
@@ -762,6 +771,8 @@ function toComputeResource(root: jsonP.JSONValue): ComputeResource {
 export type CRType =
 | "EC2"
 | "SPOT"
+| "FARGATE"
+| "FARGATE_SPOT"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, enum, output
@@ -792,6 +803,29 @@ function toLaunchTemplateSpecification(root: jsonP.JSONValue): LaunchTemplateSpe
       "launchTemplateId": "s",
       "launchTemplateName": "s",
       "version": "s",
+    },
+  }, root);
+}
+
+// refs: 2 - tags: input, named, interface, output
+export interface Ec2Configuration {
+  imageType: string;
+  imageIdOverride?: string | null;
+}
+function fromEc2Configuration(input?: Ec2Configuration | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    imageType: input["imageType"],
+    imageIdOverride: input["imageIdOverride"],
+  }
+}
+function toEc2Configuration(root: jsonP.JSONValue): Ec2Configuration {
+  return jsonP.readObj({
+    required: {
+      "imageType": "s",
+    },
+    optional: {
+      "imageIdOverride": "s",
     },
   }, root);
 }
@@ -861,6 +895,8 @@ export interface ContainerProperties {
   linuxParameters?: LinuxParameters | null;
   logConfiguration?: LogConfiguration | null;
   secrets?: Secret[] | null;
+  networkConfiguration?: NetworkConfiguration | null;
+  fargatePlatformConfiguration?: FargatePlatformConfiguration | null;
 }
 function fromContainerProperties(input?: ContainerProperties | null): jsonP.JSONValue {
   if (!input) return input;
@@ -883,6 +919,8 @@ function fromContainerProperties(input?: ContainerProperties | null): jsonP.JSON
     linuxParameters: fromLinuxParameters(input["linuxParameters"]),
     logConfiguration: fromLogConfiguration(input["logConfiguration"]),
     secrets: input["secrets"]?.map(x => fromSecret(x)),
+    networkConfiguration: fromNetworkConfiguration(input["networkConfiguration"]),
+    fargatePlatformConfiguration: fromFargatePlatformConfiguration(input["fargatePlatformConfiguration"]),
   }
 }
 function toContainerProperties(root: jsonP.JSONValue): ContainerProperties {
@@ -907,6 +945,8 @@ function toContainerProperties(root: jsonP.JSONValue): ContainerProperties {
       "linuxParameters": toLinuxParameters,
       "logConfiguration": toLogConfiguration,
       "secrets": [toSecret],
+      "networkConfiguration": toNetworkConfiguration,
+      "fargatePlatformConfiguration": toFargatePlatformConfiguration,
     },
   }, root);
 }
@@ -1049,6 +1089,8 @@ function toResourceRequirement(root: jsonP.JSONValue): ResourceRequirement {
 // refs: 8 - tags: input, named, enum, output
 export type ResourceType =
 | "GPU"
+| "VCPU"
+| "MEMORY"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 6 - tags: input, named, interface, output
@@ -1203,6 +1245,50 @@ function toSecret(root: jsonP.JSONValue): Secret {
   }, root);
 }
 
+// refs: 6 - tags: input, named, interface, output
+export interface NetworkConfiguration {
+  assignPublicIp?: AssignPublicIp | null;
+}
+function fromNetworkConfiguration(input?: NetworkConfiguration | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    assignPublicIp: input["assignPublicIp"],
+  }
+}
+function toNetworkConfiguration(root: jsonP.JSONValue): NetworkConfiguration {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "assignPublicIp": (x: jsonP.JSONValue) => cmnP.readEnum<AssignPublicIp>(x),
+    },
+  }, root);
+}
+
+// refs: 6 - tags: input, named, enum, output
+export type AssignPublicIp =
+| "ENABLED"
+| "DISABLED"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 6 - tags: input, named, interface, output
+export interface FargatePlatformConfiguration {
+  platformVersion?: string | null;
+}
+function fromFargatePlatformConfiguration(input?: FargatePlatformConfiguration | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    platformVersion: input["platformVersion"],
+  }
+}
+function toFargatePlatformConfiguration(root: jsonP.JSONValue): FargatePlatformConfiguration {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "platformVersion": "s",
+    },
+  }, root);
+}
+
 // refs: 3 - tags: input, named, interface, output
 export interface NodeProperties {
   numNodes: number;
@@ -1327,6 +1413,12 @@ function toJobTimeout(root: jsonP.JSONValue): JobTimeout {
   }, root);
 }
 
+// refs: 3 - tags: input, named, enum, output
+export type PlatformCapability =
+| "EC2"
+| "FARGATE"
+| cmnP.UnexpectedEnumValue;
+
 // refs: 1 - tags: input, named, interface
 export interface ArrayProperties {
   size?: number | null;
@@ -1418,6 +1510,8 @@ export interface ComputeResourceUpdate {
   minvCpus?: number | null;
   maxvCpus?: number | null;
   desiredvCpus?: number | null;
+  subnets?: string[] | null;
+  securityGroupIds?: string[] | null;
 }
 function fromComputeResourceUpdate(input?: ComputeResourceUpdate | null): jsonP.JSONValue {
   if (!input) return input;
@@ -1425,6 +1519,8 @@ function fromComputeResourceUpdate(input?: ComputeResourceUpdate | null): jsonP.
     minvCpus: input["minvCpus"],
     maxvCpus: input["maxvCpus"],
     desiredvCpus: input["desiredvCpus"],
+    subnets: input["subnets"],
+    securityGroupIds: input["securityGroupIds"],
   }
 }
 
@@ -1483,6 +1579,8 @@ export interface JobDefinition {
   timeout?: JobTimeout | null;
   nodeProperties?: NodeProperties | null;
   tags?: { [key: string]: string | null | undefined } | null;
+  propagateTags?: boolean | null;
+  platformCapabilities?: PlatformCapability[] | null;
 }
 function toJobDefinition(root: jsonP.JSONValue): JobDefinition {
   return jsonP.readObj({
@@ -1500,6 +1598,8 @@ function toJobDefinition(root: jsonP.JSONValue): JobDefinition {
       "timeout": toJobTimeout,
       "nodeProperties": toNodeProperties,
       "tags": x => jsonP.readMap(String, String, x),
+      "propagateTags": "b",
+      "platformCapabilities": [(x: jsonP.JSONValue) => cmnP.readEnum<PlatformCapability>(x)],
     },
   }, root);
 }
@@ -1564,6 +1664,8 @@ export interface JobDetail {
   arrayProperties?: ArrayPropertiesDetail | null;
   timeout?: JobTimeout | null;
   tags?: { [key: string]: string | null | undefined } | null;
+  propagateTags?: boolean | null;
+  platformCapabilities?: PlatformCapability[] | null;
 }
 function toJobDetail(root: jsonP.JSONValue): JobDetail {
   return jsonP.readObj({
@@ -1590,6 +1692,8 @@ function toJobDetail(root: jsonP.JSONValue): JobDetail {
       "arrayProperties": toArrayPropertiesDetail,
       "timeout": toJobTimeout,
       "tags": x => jsonP.readMap(String, String, x),
+      "propagateTags": "b",
+      "platformCapabilities": [(x: jsonP.JSONValue) => cmnP.readEnum<PlatformCapability>(x)],
     },
   }, root);
 }
@@ -1679,6 +1783,8 @@ export interface ContainerDetail {
   linuxParameters?: LinuxParameters | null;
   logConfiguration?: LogConfiguration | null;
   secrets?: Secret[] | null;
+  networkConfiguration?: NetworkConfiguration | null;
+  fargatePlatformConfiguration?: FargatePlatformConfiguration | null;
 }
 function toContainerDetail(root: jsonP.JSONValue): ContainerDetail {
   return jsonP.readObj({
@@ -1708,6 +1814,8 @@ function toContainerDetail(root: jsonP.JSONValue): ContainerDetail {
       "linuxParameters": toLinuxParameters,
       "logConfiguration": toLogConfiguration,
       "secrets": [toSecret],
+      "networkConfiguration": toNetworkConfiguration,
+      "fargatePlatformConfiguration": toFargatePlatformConfiguration,
     },
   }, root);
 }

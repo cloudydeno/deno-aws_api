@@ -1261,6 +1261,23 @@ export default class ConfigService {
     }, await resp.json());
   }
 
+  async putExternalEvaluation(
+    {abortSignal, ...params}: RequestConfig & PutExternalEvaluationRequest,
+  ): Promise<PutExternalEvaluationResponse> {
+    const body: jsonP.JSONObject = {
+      ConfigRuleName: params["ConfigRuleName"],
+      ExternalEvaluation: fromExternalEvaluation(params["ExternalEvaluation"]),
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "PutExternalEvaluation",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
+  }
+
   async putOrganizationConfigRule(
     {abortSignal, ...params}: RequestConfig & PutOrganizationConfigRuleRequest,
   ): Promise<PutOrganizationConfigRuleResponse> {
@@ -1946,6 +1963,12 @@ export interface PutEvaluationsRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface PutExternalEvaluationRequest {
+  ConfigRuleName: string;
+  ExternalEvaluation: ExternalEvaluation;
+}
+
+// refs: 1 - tags: named, input
 export interface PutOrganizationConfigRuleRequest {
   OrganizationConfigRuleName: string;
   OrganizationManagedRuleMetadata?: OrganizationManagedRuleMetadata | null;
@@ -2336,6 +2359,10 @@ export interface PutEvaluationsResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface PutExternalEvaluationResponse {
+}
+
+// refs: 1 - tags: named, output
 export interface PutOrganizationConfigRuleResponse {
   OrganizationConfigRuleArn?: string | null;
 }
@@ -2574,7 +2601,7 @@ function fromConfigRuleComplianceFilters(input?: ConfigRuleComplianceFilters | n
   }
 }
 
-// refs: 14 - tags: input, named, enum, output
+// refs: 15 - tags: input, named, enum, output
 export type ComplianceType =
 | "COMPLIANT"
 | "NON_COMPLIANT"
@@ -3129,6 +3156,25 @@ function toEvaluation(root: jsonP.JSONValue): Evaluation {
       "Annotation": "s",
     },
   }, root);
+}
+
+// refs: 1 - tags: input, named, interface
+export interface ExternalEvaluation {
+  ComplianceResourceType: string;
+  ComplianceResourceId: string;
+  ComplianceType: ComplianceType;
+  Annotation?: string | null;
+  OrderingTimestamp: Date | number;
+}
+function fromExternalEvaluation(input?: ExternalEvaluation | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    ComplianceResourceType: input["ComplianceResourceType"],
+    ComplianceResourceId: input["ComplianceResourceId"],
+    ComplianceType: input["ComplianceType"],
+    Annotation: input["Annotation"],
+    OrderingTimestamp: jsonP.serializeDate_unixTimestamp(input["OrderingTimestamp"]),
+  }
 }
 
 // refs: 2 - tags: input, named, interface, output

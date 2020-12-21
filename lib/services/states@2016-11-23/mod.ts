@@ -405,6 +405,42 @@ export default class StepFunctions {
     }, await resp.json());
   }
 
+  async startSyncExecution(
+    {abortSignal, ...params}: RequestConfig & StartSyncExecutionInput,
+  ): Promise<StartSyncExecutionOutput> {
+    const body: jsonP.JSONObject = {
+      stateMachineArn: params["stateMachineArn"],
+      name: params["name"],
+      input: params["input"],
+      traceHeader: params["traceHeader"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "StartSyncExecution",
+      hostPrefix: `sync-`,
+    });
+    return jsonP.readObj({
+      required: {
+        "executionArn": "s",
+        "startDate": "d",
+        "stopDate": "d",
+        "status": (x: jsonP.JSONValue) => cmnP.readEnum<SyncExecutionStatus>(x),
+      },
+      optional: {
+        "stateMachineArn": "s",
+        "name": "s",
+        "error": "s",
+        "cause": "s",
+        "input": "s",
+        "inputDetails": toCloudWatchEventsExecutionDataDetails,
+        "output": "s",
+        "outputDetails": toCloudWatchEventsExecutionDataDetails,
+        "traceHeader": "s",
+        "billingDetails": toBillingDetails,
+      },
+    }, await resp.json());
+  }
+
   async stopExecution(
     {abortSignal, ...params}: RequestConfig & StopExecutionInput,
   ): Promise<StopExecutionOutput> {
@@ -597,6 +633,14 @@ export interface StartExecutionInput {
 }
 
 // refs: 1 - tags: named, input
+export interface StartSyncExecutionInput {
+  stateMachineArn: string;
+  name?: string | null;
+  input?: string | null;
+  traceHeader?: string | null;
+}
+
+// refs: 1 - tags: named, input
 export interface StopExecutionInput {
   executionArn: string;
   error?: string | null;
@@ -744,6 +788,24 @@ export interface StartExecutionOutput {
 }
 
 // refs: 1 - tags: named, output
+export interface StartSyncExecutionOutput {
+  executionArn: string;
+  stateMachineArn?: string | null;
+  name?: string | null;
+  startDate: Date | number;
+  stopDate: Date | number;
+  status: SyncExecutionStatus;
+  error?: string | null;
+  cause?: string | null;
+  input?: string | null;
+  inputDetails?: CloudWatchEventsExecutionDataDetails | null;
+  output?: string | null;
+  outputDetails?: CloudWatchEventsExecutionDataDetails | null;
+  traceHeader?: string | null;
+  billingDetails?: BillingDetails | null;
+}
+
+// refs: 1 - tags: named, output
 export interface StopExecutionOutput {
   stopDate: Date | number;
 }
@@ -888,7 +950,7 @@ export type ExecutionStatus =
 | "ABORTED"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 2 - tags: output, named, interface
+// refs: 4 - tags: output, named, interface
 export interface CloudWatchEventsExecutionDataDetails {
   included?: boolean | null;
 }
@@ -1610,5 +1672,27 @@ function toStateMachineListItem(root: jsonP.JSONValue): StateMachineListItem {
       "creationDate": "d",
     },
     optional: {},
+  }, root);
+}
+
+// refs: 1 - tags: output, named, enum
+export type SyncExecutionStatus =
+| "SUCCEEDED"
+| "FAILED"
+| "TIMED_OUT"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 1 - tags: output, named, interface
+export interface BillingDetails {
+  billedMemoryUsedInMB?: number | null;
+  billedDurationInMilliseconds?: number | null;
+}
+function toBillingDetails(root: jsonP.JSONValue): BillingDetails {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "billedMemoryUsedInMB": "n",
+      "billedDurationInMilliseconds": "n",
+    },
   }, root);
 }

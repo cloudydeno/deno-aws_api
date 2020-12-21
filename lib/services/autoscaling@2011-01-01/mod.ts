@@ -160,6 +160,7 @@ export default class AutoScaling {
     if ("VPCZoneIdentifier" in params) body.append(prefix+"VPCZoneIdentifier", (params["VPCZoneIdentifier"] ?? '').toString());
     if (params["TerminationPolicies"]) qsP.appendList(body, prefix+"TerminationPolicies", params["TerminationPolicies"], {"entryPrefix":".member."})
     if ("NewInstancesProtectedFromScaleIn" in params) body.append(prefix+"NewInstancesProtectedFromScaleIn", (params["NewInstancesProtectedFromScaleIn"] ?? '').toString());
+    if ("CapacityRebalance" in params) body.append(prefix+"CapacityRebalance", (params["CapacityRebalance"] ?? '').toString());
     if (params["LifecycleHookSpecificationList"]) qsP.appendList(body, prefix+"LifecycleHookSpecificationList", params["LifecycleHookSpecificationList"], {"appender":LifecycleHookSpecification_Serialize,"entryPrefix":".member."})
     if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".member."})
     if ("ServiceLinkedRoleARN" in params) body.append(prefix+"ServiceLinkedRoleARN", (params["ServiceLinkedRoleARN"] ?? '').toString());
@@ -1009,6 +1010,7 @@ export default class AutoScaling {
     if ("NewInstancesProtectedFromScaleIn" in params) body.append(prefix+"NewInstancesProtectedFromScaleIn", (params["NewInstancesProtectedFromScaleIn"] ?? '').toString());
     if ("ServiceLinkedRoleARN" in params) body.append(prefix+"ServiceLinkedRoleARN", (params["ServiceLinkedRoleARN"] ?? '').toString());
     if ("MaxInstanceLifetime" in params) body.append(prefix+"MaxInstanceLifetime", (params["MaxInstanceLifetime"] ?? '').toString());
+    if ("CapacityRebalance" in params) body.append(prefix+"CapacityRebalance", (params["CapacityRebalance"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateAutoScalingGroup",
@@ -1081,6 +1083,7 @@ export interface CreateAutoScalingGroupType {
   VPCZoneIdentifier?: string | null;
   TerminationPolicies?: string[] | null;
   NewInstancesProtectedFromScaleIn?: boolean | null;
+  CapacityRebalance?: boolean | null;
   LifecycleHookSpecificationList?: LifecycleHookSpecification[] | null;
   Tags?: Tag[] | null;
   ServiceLinkedRoleARN?: string | null;
@@ -1415,6 +1418,7 @@ export interface UpdateAutoScalingGroupType {
   NewInstancesProtectedFromScaleIn?: boolean | null;
   ServiceLinkedRoleARN?: string | null;
   MaxInstanceLifetime?: number | null;
+  CapacityRebalance?: boolean | null;
 }
 
 // refs: 1 - tags: named, output
@@ -1629,7 +1633,7 @@ function ScheduledUpdateGroupActionRequest_Serialize(body: URLSearchParams, pref
     if ("DesiredCapacity" in params) body.append(prefix+".DesiredCapacity", (params["DesiredCapacity"] ?? '').toString());
 }
 
-// refs: 8 - tags: input, named, interface, output
+// refs: 11 - tags: input, named, interface, output
 export interface LaunchTemplateSpecification {
   LaunchTemplateId?: string | null;
   LaunchTemplateName?: string | null;
@@ -1682,15 +1686,20 @@ function LaunchTemplate_Parse(node: xmlP.XmlNode): LaunchTemplate {
 export interface LaunchTemplateOverrides {
   InstanceType?: string | null;
   WeightedCapacity?: string | null;
+  LaunchTemplateSpecification?: LaunchTemplateSpecification | null;
 }
 function LaunchTemplateOverrides_Serialize(body: URLSearchParams, prefix: string, params: LaunchTemplateOverrides) {
     if ("InstanceType" in params) body.append(prefix+".InstanceType", (params["InstanceType"] ?? '').toString());
     if ("WeightedCapacity" in params) body.append(prefix+".WeightedCapacity", (params["WeightedCapacity"] ?? '').toString());
+    if (params["LaunchTemplateSpecification"] != null) LaunchTemplateSpecification_Serialize(body, prefix+".LaunchTemplateSpecification", params["LaunchTemplateSpecification"]);
 }
 function LaunchTemplateOverrides_Parse(node: xmlP.XmlNode): LaunchTemplateOverrides {
-  return node.strings({
-    optional: {"InstanceType":true,"WeightedCapacity":true},
-  });
+  return {
+    ...node.strings({
+      optional: {"InstanceType":true,"WeightedCapacity":true},
+    }),
+    LaunchTemplateSpecification: node.first("LaunchTemplateSpecification", false, LaunchTemplateSpecification_Parse),
+  };
 }
 
 // refs: 3 - tags: input, named, interface, output
@@ -2047,6 +2056,7 @@ export interface AutoScalingGroup {
   NewInstancesProtectedFromScaleIn?: boolean | null;
   ServiceLinkedRoleARN?: string | null;
   MaxInstanceLifetime?: number | null;
+  CapacityRebalance?: boolean | null;
 }
 function AutoScalingGroup_Parse(node: xmlP.XmlNode): AutoScalingGroup {
   return {
@@ -2072,6 +2082,7 @@ function AutoScalingGroup_Parse(node: xmlP.XmlNode): AutoScalingGroup {
     TerminationPolicies: node.getList("TerminationPolicies", "member").map(x => x.content ?? ''),
     NewInstancesProtectedFromScaleIn: node.first("NewInstancesProtectedFromScaleIn", false, x => x.content === 'true'),
     MaxInstanceLifetime: node.first("MaxInstanceLifetime", false, x => parseInt(x.content ?? '0')),
+    CapacityRebalance: node.first("CapacityRebalance", false, x => x.content === 'true'),
   };
 }
 

@@ -106,6 +106,28 @@ export default class Lambda {
     }, await resp.json());
   }
 
+  async createCodeSigningConfig(
+    {abortSignal, ...params}: RequestConfig & CreateCodeSigningConfigRequest,
+  ): Promise<CreateCodeSigningConfigResponse> {
+    const body: jsonP.JSONObject = {
+      Description: params["Description"],
+      AllowedPublishers: fromAllowedPublishers(params["AllowedPublishers"]),
+      CodeSigningPolicies: fromCodeSigningPolicies(params["CodeSigningPolicies"]),
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "CreateCodeSigningConfig",
+      requestUri: "/2020-04-22/code-signing-configs/",
+      responseCode: 201,
+    });
+    return jsonP.readObj({
+      required: {
+        "CodeSigningConfig": toCodeSigningConfig,
+      },
+      optional: {},
+    }, await resp.json());
+  }
+
   async createEventSourceMapping(
     {abortSignal, ...params}: RequestConfig & CreateEventSourceMappingRequest,
   ): Promise<EventSourceMappingConfiguration> {
@@ -122,7 +144,12 @@ export default class Lambda {
       MaximumRecordAgeInSeconds: params["MaximumRecordAgeInSeconds"],
       BisectBatchOnFunctionError: params["BisectBatchOnFunctionError"],
       MaximumRetryAttempts: params["MaximumRetryAttempts"],
+      TumblingWindowInSeconds: params["TumblingWindowInSeconds"],
       Topics: params["Topics"],
+      Queues: params["Queues"],
+      SourceAccessConfigurations: params["SourceAccessConfigurations"]?.map(x => fromSourceAccessConfiguration(x)),
+      SelfManagedEventSource: fromSelfManagedEventSource(params["SelfManagedEventSource"]),
+      FunctionResponseTypes: params["FunctionResponseTypes"],
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -134,6 +161,8 @@ export default class Lambda {
       required: {},
       optional: {
         "UUID": "s",
+        "StartingPosition": (x: jsonP.JSONValue) => cmnP.readEnum<EventSourcePosition>(x),
+        "StartingPositionTimestamp": "d",
         "BatchSize": "n",
         "MaximumBatchingWindowInSeconds": "n",
         "ParallelizationFactor": "n",
@@ -145,9 +174,14 @@ export default class Lambda {
         "StateTransitionReason": "s",
         "DestinationConfig": toDestinationConfig,
         "Topics": ["s"],
+        "Queues": ["s"],
+        "SourceAccessConfigurations": [toSourceAccessConfiguration],
+        "SelfManagedEventSource": toSelfManagedEventSource,
         "MaximumRecordAgeInSeconds": "n",
         "BisectBatchOnFunctionError": "b",
         "MaximumRetryAttempts": "n",
+        "TumblingWindowInSeconds": "n",
+        "FunctionResponseTypes": [(x: jsonP.JSONValue) => cmnP.readEnum<FunctionResponseType>(x)],
       },
     }, await resp.json());
   }
@@ -166,6 +200,7 @@ export default class Lambda {
       MemorySize: params["MemorySize"],
       Publish: params["Publish"],
       VpcConfig: fromVpcConfig(params["VpcConfig"]),
+      PackageType: params["PackageType"],
       DeadLetterConfig: fromDeadLetterConfig(params["DeadLetterConfig"]),
       Environment: fromEnvironment(params["Environment"]),
       KMSKeyArn: params["KMSKeyArn"],
@@ -173,6 +208,8 @@ export default class Lambda {
       Tags: params["Tags"],
       Layers: params["Layers"],
       FileSystemConfigs: params["FileSystemConfigs"]?.map(x => fromFileSystemConfig(x)),
+      ImageConfig: fromImageConfig(params["ImageConfig"]),
+      CodeSigningConfigArn: params["CodeSigningConfigArn"],
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -210,6 +247,10 @@ export default class Lambda {
         "LastUpdateStatusReason": "s",
         "LastUpdateStatusReasonCode": (x: jsonP.JSONValue) => cmnP.readEnum<LastUpdateStatusReasonCode>(x),
         "FileSystemConfigs": [toFileSystemConfig],
+        "PackageType": (x: jsonP.JSONValue) => cmnP.readEnum<PackageType>(x),
+        "ImageConfigResponse": toImageConfigResponse,
+        "SigningProfileVersionArn": "s",
+        "SigningJobArn": "s",
       },
     }, await resp.json());
   }
@@ -227,6 +268,23 @@ export default class Lambda {
     });
   }
 
+  async deleteCodeSigningConfig(
+    {abortSignal, ...params}: RequestConfig & DeleteCodeSigningConfigRequest,
+  ): Promise<DeleteCodeSigningConfigResponse> {
+
+    const resp = await this.#client.performRequest({
+      abortSignal,
+      action: "DeleteCodeSigningConfig",
+      method: "DELETE",
+      requestUri: cmnP.encodePath`/2020-04-22/code-signing-configs/${params["CodeSigningConfigArn"]}`,
+      responseCode: 204,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
+  }
+
   async deleteEventSourceMapping(
     {abortSignal, ...params}: RequestConfig & DeleteEventSourceMappingRequest,
   ): Promise<EventSourceMappingConfiguration> {
@@ -242,6 +300,8 @@ export default class Lambda {
       required: {},
       optional: {
         "UUID": "s",
+        "StartingPosition": (x: jsonP.JSONValue) => cmnP.readEnum<EventSourcePosition>(x),
+        "StartingPositionTimestamp": "d",
         "BatchSize": "n",
         "MaximumBatchingWindowInSeconds": "n",
         "ParallelizationFactor": "n",
@@ -253,9 +313,14 @@ export default class Lambda {
         "StateTransitionReason": "s",
         "DestinationConfig": toDestinationConfig,
         "Topics": ["s"],
+        "Queues": ["s"],
+        "SourceAccessConfigurations": [toSourceAccessConfiguration],
+        "SelfManagedEventSource": toSelfManagedEventSource,
         "MaximumRecordAgeInSeconds": "n",
         "BisectBatchOnFunctionError": "b",
         "MaximumRetryAttempts": "n",
+        "TumblingWindowInSeconds": "n",
+        "FunctionResponseTypes": [(x: jsonP.JSONValue) => cmnP.readEnum<FunctionResponseType>(x)],
       },
     }, await resp.json());
   }
@@ -270,6 +335,19 @@ export default class Lambda {
       action: "DeleteFunction",
       method: "DELETE",
       requestUri: cmnP.encodePath`/2015-03-31/functions/${params["FunctionName"]}`,
+      responseCode: 204,
+    });
+  }
+
+  async deleteFunctionCodeSigningConfig(
+    {abortSignal, ...params}: RequestConfig & DeleteFunctionCodeSigningConfigRequest,
+  ): Promise<void> {
+
+    const resp = await this.#client.performRequest({
+      abortSignal,
+      action: "DeleteFunctionCodeSigningConfig",
+      method: "DELETE",
+      requestUri: cmnP.encodePath`/2020-06-30/functions/${params["FunctionName"]}/code-signing-config`,
       responseCode: 204,
     });
   }
@@ -372,6 +450,25 @@ export default class Lambda {
     }, await resp.json());
   }
 
+  async getCodeSigningConfig(
+    {abortSignal, ...params}: RequestConfig & GetCodeSigningConfigRequest,
+  ): Promise<GetCodeSigningConfigResponse> {
+
+    const resp = await this.#client.performRequest({
+      abortSignal,
+      action: "GetCodeSigningConfig",
+      method: "GET",
+      requestUri: cmnP.encodePath`/2020-04-22/code-signing-configs/${params["CodeSigningConfigArn"]}`,
+      responseCode: 200,
+    });
+    return jsonP.readObj({
+      required: {
+        "CodeSigningConfig": toCodeSigningConfig,
+      },
+      optional: {},
+    }, await resp.json());
+  }
+
   async getEventSourceMapping(
     {abortSignal, ...params}: RequestConfig & GetEventSourceMappingRequest,
   ): Promise<EventSourceMappingConfiguration> {
@@ -387,6 +484,8 @@ export default class Lambda {
       required: {},
       optional: {
         "UUID": "s",
+        "StartingPosition": (x: jsonP.JSONValue) => cmnP.readEnum<EventSourcePosition>(x),
+        "StartingPositionTimestamp": "d",
         "BatchSize": "n",
         "MaximumBatchingWindowInSeconds": "n",
         "ParallelizationFactor": "n",
@@ -398,9 +497,14 @@ export default class Lambda {
         "StateTransitionReason": "s",
         "DestinationConfig": toDestinationConfig,
         "Topics": ["s"],
+        "Queues": ["s"],
+        "SourceAccessConfigurations": [toSourceAccessConfiguration],
+        "SelfManagedEventSource": toSelfManagedEventSource,
         "MaximumRecordAgeInSeconds": "n",
         "BisectBatchOnFunctionError": "b",
         "MaximumRetryAttempts": "n",
+        "TumblingWindowInSeconds": "n",
+        "FunctionResponseTypes": [(x: jsonP.JSONValue) => cmnP.readEnum<FunctionResponseType>(x)],
       },
     }, await resp.json());
   }
@@ -425,6 +529,26 @@ export default class Lambda {
         "Tags": x => jsonP.readMap(String, String, x),
         "Concurrency": toConcurrency,
       },
+    }, await resp.json());
+  }
+
+  async getFunctionCodeSigningConfig(
+    {abortSignal, ...params}: RequestConfig & GetFunctionCodeSigningConfigRequest,
+  ): Promise<GetFunctionCodeSigningConfigResponse> {
+
+    const resp = await this.#client.performRequest({
+      abortSignal,
+      action: "GetFunctionCodeSigningConfig",
+      method: "GET",
+      requestUri: cmnP.encodePath`/2020-06-30/functions/${params["FunctionName"]}/code-signing-config`,
+      responseCode: 200,
+    });
+    return jsonP.readObj({
+      required: {
+        "CodeSigningConfigArn": "s",
+        "FunctionName": "s",
+      },
+      optional: {},
     }, await resp.json());
   }
 
@@ -489,6 +613,10 @@ export default class Lambda {
         "LastUpdateStatusReason": "s",
         "LastUpdateStatusReasonCode": (x: jsonP.JSONValue) => cmnP.readEnum<LastUpdateStatusReasonCode>(x),
         "FileSystemConfigs": [toFileSystemConfig],
+        "PackageType": (x: jsonP.JSONValue) => cmnP.readEnum<PackageType>(x),
+        "ImageConfigResponse": toImageConfigResponse,
+        "SigningProfileVersionArn": "s",
+        "SigningJobArn": "s",
       },
     }, await resp.json());
   }
@@ -702,6 +830,28 @@ export default class Lambda {
     }, await resp.json());
   }
 
+  async listCodeSigningConfigs(
+    {abortSignal, ...params}: RequestConfig & ListCodeSigningConfigsRequest = {},
+  ): Promise<ListCodeSigningConfigsResponse> {
+    const query = new URLSearchParams;
+    if (params["Marker"] != null) query.set("Marker", params["Marker"]?.toString() ?? "");
+    if (params["MaxItems"] != null) query.set("MaxItems", params["MaxItems"]?.toString() ?? "");
+    const resp = await this.#client.performRequest({
+      abortSignal, query,
+      action: "ListCodeSigningConfigs",
+      method: "GET",
+      requestUri: "/2020-04-22/code-signing-configs/",
+      responseCode: 200,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "NextMarker": "s",
+        "CodeSigningConfigs": [toCodeSigningConfig],
+      },
+    }, await resp.json());
+  }
+
   async listEventSourceMappings(
     {abortSignal, ...params}: RequestConfig & ListEventSourceMappingsRequest = {},
   ): Promise<ListEventSourceMappingsResponse> {
@@ -768,6 +918,28 @@ export default class Lambda {
       optional: {
         "NextMarker": "s",
         "Functions": [toFunctionConfiguration],
+      },
+    }, await resp.json());
+  }
+
+  async listFunctionsByCodeSigningConfig(
+    {abortSignal, ...params}: RequestConfig & ListFunctionsByCodeSigningConfigRequest,
+  ): Promise<ListFunctionsByCodeSigningConfigResponse> {
+    const query = new URLSearchParams;
+    if (params["Marker"] != null) query.set("Marker", params["Marker"]?.toString() ?? "");
+    if (params["MaxItems"] != null) query.set("MaxItems", params["MaxItems"]?.toString() ?? "");
+    const resp = await this.#client.performRequest({
+      abortSignal, query,
+      action: "ListFunctionsByCodeSigningConfig",
+      method: "GET",
+      requestUri: cmnP.encodePath`/2020-04-22/code-signing-configs/${params["CodeSigningConfigArn"]}/functions`,
+      responseCode: 200,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "NextMarker": "s",
+        "FunctionArns": ["s"],
       },
     }, await resp.json());
   }
@@ -954,7 +1126,33 @@ export default class Lambda {
         "LastUpdateStatusReason": "s",
         "LastUpdateStatusReasonCode": (x: jsonP.JSONValue) => cmnP.readEnum<LastUpdateStatusReasonCode>(x),
         "FileSystemConfigs": [toFileSystemConfig],
+        "PackageType": (x: jsonP.JSONValue) => cmnP.readEnum<PackageType>(x),
+        "ImageConfigResponse": toImageConfigResponse,
+        "SigningProfileVersionArn": "s",
+        "SigningJobArn": "s",
       },
+    }, await resp.json());
+  }
+
+  async putFunctionCodeSigningConfig(
+    {abortSignal, ...params}: RequestConfig & PutFunctionCodeSigningConfigRequest,
+  ): Promise<PutFunctionCodeSigningConfigResponse> {
+    const body: jsonP.JSONObject = {
+      CodeSigningConfigArn: params["CodeSigningConfigArn"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "PutFunctionCodeSigningConfig",
+      method: "PUT",
+      requestUri: cmnP.encodePath`/2020-06-30/functions/${params["FunctionName"]}/code-signing-config`,
+      responseCode: 200,
+    });
+    return jsonP.readObj({
+      required: {
+        "CodeSigningConfigArn": "s",
+        "FunctionName": "s",
+      },
+      optional: {},
     }, await resp.json());
   }
 
@@ -1124,6 +1322,29 @@ export default class Lambda {
     }, await resp.json());
   }
 
+  async updateCodeSigningConfig(
+    {abortSignal, ...params}: RequestConfig & UpdateCodeSigningConfigRequest,
+  ): Promise<UpdateCodeSigningConfigResponse> {
+    const body: jsonP.JSONObject = {
+      Description: params["Description"],
+      AllowedPublishers: fromAllowedPublishers(params["AllowedPublishers"]),
+      CodeSigningPolicies: fromCodeSigningPolicies(params["CodeSigningPolicies"]),
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "UpdateCodeSigningConfig",
+      method: "PUT",
+      requestUri: cmnP.encodePath`/2020-04-22/code-signing-configs/${params["CodeSigningConfigArn"]}`,
+      responseCode: 200,
+    });
+    return jsonP.readObj({
+      required: {
+        "CodeSigningConfig": toCodeSigningConfig,
+      },
+      optional: {},
+    }, await resp.json());
+  }
+
   async updateEventSourceMapping(
     {abortSignal, ...params}: RequestConfig & UpdateEventSourceMappingRequest,
   ): Promise<EventSourceMappingConfiguration> {
@@ -1137,6 +1358,9 @@ export default class Lambda {
       BisectBatchOnFunctionError: params["BisectBatchOnFunctionError"],
       MaximumRetryAttempts: params["MaximumRetryAttempts"],
       ParallelizationFactor: params["ParallelizationFactor"],
+      SourceAccessConfigurations: params["SourceAccessConfigurations"]?.map(x => fromSourceAccessConfiguration(x)),
+      TumblingWindowInSeconds: params["TumblingWindowInSeconds"],
+      FunctionResponseTypes: params["FunctionResponseTypes"],
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -1149,6 +1373,8 @@ export default class Lambda {
       required: {},
       optional: {
         "UUID": "s",
+        "StartingPosition": (x: jsonP.JSONValue) => cmnP.readEnum<EventSourcePosition>(x),
+        "StartingPositionTimestamp": "d",
         "BatchSize": "n",
         "MaximumBatchingWindowInSeconds": "n",
         "ParallelizationFactor": "n",
@@ -1160,9 +1386,14 @@ export default class Lambda {
         "StateTransitionReason": "s",
         "DestinationConfig": toDestinationConfig,
         "Topics": ["s"],
+        "Queues": ["s"],
+        "SourceAccessConfigurations": [toSourceAccessConfiguration],
+        "SelfManagedEventSource": toSelfManagedEventSource,
         "MaximumRecordAgeInSeconds": "n",
         "BisectBatchOnFunctionError": "b",
         "MaximumRetryAttempts": "n",
+        "TumblingWindowInSeconds": "n",
+        "FunctionResponseTypes": [(x: jsonP.JSONValue) => cmnP.readEnum<FunctionResponseType>(x)],
       },
     }, await resp.json());
   }
@@ -1175,6 +1406,7 @@ export default class Lambda {
       S3Bucket: params["S3Bucket"],
       S3Key: params["S3Key"],
       S3ObjectVersion: params["S3ObjectVersion"],
+      ImageUri: params["ImageUri"],
       Publish: params["Publish"],
       DryRun: params["DryRun"],
       RevisionId: params["RevisionId"],
@@ -1216,6 +1448,10 @@ export default class Lambda {
         "LastUpdateStatusReason": "s",
         "LastUpdateStatusReasonCode": (x: jsonP.JSONValue) => cmnP.readEnum<LastUpdateStatusReasonCode>(x),
         "FileSystemConfigs": [toFileSystemConfig],
+        "PackageType": (x: jsonP.JSONValue) => cmnP.readEnum<PackageType>(x),
+        "ImageConfigResponse": toImageConfigResponse,
+        "SigningProfileVersionArn": "s",
+        "SigningJobArn": "s",
       },
     }, await resp.json());
   }
@@ -1238,6 +1474,7 @@ export default class Lambda {
       RevisionId: params["RevisionId"],
       Layers: params["Layers"],
       FileSystemConfigs: params["FileSystemConfigs"]?.map(x => fromFileSystemConfig(x)),
+      ImageConfig: fromImageConfig(params["ImageConfig"]),
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -1276,6 +1513,10 @@ export default class Lambda {
         "LastUpdateStatusReason": "s",
         "LastUpdateStatusReasonCode": (x: jsonP.JSONValue) => cmnP.readEnum<LastUpdateStatusReasonCode>(x),
         "FileSystemConfigs": [toFileSystemConfig],
+        "PackageType": (x: jsonP.JSONValue) => cmnP.readEnum<PackageType>(x),
+        "ImageConfigResponse": toImageConfigResponse,
+        "SigningProfileVersionArn": "s",
+        "SigningJobArn": "s",
       },
     }, await resp.json());
   }
@@ -1401,8 +1642,15 @@ export interface CreateAliasRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface CreateCodeSigningConfigRequest {
+  Description?: string | null;
+  AllowedPublishers: AllowedPublishers;
+  CodeSigningPolicies?: CodeSigningPolicies | null;
+}
+
+// refs: 1 - tags: named, input
 export interface CreateEventSourceMappingRequest {
-  EventSourceArn: string;
+  EventSourceArn?: string | null;
   FunctionName: string;
   Enabled?: boolean | null;
   BatchSize?: number | null;
@@ -1414,21 +1662,27 @@ export interface CreateEventSourceMappingRequest {
   MaximumRecordAgeInSeconds?: number | null;
   BisectBatchOnFunctionError?: boolean | null;
   MaximumRetryAttempts?: number | null;
+  TumblingWindowInSeconds?: number | null;
   Topics?: string[] | null;
+  Queues?: string[] | null;
+  SourceAccessConfigurations?: SourceAccessConfiguration[] | null;
+  SelfManagedEventSource?: SelfManagedEventSource | null;
+  FunctionResponseTypes?: FunctionResponseType[] | null;
 }
 
 // refs: 1 - tags: named, input
 export interface CreateFunctionRequest {
   FunctionName: string;
-  Runtime: Runtime;
+  Runtime?: Runtime | null;
   Role: string;
-  Handler: string;
+  Handler?: string | null;
   Code: FunctionCode;
   Description?: string | null;
   Timeout?: number | null;
   MemorySize?: number | null;
   Publish?: boolean | null;
   VpcConfig?: VpcConfig | null;
+  PackageType?: PackageType | null;
   DeadLetterConfig?: DeadLetterConfig | null;
   Environment?: Environment | null;
   KMSKeyArn?: string | null;
@@ -1436,12 +1690,19 @@ export interface CreateFunctionRequest {
   Tags?: { [key: string]: string | null | undefined } | null;
   Layers?: string[] | null;
   FileSystemConfigs?: FileSystemConfig[] | null;
+  ImageConfig?: ImageConfig | null;
+  CodeSigningConfigArn?: string | null;
 }
 
 // refs: 1 - tags: named, input
 export interface DeleteAliasRequest {
   FunctionName: string;
   Name: string;
+}
+
+// refs: 1 - tags: named, input
+export interface DeleteCodeSigningConfigRequest {
+  CodeSigningConfigArn: string;
 }
 
 // refs: 1 - tags: named, input
@@ -1453,6 +1714,11 @@ export interface DeleteEventSourceMappingRequest {
 export interface DeleteFunctionRequest {
   FunctionName: string;
   Qualifier?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface DeleteFunctionCodeSigningConfigRequest {
+  FunctionName: string;
 }
 
 // refs: 1 - tags: named, input
@@ -1489,6 +1755,11 @@ export interface GetAliasRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface GetCodeSigningConfigRequest {
+  CodeSigningConfigArn: string;
+}
+
+// refs: 1 - tags: named, input
 export interface GetEventSourceMappingRequest {
   UUID: string;
 }
@@ -1497,6 +1768,11 @@ export interface GetEventSourceMappingRequest {
 export interface GetFunctionRequest {
   FunctionName: string;
   Qualifier?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface GetFunctionCodeSigningConfigRequest {
+  FunctionName: string;
 }
 
 // refs: 1 - tags: named, input
@@ -1570,6 +1846,12 @@ export interface ListAliasesRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface ListCodeSigningConfigsRequest {
+  Marker?: string | null;
+  MaxItems?: number | null;
+}
+
+// refs: 1 - tags: named, input
 export interface ListEventSourceMappingsRequest {
   EventSourceArn?: string | null;
   FunctionName?: string | null;
@@ -1588,6 +1870,13 @@ export interface ListFunctionEventInvokeConfigsRequest {
 export interface ListFunctionsRequest {
   MasterRegion?: string | null;
   FunctionVersion?: FunctionVersion | null;
+  Marker?: string | null;
+  MaxItems?: number | null;
+}
+
+// refs: 1 - tags: named, input
+export interface ListFunctionsByCodeSigningConfigRequest {
+  CodeSigningConfigArn: string;
   Marker?: string | null;
   MaxItems?: number | null;
 }
@@ -1641,6 +1930,12 @@ export interface PublishVersionRequest {
   CodeSha256?: string | null;
   Description?: string | null;
   RevisionId?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface PutFunctionCodeSigningConfigRequest {
+  CodeSigningConfigArn: string;
+  FunctionName: string;
 }
 
 // refs: 1 - tags: named, input
@@ -1704,6 +1999,14 @@ export interface UpdateAliasRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface UpdateCodeSigningConfigRequest {
+  CodeSigningConfigArn: string;
+  Description?: string | null;
+  AllowedPublishers?: AllowedPublishers | null;
+  CodeSigningPolicies?: CodeSigningPolicies | null;
+}
+
+// refs: 1 - tags: named, input
 export interface UpdateEventSourceMappingRequest {
   UUID: string;
   FunctionName?: string | null;
@@ -1715,6 +2018,9 @@ export interface UpdateEventSourceMappingRequest {
   BisectBatchOnFunctionError?: boolean | null;
   MaximumRetryAttempts?: number | null;
   ParallelizationFactor?: number | null;
+  SourceAccessConfigurations?: SourceAccessConfiguration[] | null;
+  TumblingWindowInSeconds?: number | null;
+  FunctionResponseTypes?: FunctionResponseType[] | null;
 }
 
 // refs: 1 - tags: named, input
@@ -1724,6 +2030,7 @@ export interface UpdateFunctionCodeRequest {
   S3Bucket?: string | null;
   S3Key?: string | null;
   S3ObjectVersion?: string | null;
+  ImageUri?: string | null;
   Publish?: boolean | null;
   DryRun?: boolean | null;
   RevisionId?: string | null;
@@ -1746,6 +2053,7 @@ export interface UpdateFunctionConfigurationRequest {
   RevisionId?: string | null;
   Layers?: string[] | null;
   FileSystemConfigs?: FileSystemConfig[] | null;
+  ImageConfig?: ImageConfig | null;
 }
 
 // refs: 1 - tags: named, input
@@ -1791,9 +2099,16 @@ function toAliasConfiguration(root: jsonP.JSONValue): AliasConfiguration {
   }, root);
 }
 
+// refs: 1 - tags: named, output
+export interface CreateCodeSigningConfigResponse {
+  CodeSigningConfig: CodeSigningConfig;
+}
+
 // refs: 2 - tags: named, output, interface
 export interface EventSourceMappingConfiguration {
   UUID?: string | null;
+  StartingPosition?: EventSourcePosition | null;
+  StartingPositionTimestamp?: Date | number | null;
   BatchSize?: number | null;
   MaximumBatchingWindowInSeconds?: number | null;
   ParallelizationFactor?: number | null;
@@ -1805,15 +2120,22 @@ export interface EventSourceMappingConfiguration {
   StateTransitionReason?: string | null;
   DestinationConfig?: DestinationConfig | null;
   Topics?: string[] | null;
+  Queues?: string[] | null;
+  SourceAccessConfigurations?: SourceAccessConfiguration[] | null;
+  SelfManagedEventSource?: SelfManagedEventSource | null;
   MaximumRecordAgeInSeconds?: number | null;
   BisectBatchOnFunctionError?: boolean | null;
   MaximumRetryAttempts?: number | null;
+  TumblingWindowInSeconds?: number | null;
+  FunctionResponseTypes?: FunctionResponseType[] | null;
 }
 function toEventSourceMappingConfiguration(root: jsonP.JSONValue): EventSourceMappingConfiguration {
   return jsonP.readObj({
     required: {},
     optional: {
       "UUID": "s",
+      "StartingPosition": (x: jsonP.JSONValue) => cmnP.readEnum<EventSourcePosition>(x),
+      "StartingPositionTimestamp": "d",
       "BatchSize": "n",
       "MaximumBatchingWindowInSeconds": "n",
       "ParallelizationFactor": "n",
@@ -1825,9 +2147,14 @@ function toEventSourceMappingConfiguration(root: jsonP.JSONValue): EventSourceMa
       "StateTransitionReason": "s",
       "DestinationConfig": toDestinationConfig,
       "Topics": ["s"],
+      "Queues": ["s"],
+      "SourceAccessConfigurations": [toSourceAccessConfiguration],
+      "SelfManagedEventSource": toSelfManagedEventSource,
       "MaximumRecordAgeInSeconds": "n",
       "BisectBatchOnFunctionError": "b",
       "MaximumRetryAttempts": "n",
+      "TumblingWindowInSeconds": "n",
+      "FunctionResponseTypes": [(x: jsonP.JSONValue) => cmnP.readEnum<FunctionResponseType>(x)],
     },
   }, root);
 }
@@ -1861,6 +2188,10 @@ export interface FunctionConfiguration {
   LastUpdateStatusReason?: string | null;
   LastUpdateStatusReasonCode?: LastUpdateStatusReasonCode | null;
   FileSystemConfigs?: FileSystemConfig[] | null;
+  PackageType?: PackageType | null;
+  ImageConfigResponse?: ImageConfigResponse | null;
+  SigningProfileVersionArn?: string | null;
+  SigningJobArn?: string | null;
 }
 function toFunctionConfiguration(root: jsonP.JSONValue): FunctionConfiguration {
   return jsonP.readObj({
@@ -1893,8 +2224,16 @@ function toFunctionConfiguration(root: jsonP.JSONValue): FunctionConfiguration {
       "LastUpdateStatusReason": "s",
       "LastUpdateStatusReasonCode": (x: jsonP.JSONValue) => cmnP.readEnum<LastUpdateStatusReasonCode>(x),
       "FileSystemConfigs": [toFileSystemConfig],
+      "PackageType": (x: jsonP.JSONValue) => cmnP.readEnum<PackageType>(x),
+      "ImageConfigResponse": toImageConfigResponse,
+      "SigningProfileVersionArn": "s",
+      "SigningJobArn": "s",
     },
   }, root);
+}
+
+// refs: 1 - tags: named, output
+export interface DeleteCodeSigningConfigResponse {
 }
 
 // refs: 1 - tags: named, output
@@ -1904,11 +2243,22 @@ export interface GetAccountSettingsResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface GetCodeSigningConfigResponse {
+  CodeSigningConfig: CodeSigningConfig;
+}
+
+// refs: 1 - tags: named, output
 export interface GetFunctionResponse {
   Configuration?: FunctionConfiguration | null;
   Code?: FunctionCodeLocation | null;
   Tags?: { [key: string]: string | null | undefined } | null;
   Concurrency?: Concurrency | null;
+}
+
+// refs: 1 - tags: named, output
+export interface GetFunctionCodeSigningConfigResponse {
+  CodeSigningConfigArn: string;
+  FunctionName: string;
 }
 
 // refs: 1 - tags: named, output
@@ -1992,6 +2342,12 @@ export interface ListAliasesResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface ListCodeSigningConfigsResponse {
+  NextMarker?: string | null;
+  CodeSigningConfigs?: CodeSigningConfig[] | null;
+}
+
+// refs: 1 - tags: named, output
 export interface ListEventSourceMappingsResponse {
   NextMarker?: string | null;
   EventSourceMappings?: EventSourceMappingConfiguration[] | null;
@@ -2007,6 +2363,12 @@ export interface ListFunctionEventInvokeConfigsResponse {
 export interface ListFunctionsResponse {
   NextMarker?: string | null;
   Functions?: FunctionConfiguration[] | null;
+}
+
+// refs: 1 - tags: named, output
+export interface ListFunctionsByCodeSigningConfigResponse {
+  NextMarker?: string | null;
+  FunctionArns?: string[] | null;
 }
 
 // refs: 1 - tags: named, output
@@ -2050,6 +2412,12 @@ export interface PublishLayerVersionResponse {
   LicenseInfo?: string | null;
 }
 
+// refs: 1 - tags: named, output
+export interface PutFunctionCodeSigningConfigResponse {
+  CodeSigningConfigArn: string;
+  FunctionName: string;
+}
+
 // refs: 2 - tags: output, named, interface
 export interface Concurrency {
   ReservedConcurrentExecutions?: number | null;
@@ -2073,6 +2441,11 @@ export interface PutProvisionedConcurrencyConfigResponse {
   LastModified?: string | null;
 }
 
+// refs: 1 - tags: named, output
+export interface UpdateCodeSigningConfigResponse {
+  CodeSigningConfig: CodeSigningConfig;
+}
+
 // refs: 4 - tags: input, named, interface, output
 export interface AliasRoutingConfiguration {
   AdditionalVersionWeights?: { [key: string]: number | null | undefined } | null;
@@ -2092,7 +2465,51 @@ function toAliasRoutingConfiguration(root: jsonP.JSONValue): AliasRoutingConfigu
   }, root);
 }
 
-// refs: 1 - tags: input, named, enum
+// refs: 6 - tags: input, named, interface, output
+export interface AllowedPublishers {
+  SigningProfileVersionArns: string[];
+}
+function fromAllowedPublishers(input?: AllowedPublishers | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    SigningProfileVersionArns: input["SigningProfileVersionArns"],
+  }
+}
+function toAllowedPublishers(root: jsonP.JSONValue): AllowedPublishers {
+  return jsonP.readObj({
+    required: {
+      "SigningProfileVersionArns": ["s"],
+    },
+    optional: {},
+  }, root);
+}
+
+// refs: 6 - tags: input, named, interface, output
+export interface CodeSigningPolicies {
+  UntrustedArtifactOnDeployment?: CodeSigningPolicy | null;
+}
+function fromCodeSigningPolicies(input?: CodeSigningPolicies | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    UntrustedArtifactOnDeployment: input["UntrustedArtifactOnDeployment"],
+  }
+}
+function toCodeSigningPolicies(root: jsonP.JSONValue): CodeSigningPolicies {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "UntrustedArtifactOnDeployment": (x: jsonP.JSONValue) => cmnP.readEnum<CodeSigningPolicy>(x),
+    },
+  }, root);
+}
+
+// refs: 6 - tags: input, named, enum, output
+export type CodeSigningPolicy =
+| "Warn"
+| "Enforce"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 3 - tags: input, named, enum, output
 export type EventSourcePosition =
 | "TRIM_HORIZON"
 | "LATEST"
@@ -2159,6 +2576,66 @@ function toOnFailure(root: jsonP.JSONValue): OnFailure {
   }, root);
 }
 
+// refs: 4 - tags: input, named, interface, output
+export interface SourceAccessConfiguration {
+  Type?: SourceAccessType | null;
+  URI?: string | null;
+}
+function fromSourceAccessConfiguration(input?: SourceAccessConfiguration | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    Type: input["Type"],
+    URI: input["URI"],
+  }
+}
+function toSourceAccessConfiguration(root: jsonP.JSONValue): SourceAccessConfiguration {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "Type": (x: jsonP.JSONValue) => cmnP.readEnum<SourceAccessType>(x),
+      "URI": "s",
+    },
+  }, root);
+}
+
+// refs: 4 - tags: input, named, enum, output
+export type SourceAccessType =
+| "BASIC_AUTH"
+| "VPC_SUBNET"
+| "VPC_SECURITY_GROUP"
+| "SASL_SCRAM_512_AUTH"
+| "SASL_SCRAM_256_AUTH"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 3 - tags: input, named, interface, output
+export interface SelfManagedEventSource {
+  Endpoints?: { [key in EndPointType]: string[] | null | undefined } | null;
+}
+function fromSelfManagedEventSource(input?: SelfManagedEventSource | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    Endpoints: input["Endpoints"],
+  }
+}
+function toSelfManagedEventSource(root: jsonP.JSONValue): SelfManagedEventSource {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "Endpoints": x => jsonP.readMap(x => cmnP.readEnumReq<EndPointType>(x), l => Array.isArray(l) ? l.map(String) : [], x),
+    },
+  }, root);
+}
+
+// refs: 3 - tags: input, named, enum, output
+export type EndPointType =
+| "KAFKA_BOOTSTRAP_SERVERS"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 4 - tags: input, named, enum, output
+export type FunctionResponseType =
+| "ReportBatchItemFailures"
+| cmnP.UnexpectedEnumValue;
+
 // refs: 13 - tags: input, named, enum, output
 export type Runtime =
 | "nodejs"
@@ -2192,6 +2669,7 @@ export interface FunctionCode {
   S3Bucket?: string | null;
   S3Key?: string | null;
   S3ObjectVersion?: string | null;
+  ImageUri?: string | null;
 }
 function fromFunctionCode(input?: FunctionCode | null): jsonP.JSONValue {
   if (!input) return input;
@@ -2200,6 +2678,7 @@ function fromFunctionCode(input?: FunctionCode | null): jsonP.JSONValue {
     S3Bucket: input["S3Bucket"],
     S3Key: input["S3Key"],
     S3ObjectVersion: input["S3ObjectVersion"],
+    ImageUri: input["ImageUri"],
   }
 }
 
@@ -2215,6 +2694,12 @@ function fromVpcConfig(input?: VpcConfig | null): jsonP.JSONValue {
     SecurityGroupIds: input["SecurityGroupIds"],
   }
 }
+
+// refs: 5 - tags: input, named, enum, output
+export type PackageType =
+| "Zip"
+| "Image"
+| cmnP.UnexpectedEnumValue;
 
 // refs: 6 - tags: input, named, interface, output
 export interface DeadLetterConfig {
@@ -2285,6 +2770,31 @@ function toFileSystemConfig(root: jsonP.JSONValue): FileSystemConfig {
   }, root);
 }
 
+// refs: 6 - tags: input, named, interface, output
+export interface ImageConfig {
+  EntryPoint?: string[] | null;
+  Command?: string[] | null;
+  WorkingDirectory?: string | null;
+}
+function fromImageConfig(input?: ImageConfig | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    EntryPoint: input["EntryPoint"],
+    Command: input["Command"],
+    WorkingDirectory: input["WorkingDirectory"],
+  }
+}
+function toImageConfig(root: jsonP.JSONValue): ImageConfig {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "EntryPoint": ["s"],
+      "Command": ["s"],
+      "WorkingDirectory": "s",
+    },
+  }, root);
+}
+
 // refs: 1 - tags: input, named, enum
 export type InvocationType =
 | "Event"
@@ -2318,6 +2828,30 @@ function fromLayerVersionContentInput(input?: LayerVersionContentInput | null): 
     S3ObjectVersion: input["S3ObjectVersion"],
     ZipFile: jsonP.serializeBlob(input["ZipFile"]),
   }
+}
+
+// refs: 4 - tags: output, named, interface
+export interface CodeSigningConfig {
+  CodeSigningConfigId: string;
+  CodeSigningConfigArn: string;
+  Description?: string | null;
+  AllowedPublishers: AllowedPublishers;
+  CodeSigningPolicies: CodeSigningPolicies;
+  LastModified: string;
+}
+function toCodeSigningConfig(root: jsonP.JSONValue): CodeSigningConfig {
+  return jsonP.readObj({
+    required: {
+      "CodeSigningConfigId": "s",
+      "CodeSigningConfigArn": "s",
+      "AllowedPublishers": toAllowedPublishers,
+      "CodeSigningPolicies": toCodeSigningPolicies,
+      "LastModified": "s",
+    },
+    optional: {
+      "Description": "s",
+    },
+  }, root);
 }
 
 // refs: 4 - tags: output, named, interface
@@ -2384,6 +2918,8 @@ function toTracingConfigResponse(root: jsonP.JSONValue): TracingConfigResponse {
 export interface Layer {
   Arn?: string | null;
   CodeSize?: number | null;
+  SigningProfileVersionArn?: string | null;
+  SigningJobArn?: string | null;
 }
 function toLayer(root: jsonP.JSONValue): Layer {
   return jsonP.readObj({
@@ -2391,6 +2927,8 @@ function toLayer(root: jsonP.JSONValue): Layer {
     optional: {
       "Arn": "s",
       "CodeSize": "n",
+      "SigningProfileVersionArn": "s",
+      "SigningJobArn": "s",
     },
   }, root);
 }
@@ -2415,6 +2953,9 @@ export type StateReasonCode =
 | "SubnetOutOfIPAddresses"
 | "InvalidSubnet"
 | "InvalidSecurityGroup"
+| "ImageDeleted"
+| "ImageAccessDenied"
+| "InvalidImage"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: output, named, enum
@@ -2433,7 +2974,40 @@ export type LastUpdateStatusReasonCode =
 | "SubnetOutOfIPAddresses"
 | "InvalidSubnet"
 | "InvalidSecurityGroup"
+| "ImageDeleted"
+| "ImageAccessDenied"
+| "InvalidImage"
 | cmnP.UnexpectedEnumValue;
+
+// refs: 4 - tags: output, named, interface
+export interface ImageConfigResponse {
+  ImageConfig?: ImageConfig | null;
+  Error?: ImageConfigError | null;
+}
+function toImageConfigResponse(root: jsonP.JSONValue): ImageConfigResponse {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "ImageConfig": toImageConfig,
+      "Error": toImageConfigError,
+    },
+  }, root);
+}
+
+// refs: 4 - tags: output, named, interface
+export interface ImageConfigError {
+  ErrorCode?: string | null;
+  Message?: string | null;
+}
+function toImageConfigError(root: jsonP.JSONValue): ImageConfigError {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "ErrorCode": "s",
+      "Message": "s",
+    },
+  }, root);
+}
 
 // refs: 1 - tags: output, named, interface
 export interface AccountLimit {
@@ -2475,6 +3049,8 @@ function toAccountUsage(root: jsonP.JSONValue): AccountUsage {
 export interface FunctionCodeLocation {
   RepositoryType?: string | null;
   Location?: string | null;
+  ImageUri?: string | null;
+  ResolvedImageUri?: string | null;
 }
 function toFunctionCodeLocation(root: jsonP.JSONValue): FunctionCodeLocation {
   return jsonP.readObj({
@@ -2482,6 +3058,8 @@ function toFunctionCodeLocation(root: jsonP.JSONValue): FunctionCodeLocation {
     optional: {
       "RepositoryType": "s",
       "Location": "s",
+      "ImageUri": "s",
+      "ResolvedImageUri": "s",
     },
   }, root);
 }
@@ -2491,6 +3069,8 @@ export interface LayerVersionContentOutput {
   Location?: string | null;
   CodeSha256?: string | null;
   CodeSize?: number | null;
+  SigningProfileVersionArn?: string | null;
+  SigningJobArn?: string | null;
 }
 function toLayerVersionContentOutput(root: jsonP.JSONValue): LayerVersionContentOutput {
   return jsonP.readObj({
@@ -2499,6 +3079,8 @@ function toLayerVersionContentOutput(root: jsonP.JSONValue): LayerVersionContent
       "Location": "s",
       "CodeSha256": "s",
       "CodeSize": "n",
+      "SigningProfileVersionArn": "s",
+      "SigningJobArn": "s",
     },
   }, root);
 }

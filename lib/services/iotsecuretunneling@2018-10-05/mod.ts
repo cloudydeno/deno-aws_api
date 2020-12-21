@@ -264,7 +264,7 @@ function toTag(root: jsonP.JSONValue): Tag {
 
 // refs: 2 - tags: input, named, interface, output
 export interface DestinationConfig {
-  thingName: string;
+  thingName?: string | null;
   services: string[];
 }
 function fromDestinationConfig(input?: DestinationConfig | null): jsonP.JSONValue {
@@ -277,10 +277,11 @@ function fromDestinationConfig(input?: DestinationConfig | null): jsonP.JSONValu
 function toDestinationConfig(root: jsonP.JSONValue): DestinationConfig {
   return jsonP.readObj({
     required: {
-      "thingName": "s",
       "services": ["s"],
     },
-    optional: {},
+    optional: {
+      "thingName": "s",
+    },
   }, root);
 }
 

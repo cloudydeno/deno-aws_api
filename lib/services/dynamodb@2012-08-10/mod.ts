@@ -5,7 +5,7 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import * as uuidv4 from "https://deno.land/std@0.71.0/uuid/v4.ts";
+import * as uuidv4 from "https://deno.land/std@0.75.0/uuid/v4.ts";
 import * as cmnP from "../../encoding/common.ts";
 import * as jsonP from "../../encoding/json.ts";
 function generateIdemptToken() {
@@ -30,6 +30,24 @@ export default class DynamoDB {
     "targetPrefix": "DynamoDB_20120810",
     "uid": "dynamodb-2012-08-10"
   };
+
+  async batchExecuteStatement(
+    {abortSignal, ...params}: RequestConfig & BatchExecuteStatementInput,
+  ): Promise<BatchExecuteStatementOutput> {
+    const body: jsonP.JSONObject = {
+      Statements: params["Statements"]?.map(x => fromBatchStatementRequest(x)),
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "BatchExecuteStatement",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Responses": [toBatchStatementResponse],
+      },
+    }, await resp.json());
+  }
 
   async batchGetItem(
     {abortSignal, ...params}: RequestConfig & BatchGetItemInput,
@@ -281,6 +299,24 @@ export default class DynamoDB {
     }, await resp.json());
   }
 
+  async describeExport(
+    {abortSignal, ...params}: RequestConfig & DescribeExportInput,
+  ): Promise<DescribeExportOutput> {
+    const body: jsonP.JSONObject = {
+      ExportArn: params["ExportArn"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DescribeExport",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ExportDescription": toExportDescription,
+      },
+    }, await resp.json());
+  }
+
   async describeGlobalTable(
     {abortSignal, ...params}: RequestConfig & DescribeGlobalTableInput,
   ): Promise<DescribeGlobalTableOutput> {
@@ -314,6 +350,25 @@ export default class DynamoDB {
       optional: {
         "GlobalTableName": "s",
         "ReplicaSettings": [toReplicaSettingsDescription],
+      },
+    }, await resp.json());
+  }
+
+  async describeKinesisStreamingDestination(
+    {abortSignal, ...params}: RequestConfig & DescribeKinesisStreamingDestinationInput,
+  ): Promise<DescribeKinesisStreamingDestinationOutput> {
+    const body: jsonP.JSONObject = {
+      TableName: params["TableName"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DescribeKinesisStreamingDestination",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "TableName": "s",
+        "KinesisDataStreamDestinations": [toKinesisDataStreamDestination],
       },
     }, await resp.json());
   }
@@ -392,6 +447,115 @@ export default class DynamoDB {
     }, await resp.json());
   }
 
+  async disableKinesisStreamingDestination(
+    {abortSignal, ...params}: RequestConfig & KinesisStreamingDestinationInput,
+  ): Promise<KinesisStreamingDestinationOutput> {
+    const body: jsonP.JSONObject = {
+      TableName: params["TableName"],
+      StreamArn: params["StreamArn"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DisableKinesisStreamingDestination",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "TableName": "s",
+        "StreamArn": "s",
+        "DestinationStatus": (x: jsonP.JSONValue) => cmnP.readEnum<DestinationStatus>(x),
+      },
+    }, await resp.json());
+  }
+
+  async enableKinesisStreamingDestination(
+    {abortSignal, ...params}: RequestConfig & KinesisStreamingDestinationInput,
+  ): Promise<KinesisStreamingDestinationOutput> {
+    const body: jsonP.JSONObject = {
+      TableName: params["TableName"],
+      StreamArn: params["StreamArn"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "EnableKinesisStreamingDestination",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "TableName": "s",
+        "StreamArn": "s",
+        "DestinationStatus": (x: jsonP.JSONValue) => cmnP.readEnum<DestinationStatus>(x),
+      },
+    }, await resp.json());
+  }
+
+  async executeStatement(
+    {abortSignal, ...params}: RequestConfig & ExecuteStatementInput,
+  ): Promise<ExecuteStatementOutput> {
+    const body: jsonP.JSONObject = {
+      Statement: params["Statement"],
+      Parameters: params["Parameters"]?.map(x => fromAttributeValue(x)),
+      ConsistentRead: params["ConsistentRead"],
+      NextToken: params["NextToken"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "ExecuteStatement",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Items": [x => jsonP.readMap(String, toAttributeValue, x)],
+        "NextToken": "s",
+      },
+    }, await resp.json());
+  }
+
+  async executeTransaction(
+    {abortSignal, ...params}: RequestConfig & ExecuteTransactionInput,
+  ): Promise<ExecuteTransactionOutput> {
+    const body: jsonP.JSONObject = {
+      TransactStatements: params["TransactStatements"]?.map(x => fromParameterizedStatement(x)),
+      ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "ExecuteTransaction",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Responses": [toItemResponse],
+      },
+    }, await resp.json());
+  }
+
+  async exportTableToPointInTime(
+    {abortSignal, ...params}: RequestConfig & ExportTableToPointInTimeInput,
+  ): Promise<ExportTableToPointInTimeOutput> {
+    const body: jsonP.JSONObject = {
+      TableArn: params["TableArn"],
+      ExportTime: jsonP.serializeDate_unixTimestamp(params["ExportTime"]),
+      ClientToken: params["ClientToken"] ?? generateIdemptToken(),
+      S3Bucket: params["S3Bucket"],
+      S3BucketOwner: params["S3BucketOwner"],
+      S3Prefix: params["S3Prefix"],
+      S3SseAlgorithm: params["S3SseAlgorithm"],
+      S3SseKmsKeyId: params["S3SseKmsKeyId"],
+      ExportFormat: params["ExportFormat"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "ExportTableToPointInTime",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ExportDescription": toExportDescription,
+      },
+    }, await resp.json());
+  }
+
   async getItem(
     {abortSignal, ...params}: RequestConfig & GetItemInput,
   ): Promise<GetItemOutput> {
@@ -457,6 +621,27 @@ export default class DynamoDB {
       required: {},
       optional: {
         "ContributorInsightsSummaries": [toContributorInsightsSummary],
+        "NextToken": "s",
+      },
+    }, await resp.json());
+  }
+
+  async listExports(
+    {abortSignal, ...params}: RequestConfig & ListExportsInput = {},
+  ): Promise<ListExportsOutput> {
+    const body: jsonP.JSONObject = {
+      TableArn: params["TableArn"],
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "ListExports",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ExportSummaries": [toExportSummary],
         "NextToken": "s",
       },
     }, await resp.json());
@@ -965,6 +1150,11 @@ export default class DynamoDB {
 }
 
 // refs: 1 - tags: named, input
+export interface BatchExecuteStatementInput {
+  Statements: BatchStatementRequest[];
+}
+
+// refs: 1 - tags: named, input
 export interface BatchGetItemInput {
   RequestItems: { [key: string]: KeysAndAttributes | null | undefined };
   ReturnConsumedCapacity?: ReturnConsumedCapacity | null;
@@ -1048,6 +1238,11 @@ export interface DescribeEndpointsRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface DescribeExportInput {
+  ExportArn: string;
+}
+
+// refs: 1 - tags: named, input
 export interface DescribeGlobalTableInput {
   GlobalTableName: string;
 }
@@ -1055,6 +1250,11 @@ export interface DescribeGlobalTableInput {
 // refs: 1 - tags: named, input
 export interface DescribeGlobalTableSettingsInput {
   GlobalTableName: string;
+}
+
+// refs: 1 - tags: named, input
+export interface DescribeKinesisStreamingDestinationInput {
+  TableName: string;
 }
 
 // refs: 1 - tags: named, input
@@ -1074,6 +1274,39 @@ export interface DescribeTableReplicaAutoScalingInput {
 // refs: 1 - tags: named, input
 export interface DescribeTimeToLiveInput {
   TableName: string;
+}
+
+// refs: 1 - tags: named, input
+export interface KinesisStreamingDestinationInput {
+  TableName: string;
+  StreamArn: string;
+}
+
+// refs: 1 - tags: named, input
+export interface ExecuteStatementInput {
+  Statement: string;
+  Parameters?: AttributeValue[] | null;
+  ConsistentRead?: boolean | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface ExecuteTransactionInput {
+  TransactStatements: ParameterizedStatement[];
+  ClientRequestToken?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface ExportTableToPointInTimeInput {
+  TableArn: string;
+  ExportTime?: Date | number | null;
+  ClientToken?: string | null;
+  S3Bucket: string;
+  S3BucketOwner?: string | null;
+  S3Prefix?: string | null;
+  S3SseAlgorithm?: S3SseAlgorithm | null;
+  S3SseKmsKeyId?: string | null;
+  ExportFormat?: ExportFormat | null;
 }
 
 // refs: 1 - tags: named, input
@@ -1102,6 +1335,13 @@ export interface ListContributorInsightsInput {
   TableName?: string | null;
   NextToken?: string | null;
   MaxResults?: number | null;
+}
+
+// refs: 1 - tags: named, input
+export interface ListExportsInput {
+  TableArn?: string | null;
+  MaxResults?: number | null;
+  NextToken?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -1301,6 +1541,11 @@ export interface UpdateTimeToLiveInput {
 }
 
 // refs: 1 - tags: named, output
+export interface BatchExecuteStatementOutput {
+  Responses?: BatchStatementResponse[] | null;
+}
+
+// refs: 1 - tags: named, output
 export interface BatchGetItemOutput {
   Responses?: { [key: string]: ({ [key: string]: AttributeValue | null | undefined })[] | null | undefined } | null;
   UnprocessedKeys?: { [key: string]: KeysAndAttributes | null | undefined } | null;
@@ -1372,6 +1617,11 @@ export interface DescribeEndpointsResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface DescribeExportOutput {
+  ExportDescription?: ExportDescription | null;
+}
+
+// refs: 1 - tags: named, output
 export interface DescribeGlobalTableOutput {
   GlobalTableDescription?: GlobalTableDescription | null;
 }
@@ -1380,6 +1630,12 @@ export interface DescribeGlobalTableOutput {
 export interface DescribeGlobalTableSettingsOutput {
   GlobalTableName?: string | null;
   ReplicaSettings?: ReplicaSettingsDescription[] | null;
+}
+
+// refs: 1 - tags: named, output
+export interface DescribeKinesisStreamingDestinationOutput {
+  TableName?: string | null;
+  KinesisDataStreamDestinations?: KinesisDataStreamDestination[] | null;
 }
 
 // refs: 1 - tags: named, output
@@ -1406,6 +1662,29 @@ export interface DescribeTimeToLiveOutput {
 }
 
 // refs: 1 - tags: named, output
+export interface KinesisStreamingDestinationOutput {
+  TableName?: string | null;
+  StreamArn?: string | null;
+  DestinationStatus?: DestinationStatus | null;
+}
+
+// refs: 1 - tags: named, output
+export interface ExecuteStatementOutput {
+  Items?: ({ [key: string]: AttributeValue | null | undefined })[] | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface ExecuteTransactionOutput {
+  Responses?: ItemResponse[] | null;
+}
+
+// refs: 1 - tags: named, output
+export interface ExportTableToPointInTimeOutput {
+  ExportDescription?: ExportDescription | null;
+}
+
+// refs: 1 - tags: named, output
 export interface GetItemOutput {
   Item?: { [key: string]: AttributeValue | null | undefined } | null;
   ConsumedCapacity?: ConsumedCapacity | null;
@@ -1420,6 +1699,12 @@ export interface ListBackupsOutput {
 // refs: 1 - tags: named, output
 export interface ListContributorInsightsOutput {
   ContributorInsightsSummaries?: ContributorInsightsSummary[] | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface ListExportsOutput {
+  ExportSummaries?: ExportSummary[] | null;
   NextToken?: string | null;
 }
 
@@ -1533,39 +1818,22 @@ export interface UpdateTimeToLiveOutput {
   TimeToLiveSpecification?: TimeToLiveSpecification | null;
 }
 
-// refs: 2 - tags: input, named, interface, output
-export interface KeysAndAttributes {
-  Keys: ({ [key: string]: AttributeValue | null | undefined })[];
-  AttributesToGet?: string[] | null;
+// refs: 1 - tags: input, named, interface
+export interface BatchStatementRequest {
+  Statement: string;
+  Parameters?: AttributeValue[] | null;
   ConsistentRead?: boolean | null;
-  ProjectionExpression?: string | null;
-  ExpressionAttributeNames?: { [key: string]: string | null | undefined } | null;
 }
-function fromKeysAndAttributes(input?: KeysAndAttributes | null): jsonP.JSONValue {
+function fromBatchStatementRequest(input?: BatchStatementRequest | null): jsonP.JSONValue {
   if (!input) return input;
   return {
-    Keys: input["Keys"]?.map(x => jsonP.serializeMap(x, fromAttributeValue)),
-    AttributesToGet: input["AttributesToGet"],
+    Statement: input["Statement"],
+    Parameters: input["Parameters"]?.map(x => fromAttributeValue(x)),
     ConsistentRead: input["ConsistentRead"],
-    ProjectionExpression: input["ProjectionExpression"],
-    ExpressionAttributeNames: input["ExpressionAttributeNames"],
   }
 }
-function toKeysAndAttributes(root: jsonP.JSONValue): KeysAndAttributes {
-  return jsonP.readObj({
-    required: {
-      "Keys": [x => jsonP.readMap(String, toAttributeValue, x)],
-    },
-    optional: {
-      "AttributesToGet": ["s"],
-      "ConsistentRead": "b",
-      "ProjectionExpression": "s",
-      "ExpressionAttributeNames": x => jsonP.readMap(String, String, x),
-    },
-  }, root);
-}
 
-// refs: 153 - tags: input, named, interface, recursed, output
+// refs: 171 - tags: input, named, interface, recursed, output
 export interface AttributeValue {
   S?: string | null;
   N?: string | null;
@@ -1607,6 +1875,38 @@ function toAttributeValue(root: jsonP.JSONValue): AttributeValue {
       "L": [toAttributeValue],
       "NULL": "b",
       "BOOL": "b",
+    },
+  }, root);
+}
+
+// refs: 2 - tags: input, named, interface, output
+export interface KeysAndAttributes {
+  Keys: ({ [key: string]: AttributeValue | null | undefined })[];
+  AttributesToGet?: string[] | null;
+  ConsistentRead?: boolean | null;
+  ProjectionExpression?: string | null;
+  ExpressionAttributeNames?: { [key: string]: string | null | undefined } | null;
+}
+function fromKeysAndAttributes(input?: KeysAndAttributes | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    Keys: input["Keys"]?.map(x => jsonP.serializeMap(x, fromAttributeValue)),
+    AttributesToGet: input["AttributesToGet"],
+    ConsistentRead: input["ConsistentRead"],
+    ProjectionExpression: input["ProjectionExpression"],
+    ExpressionAttributeNames: input["ExpressionAttributeNames"],
+  }
+}
+function toKeysAndAttributes(root: jsonP.JSONValue): KeysAndAttributes {
+  return jsonP.readObj({
+    required: {
+      "Keys": [x => jsonP.readMap(String, toAttributeValue, x)],
+    },
+    optional: {
+      "AttributesToGet": ["s"],
+      "ConsistentRead": "b",
+      "ProjectionExpression": "s",
+      "ExpressionAttributeNames": x => jsonP.readMap(String, String, x),
     },
   }, root);
 }
@@ -1970,6 +2270,31 @@ export type ReturnValue =
 | "UPDATED_OLD"
 | "ALL_NEW"
 | "UPDATED_NEW"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 1 - tags: input, named, interface
+export interface ParameterizedStatement {
+  Statement: string;
+  Parameters?: AttributeValue[] | null;
+}
+function fromParameterizedStatement(input?: ParameterizedStatement | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    Statement: input["Statement"],
+    Parameters: input["Parameters"]?.map(x => fromAttributeValue(x)),
+  }
+}
+
+// refs: 3 - tags: input, named, enum, output
+export type S3SseAlgorithm =
+| "AES256"
+| "KMS"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 3 - tags: input, named, enum, output
+export type ExportFormat =
+| "DYNAMODB_JSON"
+| "ION"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
@@ -2517,6 +2842,53 @@ function toTimeToLiveSpecification(root: jsonP.JSONValue): TimeToLiveSpecificati
   }, root);
 }
 
+// refs: 1 - tags: output, named, interface
+export interface BatchStatementResponse {
+  Error?: BatchStatementError | null;
+  TableName?: string | null;
+  Item?: { [key: string]: AttributeValue | null | undefined } | null;
+}
+function toBatchStatementResponse(root: jsonP.JSONValue): BatchStatementResponse {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "Error": toBatchStatementError,
+      "TableName": "s",
+      "Item": x => jsonP.readMap(String, toAttributeValue, x),
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
+export interface BatchStatementError {
+  Code?: BatchStatementErrorCodeEnum | null;
+  Message?: string | null;
+}
+function toBatchStatementError(root: jsonP.JSONValue): BatchStatementError {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "Code": (x: jsonP.JSONValue) => cmnP.readEnum<BatchStatementErrorCodeEnum>(x),
+      "Message": "s",
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, enum
+export type BatchStatementErrorCodeEnum =
+| "ConditionalCheckFailed"
+| "ItemCollectionSizeLimitExceeded"
+| "RequestLimitExceeded"
+| "ValidationError"
+| "ProvisionedThroughputExceeded"
+| "TransactionConflict"
+| "ThrottlingError"
+| "InternalServerError"
+| "ResourceNotFound"
+| "AccessDenied"
+| "DuplicateItem"
+| cmnP.UnexpectedEnumValue;
+
 // refs: 10 - tags: output, named, interface
 export interface ConsumedCapacity {
   TableName?: string | null;
@@ -2670,6 +3042,7 @@ export type ReplicaStatus =
 | "DELETING"
 | "ACTIVE"
 | "REGION_DISABLED"
+| "INACCESSIBLE_ENCRYPTION_CREDENTIALS"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 9 - tags: output, named, interface
@@ -3132,6 +3505,62 @@ function toEndpoint(root: jsonP.JSONValue): Endpoint {
 }
 
 // refs: 2 - tags: output, named, interface
+export interface ExportDescription {
+  ExportArn?: string | null;
+  ExportStatus?: ExportStatus | null;
+  StartTime?: Date | number | null;
+  EndTime?: Date | number | null;
+  ExportManifest?: string | null;
+  TableArn?: string | null;
+  TableId?: string | null;
+  ExportTime?: Date | number | null;
+  ClientToken?: string | null;
+  S3Bucket?: string | null;
+  S3BucketOwner?: string | null;
+  S3Prefix?: string | null;
+  S3SseAlgorithm?: S3SseAlgorithm | null;
+  S3SseKmsKeyId?: string | null;
+  FailureCode?: string | null;
+  FailureMessage?: string | null;
+  ExportFormat?: ExportFormat | null;
+  BilledSizeBytes?: number | null;
+  ItemCount?: number | null;
+}
+function toExportDescription(root: jsonP.JSONValue): ExportDescription {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "ExportArn": "s",
+      "ExportStatus": (x: jsonP.JSONValue) => cmnP.readEnum<ExportStatus>(x),
+      "StartTime": "d",
+      "EndTime": "d",
+      "ExportManifest": "s",
+      "TableArn": "s",
+      "TableId": "s",
+      "ExportTime": "d",
+      "ClientToken": "s",
+      "S3Bucket": "s",
+      "S3BucketOwner": "s",
+      "S3Prefix": "s",
+      "S3SseAlgorithm": (x: jsonP.JSONValue) => cmnP.readEnum<S3SseAlgorithm>(x),
+      "S3SseKmsKeyId": "s",
+      "FailureCode": "s",
+      "FailureMessage": "s",
+      "ExportFormat": (x: jsonP.JSONValue) => cmnP.readEnum<ExportFormat>(x),
+      "BilledSizeBytes": "n",
+      "ItemCount": "n",
+    },
+  }, root);
+}
+
+// refs: 3 - tags: output, named, enum
+export type ExportStatus =
+| "IN_PROGRESS"
+| "COMPLETED"
+| "FAILED"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 2 - tags: output, named, interface
 export interface ReplicaSettingsDescription {
   RegionName: string;
   ReplicaStatus?: ReplicaStatus | null;
@@ -3239,6 +3668,32 @@ function toReplicaGlobalSecondaryIndexSettingsDescription(root: jsonP.JSONValue)
   }, root);
 }
 
+// refs: 1 - tags: output, named, interface
+export interface KinesisDataStreamDestination {
+  StreamArn?: string | null;
+  DestinationStatus?: DestinationStatus | null;
+  DestinationStatusDescription?: string | null;
+}
+function toKinesisDataStreamDestination(root: jsonP.JSONValue): KinesisDataStreamDestination {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "StreamArn": "s",
+      "DestinationStatus": (x: jsonP.JSONValue) => cmnP.readEnum<DestinationStatus>(x),
+      "DestinationStatusDescription": "s",
+    },
+  }, root);
+}
+
+// refs: 2 - tags: output, named, enum
+export type DestinationStatus =
+| "ENABLING"
+| "ACTIVE"
+| "DISABLING"
+| "DISABLED"
+| "ENABLE_FAILED"
+| cmnP.UnexpectedEnumValue;
+
 // refs: 2 - tags: output, named, interface
 export interface TableAutoScalingDescription {
   TableName?: string | null;
@@ -3296,6 +3751,19 @@ function toReplicaGlobalSecondaryIndexAutoScalingDescription(root: jsonP.JSONVal
   }, root);
 }
 
+// refs: 2 - tags: output, named, interface
+export interface ItemResponse {
+  Item?: { [key: string]: AttributeValue | null | undefined } | null;
+}
+function toItemResponse(root: jsonP.JSONValue): ItemResponse {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "Item": x => jsonP.readMap(String, toAttributeValue, x),
+    },
+  }, root);
+}
+
 // refs: 1 - tags: output, named, interface
 export interface BackupSummary {
   TableName?: string | null;
@@ -3345,6 +3813,21 @@ function toContributorInsightsSummary(root: jsonP.JSONValue): ContributorInsight
 }
 
 // refs: 1 - tags: output, named, interface
+export interface ExportSummary {
+  ExportArn?: string | null;
+  ExportStatus?: ExportStatus | null;
+}
+function toExportSummary(root: jsonP.JSONValue): ExportSummary {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "ExportArn": "s",
+      "ExportStatus": (x: jsonP.JSONValue) => cmnP.readEnum<ExportStatus>(x),
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
 export interface GlobalTable {
   GlobalTableName?: string | null;
   ReplicationGroup?: Replica[] | null;
@@ -3355,19 +3838,6 @@ function toGlobalTable(root: jsonP.JSONValue): GlobalTable {
     optional: {
       "GlobalTableName": "s",
       "ReplicationGroup": [toReplica],
-    },
-  }, root);
-}
-
-// refs: 1 - tags: output, named, interface
-export interface ItemResponse {
-  Item?: { [key: string]: AttributeValue | null | undefined } | null;
-}
-function toItemResponse(root: jsonP.JSONValue): ItemResponse {
-  return jsonP.readObj({
-    required: {},
-    optional: {
-      "Item": x => jsonP.readMap(String, toAttributeValue, x),
     },
   }, root);
 }

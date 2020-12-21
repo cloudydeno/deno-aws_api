@@ -98,6 +98,7 @@ export default class IoTAnalytics {
       retentionPeriod: fromRetentionPeriod(params["retentionPeriod"]),
       versioningConfiguration: fromVersioningConfiguration(params["versioningConfiguration"]),
       tags: params["tags"]?.map(x => fromTag(x)),
+      lateDataRules: params["lateDataRules"]?.map(x => fromLateDataRule(x)),
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -118,9 +119,11 @@ export default class IoTAnalytics {
   async createDatasetContent(
     {abortSignal, ...params}: RequestConfig & CreateDatasetContentRequest,
   ): Promise<CreateDatasetContentResponse> {
-
+    const body: jsonP.JSONObject = {
+      versionId: params["versionId"],
+    };
     const resp = await this.#client.performRequest({
-      abortSignal,
+      abortSignal, body,
       action: "CreateDatasetContent",
       requestUri: cmnP.encodePath`/datasets/${params["datasetName"]}/content`,
     });
@@ -140,6 +143,7 @@ export default class IoTAnalytics {
       datastoreStorage: fromDatastoreStorage(params["datastoreStorage"]),
       retentionPeriod: fromRetentionPeriod(params["retentionPeriod"]),
       tags: params["tags"]?.map(x => fromTag(x)),
+      fileFormatConfiguration: fromFileFormatConfiguration(params["fileFormatConfiguration"]),
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -549,6 +553,7 @@ export default class IoTAnalytics {
     const body: jsonP.JSONObject = {
       startTime: jsonP.serializeDate_unixTimestamp(params["startTime"]),
       endTime: jsonP.serializeDate_unixTimestamp(params["endTime"]),
+      channelMessages: fromChannelMessages(params["channelMessages"]),
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -628,6 +633,7 @@ export default class IoTAnalytics {
       contentDeliveryRules: params["contentDeliveryRules"]?.map(x => fromDatasetContentDeliveryRule(x)),
       retentionPeriod: fromRetentionPeriod(params["retentionPeriod"]),
       versioningConfiguration: fromVersioningConfiguration(params["versioningConfiguration"]),
+      lateDataRules: params["lateDataRules"]?.map(x => fromLateDataRule(x)),
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -643,6 +649,7 @@ export default class IoTAnalytics {
     const body: jsonP.JSONObject = {
       retentionPeriod: fromRetentionPeriod(params["retentionPeriod"]),
       datastoreStorage: fromDatastoreStorage(params["datastoreStorage"]),
+      fileFormatConfiguration: fromFileFormatConfiguration(params["fileFormatConfiguration"]),
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -697,11 +704,13 @@ export interface CreateDatasetRequest {
   retentionPeriod?: RetentionPeriod | null;
   versioningConfiguration?: VersioningConfiguration | null;
   tags?: Tag[] | null;
+  lateDataRules?: LateDataRule[] | null;
 }
 
 // refs: 1 - tags: named, input
 export interface CreateDatasetContentRequest {
   datasetName: string;
+  versionId?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -710,6 +719,7 @@ export interface CreateDatastoreRequest {
   datastoreStorage?: DatastoreStorage | null;
   retentionPeriod?: RetentionPeriod | null;
   tags?: Tag[] | null;
+  fileFormatConfiguration?: FileFormatConfiguration | null;
 }
 
 // refs: 1 - tags: named, input
@@ -839,6 +849,7 @@ export interface StartPipelineReprocessingRequest {
   pipelineName: string;
   startTime?: Date | number | null;
   endTime?: Date | number | null;
+  channelMessages?: ChannelMessages | null;
 }
 
 // refs: 1 - tags: named, input
@@ -868,6 +879,7 @@ export interface UpdateDatasetRequest {
   contentDeliveryRules?: DatasetContentDeliveryRule[] | null;
   retentionPeriod?: RetentionPeriod | null;
   versioningConfiguration?: VersioningConfiguration | null;
+  lateDataRules?: LateDataRule[] | null;
 }
 
 // refs: 1 - tags: named, input
@@ -875,6 +887,7 @@ export interface UpdateDatastoreRequest {
   datastoreName: string;
   retentionPeriod?: RetentionPeriod | null;
   datastoreStorage?: DatastoreStorage | null;
+  fileFormatConfiguration?: FileFormatConfiguration | null;
 }
 
 // refs: 1 - tags: named, input
@@ -1554,6 +1567,67 @@ function toVersioningConfiguration(root: jsonP.JSONValue): VersioningConfigurati
 }
 
 // refs: 3 - tags: input, named, interface, output
+export interface LateDataRule {
+  ruleName?: string | null;
+  ruleConfiguration: LateDataRuleConfiguration;
+}
+function fromLateDataRule(input?: LateDataRule | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    ruleName: input["ruleName"],
+    ruleConfiguration: fromLateDataRuleConfiguration(input["ruleConfiguration"]),
+  }
+}
+function toLateDataRule(root: jsonP.JSONValue): LateDataRule {
+  return jsonP.readObj({
+    required: {
+      "ruleConfiguration": toLateDataRuleConfiguration,
+    },
+    optional: {
+      "ruleName": "s",
+    },
+  }, root);
+}
+
+// refs: 3 - tags: input, named, interface, output
+export interface LateDataRuleConfiguration {
+  deltaTimeSessionWindowConfiguration?: DeltaTimeSessionWindowConfiguration | null;
+}
+function fromLateDataRuleConfiguration(input?: LateDataRuleConfiguration | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    deltaTimeSessionWindowConfiguration: fromDeltaTimeSessionWindowConfiguration(input["deltaTimeSessionWindowConfiguration"]),
+  }
+}
+function toLateDataRuleConfiguration(root: jsonP.JSONValue): LateDataRuleConfiguration {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "deltaTimeSessionWindowConfiguration": toDeltaTimeSessionWindowConfiguration,
+    },
+  }, root);
+}
+
+// refs: 3 - tags: input, named, interface, output
+export interface DeltaTimeSessionWindowConfiguration {
+  timeoutInMinutes: number;
+}
+function fromDeltaTimeSessionWindowConfiguration(input?: DeltaTimeSessionWindowConfiguration | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    timeoutInMinutes: input["timeoutInMinutes"],
+  }
+}
+function toDeltaTimeSessionWindowConfiguration(root: jsonP.JSONValue): DeltaTimeSessionWindowConfiguration {
+  return jsonP.readObj({
+    required: {
+      "timeoutInMinutes": "n",
+    },
+    optional: {},
+  }, root);
+}
+
+// refs: 3 - tags: input, named, interface, output
 export interface DatastoreStorage {
   serviceManagedS3?: ServiceManagedDatastoreS3Storage | null;
   customerManagedS3?: CustomerManagedDatastoreS3Storage | null;
@@ -1613,6 +1687,103 @@ function toCustomerManagedDatastoreS3Storage(root: jsonP.JSONValue): CustomerMan
     optional: {
       "keyPrefix": "s",
     },
+  }, root);
+}
+
+// refs: 3 - tags: input, named, interface, output
+export interface FileFormatConfiguration {
+  jsonConfiguration?: JsonConfiguration | null;
+  parquetConfiguration?: ParquetConfiguration | null;
+}
+function fromFileFormatConfiguration(input?: FileFormatConfiguration | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    jsonConfiguration: fromJsonConfiguration(input["jsonConfiguration"]),
+    parquetConfiguration: fromParquetConfiguration(input["parquetConfiguration"]),
+  }
+}
+function toFileFormatConfiguration(root: jsonP.JSONValue): FileFormatConfiguration {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "jsonConfiguration": toJsonConfiguration,
+      "parquetConfiguration": toParquetConfiguration,
+    },
+  }, root);
+}
+
+// refs: 3 - tags: input, named, interface, output
+export interface JsonConfiguration {
+}
+function fromJsonConfiguration(input?: JsonConfiguration | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+  }
+}
+function toJsonConfiguration(root: jsonP.JSONValue): JsonConfiguration {
+  return jsonP.readObj({
+    required: {},
+    optional: {},
+  }, root);
+}
+
+// refs: 3 - tags: input, named, interface, output
+export interface ParquetConfiguration {
+  schemaDefinition?: SchemaDefinition | null;
+}
+function fromParquetConfiguration(input?: ParquetConfiguration | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    schemaDefinition: fromSchemaDefinition(input["schemaDefinition"]),
+  }
+}
+function toParquetConfiguration(root: jsonP.JSONValue): ParquetConfiguration {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "schemaDefinition": toSchemaDefinition,
+    },
+  }, root);
+}
+
+// refs: 3 - tags: input, named, interface, output
+export interface SchemaDefinition {
+  columns?: Column[] | null;
+}
+function fromSchemaDefinition(input?: SchemaDefinition | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    columns: input["columns"]?.map(x => fromColumn(x)),
+  }
+}
+function toSchemaDefinition(root: jsonP.JSONValue): SchemaDefinition {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "columns": [toColumn],
+    },
+  }, root);
+}
+
+// refs: 3 - tags: input, named, interface, output
+export interface Column {
+  name: string;
+  type: string;
+}
+function fromColumn(input?: Column | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    name: input["name"],
+    type: input["type"],
+  }
+}
+function toColumn(root: jsonP.JSONValue): Column {
+  return jsonP.readObj({
+    required: {
+      "name": "s",
+      "type": "s",
+    },
+    optional: {},
   }, root);
 }
 
@@ -1966,6 +2137,17 @@ export type LoggingLevel =
 | "ERROR"
 | cmnP.UnexpectedEnumValue;
 
+// refs: 1 - tags: input, named, interface
+export interface ChannelMessages {
+  s3Paths?: string[] | null;
+}
+function fromChannelMessages(input?: ChannelMessages | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    s3Paths: input["s3Paths"],
+  }
+}
+
 // refs: 1 - tags: output, named, interface
 export interface BatchPutMessageErrorEntry {
   messageId?: string | null;
@@ -1992,6 +2174,7 @@ export interface Channel {
   retentionPeriod?: RetentionPeriod | null;
   creationTime?: Date | number | null;
   lastUpdateTime?: Date | number | null;
+  lastMessageArrivalTime?: Date | number | null;
 }
 function toChannel(root: jsonP.JSONValue): Channel {
   return jsonP.readObj({
@@ -2004,6 +2187,7 @@ function toChannel(root: jsonP.JSONValue): Channel {
       "retentionPeriod": toRetentionPeriod,
       "creationTime": "d",
       "lastUpdateTime": "d",
+      "lastMessageArrivalTime": "d",
     },
   }, root);
 }
@@ -2055,6 +2239,7 @@ export interface Dataset {
   lastUpdateTime?: Date | number | null;
   retentionPeriod?: RetentionPeriod | null;
   versioningConfiguration?: VersioningConfiguration | null;
+  lateDataRules?: LateDataRule[] | null;
 }
 function toDataset(root: jsonP.JSONValue): Dataset {
   return jsonP.readObj({
@@ -2070,6 +2255,7 @@ function toDataset(root: jsonP.JSONValue): Dataset {
       "lastUpdateTime": "d",
       "retentionPeriod": toRetentionPeriod,
       "versioningConfiguration": toVersioningConfiguration,
+      "lateDataRules": [toLateDataRule],
     },
   }, root);
 }
@@ -2090,6 +2276,8 @@ export interface Datastore {
   retentionPeriod?: RetentionPeriod | null;
   creationTime?: Date | number | null;
   lastUpdateTime?: Date | number | null;
+  lastMessageArrivalTime?: Date | number | null;
+  fileFormatConfiguration?: FileFormatConfiguration | null;
 }
 function toDatastore(root: jsonP.JSONValue): Datastore {
   return jsonP.readObj({
@@ -2102,6 +2290,8 @@ function toDatastore(root: jsonP.JSONValue): Datastore {
       "retentionPeriod": toRetentionPeriod,
       "creationTime": "d",
       "lastUpdateTime": "d",
+      "lastMessageArrivalTime": "d",
+      "fileFormatConfiguration": toFileFormatConfiguration,
     },
   }, root);
 }
@@ -2218,6 +2408,7 @@ export interface ChannelSummary {
   status?: ChannelStatus | null;
   creationTime?: Date | number | null;
   lastUpdateTime?: Date | number | null;
+  lastMessageArrivalTime?: Date | number | null;
 }
 function toChannelSummary(root: jsonP.JSONValue): ChannelSummary {
   return jsonP.readObj({
@@ -2228,6 +2419,7 @@ function toChannelSummary(root: jsonP.JSONValue): ChannelSummary {
       "status": (x: jsonP.JSONValue) => cmnP.readEnum<ChannelStatus>(x),
       "creationTime": "d",
       "lastUpdateTime": "d",
+      "lastMessageArrivalTime": "d",
     },
   }, root);
 }
@@ -2346,6 +2538,8 @@ export interface DatastoreSummary {
   status?: DatastoreStatus | null;
   creationTime?: Date | number | null;
   lastUpdateTime?: Date | number | null;
+  lastMessageArrivalTime?: Date | number | null;
+  fileFormatType?: FileFormatType | null;
 }
 function toDatastoreSummary(root: jsonP.JSONValue): DatastoreSummary {
   return jsonP.readObj({
@@ -2356,6 +2550,8 @@ function toDatastoreSummary(root: jsonP.JSONValue): DatastoreSummary {
       "status": (x: jsonP.JSONValue) => cmnP.readEnum<DatastoreStatus>(x),
       "creationTime": "d",
       "lastUpdateTime": "d",
+      "lastMessageArrivalTime": "d",
+      "fileFormatType": (x: jsonP.JSONValue) => cmnP.readEnum<FileFormatType>(x),
     },
   }, root);
 }
@@ -2401,6 +2597,12 @@ function toCustomerManagedDatastoreS3StorageSummary(root: jsonP.JSONValue): Cust
     },
   }, root);
 }
+
+// refs: 1 - tags: output, named, enum
+export type FileFormatType =
+| "JSON"
+| "PARQUET"
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface PipelineSummary {

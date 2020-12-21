@@ -1658,6 +1658,7 @@ export type WorkspaceImageIngestionProcess =
 | "BYOL_REGULAR"
 | "BYOL_GRAPHICS"
 | "BYOL_GRAPHICSPRO"
+| "BYOL_REGULAR_WSP"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum

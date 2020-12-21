@@ -65,8 +65,8 @@ export default class ELBv2 {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"LoadBalancerArn", (params["LoadBalancerArn"] ?? '').toString());
-    body.append(prefix+"Protocol", (params["Protocol"] ?? '').toString());
-    body.append(prefix+"Port", (params["Port"] ?? '').toString());
+    if ("Protocol" in params) body.append(prefix+"Protocol", (params["Protocol"] ?? '').toString());
+    if ("Port" in params) body.append(prefix+"Port", (params["Port"] ?? '').toString());
     if ("SslPolicy" in params) body.append(prefix+"SslPolicy", (params["SslPolicy"] ?? '').toString());
     if (params["Certificates"]) qsP.appendList(body, prefix+"Certificates", params["Certificates"], {"appender":Certificate_Serialize,"entryPrefix":".member."})
     if (params["DefaultActions"]) qsP.appendList(body, prefix+"DefaultActions", params["DefaultActions"], {"appender":Action_Serialize,"entryPrefix":".member."})
@@ -646,6 +646,7 @@ export default class ELBv2 {
     body.append(prefix+"LoadBalancerArn", (params["LoadBalancerArn"] ?? '').toString());
     if (params["Subnets"]) qsP.appendList(body, prefix+"Subnets", params["Subnets"], {"entryPrefix":".member."})
     if (params["SubnetMappings"]) qsP.appendList(body, prefix+"SubnetMappings", params["SubnetMappings"], {"appender":SubnetMapping_Serialize,"entryPrefix":".member."})
+    if ("IpAddressType" in params) body.append(prefix+"IpAddressType", (params["IpAddressType"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "SetSubnets",
@@ -653,6 +654,7 @@ export default class ELBv2 {
     const xml = xmlP.readXmlResult(await resp.text(), "SetSubnetsResult");
     return {
       AvailabilityZones: xml.getList("AvailabilityZones", "member").map(AvailabilityZone_Parse),
+      IpAddressType: xml.first("IpAddressType", false, x => (x.content ?? '') as IpAddressType),
     };
   }
 
@@ -764,8 +766,8 @@ export interface AddTagsInput {
 // refs: 1 - tags: named, input
 export interface CreateListenerInput {
   LoadBalancerArn: string;
-  Protocol: ProtocolEnum;
-  Port: number;
+  Protocol?: ProtocolEnum | null;
+  Port?: number | null;
   SslPolicy?: string | null;
   Certificates?: Certificate[] | null;
   DefaultActions: Action[];
@@ -999,6 +1001,7 @@ export interface SetSubnetsInput {
   LoadBalancerArn: string;
   Subnets?: string[] | null;
   SubnetMappings?: SubnetMapping[] | null;
+  IpAddressType?: IpAddressType | null;
 }
 
 // refs: 1 - tags: named, output
@@ -1167,6 +1170,7 @@ export interface SetSecurityGroupsOutput {
 // refs: 1 - tags: named, output
 export interface SetSubnetsOutput {
   AvailabilityZones: AvailabilityZone[];
+  IpAddressType?: IpAddressType | null;
 }
 
 // refs: 9 - tags: input, named, interface, output
@@ -1211,6 +1215,7 @@ export type ProtocolEnum =
 | "TLS"
 | "UDP"
 | "TCP_UDP"
+| "GENEVE"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 11 - tags: input, named, interface, output
@@ -1452,11 +1457,13 @@ export interface SubnetMapping {
   SubnetId?: string | null;
   AllocationId?: string | null;
   PrivateIPv4Address?: string | null;
+  IPv6Address?: string | null;
 }
 function SubnetMapping_Serialize(body: URLSearchParams, prefix: string, params: SubnetMapping) {
     if ("SubnetId" in params) body.append(prefix+".SubnetId", (params["SubnetId"] ?? '').toString());
     if ("AllocationId" in params) body.append(prefix+".AllocationId", (params["AllocationId"] ?? '').toString());
     if ("PrivateIPv4Address" in params) body.append(prefix+".PrivateIPv4Address", (params["PrivateIPv4Address"] ?? '').toString());
+    if ("IPv6Address" in params) body.append(prefix+".IPv6Address", (params["IPv6Address"] ?? '').toString());
 }
 
 // refs: 3 - tags: input, named, enum, output
@@ -1469,9 +1476,10 @@ export type LoadBalancerSchemeEnum =
 export type LoadBalancerTypeEnum =
 | "application"
 | "network"
+| "gateway"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 5 - tags: input, named, enum, output
+// refs: 7 - tags: input, named, enum, output
 export type IpAddressType =
 | "ipv4"
 | "dualstack"
@@ -1792,10 +1800,11 @@ export interface LoadBalancerAddress {
   IpAddress?: string | null;
   AllocationId?: string | null;
   PrivateIPv4Address?: string | null;
+  IPv6Address?: string | null;
 }
 function LoadBalancerAddress_Parse(node: xmlP.XmlNode): LoadBalancerAddress {
   return node.strings({
-    optional: {"IpAddress":true,"AllocationId":true,"PrivateIPv4Address":true},
+    optional: {"IpAddress":true,"AllocationId":true,"PrivateIPv4Address":true,"IPv6Address":true},
   });
 }
 

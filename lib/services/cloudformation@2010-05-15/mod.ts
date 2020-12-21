@@ -5,7 +5,7 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import * as uuidv4 from "https://deno.land/std@0.71.0/uuid/v4.ts";
+import * as uuidv4 from "https://deno.land/std@0.75.0/uuid/v4.ts";
 import * as cmnP from "../../encoding/common.ts";
 import * as xmlP from "../../encoding/xml.ts";
 import * as qsP from "../../encoding/querystring.ts";
@@ -81,6 +81,7 @@ export default class CloudFormation {
     if ("Description" in params) body.append(prefix+"Description", (params["Description"] ?? '').toString());
     if ("ChangeSetType" in params) body.append(prefix+"ChangeSetType", (params["ChangeSetType"] ?? '').toString());
     if (params["ResourcesToImport"]) qsP.appendList(body, prefix+"ResourcesToImport", params["ResourcesToImport"], {"appender":ResourceToImport_Serialize,"entryPrefix":".member."})
+    if ("IncludeNestedStacks" in params) body.append(prefix+"IncludeNestedStacks", (params["IncludeNestedStacks"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateChangeSet",
@@ -289,7 +290,7 @@ export default class CloudFormation {
     const xml = xmlP.readXmlResult(await resp.text(), "DescribeChangeSetResult");
     return {
       ...xml.strings({
-        optional: {"ChangeSetName":true,"ChangeSetId":true,"StackId":true,"StackName":true,"Description":true,"StatusReason":true,"NextToken":true},
+        optional: {"ChangeSetName":true,"ChangeSetId":true,"StackId":true,"StackName":true,"Description":true,"StatusReason":true,"NextToken":true,"ParentChangeSetId":true,"RootChangeSetId":true},
       }),
       Parameters: xml.getList("Parameters", "member").map(Parameter_Parse),
       CreationTime: xml.first("CreationTime", false, x => xmlP.parseTimestamp(x.content)),
@@ -300,6 +301,7 @@ export default class CloudFormation {
       Capabilities: xml.getList("Capabilities", "member").map(x => (x.content ?? '') as Capability),
       Tags: xml.getList("Tags", "member").map(Tag_Parse),
       Changes: xml.getList("Changes", "member").map(Change_Parse),
+      IncludeNestedStacks: xml.first("IncludeNestedStacks", false, x => x.content === 'true'),
     };
   }
 
@@ -914,6 +916,7 @@ export default class CloudFormation {
     if ("Visibility" in params) body.append(prefix+"Visibility", (params["Visibility"] ?? '').toString());
     if ("ProvisioningType" in params) body.append(prefix+"ProvisioningType", (params["ProvisioningType"] ?? '').toString());
     if ("DeprecatedStatus" in params) body.append(prefix+"DeprecatedStatus", (params["DeprecatedStatus"] ?? '').toString());
+    if ("Type" in params) body.append(prefix+"Type", (params["Type"] ?? '').toString());
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     const resp = await this.#client.performRequest({
@@ -1381,6 +1384,7 @@ export interface CreateChangeSetInput {
   Description?: string | null;
   ChangeSetType?: ChangeSetType | null;
   ResourcesToImport?: ResourceToImport[] | null;
+  IncludeNestedStacks?: boolean | null;
 }
 
 // refs: 1 - tags: named, input
@@ -1689,6 +1693,7 @@ export interface ListTypesInput {
   Visibility?: Visibility | null;
   ProvisioningType?: ProvisioningType | null;
   DeprecatedStatus?: DeprecatedStatus | null;
+  Type?: RegistryType | null;
   MaxResults?: number | null;
   NextToken?: string | null;
 }
@@ -1873,6 +1878,9 @@ export interface DescribeChangeSetOutput {
   Tags: Tag[];
   Changes: Change[];
   NextToken?: string | null;
+  IncludeNestedStacks?: boolean | null;
+  ParentChangeSetId?: string | null;
+  RootChangeSetId?: string | null;
 }
 
 // refs: 1 - tags: named, output
@@ -2287,9 +2295,10 @@ function AutoDeployment_Parse(node: xmlP.XmlNode): AutoDeployment {
   };
 }
 
-// refs: 9 - tags: input, named, enum, output
+// refs: 10 - tags: input, named, enum, output
 export type RegistryType =
 | "RESOURCE"
+| "MODULE"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 6 - tags: input, named, enum, output
@@ -2455,7 +2464,10 @@ export type ChangeSetStatus =
 | "CREATE_PENDING"
 | "CREATE_IN_PROGRESS"
 | "CREATE_COMPLETE"
+| "DELETE_PENDING"
+| "DELETE_IN_PROGRESS"
 | "DELETE_COMPLETE"
+| "DELETE_FAILED"
 | "FAILED"
 | cmnP.UnexpectedEnumValue;
 
@@ -2485,16 +2497,19 @@ export interface ResourceChange {
   Replacement?: Replacement | null;
   Scope: ResourceAttribute[];
   Details: ResourceChangeDetail[];
+  ChangeSetId?: string | null;
+  ModuleInfo?: ModuleInfo | null;
 }
 function ResourceChange_Parse(node: xmlP.XmlNode): ResourceChange {
   return {
     ...node.strings({
-      optional: {"LogicalResourceId":true,"PhysicalResourceId":true,"ResourceType":true},
+      optional: {"LogicalResourceId":true,"PhysicalResourceId":true,"ResourceType":true,"ChangeSetId":true},
     }),
     Action: node.first("Action", false, x => (x.content ?? '') as ChangeAction),
     Replacement: node.first("Replacement", false, x => (x.content ?? '') as Replacement),
     Scope: node.getList("Scope", "member").map(x => (x.content ?? '') as ResourceAttribute),
     Details: node.getList("Details", "member").map(ResourceChangeDetail_Parse),
+    ModuleInfo: node.first("ModuleInfo", false, ModuleInfo_Parse),
   };
 }
 
@@ -2504,6 +2519,7 @@ export type ChangeAction =
 | "Modify"
 | "Remove"
 | "Import"
+| "Dynamic"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, enum
@@ -2578,6 +2594,17 @@ export type ChangeSource =
 | "DirectModification"
 | "Automatic"
 | cmnP.UnexpectedEnumValue;
+
+// refs: 6 - tags: output, named, interface
+export interface ModuleInfo {
+  TypeHierarchy?: string | null;
+  LogicalIdHierarchy?: string | null;
+}
+function ModuleInfo_Parse(node: xmlP.XmlNode): ModuleInfo {
+  return node.strings({
+    optional: {"TypeHierarchy":true,"LogicalIdHierarchy":true},
+  });
+}
 
 // refs: 6 - tags: output, named, enum
 export type StackDriftStatus =
@@ -2706,6 +2733,7 @@ export interface StackResourceDetail {
   Description?: string | null;
   Metadata?: string | null;
   DriftInformation?: StackResourceDriftInformation | null;
+  ModuleInfo?: ModuleInfo | null;
 }
 function StackResourceDetail_Parse(node: xmlP.XmlNode): StackResourceDetail {
   return {
@@ -2716,6 +2744,7 @@ function StackResourceDetail_Parse(node: xmlP.XmlNode): StackResourceDetail {
     LastUpdatedTimestamp: node.first("LastUpdatedTimestamp", true, x => xmlP.parseTimestamp(x.content)),
     ResourceStatus: node.first("ResourceStatus", true, x => (x.content ?? '') as ResourceStatus),
     DriftInformation: node.first("DriftInformation", false, StackResourceDriftInformation_Parse),
+    ModuleInfo: node.first("ModuleInfo", false, ModuleInfo_Parse),
   };
 }
 
@@ -2743,6 +2772,7 @@ export interface StackResourceDrift {
   PropertyDifferences: PropertyDifference[];
   StackResourceDriftStatus: StackResourceDriftStatus;
   Timestamp: Date | number;
+  ModuleInfo?: ModuleInfo | null;
 }
 function StackResourceDrift_Parse(node: xmlP.XmlNode): StackResourceDrift {
   return {
@@ -2754,6 +2784,7 @@ function StackResourceDrift_Parse(node: xmlP.XmlNode): StackResourceDrift {
     PropertyDifferences: node.getList("PropertyDifferences", "member").map(PropertyDifference_Parse),
     StackResourceDriftStatus: node.first("StackResourceDriftStatus", true, x => (x.content ?? '') as StackResourceDriftStatus),
     Timestamp: node.first("Timestamp", true, x => xmlP.parseTimestamp(x.content)),
+    ModuleInfo: node.first("ModuleInfo", false, ModuleInfo_Parse),
   };
 }
 
@@ -2803,6 +2834,7 @@ export interface StackResource {
   ResourceStatusReason?: string | null;
   Description?: string | null;
   DriftInformation?: StackResourceDriftInformation | null;
+  ModuleInfo?: ModuleInfo | null;
 }
 function StackResource_Parse(node: xmlP.XmlNode): StackResource {
   return {
@@ -2813,6 +2845,7 @@ function StackResource_Parse(node: xmlP.XmlNode): StackResource {
     Timestamp: node.first("Timestamp", true, x => xmlP.parseTimestamp(x.content)),
     ResourceStatus: node.first("ResourceStatus", true, x => (x.content ?? '') as ResourceStatus),
     DriftInformation: node.first("DriftInformation", false, StackResourceDriftInformation_Parse),
+    ModuleInfo: node.first("ModuleInfo", false, ModuleInfo_Parse),
   };
 }
 
@@ -3068,15 +3101,19 @@ export interface ChangeSetSummary {
   StatusReason?: string | null;
   CreationTime?: Date | number | null;
   Description?: string | null;
+  IncludeNestedStacks?: boolean | null;
+  ParentChangeSetId?: string | null;
+  RootChangeSetId?: string | null;
 }
 function ChangeSetSummary_Parse(node: xmlP.XmlNode): ChangeSetSummary {
   return {
     ...node.strings({
-      optional: {"StackId":true,"StackName":true,"ChangeSetId":true,"ChangeSetName":true,"StatusReason":true,"Description":true},
+      optional: {"StackId":true,"StackName":true,"ChangeSetId":true,"ChangeSetName":true,"StatusReason":true,"Description":true,"ParentChangeSetId":true,"RootChangeSetId":true},
     }),
     ExecutionStatus: node.first("ExecutionStatus", false, x => (x.content ?? '') as ExecutionStatus),
     Status: node.first("Status", false, x => (x.content ?? '') as ChangeSetStatus),
     CreationTime: node.first("CreationTime", false, x => xmlP.parseTimestamp(x.content)),
+    IncludeNestedStacks: node.first("IncludeNestedStacks", false, x => x.content === 'true'),
   };
 }
 
@@ -3126,6 +3163,7 @@ export interface StackResourceSummary {
   ResourceStatus: ResourceStatus;
   ResourceStatusReason?: string | null;
   DriftInformation?: StackResourceDriftInformationSummary | null;
+  ModuleInfo?: ModuleInfo | null;
 }
 function StackResourceSummary_Parse(node: xmlP.XmlNode): StackResourceSummary {
   return {
@@ -3136,6 +3174,7 @@ function StackResourceSummary_Parse(node: xmlP.XmlNode): StackResourceSummary {
     LastUpdatedTimestamp: node.first("LastUpdatedTimestamp", true, x => xmlP.parseTimestamp(x.content)),
     ResourceStatus: node.first("ResourceStatus", true, x => (x.content ?? '') as ResourceStatus),
     DriftInformation: node.first("DriftInformation", false, StackResourceDriftInformationSummary_Parse),
+    ModuleInfo: node.first("ModuleInfo", false, ModuleInfo_Parse),
   };
 }
 

@@ -145,6 +145,51 @@ export default class EMR {
     }, await resp.json());
   }
 
+  async createStudio(
+    {abortSignal, ...params}: RequestConfig & CreateStudioInput,
+  ): Promise<CreateStudioOutput> {
+    const body: jsonP.JSONObject = {
+      Name: params["Name"],
+      Description: params["Description"],
+      AuthMode: params["AuthMode"],
+      VpcId: params["VpcId"],
+      SubnetIds: params["SubnetIds"],
+      ServiceRole: params["ServiceRole"],
+      UserRole: params["UserRole"],
+      WorkspaceSecurityGroupId: params["WorkspaceSecurityGroupId"],
+      EngineSecurityGroupId: params["EngineSecurityGroupId"],
+      DefaultS3Location: params["DefaultS3Location"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "CreateStudio",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "StudioId": "s",
+        "Url": "s",
+      },
+    }, await resp.json());
+  }
+
+  async createStudioSessionMapping(
+    {abortSignal, ...params}: RequestConfig & CreateStudioSessionMappingInput,
+  ): Promise<void> {
+    const body: jsonP.JSONObject = {
+      StudioId: params["StudioId"],
+      IdentityId: params["IdentityId"],
+      IdentityName: params["IdentityName"],
+      IdentityType: params["IdentityType"],
+      SessionPolicyArn: params["SessionPolicyArn"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "CreateStudioSessionMapping",
+    });
+  }
+
   async deleteSecurityConfiguration(
     {abortSignal, ...params}: RequestConfig & DeleteSecurityConfigurationInput,
   ): Promise<DeleteSecurityConfigurationOutput> {
@@ -159,6 +204,33 @@ export default class EMR {
       required: {},
       optional: {},
     }, await resp.json());
+  }
+
+  async deleteStudio(
+    {abortSignal, ...params}: RequestConfig & DeleteStudioInput,
+  ): Promise<void> {
+    const body: jsonP.JSONObject = {
+      StudioId: params["StudioId"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DeleteStudio",
+    });
+  }
+
+  async deleteStudioSessionMapping(
+    {abortSignal, ...params}: RequestConfig & DeleteStudioSessionMappingInput,
+  ): Promise<void> {
+    const body: jsonP.JSONObject = {
+      StudioId: params["StudioId"],
+      IdentityId: params["IdentityId"],
+      IdentityName: params["IdentityName"],
+      IdentityType: params["IdentityType"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DeleteStudioSessionMapping",
+    });
   }
 
   async describeCluster(
@@ -257,6 +329,24 @@ export default class EMR {
     }, await resp.json());
   }
 
+  async describeStudio(
+    {abortSignal, ...params}: RequestConfig & DescribeStudioInput,
+  ): Promise<DescribeStudioOutput> {
+    const body: jsonP.JSONObject = {
+      StudioId: params["StudioId"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DescribeStudio",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Studio": toStudio,
+      },
+    }, await resp.json());
+  }
+
   async getBlockPublicAccessConfiguration(
     {abortSignal, ...params}: RequestConfig & GetBlockPublicAccessConfigurationInput = {},
   ): Promise<GetBlockPublicAccessConfigurationOutput> {
@@ -289,6 +379,27 @@ export default class EMR {
       required: {},
       optional: {
         "ManagedScalingPolicy": toManagedScalingPolicy,
+      },
+    }, await resp.json());
+  }
+
+  async getStudioSessionMapping(
+    {abortSignal, ...params}: RequestConfig & GetStudioSessionMappingInput,
+  ): Promise<GetStudioSessionMappingOutput> {
+    const body: jsonP.JSONObject = {
+      StudioId: params["StudioId"],
+      IdentityId: params["IdentityId"],
+      IdentityName: params["IdentityName"],
+      IdentityType: params["IdentityType"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "GetStudioSessionMapping",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "SessionMapping": toSessionMappingDetail,
       },
     }, await resp.json());
   }
@@ -459,6 +570,46 @@ export default class EMR {
       required: {},
       optional: {
         "Steps": [toStepSummary],
+        "Marker": "s",
+      },
+    }, await resp.json());
+  }
+
+  async listStudioSessionMappings(
+    {abortSignal, ...params}: RequestConfig & ListStudioSessionMappingsInput = {},
+  ): Promise<ListStudioSessionMappingsOutput> {
+    const body: jsonP.JSONObject = {
+      StudioId: params["StudioId"],
+      IdentityType: params["IdentityType"],
+      Marker: params["Marker"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "ListStudioSessionMappings",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "SessionMappings": [toSessionMappingSummary],
+        "Marker": "s",
+      },
+    }, await resp.json());
+  }
+
+  async listStudios(
+    {abortSignal, ...params}: RequestConfig & ListStudiosInput = {},
+  ): Promise<ListStudiosOutput> {
+    const body: jsonP.JSONObject = {
+      Marker: params["Marker"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "ListStudios",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Studios": [toStudioSummary],
         "Marker": "s",
       },
     }, await resp.json());
@@ -735,6 +886,22 @@ export default class EMR {
     });
   }
 
+  async updateStudioSessionMapping(
+    {abortSignal, ...params}: RequestConfig & UpdateStudioSessionMappingInput,
+  ): Promise<void> {
+    const body: jsonP.JSONObject = {
+      StudioId: params["StudioId"],
+      IdentityId: params["IdentityId"],
+      IdentityName: params["IdentityName"],
+      IdentityType: params["IdentityType"],
+      SessionPolicyArn: params["SessionPolicyArn"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "UpdateStudioSessionMapping",
+    });
+  }
+
   // Resource State Waiters
 
   /** Checks state up to 60 times, 30 seconds apart (about 30 minutes max wait time). */
@@ -826,8 +993,45 @@ export interface CreateSecurityConfigurationInput {
 }
 
 // refs: 1 - tags: named, input
+export interface CreateStudioInput {
+  Name: string;
+  Description?: string | null;
+  AuthMode: AuthMode;
+  VpcId: string;
+  SubnetIds: string[];
+  ServiceRole: string;
+  UserRole: string;
+  WorkspaceSecurityGroupId: string;
+  EngineSecurityGroupId: string;
+  DefaultS3Location?: string | null;
+  Tags?: Tag[] | null;
+}
+
+// refs: 1 - tags: named, input
+export interface CreateStudioSessionMappingInput {
+  StudioId: string;
+  IdentityId?: string | null;
+  IdentityName?: string | null;
+  IdentityType: IdentityType;
+  SessionPolicyArn: string;
+}
+
+// refs: 1 - tags: named, input
 export interface DeleteSecurityConfigurationInput {
   Name: string;
+}
+
+// refs: 1 - tags: named, input
+export interface DeleteStudioInput {
+  StudioId: string;
+}
+
+// refs: 1 - tags: named, input
+export interface DeleteStudioSessionMappingInput {
+  StudioId: string;
+  IdentityId?: string | null;
+  IdentityName?: string | null;
+  IdentityType: IdentityType;
 }
 
 // refs: 1 - tags: named, input
@@ -860,12 +1064,25 @@ export interface DescribeStepInput {
 }
 
 // refs: 1 - tags: named, input
+export interface DescribeStudioInput {
+  StudioId: string;
+}
+
+// refs: 1 - tags: named, input
 export interface GetBlockPublicAccessConfigurationInput {
 }
 
 // refs: 1 - tags: named, input
 export interface GetManagedScalingPolicyInput {
   ClusterId: string;
+}
+
+// refs: 1 - tags: named, input
+export interface GetStudioSessionMappingInput {
+  StudioId: string;
+  IdentityId?: string | null;
+  IdentityName?: string | null;
+  IdentityType: IdentityType;
 }
 
 // refs: 1 - tags: named, input
@@ -924,6 +1141,18 @@ export interface ListStepsInput {
   ClusterId: string;
   StepStates?: StepState[] | null;
   StepIds?: string[] | null;
+  Marker?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface ListStudioSessionMappingsInput {
+  StudioId?: string | null;
+  IdentityType?: IdentityType | null;
+  Marker?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface ListStudiosInput {
   Marker?: string | null;
 }
 
@@ -1045,6 +1274,15 @@ export interface TerminateJobFlowsInput {
   JobFlowIds: string[];
 }
 
+// refs: 1 - tags: named, input
+export interface UpdateStudioSessionMappingInput {
+  StudioId: string;
+  IdentityId?: string | null;
+  IdentityName?: string | null;
+  IdentityType: IdentityType;
+  SessionPolicyArn: string;
+}
+
 // refs: 1 - tags: named, output
 export interface AddInstanceFleetOutput {
   ClusterId?: string | null;
@@ -1080,6 +1318,12 @@ export interface CreateSecurityConfigurationOutput {
 }
 
 // refs: 1 - tags: named, output
+export interface CreateStudioOutput {
+  StudioId?: string | null;
+  Url?: string | null;
+}
+
+// refs: 1 - tags: named, output
 export interface DeleteSecurityConfigurationOutput {
 }
 
@@ -1111,6 +1355,11 @@ export interface DescribeStepOutput {
 }
 
 // refs: 1 - tags: named, output
+export interface DescribeStudioOutput {
+  Studio?: Studio | null;
+}
+
+// refs: 1 - tags: named, output
 export interface GetBlockPublicAccessConfigurationOutput {
   BlockPublicAccessConfiguration: BlockPublicAccessConfiguration;
   BlockPublicAccessConfigurationMetadata: BlockPublicAccessConfigurationMetadata;
@@ -1119,6 +1368,11 @@ export interface GetBlockPublicAccessConfigurationOutput {
 // refs: 1 - tags: named, output
 export interface GetManagedScalingPolicyOutput {
   ManagedScalingPolicy?: ManagedScalingPolicy | null;
+}
+
+// refs: 1 - tags: named, output
+export interface GetStudioSessionMappingOutput {
+  SessionMapping?: SessionMappingDetail | null;
 }
 
 // refs: 1 - tags: named, output
@@ -1166,6 +1420,18 @@ export interface ListSecurityConfigurationsOutput {
 // refs: 1 - tags: named, output
 export interface ListStepsOutput {
   Steps?: StepSummary[] | null;
+  Marker?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface ListStudioSessionMappingsOutput {
+  SessionMappings?: SessionMappingSummary[] | null;
+  Marker?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface ListStudiosOutput {
+  Studios?: StudioSummary[] | null;
   Marker?: string | null;
 }
 
@@ -1803,7 +2069,7 @@ function toKeyValue(root: jsonP.JSONValue): KeyValue {
   }, root);
 }
 
-// refs: 5 - tags: input, named, interface, output
+// refs: 7 - tags: input, named, interface, output
 export interface Tag {
   Key?: string | null;
   Value?: string | null;
@@ -1829,6 +2095,18 @@ function toTag(root: jsonP.JSONValue): Tag {
 export type StepCancellationOption =
 | "SEND_INTERRUPT"
 | "TERMINATE_PROCESS"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 2 - tags: input, named, enum, output
+export type AuthMode =
+| "SSO"
+| "IAM"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 7 - tags: input, named, enum, output
+export type IdentityType =
+| "USER"
+| "GROUP"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, enum, output
@@ -2902,6 +3180,47 @@ function toStepTimeline(root: jsonP.JSONValue): StepTimeline {
 }
 
 // refs: 1 - tags: output, named, interface
+export interface Studio {
+  StudioId?: string | null;
+  StudioArn?: string | null;
+  Name?: string | null;
+  Description?: string | null;
+  AuthMode?: AuthMode | null;
+  VpcId?: string | null;
+  SubnetIds?: string[] | null;
+  ServiceRole?: string | null;
+  UserRole?: string | null;
+  WorkspaceSecurityGroupId?: string | null;
+  EngineSecurityGroupId?: string | null;
+  Url?: string | null;
+  CreationTime?: Date | number | null;
+  DefaultS3Location?: string | null;
+  Tags?: Tag[] | null;
+}
+function toStudio(root: jsonP.JSONValue): Studio {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "StudioId": "s",
+      "StudioArn": "s",
+      "Name": "s",
+      "Description": "s",
+      "AuthMode": (x: jsonP.JSONValue) => cmnP.readEnum<AuthMode>(x),
+      "VpcId": "s",
+      "SubnetIds": ["s"],
+      "ServiceRole": "s",
+      "UserRole": "s",
+      "WorkspaceSecurityGroupId": "s",
+      "EngineSecurityGroupId": "s",
+      "Url": "s",
+      "CreationTime": "d",
+      "DefaultS3Location": "s",
+      "Tags": [toTag],
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
 export interface BlockPublicAccessConfigurationMetadata {
   CreationDateTime: Date | number;
   CreatedByArn: string;
@@ -2913,6 +3232,31 @@ function toBlockPublicAccessConfigurationMetadata(root: jsonP.JSONValue): BlockP
       "CreatedByArn": "s",
     },
     optional: {},
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
+export interface SessionMappingDetail {
+  StudioId?: string | null;
+  IdentityId?: string | null;
+  IdentityName?: string | null;
+  IdentityType?: IdentityType | null;
+  SessionPolicyArn?: string | null;
+  CreationTime?: Date | number | null;
+  LastModifiedTime?: Date | number | null;
+}
+function toSessionMappingDetail(root: jsonP.JSONValue): SessionMappingDetail {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "StudioId": "s",
+      "IdentityId": "s",
+      "IdentityName": "s",
+      "IdentityType": (x: jsonP.JSONValue) => cmnP.readEnum<IdentityType>(x),
+      "SessionPolicyArn": "s",
+      "CreationTime": "d",
+      "LastModifiedTime": "d",
+    },
   }, root);
 }
 
@@ -3424,6 +3768,52 @@ function toStepSummary(root: jsonP.JSONValue): StepSummary {
       "Config": toHadoopStepConfig,
       "ActionOnFailure": (x: jsonP.JSONValue) => cmnP.readEnum<ActionOnFailure>(x),
       "Status": toStepStatus,
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
+export interface SessionMappingSummary {
+  StudioId?: string | null;
+  IdentityId?: string | null;
+  IdentityName?: string | null;
+  IdentityType?: IdentityType | null;
+  SessionPolicyArn?: string | null;
+  CreationTime?: Date | number | null;
+}
+function toSessionMappingSummary(root: jsonP.JSONValue): SessionMappingSummary {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "StudioId": "s",
+      "IdentityId": "s",
+      "IdentityName": "s",
+      "IdentityType": (x: jsonP.JSONValue) => cmnP.readEnum<IdentityType>(x),
+      "SessionPolicyArn": "s",
+      "CreationTime": "d",
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
+export interface StudioSummary {
+  StudioId?: string | null;
+  Name?: string | null;
+  VpcId?: string | null;
+  Description?: string | null;
+  Url?: string | null;
+  CreationTime?: Date | number | null;
+}
+function toStudioSummary(root: jsonP.JSONValue): StudioSummary {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "StudioId": "s",
+      "Name": "s",
+      "VpcId": "s",
+      "Description": "s",
+      "Url": "s",
+      "CreationTime": "d",
     },
   }, root);
 }

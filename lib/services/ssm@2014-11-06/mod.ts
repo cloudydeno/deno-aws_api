@@ -5,7 +5,7 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import * as uuidv4 from "https://deno.land/std@0.71.0/uuid/v4.ts";
+import * as uuidv4 from "https://deno.land/std@0.75.0/uuid/v4.ts";
 import * as cmnP from "../../encoding/common.ts";
 import * as jsonP from "../../encoding/json.ts";
 function generateIdemptToken() {
@@ -126,6 +126,7 @@ export default class SSM {
       ComplianceSeverity: params["ComplianceSeverity"],
       SyncCompliance: params["SyncCompliance"],
       ApplyOnlyAtCronInterval: params["ApplyOnlyAtCronInterval"],
+      TargetLocations: params["TargetLocations"]?.map(x => fromTargetLocation(x)),
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -218,6 +219,7 @@ export default class SSM {
   ): Promise<CreateOpsItemResponse> {
     const body: jsonP.JSONObject = {
       Description: params["Description"],
+      OpsItemType: params["OpsItemType"],
       OperationalData: jsonP.serializeMap(params["OperationalData"], x => fromOpsItemDataValue(x)),
       Notifications: params["Notifications"]?.map(x => fromOpsItemNotification(x)),
       Priority: params["Priority"],
@@ -227,6 +229,10 @@ export default class SSM {
       Tags: params["Tags"]?.map(x => fromTag(x)),
       Category: params["Category"],
       Severity: params["Severity"],
+      ActualStartTime: jsonP.serializeDate_unixTimestamp(params["ActualStartTime"]),
+      ActualEndTime: jsonP.serializeDate_unixTimestamp(params["ActualEndTime"]),
+      PlannedStartTime: jsonP.serializeDate_unixTimestamp(params["PlannedStartTime"]),
+      PlannedEndTime: jsonP.serializeDate_unixTimestamp(params["PlannedEndTime"]),
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -236,6 +242,25 @@ export default class SSM {
       required: {},
       optional: {
         "OpsItemId": "s",
+      },
+    }, await resp.json());
+  }
+
+  async createOpsMetadata(
+    {abortSignal, ...params}: RequestConfig & CreateOpsMetadataRequest,
+  ): Promise<CreateOpsMetadataResult> {
+    const body: jsonP.JSONObject = {
+      ResourceId: params["ResourceId"],
+      Metadata: jsonP.serializeMap(params["Metadata"], x => fromMetadataValue(x)),
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "CreateOpsMetadata",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "OpsMetadataArn": "s",
       },
     }, await resp.json());
   }
@@ -380,6 +405,22 @@ export default class SSM {
       optional: {
         "WindowId": "s",
       },
+    }, await resp.json());
+  }
+
+  async deleteOpsMetadata(
+    {abortSignal, ...params}: RequestConfig & DeleteOpsMetadataRequest,
+  ): Promise<DeleteOpsMetadataResult> {
+    const body: jsonP.JSONObject = {
+      OpsMetadataArn: params["OpsMetadataArn"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DeleteOpsMetadata",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {},
     }, await resp.json());
   }
 
@@ -1388,6 +1429,7 @@ export default class SSM {
         "DocumentFormat": (x: jsonP.JSONValue) => cmnP.readEnum<DocumentFormat>(x),
         "Requires": [toDocumentRequires],
         "AttachmentsContent": [toAttachmentContent],
+        "ReviewStatus": (x: jsonP.JSONValue) => cmnP.readEnum<ReviewStatus>(x),
       },
     }, await resp.json());
   }
@@ -1601,6 +1643,28 @@ export default class SSM {
       required: {},
       optional: {
         "OpsItem": toOpsItem,
+      },
+    }, await resp.json());
+  }
+
+  async getOpsMetadata(
+    {abortSignal, ...params}: RequestConfig & GetOpsMetadataRequest,
+  ): Promise<GetOpsMetadataResult> {
+    const body: jsonP.JSONObject = {
+      OpsMetadataArn: params["OpsMetadataArn"],
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "GetOpsMetadata",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ResourceId": "s",
+        "Metadata": x => jsonP.readMap(String, toMetadataValue, x),
+        "NextToken": "s",
       },
     }, await resp.json());
   }
@@ -1939,6 +2003,32 @@ export default class SSM {
     }, await resp.json());
   }
 
+  async listDocumentMetadataHistory(
+    {abortSignal, ...params}: RequestConfig & ListDocumentMetadataHistoryRequest,
+  ): Promise<ListDocumentMetadataHistoryResponse> {
+    const body: jsonP.JSONObject = {
+      Name: params["Name"],
+      DocumentVersion: params["DocumentVersion"],
+      Metadata: params["Metadata"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "ListDocumentMetadataHistory",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Name": "s",
+        "DocumentVersion": "s",
+        "Author": "s",
+        "Metadata": toDocumentMetadataResponseInfo,
+        "NextToken": "s",
+      },
+    }, await resp.json());
+  }
+
   async listDocumentVersions(
     {abortSignal, ...params}: RequestConfig & ListDocumentVersionsRequest,
   ): Promise<ListDocumentVersionsResult> {
@@ -2004,6 +2094,48 @@ export default class SSM {
         "SchemaVersion": "s",
         "CaptureTime": "s",
         "Entries": [x => jsonP.readMap(String, String, x)],
+        "NextToken": "s",
+      },
+    }, await resp.json());
+  }
+
+  async listOpsItemEvents(
+    {abortSignal, ...params}: RequestConfig & ListOpsItemEventsRequest = {},
+  ): Promise<ListOpsItemEventsResponse> {
+    const body: jsonP.JSONObject = {
+      Filters: params["Filters"]?.map(x => fromOpsItemEventFilter(x)),
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "ListOpsItemEvents",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "NextToken": "s",
+        "Summaries": [toOpsItemEventSummary],
+      },
+    }, await resp.json());
+  }
+
+  async listOpsMetadata(
+    {abortSignal, ...params}: RequestConfig & ListOpsMetadataRequest = {},
+  ): Promise<ListOpsMetadataResult> {
+    const body: jsonP.JSONObject = {
+      Filters: params["Filters"]?.map(x => fromOpsMetadataFilter(x)),
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "ListOpsMetadata",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "OpsMetadataList": [toOpsMetadata],
         "NextToken": "s",
       },
     }, await resp.json());
@@ -2406,6 +2538,31 @@ export default class SSM {
     }, await resp.json());
   }
 
+  async startChangeRequestExecution(
+    {abortSignal, ...params}: RequestConfig & StartChangeRequestExecutionRequest,
+  ): Promise<StartChangeRequestExecutionResult> {
+    const body: jsonP.JSONObject = {
+      ScheduledTime: jsonP.serializeDate_unixTimestamp(params["ScheduledTime"]),
+      DocumentName: params["DocumentName"],
+      DocumentVersion: params["DocumentVersion"],
+      Parameters: params["Parameters"],
+      ChangeRequestName: params["ChangeRequestName"],
+      ClientToken: params["ClientToken"],
+      Runbooks: params["Runbooks"]?.map(x => fromRunbook(x)),
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "StartChangeRequestExecution",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "AutomationExecutionId": "s",
+      },
+    }, await resp.json());
+  }
+
   async startSession(
     {abortSignal, ...params}: RequestConfig & StartSessionRequest,
   ): Promise<StartSessionResponse> {
@@ -2482,6 +2639,7 @@ export default class SSM {
       ComplianceSeverity: params["ComplianceSeverity"],
       SyncCompliance: params["SyncCompliance"],
       ApplyOnlyAtCronInterval: params["ApplyOnlyAtCronInterval"],
+      TargetLocations: params["TargetLocations"]?.map(x => fromTargetLocation(x)),
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -2555,6 +2713,24 @@ export default class SSM {
       optional: {
         "Description": toDocumentDefaultVersionDescription,
       },
+    }, await resp.json());
+  }
+
+  async updateDocumentMetadata(
+    {abortSignal, ...params}: RequestConfig & UpdateDocumentMetadataRequest,
+  ): Promise<UpdateDocumentMetadataResponse> {
+    const body: jsonP.JSONObject = {
+      Name: params["Name"],
+      DocumentVersion: params["DocumentVersion"],
+      DocumentReviews: fromDocumentReviews(params["DocumentReviews"]),
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "UpdateDocumentMetadata",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {},
     }, await resp.json());
   }
 
@@ -2703,6 +2879,10 @@ export default class SSM {
       Title: params["Title"],
       Category: params["Category"],
       Severity: params["Severity"],
+      ActualStartTime: jsonP.serializeDate_unixTimestamp(params["ActualStartTime"]),
+      ActualEndTime: jsonP.serializeDate_unixTimestamp(params["ActualEndTime"]),
+      PlannedStartTime: jsonP.serializeDate_unixTimestamp(params["PlannedStartTime"]),
+      PlannedEndTime: jsonP.serializeDate_unixTimestamp(params["PlannedEndTime"]),
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -2711,6 +2891,26 @@ export default class SSM {
     return jsonP.readObj({
       required: {},
       optional: {},
+    }, await resp.json());
+  }
+
+  async updateOpsMetadata(
+    {abortSignal, ...params}: RequestConfig & UpdateOpsMetadataRequest,
+  ): Promise<UpdateOpsMetadataResult> {
+    const body: jsonP.JSONObject = {
+      OpsMetadataArn: params["OpsMetadataArn"],
+      MetadataToUpdate: jsonP.serializeMap(params["MetadataToUpdate"], x => fromMetadataValue(x)),
+      KeysToDelete: params["KeysToDelete"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "UpdateOpsMetadata",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "OpsMetadataArn": "s",
+      },
     }, await resp.json());
   }
 
@@ -2860,6 +3060,7 @@ export interface CreateAssociationRequest {
   ComplianceSeverity?: AssociationComplianceSeverity | null;
   SyncCompliance?: AssociationSyncCompliance | null;
   ApplyOnlyAtCronInterval?: boolean | null;
+  TargetLocations?: TargetLocation[] | null;
 }
 
 // refs: 1 - tags: named, input
@@ -2899,6 +3100,7 @@ export interface CreateMaintenanceWindowRequest {
 // refs: 1 - tags: named, input
 export interface CreateOpsItemRequest {
   Description: string;
+  OpsItemType?: string | null;
   OperationalData?: { [key: string]: OpsItemDataValue | null | undefined } | null;
   Notifications?: OpsItemNotification[] | null;
   Priority?: number | null;
@@ -2908,6 +3110,16 @@ export interface CreateOpsItemRequest {
   Tags?: Tag[] | null;
   Category?: string | null;
   Severity?: string | null;
+  ActualStartTime?: Date | number | null;
+  ActualEndTime?: Date | number | null;
+  PlannedStartTime?: Date | number | null;
+  PlannedEndTime?: Date | number | null;
+}
+
+// refs: 1 - tags: named, input
+export interface CreateOpsMetadataRequest {
+  ResourceId: string;
+  Metadata?: { [key: string]: MetadataValue | null | undefined } | null;
 }
 
 // refs: 1 - tags: named, input
@@ -2966,6 +3178,11 @@ export interface DeleteInventoryRequest {
 // refs: 1 - tags: named, input
 export interface DeleteMaintenanceWindowRequest {
   WindowId: string;
+}
+
+// refs: 1 - tags: named, input
+export interface DeleteOpsMetadataRequest {
+  OpsMetadataArn: string;
 }
 
 // refs: 1 - tags: named, input
@@ -3352,6 +3569,13 @@ export interface GetOpsItemRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface GetOpsMetadataRequest {
+  OpsMetadataArn: string;
+  MaxResults?: number | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, input
 export interface GetOpsSummaryRequest {
   SyncName?: string | null;
   Filters?: OpsFilter[] | null;
@@ -3464,6 +3688,15 @@ export interface ListComplianceSummariesRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface ListDocumentMetadataHistoryRequest {
+  Name: string;
+  DocumentVersion?: string | null;
+  Metadata: DocumentMetadataEnum;
+  NextToken?: string | null;
+  MaxResults?: number | null;
+}
+
+// refs: 1 - tags: named, input
 export interface ListDocumentVersionsRequest {
   Name: string;
   MaxResults?: number | null;
@@ -3485,6 +3718,20 @@ export interface ListInventoryEntriesRequest {
   Filters?: InventoryFilter[] | null;
   NextToken?: string | null;
   MaxResults?: number | null;
+}
+
+// refs: 1 - tags: named, input
+export interface ListOpsItemEventsRequest {
+  Filters?: OpsItemEventFilter[] | null;
+  MaxResults?: number | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface ListOpsMetadataRequest {
+  Filters?: OpsMetadataFilter[] | null;
+  MaxResults?: number | null;
+  NextToken?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -3655,6 +3902,18 @@ export interface StartAutomationExecutionRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface StartChangeRequestExecutionRequest {
+  ScheduledTime?: Date | number | null;
+  DocumentName: string;
+  DocumentVersion?: string | null;
+  Parameters?: { [key: string]: string[] | null | undefined } | null;
+  ChangeRequestName?: string | null;
+  ClientToken?: string | null;
+  Runbooks: Runbook[];
+  Tags?: Tag[] | null;
+}
+
+// refs: 1 - tags: named, input
 export interface StartSessionRequest {
   Target: string;
   DocumentName?: string | null;
@@ -3689,6 +3948,7 @@ export interface UpdateAssociationRequest {
   ComplianceSeverity?: AssociationComplianceSeverity | null;
   SyncCompliance?: AssociationSyncCompliance | null;
   ApplyOnlyAtCronInterval?: boolean | null;
+  TargetLocations?: TargetLocation[] | null;
 }
 
 // refs: 1 - tags: named, input
@@ -3713,6 +3973,13 @@ export interface UpdateDocumentRequest {
 export interface UpdateDocumentDefaultVersionRequest {
   Name: string;
   DocumentVersion: string;
+}
+
+// refs: 1 - tags: named, input
+export interface UpdateDocumentMetadataRequest {
+  Name: string;
+  DocumentVersion?: string | null;
+  DocumentReviews: DocumentReviews;
 }
 
 // refs: 1 - tags: named, input
@@ -3780,6 +4047,17 @@ export interface UpdateOpsItemRequest {
   Title?: string | null;
   Category?: string | null;
   Severity?: string | null;
+  ActualStartTime?: Date | number | null;
+  ActualEndTime?: Date | number | null;
+  PlannedStartTime?: Date | number | null;
+  PlannedEndTime?: Date | number | null;
+}
+
+// refs: 1 - tags: named, input
+export interface UpdateOpsMetadataRequest {
+  OpsMetadataArn: string;
+  MetadataToUpdate?: { [key: string]: MetadataValue | null | undefined } | null;
+  KeysToDelete?: string[] | null;
 }
 
 // refs: 1 - tags: named, input
@@ -3857,6 +4135,11 @@ export interface CreateOpsItemResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface CreateOpsMetadataResult {
+  OpsMetadataArn?: string | null;
+}
+
+// refs: 1 - tags: named, output
 export interface CreatePatchBaselineResult {
   BaselineId?: string | null;
 }
@@ -3887,6 +4170,10 @@ export interface DeleteInventoryResult {
 // refs: 1 - tags: named, output
 export interface DeleteMaintenanceWindowResult {
   WindowId?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface DeleteOpsMetadataResult {
 }
 
 // refs: 1 - tags: named, output
@@ -4192,6 +4479,7 @@ export interface GetDocumentResult {
   DocumentFormat?: DocumentFormat | null;
   Requires?: DocumentRequires[] | null;
   AttachmentsContent?: AttachmentContent[] | null;
+  ReviewStatus?: ReviewStatus | null;
 }
 
 // refs: 1 - tags: named, output
@@ -4289,6 +4577,13 @@ export interface GetMaintenanceWindowTaskResult {
 // refs: 1 - tags: named, output
 export interface GetOpsItemResponse {
   OpsItem?: OpsItem | null;
+}
+
+// refs: 1 - tags: named, output
+export interface GetOpsMetadataResult {
+  ResourceId?: string | null;
+  Metadata?: { [key: string]: MetadataValue | null | undefined } | null;
+  NextToken?: string | null;
 }
 
 // refs: 1 - tags: named, output
@@ -4394,6 +4689,15 @@ export interface ListComplianceSummariesResult {
 }
 
 // refs: 1 - tags: named, output
+export interface ListDocumentMetadataHistoryResponse {
+  Name?: string | null;
+  DocumentVersion?: string | null;
+  Author?: string | null;
+  Metadata?: DocumentMetadataResponseInfo | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
 export interface ListDocumentVersionsResult {
   DocumentVersions?: DocumentVersionInfo[] | null;
   NextToken?: string | null;
@@ -4412,6 +4716,18 @@ export interface ListInventoryEntriesResult {
   SchemaVersion?: string | null;
   CaptureTime?: string | null;
   Entries?: ({ [key: string]: string | null | undefined })[] | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface ListOpsItemEventsResponse {
+  NextToken?: string | null;
+  Summaries?: OpsItemEventSummary[] | null;
+}
+
+// refs: 1 - tags: named, output
+export interface ListOpsMetadataResult {
+  OpsMetadataList?: OpsMetadata[] | null;
   NextToken?: string | null;
 }
 
@@ -4507,6 +4823,11 @@ export interface StartAutomationExecutionResult {
 }
 
 // refs: 1 - tags: named, output
+export interface StartChangeRequestExecutionResult {
+  AutomationExecutionId?: string | null;
+}
+
+// refs: 1 - tags: named, output
 export interface StartSessionResponse {
   SessionId?: string | null;
   TokenValue?: string | null;
@@ -4540,6 +4861,10 @@ export interface UpdateDocumentResult {
 // refs: 1 - tags: named, output
 export interface UpdateDocumentDefaultVersionResult {
   Description?: DocumentDefaultVersionDescription | null;
+}
+
+// refs: 1 - tags: named, output
+export interface UpdateDocumentMetadataResponse {
 }
 
 // refs: 1 - tags: named, output
@@ -4594,6 +4919,11 @@ export interface UpdateOpsItemResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface UpdateOpsMetadataResult {
+  OpsMetadataArn?: string | null;
+}
+
+// refs: 1 - tags: named, output
 export interface UpdatePatchBaselineResult {
   BaselineId?: string | null;
   Name?: string | null;
@@ -4629,7 +4959,7 @@ export type ResourceTypeForTagging =
 | "OpsItem"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 14 - tags: input, named, interface, output
+// refs: 15 - tags: input, named, interface, output
 export interface Tag {
   Key: string;
   Value: string;
@@ -4651,7 +4981,7 @@ function toTag(root: jsonP.JSONValue): Tag {
   }, root);
 }
 
-// refs: 30 - tags: input, named, interface, output
+// refs: 33 - tags: input, named, interface, output
 export interface Target {
   Key?: string | null;
   Values?: string[] | null;
@@ -4732,6 +5062,37 @@ export type AssociationSyncCompliance =
 | "MANUAL"
 | cmnP.UnexpectedEnumValue;
 
+// refs: 17 - tags: input, named, interface, output
+export interface TargetLocation {
+  Accounts?: string[] | null;
+  Regions?: string[] | null;
+  TargetLocationMaxConcurrency?: string | null;
+  TargetLocationMaxErrors?: string | null;
+  ExecutionRoleName?: string | null;
+}
+function fromTargetLocation(input?: TargetLocation | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    Accounts: input["Accounts"],
+    Regions: input["Regions"],
+    TargetLocationMaxConcurrency: input["TargetLocationMaxConcurrency"],
+    TargetLocationMaxErrors: input["TargetLocationMaxErrors"],
+    ExecutionRoleName: input["ExecutionRoleName"],
+  }
+}
+function toTargetLocation(root: jsonP.JSONValue): TargetLocation {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "Accounts": ["s"],
+      "Regions": ["s"],
+      "TargetLocationMaxConcurrency": "s",
+      "TargetLocationMaxErrors": "s",
+      "ExecutionRoleName": "s",
+    },
+  }, root);
+}
+
 // refs: 2 - tags: input, named, interface, output
 export interface CreateAssociationBatchRequestEntry {
   Name: string;
@@ -4748,6 +5109,7 @@ export interface CreateAssociationBatchRequestEntry {
   ComplianceSeverity?: AssociationComplianceSeverity | null;
   SyncCompliance?: AssociationSyncCompliance | null;
   ApplyOnlyAtCronInterval?: boolean | null;
+  TargetLocations?: TargetLocation[] | null;
 }
 function fromCreateAssociationBatchRequestEntry(input?: CreateAssociationBatchRequestEntry | null): jsonP.JSONValue {
   if (!input) return input;
@@ -4766,6 +5128,7 @@ function fromCreateAssociationBatchRequestEntry(input?: CreateAssociationBatchRe
     ComplianceSeverity: input["ComplianceSeverity"],
     SyncCompliance: input["SyncCompliance"],
     ApplyOnlyAtCronInterval: input["ApplyOnlyAtCronInterval"],
+    TargetLocations: input["TargetLocations"]?.map(x => fromTargetLocation(x)),
   }
 }
 function toCreateAssociationBatchRequestEntry(root: jsonP.JSONValue): CreateAssociationBatchRequestEntry {
@@ -4787,6 +5150,7 @@ function toCreateAssociationBatchRequestEntry(root: jsonP.JSONValue): CreateAsso
       "ComplianceSeverity": (x: jsonP.JSONValue) => cmnP.readEnum<AssociationComplianceSeverity>(x),
       "SyncCompliance": (x: jsonP.JSONValue) => cmnP.readEnum<AssociationSyncCompliance>(x),
       "ApplyOnlyAtCronInterval": "b",
+      "TargetLocations": [toTargetLocation],
     },
   }, root);
 }
@@ -4847,6 +5211,7 @@ export type DocumentType =
 | "ApplicationConfigurationSchema"
 | "DeploymentStrategy"
 | "ChangeCalendar"
+| "Automation.ChangeTemplate"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 9 - tags: input, named, enum, output
@@ -4922,6 +5287,25 @@ function toRelatedOpsItem(root: jsonP.JSONValue): RelatedOpsItem {
   }, root);
 }
 
+// refs: 3 - tags: input, named, interface, output
+export interface MetadataValue {
+  Value?: string | null;
+}
+function fromMetadataValue(input?: MetadataValue | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    Value: input["Value"],
+  }
+}
+function toMetadataValue(root: jsonP.JSONValue): MetadataValue {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "Value": "s",
+    },
+  }, root);
+}
+
 // refs: 10 - tags: input, named, enum, output
 export type OperatingSystem =
 | "WINDOWS"
@@ -4933,6 +5317,7 @@ export type OperatingSystem =
 | "CENTOS"
 | "ORACLE_LINUX"
 | "DEBIAN"
+| "MACOS"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 8 - tags: input, named, interface, output
@@ -5308,6 +5693,9 @@ export type AutomationExecutionFilterKey =
 | "StartTimeAfter"
 | "AutomationType"
 | "TagKey"
+| "TargetResourceGroup"
+| "AutomationSubtype"
+| "OpsItemId"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
@@ -5456,6 +5844,10 @@ export type OpsItemFilterKey =
 | "OpsItemId"
 | "CreatedTime"
 | "LastModifiedTime"
+| "ActualStartTime"
+| "ActualEndTime"
+| "PlannedStartTime"
+| "PlannedEndTime"
 | "OperationalData"
 | "OperationalDataKey"
 | "OperationalDataValue"
@@ -5463,6 +5855,13 @@ export type OpsItemFilterKey =
 | "AutomationId"
 | "Category"
 | "Severity"
+| "OpsItemType"
+| "ChangeRequestByRequesterArn"
+| "ChangeRequestByRequesterName"
+| "ChangeRequestByApproverArn"
+| "ChangeRequestByApproverName"
+| "ChangeRequestByTemplate"
+| "ChangeRequestByTargetsResourceGroup"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
@@ -5550,6 +5949,7 @@ export type SessionFilterKey =
 | "Target"
 | "Owner"
 | "Status"
+| "SessionId"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface
@@ -5744,6 +6144,11 @@ export type ComplianceQueryOperatorType =
 | "GREATER_THAN"
 | cmnP.UnexpectedEnumValue;
 
+// refs: 1 - tags: input, named, enum
+export type DocumentMetadataEnum =
+| "DocumentReviews"
+| cmnP.UnexpectedEnumValue;
+
 // refs: 1 - tags: input, named, interface
 export interface DocumentFilter {
   key: DocumentFilterKey;
@@ -5771,6 +6176,44 @@ export interface DocumentKeyValuesFilter {
   Values?: string[] | null;
 }
 function fromDocumentKeyValuesFilter(input?: DocumentKeyValuesFilter | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    Key: input["Key"],
+    Values: input["Values"],
+  }
+}
+
+// refs: 1 - tags: input, named, interface
+export interface OpsItemEventFilter {
+  Key: OpsItemEventFilterKey;
+  Values: string[];
+  Operator: OpsItemEventFilterOperator;
+}
+function fromOpsItemEventFilter(input?: OpsItemEventFilter | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    Key: input["Key"],
+    Values: input["Values"],
+    Operator: input["Operator"],
+  }
+}
+
+// refs: 1 - tags: input, named, enum
+export type OpsItemEventFilterKey =
+| "OpsItemId"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 1 - tags: input, named, enum
+export type OpsItemEventFilterOperator =
+| "Equal"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 1 - tags: input, named, interface
+export interface OpsMetadataFilter {
+  Key: string;
+  Values: string[];
+}
+function fromOpsMetadataFilter(input?: OpsMetadataFilter | null): jsonP.JSONValue {
   if (!input) return input;
   return {
     Key: input["Key"],
@@ -6163,33 +6606,43 @@ export type ExecutionMode =
 | "Interactive"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 4 - tags: input, named, interface, output
-export interface TargetLocation {
-  Accounts?: string[] | null;
-  Regions?: string[] | null;
-  TargetLocationMaxConcurrency?: string | null;
-  TargetLocationMaxErrors?: string | null;
-  ExecutionRoleName?: string | null;
+// refs: 3 - tags: input, named, interface, output
+export interface Runbook {
+  DocumentName: string;
+  DocumentVersion?: string | null;
+  Parameters?: { [key: string]: string[] | null | undefined } | null;
+  TargetParameterName?: string | null;
+  Targets?: Target[] | null;
+  MaxConcurrency?: string | null;
+  MaxErrors?: string | null;
+  TargetLocations?: TargetLocation[] | null;
 }
-function fromTargetLocation(input?: TargetLocation | null): jsonP.JSONValue {
+function fromRunbook(input?: Runbook | null): jsonP.JSONValue {
   if (!input) return input;
   return {
-    Accounts: input["Accounts"],
-    Regions: input["Regions"],
-    TargetLocationMaxConcurrency: input["TargetLocationMaxConcurrency"],
-    TargetLocationMaxErrors: input["TargetLocationMaxErrors"],
-    ExecutionRoleName: input["ExecutionRoleName"],
+    DocumentName: input["DocumentName"],
+    DocumentVersion: input["DocumentVersion"],
+    Parameters: input["Parameters"],
+    TargetParameterName: input["TargetParameterName"],
+    Targets: input["Targets"]?.map(x => fromTarget(x)),
+    MaxConcurrency: input["MaxConcurrency"],
+    MaxErrors: input["MaxErrors"],
+    TargetLocations: input["TargetLocations"]?.map(x => fromTargetLocation(x)),
   }
 }
-function toTargetLocation(root: jsonP.JSONValue): TargetLocation {
+function toRunbook(root: jsonP.JSONValue): Runbook {
   return jsonP.readObj({
-    required: {},
+    required: {
+      "DocumentName": "s",
+    },
     optional: {
-      "Accounts": ["s"],
-      "Regions": ["s"],
-      "TargetLocationMaxConcurrency": "s",
-      "TargetLocationMaxErrors": "s",
-      "ExecutionRoleName": "s",
+      "DocumentVersion": "s",
+      "Parameters": x => jsonP.readMap(String, l => Array.isArray(l) ? l.map(String) : [], x),
+      "TargetParameterName": "s",
+      "Targets": [toTarget],
+      "MaxConcurrency": "s",
+      "MaxErrors": "s",
+      "TargetLocations": [toTargetLocation],
     },
   }, root);
 }
@@ -6236,11 +6689,74 @@ export type AssociationStatusName =
 | "Failed"
 | cmnP.UnexpectedEnumValue;
 
+// refs: 1 - tags: input, named, interface
+export interface DocumentReviews {
+  Action: DocumentReviewAction;
+  Comment?: DocumentReviewCommentSource[] | null;
+}
+function fromDocumentReviews(input?: DocumentReviews | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    Action: input["Action"],
+    Comment: input["Comment"]?.map(x => fromDocumentReviewCommentSource(x)),
+  }
+}
+
+// refs: 1 - tags: input, named, enum
+export type DocumentReviewAction =
+| "SendForReview"
+| "UpdateReview"
+| "Approve"
+| "Reject"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 2 - tags: input, named, interface, output
+export interface DocumentReviewCommentSource {
+  Type?: DocumentReviewCommentType | null;
+  Content?: string | null;
+}
+function fromDocumentReviewCommentSource(input?: DocumentReviewCommentSource | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    Type: input["Type"],
+    Content: input["Content"],
+  }
+}
+function toDocumentReviewCommentSource(root: jsonP.JSONValue): DocumentReviewCommentSource {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "Type": (x: jsonP.JSONValue) => cmnP.readEnum<DocumentReviewCommentType>(x),
+      "Content": "s",
+    },
+  }, root);
+}
+
+// refs: 2 - tags: input, named, enum, output
+export type DocumentReviewCommentType =
+| "Comment"
+| cmnP.UnexpectedEnumValue;
+
 // refs: 3 - tags: input, named, enum, output
 export type OpsItemStatus =
 | "Open"
 | "InProgress"
 | "Resolved"
+| "Pending"
+| "TimedOut"
+| "Cancelling"
+| "Cancelled"
+| "Failed"
+| "CompletedWithSuccess"
+| "CompletedWithFailure"
+| "Scheduled"
+| "RunbookInProgress"
+| "PendingChangeCalendarOverride"
+| "ChangeCalendarOverrideApproved"
+| "ChangeCalendarOverrideRejected"
+| "PendingApproval"
+| "Approved"
+| "Rejected"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 5 - tags: output, named, interface
@@ -6267,6 +6783,7 @@ export interface AssociationDescription {
   ComplianceSeverity?: AssociationComplianceSeverity | null;
   SyncCompliance?: AssociationSyncCompliance | null;
   ApplyOnlyAtCronInterval?: boolean | null;
+  TargetLocations?: TargetLocation[] | null;
 }
 function toAssociationDescription(root: jsonP.JSONValue): AssociationDescription {
   return jsonP.readObj({
@@ -6294,6 +6811,7 @@ function toAssociationDescription(root: jsonP.JSONValue): AssociationDescription
       "ComplianceSeverity": (x: jsonP.JSONValue) => cmnP.readEnum<AssociationComplianceSeverity>(x),
       "SyncCompliance": (x: jsonP.JSONValue) => cmnP.readEnum<AssociationSyncCompliance>(x),
       "ApplyOnlyAtCronInterval": "b",
+      "TargetLocations": [toTargetLocation],
     },
   }, root);
 }
@@ -6363,6 +6881,11 @@ export interface DocumentDescription {
   Tags?: Tag[] | null;
   AttachmentsInformation?: AttachmentInformation[] | null;
   Requires?: DocumentRequires[] | null;
+  Author?: string | null;
+  ReviewInformation?: ReviewInformation[] | null;
+  ApprovedVersion?: string | null;
+  PendingReviewVersion?: string | null;
+  ReviewStatus?: ReviewStatus | null;
 }
 function toDocumentDescription(root: jsonP.JSONValue): DocumentDescription {
   return jsonP.readObj({
@@ -6390,6 +6913,11 @@ function toDocumentDescription(root: jsonP.JSONValue): DocumentDescription {
       "Tags": [toTag],
       "AttachmentsInformation": [toAttachmentInformation],
       "Requires": [toDocumentRequires],
+      "Author": "s",
+      "ReviewInformation": [toReviewInformation],
+      "ApprovedVersion": "s",
+      "PendingReviewVersion": "s",
+      "ReviewStatus": (x: jsonP.JSONValue) => cmnP.readEnum<ReviewStatus>(x),
     },
   }, root);
 }
@@ -6446,6 +6974,31 @@ function toAttachmentInformation(root: jsonP.JSONValue): AttachmentInformation {
     },
   }, root);
 }
+
+// refs: 3 - tags: output, named, interface
+export interface ReviewInformation {
+  ReviewedTime?: Date | number | null;
+  Status?: ReviewStatus | null;
+  Reviewer?: string | null;
+}
+function toReviewInformation(root: jsonP.JSONValue): ReviewInformation {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "ReviewedTime": "d",
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<ReviewStatus>(x),
+      "Reviewer": "s",
+    },
+  }, root);
+}
+
+// refs: 10 - tags: output, named, enum
+export type ReviewStatus =
+| "APPROVED"
+| "NOT_REVIEWED"
+| "PENDING"
+| "REJECTED"
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface InventoryDeletionSummary {
@@ -6607,6 +7160,12 @@ export interface AutomationExecutionMetadata {
   MaxErrors?: string | null;
   Target?: string | null;
   AutomationType?: AutomationType | null;
+  AutomationSubtype?: AutomationSubtype | null;
+  ScheduledTime?: Date | number | null;
+  Runbooks?: Runbook[] | null;
+  OpsItemId?: string | null;
+  AssociationId?: string | null;
+  ChangeRequestName?: string | null;
 }
 function toAutomationExecutionMetadata(root: jsonP.JSONValue): AutomationExecutionMetadata {
   return jsonP.readObj({
@@ -6634,6 +7193,12 @@ function toAutomationExecutionMetadata(root: jsonP.JSONValue): AutomationExecuti
       "MaxErrors": "s",
       "Target": "s",
       "AutomationType": (x: jsonP.JSONValue) => cmnP.readEnum<AutomationType>(x),
+      "AutomationSubtype": (x: jsonP.JSONValue) => cmnP.readEnum<AutomationSubtype>(x),
+      "ScheduledTime": "d",
+      "Runbooks": [toRunbook],
+      "OpsItemId": "s",
+      "AssociationId": "s",
+      "ChangeRequestName": "s",
     },
   }, root);
 }
@@ -6648,6 +7213,16 @@ export type AutomationExecutionStatus =
 | "Cancelling"
 | "Cancelled"
 | "Failed"
+| "PendingApproval"
+| "Approved"
+| "Rejected"
+| "Scheduled"
+| "RunbookInProgress"
+| "PendingChangeCalendarOverride"
+| "ChangeCalendarOverrideApproved"
+| "ChangeCalendarOverrideRejected"
+| "CompletedWithSuccess"
+| "CompletedWithFailure"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
@@ -6669,6 +7244,11 @@ function toResolvedTargets(root: jsonP.JSONValue): ResolvedTargets {
 export type AutomationType =
 | "CrossAccount"
 | "Local"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 2 - tags: output, named, enum
+export type AutomationSubtype =
+| "ChangeRequest"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
@@ -7383,6 +7963,11 @@ export interface OpsItemSummary {
   OperationalData?: { [key: string]: OpsItemDataValue | null | undefined } | null;
   Category?: string | null;
   Severity?: string | null;
+  OpsItemType?: string | null;
+  ActualStartTime?: Date | number | null;
+  ActualEndTime?: Date | number | null;
+  PlannedStartTime?: Date | number | null;
+  PlannedEndTime?: Date | number | null;
 }
 function toOpsItemSummary(root: jsonP.JSONValue): OpsItemSummary {
   return jsonP.readObj({
@@ -7400,6 +7985,11 @@ function toOpsItemSummary(root: jsonP.JSONValue): OpsItemSummary {
       "OperationalData": x => jsonP.readMap(String, toOpsItemDataValue, x),
       "Category": "s",
       "Severity": "s",
+      "OpsItemType": "s",
+      "ActualStartTime": "d",
+      "ActualEndTime": "d",
+      "PlannedStartTime": "d",
+      "PlannedEndTime": "d",
     },
   }, root);
 }
@@ -7571,6 +8161,12 @@ export interface AutomationExecution {
   Target?: string | null;
   TargetLocations?: TargetLocation[] | null;
   ProgressCounters?: ProgressCounters | null;
+  AutomationSubtype?: AutomationSubtype | null;
+  ScheduledTime?: Date | number | null;
+  Runbooks?: Runbook[] | null;
+  OpsItemId?: string | null;
+  AssociationId?: string | null;
+  ChangeRequestName?: string | null;
 }
 function toAutomationExecution(root: jsonP.JSONValue): AutomationExecution {
   return jsonP.readObj({
@@ -7601,6 +8197,12 @@ function toAutomationExecution(root: jsonP.JSONValue): AutomationExecution {
       "Target": "s",
       "TargetLocations": [toTargetLocation],
       "ProgressCounters": toProgressCounters,
+      "AutomationSubtype": (x: jsonP.JSONValue) => cmnP.readEnum<AutomationSubtype>(x),
+      "ScheduledTime": "d",
+      "Runbooks": [toRunbook],
+      "OpsItemId": "s",
+      "AssociationId": "s",
+      "ChangeRequestName": "s",
     },
   }, root);
 }
@@ -7757,6 +8359,7 @@ export type InventoryAttributeDataType =
 // refs: 1 - tags: output, named, interface
 export interface OpsItem {
   CreatedBy?: string | null;
+  OpsItemType?: string | null;
   CreatedTime?: Date | number | null;
   Description?: string | null;
   LastModifiedBy?: string | null;
@@ -7772,12 +8375,17 @@ export interface OpsItem {
   OperationalData?: { [key: string]: OpsItemDataValue | null | undefined } | null;
   Category?: string | null;
   Severity?: string | null;
+  ActualStartTime?: Date | number | null;
+  ActualEndTime?: Date | number | null;
+  PlannedStartTime?: Date | number | null;
+  PlannedEndTime?: Date | number | null;
 }
 function toOpsItem(root: jsonP.JSONValue): OpsItem {
   return jsonP.readObj({
     required: {},
     optional: {
       "CreatedBy": "s",
+      "OpsItemType": "s",
       "CreatedTime": "d",
       "Description": "s",
       "LastModifiedBy": "s",
@@ -7793,6 +8401,10 @@ function toOpsItem(root: jsonP.JSONValue): OpsItem {
       "OperationalData": x => jsonP.readMap(String, toOpsItemDataValue, x),
       "Category": "s",
       "Severity": "s",
+      "ActualStartTime": "d",
+      "ActualEndTime": "d",
+      "PlannedStartTime": "d",
+      "PlannedEndTime": "d",
     },
   }, root);
 }
@@ -7933,6 +8545,7 @@ export interface AssociationVersionInfo {
   ComplianceSeverity?: AssociationComplianceSeverity | null;
   SyncCompliance?: AssociationSyncCompliance | null;
   ApplyOnlyAtCronInterval?: boolean | null;
+  TargetLocations?: TargetLocation[] | null;
 }
 function toAssociationVersionInfo(root: jsonP.JSONValue): AssociationVersionInfo {
   return jsonP.readObj({
@@ -7953,6 +8566,7 @@ function toAssociationVersionInfo(root: jsonP.JSONValue): AssociationVersionInfo
       "ComplianceSeverity": (x: jsonP.JSONValue) => cmnP.readEnum<AssociationComplianceSeverity>(x),
       "SyncCompliance": (x: jsonP.JSONValue) => cmnP.readEnum<AssociationSyncCompliance>(x),
       "ApplyOnlyAtCronInterval": "b",
+      "TargetLocations": [toTargetLocation],
     },
   }, root);
 }
@@ -8246,6 +8860,40 @@ function toNonCompliantSummary(root: jsonP.JSONValue): NonCompliantSummary {
 }
 
 // refs: 1 - tags: output, named, interface
+export interface DocumentMetadataResponseInfo {
+  ReviewerResponse?: DocumentReviewerResponseSource[] | null;
+}
+function toDocumentMetadataResponseInfo(root: jsonP.JSONValue): DocumentMetadataResponseInfo {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "ReviewerResponse": [toDocumentReviewerResponseSource],
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
+export interface DocumentReviewerResponseSource {
+  CreateTime?: Date | number | null;
+  UpdatedTime?: Date | number | null;
+  ReviewStatus?: ReviewStatus | null;
+  Comment?: DocumentReviewCommentSource[] | null;
+  Reviewer?: string | null;
+}
+function toDocumentReviewerResponseSource(root: jsonP.JSONValue): DocumentReviewerResponseSource {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "CreateTime": "d",
+      "UpdatedTime": "d",
+      "ReviewStatus": (x: jsonP.JSONValue) => cmnP.readEnum<ReviewStatus>(x),
+      "Comment": [toDocumentReviewCommentSource],
+      "Reviewer": "s",
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
 export interface DocumentVersionInfo {
   Name?: string | null;
   DocumentVersion?: string | null;
@@ -8255,6 +8903,7 @@ export interface DocumentVersionInfo {
   DocumentFormat?: DocumentFormat | null;
   Status?: DocumentStatus | null;
   StatusInformation?: string | null;
+  ReviewStatus?: ReviewStatus | null;
 }
 function toDocumentVersionInfo(root: jsonP.JSONValue): DocumentVersionInfo {
   return jsonP.readObj({
@@ -8268,6 +8917,7 @@ function toDocumentVersionInfo(root: jsonP.JSONValue): DocumentVersionInfo {
       "DocumentFormat": (x: jsonP.JSONValue) => cmnP.readEnum<DocumentFormat>(x),
       "Status": (x: jsonP.JSONValue) => cmnP.readEnum<DocumentStatus>(x),
       "StatusInformation": "s",
+      "ReviewStatus": (x: jsonP.JSONValue) => cmnP.readEnum<ReviewStatus>(x),
     },
   }, root);
 }
@@ -8285,6 +8935,8 @@ export interface DocumentIdentifier {
   TargetType?: string | null;
   Tags?: Tag[] | null;
   Requires?: DocumentRequires[] | null;
+  ReviewStatus?: ReviewStatus | null;
+  Author?: string | null;
 }
 function toDocumentIdentifier(root: jsonP.JSONValue): DocumentIdentifier {
   return jsonP.readObj({
@@ -8301,6 +8953,67 @@ function toDocumentIdentifier(root: jsonP.JSONValue): DocumentIdentifier {
       "TargetType": "s",
       "Tags": [toTag],
       "Requires": [toDocumentRequires],
+      "ReviewStatus": (x: jsonP.JSONValue) => cmnP.readEnum<ReviewStatus>(x),
+      "Author": "s",
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
+export interface OpsItemEventSummary {
+  OpsItemId?: string | null;
+  EventId?: string | null;
+  Source?: string | null;
+  DetailType?: string | null;
+  Detail?: string | null;
+  CreatedBy?: OpsItemIdentity | null;
+  CreatedTime?: Date | number | null;
+}
+function toOpsItemEventSummary(root: jsonP.JSONValue): OpsItemEventSummary {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "OpsItemId": "s",
+      "EventId": "s",
+      "Source": "s",
+      "DetailType": "s",
+      "Detail": "s",
+      "CreatedBy": toOpsItemIdentity,
+      "CreatedTime": "d",
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
+export interface OpsItemIdentity {
+  Arn?: string | null;
+}
+function toOpsItemIdentity(root: jsonP.JSONValue): OpsItemIdentity {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "Arn": "s",
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
+export interface OpsMetadata {
+  ResourceId?: string | null;
+  OpsMetadataArn?: string | null;
+  LastModifiedDate?: Date | number | null;
+  LastModifiedUser?: string | null;
+  CreationDate?: Date | number | null;
+}
+function toOpsMetadata(root: jsonP.JSONValue): OpsMetadata {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "ResourceId": "s",
+      "OpsMetadataArn": "s",
+      "LastModifiedDate": "d",
+      "LastModifiedUser": "s",
+      "CreationDate": "d",
     },
   }, root);
 }

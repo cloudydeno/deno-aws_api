@@ -668,6 +668,7 @@ export type ConnectorType =
 | "Amplitude"
 | "Veeva"
 | "EventBridge"
+| "Upsolver"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, enum, output
@@ -1821,6 +1822,7 @@ export interface DestinationConnectorProperties {
   Salesforce?: SalesforceDestinationProperties | null;
   Snowflake?: SnowflakeDestinationProperties | null;
   EventBridge?: EventBridgeDestinationProperties | null;
+  Upsolver?: UpsolverDestinationProperties | null;
 }
 function fromDestinationConnectorProperties(input?: DestinationConnectorProperties | null): jsonP.JSONValue {
   if (!input) return input;
@@ -1830,6 +1832,7 @@ function fromDestinationConnectorProperties(input?: DestinationConnectorProperti
     Salesforce: fromSalesforceDestinationProperties(input["Salesforce"]),
     Snowflake: fromSnowflakeDestinationProperties(input["Snowflake"]),
     EventBridge: fromEventBridgeDestinationProperties(input["EventBridge"]),
+    Upsolver: fromUpsolverDestinationProperties(input["Upsolver"]),
   }
 }
 function toDestinationConnectorProperties(root: jsonP.JSONValue): DestinationConnectorProperties {
@@ -1841,6 +1844,7 @@ function toDestinationConnectorProperties(root: jsonP.JSONValue): DestinationCon
       "Salesforce": toSalesforceDestinationProperties,
       "Snowflake": toSnowflakeDestinationProperties,
       "EventBridge": toEventBridgeDestinationProperties,
+      "Upsolver": toUpsolverDestinationProperties,
     },
   }, root);
 }
@@ -1950,14 +1954,14 @@ function toS3OutputFormatConfig(root: jsonP.JSONValue): S3OutputFormatConfig {
   }, root);
 }
 
-// refs: 3 - tags: input, named, enum, output
+// refs: 6 - tags: input, named, enum, output
 export type FileType =
 | "CSV"
 | "JSON"
 | "PARQUET"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 3 - tags: input, named, interface, output
+// refs: 6 - tags: input, named, interface, output
 export interface PrefixConfig {
   prefixType?: PrefixType | null;
   prefixFormat?: PrefixFormat | null;
@@ -1979,14 +1983,14 @@ function toPrefixConfig(root: jsonP.JSONValue): PrefixConfig {
   }, root);
 }
 
-// refs: 3 - tags: input, named, enum, output
+// refs: 6 - tags: input, named, enum, output
 export type PrefixType =
 | "FILENAME"
 | "PATH"
 | "PATH_AND_FILENAME"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 3 - tags: input, named, enum, output
+// refs: 6 - tags: input, named, enum, output
 export type PrefixFormat =
 | "YEAR"
 | "MONTH"
@@ -1995,7 +1999,7 @@ export type PrefixFormat =
 | "MINUTE"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 3 - tags: input, named, interface, output
+// refs: 6 - tags: input, named, interface, output
 export interface AggregationConfig {
   aggregationType?: AggregationType | null;
 }
@@ -2014,7 +2018,7 @@ function toAggregationConfig(root: jsonP.JSONValue): AggregationConfig {
   }, root);
 }
 
-// refs: 3 - tags: input, named, enum, output
+// refs: 6 - tags: input, named, enum, output
 export type AggregationType =
 | "None"
 | "SingleFile"
@@ -2104,6 +2108,58 @@ function toEventBridgeDestinationProperties(root: jsonP.JSONValue): EventBridgeD
     },
     optional: {
       "errorHandlingConfig": toErrorHandlingConfig,
+    },
+  }, root);
+}
+
+// refs: 3 - tags: input, named, interface, output
+export interface UpsolverDestinationProperties {
+  bucketName: string;
+  bucketPrefix?: string | null;
+  s3OutputFormatConfig: UpsolverS3OutputFormatConfig;
+}
+function fromUpsolverDestinationProperties(input?: UpsolverDestinationProperties | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    bucketName: input["bucketName"],
+    bucketPrefix: input["bucketPrefix"],
+    s3OutputFormatConfig: fromUpsolverS3OutputFormatConfig(input["s3OutputFormatConfig"]),
+  }
+}
+function toUpsolverDestinationProperties(root: jsonP.JSONValue): UpsolverDestinationProperties {
+  return jsonP.readObj({
+    required: {
+      "bucketName": "s",
+      "s3OutputFormatConfig": toUpsolverS3OutputFormatConfig,
+    },
+    optional: {
+      "bucketPrefix": "s",
+    },
+  }, root);
+}
+
+// refs: 3 - tags: input, named, interface, output
+export interface UpsolverS3OutputFormatConfig {
+  fileType?: FileType | null;
+  prefixConfig: PrefixConfig;
+  aggregationConfig?: AggregationConfig | null;
+}
+function fromUpsolverS3OutputFormatConfig(input?: UpsolverS3OutputFormatConfig | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    fileType: input["fileType"],
+    prefixConfig: fromPrefixConfig(input["prefixConfig"]),
+    aggregationConfig: fromAggregationConfig(input["aggregationConfig"]),
+  }
+}
+function toUpsolverS3OutputFormatConfig(root: jsonP.JSONValue): UpsolverS3OutputFormatConfig {
+  return jsonP.readObj({
+    required: {
+      "prefixConfig": toPrefixConfig,
+    },
+    optional: {
+      "fileType": (x: jsonP.JSONValue) => cmnP.readEnum<FileType>(x),
+      "aggregationConfig": toAggregationConfig,
     },
   }, root);
 }
@@ -2700,6 +2756,7 @@ export interface ConnectorMetadata {
   Veeva?: VeevaMetadata | null;
   Zendesk?: ZendeskMetadata | null;
   EventBridge?: EventBridgeMetadata | null;
+  Upsolver?: UpsolverMetadata | null;
 }
 function toConnectorMetadata(root: jsonP.JSONValue): ConnectorMetadata {
   return jsonP.readObj({
@@ -2722,6 +2779,7 @@ function toConnectorMetadata(root: jsonP.JSONValue): ConnectorMetadata {
       "Veeva": toVeevaMetadata,
       "Zendesk": toZendeskMetadata,
       "EventBridge": toEventBridgeMetadata,
+      "Upsolver": toUpsolverMetadata,
     },
   }, root);
 }
@@ -2905,6 +2963,16 @@ function toZendeskMetadata(root: jsonP.JSONValue): ZendeskMetadata {
 export interface EventBridgeMetadata {
 }
 function toEventBridgeMetadata(root: jsonP.JSONValue): EventBridgeMetadata {
+  return jsonP.readObj({
+    required: {},
+    optional: {},
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
+export interface UpsolverMetadata {
+}
+function toUpsolverMetadata(root: jsonP.JSONValue): UpsolverMetadata {
   return jsonP.readObj({
     required: {},
     optional: {},

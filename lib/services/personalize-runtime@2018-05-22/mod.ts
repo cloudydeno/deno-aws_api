@@ -35,6 +35,7 @@ export default class PersonalizeRuntime {
       userId: params["userId"],
       context: params["context"],
       filterArn: params["filterArn"],
+      filterValues: params["filterValues"],
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -60,6 +61,7 @@ export default class PersonalizeRuntime {
       numResults: params["numResults"],
       context: params["context"],
       filterArn: params["filterArn"],
+      filterValues: params["filterValues"],
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -84,6 +86,7 @@ export interface GetPersonalizedRankingRequest {
   userId: string;
   context?: { [key: string]: string | null | undefined } | null;
   filterArn?: string | null;
+  filterValues?: { [key: string]: string | null | undefined } | null;
 }
 
 // refs: 1 - tags: named, input
@@ -94,6 +97,7 @@ export interface GetRecommendationsRequest {
   numResults?: number | null;
   context?: { [key: string]: string | null | undefined } | null;
   filterArn?: string | null;
+  filterValues?: { [key: string]: string | null | undefined } | null;
 }
 
 // refs: 1 - tags: named, output

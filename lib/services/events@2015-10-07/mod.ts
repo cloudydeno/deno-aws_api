@@ -38,6 +38,51 @@ export default class CloudWatchEvents {
     });
   }
 
+  async cancelReplay(
+    {abortSignal, ...params}: RequestConfig & CancelReplayRequest,
+  ): Promise<CancelReplayResponse> {
+    const body: jsonP.JSONObject = {
+      ReplayName: params["ReplayName"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "CancelReplay",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ReplayArn": "s",
+        "State": (x: jsonP.JSONValue) => cmnP.readEnum<ReplayState>(x),
+        "StateReason": "s",
+      },
+    }, await resp.json());
+  }
+
+  async createArchive(
+    {abortSignal, ...params}: RequestConfig & CreateArchiveRequest,
+  ): Promise<CreateArchiveResponse> {
+    const body: jsonP.JSONObject = {
+      ArchiveName: params["ArchiveName"],
+      EventSourceArn: params["EventSourceArn"],
+      Description: params["Description"],
+      EventPattern: params["EventPattern"],
+      RetentionDays: params["RetentionDays"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "CreateArchive",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ArchiveArn": "s",
+        "State": (x: jsonP.JSONValue) => cmnP.readEnum<ArchiveState>(x),
+        "StateReason": "s",
+        "CreationTime": "d",
+      },
+    }, await resp.json());
+  }
+
   async createEventBus(
     {abortSignal, ...params}: RequestConfig & CreateEventBusRequest,
   ): Promise<CreateEventBusResponse> {
@@ -89,6 +134,22 @@ export default class CloudWatchEvents {
     });
   }
 
+  async deleteArchive(
+    {abortSignal, ...params}: RequestConfig & DeleteArchiveRequest,
+  ): Promise<DeleteArchiveResponse> {
+    const body: jsonP.JSONObject = {
+      ArchiveName: params["ArchiveName"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DeleteArchive",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
+  }
+
   async deleteEventBus(
     {abortSignal, ...params}: RequestConfig & DeleteEventBusRequest,
   ): Promise<void> {
@@ -126,6 +187,34 @@ export default class CloudWatchEvents {
       abortSignal, body,
       action: "DeleteRule",
     });
+  }
+
+  async describeArchive(
+    {abortSignal, ...params}: RequestConfig & DescribeArchiveRequest,
+  ): Promise<DescribeArchiveResponse> {
+    const body: jsonP.JSONObject = {
+      ArchiveName: params["ArchiveName"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DescribeArchive",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ArchiveArn": "s",
+        "ArchiveName": "s",
+        "EventSourceArn": "s",
+        "Description": "s",
+        "EventPattern": "s",
+        "State": (x: jsonP.JSONValue) => cmnP.readEnum<ArchiveState>(x),
+        "StateReason": "s",
+        "RetentionDays": "n",
+        "SizeBytes": "n",
+        "EventCount": "n",
+        "CreationTime": "d",
+      },
+    }, await resp.json());
   }
 
   async describeEventBus(
@@ -190,6 +279,35 @@ export default class CloudWatchEvents {
     }, await resp.json());
   }
 
+  async describeReplay(
+    {abortSignal, ...params}: RequestConfig & DescribeReplayRequest,
+  ): Promise<DescribeReplayResponse> {
+    const body: jsonP.JSONObject = {
+      ReplayName: params["ReplayName"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DescribeReplay",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ReplayName": "s",
+        "ReplayArn": "s",
+        "Description": "s",
+        "State": (x: jsonP.JSONValue) => cmnP.readEnum<ReplayState>(x),
+        "StateReason": "s",
+        "EventSourceArn": "s",
+        "Destination": toReplayDestination,
+        "EventStartTime": "d",
+        "EventEndTime": "d",
+        "EventLastReplayedTime": "d",
+        "ReplayStartTime": "d",
+        "ReplayEndTime": "d",
+      },
+    }, await resp.json());
+  }
+
   async describeRule(
     {abortSignal, ...params}: RequestConfig & DescribeRuleRequest,
   ): Promise<DescribeRuleResponse> {
@@ -213,6 +331,7 @@ export default class CloudWatchEvents {
         "RoleArn": "s",
         "ManagedBy": "s",
         "EventBusName": "s",
+        "CreatedBy": "s",
       },
     }, await resp.json());
   }
@@ -241,6 +360,29 @@ export default class CloudWatchEvents {
       abortSignal, body,
       action: "EnableRule",
     });
+  }
+
+  async listArchives(
+    {abortSignal, ...params}: RequestConfig & ListArchivesRequest = {},
+  ): Promise<ListArchivesResponse> {
+    const body: jsonP.JSONObject = {
+      NamePrefix: params["NamePrefix"],
+      EventSourceArn: params["EventSourceArn"],
+      State: params["State"],
+      NextToken: params["NextToken"],
+      Limit: params["Limit"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "ListArchives",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Archives": [toArchive],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async listEventBuses(
@@ -322,6 +464,29 @@ export default class CloudWatchEvents {
       required: {},
       optional: {
         "PartnerEventSources": [toPartnerEventSource],
+        "NextToken": "s",
+      },
+    }, await resp.json());
+  }
+
+  async listReplays(
+    {abortSignal, ...params}: RequestConfig & ListReplaysRequest = {},
+  ): Promise<ListReplaysResponse> {
+    const body: jsonP.JSONObject = {
+      NamePrefix: params["NamePrefix"],
+      State: params["State"],
+      EventSourceArn: params["EventSourceArn"],
+      NextToken: params["NextToken"],
+      Limit: params["Limit"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "ListReplays",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Replays": [toReplay],
         "NextToken": "s",
       },
     }, await resp.json());
@@ -450,7 +615,7 @@ export default class CloudWatchEvents {
   }
 
   async putPermission(
-    {abortSignal, ...params}: RequestConfig & PutPermissionRequest,
+    {abortSignal, ...params}: RequestConfig & PutPermissionRequest = {},
   ): Promise<void> {
     const body: jsonP.JSONObject = {
       EventBusName: params["EventBusName"],
@@ -458,6 +623,7 @@ export default class CloudWatchEvents {
       Principal: params["Principal"],
       StatementId: params["StatementId"],
       Condition: fromCondition(params["Condition"]),
+      Policy: params["Policy"],
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -512,10 +678,11 @@ export default class CloudWatchEvents {
   }
 
   async removePermission(
-    {abortSignal, ...params}: RequestConfig & RemovePermissionRequest,
+    {abortSignal, ...params}: RequestConfig & RemovePermissionRequest = {},
   ): Promise<void> {
     const body: jsonP.JSONObject = {
       StatementId: params["StatementId"],
+      RemoveAllPermissions: params["RemoveAllPermissions"],
       EventBusName: params["EventBusName"],
     };
     const resp = await this.#client.performRequest({
@@ -542,6 +709,32 @@ export default class CloudWatchEvents {
       optional: {
         "FailedEntryCount": "n",
         "FailedEntries": [toRemoveTargetsResultEntry],
+      },
+    }, await resp.json());
+  }
+
+  async startReplay(
+    {abortSignal, ...params}: RequestConfig & StartReplayRequest,
+  ): Promise<StartReplayResponse> {
+    const body: jsonP.JSONObject = {
+      ReplayName: params["ReplayName"],
+      Description: params["Description"],
+      EventSourceArn: params["EventSourceArn"],
+      EventStartTime: jsonP.serializeDate_unixTimestamp(params["EventStartTime"]),
+      EventEndTime: jsonP.serializeDate_unixTimestamp(params["EventEndTime"]),
+      Destination: fromReplayDestination(params["Destination"]),
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "StartReplay",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ReplayArn": "s",
+        "State": (x: jsonP.JSONValue) => cmnP.readEnum<ReplayState>(x),
+        "StateReason": "s",
+        "ReplayStartTime": "d",
       },
     }, await resp.json());
   }
@@ -599,11 +792,49 @@ export default class CloudWatchEvents {
     }, await resp.json());
   }
 
+  async updateArchive(
+    {abortSignal, ...params}: RequestConfig & UpdateArchiveRequest,
+  ): Promise<UpdateArchiveResponse> {
+    const body: jsonP.JSONObject = {
+      ArchiveName: params["ArchiveName"],
+      Description: params["Description"],
+      EventPattern: params["EventPattern"],
+      RetentionDays: params["RetentionDays"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "UpdateArchive",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ArchiveArn": "s",
+        "State": (x: jsonP.JSONValue) => cmnP.readEnum<ArchiveState>(x),
+        "StateReason": "s",
+        "CreationTime": "d",
+      },
+    }, await resp.json());
+  }
+
 }
 
 // refs: 1 - tags: named, input
 export interface ActivateEventSourceRequest {
   Name: string;
+}
+
+// refs: 1 - tags: named, input
+export interface CancelReplayRequest {
+  ReplayName: string;
+}
+
+// refs: 1 - tags: named, input
+export interface CreateArchiveRequest {
+  ArchiveName: string;
+  EventSourceArn: string;
+  Description?: string | null;
+  EventPattern?: string | null;
+  RetentionDays?: number | null;
 }
 
 // refs: 1 - tags: named, input
@@ -625,6 +856,11 @@ export interface DeactivateEventSourceRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface DeleteArchiveRequest {
+  ArchiveName: string;
+}
+
+// refs: 1 - tags: named, input
 export interface DeleteEventBusRequest {
   Name: string;
 }
@@ -643,6 +879,11 @@ export interface DeleteRuleRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface DescribeArchiveRequest {
+  ArchiveName: string;
+}
+
+// refs: 1 - tags: named, input
 export interface DescribeEventBusRequest {
   Name?: string | null;
 }
@@ -655,6 +896,11 @@ export interface DescribeEventSourceRequest {
 // refs: 1 - tags: named, input
 export interface DescribePartnerEventSourceRequest {
   Name: string;
+}
+
+// refs: 1 - tags: named, input
+export interface DescribeReplayRequest {
+  ReplayName: string;
 }
 
 // refs: 1 - tags: named, input
@@ -673,6 +919,15 @@ export interface DisableRuleRequest {
 export interface EnableRuleRequest {
   Name: string;
   EventBusName?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface ListArchivesRequest {
+  NamePrefix?: string | null;
+  EventSourceArn?: string | null;
+  State?: ArchiveState | null;
+  NextToken?: string | null;
+  Limit?: number | null;
 }
 
 // refs: 1 - tags: named, input
@@ -699,6 +954,15 @@ export interface ListPartnerEventSourceAccountsRequest {
 // refs: 1 - tags: named, input
 export interface ListPartnerEventSourcesRequest {
   NamePrefix: string;
+  NextToken?: string | null;
+  Limit?: number | null;
+}
+
+// refs: 1 - tags: named, input
+export interface ListReplaysRequest {
+  NamePrefix?: string | null;
+  State?: ReplayState | null;
+  EventSourceArn?: string | null;
   NextToken?: string | null;
   Limit?: number | null;
 }
@@ -745,10 +1009,11 @@ export interface PutPartnerEventsRequest {
 // refs: 1 - tags: named, input
 export interface PutPermissionRequest {
   EventBusName?: string | null;
-  Action: string;
-  Principal: string;
-  StatementId: string;
+  Action?: string | null;
+  Principal?: string | null;
+  StatementId?: string | null;
   Condition?: Condition | null;
+  Policy?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -772,7 +1037,8 @@ export interface PutTargetsRequest {
 
 // refs: 1 - tags: named, input
 export interface RemovePermissionRequest {
-  StatementId: string;
+  StatementId?: string | null;
+  RemoveAllPermissions?: boolean | null;
   EventBusName?: string | null;
 }
 
@@ -782,6 +1048,16 @@ export interface RemoveTargetsRequest {
   EventBusName?: string | null;
   Ids: string[];
   Force?: boolean | null;
+}
+
+// refs: 1 - tags: named, input
+export interface StartReplayRequest {
+  ReplayName: string;
+  Description?: string | null;
+  EventSourceArn: string;
+  EventStartTime: Date | number;
+  EventEndTime: Date | number;
+  Destination: ReplayDestination;
 }
 
 // refs: 1 - tags: named, input
@@ -802,6 +1078,29 @@ export interface UntagResourceRequest {
   TagKeys: string[];
 }
 
+// refs: 1 - tags: named, input
+export interface UpdateArchiveRequest {
+  ArchiveName: string;
+  Description?: string | null;
+  EventPattern?: string | null;
+  RetentionDays?: number | null;
+}
+
+// refs: 1 - tags: named, output
+export interface CancelReplayResponse {
+  ReplayArn?: string | null;
+  State?: ReplayState | null;
+  StateReason?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface CreateArchiveResponse {
+  ArchiveArn?: string | null;
+  State?: ArchiveState | null;
+  StateReason?: string | null;
+  CreationTime?: Date | number | null;
+}
+
 // refs: 1 - tags: named, output
 export interface CreateEventBusResponse {
   EventBusArn?: string | null;
@@ -810,6 +1109,25 @@ export interface CreateEventBusResponse {
 // refs: 1 - tags: named, output
 export interface CreatePartnerEventSourceResponse {
   EventSourceArn?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface DeleteArchiveResponse {
+}
+
+// refs: 1 - tags: named, output
+export interface DescribeArchiveResponse {
+  ArchiveArn?: string | null;
+  ArchiveName?: string | null;
+  EventSourceArn?: string | null;
+  Description?: string | null;
+  EventPattern?: string | null;
+  State?: ArchiveState | null;
+  StateReason?: string | null;
+  RetentionDays?: number | null;
+  SizeBytes?: number | null;
+  EventCount?: number | null;
+  CreationTime?: Date | number | null;
 }
 
 // refs: 1 - tags: named, output
@@ -836,6 +1154,22 @@ export interface DescribePartnerEventSourceResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface DescribeReplayResponse {
+  ReplayName?: string | null;
+  ReplayArn?: string | null;
+  Description?: string | null;
+  State?: ReplayState | null;
+  StateReason?: string | null;
+  EventSourceArn?: string | null;
+  Destination?: ReplayDestination | null;
+  EventStartTime?: Date | number | null;
+  EventEndTime?: Date | number | null;
+  EventLastReplayedTime?: Date | number | null;
+  ReplayStartTime?: Date | number | null;
+  ReplayEndTime?: Date | number | null;
+}
+
+// refs: 1 - tags: named, output
 export interface DescribeRuleResponse {
   Name?: string | null;
   Arn?: string | null;
@@ -846,6 +1180,13 @@ export interface DescribeRuleResponse {
   RoleArn?: string | null;
   ManagedBy?: string | null;
   EventBusName?: string | null;
+  CreatedBy?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface ListArchivesResponse {
+  Archives?: Archive[] | null;
+  NextToken?: string | null;
 }
 
 // refs: 1 - tags: named, output
@@ -869,6 +1210,12 @@ export interface ListPartnerEventSourceAccountsResponse {
 // refs: 1 - tags: named, output
 export interface ListPartnerEventSourcesResponse {
   PartnerEventSources?: PartnerEventSource[] | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface ListReplaysResponse {
+  Replays?: Replay[] | null;
   NextToken?: string | null;
 }
 
@@ -925,6 +1272,14 @@ export interface RemoveTargetsResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface StartReplayResponse {
+  ReplayArn?: string | null;
+  State?: ReplayState | null;
+  StateReason?: string | null;
+  ReplayStartTime?: Date | number | null;
+}
+
+// refs: 1 - tags: named, output
 export interface TagResourceResponse {
 }
 
@@ -935,6 +1290,14 @@ export interface TestEventPatternResponse {
 
 // refs: 1 - tags: named, output
 export interface UntagResourceResponse {
+}
+
+// refs: 1 - tags: named, output
+export interface UpdateArchiveResponse {
+  ArchiveArn?: string | null;
+  State?: ArchiveState | null;
+  StateReason?: string | null;
+  CreationTime?: Date | number | null;
 }
 
 // refs: 4 - tags: input, named, interface, output
@@ -958,6 +1321,26 @@ function toTag(root: jsonP.JSONValue): Tag {
     optional: {},
   }, root);
 }
+
+// refs: 5 - tags: input, named, enum, output
+export type ArchiveState =
+| "ENABLED"
+| "DISABLED"
+| "CREATING"
+| "UPDATING"
+| "CREATE_FAILED"
+| "UPDATE_FAILED"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 5 - tags: input, named, enum, output
+export type ReplayState =
+| "STARTING"
+| "RUNNING"
+| "CANCELLING"
+| "COMPLETED"
+| "CANCELLED"
+| "FAILED"
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface PutEventsRequestEntry {
@@ -1444,12 +1827,62 @@ function toRetryPolicy(root: jsonP.JSONValue): RetryPolicy {
   }, root);
 }
 
+// refs: 2 - tags: input, named, interface, output
+export interface ReplayDestination {
+  Arn: string;
+  FilterArns?: string[] | null;
+}
+function fromReplayDestination(input?: ReplayDestination | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    Arn: input["Arn"],
+    FilterArns: input["FilterArns"],
+  }
+}
+function toReplayDestination(root: jsonP.JSONValue): ReplayDestination {
+  return jsonP.readObj({
+    required: {
+      "Arn": "s",
+    },
+    optional: {
+      "FilterArns": ["s"],
+    },
+  }, root);
+}
+
 // refs: 3 - tags: output, named, enum
 export type EventSourceState =
 | "PENDING"
 | "ACTIVE"
 | "DELETED"
 | cmnP.UnexpectedEnumValue;
+
+// refs: 1 - tags: output, named, interface
+export interface Archive {
+  ArchiveName?: string | null;
+  EventSourceArn?: string | null;
+  State?: ArchiveState | null;
+  StateReason?: string | null;
+  RetentionDays?: number | null;
+  SizeBytes?: number | null;
+  EventCount?: number | null;
+  CreationTime?: Date | number | null;
+}
+function toArchive(root: jsonP.JSONValue): Archive {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "ArchiveName": "s",
+      "EventSourceArn": "s",
+      "State": (x: jsonP.JSONValue) => cmnP.readEnum<ArchiveState>(x),
+      "StateReason": "s",
+      "RetentionDays": "n",
+      "SizeBytes": "n",
+      "EventCount": "n",
+      "CreationTime": "d",
+    },
+  }, root);
+}
 
 // refs: 1 - tags: output, named, interface
 export interface EventBus {
@@ -1521,6 +1954,35 @@ function toPartnerEventSource(root: jsonP.JSONValue): PartnerEventSource {
     optional: {
       "Arn": "s",
       "Name": "s",
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
+export interface Replay {
+  ReplayName?: string | null;
+  EventSourceArn?: string | null;
+  State?: ReplayState | null;
+  StateReason?: string | null;
+  EventStartTime?: Date | number | null;
+  EventEndTime?: Date | number | null;
+  EventLastReplayedTime?: Date | number | null;
+  ReplayStartTime?: Date | number | null;
+  ReplayEndTime?: Date | number | null;
+}
+function toReplay(root: jsonP.JSONValue): Replay {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "ReplayName": "s",
+      "EventSourceArn": "s",
+      "State": (x: jsonP.JSONValue) => cmnP.readEnum<ReplayState>(x),
+      "StateReason": "s",
+      "EventStartTime": "d",
+      "EventEndTime": "d",
+      "EventLastReplayedTime": "d",
+      "ReplayStartTime": "d",
+      "ReplayEndTime": "d",
     },
   }, root);
 }

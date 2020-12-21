@@ -1682,6 +1682,8 @@ export interface AliasListEntry {
   AliasName?: string | null;
   AliasArn?: string | null;
   TargetKeyId?: string | null;
+  CreationDate?: Date | number | null;
+  LastUpdatedDate?: Date | number | null;
 }
 function toAliasListEntry(root: jsonP.JSONValue): AliasListEntry {
   return jsonP.readObj({
@@ -1690,6 +1692,8 @@ function toAliasListEntry(root: jsonP.JSONValue): AliasListEntry {
       "AliasName": "s",
       "AliasArn": "s",
       "TargetKeyId": "s",
+      "CreationDate": "d",
+      "LastUpdatedDate": "d",
     },
   }, root);
 }

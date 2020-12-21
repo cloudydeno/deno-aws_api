@@ -1358,6 +1358,7 @@ export type PackageFormat =
 | "npm"
 | "pypi"
 | "maven"
+| "nuget"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, interface, output

@@ -3679,6 +3679,9 @@ export interface LambdaConfigType {
   VerifyAuthChallengeResponse?: string | null;
   PreTokenGeneration?: string | null;
   UserMigration?: string | null;
+  CustomSMSSender?: CustomSMSLambdaVersionConfigType | null;
+  CustomEmailSender?: CustomEmailLambdaVersionConfigType | null;
+  KMSKeyID?: string | null;
 }
 function fromLambdaConfigType(input?: LambdaConfigType | null): jsonP.JSONValue {
   if (!input) return input;
@@ -3693,6 +3696,9 @@ function fromLambdaConfigType(input?: LambdaConfigType | null): jsonP.JSONValue 
     VerifyAuthChallengeResponse: input["VerifyAuthChallengeResponse"],
     PreTokenGeneration: input["PreTokenGeneration"],
     UserMigration: input["UserMigration"],
+    CustomSMSSender: fromCustomSMSLambdaVersionConfigType(input["CustomSMSSender"]),
+    CustomEmailSender: fromCustomEmailLambdaVersionConfigType(input["CustomEmailSender"]),
+    KMSKeyID: input["KMSKeyID"],
   }
 }
 function toLambdaConfigType(root: jsonP.JSONValue): LambdaConfigType {
@@ -3709,9 +3715,66 @@ function toLambdaConfigType(root: jsonP.JSONValue): LambdaConfigType {
       "VerifyAuthChallengeResponse": "s",
       "PreTokenGeneration": "s",
       "UserMigration": "s",
+      "CustomSMSSender": toCustomSMSLambdaVersionConfigType,
+      "CustomEmailSender": toCustomEmailLambdaVersionConfigType,
+      "KMSKeyID": "s",
     },
   }, root);
 }
+
+// refs: 5 - tags: input, named, interface, output
+export interface CustomSMSLambdaVersionConfigType {
+  LambdaVersion: CustomSMSSenderLambdaVersionType;
+  LambdaArn: string;
+}
+function fromCustomSMSLambdaVersionConfigType(input?: CustomSMSLambdaVersionConfigType | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    LambdaVersion: input["LambdaVersion"],
+    LambdaArn: input["LambdaArn"],
+  }
+}
+function toCustomSMSLambdaVersionConfigType(root: jsonP.JSONValue): CustomSMSLambdaVersionConfigType {
+  return jsonP.readObj({
+    required: {
+      "LambdaVersion": (x: jsonP.JSONValue) => cmnP.readEnum<CustomSMSSenderLambdaVersionType>(x),
+      "LambdaArn": "s",
+    },
+    optional: {},
+  }, root);
+}
+
+// refs: 5 - tags: input, named, enum, output
+export type CustomSMSSenderLambdaVersionType =
+| "V1_0"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 5 - tags: input, named, interface, output
+export interface CustomEmailLambdaVersionConfigType {
+  LambdaVersion: CustomEmailSenderLambdaVersionType;
+  LambdaArn: string;
+}
+function fromCustomEmailLambdaVersionConfigType(input?: CustomEmailLambdaVersionConfigType | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    LambdaVersion: input["LambdaVersion"],
+    LambdaArn: input["LambdaArn"],
+  }
+}
+function toCustomEmailLambdaVersionConfigType(root: jsonP.JSONValue): CustomEmailLambdaVersionConfigType {
+  return jsonP.readObj({
+    required: {
+      "LambdaVersion": (x: jsonP.JSONValue) => cmnP.readEnum<CustomEmailSenderLambdaVersionType>(x),
+      "LambdaArn": "s",
+    },
+    optional: {},
+  }, root);
+}
+
+// refs: 5 - tags: input, named, enum, output
+export type CustomEmailSenderLambdaVersionType =
+| "V1_0"
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, enum, output
 export type VerifiedAttributeType =

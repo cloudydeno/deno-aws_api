@@ -5,7 +5,7 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import * as HashMd5 from "https://deno.land/std@0.71.0/hash/md5.ts";
+import * as HashMd5 from "https://deno.land/std@0.75.0/hash/md5.ts";
 import * as cmnP from "../../encoding/common.ts";
 import * as xmlP from "../../encoding/xml.ts";
 import * as Base64 from "https://deno.land/x/base64@v0.2.1/mod.ts";
@@ -80,6 +80,7 @@ export default class S3 {
       ServerSideEncryption: cmnP.readEnum<ServerSideEncryption>(resp.headers.get("x-amz-server-side-encryption")),
       VersionId: resp.headers.get("x-amz-version-id"),
       SSEKMSKeyId: resp.headers.get("x-amz-server-side-encryption-aws-kms-key-id"),
+      BucketKeyEnabled: cmnP.readBool(resp.headers.get("x-amz-server-side-encryption-bucket-key-enabled")),
       RequestCharged: cmnP.readEnum<RequestCharged>(resp.headers.get("x-amz-request-charged")),
       ...xml.strings({
         optional: {"Location":true,"Bucket":true,"Key":true,"ETag":true},
@@ -120,6 +121,7 @@ export default class S3 {
     if (params["SSECustomerKeyMD5"] != null) headers.append("x-amz-server-side-encryption-customer-key-MD5", params["SSECustomerKeyMD5"]);
     if (params["SSEKMSKeyId"] != null) headers.append("x-amz-server-side-encryption-aws-kms-key-id", params["SSEKMSKeyId"]);
     if (params["SSEKMSEncryptionContext"] != null) headers.append("x-amz-server-side-encryption-context", params["SSEKMSEncryptionContext"]);
+    if (params["BucketKeyEnabled"] != null) headers.append("x-amz-server-side-encryption-bucket-key-enabled", params["BucketKeyEnabled"]?.toString() ?? '');
     if (params["CopySourceSSECustomerAlgorithm"] != null) headers.append("x-amz-copy-source-server-side-encryption-customer-algorithm", params["CopySourceSSECustomerAlgorithm"]);
     if (params["CopySourceSSECustomerKey"] != null) headers.append("x-amz-copy-source-server-side-encryption-customer-key", cmnP.serializeBlob(params["CopySourceSSECustomerKey"]) ?? '');
     if (params["CopySourceSSECustomerKeyMD5"] != null) headers.append("x-amz-copy-source-server-side-encryption-customer-key-MD5", params["CopySourceSSECustomerKeyMD5"]);
@@ -146,6 +148,7 @@ export default class S3 {
     SSECustomerKeyMD5: resp.headers.get("x-amz-server-side-encryption-customer-key-MD5"),
     SSEKMSKeyId: resp.headers.get("x-amz-server-side-encryption-aws-kms-key-id"),
     SSEKMSEncryptionContext: resp.headers.get("x-amz-server-side-encryption-context"),
+    BucketKeyEnabled: cmnP.readBool(resp.headers.get("x-amz-server-side-encryption-bucket-key-enabled")),
     RequestCharged: cmnP.readEnum<RequestCharged>(resp.headers.get("x-amz-request-charged")),
     CopyObjectResult: {
         ...xml.strings({
@@ -211,6 +214,7 @@ export default class S3 {
     if (params["SSECustomerKeyMD5"] != null) headers.append("x-amz-server-side-encryption-customer-key-MD5", params["SSECustomerKeyMD5"]);
     if (params["SSEKMSKeyId"] != null) headers.append("x-amz-server-side-encryption-aws-kms-key-id", params["SSEKMSKeyId"]);
     if (params["SSEKMSEncryptionContext"] != null) headers.append("x-amz-server-side-encryption-context", params["SSEKMSEncryptionContext"]);
+    if (params["BucketKeyEnabled"] != null) headers.append("x-amz-server-side-encryption-bucket-key-enabled", params["BucketKeyEnabled"]?.toString() ?? '');
     if (params["RequestPayer"] != null) headers.append("x-amz-request-payer", params["RequestPayer"]);
     if (params["Tagging"] != null) headers.append("x-amz-tagging", params["Tagging"]);
     if (params["ObjectLockMode"] != null) headers.append("x-amz-object-lock-mode", params["ObjectLockMode"]);
@@ -231,6 +235,7 @@ export default class S3 {
       SSECustomerKeyMD5: resp.headers.get("x-amz-server-side-encryption-customer-key-MD5"),
       SSEKMSKeyId: resp.headers.get("x-amz-server-side-encryption-aws-kms-key-id"),
       SSEKMSEncryptionContext: resp.headers.get("x-amz-server-side-encryption-context"),
+      BucketKeyEnabled: cmnP.readBool(resp.headers.get("x-amz-server-side-encryption-bucket-key-enabled")),
       RequestCharged: cmnP.readEnum<RequestCharged>(resp.headers.get("x-amz-request-charged")),
       ...xml.strings({
         optional: {"Bucket":true,"Key":true,"UploadId":true},
@@ -292,6 +297,20 @@ export default class S3 {
       action: "DeleteBucketEncryption",
       method: "DELETE",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?encryption`,
+      responseCode: 204,
+    });
+  }
+
+  async deleteBucketIntelligentTieringConfiguration(
+    {abortSignal, ...params}: RequestConfig & DeleteBucketIntelligentTieringConfigurationRequest,
+  ): Promise<void> {
+    const query = new URLSearchParams;
+    query.set("id", params["Id"]?.toString() ?? "");
+    const resp = await this.#client.performRequest({
+      abortSignal, query,
+      action: "DeleteBucketIntelligentTieringConfiguration",
+      method: "DELETE",
+      requestUri: cmnP.encodePath`/${params["Bucket"]}?intelligent-tiering`,
       responseCode: 204,
     });
   }
@@ -585,6 +604,23 @@ export default class S3 {
     const xml = xmlP.readXmlResult(await resp.text());
   return {
     ServerSideEncryptionConfiguration: ServerSideEncryptionConfiguration_Parse(xml),
+  };
+  }
+
+  async getBucketIntelligentTieringConfiguration(
+    {abortSignal, ...params}: RequestConfig & GetBucketIntelligentTieringConfigurationRequest,
+  ): Promise<GetBucketIntelligentTieringConfigurationOutput> {
+    const query = new URLSearchParams;
+    query.set("id", params["Id"]?.toString() ?? "");
+    const resp = await this.#client.performRequest({
+      abortSignal, query,
+      action: "GetBucketIntelligentTieringConfiguration",
+      method: "GET",
+      requestUri: cmnP.encodePath`/${params["Bucket"]}?intelligent-tiering`,
+    });
+    const xml = xmlP.readXmlResult(await resp.text());
+  return {
+    IntelligentTieringConfiguration: IntelligentTieringConfiguration_Parse(xml),
   };
   }
 
@@ -924,6 +960,7 @@ export default class S3 {
     SSECustomerAlgorithm: resp.headers.get("x-amz-server-side-encryption-customer-algorithm"),
     SSECustomerKeyMD5: resp.headers.get("x-amz-server-side-encryption-customer-key-MD5"),
     SSEKMSKeyId: resp.headers.get("x-amz-server-side-encryption-aws-kms-key-id"),
+    BucketKeyEnabled: cmnP.readBool(resp.headers.get("x-amz-server-side-encryption-bucket-key-enabled")),
     StorageClass: cmnP.readEnum<StorageClass>(resp.headers.get("x-amz-storage-class")),
     RequestCharged: cmnP.readEnum<RequestCharged>(resp.headers.get("x-amz-request-charged")),
     ReplicationStatus: cmnP.readEnum<ReplicationStatus>(resp.headers.get("x-amz-replication-status")),
@@ -1115,6 +1152,7 @@ export default class S3 {
       AcceptRanges: resp.headers.get("accept-ranges"),
       Expiration: resp.headers.get("x-amz-expiration"),
       Restore: resp.headers.get("x-amz-restore"),
+      ArchiveStatus: cmnP.readEnum<ArchiveStatus>(resp.headers.get("x-amz-archive-status")),
       LastModified: cmnP.readTimestamp(resp.headers.get("Last-Modified")),
       ContentLength: cmnP.readNum(resp.headers.get("Content-Length")),
       ETag: resp.headers.get("ETag"),
@@ -1132,6 +1170,7 @@ export default class S3 {
       SSECustomerAlgorithm: resp.headers.get("x-amz-server-side-encryption-customer-algorithm"),
       SSECustomerKeyMD5: resp.headers.get("x-amz-server-side-encryption-customer-key-MD5"),
       SSEKMSKeyId: resp.headers.get("x-amz-server-side-encryption-aws-kms-key-id"),
+      BucketKeyEnabled: cmnP.readBool(resp.headers.get("x-amz-server-side-encryption-bucket-key-enabled")),
       StorageClass: cmnP.readEnum<StorageClass>(resp.headers.get("x-amz-storage-class")),
       RequestCharged: cmnP.readEnum<RequestCharged>(resp.headers.get("x-amz-request-charged")),
       ReplicationStatus: cmnP.readEnum<ReplicationStatus>(resp.headers.get("x-amz-replication-status")),
@@ -1162,6 +1201,27 @@ export default class S3 {
       }),
       IsTruncated: xml.first("IsTruncated", false, x => x.content === 'true'),
       AnalyticsConfigurationList: xml.getList("AnalyticsConfiguration").map(AnalyticsConfiguration_Parse),
+    };
+  }
+
+  async listBucketIntelligentTieringConfigurations(
+    {abortSignal, ...params}: RequestConfig & ListBucketIntelligentTieringConfigurationsRequest,
+  ): Promise<ListBucketIntelligentTieringConfigurationsOutput> {
+    const query = new URLSearchParams;
+    if (params["ContinuationToken"] != null) query.set("continuation-token", params["ContinuationToken"]?.toString() ?? "");
+    const resp = await this.#client.performRequest({
+      abortSignal, query,
+      action: "ListBucketIntelligentTieringConfigurations",
+      method: "GET",
+      requestUri: cmnP.encodePath`/${params["Bucket"]}?intelligent-tiering`,
+    });
+    const xml = xmlP.readXmlResult(await resp.text());
+    return {
+      ...xml.strings({
+        optional: {"ContinuationToken":true,"NextContinuationToken":true},
+      }),
+      IsTruncated: xml.first("IsTruncated", false, x => x.content === 'true'),
+      IntelligentTieringConfigurationList: xml.getList("IntelligentTieringConfiguration").map(IntelligentTieringConfiguration_Parse),
     };
   }
 
@@ -1505,6 +1565,29 @@ export default class S3 {
     });
   }
 
+  async putBucketIntelligentTieringConfiguration(
+    {abortSignal, ...params}: RequestConfig & PutBucketIntelligentTieringConfigurationRequest,
+  ): Promise<void> {
+    const inner = params["IntelligentTieringConfiguration"];
+    const body = inner ? xmlP.stringify({
+      name: "IntelligentTieringConfiguration",
+      attributes: {"xmlns":"http://s3.amazonaws.com/doc/2006-03-01/"},
+      children: [
+        {name: "Id", content: inner["Id"]?.toString()},
+        {name: "Filter", ...IntelligentTieringFilter_Serialize(inner["Filter"])},
+        {name: "Status", content: inner["Status"]?.toString()},
+        ...(inner["Tierings"]?.map(x => ({name: "Tiering", ...Tiering_Serialize(x)})) ?? []),
+      ]}) : "";
+    const query = new URLSearchParams;
+    query.set("id", params["Id"]?.toString() ?? "");
+    const resp = await this.#client.performRequest({
+      abortSignal, query, body,
+      action: "PutBucketIntelligentTieringConfiguration",
+      method: "PUT",
+      requestUri: cmnP.encodePath`/${params["Bucket"]}?intelligent-tiering`,
+    });
+  }
+
   async putBucketInventoryConfiguration(
     {abortSignal, ...params}: RequestConfig & PutBucketInventoryConfigurationRequest,
   ): Promise<void> {
@@ -1842,6 +1925,7 @@ export default class S3 {
     if (params["SSECustomerKeyMD5"] != null) headers.append("x-amz-server-side-encryption-customer-key-MD5", params["SSECustomerKeyMD5"]);
     if (params["SSEKMSKeyId"] != null) headers.append("x-amz-server-side-encryption-aws-kms-key-id", params["SSEKMSKeyId"]);
     if (params["SSEKMSEncryptionContext"] != null) headers.append("x-amz-server-side-encryption-context", params["SSEKMSEncryptionContext"]);
+    if (params["BucketKeyEnabled"] != null) headers.append("x-amz-server-side-encryption-bucket-key-enabled", params["BucketKeyEnabled"]?.toString() ?? '');
     if (params["RequestPayer"] != null) headers.append("x-amz-request-payer", params["RequestPayer"]);
     if (params["Tagging"] != null) headers.append("x-amz-tagging", params["Tagging"]);
     if (params["ObjectLockMode"] != null) headers.append("x-amz-object-lock-mode", params["ObjectLockMode"]);
@@ -1863,6 +1947,7 @@ export default class S3 {
       SSECustomerKeyMD5: resp.headers.get("x-amz-server-side-encryption-customer-key-MD5"),
       SSEKMSKeyId: resp.headers.get("x-amz-server-side-encryption-aws-kms-key-id"),
       SSEKMSEncryptionContext: resp.headers.get("x-amz-server-side-encryption-context"),
+      BucketKeyEnabled: cmnP.readBool(resp.headers.get("x-amz-server-side-encryption-bucket-key-enabled")),
       RequestCharged: cmnP.readEnum<RequestCharged>(resp.headers.get("x-amz-request-charged")),
     };
   }
@@ -2129,6 +2214,7 @@ export default class S3 {
       SSECustomerAlgorithm: resp.headers.get("x-amz-server-side-encryption-customer-algorithm"),
       SSECustomerKeyMD5: resp.headers.get("x-amz-server-side-encryption-customer-key-MD5"),
       SSEKMSKeyId: resp.headers.get("x-amz-server-side-encryption-aws-kms-key-id"),
+      BucketKeyEnabled: cmnP.readBool(resp.headers.get("x-amz-server-side-encryption-bucket-key-enabled")),
       RequestCharged: cmnP.readEnum<RequestCharged>(resp.headers.get("x-amz-request-charged")),
     };
   }
@@ -2168,6 +2254,7 @@ export default class S3 {
     SSECustomerAlgorithm: resp.headers.get("x-amz-server-side-encryption-customer-algorithm"),
     SSECustomerKeyMD5: resp.headers.get("x-amz-server-side-encryption-customer-key-MD5"),
     SSEKMSKeyId: resp.headers.get("x-amz-server-side-encryption-aws-kms-key-id"),
+    BucketKeyEnabled: cmnP.readBool(resp.headers.get("x-amz-server-side-encryption-bucket-key-enabled")),
     RequestCharged: cmnP.readEnum<RequestCharged>(resp.headers.get("x-amz-request-charged")),
     CopyPartResult: {
         ...xml.strings({
@@ -2302,6 +2389,7 @@ export interface CopyObjectRequest {
   SSECustomerKeyMD5?: string | null;
   SSEKMSKeyId?: string | null;
   SSEKMSEncryptionContext?: string | null;
+  BucketKeyEnabled?: boolean | null;
   CopySourceSSECustomerAlgorithm?: string | null;
   CopySourceSSECustomerKey?: Uint8Array | string | null;
   CopySourceSSECustomerKeyMD5?: string | null;
@@ -2351,6 +2439,7 @@ export interface CreateMultipartUploadRequest {
   SSECustomerKeyMD5?: string | null;
   SSEKMSKeyId?: string | null;
   SSEKMSEncryptionContext?: string | null;
+  BucketKeyEnabled?: boolean | null;
   RequestPayer?: RequestPayer | null;
   Tagging?: string | null;
   ObjectLockMode?: ObjectLockMode | null;
@@ -2382,6 +2471,12 @@ export interface DeleteBucketCorsRequest {
 export interface DeleteBucketEncryptionRequest {
   Bucket: string;
   ExpectedBucketOwner?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface DeleteBucketIntelligentTieringConfigurationRequest {
+  Bucket: string;
+  Id: string;
 }
 
 // refs: 1 - tags: named, input
@@ -2498,6 +2593,12 @@ export interface GetBucketCorsRequest {
 export interface GetBucketEncryptionRequest {
   Bucket: string;
   ExpectedBucketOwner?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface GetBucketIntelligentTieringConfigurationRequest {
+  Bucket: string;
+  Id: string;
 }
 
 // refs: 1 - tags: named, input
@@ -2703,6 +2804,12 @@ export interface ListBucketAnalyticsConfigurationsRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface ListBucketIntelligentTieringConfigurationsRequest {
+  Bucket: string;
+  ContinuationToken?: string | null;
+}
+
+// refs: 1 - tags: named, input
 export interface ListBucketInventoryConfigurationsRequest {
   Bucket: string;
   ContinuationToken?: string | null;
@@ -2820,6 +2927,13 @@ export interface PutBucketEncryptionRequest {
   ContentMD5?: string | null;
   ServerSideEncryptionConfiguration: ServerSideEncryptionConfiguration;
   ExpectedBucketOwner?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface PutBucketIntelligentTieringConfigurationRequest {
+  Bucket: string;
+  Id: string;
+  IntelligentTieringConfiguration: IntelligentTieringConfiguration;
 }
 
 // refs: 1 - tags: named, input
@@ -2962,6 +3076,7 @@ export interface PutObjectRequest {
   SSECustomerKeyMD5?: string | null;
   SSEKMSKeyId?: string | null;
   SSEKMSEncryptionContext?: string | null;
+  BucketKeyEnabled?: boolean | null;
   RequestPayer?: RequestPayer | null;
   Tagging?: string | null;
   ObjectLockMode?: ObjectLockMode | null;
@@ -3118,6 +3233,7 @@ export interface CompleteMultipartUploadOutput {
   ServerSideEncryption?: ServerSideEncryption | null;
   VersionId?: string | null;
   SSEKMSKeyId?: string | null;
+  BucketKeyEnabled?: boolean | null;
   RequestCharged?: RequestCharged | null;
 }
 
@@ -3132,6 +3248,7 @@ export interface CopyObjectOutput {
   SSECustomerKeyMD5?: string | null;
   SSEKMSKeyId?: string | null;
   SSEKMSEncryptionContext?: string | null;
+  BucketKeyEnabled?: boolean | null;
   RequestCharged?: RequestCharged | null;
 }
 
@@ -3152,6 +3269,7 @@ export interface CreateMultipartUploadOutput {
   SSECustomerKeyMD5?: string | null;
   SSEKMSKeyId?: string | null;
   SSEKMSEncryptionContext?: string | null;
+  BucketKeyEnabled?: boolean | null;
   RequestCharged?: RequestCharged | null;
 }
 
@@ -3198,6 +3316,11 @@ export interface GetBucketCorsOutput {
 // refs: 1 - tags: named, output
 export interface GetBucketEncryptionOutput {
   ServerSideEncryptionConfiguration?: ServerSideEncryptionConfiguration | null;
+}
+
+// refs: 1 - tags: named, output
+export interface GetBucketIntelligentTieringConfigurationOutput {
+  IntelligentTieringConfiguration?: IntelligentTieringConfiguration | null;
 }
 
 // refs: 1 - tags: named, output
@@ -3343,6 +3466,7 @@ export interface GetObjectOutput {
   SSECustomerAlgorithm?: string | null;
   SSECustomerKeyMD5?: string | null;
   SSEKMSKeyId?: string | null;
+  BucketKeyEnabled?: boolean | null;
   StorageClass?: StorageClass | null;
   RequestCharged?: RequestCharged | null;
   ReplicationStatus?: ReplicationStatus | null;
@@ -3398,6 +3522,7 @@ export interface HeadObjectOutput {
   AcceptRanges?: string | null;
   Expiration?: string | null;
   Restore?: string | null;
+  ArchiveStatus?: ArchiveStatus | null;
   LastModified?: Date | number | null;
   ContentLength?: number | null;
   ETag?: string | null;
@@ -3415,6 +3540,7 @@ export interface HeadObjectOutput {
   SSECustomerAlgorithm?: string | null;
   SSECustomerKeyMD5?: string | null;
   SSEKMSKeyId?: string | null;
+  BucketKeyEnabled?: boolean | null;
   StorageClass?: StorageClass | null;
   RequestCharged?: RequestCharged | null;
   ReplicationStatus?: ReplicationStatus | null;
@@ -3430,6 +3556,14 @@ export interface ListBucketAnalyticsConfigurationsOutput {
   ContinuationToken?: string | null;
   NextContinuationToken?: string | null;
   AnalyticsConfigurationList: AnalyticsConfiguration[];
+}
+
+// refs: 1 - tags: named, output
+export interface ListBucketIntelligentTieringConfigurationsOutput {
+  IsTruncated?: boolean | null;
+  ContinuationToken?: string | null;
+  NextContinuationToken?: string | null;
+  IntelligentTieringConfigurationList: IntelligentTieringConfiguration[];
 }
 
 // refs: 1 - tags: named, output
@@ -3545,6 +3679,7 @@ export interface PutObjectOutput {
   SSECustomerKeyMD5?: string | null;
   SSEKMSKeyId?: string | null;
   SSEKMSEncryptionContext?: string | null;
+  BucketKeyEnabled?: boolean | null;
   RequestCharged?: RequestCharged | null;
 }
 
@@ -3591,6 +3726,7 @@ export interface UploadPartOutput {
   SSECustomerAlgorithm?: string | null;
   SSECustomerKeyMD5?: string | null;
   SSEKMSKeyId?: string | null;
+  BucketKeyEnabled?: boolean | null;
   RequestCharged?: RequestCharged | null;
 }
 
@@ -3602,6 +3738,7 @@ export interface UploadPartCopyOutput {
   SSECustomerAlgorithm?: string | null;
   SSECustomerKeyMD5?: string | null;
   SSEKMSKeyId?: string | null;
+  BucketKeyEnabled?: boolean | null;
   RequestCharged?: RequestCharged | null;
 }
 
@@ -3926,7 +4063,7 @@ function AnalyticsFilter_Parse(node: xmlP.XmlNode): AnalyticsFilter {
   };
 }
 
-// refs: 25 - tags: input, named, interface, output
+// refs: 31 - tags: input, named, interface, output
 export interface Tag {
   Key: string;
   Value: string;
@@ -4110,16 +4247,19 @@ function ServerSideEncryptionConfiguration_Parse(node: xmlP.XmlNode): ServerSide
 // refs: 2 - tags: input, named, interface, output
 export interface ServerSideEncryptionRule {
   ApplyServerSideEncryptionByDefault?: ServerSideEncryptionByDefault | null;
+  BucketKeyEnabled?: boolean | null;
 }
 function ServerSideEncryptionRule_Serialize(data: ServerSideEncryptionRule | undefined | null): Partial<xmlP.Node> {
   if (!data) return {};
   return {children: [
     {name: "ApplyServerSideEncryptionByDefault", ...ServerSideEncryptionByDefault_Serialize(data["ApplyServerSideEncryptionByDefault"])},
+    {name: "BucketKeyEnabled", content: data["BucketKeyEnabled"]?.toString()},
   ]};
 }
 function ServerSideEncryptionRule_Parse(node: xmlP.XmlNode): ServerSideEncryptionRule {
   return {
     ApplyServerSideEncryptionByDefault: node.first("ApplyServerSideEncryptionByDefault", false, ServerSideEncryptionByDefault_Parse),
+    BucketKeyEnabled: node.first("BucketKeyEnabled", false, x => x.content === 'true'),
   };
 }
 
@@ -4143,6 +4283,109 @@ function ServerSideEncryptionByDefault_Parse(node: xmlP.XmlNode): ServerSideEncr
     SSEAlgorithm: node.first("SSEAlgorithm", true, x => (x.content ?? '') as ServerSideEncryption),
   };
 }
+
+// refs: 3 - tags: input, named, interface, output
+export interface IntelligentTieringConfiguration {
+  Id: string;
+  Filter?: IntelligentTieringFilter | null;
+  Status: IntelligentTieringStatus;
+  Tierings: Tiering[];
+}
+function IntelligentTieringConfiguration_Serialize(data: IntelligentTieringConfiguration | undefined | null): Partial<xmlP.Node> {
+  if (!data) return {};
+  return {children: [
+    {name: "Id", content: data["Id"]?.toString()},
+    {name: "Filter", ...IntelligentTieringFilter_Serialize(data["Filter"])},
+    {name: "Status", content: data["Status"]?.toString()},
+    ...(data["Tierings"]?.map(x => ({name: "Tiering", ...Tiering_Serialize(x)})) ?? []),
+  ]};
+}
+function IntelligentTieringConfiguration_Parse(node: xmlP.XmlNode): IntelligentTieringConfiguration {
+  return {
+    ...node.strings({
+      required: {"Id":true},
+    }),
+    Filter: node.first("Filter", false, IntelligentTieringFilter_Parse),
+    Status: node.first("Status", true, x => (x.content ?? '') as IntelligentTieringStatus),
+    Tierings: node.getList("Tiering").map(Tiering_Parse),
+  };
+}
+
+// refs: 3 - tags: input, named, interface, output
+export interface IntelligentTieringFilter {
+  Prefix?: string | null;
+  Tag?: Tag | null;
+  And?: IntelligentTieringAndOperator | null;
+}
+function IntelligentTieringFilter_Serialize(data: IntelligentTieringFilter | undefined | null): Partial<xmlP.Node> {
+  if (!data) return {};
+  return {children: [
+    {name: "Prefix", content: data["Prefix"]?.toString()},
+    {name: "Tag", ...Tag_Serialize(data["Tag"])},
+    {name: "And", ...IntelligentTieringAndOperator_Serialize(data["And"])},
+  ]};
+}
+function IntelligentTieringFilter_Parse(node: xmlP.XmlNode): IntelligentTieringFilter {
+  return {
+    ...node.strings({
+      optional: {"Prefix":true},
+    }),
+    Tag: node.first("Tag", false, Tag_Parse),
+    And: node.first("And", false, IntelligentTieringAndOperator_Parse),
+  };
+}
+
+// refs: 3 - tags: input, named, interface, output
+export interface IntelligentTieringAndOperator {
+  Prefix?: string | null;
+  Tags: Tag[];
+}
+function IntelligentTieringAndOperator_Serialize(data: IntelligentTieringAndOperator | undefined | null): Partial<xmlP.Node> {
+  if (!data) return {};
+  return {children: [
+    {name: "Prefix", content: data["Prefix"]?.toString()},
+    ...(data["Tags"]?.map(x => ({name: "Tag", ...Tag_Serialize(x)})) ?? []),
+  ]};
+}
+function IntelligentTieringAndOperator_Parse(node: xmlP.XmlNode): IntelligentTieringAndOperator {
+  return {
+    ...node.strings({
+      optional: {"Prefix":true},
+    }),
+    Tags: node.getList("Tag").map(Tag_Parse),
+  };
+}
+
+// refs: 3 - tags: input, named, enum, output
+export type IntelligentTieringStatus =
+| "Enabled"
+| "Disabled"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 3 - tags: input, named, interface, output
+export interface Tiering {
+  Days: number;
+  AccessTier: IntelligentTieringAccessTier;
+}
+function Tiering_Serialize(data: Tiering | undefined | null): Partial<xmlP.Node> {
+  if (!data) return {};
+  return {children: [
+    {name: "Days", content: data["Days"]?.toString()},
+    {name: "AccessTier", content: data["AccessTier"]?.toString()},
+  ]};
+}
+function Tiering_Parse(node: xmlP.XmlNode): Tiering {
+  return {
+    Days: node.first("Days", true, x => parseInt(x.content ?? '0')),
+    AccessTier: node.first("AccessTier", true, x => (x.content ?? '') as IntelligentTieringAccessTier),
+  };
+}
+
+// refs: 3 - tags: input, named, enum, output
+export type IntelligentTieringAccessTier =
+| "ARCHIVE_ACCESS"
+| "DEEP_ARCHIVE_ACCESS"
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface, output
 export interface InventoryConfiguration {
@@ -5117,16 +5360,19 @@ export type ReplicationRuleStatus =
 // refs: 2 - tags: input, named, interface, output
 export interface SourceSelectionCriteria {
   SseKmsEncryptedObjects?: SseKmsEncryptedObjects | null;
+  ReplicaModifications?: ReplicaModifications | null;
 }
 function SourceSelectionCriteria_Serialize(data: SourceSelectionCriteria | undefined | null): Partial<xmlP.Node> {
   if (!data) return {};
   return {children: [
     {name: "SseKmsEncryptedObjects", ...SseKmsEncryptedObjects_Serialize(data["SseKmsEncryptedObjects"])},
+    {name: "ReplicaModifications", ...ReplicaModifications_Serialize(data["ReplicaModifications"])},
   ]};
 }
 function SourceSelectionCriteria_Parse(node: xmlP.XmlNode): SourceSelectionCriteria {
   return {
     SseKmsEncryptedObjects: node.first("SseKmsEncryptedObjects", false, SseKmsEncryptedObjects_Parse),
+    ReplicaModifications: node.first("ReplicaModifications", false, ReplicaModifications_Parse),
   };
 }
 
@@ -5148,6 +5394,28 @@ function SseKmsEncryptedObjects_Parse(node: xmlP.XmlNode): SseKmsEncryptedObject
 
 // refs: 2 - tags: input, named, enum, output
 export type SseKmsEncryptedObjectsStatus =
+| "Enabled"
+| "Disabled"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 2 - tags: input, named, interface, output
+export interface ReplicaModifications {
+  Status: ReplicaModificationsStatus;
+}
+function ReplicaModifications_Serialize(data: ReplicaModifications | undefined | null): Partial<xmlP.Node> {
+  if (!data) return {};
+  return {children: [
+    {name: "Status", content: data["Status"]?.toString()},
+  ]};
+}
+function ReplicaModifications_Parse(node: xmlP.XmlNode): ReplicaModifications {
+  return {
+    Status: node.first("Status", true, x => (x.content ?? '') as ReplicaModificationsStatus),
+  };
+}
+
+// refs: 2 - tags: input, named, enum, output
+export type ReplicaModificationsStatus =
 | "Enabled"
 | "Disabled"
 | cmnP.UnexpectedEnumValue;
@@ -5291,7 +5559,7 @@ function ReplicationTimeValue_Parse(node: xmlP.XmlNode): ReplicationTimeValue {
 // refs: 2 - tags: input, named, interface, output
 export interface Metrics {
   Status: MetricsStatus;
-  EventThreshold: ReplicationTimeValue;
+  EventThreshold?: ReplicationTimeValue | null;
 }
 function Metrics_Serialize(data: Metrics | undefined | null): Partial<xmlP.Node> {
   if (!data) return {};
@@ -5303,7 +5571,7 @@ function Metrics_Serialize(data: Metrics | undefined | null): Partial<xmlP.Node>
 function Metrics_Parse(node: xmlP.XmlNode): Metrics {
   return {
     Status: node.first("Status", true, x => (x.content ?? '') as MetricsStatus),
-    EventThreshold: node.first("EventThreshold", true, ReplicationTimeValue_Parse),
+    EventThreshold: node.first("EventThreshold", false, ReplicationTimeValue_Parse),
   };
 }
 
@@ -6012,6 +6280,12 @@ export type ReplicationStatus =
 | "PENDING"
 | "FAILED"
 | "REPLICA"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 1 - tags: output, named, enum
+export type ArchiveStatus =
+| "ARCHIVE_ACCESS"
+| "DEEP_ARCHIVE_ACCESS"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface

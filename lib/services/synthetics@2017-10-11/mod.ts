@@ -475,6 +475,7 @@ export interface CanaryRunConfigInput {
   TimeoutInSeconds?: number | null;
   MemoryInMB?: number | null;
   ActiveTracing?: boolean | null;
+  EnvironmentVariables?: { [key: string]: string | null | undefined } | null;
 }
 function fromCanaryRunConfigInput(input?: CanaryRunConfigInput | null): jsonP.JSONValue {
   if (!input) return input;
@@ -482,6 +483,7 @@ function fromCanaryRunConfigInput(input?: CanaryRunConfigInput | null): jsonP.JS
     TimeoutInSeconds: input["TimeoutInSeconds"],
     MemoryInMB: input["MemoryInMB"],
     ActiveTracing: input["ActiveTracing"],
+    EnvironmentVariables: input["EnvironmentVariables"],
   }
 }
 

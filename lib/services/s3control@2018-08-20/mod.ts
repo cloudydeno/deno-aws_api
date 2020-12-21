@@ -5,7 +5,7 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import * as uuidv4 from "https://deno.land/std@0.71.0/uuid/v4.ts";
+import * as uuidv4 from "https://deno.land/std@0.75.0/uuid/v4.ts";
 import * as cmnP from "../../encoding/common.ts";
 import * as xmlP from "../../encoding/xml.ts";
 function generateIdemptToken() {
@@ -235,6 +235,36 @@ export default class S3Control {
     });
   }
 
+  async deleteStorageLensConfiguration(
+    {abortSignal, ...params}: RequestConfig & DeleteStorageLensConfigurationRequest,
+  ): Promise<void> {
+    const headers = new Headers;
+    headers.append("x-amz-account-id", params["AccountId"]);
+    const resp = await this.#client.performRequest({
+      abortSignal, headers,
+      action: "DeleteStorageLensConfiguration",
+      method: "DELETE",
+      requestUri: cmnP.encodePath`/v20180820/storagelens/${params["ConfigId"]}`,
+      hostPrefix: `${params.AccountId}.`,
+    });
+  }
+
+  async deleteStorageLensConfigurationTagging(
+    {abortSignal, ...params}: RequestConfig & DeleteStorageLensConfigurationTaggingRequest,
+  ): Promise<DeleteStorageLensConfigurationTaggingResult> {
+    const headers = new Headers;
+    headers.append("x-amz-account-id", params["AccountId"]);
+    const resp = await this.#client.performRequest({
+      abortSignal, headers,
+      action: "DeleteStorageLensConfigurationTagging",
+      method: "DELETE",
+      requestUri: cmnP.encodePath`/v20180820/storagelens/${params["ConfigId"]}/tagging`,
+      hostPrefix: `${params.AccountId}.`,
+    });
+    return {
+    };
+  }
+
   async describeJob(
     {abortSignal, ...params}: RequestConfig & DescribeJobRequest,
   ): Promise<DescribeJobResult> {
@@ -425,6 +455,42 @@ export default class S3Control {
   };
   }
 
+  async getStorageLensConfiguration(
+    {abortSignal, ...params}: RequestConfig & GetStorageLensConfigurationRequest,
+  ): Promise<GetStorageLensConfigurationResult> {
+    const headers = new Headers;
+    headers.append("x-amz-account-id", params["AccountId"]);
+    const resp = await this.#client.performRequest({
+      abortSignal, headers,
+      action: "GetStorageLensConfiguration",
+      method: "GET",
+      requestUri: cmnP.encodePath`/v20180820/storagelens/${params["ConfigId"]}`,
+      hostPrefix: `${params.AccountId}.`,
+    });
+    const xml = xmlP.readXmlResult(await resp.text());
+  return {
+    StorageLensConfiguration: StorageLensConfiguration_Parse(xml),
+  };
+  }
+
+  async getStorageLensConfigurationTagging(
+    {abortSignal, ...params}: RequestConfig & GetStorageLensConfigurationTaggingRequest,
+  ): Promise<GetStorageLensConfigurationTaggingResult> {
+    const headers = new Headers;
+    headers.append("x-amz-account-id", params["AccountId"]);
+    const resp = await this.#client.performRequest({
+      abortSignal, headers,
+      action: "GetStorageLensConfigurationTagging",
+      method: "GET",
+      requestUri: cmnP.encodePath`/v20180820/storagelens/${params["ConfigId"]}/tagging`,
+      hostPrefix: `${params.AccountId}.`,
+    });
+    const xml = xmlP.readXmlResult(await resp.text());
+    return {
+      Tags: xml.getList("Tags", "Tag").map(StorageLensTag_Parse),
+    };
+  }
+
   async listAccessPoints(
     {abortSignal, ...params}: RequestConfig & ListAccessPointsRequest,
   ): Promise<ListAccessPointsResult> {
@@ -499,6 +565,29 @@ export default class S3Control {
         optional: {"NextToken":true},
       }),
       RegionalBucketList: xml.getList("RegionalBucketList", "RegionalBucket").map(RegionalBucket_Parse),
+    };
+  }
+
+  async listStorageLensConfigurations(
+    {abortSignal, ...params}: RequestConfig & ListStorageLensConfigurationsRequest,
+  ): Promise<ListStorageLensConfigurationsResult> {
+    const headers = new Headers;
+    const query = new URLSearchParams;
+    headers.append("x-amz-account-id", params["AccountId"]);
+    if (params["NextToken"] != null) query.set("nextToken", params["NextToken"]?.toString() ?? "");
+    const resp = await this.#client.performRequest({
+      abortSignal, headers, query,
+      action: "ListStorageLensConfigurations",
+      method: "GET",
+      requestUri: "/v20180820/storagelens",
+      hostPrefix: `${params.AccountId}.`,
+    });
+    const xml = xmlP.readXmlResult(await resp.text());
+    return {
+      ...xml.strings({
+        optional: {"NextToken":true},
+      }),
+      StorageLensConfigurationList: xml.getList("StorageLensConfiguration").map(ListStorageLensConfigurationEntry_Parse),
     };
   }
 
@@ -629,6 +718,49 @@ export default class S3Control {
       requestUri: "/v20180820/configuration/publicAccessBlock",
       hostPrefix: `${params.AccountId}.`,
     });
+  }
+
+  async putStorageLensConfiguration(
+    {abortSignal, ...params}: RequestConfig & PutStorageLensConfigurationRequest,
+  ): Promise<void> {
+    const headers = new Headers;
+    const body = xmlP.stringify({
+      name: "PutStorageLensConfigurationRequest",
+      attributes: {"xmlns":"http://awss3control.amazonaws.com/doc/2018-08-20/"},
+      children: [
+        {name: "StorageLensConfiguration", ...StorageLensConfiguration_Serialize(params["StorageLensConfiguration"])},
+        {name: "Tags", children: params["Tags"]?.map(x => ({name: "Tag", ...StorageLensTag_Serialize(x)}))},
+      ]});
+    headers.append("x-amz-account-id", params["AccountId"]);
+    const resp = await this.#client.performRequest({
+      abortSignal, headers, body,
+      action: "PutStorageLensConfiguration",
+      method: "PUT",
+      requestUri: cmnP.encodePath`/v20180820/storagelens/${params["ConfigId"]}`,
+      hostPrefix: `${params.AccountId}.`,
+    });
+  }
+
+  async putStorageLensConfigurationTagging(
+    {abortSignal, ...params}: RequestConfig & PutStorageLensConfigurationTaggingRequest,
+  ): Promise<PutStorageLensConfigurationTaggingResult> {
+    const headers = new Headers;
+    const body = xmlP.stringify({
+      name: "PutStorageLensConfigurationTaggingRequest",
+      attributes: {"xmlns":"http://awss3control.amazonaws.com/doc/2018-08-20/"},
+      children: [
+        {name: "Tags", children: params["Tags"]?.map(x => ({name: "Tag", ...StorageLensTag_Serialize(x)}))},
+      ]});
+    headers.append("x-amz-account-id", params["AccountId"]);
+    const resp = await this.#client.performRequest({
+      abortSignal, headers, body,
+      action: "PutStorageLensConfigurationTagging",
+      method: "PUT",
+      requestUri: cmnP.encodePath`/v20180820/storagelens/${params["ConfigId"]}/tagging`,
+      hostPrefix: `${params.AccountId}.`,
+    });
+    return {
+    };
   }
 
   async updateJobPriority(
@@ -763,6 +895,18 @@ export interface DeletePublicAccessBlockRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface DeleteStorageLensConfigurationRequest {
+  ConfigId: string;
+  AccountId: string;
+}
+
+// refs: 1 - tags: named, input
+export interface DeleteStorageLensConfigurationTaggingRequest {
+  ConfigId: string;
+  AccountId: string;
+}
+
+// refs: 1 - tags: named, input
 export interface DescribeJobRequest {
   AccountId: string;
   JobId: string;
@@ -822,6 +966,18 @@ export interface GetPublicAccessBlockRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface GetStorageLensConfigurationRequest {
+  ConfigId: string;
+  AccountId: string;
+}
+
+// refs: 1 - tags: named, input
+export interface GetStorageLensConfigurationTaggingRequest {
+  ConfigId: string;
+  AccountId: string;
+}
+
+// refs: 1 - tags: named, input
 export interface ListAccessPointsRequest {
   AccountId: string;
   Bucket?: string | null;
@@ -843,6 +999,12 @@ export interface ListRegionalBucketsRequest {
   NextToken?: string | null;
   MaxResults?: number | null;
   OutpostId?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface ListStorageLensConfigurationsRequest {
+  AccountId: string;
+  NextToken?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -888,6 +1050,21 @@ export interface PutPublicAccessBlockRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface PutStorageLensConfigurationRequest {
+  ConfigId: string;
+  AccountId: string;
+  StorageLensConfiguration: StorageLensConfiguration;
+  Tags?: StorageLensTag[] | null;
+}
+
+// refs: 1 - tags: named, input
+export interface PutStorageLensConfigurationTaggingRequest {
+  ConfigId: string;
+  AccountId: string;
+  Tags: StorageLensTag[];
+}
+
+// refs: 1 - tags: named, input
 export interface UpdateJobPriorityRequest {
   AccountId: string;
   JobId: string;
@@ -920,6 +1097,10 @@ export interface CreateJobResult {
 
 // refs: 1 - tags: named, output
 export interface DeleteJobTaggingResult {
+}
+
+// refs: 1 - tags: named, output
+export interface DeleteStorageLensConfigurationTaggingResult {
 }
 
 // refs: 1 - tags: named, output
@@ -980,6 +1161,16 @@ export interface GetPublicAccessBlockOutput {
 }
 
 // refs: 1 - tags: named, output
+export interface GetStorageLensConfigurationResult {
+  StorageLensConfiguration?: StorageLensConfiguration | null;
+}
+
+// refs: 1 - tags: named, output
+export interface GetStorageLensConfigurationTaggingResult {
+  Tags: StorageLensTag[];
+}
+
+// refs: 1 - tags: named, output
 export interface ListAccessPointsResult {
   AccessPointList: AccessPoint[];
   NextToken?: string | null;
@@ -998,7 +1189,17 @@ export interface ListRegionalBucketsResult {
 }
 
 // refs: 1 - tags: named, output
+export interface ListStorageLensConfigurationsResult {
+  NextToken?: string | null;
+  StorageLensConfigurationList: ListStorageLensConfigurationEntry[];
+}
+
+// refs: 1 - tags: named, output
 export interface PutJobTaggingResult {
+}
+
+// refs: 1 - tags: named, output
+export interface PutStorageLensConfigurationTaggingResult {
 }
 
 // refs: 1 - tags: named, output
@@ -1898,6 +2099,337 @@ function Tagging_Serialize(data: Tagging | undefined | null): Partial<xmlP.Node>
   ]};
 }
 
+// refs: 2 - tags: input, named, interface, output
+export interface StorageLensConfiguration {
+  Id: string;
+  AccountLevel: AccountLevel;
+  Include?: Include | null;
+  Exclude?: Exclude | null;
+  DataExport?: StorageLensDataExport | null;
+  IsEnabled: boolean;
+  AwsOrg?: StorageLensAwsOrg | null;
+  StorageLensArn?: string | null;
+}
+function StorageLensConfiguration_Serialize(data: StorageLensConfiguration | undefined | null): Partial<xmlP.Node> {
+  if (!data) return {};
+  return {children: [
+    {name: "Id", content: data["Id"]?.toString()},
+    {name: "AccountLevel", ...AccountLevel_Serialize(data["AccountLevel"])},
+    {name: "Include", ...Include_Serialize(data["Include"])},
+    {name: "Exclude", ...Exclude_Serialize(data["Exclude"])},
+    {name: "DataExport", ...StorageLensDataExport_Serialize(data["DataExport"])},
+    {name: "IsEnabled", content: data["IsEnabled"]?.toString()},
+    {name: "AwsOrg", ...StorageLensAwsOrg_Serialize(data["AwsOrg"])},
+    {name: "StorageLensArn", content: data["StorageLensArn"]?.toString()},
+  ]};
+}
+function StorageLensConfiguration_Parse(node: xmlP.XmlNode): StorageLensConfiguration {
+  return {
+    ...node.strings({
+      required: {"Id":true},
+      optional: {"StorageLensArn":true},
+    }),
+    AccountLevel: node.first("AccountLevel", true, AccountLevel_Parse),
+    Include: node.first("Include", false, Include_Parse),
+    Exclude: node.first("Exclude", false, Exclude_Parse),
+    DataExport: node.first("DataExport", false, StorageLensDataExport_Parse),
+    IsEnabled: node.first("IsEnabled", true, x => x.content === 'true'),
+    AwsOrg: node.first("AwsOrg", false, StorageLensAwsOrg_Parse),
+  };
+}
+
+// refs: 2 - tags: input, named, interface, output
+export interface AccountLevel {
+  ActivityMetrics?: ActivityMetrics | null;
+  BucketLevel: BucketLevel;
+}
+function AccountLevel_Serialize(data: AccountLevel | undefined | null): Partial<xmlP.Node> {
+  if (!data) return {};
+  return {children: [
+    {name: "ActivityMetrics", ...ActivityMetrics_Serialize(data["ActivityMetrics"])},
+    {name: "BucketLevel", ...BucketLevel_Serialize(data["BucketLevel"])},
+  ]};
+}
+function AccountLevel_Parse(node: xmlP.XmlNode): AccountLevel {
+  return {
+    ActivityMetrics: node.first("ActivityMetrics", false, ActivityMetrics_Parse),
+    BucketLevel: node.first("BucketLevel", true, BucketLevel_Parse),
+  };
+}
+
+// refs: 4 - tags: input, named, interface, output
+export interface ActivityMetrics {
+  IsEnabled?: boolean | null;
+}
+function ActivityMetrics_Serialize(data: ActivityMetrics | undefined | null): Partial<xmlP.Node> {
+  if (!data) return {};
+  return {children: [
+    {name: "IsEnabled", content: data["IsEnabled"]?.toString()},
+  ]};
+}
+function ActivityMetrics_Parse(node: xmlP.XmlNode): ActivityMetrics {
+  return {
+    IsEnabled: node.first("IsEnabled", false, x => x.content === 'true'),
+  };
+}
+
+// refs: 2 - tags: input, named, interface, output
+export interface BucketLevel {
+  ActivityMetrics?: ActivityMetrics | null;
+  PrefixLevel?: PrefixLevel | null;
+}
+function BucketLevel_Serialize(data: BucketLevel | undefined | null): Partial<xmlP.Node> {
+  if (!data) return {};
+  return {children: [
+    {name: "ActivityMetrics", ...ActivityMetrics_Serialize(data["ActivityMetrics"])},
+    {name: "PrefixLevel", ...PrefixLevel_Serialize(data["PrefixLevel"])},
+  ]};
+}
+function BucketLevel_Parse(node: xmlP.XmlNode): BucketLevel {
+  return {
+    ActivityMetrics: node.first("ActivityMetrics", false, ActivityMetrics_Parse),
+    PrefixLevel: node.first("PrefixLevel", false, PrefixLevel_Parse),
+  };
+}
+
+// refs: 2 - tags: input, named, interface, output
+export interface PrefixLevel {
+  StorageMetrics: PrefixLevelStorageMetrics;
+}
+function PrefixLevel_Serialize(data: PrefixLevel | undefined | null): Partial<xmlP.Node> {
+  if (!data) return {};
+  return {children: [
+    {name: "StorageMetrics", ...PrefixLevelStorageMetrics_Serialize(data["StorageMetrics"])},
+  ]};
+}
+function PrefixLevel_Parse(node: xmlP.XmlNode): PrefixLevel {
+  return {
+    StorageMetrics: node.first("StorageMetrics", true, PrefixLevelStorageMetrics_Parse),
+  };
+}
+
+// refs: 2 - tags: input, named, interface, output
+export interface PrefixLevelStorageMetrics {
+  IsEnabled?: boolean | null;
+  SelectionCriteria?: SelectionCriteria | null;
+}
+function PrefixLevelStorageMetrics_Serialize(data: PrefixLevelStorageMetrics | undefined | null): Partial<xmlP.Node> {
+  if (!data) return {};
+  return {children: [
+    {name: "IsEnabled", content: data["IsEnabled"]?.toString()},
+    {name: "SelectionCriteria", ...SelectionCriteria_Serialize(data["SelectionCriteria"])},
+  ]};
+}
+function PrefixLevelStorageMetrics_Parse(node: xmlP.XmlNode): PrefixLevelStorageMetrics {
+  return {
+    IsEnabled: node.first("IsEnabled", false, x => x.content === 'true'),
+    SelectionCriteria: node.first("SelectionCriteria", false, SelectionCriteria_Parse),
+  };
+}
+
+// refs: 2 - tags: input, named, interface, output
+export interface SelectionCriteria {
+  Delimiter?: string | null;
+  MaxDepth?: number | null;
+  MinStorageBytesPercentage?: number | null;
+}
+function SelectionCriteria_Serialize(data: SelectionCriteria | undefined | null): Partial<xmlP.Node> {
+  if (!data) return {};
+  return {children: [
+    {name: "Delimiter", content: data["Delimiter"]?.toString()},
+    {name: "MaxDepth", content: data["MaxDepth"]?.toString()},
+    {name: "MinStorageBytesPercentage", content: data["MinStorageBytesPercentage"]?.toString()},
+  ]};
+}
+function SelectionCriteria_Parse(node: xmlP.XmlNode): SelectionCriteria {
+  return {
+    ...node.strings({
+      optional: {"Delimiter":true},
+    }),
+    MaxDepth: node.first("MaxDepth", false, x => parseInt(x.content ?? '0')),
+    MinStorageBytesPercentage: node.first("MinStorageBytesPercentage", false, x => parseFloat(x.content ?? '0')),
+  };
+}
+
+// refs: 2 - tags: input, named, interface, output
+export interface Include {
+  Buckets: string[];
+  Regions: string[];
+}
+function Include_Serialize(data: Include | undefined | null): Partial<xmlP.Node> {
+  if (!data) return {};
+  return {children: [
+    {name: "Buckets", children: data["Buckets"]?.map(x => ({name: "Arn", content: x}))},
+    {name: "Regions", children: data["Regions"]?.map(x => ({name: "Region", content: x}))},
+  ]};
+}
+function Include_Parse(node: xmlP.XmlNode): Include {
+  return {
+    Buckets: node.getList("Buckets", "Arn").map(x => x.content ?? ''),
+    Regions: node.getList("Regions", "Region").map(x => x.content ?? ''),
+  };
+}
+
+// refs: 2 - tags: input, named, interface, output
+export interface Exclude {
+  Buckets: string[];
+  Regions: string[];
+}
+function Exclude_Serialize(data: Exclude | undefined | null): Partial<xmlP.Node> {
+  if (!data) return {};
+  return {children: [
+    {name: "Buckets", children: data["Buckets"]?.map(x => ({name: "Arn", content: x}))},
+    {name: "Regions", children: data["Regions"]?.map(x => ({name: "Region", content: x}))},
+  ]};
+}
+function Exclude_Parse(node: xmlP.XmlNode): Exclude {
+  return {
+    Buckets: node.getList("Buckets", "Arn").map(x => x.content ?? ''),
+    Regions: node.getList("Regions", "Region").map(x => x.content ?? ''),
+  };
+}
+
+// refs: 2 - tags: input, named, interface, output
+export interface StorageLensDataExport {
+  S3BucketDestination: S3BucketDestination;
+}
+function StorageLensDataExport_Serialize(data: StorageLensDataExport | undefined | null): Partial<xmlP.Node> {
+  if (!data) return {};
+  return {children: [
+    {name: "S3BucketDestination", ...S3BucketDestination_Serialize(data["S3BucketDestination"])},
+  ]};
+}
+function StorageLensDataExport_Parse(node: xmlP.XmlNode): StorageLensDataExport {
+  return {
+    S3BucketDestination: node.first("S3BucketDestination", true, S3BucketDestination_Parse),
+  };
+}
+
+// refs: 2 - tags: input, named, interface, output
+export interface S3BucketDestination {
+  Format: Format;
+  OutputSchemaVersion: OutputSchemaVersion;
+  AccountId: string;
+  Arn: string;
+  Prefix?: string | null;
+  Encryption?: StorageLensDataExportEncryption | null;
+}
+function S3BucketDestination_Serialize(data: S3BucketDestination | undefined | null): Partial<xmlP.Node> {
+  if (!data) return {};
+  return {children: [
+    {name: "Format", content: data["Format"]?.toString()},
+    {name: "OutputSchemaVersion", content: data["OutputSchemaVersion"]?.toString()},
+    {name: "AccountId", content: data["AccountId"]?.toString()},
+    {name: "Arn", content: data["Arn"]?.toString()},
+    {name: "Prefix", content: data["Prefix"]?.toString()},
+    {name: "Encryption", ...StorageLensDataExportEncryption_Serialize(data["Encryption"])},
+  ]};
+}
+function S3BucketDestination_Parse(node: xmlP.XmlNode): S3BucketDestination {
+  return {
+    ...node.strings({
+      required: {"AccountId":true,"Arn":true},
+      optional: {"Prefix":true},
+    }),
+    Format: node.first("Format", true, x => (x.content ?? '') as Format),
+    OutputSchemaVersion: node.first("OutputSchemaVersion", true, x => (x.content ?? '') as OutputSchemaVersion),
+    Encryption: node.first("Encryption", false, StorageLensDataExportEncryption_Parse),
+  };
+}
+
+// refs: 2 - tags: input, named, enum, output
+export type Format =
+| "CSV"
+| "Parquet"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 2 - tags: input, named, enum, output
+export type OutputSchemaVersion =
+| "V_1"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 2 - tags: input, named, interface, output
+export interface StorageLensDataExportEncryption {
+  SSES3?: SSES3 | null;
+  SSEKMS?: SSEKMS | null;
+}
+function StorageLensDataExportEncryption_Serialize(data: StorageLensDataExportEncryption | undefined | null): Partial<xmlP.Node> {
+  if (!data) return {};
+  return {children: [
+    {name: "SSE-S3", ...SSES3_Serialize(data["SSES3"])},
+    {name: "SSE-KMS", ...SSEKMS_Serialize(data["SSEKMS"])},
+  ]};
+}
+function StorageLensDataExportEncryption_Parse(node: xmlP.XmlNode): StorageLensDataExportEncryption {
+  return {
+    SSES3: node.first("SSE-S3", false, SSES3_Parse),
+    SSEKMS: node.first("SSE-KMS", false, SSEKMS_Parse),
+  };
+}
+
+// refs: 2 - tags: input, named, interface, output
+export interface SSES3 {
+}
+function SSES3_Serialize(data: SSES3 | undefined | null): Partial<xmlP.Node> {
+  if (!data) return {};
+  return {children: [
+
+  ]};
+}
+function SSES3_Parse(node: xmlP.XmlNode): SSES3 {
+  return {};
+}
+
+// refs: 2 - tags: input, named, interface, output
+export interface SSEKMS {
+  KeyId: string;
+}
+function SSEKMS_Serialize(data: SSEKMS | undefined | null): Partial<xmlP.Node> {
+  if (!data) return {};
+  return {children: [
+    {name: "KeyId", content: data["KeyId"]?.toString()},
+  ]};
+}
+function SSEKMS_Parse(node: xmlP.XmlNode): SSEKMS {
+  return node.strings({
+    required: {"KeyId":true},
+  });
+}
+
+// refs: 2 - tags: input, named, interface, output
+export interface StorageLensAwsOrg {
+  Arn: string;
+}
+function StorageLensAwsOrg_Serialize(data: StorageLensAwsOrg | undefined | null): Partial<xmlP.Node> {
+  if (!data) return {};
+  return {children: [
+    {name: "Arn", content: data["Arn"]?.toString()},
+  ]};
+}
+function StorageLensAwsOrg_Parse(node: xmlP.XmlNode): StorageLensAwsOrg {
+  return node.strings({
+    required: {"Arn":true},
+  });
+}
+
+// refs: 3 - tags: input, named, interface, output
+export interface StorageLensTag {
+  Key: string;
+  Value: string;
+}
+function StorageLensTag_Serialize(data: StorageLensTag | undefined | null): Partial<xmlP.Node> {
+  if (!data) return {};
+  return {children: [
+    {name: "Key", content: data["Key"]?.toString()},
+    {name: "Value", content: data["Value"]?.toString()},
+  ]};
+}
+function StorageLensTag_Parse(node: xmlP.XmlNode): StorageLensTag {
+  return node.strings({
+    required: {"Key":true,"Value":true},
+  });
+}
+
 // refs: 1 - tags: input, named, enum
 export type RequestedJobStatus =
 | "Cancelled"
@@ -2055,5 +2587,21 @@ function RegionalBucket_Parse(node: xmlP.XmlNode): RegionalBucket {
     }),
     PublicAccessBlockEnabled: node.first("PublicAccessBlockEnabled", true, x => x.content === 'true'),
     CreationDate: node.first("CreationDate", true, x => xmlP.parseTimestamp(x.content)),
+  };
+}
+
+// refs: 1 - tags: output, named, interface
+export interface ListStorageLensConfigurationEntry {
+  Id: string;
+  StorageLensArn: string;
+  HomeRegion: string;
+  IsEnabled?: boolean | null;
+}
+function ListStorageLensConfigurationEntry_Parse(node: xmlP.XmlNode): ListStorageLensConfigurationEntry {
+  return {
+    ...node.strings({
+      required: {"Id":true,"StorageLensArn":true,"HomeRegion":true},
+    }),
+    IsEnabled: node.first("IsEnabled", false, x => x.content === 'true'),
   };
 }

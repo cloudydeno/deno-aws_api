@@ -5,7 +5,7 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import * as uuidv4 from "https://deno.land/std@0.71.0/uuid/v4.ts";
+import * as uuidv4 from "https://deno.land/std@0.75.0/uuid/v4.ts";
 import * as cmnP from "../../encoding/common.ts";
 import * as jsonP from "../../encoding/json.ts";
 function generateIdemptToken() {
@@ -380,6 +380,24 @@ export default class Comprehend {
     }, await resp.json());
   }
 
+  async describeEventsDetectionJob(
+    {abortSignal, ...params}: RequestConfig & DescribeEventsDetectionJobRequest,
+  ): Promise<DescribeEventsDetectionJobResponse> {
+    const body: jsonP.JSONObject = {
+      JobId: params["JobId"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DescribeEventsDetectionJob",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "EventsDetectionJobProperties": toEventsDetectionJobProperties,
+      },
+    }, await resp.json());
+  }
+
   async describeKeyPhrasesDetectionJob(
     {abortSignal, ...params}: RequestConfig & DescribeKeyPhrasesDetectionJobRequest,
   ): Promise<DescribeKeyPhrasesDetectionJobResponse> {
@@ -693,6 +711,27 @@ export default class Comprehend {
     }, await resp.json());
   }
 
+  async listEventsDetectionJobs(
+    {abortSignal, ...params}: RequestConfig & ListEventsDetectionJobsRequest = {},
+  ): Promise<ListEventsDetectionJobsResponse> {
+    const body: jsonP.JSONObject = {
+      Filter: fromEventsDetectionJobFilter(params["Filter"]),
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "ListEventsDetectionJobs",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "EventsDetectionJobPropertiesList": [toEventsDetectionJobProperties],
+        "NextToken": "s",
+      },
+    }, await resp.json());
+  }
+
   async listKeyPhrasesDetectionJobs(
     {abortSignal, ...params}: RequestConfig & ListKeyPhrasesDetectionJobsRequest = {},
   ): Promise<ListKeyPhrasesDetectionJobsResponse> {
@@ -874,6 +913,31 @@ export default class Comprehend {
     }, await resp.json());
   }
 
+  async startEventsDetectionJob(
+    {abortSignal, ...params}: RequestConfig & StartEventsDetectionJobRequest,
+  ): Promise<StartEventsDetectionJobResponse> {
+    const body: jsonP.JSONObject = {
+      InputDataConfig: fromInputDataConfig(params["InputDataConfig"]),
+      OutputDataConfig: fromOutputDataConfig(params["OutputDataConfig"]),
+      DataAccessRoleArn: params["DataAccessRoleArn"],
+      JobName: params["JobName"],
+      LanguageCode: params["LanguageCode"],
+      ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
+      TargetEventTypes: params["TargetEventTypes"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "StartEventsDetectionJob",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "JobId": "s",
+        "JobStatus": (x: jsonP.JSONValue) => cmnP.readEnum<JobStatus>(x),
+      },
+    }, await resp.json());
+  }
+
   async startKeyPhrasesDetectionJob(
     {abortSignal, ...params}: RequestConfig & StartKeyPhrasesDetectionJobRequest,
   ): Promise<StartKeyPhrasesDetectionJobResponse> {
@@ -1006,6 +1070,25 @@ export default class Comprehend {
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopEntitiesDetectionJob",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "JobId": "s",
+        "JobStatus": (x: jsonP.JSONValue) => cmnP.readEnum<JobStatus>(x),
+      },
+    }, await resp.json());
+  }
+
+  async stopEventsDetectionJob(
+    {abortSignal, ...params}: RequestConfig & StopEventsDetectionJobRequest,
+  ): Promise<StopEventsDetectionJobResponse> {
+    const body: jsonP.JSONObject = {
+      JobId: params["JobId"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "StopEventsDetectionJob",
     });
     return jsonP.readObj({
       required: {},
@@ -1274,6 +1357,11 @@ export interface DescribeEntityRecognizerRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface DescribeEventsDetectionJobRequest {
+  JobId: string;
+}
+
+// refs: 1 - tags: named, input
 export interface DescribeKeyPhrasesDetectionJobRequest {
   JobId: string;
 }
@@ -1372,6 +1460,13 @@ export interface ListEntityRecognizersRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface ListEventsDetectionJobsRequest {
+  Filter?: EventsDetectionJobFilter | null;
+  NextToken?: string | null;
+  MaxResults?: number | null;
+}
+
+// refs: 1 - tags: named, input
 export interface ListKeyPhrasesDetectionJobsRequest {
   Filter?: KeyPhrasesDetectionJobFilter | null;
   NextToken?: string | null;
@@ -1441,6 +1536,17 @@ export interface StartEntitiesDetectionJobRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface StartEventsDetectionJobRequest {
+  InputDataConfig: InputDataConfig;
+  OutputDataConfig: OutputDataConfig;
+  DataAccessRoleArn: string;
+  JobName?: string | null;
+  LanguageCode: LanguageCode;
+  ClientRequestToken?: string | null;
+  TargetEventTypes: string[];
+}
+
+// refs: 1 - tags: named, input
 export interface StartKeyPhrasesDetectionJobRequest {
   InputDataConfig: InputDataConfig;
   OutputDataConfig: OutputDataConfig;
@@ -1495,6 +1601,11 @@ export interface StopDominantLanguageDetectionJobRequest {
 
 // refs: 1 - tags: named, input
 export interface StopEntitiesDetectionJobRequest {
+  JobId: string;
+}
+
+// refs: 1 - tags: named, input
+export interface StopEventsDetectionJobRequest {
   JobId: string;
 }
 
@@ -1635,6 +1746,11 @@ export interface DescribeEntityRecognizerResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface DescribeEventsDetectionJobResponse {
+  EventsDetectionJobProperties?: EventsDetectionJobProperties | null;
+}
+
+// refs: 1 - tags: named, output
 export interface DescribeKeyPhrasesDetectionJobResponse {
   KeyPhrasesDetectionJobProperties?: KeyPhrasesDetectionJobProperties | null;
 }
@@ -1722,6 +1838,12 @@ export interface ListEntityRecognizersResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface ListEventsDetectionJobsResponse {
+  EventsDetectionJobPropertiesList?: EventsDetectionJobProperties[] | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
 export interface ListKeyPhrasesDetectionJobsResponse {
   KeyPhrasesDetectionJobPropertiesList?: KeyPhrasesDetectionJobProperties[] | null;
   NextToken?: string | null;
@@ -1770,6 +1892,12 @@ export interface StartEntitiesDetectionJobResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface StartEventsDetectionJobResponse {
+  JobId?: string | null;
+  JobStatus?: JobStatus | null;
+}
+
+// refs: 1 - tags: named, output
 export interface StartKeyPhrasesDetectionJobResponse {
   JobId?: string | null;
   JobStatus?: JobStatus | null;
@@ -1801,6 +1929,12 @@ export interface StopDominantLanguageDetectionJobResponse {
 
 // refs: 1 - tags: named, output
 export interface StopEntitiesDetectionJobResponse {
+  JobId?: string | null;
+  JobStatus?: JobStatus | null;
+}
+
+// refs: 1 - tags: named, output
+export interface StopEventsDetectionJobResponse {
   JobId?: string | null;
   JobStatus?: JobStatus | null;
 }
@@ -1843,7 +1977,7 @@ export interface UntagResourceResponse {
 export interface UpdateEndpointResponse {
 }
 
-// refs: 25 - tags: input, named, enum, output
+// refs: 28 - tags: input, named, enum, output
 export type LanguageCode =
 | "en"
 | "es"
@@ -2132,7 +2266,7 @@ function fromDocumentClassificationJobFilter(input?: DocumentClassificationJobFi
   }
 }
 
-// refs: 33 - tags: input, named, enum, output
+// refs: 38 - tags: input, named, enum, output
 export type JobStatus =
 | "SUBMITTED"
 | "IN_PROGRESS"
@@ -2244,6 +2378,23 @@ function fromEntityRecognizerFilter(input?: EntityRecognizerFilter | null): json
 }
 
 // refs: 1 - tags: input, named, interface
+export interface EventsDetectionJobFilter {
+  JobName?: string | null;
+  JobStatus?: JobStatus | null;
+  SubmitTimeBefore?: Date | number | null;
+  SubmitTimeAfter?: Date | number | null;
+}
+function fromEventsDetectionJobFilter(input?: EventsDetectionJobFilter | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    JobName: input["JobName"],
+    JobStatus: input["JobStatus"],
+    SubmitTimeBefore: jsonP.serializeDate_unixTimestamp(input["SubmitTimeBefore"]),
+    SubmitTimeAfter: jsonP.serializeDate_unixTimestamp(input["SubmitTimeAfter"]),
+  }
+}
+
+// refs: 1 - tags: input, named, interface
 export interface KeyPhrasesDetectionJobFilter {
   JobName?: string | null;
   JobStatus?: JobStatus | null;
@@ -2311,7 +2462,7 @@ function fromTopicsDetectionJobFilter(input?: TopicsDetectionJobFilter | null): 
   }
 }
 
-// refs: 21 - tags: input, named, interface, output
+// refs: 24 - tags: input, named, interface, output
 export interface InputDataConfig {
   S3Uri: string;
   InputFormat?: InputFormat | null;
@@ -2334,13 +2485,13 @@ function toInputDataConfig(root: jsonP.JSONValue): InputDataConfig {
   }, root);
 }
 
-// refs: 21 - tags: input, named, enum, output
+// refs: 24 - tags: input, named, enum, output
 export type InputFormat =
 | "ONE_DOC_PER_FILE"
 | "ONE_DOC_PER_LINE"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 19 - tags: input, named, interface, output
+// refs: 22 - tags: input, named, interface, output
 export interface OutputDataConfig {
   S3Uri: string;
   KmsKeyId?: string | null;
@@ -3026,6 +3177,39 @@ function toEntityTypesEvaluationMetrics(root: jsonP.JSONValue): EntityTypesEvalu
       "Precision": "n",
       "Recall": "n",
       "F1Score": "n",
+    },
+  }, root);
+}
+
+// refs: 2 - tags: output, named, interface
+export interface EventsDetectionJobProperties {
+  JobId?: string | null;
+  JobName?: string | null;
+  JobStatus?: JobStatus | null;
+  Message?: string | null;
+  SubmitTime?: Date | number | null;
+  EndTime?: Date | number | null;
+  InputDataConfig?: InputDataConfig | null;
+  OutputDataConfig?: OutputDataConfig | null;
+  LanguageCode?: LanguageCode | null;
+  DataAccessRoleArn?: string | null;
+  TargetEventTypes?: string[] | null;
+}
+function toEventsDetectionJobProperties(root: jsonP.JSONValue): EventsDetectionJobProperties {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "JobId": "s",
+      "JobName": "s",
+      "JobStatus": (x: jsonP.JSONValue) => cmnP.readEnum<JobStatus>(x),
+      "Message": "s",
+      "SubmitTime": "d",
+      "EndTime": "d",
+      "InputDataConfig": toInputDataConfig,
+      "OutputDataConfig": toOutputDataConfig,
+      "LanguageCode": (x: jsonP.JSONValue) => cmnP.readEnum<LanguageCode>(x),
+      "DataAccessRoleArn": "s",
+      "TargetEventTypes": ["s"],
     },
   }, root);
 }

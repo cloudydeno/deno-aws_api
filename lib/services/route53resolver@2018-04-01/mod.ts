@@ -5,7 +5,7 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import * as uuidv4 from "https://deno.land/std@0.71.0/uuid/v4.ts";
+import * as uuidv4 from "https://deno.land/std@0.75.0/uuid/v4.ts";
 import * as cmnP from "../../encoding/common.ts";
 import * as jsonP from "../../encoding/json.ts";
 function generateIdemptToken() {
@@ -268,6 +268,24 @@ export default class Route53Resolver {
     }, await resp.json());
   }
 
+  async getResolverDnssecConfig(
+    {abortSignal, ...params}: RequestConfig & GetResolverDnssecConfigRequest,
+  ): Promise<GetResolverDnssecConfigResponse> {
+    const body: jsonP.JSONObject = {
+      ResourceId: params["ResourceId"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "GetResolverDnssecConfig",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ResolverDNSSECConfig": toResolverDnssecConfig,
+      },
+    }, await resp.json());
+  }
+
   async getResolverEndpoint(
     {abortSignal, ...params}: RequestConfig & GetResolverEndpointRequest,
   ): Promise<GetResolverEndpointResponse> {
@@ -390,6 +408,27 @@ export default class Route53Resolver {
       required: {},
       optional: {
         "ResolverRulePolicy": "s",
+      },
+    }, await resp.json());
+  }
+
+  async listResolverDnssecConfigs(
+    {abortSignal, ...params}: RequestConfig & ListResolverDnssecConfigsRequest = {},
+  ): Promise<ListResolverDnssecConfigsResponse> {
+    const body: jsonP.JSONObject = {
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+      Filters: params["Filters"]?.map(x => fromFilter(x)),
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "ListResolverDnssecConfigs",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "NextToken": "s",
+        "ResolverDnssecConfigs": [toResolverDnssecConfig],
       },
     }, await resp.json());
   }
@@ -625,6 +664,25 @@ export default class Route53Resolver {
     }, await resp.json());
   }
 
+  async updateResolverDnssecConfig(
+    {abortSignal, ...params}: RequestConfig & UpdateResolverDnssecConfigRequest,
+  ): Promise<UpdateResolverDnssecConfigResponse> {
+    const body: jsonP.JSONObject = {
+      ResourceId: params["ResourceId"],
+      Validation: params["Validation"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "UpdateResolverDnssecConfig",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ResolverDNSSECConfig": toResolverDnssecConfig,
+      },
+    }, await resp.json());
+  }
+
   async updateResolverEndpoint(
     {abortSignal, ...params}: RequestConfig & UpdateResolverEndpointRequest,
   ): Promise<UpdateResolverEndpointResponse> {
@@ -747,6 +805,11 @@ export interface DisassociateResolverRuleRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface GetResolverDnssecConfigRequest {
+  ResourceId: string;
+}
+
+// refs: 1 - tags: named, input
 export interface GetResolverEndpointRequest {
   ResolverEndpointId: string;
 }
@@ -779,6 +842,13 @@ export interface GetResolverRuleAssociationRequest {
 // refs: 1 - tags: named, input
 export interface GetResolverRulePolicyRequest {
   Arn: string;
+}
+
+// refs: 1 - tags: named, input
+export interface ListResolverDnssecConfigsRequest {
+  MaxResults?: number | null;
+  NextToken?: string | null;
+  Filters?: Filter[] | null;
 }
 
 // refs: 1 - tags: named, input
@@ -859,6 +929,12 @@ export interface UntagResourceRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface UpdateResolverDnssecConfigRequest {
+  ResourceId: string;
+  Validation: Validation;
+}
+
+// refs: 1 - tags: named, input
 export interface UpdateResolverEndpointRequest {
   ResolverEndpointId: string;
   Name?: string | null;
@@ -931,6 +1007,11 @@ export interface DisassociateResolverRuleResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface GetResolverDnssecConfigResponse {
+  ResolverDNSSECConfig?: ResolverDnssecConfig | null;
+}
+
+// refs: 1 - tags: named, output
 export interface GetResolverEndpointResponse {
   ResolverEndpoint?: ResolverEndpoint | null;
 }
@@ -963,6 +1044,12 @@ export interface GetResolverRuleAssociationResponse {
 // refs: 1 - tags: named, output
 export interface GetResolverRulePolicyResponse {
   ResolverRulePolicy?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface ListResolverDnssecConfigsResponse {
+  NextToken?: string | null;
+  ResolverDnssecConfigs?: ResolverDnssecConfig[] | null;
 }
 
 // refs: 1 - tags: named, output
@@ -1031,6 +1118,11 @@ export interface TagResourceResponse {
 
 // refs: 1 - tags: named, output
 export interface UntagResourceResponse {
+}
+
+// refs: 1 - tags: named, output
+export interface UpdateResolverDnssecConfigResponse {
+  ResolverDNSSECConfig?: ResolverDnssecConfig | null;
 }
 
 // refs: 1 - tags: named, output
@@ -1129,7 +1221,7 @@ function toTargetAddress(root: jsonP.JSONValue): TargetAddress {
   }, root);
 }
 
-// refs: 5 - tags: input, named, interface
+// refs: 6 - tags: input, named, interface
 export interface Filter {
   Name?: string | null;
   Values?: string[] | null;
@@ -1146,6 +1238,12 @@ function fromFilter(input?: Filter | null): jsonP.JSONValue {
 export type SortOrder =
 | "ASCENDING"
 | "DESCENDING"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 1 - tags: input, named, enum
+export type Validation =
+| "ENABLE"
+| "DISABLE"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
@@ -1373,6 +1471,33 @@ export type ResolverRuleStatus =
 | "DELETING"
 | "UPDATING"
 | "FAILED"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 3 - tags: output, named, interface
+export interface ResolverDnssecConfig {
+  Id?: string | null;
+  OwnerId?: string | null;
+  ResourceId?: string | null;
+  ValidationStatus?: ResolverDNSSECValidationStatus | null;
+}
+function toResolverDnssecConfig(root: jsonP.JSONValue): ResolverDnssecConfig {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "Id": "s",
+      "OwnerId": "s",
+      "ResourceId": "s",
+      "ValidationStatus": (x: jsonP.JSONValue) => cmnP.readEnum<ResolverDNSSECValidationStatus>(x),
+    },
+  }, root);
+}
+
+// refs: 3 - tags: output, named, enum
+export type ResolverDNSSECValidationStatus =
+| "ENABLING"
+| "ENABLED"
+| "DISABLING"
+| "DISABLED"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface

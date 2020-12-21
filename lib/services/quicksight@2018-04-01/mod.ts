@@ -152,6 +152,7 @@ export default class QuickSight {
       ColumnGroups: params["ColumnGroups"]?.map(x => fromColumnGroup(x)),
       Permissions: params["Permissions"]?.map(x => fromResourcePermission(x)),
       RowLevelPermissionDataSet: fromRowLevelPermissionDataSet(params["RowLevelPermissionDataSet"]),
+      ColumnLevelPermissionRules: params["ColumnLevelPermissionRules"]?.map(x => fromColumnLevelPermissionRule(x)),
       Tags: params["Tags"]?.map(x => fromTag(x)),
     };
     const resp = await this.#client.performRequest({
@@ -1277,7 +1278,12 @@ export default class QuickSight {
     if (params["SessionLifetimeInMinutes"] != null) query.set("session-lifetime", params["SessionLifetimeInMinutes"]?.toString() ?? "");
     if (params["UndoRedoDisabled"] != null) query.set("undo-redo-disabled", params["UndoRedoDisabled"]?.toString() ?? "");
     if (params["ResetDisabled"] != null) query.set("reset-disabled", params["ResetDisabled"]?.toString() ?? "");
+    if (params["StatePersistenceEnabled"] != null) query.set("state-persistence-enabled", params["StatePersistenceEnabled"]?.toString() ?? "");
     if (params["UserArn"] != null) query.set("user-arn", params["UserArn"]?.toString() ?? "");
+    if (params["Namespace"] != null) query.set("namespace", params["Namespace"]?.toString() ?? "");
+    for (const item of params["AdditionalDashboardIds"] ?? []) {
+      query.append("additional-dashboard-ids", item?.toString() ?? "");
+    }
     const resp = await this.#client.performRequest({
       abortSignal, query,
       action: "GetDashboardEmbedUrl",
@@ -2171,6 +2177,7 @@ export default class QuickSight {
       ImportMode: params["ImportMode"],
       ColumnGroups: params["ColumnGroups"]?.map(x => fromColumnGroup(x)),
       RowLevelPermissionDataSet: fromRowLevelPermissionDataSet(params["RowLevelPermissionDataSet"]),
+      ColumnLevelPermissionRules: params["ColumnLevelPermissionRules"]?.map(x => fromColumnLevelPermissionRule(x)),
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -2569,6 +2576,7 @@ export interface CreateDataSetRequest {
   ColumnGroups?: ColumnGroup[] | null;
   Permissions?: ResourcePermission[] | null;
   RowLevelPermissionDataSet?: RowLevelPermissionDataSet | null;
+  ColumnLevelPermissionRules?: ColumnLevelPermissionRule[] | null;
   Tags?: Tag[] | null;
 }
 
@@ -2911,11 +2919,14 @@ export interface DescribeUserRequest {
 export interface GetDashboardEmbedUrlRequest {
   AwsAccountId: string;
   DashboardId: string;
-  IdentityType: IdentityType;
+  IdentityType: EmbeddingIdentityType;
   SessionLifetimeInMinutes?: number | null;
   UndoRedoDisabled?: boolean | null;
   ResetDisabled?: boolean | null;
+  StatePersistenceEnabled?: boolean | null;
   UserArn?: string | null;
+  Namespace?: string | null;
+  AdditionalDashboardIds?: string[] | null;
 }
 
 // refs: 1 - tags: named, input
@@ -3197,6 +3208,7 @@ export interface UpdateDataSetRequest {
   ImportMode: DataSetImportMode;
   ColumnGroups?: ColumnGroup[] | null;
   RowLevelPermissionDataSet?: RowLevelPermissionDataSet | null;
+  ColumnLevelPermissionRules?: ColumnLevelPermissionRule[] | null;
 }
 
 // refs: 1 - tags: named, input
@@ -4384,6 +4396,7 @@ function toPhysicalTable(root: jsonP.JSONValue): PhysicalTable {
 // refs: 3 - tags: input, named, interface, output
 export interface RelationalTable {
   DataSourceArn: string;
+  Catalog?: string | null;
   Schema?: string | null;
   Name: string;
   InputColumns: InputColumn[];
@@ -4392,6 +4405,7 @@ function fromRelationalTable(input?: RelationalTable | null): jsonP.JSONValue {
   if (!input) return input;
   return {
     DataSourceArn: input["DataSourceArn"],
+    Catalog: input["Catalog"],
     Schema: input["Schema"],
     Name: input["Name"],
     InputColumns: input["InputColumns"]?.map(x => fromInputColumn(x)),
@@ -4405,6 +4419,7 @@ function toRelationalTable(root: jsonP.JSONValue): RelationalTable {
       "InputColumns": [toInputColumn],
     },
     optional: {
+      "Catalog": "s",
       "Schema": "s",
     },
   }, root);
@@ -4843,6 +4858,8 @@ function toLogicalTableSource(root: jsonP.JSONValue): LogicalTableSource {
 export interface JoinInstruction {
   LeftOperand: string;
   RightOperand: string;
+  LeftJoinKeyProperties?: JoinKeyProperties | null;
+  RightJoinKeyProperties?: JoinKeyProperties | null;
   Type: JoinType;
   OnClause: string;
 }
@@ -4851,6 +4868,8 @@ function fromJoinInstruction(input?: JoinInstruction | null): jsonP.JSONValue {
   return {
     LeftOperand: input["LeftOperand"],
     RightOperand: input["RightOperand"],
+    LeftJoinKeyProperties: fromJoinKeyProperties(input["LeftJoinKeyProperties"]),
+    RightJoinKeyProperties: fromJoinKeyProperties(input["RightJoinKeyProperties"]),
     Type: input["Type"],
     OnClause: input["OnClause"],
   }
@@ -4863,7 +4882,29 @@ function toJoinInstruction(root: jsonP.JSONValue): JoinInstruction {
       "Type": (x: jsonP.JSONValue) => cmnP.readEnum<JoinType>(x),
       "OnClause": "s",
     },
-    optional: {},
+    optional: {
+      "LeftJoinKeyProperties": toJoinKeyProperties,
+      "RightJoinKeyProperties": toJoinKeyProperties,
+    },
+  }, root);
+}
+
+// refs: 6 - tags: input, named, interface, output
+export interface JoinKeyProperties {
+  UniqueKey?: boolean | null;
+}
+function fromJoinKeyProperties(input?: JoinKeyProperties | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    UniqueKey: input["UniqueKey"],
+  }
+}
+function toJoinKeyProperties(root: jsonP.JSONValue): JoinKeyProperties {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "UniqueKey": "b",
+    },
   }, root);
 }
 
@@ -4962,6 +5003,28 @@ export type RowLevelPermissionPolicy =
 | "DENY_ACCESS"
 | cmnP.UnexpectedEnumValue;
 
+// refs: 3 - tags: input, named, interface, output
+export interface ColumnLevelPermissionRule {
+  Principals?: string[] | null;
+  ColumnNames?: string[] | null;
+}
+function fromColumnLevelPermissionRule(input?: ColumnLevelPermissionRule | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    Principals: input["Principals"],
+    ColumnNames: input["ColumnNames"],
+  }
+}
+function toColumnLevelPermissionRule(root: jsonP.JSONValue): ColumnLevelPermissionRule {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "Principals": ["s"],
+      "ColumnNames": ["s"],
+    },
+  }, root);
+}
+
 // refs: 3 - tags: input, named, enum, output
 export type DataSourceType =
 | "ADOBE_ANALYTICS"
@@ -4974,6 +5037,7 @@ export type DataSourceType =
 | "JIRA"
 | "MARIADB"
 | "MYSQL"
+| "ORACLE"
 | "POSTGRESQL"
 | "PRESTO"
 | "REDSHIFT"
@@ -4998,6 +5062,7 @@ export interface DataSourceParameters {
   JiraParameters?: JiraParameters | null;
   MariaDbParameters?: MariaDbParameters | null;
   MySqlParameters?: MySqlParameters | null;
+  OracleParameters?: OracleParameters | null;
   PostgreSqlParameters?: PostgreSqlParameters | null;
   PrestoParameters?: PrestoParameters | null;
   RdsParameters?: RdsParameters | null;
@@ -5021,6 +5086,7 @@ function fromDataSourceParameters(input?: DataSourceParameters | null): jsonP.JS
     JiraParameters: fromJiraParameters(input["JiraParameters"]),
     MariaDbParameters: fromMariaDbParameters(input["MariaDbParameters"]),
     MySqlParameters: fromMySqlParameters(input["MySqlParameters"]),
+    OracleParameters: fromOracleParameters(input["OracleParameters"]),
     PostgreSqlParameters: fromPostgreSqlParameters(input["PostgreSqlParameters"]),
     PrestoParameters: fromPrestoParameters(input["PrestoParameters"]),
     RdsParameters: fromRdsParameters(input["RdsParameters"]),
@@ -5046,6 +5112,7 @@ function toDataSourceParameters(root: jsonP.JSONValue): DataSourceParameters {
       "JiraParameters": toJiraParameters,
       "MariaDbParameters": toMariaDbParameters,
       "MySqlParameters": toMySqlParameters,
+      "OracleParameters": toOracleParameters,
       "PostgreSqlParameters": toPostgreSqlParameters,
       "PrestoParameters": toPrestoParameters,
       "RdsParameters": toRdsParameters,
@@ -5227,6 +5294,31 @@ function fromMySqlParameters(input?: MySqlParameters | null): jsonP.JSONValue {
   }
 }
 function toMySqlParameters(root: jsonP.JSONValue): MySqlParameters {
+  return jsonP.readObj({
+    required: {
+      "Host": "s",
+      "Port": "n",
+      "Database": "s",
+    },
+    optional: {},
+  }, root);
+}
+
+// refs: 8 - tags: input, named, interface, output
+export interface OracleParameters {
+  Host: string;
+  Port: number;
+  Database: string;
+}
+function fromOracleParameters(input?: OracleParameters | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    Host: input["Host"],
+    Port: input["Port"],
+    Database: input["Database"],
+  }
+}
+function toOracleParameters(root: jsonP.JSONValue): OracleParameters {
   return jsonP.readObj({
     required: {
       "Host": "s",
@@ -5866,10 +5958,11 @@ function toMarginStyle(root: jsonP.JSONValue): MarginStyle {
   }, root);
 }
 
-// refs: 6 - tags: input, named, enum, output
-export type IdentityType =
+// refs: 1 - tags: input, named, enum
+export type EmbeddingIdentityType =
 | "IAM"
 | "QUICKSIGHT"
+| "ANONYMOUS"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, enum, output
@@ -5877,6 +5970,12 @@ export type ThemeType =
 | "QUICKSIGHT"
 | "CUSTOM"
 | "ALL"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 5 - tags: input, named, enum, output
+export type IdentityType =
+| "IAM"
+| "QUICKSIGHT"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 6 - tags: input, named, enum, output
@@ -6230,6 +6329,7 @@ export interface DataSet {
   ConsumedSpiceCapacityInBytes?: number | null;
   ColumnGroups?: ColumnGroup[] | null;
   RowLevelPermissionDataSet?: RowLevelPermissionDataSet | null;
+  ColumnLevelPermissionRules?: ColumnLevelPermissionRule[] | null;
 }
 function toDataSet(root: jsonP.JSONValue): DataSet {
   return jsonP.readObj({
@@ -6247,6 +6347,7 @@ function toDataSet(root: jsonP.JSONValue): DataSet {
       "ConsumedSpiceCapacityInBytes": "n",
       "ColumnGroups": [toColumnGroup],
       "RowLevelPermissionDataSet": toRowLevelPermissionDataSet,
+      "ColumnLevelPermissionRules": [toColumnLevelPermissionRule],
     },
   }, root);
 }
@@ -6863,6 +6964,7 @@ export interface DataSetSummary {
   LastUpdatedTime?: Date | number | null;
   ImportMode?: DataSetImportMode | null;
   RowLevelPermissionDataSet?: RowLevelPermissionDataSet | null;
+  ColumnLevelPermissionRulesApplied?: boolean | null;
 }
 function toDataSetSummary(root: jsonP.JSONValue): DataSetSummary {
   return jsonP.readObj({
@@ -6875,6 +6977,7 @@ function toDataSetSummary(root: jsonP.JSONValue): DataSetSummary {
       "LastUpdatedTime": "d",
       "ImportMode": (x: jsonP.JSONValue) => cmnP.readEnum<DataSetImportMode>(x),
       "RowLevelPermissionDataSet": toRowLevelPermissionDataSet,
+      "ColumnLevelPermissionRulesApplied": "b",
     },
   }, root);
 }

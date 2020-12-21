@@ -65,6 +65,7 @@ export default class LexRuntime {
         "sessionAttributes": x => jsonP.readMap(String, String, x),
         "sessionId": "s",
         "dialogAction": toDialogAction,
+        "activeContexts": [toActiveContext],
       },
     }, await resp.json());
   }
@@ -78,6 +79,7 @@ export default class LexRuntime {
     if (params["requestAttributes"] != null) headers.append("x-amz-lex-request-attributes", btoa(jsonP.serializeJsonValue(params["requestAttributes"]) ?? ''));
     headers.append("Content-Type", params["contentType"]);
     if (params["accept"] != null) headers.append("Accept", params["accept"]);
+    if (params["activeContexts"] != null) headers.append("x-amz-lex-active-contexts", btoa(jsonP.serializeJsonValue(params["activeContexts"]) ?? ''));
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "PostContent",
@@ -98,6 +100,7 @@ export default class LexRuntime {
     inputTranscript: resp.headers.get("x-amz-lex-input-transcript"),
     botVersion: resp.headers.get("x-amz-lex-bot-version"),
     sessionId: resp.headers.get("x-amz-lex-session-id"),
+    activeContexts: jsonP.readJsonValueBase64(resp.headers.get("x-amz-lex-active-contexts")),
     audioStream: await resp.text(), // TODO: maybe allow proper body streaming,
   };
   }
@@ -109,6 +112,7 @@ export default class LexRuntime {
       sessionAttributes: params["sessionAttributes"],
       requestAttributes: params["requestAttributes"],
       inputText: params["inputText"],
+      activeContexts: params["activeContexts"]?.map(x => fromActiveContext(x)),
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -131,6 +135,7 @@ export default class LexRuntime {
         "responseCard": toResponseCard,
         "sessionId": "s",
         "botVersion": "s",
+        "activeContexts": [toActiveContext],
       },
     }, await resp.json());
   }
@@ -143,6 +148,7 @@ export default class LexRuntime {
       sessionAttributes: params["sessionAttributes"],
       dialogAction: fromDialogAction(params["dialogAction"]),
       recentIntentSummaryView: params["recentIntentSummaryView"]?.map(x => fromIntentSummary(x)),
+      activeContexts: params["activeContexts"]?.map(x => fromActiveContext(x)),
     };
     if (params["accept"] != null) headers.append("Accept", params["accept"]);
     const resp = await this.#client.performRequest({
@@ -160,6 +166,7 @@ export default class LexRuntime {
     dialogState: cmnP.readEnum<DialogState>(resp.headers.get("x-amz-lex-dialog-state")),
     slotToElicit: resp.headers.get("x-amz-lex-slot-to-elicit"),
     sessionId: resp.headers.get("x-amz-lex-session-id"),
+    activeContexts: jsonP.readJsonValueBase64(resp.headers.get("x-amz-lex-active-contexts")),
     audioStream: await resp.text(), // TODO: maybe allow proper body streaming,
   };
   }
@@ -191,6 +198,7 @@ export interface PostContentRequest {
   contentType: string;
   accept?: string | null;
   inputStream: Uint8Array | string;
+  activeContexts?: jsonP.JSONValue | null;
 }
 
 // refs: 1 - tags: named, input
@@ -201,6 +209,7 @@ export interface PostTextRequest {
   sessionAttributes?: { [key: string]: string | null | undefined } | null;
   requestAttributes?: { [key: string]: string | null | undefined } | null;
   inputText: string;
+  activeContexts?: ActiveContext[] | null;
 }
 
 // refs: 1 - tags: named, input
@@ -212,6 +221,7 @@ export interface PutSessionRequest {
   dialogAction?: DialogAction | null;
   recentIntentSummaryView?: IntentSummary[] | null;
   accept?: string | null;
+  activeContexts?: ActiveContext[] | null;
 }
 
 // refs: 1 - tags: named, output
@@ -228,6 +238,7 @@ export interface GetSessionResponse {
   sessionAttributes?: { [key: string]: string | null | undefined } | null;
   sessionId?: string | null;
   dialogAction?: DialogAction | null;
+  activeContexts?: ActiveContext[] | null;
 }
 
 // refs: 1 - tags: named, output
@@ -247,6 +258,7 @@ export interface PostContentResponse {
   audioStream?: Uint8Array | string | null;
   botVersion?: string | null;
   sessionId?: string | null;
+  activeContexts?: jsonP.JSONValue | null;
 }
 
 // refs: 1 - tags: named, output
@@ -264,6 +276,7 @@ export interface PostTextResponse {
   responseCard?: ResponseCard | null;
   sessionId?: string | null;
   botVersion?: string | null;
+  activeContexts?: ActiveContext[] | null;
 }
 
 // refs: 1 - tags: named, output
@@ -278,6 +291,54 @@ export interface PutSessionResponse {
   slotToElicit?: string | null;
   audioStream?: Uint8Array | string | null;
   sessionId?: string | null;
+  activeContexts?: jsonP.JSONValue | null;
+}
+
+// refs: 4 - tags: input, named, interface, output
+export interface ActiveContext {
+  name: string;
+  timeToLive: ActiveContextTimeToLive;
+  parameters: { [key: string]: string | null | undefined };
+}
+function fromActiveContext(input?: ActiveContext | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    name: input["name"],
+    timeToLive: fromActiveContextTimeToLive(input["timeToLive"]),
+    parameters: input["parameters"],
+  }
+}
+function toActiveContext(root: jsonP.JSONValue): ActiveContext {
+  return jsonP.readObj({
+    required: {
+      "name": "s",
+      "timeToLive": toActiveContextTimeToLive,
+      "parameters": x => jsonP.readMap(String, String, x),
+    },
+    optional: {},
+  }, root);
+}
+
+// refs: 4 - tags: input, named, interface, output
+export interface ActiveContextTimeToLive {
+  timeToLiveInSeconds?: number | null;
+  turnsToLive?: number | null;
+}
+function fromActiveContextTimeToLive(input?: ActiveContextTimeToLive | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    timeToLiveInSeconds: input["timeToLiveInSeconds"],
+    turnsToLive: input["turnsToLive"],
+  }
+}
+function toActiveContextTimeToLive(root: jsonP.JSONValue): ActiveContextTimeToLive {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "timeToLiveInSeconds": "n",
+      "turnsToLive": "n",
+    },
+  }, root);
 }
 
 // refs: 2 - tags: input, named, interface, output
