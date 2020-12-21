@@ -1,11 +1,9 @@
 import {ApiFactory} from './client/mod.ts';
 const factory = new ApiFactory();
 
-// various "query" services (20 in total)
 
 import STS from './services/sts@2011-06-15/mod.ts';
 const sts = new STS(factory);
-
 await sts.getCallerIdentity().then(identity => {
   console.log('You are', identity.UserId, 'in account', identity.Account);
   console.log('ARN:', identity.Arn);
@@ -27,15 +25,6 @@ const sns = new SNS(factory);
 console.log(await sns.listTopics().catch(err => err));
 
 
-// TODO: 4 "rest-xml" services (cloudfront, route53, and s3)
-
-// import S3 from './services/s3@2006-03-01.ts';
-// const s3 = new S3(factory);
-// console.log(await s3.listBuckets().catch(err => err));
-// // s3.waitForBucketExists({Bucket: 'stardust-blobs'})
-
-
-// TODO: 97 "rest-json" services (apigateway, eks, es, lambda, etc)
-
-
-// TODO: 110 "json" services (cloudtrail, codebuild, dynamodb, ecr, etc)
+import S3 from './services/s3@2006-03-01/mod.ts';
+const s3 = new S3(factory);
+console.log(await s3.listBuckets().catch(err => err));
