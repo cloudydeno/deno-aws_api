@@ -101,21 +101,21 @@ The following credential sources are supported:
 * Environment variables
 * Static credentials in `~/.aws/credentials`
 * EKS Pod Identity (web identity token files)
+* EC2 instance credentials
 
 Some individual features that are implemented:
 
 * Waiters (as `.waitForXYZ({...})`)
-* Automatic credential loading
+* Automatic credential detection / loading
+* EC2 instance metadata server v2
 
 Multiple bits are *missing*:
 
 * Automatic pagination
 * AssumeRole credentials
-* EC2 instance metadata endpoint
-* EC2 instance credentials
-* Credential chaining
 * Debug logging/tracing of API calls
 * Automatic retries
+* Getting EKS credentials from regional STS endpoints
 * AWS endpoints other than `**.amazonaws.com` (govcloud, China AWS, etc)
 
 ## List of Typechecked API Clients
