@@ -209,17 +209,7 @@ export default class ProtocolJsonCodegen {
         typeSpec = 's'; /// only used in test fixtures
       } else if (innerShape.spec.type == 'list') {
         const valShape = this.shapes.get(innerShape.spec.member);
-        switch (valShape.spec.type) {
-          case 'structure':
-            typeSpec = Symbol.for(`x => jsonP.readList(to${valShape.censoredName}, x)`);
-            break;
-          case 'string':
-            if (valShape.spec.enum) throw new Error(`TODO: json struct output list of enums`);
-            typeSpec = Symbol.for(`x => jsonP.readList(String, x)`);
-            break;
-          default: throw new Error(
-            `TODO: json struct output list member ${valShape.spec.type}`);
-        }
+        typeSpec = Symbol.for(`x => jsonP.readList(${this.exprReadOutput(valShape)}, x)`);
       } else if (innerShape.spec.type == 'map') {
         const keyShape = this.shapes.get(innerShape.spec.key);
         const valShape = this.shapes.get(innerShape.spec.value);
