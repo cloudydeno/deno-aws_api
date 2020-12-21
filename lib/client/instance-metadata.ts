@@ -57,7 +57,7 @@ export class IMDSv2 {
 
   async performRequest(
     method: 'GET' | 'HEAD' | 'PUT' = 'GET',
-    path = 'metadata/',
+    path = 'meta-data/',
   ) {
     const resp = await fetch(new URL(path, this.baseUrl), {
       method: method,
@@ -90,4 +90,10 @@ export class IMDSv2 {
 }
 
 // TODO: typed interfaces around all the metadata endpoints
-// https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instancedata-data-categories.html
+// dynamic/instance-identity/document - JSON
+// user-data - arbitrary binary data from the user
+// meta-data - https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instancedata-data-categories.html
+
+// Theses paths have some interesting data for talking to AWS services:
+// meta-data/services/domain and meta-data/services/partition
+// TODO: autoconfigure AWS hostnames and signing partitions from IMDSv2 ^^
