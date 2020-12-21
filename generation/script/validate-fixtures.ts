@@ -1,5 +1,5 @@
-import * as path from "https://deno.land/std@0.71.0/path/mod.ts";
-import { pooledMap } from "https://deno.land/std@0.71.0/async/pool.ts";
+import * as path from "https://deno.land/std@0.75.0/path/mod.ts";
+import { pooledMap } from "https://deno.land/std@0.75.0/async/pool.ts";
 
 import type * as Schema from '../sdk-schema.ts';
 import ServiceCodeGen from '../code-gen.ts';
@@ -165,7 +165,7 @@ const results = pooledMap(concurrency, allTestRuns, async function (run): Promis
 
   const chunks = new Array<string>();
   chunks.push('\n/////////\n');
-  chunks.push(`import { assertEquals } from "https://deno.land/std@0.71.0/testing/asserts.ts";`);
+  chunks.push(`import { assertEquals } from "https://deno.land/std@0.75.0/testing/asserts.ts";`);
   chunks.push(`import { wrapServiceClient } from '../../client/mod.ts';\n`);
 
   chunks.push(`async function checkRequest(request: Request, opts: {hostPrefix?: string, urlPath: string}): Promise<Response> {`);
