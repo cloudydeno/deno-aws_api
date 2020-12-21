@@ -52,7 +52,7 @@ export const DefaultCredentialsProvider
     // () => new ECSCredentials(),
     // () => new ProcessCredentials(),
     () => new TokenFileWebIdentityCredentials(),
-    // () => new EC2MetadataCredentials(),
+    () => new EC2MetadataCredentials(),
   ]);
 
 // full spec: https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html
@@ -209,6 +209,80 @@ export class TokenFileWebIdentityCredentials implements CredentialsProvider {
     });
   }
 }
+
+export class EC2MetadataCredentials implements CredentialsProvider {
+  #service = new IMDSv2;
+  #promise: Promise<Credentials> | null = null;
+  #expireAfter: Date | null = null;
+
+  constructor(opts: {
+  }={}) {
+  }
+
+  // We can't expire using setTimeout because that hangs Deno
+  // https://github.com/denoland/deno/issues/6141
+  getCredentials(): Promise<Credentials> {
+    if (this.#expireAfter && this.#expireAfter < new Date()) {
+      this.#expireAfter = null;
+      this.#promise = null;
+    }
+
+    if (!this.#promise) {
+      const promise = this.load();
+      this.#promise = promise.then(x => {
+        if (x.expiresAt && x.expiresAt > new Date()) {
+          this.#expireAfter = new Date(x.expiresAt.valueOf() - 60*1000);
+        }
+        return x;
+      }, err => {
+        this.#expireAfter = new Date(Date.now() + 30*1000);
+        return Promise.reject(err);
+      });
+    }
+
+    return this.#promise;
+  }
+
+  async load(): Promise<Credentials> {
+
+    const roleListReq = this.#service
+      .performRequest('GET', 'meta-data/iam/security-credentials/')
+      .then(x => x ? x.split('\n') : [])
+      .catch(err => {
+        if ('status' in err && err.status === 404) throw new Error(
+          `This EC2 Instance doesn't have an IAM instance role attached`);
+        throw err;
+      });
+
+    const roleList = await roleListReq;
+    if (roleList.length !== 1 || !roleList[0]) throw new Error(
+      `Unexpected EC2 instance role list: ${JSON.stringify(roleList)}`);
+
+    const credential: {
+      Code: "Success" | string;
+      LastUpdated: string;
+      Type: "AWS-HMAC" | string;
+      AccessKeyId: string;
+      SecretAccessKey: string;
+      Token: string;
+      Expiration: string;
+    } = JSON.parse(await this.#service
+      .performRequest('GET', 'meta-data/iam/security-credentials/'+roleList[0]));
+    if (credential.Code !== 'Success') throw new Error(
+      `Unexpected EC2 instance credential code: ${credential.Code}`);
+    if (credential.Type !== 'AWS-HMAC') throw new Error(
+      `Unexpected EC2 instance credential type: ${credential.Type}`);
+
+    return Promise.resolve({
+      awsAccessKeyId: credential.AccessKeyId,
+      awsSecretKey: credential.SecretAccessKey,
+      sessionToken: credential.Token,
+      expiresAt: new Date(credential.Expiration),
+      region: await this.#service.performRequest('GET', 'meta-data/placement/region'),
+    });
+  }
+}
+
 
 export function getDefaultCredentials(): Promise<Credentials> {
   return DefaultCredentialsProvider.getCredentials();

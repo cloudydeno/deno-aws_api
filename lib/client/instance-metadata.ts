@@ -47,7 +47,7 @@ export class IMDSv2 {
     ]);
 
     if (resp.status > 299) throw new Error(
-      `Metadata server gave HTTP ${resp.status} to token request`);
+      `Metadata server gave HTTP ${resp.status} to V2 token request`);
 
     return [
       await resp.text(),
@@ -65,8 +65,11 @@ export class IMDSv2 {
       headers: {
         "x-aws-ec2-metadata-token": await this.getToken(),
       }});
-    if (resp.status > 299) throw new Error(
-      `Metadata server gave HTTP ${resp.status} to token request`);
+    if (resp.status > 299) {
+      const err: any = new Error(`Metadata server gave HTTP ${resp.status} to ${method} ${path}`);
+      err.status = resp.status;
+      throw err;
+    }
 
     return await resp.text();
   }
