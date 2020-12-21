@@ -1,4 +1,5 @@
 import type { ApiMetadata, Credentials, CredentialsProvider } from "./common.ts";
+import { IMDSv2 } from "./instance-metadata.ts";
 
 // If more than one credential source is available to the SDK, the default precedence of selection is as follows:
 //  1. Credentials that are explicitly set through the service-client constructor
@@ -20,13 +21,14 @@ export class CredentialsProviderChain implements CredentialsProvider {
 
     const errors: Array<string> = [];
     for (const providerFunc of this.#chain) {
-      const provider = providerFunc();
       try {
+        const provider = providerFunc();
         const creds = await provider.getCredentials();
         this.#supplier = provider;
         return creds;
       } catch (err) {
-        const srcName = `    - ${provider.constructor.name} `;
+        const providerLabel = providerFunc.toString().replace(/^\(\) => new /, '');
+        const srcName = `    - ${providerLabel} `;
         if (err instanceof Error) {
           // if (err.message !== 'No credentials found') {
             errors.push(srcName+(err.stack?.split('\n')[0] || err.message));
