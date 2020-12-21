@@ -299,12 +299,8 @@ export default class ProtocolJsonCodegen {
       expr = 'y => typeof y === "boolean" ? y : null';
     } else if (innerShape.spec.type === 'map') {
       const valShape = this.shapes.get(innerShape.spec.value);
-      if (valShape.tags.has('named')) {
-        // TODO: is this safe? when would a map have a null?
-        expr = `y => jsonP.readMap(String, to${valShape.censoredName}, y)!`;
-      } else if (valShape.spec.type === 'timestamp') {
-        expr = `y => jsonP.readMap(String, jsonP.readDate, y)!`;
-      }
+      // TODO: is this safe? when would a map have a null?
+      expr = `y => jsonP.readMap(String, ${this.exprReadOutput(valShape)}, y)!`;
     } else if (innerShape.spec.type === 'list') {
       const valShape = this.shapes.get(innerShape.spec.member);
       if (valShape.tags.has('named')) {
@@ -315,7 +311,7 @@ export default class ProtocolJsonCodegen {
       } else throw new Error(`TODO: json output list ${valShape.spec.type}`);
     }
 
-    if (expr.includes('TODO')) throw new Error(`TODO: json output ${shape.spec.type}`);
+    if (expr.includes('TODO')) throw new Error(`TODO: json output ${innerShape.spec.type}`);
     if (isList) {
       return `l => Array.isArray(l) ? l.map(${expr}) : []`;
     } else {
