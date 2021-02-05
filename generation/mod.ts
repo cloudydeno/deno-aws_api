@@ -1,4 +1,4 @@
-import * as path from "https://deno.land/std@0.75.0/path/mod.ts";
+import * as path from "https://deno.land/std@0.86.0/path/mod.ts";
 import type * as Schema from './sdk-schema.ts';
 import ServiceCodeGen from './code-gen.ts';
 

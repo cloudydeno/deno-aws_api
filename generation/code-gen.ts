@@ -105,7 +105,7 @@ export default class ServiceCodeGen {
     } else {
       this.helpers.addHelper('generateIdemptToken', {
         deps: {
-          uuidv4: `https://deno.land/std@0.75.0/uuid/v4.ts`,
+          uuidv4: `https://deno.land/std@0.86.0/uuid/v4.ts`,
         },
         chunks: [
           `function generateIdemptToken() {`,
@@ -117,7 +117,7 @@ export default class ServiceCodeGen {
 
     this.helpers.addHelper('hashMD5', {
       deps: {
-        HashMd5: "https://deno.land/std@0.75.0/hash/md5.ts",
+        HashMd5: "https://deno.land/std@0.86.0/hash/md5.ts",
       },
       chunks: [
         `function hashMD5(data: HashMd5.Message): string {`,
