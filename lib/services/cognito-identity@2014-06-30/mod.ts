@@ -194,6 +194,7 @@ export default class CognitoIdentity {
       IdentityPoolId: params["IdentityPoolId"],
       IdentityId: params["IdentityId"],
       Logins: params["Logins"],
+      PrincipalTags: params["PrincipalTags"],
       TokenDuration: params["TokenDuration"],
     };
     const resp = await this.#client.performRequest({
@@ -205,6 +206,28 @@ export default class CognitoIdentity {
       optional: {
         "IdentityId": "s",
         "Token": "s",
+      },
+    }, await resp.json());
+  }
+
+  async getPrincipalTagAttributeMap(
+    {abortSignal, ...params}: RequestConfig & GetPrincipalTagAttributeMapInput,
+  ): Promise<GetPrincipalTagAttributeMapResponse> {
+    const body: jsonP.JSONObject = {
+      IdentityPoolId: params["IdentityPoolId"],
+      IdentityProviderName: params["IdentityProviderName"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "GetPrincipalTagAttributeMap",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "IdentityPoolId": "s",
+        "IdentityProviderName": "s",
+        "UseDefaults": "b",
+        "PrincipalTags": x => jsonP.readMap(String, String, x),
       },
     }, await resp.json());
   }
@@ -327,6 +350,30 @@ export default class CognitoIdentity {
       abortSignal, body,
       action: "SetIdentityPoolRoles",
     });
+  }
+
+  async setPrincipalTagAttributeMap(
+    {abortSignal, ...params}: RequestConfig & SetPrincipalTagAttributeMapInput,
+  ): Promise<SetPrincipalTagAttributeMapResponse> {
+    const body: jsonP.JSONObject = {
+      IdentityPoolId: params["IdentityPoolId"],
+      IdentityProviderName: params["IdentityProviderName"],
+      UseDefaults: params["UseDefaults"],
+      PrincipalTags: params["PrincipalTags"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "SetPrincipalTagAttributeMap",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "IdentityPoolId": "s",
+        "IdentityProviderName": "s",
+        "UseDefaults": "b",
+        "PrincipalTags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async tagResource(
@@ -479,7 +526,14 @@ export interface GetOpenIdTokenForDeveloperIdentityInput {
   IdentityPoolId: string;
   IdentityId?: string | null;
   Logins: { [key: string]: string | null | undefined };
+  PrincipalTags?: { [key: string]: string | null | undefined } | null;
   TokenDuration?: number | null;
+}
+
+// refs: 1 - tags: named, input
+export interface GetPrincipalTagAttributeMapInput {
+  IdentityPoolId: string;
+  IdentityProviderName: string;
 }
 
 // refs: 1 - tags: named, input
@@ -523,6 +577,14 @@ export interface SetIdentityPoolRolesInput {
   IdentityPoolId: string;
   Roles: { [key: string]: string | null | undefined };
   RoleMappings?: { [key: string]: RoleMapping | null | undefined } | null;
+}
+
+// refs: 1 - tags: named, input
+export interface SetPrincipalTagAttributeMapInput {
+  IdentityPoolId: string;
+  IdentityProviderName: string;
+  UseDefaults?: boolean | null;
+  PrincipalTags?: { [key: string]: string | null | undefined } | null;
 }
 
 // refs: 1 - tags: named, input
@@ -654,6 +716,14 @@ export interface GetOpenIdTokenForDeveloperIdentityResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface GetPrincipalTagAttributeMapResponse {
+  IdentityPoolId?: string | null;
+  IdentityProviderName?: string | null;
+  UseDefaults?: boolean | null;
+  PrincipalTags?: { [key: string]: string | null | undefined } | null;
+}
+
+// refs: 1 - tags: named, output
 export interface ListIdentitiesResponse {
   IdentityPoolId?: string | null;
   Identities?: IdentityDescription[] | null;
@@ -681,6 +751,14 @@ export interface LookupDeveloperIdentityResponse {
 // refs: 1 - tags: named, output
 export interface MergeDeveloperIdentitiesResponse {
   IdentityId?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface SetPrincipalTagAttributeMapResponse {
+  IdentityPoolId?: string | null;
+  IdentityProviderName?: string | null;
+  UseDefaults?: boolean | null;
+  PrincipalTags?: { [key: string]: string | null | undefined } | null;
 }
 
 // refs: 1 - tags: named, output

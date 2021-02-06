@@ -5,7 +5,7 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import * as uuidv4 from "https://deno.land/std@0.75.0/uuid/v4.ts";
+import * as uuidv4 from "https://deno.land/std@0.86.0/uuid/v4.ts";
 import * as cmnP from "../../encoding/common.ts";
 import * as jsonP from "../../encoding/json.ts";
 function generateIdemptToken() {
@@ -2560,6 +2560,8 @@ export interface RobotApplicationConfig {
   application: string;
   applicationVersion?: string | null;
   launchConfig: LaunchConfig;
+  uploadConfigurations?: UploadConfiguration[] | null;
+  useDefaultUploadConfigurations?: boolean | null;
 }
 function fromRobotApplicationConfig(input?: RobotApplicationConfig | null): jsonP.JSONValue {
   if (!input) return input;
@@ -2567,6 +2569,8 @@ function fromRobotApplicationConfig(input?: RobotApplicationConfig | null): json
     application: input["application"],
     applicationVersion: input["applicationVersion"],
     launchConfig: fromLaunchConfig(input["launchConfig"]),
+    uploadConfigurations: input["uploadConfigurations"]?.map(x => fromUploadConfiguration(x)),
+    useDefaultUploadConfigurations: input["useDefaultUploadConfigurations"],
   }
 }
 function toRobotApplicationConfig(root: jsonP.JSONValue): RobotApplicationConfig {
@@ -2577,6 +2581,8 @@ function toRobotApplicationConfig(root: jsonP.JSONValue): RobotApplicationConfig
     },
     optional: {
       "applicationVersion": "s",
+      "uploadConfigurations": [toUploadConfiguration],
+      "useDefaultUploadConfigurations": "b",
     },
   }, root);
 }
@@ -2658,12 +2664,45 @@ function toPortMapping(root: jsonP.JSONValue): PortMapping {
   }, root);
 }
 
+// refs: 18 - tags: input, named, interface, output
+export interface UploadConfiguration {
+  name: string;
+  path: string;
+  uploadBehavior: UploadBehavior;
+}
+function fromUploadConfiguration(input?: UploadConfiguration | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    name: input["name"],
+    path: input["path"],
+    uploadBehavior: input["uploadBehavior"],
+  }
+}
+function toUploadConfiguration(root: jsonP.JSONValue): UploadConfiguration {
+  return jsonP.readObj({
+    required: {
+      "name": "s",
+      "path": "s",
+      "uploadBehavior": (x: jsonP.JSONValue) => cmnP.readEnum<UploadBehavior>(x),
+    },
+    optional: {},
+  }, root);
+}
+
+// refs: 18 - tags: input, named, enum, output
+export type UploadBehavior =
+| "UPLOAD_ON_TERMINATE"
+| "UPLOAD_ROLLING_AUTO_REMOVE"
+| cmnP.UnexpectedEnumValue;
+
 // refs: 9 - tags: input, named, interface, output
 export interface SimulationApplicationConfig {
   application: string;
   applicationVersion?: string | null;
   launchConfig: LaunchConfig;
+  uploadConfigurations?: UploadConfiguration[] | null;
   worldConfigs?: WorldConfig[] | null;
+  useDefaultUploadConfigurations?: boolean | null;
 }
 function fromSimulationApplicationConfig(input?: SimulationApplicationConfig | null): jsonP.JSONValue {
   if (!input) return input;
@@ -2671,7 +2710,9 @@ function fromSimulationApplicationConfig(input?: SimulationApplicationConfig | n
     application: input["application"],
     applicationVersion: input["applicationVersion"],
     launchConfig: fromLaunchConfig(input["launchConfig"]),
+    uploadConfigurations: input["uploadConfigurations"]?.map(x => fromUploadConfiguration(x)),
     worldConfigs: input["worldConfigs"]?.map(x => fromWorldConfig(x)),
+    useDefaultUploadConfigurations: input["useDefaultUploadConfigurations"],
   }
 }
 function toSimulationApplicationConfig(root: jsonP.JSONValue): SimulationApplicationConfig {
@@ -2682,7 +2723,9 @@ function toSimulationApplicationConfig(root: jsonP.JSONValue): SimulationApplica
     },
     optional: {
       "applicationVersion": "s",
+      "uploadConfigurations": [toUploadConfiguration],
       "worldConfigs": [toWorldConfig],
+      "useDefaultUploadConfigurations": "b",
     },
   }, root);
 }
@@ -2995,6 +3038,7 @@ export type SimulationJobErrorCode =
 | "WrongRegionS3Output"
 | "WrongRegionRobotApplication"
 | "WrongRegionSimulationApplication"
+| "UploadContentMismatchError"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: output, named, interface

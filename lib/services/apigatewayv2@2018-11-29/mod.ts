@@ -207,6 +207,7 @@ export default class ApiGatewayV2 {
       payloadFormatVersion: params["PayloadFormatVersion"],
       requestParameters: params["RequestParameters"],
       requestTemplates: params["RequestTemplates"],
+      responseParameters: params["ResponseParameters"],
       templateSelectionExpression: params["TemplateSelectionExpression"],
       timeoutInMillis: params["TimeoutInMillis"],
       tlsConfig: fromTlsConfigInput(params["TlsConfig"]),
@@ -236,6 +237,7 @@ export default class ApiGatewayV2 {
         "PayloadFormatVersion": "s",
         "RequestParameters": x => jsonP.readMap(String, String, x),
         "RequestTemplates": x => jsonP.readMap(String, String, x),
+        "ResponseParameters": x => jsonP.readMap(String, y => jsonP.readMap(String, String, y)!, x),
         "TemplateSelectionExpression": "s",
         "TimeoutInMillis": "n",
         "TlsConfig": toTlsConfig,
@@ -958,6 +960,7 @@ export default class ApiGatewayV2 {
         "PayloadFormatVersion": "s",
         "RequestParameters": x => jsonP.readMap(String, String, x),
         "RequestTemplates": x => jsonP.readMap(String, String, x),
+        "ResponseParameters": x => jsonP.readMap(String, y => jsonP.readMap(String, String, y)!, x),
         "TemplateSelectionExpression": "s",
         "TimeoutInMillis": "n",
         "TlsConfig": toTlsConfig,
@@ -1610,6 +1613,7 @@ export default class ApiGatewayV2 {
       payloadFormatVersion: params["PayloadFormatVersion"],
       requestParameters: params["RequestParameters"],
       requestTemplates: params["RequestTemplates"],
+      responseParameters: params["ResponseParameters"],
       templateSelectionExpression: params["TemplateSelectionExpression"],
       timeoutInMillis: params["TimeoutInMillis"],
       tlsConfig: fromTlsConfigInput(params["TlsConfig"]),
@@ -1640,6 +1644,7 @@ export default class ApiGatewayV2 {
         "PayloadFormatVersion": "s",
         "RequestParameters": x => jsonP.readMap(String, String, x),
         "RequestTemplates": x => jsonP.readMap(String, String, x),
+        "ResponseParameters": x => jsonP.readMap(String, y => jsonP.readMap(String, String, y)!, x),
         "TemplateSelectionExpression": "s",
         "TimeoutInMillis": "n",
         "TlsConfig": toTlsConfig,
@@ -1919,6 +1924,7 @@ export interface CreateIntegrationRequest {
   PayloadFormatVersion?: string | null;
   RequestParameters?: { [key: string]: string | null | undefined } | null;
   RequestTemplates?: { [key: string]: string | null | undefined } | null;
+  ResponseParameters?: { [key: string]: { [key: string]: string | null | undefined } | null | undefined } | null;
   TemplateSelectionExpression?: string | null;
   TimeoutInMillis?: number | null;
   TlsConfig?: TlsConfigInput | null;
@@ -2369,6 +2375,7 @@ export interface UpdateIntegrationRequest {
   PayloadFormatVersion?: string | null;
   RequestParameters?: { [key: string]: string | null | undefined } | null;
   RequestTemplates?: { [key: string]: string | null | undefined } | null;
+  ResponseParameters?: { [key: string]: { [key: string]: string | null | undefined } | null | undefined } | null;
   TemplateSelectionExpression?: string | null;
   TimeoutInMillis?: number | null;
   TlsConfig?: TlsConfigInput | null;
@@ -2524,6 +2531,7 @@ export interface CreateIntegrationResult {
   PayloadFormatVersion?: string | null;
   RequestParameters?: { [key: string]: string | null | undefined } | null;
   RequestTemplates?: { [key: string]: string | null | undefined } | null;
+  ResponseParameters?: { [key: string]: { [key: string]: string | null | undefined } | null | undefined } | null;
   TemplateSelectionExpression?: string | null;
   TimeoutInMillis?: number | null;
   TlsConfig?: TlsConfig | null;
@@ -2724,6 +2732,7 @@ export interface GetIntegrationResult {
   PayloadFormatVersion?: string | null;
   RequestParameters?: { [key: string]: string | null | undefined } | null;
   RequestTemplates?: { [key: string]: string | null | undefined } | null;
+  ResponseParameters?: { [key: string]: { [key: string]: string | null | undefined } | null | undefined } | null;
   TemplateSelectionExpression?: string | null;
   TimeoutInMillis?: number | null;
   TlsConfig?: TlsConfig | null;
@@ -2981,6 +2990,7 @@ export interface UpdateIntegrationResult {
   PayloadFormatVersion?: string | null;
   RequestParameters?: { [key: string]: string | null | undefined } | null;
   RequestTemplates?: { [key: string]: string | null | undefined } | null;
+  ResponseParameters?: { [key: string]: { [key: string]: string | null | undefined } | null | undefined } | null;
   TemplateSelectionExpression?: string | null;
   TimeoutInMillis?: number | null;
   TlsConfig?: TlsConfig | null;
@@ -3566,6 +3576,7 @@ export interface Integration {
   PayloadFormatVersion?: string | null;
   RequestParameters?: { [key: string]: string | null | undefined } | null;
   RequestTemplates?: { [key: string]: string | null | undefined } | null;
+  ResponseParameters?: { [key: string]: { [key: string]: string | null | undefined } | null | undefined } | null;
   TemplateSelectionExpression?: string | null;
   TimeoutInMillis?: number | null;
   TlsConfig?: TlsConfig | null;
@@ -3590,6 +3601,7 @@ function toIntegration(root: jsonP.JSONValue): Integration {
       "PayloadFormatVersion": "s",
       "RequestParameters": x => jsonP.readMap(String, String, x),
       "RequestTemplates": x => jsonP.readMap(String, String, x),
+      "ResponseParameters": x => jsonP.readMap(String, y => jsonP.readMap(String, String, y)!, x),
       "TemplateSelectionExpression": "s",
       "TimeoutInMillis": "n",
       "TlsConfig": toTlsConfig,

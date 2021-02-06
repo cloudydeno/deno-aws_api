@@ -257,11 +257,13 @@ export default class ACMPCA {
     {abortSignal, ...params}: RequestConfig & IssueCertificateRequest,
   ): Promise<IssueCertificateResponse> {
     const body: jsonP.JSONObject = {
+      ApiPassthrough: fromApiPassthrough(params["ApiPassthrough"]),
       CertificateAuthorityArn: params["CertificateAuthorityArn"],
       Csr: jsonP.serializeBlob(params["Csr"]),
       SigningAlgorithm: params["SigningAlgorithm"],
       TemplateArn: params["TemplateArn"],
       Validity: fromValidity(params["Validity"]),
+      ValidityNotBefore: fromValidity(params["ValidityNotBefore"]),
       IdempotencyToken: params["IdempotencyToken"],
     };
     const resp = await this.#client.performRequest({
@@ -563,11 +565,13 @@ export interface ImportCertificateAuthorityCertificateRequest {
 
 // refs: 1 - tags: named, input
 export interface IssueCertificateRequest {
+  ApiPassthrough?: ApiPassthrough | null;
   CertificateAuthorityArn: string;
   Csr: Uint8Array | string;
   SigningAlgorithm: SigningAlgorithm;
   TemplateArn?: string | null;
   Validity: Validity;
+  ValidityNotBefore?: Validity | null;
   IdempotencyToken?: string | null;
 }
 
@@ -703,6 +707,7 @@ export interface CertificateAuthorityConfiguration {
   KeyAlgorithm: KeyAlgorithm;
   SigningAlgorithm: SigningAlgorithm;
   Subject: ASN1Subject;
+  CsrExtensions?: CsrExtensions | null;
 }
 function fromCertificateAuthorityConfiguration(input?: CertificateAuthorityConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
@@ -710,6 +715,7 @@ function fromCertificateAuthorityConfiguration(input?: CertificateAuthorityConfi
     KeyAlgorithm: input["KeyAlgorithm"],
     SigningAlgorithm: input["SigningAlgorithm"],
     Subject: fromASN1Subject(input["Subject"]),
+    CsrExtensions: fromCsrExtensions(input["CsrExtensions"]),
   }
 }
 function toCertificateAuthorityConfiguration(root: jsonP.JSONValue): CertificateAuthorityConfiguration {
@@ -719,7 +725,9 @@ function toCertificateAuthorityConfiguration(root: jsonP.JSONValue): Certificate
       "SigningAlgorithm": (x: jsonP.JSONValue) => cmnP.readEnum<SigningAlgorithm>(x),
       "Subject": toASN1Subject,
     },
-    optional: {},
+    optional: {
+      "CsrExtensions": toCsrExtensions,
+    },
   }, root);
 }
 
@@ -741,7 +749,7 @@ export type SigningAlgorithm =
 | "SHA512WITHRSA"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 3 - tags: input, named, interface, output
+// refs: 8 - tags: input, named, interface, output
 export interface ASN1Subject {
   Country?: string | null;
   Organization?: string | null;
@@ -795,6 +803,207 @@ function toASN1Subject(root: jsonP.JSONValue): ASN1Subject {
       "Initials": "s",
       "Pseudonym": "s",
       "GenerationQualifier": "s",
+    },
+  }, root);
+}
+
+// refs: 3 - tags: input, named, interface, output
+export interface CsrExtensions {
+  KeyUsage?: KeyUsage | null;
+  SubjectInformationAccess?: AccessDescription[] | null;
+}
+function fromCsrExtensions(input?: CsrExtensions | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    KeyUsage: fromKeyUsage(input["KeyUsage"]),
+    SubjectInformationAccess: input["SubjectInformationAccess"]?.map(x => fromAccessDescription(x)),
+  }
+}
+function toCsrExtensions(root: jsonP.JSONValue): CsrExtensions {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "KeyUsage": toKeyUsage,
+      "SubjectInformationAccess": [toAccessDescription],
+    },
+  }, root);
+}
+
+// refs: 4 - tags: input, named, interface, output
+export interface KeyUsage {
+  DigitalSignature?: boolean | null;
+  NonRepudiation?: boolean | null;
+  KeyEncipherment?: boolean | null;
+  DataEncipherment?: boolean | null;
+  KeyAgreement?: boolean | null;
+  KeyCertSign?: boolean | null;
+  CRLSign?: boolean | null;
+  EncipherOnly?: boolean | null;
+  DecipherOnly?: boolean | null;
+}
+function fromKeyUsage(input?: KeyUsage | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    DigitalSignature: input["DigitalSignature"],
+    NonRepudiation: input["NonRepudiation"],
+    KeyEncipherment: input["KeyEncipherment"],
+    DataEncipherment: input["DataEncipherment"],
+    KeyAgreement: input["KeyAgreement"],
+    KeyCertSign: input["KeyCertSign"],
+    CRLSign: input["CRLSign"],
+    EncipherOnly: input["EncipherOnly"],
+    DecipherOnly: input["DecipherOnly"],
+  }
+}
+function toKeyUsage(root: jsonP.JSONValue): KeyUsage {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "DigitalSignature": "b",
+      "NonRepudiation": "b",
+      "KeyEncipherment": "b",
+      "DataEncipherment": "b",
+      "KeyAgreement": "b",
+      "KeyCertSign": "b",
+      "CRLSign": "b",
+      "EncipherOnly": "b",
+      "DecipherOnly": "b",
+    },
+  }, root);
+}
+
+// refs: 3 - tags: input, named, interface, output
+export interface AccessDescription {
+  AccessMethod: AccessMethod;
+  AccessLocation: GeneralName;
+}
+function fromAccessDescription(input?: AccessDescription | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    AccessMethod: fromAccessMethod(input["AccessMethod"]),
+    AccessLocation: fromGeneralName(input["AccessLocation"]),
+  }
+}
+function toAccessDescription(root: jsonP.JSONValue): AccessDescription {
+  return jsonP.readObj({
+    required: {
+      "AccessMethod": toAccessMethod,
+      "AccessLocation": toGeneralName,
+    },
+    optional: {},
+  }, root);
+}
+
+// refs: 3 - tags: input, named, interface, output
+export interface AccessMethod {
+  CustomObjectIdentifier?: string | null;
+  AccessMethodType?: AccessMethodType | null;
+}
+function fromAccessMethod(input?: AccessMethod | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    CustomObjectIdentifier: input["CustomObjectIdentifier"],
+    AccessMethodType: input["AccessMethodType"],
+  }
+}
+function toAccessMethod(root: jsonP.JSONValue): AccessMethod {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "CustomObjectIdentifier": "s",
+      "AccessMethodType": (x: jsonP.JSONValue) => cmnP.readEnum<AccessMethodType>(x),
+    },
+  }, root);
+}
+
+// refs: 3 - tags: input, named, enum, output
+export type AccessMethodType =
+| "CA_REPOSITORY"
+| "RESOURCE_PKI_MANIFEST"
+| "RESOURCE_PKI_NOTIFY"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 4 - tags: input, named, interface, output
+export interface GeneralName {
+  OtherName?: OtherName | null;
+  Rfc822Name?: string | null;
+  DnsName?: string | null;
+  DirectoryName?: ASN1Subject | null;
+  EdiPartyName?: EdiPartyName | null;
+  UniformResourceIdentifier?: string | null;
+  IpAddress?: string | null;
+  RegisteredId?: string | null;
+}
+function fromGeneralName(input?: GeneralName | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    OtherName: fromOtherName(input["OtherName"]),
+    Rfc822Name: input["Rfc822Name"],
+    DnsName: input["DnsName"],
+    DirectoryName: fromASN1Subject(input["DirectoryName"]),
+    EdiPartyName: fromEdiPartyName(input["EdiPartyName"]),
+    UniformResourceIdentifier: input["UniformResourceIdentifier"],
+    IpAddress: input["IpAddress"],
+    RegisteredId: input["RegisteredId"],
+  }
+}
+function toGeneralName(root: jsonP.JSONValue): GeneralName {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "OtherName": toOtherName,
+      "Rfc822Name": "s",
+      "DnsName": "s",
+      "DirectoryName": toASN1Subject,
+      "EdiPartyName": toEdiPartyName,
+      "UniformResourceIdentifier": "s",
+      "IpAddress": "s",
+      "RegisteredId": "s",
+    },
+  }, root);
+}
+
+// refs: 4 - tags: input, named, interface, output
+export interface OtherName {
+  TypeId: string;
+  Value: string;
+}
+function fromOtherName(input?: OtherName | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    TypeId: input["TypeId"],
+    Value: input["Value"],
+  }
+}
+function toOtherName(root: jsonP.JSONValue): OtherName {
+  return jsonP.readObj({
+    required: {
+      "TypeId": "s",
+      "Value": "s",
+    },
+    optional: {},
+  }, root);
+}
+
+// refs: 4 - tags: input, named, interface, output
+export interface EdiPartyName {
+  PartyName: string;
+  NameAssigner?: string | null;
+}
+function fromEdiPartyName(input?: EdiPartyName | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    PartyName: input["PartyName"],
+    NameAssigner: input["NameAssigner"],
+  }
+}
+function toEdiPartyName(root: jsonP.JSONValue): EdiPartyName {
+  return jsonP.readObj({
+    required: {
+      "PartyName": "s",
+    },
+    optional: {
+      "NameAssigner": "s",
     },
   }, root);
 }
@@ -890,6 +1099,104 @@ export type ActionType =
 | cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
+export interface ApiPassthrough {
+  Extensions?: Extensions | null;
+  Subject?: ASN1Subject | null;
+}
+function fromApiPassthrough(input?: ApiPassthrough | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    Extensions: fromExtensions(input["Extensions"]),
+    Subject: fromASN1Subject(input["Subject"]),
+  }
+}
+
+// refs: 1 - tags: input, named, interface
+export interface Extensions {
+  CertificatePolicies?: PolicyInformation[] | null;
+  ExtendedKeyUsage?: ExtendedKeyUsage[] | null;
+  KeyUsage?: KeyUsage | null;
+  SubjectAlternativeNames?: GeneralName[] | null;
+}
+function fromExtensions(input?: Extensions | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    CertificatePolicies: input["CertificatePolicies"]?.map(x => fromPolicyInformation(x)),
+    ExtendedKeyUsage: input["ExtendedKeyUsage"]?.map(x => fromExtendedKeyUsage(x)),
+    KeyUsage: fromKeyUsage(input["KeyUsage"]),
+    SubjectAlternativeNames: input["SubjectAlternativeNames"]?.map(x => fromGeneralName(x)),
+  }
+}
+
+// refs: 1 - tags: input, named, interface
+export interface PolicyInformation {
+  CertPolicyId: string;
+  PolicyQualifiers?: PolicyQualifierInfo[] | null;
+}
+function fromPolicyInformation(input?: PolicyInformation | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    CertPolicyId: input["CertPolicyId"],
+    PolicyQualifiers: input["PolicyQualifiers"]?.map(x => fromPolicyQualifierInfo(x)),
+  }
+}
+
+// refs: 1 - tags: input, named, interface
+export interface PolicyQualifierInfo {
+  PolicyQualifierId: PolicyQualifierId;
+  Qualifier: Qualifier;
+}
+function fromPolicyQualifierInfo(input?: PolicyQualifierInfo | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    PolicyQualifierId: input["PolicyQualifierId"],
+    Qualifier: fromQualifier(input["Qualifier"]),
+  }
+}
+
+// refs: 1 - tags: input, named, enum
+export type PolicyQualifierId =
+| "CPS"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 1 - tags: input, named, interface
+export interface Qualifier {
+  CpsUri: string;
+}
+function fromQualifier(input?: Qualifier | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    CpsUri: input["CpsUri"],
+  }
+}
+
+// refs: 1 - tags: input, named, interface
+export interface ExtendedKeyUsage {
+  ExtendedKeyUsageType?: ExtendedKeyUsageType | null;
+  ExtendedKeyUsageObjectIdentifier?: string | null;
+}
+function fromExtendedKeyUsage(input?: ExtendedKeyUsage | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    ExtendedKeyUsageType: input["ExtendedKeyUsageType"],
+    ExtendedKeyUsageObjectIdentifier: input["ExtendedKeyUsageObjectIdentifier"],
+  }
+}
+
+// refs: 1 - tags: input, named, enum
+export type ExtendedKeyUsageType =
+| "SERVER_AUTH"
+| "CLIENT_AUTH"
+| "CODE_SIGNING"
+| "EMAIL_PROTECTION"
+| "TIME_STAMPING"
+| "OCSP_SIGNING"
+| "SMART_CARD_LOGIN"
+| "DOCUMENT_SIGNING"
+| "CERTIFICATE_TRANSPARENCY"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 2 - tags: input, named, interface
 export interface Validity {
   Value: number;
   Type: ValidityPeriodType;
@@ -902,7 +1209,7 @@ function fromValidity(input?: Validity | null): jsonP.JSONValue {
   }
 }
 
-// refs: 1 - tags: input, named, enum
+// refs: 2 - tags: input, named, enum
 export type ValidityPeriodType =
 | "END_DATE"
 | "ABSOLUTE"

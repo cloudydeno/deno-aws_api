@@ -26,7 +26,7 @@ export default class CloudFront {
     "uid": "cloudfront-2019-03-26"
   };
 
-  async createCloudFrontOriginAccessIdentity2019_03_26(
+  async createCloudFrontOriginAccessIdentity(
     {abortSignal, ...params}: RequestConfig & CreateCloudFrontOriginAccessIdentityRequest,
   ): Promise<CreateCloudFrontOriginAccessIdentityResult> {
     const inner = params["CloudFrontOriginAccessIdentityConfig"];
@@ -51,7 +51,7 @@ export default class CloudFront {
   };
   }
 
-  async createDistribution2019_03_26(
+  async createDistribution(
     {abortSignal, ...params}: RequestConfig & CreateDistributionRequest,
   ): Promise<CreateDistributionResult> {
     const inner = params["DistributionConfig"];
@@ -91,7 +91,7 @@ export default class CloudFront {
   };
   }
 
-  async createDistributionWithTags2019_03_26(
+  async createDistributionWithTags(
     {abortSignal, ...params}: RequestConfig & CreateDistributionWithTagsRequest,
   ): Promise<CreateDistributionWithTagsResult> {
     const inner = params["DistributionConfigWithTags"];
@@ -116,7 +116,7 @@ export default class CloudFront {
   };
   }
 
-  async createFieldLevelEncryptionConfig2019_03_26(
+  async createFieldLevelEncryptionConfig(
     {abortSignal, ...params}: RequestConfig & CreateFieldLevelEncryptionConfigRequest,
   ): Promise<CreateFieldLevelEncryptionConfigResult> {
     const inner = params["FieldLevelEncryptionConfig"];
@@ -143,7 +143,7 @@ export default class CloudFront {
   };
   }
 
-  async createFieldLevelEncryptionProfile2019_03_26(
+  async createFieldLevelEncryptionProfile(
     {abortSignal, ...params}: RequestConfig & CreateFieldLevelEncryptionProfileRequest,
   ): Promise<CreateFieldLevelEncryptionProfileResult> {
     const inner = params["FieldLevelEncryptionProfileConfig"];
@@ -170,7 +170,7 @@ export default class CloudFront {
   };
   }
 
-  async createInvalidation2019_03_26(
+  async createInvalidation(
     {abortSignal, ...params}: RequestConfig & CreateInvalidationRequest,
   ): Promise<CreateInvalidationResult> {
     const inner = params["InvalidationBatch"];
@@ -194,7 +194,7 @@ export default class CloudFront {
   };
   }
 
-  async createPublicKey2019_03_26(
+  async createPublicKey(
     {abortSignal, ...params}: RequestConfig & CreatePublicKeyRequest,
   ): Promise<CreatePublicKeyResult> {
     const inner = params["PublicKeyConfig"];
@@ -221,7 +221,7 @@ export default class CloudFront {
   };
   }
 
-  async createStreamingDistribution2019_03_26(
+  async createStreamingDistribution(
     {abortSignal, ...params}: RequestConfig & CreateStreamingDistributionRequest,
   ): Promise<CreateStreamingDistributionResult> {
     const inner = params["StreamingDistributionConfig"];
@@ -252,7 +252,7 @@ export default class CloudFront {
   };
   }
 
-  async createStreamingDistributionWithTags2019_03_26(
+  async createStreamingDistributionWithTags(
     {abortSignal, ...params}: RequestConfig & CreateStreamingDistributionWithTagsRequest,
   ): Promise<CreateStreamingDistributionWithTagsResult> {
     const inner = params["StreamingDistributionConfigWithTags"];
@@ -277,7 +277,7 @@ export default class CloudFront {
   };
   }
 
-  async deleteCloudFrontOriginAccessIdentity2019_03_26(
+  async deleteCloudFrontOriginAccessIdentity(
     {abortSignal, ...params}: RequestConfig & DeleteCloudFrontOriginAccessIdentityRequest,
   ): Promise<void> {
     const headers = new Headers;
@@ -291,7 +291,7 @@ export default class CloudFront {
     });
   }
 
-  async deleteDistribution2019_03_26(
+  async deleteDistribution(
     {abortSignal, ...params}: RequestConfig & DeleteDistributionRequest,
   ): Promise<void> {
     const headers = new Headers;
@@ -305,7 +305,7 @@ export default class CloudFront {
     });
   }
 
-  async deleteFieldLevelEncryptionConfig2019_03_26(
+  async deleteFieldLevelEncryptionConfig(
     {abortSignal, ...params}: RequestConfig & DeleteFieldLevelEncryptionConfigRequest,
   ): Promise<void> {
     const headers = new Headers;
@@ -319,7 +319,7 @@ export default class CloudFront {
     });
   }
 
-  async deleteFieldLevelEncryptionProfile2019_03_26(
+  async deleteFieldLevelEncryptionProfile(
     {abortSignal, ...params}: RequestConfig & DeleteFieldLevelEncryptionProfileRequest,
   ): Promise<void> {
     const headers = new Headers;
@@ -333,7 +333,7 @@ export default class CloudFront {
     });
   }
 
-  async deletePublicKey2019_03_26(
+  async deletePublicKey(
     {abortSignal, ...params}: RequestConfig & DeletePublicKeyRequest,
   ): Promise<void> {
     const headers = new Headers;
@@ -347,7 +347,7 @@ export default class CloudFront {
     });
   }
 
-  async deleteStreamingDistribution2019_03_26(
+  async deleteStreamingDistribution(
     {abortSignal, ...params}: RequestConfig & DeleteStreamingDistributionRequest,
   ): Promise<void> {
     const headers = new Headers;
@@ -361,7 +361,7 @@ export default class CloudFront {
     });
   }
 
-  async getCloudFrontOriginAccessIdentity2019_03_26(
+  async getCloudFrontOriginAccessIdentity(
     {abortSignal, ...params}: RequestConfig & GetCloudFrontOriginAccessIdentityRequest,
   ): Promise<GetCloudFrontOriginAccessIdentityResult> {
 
@@ -378,7 +378,7 @@ export default class CloudFront {
   };
   }
 
-  async getCloudFrontOriginAccessIdentityConfig2019_03_26(
+  async getCloudFrontOriginAccessIdentityConfig(
     {abortSignal, ...params}: RequestConfig & GetCloudFrontOriginAccessIdentityConfigRequest,
   ): Promise<GetCloudFrontOriginAccessIdentityConfigResult> {
 
@@ -395,7 +395,7 @@ export default class CloudFront {
   };
   }
 
-  async getDistribution2019_03_26(
+  async getDistribution(
     {abortSignal, ...params}: RequestConfig & GetDistributionRequest,
   ): Promise<GetDistributionResult> {
 
@@ -412,7 +412,7 @@ export default class CloudFront {
   };
   }
 
-  async getDistributionConfig2019_03_26(
+  async getDistributionConfig(
     {abortSignal, ...params}: RequestConfig & GetDistributionConfigRequest,
   ): Promise<GetDistributionConfigResult> {
 
@@ -429,7 +429,7 @@ export default class CloudFront {
   };
   }
 
-  async getFieldLevelEncryption2019_03_26(
+  async getFieldLevelEncryption(
     {abortSignal, ...params}: RequestConfig & GetFieldLevelEncryptionRequest,
   ): Promise<GetFieldLevelEncryptionResult> {
 
@@ -446,7 +446,7 @@ export default class CloudFront {
   };
   }
 
-  async getFieldLevelEncryptionConfig2019_03_26(
+  async getFieldLevelEncryptionConfig(
     {abortSignal, ...params}: RequestConfig & GetFieldLevelEncryptionConfigRequest,
   ): Promise<GetFieldLevelEncryptionConfigResult> {
 
@@ -463,7 +463,7 @@ export default class CloudFront {
   };
   }
 
-  async getFieldLevelEncryptionProfile2019_03_26(
+  async getFieldLevelEncryptionProfile(
     {abortSignal, ...params}: RequestConfig & GetFieldLevelEncryptionProfileRequest,
   ): Promise<GetFieldLevelEncryptionProfileResult> {
 
@@ -480,7 +480,7 @@ export default class CloudFront {
   };
   }
 
-  async getFieldLevelEncryptionProfileConfig2019_03_26(
+  async getFieldLevelEncryptionProfileConfig(
     {abortSignal, ...params}: RequestConfig & GetFieldLevelEncryptionProfileConfigRequest,
   ): Promise<GetFieldLevelEncryptionProfileConfigResult> {
 
@@ -497,7 +497,7 @@ export default class CloudFront {
   };
   }
 
-  async getInvalidation2019_03_26(
+  async getInvalidation(
     {abortSignal, ...params}: RequestConfig & GetInvalidationRequest,
   ): Promise<GetInvalidationResult> {
 
@@ -513,7 +513,7 @@ export default class CloudFront {
   };
   }
 
-  async getPublicKey2019_03_26(
+  async getPublicKey(
     {abortSignal, ...params}: RequestConfig & GetPublicKeyRequest,
   ): Promise<GetPublicKeyResult> {
 
@@ -530,7 +530,7 @@ export default class CloudFront {
   };
   }
 
-  async getPublicKeyConfig2019_03_26(
+  async getPublicKeyConfig(
     {abortSignal, ...params}: RequestConfig & GetPublicKeyConfigRequest,
   ): Promise<GetPublicKeyConfigResult> {
 
@@ -547,7 +547,7 @@ export default class CloudFront {
   };
   }
 
-  async getStreamingDistribution2019_03_26(
+  async getStreamingDistribution(
     {abortSignal, ...params}: RequestConfig & GetStreamingDistributionRequest,
   ): Promise<GetStreamingDistributionResult> {
 
@@ -564,7 +564,7 @@ export default class CloudFront {
   };
   }
 
-  async getStreamingDistributionConfig2019_03_26(
+  async getStreamingDistributionConfig(
     {abortSignal, ...params}: RequestConfig & GetStreamingDistributionConfigRequest,
   ): Promise<GetStreamingDistributionConfigResult> {
 
@@ -581,7 +581,7 @@ export default class CloudFront {
   };
   }
 
-  async listCloudFrontOriginAccessIdentities2019_03_26(
+  async listCloudFrontOriginAccessIdentities(
     {abortSignal, ...params}: RequestConfig & ListCloudFrontOriginAccessIdentitiesRequest = {},
   ): Promise<ListCloudFrontOriginAccessIdentitiesResult> {
     const query = new URLSearchParams;
@@ -608,7 +608,7 @@ export default class CloudFront {
   };
   }
 
-  async listDistributions2019_03_26(
+  async listDistributions(
     {abortSignal, ...params}: RequestConfig & ListDistributionsRequest = {},
   ): Promise<ListDistributionsResult> {
     const query = new URLSearchParams;
@@ -626,7 +626,7 @@ export default class CloudFront {
   };
   }
 
-  async listDistributionsByWebACLId2019_03_26(
+  async listDistributionsByWebACLId(
     {abortSignal, ...params}: RequestConfig & ListDistributionsByWebACLIdRequest,
   ): Promise<ListDistributionsByWebACLIdResult> {
     const query = new URLSearchParams;
@@ -644,7 +644,7 @@ export default class CloudFront {
   };
   }
 
-  async listFieldLevelEncryptionConfigs2019_03_26(
+  async listFieldLevelEncryptionConfigs(
     {abortSignal, ...params}: RequestConfig & ListFieldLevelEncryptionConfigsRequest = {},
   ): Promise<ListFieldLevelEncryptionConfigsResult> {
     const query = new URLSearchParams;
@@ -669,7 +669,7 @@ export default class CloudFront {
   };
   }
 
-  async listFieldLevelEncryptionProfiles2019_03_26(
+  async listFieldLevelEncryptionProfiles(
     {abortSignal, ...params}: RequestConfig & ListFieldLevelEncryptionProfilesRequest = {},
   ): Promise<ListFieldLevelEncryptionProfilesResult> {
     const query = new URLSearchParams;
@@ -694,7 +694,7 @@ export default class CloudFront {
   };
   }
 
-  async listInvalidations2019_03_26(
+  async listInvalidations(
     {abortSignal, ...params}: RequestConfig & ListInvalidationsRequest,
   ): Promise<ListInvalidationsResult> {
     const query = new URLSearchParams;
@@ -721,7 +721,7 @@ export default class CloudFront {
   };
   }
 
-  async listPublicKeys2019_03_26(
+  async listPublicKeys(
     {abortSignal, ...params}: RequestConfig & ListPublicKeysRequest = {},
   ): Promise<ListPublicKeysResult> {
     const query = new URLSearchParams;
@@ -746,7 +746,7 @@ export default class CloudFront {
   };
   }
 
-  async listStreamingDistributions2019_03_26(
+  async listStreamingDistributions(
     {abortSignal, ...params}: RequestConfig & ListStreamingDistributionsRequest = {},
   ): Promise<ListStreamingDistributionsResult> {
     const query = new URLSearchParams;
@@ -773,7 +773,7 @@ export default class CloudFront {
   };
   }
 
-  async listTagsForResource2019_03_26(
+  async listTagsForResource(
     {abortSignal, ...params}: RequestConfig & ListTagsForResourceRequest,
   ): Promise<ListTagsForResourceResult> {
     const query = new URLSearchParams;
@@ -790,7 +790,7 @@ export default class CloudFront {
   };
   }
 
-  async tagResource2019_03_26(
+  async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<void> {
     const inner = params["Tags"];
@@ -810,7 +810,7 @@ export default class CloudFront {
     });
   }
 
-  async untagResource2019_03_26(
+  async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceRequest,
   ): Promise<void> {
     const inner = params["TagKeys"];
@@ -830,7 +830,7 @@ export default class CloudFront {
     });
   }
 
-  async updateCloudFrontOriginAccessIdentity2019_03_26(
+  async updateCloudFrontOriginAccessIdentity(
     {abortSignal, ...params}: RequestConfig & UpdateCloudFrontOriginAccessIdentityRequest,
   ): Promise<UpdateCloudFrontOriginAccessIdentityResult> {
     const inner = params["CloudFrontOriginAccessIdentityConfig"];
@@ -856,7 +856,7 @@ export default class CloudFront {
   };
   }
 
-  async updateDistribution2019_03_26(
+  async updateDistribution(
     {abortSignal, ...params}: RequestConfig & UpdateDistributionRequest,
   ): Promise<UpdateDistributionResult> {
     const inner = params["DistributionConfig"];
@@ -897,7 +897,7 @@ export default class CloudFront {
   };
   }
 
-  async updateFieldLevelEncryptionConfig2019_03_26(
+  async updateFieldLevelEncryptionConfig(
     {abortSignal, ...params}: RequestConfig & UpdateFieldLevelEncryptionConfigRequest,
   ): Promise<UpdateFieldLevelEncryptionConfigResult> {
     const inner = params["FieldLevelEncryptionConfig"];
@@ -925,7 +925,7 @@ export default class CloudFront {
   };
   }
 
-  async updateFieldLevelEncryptionProfile2019_03_26(
+  async updateFieldLevelEncryptionProfile(
     {abortSignal, ...params}: RequestConfig & UpdateFieldLevelEncryptionProfileRequest,
   ): Promise<UpdateFieldLevelEncryptionProfileResult> {
     const inner = params["FieldLevelEncryptionProfileConfig"];
@@ -953,7 +953,7 @@ export default class CloudFront {
   };
   }
 
-  async updatePublicKey2019_03_26(
+  async updatePublicKey(
     {abortSignal, ...params}: RequestConfig & UpdatePublicKeyRequest,
   ): Promise<UpdatePublicKeyResult> {
     const inner = params["PublicKeyConfig"];
@@ -981,7 +981,7 @@ export default class CloudFront {
   };
   }
 
-  async updateStreamingDistribution2019_03_26(
+  async updateStreamingDistribution(
     {abortSignal, ...params}: RequestConfig & UpdateStreamingDistributionRequest,
   ): Promise<UpdateStreamingDistributionResult> {
     const inner = params["StreamingDistributionConfig"];
@@ -1024,7 +1024,7 @@ export default class CloudFront {
   ): Promise<GetDistributionResult> {
     const errMessage = 'ResourceNotReady: Resource is not in the state DistributionDeployed';
     for (let i = 0; i < 35; i++) {
-      const resp = await this.getDistribution2019_03_26(params);
+      const resp = await this.getDistribution(params);
       if (resp?.Distribution?.Status === "Deployed") return resp;
       await new Promise(r => setTimeout(r, 60000));
     }
@@ -1040,7 +1040,7 @@ export default class CloudFront {
   ): Promise<GetInvalidationResult> {
     const errMessage = 'ResourceNotReady: Resource is not in the state InvalidationCompleted';
     for (let i = 0; i < 30; i++) {
-      const resp = await this.getInvalidation2019_03_26(params);
+      const resp = await this.getInvalidation(params);
       if (resp?.Invalidation?.Status === "Completed") return resp;
       await new Promise(r => setTimeout(r, 20000));
     }
@@ -1056,7 +1056,7 @@ export default class CloudFront {
   ): Promise<GetStreamingDistributionResult> {
     const errMessage = 'ResourceNotReady: Resource is not in the state StreamingDistributionDeployed';
     for (let i = 0; i < 25; i++) {
-      const resp = await this.getStreamingDistribution2019_03_26(params);
+      const resp = await this.getStreamingDistribution(params);
       if (resp?.StreamingDistribution?.Status === "Deployed") return resp;
       await new Promise(r => setTimeout(r, 60000));
     }

@@ -353,6 +353,38 @@ export default class DataBrew {
     }, await resp.json());
   }
 
+  async describeJobRun(
+    {abortSignal, ...params}: RequestConfig & DescribeJobRunRequest,
+  ): Promise<DescribeJobRunResponse> {
+
+    const resp = await this.#client.performRequest({
+      abortSignal,
+      action: "DescribeJobRun",
+      method: "GET",
+      requestUri: cmnP.encodePath`/jobs/${params["Name"]}/jobRun/${params["RunId"]}`,
+    });
+    return jsonP.readObj({
+      required: {
+        "JobName": "s",
+      },
+      optional: {
+        "Attempt": "n",
+        "CompletedOn": "d",
+        "DatasetName": "s",
+        "ErrorMessage": "s",
+        "ExecutionTime": "n",
+        "RunId": "s",
+        "State": (x: jsonP.JSONValue) => cmnP.readEnum<JobRunState>(x),
+        "LogSubscription": (x: jsonP.JSONValue) => cmnP.readEnum<LogSubscription>(x),
+        "LogGroupName": "s",
+        "Outputs": [toOutput],
+        "RecipeReference": toRecipeReference,
+        "StartedBy": "s",
+        "StartedOn": "d",
+      },
+    }, await resp.json());
+  }
+
   async describeProject(
     {abortSignal, ...params}: RequestConfig & DescribeProjectRequest,
   ): Promise<DescribeProjectResponse> {
@@ -1010,6 +1042,12 @@ export interface DescribeJobRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface DescribeJobRunRequest {
+  Name: string;
+  RunId: string;
+}
+
+// refs: 1 - tags: named, input
 export interface DescribeProjectRequest {
   Name: string;
 }
@@ -1277,6 +1315,24 @@ export interface DescribeJobResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface DescribeJobRunResponse {
+  Attempt?: number | null;
+  CompletedOn?: Date | number | null;
+  DatasetName?: string | null;
+  ErrorMessage?: string | null;
+  ExecutionTime?: number | null;
+  JobName: string;
+  RunId?: string | null;
+  State?: JobRunState | null;
+  LogSubscription?: LogSubscription | null;
+  LogGroupName?: string | null;
+  Outputs?: Output[] | null;
+  RecipeReference?: RecipeReference | null;
+  StartedBy?: string | null;
+  StartedOn?: Date | number | null;
+}
+
+// refs: 1 - tags: named, output
 export interface DescribeProjectResponse {
   CreateDate?: Date | number | null;
   CreatedBy?: string | null;
@@ -1442,12 +1498,14 @@ export interface UpdateScheduleResponse {
 export interface FormatOptions {
   Json?: JsonOptions | null;
   Excel?: ExcelOptions | null;
+  Csv?: CsvOptions | null;
 }
 function fromFormatOptions(input?: FormatOptions | null): jsonP.JSONValue {
   if (!input) return input;
   return {
     Json: fromJsonOptions(input["Json"]),
     Excel: fromExcelOptions(input["Excel"]),
+    Csv: fromCsvOptions(input["Csv"]),
   }
 }
 function toFormatOptions(root: jsonP.JSONValue): FormatOptions {
@@ -1456,6 +1514,7 @@ function toFormatOptions(root: jsonP.JSONValue): FormatOptions {
     optional: {
       "Json": toJsonOptions,
       "Excel": toExcelOptions,
+      "Csv": toCsvOptions,
     },
   }, root);
 }
@@ -1502,6 +1561,25 @@ function toExcelOptions(root: jsonP.JSONValue): ExcelOptions {
 }
 
 // refs: 4 - tags: input, named, interface, output
+export interface CsvOptions {
+  Delimiter?: string | null;
+}
+function fromCsvOptions(input?: CsvOptions | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    Delimiter: input["Delimiter"],
+  }
+}
+function toCsvOptions(root: jsonP.JSONValue): CsvOptions {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "Delimiter": "s",
+    },
+  }, root);
+}
+
+// refs: 4 - tags: input, named, interface, output
 export interface Input {
   S3InputDefinition?: S3Location | null;
   DataCatalogInputDefinition?: DataCatalogInputDefinition | null;
@@ -1523,7 +1601,7 @@ function toInput(root: jsonP.JSONValue): Input {
   }, root);
 }
 
-// refs: 15 - tags: input, named, interface, output
+// refs: 16 - tags: input, named, interface, output
 export interface S3Location {
   Bucket: string;
   Key?: string | null;
@@ -1581,7 +1659,7 @@ export type EncryptionMode =
 | "SSE-S3"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 7 - tags: input, named, enum, output
+// refs: 8 - tags: input, named, enum, output
 export type LogSubscription =
 | "ENABLE"
 | "DISABLE"
@@ -1689,13 +1767,14 @@ function toConditionExpression(root: jsonP.JSONValue): ConditionExpression {
   }, root);
 }
 
-// refs: 5 - tags: input, named, interface, output
+// refs: 6 - tags: input, named, interface, output
 export interface Output {
   CompressionFormat?: CompressionFormat | null;
   Format?: OutputFormat | null;
   PartitionColumns?: string[] | null;
   Location: S3Location;
   Overwrite?: boolean | null;
+  FormatOptions?: OutputFormatOptions | null;
 }
 function fromOutput(input?: Output | null): jsonP.JSONValue {
   if (!input) return input;
@@ -1705,6 +1784,7 @@ function fromOutput(input?: Output | null): jsonP.JSONValue {
     PartitionColumns: input["PartitionColumns"],
     Location: fromS3Location(input["Location"]),
     Overwrite: input["Overwrite"],
+    FormatOptions: fromOutputFormatOptions(input["FormatOptions"]),
   }
 }
 function toOutput(root: jsonP.JSONValue): Output {
@@ -1717,11 +1797,12 @@ function toOutput(root: jsonP.JSONValue): Output {
       "Format": (x: jsonP.JSONValue) => cmnP.readEnum<OutputFormat>(x),
       "PartitionColumns": ["s"],
       "Overwrite": "b",
+      "FormatOptions": toOutputFormatOptions,
     },
   }, root);
 }
 
-// refs: 5 - tags: input, named, enum, output
+// refs: 6 - tags: input, named, enum, output
 export type CompressionFormat =
 | "GZIP"
 | "LZ4"
@@ -1734,7 +1815,7 @@ export type CompressionFormat =
 | "ZLIB"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 5 - tags: input, named, enum, output
+// refs: 6 - tags: input, named, enum, output
 export type OutputFormat =
 | "CSV"
 | "JSON"
@@ -1745,7 +1826,45 @@ export type OutputFormat =
 | "XML"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 4 - tags: input, named, interface, output
+// refs: 6 - tags: input, named, interface, output
+export interface OutputFormatOptions {
+  Csv?: CsvOutputOptions | null;
+}
+function fromOutputFormatOptions(input?: OutputFormatOptions | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    Csv: fromCsvOutputOptions(input["Csv"]),
+  }
+}
+function toOutputFormatOptions(root: jsonP.JSONValue): OutputFormatOptions {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "Csv": toCsvOutputOptions,
+    },
+  }, root);
+}
+
+// refs: 6 - tags: input, named, interface, output
+export interface CsvOutputOptions {
+  Delimiter?: string | null;
+}
+function fromCsvOutputOptions(input?: CsvOutputOptions | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    Delimiter: input["Delimiter"],
+  }
+}
+function toCsvOutputOptions(root: jsonP.JSONValue): CsvOutputOptions {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "Delimiter": "s",
+    },
+  }, root);
+}
+
+// refs: 5 - tags: input, named, interface, output
 export interface RecipeReference {
   Name: string;
   RecipeVersion?: string | null;
@@ -1810,6 +1929,17 @@ export type Source =
 export type JobType =
 | "PROFILE"
 | "RECIPE"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 2 - tags: output, named, enum
+export type JobRunState =
+| "STARTING"
+| "RUNNING"
+| "STOPPING"
+| "STOPPED"
+| "SUCCEEDED"
+| "FAILED"
+| "TIMEOUT"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, enum
@@ -1898,17 +2028,6 @@ function toJobRun(root: jsonP.JSONValue): JobRun {
     },
   }, root);
 }
-
-// refs: 1 - tags: output, named, enum
-export type JobRunState =
-| "STARTING"
-| "RUNNING"
-| "STOPPING"
-| "STOPPED"
-| "SUCCEEDED"
-| "FAILED"
-| "TIMEOUT"
-| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface Job {

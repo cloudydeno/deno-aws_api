@@ -546,6 +546,29 @@ export default class Kafka {
     }, await resp.json());
   }
 
+  async updateBrokerType(
+    {abortSignal, ...params}: RequestConfig & UpdateBrokerTypeRequest,
+  ): Promise<UpdateBrokerTypeResponse> {
+    const body: jsonP.JSONObject = {
+      currentVersion: params["CurrentVersion"],
+      targetInstanceType: params["TargetInstanceType"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "UpdateBrokerType",
+      method: "PUT",
+      requestUri: cmnP.encodePath`/v1/clusters/${params["ClusterArn"]}/nodes/type`,
+      responseCode: 200,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ClusterArn": "s",
+        "ClusterOperationArn": "s",
+      },
+    }, await resp.json());
+  }
+
   async updateBrokerStorage(
     {abortSignal, ...params}: RequestConfig & UpdateBrokerStorageRequest,
   ): Promise<UpdateBrokerStorageResponse> {
@@ -821,6 +844,13 @@ export interface UpdateBrokerCountRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface UpdateBrokerTypeRequest {
+  ClusterArn: string;
+  CurrentVersion: string;
+  TargetInstanceType: string;
+}
+
+// refs: 1 - tags: named, input
 export interface UpdateBrokerStorageRequest {
   ClusterArn: string;
   CurrentVersion: string;
@@ -995,6 +1025,12 @@ export interface RebootBrokerResponse {
 
 // refs: 1 - tags: named, output
 export interface UpdateBrokerCountResponse {
+  ClusterArn?: string | null;
+  ClusterOperationArn?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface UpdateBrokerTypeResponse {
   ClusterArn?: string | null;
   ClusterOperationArn?: string | null;
 }
@@ -1739,6 +1775,7 @@ export interface MutableClusterInfo {
   OpenMonitoring?: OpenMonitoring | null;
   KafkaVersion?: string | null;
   LoggingInfo?: LoggingInfo | null;
+  InstanceType?: string | null;
 }
 function toMutableClusterInfo(root: jsonP.JSONValue): MutableClusterInfo {
   return jsonP.readObj({
@@ -1751,6 +1788,7 @@ function toMutableClusterInfo(root: jsonP.JSONValue): MutableClusterInfo {
       "OpenMonitoring": toOpenMonitoring,
       "KafkaVersion": "s",
       "LoggingInfo": toLoggingInfo,
+      "InstanceType": "s",
     },
   }, root);
 }

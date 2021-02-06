@@ -54,9 +54,10 @@ export default class LookoutVision {
   ): Promise<CreateModelResponse> {
     const headers = new Headers;
     const body: jsonP.JSONObject = {
-      Description: fromModelDescription(params["Description"]),
+      Description: params["Description"],
       OutputConfig: fromOutputConfig(params["OutputConfig"]),
       KmsKeyId: params["KmsKeyId"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
     };
     if (params["ClientToken"] != null) headers.append("X-Amzn-Client-Token", params["ClientToken"]);
     const resp = await this.#client.performRequest({
@@ -292,6 +293,24 @@ export default class LookoutVision {
     }, await resp.json());
   }
 
+  async listTagsForResource(
+    {abortSignal, ...params}: RequestConfig & ListTagsForResourceRequest,
+  ): Promise<ListTagsForResourceResponse> {
+
+    const resp = await this.#client.performRequest({
+      abortSignal,
+      action: "ListTagsForResource",
+      method: "GET",
+      requestUri: cmnP.encodePath`/2020-11-20/tags/${params["ResourceArn"]}`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Tags": [toTag],
+      },
+    }, await resp.json());
+  }
+
   async startModel(
     {abortSignal, ...params}: RequestConfig & StartModelRequest,
   ): Promise<StartModelResponse> {
@@ -333,6 +352,42 @@ export default class LookoutVision {
     }, await resp.json());
   }
 
+  async tagResource(
+    {abortSignal, ...params}: RequestConfig & TagResourceRequest,
+  ): Promise<TagResourceResponse> {
+    const body: jsonP.JSONObject = {
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "TagResource",
+      requestUri: cmnP.encodePath`/2020-11-20/tags/${params["ResourceArn"]}`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
+  }
+
+  async untagResource(
+    {abortSignal, ...params}: RequestConfig & UntagResourceRequest,
+  ): Promise<UntagResourceResponse> {
+    const query = new URLSearchParams;
+    for (const item of params["TagKeys"]) {
+      query.append("tagKeys", item?.toString() ?? "");
+    }
+    const resp = await this.#client.performRequest({
+      abortSignal, query,
+      action: "UntagResource",
+      method: "DELETE",
+      requestUri: cmnP.encodePath`/2020-11-20/tags/${params["ResourceArn"]}`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
+  }
+
   async updateDatasetEntries(
     {abortSignal, ...params}: RequestConfig & UpdateDatasetEntriesRequest,
   ): Promise<UpdateDatasetEntriesResponse> {
@@ -369,10 +424,11 @@ export interface CreateDatasetRequest {
 // refs: 1 - tags: named, input
 export interface CreateModelRequest {
   ProjectName: string;
-  Description?: ModelDescription | null;
+  Description?: string | null;
   ClientToken?: string | null;
   OutputConfig: OutputConfig;
   KmsKeyId?: string | null;
+  Tags?: Tag[] | null;
 }
 
 // refs: 1 - tags: named, input
@@ -453,6 +509,11 @@ export interface ListProjectsRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface ListTagsForResourceRequest {
+  ResourceArn: string;
+}
+
+// refs: 1 - tags: named, input
 export interface StartModelRequest {
   ProjectName: string;
   ModelVersion: string;
@@ -465,6 +526,18 @@ export interface StopModelRequest {
   ProjectName: string;
   ModelVersion: string;
   ClientToken?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface TagResourceRequest {
+  ResourceArn: string;
+  Tags: Tag[];
+}
+
+// refs: 1 - tags: named, input
+export interface UntagResourceRequest {
+  ResourceArn: string;
+  TagKeys: string[];
 }
 
 // refs: 1 - tags: named, input
@@ -543,6 +616,11 @@ export interface ListProjectsResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface ListTagsForResourceResponse {
+  Tags?: Tag[] | null;
+}
+
+// refs: 1 - tags: named, output
 export interface StartModelResponse {
   Status?: ModelHostingStatus | null;
 }
@@ -550,6 +628,14 @@ export interface StartModelResponse {
 // refs: 1 - tags: named, output
 export interface StopModelResponse {
   Status?: ModelHostingStatus | null;
+}
+
+// refs: 1 - tags: named, output
+export interface TagResourceResponse {
+}
+
+// refs: 1 - tags: named, output
+export interface UntagResourceResponse {
 }
 
 // refs: 1 - tags: named, output
@@ -595,96 +681,6 @@ function fromInputS3Object(input?: InputS3Object | null): jsonP.JSONValue {
 }
 
 // refs: 2 - tags: input, named, interface, output
-export interface ModelDescription {
-  ModelVersion?: string | null;
-  ModelArn?: string | null;
-  CreationTimestamp?: Date | number | null;
-  Description?: string | null;
-  Status?: ModelStatus | null;
-  StatusMessage?: string | null;
-  Performance?: ModelPerformance | null;
-  OutputConfig?: OutputConfig | null;
-  EvaluationManifest?: OutputS3Object | null;
-  EvaluationResult?: OutputS3Object | null;
-  EvaluationEndTimestamp?: Date | number | null;
-  KmsKeyId?: string | null;
-}
-function fromModelDescription(input?: ModelDescription | null): jsonP.JSONValue {
-  if (!input) return input;
-  return {
-    ModelVersion: input["ModelVersion"],
-    ModelArn: input["ModelArn"],
-    CreationTimestamp: jsonP.serializeDate_unixTimestamp(input["CreationTimestamp"]),
-    Description: input["Description"],
-    Status: input["Status"],
-    StatusMessage: input["StatusMessage"],
-    Performance: fromModelPerformance(input["Performance"]),
-    OutputConfig: fromOutputConfig(input["OutputConfig"]),
-    EvaluationManifest: fromOutputS3Object(input["EvaluationManifest"]),
-    EvaluationResult: fromOutputS3Object(input["EvaluationResult"]),
-    EvaluationEndTimestamp: jsonP.serializeDate_unixTimestamp(input["EvaluationEndTimestamp"]),
-    KmsKeyId: input["KmsKeyId"],
-  }
-}
-function toModelDescription(root: jsonP.JSONValue): ModelDescription {
-  return jsonP.readObj({
-    required: {},
-    optional: {
-      "ModelVersion": "s",
-      "ModelArn": "s",
-      "CreationTimestamp": "d",
-      "Description": "s",
-      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<ModelStatus>(x),
-      "StatusMessage": "s",
-      "Performance": toModelPerformance,
-      "OutputConfig": toOutputConfig,
-      "EvaluationManifest": toOutputS3Object,
-      "EvaluationResult": toOutputS3Object,
-      "EvaluationEndTimestamp": "d",
-      "KmsKeyId": "s",
-    },
-  }, root);
-}
-
-// refs: 4 - tags: input, named, enum, output
-export type ModelStatus =
-| "TRAINING"
-| "TRAINED"
-| "TRAINING_FAILED"
-| "STARTING_HOSTING"
-| "HOSTED"
-| "HOSTING_FAILED"
-| "STOPPING_HOSTING"
-| "SYSTEM_UPDATING"
-| "DELETING"
-| cmnP.UnexpectedEnumValue;
-
-// refs: 4 - tags: input, named, interface, output
-export interface ModelPerformance {
-  F1Score?: number | null;
-  Recall?: number | null;
-  Precision?: number | null;
-}
-function fromModelPerformance(input?: ModelPerformance | null): jsonP.JSONValue {
-  if (!input) return input;
-  return {
-    F1Score: input["F1Score"],
-    Recall: input["Recall"],
-    Precision: input["Precision"],
-  }
-}
-function toModelPerformance(root: jsonP.JSONValue): ModelPerformance {
-  return jsonP.readObj({
-    required: {},
-    optional: {
-      "F1Score": "n",
-      "Recall": "n",
-      "Precision": "n",
-    },
-  }, root);
-}
-
-// refs: 3 - tags: input, named, interface, output
 export interface OutputConfig {
   S3Location: S3Location;
 }
@@ -703,7 +699,7 @@ function toOutputConfig(root: jsonP.JSONValue): OutputConfig {
   }, root);
 }
 
-// refs: 3 - tags: input, named, interface, output
+// refs: 2 - tags: input, named, interface, output
 export interface S3Location {
   Bucket: string;
   Prefix?: string | null;
@@ -726,23 +722,23 @@ function toS3Location(root: jsonP.JSONValue): S3Location {
   }, root);
 }
 
-// refs: 4 - tags: input, named, interface, output
-export interface OutputS3Object {
-  Bucket: string;
+// refs: 3 - tags: input, named, interface, output
+export interface Tag {
   Key: string;
+  Value: string;
 }
-function fromOutputS3Object(input?: OutputS3Object | null): jsonP.JSONValue {
+function fromTag(input?: Tag | null): jsonP.JSONValue {
   if (!input) return input;
   return {
-    Bucket: input["Bucket"],
     Key: input["Key"],
+    Value: input["Value"],
   }
 }
-function toOutputS3Object(root: jsonP.JSONValue): OutputS3Object {
+function toTag(root: jsonP.JSONValue): Tag {
   return jsonP.readObj({
     required: {
-      "Bucket": "s",
       "Key": "s",
+      "Value": "s",
     },
     optional: {},
   }, root);
@@ -806,6 +802,36 @@ function toModelMetadata(root: jsonP.JSONValue): ModelMetadata {
   }, root);
 }
 
+// refs: 3 - tags: output, named, enum
+export type ModelStatus =
+| "TRAINING"
+| "TRAINED"
+| "TRAINING_FAILED"
+| "STARTING_HOSTING"
+| "HOSTED"
+| "HOSTING_FAILED"
+| "STOPPING_HOSTING"
+| "SYSTEM_UPDATING"
+| "DELETING"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 3 - tags: output, named, interface
+export interface ModelPerformance {
+  F1Score?: number | null;
+  Recall?: number | null;
+  Precision?: number | null;
+}
+function toModelPerformance(root: jsonP.JSONValue): ModelPerformance {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "F1Score": "n",
+      "Recall": "n",
+      "Precision": "n",
+    },
+  }, root);
+}
+
 // refs: 2 - tags: output, named, interface
 export interface ProjectMetadata {
   ProjectArn?: string | null;
@@ -864,6 +890,56 @@ function toDatasetImageStats(root: jsonP.JSONValue): DatasetImageStats {
       "Normal": "n",
       "Anomaly": "n",
     },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
+export interface ModelDescription {
+  ModelVersion?: string | null;
+  ModelArn?: string | null;
+  CreationTimestamp?: Date | number | null;
+  Description?: string | null;
+  Status?: ModelStatus | null;
+  StatusMessage?: string | null;
+  Performance?: ModelPerformance | null;
+  OutputConfig?: OutputConfig | null;
+  EvaluationManifest?: OutputS3Object | null;
+  EvaluationResult?: OutputS3Object | null;
+  EvaluationEndTimestamp?: Date | number | null;
+  KmsKeyId?: string | null;
+}
+function toModelDescription(root: jsonP.JSONValue): ModelDescription {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "ModelVersion": "s",
+      "ModelArn": "s",
+      "CreationTimestamp": "d",
+      "Description": "s",
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<ModelStatus>(x),
+      "StatusMessage": "s",
+      "Performance": toModelPerformance,
+      "OutputConfig": toOutputConfig,
+      "EvaluationManifest": toOutputS3Object,
+      "EvaluationResult": toOutputS3Object,
+      "EvaluationEndTimestamp": "d",
+      "KmsKeyId": "s",
+    },
+  }, root);
+}
+
+// refs: 2 - tags: output, named, interface
+export interface OutputS3Object {
+  Bucket: string;
+  Key: string;
+}
+function toOutputS3Object(root: jsonP.JSONValue): OutputS3Object {
+  return jsonP.readObj({
+    required: {
+      "Bucket": "s",
+      "Key": "s",
+    },
+    optional: {},
   }, root);
 }
 

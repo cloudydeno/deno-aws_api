@@ -745,6 +745,8 @@ export default class ES {
       LogPublishingOptions: jsonP.serializeMap(params["LogPublishingOptions"], x => fromLogPublishingOption(x)),
       DomainEndpointOptions: fromDomainEndpointOptions(params["DomainEndpointOptions"]),
       AdvancedSecurityOptions: fromAdvancedSecurityOptionsInput(params["AdvancedSecurityOptions"]),
+      NodeToNodeEncryptionOptions: fromNodeToNodeEncryptionOptions(params["NodeToNodeEncryptionOptions"]),
+      EncryptionAtRestOptions: fromEncryptionAtRestOptions(params["EncryptionAtRestOptions"]),
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -1037,6 +1039,8 @@ export interface UpdateElasticsearchDomainConfigRequest {
   LogPublishingOptions?: { [key in LogType]: LogPublishingOption | null | undefined } | null;
   DomainEndpointOptions?: DomainEndpointOptions | null;
   AdvancedSecurityOptions?: AdvancedSecurityOptionsInput | null;
+  NodeToNodeEncryptionOptions?: NodeToNodeEncryptionOptions | null;
+  EncryptionAtRestOptions?: EncryptionAtRestOptions | null;
 }
 
 // refs: 1 - tags: named, input
@@ -1505,7 +1509,7 @@ function toCognitoOptions(root: jsonP.JSONValue): CognitoOptions {
   }, root);
 }
 
-// refs: 7 - tags: input, named, interface, output
+// refs: 8 - tags: input, named, interface, output
 export interface EncryptionAtRestOptions {
   Enabled?: boolean | null;
   KmsKeyId?: string | null;
@@ -1527,7 +1531,7 @@ function toEncryptionAtRestOptions(root: jsonP.JSONValue): EncryptionAtRestOptio
   }, root);
 }
 
-// refs: 7 - tags: input, named, interface, output
+// refs: 8 - tags: input, named, interface, output
 export interface NodeToNodeEncryptionOptions {
   Enabled?: boolean | null;
 }

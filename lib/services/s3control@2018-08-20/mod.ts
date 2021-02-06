@@ -5,7 +5,7 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import * as uuidv4 from "https://deno.land/std@0.75.0/uuid/v4.ts";
+import * as uuidv4 from "https://deno.land/std@0.86.0/uuid/v4.ts";
 import * as cmnP from "../../encoding/common.ts";
 import * as xmlP from "../../encoding/xml.ts";
 function generateIdemptToken() {
@@ -1296,6 +1296,7 @@ export interface JobOperation {
   S3PutObjectCopy?: S3CopyObjectOperation | null;
   S3PutObjectAcl?: S3SetObjectAclOperation | null;
   S3PutObjectTagging?: S3SetObjectTaggingOperation | null;
+  S3DeleteObjectTagging?: S3DeleteObjectTaggingOperation | null;
   S3InitiateRestoreObject?: S3InitiateRestoreObjectOperation | null;
   S3PutObjectLegalHold?: S3SetObjectLegalHoldOperation | null;
   S3PutObjectRetention?: S3SetObjectRetentionOperation | null;
@@ -1307,6 +1308,7 @@ function JobOperation_Serialize(data: JobOperation | undefined | null): Partial<
     {name: "S3PutObjectCopy", ...S3CopyObjectOperation_Serialize(data["S3PutObjectCopy"])},
     {name: "S3PutObjectAcl", ...S3SetObjectAclOperation_Serialize(data["S3PutObjectAcl"])},
     {name: "S3PutObjectTagging", ...S3SetObjectTaggingOperation_Serialize(data["S3PutObjectTagging"])},
+    {name: "S3DeleteObjectTagging", ...S3DeleteObjectTaggingOperation_Serialize(data["S3DeleteObjectTagging"])},
     {name: "S3InitiateRestoreObject", ...S3InitiateRestoreObjectOperation_Serialize(data["S3InitiateRestoreObject"])},
     {name: "S3PutObjectLegalHold", ...S3SetObjectLegalHoldOperation_Serialize(data["S3PutObjectLegalHold"])},
     {name: "S3PutObjectRetention", ...S3SetObjectRetentionOperation_Serialize(data["S3PutObjectRetention"])},
@@ -1318,6 +1320,7 @@ function JobOperation_Parse(node: xmlP.XmlNode): JobOperation {
     S3PutObjectCopy: node.first("S3PutObjectCopy", false, S3CopyObjectOperation_Parse),
     S3PutObjectAcl: node.first("S3PutObjectAcl", false, S3SetObjectAclOperation_Parse),
     S3PutObjectTagging: node.first("S3PutObjectTagging", false, S3SetObjectTaggingOperation_Parse),
+    S3DeleteObjectTagging: node.first("S3DeleteObjectTagging", false, S3DeleteObjectTaggingOperation_Parse),
     S3InitiateRestoreObject: node.first("S3InitiateRestoreObject", false, S3InitiateRestoreObjectOperation_Parse),
     S3PutObjectLegalHold: node.first("S3PutObjectLegalHold", false, S3SetObjectLegalHoldOperation_Parse),
     S3PutObjectRetention: node.first("S3PutObjectRetention", false, S3SetObjectRetentionOperation_Parse),
@@ -1650,6 +1653,19 @@ function S3SetObjectTaggingOperation_Parse(node: xmlP.XmlNode): S3SetObjectTaggi
   return {
     TagSet: node.getList("TagSet", "member").map(S3Tag_Parse),
   };
+}
+
+// refs: 2 - tags: input, named, interface, output
+export interface S3DeleteObjectTaggingOperation {
+}
+function S3DeleteObjectTaggingOperation_Serialize(data: S3DeleteObjectTaggingOperation | undefined | null): Partial<xmlP.Node> {
+  if (!data) return {};
+  return {children: [
+
+  ]};
+}
+function S3DeleteObjectTaggingOperation_Parse(node: xmlP.XmlNode): S3DeleteObjectTaggingOperation {
+  return {};
 }
 
 // refs: 2 - tags: input, named, interface, output
@@ -2566,6 +2582,7 @@ export type OperationName =
 | "S3PutObjectCopy"
 | "S3PutObjectAcl"
 | "S3PutObjectTagging"
+| "S3DeleteObjectTagging"
 | "S3InitiateRestoreObject"
 | "S3PutObjectLegalHold"
 | "S3PutObjectRetention"

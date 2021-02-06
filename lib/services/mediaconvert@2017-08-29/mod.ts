@@ -5,7 +5,7 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import * as uuidv4 from "https://deno.land/std@0.75.0/uuid/v4.ts";
+import * as uuidv4 from "https://deno.land/std@0.86.0/uuid/v4.ts";
 import * as cmnP from "../../encoding/common.ts";
 import * as jsonP from "../../encoding/json.ts";
 function generateIdemptToken() {
@@ -1461,11 +1461,13 @@ function toChannelMapping(root: jsonP.JSONValue): ChannelMapping {
 // refs: 26 - tags: input, named, interface, output
 export interface OutputChannelMapping {
   InputChannels?: number[] | null;
+  InputChannelsFineTune?: number[] | null;
 }
 function fromOutputChannelMapping(input?: OutputChannelMapping | null): jsonP.JSONValue {
   if (!input) return input;
   return {
     inputChannels: input["InputChannels"],
+    inputChannelsFineTune: input["InputChannelsFineTune"],
   }
 }
 function toOutputChannelMapping(root: jsonP.JSONValue): OutputChannelMapping {
@@ -1473,6 +1475,7 @@ function toOutputChannelMapping(root: jsonP.JSONValue): OutputChannelMapping {
     required: {},
     optional: {
       "InputChannels": ["n"],
+      "InputChannelsFineTune": ["n"],
     },
   }, root);
 }
@@ -4685,6 +4688,7 @@ function toContainerSettings(root: jsonP.JSONValue): ContainerSettings {
 // refs: 16 - tags: input, named, interface, output
 export interface CmfcSettings {
   AudioDuration?: CmfcAudioDuration | null;
+  IFrameOnlyManifest?: CmfcIFrameOnlyManifest | null;
   Scte35Esam?: CmfcScte35Esam | null;
   Scte35Source?: CmfcScte35Source | null;
 }
@@ -4692,6 +4696,7 @@ function fromCmfcSettings(input?: CmfcSettings | null): jsonP.JSONValue {
   if (!input) return input;
   return {
     audioDuration: input["AudioDuration"],
+    iFrameOnlyManifest: input["IFrameOnlyManifest"],
     scte35Esam: input["Scte35Esam"],
     scte35Source: input["Scte35Source"],
   }
@@ -4701,6 +4706,7 @@ function toCmfcSettings(root: jsonP.JSONValue): CmfcSettings {
     required: {},
     optional: {
       "AudioDuration": (x: jsonP.JSONValue) => cmnP.readEnum<CmfcAudioDuration>(x),
+      "IFrameOnlyManifest": (x: jsonP.JSONValue) => cmnP.readEnum<CmfcIFrameOnlyManifest>(x),
       "Scte35Esam": (x: jsonP.JSONValue) => cmnP.readEnum<CmfcScte35Esam>(x),
       "Scte35Source": (x: jsonP.JSONValue) => cmnP.readEnum<CmfcScte35Source>(x),
     },
@@ -4711,6 +4717,12 @@ function toCmfcSettings(root: jsonP.JSONValue): CmfcSettings {
 export type CmfcAudioDuration =
 | "DEFAULT_CODEC_DURATION"
 | "MATCH_VIDEO_DURATION"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 16 - tags: input, named, enum, output
+export type CmfcIFrameOnlyManifest =
+| "INCLUDE"
+| "EXCLUDE"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 16 - tags: input, named, enum, output
@@ -5686,11 +5698,13 @@ export type Av1SpatialAdaptiveQuantization =
 // refs: 16 - tags: input, named, interface, output
 export interface AvcIntraSettings {
   AvcIntraClass?: AvcIntraClass | null;
+  AvcIntraUhdSettings?: AvcIntraUhdSettings | null;
   FramerateControl?: AvcIntraFramerateControl | null;
   FramerateConversionAlgorithm?: AvcIntraFramerateConversionAlgorithm | null;
   FramerateDenominator?: number | null;
   FramerateNumerator?: number | null;
   InterlaceMode?: AvcIntraInterlaceMode | null;
+  ScanTypeConversionMode?: AvcIntraScanTypeConversionMode | null;
   SlowPal?: AvcIntraSlowPal | null;
   Telecine?: AvcIntraTelecine | null;
 }
@@ -5698,11 +5712,13 @@ function fromAvcIntraSettings(input?: AvcIntraSettings | null): jsonP.JSONValue 
   if (!input) return input;
   return {
     avcIntraClass: input["AvcIntraClass"],
+    avcIntraUhdSettings: fromAvcIntraUhdSettings(input["AvcIntraUhdSettings"]),
     framerateControl: input["FramerateControl"],
     framerateConversionAlgorithm: input["FramerateConversionAlgorithm"],
     framerateDenominator: input["FramerateDenominator"],
     framerateNumerator: input["FramerateNumerator"],
     interlaceMode: input["InterlaceMode"],
+    scanTypeConversionMode: input["ScanTypeConversionMode"],
     slowPal: input["SlowPal"],
     telecine: input["Telecine"],
   }
@@ -5712,11 +5728,13 @@ function toAvcIntraSettings(root: jsonP.JSONValue): AvcIntraSettings {
     required: {},
     optional: {
       "AvcIntraClass": (x: jsonP.JSONValue) => cmnP.readEnum<AvcIntraClass>(x),
+      "AvcIntraUhdSettings": toAvcIntraUhdSettings,
       "FramerateControl": (x: jsonP.JSONValue) => cmnP.readEnum<AvcIntraFramerateControl>(x),
       "FramerateConversionAlgorithm": (x: jsonP.JSONValue) => cmnP.readEnum<AvcIntraFramerateConversionAlgorithm>(x),
       "FramerateDenominator": "n",
       "FramerateNumerator": "n",
       "InterlaceMode": (x: jsonP.JSONValue) => cmnP.readEnum<AvcIntraInterlaceMode>(x),
+      "ScanTypeConversionMode": (x: jsonP.JSONValue) => cmnP.readEnum<AvcIntraScanTypeConversionMode>(x),
       "SlowPal": (x: jsonP.JSONValue) => cmnP.readEnum<AvcIntraSlowPal>(x),
       "Telecine": (x: jsonP.JSONValue) => cmnP.readEnum<AvcIntraTelecine>(x),
     },
@@ -5728,6 +5746,32 @@ export type AvcIntraClass =
 | "CLASS_50"
 | "CLASS_100"
 | "CLASS_200"
+| "CLASS_4K_2K"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 16 - tags: input, named, interface, output
+export interface AvcIntraUhdSettings {
+  QualityTuningLevel?: AvcIntraUhdQualityTuningLevel | null;
+}
+function fromAvcIntraUhdSettings(input?: AvcIntraUhdSettings | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    qualityTuningLevel: input["QualityTuningLevel"],
+  }
+}
+function toAvcIntraUhdSettings(root: jsonP.JSONValue): AvcIntraUhdSettings {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "QualityTuningLevel": (x: jsonP.JSONValue) => cmnP.readEnum<AvcIntraUhdQualityTuningLevel>(x),
+    },
+  }, root);
+}
+
+// refs: 16 - tags: input, named, enum, output
+export type AvcIntraUhdQualityTuningLevel =
+| "SINGLE_PASS"
+| "MULTI_PASS"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 16 - tags: input, named, enum, output
@@ -5750,6 +5794,12 @@ export type AvcIntraInterlaceMode =
 | "BOTTOM_FIELD"
 | "FOLLOW_TOP_FIELD"
 | "FOLLOW_BOTTOM_FIELD"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 16 - tags: input, named, enum, output
+export type AvcIntraScanTypeConversionMode =
+| "INTERLACED"
+| "INTERLACED_OPTIMIZE"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 16 - tags: input, named, enum, output
@@ -5838,6 +5888,7 @@ export interface H264Settings {
   QvbrSettings?: H264QvbrSettings | null;
   RateControlMode?: H264RateControlMode | null;
   RepeatPps?: H264RepeatPps | null;
+  ScanTypeConversionMode?: H264ScanTypeConversionMode | null;
   SceneChangeDetect?: H264SceneChangeDetect | null;
   Slices?: number | null;
   SlowPal?: H264SlowPal | null;
@@ -5881,6 +5932,7 @@ function fromH264Settings(input?: H264Settings | null): jsonP.JSONValue {
     qvbrSettings: fromH264QvbrSettings(input["QvbrSettings"]),
     rateControlMode: input["RateControlMode"],
     repeatPps: input["RepeatPps"],
+    scanTypeConversionMode: input["ScanTypeConversionMode"],
     sceneChangeDetect: input["SceneChangeDetect"],
     slices: input["Slices"],
     slowPal: input["SlowPal"],
@@ -5926,6 +5978,7 @@ function toH264Settings(root: jsonP.JSONValue): H264Settings {
       "QvbrSettings": toH264QvbrSettings,
       "RateControlMode": (x: jsonP.JSONValue) => cmnP.readEnum<H264RateControlMode>(x),
       "RepeatPps": (x: jsonP.JSONValue) => cmnP.readEnum<H264RepeatPps>(x),
+      "ScanTypeConversionMode": (x: jsonP.JSONValue) => cmnP.readEnum<H264ScanTypeConversionMode>(x),
       "SceneChangeDetect": (x: jsonP.JSONValue) => cmnP.readEnum<H264SceneChangeDetect>(x),
       "Slices": "n",
       "SlowPal": (x: jsonP.JSONValue) => cmnP.readEnum<H264SlowPal>(x),
@@ -6091,6 +6144,12 @@ export type H264RepeatPps =
 | cmnP.UnexpectedEnumValue;
 
 // refs: 16 - tags: input, named, enum, output
+export type H264ScanTypeConversionMode =
+| "INTERLACED"
+| "INTERLACED_OPTIMIZE"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 16 - tags: input, named, enum, output
 export type H264SceneChangeDetect =
 | "DISABLED"
 | "ENABLED"
@@ -6165,6 +6224,7 @@ export interface H265Settings {
   QvbrSettings?: H265QvbrSettings | null;
   RateControlMode?: H265RateControlMode | null;
   SampleAdaptiveOffsetFilterMode?: H265SampleAdaptiveOffsetFilterMode | null;
+  ScanTypeConversionMode?: H265ScanTypeConversionMode | null;
   SceneChangeDetect?: H265SceneChangeDetect | null;
   Slices?: number | null;
   SlowPal?: H265SlowPal | null;
@@ -6208,6 +6268,7 @@ function fromH265Settings(input?: H265Settings | null): jsonP.JSONValue {
     qvbrSettings: fromH265QvbrSettings(input["QvbrSettings"]),
     rateControlMode: input["RateControlMode"],
     sampleAdaptiveOffsetFilterMode: input["SampleAdaptiveOffsetFilterMode"],
+    scanTypeConversionMode: input["ScanTypeConversionMode"],
     sceneChangeDetect: input["SceneChangeDetect"],
     slices: input["Slices"],
     slowPal: input["SlowPal"],
@@ -6253,6 +6314,7 @@ function toH265Settings(root: jsonP.JSONValue): H265Settings {
       "QvbrSettings": toH265QvbrSettings,
       "RateControlMode": (x: jsonP.JSONValue) => cmnP.readEnum<H265RateControlMode>(x),
       "SampleAdaptiveOffsetFilterMode": (x: jsonP.JSONValue) => cmnP.readEnum<H265SampleAdaptiveOffsetFilterMode>(x),
+      "ScanTypeConversionMode": (x: jsonP.JSONValue) => cmnP.readEnum<H265ScanTypeConversionMode>(x),
       "SceneChangeDetect": (x: jsonP.JSONValue) => cmnP.readEnum<H265SceneChangeDetect>(x),
       "Slices": "n",
       "SlowPal": (x: jsonP.JSONValue) => cmnP.readEnum<H265SlowPal>(x),
@@ -6412,6 +6474,12 @@ export type H265SampleAdaptiveOffsetFilterMode =
 | cmnP.UnexpectedEnumValue;
 
 // refs: 16 - tags: input, named, enum, output
+export type H265ScanTypeConversionMode =
+| "INTERLACED"
+| "INTERLACED_OPTIMIZE"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 16 - tags: input, named, enum, output
 export type H265SceneChangeDetect =
 | "DISABLED"
 | "ENABLED"
@@ -6493,6 +6561,7 @@ export interface Mpeg2Settings {
   ParNumerator?: number | null;
   QualityTuningLevel?: Mpeg2QualityTuningLevel | null;
   RateControlMode?: Mpeg2RateControlMode | null;
+  ScanTypeConversionMode?: Mpeg2ScanTypeConversionMode | null;
   SceneChangeDetect?: Mpeg2SceneChangeDetect | null;
   SlowPal?: Mpeg2SlowPal | null;
   Softness?: number | null;
@@ -6528,6 +6597,7 @@ function fromMpeg2Settings(input?: Mpeg2Settings | null): jsonP.JSONValue {
     parNumerator: input["ParNumerator"],
     qualityTuningLevel: input["QualityTuningLevel"],
     rateControlMode: input["RateControlMode"],
+    scanTypeConversionMode: input["ScanTypeConversionMode"],
     sceneChangeDetect: input["SceneChangeDetect"],
     slowPal: input["SlowPal"],
     softness: input["Softness"],
@@ -6565,6 +6635,7 @@ function toMpeg2Settings(root: jsonP.JSONValue): Mpeg2Settings {
       "ParNumerator": "n",
       "QualityTuningLevel": (x: jsonP.JSONValue) => cmnP.readEnum<Mpeg2QualityTuningLevel>(x),
       "RateControlMode": (x: jsonP.JSONValue) => cmnP.readEnum<Mpeg2RateControlMode>(x),
+      "ScanTypeConversionMode": (x: jsonP.JSONValue) => cmnP.readEnum<Mpeg2ScanTypeConversionMode>(x),
       "SceneChangeDetect": (x: jsonP.JSONValue) => cmnP.readEnum<Mpeg2SceneChangeDetect>(x),
       "SlowPal": (x: jsonP.JSONValue) => cmnP.readEnum<Mpeg2SlowPal>(x),
       "Softness": "n",
@@ -6661,6 +6732,12 @@ export type Mpeg2RateControlMode =
 | cmnP.UnexpectedEnumValue;
 
 // refs: 16 - tags: input, named, enum, output
+export type Mpeg2ScanTypeConversionMode =
+| "INTERLACED"
+| "INTERLACED_OPTIMIZE"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 16 - tags: input, named, enum, output
 export type Mpeg2SceneChangeDetect =
 | "DISABLED"
 | "ENABLED"
@@ -6708,6 +6785,7 @@ export interface ProresSettings {
   ParControl?: ProresParControl | null;
   ParDenominator?: number | null;
   ParNumerator?: number | null;
+  ScanTypeConversionMode?: ProresScanTypeConversionMode | null;
   SlowPal?: ProresSlowPal | null;
   Telecine?: ProresTelecine | null;
 }
@@ -6723,6 +6801,7 @@ function fromProresSettings(input?: ProresSettings | null): jsonP.JSONValue {
     parControl: input["ParControl"],
     parDenominator: input["ParDenominator"],
     parNumerator: input["ParNumerator"],
+    scanTypeConversionMode: input["ScanTypeConversionMode"],
     slowPal: input["SlowPal"],
     telecine: input["Telecine"],
   }
@@ -6740,6 +6819,7 @@ function toProresSettings(root: jsonP.JSONValue): ProresSettings {
       "ParControl": (x: jsonP.JSONValue) => cmnP.readEnum<ProresParControl>(x),
       "ParDenominator": "n",
       "ParNumerator": "n",
+      "ScanTypeConversionMode": (x: jsonP.JSONValue) => cmnP.readEnum<ProresScanTypeConversionMode>(x),
       "SlowPal": (x: jsonP.JSONValue) => cmnP.readEnum<ProresSlowPal>(x),
       "Telecine": (x: jsonP.JSONValue) => cmnP.readEnum<ProresTelecine>(x),
     },
@@ -6783,6 +6863,12 @@ export type ProresParControl =
 | cmnP.UnexpectedEnumValue;
 
 // refs: 16 - tags: input, named, enum, output
+export type ProresScanTypeConversionMode =
+| "INTERLACED"
+| "INTERLACED_OPTIMIZE"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 16 - tags: input, named, enum, output
 export type ProresSlowPal =
 | "DISABLED"
 | "ENABLED"
@@ -6801,6 +6887,7 @@ export interface Vc3Settings {
   FramerateDenominator?: number | null;
   FramerateNumerator?: number | null;
   InterlaceMode?: Vc3InterlaceMode | null;
+  ScanTypeConversionMode?: Vc3ScanTypeConversionMode | null;
   SlowPal?: Vc3SlowPal | null;
   Telecine?: Vc3Telecine | null;
   Vc3Class?: Vc3Class | null;
@@ -6813,6 +6900,7 @@ function fromVc3Settings(input?: Vc3Settings | null): jsonP.JSONValue {
     framerateDenominator: input["FramerateDenominator"],
     framerateNumerator: input["FramerateNumerator"],
     interlaceMode: input["InterlaceMode"],
+    scanTypeConversionMode: input["ScanTypeConversionMode"],
     slowPal: input["SlowPal"],
     telecine: input["Telecine"],
     vc3Class: input["Vc3Class"],
@@ -6827,6 +6915,7 @@ function toVc3Settings(root: jsonP.JSONValue): Vc3Settings {
       "FramerateDenominator": "n",
       "FramerateNumerator": "n",
       "InterlaceMode": (x: jsonP.JSONValue) => cmnP.readEnum<Vc3InterlaceMode>(x),
+      "ScanTypeConversionMode": (x: jsonP.JSONValue) => cmnP.readEnum<Vc3ScanTypeConversionMode>(x),
       "SlowPal": (x: jsonP.JSONValue) => cmnP.readEnum<Vc3SlowPal>(x),
       "Telecine": (x: jsonP.JSONValue) => cmnP.readEnum<Vc3Telecine>(x),
       "Vc3Class": (x: jsonP.JSONValue) => cmnP.readEnum<Vc3Class>(x),
@@ -6851,6 +6940,12 @@ export type Vc3FramerateConversionAlgorithm =
 export type Vc3InterlaceMode =
 | "INTERLACED"
 | "PROGRESSIVE"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 16 - tags: input, named, enum, output
+export type Vc3ScanTypeConversionMode =
+| "INTERLACED"
+| "INTERLACED_OPTIMIZE"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 16 - tags: input, named, enum, output

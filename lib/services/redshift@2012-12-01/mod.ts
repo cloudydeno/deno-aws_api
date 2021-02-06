@@ -3666,7 +3666,7 @@ function Cluster_Parse(node: xmlP.XmlNode): Cluster {
 export interface Endpoint {
   Address?: string | null;
   Port?: number | null;
-  VpcEndpoints: SpartaProxyVpcEndpoint[];
+  VpcEndpoints: VpcEndpoint[];
 }
 function Endpoint_Parse(node: xmlP.XmlNode): Endpoint {
   return {
@@ -3674,15 +3674,15 @@ function Endpoint_Parse(node: xmlP.XmlNode): Endpoint {
       optional: {"Address":true},
     }),
     Port: node.first("Port", false, x => parseInt(x.content ?? '0')),
-    VpcEndpoints: node.getList("VpcEndpoints", "SpartaProxyVpcEndpoint").map(SpartaProxyVpcEndpoint_Parse),
+    VpcEndpoints: node.getList("VpcEndpoints", "VpcEndpoint").map(VpcEndpoint_Parse),
   };
 }
 
 // refs: 16 - tags: output, named, interface
-export interface SpartaProxyVpcEndpoint {
+export interface VpcEndpoint {
   VpcEndpointId?: string | null;
 }
-function SpartaProxyVpcEndpoint_Parse(node: xmlP.XmlNode): SpartaProxyVpcEndpoint {
+function VpcEndpoint_Parse(node: xmlP.XmlNode): VpcEndpoint {
   return node.strings({
     optional: {"VpcEndpointId":true},
   });

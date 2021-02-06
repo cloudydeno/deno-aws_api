@@ -167,6 +167,7 @@ export default class ResourceGroups {
       optional: {
         "Succeeded": ["s"],
         "Failed": [toFailedResource],
+        "Pending": [toPendingResource],
       },
     }, await resp.json());
   }
@@ -189,6 +190,7 @@ export default class ResourceGroups {
     return jsonP.readObj({
       required: {},
       optional: {
+        "Resources": [toListGroupResourcesItem],
         "ResourceIdentifiers": [toResourceIdentifier],
         "NextToken": "s",
         "QueryErrors": [toQueryError],
@@ -217,6 +219,25 @@ export default class ResourceGroups {
         "Groups": [toGroup],
         "NextToken": "s",
       },
+    }, await resp.json());
+  }
+
+  async putGroupConfiguration(
+    {abortSignal, ...params}: RequestConfig & PutGroupConfigurationInput = {},
+  ): Promise<PutGroupConfigurationOutput> {
+    const body: jsonP.JSONObject = {
+      Group: params["Group"],
+      Configuration: params["Configuration"]?.map(x => fromGroupConfigurationItem(x)),
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "PutGroupConfiguration",
+      requestUri: "/put-group-configuration",
+      responseCode: 202,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {},
     }, await resp.json());
   }
 
@@ -281,6 +302,7 @@ export default class ResourceGroups {
       optional: {
         "Succeeded": ["s"],
         "Failed": [toFailedResource],
+        "Pending": [toPendingResource],
       },
     }, await resp.json());
   }
@@ -410,6 +432,12 @@ export interface ListGroupsInput {
 }
 
 // refs: 1 - tags: named, input
+export interface PutGroupConfigurationInput {
+  Group?: string | null;
+  Configuration?: GroupConfigurationItem[] | null;
+}
+
+// refs: 1 - tags: named, input
 export interface SearchResourcesInput {
   ResourceQuery: ResourceQuery;
   MaxResults?: number | null;
@@ -486,10 +514,12 @@ export interface GetTagsOutput {
 export interface GroupResourcesOutput {
   Succeeded?: string[] | null;
   Failed?: FailedResource[] | null;
+  Pending?: PendingResource[] | null;
 }
 
 // refs: 1 - tags: named, output
 export interface ListGroupResourcesOutput {
+  Resources?: ListGroupResourcesItem[] | null;
   ResourceIdentifiers?: ResourceIdentifier[] | null;
   NextToken?: string | null;
   QueryErrors?: QueryError[] | null;
@@ -500,6 +530,10 @@ export interface ListGroupsOutput {
   GroupIdentifiers?: GroupIdentifier[] | null;
   Groups?: Group[] | null;
   NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface PutGroupConfigurationOutput {
 }
 
 // refs: 1 - tags: named, output
@@ -519,6 +553,7 @@ export interface TagOutput {
 export interface UngroupResourcesOutput {
   Succeeded?: string[] | null;
   Failed?: FailedResource[] | null;
+  Pending?: PendingResource[] | null;
 }
 
 // refs: 1 - tags: named, output
@@ -565,7 +600,7 @@ export type QueryType =
 | "CLOUDFORMATION_STACK_1_0"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 5 - tags: input, named, interface, output
+// refs: 6 - tags: input, named, interface, output
 export interface GroupConfigurationItem {
   Type: string;
   Parameters?: GroupConfigurationParameter[] | null;
@@ -588,7 +623,7 @@ function toGroupConfigurationItem(root: jsonP.JSONValue): GroupConfigurationItem
   }, root);
 }
 
-// refs: 5 - tags: input, named, interface, output
+// refs: 6 - tags: input, named, interface, output
 export interface GroupConfigurationParameter {
   Name: string;
   Values?: string[] | null;
@@ -725,6 +760,34 @@ function toFailedResource(root: jsonP.JSONValue): FailedResource {
 }
 
 // refs: 2 - tags: output, named, interface
+export interface PendingResource {
+  ResourceArn?: string | null;
+}
+function toPendingResource(root: jsonP.JSONValue): PendingResource {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "ResourceArn": "s",
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
+export interface ListGroupResourcesItem {
+  Identifier?: ResourceIdentifier | null;
+  Status?: ResourceStatus | null;
+}
+function toListGroupResourcesItem(root: jsonP.JSONValue): ListGroupResourcesItem {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "Identifier": toResourceIdentifier,
+      "Status": toResourceStatus,
+    },
+  }, root);
+}
+
+// refs: 3 - tags: output, named, interface
 export interface ResourceIdentifier {
   ResourceArn?: string | null;
   ResourceType?: string | null;
@@ -738,6 +801,24 @@ function toResourceIdentifier(root: jsonP.JSONValue): ResourceIdentifier {
     },
   }, root);
 }
+
+// refs: 1 - tags: output, named, interface
+export interface ResourceStatus {
+  Name?: ResourceStatusValue | null;
+}
+function toResourceStatus(root: jsonP.JSONValue): ResourceStatus {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "Name": (x: jsonP.JSONValue) => cmnP.readEnum<ResourceStatusValue>(x),
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, enum
+export type ResourceStatusValue =
+| "PENDING"
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface QueryError {

@@ -5,7 +5,7 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import * as uuidv4 from "https://deno.land/std@0.75.0/uuid/v4.ts";
+import * as uuidv4 from "https://deno.land/std@0.86.0/uuid/v4.ts";
 import * as cmnP from "../../encoding/common.ts";
 import * as xmlP from "../../encoding/xml.ts";
 import * as qsP from "../../encoding/querystring.ts";
@@ -166,6 +166,7 @@ export default class EC2 {
     if ("NetworkBorderGroup" in params) body.append(prefix+"NetworkBorderGroup", (params["NetworkBorderGroup"] ?? '').toString());
     if ("CustomerOwnedIpv4Pool" in params) body.append(prefix+"CustomerOwnedIpv4Pool", (params["CustomerOwnedIpv4Pool"] ?? '').toString());
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
+    if (params["TagSpecifications"]) qsP.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AllocateAddress",
@@ -809,6 +810,7 @@ export default class EC2 {
     body.append(prefix+"Name", (params["Name"] ?? '').toString());
     body.append(prefix+"SourceImageId", (params["SourceImageId"] ?? '').toString());
     body.append(prefix+"SourceRegion", (params["SourceRegion"] ?? '').toString());
+    if ("DestinationOutpostArn" in params) body.append(prefix+"DestinationOutpostArn", (params["DestinationOutpostArn"] ?? '').toString());
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -826,6 +828,7 @@ export default class EC2 {
     const body = new URLSearchParams;
     const prefix = '';
     if ("Description" in params) body.append(prefix+"Description", (params["Description"] ?? '').toString());
+    if ("DestinationOutpostArn" in params) body.append(prefix+"DestinationOutpostArn", (params["DestinationOutpostArn"] ?? '').toString());
     if ("DestinationRegion" in params) body.append(prefix+"DestinationRegion", (params["DestinationRegion"] ?? '').toString());
     if ("Encrypted" in params) body.append(prefix+"Encrypted", (params["Encrypted"] ?? '').toString());
     if ("KmsKeyId" in params) body.append(prefix+"KmsKeyId", (params["KmsKeyId"] ?? '').toString());
@@ -1552,6 +1555,7 @@ export default class EC2 {
     const body = new URLSearchParams;
     const prefix = '';
     if ("Description" in params) body.append(prefix+"Description", (params["Description"] ?? '').toString());
+    if ("OutpostArn" in params) body.append(prefix+"OutpostArn", (params["OutpostArn"] ?? '').toString());
     body.append(prefix+"VolumeId", (params["VolumeId"] ?? '').toString());
     if (params["TagSpecifications"]) qsP.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
@@ -1570,6 +1574,7 @@ export default class EC2 {
     const prefix = '';
     if ("Description" in params) body.append(prefix+"Description", (params["Description"] ?? '').toString());
     InstanceSpecification_Serialize(body, prefix+"InstanceSpecification", params["InstanceSpecification"]);
+    if ("OutpostArn" in params) body.append(prefix+"OutpostArn", (params["OutpostArn"] ?? '').toString());
     if (params["TagSpecifications"]) qsP.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     if ("CopyTagsFromSource" in params) body.append(prefix+"CopyTagsFromSource", (params["CopyTagsFromSource"] ?? '').toString());
@@ -3085,6 +3090,27 @@ export default class EC2 {
     const xml = xmlP.readXmlResult(await resp.text());
     return {
       Addresses: xml.getList("addressesSet", "item").map(Address_Parse),
+    };
+  }
+
+  async describeAddressesAttribute(
+    {abortSignal, ...params}: RequestConfig & DescribeAddressesAttributeRequest = {},
+  ): Promise<DescribeAddressesAttributeResult> {
+    const body = new URLSearchParams;
+    const prefix = '';
+    if (params["AllocationIds"]) qsP.appendList(body, prefix+"AllocationId", params["AllocationIds"], {"entryPrefix":"."})
+    if ("Attribute" in params) body.append(prefix+"Attribute", (params["Attribute"] ?? '').toString());
+    if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
+    if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
+    if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DescribeAddressesAttribute",
+    });
+    const xml = xmlP.readXmlResult(await resp.text());
+    return {
+      Addresses: xml.getList("addressSet", "item").map(AddressAttribute_Parse),
+      NextToken: xml.first("nextToken", false, x => x.content ?? ''),
     };
   }
 
@@ -6620,6 +6646,24 @@ export default class EC2 {
     };
   }
 
+  async modifyAddressAttribute(
+    {abortSignal, ...params}: RequestConfig & ModifyAddressAttributeRequest,
+  ): Promise<ModifyAddressAttributeResult> {
+    const body = new URLSearchParams;
+    const prefix = '';
+    body.append(prefix+"AllocationId", (params["AllocationId"] ?? '').toString());
+    if ("DomainName" in params) body.append(prefix+"DomainName", (params["DomainName"] ?? '').toString());
+    if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "ModifyAddressAttribute",
+    });
+    const xml = xmlP.readXmlResult(await resp.text());
+    return {
+      Address: xml.first("address", false, AddressAttribute_Parse),
+    };
+  }
+
   async modifyAvailabilityZoneGroup(
     {abortSignal, ...params}: RequestConfig & ModifyAvailabilityZoneGroupRequest,
   ): Promise<ModifyAvailabilityZoneGroupResult> {
@@ -6647,6 +6691,7 @@ export default class EC2 {
     if ("InstanceCount" in params) body.append(prefix+"InstanceCount", (params["InstanceCount"] ?? '').toString());
     if ("EndDate" in params) body.append(prefix+"EndDate", qsP.encodeDate_iso8601(params["EndDate"]));
     if ("EndDateType" in params) body.append(prefix+"EndDateType", (params["EndDateType"] ?? '').toString());
+    if ("Accept" in params) body.append(prefix+"Accept", (params["Accept"] ?? '').toString());
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -7993,6 +8038,24 @@ export default class EC2 {
     };
   }
 
+  async resetAddressAttribute(
+    {abortSignal, ...params}: RequestConfig & ResetAddressAttributeRequest,
+  ): Promise<ResetAddressAttributeResult> {
+    const body = new URLSearchParams;
+    const prefix = '';
+    body.append(prefix+"AllocationId", (params["AllocationId"] ?? '').toString());
+    body.append(prefix+"Attribute", (params["Attribute"] ?? '').toString());
+    if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "ResetAddressAttribute",
+    });
+    const xml = xmlP.readXmlResult(await resp.text());
+    return {
+      Address: xml.first("address", false, AddressAttribute_Parse),
+    };
+  }
+
   async resetEbsDefaultKmsKeyId(
     {abortSignal, ...params}: RequestConfig & ResetEbsDefaultKmsKeyIdRequest = {},
   ): Promise<ResetEbsDefaultKmsKeyIdResult> {
@@ -9119,6 +9182,7 @@ export interface AllocateAddressRequest {
   NetworkBorderGroup?: string | null;
   CustomerOwnedIpv4Pool?: string | null;
   DryRun?: boolean | null;
+  TagSpecifications?: TagSpecification[] | null;
 }
 
 // refs: 1 - tags: named, input
@@ -9393,12 +9457,14 @@ export interface CopyImageRequest {
   Name: string;
   SourceImageId: string;
   SourceRegion: string;
+  DestinationOutpostArn?: string | null;
   DryRun?: boolean | null;
 }
 
 // refs: 1 - tags: named, input
 export interface CopySnapshotRequest {
   Description?: string | null;
+  DestinationOutpostArn?: string | null;
   DestinationRegion?: string | null;
   Encrypted?: boolean | null;
   KmsKeyId?: string | null;
@@ -9749,6 +9815,7 @@ export interface CreateSecurityGroupRequest {
 // refs: 1 - tags: named, input
 export interface CreateSnapshotRequest {
   Description?: string | null;
+  OutpostArn?: string | null;
   VolumeId: string;
   TagSpecifications?: TagSpecification[] | null;
   DryRun?: boolean | null;
@@ -9758,6 +9825,7 @@ export interface CreateSnapshotRequest {
 export interface CreateSnapshotsRequest {
   Description?: string | null;
   InstanceSpecification: InstanceSpecification;
+  OutpostArn?: string | null;
   TagSpecifications?: TagSpecification[] | null;
   DryRun?: boolean | null;
   CopyTagsFromSource?: CopyTagsFromSource | null;
@@ -10403,6 +10471,15 @@ export interface DescribeAddressesRequest {
   Filters?: Filter[] | null;
   PublicIps?: string[] | null;
   AllocationIds?: string[] | null;
+  DryRun?: boolean | null;
+}
+
+// refs: 1 - tags: named, input
+export interface DescribeAddressesAttributeRequest {
+  AllocationIds?: string[] | null;
+  Attribute?: AddressAttributeName | null;
+  NextToken?: string | null;
+  MaxResults?: number | null;
   DryRun?: boolean | null;
 }
 
@@ -11846,6 +11923,13 @@ export interface ImportVolumeRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface ModifyAddressAttributeRequest {
+  AllocationId: string;
+  DomainName?: string | null;
+  DryRun?: boolean | null;
+}
+
+// refs: 1 - tags: named, input
 export interface ModifyAvailabilityZoneGroupRequest {
   GroupName: string;
   OptInStatus: ModifyAvailabilityZoneOptInStatus;
@@ -11858,6 +11942,7 @@ export interface ModifyCapacityReservationRequest {
   InstanceCount?: number | null;
   EndDate?: Date | number | null;
   EndDateType?: EndDateType | null;
+  Accept?: boolean | null;
   DryRun?: boolean | null;
 }
 
@@ -12491,6 +12576,13 @@ export interface RequestSpotInstancesRequest {
   ValidUntil?: Date | number | null;
   TagSpecifications?: TagSpecification[] | null;
   InstanceInterruptionBehavior?: InstanceInterruptionBehavior | null;
+}
+
+// refs: 1 - tags: named, input
+export interface ResetAddressAttributeRequest {
+  AllocationId: string;
+  Attribute: AddressAttributeName;
+  DryRun?: boolean | null;
 }
 
 // refs: 1 - tags: named, input
@@ -13157,6 +13249,7 @@ export interface Snapshot {
   VolumeId?: string | null;
   VolumeSize?: number | null;
   OwnerAlias?: string | null;
+  OutpostArn?: string | null;
   Tags: Tag[];
 }
 function Snapshot_Parse(node: xmlP.XmlNode): Snapshot {
@@ -13174,6 +13267,7 @@ function Snapshot_Parse(node: xmlP.XmlNode): Snapshot {
     VolumeId: node.first("volumeId", false, x => x.content ?? ''),
     VolumeSize: node.first("volumeSize", false, x => parseInt(x.content ?? '0')),
     OwnerAlias: node.first("ownerAlias", false, x => x.content ?? ''),
+    OutpostArn: node.first("outpostArn", false, x => x.content ?? ''),
     Tags: node.getList("tagSet", "item").map(Tag_Parse),
   };
 }
@@ -13541,6 +13635,12 @@ export interface DescribeAccountAttributesResult {
 // refs: 1 - tags: named, output
 export interface DescribeAddressesResult {
   Addresses: Address[];
+}
+
+// refs: 1 - tags: named, output
+export interface DescribeAddressesAttributeResult {
+  Addresses: AddressAttribute[];
+  NextToken?: string | null;
 }
 
 // refs: 1 - tags: named, output
@@ -14576,6 +14676,11 @@ export interface ImportVolumeResult {
 }
 
 // refs: 1 - tags: named, output
+export interface ModifyAddressAttributeResult {
+  Address?: AddressAttribute | null;
+}
+
+// refs: 1 - tags: named, output
 export interface ModifyAvailabilityZoneGroupResult {
   Return?: boolean | null;
 }
@@ -14867,6 +14972,11 @@ export interface RequestSpotInstancesResult {
 }
 
 // refs: 1 - tags: named, output
+export interface ResetAddressAttributeResult {
+  Address?: AddressAttribute | null;
+}
+
+// refs: 1 - tags: named, output
 export interface ResetEbsDefaultKmsKeyIdResult {
   KmsKeyId?: string | null;
 }
@@ -15019,13 +15129,7 @@ export type DomainType =
 | "standard"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 3 - tags: input, named, enum, output
-export type AutoPlacement =
-| "on"
-| "off"
-| cmnP.UnexpectedEnumValue;
-
-// refs: 56 - tags: input, named, interface, output
+// refs: 57 - tags: input, named, interface, output
 export interface TagSpecification {
   ResourceType?: ResourceType | null;
   Tags: Tag[];
@@ -15041,7 +15145,7 @@ function TagSpecification_Parse(node: xmlP.XmlNode): TagSpecification {
   };
 }
 
-// refs: 64 - tags: input, named, enum, output
+// refs: 65 - tags: input, named, enum, output
 export type ResourceType =
 | "client-vpn-endpoint"
 | "customer-gateway"
@@ -15092,7 +15196,7 @@ export type ResourceType =
 | "vpc-flow-log"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 212 - tags: input, named, interface, output
+// refs: 213 - tags: input, named, interface, output
 export interface Tag {
   Key?: string | null;
   Value?: string | null;
@@ -15107,6 +15211,12 @@ function Tag_Parse(node: xmlP.XmlNode): Tag {
     Value: node.first("value", false, x => x.content ?? ''),
   };
 }
+
+// refs: 3 - tags: input, named, enum, output
+export type AutoPlacement =
+| "on"
+| "off"
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, enum, output
 export type HostRecovery =
@@ -16073,6 +16183,7 @@ export interface EbsBlockDevice {
   VolumeType?: VolumeType | null;
   KmsKeyId?: string | null;
   Throughput?: number | null;
+  OutpostArn?: string | null;
   Encrypted?: boolean | null;
 }
 function EbsBlockDevice_Serialize(body: URLSearchParams, prefix: string, params: EbsBlockDevice) {
@@ -16083,6 +16194,7 @@ function EbsBlockDevice_Serialize(body: URLSearchParams, prefix: string, params:
     if ("VolumeType" in params) body.append(prefix+".VolumeType", (params["VolumeType"] ?? '').toString());
     if ("KmsKeyId" in params) body.append(prefix+".KmsKeyId", (params["KmsKeyId"] ?? '').toString());
     if ("Throughput" in params) body.append(prefix+".Throughput", (params["Throughput"] ?? '').toString());
+    if ("OutpostArn" in params) body.append(prefix+".OutpostArn", (params["OutpostArn"] ?? '').toString());
     if ("Encrypted" in params) body.append(prefix+".Encrypted", (params["Encrypted"] ?? '').toString());
 }
 function EbsBlockDevice_Parse(node: xmlP.XmlNode): EbsBlockDevice {
@@ -16096,6 +16208,7 @@ function EbsBlockDevice_Parse(node: xmlP.XmlNode): EbsBlockDevice {
     VolumeSize: node.first("volumeSize", false, x => parseInt(x.content ?? '0')),
     VolumeType: node.first("volumeType", false, x => (x.content ?? '') as VolumeType),
     Throughput: node.first("throughput", false, x => parseInt(x.content ?? '0')),
+    OutpostArn: node.first("outpostArn", false, x => x.content ?? ''),
     Encrypted: node.first("encrypted", false, x => x.content === 'true'),
   };
 }
@@ -16940,6 +17053,11 @@ function Filter_Serialize(body: URLSearchParams, prefix: string, params: Filter)
     if ("Name" in params) body.append(prefix+".Name", (params["Name"] ?? '').toString());
     if (params["Values"]) qsP.appendList(body, prefix+".Value", params["Values"], {"entryPrefix":"."})
 }
+
+// refs: 2 - tags: input, named, enum
+export type AddressAttributeName =
+| "domain-name"
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, enum, output
 export type FleetEventType =
@@ -19196,6 +19314,7 @@ export interface CapacityReservation {
   EbsOptimized?: boolean | null;
   EphemeralStorage?: boolean | null;
   State?: CapacityReservationState | null;
+  StartDate?: Date | number | null;
   EndDate?: Date | number | null;
   EndDateType?: EndDateType | null;
   InstanceMatchCriteria?: InstanceMatchCriteria | null;
@@ -19217,6 +19336,7 @@ function CapacityReservation_Parse(node: xmlP.XmlNode): CapacityReservation {
     EbsOptimized: node.first("ebsOptimized", false, x => x.content === 'true'),
     EphemeralStorage: node.first("ephemeralStorage", false, x => x.content === 'true'),
     State: node.first("state", false, x => (x.content ?? '') as CapacityReservationState),
+    StartDate: node.first("startDate", false, x => xmlP.parseTimestamp(x.content)),
     EndDate: node.first("endDate", false, x => xmlP.parseTimestamp(x.content)),
     EndDateType: node.first("endDateType", false, x => (x.content ?? '') as EndDateType),
     InstanceMatchCriteria: node.first("instanceMatchCriteria", false, x => (x.content ?? '') as InstanceMatchCriteria),
@@ -20628,6 +20748,7 @@ export interface SnapshotInfo {
   Progress?: string | null;
   OwnerId?: string | null;
   SnapshotId?: string | null;
+  OutpostArn?: string | null;
 }
 function SnapshotInfo_Parse(node: xmlP.XmlNode): SnapshotInfo {
   return {
@@ -20641,6 +20762,7 @@ function SnapshotInfo_Parse(node: xmlP.XmlNode): SnapshotInfo {
     Progress: node.first("progress", false, x => x.content ?? ''),
     OwnerId: node.first("ownerId", false, x => x.content ?? ''),
     SnapshotId: node.first("snapshotId", false, x => x.content ?? ''),
+    OutpostArn: node.first("outpostArn", false, x => x.content ?? ''),
   };
 }
 
@@ -21834,6 +21956,36 @@ function Address_Parse(node: xmlP.XmlNode): Address {
     CustomerOwnedIp: node.first("customerOwnedIp", false, x => x.content ?? ''),
     CustomerOwnedIpv4Pool: node.first("customerOwnedIpv4Pool", false, x => x.content ?? ''),
     CarrierIp: node.first("carrierIp", false, x => x.content ?? ''),
+  };
+}
+
+// refs: 3 - tags: output, named, interface
+export interface AddressAttribute {
+  PublicIp?: string | null;
+  AllocationId?: string | null;
+  PtrRecord?: string | null;
+  PtrRecordUpdate?: PtrUpdateStatus | null;
+}
+function AddressAttribute_Parse(node: xmlP.XmlNode): AddressAttribute {
+  return {
+    PublicIp: node.first("publicIp", false, x => x.content ?? ''),
+    AllocationId: node.first("allocationId", false, x => x.content ?? ''),
+    PtrRecord: node.first("ptrRecord", false, x => x.content ?? ''),
+    PtrRecordUpdate: node.first("ptrRecordUpdate", false, PtrUpdateStatus_Parse),
+  };
+}
+
+// refs: 3 - tags: output, named, interface
+export interface PtrUpdateStatus {
+  Value?: string | null;
+  Status?: string | null;
+  Reason?: string | null;
+}
+function PtrUpdateStatus_Parse(node: xmlP.XmlNode): PtrUpdateStatus {
+  return {
+    Value: node.first("value", false, x => x.content ?? ''),
+    Status: node.first("status", false, x => x.content ?? ''),
+    Reason: node.first("reason", false, x => x.content ?? ''),
   };
 }
 

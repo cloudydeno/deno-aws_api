@@ -209,6 +209,7 @@ export default class ApplicationAutoScaling {
     const body: jsonP.JSONObject = {
       ServiceNamespace: params["ServiceNamespace"],
       Schedule: params["Schedule"],
+      Timezone: params["Timezone"],
       ScheduledActionName: params["ScheduledActionName"],
       ResourceId: params["ResourceId"],
       ScalableDimension: params["ScalableDimension"],
@@ -326,6 +327,7 @@ export interface PutScalingPolicyRequest {
 export interface PutScheduledActionRequest {
   ServiceNamespace: ServiceNamespace;
   Schedule?: string | null;
+  Timezone?: string | null;
   ScheduledActionName: string;
   ResourceId: string;
   ScalableDimension: ScalableDimension;
@@ -823,6 +825,7 @@ export interface ScheduledAction {
   ScheduledActionARN: string;
   ServiceNamespace: ServiceNamespace;
   Schedule: string;
+  Timezone?: string | null;
   ResourceId: string;
   ScalableDimension?: ScalableDimension | null;
   StartTime?: Date | number | null;
@@ -841,6 +844,7 @@ function toScheduledAction(root: jsonP.JSONValue): ScheduledAction {
       "CreationTime": "d",
     },
     optional: {
+      "Timezone": "s",
       "ScalableDimension": (x: jsonP.JSONValue) => cmnP.readEnum<ScalableDimension>(x),
       "StartTime": "d",
       "EndTime": "d",

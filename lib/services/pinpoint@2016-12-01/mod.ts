@@ -4054,6 +4054,11 @@ function toAttributeDimension(root: jsonP.JSONValue): AttributeDimension {
 export type AttributeType =
 | "INCLUSIVE"
 | "EXCLUSIVE"
+| "CONTAINS"
+| "BEFORE"
+| "AFTER"
+| "ON"
+| "BETWEEN"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 280 - tags: input, named, interface, output

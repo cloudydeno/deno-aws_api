@@ -5,7 +5,7 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import * as uuidv4 from "https://deno.land/std@0.75.0/uuid/v4.ts";
+import * as uuidv4 from "https://deno.land/std@0.86.0/uuid/v4.ts";
 import * as cmnP from "../../encoding/common.ts";
 import * as jsonP from "../../encoding/json.ts";
 function generateIdemptToken() {
@@ -658,6 +658,7 @@ export default class IoTWireless {
       required: {},
       optional: {
         "IotCertificateId": "s",
+        "LoRaWANNetworkServerCertificateId": "s",
       },
     }, await resp.json());
   }
@@ -1574,6 +1575,7 @@ export interface GetWirelessGatewayResponse {
 // refs: 1 - tags: named, output
 export interface GetWirelessGatewayCertificateResponse {
   IotCertificateId?: string | null;
+  LoRaWANNetworkServerCertificateId?: string | null;
 }
 
 // refs: 1 - tags: named, output
@@ -1709,6 +1711,7 @@ function toSidewalkAccountInfo(root: jsonP.JSONValue): SidewalkAccountInfo {
 // refs: 4 - tags: input, named, enum, output
 export type ExpressionType =
 | "RuleName"
+| "MqttTopic"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 6 - tags: input, named, interface, output
@@ -2203,14 +2206,14 @@ export type WirelessGatewayTaskStatus =
 // refs: 2 - tags: output, named, interface
 export interface SidewalkAccountInfoWithFingerprint {
   AmazonId?: string | null;
-  AppServerPrivateKey?: string | null;
+  Fingerprint?: string | null;
 }
 function toSidewalkAccountInfoWithFingerprint(root: jsonP.JSONValue): SidewalkAccountInfoWithFingerprint {
   return jsonP.readObj({
     required: {},
     optional: {
       "AmazonId": "s",
-      "AppServerPrivateKey": "s",
+      "Fingerprint": "s",
     },
   }, root);
 }

@@ -5,7 +5,7 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import * as uuidv4 from "https://deno.land/std@0.75.0/uuid/v4.ts";
+import * as uuidv4 from "https://deno.land/std@0.86.0/uuid/v4.ts";
 import * as cmnP from "../../encoding/common.ts";
 import * as jsonP from "../../encoding/json.ts";
 function generateIdemptToken() {
@@ -30,6 +30,26 @@ export default class ConnectParticipant {
     "signingName": "execute-api",
     "uid": "connectparticipant-2018-09-07"
   };
+
+  async completeAttachmentUpload(
+    {abortSignal, ...params}: RequestConfig & CompleteAttachmentUploadRequest,
+  ): Promise<CompleteAttachmentUploadResponse> {
+    const headers = new Headers;
+    const body: jsonP.JSONObject = {
+      AttachmentIds: params["AttachmentIds"],
+      ClientToken: params["ClientToken"] ?? generateIdemptToken(),
+    };
+    headers.append("X-Amz-Bearer", params["ConnectionToken"]);
+    const resp = await this.#client.performRequest({
+      abortSignal, headers, body,
+      action: "CompleteAttachmentUpload",
+      requestUri: "/participant/complete-attachment-upload",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
+  }
 
   async createParticipantConnection(
     {abortSignal, ...params}: RequestConfig & CreateParticipantConnectionRequest,
@@ -69,6 +89,28 @@ export default class ConnectParticipant {
     return jsonP.readObj({
       required: {},
       optional: {},
+    }, await resp.json());
+  }
+
+  async getAttachment(
+    {abortSignal, ...params}: RequestConfig & GetAttachmentRequest,
+  ): Promise<GetAttachmentResponse> {
+    const headers = new Headers;
+    const body: jsonP.JSONObject = {
+      AttachmentId: params["AttachmentId"],
+    };
+    headers.append("X-Amz-Bearer", params["ConnectionToken"]);
+    const resp = await this.#client.performRequest({
+      abortSignal, headers, body,
+      action: "GetAttachment",
+      requestUri: "/participant/attachment",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Url": "s",
+        "UrlExpiry": "s",
+      },
     }, await resp.json());
   }
 
@@ -148,6 +190,38 @@ export default class ConnectParticipant {
     }, await resp.json());
   }
 
+  async startAttachmentUpload(
+    {abortSignal, ...params}: RequestConfig & StartAttachmentUploadRequest,
+  ): Promise<StartAttachmentUploadResponse> {
+    const headers = new Headers;
+    const body: jsonP.JSONObject = {
+      ContentType: params["ContentType"],
+      AttachmentSizeInBytes: params["AttachmentSizeInBytes"],
+      AttachmentName: params["AttachmentName"],
+      ClientToken: params["ClientToken"] ?? generateIdemptToken(),
+    };
+    headers.append("X-Amz-Bearer", params["ConnectionToken"]);
+    const resp = await this.#client.performRequest({
+      abortSignal, headers, body,
+      action: "StartAttachmentUpload",
+      requestUri: "/participant/start-attachment-upload",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "AttachmentId": "s",
+        "UploadMetadata": toUploadMetadata,
+      },
+    }, await resp.json());
+  }
+
+}
+
+// refs: 1 - tags: named, input
+export interface CompleteAttachmentUploadRequest {
+  AttachmentIds: string[];
+  ClientToken: string;
+  ConnectionToken: string;
 }
 
 // refs: 1 - tags: named, input
@@ -159,6 +233,12 @@ export interface CreateParticipantConnectionRequest {
 // refs: 1 - tags: named, input
 export interface DisconnectParticipantRequest {
   ClientToken?: string | null;
+  ConnectionToken: string;
+}
+
+// refs: 1 - tags: named, input
+export interface GetAttachmentRequest {
+  AttachmentId: string;
   ConnectionToken: string;
 }
 
@@ -189,6 +269,19 @@ export interface SendMessageRequest {
   ConnectionToken: string;
 }
 
+// refs: 1 - tags: named, input
+export interface StartAttachmentUploadRequest {
+  ContentType: string;
+  AttachmentSizeInBytes: number;
+  AttachmentName: string;
+  ClientToken: string;
+  ConnectionToken: string;
+}
+
+// refs: 1 - tags: named, output
+export interface CompleteAttachmentUploadResponse {
+}
+
 // refs: 1 - tags: named, output
 export interface CreateParticipantConnectionResponse {
   Websocket?: Websocket | null;
@@ -197,6 +290,12 @@ export interface CreateParticipantConnectionResponse {
 
 // refs: 1 - tags: named, output
 export interface DisconnectParticipantResponse {
+}
+
+// refs: 1 - tags: named, output
+export interface GetAttachmentResponse {
+  Url?: string | null;
+  UrlExpiry?: string | null;
 }
 
 // refs: 1 - tags: named, output
@@ -216,6 +315,12 @@ export interface SendEventResponse {
 export interface SendMessageResponse {
   Id?: string | null;
   AbsoluteTime?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface StartAttachmentUploadResponse {
+  AttachmentId?: string | null;
+  UploadMetadata?: UploadMetadata | null;
 }
 
 // refs: 1 - tags: input, named, enum
@@ -291,6 +396,7 @@ export interface Item {
   ParticipantId?: string | null;
   DisplayName?: string | null;
   ParticipantRole?: ParticipantRole | null;
+  Attachments?: AttachmentItem[] | null;
 }
 function toItem(root: jsonP.JSONValue): Item {
   return jsonP.readObj({
@@ -304,14 +410,22 @@ function toItem(root: jsonP.JSONValue): Item {
       "ParticipantId": "s",
       "DisplayName": "s",
       "ParticipantRole": (x: jsonP.JSONValue) => cmnP.readEnum<ParticipantRole>(x),
+      "Attachments": [toAttachmentItem],
     },
   }, root);
 }
 
 // refs: 1 - tags: output, named, enum
 export type ChatItemType =
+| "TYPING"
+| "PARTICIPANT_JOINED"
+| "PARTICIPANT_LEFT"
+| "CHAT_ENDED"
+| "TRANSFER_SUCCEEDED"
+| "TRANSFER_FAILED"
 | "MESSAGE"
 | "EVENT"
+| "ATTACHMENT"
 | "CONNECTION_ACK"
 | cmnP.UnexpectedEnumValue;
 
@@ -321,3 +435,46 @@ export type ParticipantRole =
 | "CUSTOMER"
 | "SYSTEM"
 | cmnP.UnexpectedEnumValue;
+
+// refs: 1 - tags: output, named, interface
+export interface AttachmentItem {
+  ContentType?: string | null;
+  AttachmentId?: string | null;
+  AttachmentName?: string | null;
+  Status?: ArtifactStatus | null;
+}
+function toAttachmentItem(root: jsonP.JSONValue): AttachmentItem {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "ContentType": "s",
+      "AttachmentId": "s",
+      "AttachmentName": "s",
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<ArtifactStatus>(x),
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, enum
+export type ArtifactStatus =
+| "APPROVED"
+| "REJECTED"
+| "IN_PROGRESS"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 1 - tags: output, named, interface
+export interface UploadMetadata {
+  Url?: string | null;
+  UrlExpiry?: string | null;
+  HeadersToInclude?: { [key: string]: string | null | undefined } | null;
+}
+function toUploadMetadata(root: jsonP.JSONValue): UploadMetadata {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "Url": "s",
+      "UrlExpiry": "s",
+      "HeadersToInclude": x => jsonP.readMap(String, String, x),
+    },
+  }, root);
+}

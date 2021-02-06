@@ -246,6 +246,7 @@ export default class CostExplorer {
         "NextPageToken": "s",
         "GroupDefinitions": [toGroupDefinition],
         "ResultsByTime": [toResultByTime],
+        "DimensionValueAttributes": [toDimensionValuesWithAttributes],
       },
     }, await resp.json());
   }
@@ -271,6 +272,36 @@ export default class CostExplorer {
         "NextPageToken": "s",
         "GroupDefinitions": [toGroupDefinition],
         "ResultsByTime": [toResultByTime],
+        "DimensionValueAttributes": [toDimensionValuesWithAttributes],
+      },
+    }, await resp.json());
+  }
+
+  async getCostCategories(
+    {abortSignal, ...params}: RequestConfig & GetCostCategoriesRequest,
+  ): Promise<GetCostCategoriesResponse> {
+    const body: jsonP.JSONObject = {
+      SearchString: params["SearchString"],
+      TimePeriod: fromDateInterval(params["TimePeriod"]),
+      CostCategoryName: params["CostCategoryName"],
+      Filter: fromExpression(params["Filter"]),
+      SortBy: params["SortBy"]?.map(x => fromSortDefinition(x)),
+      MaxResults: params["MaxResults"],
+      NextPageToken: params["NextPageToken"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "GetCostCategories",
+    });
+    return jsonP.readObj({
+      required: {
+        "ReturnSize": "n",
+        "TotalSize": "n",
+      },
+      optional: {
+        "NextPageToken": "s",
+        "CostCategoryNames": ["s"],
+        "CostCategoryValues": ["s"],
       },
     }, await resp.json());
   }
@@ -306,6 +337,9 @@ export default class CostExplorer {
       TimePeriod: fromDateInterval(params["TimePeriod"]),
       Dimension: params["Dimension"],
       Context: params["Context"],
+      Filter: fromExpression(params["Filter"]),
+      SortBy: params["SortBy"]?.map(x => fromSortDefinition(x)),
+      MaxResults: params["MaxResults"],
       NextPageToken: params["NextPageToken"],
     };
     const resp = await this.#client.performRequest({
@@ -334,6 +368,8 @@ export default class CostExplorer {
       Filter: fromExpression(params["Filter"]),
       Metrics: params["Metrics"],
       NextPageToken: params["NextPageToken"],
+      SortBy: fromSortDefinition(params["SortBy"]),
+      MaxResults: params["MaxResults"],
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -356,6 +392,7 @@ export default class CostExplorer {
     const body: jsonP.JSONObject = {
       AccountId: params["AccountId"],
       Service: params["Service"],
+      Filter: fromExpression(params["Filter"]),
       AccountScope: params["AccountScope"],
       LookbackPeriodInDays: params["LookbackPeriodInDays"],
       TermInYears: params["TermInYears"],
@@ -386,7 +423,9 @@ export default class CostExplorer {
       GroupBy: params["GroupBy"]?.map(x => fromGroupDefinition(x)),
       Granularity: params["Granularity"],
       Filter: fromExpression(params["Filter"]),
+      SortBy: fromSortDefinition(params["SortBy"]),
       NextPageToken: params["NextPageToken"],
+      MaxResults: params["MaxResults"],
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -440,6 +479,7 @@ export default class CostExplorer {
       Metrics: params["Metrics"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
+      SortBy: fromSortDefinition(params["SortBy"]),
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -489,6 +529,7 @@ export default class CostExplorer {
       TimePeriod: fromDateInterval(params["TimePeriod"]),
       Granularity: params["Granularity"],
       Filter: fromExpression(params["Filter"]),
+      SortBy: fromSortDefinition(params["SortBy"]),
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -510,8 +551,10 @@ export default class CostExplorer {
     const body: jsonP.JSONObject = {
       TimePeriod: fromDateInterval(params["TimePeriod"]),
       Filter: fromExpression(params["Filter"]),
+      DataType: params["DataType"],
       NextToken: params["NextToken"],
       MaxResults: params["MaxResults"],
+      SortBy: fromSortDefinition(params["SortBy"]),
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -536,6 +579,9 @@ export default class CostExplorer {
       SearchString: params["SearchString"],
       TimePeriod: fromDateInterval(params["TimePeriod"]),
       TagKey: params["TagKey"],
+      Filter: fromExpression(params["Filter"]),
+      SortBy: params["SortBy"]?.map(x => fromSortDefinition(x)),
+      MaxResults: params["MaxResults"],
       NextPageToken: params["NextPageToken"],
     };
     const resp = await this.#client.performRequest({
@@ -766,6 +812,17 @@ export interface GetCostAndUsageWithResourcesRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface GetCostCategoriesRequest {
+  SearchString?: string | null;
+  TimePeriod: DateInterval;
+  CostCategoryName?: string | null;
+  Filter?: Expression | null;
+  SortBy?: SortDefinition[] | null;
+  MaxResults?: number | null;
+  NextPageToken?: string | null;
+}
+
+// refs: 1 - tags: named, input
 export interface GetCostForecastRequest {
   TimePeriod: DateInterval;
   Metric: Metric;
@@ -780,6 +837,9 @@ export interface GetDimensionValuesRequest {
   TimePeriod: DateInterval;
   Dimension: Dimension;
   Context?: Context | null;
+  Filter?: Expression | null;
+  SortBy?: SortDefinition[] | null;
+  MaxResults?: number | null;
   NextPageToken?: string | null;
 }
 
@@ -791,12 +851,15 @@ export interface GetReservationCoverageRequest {
   Filter?: Expression | null;
   Metrics?: string[] | null;
   NextPageToken?: string | null;
+  SortBy?: SortDefinition | null;
+  MaxResults?: number | null;
 }
 
 // refs: 1 - tags: named, input
 export interface GetReservationPurchaseRecommendationRequest {
   AccountId?: string | null;
   Service: string;
+  Filter?: Expression | null;
   AccountScope?: AccountScope | null;
   LookbackPeriodInDays?: LookbackPeriodInDays | null;
   TermInYears?: TermInYears | null;
@@ -812,7 +875,9 @@ export interface GetReservationUtilizationRequest {
   GroupBy?: GroupDefinition[] | null;
   Granularity?: Granularity | null;
   Filter?: Expression | null;
+  SortBy?: SortDefinition | null;
   NextPageToken?: string | null;
+  MaxResults?: number | null;
 }
 
 // refs: 1 - tags: named, input
@@ -833,6 +898,7 @@ export interface GetSavingsPlansCoverageRequest {
   Metrics?: string[] | null;
   NextToken?: string | null;
   MaxResults?: number | null;
+  SortBy?: SortDefinition | null;
 }
 
 // refs: 1 - tags: named, input
@@ -852,14 +918,17 @@ export interface GetSavingsPlansUtilizationRequest {
   TimePeriod: DateInterval;
   Granularity?: Granularity | null;
   Filter?: Expression | null;
+  SortBy?: SortDefinition | null;
 }
 
 // refs: 1 - tags: named, input
 export interface GetSavingsPlansUtilizationDetailsRequest {
   TimePeriod: DateInterval;
   Filter?: Expression | null;
+  DataType?: SavingsPlansDataType[] | null;
   NextToken?: string | null;
   MaxResults?: number | null;
+  SortBy?: SortDefinition | null;
 }
 
 // refs: 1 - tags: named, input
@@ -867,6 +936,9 @@ export interface GetTagsRequest {
   SearchString?: string | null;
   TimePeriod: DateInterval;
   TagKey?: string | null;
+  Filter?: Expression | null;
+  SortBy?: SortDefinition[] | null;
+  MaxResults?: number | null;
   NextPageToken?: string | null;
 }
 
@@ -973,6 +1045,7 @@ export interface GetCostAndUsageResponse {
   NextPageToken?: string | null;
   GroupDefinitions?: GroupDefinition[] | null;
   ResultsByTime?: ResultByTime[] | null;
+  DimensionValueAttributes?: DimensionValuesWithAttributes[] | null;
 }
 
 // refs: 1 - tags: named, output
@@ -980,6 +1053,16 @@ export interface GetCostAndUsageWithResourcesResponse {
   NextPageToken?: string | null;
   GroupDefinitions?: GroupDefinition[] | null;
   ResultsByTime?: ResultByTime[] | null;
+  DimensionValueAttributes?: DimensionValuesWithAttributes[] | null;
+}
+
+// refs: 1 - tags: named, output
+export interface GetCostCategoriesResponse {
+  NextPageToken?: string | null;
+  CostCategoryNames?: string[] | null;
+  CostCategoryValues?: string[] | null;
+  ReturnSize: number;
+  TotalSize: number;
 }
 
 // refs: 1 - tags: named, output
@@ -1149,7 +1232,7 @@ export type MonitorDimension =
 | "SERVICE"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 64 - tags: input, named, interface, recursed, recursive, output
+// refs: 80 - tags: input, named, interface, recursed, recursive, output
 export interface Expression {
   Or?: Expression[] | null;
   And?: Expression[] | null;
@@ -1183,7 +1266,7 @@ function toExpression(root: jsonP.JSONValue): Expression {
   }, root);
 }
 
-// refs: 16 - tags: input, named, interface, output
+// refs: 20 - tags: input, named, interface, output
 export interface DimensionValues {
   Key?: Dimension | null;
   Values?: string[] | null;
@@ -1208,7 +1291,7 @@ function toDimensionValues(root: jsonP.JSONValue): DimensionValues {
   }, root);
 }
 
-// refs: 17 - tags: input, named, enum, output
+// refs: 21 - tags: input, named, enum, output
 export type Dimension =
 | "AZ"
 | "INSTANCE_TYPE"
@@ -1239,11 +1322,14 @@ export type Dimension =
 | "SAVINGS_PLANS_TYPE"
 | "SAVINGS_PLAN_ARN"
 | "PAYMENT_OPTION"
+| "AGREEMENT_END_DATE_TIME_AFTER"
+| "AGREEMENT_END_DATE_TIME_BEFORE"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 49 - tags: input, named, enum, output
+// refs: 61 - tags: input, named, enum, output
 export type MatchOption =
 | "EQUALS"
+| "ABSENT"
 | "STARTS_WITH"
 | "ENDS_WITH"
 | "CONTAINS"
@@ -1251,7 +1337,7 @@ export type MatchOption =
 | "CASE_INSENSITIVE"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 17 - tags: input, named, interface, output
+// refs: 21 - tags: input, named, interface, output
 export interface TagValues {
   Key?: string | null;
   Values?: string[] | null;
@@ -1276,7 +1362,7 @@ function toTagValues(root: jsonP.JSONValue): TagValues {
   }, root);
 }
 
-// refs: 16 - tags: input, named, interface, output
+// refs: 20 - tags: input, named, interface, output
 export interface CostCategoryValues {
   Key?: string | null;
   Values?: string[] | null;
@@ -1455,7 +1541,7 @@ export type NumericOperator =
 | "BETWEEN"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 20 - tags: input, named, interface, output
+// refs: 21 - tags: input, named, interface, output
 export interface DateInterval {
   Start: string;
   End: string;
@@ -1511,6 +1597,25 @@ export type GroupDefinitionType =
 | "DIMENSION"
 | "TAG"
 | "COST_CATEGORY"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 8 - tags: input, named, interface
+export interface SortDefinition {
+  Key: string;
+  SortOrder?: SortOrder | null;
+}
+function fromSortDefinition(input?: SortDefinition | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    Key: input["Key"],
+    SortOrder: input["SortOrder"],
+  }
+}
+
+// refs: 8 - tags: input, named, enum
+export type SortOrder =
+| "ASCENDING"
+| "DESCENDING"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, enum
@@ -1636,6 +1741,14 @@ export type RecommendationTarget =
 export type SupportedSavingsPlansType =
 | "COMPUTE_SP"
 | "EC2_INSTANCE_SP"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 1 - tags: input, named, enum
+export type SavingsPlansDataType =
+| "ATTRIBUTES"
+| "UTILIZATION"
+| "AMORTIZED_COMMITMENT"
+| "SAVINGS"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
@@ -1819,6 +1932,21 @@ function toGroup(root: jsonP.JSONValue): Group {
   }, root);
 }
 
+// refs: 3 - tags: output, named, interface
+export interface DimensionValuesWithAttributes {
+  Value?: string | null;
+  Attributes?: { [key: string]: string | null | undefined } | null;
+}
+function toDimensionValuesWithAttributes(root: jsonP.JSONValue): DimensionValuesWithAttributes {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "Value": "s",
+      "Attributes": x => jsonP.readMap(String, String, x),
+    },
+  }, root);
+}
+
 // refs: 2 - tags: output, named, interface
 export interface ForecastResult {
   TimePeriod?: DateInterval | null;
@@ -1834,21 +1962,6 @@ function toForecastResult(root: jsonP.JSONValue): ForecastResult {
       "MeanValue": "s",
       "PredictionIntervalLowerBound": "s",
       "PredictionIntervalUpperBound": "s",
-    },
-  }, root);
-}
-
-// refs: 1 - tags: output, named, interface
-export interface DimensionValuesWithAttributes {
-  Value?: string | null;
-  Attributes?: { [key: string]: string | null | undefined } | null;
-}
-function toDimensionValuesWithAttributes(root: jsonP.JSONValue): DimensionValuesWithAttributes {
-  return jsonP.readObj({
-    required: {},
-    optional: {
-      "Value": "s",
-      "Attributes": x => jsonP.readMap(String, String, x),
     },
   }, root);
 }
@@ -2253,6 +2366,9 @@ export interface ReservationAggregates {
   AmortizedUpfrontFee?: string | null;
   AmortizedRecurringFee?: string | null;
   TotalAmortizedFee?: string | null;
+  RICostForUnusedHours?: string | null;
+  RealizedSavings?: string | null;
+  UnrealizedSavings?: string | null;
 }
 function toReservationAggregates(root: jsonP.JSONValue): ReservationAggregates {
   return jsonP.readObj({
@@ -2272,6 +2388,9 @@ function toReservationAggregates(root: jsonP.JSONValue): ReservationAggregates {
       "AmortizedUpfrontFee": "s",
       "AmortizedRecurringFee": "s",
       "TotalAmortizedFee": "s",
+      "RICostForUnusedHours": "s",
+      "RealizedSavings": "s",
+      "UnrealizedSavings": "s",
     },
   }, root);
 }
@@ -2281,6 +2400,7 @@ export interface RightsizingRecommendationMetadata {
   RecommendationId?: string | null;
   GenerationTimestamp?: string | null;
   LookbackPeriodInDays?: LookbackPeriodInDays | null;
+  AdditionalMetadata?: string | null;
 }
 function toRightsizingRecommendationMetadata(root: jsonP.JSONValue): RightsizingRecommendationMetadata {
   return jsonP.readObj({
@@ -2289,6 +2409,7 @@ function toRightsizingRecommendationMetadata(root: jsonP.JSONValue): Rightsizing
       "RecommendationId": "s",
       "GenerationTimestamp": "s",
       "LookbackPeriodInDays": (x: jsonP.JSONValue) => cmnP.readEnum<LookbackPeriodInDays>(x),
+      "AdditionalMetadata": "s",
     },
   }, root);
 }

@@ -5,7 +5,7 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import * as uuidv4 from "https://deno.land/std@0.75.0/uuid/v4.ts";
+import * as uuidv4 from "https://deno.land/std@0.86.0/uuid/v4.ts";
 import * as cmnP from "../../encoding/common.ts";
 import * as jsonP from "../../encoding/json.ts";
 function generateIdemptToken() {
@@ -95,6 +95,25 @@ export default class HealthLake {
     }, await resp.json());
   }
 
+  async describeFHIRExportJob(
+    {abortSignal, ...params}: RequestConfig & DescribeFHIRExportJobRequest,
+  ): Promise<DescribeFHIRExportJobResponse> {
+    const body: jsonP.JSONObject = {
+      DatastoreId: params["DatastoreId"],
+      JobId: params["JobId"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DescribeFHIRExportJob",
+    });
+    return jsonP.readObj({
+      required: {
+        "ExportJobProperties": toExportJobProperties,
+      },
+      optional: {},
+    }, await resp.json());
+  }
+
   async describeFHIRImportJob(
     {abortSignal, ...params}: RequestConfig & DescribeFHIRImportJobRequest,
   ): Promise<DescribeFHIRImportJobResponse> {
@@ -132,6 +151,31 @@ export default class HealthLake {
       },
       optional: {
         "NextToken": "s",
+      },
+    }, await resp.json());
+  }
+
+  async startFHIRExportJob(
+    {abortSignal, ...params}: RequestConfig & StartFHIRExportJobRequest,
+  ): Promise<StartFHIRExportJobResponse> {
+    const body: jsonP.JSONObject = {
+      JobName: params["JobName"],
+      OutputDataConfig: fromOutputDataConfig(params["OutputDataConfig"]),
+      DatastoreId: params["DatastoreId"],
+      DataAccessRoleArn: params["DataAccessRoleArn"],
+      ClientToken: params["ClientToken"] ?? generateIdemptToken(),
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "StartFHIRExportJob",
+    });
+    return jsonP.readObj({
+      required: {
+        "JobId": "s",
+        "JobStatus": (x: jsonP.JSONValue) => cmnP.readEnum<JobStatus>(x),
+      },
+      optional: {
+        "DatastoreId": "s",
       },
     }, await resp.json());
   }
@@ -182,6 +226,12 @@ export interface DescribeFHIRDatastoreRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface DescribeFHIRExportJobRequest {
+  DatastoreId: string;
+  JobId: string;
+}
+
+// refs: 1 - tags: named, input
 export interface DescribeFHIRImportJobRequest {
   DatastoreId: string;
   JobId: string;
@@ -192,6 +242,15 @@ export interface ListFHIRDatastoresRequest {
   Filter?: DatastoreFilter | null;
   NextToken?: string | null;
   MaxResults?: number | null;
+}
+
+// refs: 1 - tags: named, input
+export interface StartFHIRExportJobRequest {
+  JobName?: string | null;
+  OutputDataConfig: OutputDataConfig;
+  DatastoreId: string;
+  DataAccessRoleArn: string;
+  ClientToken: string;
 }
 
 // refs: 1 - tags: named, input
@@ -225,6 +284,11 @@ export interface DescribeFHIRDatastoreResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface DescribeFHIRExportJobResponse {
+  ExportJobProperties: ExportJobProperties;
+}
+
+// refs: 1 - tags: named, output
 export interface DescribeFHIRImportJobResponse {
   ImportJobProperties: ImportJobProperties;
 }
@@ -233,6 +297,13 @@ export interface DescribeFHIRImportJobResponse {
 export interface ListFHIRDatastoresResponse {
   DatastorePropertiesList: DatastoreProperties[];
   NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface StartFHIRExportJobResponse {
+  JobId: string;
+  JobStatus: JobStatus;
+  DatastoreId?: string | null;
 }
 
 // refs: 1 - tags: named, output
@@ -297,6 +368,25 @@ export type DatastoreStatus =
 | cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface, output
+export interface OutputDataConfig {
+  S3Uri?: string | null;
+}
+function fromOutputDataConfig(input?: OutputDataConfig | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    S3Uri: input["S3Uri"],
+  }
+}
+function toOutputDataConfig(root: jsonP.JSONValue): OutputDataConfig {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "S3Uri": "s",
+    },
+  }, root);
+}
+
+// refs: 2 - tags: input, named, interface, output
 export interface InputDataConfig {
   S3Uri?: string | null;
 }
@@ -344,6 +434,44 @@ function toDatastoreProperties(root: jsonP.JSONValue): DatastoreProperties {
 }
 
 // refs: 1 - tags: output, named, interface
+export interface ExportJobProperties {
+  JobId: string;
+  JobName?: string | null;
+  JobStatus: JobStatus;
+  SubmitTime: Date | number;
+  EndTime?: Date | number | null;
+  DatastoreId: string;
+  OutputDataConfig: OutputDataConfig;
+  DataAccessRoleArn?: string | null;
+  Message?: string | null;
+}
+function toExportJobProperties(root: jsonP.JSONValue): ExportJobProperties {
+  return jsonP.readObj({
+    required: {
+      "JobId": "s",
+      "JobStatus": (x: jsonP.JSONValue) => cmnP.readEnum<JobStatus>(x),
+      "SubmitTime": "d",
+      "DatastoreId": "s",
+      "OutputDataConfig": toOutputDataConfig,
+    },
+    optional: {
+      "JobName": "s",
+      "EndTime": "d",
+      "DataAccessRoleArn": "s",
+      "Message": "s",
+    },
+  }, root);
+}
+
+// refs: 4 - tags: output, named, enum
+export type JobStatus =
+| "SUBMITTED"
+| "IN_PROGRESS"
+| "COMPLETED"
+| "FAILED"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 1 - tags: output, named, interface
 export interface ImportJobProperties {
   JobId: string;
   JobName?: string | null;
@@ -372,11 +500,3 @@ function toImportJobProperties(root: jsonP.JSONValue): ImportJobProperties {
     },
   }, root);
 }
-
-// refs: 2 - tags: output, named, enum
-export type JobStatus =
-| "SUBMITTED"
-| "IN_PROGRESS"
-| "COMPLETED"
-| "FAILED"
-| cmnP.UnexpectedEnumValue;

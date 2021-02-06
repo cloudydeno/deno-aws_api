@@ -357,6 +357,7 @@ export default class SecurityHub {
     const query = new URLSearchParams;
     if (params["NextToken"] != null) query.set("NextToken", params["NextToken"]?.toString() ?? "");
     if (params["MaxResults"] != null) query.set("MaxResults", params["MaxResults"]?.toString() ?? "");
+    if (params["ProductArn"] != null) query.set("ProductArn", params["ProductArn"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
       abortSignal, query,
       action: "DescribeProducts",
@@ -1065,6 +1066,7 @@ export interface DescribeOrganizationConfigurationRequest {
 export interface DescribeProductsRequest {
   NextToken?: string | null;
   MaxResults?: number | null;
+  ProductArn?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -1536,6 +1538,7 @@ export interface AwsSecurityFinding {
   Note?: Note | null;
   Vulnerabilities?: Vulnerability[] | null;
   PatchSummary?: PatchSummary | null;
+  Action?: Action | null;
 }
 function fromAwsSecurityFinding(input?: AwsSecurityFinding | null): jsonP.JSONValue {
   if (!input) return input;
@@ -1574,6 +1577,7 @@ function fromAwsSecurityFinding(input?: AwsSecurityFinding | null): jsonP.JSONVa
     Note: fromNote(input["Note"]),
     Vulnerabilities: input["Vulnerabilities"]?.map(x => fromVulnerability(x)),
     PatchSummary: fromPatchSummary(input["PatchSummary"]),
+    Action: fromAction(input["Action"]),
   }
 }
 function toAwsSecurityFinding(root: jsonP.JSONValue): AwsSecurityFinding {
@@ -1615,6 +1619,7 @@ function toAwsSecurityFinding(root: jsonP.JSONValue): AwsSecurityFinding {
       "Note": toNote,
       "Vulnerabilities": [toVulnerability],
       "PatchSummary": toPatchSummary,
+      "Action": toAction,
     },
   }, root);
 }
@@ -2070,6 +2075,7 @@ export interface ResourceDetails {
   AwsApiGatewayStage?: AwsApiGatewayStageDetails | null;
   AwsApiGatewayRestApi?: AwsApiGatewayRestApiDetails | null;
   AwsCloudTrailTrail?: AwsCloudTrailTrailDetails | null;
+  AwsSsmPatchCompliance?: AwsSsmPatchComplianceDetails | null;
   AwsCertificateManagerCertificate?: AwsCertificateManagerCertificateDetails | null;
   AwsRedshiftCluster?: AwsRedshiftClusterDetails | null;
   AwsElbLoadBalancer?: AwsElbLoadBalancerDetails | null;
@@ -2114,6 +2120,7 @@ function fromResourceDetails(input?: ResourceDetails | null): jsonP.JSONValue {
     AwsApiGatewayStage: fromAwsApiGatewayStageDetails(input["AwsApiGatewayStage"]),
     AwsApiGatewayRestApi: fromAwsApiGatewayRestApiDetails(input["AwsApiGatewayRestApi"]),
     AwsCloudTrailTrail: fromAwsCloudTrailTrailDetails(input["AwsCloudTrailTrail"]),
+    AwsSsmPatchCompliance: fromAwsSsmPatchComplianceDetails(input["AwsSsmPatchCompliance"]),
     AwsCertificateManagerCertificate: fromAwsCertificateManagerCertificateDetails(input["AwsCertificateManagerCertificate"]),
     AwsRedshiftCluster: fromAwsRedshiftClusterDetails(input["AwsRedshiftCluster"]),
     AwsElbLoadBalancer: fromAwsElbLoadBalancerDetails(input["AwsElbLoadBalancer"]),
@@ -2160,6 +2167,7 @@ function toResourceDetails(root: jsonP.JSONValue): ResourceDetails {
       "AwsApiGatewayStage": toAwsApiGatewayStageDetails,
       "AwsApiGatewayRestApi": toAwsApiGatewayRestApiDetails,
       "AwsCloudTrailTrail": toAwsCloudTrailTrailDetails,
+      "AwsSsmPatchCompliance": toAwsSsmPatchComplianceDetails,
       "AwsCertificateManagerCertificate": toAwsCertificateManagerCertificateDetails,
       "AwsRedshiftCluster": toAwsRedshiftClusterDetails,
       "AwsElbLoadBalancer": toAwsElbLoadBalancerDetails,
@@ -2677,6 +2685,10 @@ export interface AwsEc2NetworkInterfaceDetails {
   NetworkInterfaceId?: string | null;
   SecurityGroups?: AwsEc2NetworkInterfaceSecurityGroup[] | null;
   SourceDestCheck?: boolean | null;
+  IpV6Addresses?: AwsEc2NetworkInterfaceIpV6AddressDetail[] | null;
+  PrivateIpAddresses?: AwsEc2NetworkInterfacePrivateIpAddressDetail[] | null;
+  PublicDnsName?: string | null;
+  PublicIp?: string | null;
 }
 function fromAwsEc2NetworkInterfaceDetails(input?: AwsEc2NetworkInterfaceDetails | null): jsonP.JSONValue {
   if (!input) return input;
@@ -2685,6 +2697,10 @@ function fromAwsEc2NetworkInterfaceDetails(input?: AwsEc2NetworkInterfaceDetails
     NetworkInterfaceId: input["NetworkInterfaceId"],
     SecurityGroups: input["SecurityGroups"]?.map(x => fromAwsEc2NetworkInterfaceSecurityGroup(x)),
     SourceDestCheck: input["SourceDestCheck"],
+    IpV6Addresses: input["IpV6Addresses"]?.map(x => fromAwsEc2NetworkInterfaceIpV6AddressDetail(x)),
+    PrivateIpAddresses: input["PrivateIpAddresses"]?.map(x => fromAwsEc2NetworkInterfacePrivateIpAddressDetail(x)),
+    PublicDnsName: input["PublicDnsName"],
+    PublicIp: input["PublicIp"],
   }
 }
 function toAwsEc2NetworkInterfaceDetails(root: jsonP.JSONValue): AwsEc2NetworkInterfaceDetails {
@@ -2695,6 +2711,10 @@ function toAwsEc2NetworkInterfaceDetails(root: jsonP.JSONValue): AwsEc2NetworkIn
       "NetworkInterfaceId": "s",
       "SecurityGroups": [toAwsEc2NetworkInterfaceSecurityGroup],
       "SourceDestCheck": "b",
+      "IpV6Addresses": [toAwsEc2NetworkInterfaceIpV6AddressDetail],
+      "PrivateIpAddresses": [toAwsEc2NetworkInterfacePrivateIpAddressDetail],
+      "PublicDnsName": "s",
+      "PublicIp": "s",
     },
   }, root);
 }
@@ -2754,6 +2774,47 @@ function toAwsEc2NetworkInterfaceSecurityGroup(root: jsonP.JSONValue): AwsEc2Net
     optional: {
       "GroupName": "s",
       "GroupId": "s",
+    },
+  }, root);
+}
+
+// refs: 2 - tags: input, named, interface, output
+export interface AwsEc2NetworkInterfaceIpV6AddressDetail {
+  IpV6Address?: string | null;
+}
+function fromAwsEc2NetworkInterfaceIpV6AddressDetail(input?: AwsEc2NetworkInterfaceIpV6AddressDetail | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    IpV6Address: input["IpV6Address"],
+  }
+}
+function toAwsEc2NetworkInterfaceIpV6AddressDetail(root: jsonP.JSONValue): AwsEc2NetworkInterfaceIpV6AddressDetail {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "IpV6Address": "s",
+    },
+  }, root);
+}
+
+// refs: 2 - tags: input, named, interface, output
+export interface AwsEc2NetworkInterfacePrivateIpAddressDetail {
+  PrivateIpAddress?: string | null;
+  PrivateDnsName?: string | null;
+}
+function fromAwsEc2NetworkInterfacePrivateIpAddressDetail(input?: AwsEc2NetworkInterfacePrivateIpAddressDetail | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    PrivateIpAddress: input["PrivateIpAddress"],
+    PrivateDnsName: input["PrivateDnsName"],
+  }
+}
+function toAwsEc2NetworkInterfacePrivateIpAddressDetail(root: jsonP.JSONValue): AwsEc2NetworkInterfacePrivateIpAddressDetail {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "PrivateIpAddress": "s",
+      "PrivateDnsName": "s",
     },
   }, root);
 }
@@ -4682,6 +4743,114 @@ function toAwsCloudTrailTrailDetails(root: jsonP.JSONValue): AwsCloudTrailTrailD
       "SnsTopicArn": "s",
       "SnsTopicName": "s",
       "TrailArn": "s",
+    },
+  }, root);
+}
+
+// refs: 2 - tags: input, named, interface, output
+export interface AwsSsmPatchComplianceDetails {
+  Patch?: AwsSsmPatch | null;
+}
+function fromAwsSsmPatchComplianceDetails(input?: AwsSsmPatchComplianceDetails | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    Patch: fromAwsSsmPatch(input["Patch"]),
+  }
+}
+function toAwsSsmPatchComplianceDetails(root: jsonP.JSONValue): AwsSsmPatchComplianceDetails {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "Patch": toAwsSsmPatch,
+    },
+  }, root);
+}
+
+// refs: 2 - tags: input, named, interface, output
+export interface AwsSsmPatch {
+  ComplianceSummary?: AwsSsmComplianceSummary | null;
+}
+function fromAwsSsmPatch(input?: AwsSsmPatch | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    ComplianceSummary: fromAwsSsmComplianceSummary(input["ComplianceSummary"]),
+  }
+}
+function toAwsSsmPatch(root: jsonP.JSONValue): AwsSsmPatch {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "ComplianceSummary": toAwsSsmComplianceSummary,
+    },
+  }, root);
+}
+
+// refs: 2 - tags: input, named, interface, output
+export interface AwsSsmComplianceSummary {
+  Status?: string | null;
+  CompliantCriticalCount?: number | null;
+  CompliantHighCount?: number | null;
+  CompliantMediumCount?: number | null;
+  ExecutionType?: string | null;
+  NonCompliantCriticalCount?: number | null;
+  CompliantInformationalCount?: number | null;
+  NonCompliantInformationalCount?: number | null;
+  CompliantUnspecifiedCount?: number | null;
+  NonCompliantLowCount?: number | null;
+  NonCompliantHighCount?: number | null;
+  CompliantLowCount?: number | null;
+  ComplianceType?: string | null;
+  PatchBaselineId?: string | null;
+  OverallSeverity?: string | null;
+  NonCompliantMediumCount?: number | null;
+  NonCompliantUnspecifiedCount?: number | null;
+  PatchGroup?: string | null;
+}
+function fromAwsSsmComplianceSummary(input?: AwsSsmComplianceSummary | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    Status: input["Status"],
+    CompliantCriticalCount: input["CompliantCriticalCount"],
+    CompliantHighCount: input["CompliantHighCount"],
+    CompliantMediumCount: input["CompliantMediumCount"],
+    ExecutionType: input["ExecutionType"],
+    NonCompliantCriticalCount: input["NonCompliantCriticalCount"],
+    CompliantInformationalCount: input["CompliantInformationalCount"],
+    NonCompliantInformationalCount: input["NonCompliantInformationalCount"],
+    CompliantUnspecifiedCount: input["CompliantUnspecifiedCount"],
+    NonCompliantLowCount: input["NonCompliantLowCount"],
+    NonCompliantHighCount: input["NonCompliantHighCount"],
+    CompliantLowCount: input["CompliantLowCount"],
+    ComplianceType: input["ComplianceType"],
+    PatchBaselineId: input["PatchBaselineId"],
+    OverallSeverity: input["OverallSeverity"],
+    NonCompliantMediumCount: input["NonCompliantMediumCount"],
+    NonCompliantUnspecifiedCount: input["NonCompliantUnspecifiedCount"],
+    PatchGroup: input["PatchGroup"],
+  }
+}
+function toAwsSsmComplianceSummary(root: jsonP.JSONValue): AwsSsmComplianceSummary {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "Status": "s",
+      "CompliantCriticalCount": "n",
+      "CompliantHighCount": "n",
+      "CompliantMediumCount": "n",
+      "ExecutionType": "s",
+      "NonCompliantCriticalCount": "n",
+      "CompliantInformationalCount": "n",
+      "NonCompliantInformationalCount": "n",
+      "CompliantUnspecifiedCount": "n",
+      "NonCompliantLowCount": "n",
+      "NonCompliantHighCount": "n",
+      "CompliantLowCount": "n",
+      "ComplianceType": "s",
+      "PatchBaselineId": "s",
+      "OverallSeverity": "s",
+      "NonCompliantMediumCount": "n",
+      "NonCompliantUnspecifiedCount": "n",
+      "PatchGroup": "s",
     },
   }, root);
 }
@@ -7760,6 +7929,387 @@ function toPatchSummary(root: jsonP.JSONValue): PatchSummary {
       "OperationEndTime": "s",
       "RebootOption": "s",
       "Operation": "s",
+    },
+  }, root);
+}
+
+// refs: 2 - tags: input, named, interface, output
+export interface Action {
+  ActionType?: string | null;
+  NetworkConnectionAction?: NetworkConnectionAction | null;
+  AwsApiCallAction?: AwsApiCallAction | null;
+  DnsRequestAction?: DnsRequestAction | null;
+  PortProbeAction?: PortProbeAction | null;
+}
+function fromAction(input?: Action | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    ActionType: input["ActionType"],
+    NetworkConnectionAction: fromNetworkConnectionAction(input["NetworkConnectionAction"]),
+    AwsApiCallAction: fromAwsApiCallAction(input["AwsApiCallAction"]),
+    DnsRequestAction: fromDnsRequestAction(input["DnsRequestAction"]),
+    PortProbeAction: fromPortProbeAction(input["PortProbeAction"]),
+  }
+}
+function toAction(root: jsonP.JSONValue): Action {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "ActionType": "s",
+      "NetworkConnectionAction": toNetworkConnectionAction,
+      "AwsApiCallAction": toAwsApiCallAction,
+      "DnsRequestAction": toDnsRequestAction,
+      "PortProbeAction": toPortProbeAction,
+    },
+  }, root);
+}
+
+// refs: 2 - tags: input, named, interface, output
+export interface NetworkConnectionAction {
+  ConnectionDirection?: string | null;
+  RemoteIpDetails?: ActionRemoteIpDetails | null;
+  RemotePortDetails?: ActionRemotePortDetails | null;
+  LocalPortDetails?: ActionLocalPortDetails | null;
+  Protocol?: string | null;
+  Blocked?: boolean | null;
+}
+function fromNetworkConnectionAction(input?: NetworkConnectionAction | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    ConnectionDirection: input["ConnectionDirection"],
+    RemoteIpDetails: fromActionRemoteIpDetails(input["RemoteIpDetails"]),
+    RemotePortDetails: fromActionRemotePortDetails(input["RemotePortDetails"]),
+    LocalPortDetails: fromActionLocalPortDetails(input["LocalPortDetails"]),
+    Protocol: input["Protocol"],
+    Blocked: input["Blocked"],
+  }
+}
+function toNetworkConnectionAction(root: jsonP.JSONValue): NetworkConnectionAction {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "ConnectionDirection": "s",
+      "RemoteIpDetails": toActionRemoteIpDetails,
+      "RemotePortDetails": toActionRemotePortDetails,
+      "LocalPortDetails": toActionLocalPortDetails,
+      "Protocol": "s",
+      "Blocked": "b",
+    },
+  }, root);
+}
+
+// refs: 6 - tags: input, named, interface, output
+export interface ActionRemoteIpDetails {
+  IpAddressV4?: string | null;
+  Organization?: IpOrganizationDetails | null;
+  Country?: Country | null;
+  City?: City | null;
+  GeoLocation?: GeoLocation | null;
+}
+function fromActionRemoteIpDetails(input?: ActionRemoteIpDetails | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    IpAddressV4: input["IpAddressV4"],
+    Organization: fromIpOrganizationDetails(input["Organization"]),
+    Country: fromCountry(input["Country"]),
+    City: fromCity(input["City"]),
+    GeoLocation: fromGeoLocation(input["GeoLocation"]),
+  }
+}
+function toActionRemoteIpDetails(root: jsonP.JSONValue): ActionRemoteIpDetails {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "IpAddressV4": "s",
+      "Organization": toIpOrganizationDetails,
+      "Country": toCountry,
+      "City": toCity,
+      "GeoLocation": toGeoLocation,
+    },
+  }, root);
+}
+
+// refs: 6 - tags: input, named, interface, output
+export interface IpOrganizationDetails {
+  Asn?: number | null;
+  AsnOrg?: string | null;
+  Isp?: string | null;
+  Org?: string | null;
+}
+function fromIpOrganizationDetails(input?: IpOrganizationDetails | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    Asn: input["Asn"],
+    AsnOrg: input["AsnOrg"],
+    Isp: input["Isp"],
+    Org: input["Org"],
+  }
+}
+function toIpOrganizationDetails(root: jsonP.JSONValue): IpOrganizationDetails {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "Asn": "n",
+      "AsnOrg": "s",
+      "Isp": "s",
+      "Org": "s",
+    },
+  }, root);
+}
+
+// refs: 6 - tags: input, named, interface, output
+export interface Country {
+  CountryCode?: string | null;
+  CountryName?: string | null;
+}
+function fromCountry(input?: Country | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    CountryCode: input["CountryCode"],
+    CountryName: input["CountryName"],
+  }
+}
+function toCountry(root: jsonP.JSONValue): Country {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "CountryCode": "s",
+      "CountryName": "s",
+    },
+  }, root);
+}
+
+// refs: 6 - tags: input, named, interface, output
+export interface City {
+  CityName?: string | null;
+}
+function fromCity(input?: City | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    CityName: input["CityName"],
+  }
+}
+function toCity(root: jsonP.JSONValue): City {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "CityName": "s",
+    },
+  }, root);
+}
+
+// refs: 6 - tags: input, named, interface, output
+export interface GeoLocation {
+  Lon?: number | null;
+  Lat?: number | null;
+}
+function fromGeoLocation(input?: GeoLocation | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    Lon: input["Lon"],
+    Lat: input["Lat"],
+  }
+}
+function toGeoLocation(root: jsonP.JSONValue): GeoLocation {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "Lon": "n",
+      "Lat": "n",
+    },
+  }, root);
+}
+
+// refs: 2 - tags: input, named, interface, output
+export interface ActionRemotePortDetails {
+  Port?: number | null;
+  PortName?: string | null;
+}
+function fromActionRemotePortDetails(input?: ActionRemotePortDetails | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    Port: input["Port"],
+    PortName: input["PortName"],
+  }
+}
+function toActionRemotePortDetails(root: jsonP.JSONValue): ActionRemotePortDetails {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "Port": "n",
+      "PortName": "s",
+    },
+  }, root);
+}
+
+// refs: 4 - tags: input, named, interface, output
+export interface ActionLocalPortDetails {
+  Port?: number | null;
+  PortName?: string | null;
+}
+function fromActionLocalPortDetails(input?: ActionLocalPortDetails | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    Port: input["Port"],
+    PortName: input["PortName"],
+  }
+}
+function toActionLocalPortDetails(root: jsonP.JSONValue): ActionLocalPortDetails {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "Port": "n",
+      "PortName": "s",
+    },
+  }, root);
+}
+
+// refs: 2 - tags: input, named, interface, output
+export interface AwsApiCallAction {
+  Api?: string | null;
+  ServiceName?: string | null;
+  CallerType?: string | null;
+  RemoteIpDetails?: ActionRemoteIpDetails | null;
+  DomainDetails?: AwsApiCallActionDomainDetails | null;
+  AffectedResources?: { [key: string]: string | null | undefined } | null;
+  FirstSeen?: string | null;
+  LastSeen?: string | null;
+}
+function fromAwsApiCallAction(input?: AwsApiCallAction | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    Api: input["Api"],
+    ServiceName: input["ServiceName"],
+    CallerType: input["CallerType"],
+    RemoteIpDetails: fromActionRemoteIpDetails(input["RemoteIpDetails"]),
+    DomainDetails: fromAwsApiCallActionDomainDetails(input["DomainDetails"]),
+    AffectedResources: input["AffectedResources"],
+    FirstSeen: input["FirstSeen"],
+    LastSeen: input["LastSeen"],
+  }
+}
+function toAwsApiCallAction(root: jsonP.JSONValue): AwsApiCallAction {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "Api": "s",
+      "ServiceName": "s",
+      "CallerType": "s",
+      "RemoteIpDetails": toActionRemoteIpDetails,
+      "DomainDetails": toAwsApiCallActionDomainDetails,
+      "AffectedResources": x => jsonP.readMap(String, String, x),
+      "FirstSeen": "s",
+      "LastSeen": "s",
+    },
+  }, root);
+}
+
+// refs: 2 - tags: input, named, interface, output
+export interface AwsApiCallActionDomainDetails {
+  Domain?: string | null;
+}
+function fromAwsApiCallActionDomainDetails(input?: AwsApiCallActionDomainDetails | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    Domain: input["Domain"],
+  }
+}
+function toAwsApiCallActionDomainDetails(root: jsonP.JSONValue): AwsApiCallActionDomainDetails {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "Domain": "s",
+    },
+  }, root);
+}
+
+// refs: 2 - tags: input, named, interface, output
+export interface DnsRequestAction {
+  Domain?: string | null;
+  Protocol?: string | null;
+  Blocked?: boolean | null;
+}
+function fromDnsRequestAction(input?: DnsRequestAction | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    Domain: input["Domain"],
+    Protocol: input["Protocol"],
+    Blocked: input["Blocked"],
+  }
+}
+function toDnsRequestAction(root: jsonP.JSONValue): DnsRequestAction {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "Domain": "s",
+      "Protocol": "s",
+      "Blocked": "b",
+    },
+  }, root);
+}
+
+// refs: 2 - tags: input, named, interface, output
+export interface PortProbeAction {
+  PortProbeDetails?: PortProbeDetail[] | null;
+  Blocked?: boolean | null;
+}
+function fromPortProbeAction(input?: PortProbeAction | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    PortProbeDetails: input["PortProbeDetails"]?.map(x => fromPortProbeDetail(x)),
+    Blocked: input["Blocked"],
+  }
+}
+function toPortProbeAction(root: jsonP.JSONValue): PortProbeAction {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "PortProbeDetails": [toPortProbeDetail],
+      "Blocked": "b",
+    },
+  }, root);
+}
+
+// refs: 2 - tags: input, named, interface, output
+export interface PortProbeDetail {
+  LocalPortDetails?: ActionLocalPortDetails | null;
+  LocalIpDetails?: ActionLocalIpDetails | null;
+  RemoteIpDetails?: ActionRemoteIpDetails | null;
+}
+function fromPortProbeDetail(input?: PortProbeDetail | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    LocalPortDetails: fromActionLocalPortDetails(input["LocalPortDetails"]),
+    LocalIpDetails: fromActionLocalIpDetails(input["LocalIpDetails"]),
+    RemoteIpDetails: fromActionRemoteIpDetails(input["RemoteIpDetails"]),
+  }
+}
+function toPortProbeDetail(root: jsonP.JSONValue): PortProbeDetail {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "LocalPortDetails": toActionLocalPortDetails,
+      "LocalIpDetails": toActionLocalIpDetails,
+      "RemoteIpDetails": toActionRemoteIpDetails,
+    },
+  }, root);
+}
+
+// refs: 2 - tags: input, named, interface, output
+export interface ActionLocalIpDetails {
+  IpAddressV4?: string | null;
+}
+function fromActionLocalIpDetails(input?: ActionLocalIpDetails | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    IpAddressV4: input["IpAddressV4"],
+  }
+}
+function toActionLocalIpDetails(root: jsonP.JSONValue): ActionLocalIpDetails {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "IpAddressV4": "s",
     },
   }, root);
 }

@@ -5,7 +5,7 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import * as uuidv4 from "https://deno.land/std@0.75.0/uuid/v4.ts";
+import * as uuidv4 from "https://deno.land/std@0.86.0/uuid/v4.ts";
 import * as cmnP from "../../encoding/common.ts";
 import * as jsonP from "../../encoding/json.ts";
 function generateIdemptToken() {
@@ -64,6 +64,7 @@ export default class ManagedBlockchain {
       FrameworkConfiguration: fromNetworkFrameworkConfiguration(params["FrameworkConfiguration"]),
       VotingPolicy: fromVotingPolicy(params["VotingPolicy"]),
       MemberConfiguration: fromMemberConfiguration(params["MemberConfiguration"]),
+      Tags: params["Tags"],
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -84,12 +85,14 @@ export default class ManagedBlockchain {
   ): Promise<CreateNodeOutput> {
     const body: jsonP.JSONObject = {
       ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
+      MemberId: params["MemberId"],
       NodeConfiguration: fromNodeConfiguration(params["NodeConfiguration"]),
+      Tags: params["Tags"],
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateNode",
-      requestUri: cmnP.encodePath`/networks/${params["NetworkId"]}/members/${params["MemberId"]}/nodes`,
+      requestUri: cmnP.encodePath`/networks/${params["NetworkId"]}/nodes`,
     });
     return jsonP.readObj({
       required: {},
@@ -107,6 +110,7 @@ export default class ManagedBlockchain {
       MemberId: params["MemberId"],
       Actions: fromProposalActions(params["Actions"]),
       Description: params["Description"],
+      Tags: params["Tags"],
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -140,12 +144,13 @@ export default class ManagedBlockchain {
   async deleteNode(
     {abortSignal, ...params}: RequestConfig & DeleteNodeInput,
   ): Promise<DeleteNodeOutput> {
-
+    const query = new URLSearchParams;
+    if (params["MemberId"] != null) query.set("memberId", params["MemberId"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
-      abortSignal,
+      abortSignal, query,
       action: "DeleteNode",
       method: "DELETE",
-      requestUri: cmnP.encodePath`/networks/${params["NetworkId"]}/members/${params["MemberId"]}/nodes/${params["NodeId"]}`,
+      requestUri: cmnP.encodePath`/networks/${params["NetworkId"]}/nodes/${params["NodeId"]}`,
     });
     return jsonP.readObj({
       required: {},
@@ -192,12 +197,13 @@ export default class ManagedBlockchain {
   async getNode(
     {abortSignal, ...params}: RequestConfig & GetNodeInput,
   ): Promise<GetNodeOutput> {
-
+    const query = new URLSearchParams;
+    if (params["MemberId"] != null) query.set("memberId", params["MemberId"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
-      abortSignal,
+      abortSignal, query,
       action: "GetNode",
       method: "GET",
-      requestUri: cmnP.encodePath`/networks/${params["NetworkId"]}/members/${params["MemberId"]}/nodes/${params["NodeId"]}`,
+      requestUri: cmnP.encodePath`/networks/${params["NetworkId"]}/nodes/${params["NodeId"]}`,
     });
     return jsonP.readObj({
       required: {},
@@ -298,6 +304,7 @@ export default class ManagedBlockchain {
     {abortSignal, ...params}: RequestConfig & ListNodesInput,
   ): Promise<ListNodesOutput> {
     const query = new URLSearchParams;
+    if (params["MemberId"] != null) query.set("memberId", params["MemberId"]?.toString() ?? "");
     if (params["Status"] != null) query.set("status", params["Status"]?.toString() ?? "");
     if (params["MaxResults"] != null) query.set("maxResults", params["MaxResults"]?.toString() ?? "");
     if (params["NextToken"] != null) query.set("nextToken", params["NextToken"]?.toString() ?? "");
@@ -305,7 +312,7 @@ export default class ManagedBlockchain {
       abortSignal, query,
       action: "ListNodes",
       method: "GET",
-      requestUri: cmnP.encodePath`/networks/${params["NetworkId"]}/members/${params["MemberId"]}/nodes`,
+      requestUri: cmnP.encodePath`/networks/${params["NetworkId"]}/nodes`,
     });
     return jsonP.readObj({
       required: {},
@@ -358,6 +365,24 @@ export default class ManagedBlockchain {
     }, await resp.json());
   }
 
+  async listTagsForResource(
+    {abortSignal, ...params}: RequestConfig & ListTagsForResourceRequest,
+  ): Promise<ListTagsForResourceResponse> {
+
+    const resp = await this.#client.performRequest({
+      abortSignal,
+      action: "ListTagsForResource",
+      method: "GET",
+      requestUri: cmnP.encodePath`/tags/${params["ResourceArn"]}`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
+  }
+
   async rejectInvitation(
     {abortSignal, ...params}: RequestConfig & RejectInvitationInput,
   ): Promise<RejectInvitationOutput> {
@@ -367,6 +392,42 @@ export default class ManagedBlockchain {
       action: "RejectInvitation",
       method: "DELETE",
       requestUri: cmnP.encodePath`/invitations/${params["InvitationId"]}`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
+  }
+
+  async tagResource(
+    {abortSignal, ...params}: RequestConfig & TagResourceRequest,
+  ): Promise<TagResourceResponse> {
+    const body: jsonP.JSONObject = {
+      Tags: params["Tags"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "TagResource",
+      requestUri: cmnP.encodePath`/tags/${params["ResourceArn"]}`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
+  }
+
+  async untagResource(
+    {abortSignal, ...params}: RequestConfig & UntagResourceRequest,
+  ): Promise<UntagResourceResponse> {
+    const query = new URLSearchParams;
+    for (const item of params["TagKeys"]) {
+      query.append("tagKeys", item?.toString() ?? "");
+    }
+    const resp = await this.#client.performRequest({
+      abortSignal, query,
+      action: "UntagResource",
+      method: "DELETE",
+      requestUri: cmnP.encodePath`/tags/${params["ResourceArn"]}`,
     });
     return jsonP.readObj({
       required: {},
@@ -396,13 +457,14 @@ export default class ManagedBlockchain {
     {abortSignal, ...params}: RequestConfig & UpdateNodeInput,
   ): Promise<UpdateNodeOutput> {
     const body: jsonP.JSONObject = {
+      MemberId: params["MemberId"],
       LogPublishingConfiguration: fromNodeLogPublishingConfiguration(params["LogPublishingConfiguration"]),
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateNode",
       method: "PATCH",
-      requestUri: cmnP.encodePath`/networks/${params["NetworkId"]}/members/${params["MemberId"]}/nodes/${params["NodeId"]}`,
+      requestUri: cmnP.encodePath`/networks/${params["NetworkId"]}/nodes/${params["NodeId"]}`,
     });
     return jsonP.readObj({
       required: {},
@@ -448,14 +510,16 @@ export interface CreateNetworkInput {
   FrameworkConfiguration?: NetworkFrameworkConfiguration | null;
   VotingPolicy: VotingPolicy;
   MemberConfiguration: MemberConfiguration;
+  Tags?: { [key: string]: string | null | undefined } | null;
 }
 
 // refs: 1 - tags: named, input
 export interface CreateNodeInput {
   ClientRequestToken: string;
   NetworkId: string;
-  MemberId: string;
+  MemberId?: string | null;
   NodeConfiguration: NodeConfiguration;
+  Tags?: { [key: string]: string | null | undefined } | null;
 }
 
 // refs: 1 - tags: named, input
@@ -465,6 +529,7 @@ export interface CreateProposalInput {
   MemberId: string;
   Actions: ProposalActions;
   Description?: string | null;
+  Tags?: { [key: string]: string | null | undefined } | null;
 }
 
 // refs: 1 - tags: named, input
@@ -476,7 +541,7 @@ export interface DeleteMemberInput {
 // refs: 1 - tags: named, input
 export interface DeleteNodeInput {
   NetworkId: string;
-  MemberId: string;
+  MemberId?: string | null;
   NodeId: string;
 }
 
@@ -494,7 +559,7 @@ export interface GetNetworkInput {
 // refs: 1 - tags: named, input
 export interface GetNodeInput {
   NetworkId: string;
-  MemberId: string;
+  MemberId?: string | null;
   NodeId: string;
 }
 
@@ -532,7 +597,7 @@ export interface ListNetworksInput {
 // refs: 1 - tags: named, input
 export interface ListNodesInput {
   NetworkId: string;
-  MemberId: string;
+  MemberId?: string | null;
   Status?: NodeStatus | null;
   MaxResults?: number | null;
   NextToken?: string | null;
@@ -554,8 +619,25 @@ export interface ListProposalsInput {
 }
 
 // refs: 1 - tags: named, input
+export interface ListTagsForResourceRequest {
+  ResourceArn: string;
+}
+
+// refs: 1 - tags: named, input
 export interface RejectInvitationInput {
   InvitationId: string;
+}
+
+// refs: 1 - tags: named, input
+export interface TagResourceRequest {
+  ResourceArn: string;
+  Tags: { [key: string]: string | null | undefined };
+}
+
+// refs: 1 - tags: named, input
+export interface UntagResourceRequest {
+  ResourceArn: string;
+  TagKeys: string[];
 }
 
 // refs: 1 - tags: named, input
@@ -568,7 +650,7 @@ export interface UpdateMemberInput {
 // refs: 1 - tags: named, input
 export interface UpdateNodeInput {
   NetworkId: string;
-  MemberId: string;
+  MemberId?: string | null;
   NodeId: string;
   LogPublishingConfiguration?: NodeLogPublishingConfiguration | null;
 }
@@ -667,7 +749,20 @@ export interface ListProposalsOutput {
 }
 
 // refs: 1 - tags: named, output
+export interface ListTagsForResourceResponse {
+  Tags?: { [key: string]: string | null | undefined } | null;
+}
+
+// refs: 1 - tags: named, output
 export interface RejectInvitationOutput {
+}
+
+// refs: 1 - tags: named, output
+export interface TagResourceResponse {
+}
+
+// refs: 1 - tags: named, output
+export interface UntagResourceResponse {
 }
 
 // refs: 1 - tags: named, output
@@ -688,6 +783,7 @@ export interface MemberConfiguration {
   Description?: string | null;
   FrameworkConfiguration: MemberFrameworkConfiguration;
   LogPublishingConfiguration?: MemberLogPublishingConfiguration | null;
+  Tags?: { [key: string]: string | null | undefined } | null;
 }
 function fromMemberConfiguration(input?: MemberConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
@@ -696,6 +792,7 @@ function fromMemberConfiguration(input?: MemberConfiguration | null): jsonP.JSON
     Description: input["Description"],
     FrameworkConfiguration: fromMemberFrameworkConfiguration(input["FrameworkConfiguration"]),
     LogPublishingConfiguration: fromMemberLogPublishingConfiguration(input["LogPublishingConfiguration"]),
+    Tags: input["Tags"],
   }
 }
 
@@ -802,6 +899,7 @@ function toLogConfiguration(root: jsonP.JSONValue): LogConfiguration {
 // refs: 5 - tags: input, named, enum, output
 export type Framework =
 | "HYPERLEDGER_FABRIC"
+| "ETHEREUM"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
@@ -885,7 +983,7 @@ export type ThresholdComparator =
 // refs: 1 - tags: input, named, interface
 export interface NodeConfiguration {
   InstanceType: string;
-  AvailabilityZone: string;
+  AvailabilityZone?: string | null;
   LogPublishingConfiguration?: NodeLogPublishingConfiguration | null;
   StateDB?: StateDBType | null;
 }
@@ -1029,6 +1127,7 @@ export type NetworkStatus =
 export type NodeStatus =
 | "CREATING"
 | "AVAILABLE"
+| "UNHEALTHY"
 | "CREATE_FAILED"
 | "UPDATING"
 | "DELETING"
@@ -1052,6 +1151,8 @@ export interface Member {
   LogPublishingConfiguration?: MemberLogPublishingConfiguration | null;
   Status?: MemberStatus | null;
   CreationDate?: Date | number | null;
+  Tags?: { [key: string]: string | null | undefined } | null;
+  Arn?: string | null;
 }
 function toMember(root: jsonP.JSONValue): Member {
   return jsonP.readObj({
@@ -1065,6 +1166,8 @@ function toMember(root: jsonP.JSONValue): Member {
       "LogPublishingConfiguration": toMemberLogPublishingConfiguration,
       "Status": (x: jsonP.JSONValue) => cmnP.readEnum<MemberStatus>(x),
       "CreationDate": "d",
+      "Tags": x => jsonP.readMap(String, String, x),
+      "Arn": "s",
     },
   }, root);
 }
@@ -1109,6 +1212,8 @@ export interface Network {
   VotingPolicy?: VotingPolicy | null;
   Status?: NetworkStatus | null;
   CreationDate?: Date | number | null;
+  Tags?: { [key: string]: string | null | undefined } | null;
+  Arn?: string | null;
 }
 function toNetwork(root: jsonP.JSONValue): Network {
   return jsonP.readObj({
@@ -1124,6 +1229,8 @@ function toNetwork(root: jsonP.JSONValue): Network {
       "VotingPolicy": toVotingPolicy,
       "Status": (x: jsonP.JSONValue) => cmnP.readEnum<NetworkStatus>(x),
       "CreationDate": "d",
+      "Tags": x => jsonP.readMap(String, String, x),
+      "Arn": "s",
     },
   }, root);
 }
@@ -1131,12 +1238,14 @@ function toNetwork(root: jsonP.JSONValue): Network {
 // refs: 1 - tags: output, named, interface
 export interface NetworkFrameworkAttributes {
   Fabric?: NetworkFabricAttributes | null;
+  Ethereum?: NetworkEthereumAttributes | null;
 }
 function toNetworkFrameworkAttributes(root: jsonP.JSONValue): NetworkFrameworkAttributes {
   return jsonP.readObj({
     required: {},
     optional: {
       "Fabric": toNetworkFabricAttributes,
+      "Ethereum": toNetworkEthereumAttributes,
     },
   }, root);
 }
@@ -1157,6 +1266,19 @@ function toNetworkFabricAttributes(root: jsonP.JSONValue): NetworkFabricAttribut
 }
 
 // refs: 1 - tags: output, named, interface
+export interface NetworkEthereumAttributes {
+  ChainId?: string | null;
+}
+function toNetworkEthereumAttributes(root: jsonP.JSONValue): NetworkEthereumAttributes {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "ChainId": "s",
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
 export interface Node {
   NetworkId?: string | null;
   MemberId?: string | null;
@@ -1168,6 +1290,8 @@ export interface Node {
   StateDB?: StateDBType | null;
   Status?: NodeStatus | null;
   CreationDate?: Date | number | null;
+  Tags?: { [key: string]: string | null | undefined } | null;
+  Arn?: string | null;
 }
 function toNode(root: jsonP.JSONValue): Node {
   return jsonP.readObj({
@@ -1183,6 +1307,8 @@ function toNode(root: jsonP.JSONValue): Node {
       "StateDB": (x: jsonP.JSONValue) => cmnP.readEnum<StateDBType>(x),
       "Status": (x: jsonP.JSONValue) => cmnP.readEnum<NodeStatus>(x),
       "CreationDate": "d",
+      "Tags": x => jsonP.readMap(String, String, x),
+      "Arn": "s",
     },
   }, root);
 }
@@ -1190,12 +1316,14 @@ function toNode(root: jsonP.JSONValue): Node {
 // refs: 1 - tags: output, named, interface
 export interface NodeFrameworkAttributes {
   Fabric?: NodeFabricAttributes | null;
+  Ethereum?: NodeEthereumAttributes | null;
 }
 function toNodeFrameworkAttributes(root: jsonP.JSONValue): NodeFrameworkAttributes {
   return jsonP.readObj({
     required: {},
     optional: {
       "Fabric": toNodeFabricAttributes,
+      "Ethereum": toNodeEthereumAttributes,
     },
   }, root);
 }
@@ -1216,6 +1344,21 @@ function toNodeFabricAttributes(root: jsonP.JSONValue): NodeFabricAttributes {
 }
 
 // refs: 1 - tags: output, named, interface
+export interface NodeEthereumAttributes {
+  HttpEndpoint?: string | null;
+  WebSocketEndpoint?: string | null;
+}
+function toNodeEthereumAttributes(root: jsonP.JSONValue): NodeEthereumAttributes {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "HttpEndpoint": "s",
+      "WebSocketEndpoint": "s",
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
 export interface Proposal {
   ProposalId?: string | null;
   NetworkId?: string | null;
@@ -1229,6 +1372,8 @@ export interface Proposal {
   YesVoteCount?: number | null;
   NoVoteCount?: number | null;
   OutstandingVoteCount?: number | null;
+  Tags?: { [key: string]: string | null | undefined } | null;
+  Arn?: string | null;
 }
 function toProposal(root: jsonP.JSONValue): Proposal {
   return jsonP.readObj({
@@ -1246,6 +1391,8 @@ function toProposal(root: jsonP.JSONValue): Proposal {
       "YesVoteCount": "n",
       "NoVoteCount": "n",
       "OutstandingVoteCount": "n",
+      "Tags": x => jsonP.readMap(String, String, x),
+      "Arn": "s",
     },
   }, root);
 }
@@ -1266,6 +1413,7 @@ export interface Invitation {
   ExpirationDate?: Date | number | null;
   Status?: InvitationStatus | null;
   NetworkSummary?: NetworkSummary | null;
+  Arn?: string | null;
 }
 function toInvitation(root: jsonP.JSONValue): Invitation {
   return jsonP.readObj({
@@ -1276,6 +1424,7 @@ function toInvitation(root: jsonP.JSONValue): Invitation {
       "ExpirationDate": "d",
       "Status": (x: jsonP.JSONValue) => cmnP.readEnum<InvitationStatus>(x),
       "NetworkSummary": toNetworkSummary,
+      "Arn": "s",
     },
   }, root);
 }
@@ -1298,6 +1447,7 @@ export interface NetworkSummary {
   FrameworkVersion?: string | null;
   Status?: NetworkStatus | null;
   CreationDate?: Date | number | null;
+  Arn?: string | null;
 }
 function toNetworkSummary(root: jsonP.JSONValue): NetworkSummary {
   return jsonP.readObj({
@@ -1310,6 +1460,7 @@ function toNetworkSummary(root: jsonP.JSONValue): NetworkSummary {
       "FrameworkVersion": "s",
       "Status": (x: jsonP.JSONValue) => cmnP.readEnum<NetworkStatus>(x),
       "CreationDate": "d",
+      "Arn": "s",
     },
   }, root);
 }
@@ -1322,6 +1473,7 @@ export interface MemberSummary {
   Status?: MemberStatus | null;
   CreationDate?: Date | number | null;
   IsOwned?: boolean | null;
+  Arn?: string | null;
 }
 function toMemberSummary(root: jsonP.JSONValue): MemberSummary {
   return jsonP.readObj({
@@ -1333,6 +1485,7 @@ function toMemberSummary(root: jsonP.JSONValue): MemberSummary {
       "Status": (x: jsonP.JSONValue) => cmnP.readEnum<MemberStatus>(x),
       "CreationDate": "d",
       "IsOwned": "b",
+      "Arn": "s",
     },
   }, root);
 }
@@ -1344,6 +1497,7 @@ export interface NodeSummary {
   CreationDate?: Date | number | null;
   AvailabilityZone?: string | null;
   InstanceType?: string | null;
+  Arn?: string | null;
 }
 function toNodeSummary(root: jsonP.JSONValue): NodeSummary {
   return jsonP.readObj({
@@ -1354,6 +1508,7 @@ function toNodeSummary(root: jsonP.JSONValue): NodeSummary {
       "CreationDate": "d",
       "AvailabilityZone": "s",
       "InstanceType": "s",
+      "Arn": "s",
     },
   }, root);
 }
@@ -1384,6 +1539,7 @@ export interface ProposalSummary {
   Status?: ProposalStatus | null;
   CreationDate?: Date | number | null;
   ExpirationDate?: Date | number | null;
+  Arn?: string | null;
 }
 function toProposalSummary(root: jsonP.JSONValue): ProposalSummary {
   return jsonP.readObj({
@@ -1396,6 +1552,7 @@ function toProposalSummary(root: jsonP.JSONValue): ProposalSummary {
       "Status": (x: jsonP.JSONValue) => cmnP.readEnum<ProposalStatus>(x),
       "CreationDate": "d",
       "ExpirationDate": "d",
+      "Arn": "s",
     },
   }, root);
 }

@@ -253,6 +253,22 @@ export default class ConfigService {
     });
   }
 
+  async deleteStoredQuery(
+    {abortSignal, ...params}: RequestConfig & DeleteStoredQueryRequest,
+  ): Promise<DeleteStoredQueryResponse> {
+    const body: jsonP.JSONObject = {
+      QueryName: params["QueryName"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DeleteStoredQuery",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
+  }
+
   async deliverConfigSnapshot(
     {abortSignal, ...params}: RequestConfig & DeliverConfigSnapshotRequest,
   ): Promise<DeliverConfigSnapshotResponse> {
@@ -1072,6 +1088,24 @@ export default class ConfigService {
     }, await resp.json());
   }
 
+  async getStoredQuery(
+    {abortSignal, ...params}: RequestConfig & GetStoredQueryRequest,
+  ): Promise<GetStoredQueryResponse> {
+    const body: jsonP.JSONObject = {
+      QueryName: params["QueryName"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "GetStoredQuery",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "StoredQuery": toStoredQuery,
+      },
+    }, await resp.json());
+  }
+
   async listAggregateDiscoveredResources(
     {abortSignal, ...params}: RequestConfig & ListAggregateDiscoveredResourcesRequest,
   ): Promise<ListAggregateDiscoveredResourcesResponse> {
@@ -1115,6 +1149,26 @@ export default class ConfigService {
       optional: {
         "resourceIdentifiers": [toResourceIdentifier],
         "nextToken": "s",
+      },
+    }, await resp.json());
+  }
+
+  async listStoredQueries(
+    {abortSignal, ...params}: RequestConfig & ListStoredQueriesRequest = {},
+  ): Promise<ListStoredQueriesResponse> {
+    const body: jsonP.JSONObject = {
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "ListStoredQueries",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "StoredQueryMetadata": [toStoredQueryMetadata],
+        "NextToken": "s",
       },
     }, await resp.json());
   }
@@ -1397,6 +1451,25 @@ export default class ConfigService {
     }, await resp.json());
   }
 
+  async putStoredQuery(
+    {abortSignal, ...params}: RequestConfig & PutStoredQueryRequest,
+  ): Promise<PutStoredQueryResponse> {
+    const body: jsonP.JSONObject = {
+      StoredQuery: fromStoredQuery(params["StoredQuery"]),
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "PutStoredQuery",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "QueryArn": "s",
+      },
+    }, await resp.json());
+  }
+
   async selectAggregateResourceConfig(
     {abortSignal, ...params}: RequestConfig & SelectAggregateResourceConfigRequest,
   ): Promise<SelectAggregateResourceConfigResponse> {
@@ -1615,6 +1688,11 @@ export interface DeleteResourceConfigRequest {
 // refs: 1 - tags: named, input
 export interface DeleteRetentionConfigurationRequest {
   RetentionConfigurationName: string;
+}
+
+// refs: 1 - tags: named, input
+export interface DeleteStoredQueryRequest {
+  QueryName: string;
 }
 
 // refs: 1 - tags: named, input
@@ -1889,6 +1967,11 @@ export interface GetResourceConfigHistoryRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface GetStoredQueryRequest {
+  QueryName: string;
+}
+
+// refs: 1 - tags: named, input
 export interface ListAggregateDiscoveredResourcesRequest {
   ConfigurationAggregatorName: string;
   ResourceType: ResourceType;
@@ -1905,6 +1988,12 @@ export interface ListDiscoveredResourcesRequest {
   limit?: number | null;
   includeDeletedResources?: boolean | null;
   nextToken?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface ListStoredQueriesRequest {
+  NextToken?: string | null;
+  MaxResults?: number | null;
 }
 
 // refs: 1 - tags: named, input
@@ -2016,6 +2105,12 @@ export interface PutRetentionConfigurationRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface PutStoredQueryRequest {
+  StoredQuery: StoredQuery;
+  Tags?: Tag[] | null;
+}
+
+// refs: 1 - tags: named, input
 export interface SelectAggregateResourceConfigRequest {
   Expression: string;
   ConfigurationAggregatorName: string;
@@ -2087,6 +2182,10 @@ export interface DeleteRemediationConfigurationResponse {
 // refs: 1 - tags: named, output
 export interface DeleteRemediationExceptionsResponse {
   FailedBatches?: FailedDeleteRemediationExceptionsBatch[] | null;
+}
+
+// refs: 1 - tags: named, output
+export interface DeleteStoredQueryResponse {
 }
 
 // refs: 1 - tags: named, output
@@ -2321,6 +2420,11 @@ export interface GetResourceConfigHistoryResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface GetStoredQueryResponse {
+  StoredQuery?: StoredQuery | null;
+}
+
+// refs: 1 - tags: named, output
 export interface ListAggregateDiscoveredResourcesResponse {
   ResourceIdentifiers?: AggregateResourceIdentifier[] | null;
   NextToken?: string | null;
@@ -2330,6 +2434,12 @@ export interface ListAggregateDiscoveredResourcesResponse {
 export interface ListDiscoveredResourcesResponse {
   resourceIdentifiers?: ResourceIdentifier[] | null;
   nextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface ListStoredQueriesResponse {
+  StoredQueryMetadata?: StoredQueryMetadata[] | null;
+  NextToken?: string | null;
 }
 
 // refs: 1 - tags: named, output
@@ -2385,6 +2495,11 @@ export interface PutRemediationExceptionsResponse {
 // refs: 1 - tags: named, output
 export interface PutRetentionConfigurationResponse {
   RetentionConfiguration?: RetentionConfiguration | null;
+}
+
+// refs: 1 - tags: named, output
+export interface PutStoredQueryResponse {
+  QueryArn?: string | null;
 }
 
 // refs: 1 - tags: named, output
@@ -2510,6 +2625,9 @@ export type ResourceType =
 | "AWS::CloudFront::Distribution"
 | "AWS::CloudFront::StreamingDistribution"
 | "AWS::Lambda::Function"
+| "AWS::NetworkFirewall::Firewall"
+| "AWS::NetworkFirewall::FirewallPolicy"
+| "AWS::NetworkFirewall::RuleGroup"
 | "AWS::ElasticBeanstalk::Application"
 | "AWS::ElasticBeanstalk::ApplicationVersion"
 | "AWS::ElasticBeanstalk::Environment"
@@ -2768,7 +2886,7 @@ function fromResourceFilters(input?: ResourceFilters | null): jsonP.JSONValue {
   }
 }
 
-// refs: 5 - tags: input, named, interface, output
+// refs: 6 - tags: input, named, interface, output
 export interface Tag {
   Key?: string | null;
   Value?: string | null;
@@ -3429,6 +3547,38 @@ function toSsmControls(root: jsonP.JSONValue): SsmControls {
     optional: {
       "ConcurrentExecutionRatePercentage": "n",
       "ErrorPercentage": "n",
+    },
+  }, root);
+}
+
+// refs: 2 - tags: input, named, interface, output
+export interface StoredQuery {
+  QueryId?: string | null;
+  QueryArn?: string | null;
+  QueryName: string;
+  Description?: string | null;
+  Expression?: string | null;
+}
+function fromStoredQuery(input?: StoredQuery | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    QueryId: input["QueryId"],
+    QueryArn: input["QueryArn"],
+    QueryName: input["QueryName"],
+    Description: input["Description"],
+    Expression: input["Expression"],
+  }
+}
+function toStoredQuery(root: jsonP.JSONValue): StoredQuery {
+  return jsonP.readObj({
+    required: {
+      "QueryName": "s",
+    },
+    optional: {
+      "QueryId": "s",
+      "QueryArn": "s",
+      "Description": "s",
+      "Expression": "s",
     },
   }, root);
 }
@@ -4421,6 +4571,26 @@ function toResourceIdentifier(root: jsonP.JSONValue): ResourceIdentifier {
       "resourceId": "s",
       "resourceName": "s",
       "resourceDeletionTime": "d",
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
+export interface StoredQueryMetadata {
+  QueryId: string;
+  QueryArn: string;
+  QueryName: string;
+  Description?: string | null;
+}
+function toStoredQueryMetadata(root: jsonP.JSONValue): StoredQueryMetadata {
+  return jsonP.readObj({
+    required: {
+      "QueryId": "s",
+      "QueryArn": "s",
+      "QueryName": "s",
+    },
+    optional: {
+      "Description": "s",
     },
   }, root);
 }

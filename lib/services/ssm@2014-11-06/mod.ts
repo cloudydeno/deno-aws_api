@@ -5,7 +5,7 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import * as uuidv4 from "https://deno.land/std@0.75.0/uuid/v4.ts";
+import * as uuidv4 from "https://deno.land/std@0.86.0/uuid/v4.ts";
 import * as cmnP from "../../encoding/common.ts";
 import * as jsonP from "../../encoding/json.ts";
 function generateIdemptToken() {
@@ -749,6 +749,8 @@ export default class SSM {
     const body: jsonP.JSONObject = {
       Name: params["Name"],
       PermissionType: params["PermissionType"],
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -759,6 +761,7 @@ export default class SSM {
       optional: {
         "AccountIds": ["s"],
         "AccountSharingInfoList": [toAccountSharingInfo],
+        "NextToken": "s",
       },
     }, await resp.json());
   }
@@ -3296,6 +3299,8 @@ export interface DescribeDocumentRequest {
 export interface DescribeDocumentPermissionRequest {
   Name: string;
   PermissionType: DocumentPermissionType;
+  MaxResults?: number | null;
+  NextToken?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -3820,15 +3825,15 @@ export interface RegisterTargetWithMaintenanceWindowRequest {
 // refs: 1 - tags: named, input
 export interface RegisterTaskWithMaintenanceWindowRequest {
   WindowId: string;
-  Targets: Target[];
+  Targets?: Target[] | null;
   TaskArn: string;
   ServiceRoleArn?: string | null;
   TaskType: MaintenanceWindowTaskType;
   TaskParameters?: { [key: string]: MaintenanceWindowTaskParameterValueExpression | null | undefined } | null;
   TaskInvocationParameters?: MaintenanceWindowTaskInvocationParameters | null;
   Priority?: number | null;
-  MaxConcurrency: string;
-  MaxErrors: string;
+  MaxConcurrency?: string | null;
+  MaxErrors?: string | null;
   LoggingInfo?: LoggingInfo | null;
   Name?: string | null;
   Description?: string | null;
@@ -4267,6 +4272,7 @@ export interface DescribeDocumentResult {
 export interface DescribeDocumentPermissionResponse {
   AccountIds?: string[] | null;
   AccountSharingInfoList?: AccountSharingInfo[] | null;
+  NextToken?: string | null;
 }
 
 // refs: 1 - tags: named, output

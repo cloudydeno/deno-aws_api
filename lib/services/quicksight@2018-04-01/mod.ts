@@ -150,6 +150,7 @@ export default class QuickSight {
       LogicalTableMap: jsonP.serializeMap(params["LogicalTableMap"], x => fromLogicalTable(x)),
       ImportMode: params["ImportMode"],
       ColumnGroups: params["ColumnGroups"]?.map(x => fromColumnGroup(x)),
+      FieldFolders: jsonP.serializeMap(params["FieldFolders"], x => fromFieldFolder(x)),
       Permissions: params["Permissions"]?.map(x => fromResourcePermission(x)),
       RowLevelPermissionDataSet: fromRowLevelPermissionDataSet(params["RowLevelPermissionDataSet"]),
       ColumnLevelPermissionRules: params["ColumnLevelPermissionRules"]?.map(x => fromColumnLevelPermissionRule(x)),
@@ -2176,6 +2177,7 @@ export default class QuickSight {
       LogicalTableMap: jsonP.serializeMap(params["LogicalTableMap"], x => fromLogicalTable(x)),
       ImportMode: params["ImportMode"],
       ColumnGroups: params["ColumnGroups"]?.map(x => fromColumnGroup(x)),
+      FieldFolders: jsonP.serializeMap(params["FieldFolders"], x => fromFieldFolder(x)),
       RowLevelPermissionDataSet: fromRowLevelPermissionDataSet(params["RowLevelPermissionDataSet"]),
       ColumnLevelPermissionRules: params["ColumnLevelPermissionRules"]?.map(x => fromColumnLevelPermissionRule(x)),
     };
@@ -2574,6 +2576,7 @@ export interface CreateDataSetRequest {
   LogicalTableMap?: { [key: string]: LogicalTable | null | undefined } | null;
   ImportMode: DataSetImportMode;
   ColumnGroups?: ColumnGroup[] | null;
+  FieldFolders?: { [key: string]: FieldFolder | null | undefined } | null;
   Permissions?: ResourcePermission[] | null;
   RowLevelPermissionDataSet?: RowLevelPermissionDataSet | null;
   ColumnLevelPermissionRules?: ColumnLevelPermissionRule[] | null;
@@ -3207,6 +3210,7 @@ export interface UpdateDataSetRequest {
   LogicalTableMap?: { [key: string]: LogicalTable | null | undefined } | null;
   ImportMode: DataSetImportMode;
   ColumnGroups?: ColumnGroup[] | null;
+  FieldFolders?: { [key: string]: FieldFolder | null | undefined } | null;
   RowLevelPermissionDataSet?: RowLevelPermissionDataSet | null;
   ColumnLevelPermissionRules?: ColumnLevelPermissionRule[] | null;
 }
@@ -4971,6 +4975,28 @@ export type GeoSpatialCountryCode =
 | "US"
 | cmnP.UnexpectedEnumValue;
 
+// refs: 3 - tags: input, named, interface, output
+export interface FieldFolder {
+  description?: string | null;
+  columns?: string[] | null;
+}
+function fromFieldFolder(input?: FieldFolder | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    description: input["description"],
+    columns: input["columns"],
+  }
+}
+function toFieldFolder(root: jsonP.JSONValue): FieldFolder {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "description": "s",
+      "columns": ["s"],
+    },
+  }, root);
+}
+
 // refs: 4 - tags: input, named, interface, output
 export interface RowLevelPermissionDataSet {
   Namespace?: string | null;
@@ -6328,6 +6354,7 @@ export interface DataSet {
   ImportMode?: DataSetImportMode | null;
   ConsumedSpiceCapacityInBytes?: number | null;
   ColumnGroups?: ColumnGroup[] | null;
+  FieldFolders?: { [key: string]: FieldFolder | null | undefined } | null;
   RowLevelPermissionDataSet?: RowLevelPermissionDataSet | null;
   ColumnLevelPermissionRules?: ColumnLevelPermissionRule[] | null;
 }
@@ -6346,6 +6373,7 @@ function toDataSet(root: jsonP.JSONValue): DataSet {
       "ImportMode": (x: jsonP.JSONValue) => cmnP.readEnum<DataSetImportMode>(x),
       "ConsumedSpiceCapacityInBytes": "n",
       "ColumnGroups": [toColumnGroup],
+      "FieldFolders": x => jsonP.readMap(String, toFieldFolder, x),
       "RowLevelPermissionDataSet": toRowLevelPermissionDataSet,
       "ColumnLevelPermissionRules": [toColumnLevelPermissionRule],
     },

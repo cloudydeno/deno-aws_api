@@ -63,6 +63,7 @@ export default class DevOpsGuru {
         "OpenReactiveInsights": "n",
         "OpenProactiveInsights": "n",
         "MetricsAnalyzed": "n",
+        "ResourceHours": "n",
       },
       optional: {},
     }, await resp.json());
@@ -525,6 +526,7 @@ export interface DescribeAccountHealthResponse {
   OpenReactiveInsights: number;
   OpenProactiveInsights: number;
   MetricsAnalyzed: number;
+  ResourceHours: number;
 }
 
 // refs: 1 - tags: named, output

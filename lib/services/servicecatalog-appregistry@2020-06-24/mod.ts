@@ -5,7 +5,7 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import * as uuidv4 from "https://deno.land/std@0.75.0/uuid/v4.ts";
+import * as uuidv4 from "https://deno.land/std@0.86.0/uuid/v4.ts";
 import * as cmnP from "../../encoding/common.ts";
 import * as jsonP from "../../encoding/json.ts";
 function generateIdemptToken() {
@@ -342,6 +342,25 @@ export default class ServiceCatalogAppRegistry {
     }, await resp.json());
   }
 
+  async syncResource(
+    {abortSignal, ...params}: RequestConfig & SyncResourceRequest,
+  ): Promise<SyncResourceResponse> {
+
+    const resp = await this.#client.performRequest({
+      abortSignal,
+      action: "SyncResource",
+      requestUri: cmnP.encodePath`/sync/${params["resourceType"]}/${params["resource"]}`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "applicationArn": "s",
+        "resourceArn": "s",
+        "actionTaken": (x: jsonP.JSONValue) => cmnP.readEnum<SyncAction>(x),
+      },
+    }, await resp.json());
+  }
+
   async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<TagResourceResponse> {
@@ -518,6 +537,12 @@ export interface ListTagsForResourceRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface SyncResourceRequest {
+  resourceType: ResourceType;
+  resource: string;
+}
+
+// refs: 1 - tags: named, input
 export interface TagResourceRequest {
   resourceArn: string;
   tags: { [key: string]: string | null | undefined };
@@ -642,6 +667,13 @@ export interface ListTagsForResourceResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface SyncResourceResponse {
+  applicationArn?: string | null;
+  resourceArn?: string | null;
+  actionTaken?: SyncAction | null;
+}
+
+// refs: 1 - tags: named, output
 export interface TagResourceResponse {
 }
 
@@ -659,7 +691,7 @@ export interface UpdateAttributeGroupResponse {
   attributeGroup?: AttributeGroup | null;
 }
 
-// refs: 2 - tags: input, named, enum
+// refs: 3 - tags: input, named, enum
 export type ResourceType =
 | "CFN_STACK"
 | cmnP.UnexpectedEnumValue;
@@ -774,3 +806,9 @@ function toResourceInfo(root: jsonP.JSONValue): ResourceInfo {
     },
   }, root);
 }
+
+// refs: 1 - tags: output, named, enum
+export type SyncAction =
+| "START_SYNC"
+| "NO_ACTION"
+| cmnP.UnexpectedEnumValue;

@@ -5,7 +5,7 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import * as HashMd5 from "https://deno.land/std@0.75.0/hash/md5.ts";
+import * as HashMd5 from "https://deno.land/std@0.86.0/hash/md5.ts";
 import * as cmnP from "../../encoding/common.ts";
 import * as xmlP from "../../encoding/xml.ts";
 import * as Base64 from "https://deno.land/x/base64@v0.2.1/mod.ts";
@@ -923,7 +923,7 @@ export default class S3 {
     if (params["ResponseContentEncoding"] != null) query.set("response-content-encoding", params["ResponseContentEncoding"]?.toString() ?? "");
     if (params["ResponseContentLanguage"] != null) query.set("response-content-language", params["ResponseContentLanguage"]?.toString() ?? "");
     if (params["ResponseContentType"] != null) query.set("response-content-type", params["ResponseContentType"]?.toString() ?? "");
-    if (params["ResponseExpires"] != null) query.set("response-expires", cmnP.serializeDate_iso8601(params["ResponseExpires"]) ?? "");
+    if (params["ResponseExpires"] != null) query.set("response-expires", cmnP.serializeDate_rfc822(params["ResponseExpires"]) ?? "");
     if (params["VersionId"] != null) query.set("versionId", params["VersionId"]?.toString() ?? "");
     if (params["SSECustomerAlgorithm"] != null) headers.append("x-amz-server-side-encryption-customer-algorithm", params["SSECustomerAlgorithm"]);
     if (params["SSECustomerKey"] != null) headers.append("x-amz-server-side-encryption-customer-key", cmnP.serializeBlob(params["SSECustomerKey"]) ?? '');

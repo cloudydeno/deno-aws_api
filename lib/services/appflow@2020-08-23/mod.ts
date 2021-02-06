@@ -1375,6 +1375,7 @@ export interface ScheduledTriggerProperties {
   scheduleStartTime?: Date | number | null;
   scheduleEndTime?: Date | number | null;
   timezone?: string | null;
+  scheduleOffset?: number | null;
 }
 function fromScheduledTriggerProperties(input?: ScheduledTriggerProperties | null): jsonP.JSONValue {
   if (!input) return input;
@@ -1384,6 +1385,7 @@ function fromScheduledTriggerProperties(input?: ScheduledTriggerProperties | nul
     scheduleStartTime: jsonP.serializeDate_unixTimestamp(input["scheduleStartTime"]),
     scheduleEndTime: jsonP.serializeDate_unixTimestamp(input["scheduleEndTime"]),
     timezone: input["timezone"],
+    scheduleOffset: input["scheduleOffset"],
   }
 }
 function toScheduledTriggerProperties(root: jsonP.JSONValue): ScheduledTriggerProperties {
@@ -1396,6 +1398,7 @@ function toScheduledTriggerProperties(root: jsonP.JSONValue): ScheduledTriggerPr
       "scheduleStartTime": "d",
       "scheduleEndTime": "d",
       "timezone": "s",
+      "scheduleOffset": "n",
     },
   }, root);
 }
@@ -3010,6 +3013,8 @@ export interface ExecutionRecord {
   executionResult?: ExecutionResult | null;
   startedAt?: Date | number | null;
   lastUpdatedAt?: Date | number | null;
+  dataPullStartTime?: Date | number | null;
+  dataPullEndTime?: Date | number | null;
 }
 function toExecutionRecord(root: jsonP.JSONValue): ExecutionRecord {
   return jsonP.readObj({
@@ -3020,6 +3025,8 @@ function toExecutionRecord(root: jsonP.JSONValue): ExecutionRecord {
       "executionResult": toExecutionResult,
       "startedAt": "d",
       "lastUpdatedAt": "d",
+      "dataPullStartTime": "d",
+      "dataPullEndTime": "d",
     },
   }, root);
 }

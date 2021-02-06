@@ -296,6 +296,24 @@ export default class ServiceQuotas {
     }, await resp.json());
   }
 
+  async listTagsForResource(
+    {abortSignal, ...params}: RequestConfig & ListTagsForResourceRequest,
+  ): Promise<ListTagsForResourceResponse> {
+    const body: jsonP.JSONObject = {
+      ResourceARN: params["ResourceARN"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "ListTagsForResource",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Tags": [toTag],
+      },
+    }, await resp.json());
+  }
+
   async putServiceQuotaIncreaseRequestIntoTemplate(
     {abortSignal, ...params}: RequestConfig & PutServiceQuotaIncreaseRequestIntoTemplateRequest,
   ): Promise<PutServiceQuotaIncreaseRequestIntoTemplateResponse> {
@@ -334,6 +352,40 @@ export default class ServiceQuotas {
       optional: {
         "RequestedQuota": toRequestedServiceQuotaChange,
       },
+    }, await resp.json());
+  }
+
+  async tagResource(
+    {abortSignal, ...params}: RequestConfig & TagResourceRequest,
+  ): Promise<TagResourceResponse> {
+    const body: jsonP.JSONObject = {
+      ResourceARN: params["ResourceARN"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "TagResource",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
+  }
+
+  async untagResource(
+    {abortSignal, ...params}: RequestConfig & UntagResourceRequest,
+  ): Promise<UntagResourceResponse> {
+    const body: jsonP.JSONObject = {
+      ResourceARN: params["ResourceARN"],
+      TagKeys: params["TagKeys"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "UntagResource",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {},
     }, await resp.json());
   }
 
@@ -428,6 +480,11 @@ export interface ListServicesRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface ListTagsForResourceRequest {
+  ResourceARN: string;
+}
+
+// refs: 1 - tags: named, input
 export interface PutServiceQuotaIncreaseRequestIntoTemplateRequest {
   QuotaCode: string;
   ServiceCode: string;
@@ -440,6 +497,18 @@ export interface RequestServiceQuotaIncreaseRequest {
   ServiceCode: string;
   QuotaCode: string;
   DesiredValue: number;
+}
+
+// refs: 1 - tags: named, input
+export interface TagResourceRequest {
+  ResourceARN: string;
+  Tags: Tag[];
+}
+
+// refs: 1 - tags: named, input
+export interface UntagResourceRequest {
+  ResourceARN: string;
+  TagKeys: string[];
 }
 
 // refs: 1 - tags: named, output
@@ -516,6 +585,11 @@ export interface ListServicesResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface ListTagsForResourceResponse {
+  Tags?: Tag[] | null;
+}
+
+// refs: 1 - tags: named, output
 export interface PutServiceQuotaIncreaseRequestIntoTemplateResponse {
   ServiceQuotaIncreaseRequestInTemplate?: ServiceQuotaIncreaseRequestInTemplate | null;
 }
@@ -523,6 +597,14 @@ export interface PutServiceQuotaIncreaseRequestIntoTemplateResponse {
 // refs: 1 - tags: named, output
 export interface RequestServiceQuotaIncreaseResponse {
   RequestedQuota?: RequestedServiceQuotaChange | null;
+}
+
+// refs: 1 - tags: named, output
+export interface TagResourceResponse {
+}
+
+// refs: 1 - tags: named, output
+export interface UntagResourceResponse {
 }
 
 // refs: 6 - tags: input, named, enum, output
@@ -533,6 +615,28 @@ export type RequestStatus =
 | "DENIED"
 | "CASE_CLOSED"
 | cmnP.UnexpectedEnumValue;
+
+// refs: 2 - tags: input, named, interface, output
+export interface Tag {
+  Key: string;
+  Value: string;
+}
+function fromTag(input?: Tag | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    Key: input["Key"],
+    Value: input["Value"],
+  }
+}
+function toTag(root: jsonP.JSONValue): Tag {
+  return jsonP.readObj({
+    required: {
+      "Key": "s",
+      "Value": "s",
+    },
+    optional: {},
+  }, root);
+}
 
 // refs: 4 - tags: output, named, interface
 export interface ServiceQuota {

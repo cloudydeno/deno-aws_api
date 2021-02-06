@@ -26,7 +26,7 @@ export default class CloudFront {
     "uid": "cloudfront-2016-11-25"
   };
 
-  async createCloudFrontOriginAccessIdentity2016_11_25(
+  async createCloudFrontOriginAccessIdentity(
     {abortSignal, ...params}: RequestConfig & CreateCloudFrontOriginAccessIdentityRequest,
   ): Promise<CreateCloudFrontOriginAccessIdentityResult> {
     const inner = params["CloudFrontOriginAccessIdentityConfig"];
@@ -51,7 +51,7 @@ export default class CloudFront {
   };
   }
 
-  async createDistribution2016_11_25(
+  async createDistribution(
     {abortSignal, ...params}: RequestConfig & CreateDistributionRequest,
   ): Promise<CreateDistributionResult> {
     const inner = params["DistributionConfig"];
@@ -90,7 +90,7 @@ export default class CloudFront {
   };
   }
 
-  async createDistributionWithTags2016_11_25(
+  async createDistributionWithTags(
     {abortSignal, ...params}: RequestConfig & CreateDistributionWithTagsRequest,
   ): Promise<CreateDistributionWithTagsResult> {
     const inner = params["DistributionConfigWithTags"];
@@ -115,7 +115,7 @@ export default class CloudFront {
   };
   }
 
-  async createInvalidation2016_11_25(
+  async createInvalidation(
     {abortSignal, ...params}: RequestConfig & CreateInvalidationRequest,
   ): Promise<CreateInvalidationResult> {
     const inner = params["InvalidationBatch"];
@@ -139,7 +139,7 @@ export default class CloudFront {
   };
   }
 
-  async createStreamingDistribution2016_11_25(
+  async createStreamingDistribution(
     {abortSignal, ...params}: RequestConfig & CreateStreamingDistributionRequest,
   ): Promise<CreateStreamingDistributionResult> {
     const inner = params["StreamingDistributionConfig"];
@@ -170,7 +170,7 @@ export default class CloudFront {
   };
   }
 
-  async createStreamingDistributionWithTags2016_11_25(
+  async createStreamingDistributionWithTags(
     {abortSignal, ...params}: RequestConfig & CreateStreamingDistributionWithTagsRequest,
   ): Promise<CreateStreamingDistributionWithTagsResult> {
     const inner = params["StreamingDistributionConfigWithTags"];
@@ -195,7 +195,7 @@ export default class CloudFront {
   };
   }
 
-  async deleteCloudFrontOriginAccessIdentity2016_11_25(
+  async deleteCloudFrontOriginAccessIdentity(
     {abortSignal, ...params}: RequestConfig & DeleteCloudFrontOriginAccessIdentityRequest,
   ): Promise<void> {
     const headers = new Headers;
@@ -209,7 +209,7 @@ export default class CloudFront {
     });
   }
 
-  async deleteDistribution2016_11_25(
+  async deleteDistribution(
     {abortSignal, ...params}: RequestConfig & DeleteDistributionRequest,
   ): Promise<void> {
     const headers = new Headers;
@@ -223,7 +223,7 @@ export default class CloudFront {
     });
   }
 
-  async deleteStreamingDistribution2016_11_25(
+  async deleteStreamingDistribution(
     {abortSignal, ...params}: RequestConfig & DeleteStreamingDistributionRequest,
   ): Promise<void> {
     const headers = new Headers;
@@ -237,7 +237,7 @@ export default class CloudFront {
     });
   }
 
-  async getCloudFrontOriginAccessIdentity2016_11_25(
+  async getCloudFrontOriginAccessIdentity(
     {abortSignal, ...params}: RequestConfig & GetCloudFrontOriginAccessIdentityRequest,
   ): Promise<GetCloudFrontOriginAccessIdentityResult> {
 
@@ -254,7 +254,7 @@ export default class CloudFront {
   };
   }
 
-  async getCloudFrontOriginAccessIdentityConfig2016_11_25(
+  async getCloudFrontOriginAccessIdentityConfig(
     {abortSignal, ...params}: RequestConfig & GetCloudFrontOriginAccessIdentityConfigRequest,
   ): Promise<GetCloudFrontOriginAccessIdentityConfigResult> {
 
@@ -271,7 +271,7 @@ export default class CloudFront {
   };
   }
 
-  async getDistribution2016_11_25(
+  async getDistribution(
     {abortSignal, ...params}: RequestConfig & GetDistributionRequest,
   ): Promise<GetDistributionResult> {
 
@@ -288,7 +288,7 @@ export default class CloudFront {
   };
   }
 
-  async getDistributionConfig2016_11_25(
+  async getDistributionConfig(
     {abortSignal, ...params}: RequestConfig & GetDistributionConfigRequest,
   ): Promise<GetDistributionConfigResult> {
 
@@ -305,7 +305,7 @@ export default class CloudFront {
   };
   }
 
-  async getInvalidation2016_11_25(
+  async getInvalidation(
     {abortSignal, ...params}: RequestConfig & GetInvalidationRequest,
   ): Promise<GetInvalidationResult> {
 
@@ -321,7 +321,7 @@ export default class CloudFront {
   };
   }
 
-  async getStreamingDistribution2016_11_25(
+  async getStreamingDistribution(
     {abortSignal, ...params}: RequestConfig & GetStreamingDistributionRequest,
   ): Promise<GetStreamingDistributionResult> {
 
@@ -338,7 +338,7 @@ export default class CloudFront {
   };
   }
 
-  async getStreamingDistributionConfig2016_11_25(
+  async getStreamingDistributionConfig(
     {abortSignal, ...params}: RequestConfig & GetStreamingDistributionConfigRequest,
   ): Promise<GetStreamingDistributionConfigResult> {
 
@@ -355,7 +355,7 @@ export default class CloudFront {
   };
   }
 
-  async listCloudFrontOriginAccessIdentities2016_11_25(
+  async listCloudFrontOriginAccessIdentities(
     {abortSignal, ...params}: RequestConfig & ListCloudFrontOriginAccessIdentitiesRequest = {},
   ): Promise<ListCloudFrontOriginAccessIdentitiesResult> {
     const query = new URLSearchParams;
@@ -382,7 +382,7 @@ export default class CloudFront {
   };
   }
 
-  async listDistributions2016_11_25(
+  async listDistributions(
     {abortSignal, ...params}: RequestConfig & ListDistributionsRequest = {},
   ): Promise<ListDistributionsResult> {
     const query = new URLSearchParams;
@@ -400,7 +400,7 @@ export default class CloudFront {
   };
   }
 
-  async listDistributionsByWebACLId2016_11_25(
+  async listDistributionsByWebACLId(
     {abortSignal, ...params}: RequestConfig & ListDistributionsByWebACLIdRequest,
   ): Promise<ListDistributionsByWebACLIdResult> {
     const query = new URLSearchParams;
@@ -418,7 +418,7 @@ export default class CloudFront {
   };
   }
 
-  async listInvalidations2016_11_25(
+  async listInvalidations(
     {abortSignal, ...params}: RequestConfig & ListInvalidationsRequest,
   ): Promise<ListInvalidationsResult> {
     const query = new URLSearchParams;
@@ -445,7 +445,7 @@ export default class CloudFront {
   };
   }
 
-  async listStreamingDistributions2016_11_25(
+  async listStreamingDistributions(
     {abortSignal, ...params}: RequestConfig & ListStreamingDistributionsRequest = {},
   ): Promise<ListStreamingDistributionsResult> {
     const query = new URLSearchParams;
@@ -472,7 +472,7 @@ export default class CloudFront {
   };
   }
 
-  async listTagsForResource2016_11_25(
+  async listTagsForResource(
     {abortSignal, ...params}: RequestConfig & ListTagsForResourceRequest,
   ): Promise<ListTagsForResourceResult> {
     const query = new URLSearchParams;
@@ -489,7 +489,7 @@ export default class CloudFront {
   };
   }
 
-  async tagResource2016_11_25(
+  async tagResource(
     {abortSignal, ...params}: RequestConfig & TagResourceRequest,
   ): Promise<void> {
     const inner = params["Tags"];
@@ -509,7 +509,7 @@ export default class CloudFront {
     });
   }
 
-  async untagResource2016_11_25(
+  async untagResource(
     {abortSignal, ...params}: RequestConfig & UntagResourceRequest,
   ): Promise<void> {
     const inner = params["TagKeys"];
@@ -529,7 +529,7 @@ export default class CloudFront {
     });
   }
 
-  async updateCloudFrontOriginAccessIdentity2016_11_25(
+  async updateCloudFrontOriginAccessIdentity(
     {abortSignal, ...params}: RequestConfig & UpdateCloudFrontOriginAccessIdentityRequest,
   ): Promise<UpdateCloudFrontOriginAccessIdentityResult> {
     const inner = params["CloudFrontOriginAccessIdentityConfig"];
@@ -555,7 +555,7 @@ export default class CloudFront {
   };
   }
 
-  async updateDistribution2016_11_25(
+  async updateDistribution(
     {abortSignal, ...params}: RequestConfig & UpdateDistributionRequest,
   ): Promise<UpdateDistributionResult> {
     const inner = params["DistributionConfig"];
@@ -595,7 +595,7 @@ export default class CloudFront {
   };
   }
 
-  async updateStreamingDistribution2016_11_25(
+  async updateStreamingDistribution(
     {abortSignal, ...params}: RequestConfig & UpdateStreamingDistributionRequest,
   ): Promise<UpdateStreamingDistributionResult> {
     const inner = params["StreamingDistributionConfig"];
@@ -638,7 +638,7 @@ export default class CloudFront {
   ): Promise<GetDistributionResult> {
     const errMessage = 'ResourceNotReady: Resource is not in the state DistributionDeployed';
     for (let i = 0; i < 25; i++) {
-      const resp = await this.getDistribution2016_11_25(params);
+      const resp = await this.getDistribution(params);
       if (resp?.Distribution?.Status === "Deployed") return resp;
       await new Promise(r => setTimeout(r, 60000));
     }
@@ -654,7 +654,7 @@ export default class CloudFront {
   ): Promise<GetInvalidationResult> {
     const errMessage = 'ResourceNotReady: Resource is not in the state InvalidationCompleted';
     for (let i = 0; i < 30; i++) {
-      const resp = await this.getInvalidation2016_11_25(params);
+      const resp = await this.getInvalidation(params);
       if (resp?.Invalidation?.Status === "Completed") return resp;
       await new Promise(r => setTimeout(r, 20000));
     }
@@ -670,7 +670,7 @@ export default class CloudFront {
   ): Promise<GetStreamingDistributionResult> {
     const errMessage = 'ResourceNotReady: Resource is not in the state StreamingDistributionDeployed';
     for (let i = 0; i < 25; i++) {
-      const resp = await this.getStreamingDistribution2016_11_25(params);
+      const resp = await this.getStreamingDistribution(params);
       if (resp?.StreamingDistribution?.Status === "Deployed") return resp;
       await new Promise(r => setTimeout(r, 60000));
     }

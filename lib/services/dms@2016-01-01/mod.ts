@@ -2388,6 +2388,8 @@ export interface MongoDbSettings {
   DocsToInvestigate?: string | null;
   AuthSource?: string | null;
   KmsKeyId?: string | null;
+  SecretsManagerAccessRoleArn?: string | null;
+  SecretsManagerSecretId?: string | null;
 }
 function fromMongoDbSettings(input?: MongoDbSettings | null): jsonP.JSONValue {
   if (!input) return input;
@@ -2404,6 +2406,8 @@ function fromMongoDbSettings(input?: MongoDbSettings | null): jsonP.JSONValue {
     DocsToInvestigate: input["DocsToInvestigate"],
     AuthSource: input["AuthSource"],
     KmsKeyId: input["KmsKeyId"],
+    SecretsManagerAccessRoleArn: input["SecretsManagerAccessRoleArn"],
+    SecretsManagerSecretId: input["SecretsManagerSecretId"],
   }
 }
 function toMongoDbSettings(root: jsonP.JSONValue): MongoDbSettings {
@@ -2422,6 +2426,8 @@ function toMongoDbSettings(root: jsonP.JSONValue): MongoDbSettings {
       "DocsToInvestigate": "s",
       "AuthSource": "s",
       "KmsKeyId": "s",
+      "SecretsManagerAccessRoleArn": "s",
+      "SecretsManagerSecretId": "s",
     },
   }, root);
 }
@@ -2637,6 +2643,8 @@ export interface RedshiftSettings {
   TruncateColumns?: boolean | null;
   Username?: string | null;
   WriteBufferSize?: number | null;
+  SecretsManagerAccessRoleArn?: string | null;
+  SecretsManagerSecretId?: string | null;
 }
 function fromRedshiftSettings(input?: RedshiftSettings | null): jsonP.JSONValue {
   if (!input) return input;
@@ -2669,6 +2677,8 @@ function fromRedshiftSettings(input?: RedshiftSettings | null): jsonP.JSONValue 
     TruncateColumns: input["TruncateColumns"],
     Username: input["Username"],
     WriteBufferSize: input["WriteBufferSize"],
+    SecretsManagerAccessRoleArn: input["SecretsManagerAccessRoleArn"],
+    SecretsManagerSecretId: input["SecretsManagerSecretId"],
   }
 }
 function toRedshiftSettings(root: jsonP.JSONValue): RedshiftSettings {
@@ -2703,6 +2713,8 @@ function toRedshiftSettings(root: jsonP.JSONValue): RedshiftSettings {
       "TruncateColumns": "b",
       "Username": "s",
       "WriteBufferSize": "n",
+      "SecretsManagerAccessRoleArn": "s",
+      "SecretsManagerSecretId": "s",
     },
   }, root);
 }
@@ -2721,6 +2733,8 @@ export interface PostgreSQLSettings {
   ServerName?: string | null;
   Username?: string | null;
   SlotName?: string | null;
+  SecretsManagerAccessRoleArn?: string | null;
+  SecretsManagerSecretId?: string | null;
 }
 function fromPostgreSQLSettings(input?: PostgreSQLSettings | null): jsonP.JSONValue {
   if (!input) return input;
@@ -2737,6 +2751,8 @@ function fromPostgreSQLSettings(input?: PostgreSQLSettings | null): jsonP.JSONVa
     ServerName: input["ServerName"],
     Username: input["Username"],
     SlotName: input["SlotName"],
+    SecretsManagerAccessRoleArn: input["SecretsManagerAccessRoleArn"],
+    SecretsManagerSecretId: input["SecretsManagerSecretId"],
   }
 }
 function toPostgreSQLSettings(root: jsonP.JSONValue): PostgreSQLSettings {
@@ -2755,6 +2771,8 @@ function toPostgreSQLSettings(root: jsonP.JSONValue): PostgreSQLSettings {
       "ServerName": "s",
       "Username": "s",
       "SlotName": "s",
+      "SecretsManagerAccessRoleArn": "s",
+      "SecretsManagerSecretId": "s",
     },
   }, root);
 }
@@ -2772,6 +2790,8 @@ export interface MySQLSettings {
   ServerName?: string | null;
   ServerTimezone?: string | null;
   Username?: string | null;
+  SecretsManagerAccessRoleArn?: string | null;
+  SecretsManagerSecretId?: string | null;
 }
 function fromMySQLSettings(input?: MySQLSettings | null): jsonP.JSONValue {
   if (!input) return input;
@@ -2787,6 +2807,8 @@ function fromMySQLSettings(input?: MySQLSettings | null): jsonP.JSONValue {
     ServerName: input["ServerName"],
     ServerTimezone: input["ServerTimezone"],
     Username: input["Username"],
+    SecretsManagerAccessRoleArn: input["SecretsManagerAccessRoleArn"],
+    SecretsManagerSecretId: input["SecretsManagerSecretId"],
   }
 }
 function toMySQLSettings(root: jsonP.JSONValue): MySQLSettings {
@@ -2804,6 +2826,8 @@ function toMySQLSettings(root: jsonP.JSONValue): MySQLSettings {
       "ServerName": "s",
       "ServerTimezone": "s",
       "Username": "s",
+      "SecretsManagerAccessRoleArn": "s",
+      "SecretsManagerSecretId": "s",
     },
   }, root);
 }
@@ -2846,6 +2870,10 @@ export interface OracleSettings {
   SecurityDbEncryptionName?: string | null;
   ServerName?: string | null;
   Username?: string | null;
+  SecretsManagerAccessRoleArn?: string | null;
+  SecretsManagerSecretId?: string | null;
+  SecretsManagerOracleAsmAccessRoleArn?: string | null;
+  SecretsManagerOracleAsmSecretId?: string | null;
 }
 function fromOracleSettings(input?: OracleSettings | null): jsonP.JSONValue {
   if (!input) return input;
@@ -2880,6 +2908,10 @@ function fromOracleSettings(input?: OracleSettings | null): jsonP.JSONValue {
     SecurityDbEncryptionName: input["SecurityDbEncryptionName"],
     ServerName: input["ServerName"],
     Username: input["Username"],
+    SecretsManagerAccessRoleArn: input["SecretsManagerAccessRoleArn"],
+    SecretsManagerSecretId: input["SecretsManagerSecretId"],
+    SecretsManagerOracleAsmAccessRoleArn: input["SecretsManagerOracleAsmAccessRoleArn"],
+    SecretsManagerOracleAsmSecretId: input["SecretsManagerOracleAsmSecretId"],
   }
 }
 function toOracleSettings(root: jsonP.JSONValue): OracleSettings {
@@ -2916,6 +2948,10 @@ function toOracleSettings(root: jsonP.JSONValue): OracleSettings {
       "SecurityDbEncryptionName": "s",
       "ServerName": "s",
       "Username": "s",
+      "SecretsManagerAccessRoleArn": "s",
+      "SecretsManagerSecretId": "s",
+      "SecretsManagerOracleAsmAccessRoleArn": "s",
+      "SecretsManagerOracleAsmSecretId": "s",
     },
   }, root);
 }
@@ -2934,6 +2970,8 @@ export interface SybaseSettings {
   Port?: number | null;
   ServerName?: string | null;
   Username?: string | null;
+  SecretsManagerAccessRoleArn?: string | null;
+  SecretsManagerSecretId?: string | null;
 }
 function fromSybaseSettings(input?: SybaseSettings | null): jsonP.JSONValue {
   if (!input) return input;
@@ -2943,6 +2981,8 @@ function fromSybaseSettings(input?: SybaseSettings | null): jsonP.JSONValue {
     Port: input["Port"],
     ServerName: input["ServerName"],
     Username: input["Username"],
+    SecretsManagerAccessRoleArn: input["SecretsManagerAccessRoleArn"],
+    SecretsManagerSecretId: input["SecretsManagerSecretId"],
   }
 }
 function toSybaseSettings(root: jsonP.JSONValue): SybaseSettings {
@@ -2954,6 +2994,8 @@ function toSybaseSettings(root: jsonP.JSONValue): SybaseSettings {
       "Port": "n",
       "ServerName": "s",
       "Username": "s",
+      "SecretsManagerAccessRoleArn": "s",
+      "SecretsManagerSecretId": "s",
     },
   }, root);
 }
@@ -2970,6 +3012,8 @@ export interface MicrosoftSQLServerSettings {
   ServerName?: string | null;
   Username?: string | null;
   UseBcpFullLoad?: boolean | null;
+  SecretsManagerAccessRoleArn?: string | null;
+  SecretsManagerSecretId?: string | null;
 }
 function fromMicrosoftSQLServerSettings(input?: MicrosoftSQLServerSettings | null): jsonP.JSONValue {
   if (!input) return input;
@@ -2984,6 +3028,8 @@ function fromMicrosoftSQLServerSettings(input?: MicrosoftSQLServerSettings | nul
     ServerName: input["ServerName"],
     Username: input["Username"],
     UseBcpFullLoad: input["UseBcpFullLoad"],
+    SecretsManagerAccessRoleArn: input["SecretsManagerAccessRoleArn"],
+    SecretsManagerSecretId: input["SecretsManagerSecretId"],
   }
 }
 function toMicrosoftSQLServerSettings(root: jsonP.JSONValue): MicrosoftSQLServerSettings {
@@ -3000,6 +3046,8 @@ function toMicrosoftSQLServerSettings(root: jsonP.JSONValue): MicrosoftSQLServer
       "ServerName": "s",
       "Username": "s",
       "UseBcpFullLoad": "b",
+      "SecretsManagerAccessRoleArn": "s",
+      "SecretsManagerSecretId": "s",
     },
   }, root);
 }
@@ -3021,6 +3069,8 @@ export interface IBMDb2Settings {
   CurrentLsn?: string | null;
   MaxKBytesPerRead?: number | null;
   Username?: string | null;
+  SecretsManagerAccessRoleArn?: string | null;
+  SecretsManagerSecretId?: string | null;
 }
 function fromIBMDb2Settings(input?: IBMDb2Settings | null): jsonP.JSONValue {
   if (!input) return input;
@@ -3033,6 +3083,8 @@ function fromIBMDb2Settings(input?: IBMDb2Settings | null): jsonP.JSONValue {
     CurrentLsn: input["CurrentLsn"],
     MaxKBytesPerRead: input["MaxKBytesPerRead"],
     Username: input["Username"],
+    SecretsManagerAccessRoleArn: input["SecretsManagerAccessRoleArn"],
+    SecretsManagerSecretId: input["SecretsManagerSecretId"],
   }
 }
 function toIBMDb2Settings(root: jsonP.JSONValue): IBMDb2Settings {
@@ -3047,6 +3099,8 @@ function toIBMDb2Settings(root: jsonP.JSONValue): IBMDb2Settings {
       "CurrentLsn": "s",
       "MaxKBytesPerRead": "n",
       "Username": "s",
+      "SecretsManagerAccessRoleArn": "s",
+      "SecretsManagerSecretId": "s",
     },
   }, root);
 }
@@ -3062,6 +3116,8 @@ export interface DocDbSettings {
   ExtractDocId?: boolean | null;
   DocsToInvestigate?: number | null;
   KmsKeyId?: string | null;
+  SecretsManagerAccessRoleArn?: string | null;
+  SecretsManagerSecretId?: string | null;
 }
 function fromDocDbSettings(input?: DocDbSettings | null): jsonP.JSONValue {
   if (!input) return input;
@@ -3075,6 +3131,8 @@ function fromDocDbSettings(input?: DocDbSettings | null): jsonP.JSONValue {
     ExtractDocId: input["ExtractDocId"],
     DocsToInvestigate: input["DocsToInvestigate"],
     KmsKeyId: input["KmsKeyId"],
+    SecretsManagerAccessRoleArn: input["SecretsManagerAccessRoleArn"],
+    SecretsManagerSecretId: input["SecretsManagerSecretId"],
   }
 }
 function toDocDbSettings(root: jsonP.JSONValue): DocDbSettings {
@@ -3090,6 +3148,8 @@ function toDocDbSettings(root: jsonP.JSONValue): DocDbSettings {
       "ExtractDocId": "b",
       "DocsToInvestigate": "n",
       "KmsKeyId": "s",
+      "SecretsManagerAccessRoleArn": "s",
+      "SecretsManagerSecretId": "s",
     },
   }, root);
 }

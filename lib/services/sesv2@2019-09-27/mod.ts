@@ -178,6 +178,7 @@ export default class SESV2 {
       EmailIdentity: params["EmailIdentity"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
       DkimSigningAttributes: fromDkimSigningAttributes(params["DkimSigningAttributes"]),
+      ConfigurationSetName: params["ConfigurationSetName"],
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -712,6 +713,7 @@ export default class SESV2 {
         "MailFromAttributes": toMailFromAttributes,
         "Policies": x => jsonP.readMap(String, String, x),
         "Tags": [toTag],
+        "ConfigurationSetName": "s",
       },
     }, await resp.json());
   }
@@ -1284,6 +1286,24 @@ export default class SESV2 {
     }, await resp.json());
   }
 
+  async putEmailIdentityConfigurationSetAttributes(
+    {abortSignal, ...params}: RequestConfig & PutEmailIdentityConfigurationSetAttributesRequest,
+  ): Promise<PutEmailIdentityConfigurationSetAttributesResponse> {
+    const body: jsonP.JSONObject = {
+      ConfigurationSetName: params["ConfigurationSetName"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "PutEmailIdentityConfigurationSetAttributes",
+      method: "PUT",
+      requestUri: cmnP.encodePath`/v2/email/identities/${params["EmailIdentity"]}/configuration-set`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
+  }
+
   async putEmailIdentityDkimAttributes(
     {abortSignal, ...params}: RequestConfig & PutEmailIdentityDkimAttributesRequest,
   ): Promise<PutEmailIdentityDkimAttributesResponse> {
@@ -1694,6 +1714,7 @@ export interface CreateEmailIdentityRequest {
   EmailIdentity: string;
   Tags?: Tag[] | null;
   DkimSigningAttributes?: DkimSigningAttributes | null;
+  ConfigurationSetName?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -2013,6 +2034,12 @@ export interface PutDedicatedIpWarmupAttributesRequest {
 export interface PutDeliverabilityDashboardOptionRequest {
   DashboardEnabled: boolean;
   SubscribedDomains?: DomainDeliverabilityTrackingOption[] | null;
+}
+
+// refs: 1 - tags: named, input
+export interface PutEmailIdentityConfigurationSetAttributesRequest {
+  EmailIdentity: string;
+  ConfigurationSetName?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -2348,6 +2375,7 @@ export interface GetEmailIdentityResponse {
   MailFromAttributes?: MailFromAttributes | null;
   Policies?: { [key: string]: string | null | undefined } | null;
   Tags?: Tag[] | null;
+  ConfigurationSetName?: string | null;
 }
 
 // refs: 1 - tags: named, output
@@ -2496,6 +2524,10 @@ export interface PutDedicatedIpWarmupAttributesResponse {
 
 // refs: 1 - tags: named, output
 export interface PutDeliverabilityDashboardOptionResponse {
+}
+
+// refs: 1 - tags: named, output
+export interface PutEmailIdentityConfigurationSetAttributesResponse {
 }
 
 // refs: 1 - tags: named, output

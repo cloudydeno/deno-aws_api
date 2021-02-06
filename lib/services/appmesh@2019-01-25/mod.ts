@@ -5,7 +5,7 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import * as uuidv4 from "https://deno.land/std@0.75.0/uuid/v4.ts";
+import * as uuidv4 from "https://deno.land/std@0.86.0/uuid/v4.ts";
 import * as cmnP from "../../encoding/common.ts";
 import * as jsonP from "../../encoding/json.ts";
 function generateIdemptToken() {
@@ -2190,6 +2190,7 @@ function toVirtualGatewayClientPolicy(root: jsonP.JSONValue): VirtualGatewayClie
 
 // refs: 6 - tags: input, named, interface, output
 export interface VirtualGatewayClientPolicyTls {
+  certificate?: VirtualGatewayClientTlsCertificate | null;
   enforce?: boolean | null;
   ports?: number[] | null;
   validation: VirtualGatewayTlsValidationContext;
@@ -2197,6 +2198,7 @@ export interface VirtualGatewayClientPolicyTls {
 function fromVirtualGatewayClientPolicyTls(input?: VirtualGatewayClientPolicyTls | null): jsonP.JSONValue {
   if (!input) return input;
   return {
+    certificate: fromVirtualGatewayClientTlsCertificate(input["certificate"]),
     enforce: input["enforce"],
     ports: input["ports"],
     validation: fromVirtualGatewayTlsValidationContext(input["validation"]),
@@ -2208,6 +2210,7 @@ function toVirtualGatewayClientPolicyTls(root: jsonP.JSONValue): VirtualGatewayC
       "validation": toVirtualGatewayTlsValidationContext,
     },
     optional: {
+      "certificate": toVirtualGatewayClientTlsCertificate,
       "enforce": "b",
       "ports": ["n"],
     },
@@ -2215,12 +2218,77 @@ function toVirtualGatewayClientPolicyTls(root: jsonP.JSONValue): VirtualGatewayC
 }
 
 // refs: 6 - tags: input, named, interface, output
+export interface VirtualGatewayClientTlsCertificate {
+  file?: VirtualGatewayListenerTlsFileCertificate | null;
+  sds?: VirtualGatewayListenerTlsSdsCertificate | null;
+}
+function fromVirtualGatewayClientTlsCertificate(input?: VirtualGatewayClientTlsCertificate | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    file: fromVirtualGatewayListenerTlsFileCertificate(input["file"]),
+    sds: fromVirtualGatewayListenerTlsSdsCertificate(input["sds"]),
+  }
+}
+function toVirtualGatewayClientTlsCertificate(root: jsonP.JSONValue): VirtualGatewayClientTlsCertificate {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "file": toVirtualGatewayListenerTlsFileCertificate,
+      "sds": toVirtualGatewayListenerTlsSdsCertificate,
+    },
+  }, root);
+}
+
+// refs: 12 - tags: input, named, interface, output
+export interface VirtualGatewayListenerTlsFileCertificate {
+  certificateChain: string;
+  privateKey: string;
+}
+function fromVirtualGatewayListenerTlsFileCertificate(input?: VirtualGatewayListenerTlsFileCertificate | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    certificateChain: input["certificateChain"],
+    privateKey: input["privateKey"],
+  }
+}
+function toVirtualGatewayListenerTlsFileCertificate(root: jsonP.JSONValue): VirtualGatewayListenerTlsFileCertificate {
+  return jsonP.readObj({
+    required: {
+      "certificateChain": "s",
+      "privateKey": "s",
+    },
+    optional: {},
+  }, root);
+}
+
+// refs: 12 - tags: input, named, interface, output
+export interface VirtualGatewayListenerTlsSdsCertificate {
+  secretName: string;
+}
+function fromVirtualGatewayListenerTlsSdsCertificate(input?: VirtualGatewayListenerTlsSdsCertificate | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    secretName: input["secretName"],
+  }
+}
+function toVirtualGatewayListenerTlsSdsCertificate(root: jsonP.JSONValue): VirtualGatewayListenerTlsSdsCertificate {
+  return jsonP.readObj({
+    required: {
+      "secretName": "s",
+    },
+    optional: {},
+  }, root);
+}
+
+// refs: 6 - tags: input, named, interface, output
 export interface VirtualGatewayTlsValidationContext {
+  subjectAlternativeNames?: SubjectAlternativeNames | null;
   trust: VirtualGatewayTlsValidationContextTrust;
 }
 function fromVirtualGatewayTlsValidationContext(input?: VirtualGatewayTlsValidationContext | null): jsonP.JSONValue {
   if (!input) return input;
   return {
+    subjectAlternativeNames: fromSubjectAlternativeNames(input["subjectAlternativeNames"]),
     trust: fromVirtualGatewayTlsValidationContextTrust(input["trust"]),
   }
 }
@@ -2228,6 +2296,46 @@ function toVirtualGatewayTlsValidationContext(root: jsonP.JSONValue): VirtualGat
   return jsonP.readObj({
     required: {
       "trust": toVirtualGatewayTlsValidationContextTrust,
+    },
+    optional: {
+      "subjectAlternativeNames": toSubjectAlternativeNames,
+    },
+  }, root);
+}
+
+// refs: 30 - tags: input, named, interface, output
+export interface SubjectAlternativeNames {
+  match: SubjectAlternativeNameMatchers;
+}
+function fromSubjectAlternativeNames(input?: SubjectAlternativeNames | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    match: fromSubjectAlternativeNameMatchers(input["match"]),
+  }
+}
+function toSubjectAlternativeNames(root: jsonP.JSONValue): SubjectAlternativeNames {
+  return jsonP.readObj({
+    required: {
+      "match": toSubjectAlternativeNameMatchers,
+    },
+    optional: {},
+  }, root);
+}
+
+// refs: 30 - tags: input, named, interface, output
+export interface SubjectAlternativeNameMatchers {
+  exact: string[];
+}
+function fromSubjectAlternativeNameMatchers(input?: SubjectAlternativeNameMatchers | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    exact: input["exact"],
+  }
+}
+function toSubjectAlternativeNameMatchers(root: jsonP.JSONValue): SubjectAlternativeNameMatchers {
+  return jsonP.readObj({
+    required: {
+      "exact": ["s"],
     },
     optional: {},
   }, root);
@@ -2237,12 +2345,14 @@ function toVirtualGatewayTlsValidationContext(root: jsonP.JSONValue): VirtualGat
 export interface VirtualGatewayTlsValidationContextTrust {
   acm?: VirtualGatewayTlsValidationContextAcmTrust | null;
   file?: VirtualGatewayTlsValidationContextFileTrust | null;
+  sds?: VirtualGatewayTlsValidationContextSdsTrust | null;
 }
 function fromVirtualGatewayTlsValidationContextTrust(input?: VirtualGatewayTlsValidationContextTrust | null): jsonP.JSONValue {
   if (!input) return input;
   return {
     acm: fromVirtualGatewayTlsValidationContextAcmTrust(input["acm"]),
     file: fromVirtualGatewayTlsValidationContextFileTrust(input["file"]),
+    sds: fromVirtualGatewayTlsValidationContextSdsTrust(input["sds"]),
   }
 }
 function toVirtualGatewayTlsValidationContextTrust(root: jsonP.JSONValue): VirtualGatewayTlsValidationContextTrust {
@@ -2251,6 +2361,7 @@ function toVirtualGatewayTlsValidationContextTrust(root: jsonP.JSONValue): Virtu
     optional: {
       "acm": toVirtualGatewayTlsValidationContextAcmTrust,
       "file": toVirtualGatewayTlsValidationContextFileTrust,
+      "sds": toVirtualGatewayTlsValidationContextSdsTrust,
     },
   }, root);
 }
@@ -2274,7 +2385,7 @@ function toVirtualGatewayTlsValidationContextAcmTrust(root: jsonP.JSONValue): Vi
   }, root);
 }
 
-// refs: 6 - tags: input, named, interface, output
+// refs: 12 - tags: input, named, interface, output
 export interface VirtualGatewayTlsValidationContextFileTrust {
   certificateChain: string;
 }
@@ -2288,6 +2399,25 @@ function toVirtualGatewayTlsValidationContextFileTrust(root: jsonP.JSONValue): V
   return jsonP.readObj({
     required: {
       "certificateChain": "s",
+    },
+    optional: {},
+  }, root);
+}
+
+// refs: 12 - tags: input, named, interface, output
+export interface VirtualGatewayTlsValidationContextSdsTrust {
+  secretName: string;
+}
+function fromVirtualGatewayTlsValidationContextSdsTrust(input?: VirtualGatewayTlsValidationContextSdsTrust | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    secretName: input["secretName"],
+  }
+}
+function toVirtualGatewayTlsValidationContextSdsTrust(root: jsonP.JSONValue): VirtualGatewayTlsValidationContextSdsTrust {
+  return jsonP.readObj({
+    required: {
+      "secretName": "s",
     },
     optional: {},
   }, root);
@@ -2479,12 +2609,14 @@ function toVirtualGatewayPortMapping(root: jsonP.JSONValue): VirtualGatewayPortM
 export interface VirtualGatewayListenerTls {
   certificate: VirtualGatewayListenerTlsCertificate;
   mode: VirtualGatewayListenerTlsMode;
+  validation?: VirtualGatewayListenerTlsValidationContext | null;
 }
 function fromVirtualGatewayListenerTls(input?: VirtualGatewayListenerTls | null): jsonP.JSONValue {
   if (!input) return input;
   return {
     certificate: fromVirtualGatewayListenerTlsCertificate(input["certificate"]),
     mode: input["mode"],
+    validation: fromVirtualGatewayListenerTlsValidationContext(input["validation"]),
   }
 }
 function toVirtualGatewayListenerTls(root: jsonP.JSONValue): VirtualGatewayListenerTls {
@@ -2493,7 +2625,9 @@ function toVirtualGatewayListenerTls(root: jsonP.JSONValue): VirtualGatewayListe
       "certificate": toVirtualGatewayListenerTlsCertificate,
       "mode": (x: jsonP.JSONValue) => cmnP.readEnum<VirtualGatewayListenerTlsMode>(x),
     },
-    optional: {},
+    optional: {
+      "validation": toVirtualGatewayListenerTlsValidationContext,
+    },
   }, root);
 }
 
@@ -2501,12 +2635,14 @@ function toVirtualGatewayListenerTls(root: jsonP.JSONValue): VirtualGatewayListe
 export interface VirtualGatewayListenerTlsCertificate {
   acm?: VirtualGatewayListenerTlsAcmCertificate | null;
   file?: VirtualGatewayListenerTlsFileCertificate | null;
+  sds?: VirtualGatewayListenerTlsSdsCertificate | null;
 }
 function fromVirtualGatewayListenerTlsCertificate(input?: VirtualGatewayListenerTlsCertificate | null): jsonP.JSONValue {
   if (!input) return input;
   return {
     acm: fromVirtualGatewayListenerTlsAcmCertificate(input["acm"]),
     file: fromVirtualGatewayListenerTlsFileCertificate(input["file"]),
+    sds: fromVirtualGatewayListenerTlsSdsCertificate(input["sds"]),
   }
 }
 function toVirtualGatewayListenerTlsCertificate(root: jsonP.JSONValue): VirtualGatewayListenerTlsCertificate {
@@ -2515,6 +2651,7 @@ function toVirtualGatewayListenerTlsCertificate(root: jsonP.JSONValue): VirtualG
     optional: {
       "acm": toVirtualGatewayListenerTlsAcmCertificate,
       "file": toVirtualGatewayListenerTlsFileCertificate,
+      "sds": toVirtualGatewayListenerTlsSdsCertificate,
     },
   }, root);
 }
@@ -2538,34 +2675,57 @@ function toVirtualGatewayListenerTlsAcmCertificate(root: jsonP.JSONValue): Virtu
   }, root);
 }
 
-// refs: 6 - tags: input, named, interface, output
-export interface VirtualGatewayListenerTlsFileCertificate {
-  certificateChain: string;
-  privateKey: string;
-}
-function fromVirtualGatewayListenerTlsFileCertificate(input?: VirtualGatewayListenerTlsFileCertificate | null): jsonP.JSONValue {
-  if (!input) return input;
-  return {
-    certificateChain: input["certificateChain"],
-    privateKey: input["privateKey"],
-  }
-}
-function toVirtualGatewayListenerTlsFileCertificate(root: jsonP.JSONValue): VirtualGatewayListenerTlsFileCertificate {
-  return jsonP.readObj({
-    required: {
-      "certificateChain": "s",
-      "privateKey": "s",
-    },
-    optional: {},
-  }, root);
-}
-
 // refs: 6 - tags: input, named, enum, output
 export type VirtualGatewayListenerTlsMode =
 | "STRICT"
 | "PERMISSIVE"
 | "DISABLED"
 | cmnP.UnexpectedEnumValue;
+
+// refs: 6 - tags: input, named, interface, output
+export interface VirtualGatewayListenerTlsValidationContext {
+  subjectAlternativeNames?: SubjectAlternativeNames | null;
+  trust: VirtualGatewayListenerTlsValidationContextTrust;
+}
+function fromVirtualGatewayListenerTlsValidationContext(input?: VirtualGatewayListenerTlsValidationContext | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    subjectAlternativeNames: fromSubjectAlternativeNames(input["subjectAlternativeNames"]),
+    trust: fromVirtualGatewayListenerTlsValidationContextTrust(input["trust"]),
+  }
+}
+function toVirtualGatewayListenerTlsValidationContext(root: jsonP.JSONValue): VirtualGatewayListenerTlsValidationContext {
+  return jsonP.readObj({
+    required: {
+      "trust": toVirtualGatewayListenerTlsValidationContextTrust,
+    },
+    optional: {
+      "subjectAlternativeNames": toSubjectAlternativeNames,
+    },
+  }, root);
+}
+
+// refs: 6 - tags: input, named, interface, output
+export interface VirtualGatewayListenerTlsValidationContextTrust {
+  file?: VirtualGatewayTlsValidationContextFileTrust | null;
+  sds?: VirtualGatewayTlsValidationContextSdsTrust | null;
+}
+function fromVirtualGatewayListenerTlsValidationContextTrust(input?: VirtualGatewayListenerTlsValidationContextTrust | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    file: fromVirtualGatewayTlsValidationContextFileTrust(input["file"]),
+    sds: fromVirtualGatewayTlsValidationContextSdsTrust(input["sds"]),
+  }
+}
+function toVirtualGatewayListenerTlsValidationContextTrust(root: jsonP.JSONValue): VirtualGatewayListenerTlsValidationContextTrust {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "file": toVirtualGatewayTlsValidationContextFileTrust,
+      "sds": toVirtualGatewayTlsValidationContextSdsTrust,
+    },
+  }, root);
+}
 
 // refs: 6 - tags: input, named, interface, output
 export interface VirtualGatewayLogging {
@@ -2695,6 +2855,7 @@ function toClientPolicy(root: jsonP.JSONValue): ClientPolicy {
 
 // refs: 12 - tags: input, named, interface, output
 export interface ClientPolicyTls {
+  certificate?: ClientTlsCertificate | null;
   enforce?: boolean | null;
   ports?: number[] | null;
   validation: TlsValidationContext;
@@ -2702,6 +2863,7 @@ export interface ClientPolicyTls {
 function fromClientPolicyTls(input?: ClientPolicyTls | null): jsonP.JSONValue {
   if (!input) return input;
   return {
+    certificate: fromClientTlsCertificate(input["certificate"]),
     enforce: input["enforce"],
     ports: input["ports"],
     validation: fromTlsValidationContext(input["validation"]),
@@ -2713,6 +2875,7 @@ function toClientPolicyTls(root: jsonP.JSONValue): ClientPolicyTls {
       "validation": toTlsValidationContext,
     },
     optional: {
+      "certificate": toClientTlsCertificate,
       "enforce": "b",
       "ports": ["n"],
     },
@@ -2720,12 +2883,77 @@ function toClientPolicyTls(root: jsonP.JSONValue): ClientPolicyTls {
 }
 
 // refs: 12 - tags: input, named, interface, output
+export interface ClientTlsCertificate {
+  file?: ListenerTlsFileCertificate | null;
+  sds?: ListenerTlsSdsCertificate | null;
+}
+function fromClientTlsCertificate(input?: ClientTlsCertificate | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    file: fromListenerTlsFileCertificate(input["file"]),
+    sds: fromListenerTlsSdsCertificate(input["sds"]),
+  }
+}
+function toClientTlsCertificate(root: jsonP.JSONValue): ClientTlsCertificate {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "file": toListenerTlsFileCertificate,
+      "sds": toListenerTlsSdsCertificate,
+    },
+  }, root);
+}
+
+// refs: 18 - tags: input, named, interface, output
+export interface ListenerTlsFileCertificate {
+  certificateChain: string;
+  privateKey: string;
+}
+function fromListenerTlsFileCertificate(input?: ListenerTlsFileCertificate | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    certificateChain: input["certificateChain"],
+    privateKey: input["privateKey"],
+  }
+}
+function toListenerTlsFileCertificate(root: jsonP.JSONValue): ListenerTlsFileCertificate {
+  return jsonP.readObj({
+    required: {
+      "certificateChain": "s",
+      "privateKey": "s",
+    },
+    optional: {},
+  }, root);
+}
+
+// refs: 18 - tags: input, named, interface, output
+export interface ListenerTlsSdsCertificate {
+  secretName: string;
+}
+function fromListenerTlsSdsCertificate(input?: ListenerTlsSdsCertificate | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    secretName: input["secretName"],
+  }
+}
+function toListenerTlsSdsCertificate(root: jsonP.JSONValue): ListenerTlsSdsCertificate {
+  return jsonP.readObj({
+    required: {
+      "secretName": "s",
+    },
+    optional: {},
+  }, root);
+}
+
+// refs: 12 - tags: input, named, interface, output
 export interface TlsValidationContext {
+  subjectAlternativeNames?: SubjectAlternativeNames | null;
   trust: TlsValidationContextTrust;
 }
 function fromTlsValidationContext(input?: TlsValidationContext | null): jsonP.JSONValue {
   if (!input) return input;
   return {
+    subjectAlternativeNames: fromSubjectAlternativeNames(input["subjectAlternativeNames"]),
     trust: fromTlsValidationContextTrust(input["trust"]),
   }
 }
@@ -2734,7 +2962,9 @@ function toTlsValidationContext(root: jsonP.JSONValue): TlsValidationContext {
     required: {
       "trust": toTlsValidationContextTrust,
     },
-    optional: {},
+    optional: {
+      "subjectAlternativeNames": toSubjectAlternativeNames,
+    },
   }, root);
 }
 
@@ -2742,12 +2972,14 @@ function toTlsValidationContext(root: jsonP.JSONValue): TlsValidationContext {
 export interface TlsValidationContextTrust {
   acm?: TlsValidationContextAcmTrust | null;
   file?: TlsValidationContextFileTrust | null;
+  sds?: TlsValidationContextSdsTrust | null;
 }
 function fromTlsValidationContextTrust(input?: TlsValidationContextTrust | null): jsonP.JSONValue {
   if (!input) return input;
   return {
     acm: fromTlsValidationContextAcmTrust(input["acm"]),
     file: fromTlsValidationContextFileTrust(input["file"]),
+    sds: fromTlsValidationContextSdsTrust(input["sds"]),
   }
 }
 function toTlsValidationContextTrust(root: jsonP.JSONValue): TlsValidationContextTrust {
@@ -2756,6 +2988,7 @@ function toTlsValidationContextTrust(root: jsonP.JSONValue): TlsValidationContex
     optional: {
       "acm": toTlsValidationContextAcmTrust,
       "file": toTlsValidationContextFileTrust,
+      "sds": toTlsValidationContextSdsTrust,
     },
   }, root);
 }
@@ -2779,7 +3012,7 @@ function toTlsValidationContextAcmTrust(root: jsonP.JSONValue): TlsValidationCon
   }, root);
 }
 
-// refs: 12 - tags: input, named, interface, output
+// refs: 18 - tags: input, named, interface, output
 export interface TlsValidationContextFileTrust {
   certificateChain: string;
 }
@@ -2793,6 +3026,25 @@ function toTlsValidationContextFileTrust(root: jsonP.JSONValue): TlsValidationCo
   return jsonP.readObj({
     required: {
       "certificateChain": "s",
+    },
+    optional: {},
+  }, root);
+}
+
+// refs: 18 - tags: input, named, interface, output
+export interface TlsValidationContextSdsTrust {
+  secretName: string;
+}
+function fromTlsValidationContextSdsTrust(input?: TlsValidationContextSdsTrust | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    secretName: input["secretName"],
+  }
+}
+function toTlsValidationContextSdsTrust(root: jsonP.JSONValue): TlsValidationContextSdsTrust {
+  return jsonP.readObj({
+    required: {
+      "secretName": "s",
     },
     optional: {},
   }, root);
@@ -3111,12 +3363,14 @@ function toListenerTimeout(root: jsonP.JSONValue): ListenerTimeout {
 export interface ListenerTls {
   certificate: ListenerTlsCertificate;
   mode: ListenerTlsMode;
+  validation?: ListenerTlsValidationContext | null;
 }
 function fromListenerTls(input?: ListenerTls | null): jsonP.JSONValue {
   if (!input) return input;
   return {
     certificate: fromListenerTlsCertificate(input["certificate"]),
     mode: input["mode"],
+    validation: fromListenerTlsValidationContext(input["validation"]),
   }
 }
 function toListenerTls(root: jsonP.JSONValue): ListenerTls {
@@ -3125,7 +3379,9 @@ function toListenerTls(root: jsonP.JSONValue): ListenerTls {
       "certificate": toListenerTlsCertificate,
       "mode": (x: jsonP.JSONValue) => cmnP.readEnum<ListenerTlsMode>(x),
     },
-    optional: {},
+    optional: {
+      "validation": toListenerTlsValidationContext,
+    },
   }, root);
 }
 
@@ -3133,12 +3389,14 @@ function toListenerTls(root: jsonP.JSONValue): ListenerTls {
 export interface ListenerTlsCertificate {
   acm?: ListenerTlsAcmCertificate | null;
   file?: ListenerTlsFileCertificate | null;
+  sds?: ListenerTlsSdsCertificate | null;
 }
 function fromListenerTlsCertificate(input?: ListenerTlsCertificate | null): jsonP.JSONValue {
   if (!input) return input;
   return {
     acm: fromListenerTlsAcmCertificate(input["acm"]),
     file: fromListenerTlsFileCertificate(input["file"]),
+    sds: fromListenerTlsSdsCertificate(input["sds"]),
   }
 }
 function toListenerTlsCertificate(root: jsonP.JSONValue): ListenerTlsCertificate {
@@ -3147,6 +3405,7 @@ function toListenerTlsCertificate(root: jsonP.JSONValue): ListenerTlsCertificate
     optional: {
       "acm": toListenerTlsAcmCertificate,
       "file": toListenerTlsFileCertificate,
+      "sds": toListenerTlsSdsCertificate,
     },
   }, root);
 }
@@ -3170,34 +3429,57 @@ function toListenerTlsAcmCertificate(root: jsonP.JSONValue): ListenerTlsAcmCerti
   }, root);
 }
 
-// refs: 6 - tags: input, named, interface, output
-export interface ListenerTlsFileCertificate {
-  certificateChain: string;
-  privateKey: string;
-}
-function fromListenerTlsFileCertificate(input?: ListenerTlsFileCertificate | null): jsonP.JSONValue {
-  if (!input) return input;
-  return {
-    certificateChain: input["certificateChain"],
-    privateKey: input["privateKey"],
-  }
-}
-function toListenerTlsFileCertificate(root: jsonP.JSONValue): ListenerTlsFileCertificate {
-  return jsonP.readObj({
-    required: {
-      "certificateChain": "s",
-      "privateKey": "s",
-    },
-    optional: {},
-  }, root);
-}
-
 // refs: 6 - tags: input, named, enum, output
 export type ListenerTlsMode =
 | "STRICT"
 | "PERMISSIVE"
 | "DISABLED"
 | cmnP.UnexpectedEnumValue;
+
+// refs: 6 - tags: input, named, interface, output
+export interface ListenerTlsValidationContext {
+  subjectAlternativeNames?: SubjectAlternativeNames | null;
+  trust: ListenerTlsValidationContextTrust;
+}
+function fromListenerTlsValidationContext(input?: ListenerTlsValidationContext | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    subjectAlternativeNames: fromSubjectAlternativeNames(input["subjectAlternativeNames"]),
+    trust: fromListenerTlsValidationContextTrust(input["trust"]),
+  }
+}
+function toListenerTlsValidationContext(root: jsonP.JSONValue): ListenerTlsValidationContext {
+  return jsonP.readObj({
+    required: {
+      "trust": toListenerTlsValidationContextTrust,
+    },
+    optional: {
+      "subjectAlternativeNames": toSubjectAlternativeNames,
+    },
+  }, root);
+}
+
+// refs: 6 - tags: input, named, interface, output
+export interface ListenerTlsValidationContextTrust {
+  file?: TlsValidationContextFileTrust | null;
+  sds?: TlsValidationContextSdsTrust | null;
+}
+function fromListenerTlsValidationContextTrust(input?: ListenerTlsValidationContextTrust | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    file: fromTlsValidationContextFileTrust(input["file"]),
+    sds: fromTlsValidationContextSdsTrust(input["sds"]),
+  }
+}
+function toListenerTlsValidationContextTrust(root: jsonP.JSONValue): ListenerTlsValidationContextTrust {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "file": toTlsValidationContextFileTrust,
+      "sds": toTlsValidationContextSdsTrust,
+    },
+  }, root);
+}
 
 // refs: 6 - tags: input, named, interface, output
 export interface Logging {

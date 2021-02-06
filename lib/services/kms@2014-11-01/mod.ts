@@ -587,6 +587,8 @@ export default class KMS {
       Limit: params["Limit"],
       Marker: params["Marker"],
       KeyId: params["KeyId"],
+      GrantId: params["GrantId"],
+      GranteePrincipal: params["GranteePrincipal"],
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -1106,6 +1108,8 @@ export interface ListGrantsRequest {
   Limit?: number | null;
   Marker?: string | null;
   KeyId: string;
+  GrantId?: string | null;
+  GranteePrincipal?: string | null;
 }
 
 // refs: 1 - tags: named, input

@@ -1095,6 +1095,7 @@ export default class ElastiCache {
     body.append(prefix+"ApplyImmediately", (params["ApplyImmediately"] ?? '').toString());
     if ("CacheNodeType" in params) body.append(prefix+"CacheNodeType", (params["CacheNodeType"] ?? '').toString());
     if ("EngineVersion" in params) body.append(prefix+"EngineVersion", (params["EngineVersion"] ?? '').toString());
+    if ("CacheParameterGroupName" in params) body.append(prefix+"CacheParameterGroupName", (params["CacheParameterGroupName"] ?? '').toString());
     if ("GlobalReplicationGroupDescription" in params) body.append(prefix+"GlobalReplicationGroupDescription", (params["GlobalReplicationGroupDescription"] ?? '').toString());
     if ("AutomaticFailoverEnabled" in params) body.append(prefix+"AutomaticFailoverEnabled", (params["AutomaticFailoverEnabled"] ?? '').toString());
     const resp = await this.#client.performRequest({
@@ -1896,6 +1897,7 @@ export interface ModifyGlobalReplicationGroupMessage {
   ApplyImmediately: boolean;
   CacheNodeType?: string | null;
   EngineVersion?: string | null;
+  CacheParameterGroupName?: string | null;
   GlobalReplicationGroupDescription?: string | null;
   AutomaticFailoverEnabled?: boolean | null;
 }

@@ -166,6 +166,60 @@ export default class Outposts {
     }, await resp.json());
   }
 
+  async listTagsForResource(
+    {abortSignal, ...params}: RequestConfig & ListTagsForResourceRequest,
+  ): Promise<ListTagsForResourceResponse> {
+
+    const resp = await this.#client.performRequest({
+      abortSignal,
+      action: "ListTagsForResource",
+      method: "GET",
+      requestUri: cmnP.encodePath`/tags/${params["ResourceArn"]}`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
+  }
+
+  async tagResource(
+    {abortSignal, ...params}: RequestConfig & TagResourceRequest,
+  ): Promise<TagResourceResponse> {
+    const body: jsonP.JSONObject = {
+      Tags: params["Tags"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "TagResource",
+      requestUri: cmnP.encodePath`/tags/${params["ResourceArn"]}`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
+  }
+
+  async untagResource(
+    {abortSignal, ...params}: RequestConfig & UntagResourceRequest,
+  ): Promise<UntagResourceResponse> {
+    const query = new URLSearchParams;
+    for (const item of params["TagKeys"]) {
+      query.append("tagKeys", item?.toString() ?? "");
+    }
+    const resp = await this.#client.performRequest({
+      abortSignal, query,
+      action: "UntagResource",
+      method: "DELETE",
+      requestUri: cmnP.encodePath`/tags/${params["ResourceArn"]}`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
+  }
+
 }
 
 // refs: 1 - tags: named, input
@@ -212,6 +266,23 @@ export interface ListSitesInput {
   MaxResults?: number | null;
 }
 
+// refs: 1 - tags: named, input
+export interface ListTagsForResourceRequest {
+  ResourceArn: string;
+}
+
+// refs: 1 - tags: named, input
+export interface TagResourceRequest {
+  ResourceArn: string;
+  Tags: { [key: string]: string | null | undefined };
+}
+
+// refs: 1 - tags: named, input
+export interface UntagResourceRequest {
+  ResourceArn: string;
+  TagKeys: string[];
+}
+
 // refs: 1 - tags: named, output
 export interface CreateOutpostOutput {
   Outpost?: Outpost | null;
@@ -248,6 +319,19 @@ export interface ListOutpostsOutput {
 export interface ListSitesOutput {
   Sites?: Site[] | null;
   NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface ListTagsForResourceResponse {
+  Tags?: { [key: string]: string | null | undefined } | null;
+}
+
+// refs: 1 - tags: named, output
+export interface TagResourceResponse {
+}
+
+// refs: 1 - tags: named, output
+export interface UntagResourceResponse {
 }
 
 // refs: 3 - tags: output, named, interface

@@ -5713,6 +5713,8 @@ export type ConnectionType =
 | "MONGODB"
 | "KAFKA"
 | "NETWORK"
+| "MARKETPLACE"
+| "CUSTOM"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, enum, output
@@ -5738,6 +5740,10 @@ export type ConnectionPropertyKey =
 | "KAFKA_SSL_ENABLED"
 | "KAFKA_CUSTOM_CERT"
 | "KAFKA_SKIP_CUSTOM_CERT_VALIDATION"
+| "SECRET_ID"
+| "CONNECTOR_URL"
+| "CONNECTOR_TYPE"
+| "CONNECTOR_CLASS_NAME"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, interface, output
@@ -8764,6 +8770,7 @@ export interface FindMatchesMetrics {
   Recall?: number | null;
   F1?: number | null;
   ConfusionMatrix?: ConfusionMatrix | null;
+  ColumnImportances?: ColumnImportance[] | null;
 }
 function toFindMatchesMetrics(root: jsonP.JSONValue): FindMatchesMetrics {
   return jsonP.readObj({
@@ -8774,6 +8781,7 @@ function toFindMatchesMetrics(root: jsonP.JSONValue): FindMatchesMetrics {
       "Recall": "n",
       "F1": "n",
       "ConfusionMatrix": toConfusionMatrix,
+      "ColumnImportances": [toColumnImportance],
     },
   }, root);
 }
@@ -8793,6 +8801,21 @@ function toConfusionMatrix(root: jsonP.JSONValue): ConfusionMatrix {
       "NumFalsePositives": "n",
       "NumTrueNegatives": "n",
       "NumFalseNegatives": "n",
+    },
+  }, root);
+}
+
+// refs: 2 - tags: output, named, interface
+export interface ColumnImportance {
+  ColumnName?: string | null;
+  Importance?: number | null;
+}
+function toColumnImportance(root: jsonP.JSONValue): ColumnImportance {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "ColumnName": "s",
+      "Importance": "n",
     },
   }, root);
 }

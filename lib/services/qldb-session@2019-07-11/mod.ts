@@ -188,12 +188,27 @@ function fromFetchPageRequest(input?: FetchPageRequest | null): jsonP.JSONValue 
 // refs: 1 - tags: output, named, interface
 export interface StartSessionResult {
   SessionToken?: string | null;
+  TimingInformation?: TimingInformation | null;
 }
 function toStartSessionResult(root: jsonP.JSONValue): StartSessionResult {
   return jsonP.readObj({
     required: {},
     optional: {
       "SessionToken": "s",
+      "TimingInformation": toTimingInformation,
+    },
+  }, root);
+}
+
+// refs: 7 - tags: output, named, interface
+export interface TimingInformation {
+  ProcessingTimeMilliseconds?: number | null;
+}
+function toTimingInformation(root: jsonP.JSONValue): TimingInformation {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "ProcessingTimeMilliseconds": "n",
     },
   }, root);
 }
@@ -201,23 +216,28 @@ function toStartSessionResult(root: jsonP.JSONValue): StartSessionResult {
 // refs: 1 - tags: output, named, interface
 export interface StartTransactionResult {
   TransactionId?: string | null;
+  TimingInformation?: TimingInformation | null;
 }
 function toStartTransactionResult(root: jsonP.JSONValue): StartTransactionResult {
   return jsonP.readObj({
     required: {},
     optional: {
       "TransactionId": "s",
+      "TimingInformation": toTimingInformation,
     },
   }, root);
 }
 
 // refs: 1 - tags: output, named, interface
 export interface EndSessionResult {
+  TimingInformation?: TimingInformation | null;
 }
 function toEndSessionResult(root: jsonP.JSONValue): EndSessionResult {
   return jsonP.readObj({
     required: {},
-    optional: {},
+    optional: {
+      "TimingInformation": toTimingInformation,
+    },
   }, root);
 }
 
@@ -225,6 +245,8 @@ function toEndSessionResult(root: jsonP.JSONValue): EndSessionResult {
 export interface CommitTransactionResult {
   TransactionId?: string | null;
   CommitDigest?: Uint8Array | string | null;
+  TimingInformation?: TimingInformation | null;
+  ConsumedIOs?: IOUsage | null;
 }
 function toCommitTransactionResult(root: jsonP.JSONValue): CommitTransactionResult {
   return jsonP.readObj({
@@ -232,29 +254,53 @@ function toCommitTransactionResult(root: jsonP.JSONValue): CommitTransactionResu
     optional: {
       "TransactionId": "s",
       "CommitDigest": "a",
+      "TimingInformation": toTimingInformation,
+      "ConsumedIOs": toIOUsage,
+    },
+  }, root);
+}
+
+// refs: 3 - tags: output, named, interface
+export interface IOUsage {
+  ReadIOs?: number | null;
+  WriteIOs?: number | null;
+}
+function toIOUsage(root: jsonP.JSONValue): IOUsage {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "ReadIOs": "n",
+      "WriteIOs": "n",
     },
   }, root);
 }
 
 // refs: 1 - tags: output, named, interface
 export interface AbortTransactionResult {
+  TimingInformation?: TimingInformation | null;
 }
 function toAbortTransactionResult(root: jsonP.JSONValue): AbortTransactionResult {
   return jsonP.readObj({
     required: {},
-    optional: {},
+    optional: {
+      "TimingInformation": toTimingInformation,
+    },
   }, root);
 }
 
 // refs: 1 - tags: output, named, interface
 export interface ExecuteStatementResult {
   FirstPage?: Page | null;
+  TimingInformation?: TimingInformation | null;
+  ConsumedIOs?: IOUsage | null;
 }
 function toExecuteStatementResult(root: jsonP.JSONValue): ExecuteStatementResult {
   return jsonP.readObj({
     required: {},
     optional: {
       "FirstPage": toPage,
+      "TimingInformation": toTimingInformation,
+      "ConsumedIOs": toIOUsage,
     },
   }, root);
 }
@@ -277,12 +323,16 @@ function toPage(root: jsonP.JSONValue): Page {
 // refs: 1 - tags: output, named, interface
 export interface FetchPageResult {
   Page?: Page | null;
+  TimingInformation?: TimingInformation | null;
+  ConsumedIOs?: IOUsage | null;
 }
 function toFetchPageResult(root: jsonP.JSONValue): FetchPageResult {
   return jsonP.readObj({
     required: {},
     optional: {
       "Page": toPage,
+      "TimingInformation": toTimingInformation,
+      "ConsumedIOs": toIOUsage,
     },
   }, root);
 }

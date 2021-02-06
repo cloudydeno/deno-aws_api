@@ -5,7 +5,7 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import * as uuidv4 from "https://deno.land/std@0.75.0/uuid/v4.ts";
+import * as uuidv4 from "https://deno.land/std@0.86.0/uuid/v4.ts";
 import * as cmnP from "../../encoding/common.ts";
 import * as jsonP from "../../encoding/json.ts";
 function generateIdemptToken() {
@@ -91,6 +91,19 @@ export default class Connect {
       action: "AssociateLexBot",
       method: "PUT",
       requestUri: cmnP.encodePath`/instance/${params["InstanceId"]}/lex-bot`,
+    });
+  }
+
+  async associateQueueQuickConnects(
+    {abortSignal, ...params}: RequestConfig & AssociateQueueQuickConnectsRequest,
+  ): Promise<void> {
+    const body: jsonP.JSONObject = {
+      QuickConnectIds: params["QuickConnectIds"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "AssociateQueueQuickConnects",
+      requestUri: cmnP.encodePath`/queues/${params["InstanceId"]}/${params["QueueId"]}/associate-quick-connects`,
     });
   }
 
@@ -199,6 +212,57 @@ export default class Connect {
       optional: {
         "IntegrationAssociationId": "s",
         "IntegrationAssociationArn": "s",
+      },
+    }, await resp.json());
+  }
+
+  async createQueue(
+    {abortSignal, ...params}: RequestConfig & CreateQueueRequest,
+  ): Promise<CreateQueueResponse> {
+    const body: jsonP.JSONObject = {
+      Name: params["Name"],
+      Description: params["Description"],
+      OutboundCallerConfig: fromOutboundCallerConfig(params["OutboundCallerConfig"]),
+      HoursOfOperationId: params["HoursOfOperationId"],
+      MaxContacts: params["MaxContacts"],
+      QuickConnectIds: params["QuickConnectIds"],
+      Tags: params["Tags"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "CreateQueue",
+      method: "PUT",
+      requestUri: cmnP.encodePath`/queues/${params["InstanceId"]}`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "QueueArn": "s",
+        "QueueId": "s",
+      },
+    }, await resp.json());
+  }
+
+  async createQuickConnect(
+    {abortSignal, ...params}: RequestConfig & CreateQuickConnectRequest,
+  ): Promise<CreateQuickConnectResponse> {
+    const body: jsonP.JSONObject = {
+      Name: params["Name"],
+      Description: params["Description"],
+      QuickConnectConfig: fromQuickConnectConfig(params["QuickConnectConfig"]),
+      Tags: params["Tags"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "CreateQuickConnect",
+      method: "PUT",
+      requestUri: cmnP.encodePath`/quick-connects/${params["InstanceId"]}`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "QuickConnectARN": "s",
+        "QuickConnectId": "s",
       },
     }, await resp.json());
   }
@@ -325,6 +389,18 @@ export default class Connect {
     });
   }
 
+  async deleteQuickConnect(
+    {abortSignal, ...params}: RequestConfig & DeleteQuickConnectRequest,
+  ): Promise<void> {
+
+    const resp = await this.#client.performRequest({
+      abortSignal,
+      action: "DeleteQuickConnect",
+      method: "DELETE",
+      requestUri: cmnP.encodePath`/quick-connects/${params["InstanceId"]}/${params["QuickConnectId"]}`,
+    });
+  }
+
   async deleteUseCase(
     {abortSignal, ...params}: RequestConfig & DeleteUseCaseRequest,
   ): Promise<void> {
@@ -375,6 +451,24 @@ export default class Connect {
       required: {},
       optional: {
         "ContactFlow": toContactFlow,
+      },
+    }, await resp.json());
+  }
+
+  async describeHoursOfOperation(
+    {abortSignal, ...params}: RequestConfig & DescribeHoursOfOperationRequest,
+  ): Promise<DescribeHoursOfOperationResponse> {
+
+    const resp = await this.#client.performRequest({
+      abortSignal,
+      action: "DescribeHoursOfOperation",
+      method: "GET",
+      requestUri: cmnP.encodePath`/hours-of-operations/${params["InstanceId"]}/${params["HoursOfOperationId"]}`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "HoursOfOperation": toHoursOfOperation,
       },
     }, await resp.json());
   }
@@ -430,6 +524,42 @@ export default class Connect {
       required: {},
       optional: {
         "StorageConfig": toInstanceStorageConfig,
+      },
+    }, await resp.json());
+  }
+
+  async describeQueue(
+    {abortSignal, ...params}: RequestConfig & DescribeQueueRequest,
+  ): Promise<DescribeQueueResponse> {
+
+    const resp = await this.#client.performRequest({
+      abortSignal,
+      action: "DescribeQueue",
+      method: "GET",
+      requestUri: cmnP.encodePath`/queues/${params["InstanceId"]}/${params["QueueId"]}`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Queue": toQueue,
+      },
+    }, await resp.json());
+  }
+
+  async describeQuickConnect(
+    {abortSignal, ...params}: RequestConfig & DescribeQuickConnectRequest,
+  ): Promise<DescribeQuickConnectResponse> {
+
+    const resp = await this.#client.performRequest({
+      abortSignal,
+      action: "DescribeQuickConnect",
+      method: "GET",
+      requestUri: cmnP.encodePath`/quick-connects/${params["InstanceId"]}/${params["QuickConnectId"]}`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "QuickConnect": toQuickConnect,
       },
     }, await resp.json());
   }
@@ -556,6 +686,19 @@ export default class Connect {
       action: "DisassociateLexBot",
       method: "DELETE",
       requestUri: cmnP.encodePath`/instance/${params["InstanceId"]}/lex-bot`,
+    });
+  }
+
+  async disassociateQueueQuickConnects(
+    {abortSignal, ...params}: RequestConfig & DisassociateQueueQuickConnectsRequest,
+  ): Promise<void> {
+    const body: jsonP.JSONObject = {
+      QuickConnectIds: params["QuickConnectIds"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DisassociateQueueQuickConnects",
+      requestUri: cmnP.encodePath`/queues/${params["InstanceId"]}/${params["QueueId"]}/disassociate-quick-connects`,
     });
   }
 
@@ -912,6 +1055,27 @@ export default class Connect {
     }, await resp.json());
   }
 
+  async listQueueQuickConnects(
+    {abortSignal, ...params}: RequestConfig & ListQueueQuickConnectsRequest,
+  ): Promise<ListQueueQuickConnectsResponse> {
+    const query = new URLSearchParams;
+    if (params["NextToken"] != null) query.set("nextToken", params["NextToken"]?.toString() ?? "");
+    if (params["MaxResults"] != null) query.set("maxResults", params["MaxResults"]?.toString() ?? "");
+    const resp = await this.#client.performRequest({
+      abortSignal, query,
+      action: "ListQueueQuickConnects",
+      method: "GET",
+      requestUri: cmnP.encodePath`/queues/${params["InstanceId"]}/${params["QueueId"]}/quick-connects`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "NextToken": "s",
+        "QuickConnectSummaryList": [toQuickConnectSummary],
+      },
+    }, await resp.json());
+  }
+
   async listQueues(
     {abortSignal, ...params}: RequestConfig & ListQueuesRequest,
   ): Promise<ListQueuesResponse> {
@@ -931,6 +1095,30 @@ export default class Connect {
       required: {},
       optional: {
         "QueueSummaryList": [toQueueSummary],
+        "NextToken": "s",
+      },
+    }, await resp.json());
+  }
+
+  async listQuickConnects(
+    {abortSignal, ...params}: RequestConfig & ListQuickConnectsRequest,
+  ): Promise<ListQuickConnectsResponse> {
+    const query = new URLSearchParams;
+    if (params["NextToken"] != null) query.set("nextToken", params["NextToken"]?.toString() ?? "");
+    if (params["MaxResults"] != null) query.set("maxResults", params["MaxResults"]?.toString() ?? "");
+    for (const item of params["QuickConnectTypes"] ?? []) {
+      query.append("QuickConnectTypes", item?.toString() ?? "");
+    }
+    const resp = await this.#client.performRequest({
+      abortSignal, query,
+      action: "ListQuickConnects",
+      method: "GET",
+      requestUri: cmnP.encodePath`/quick-connects/${params["InstanceId"]}`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "QuickConnectSummaryList": [toQuickConnectSummary],
         "NextToken": "s",
       },
     }, await resp.json());
@@ -1378,6 +1566,99 @@ export default class Connect {
     });
   }
 
+  async updateQueueHoursOfOperation(
+    {abortSignal, ...params}: RequestConfig & UpdateQueueHoursOfOperationRequest,
+  ): Promise<void> {
+    const body: jsonP.JSONObject = {
+      HoursOfOperationId: params["HoursOfOperationId"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "UpdateQueueHoursOfOperation",
+      requestUri: cmnP.encodePath`/queues/${params["InstanceId"]}/${params["QueueId"]}/hours-of-operation`,
+    });
+  }
+
+  async updateQueueMaxContacts(
+    {abortSignal, ...params}: RequestConfig & UpdateQueueMaxContactsRequest,
+  ): Promise<void> {
+    const body: jsonP.JSONObject = {
+      MaxContacts: params["MaxContacts"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "UpdateQueueMaxContacts",
+      requestUri: cmnP.encodePath`/queues/${params["InstanceId"]}/${params["QueueId"]}/max-contacts`,
+    });
+  }
+
+  async updateQueueName(
+    {abortSignal, ...params}: RequestConfig & UpdateQueueNameRequest,
+  ): Promise<void> {
+    const body: jsonP.JSONObject = {
+      Name: params["Name"],
+      Description: params["Description"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "UpdateQueueName",
+      requestUri: cmnP.encodePath`/queues/${params["InstanceId"]}/${params["QueueId"]}/name`,
+    });
+  }
+
+  async updateQueueOutboundCallerConfig(
+    {abortSignal, ...params}: RequestConfig & UpdateQueueOutboundCallerConfigRequest,
+  ): Promise<void> {
+    const body: jsonP.JSONObject = {
+      OutboundCallerConfig: fromOutboundCallerConfig(params["OutboundCallerConfig"]),
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "UpdateQueueOutboundCallerConfig",
+      requestUri: cmnP.encodePath`/queues/${params["InstanceId"]}/${params["QueueId"]}/outbound-caller-config`,
+    });
+  }
+
+  async updateQueueStatus(
+    {abortSignal, ...params}: RequestConfig & UpdateQueueStatusRequest,
+  ): Promise<void> {
+    const body: jsonP.JSONObject = {
+      Status: params["Status"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "UpdateQueueStatus",
+      requestUri: cmnP.encodePath`/queues/${params["InstanceId"]}/${params["QueueId"]}/status`,
+    });
+  }
+
+  async updateQuickConnectConfig(
+    {abortSignal, ...params}: RequestConfig & UpdateQuickConnectConfigRequest,
+  ): Promise<void> {
+    const body: jsonP.JSONObject = {
+      QuickConnectConfig: fromQuickConnectConfig(params["QuickConnectConfig"]),
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "UpdateQuickConnectConfig",
+      requestUri: cmnP.encodePath`/quick-connects/${params["InstanceId"]}/${params["QuickConnectId"]}/config`,
+    });
+  }
+
+  async updateQuickConnectName(
+    {abortSignal, ...params}: RequestConfig & UpdateQuickConnectNameRequest,
+  ): Promise<void> {
+    const body: jsonP.JSONObject = {
+      Name: params["Name"],
+      Description: params["Description"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "UpdateQuickConnectName",
+      requestUri: cmnP.encodePath`/quick-connects/${params["InstanceId"]}/${params["QuickConnectId"]}/name`,
+    });
+  }
+
   async updateRoutingProfileConcurrency(
     {abortSignal, ...params}: RequestConfig & UpdateRoutingProfileConcurrencyRequest,
   ): Promise<void> {
@@ -1550,6 +1831,13 @@ export interface AssociateLexBotRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface AssociateQueueQuickConnectsRequest {
+  InstanceId: string;
+  QueueId: string;
+  QuickConnectIds: string[];
+}
+
+// refs: 1 - tags: named, input
 export interface AssociateRoutingProfileQueuesRequest {
   InstanceId: string;
   RoutingProfileId: string;
@@ -1590,6 +1878,27 @@ export interface CreateIntegrationAssociationRequest {
   SourceApplicationUrl: string;
   SourceApplicationName: string;
   SourceType: SourceType;
+}
+
+// refs: 1 - tags: named, input
+export interface CreateQueueRequest {
+  InstanceId: string;
+  Name: string;
+  Description?: string | null;
+  OutboundCallerConfig?: OutboundCallerConfig | null;
+  HoursOfOperationId: string;
+  MaxContacts?: number | null;
+  QuickConnectIds?: string[] | null;
+  Tags?: { [key: string]: string | null | undefined } | null;
+}
+
+// refs: 1 - tags: named, input
+export interface CreateQuickConnectRequest {
+  InstanceId: string;
+  Name: string;
+  Description?: string | null;
+  QuickConnectConfig: QuickConnectConfig;
+  Tags?: { [key: string]: string | null | undefined } | null;
 }
 
 // refs: 1 - tags: named, input
@@ -1643,6 +1952,12 @@ export interface DeleteIntegrationAssociationRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface DeleteQuickConnectRequest {
+  InstanceId: string;
+  QuickConnectId: string;
+}
+
+// refs: 1 - tags: named, input
 export interface DeleteUseCaseRequest {
   InstanceId: string;
   IntegrationAssociationId: string;
@@ -1668,6 +1983,12 @@ export interface DescribeContactFlowRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface DescribeHoursOfOperationRequest {
+  InstanceId: string;
+  HoursOfOperationId: string;
+}
+
+// refs: 1 - tags: named, input
 export interface DescribeInstanceRequest {
   InstanceId: string;
 }
@@ -1683,6 +2004,18 @@ export interface DescribeInstanceStorageConfigRequest {
   InstanceId: string;
   AssociationId: string;
   ResourceType: InstanceStorageResourceType;
+}
+
+// refs: 1 - tags: named, input
+export interface DescribeQueueRequest {
+  InstanceId: string;
+  QueueId: string;
+}
+
+// refs: 1 - tags: named, input
+export interface DescribeQuickConnectRequest {
+  InstanceId: string;
+  QuickConnectId: string;
 }
 
 // refs: 1 - tags: named, input
@@ -1732,6 +2065,13 @@ export interface DisassociateLexBotRequest {
   InstanceId: string;
   BotName: string;
   LexRegion: string;
+}
+
+// refs: 1 - tags: named, input
+export interface DisassociateQueueQuickConnectsRequest {
+  InstanceId: string;
+  QueueId: string;
+  QuickConnectIds: string[];
 }
 
 // refs: 1 - tags: named, input
@@ -1861,11 +2201,27 @@ export interface ListPromptsRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface ListQueueQuickConnectsRequest {
+  InstanceId: string;
+  QueueId: string;
+  NextToken?: string | null;
+  MaxResults?: number | null;
+}
+
+// refs: 1 - tags: named, input
 export interface ListQueuesRequest {
   InstanceId: string;
   QueueTypes?: QueueType[] | null;
   NextToken?: string | null;
   MaxResults?: number | null;
+}
+
+// refs: 1 - tags: named, input
+export interface ListQuickConnectsRequest {
+  InstanceId: string;
+  NextToken?: string | null;
+  MaxResults?: number | null;
+  QuickConnectTypes?: QuickConnectType[] | null;
 }
 
 // refs: 1 - tags: named, input
@@ -2042,6 +2398,57 @@ export interface UpdateInstanceStorageConfigRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface UpdateQueueHoursOfOperationRequest {
+  InstanceId: string;
+  QueueId: string;
+  HoursOfOperationId: string;
+}
+
+// refs: 1 - tags: named, input
+export interface UpdateQueueMaxContactsRequest {
+  InstanceId: string;
+  QueueId: string;
+  MaxContacts: number;
+}
+
+// refs: 1 - tags: named, input
+export interface UpdateQueueNameRequest {
+  InstanceId: string;
+  QueueId: string;
+  Name?: string | null;
+  Description?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface UpdateQueueOutboundCallerConfigRequest {
+  InstanceId: string;
+  QueueId: string;
+  OutboundCallerConfig: OutboundCallerConfig;
+}
+
+// refs: 1 - tags: named, input
+export interface UpdateQueueStatusRequest {
+  InstanceId: string;
+  QueueId: string;
+  Status: QueueStatus;
+}
+
+// refs: 1 - tags: named, input
+export interface UpdateQuickConnectConfigRequest {
+  InstanceId: string;
+  QuickConnectId: string;
+  QuickConnectConfig: QuickConnectConfig;
+}
+
+// refs: 1 - tags: named, input
+export interface UpdateQuickConnectNameRequest {
+  InstanceId: string;
+  QuickConnectId: string;
+  Name?: string | null;
+  Description?: string | null;
+}
+
+// refs: 1 - tags: named, input
 export interface UpdateRoutingProfileConcurrencyRequest {
   InstanceId: string;
   RoutingProfileId: string;
@@ -2147,6 +2554,18 @@ export interface CreateIntegrationAssociationResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface CreateQueueResponse {
+  QueueArn?: string | null;
+  QueueId?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface CreateQuickConnectResponse {
+  QuickConnectARN?: string | null;
+  QuickConnectId?: string | null;
+}
+
+// refs: 1 - tags: named, output
 export interface CreateRoutingProfileResponse {
   RoutingProfileArn?: string | null;
   RoutingProfileId?: string | null;
@@ -2176,6 +2595,11 @@ export interface DescribeContactFlowResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface DescribeHoursOfOperationResponse {
+  HoursOfOperation?: HoursOfOperation | null;
+}
+
+// refs: 1 - tags: named, output
 export interface DescribeInstanceResponse {
   Instance?: Instance | null;
 }
@@ -2188,6 +2612,16 @@ export interface DescribeInstanceAttributeResponse {
 // refs: 1 - tags: named, output
 export interface DescribeInstanceStorageConfigResponse {
   StorageConfig?: InstanceStorageConfig | null;
+}
+
+// refs: 1 - tags: named, output
+export interface DescribeQueueResponse {
+  Queue?: Queue | null;
+}
+
+// refs: 1 - tags: named, output
+export interface DescribeQuickConnectResponse {
+  QuickConnect?: QuickConnect | null;
 }
 
 // refs: 1 - tags: named, output
@@ -2300,8 +2734,20 @@ export interface ListPromptsResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface ListQueueQuickConnectsResponse {
+  NextToken?: string | null;
+  QuickConnectSummaryList?: QuickConnectSummary[] | null;
+}
+
+// refs: 1 - tags: named, output
 export interface ListQueuesResponse {
   QueueSummaryList?: QueueSummary[] | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface ListQuickConnectsResponse {
+  QuickConnectSummaryList?: QuickConnectSummary[] | null;
   NextToken?: string | null;
 }
 
@@ -2649,6 +3095,130 @@ export type SourceType =
 | "SALESFORCE"
 | "ZENDESK"
 | cmnP.UnexpectedEnumValue;
+
+// refs: 3 - tags: input, named, interface, output
+export interface OutboundCallerConfig {
+  OutboundCallerIdName?: string | null;
+  OutboundCallerIdNumberId?: string | null;
+  OutboundFlowId?: string | null;
+}
+function fromOutboundCallerConfig(input?: OutboundCallerConfig | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    OutboundCallerIdName: input["OutboundCallerIdName"],
+    OutboundCallerIdNumberId: input["OutboundCallerIdNumberId"],
+    OutboundFlowId: input["OutboundFlowId"],
+  }
+}
+function toOutboundCallerConfig(root: jsonP.JSONValue): OutboundCallerConfig {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "OutboundCallerIdName": "s",
+      "OutboundCallerIdNumberId": "s",
+      "OutboundFlowId": "s",
+    },
+  }, root);
+}
+
+// refs: 3 - tags: input, named, interface, output
+export interface QuickConnectConfig {
+  QuickConnectType: QuickConnectType;
+  UserConfig?: UserQuickConnectConfig | null;
+  QueueConfig?: QueueQuickConnectConfig | null;
+  PhoneConfig?: PhoneNumberQuickConnectConfig | null;
+}
+function fromQuickConnectConfig(input?: QuickConnectConfig | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    QuickConnectType: input["QuickConnectType"],
+    UserConfig: fromUserQuickConnectConfig(input["UserConfig"]),
+    QueueConfig: fromQueueQuickConnectConfig(input["QueueConfig"]),
+    PhoneConfig: fromPhoneNumberQuickConnectConfig(input["PhoneConfig"]),
+  }
+}
+function toQuickConnectConfig(root: jsonP.JSONValue): QuickConnectConfig {
+  return jsonP.readObj({
+    required: {
+      "QuickConnectType": (x: jsonP.JSONValue) => cmnP.readEnum<QuickConnectType>(x),
+    },
+    optional: {
+      "UserConfig": toUserQuickConnectConfig,
+      "QueueConfig": toQueueQuickConnectConfig,
+      "PhoneConfig": toPhoneNumberQuickConnectConfig,
+    },
+  }, root);
+}
+
+// refs: 6 - tags: input, named, enum, output
+export type QuickConnectType =
+| "USER"
+| "QUEUE"
+| "PHONE_NUMBER"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 3 - tags: input, named, interface, output
+export interface UserQuickConnectConfig {
+  UserId: string;
+  ContactFlowId: string;
+}
+function fromUserQuickConnectConfig(input?: UserQuickConnectConfig | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    UserId: input["UserId"],
+    ContactFlowId: input["ContactFlowId"],
+  }
+}
+function toUserQuickConnectConfig(root: jsonP.JSONValue): UserQuickConnectConfig {
+  return jsonP.readObj({
+    required: {
+      "UserId": "s",
+      "ContactFlowId": "s",
+    },
+    optional: {},
+  }, root);
+}
+
+// refs: 3 - tags: input, named, interface, output
+export interface QueueQuickConnectConfig {
+  QueueId: string;
+  ContactFlowId: string;
+}
+function fromQueueQuickConnectConfig(input?: QueueQuickConnectConfig | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    QueueId: input["QueueId"],
+    ContactFlowId: input["ContactFlowId"],
+  }
+}
+function toQueueQuickConnectConfig(root: jsonP.JSONValue): QueueQuickConnectConfig {
+  return jsonP.readObj({
+    required: {
+      "QueueId": "s",
+      "ContactFlowId": "s",
+    },
+    optional: {},
+  }, root);
+}
+
+// refs: 3 - tags: input, named, interface, output
+export interface PhoneNumberQuickConnectConfig {
+  PhoneNumber: string;
+}
+function fromPhoneNumberQuickConnectConfig(input?: PhoneNumberQuickConnectConfig | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    PhoneNumber: input["PhoneNumber"],
+  }
+}
+function toPhoneNumberQuickConnectConfig(root: jsonP.JSONValue): PhoneNumberQuickConnectConfig {
+  return jsonP.readObj({
+    required: {
+      "PhoneNumber": "s",
+    },
+    optional: {},
+  }, root);
+}
 
 // refs: 3 - tags: input, named, interface, output
 export interface MediaConcurrency {
@@ -3217,6 +3787,12 @@ export type ReferenceType =
 | "URL"
 | cmnP.UnexpectedEnumValue;
 
+// refs: 2 - tags: input, named, enum, output
+export type QueueStatus =
+| "ENABLED"
+| "DISABLED"
+| cmnP.UnexpectedEnumValue;
+
 // refs: 1 - tags: input, named, interface
 export interface HierarchyStructureUpdate {
   LevelOne?: HierarchyLevelUpdate | null;
@@ -3268,6 +3844,74 @@ function toContactFlow(root: jsonP.JSONValue): ContactFlow {
       "Description": "s",
       "Content": "s",
       "Tags": x => jsonP.readMap(String, String, x),
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
+export interface HoursOfOperation {
+  HoursOfOperationId?: string | null;
+  HoursOfOperationArn?: string | null;
+  Name?: string | null;
+  Description?: string | null;
+  TimeZone?: string | null;
+  Config?: HoursOfOperationConfig[] | null;
+  Tags?: { [key: string]: string | null | undefined } | null;
+}
+function toHoursOfOperation(root: jsonP.JSONValue): HoursOfOperation {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "HoursOfOperationId": "s",
+      "HoursOfOperationArn": "s",
+      "Name": "s",
+      "Description": "s",
+      "TimeZone": "s",
+      "Config": [toHoursOfOperationConfig],
+      "Tags": x => jsonP.readMap(String, String, x),
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
+export interface HoursOfOperationConfig {
+  Day?: HoursOfOperationDays | null;
+  StartTime?: HoursOfOperationTimeSlice | null;
+  EndTime?: HoursOfOperationTimeSlice | null;
+}
+function toHoursOfOperationConfig(root: jsonP.JSONValue): HoursOfOperationConfig {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "Day": (x: jsonP.JSONValue) => cmnP.readEnum<HoursOfOperationDays>(x),
+      "StartTime": toHoursOfOperationTimeSlice,
+      "EndTime": toHoursOfOperationTimeSlice,
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, enum
+export type HoursOfOperationDays =
+| "SUNDAY"
+| "MONDAY"
+| "TUESDAY"
+| "WEDNESDAY"
+| "THURSDAY"
+| "FRIDAY"
+| "SATURDAY"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 2 - tags: output, named, interface
+export interface HoursOfOperationTimeSlice {
+  Hours?: number | null;
+  Minutes?: number | null;
+}
+function toHoursOfOperationTimeSlice(root: jsonP.JSONValue): HoursOfOperationTimeSlice {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "Hours": "n",
+      "Minutes": "n",
     },
   }, root);
 }
@@ -3334,6 +3978,58 @@ function toAttribute(root: jsonP.JSONValue): Attribute {
     optional: {
       "AttributeType": (x: jsonP.JSONValue) => cmnP.readEnum<InstanceAttributeType>(x),
       "Value": "s",
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
+export interface Queue {
+  Name?: string | null;
+  QueueArn?: string | null;
+  QueueId?: string | null;
+  Description?: string | null;
+  OutboundCallerConfig?: OutboundCallerConfig | null;
+  HoursOfOperationId?: string | null;
+  MaxContacts?: number | null;
+  Status?: QueueStatus | null;
+  Tags?: { [key: string]: string | null | undefined } | null;
+}
+function toQueue(root: jsonP.JSONValue): Queue {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "Name": "s",
+      "QueueArn": "s",
+      "QueueId": "s",
+      "Description": "s",
+      "OutboundCallerConfig": toOutboundCallerConfig,
+      "HoursOfOperationId": "s",
+      "MaxContacts": "n",
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<QueueStatus>(x),
+      "Tags": x => jsonP.readMap(String, String, x),
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
+export interface QuickConnect {
+  QuickConnectARN?: string | null;
+  QuickConnectId?: string | null;
+  Name?: string | null;
+  Description?: string | null;
+  QuickConnectConfig?: QuickConnectConfig | null;
+  Tags?: { [key: string]: string | null | undefined } | null;
+}
+function toQuickConnect(root: jsonP.JSONValue): QuickConnect {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "QuickConnectARN": "s",
+      "QuickConnectId": "s",
+      "Name": "s",
+      "Description": "s",
+      "QuickConnectConfig": toQuickConnectConfig,
+      "Tags": x => jsonP.readMap(String, String, x),
     },
   }, root);
 }
@@ -3728,6 +4424,25 @@ function toPromptSummary(root: jsonP.JSONValue): PromptSummary {
       "Id": "s",
       "Arn": "s",
       "Name": "s",
+    },
+  }, root);
+}
+
+// refs: 2 - tags: output, named, interface
+export interface QuickConnectSummary {
+  Id?: string | null;
+  Arn?: string | null;
+  Name?: string | null;
+  QuickConnectType?: QuickConnectType | null;
+}
+function toQuickConnectSummary(root: jsonP.JSONValue): QuickConnectSummary {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "Id": "s",
+      "Arn": "s",
+      "Name": "s",
+      "QuickConnectType": (x: jsonP.JSONValue) => cmnP.readEnum<QuickConnectType>(x),
     },
   }, root);
 }

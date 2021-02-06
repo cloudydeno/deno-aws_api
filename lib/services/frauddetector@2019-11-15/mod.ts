@@ -2054,6 +2054,7 @@ export type DetectorVersionStatus =
 export type ModelVersionStatus =
 | "ACTIVE"
 | "INACTIVE"
+| "TRAINING_CANCELLED"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface

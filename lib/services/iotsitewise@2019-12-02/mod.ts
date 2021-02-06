@@ -5,7 +5,7 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import * as uuidv4 from "https://deno.land/std@0.75.0/uuid/v4.ts";
+import * as uuidv4 from "https://deno.land/std@0.86.0/uuid/v4.ts";
 import * as cmnP from "../../encoding/common.ts";
 import * as jsonP from "../../encoding/json.ts";
 function generateIdemptToken() {
@@ -269,6 +269,28 @@ export default class IoTSiteWise {
         "portalStartUrl": "s",
         "portalStatus": toPortalStatus,
         "ssoApplicationId": "s",
+      },
+      optional: {},
+    }, await resp.json());
+  }
+
+  async createPresignedPortalUrl(
+    {abortSignal, ...params}: RequestConfig & CreatePresignedPortalUrlRequest,
+  ): Promise<CreatePresignedPortalUrlResponse> {
+    const body: jsonP.JSONObject = {
+      sessionDurationSeconds: params["sessionDurationSeconds"],
+      state: params["state"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "CreatePresignedPortalUrl",
+      requestUri: cmnP.encodePath`/portals/${params["portalId"]}/presigned-url`,
+      responseCode: 200,
+      hostPrefix: `monitor.`,
+    });
+    return jsonP.readObj({
+      required: {
+        "presignedPortalUrl": "s",
       },
       optional: {},
     }, await resp.json());
@@ -1552,6 +1574,13 @@ export interface CreatePortalRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface CreatePresignedPortalUrlRequest {
+  portalId: string;
+  sessionDurationSeconds?: number | null;
+  state?: string | null;
+}
+
+// refs: 1 - tags: named, input
 export interface CreateProjectRequest {
   portalId: string;
   projectName: string;
@@ -1933,6 +1962,11 @@ export interface CreatePortalResponse {
   portalStartUrl: string;
   portalStatus: PortalStatus;
   ssoApplicationId: string;
+}
+
+// refs: 1 - tags: named, output
+export interface CreatePresignedPortalUrlResponse {
+  presignedPortalUrl: string;
 }
 
 // refs: 1 - tags: named, output
@@ -2329,6 +2363,7 @@ export interface Identity {
   user?: UserIdentity | null;
   group?: GroupIdentity | null;
   iamUser?: IAMUserIdentity | null;
+  iamRole?: IAMRoleIdentity | null;
 }
 function fromIdentity(input?: Identity | null): jsonP.JSONValue {
   if (!input) return input;
@@ -2336,6 +2371,7 @@ function fromIdentity(input?: Identity | null): jsonP.JSONValue {
     user: fromUserIdentity(input["user"]),
     group: fromGroupIdentity(input["group"]),
     iamUser: fromIAMUserIdentity(input["iamUser"]),
+    iamRole: fromIAMRoleIdentity(input["iamRole"]),
   }
 }
 function toIdentity(root: jsonP.JSONValue): Identity {
@@ -2345,6 +2381,7 @@ function toIdentity(root: jsonP.JSONValue): Identity {
       "user": toUserIdentity,
       "group": toGroupIdentity,
       "iamUser": toIAMUserIdentity,
+      "iamRole": toIAMRoleIdentity,
     },
   }, root);
 }
@@ -2398,6 +2435,25 @@ function fromIAMUserIdentity(input?: IAMUserIdentity | null): jsonP.JSONValue {
   }
 }
 function toIAMUserIdentity(root: jsonP.JSONValue): IAMUserIdentity {
+  return jsonP.readObj({
+    required: {
+      "arn": "s",
+    },
+    optional: {},
+  }, root);
+}
+
+// refs: 4 - tags: input, named, interface, output
+export interface IAMRoleIdentity {
+  arn: string;
+}
+function fromIAMRoleIdentity(input?: IAMRoleIdentity | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    arn: input["arn"],
+  }
+}
+function toIAMRoleIdentity(root: jsonP.JSONValue): IAMRoleIdentity {
   return jsonP.readObj({
     required: {
       "arn": "s",

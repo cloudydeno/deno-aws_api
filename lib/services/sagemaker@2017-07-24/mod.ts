@@ -5,7 +5,7 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import * as uuidv4 from "https://deno.land/std@0.75.0/uuid/v4.ts";
+import * as uuidv4 from "https://deno.land/std@0.86.0/uuid/v4.ts";
 import * as cmnP from "../../encoding/common.ts";
 import * as jsonP from "../../encoding/json.ts";
 function generateIdemptToken() {
@@ -12228,6 +12228,7 @@ export interface ContainerDefinition {
   ModelDataUrl?: string | null;
   Environment?: { [key: string]: string | null | undefined } | null;
   ModelPackageName?: string | null;
+  MultiModelConfig?: MultiModelConfig | null;
 }
 function fromContainerDefinition(input?: ContainerDefinition | null): jsonP.JSONValue {
   if (!input) return input;
@@ -12239,6 +12240,7 @@ function fromContainerDefinition(input?: ContainerDefinition | null): jsonP.JSON
     ModelDataUrl: input["ModelDataUrl"],
     Environment: input["Environment"],
     ModelPackageName: input["ModelPackageName"],
+    MultiModelConfig: fromMultiModelConfig(input["MultiModelConfig"]),
   }
 }
 function toContainerDefinition(root: jsonP.JSONValue): ContainerDefinition {
@@ -12252,6 +12254,7 @@ function toContainerDefinition(root: jsonP.JSONValue): ContainerDefinition {
       "ModelDataUrl": "s",
       "Environment": x => jsonP.readMap(String, String, x),
       "ModelPackageName": "s",
+      "MultiModelConfig": toMultiModelConfig,
     },
   }, root);
 }
@@ -12285,6 +12288,31 @@ export type RepositoryAccessMode =
 export type ContainerMode =
 | "SingleModel"
 | "MultiModel"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 4 - tags: input, named, interface, output
+export interface MultiModelConfig {
+  ModelCacheSetting?: ModelCacheSetting | null;
+}
+function fromMultiModelConfig(input?: MultiModelConfig | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    ModelCacheSetting: input["ModelCacheSetting"],
+  }
+}
+function toMultiModelConfig(root: jsonP.JSONValue): MultiModelConfig {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "ModelCacheSetting": (x: jsonP.JSONValue) => cmnP.readEnum<ModelCacheSetting>(x),
+    },
+  }, root);
+}
+
+// refs: 4 - tags: input, named, enum, output
+export type ModelCacheSetting =
+| "Enabled"
+| "Disabled"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface, output

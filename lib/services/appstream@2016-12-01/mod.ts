@@ -1811,6 +1811,8 @@ export type Action =
 | "FILE_UPLOAD"
 | "FILE_DOWNLOAD"
 | "PRINTING_TO_LOCAL_DEVICE"
+| "DOMAIN_PASSWORD_SIGNIN"
+| "DOMAIN_SMART_CARD_SIGNIN"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 5 - tags: input, named, enum, output
@@ -2048,6 +2050,8 @@ export type FleetErrorCode =
 | "SECURITY_GROUPS_NOT_FOUND"
 | "IGW_NOT_ATTACHED"
 | "IAM_SERVICE_ROLE_MISSING_DESCRIBE_SECURITY_GROUPS_ACTION"
+| "FLEET_STOPPED"
+| "FLEET_INSTANCE_PROVISIONING_FAILURE"
 | "DOMAIN_JOIN_ERROR_FILE_NOT_FOUND"
 | "DOMAIN_JOIN_ERROR_ACCESS_DENIED"
 | "DOMAIN_JOIN_ERROR_LOGON_FAILURE"
@@ -2315,6 +2319,8 @@ export type ImageState =
 | "FAILED"
 | "COPYING"
 | "DELETING"
+| "CREATING"
+| "IMPORTING"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface

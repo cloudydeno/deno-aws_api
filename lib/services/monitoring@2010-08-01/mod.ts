@@ -318,6 +318,7 @@ export default class CloudWatch {
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     if ("ScanBy" in params) body.append(prefix+"ScanBy", (params["ScanBy"] ?? '').toString());
     if ("MaxDatapoints" in params) body.append(prefix+"MaxDatapoints", (params["MaxDatapoints"] ?? '').toString());
+    if (params["LabelOptions"] != null) LabelOptions_Serialize(body, prefix+"LabelOptions", params["LabelOptions"]);
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetMetricData",
@@ -745,6 +746,7 @@ export interface GetMetricDataInput {
   NextToken?: string | null;
   ScanBy?: ScanBy | null;
   MaxDatapoints?: number | null;
+  LabelOptions?: LabelOptions | null;
 }
 
 // refs: 1 - tags: named, input
@@ -1151,6 +1153,14 @@ function Metric_Parse(node: xmlP.XmlNode): Metric {
     }),
     Dimensions: node.getList("Dimensions", "member").map(Dimension_Parse),
   };
+}
+
+// refs: 1 - tags: input, named, interface
+export interface LabelOptions {
+  Timezone?: string | null;
+}
+function LabelOptions_Serialize(body: URLSearchParams, prefix: string, params: LabelOptions) {
+    if ("Timezone" in params) body.append(prefix+".Timezone", (params["Timezone"] ?? '').toString());
 }
 
 // refs: 1 - tags: input, named, interface

@@ -4057,6 +4057,9 @@ export interface TaskDefinition {
   pidMode?: PidMode | null;
   ipcMode?: IpcMode | null;
   proxyConfiguration?: ProxyConfiguration | null;
+  registeredAt?: Date | number | null;
+  deregisteredAt?: Date | number | null;
+  registeredBy?: string | null;
 }
 function toTaskDefinition(root: jsonP.JSONValue): TaskDefinition {
   return jsonP.readObj({
@@ -4081,6 +4084,9 @@ function toTaskDefinition(root: jsonP.JSONValue): TaskDefinition {
       "pidMode": (x: jsonP.JSONValue) => cmnP.readEnum<PidMode>(x),
       "ipcMode": (x: jsonP.JSONValue) => cmnP.readEnum<IpcMode>(x),
       "proxyConfiguration": toProxyConfiguration,
+      "registeredAt": "d",
+      "deregisteredAt": "d",
+      "registeredBy": "s",
     },
   }, root);
 }

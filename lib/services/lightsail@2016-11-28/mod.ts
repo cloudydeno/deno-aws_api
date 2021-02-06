@@ -380,6 +380,7 @@ export default class Lightsail {
       cacheBehaviorSettings: fromCacheSettings(params["cacheBehaviorSettings"]),
       cacheBehaviors: params["cacheBehaviors"]?.map(x => fromCacheBehaviorPerPath(x)),
       bundleId: params["bundleId"],
+      ipAddressType: params["ipAddressType"],
       tags: params["tags"]?.map(x => fromTag(x)),
     };
     const resp = await this.#client.performRequest({
@@ -466,6 +467,7 @@ export default class Lightsail {
       keyPairName: params["keyPairName"],
       tags: params["tags"]?.map(x => fromTag(x)),
       addOns: params["addOns"]?.map(x => fromAddOnRequest(x)),
+      ipAddressType: params["ipAddressType"],
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -492,6 +494,7 @@ export default class Lightsail {
       keyPairName: params["keyPairName"],
       tags: params["tags"]?.map(x => fromTag(x)),
       addOns: params["addOns"]?.map(x => fromAddOnRequest(x)),
+      ipAddressType: params["ipAddressType"],
       sourceInstanceName: params["sourceInstanceName"],
       restoreDate: params["restoreDate"],
       useLatestRestorableAutoSnapshot: params["useLatestRestorableAutoSnapshot"],
@@ -541,6 +544,7 @@ export default class Lightsail {
       certificateDomainName: params["certificateDomainName"],
       certificateAlternativeNames: params["certificateAlternativeNames"],
       tags: params["tags"]?.map(x => fromTag(x)),
+      ipAddressType: params["ipAddressType"],
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -2505,6 +2509,26 @@ export default class Lightsail {
     }, await resp.json());
   }
 
+  async setIpAddressType(
+    {abortSignal, ...params}: RequestConfig & SetIpAddressTypeRequest,
+  ): Promise<SetIpAddressTypeResult> {
+    const body: jsonP.JSONObject = {
+      resourceType: params["resourceType"],
+      resourceName: params["resourceName"],
+      ipAddressType: params["ipAddressType"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "SetIpAddressType",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "operations": [toOperation],
+      },
+    }, await resp.json());
+  }
+
   async startInstance(
     {abortSignal, ...params}: RequestConfig & StartInstanceRequest,
   ): Promise<StartInstanceResult> {
@@ -2936,6 +2960,7 @@ export interface CreateDistributionRequest {
   cacheBehaviorSettings?: CacheSettings | null;
   cacheBehaviors?: CacheBehaviorPerPath[] | null;
   bundleId: string;
+  ipAddressType?: IpAddressType | null;
   tags?: Tag[] | null;
 }
 
@@ -2969,6 +2994,7 @@ export interface CreateInstancesRequest {
   keyPairName?: string | null;
   tags?: Tag[] | null;
   addOns?: AddOnRequest[] | null;
+  ipAddressType?: IpAddressType | null;
 }
 
 // refs: 1 - tags: named, input
@@ -2982,6 +3008,7 @@ export interface CreateInstancesFromSnapshotRequest {
   keyPairName?: string | null;
   tags?: Tag[] | null;
   addOns?: AddOnRequest[] | null;
+  ipAddressType?: IpAddressType | null;
   sourceInstanceName?: string | null;
   restoreDate?: string | null;
   useLatestRestorableAutoSnapshot?: boolean | null;
@@ -3002,6 +3029,7 @@ export interface CreateLoadBalancerRequest {
   certificateDomainName?: string | null;
   certificateAlternativeNames?: string[] | null;
   tags?: Tag[] | null;
+  ipAddressType?: IpAddressType | null;
 }
 
 // refs: 1 - tags: named, input
@@ -3605,6 +3633,13 @@ export interface ResetDistributionCacheRequest {
 // refs: 1 - tags: named, input
 export interface SendContactMethodVerificationRequest {
   protocol: ContactMethodVerificationProtocol;
+}
+
+// refs: 1 - tags: named, input
+export interface SetIpAddressTypeRequest {
+  resourceType: ResourceType;
+  resourceName: string;
+  ipAddressType: IpAddressType;
 }
 
 // refs: 1 - tags: named, input
@@ -4384,6 +4419,11 @@ export interface SendContactMethodVerificationResult {
 }
 
 // refs: 1 - tags: named, output
+export interface SetIpAddressTypeResult {
+  operations?: Operation[] | null;
+}
+
+// refs: 1 - tags: named, output
 export interface StartInstanceResult {
   operations?: Operation[] | null;
 }
@@ -4464,6 +4504,7 @@ export interface PortInfo {
   toPort?: number | null;
   protocol?: NetworkProtocol | null;
   cidrs?: string[] | null;
+  ipv6Cidrs?: string[] | null;
   cidrListAliases?: string[] | null;
 }
 function fromPortInfo(input?: PortInfo | null): jsonP.JSONValue {
@@ -4473,6 +4514,7 @@ function fromPortInfo(input?: PortInfo | null): jsonP.JSONValue {
     toPort: input["toPort"],
     protocol: input["protocol"],
     cidrs: input["cidrs"],
+    ipv6Cidrs: input["ipv6Cidrs"],
     cidrListAliases: input["cidrListAliases"],
   }
 }
@@ -4485,7 +4527,7 @@ export type NetworkProtocol =
 | "icmp"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 119 - tags: input, named, enum, output
+// refs: 120 - tags: input, named, enum, output
 export type RegionName =
 | "us-east-1"
 | "us-east-2"
@@ -4895,6 +4937,12 @@ function toCacheBehaviorPerPath(root: jsonP.JSONValue): CacheBehaviorPerPath {
   }, root);
 }
 
+// refs: 11 - tags: input, named, enum, output
+export type IpAddressType =
+| "dualstack"
+| "ipv4"
+| cmnP.UnexpectedEnumValue;
+
 // refs: 5 - tags: input, named, interface, output
 export interface DomainEntry {
   id?: string | null;
@@ -5117,6 +5165,29 @@ export type ContactMethodVerificationProtocol =
 | "Email"
 | cmnP.UnexpectedEnumValue;
 
+// refs: 119 - tags: input, named, enum, output
+export type ResourceType =
+| "ContainerService"
+| "Instance"
+| "StaticIp"
+| "KeyPair"
+| "InstanceSnapshot"
+| "Domain"
+| "PeeredVpc"
+| "LoadBalancer"
+| "LoadBalancerTlsCertificate"
+| "Disk"
+| "DiskSnapshot"
+| "RelationalDatabase"
+| "RelationalDatabaseSnapshot"
+| "ExportSnapshotRecord"
+| "CloudFormationStackRecord"
+| "Alarm"
+| "ContactMethod"
+| "Distribution"
+| "Certificate"
+| cmnP.UnexpectedEnumValue;
+
 // refs: 3 - tags: input, named, enum, output
 export type LoadBalancerAttributeName =
 | "HealthCheckPath"
@@ -5164,7 +5235,7 @@ function toRelationalDatabaseParameter(root: jsonP.JSONValue): RelationalDatabas
   }, root);
 }
 
-// refs: 77 - tags: output, named, interface
+// refs: 78 - tags: output, named, interface
 export interface Operation {
   id?: string | null;
   resourceName?: string | null;
@@ -5199,30 +5270,7 @@ function toOperation(root: jsonP.JSONValue): Operation {
   }, root);
 }
 
-// refs: 117 - tags: output, named, enum
-export type ResourceType =
-| "ContainerService"
-| "Instance"
-| "StaticIp"
-| "KeyPair"
-| "InstanceSnapshot"
-| "Domain"
-| "PeeredVpc"
-| "LoadBalancer"
-| "LoadBalancerTlsCertificate"
-| "Disk"
-| "DiskSnapshot"
-| "RelationalDatabase"
-| "RelationalDatabaseSnapshot"
-| "ExportSnapshotRecord"
-| "CloudFormationStackRecord"
-| "Alarm"
-| "ContactMethod"
-| "Distribution"
-| "Certificate"
-| cmnP.UnexpectedEnumValue;
-
-// refs: 113 - tags: output, named, interface
+// refs: 114 - tags: output, named, interface
 export interface ResourceLocation {
   availabilityZone?: string | null;
   regionName?: RegionName | null;
@@ -5237,7 +5285,7 @@ function toResourceLocation(root: jsonP.JSONValue): ResourceLocation {
   }, root);
 }
 
-// refs: 77 - tags: output, named, enum
+// refs: 78 - tags: output, named, enum
 export type OperationType =
 | "DeleteKnownHostKeys"
 | "DeleteInstance"
@@ -5301,6 +5349,7 @@ export type OperationType =
 | "AttachCertificateToDistribution"
 | "DetachCertificateFromDistribution"
 | "UpdateDistributionBundle"
+| "SetIpAddressType"
 | "CreateCertificate"
 | "DeleteCertificate"
 | "CreateContainerService"
@@ -5312,7 +5361,7 @@ export type OperationType =
 | "DeleteContainerImage"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 77 - tags: output, named, enum
+// refs: 78 - tags: output, named, enum
 export type OperationStatus =
 | "NotStarted"
 | "Started"
@@ -5594,6 +5643,7 @@ export interface LightsailDistribution {
   cacheBehaviorSettings?: CacheSettings | null;
   cacheBehaviors?: CacheBehaviorPerPath[] | null;
   ableToUpdateBundle?: boolean | null;
+  ipAddressType?: IpAddressType | null;
   tags?: Tag[] | null;
 }
 function toLightsailDistribution(root: jsonP.JSONValue): LightsailDistribution {
@@ -5618,6 +5668,7 @@ function toLightsailDistribution(root: jsonP.JSONValue): LightsailDistribution {
       "cacheBehaviorSettings": toCacheSettings,
       "cacheBehaviors": [toCacheBehaviorPerPath],
       "ableToUpdateBundle": "b",
+      "ipAddressType": (x: jsonP.JSONValue) => cmnP.readEnum<IpAddressType>(x),
       "tags": [toTag],
     },
   }, root);
@@ -6341,7 +6392,8 @@ export interface Instance {
   isStaticIp?: boolean | null;
   privateIpAddress?: string | null;
   publicIpAddress?: string | null;
-  ipv6Address?: string | null;
+  ipv6Addresses?: string[] | null;
+  ipAddressType?: IpAddressType | null;
   hardware?: InstanceHardware | null;
   networking?: InstanceNetworking | null;
   state?: InstanceState | null;
@@ -6366,7 +6418,8 @@ function toInstance(root: jsonP.JSONValue): Instance {
       "isStaticIp": "b",
       "privateIpAddress": "s",
       "publicIpAddress": "s",
-      "ipv6Address": "s",
+      "ipv6Addresses": ["s"],
+      "ipAddressType": (x: jsonP.JSONValue) => cmnP.readEnum<IpAddressType>(x),
       "hardware": toInstanceHardware,
       "networking": toInstanceNetworking,
       "state": toInstanceState,
@@ -6431,6 +6484,7 @@ export interface InstancePortInfo {
   commonName?: string | null;
   accessDirection?: AccessDirection | null;
   cidrs?: string[] | null;
+  ipv6Cidrs?: string[] | null;
   cidrListAliases?: string[] | null;
 }
 function toInstancePortInfo(root: jsonP.JSONValue): InstancePortInfo {
@@ -6445,6 +6499,7 @@ function toInstancePortInfo(root: jsonP.JSONValue): InstancePortInfo {
       "commonName": "s",
       "accessDirection": (x: jsonP.JSONValue) => cmnP.readEnum<AccessDirection>(x),
       "cidrs": ["s"],
+      "ipv6Cidrs": ["s"],
       "cidrListAliases": ["s"],
     },
   }, root);
@@ -6555,6 +6610,7 @@ export interface InstancePortState {
   protocol?: NetworkProtocol | null;
   state?: PortState | null;
   cidrs?: string[] | null;
+  ipv6Cidrs?: string[] | null;
   cidrListAliases?: string[] | null;
 }
 function toInstancePortState(root: jsonP.JSONValue): InstancePortState {
@@ -6566,6 +6622,7 @@ function toInstancePortState(root: jsonP.JSONValue): InstancePortState {
       "protocol": (x: jsonP.JSONValue) => cmnP.readEnum<NetworkProtocol>(x),
       "state": (x: jsonP.JSONValue) => cmnP.readEnum<PortState>(x),
       "cidrs": ["s"],
+      "ipv6Cidrs": ["s"],
       "cidrListAliases": ["s"],
     },
   }, root);
@@ -6645,6 +6702,7 @@ export interface LoadBalancer {
   instanceHealthSummary?: InstanceHealthSummary[] | null;
   tlsCertificateSummaries?: LoadBalancerTlsCertificateSummary[] | null;
   configurationOptions?: { [key in LoadBalancerAttributeName]: string | null | undefined } | null;
+  ipAddressType?: IpAddressType | null;
 }
 function toLoadBalancer(root: jsonP.JSONValue): LoadBalancer {
   return jsonP.readObj({
@@ -6666,6 +6724,7 @@ function toLoadBalancer(root: jsonP.JSONValue): LoadBalancer {
       "instanceHealthSummary": [toInstanceHealthSummary],
       "tlsCertificateSummaries": [toLoadBalancerTlsCertificateSummary],
       "configurationOptions": x => jsonP.readMap(x => cmnP.readEnumReq<LoadBalancerAttributeName>(x), String, x),
+      "ipAddressType": (x: jsonP.JSONValue) => cmnP.readEnum<IpAddressType>(x),
     },
   }, root);
 }

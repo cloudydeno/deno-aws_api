@@ -5,7 +5,7 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import * as uuidv4 from "https://deno.land/std@0.75.0/uuid/v4.ts";
+import * as uuidv4 from "https://deno.land/std@0.86.0/uuid/v4.ts";
 import * as cmnP from "../../encoding/common.ts";
 import * as jsonP from "../../encoding/json.ts";
 function generateIdemptToken() {
@@ -4029,12 +4029,24 @@ function toProvisioningArtifactParameter(root: jsonP.JSONValue): ProvisioningArt
 // refs: 1 - tags: output, named, interface
 export interface ParameterConstraints {
   AllowedValues?: string[] | null;
+  AllowedPattern?: string | null;
+  ConstraintDescription?: string | null;
+  MaxLength?: string | null;
+  MinLength?: string | null;
+  MaxValue?: string | null;
+  MinValue?: string | null;
 }
 function toParameterConstraints(root: jsonP.JSONValue): ParameterConstraints {
   return jsonP.readObj({
     required: {},
     optional: {
       "AllowedValues": ["s"],
+      "AllowedPattern": "s",
+      "ConstraintDescription": "s",
+      "MaxLength": "s",
+      "MinLength": "s",
+      "MaxValue": "s",
+      "MinValue": "s",
     },
   }, root);
 }

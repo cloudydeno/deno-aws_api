@@ -5,7 +5,7 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import * as uuidv4 from "https://deno.land/std@0.75.0/uuid/v4.ts";
+import * as uuidv4 from "https://deno.land/std@0.86.0/uuid/v4.ts";
 import * as cmnP from "../../encoding/common.ts";
 import * as jsonP from "../../encoding/json.ts";
 function generateIdemptToken() {
@@ -353,6 +353,26 @@ export default class Athena {
     }, await resp.json());
   }
 
+  async listEngineVersions(
+    {abortSignal, ...params}: RequestConfig & ListEngineVersionsInput = {},
+  ): Promise<ListEngineVersionsOutput> {
+    const body: jsonP.JSONObject = {
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "ListEngineVersions",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "EngineVersions": [toEngineVersion],
+        "NextToken": "s",
+      },
+    }, await resp.json());
+  }
+
   async listNamedQueries(
     {abortSignal, ...params}: RequestConfig & ListNamedQueriesInput = {},
   ): Promise<ListNamedQueriesOutput> {
@@ -678,6 +698,12 @@ export interface ListDatabasesInput {
 }
 
 // refs: 1 - tags: named, input
+export interface ListEngineVersionsInput {
+  NextToken?: string | null;
+  MaxResults?: number | null;
+}
+
+// refs: 1 - tags: named, input
 export interface ListNamedQueriesInput {
   NextToken?: string | null;
   MaxResults?: number | null;
@@ -842,6 +868,12 @@ export interface ListDatabasesOutput {
 }
 
 // refs: 1 - tags: named, output
+export interface ListEngineVersionsOutput {
+  EngineVersions?: EngineVersion[] | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
 export interface ListNamedQueriesOutput {
   NamedQueryIds?: string[] | null;
   NextToken?: string | null;
@@ -932,6 +964,7 @@ export interface WorkGroupConfiguration {
   PublishCloudWatchMetricsEnabled?: boolean | null;
   BytesScannedCutoffPerQuery?: number | null;
   RequesterPaysEnabled?: boolean | null;
+  EngineVersion?: EngineVersion | null;
 }
 function fromWorkGroupConfiguration(input?: WorkGroupConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
@@ -941,6 +974,7 @@ function fromWorkGroupConfiguration(input?: WorkGroupConfiguration | null): json
     PublishCloudWatchMetricsEnabled: input["PublishCloudWatchMetricsEnabled"],
     BytesScannedCutoffPerQuery: input["BytesScannedCutoffPerQuery"],
     RequesterPaysEnabled: input["RequesterPaysEnabled"],
+    EngineVersion: fromEngineVersion(input["EngineVersion"]),
   }
 }
 function toWorkGroupConfiguration(root: jsonP.JSONValue): WorkGroupConfiguration {
@@ -952,6 +986,7 @@ function toWorkGroupConfiguration(root: jsonP.JSONValue): WorkGroupConfiguration
       "PublishCloudWatchMetricsEnabled": "b",
       "BytesScannedCutoffPerQuery": "n",
       "RequesterPaysEnabled": "b",
+      "EngineVersion": toEngineVersion,
     },
   }, root);
 }
@@ -1008,6 +1043,28 @@ export type EncryptionOption =
 | "CSE_KMS"
 | cmnP.UnexpectedEnumValue;
 
+// refs: 7 - tags: input, named, interface, output
+export interface EngineVersion {
+  SelectedEngineVersion?: string | null;
+  EffectiveEngineVersion?: string | null;
+}
+function fromEngineVersion(input?: EngineVersion | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    SelectedEngineVersion: input["SelectedEngineVersion"],
+    EffectiveEngineVersion: input["EffectiveEngineVersion"],
+  }
+}
+function toEngineVersion(root: jsonP.JSONValue): EngineVersion {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "SelectedEngineVersion": "s",
+      "EffectiveEngineVersion": "s",
+    },
+  }, root);
+}
+
 // refs: 3 - tags: input, named, interface, output
 export interface QueryExecutionContext {
   Database?: string | null;
@@ -1038,6 +1095,7 @@ export interface WorkGroupConfigurationUpdates {
   BytesScannedCutoffPerQuery?: number | null;
   RemoveBytesScannedCutoffPerQuery?: boolean | null;
   RequesterPaysEnabled?: boolean | null;
+  EngineVersion?: EngineVersion | null;
 }
 function fromWorkGroupConfigurationUpdates(input?: WorkGroupConfigurationUpdates | null): jsonP.JSONValue {
   if (!input) return input;
@@ -1048,6 +1106,7 @@ function fromWorkGroupConfigurationUpdates(input?: WorkGroupConfigurationUpdates
     BytesScannedCutoffPerQuery: input["BytesScannedCutoffPerQuery"],
     RemoveBytesScannedCutoffPerQuery: input["RemoveBytesScannedCutoffPerQuery"],
     RequesterPaysEnabled: input["RequesterPaysEnabled"],
+    EngineVersion: fromEngineVersion(input["EngineVersion"]),
   }
 }
 
@@ -1125,6 +1184,7 @@ export interface QueryExecution {
   Status?: QueryExecutionStatus | null;
   Statistics?: QueryExecutionStatistics | null;
   WorkGroup?: string | null;
+  EngineVersion?: EngineVersion | null;
 }
 function toQueryExecution(root: jsonP.JSONValue): QueryExecution {
   return jsonP.readObj({
@@ -1138,6 +1198,7 @@ function toQueryExecution(root: jsonP.JSONValue): QueryExecution {
       "Status": toQueryExecutionStatus,
       "Statistics": toQueryExecutionStatistics,
       "WorkGroup": "s",
+      "EngineVersion": toEngineVersion,
     },
   }, root);
 }
@@ -1437,6 +1498,7 @@ export interface WorkGroupSummary {
   State?: WorkGroupState | null;
   Description?: string | null;
   CreationTime?: Date | number | null;
+  EngineVersion?: EngineVersion | null;
 }
 function toWorkGroupSummary(root: jsonP.JSONValue): WorkGroupSummary {
   return jsonP.readObj({
@@ -1446,6 +1508,7 @@ function toWorkGroupSummary(root: jsonP.JSONValue): WorkGroupSummary {
       "State": (x: jsonP.JSONValue) => cmnP.readEnum<WorkGroupState>(x),
       "Description": "s",
       "CreationTime": "d",
+      "EngineVersion": toEngineVersion,
     },
   }, root);
 }

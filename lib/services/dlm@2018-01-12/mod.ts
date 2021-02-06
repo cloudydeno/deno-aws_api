@@ -292,6 +292,7 @@ export type SettablePolicyStateValues =
 export interface PolicyDetails {
   PolicyType?: PolicyTypeValues | null;
   ResourceTypes?: ResourceTypeValues[] | null;
+  ResourceLocations?: ResourceLocationValues[] | null;
   TargetTags?: Tag[] | null;
   Schedules?: Schedule[] | null;
   Parameters?: Parameters | null;
@@ -303,6 +304,7 @@ function fromPolicyDetails(input?: PolicyDetails | null): jsonP.JSONValue {
   return {
     PolicyType: input["PolicyType"],
     ResourceTypes: input["ResourceTypes"],
+    ResourceLocations: input["ResourceLocations"],
     TargetTags: input["TargetTags"]?.map(x => fromTag(x)),
     Schedules: input["Schedules"]?.map(x => fromSchedule(x)),
     Parameters: fromParameters(input["Parameters"]),
@@ -316,6 +318,7 @@ function toPolicyDetails(root: jsonP.JSONValue): PolicyDetails {
     optional: {
       "PolicyType": (x: jsonP.JSONValue) => cmnP.readEnum<PolicyTypeValues>(x),
       "ResourceTypes": [(x: jsonP.JSONValue) => cmnP.readEnum<ResourceTypeValues>(x)],
+      "ResourceLocations": [(x: jsonP.JSONValue) => cmnP.readEnum<ResourceLocationValues>(x)],
       "TargetTags": [toTag],
       "Schedules": [toSchedule],
       "Parameters": toParameters,
@@ -336,6 +339,12 @@ export type PolicyTypeValues =
 export type ResourceTypeValues =
 | "VOLUME"
 | "INSTANCE"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 3 - tags: input, named, enum, output
+export type ResourceLocationValues =
+| "CLOUD"
+| "OUTPOST"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 9 - tags: input, named, interface, output
@@ -405,6 +414,7 @@ function toSchedule(root: jsonP.JSONValue): Schedule {
 
 // refs: 3 - tags: input, named, interface, output
 export interface CreateRule {
+  Location?: LocationValues | null;
   Interval?: number | null;
   IntervalUnit?: IntervalUnitValues | null;
   Times?: string[] | null;
@@ -413,6 +423,7 @@ export interface CreateRule {
 function fromCreateRule(input?: CreateRule | null): jsonP.JSONValue {
   if (!input) return input;
   return {
+    Location: input["Location"],
     Interval: input["Interval"],
     IntervalUnit: input["IntervalUnit"],
     Times: input["Times"],
@@ -423,6 +434,7 @@ function toCreateRule(root: jsonP.JSONValue): CreateRule {
   return jsonP.readObj({
     required: {},
     optional: {
+      "Location": (x: jsonP.JSONValue) => cmnP.readEnum<LocationValues>(x),
       "Interval": "n",
       "IntervalUnit": (x: jsonP.JSONValue) => cmnP.readEnum<IntervalUnitValues>(x),
       "Times": ["s"],
@@ -430,6 +442,12 @@ function toCreateRule(root: jsonP.JSONValue): CreateRule {
     },
   }, root);
 }
+
+// refs: 3 - tags: input, named, enum, output
+export type LocationValues =
+| "CLOUD"
+| "OUTPOST_LOCAL"
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, enum, output
 export type IntervalUnitValues =
@@ -500,7 +518,8 @@ function toFastRestoreRule(root: jsonP.JSONValue): FastRestoreRule {
 
 // refs: 3 - tags: input, named, interface, output
 export interface CrossRegionCopyRule {
-  TargetRegion: string;
+  TargetRegion?: string | null;
+  Target?: string | null;
   Encrypted: boolean;
   CmkArn?: string | null;
   CopyTags?: boolean | null;
@@ -510,6 +529,7 @@ function fromCrossRegionCopyRule(input?: CrossRegionCopyRule | null): jsonP.JSON
   if (!input) return input;
   return {
     TargetRegion: input["TargetRegion"],
+    Target: input["Target"],
     Encrypted: input["Encrypted"],
     CmkArn: input["CmkArn"],
     CopyTags: input["CopyTags"],
@@ -519,10 +539,11 @@ function fromCrossRegionCopyRule(input?: CrossRegionCopyRule | null): jsonP.JSON
 function toCrossRegionCopyRule(root: jsonP.JSONValue): CrossRegionCopyRule {
   return jsonP.readObj({
     required: {
-      "TargetRegion": "s",
       "Encrypted": "b",
     },
     optional: {
+      "TargetRegion": "s",
+      "Target": "s",
       "CmkArn": "s",
       "CopyTags": "b",
       "RetainRule": toCrossRegionCopyRetainRule,

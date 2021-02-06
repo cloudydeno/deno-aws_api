@@ -5,7 +5,7 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import * as uuidv4 from "https://deno.land/std@0.75.0/uuid/v4.ts";
+import * as uuidv4 from "https://deno.land/std@0.86.0/uuid/v4.ts";
 import * as cmnP from "../../encoding/common.ts";
 import * as jsonP from "../../encoding/json.ts";
 function generateIdemptToken() {
@@ -1787,8 +1787,8 @@ function toS3JobDefinition(root: jsonP.JSONValue): S3JobDefinition {
 
 // refs: 3 - tags: input, named, interface, output
 export interface S3BucketDefinitionForJob {
-  accountId?: string | null;
-  buckets?: string[] | null;
+  accountId: string;
+  buckets: string[];
 }
 function fromS3BucketDefinitionForJob(input?: S3BucketDefinitionForJob | null): jsonP.JSONValue {
   if (!input) return input;
@@ -1799,11 +1799,11 @@ function fromS3BucketDefinitionForJob(input?: S3BucketDefinitionForJob | null): 
 }
 function toS3BucketDefinitionForJob(root: jsonP.JSONValue): S3BucketDefinitionForJob {
   return jsonP.readObj({
-    required: {},
-    optional: {
+    required: {
       "accountId": "s",
       "buckets": ["s"],
     },
+    optional: {},
   }, root);
 }
 
@@ -1904,6 +1904,7 @@ export type JobComparator =
 | "LTE"
 | "NE"
 | "CONTAINS"
+| "STARTS_WITH"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, enum, output
@@ -1913,6 +1914,7 @@ export type ScopeFilterKey =
 | "OBJECT_LAST_MODIFIED_DATE"
 | "OBJECT_SIZE"
 | "TAG"
+| "OBJECT_KEY"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, interface, output

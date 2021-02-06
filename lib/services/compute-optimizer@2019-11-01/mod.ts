@@ -210,6 +210,29 @@ export default class ComputeOptimizer {
     }, await resp.json());
   }
 
+  async getLambdaFunctionRecommendations(
+    {abortSignal, ...params}: RequestConfig & GetLambdaFunctionRecommendationsRequest = {},
+  ): Promise<GetLambdaFunctionRecommendationsResponse> {
+    const body: jsonP.JSONObject = {
+      functionArns: params["functionArns"],
+      accountIds: params["accountIds"],
+      filters: params["filters"]?.map(x => fromLambdaFunctionRecommendationFilter(x)),
+      nextToken: params["nextToken"],
+      maxResults: params["maxResults"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "GetLambdaFunctionRecommendations",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "nextToken": "s",
+        "lambdaFunctionRecommendations": [toLambdaFunctionRecommendation],
+      },
+    }, await resp.json());
+  }
+
   async getRecommendationSummaries(
     {abortSignal, ...params}: RequestConfig & GetRecommendationSummariesRequest = {},
   ): Promise<GetRecommendationSummariesResponse> {
@@ -322,6 +345,15 @@ export interface GetEnrollmentStatusRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface GetLambdaFunctionRecommendationsRequest {
+  functionArns?: string[] | null;
+  accountIds?: string[] | null;
+  filters?: LambdaFunctionRecommendationFilter[] | null;
+  nextToken?: string | null;
+  maxResults?: number | null;
+}
+
+// refs: 1 - tags: named, input
 export interface GetRecommendationSummariesRequest {
   accountIds?: string[] | null;
   nextToken?: string | null;
@@ -383,6 +415,12 @@ export interface GetEnrollmentStatusResponse {
   status?: Status | null;
   statusReason?: string | null;
   memberAccountsEnrolled?: boolean | null;
+}
+
+// refs: 1 - tags: named, output
+export interface GetLambdaFunctionRecommendationsResponse {
+  nextToken?: string | null;
+  lambdaFunctionRecommendations?: LambdaFunctionRecommendation[] | null;
 }
 
 // refs: 1 - tags: named, output
@@ -553,6 +591,25 @@ export type EBSFilterName =
 export type MetricStatistic =
 | "Maximum"
 | "Average"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 1 - tags: input, named, interface
+export interface LambdaFunctionRecommendationFilter {
+  name?: LambdaFunctionRecommendationFilterName | null;
+  values?: string[] | null;
+}
+function fromLambdaFunctionRecommendationFilter(input?: LambdaFunctionRecommendationFilter | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    name: input["name"],
+    values: input["values"],
+  }
+}
+
+// refs: 1 - tags: input, named, enum
+export type LambdaFunctionRecommendationFilterName =
+| "Finding"
+| "FindingReasonCode"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, enum, output
@@ -919,6 +976,7 @@ export type RecommendationSourceType =
 | "Ec2Instance"
 | "AutoScalingGroup"
 | "EbsVolume"
+| "LambdaFunction"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
@@ -956,6 +1014,129 @@ function toProjectedMetric(root: jsonP.JSONValue): ProjectedMetric {
 }
 
 // refs: 1 - tags: output, named, interface
+export interface LambdaFunctionRecommendation {
+  functionArn?: string | null;
+  functionVersion?: string | null;
+  accountId?: string | null;
+  currentMemorySize?: number | null;
+  numberOfInvocations?: number | null;
+  utilizationMetrics?: LambdaFunctionUtilizationMetric[] | null;
+  lookbackPeriodInDays?: number | null;
+  lastRefreshTimestamp?: Date | number | null;
+  finding?: LambdaFunctionRecommendationFinding | null;
+  findingReasonCodes?: LambdaFunctionRecommendationFindingReasonCode[] | null;
+  memorySizeRecommendationOptions?: LambdaFunctionMemoryRecommendationOption[] | null;
+}
+function toLambdaFunctionRecommendation(root: jsonP.JSONValue): LambdaFunctionRecommendation {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "functionArn": "s",
+      "functionVersion": "s",
+      "accountId": "s",
+      "currentMemorySize": "n",
+      "numberOfInvocations": "n",
+      "utilizationMetrics": [toLambdaFunctionUtilizationMetric],
+      "lookbackPeriodInDays": "n",
+      "lastRefreshTimestamp": "d",
+      "finding": (x: jsonP.JSONValue) => cmnP.readEnum<LambdaFunctionRecommendationFinding>(x),
+      "findingReasonCodes": [(x: jsonP.JSONValue) => cmnP.readEnum<LambdaFunctionRecommendationFindingReasonCode>(x)],
+      "memorySizeRecommendationOptions": [toLambdaFunctionMemoryRecommendationOption],
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
+export interface LambdaFunctionUtilizationMetric {
+  name?: LambdaFunctionMetricName | null;
+  statistic?: LambdaFunctionMetricStatistic | null;
+  value?: number | null;
+}
+function toLambdaFunctionUtilizationMetric(root: jsonP.JSONValue): LambdaFunctionUtilizationMetric {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "name": (x: jsonP.JSONValue) => cmnP.readEnum<LambdaFunctionMetricName>(x),
+      "statistic": (x: jsonP.JSONValue) => cmnP.readEnum<LambdaFunctionMetricStatistic>(x),
+      "value": "n",
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, enum
+export type LambdaFunctionMetricName =
+| "Duration"
+| "Memory"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 1 - tags: output, named, enum
+export type LambdaFunctionMetricStatistic =
+| "Maximum"
+| "Average"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 1 - tags: output, named, enum
+export type LambdaFunctionRecommendationFinding =
+| "Optimized"
+| "NotOptimized"
+| "Unavailable"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 1 - tags: output, named, enum
+export type LambdaFunctionRecommendationFindingReasonCode =
+| "MemoryOverprovisioned"
+| "MemoryUnderprovisioned"
+| "InsufficientData"
+| "Inconclusive"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 1 - tags: output, named, interface
+export interface LambdaFunctionMemoryRecommendationOption {
+  rank?: number | null;
+  memorySize?: number | null;
+  projectedUtilizationMetrics?: LambdaFunctionMemoryProjectedMetric[] | null;
+}
+function toLambdaFunctionMemoryRecommendationOption(root: jsonP.JSONValue): LambdaFunctionMemoryRecommendationOption {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "rank": "n",
+      "memorySize": "n",
+      "projectedUtilizationMetrics": [toLambdaFunctionMemoryProjectedMetric],
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, interface
+export interface LambdaFunctionMemoryProjectedMetric {
+  name?: LambdaFunctionMemoryMetricName | null;
+  statistic?: LambdaFunctionMemoryMetricStatistic | null;
+  value?: number | null;
+}
+function toLambdaFunctionMemoryProjectedMetric(root: jsonP.JSONValue): LambdaFunctionMemoryProjectedMetric {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "name": (x: jsonP.JSONValue) => cmnP.readEnum<LambdaFunctionMemoryMetricName>(x),
+      "statistic": (x: jsonP.JSONValue) => cmnP.readEnum<LambdaFunctionMemoryMetricStatistic>(x),
+      "value": "n",
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, enum
+export type LambdaFunctionMemoryMetricName =
+| "Duration"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 1 - tags: output, named, enum
+export type LambdaFunctionMemoryMetricStatistic =
+| "LowerBound"
+| "UpperBound"
+| "Expected"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 1 - tags: output, named, interface
 export interface RecommendationSummary {
   summaries?: Summary[] | null;
   recommendationResourceType?: RecommendationSourceType | null;
@@ -976,6 +1157,7 @@ function toRecommendationSummary(root: jsonP.JSONValue): RecommendationSummary {
 export interface Summary {
   name?: Finding | null;
   value?: number | null;
+  reasonCodeSummaries?: ReasonCodeSummary[] | null;
 }
 function toSummary(root: jsonP.JSONValue): Summary {
   return jsonP.readObj({
@@ -983,6 +1165,28 @@ function toSummary(root: jsonP.JSONValue): Summary {
     optional: {
       "name": (x: jsonP.JSONValue) => cmnP.readEnum<Finding>(x),
       "value": "n",
+      "reasonCodeSummaries": [toReasonCodeSummary],
     },
   }, root);
 }
+
+// refs: 1 - tags: output, named, interface
+export interface ReasonCodeSummary {
+  name?: FindingReasonCode | null;
+  value?: number | null;
+}
+function toReasonCodeSummary(root: jsonP.JSONValue): ReasonCodeSummary {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "name": (x: jsonP.JSONValue) => cmnP.readEnum<FindingReasonCode>(x),
+      "value": "n",
+    },
+  }, root);
+}
+
+// refs: 1 - tags: output, named, enum
+export type FindingReasonCode =
+| "MemoryOverprovisioned"
+| "MemoryUnderprovisioned"
+| cmnP.UnexpectedEnumValue;

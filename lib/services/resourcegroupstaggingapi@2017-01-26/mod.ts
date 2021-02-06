@@ -81,6 +81,7 @@ export default class ResourceGroupsTaggingAPI {
       ResourceTypeFilters: params["ResourceTypeFilters"],
       IncludeComplianceDetails: params["IncludeComplianceDetails"],
       ExcludeCompliantResources: params["ExcludeCompliantResources"],
+      ResourceARNList: params["ResourceARNList"],
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -214,6 +215,7 @@ export interface GetResourcesInput {
   ResourceTypeFilters?: string[] | null;
   IncludeComplianceDetails?: boolean | null;
   ExcludeCompliantResources?: boolean | null;
+  ResourceARNList?: string[] | null;
 }
 
 // refs: 1 - tags: named, input

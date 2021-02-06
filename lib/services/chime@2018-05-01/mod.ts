@@ -5,7 +5,7 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import * as uuidv4 from "https://deno.land/std@0.75.0/uuid/v4.ts";
+import * as uuidv4 from "https://deno.land/std@0.86.0/uuid/v4.ts";
 import * as cmnP from "../../encoding/common.ts";
 import * as jsonP from "../../encoding/json.ts";
 function generateIdemptToken() {
@@ -274,6 +274,7 @@ export default class Chime {
       Name: params["Name"],
       Metadata: params["Metadata"],
       ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
+      Tags: params["Tags"]?.map(x => fromTag(x)),
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -321,6 +322,7 @@ export default class Chime {
       Name: params["Name"],
       Metadata: params["Metadata"],
       ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
+      Tags: params["Tags"]?.map(x => fromTag(x)),
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -382,6 +384,7 @@ export default class Chime {
   async createChannel(
     {abortSignal, ...params}: RequestConfig & CreateChannelRequest,
   ): Promise<CreateChannelResponse> {
+    const headers = new Headers;
     const body: jsonP.JSONObject = {
       AppInstanceArn: params["AppInstanceArn"],
       Name: params["Name"],
@@ -391,8 +394,9 @@ export default class Chime {
       ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
       Tags: params["Tags"]?.map(x => fromTag(x)),
     };
+    if (params["ChimeBearer"] != null) headers.append("x-amz-chime-bearer", params["ChimeBearer"]);
     const resp = await this.#client.performRequest({
-      abortSignal, body,
+      abortSignal, headers, body,
       action: "CreateChannel",
       requestUri: "/channels",
       responseCode: 201,
@@ -409,11 +413,13 @@ export default class Chime {
   async createChannelBan(
     {abortSignal, ...params}: RequestConfig & CreateChannelBanRequest,
   ): Promise<CreateChannelBanResponse> {
+    const headers = new Headers;
     const body: jsonP.JSONObject = {
       MemberArn: params["MemberArn"],
     };
+    if (params["ChimeBearer"] != null) headers.append("x-amz-chime-bearer", params["ChimeBearer"]);
     const resp = await this.#client.performRequest({
-      abortSignal, body,
+      abortSignal, headers, body,
       action: "CreateChannelBan",
       requestUri: cmnP.encodePath`/channels/${params["ChannelArn"]}/bans`,
       responseCode: 201,
@@ -431,12 +437,14 @@ export default class Chime {
   async createChannelMembership(
     {abortSignal, ...params}: RequestConfig & CreateChannelMembershipRequest,
   ): Promise<CreateChannelMembershipResponse> {
+    const headers = new Headers;
     const body: jsonP.JSONObject = {
       MemberArn: params["MemberArn"],
       Type: params["Type"],
     };
+    if (params["ChimeBearer"] != null) headers.append("x-amz-chime-bearer", params["ChimeBearer"]);
     const resp = await this.#client.performRequest({
-      abortSignal, body,
+      abortSignal, headers, body,
       action: "CreateChannelMembership",
       requestUri: cmnP.encodePath`/channels/${params["ChannelArn"]}/memberships`,
       responseCode: 201,
@@ -454,11 +462,13 @@ export default class Chime {
   async createChannelModerator(
     {abortSignal, ...params}: RequestConfig & CreateChannelModeratorRequest,
   ): Promise<CreateChannelModeratorResponse> {
+    const headers = new Headers;
     const body: jsonP.JSONObject = {
       ChannelModeratorArn: params["ChannelModeratorArn"],
     };
+    if (params["ChimeBearer"] != null) headers.append("x-amz-chime-bearer", params["ChimeBearer"]);
     const resp = await this.#client.performRequest({
-      abortSignal, body,
+      abortSignal, headers, body,
       action: "CreateChannelModerator",
       requestUri: cmnP.encodePath`/channels/${params["ChannelArn"]}/moderators`,
       responseCode: 201,
@@ -857,9 +867,10 @@ export default class Chime {
   async deleteChannel(
     {abortSignal, ...params}: RequestConfig & DeleteChannelRequest,
   ): Promise<void> {
-
+    const headers = new Headers;
+    if (params["ChimeBearer"] != null) headers.append("x-amz-chime-bearer", params["ChimeBearer"]);
     const resp = await this.#client.performRequest({
-      abortSignal,
+      abortSignal, headers,
       action: "DeleteChannel",
       method: "DELETE",
       requestUri: cmnP.encodePath`/channels/${params["ChannelArn"]}`,
@@ -871,9 +882,10 @@ export default class Chime {
   async deleteChannelBan(
     {abortSignal, ...params}: RequestConfig & DeleteChannelBanRequest,
   ): Promise<void> {
-
+    const headers = new Headers;
+    if (params["ChimeBearer"] != null) headers.append("x-amz-chime-bearer", params["ChimeBearer"]);
     const resp = await this.#client.performRequest({
-      abortSignal,
+      abortSignal, headers,
       action: "DeleteChannelBan",
       method: "DELETE",
       requestUri: cmnP.encodePath`/channels/${params["ChannelArn"]}/bans/${params["MemberArn"]}`,
@@ -885,9 +897,10 @@ export default class Chime {
   async deleteChannelMembership(
     {abortSignal, ...params}: RequestConfig & DeleteChannelMembershipRequest,
   ): Promise<void> {
-
+    const headers = new Headers;
+    if (params["ChimeBearer"] != null) headers.append("x-amz-chime-bearer", params["ChimeBearer"]);
     const resp = await this.#client.performRequest({
-      abortSignal,
+      abortSignal, headers,
       action: "DeleteChannelMembership",
       method: "DELETE",
       requestUri: cmnP.encodePath`/channels/${params["ChannelArn"]}/memberships/${params["MemberArn"]}`,
@@ -899,9 +912,10 @@ export default class Chime {
   async deleteChannelMessage(
     {abortSignal, ...params}: RequestConfig & DeleteChannelMessageRequest,
   ): Promise<void> {
-
+    const headers = new Headers;
+    if (params["ChimeBearer"] != null) headers.append("x-amz-chime-bearer", params["ChimeBearer"]);
     const resp = await this.#client.performRequest({
-      abortSignal,
+      abortSignal, headers,
       action: "DeleteChannelMessage",
       method: "DELETE",
       requestUri: cmnP.encodePath`/channels/${params["ChannelArn"]}/messages/${params["MessageId"]}`,
@@ -913,9 +927,10 @@ export default class Chime {
   async deleteChannelModerator(
     {abortSignal, ...params}: RequestConfig & DeleteChannelModeratorRequest,
   ): Promise<void> {
-
+    const headers = new Headers;
+    if (params["ChimeBearer"] != null) headers.append("x-amz-chime-bearer", params["ChimeBearer"]);
     const resp = await this.#client.performRequest({
-      abortSignal,
+      abortSignal, headers,
       action: "DeleteChannelModerator",
       method: "DELETE",
       requestUri: cmnP.encodePath`/channels/${params["ChannelArn"]}/moderators/${params["ChannelModeratorArn"]}`,
@@ -1196,9 +1211,10 @@ export default class Chime {
   async describeChannel(
     {abortSignal, ...params}: RequestConfig & DescribeChannelRequest,
   ): Promise<DescribeChannelResponse> {
-
+    const headers = new Headers;
+    if (params["ChimeBearer"] != null) headers.append("x-amz-chime-bearer", params["ChimeBearer"]);
     const resp = await this.#client.performRequest({
-      abortSignal,
+      abortSignal, headers,
       action: "DescribeChannel",
       method: "GET",
       requestUri: cmnP.encodePath`/channels/${params["ChannelArn"]}`,
@@ -1216,9 +1232,10 @@ export default class Chime {
   async describeChannelBan(
     {abortSignal, ...params}: RequestConfig & DescribeChannelBanRequest,
   ): Promise<DescribeChannelBanResponse> {
-
+    const headers = new Headers;
+    if (params["ChimeBearer"] != null) headers.append("x-amz-chime-bearer", params["ChimeBearer"]);
     const resp = await this.#client.performRequest({
-      abortSignal,
+      abortSignal, headers,
       action: "DescribeChannelBan",
       method: "GET",
       requestUri: cmnP.encodePath`/channels/${params["ChannelArn"]}/bans/${params["MemberArn"]}`,
@@ -1236,9 +1253,10 @@ export default class Chime {
   async describeChannelMembership(
     {abortSignal, ...params}: RequestConfig & DescribeChannelMembershipRequest,
   ): Promise<DescribeChannelMembershipResponse> {
-
+    const headers = new Headers;
+    if (params["ChimeBearer"] != null) headers.append("x-amz-chime-bearer", params["ChimeBearer"]);
     const resp = await this.#client.performRequest({
-      abortSignal,
+      abortSignal, headers,
       action: "DescribeChannelMembership",
       method: "GET",
       requestUri: cmnP.encodePath`/channels/${params["ChannelArn"]}/memberships/${params["MemberArn"]}`,
@@ -1256,10 +1274,12 @@ export default class Chime {
   async describeChannelMembershipForAppInstanceUser(
     {abortSignal, ...params}: RequestConfig & DescribeChannelMembershipForAppInstanceUserRequest,
   ): Promise<DescribeChannelMembershipForAppInstanceUserResponse> {
+    const headers = new Headers;
     const query = new URLSearchParams;
     query.set("app-instance-user-arn", params["AppInstanceUserArn"]?.toString() ?? "");
+    if (params["ChimeBearer"] != null) headers.append("x-amz-chime-bearer", params["ChimeBearer"]);
     const resp = await this.#client.performRequest({
-      abortSignal, query,
+      abortSignal, headers, query,
       action: "DescribeChannelMembershipForAppInstanceUser",
       method: "GET",
       requestUri: cmnP.encodePath`/channels/${params["ChannelArn"]}?scope=app-instance-user-membership`,
@@ -1277,10 +1297,12 @@ export default class Chime {
   async describeChannelModeratedByAppInstanceUser(
     {abortSignal, ...params}: RequestConfig & DescribeChannelModeratedByAppInstanceUserRequest,
   ): Promise<DescribeChannelModeratedByAppInstanceUserResponse> {
+    const headers = new Headers;
     const query = new URLSearchParams;
     query.set("app-instance-user-arn", params["AppInstanceUserArn"]?.toString() ?? "");
+    if (params["ChimeBearer"] != null) headers.append("x-amz-chime-bearer", params["ChimeBearer"]);
     const resp = await this.#client.performRequest({
-      abortSignal, query,
+      abortSignal, headers, query,
       action: "DescribeChannelModeratedByAppInstanceUser",
       method: "GET",
       requestUri: cmnP.encodePath`/channels/${params["ChannelArn"]}?scope=app-instance-user-moderated-channel`,
@@ -1298,9 +1320,10 @@ export default class Chime {
   async describeChannelModerator(
     {abortSignal, ...params}: RequestConfig & DescribeChannelModeratorRequest,
   ): Promise<DescribeChannelModeratorResponse> {
-
+    const headers = new Headers;
+    if (params["ChimeBearer"] != null) headers.append("x-amz-chime-bearer", params["ChimeBearer"]);
     const resp = await this.#client.performRequest({
-      abortSignal,
+      abortSignal, headers,
       action: "DescribeChannelModerator",
       method: "GET",
       requestUri: cmnP.encodePath`/channels/${params["ChannelArn"]}/moderators/${params["ChannelModeratorArn"]}`,
@@ -1506,9 +1529,10 @@ export default class Chime {
   async getChannelMessage(
     {abortSignal, ...params}: RequestConfig & GetChannelMessageRequest,
   ): Promise<GetChannelMessageResponse> {
-
+    const headers = new Headers;
+    if (params["ChimeBearer"] != null) headers.append("x-amz-chime-bearer", params["ChimeBearer"]);
     const resp = await this.#client.performRequest({
-      abortSignal,
+      abortSignal, headers,
       action: "GetChannelMessage",
       method: "GET",
       requestUri: cmnP.encodePath`/channels/${params["ChannelArn"]}/messages/${params["MessageId"]}`,
@@ -2161,11 +2185,13 @@ export default class Chime {
   async listChannelBans(
     {abortSignal, ...params}: RequestConfig & ListChannelBansRequest,
   ): Promise<ListChannelBansResponse> {
+    const headers = new Headers;
     const query = new URLSearchParams;
     if (params["MaxResults"] != null) query.set("max-results", params["MaxResults"]?.toString() ?? "");
     if (params["NextToken"] != null) query.set("next-token", params["NextToken"]?.toString() ?? "");
+    if (params["ChimeBearer"] != null) headers.append("x-amz-chime-bearer", params["ChimeBearer"]);
     const resp = await this.#client.performRequest({
-      abortSignal, query,
+      abortSignal, headers, query,
       action: "ListChannelBans",
       method: "GET",
       requestUri: cmnP.encodePath`/channels/${params["ChannelArn"]}/bans`,
@@ -2185,12 +2211,14 @@ export default class Chime {
   async listChannelMemberships(
     {abortSignal, ...params}: RequestConfig & ListChannelMembershipsRequest,
   ): Promise<ListChannelMembershipsResponse> {
+    const headers = new Headers;
     const query = new URLSearchParams;
     if (params["Type"] != null) query.set("type", params["Type"]?.toString() ?? "");
     if (params["MaxResults"] != null) query.set("max-results", params["MaxResults"]?.toString() ?? "");
     if (params["NextToken"] != null) query.set("next-token", params["NextToken"]?.toString() ?? "");
+    if (params["ChimeBearer"] != null) headers.append("x-amz-chime-bearer", params["ChimeBearer"]);
     const resp = await this.#client.performRequest({
-      abortSignal, query,
+      abortSignal, headers, query,
       action: "ListChannelMemberships",
       method: "GET",
       requestUri: cmnP.encodePath`/channels/${params["ChannelArn"]}/memberships`,
@@ -2210,12 +2238,14 @@ export default class Chime {
   async listChannelMembershipsForAppInstanceUser(
     {abortSignal, ...params}: RequestConfig & ListChannelMembershipsForAppInstanceUserRequest = {},
   ): Promise<ListChannelMembershipsForAppInstanceUserResponse> {
+    const headers = new Headers;
     const query = new URLSearchParams;
     if (params["AppInstanceUserArn"] != null) query.set("app-instance-user-arn", params["AppInstanceUserArn"]?.toString() ?? "");
     if (params["MaxResults"] != null) query.set("max-results", params["MaxResults"]?.toString() ?? "");
     if (params["NextToken"] != null) query.set("next-token", params["NextToken"]?.toString() ?? "");
+    if (params["ChimeBearer"] != null) headers.append("x-amz-chime-bearer", params["ChimeBearer"]);
     const resp = await this.#client.performRequest({
-      abortSignal, query,
+      abortSignal, headers, query,
       action: "ListChannelMembershipsForAppInstanceUser",
       method: "GET",
       requestUri: "/channels?scope=app-instance-user-memberships",
@@ -2234,14 +2264,16 @@ export default class Chime {
   async listChannelMessages(
     {abortSignal, ...params}: RequestConfig & ListChannelMessagesRequest,
   ): Promise<ListChannelMessagesResponse> {
+    const headers = new Headers;
     const query = new URLSearchParams;
     if (params["SortOrder"] != null) query.set("sort-order", params["SortOrder"]?.toString() ?? "");
     if (params["NotBefore"] != null) query.set("not-before", cmnP.serializeDate_iso8601(params["NotBefore"]) ?? "");
     if (params["NotAfter"] != null) query.set("not-after", cmnP.serializeDate_iso8601(params["NotAfter"]) ?? "");
     if (params["MaxResults"] != null) query.set("max-results", params["MaxResults"]?.toString() ?? "");
     if (params["NextToken"] != null) query.set("next-token", params["NextToken"]?.toString() ?? "");
+    if (params["ChimeBearer"] != null) headers.append("x-amz-chime-bearer", params["ChimeBearer"]);
     const resp = await this.#client.performRequest({
-      abortSignal, query,
+      abortSignal, headers, query,
       action: "ListChannelMessages",
       method: "GET",
       requestUri: cmnP.encodePath`/channels/${params["ChannelArn"]}/messages`,
@@ -2261,11 +2293,13 @@ export default class Chime {
   async listChannelModerators(
     {abortSignal, ...params}: RequestConfig & ListChannelModeratorsRequest,
   ): Promise<ListChannelModeratorsResponse> {
+    const headers = new Headers;
     const query = new URLSearchParams;
     if (params["MaxResults"] != null) query.set("max-results", params["MaxResults"]?.toString() ?? "");
     if (params["NextToken"] != null) query.set("next-token", params["NextToken"]?.toString() ?? "");
+    if (params["ChimeBearer"] != null) headers.append("x-amz-chime-bearer", params["ChimeBearer"]);
     const resp = await this.#client.performRequest({
-      abortSignal, query,
+      abortSignal, headers, query,
       action: "ListChannelModerators",
       method: "GET",
       requestUri: cmnP.encodePath`/channels/${params["ChannelArn"]}/moderators`,
@@ -2285,13 +2319,15 @@ export default class Chime {
   async listChannels(
     {abortSignal, ...params}: RequestConfig & ListChannelsRequest,
   ): Promise<ListChannelsResponse> {
+    const headers = new Headers;
     const query = new URLSearchParams;
     query.set("app-instance-arn", params["AppInstanceArn"]?.toString() ?? "");
     if (params["Privacy"] != null) query.set("privacy", params["Privacy"]?.toString() ?? "");
     if (params["MaxResults"] != null) query.set("max-results", params["MaxResults"]?.toString() ?? "");
     if (params["NextToken"] != null) query.set("next-token", params["NextToken"]?.toString() ?? "");
+    if (params["ChimeBearer"] != null) headers.append("x-amz-chime-bearer", params["ChimeBearer"]);
     const resp = await this.#client.performRequest({
-      abortSignal, query,
+      abortSignal, headers, query,
       action: "ListChannels",
       method: "GET",
       requestUri: "/channels",
@@ -2310,12 +2346,14 @@ export default class Chime {
   async listChannelsModeratedByAppInstanceUser(
     {abortSignal, ...params}: RequestConfig & ListChannelsModeratedByAppInstanceUserRequest = {},
   ): Promise<ListChannelsModeratedByAppInstanceUserResponse> {
+    const headers = new Headers;
     const query = new URLSearchParams;
     if (params["AppInstanceUserArn"] != null) query.set("app-instance-user-arn", params["AppInstanceUserArn"]?.toString() ?? "");
     if (params["MaxResults"] != null) query.set("max-results", params["MaxResults"]?.toString() ?? "");
     if (params["NextToken"] != null) query.set("next-token", params["NextToken"]?.toString() ?? "");
+    if (params["ChimeBearer"] != null) headers.append("x-amz-chime-bearer", params["ChimeBearer"]);
     const resp = await this.#client.performRequest({
-      abortSignal, query,
+      abortSignal, headers, query,
       action: "ListChannelsModeratedByAppInstanceUser",
       method: "GET",
       requestUri: "/channels?scope=app-instance-user-moderated-channels",
@@ -2908,9 +2946,10 @@ export default class Chime {
   async redactChannelMessage(
     {abortSignal, ...params}: RequestConfig & RedactChannelMessageRequest,
   ): Promise<RedactChannelMessageResponse> {
-
+    const headers = new Headers;
+    if (params["ChimeBearer"] != null) headers.append("x-amz-chime-bearer", params["ChimeBearer"]);
     const resp = await this.#client.performRequest({
-      abortSignal,
+      abortSignal, headers,
       action: "RedactChannelMessage",
       requestUri: cmnP.encodePath`/channels/${params["ChannelArn"]}/messages/${params["MessageId"]}?operation=redact`,
       responseCode: 200,
@@ -3039,6 +3078,7 @@ export default class Chime {
   async sendChannelMessage(
     {abortSignal, ...params}: RequestConfig & SendChannelMessageRequest,
   ): Promise<SendChannelMessageResponse> {
+    const headers = new Headers;
     const body: jsonP.JSONObject = {
       Content: params["Content"],
       Type: params["Type"],
@@ -3046,8 +3086,9 @@ export default class Chime {
       Metadata: params["Metadata"],
       ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
     };
+    if (params["ChimeBearer"] != null) headers.append("x-amz-chime-bearer", params["ChimeBearer"]);
     const resp = await this.#client.performRequest({
-      abortSignal, body,
+      abortSignal, headers, body,
       action: "SendChannelMessage",
       requestUri: cmnP.encodePath`/channels/${params["ChannelArn"]}/messages`,
       responseCode: 201,
@@ -3256,13 +3297,15 @@ export default class Chime {
   async updateChannel(
     {abortSignal, ...params}: RequestConfig & UpdateChannelRequest,
   ): Promise<UpdateChannelResponse> {
+    const headers = new Headers;
     const body: jsonP.JSONObject = {
       Name: params["Name"],
       Mode: params["Mode"],
       Metadata: params["Metadata"],
     };
+    if (params["ChimeBearer"] != null) headers.append("x-amz-chime-bearer", params["ChimeBearer"]);
     const resp = await this.#client.performRequest({
-      abortSignal, body,
+      abortSignal, headers, body,
       action: "UpdateChannel",
       method: "PUT",
       requestUri: cmnP.encodePath`/channels/${params["ChannelArn"]}`,
@@ -3280,12 +3323,14 @@ export default class Chime {
   async updateChannelMessage(
     {abortSignal, ...params}: RequestConfig & UpdateChannelMessageRequest,
   ): Promise<UpdateChannelMessageResponse> {
+    const headers = new Headers;
     const body: jsonP.JSONObject = {
       Content: params["Content"],
       Metadata: params["Metadata"],
     };
+    if (params["ChimeBearer"] != null) headers.append("x-amz-chime-bearer", params["ChimeBearer"]);
     const resp = await this.#client.performRequest({
-      abortSignal, body,
+      abortSignal, headers, body,
       action: "UpdateChannelMessage",
       method: "PUT",
       requestUri: cmnP.encodePath`/channels/${params["ChannelArn"]}/messages/${params["MessageId"]}`,
@@ -3304,9 +3349,10 @@ export default class Chime {
   async updateChannelReadMarker(
     {abortSignal, ...params}: RequestConfig & UpdateChannelReadMarkerRequest,
   ): Promise<UpdateChannelReadMarkerResponse> {
-
+    const headers = new Headers;
+    if (params["ChimeBearer"] != null) headers.append("x-amz-chime-bearer", params["ChimeBearer"]);
     const resp = await this.#client.performRequest({
-      abortSignal,
+      abortSignal, headers,
       action: "UpdateChannelReadMarker",
       method: "PUT",
       requestUri: cmnP.encodePath`/channels/${params["ChannelArn"]}/readMarker`,
@@ -3640,6 +3686,7 @@ export interface CreateAppInstanceRequest {
   Name: string;
   Metadata?: string | null;
   ClientRequestToken: string;
+  Tags?: Tag[] | null;
 }
 
 // refs: 1 - tags: named, input
@@ -3655,6 +3702,7 @@ export interface CreateAppInstanceUserRequest {
   Name: string;
   Metadata?: string | null;
   ClientRequestToken: string;
+  Tags?: Tag[] | null;
 }
 
 // refs: 1 - tags: named, input
@@ -3680,12 +3728,14 @@ export interface CreateChannelRequest {
   Metadata?: string | null;
   ClientRequestToken: string;
   Tags?: Tag[] | null;
+  ChimeBearer?: string | null;
 }
 
 // refs: 1 - tags: named, input
 export interface CreateChannelBanRequest {
   ChannelArn: string;
   MemberArn: string;
+  ChimeBearer?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -3693,12 +3743,14 @@ export interface CreateChannelMembershipRequest {
   ChannelArn: string;
   MemberArn: string;
   Type: ChannelMembershipType;
+  ChimeBearer?: string | null;
 }
 
 // refs: 1 - tags: named, input
 export interface CreateChannelModeratorRequest {
   ChannelArn: string;
   ChannelModeratorArn: string;
+  ChimeBearer?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -3766,14 +3818,14 @@ export interface CreateRoomMembershipRequest {
 // refs: 1 - tags: named, input
 export interface CreateSipMediaApplicationRequest {
   AwsRegion: string;
-  Name?: string | null;
+  Name: string;
   Endpoints: SipMediaApplicationEndpoint[];
 }
 
 // refs: 1 - tags: named, input
 export interface CreateSipMediaApplicationCallRequest {
-  FromPhoneNumber?: string | null;
-  ToPhoneNumber?: string | null;
+  FromPhoneNumber: string;
+  ToPhoneNumber: string;
   SipMediaApplicationId: string;
 }
 
@@ -3842,30 +3894,35 @@ export interface DeleteAttendeeRequest {
 // refs: 1 - tags: named, input
 export interface DeleteChannelRequest {
   ChannelArn: string;
+  ChimeBearer?: string | null;
 }
 
 // refs: 1 - tags: named, input
 export interface DeleteChannelBanRequest {
   ChannelArn: string;
   MemberArn: string;
+  ChimeBearer?: string | null;
 }
 
 // refs: 1 - tags: named, input
 export interface DeleteChannelMembershipRequest {
   ChannelArn: string;
   MemberArn: string;
+  ChimeBearer?: string | null;
 }
 
 // refs: 1 - tags: named, input
 export interface DeleteChannelMessageRequest {
   ChannelArn: string;
   MessageId: string;
+  ChimeBearer?: string | null;
 }
 
 // refs: 1 - tags: named, input
 export interface DeleteChannelModeratorRequest {
   ChannelArn: string;
   ChannelModeratorArn: string;
+  ChimeBearer?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -3973,36 +4030,42 @@ export interface DescribeAppInstanceUserRequest {
 // refs: 1 - tags: named, input
 export interface DescribeChannelRequest {
   ChannelArn: string;
+  ChimeBearer?: string | null;
 }
 
 // refs: 1 - tags: named, input
 export interface DescribeChannelBanRequest {
   ChannelArn: string;
   MemberArn: string;
+  ChimeBearer?: string | null;
 }
 
 // refs: 1 - tags: named, input
 export interface DescribeChannelMembershipRequest {
   ChannelArn: string;
   MemberArn: string;
+  ChimeBearer?: string | null;
 }
 
 // refs: 1 - tags: named, input
 export interface DescribeChannelMembershipForAppInstanceUserRequest {
   ChannelArn: string;
   AppInstanceUserArn: string;
+  ChimeBearer?: string | null;
 }
 
 // refs: 1 - tags: named, input
 export interface DescribeChannelModeratedByAppInstanceUserRequest {
   ChannelArn: string;
   AppInstanceUserArn: string;
+  ChimeBearer?: string | null;
 }
 
 // refs: 1 - tags: named, input
 export interface DescribeChannelModeratorRequest {
   ChannelArn: string;
   ChannelModeratorArn: string;
+  ChimeBearer?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -4065,6 +4128,7 @@ export interface GetBotRequest {
 export interface GetChannelMessageRequest {
   ChannelArn: string;
   MessageId: string;
+  ChimeBearer?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -4241,6 +4305,7 @@ export interface ListChannelBansRequest {
   ChannelArn: string;
   MaxResults?: number | null;
   NextToken?: string | null;
+  ChimeBearer?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -4249,6 +4314,7 @@ export interface ListChannelMembershipsRequest {
   Type?: ChannelMembershipType | null;
   MaxResults?: number | null;
   NextToken?: string | null;
+  ChimeBearer?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -4256,6 +4322,7 @@ export interface ListChannelMembershipsForAppInstanceUserRequest {
   AppInstanceUserArn?: string | null;
   MaxResults?: number | null;
   NextToken?: string | null;
+  ChimeBearer?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -4266,6 +4333,7 @@ export interface ListChannelMessagesRequest {
   NotAfter?: Date | number | null;
   MaxResults?: number | null;
   NextToken?: string | null;
+  ChimeBearer?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -4273,6 +4341,7 @@ export interface ListChannelModeratorsRequest {
   ChannelArn: string;
   MaxResults?: number | null;
   NextToken?: string | null;
+  ChimeBearer?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -4281,6 +4350,7 @@ export interface ListChannelsRequest {
   Privacy?: ChannelPrivacy | null;
   MaxResults?: number | null;
   NextToken?: string | null;
+  ChimeBearer?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -4288,6 +4358,7 @@ export interface ListChannelsModeratedByAppInstanceUserRequest {
   AppInstanceUserArn?: string | null;
   MaxResults?: number | null;
   NextToken?: string | null;
+  ChimeBearer?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -4472,6 +4543,7 @@ export interface PutVoiceConnectorTerminationCredentialsRequest {
 export interface RedactChannelMessageRequest {
   ChannelArn: string;
   MessageId: string;
+  ChimeBearer?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -4524,6 +4596,7 @@ export interface SendChannelMessageRequest {
   Persistence: ChannelMessagePersistenceType;
   Metadata?: string | null;
   ClientRequestToken: string;
+  ChimeBearer?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -4603,6 +4676,7 @@ export interface UpdateChannelRequest {
   Name: string;
   Mode: ChannelMode;
   Metadata?: string | null;
+  ChimeBearer?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -4611,11 +4685,13 @@ export interface UpdateChannelMessageRequest {
   MessageId: string;
   Content?: string | null;
   Metadata?: string | null;
+  ChimeBearer?: string | null;
 }
 
 // refs: 1 - tags: named, input
 export interface UpdateChannelReadMarkerRequest {
   ChannelArn: string;
+  ChimeBearer?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -5498,7 +5574,7 @@ function fromCreateAttendeeRequestItem(input?: CreateAttendeeRequestItem | null)
   }
 }
 
-// refs: 12 - tags: input, named, interface, output
+// refs: 14 - tags: input, named, interface, output
 export interface Tag {
   Key: string;
   Value: string;

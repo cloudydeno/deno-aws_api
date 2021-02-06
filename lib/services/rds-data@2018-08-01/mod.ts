@@ -283,10 +283,12 @@ function fromSqlParameter(input?: SqlParameter | null): jsonP.JSONValue {
 
 // refs: 2 - tags: input, named, enum
 export type TypeHint =
-| "DATE"
-| "DECIMAL"
-| "TIME"
+| "JSON"
+| "UUID"
 | "TIMESTAMP"
+| "DATE"
+| "TIME"
+| "DECIMAL"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 5 - tags: input, named, interface, output
@@ -370,8 +372,8 @@ function fromResultSetOptions(input?: ResultSetOptions | null): jsonP.JSONValue 
 
 // refs: 1 - tags: input, named, enum
 export type DecimalReturnType =
-| "DOUBLE_OR_LONG"
 | "STRING"
+| "DOUBLE_OR_LONG"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface

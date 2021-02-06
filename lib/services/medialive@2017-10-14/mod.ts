@@ -5,7 +5,7 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import * as uuidv4 from "https://deno.land/std@0.75.0/uuid/v4.ts";
+import * as uuidv4 from "https://deno.land/std@0.86.0/uuid/v4.ts";
 import * as cmnP from "../../encoding/common.ts";
 import * as jsonP from "../../encoding/json.ts";
 function generateIdemptToken() {
@@ -170,6 +170,7 @@ export default class MediaLive {
       reserved: params["Reserved"],
       roleArn: params["RoleArn"],
       tags: params["Tags"],
+      vpc: fromVpcOutputSettings(params["Vpc"]),
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -326,6 +327,7 @@ export default class MediaLive {
         "RoleArn": "s",
         "State": (x: jsonP.JSONValue) => cmnP.readEnum<ChannelState>(x),
         "Tags": x => jsonP.readMap(String, String, x),
+        "Vpc": toVpcOutputSettings,
       },
     }, await resp.json());
   }
@@ -514,6 +516,7 @@ export default class MediaLive {
         "RoleArn": "s",
         "State": (x: jsonP.JSONValue) => cmnP.readEnum<ChannelState>(x),
         "Tags": x => jsonP.readMap(String, String, x),
+        "Vpc": toVpcOutputSettings,
       },
     }, await resp.json());
   }
@@ -1069,6 +1072,7 @@ export default class MediaLive {
         "RoleArn": "s",
         "State": (x: jsonP.JSONValue) => cmnP.readEnum<ChannelState>(x),
         "Tags": x => jsonP.readMap(String, String, x),
+        "Vpc": toVpcOutputSettings,
       },
     }, await resp.json());
   }
@@ -1129,6 +1133,7 @@ export default class MediaLive {
         "RoleArn": "s",
         "State": (x: jsonP.JSONValue) => cmnP.readEnum<ChannelState>(x),
         "Tags": x => jsonP.readMap(String, String, x),
+        "Vpc": toVpcOutputSettings,
       },
     }, await resp.json());
   }
@@ -1676,6 +1681,7 @@ export interface CreateChannelRequest {
   Reserved?: string | null;
   RoleArn?: string | null;
   Tags?: { [key: string]: string | null | undefined } | null;
+  Vpc?: VpcOutputSettings | null;
 }
 
 // refs: 1 - tags: named, input
@@ -2081,6 +2087,7 @@ export interface DeleteChannelResponse {
   RoleArn?: string | null;
   State?: ChannelState | null;
   Tags?: { [key: string]: string | null | undefined } | null;
+  Vpc?: VpcOutputSettings | null;
 }
 
 // refs: 1 - tags: named, output
@@ -2158,6 +2165,7 @@ export interface DescribeChannelResponse {
   RoleArn?: string | null;
   State?: ChannelState | null;
   Tags?: { [key: string]: string | null | undefined } | null;
+  Vpc?: VpcOutputSettings | null;
 }
 
 // refs: 1 - tags: named, output
@@ -2366,6 +2374,7 @@ export interface StartChannelResponse {
   RoleArn?: string | null;
   State?: ChannelState | null;
   Tags?: { [key: string]: string | null | undefined } | null;
+  Vpc?: VpcOutputSettings | null;
 }
 
 // refs: 1 - tags: named, output
@@ -2400,6 +2409,7 @@ export interface StopChannelResponse {
   RoleArn?: string | null;
   State?: ChannelState | null;
   Tags?: { [key: string]: string | null | undefined } | null;
+  Vpc?: VpcOutputSettings | null;
 }
 
 // refs: 1 - tags: named, output
@@ -6291,6 +6301,7 @@ export type HlsH265PackagingType =
 export interface HlsSettings {
   AudioOnlyHlsSettings?: AudioOnlyHlsSettings | null;
   Fmp4HlsSettings?: Fmp4HlsSettings | null;
+  FrameCaptureHlsSettings?: FrameCaptureHlsSettings | null;
   StandardHlsSettings?: StandardHlsSettings | null;
 }
 function fromHlsSettings(input?: HlsSettings | null): jsonP.JSONValue {
@@ -6298,6 +6309,7 @@ function fromHlsSettings(input?: HlsSettings | null): jsonP.JSONValue {
   return {
     audioOnlyHlsSettings: fromAudioOnlyHlsSettings(input["AudioOnlyHlsSettings"]),
     fmp4HlsSettings: fromFmp4HlsSettings(input["Fmp4HlsSettings"]),
+    frameCaptureHlsSettings: fromFrameCaptureHlsSettings(input["FrameCaptureHlsSettings"]),
     standardHlsSettings: fromStandardHlsSettings(input["StandardHlsSettings"]),
   }
 }
@@ -6307,6 +6319,7 @@ function toHlsSettings(root: jsonP.JSONValue): HlsSettings {
     optional: {
       "AudioOnlyHlsSettings": toAudioOnlyHlsSettings,
       "Fmp4HlsSettings": toFmp4HlsSettings,
+      "FrameCaptureHlsSettings": toFrameCaptureHlsSettings,
       "StandardHlsSettings": toStandardHlsSettings,
     },
   }, root);
@@ -6390,6 +6403,21 @@ export type Fmp4TimedMetadataBehavior =
 | "NO_PASSTHROUGH"
 | "PASSTHROUGH"
 | cmnP.UnexpectedEnumValue;
+
+// refs: 9 - tags: input, named, interface, output
+export interface FrameCaptureHlsSettings {
+}
+function fromFrameCaptureHlsSettings(input?: FrameCaptureHlsSettings | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+  }
+}
+function toFrameCaptureHlsSettings(root: jsonP.JSONValue): FrameCaptureHlsSettings {
+  return jsonP.readObj({
+    required: {},
+    optional: {},
+  }, root);
+}
 
 // refs: 9 - tags: input, named, interface, output
 export interface StandardHlsSettings {
@@ -6779,7 +6807,7 @@ function toVideoCodecSettings(root: jsonP.JSONValue): VideoCodecSettings {
 
 // refs: 9 - tags: input, named, interface, output
 export interface FrameCaptureSettings {
-  CaptureInterval: number;
+  CaptureInterval?: number | null;
   CaptureIntervalUnits?: FrameCaptureIntervalUnit | null;
 }
 function fromFrameCaptureSettings(input?: FrameCaptureSettings | null): jsonP.JSONValue {
@@ -6791,10 +6819,9 @@ function fromFrameCaptureSettings(input?: FrameCaptureSettings | null): jsonP.JS
 }
 function toFrameCaptureSettings(root: jsonP.JSONValue): FrameCaptureSettings {
   return jsonP.readObj({
-    required: {
-      "CaptureInterval": "n",
-    },
+    required: {},
     optional: {
+      "CaptureInterval": "n",
       "CaptureIntervalUnits": (x: jsonP.JSONValue) => cmnP.readEnum<FrameCaptureIntervalUnit>(x),
     },
   }, root);
@@ -8488,6 +8515,32 @@ export type LogLevel =
 | "DISABLED"
 | cmnP.UnexpectedEnumValue;
 
+// refs: 9 - tags: input, named, interface, output
+export interface VpcOutputSettings {
+  PublicAddressAllocationIds?: string[] | null;
+  SecurityGroupIds?: string[] | null;
+  SubnetIds: string[];
+}
+function fromVpcOutputSettings(input?: VpcOutputSettings | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    publicAddressAllocationIds: input["PublicAddressAllocationIds"],
+    securityGroupIds: input["SecurityGroupIds"],
+    subnetIds: input["SubnetIds"],
+  }
+}
+function toVpcOutputSettings(root: jsonP.JSONValue): VpcOutputSettings {
+  return jsonP.readObj({
+    required: {
+      "SubnetIds": ["s"],
+    },
+    optional: {
+      "PublicAddressAllocationIds": ["s"],
+      "SecurityGroupIds": ["s"],
+    },
+  }, root);
+}
+
 // refs: 2 - tags: input, named, interface
 export interface InputDestinationRequest {
   StreamName?: string | null;
@@ -8831,6 +8884,7 @@ export interface Channel {
   RoleArn?: string | null;
   State?: ChannelState | null;
   Tags?: { [key: string]: string | null | undefined } | null;
+  Vpc?: VpcOutputSettings | null;
 }
 function toChannel(root: jsonP.JSONValue): Channel {
   return jsonP.readObj({
@@ -8852,6 +8906,7 @@ function toChannel(root: jsonP.JSONValue): Channel {
       "RoleArn": "s",
       "State": (x: jsonP.JSONValue) => cmnP.readEnum<ChannelState>(x),
       "Tags": x => jsonP.readMap(String, String, x),
+      "Vpc": toVpcOutputSettings,
     },
   }, root);
 }
@@ -9453,6 +9508,7 @@ export interface ChannelSummary {
   RoleArn?: string | null;
   State?: ChannelState | null;
   Tags?: { [key: string]: string | null | undefined } | null;
+  Vpc?: VpcOutputSettings | null;
 }
 function toChannelSummary(root: jsonP.JSONValue): ChannelSummary {
   return jsonP.readObj({
@@ -9472,6 +9528,7 @@ function toChannelSummary(root: jsonP.JSONValue): ChannelSummary {
       "RoleArn": "s",
       "State": (x: jsonP.JSONValue) => cmnP.readEnum<ChannelState>(x),
       "Tags": x => jsonP.readMap(String, String, x),
+      "Vpc": toVpcOutputSettings,
     },
   }, root);
 }

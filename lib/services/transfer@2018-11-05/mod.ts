@@ -33,6 +33,7 @@ export default class Transfer {
   ): Promise<CreateServerResponse> {
     const body: jsonP.JSONObject = {
       Certificate: params["Certificate"],
+      Domain: params["Domain"],
       EndpointDetails: fromEndpointDetails(params["EndpointDetails"]),
       EndpointType: params["EndpointType"],
       HostKey: params["HostKey"],
@@ -63,6 +64,7 @@ export default class Transfer {
       HomeDirectoryType: params["HomeDirectoryType"],
       HomeDirectoryMappings: params["HomeDirectoryMappings"]?.map(x => fromHomeDirectoryMapEntry(x)),
       Policy: params["Policy"],
+      PosixProfile: fromPosixProfile(params["PosixProfile"]),
       Role: params["Role"],
       ServerId: params["ServerId"],
       SshPublicKeyBody: params["SshPublicKeyBody"],
@@ -396,6 +398,7 @@ export default class Transfer {
       HomeDirectoryType: params["HomeDirectoryType"],
       HomeDirectoryMappings: params["HomeDirectoryMappings"]?.map(x => fromHomeDirectoryMapEntry(x)),
       Policy: params["Policy"],
+      PosixProfile: fromPosixProfile(params["PosixProfile"]),
       Role: params["Role"],
       ServerId: params["ServerId"],
       UserName: params["UserName"],
@@ -418,6 +421,7 @@ export default class Transfer {
 // refs: 1 - tags: named, input
 export interface CreateServerRequest {
   Certificate?: string | null;
+  Domain?: Domain | null;
   EndpointDetails?: EndpointDetails | null;
   EndpointType?: EndpointType | null;
   HostKey?: string | null;
@@ -435,6 +439,7 @@ export interface CreateUserRequest {
   HomeDirectoryType?: HomeDirectoryType | null;
   HomeDirectoryMappings?: HomeDirectoryMapEntry[] | null;
   Policy?: string | null;
+  PosixProfile?: PosixProfile | null;
   Role: string;
   ServerId: string;
   SshPublicKeyBody?: string | null;
@@ -559,6 +564,7 @@ export interface UpdateUserRequest {
   HomeDirectoryType?: HomeDirectoryType | null;
   HomeDirectoryMappings?: HomeDirectoryMapEntry[] | null;
   Policy?: string | null;
+  PosixProfile?: PosixProfile | null;
   Role?: string | null;
   ServerId: string;
   UserName: string;
@@ -642,6 +648,12 @@ export interface UpdateUserResponse {
   ServerId: string;
   UserName: string;
 }
+
+// refs: 3 - tags: input, named, enum, output
+export type Domain =
+| "S3"
+| "EFS"
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface, output
 export interface EndpointDetails {
@@ -766,6 +778,32 @@ function toHomeDirectoryMapEntry(root: jsonP.JSONValue): HomeDirectoryMapEntry {
   }, root);
 }
 
+// refs: 3 - tags: input, named, interface, output
+export interface PosixProfile {
+  Uid: number;
+  Gid: number;
+  SecondaryGids?: number[] | null;
+}
+function fromPosixProfile(input?: PosixProfile | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    Uid: input["Uid"],
+    Gid: input["Gid"],
+    SecondaryGids: input["SecondaryGids"],
+  }
+}
+function toPosixProfile(root: jsonP.JSONValue): PosixProfile {
+  return jsonP.readObj({
+    required: {
+      "Uid": "n",
+      "Gid": "n",
+    },
+    optional: {
+      "SecondaryGids": ["n"],
+    },
+  }, root);
+}
+
 // refs: 1 - tags: output, named, interface
 export interface DescribedSecurityPolicy {
   Fips?: boolean | null;
@@ -794,6 +832,7 @@ function toDescribedSecurityPolicy(root: jsonP.JSONValue): DescribedSecurityPoli
 export interface DescribedServer {
   Arn: string;
   Certificate?: string | null;
+  Domain?: Domain | null;
   EndpointDetails?: EndpointDetails | null;
   EndpointType?: EndpointType | null;
   HostKeyFingerprint?: string | null;
@@ -814,6 +853,7 @@ function toDescribedServer(root: jsonP.JSONValue): DescribedServer {
     },
     optional: {
       "Certificate": "s",
+      "Domain": (x: jsonP.JSONValue) => cmnP.readEnum<Domain>(x),
       "EndpointDetails": toEndpointDetails,
       "EndpointType": (x: jsonP.JSONValue) => cmnP.readEnum<EndpointType>(x),
       "HostKeyFingerprint": "s",
@@ -847,6 +887,7 @@ export interface DescribedUser {
   HomeDirectoryMappings?: HomeDirectoryMapEntry[] | null;
   HomeDirectoryType?: HomeDirectoryType | null;
   Policy?: string | null;
+  PosixProfile?: PosixProfile | null;
   Role?: string | null;
   SshPublicKeys?: SshPublicKey[] | null;
   Tags?: Tag[] | null;
@@ -862,6 +903,7 @@ function toDescribedUser(root: jsonP.JSONValue): DescribedUser {
       "HomeDirectoryMappings": [toHomeDirectoryMapEntry],
       "HomeDirectoryType": (x: jsonP.JSONValue) => cmnP.readEnum<HomeDirectoryType>(x),
       "Policy": "s",
+      "PosixProfile": toPosixProfile,
       "Role": "s",
       "SshPublicKeys": [toSshPublicKey],
       "Tags": [toTag],
@@ -890,6 +932,7 @@ function toSshPublicKey(root: jsonP.JSONValue): SshPublicKey {
 // refs: 1 - tags: output, named, interface
 export interface ListedServer {
   Arn: string;
+  Domain?: Domain | null;
   IdentityProviderType?: IdentityProviderType | null;
   EndpointType?: EndpointType | null;
   LoggingRole?: string | null;
@@ -903,6 +946,7 @@ function toListedServer(root: jsonP.JSONValue): ListedServer {
       "Arn": "s",
     },
     optional: {
+      "Domain": (x: jsonP.JSONValue) => cmnP.readEnum<Domain>(x),
       "IdentityProviderType": (x: jsonP.JSONValue) => cmnP.readEnum<IdentityProviderType>(x),
       "EndpointType": (x: jsonP.JSONValue) => cmnP.readEnum<EndpointType>(x),
       "LoggingRole": "s",

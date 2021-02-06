@@ -180,6 +180,7 @@ export default class AuditManager {
       description: params["description"],
       complianceType: params["complianceType"],
       controlSets: params["controlSets"]?.map(x => fromCreateAssessmentFrameworkControlSet(x)),
+      tags: params["tags"],
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -1105,6 +1106,7 @@ export interface CreateAssessmentFrameworkRequest {
   description?: string | null;
   complianceType?: string | null;
   controlSets: CreateAssessmentFrameworkControlSet[];
+  tags?: { [key: string]: string | null | undefined } | null;
 }
 
 // refs: 1 - tags: named, input
@@ -2309,6 +2311,7 @@ export interface Framework {
   lastUpdatedAt?: Date | number | null;
   createdBy?: string | null;
   lastUpdatedBy?: string | null;
+  tags?: { [key: string]: string | null | undefined } | null;
 }
 function toFramework(root: jsonP.JSONValue): Framework {
   return jsonP.readObj({
@@ -2327,6 +2330,7 @@ function toFramework(root: jsonP.JSONValue): Framework {
       "lastUpdatedAt": "d",
       "createdBy": "s",
       "lastUpdatedBy": "s",
+      "tags": x => jsonP.readMap(String, String, x),
     },
   }, root);
 }
@@ -2659,6 +2663,7 @@ function toSettings(root: jsonP.JSONValue): Settings {
 
 // refs: 1 - tags: output, named, interface
 export interface AssessmentFrameworkMetadata {
+  arn?: string | null;
   id?: string | null;
   type?: FrameworkType | null;
   name?: string | null;
@@ -2674,6 +2679,7 @@ function toAssessmentFrameworkMetadata(root: jsonP.JSONValue): AssessmentFramewo
   return jsonP.readObj({
     required: {},
     optional: {
+      "arn": "s",
       "id": "s",
       "type": (x: jsonP.JSONValue) => cmnP.readEnum<FrameworkType>(x),
       "name": "s",

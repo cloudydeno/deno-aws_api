@@ -433,6 +433,7 @@ export default class RDS {
     if (params["ProcessorFeatures"]) qsP.appendList(body, prefix+"ProcessorFeatures", params["ProcessorFeatures"], {"appender":ProcessorFeature_Serialize,"entryPrefix":".ProcessorFeature."})
     if ("DeletionProtection" in params) body.append(prefix+"DeletionProtection", (params["DeletionProtection"] ?? '').toString());
     if ("MaxAllocatedStorage" in params) body.append(prefix+"MaxAllocatedStorage", (params["MaxAllocatedStorage"] ?? '').toString());
+    if ("EnableCustomerOwnedIp" in params) body.append(prefix+"EnableCustomerOwnedIp", (params["EnableCustomerOwnedIp"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateDBInstance",
@@ -2040,6 +2041,7 @@ export default class RDS {
     if ("MaxAllocatedStorage" in params) body.append(prefix+"MaxAllocatedStorage", (params["MaxAllocatedStorage"] ?? '').toString());
     if ("CertificateRotationRestart" in params) body.append(prefix+"CertificateRotationRestart", (params["CertificateRotationRestart"] ?? '').toString());
     if ("ReplicaMode" in params) body.append(prefix+"ReplicaMode", (params["ReplicaMode"] ?? '').toString());
+    if ("EnableCustomerOwnedIp" in params) body.append(prefix+"EnableCustomerOwnedIp", (params["EnableCustomerOwnedIp"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ModifyDBInstance",
@@ -2192,6 +2194,8 @@ export default class RDS {
     if ("GlobalClusterIdentifier" in params) body.append(prefix+"GlobalClusterIdentifier", (params["GlobalClusterIdentifier"] ?? '').toString());
     if ("NewGlobalClusterIdentifier" in params) body.append(prefix+"NewGlobalClusterIdentifier", (params["NewGlobalClusterIdentifier"] ?? '').toString());
     if ("DeletionProtection" in params) body.append(prefix+"DeletionProtection", (params["DeletionProtection"] ?? '').toString());
+    if ("EngineVersion" in params) body.append(prefix+"EngineVersion", (params["EngineVersion"] ?? '').toString());
+    if ("AllowMajorVersionUpgrade" in params) body.append(prefix+"AllowMajorVersionUpgrade", (params["AllowMajorVersionUpgrade"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ModifyGlobalCluster",
@@ -2571,6 +2575,7 @@ export default class RDS {
     if ("UseDefaultProcessorFeatures" in params) body.append(prefix+"UseDefaultProcessorFeatures", (params["UseDefaultProcessorFeatures"] ?? '').toString());
     if ("DBParameterGroupName" in params) body.append(prefix+"DBParameterGroupName", (params["DBParameterGroupName"] ?? '').toString());
     if ("DeletionProtection" in params) body.append(prefix+"DeletionProtection", (params["DeletionProtection"] ?? '').toString());
+    if ("EnableCustomerOwnedIp" in params) body.append(prefix+"EnableCustomerOwnedIp", (params["EnableCustomerOwnedIp"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RestoreDBInstanceFromDBSnapshot",
@@ -2678,6 +2683,7 @@ export default class RDS {
     if ("SourceDbiResourceId" in params) body.append(prefix+"SourceDbiResourceId", (params["SourceDbiResourceId"] ?? '').toString());
     if ("MaxAllocatedStorage" in params) body.append(prefix+"MaxAllocatedStorage", (params["MaxAllocatedStorage"] ?? '').toString());
     if ("SourceDBInstanceAutomatedBackupsArn" in params) body.append(prefix+"SourceDBInstanceAutomatedBackupsArn", (params["SourceDBInstanceAutomatedBackupsArn"] ?? '').toString());
+    if ("EnableCustomerOwnedIp" in params) body.append(prefix+"EnableCustomerOwnedIp", (params["EnableCustomerOwnedIp"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RestoreDBInstanceToPointInTime",
@@ -3222,6 +3228,7 @@ export interface CreateDBInstanceMessage {
   ProcessorFeatures?: ProcessorFeature[] | null;
   DeletionProtection?: boolean | null;
   MaxAllocatedStorage?: number | null;
+  EnableCustomerOwnedIp?: boolean | null;
 }
 
 // refs: 1 - tags: named, input
@@ -3918,6 +3925,7 @@ export interface ModifyDBInstanceMessage {
   MaxAllocatedStorage?: number | null;
   CertificateRotationRestart?: boolean | null;
   ReplicaMode?: ReplicaMode | null;
+  EnableCustomerOwnedIp?: boolean | null;
 }
 
 // refs: 1 - tags: named, input
@@ -3982,6 +3990,8 @@ export interface ModifyGlobalClusterMessage {
   GlobalClusterIdentifier?: string | null;
   NewGlobalClusterIdentifier?: string | null;
   DeletionProtection?: boolean | null;
+  EngineVersion?: string | null;
+  AllowMajorVersionUpgrade?: boolean | null;
 }
 
 // refs: 1 - tags: named, input
@@ -4186,6 +4196,7 @@ export interface RestoreDBInstanceFromDBSnapshotMessage {
   UseDefaultProcessorFeatures?: boolean | null;
   DBParameterGroupName?: string | null;
   DeletionProtection?: boolean | null;
+  EnableCustomerOwnedIp?: boolean | null;
 }
 
 // refs: 1 - tags: named, input
@@ -4271,6 +4282,7 @@ export interface RestoreDBInstanceToPointInTimeMessage {
   SourceDbiResourceId?: string | null;
   MaxAllocatedStorage?: number | null;
   SourceDBInstanceAutomatedBackupsArn?: string | null;
+  EnableCustomerOwnedIp?: boolean | null;
 }
 
 // refs: 1 - tags: named, input
@@ -5869,6 +5881,7 @@ export interface DBInstance {
   MaxAllocatedStorage?: number | null;
   TagList: Tag[];
   DBInstanceAutomatedBackupsReplications: DBInstanceAutomatedBackupsReplication[];
+  CustomerOwnedIpEnabled?: boolean | null;
 }
 function DBInstance_Parse(node: xmlP.XmlNode): DBInstance {
   return {
@@ -5911,6 +5924,7 @@ function DBInstance_Parse(node: xmlP.XmlNode): DBInstance {
     MaxAllocatedStorage: node.first("MaxAllocatedStorage", false, x => parseInt(x.content ?? '0')),
     TagList: node.getList("TagList", "Tag").map(Tag_Parse),
     DBInstanceAutomatedBackupsReplications: node.getList("DBInstanceAutomatedBackupsReplications", "DBInstanceAutomatedBackupsReplication").map(DBInstanceAutomatedBackupsReplication_Parse),
+    CustomerOwnedIpEnabled: node.first("CustomerOwnedIpEnabled", false, x => x.content === 'true'),
   };
 }
 

@@ -756,7 +756,7 @@ export interface DeleteDomainRequest {
 // refs: 1 - tags: named, input
 export interface DeleteIntegrationRequest {
   DomainName: string;
-  Uri?: string | null;
+  Uri: string;
 }
 
 // refs: 1 - tags: named, input
@@ -795,7 +795,7 @@ export interface GetDomainRequest {
 // refs: 1 - tags: named, input
 export interface GetIntegrationRequest {
   DomainName: string;
-  Uri?: string | null;
+  Uri: string;
 }
 
 // refs: 1 - tags: named, input

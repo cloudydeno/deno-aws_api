@@ -5,7 +5,7 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import * as uuidv4 from "https://deno.land/std@0.75.0/uuid/v4.ts";
+import * as uuidv4 from "https://deno.land/std@0.86.0/uuid/v4.ts";
 import * as cmnP from "../../encoding/common.ts";
 import * as jsonP from "../../encoding/json.ts";
 function generateIdemptToken() {
@@ -1948,6 +1948,7 @@ export interface PipelineExecution {
   pipelineVersion?: number | null;
   pipelineExecutionId?: string | null;
   status?: PipelineExecutionStatus | null;
+  statusSummary?: string | null;
   artifactRevisions?: ArtifactRevision[] | null;
 }
 function toPipelineExecution(root: jsonP.JSONValue): PipelineExecution {
@@ -1958,6 +1959,7 @@ function toPipelineExecution(root: jsonP.JSONValue): PipelineExecution {
       "pipelineVersion": "n",
       "pipelineExecutionId": "s",
       "status": (x: jsonP.JSONValue) => cmnP.readEnum<PipelineExecutionStatus>(x),
+      "statusSummary": "s",
       "artifactRevisions": [toArtifactRevision],
     },
   }, root);
@@ -1965,6 +1967,7 @@ function toPipelineExecution(root: jsonP.JSONValue): PipelineExecution {
 
 // refs: 2 - tags: output, named, enum
 export type PipelineExecutionStatus =
+| "Cancelled"
 | "InProgress"
 | "Stopped"
 | "Stopping"
@@ -2034,6 +2037,7 @@ function toStageExecution(root: jsonP.JSONValue): StageExecution {
 
 // refs: 2 - tags: output, named, enum
 export type StageExecutionStatus =
+| "Cancelled"
 | "InProgress"
 | "Failed"
 | "Stopped"
