@@ -28,7 +28,10 @@ for await (const obj of readCSVObjects(f)) {
 }
 f.close();
 
-const serviceList = JSON.parse(await Deno.readTextFile('./aws-sdk-js/apis/metadata.json')) as Schema.MetadataListing;
+const serviceList = JSON.parse(await Deno.readTextFile('./aws-sdk-js/apis/metadata.json')) as Record<string, Schema.ServiceMetadata & {modId: string}>;
+for (const [modId, svc] of Object.entries(serviceList)) {
+  svc.modId = modId;
+}
 for (const svc of Object.values(serviceList)) {
   if (svc.prefix) {
     serviceList[svc.prefix] = svc;
@@ -47,14 +50,24 @@ for await (const entry of Deno.readDir(`./aws-sdk-js/apis`)) {
     continue;
   }
 
+  // "cloudwatch": {
+  //   "prefix": "monitoring",
+  //   "name": "CloudWatch",
+  //   "cors": true
+  // },
+  // "lexmodelsv2": {
+  //   "prefix": "models.lex.v2",
+  //   "name": "LexModelsV2"
+  // },
+
   if (!(`${service}@${version}` in services)) {
     const apiSpec = JSON.parse(await Deno.readTextFile('./aws-sdk-js/apis/'+entry.name)) as Schema.Api;
 
     services[`${service}@${version}`] = {
       service, version,
       fullname: apiSpec.metadata.serviceFullName,
-      id: apiSpec.metadata.serviceId,
-      namespace: serviceList[service].name,
+      id: '',
+      namespace: '',
       protocol: apiSpec.metadata.protocol,
 
       generated: '',
@@ -65,11 +78,13 @@ for await (const entry of Deno.readDir(`./aws-sdk-js/apis`)) {
   }
 
   const svc = services[`${service}@${version}`];
+  svc.id = serviceList[service].modId;
+  svc.namespace = serviceList[service].name;
 
   let modPath: string;
   let byteCount: number;
   try {
-    [modPath, byteCount] = await generateApi('aws-sdk-js/apis', uid, svc.namespace);
+    [modPath, byteCount] = await generateApi('aws-sdk-js/apis', uid, svc.namespace, serviceList[service].modId);
     svc.bytecount = byteCount.toString();
     svc.generated = 'ok';
   } catch (err) {
@@ -113,7 +128,7 @@ fOut.close();
 
 
 
-async function generateApi(apisPath: string, apiUid: string, namespace: string): Promise<[string, number]> {
+async function generateApi(apisPath: string, apiUid: string, namespace: string, serviceId: string): Promise<[string, number]> {
   const jsonPath = (suffix: string) =>
     path.join(apisPath, `${apiUid}.${suffix}.json`);
   const maybeReadFile = (path: string): Promise<any> =>
@@ -129,9 +144,8 @@ async function generateApi(apisPath: string, apiUid: string, namespace: string):
     waiters: JSON.parse(await maybeReadFile(jsonPath('waiters2'))) as Schema.Waiters,
   });
 
-  const service = apiUid.slice(0, -11);
   const version = apiUid.slice(-10);
-  const modName = `${service}@${version}`;
+  const modName = `${serviceId}@${version}`;
 
   console.log('Writing', modName);
   const modPath = path.join('lib', 'services', modName);

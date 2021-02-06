@@ -31,7 +31,7 @@ for await (const obj of readCSVObjects(f)) {
 f.close();
 
 services.sort((a, b) =>
-  `${a.service}!${a.version}`.localeCompare(`${b.service}!${b.version}`));
+  `${a.id}!${a.version}`.localeCompare(`${b.id}!${b.version}`));
 
 const workingSvc = services.filter(x => x.typechecked === 'ok');
 
@@ -54,7 +54,7 @@ async function updateReadme(header: string) {
   for (const svc of workingSvc) {
     chunks.push(`| `+[
       svc.namespace,
-      `\`${svc.service}@${svc.version}\``,
+      `\`${svc.id}@${svc.version}\``,
       formatFileSize(parseInt(svc.bytecount)),
       formatDuration(parseInt(svc.cachetime)),
     ].join(' | ')+` |`);
