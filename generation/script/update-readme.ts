@@ -1,7 +1,7 @@
 import { readCSVObjects } from "https://deno.land/x/csv@v0.5.1/mod.ts";
 
 const sdk = JSON.parse(await Deno.readTextFile('aws-sdk-js/package.json'));
-const header = `All API definitions are current as of aws-sdk-js \`v${sdk.version}\`.`;
+const header = `All API definitions are current as of [aws-sdk-js \`v${sdk.version}\`](https://github.com/aws/aws-sdk-js/releases/tag/v${sdk.version}).`;
 
 const genBarrier = `
 
