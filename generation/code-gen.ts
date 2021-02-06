@@ -2,7 +2,7 @@ import type * as Schema from './sdk-schema.ts';
 import ProtocolQueryCodegen from './protocol-query.ts';
 import ProtocolJsonCodegen from './protocol-json.ts';
 import ShapeLibrary, { KnownShape } from './shape-library.ts';
-import { fixupApiSpec, fixupWaitersSpec, unauthenticatedApis } from './quirks.ts';
+import { fixupApiSpec, fixupWaitersSpec, unauthenticatedApis, cleanFuncName } from './quirks.ts';
 import GenWaiter from "./gen-waiter.ts";
 import HelperLibrary from "./helper-library.ts";
 import ProtocolRestCodegen from "./protocol-rest.ts";
@@ -208,7 +208,7 @@ export default class ServiceCodeGen {
       signature += '>';
 
       const lowerCamelName = operation.name[0].toLowerCase() + operation.name.slice(1);
-      chunks.push(`  async ${lowerCamelName}${signature} {`);
+      chunks.push(`  async ${cleanFuncName(lowerCamelName)}${signature} {`);
       let protoPathParts: Map<string,string> | undefined;
       const referencedInputs = new Set(['abortSignal']);
       if (operation.input && inputShape?.spec.type === 'structure') {

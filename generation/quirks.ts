@@ -119,3 +119,8 @@ export function fixupJmesCode(code: string): string {
     .replace(`resp["Output"].length`, `(resp["Output"] ?? '').length`) // our ec2 hack above ^^
   ;
 }
+
+// Specifically for CloudFront APIs
+export function cleanFuncName(opName: string) {
+  return opName.replace(/\d{4}_\d\d_\d\d$/, '');
+}

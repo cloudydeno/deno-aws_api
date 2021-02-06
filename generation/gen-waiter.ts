@@ -1,7 +1,7 @@
 import type * as Schema from "./sdk-schema.ts";
 import type ShapeLibrary from "./shape-library.ts";
 import { compileJMESPath } from "./jmespath.ts";
-import { fixupJmesCode } from "./quirks.ts";
+import { fixupJmesCode, cleanFuncName } from "./quirks.ts";
 
 export default class GenWaiter {
   name: string;
@@ -87,7 +87,7 @@ export default class GenWaiter {
 
     const innerChunks: string[] = [];
     const lowerCamelName = this.operation.name[0].toLowerCase() + this.operation.name.slice(1);
-    innerChunks.push(`      ${outputShape ? 'const resp = ' : ''}await this.${lowerCamelName}(params);`);
+    innerChunks.push(`      ${outputShape ? 'const resp = ' : ''}await this.${cleanFuncName(lowerCamelName)}(params);`);
 
     if (collapsePathEval) {
       const code = fixupJmesCode(compileJMESPath(allPaths[0], 'resp'));
