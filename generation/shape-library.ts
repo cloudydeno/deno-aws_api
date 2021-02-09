@@ -1,6 +1,6 @@
 import type * as Schema from './sdk-schema.ts';
 
-export default class ShapeLibrary {
+export class ShapeLibrary {
 
   static fromApiSpec(apiSpec: Schema.Api): ShapeLibrary {
     const inputShapes = new Set<string>();

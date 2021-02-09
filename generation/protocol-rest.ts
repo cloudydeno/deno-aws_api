@@ -1,8 +1,9 @@
-import HelperLibrary from "./helper-library.ts";
+import type * as Schema from './sdk-schema.ts';
+import { ShapeLibrary, KnownShape } from "./shape-library.ts";
+import type { HelperLibrary } from "./helper-library.ts";
+
 import ProtocolJsonCodegen from "./protocol-json.ts";
 import ProtocolXmlCodegen from "./protocol-xml.ts";
-import type * as Schema from './sdk-schema.ts';
-import ShapeLibrary, { KnownShape } from "./shape-library.ts";
 
 export default class ProtocolRestCodegen {
   shapes: ShapeLibrary;

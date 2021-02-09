@@ -1,7 +1,6 @@
 import type * as Schema from './sdk-schema.ts';
-import type ShapeLibrary from './shape-library.ts';
-import type { KnownShape } from './shape-library.ts';
-import type HelperLibrary from "./helper-library.ts";
+import type { ShapeLibrary, KnownShape } from "./shape-library.ts";
+import type { HelperLibrary } from "./helper-library.ts";
 
 // XML input/output, used by "rest-xml" and also for "query"s output
 export default class ProtocolXmlCodegen {

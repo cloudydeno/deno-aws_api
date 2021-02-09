@@ -1,4 +1,4 @@
-export default class HelperLibrary {
+export class HelperLibrary {
   #helpers = new Map<string, Helper>();
   #inUse = new Set<string>();
   #extraDeps = new Map<string, string>();
@@ -81,3 +81,19 @@ export const IdemptTokenMock: Helper = {
     `}`,
   ],
 };
+
+export function makeHelperLibrary(opts: {
+  isTest?: boolean;
+} = {}) {
+  const lib = new HelperLibrary();
+
+  lib.addDep("cmnP", "../../encoding/common.ts");
+
+  lib.addHelper('generateIdemptToken', opts.isTest
+    ? IdemptTokenMock
+    : IdemptToken);
+
+  lib.addHelper('hashMD5', HashMD5);
+
+  return lib;
+}

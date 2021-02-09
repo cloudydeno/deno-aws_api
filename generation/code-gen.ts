@@ -1,9 +1,10 @@
 import type * as Schema from './sdk-schema.ts';
-import ShapeLibrary, { KnownShape } from './shape-library.ts';
+import { ShapeLibrary, KnownShape } from './shape-library.ts';
+import { HelperLibrary, makeHelperLibrary } from "./helper-library.ts";
+import { ProtocolCodegen, makeProtocolCodegenFor } from "./protocol.ts";
+
 import { fixupApiSpec, fixupWaitersSpec, unauthenticatedApis, cleanFuncName } from './quirks.ts';
 import GenWaiter from "./gen-waiter.ts";
-import HelperLibrary, * as Helpers from "./helper-library.ts";
-import { ProtocolCodegen, makeProtocolCodegenFor } from "./protocol.ts";
 
 export default class ServiceCodeGen {
   apiSpec: Schema.Api;
@@ -35,14 +36,7 @@ export default class ServiceCodeGen {
     }
 
     this.shapes = ShapeLibrary.fromApiSpec(specs.api);
-
-    this.helpers = new HelperLibrary();
-    this.helpers.addDep("cmnP", "../../encoding/common.ts");
-    this.helpers.addHelper('generateIdemptToken', specs.isTest
-      ? Helpers.IdemptTokenMock
-      : Helpers.IdemptToken);
-    this.helpers.addHelper('hashMD5', Helpers.HashMD5);
-
+    this.helpers = makeHelperLibrary(specs);
     this.protocol = makeProtocolCodegenFor(specs.api.metadata, this.shapes, this.helpers);
   }
 

@@ -1,6 +1,6 @@
 import type * as Schema from './sdk-schema.ts';
-import ShapeLibrary, { KnownShape } from './shape-library.ts';
-import HelperLibrary from "./helper-library.ts";
+import { ShapeLibrary, KnownShape } from './shape-library.ts';
+import { HelperLibrary } from "./helper-library.ts";
 
 import ProtocolQueryCodegen from './protocol-query.ts';
 import ProtocolJsonCodegen from './protocol-json.ts';
@@ -30,7 +30,7 @@ export interface ProtocolCodegen {
   ): {
     inputParsingFunction: string;
   };
-  
+
   generateShapeOutputParsingTypescript(
     shape: KnownShape,
   ): {

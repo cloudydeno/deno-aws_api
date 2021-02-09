@@ -1,5 +1,5 @@
 import type * as Schema from "./sdk-schema.ts";
-import type ShapeLibrary from "./shape-library.ts";
+import type { ShapeLibrary } from "./shape-library.ts";
 import { compileJMESPath } from "./jmespath.ts";
 import { fixupJmesCode, cleanFuncName } from "./quirks.ts";
 
