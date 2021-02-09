@@ -116,12 +116,13 @@ Some individual features that are implemented:
 
 Multiple bits are *missing*:
 
-* Automatic pagination
-* AssumeRole credentials
+* Automatic pagination (#1)
+* AssumeRole credentials (#4)
 * Debug logging/tracing of API calls
 * Automatic retries
-* Getting EKS credentials from regional STS endpoints
-* AWS endpoints other than `**.amazonaws.com` (govcloud, China AWS, etc)
+* Getting EKS credentials from regional STS endpoints (#2)
+* AWS endpoints other than `**.amazonaws.com` (#3)
+    * govcloud, China AWS, IPv6, etc.
 
 ## List of Typechecked API Clients
 
