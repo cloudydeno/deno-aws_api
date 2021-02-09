@@ -5,12 +5,10 @@ import type HelperLibrary from "./helper-library.ts";
 
 // "query" and also "ec2" which is based on "query"
 export default class ProtocolJsonCodegen {
-  shapes: ShapeLibrary;
-  helpers: HelperLibrary;
-  constructor(shapes: ShapeLibrary, helpers: HelperLibrary) {
-    this.shapes = shapes;
-    this.helpers = helpers;
-
+  constructor(
+    public shapes: ShapeLibrary,
+    public helpers: HelperLibrary,
+  ) {
     helpers.addDep("jsonP", "../../encoding/json.ts");
   }
 

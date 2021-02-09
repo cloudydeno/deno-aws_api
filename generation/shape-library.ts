@@ -72,10 +72,6 @@ export default class ShapeLibrary {
     }
 
     this.allNamedShapes = allNamedShapes;
-
-    // console.log('All Named Shapes:', Array.from(allNamedShapes).map(x => [x.name, x.tags, x.refCount]));
-    // console.log('All Shapes:', Array.from(this.knownShapes.values()).map(x => [x.name, x.tags, x.refCount]));
-    // Deno.exit(5);
   }
 
   get(ref: Schema.ShapeRef): KnownShape {
@@ -125,15 +121,11 @@ export type ShapeTag =
 ;
 
 export class KnownShape {
-  name: string;
-  spec: Schema.ApiShape;
-  payloadField?: string;
-  constructor(name: string, spec: Schema.ApiShape) {
-    this.name = name;
-    this.spec = spec;
-    this.payloadField = spec.payload;
-  }
-
+  constructor(
+    public name: string,
+    public spec: Schema.ApiShape,
+  ) {}
+  payloadField = this.spec.payload;
   tags = new Set<ShapeTag>();
   refCount = 0;
 

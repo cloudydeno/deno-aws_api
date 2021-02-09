@@ -4,16 +4,12 @@ import { compileJMESPath } from "./jmespath.ts";
 import { fixupJmesCode, cleanFuncName } from "./quirks.ts";
 
 export default class GenWaiter {
-  name: string;
-  spec: Schema.WaiterSpec;
-  operation: Schema.ApiOperation;
-  shapes: ShapeLibrary;
-  constructor(name: string, spec: Schema.WaiterSpec, operation: Schema.ApiOperation, shapes: ShapeLibrary) {
-    this.name = name;
-    this.spec = spec;
-    this.operation = operation;
-    this.shapes = shapes;
-  }
+  constructor(
+    public name: string,
+    public spec: Schema.WaiterSpec,
+    public operation: Schema.ApiOperation,
+    public shapes: ShapeLibrary,
+  ) {}
 
   compilePathWaiter(spec: Schema.WaiterPathMatcher): [string, string] {
     return [

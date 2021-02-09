@@ -150,6 +150,7 @@ async function generateApi(apisPath: string, apiUid: string, namespace: string, 
   console.log('Writing', modName);
   const modPath = path.join('lib', 'services', modName);
   const modCode = codeGen.generateTypescript(namespace);
+  const structsCode = codeGen.generateTypescript(namespace);
   await Deno.run({cmd: ['mkdir', '-p', modPath]}).status();
   await Deno.writeTextFile(modPath+'/mod.ts', modCode);
   return [modPath+'/mod.ts', modCode.length];

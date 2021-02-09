@@ -127,46 +127,6 @@ export default class ServiceCodeGen {
         `}`,
       ],
     });
-
-    // this.helpers.addHelper('encodePath', {
-    //   chunks: [
-    //     `function encodePath(`,
-    //     `  strings: TemplateStringsArray,`,
-    //     `  ...names: (string | string[])[]`,
-    //     `): string {`,
-    //     `  return String.raw(strings, ...names.map((x) =>`,
-    //     `    typeof x === "string"`,
-    //     `      ? encodeURIComponent(x)`,
-    //     `      : x.map(encodeURIComponent).join("/")`,
-    //     `  ));`,
-    //     `}`],
-    // });
-
-    // this.helpers.addHelper('serializeDate_unixTimestamp', {
-    //   chunks: [
-    //     `function serializeDate_unixTimestamp(input: Date | number | null | undefined) {`,
-    //     `  if (input == null) return input;`,
-    //     `  const date = typeof input === 'number' ? new Date(input*1000) : input;`,
-    //     `  return Math.floor(date.valueOf() / 1000);`,
-    //     `}`,
-    //   ]});
-    // this.helpers.addHelper('serializeDate_iso8601', {
-    //   chunks: [
-    //     `function serializeDate_iso8601(input: Date | number | null | undefined) {`,
-    //     `  if (input == null) return input;`,
-    //     `  const date = typeof input === 'number' ? new Date(input*1000) : input;`,
-    //     `  return date.toISOString();`,
-    //     `}`,
-    //   ]});
-    // this.helpers.addHelper('serializeDate_rfc822', {
-    //   chunks: [
-    //     `function serializeDate_rfc822(input: Date | number | null | undefined) {`,
-    //     `  if (input == null) return input;`,
-    //     `  const date = typeof input === 'number' ? new Date(input*1000) : input;`,
-    //     `  return date.toUTCString();`,
-    //     `}`,
-    //   ]});
-
   }
 
   generateTypescript(namespace: string): string {
@@ -246,10 +206,6 @@ export default class ServiceCodeGen {
       }
       chunks.push(`    });`);
 
-      /////
-      // OVERALL TODO: Detect 'framing' shapes (e.g. for s3 headers) and treat them specially
-      // These are only in 'rest-xml' and 'rest-json'
-
       if (outputShape?.spec.type === 'structure') {
         const {outputParsingCode, outputVariables} = this.protocol
           .generateOperationOutputParsingTypescript(outputShape, operation.output?.resultWrapper ?? outputShape?.spec.resultWrapper);
@@ -305,15 +261,6 @@ export default class ServiceCodeGen {
         if (!(this.shapes.outputShapes.includes(shape) && shape.refCount === 1) && shape.tags.has('output')) {
           chunks.push(this.protocol.generateShapeOutputParsingTypescript(shape).outputParsingFunction);
         }
-      } else if (shape.tags.has('enum')) {
-        // Maybe include input reading (prep for wire)
-        // if (shape.tags.has('input')) {
-        //   chunks.push(this.protocol.generateShapeInputParsingTypescript(shape).inputParsingFunction);
-        // }
-        // Maybe include output reading (post-wire enriching)
-        // if (shape.tags.has('output')) {
-        //   chunks.push(this.protocol.generateShapeOutputParsingTypescript(shape).outputParsingFunction);
-        // }
       }
       chunks.push('');
     }

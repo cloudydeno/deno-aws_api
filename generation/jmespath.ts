@@ -16,7 +16,7 @@ import { compile } from 'https://deno.land/x/jmespath@v0.2.0/index.ts';
 
 
 export function compileJMESPath(pathstr: string, rootRef: string): string {
-  return postProcess(compilePath(compile(pathstr), 'resp'));
+  return postProcess(compilePath(compile(pathstr), rootRef));
 }
 
 function postProcess(code: string): string {

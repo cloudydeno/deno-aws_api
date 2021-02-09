@@ -7,19 +7,11 @@ import ShapeLibrary, { KnownShape } from "./shape-library.ts";
 export default class ProtocolRestCodegen {
   shapes: ShapeLibrary;
   helpers: HelperLibrary;
-  innerProtocol: ProtocolJsonCodegen | ProtocolXmlCodegen;
-  constructor(innerProtocol: ProtocolJsonCodegen | ProtocolXmlCodegen) {
+  constructor(
+    public innerProtocol: ProtocolJsonCodegen | ProtocolXmlCodegen,
+  ) {
     this.shapes = innerProtocol.shapes;
     this.helpers = innerProtocol.helpers;
-    this.innerProtocol = innerProtocol;
-
-    // this.helpers.addHelper('fmtDateHeader', {
-    //   chunks: [
-    //     `function fmtDateHeader(input: Date | number): string {`,
-    //     `  const date = (typeof input === 'number') ? new Date(input*1000) : input;`,
-    //     `  return date.toUTCString();`,
-    //     `}`],
-    // });
   }
 
   generateOperationInputParsingTypescript(inputShape: KnownShape, meta: Schema.LocationInfo) {
@@ -208,9 +200,6 @@ export default class ProtocolRestCodegen {
           frameRef = `inner`;
           locInfo = {...bodySpec, paramRef: frameRef};
 
-          // chunks.push(`    const body`)
-          // chunks.push(`    ${bodyShape.censoredName}_Serialize(body, prefix+${JSON.stringify(prefix+locationName)}, ${paramRef});`);
-
         } else throw new Error(`TODO: bad inner shape ${bodyShape.spec.type} ${bodyShape.name}`)
 
       } else {
@@ -231,34 +220,6 @@ export default class ProtocolRestCodegen {
 
       // console.log(frameRef, locInfo.xmlNamespace, locInfo.locationName, Object.keys(frame.members));
     }
-
-    // for (const [field, spec] of Object.entries(inputShape.members)) {
-    //   const shape = this.apiSpec.shapes[spec.shape];
-    //   const defaultName = this.apiSpec.metadata.protocol === 'ec2' ? field : (field[0].toUpperCase()+field.slice(1));
-    //   const locationName = spec.locationName ?? shape.locationName ?? defaultName;
-    //   const isRequired = (inputShape.required ?? []).map(x => x.toLowerCase()).includes(field.toLowerCase());
-    //   const paramRef = `params[${JSON.stringify(field)}]`;
-    //   switch (spec.location) {
-    //     default:
-    //       // console.log([spec.queryName, spec.locationName, shape.locationName]);
-    //       // TODO: only queryName in a query api
-    //       // chunks.push(`    ${isRequired ? '' : `if (${JSON.stringify(field)} in params) `}body[${JSON.stringify(spec.queryName ?? locationName)}] = ${paramRef};`);
-    //       switch (shape.type) {
-    //         // case 'boolean':
-    //         //   chunks.push(`    ${isRequired ? '' : `if (${paramRef} !== undefined) `}body.append(${JSON.stringify(spec.queryName ?? locationName)}, ${paramRef});`);
-    //         case 'list':
-    //           const flattened = shape.flattened ?? this.apiSpec.metadata.protocol !== 'ec2';
-    //           const childPrefix = flattened ? '' : '.entry';
-    //           chunks.push(`    (${paramRef} ?? []).forEach((item, idx) => {`)
-    //             chunks.push(`    body.append(${JSON.stringify(spec.queryName ?? locationName)}+'.'+String(idx+1)+'${childPrefix}', String(item));`);
-    //           chunks.push(`    });`);
-    //           break;
-    //         default:
-    //           chunks.push(`    ${isRequired ? '' : `if (${paramRef} !== undefined) `}body.append(${JSON.stringify(spec.queryName ?? locationName)}, String(${paramRef}));`);
-    //       }
-    //       referencedInputs.add('body');
-    //   }
-    // }
 
     return {
       inputParsingCode: chunks.join('\n'),
@@ -295,30 +256,6 @@ export default class ProtocolRestCodegen {
         const isRequired = (shape.spec.required ?? []).map(x => x.toLowerCase()).includes(field.toLowerCase());
         chunks.push(this.describeOutputField(field, spec, isRequired));
 
-        // const fieldShape = this.shapes.get(spec);
-        // // const locationName = spec.locationName ?? fieldShape.spec.locationName ?? (field[0].toUpperCase()+field.slice(1));
-        // switch (spec.location) {
-        //   case 'statusCode':
-        //     chunks.push(`    ${field}: resp.status,`);
-        //     break;
-        //   case 'header':
-        //     chunks.push(`    ${field}: resp.headers.get(${JSON.stringify(spec.locationName)}),`);
-        //     break;
-        //   case 'headers':
-        //     if (fieldShape.spec.type !== 'map') throw new Error(`rest headers field needs to be a Map`);
-        //     // const keyShape = this.shapes.get(fieldShape.spec.key);
-        //     const valShape = this.shapes.get(fieldShape.spec.value);
-        //     switch (valShape.spec.type) {
-        //       case 'string':
-        //         chunks.push(`    ${field}: cmnP.toJsObj(resp.headers, ${spec.locationName ? JSON.stringify(spec.locationName.toLowerCase()) : 'true'}, v => v),`);
-        //         break;
-        //       default:
-        //         throw new Error(`TODO: rest output headerS ${valShape.spec.type} "${field}"`);
-        //     }
-        //     break;
-        //   default:
-        //     throw new Error(`TODO: rest output location ${spec.location}`);
-        // }
       }
       if (payloadChunk) chunks.push(`    ${payloadChunk},`);
       chunks.push(`  };`);
