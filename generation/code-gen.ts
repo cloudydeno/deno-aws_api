@@ -1,30 +1,9 @@
 import type * as Schema from './sdk-schema.ts';
-import ProtocolQueryCodegen from './protocol-query.ts';
-import ProtocolJsonCodegen from './protocol-json.ts';
 import ShapeLibrary, { KnownShape } from './shape-library.ts';
 import { fixupApiSpec, fixupWaitersSpec, unauthenticatedApis, cleanFuncName } from './quirks.ts';
 import GenWaiter from "./gen-waiter.ts";
-import HelperLibrary from "./helper-library.ts";
-import ProtocolRestCodegen from "./protocol-rest.ts";
-import ProtocolXmlCodegen from "./protocol-xml.ts";
-
-interface ProtocolCodegen {
-  generateOperationInputParsingTypescript(inputShape: KnownShape, meta: Schema.LocationInfo): {
-    inputParsingCode: string;
-    inputVariables: string[];
-    pathParts?: Map<string,string>;
-  };
-  generateOperationOutputParsingTypescript(shape: KnownShape, resultWrapper?: string): {
-    outputParsingCode: string;
-    outputVariables: string[];
-  };
-  generateShapeInputParsingTypescript(shape: KnownShape): {
-    inputParsingFunction: string;
-  };
-  generateShapeOutputParsingTypescript(shape: KnownShape): {
-    outputParsingFunction: string;
-  };
-}
+import HelperLibrary, * as Helpers from "./helper-library.ts";
+import { ProtocolCodegen, makeProtocolCodegenFor } from "./protocol.ts";
 
 export default class ServiceCodeGen {
   apiSpec: Schema.Api;
@@ -55,78 +34,16 @@ export default class ServiceCodeGen {
       this.apiSpec.metadata.uid = specs.uid;
     }
 
-    const inputShapes = new Set<string>();
-    const outputShapes = new Set<string>();
-    for (const op of Object.values(specs.api.operations)) {
-      if (op.input) inputShapes.add(op.input.shape);
-      if (op.output) outputShapes.add(op.output.shape);
-    }
+    this.shapes = ShapeLibrary.fromApiSpec(specs.api);
 
-    this.shapes = new ShapeLibrary({
-      shapeSpecs: specs.api.shapes,
-      inputNames: Array.from(inputShapes),
-      outputNames: Array.from(outputShapes),
-    });
     this.helpers = new HelperLibrary();
     this.helpers.addDep("cmnP", "../../encoding/common.ts");
+    this.helpers.addHelper('generateIdemptToken', specs.isTest
+      ? Helpers.IdemptTokenMock
+      : Helpers.IdemptToken);
+    this.helpers.addHelper('hashMD5', Helpers.HashMD5);
 
-    switch (specs.api.metadata.protocol) {
-      case 'ec2':
-        this.protocol = new ProtocolQueryCodegen(this.shapes, this.helpers, {ec2: true});
-        break;
-      case 'query':
-        this.protocol = new ProtocolQueryCodegen(this.shapes, this.helpers);
-        break;
-      case 'json':
-        this.protocol = new ProtocolJsonCodegen(this.shapes, this.helpers);
-        break;
-      case 'rest-xml': {
-        const inner = new ProtocolXmlCodegen(this.shapes, this.helpers);
-        this.protocol = new ProtocolRestCodegen(inner);
-        break;
-      }
-      case 'rest-json': {
-        const inner = new ProtocolJsonCodegen(this.shapes, this.helpers);
-        this.protocol = new ProtocolRestCodegen(inner);
-        break;
-      }
-      default: throw new Error(
-        `TODO: unimpl protocol ${specs.api.metadata.protocol}`);
-    }
-
-    if (specs.isTest) {
-      this.helpers.addHelper('generateIdemptToken', {
-        chunks: [
-          `function generateIdemptToken() {`,
-          `  return "00000000-0000-4000-8000-000000000000";`,
-          `}`,
-        ],
-      });
-    } else {
-      this.helpers.addHelper('generateIdemptToken', {
-        deps: {
-          uuidv4: `https://deno.land/std@0.86.0/uuid/v4.ts`,
-        },
-        chunks: [
-          `function generateIdemptToken() {`,
-          `  return uuidv4.generate();`,
-          `}`,
-        ],
-      });
-    }
-
-    this.helpers.addHelper('hashMD5', {
-      deps: {
-        HashMd5: "https://deno.land/std@0.86.0/hash/md5.ts",
-      },
-      chunks: [
-        `function hashMD5(data: HashMd5.Message): string {`,
-        `  const hasher = new HashMd5.Md5();`,
-        `  hasher.update(data);`,
-        `  return hasher.toString('base64');`,
-        `}`,
-      ],
-    });
+    this.protocol = makeProtocolCodegenFor(specs.api.metadata, this.shapes, this.helpers);
   }
 
   generateTypescript(namespace: string): string {

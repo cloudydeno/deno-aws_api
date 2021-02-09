@@ -49,3 +49,35 @@ export interface Helper {
   chunks: string[];
   deps?: Record<string,string>;
 }
+
+
+export const HashMD5: Helper = {
+  deps: {
+    HashMd5: "https://deno.land/std@0.86.0/hash/md5.ts",
+  },
+  chunks: [
+    `function hashMD5(data: HashMd5.Message): string {`,
+    `  const hasher = new HashMd5.Md5();`,
+    `  hasher.update(data);`,
+    `  return hasher.toString('base64');`,
+    `}`,
+  ],
+};
+
+export const IdemptToken: Helper = {
+  deps: {
+    uuidv4: `https://deno.land/std@0.86.0/uuid/v4.ts`,
+  },
+  chunks: [
+    `function generateIdemptToken() {`,
+    `  return uuidv4.generate();`,
+    `}`,
+  ],
+};
+export const IdemptTokenMock: Helper = {
+  chunks: [
+    `function generateIdemptToken() {`,
+    `  return "00000000-0000-4000-8000-000000000000";`,
+    `}`,
+  ],
+};

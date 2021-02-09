@@ -1,6 +1,22 @@
 import type * as Schema from './sdk-schema.ts';
 
 export default class ShapeLibrary {
+
+  static fromApiSpec(apiSpec: Schema.Api): ShapeLibrary {
+    const inputShapes = new Set<string>();
+    const outputShapes = new Set<string>();
+    for (const op of Object.values(apiSpec.operations)) {
+      if (op.input) inputShapes.add(op.input.shape);
+      if (op.output) outputShapes.add(op.output.shape);
+    }
+
+    return new ShapeLibrary({
+      shapeSpecs: apiSpec.shapes,
+      inputNames: Array.from(inputShapes),
+      outputNames: Array.from(outputShapes),
+    });
+  }
+
   knownShapes: Map<string, KnownShape>;
 
   inputShapes: Array<KnownShape>;
