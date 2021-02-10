@@ -1,10 +1,11 @@
-import * as path from "https://deno.land/std@0.86.0/path/mod.ts";
+#!/usr/bin/env -S deno run --allow-run --allow-env --allow-write --allow-read
+
 import { pooledMap } from "https://deno.land/std@0.86.0/async/pool.ts";
 
 import type * as Schema from '../sdk-schema.ts';
 import ServiceCodeGen from '../code-gen.ts';
 
-await Deno.run({cmd: ['mkdir', '-p', 'lib/services/fixture']}).status();
+await Deno.run({cmd: ['mkdir', '-p', 'lib/testgen/fixtures']}).status();
 
 type ProtocolFixture = Schema.Api & {
   "description": string;
@@ -131,7 +132,7 @@ async function* readAllTestFixtures() {
 const allTestRuns = readAllTestFixtures();
 
 const concurrency = Deno.env.get('CI') ? 1 : 3;
-const results = pooledMap(concurrency, allTestRuns, async function (run): Promise<TestRunResult> {
+async function doOneRun(run: TestRun): Promise<TestRunResult> {
 
   // QUIRK
   if (run.description.endsWith('Enum with params {}')) {
@@ -267,7 +268,12 @@ const results = pooledMap(concurrency, allTestRuns, async function (run): Promis
   return Promise
     .all([child.output(), child.stderrOutput(), child.status()])
     .then(([stdout, stderr, status]) => ({run, stdout, stderr, status, source: apiSource+chunks.join('\n')}));
-});
+}
+const results = pooledMap(concurrency, allTestRuns, (run) => doOneRun(run)
+  .catch(err => {
+    console.log(err.stack);
+    throw err;
+  }));
 
 let passed = 0;
 let failed = 0;

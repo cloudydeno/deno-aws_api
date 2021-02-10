@@ -25,9 +25,6 @@ jobs:
       with:
         deno-version: ${{ matrix.deno-version }}
 
-    - name: Create test folders
-      run: mkdir -p lib/testgen/fixtures
-
     - name: Validate aws-sdk fixtures
       run: deno run -A generation/script/validate-fixtures.ts
 
