@@ -17,6 +17,10 @@ type FetchOpts = {
 };
 type SigningFetcher = (request: Request, opts: FetchOpts) => Promise<Response>;
 
+interface ClientClass<T> {
+  new (apiFactory: ApiFactory): T;
+}
+
 export class ApiFactory {
   #credentials: CredentialsProvider;
   #region?: string;
@@ -31,7 +35,16 @@ export class ApiFactory {
     } else {
       this.#credentials = opts.credentialProvider ?? DefaultCredentialsProvider;
     }
-    this.#region = opts.region ?? Deno.env.get("AWS_REGION");
+
+    try {
+      this.#region = opts.region ?? Deno.env.get("AWS_REGION");
+    } catch (err) {
+      if (err.name !== 'PermissionDenied') throw err;
+    }
+  }
+
+  makeNew<T>(constr: ClientClass<T>) {
+    return new constr(this);
   }
 
   buildServiceClient(apiMetadata: ApiMetadata): ServiceClient {
@@ -79,6 +92,11 @@ export class ApiFactory {
     return wrapServiceClient(apiMetadata, signingFetcher);
   }
 
+  async ensureCredentialsAvailable() {
+    const creds = await this.#credentials.getCredentials();
+    if (creds.awsAccessKeyId) return;
+    throw new Error(`Empty credentials were returned successfully (somehow?)`);
+  }
 }
 
 function throwMissingRegion(): never {

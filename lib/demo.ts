@@ -1,6 +1,8 @@
 import {ApiFactory} from './client/mod.ts';
 const factory = new ApiFactory();
 
+await factory.ensureCredentialsAvailable();
+
 
 import STS from './services/sts@2011-06-15/mod.ts';
 const sts = new STS(factory);
