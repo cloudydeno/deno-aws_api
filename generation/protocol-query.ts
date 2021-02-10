@@ -33,9 +33,10 @@ export default class ProtocolQueryCodegen extends ProtocolXmlCodegen {
     if (shape.spec.type === 'string') return {
       inputParsingFunction: '',
     };
+    const namePrefix = (this.helpers.hasDep('s')) ? 's.' : '';
 
     const chunks = new Array<string>();
-    chunks.push(`function ${shape.censoredName}_Serialize(body: URLSearchParams, prefix: string, params: ${shape.censoredName}) {`);
+    chunks.push(`function ${shape.censoredName}_Serialize(body: URLSearchParams, prefix: string, params: ${namePrefix}${shape.censoredName}) {`);
 
     switch (shape.spec.type) {
       case 'structure':

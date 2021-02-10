@@ -18,7 +18,7 @@ export default class GenWaiter {
     ];
   }
 
-  generateTypescript(): string {
+  generateTypescript(namePrefix: string): string {
     const inputShape = this.operation.input ? this.shapes.get(this.operation.input) : null;
     const outputShape = this.operation.output ? this.shapes.get(this.operation.output) : null;
     if (inputShape && inputShape?.spec.type !== 'structure') throw new Error(`TODO: ${inputShape.spec.type} input`);
@@ -74,11 +74,12 @@ export default class GenWaiter {
 
     const inputSignature = [
       `RequestConfig`,
-      inputShape?.censoredName,
+      inputShape?.censoredName ? `${namePrefix}${inputShape?.censoredName}` : false,
     ].filter(x => x).join(' & ');
     const outputSignature = [
       goodErrs.length > 0 ? 'Error' : '',
-      outputShape?.censoredName || 'void', // TODO: probably add heuristics on when to include this
+      // TODO: probably add heuristics on when to include this
+      outputShape?.censoredName ? `${namePrefix}${outputShape?.censoredName}` : 'void',
     ].filter(x => x).join(' | ');
 
     const innerChunks: string[] = [];

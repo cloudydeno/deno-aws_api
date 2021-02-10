@@ -9,6 +9,9 @@ export class HelperLibrary {
   addDep(name: string, sourceUrl: string) {
     this.#extraDeps.set(name, sourceUrl);
   }
+  hasDep(name: string) {
+    return this.#extraDeps.has(name);
+  }
 
   useHelper(name: string) {
     if (!this.#helpers.has(name)) throw new Error(

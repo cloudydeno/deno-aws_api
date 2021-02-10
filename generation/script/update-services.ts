@@ -113,7 +113,10 @@ for await (const entry of Deno.readDir(`./aws-sdk-js/apis`)) {
   svc.typechecked = 'ok';
   svc.cachetime = (cacheEnd.valueOf() - cacheStart.valueOf()).toString();
 
-  await Deno.run({cmd: ['git', 'add', modPath]}).status();
+  await Deno.run({cmd: ['git', 'add',
+    modPath,
+    modPath.replace(/mod.ts$/, 'structs.ts'),
+  ]}).status();
 }
 
 
@@ -143,15 +146,16 @@ async function generateApi(apisPath: string, apiUid: string, namespace: string, 
     pagers: JSON.parse(await maybeReadFile(jsonPath('paginators'))) as Schema.Pagination,
     waiters: JSON.parse(await maybeReadFile(jsonPath('waiters2'))) as Schema.Waiters,
   });
+  const modCode = codeGen.generateModTypescript(namespace);
+  const structsCode = codeGen.generateStructsTypescript();
 
   const version = apiUid.slice(-10);
   const modName = `${serviceId}@${version}`;
-
   console.log('Writing', modName);
+
   const modPath = path.join('lib', 'services', modName);
-  const modCode = codeGen.generateTypescript(namespace);
-  const structsCode = codeGen.generateTypescript(namespace);
   await Deno.run({cmd: ['mkdir', '-p', modPath]}).status();
   await Deno.writeTextFile(modPath+'/mod.ts', modCode);
-  return [modPath+'/mod.ts', modCode.length];
+  await Deno.writeTextFile(modPath+'/structs.ts', structsCode);
+  return [modPath+'/mod.ts', modCode.length + structsCode.length];
 }

@@ -40,11 +40,12 @@ export default class ProtocolXmlCodegen {
     if (shape.spec.type !== 'structure') return {
       inputParsingFunction: '',
     };
+    const namePrefix = (this.helpers.hasDep('s')) ? 's.' : '';
 
     const {attrCode, childrenCode} = this.generateStructureInputTypescript(shape.spec, 'data');
 
     const chunks = new Array<string>();
-    chunks.push(`function ${shape.censoredName}_Serialize(data: ${shape.censoredName} | undefined | null): Partial<xmlP.Node> {`);
+    chunks.push(`function ${shape.censoredName}_Serialize(data: ${namePrefix}${shape.censoredName} | undefined | null): Partial<xmlP.Node> {`);
     chunks.push(`  if (!data) return {};`);
     if (attrCode.length > 0) {
       chunks.push(`  return {attributes: {`);
@@ -223,9 +224,10 @@ export default class ProtocolXmlCodegen {
     if (shape.spec.type === 'string') return {
       outputParsingFunction: '',
     };
+    const namePrefix = (this.helpers.hasDep('s')) ? 's.' : '';
 
     const chunks = new Array<string>();
-    chunks.push(`function ${shape.censoredName}_Parse(node: xmlP.XmlNode): ${shape.censoredName} {`);
+    chunks.push(`function ${shape.censoredName}_Parse(node: xmlP.XmlNode): ${namePrefix}${shape.censoredName} {`);
 
     switch (shape.spec.type) {
       case 'structure':
@@ -242,6 +244,8 @@ export default class ProtocolXmlCodegen {
   }
 
   generateStructureOutputTypescript(outputStruct: Schema.ShapeStructure, nodeRef: string, payload?: string): string {
+    const namePrefix = (this.helpers.hasDep('s')) ? 's.' : '';
+
     // Organize fields into basic strings and 'special' others
     // Basic strings can be passed directly from the xml module
     // TODO: support for locationName and maybe even enums, as further strings() arguments
@@ -342,7 +346,7 @@ export default class ProtocolXmlCodegen {
         case 'string': {
           if (spec.xmlAttribute) {
             if (shape.spec.enum && isRequired) {
-              chunks.push(`    ${field}: cmnP.readEnumReq<${shape.censoredName}>(${nodeRef}.attributes[${JSON.stringify(locationName)}]),`);
+              chunks.push(`    ${field}: cmnP.readEnumReq<${namePrefix}${shape.censoredName}>(${nodeRef}.attributes[${JSON.stringify(locationName)}]),`);
               break;
             }
             throw new Error(`xmlAttribute is only handled in certain cases for S3`);
@@ -374,12 +378,13 @@ export default class ProtocolXmlCodegen {
   }
 
   configureInnerShapeReading(innerShape: KnownShape) {
+    const namePrefix = (this.helpers.hasDep('s')) ? 's.' : '';
     switch (innerShape.spec.type) {
       case 'string':
         if (innerShape.spec.enum) {
           // TODO: is there a better way of mapping freetext into enums?
           if (innerShape.tags.has('named')) {
-            return `x => (x.content ?? '') as ${innerShape.censoredName}`;
+            return `x => (x.content ?? '') as ${namePrefix}${innerShape.censoredName}`;
           } else {
             return `x => (x.content ?? '') as ${innerShape.spec.enum.map(x => JSON.stringify(x)).join(' | ')}`;
           }

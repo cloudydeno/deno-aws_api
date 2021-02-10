@@ -12,9 +12,10 @@ export function generateApiTypescript(
   helpers: HelperLibrary,
   protocol: ProtocolCodegen,
   namespace: string,
+  namePrefix: string,
 ): string {
 
-  const structEmitter = new StructEmitter(apiSpec, shapes, helpers, protocol);
+  const structEmitter = new StructEmitter(apiSpec, shapes, helpers, protocol, namePrefix);
   helpers.addDep("client", "../../client/common.ts");
 
   const chunks = new Array<string>();

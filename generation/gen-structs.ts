@@ -9,36 +9,47 @@ export class StructEmitter {
     private shapes: ShapeLibrary,
     private helpers: HelperLibrary,
     private protocol: ProtocolCodegen,
+    private namePrefix: string = '',
   ) {}
 
-  generateStructsTypescript(): string {
+  generateStructsTypescript(including: ('iface' | 'mapping')[]): string {
     const chunks = new Array<string>();
 
     for (const shape of this.shapes.allNamedShapes) {
       if (!shape.tags.has('named')) continue;
+      let anythingHappened = false;
 
-      chunks.push(`// refs: ${shape.refCount
-        } - tags: ${Array.from(shape.tags).join(', ')}`);
+      if (including.includes('iface')) {
 
-      // if (this.#singleRefShapes.has(shape.name)) {
-      //   chunks.push(`// TODO: can be inlined (only used once)`);
-      // }
-      chunks.push(`${
-        this.writeStructureType(shape)}`);
+        chunks.push(`// refs: ${shape.refCount
+          } - tags: ${Array.from(shape.tags).join(', ')}`);
+
+        // if (this.#singleRefShapes.has(shape.name)) {
+        //   chunks.push(`// TODO: can be inlined (only used once)`);
+        // }
+        chunks.push(`${this.writeStructureType(shape)}`);
+
+        anythingHappened = true;
+      }
 
       // TODO: other types might want a helper func... enums??
       // TODO QUIRK: IdentityPool isn't tagged right, out of the entire API surface
-      if (shape.tags.has('interface') || shape.censoredName === 'IdentityPool') {
+      if (including.includes('mapping') && (shape.tags.has('interface') || shape.censoredName === 'IdentityPool')) {
         // Maybe include input reading (prep for wire)
         if (!(this.shapes.inputShapes.includes(shape) && shape.refCount === 1) && shape.tags.has('input')) {
           chunks.push(this.protocol.generateShapeInputParsingTypescript(shape).inputParsingFunction);
+          anythingHappened = true;
         }
         // Maybe include output reading (post-wire enriching)
         if (!(this.shapes.outputShapes.includes(shape) && shape.refCount === 1) && shape.tags.has('output')) {
           chunks.push(this.protocol.generateShapeOutputParsingTypescript(shape).outputParsingFunction);
+          anythingHappened = true;
         }
       }
-      chunks.push('');
+
+      if (anythingHappened) {
+        chunks.push('');
+      }
     }
 
     return chunks.join('\n');
@@ -75,7 +86,7 @@ export class StructEmitter {
   // TODO: enums as a map key type should become an object instead
   specifyShapeType(shape: KnownShape, opts: {isDictKey?: true; isJson?: true}): string {
     if (shape.tags.has('named') && !opts.isDictKey) {
-      return shape.censoredName;
+      return this.namePrefix+shape.censoredName;
     }
 
     switch (shape.spec.type) {
@@ -83,6 +94,7 @@ export class StructEmitter {
         if (shape.spec.enum && !opts.isDictKey) {
           return shape.spec.enum.map(x => JSON.stringify(x)).join(' | ');
         } else if (opts.isJson && !opts.isDictKey) {
+          this.helpers.addDep("jsonP", "../../encoding/json.ts");
           return 'jsonP.JSONValue';
         }
       case 'boolean':
@@ -103,7 +115,7 @@ export class StructEmitter {
         const keyShape = this.shapes.get(shape.spec.key);
         const valueShape = this.shapes.get(shape.spec.value);
         const keyType = (keyShape.spec.type === 'string' && keyShape.spec.enum)
-          ? `key in ${keyShape.censoredName}`
+          ? `key in ${this.namePrefix}${keyShape.censoredName}`
           : `key: ${this.specifyShapeType(keyShape, {isDictKey: true})}`;
         return `{ [${keyType}]: ${this.specifyShapeType(valueShape, {isJson: shape.spec.value.jsonvalue})} | null | undefined }`;
       case 'structure':
