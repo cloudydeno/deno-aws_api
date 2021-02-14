@@ -11,8 +11,6 @@ export default class ProtocolXmlCodegen {
     {ec2}: {ec2?: boolean} = {},
   ) {
     this.ec2Mode = ec2 ?? false;
-
-    helpers.useHelper("xmlP");
   }
 
   generateOperationInputParsingTypescript(inputShape: KnownShape, meta: Schema.LocationInfo & {paramRef?: string}): { inputParsingCode: string; inputVariables: string[]; } {
@@ -20,6 +18,7 @@ export default class ProtocolXmlCodegen {
       `Can only generate top level structures`);
 
     const chunks = new Array<string>();
+    this.helpers.useHelper("xmlP");
 
     const {attrCode, childrenCode} = this.generateStructureInputTypescript(inputShape.spec, meta.paramRef ?? 'params');
 
@@ -41,6 +40,7 @@ export default class ProtocolXmlCodegen {
       inputParsingFunction: '',
     };
     const namePrefix = (this.helpers.hasDep('s')) ? 's.' : '';
+    this.helpers.useHelper("xmlP");
 
     const {attrCode, childrenCode} = this.generateStructureInputTypescript(shape.spec, 'data');
 
@@ -179,6 +179,7 @@ export default class ProtocolXmlCodegen {
             throw new Error(`TODO: xml output map flattened`);
             // chunks.push(`    ...(${paramRef}?.map(x => ({name: ${JSON.stringify(locationName)}, ${childField}${childExpr}})) ?? []),`);
           } else {
+            this.helpers.useHelper("xmlP");
             chunks.push(`    {name: ${JSON.stringify(locationName)}, ...xmlP.emitMap(${paramRef}, ${JSON.stringify(shape.spec.locationName ?? 'entry')}, ${JSON.stringify(shape.spec.key.locationName ?? 'key')}, ${valEncoder})},`);
           }
 
@@ -207,6 +208,7 @@ export default class ProtocolXmlCodegen {
       `Can only generate top level output structures`);
 
     const chunks = new Array<string>();
+    this.helpers.useHelper("xmlP");
     chunks.push(`    const xml = xmlP.readXmlResult(await resp.text()${resultWrapper ? `, ${JSON.stringify(resultWrapper)}` : ''});`);
     if (shape.refCount > 1) {
       chunks.push(`    return ${shape.censoredName}_Parse(xml);`);
@@ -229,6 +231,7 @@ export default class ProtocolXmlCodegen {
     const namePrefix = (this.helpers.hasDep('s')) ? 's.' : '';
 
     const chunks = new Array<string>();
+    this.helpers.useHelper("xmlP");
     chunks.push(`function ${shape.censoredName}_Parse(node: xmlP.XmlNode): ${namePrefix}${shape.censoredName} {`);
 
     switch (shape.spec.type) {
@@ -341,6 +344,7 @@ export default class ProtocolXmlCodegen {
           const keyShape = this.shapes.get(shape.spec.key);
           const valueShape = this.shapes.get(shape.spec.value);
           // console.log([mapPrefix, entryPrefix, innerShape.spec.type, innerShape.spec.locationName]);
+          this.helpers.useHelper("xmlP");
           chunks.push(`    ${field}: xmlP.readXmlMap(${nodeRef}.getList(${entryPath.map(x => JSON.stringify(x)).join(', ')}), ${this.configureInnerShapeReading(valueShape)}, ${JSON.stringify(mapConfig)}),`);
           break;
         }
@@ -407,6 +411,7 @@ export default class ProtocolXmlCodegen {
         this.helpers.useHelper("parseBlob");
         return `x => parseBlob(x.content) ?? ''`;
       case 'timestamp':
+        this.helpers.useHelper("xmlP");
         return `x => xmlP.parseTimestamp(x.content)`;
       case 'map':
         throw new Error(`TODO: xml output map ${innerShape.spec.value.shape}`);
@@ -418,10 +423,7 @@ export default class ProtocolXmlCodegen {
           throw new Error(`Structure ${innerShape.name} is used in an output list but wasn't named`);
         }
     }
-    // sue me
     throw new Error(`TODO: xml output field ${innerShape.spec.type}`);
-    return `x => x /* TODO: ${innerShape.spec.type} output*/`;
-    // return '{' + confExtras + JSON.stringify(extraConfig).slice(1);
   }
 
 }
