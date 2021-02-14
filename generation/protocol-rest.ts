@@ -80,8 +80,8 @@ export default class ProtocolRestCodegen {
               formattedRef = `${formattedRef}?.toString() ?? ''`;
               break;
             case 'blob':
-              formattedRef = `cmnP.serializeBlob(${formattedRef}) ?? ''`;
-              this.helpers.useHelper("cmnP");
+              this.helpers.useHelper("serializeBlob");
+              formattedRef = `serializeBlob(${formattedRef}) ?? ''`;
               break;
             case 'string':
               // TODO: also headers that are MD5s of other headers

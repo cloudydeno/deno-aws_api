@@ -109,8 +109,8 @@ export default class ProtocolQueryCodegen extends ProtocolXmlCodegen {
           chunks.push(`    ${isRequired ? '' : `if (${JSON.stringify(field)} in params) `}body.append(prefix+${JSON.stringify(prefix+locationName)}, (${paramRef} ?? '').toString());`);
           break;
         case 'blob':
-          this.helpers.useHelper("qsP");
-          chunks.push(`    ${isRequired ? '' : `if (${JSON.stringify(field)} in params) `}body.append(prefix+${JSON.stringify(prefix+locationName)}, qsP.encodeBlob(${paramRef}));`);
+          this.helpers.useHelper("serializeBlob");
+          chunks.push(`    ${isRequired ? '' : `if (${JSON.stringify(field)} in params) `}body.append(prefix+${JSON.stringify(prefix+locationName)}, serializeBlob(${paramRef}) ?? '');`);
           break;
         case 'timestamp':
           this.helpers.useHelper("qsP");
@@ -151,8 +151,8 @@ export default class ProtocolQueryCodegen extends ProtocolXmlCodegen {
     let confExtras = '';
     switch (innerShape.spec.type) {
       case 'blob':
-        this.helpers.useHelper("qsP");
-        confExtras += `"encoder":qsP.encodeBlob,`;
+        this.helpers.useHelper("serializeBlob");
+        confExtras += `"encoder":(x)=>serializeBlob(x) ?? '',`;
         break;
       case 'timestamp':
         this.helpers.useHelper("qsP");

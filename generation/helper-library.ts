@@ -39,13 +39,13 @@ export class HelperLibrary {
     for (const helper of helpers) {
       if (!helper.deps) continue;
       for (const dep of Object.entries(helper.deps)) {
-        if (deps.has(dep[0])) console.error('dup dep', dep);
+        if (deps.has(dep[0])) continue;
         deps.add(dep[0]);
         depChunks.push(`import * as ${dep[0]} from ${JSON.stringify(dep[1])};`);
       }
     }
     for (const dep of this.#extraDeps.entries()) {
-      if (deps.has(dep[0])) console.error('dup dep', dep);
+      if (deps.has(dep[0])) continue;
       deps.add(dep[0]);
       if (dep[1].endsWith('/structs.ts')) {
         depChunks.push(`import type * as ${dep[0]} from ${JSON.stringify(dep[1])};`);
@@ -80,6 +80,29 @@ export const HashMD5: Helper = {
   ],
 };
 
+export const SerializeBlob: Helper = {
+  deps: {
+    Base64: "https://deno.land/std@0.86.0/encoding/base64.ts",
+  },
+  chunks: [
+    `function serializeBlob(input: string | Uint8Array | null | undefined) {`,
+    `  if (input == null) return input;`,
+    `  return Base64.encode(input);`,
+    `}`,
+  ],
+};
+export const ParseBlob: Helper = {
+  deps: {
+    Base64: "https://deno.land/std@0.86.0/encoding/base64.ts",
+  },
+  chunks: [
+    `function parseBlob(input: string | null | undefined) {`,
+    `  if (input == null) return input;`,
+    `  return Base64.decode(input);`,
+    `}`,
+  ],
+};
+
 export const IdemptToken: Helper = {
   deps: {
     uuidv4: `https://deno.land/std@0.86.0/uuid/v4.ts`,
@@ -103,7 +126,7 @@ export function makeHelperLibrary(opts: {
 } = {}) {
   const lib = new HelperLibrary();
 
-  lib.addOptionalDep('Base64', 'https://deno.land/x/base64@v0.2.1/mod.ts');
+  // lib.addOptionalDep('Base64', 'https://deno.land/x/base64@v0.2.1/mod.ts');
   lib.addOptionalDep('client', '../../client/common.ts');
 
   lib.addOptionalDep('cmnP', '../../encoding/common.ts');
@@ -116,6 +139,9 @@ export function makeHelperLibrary(opts: {
     : IdemptToken);
 
   lib.addHelper('hashMD5', HashMD5);
+
+  lib.addHelper('serializeBlob', SerializeBlob);
+  lib.addHelper('parseBlob', ParseBlob);
 
   return lib;
 }

@@ -215,8 +215,9 @@ async function doOneRun(run: TestRun): Promise<TestRunResult> {
     if (run.description.includes('Ignores undefined output') || run.description.includes('Enum with result {}')) {
       chunks.push(`const result: void = await testService.${lowerCamel(given.name)}();\n`);
     } else {
+      chunks.push(`import { testTransformJsObj } from '../../encoding/common.ts';`);
       chunks.push(`const result = await testService.${lowerCamel(given.name)}();\n`);
-      chunks.push(`const resultJson = JSON.stringify(cmnP.testTransformJsObj(result));`);
+      chunks.push(`const resultJson = JSON.stringify(testTransformJsObj(result));`);
       chunks.push(`assertEquals(resultJson,`);
       chunks.push(`  ${JSON.stringify(fixExpectedJson(JSON.stringify(result)))});`);
     }

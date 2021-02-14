@@ -70,8 +70,8 @@ export default class ProtocolJsonCodegen {
         this.helpers.useHelper("jsonP");
         encoder = `jsonP.serializeDate_${dateFmt}(${fieldRef})`;
       } else if (innerShape.spec.type === 'blob') {
-        this.helpers.useHelper("jsonP");
-        encoder = `jsonP.serializeBlob(${fieldRef})`;
+        this.helpers.useHelper("serializeBlob");
+        encoder = `serializeBlob(${fieldRef})`;
       } else if (innerShape.spec.type === 'structure') {
         encoder = `from${innerShape.censoredName}(${fieldRef})`;
       } else if (innerShape.spec.type === 'list') {

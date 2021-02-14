@@ -109,8 +109,8 @@ export default class ProtocolXmlCodegen {
           break;
 
         case 'blob':
-          this.helpers.useHelper("cmnP");
-          chunks.push(`    {name: ${JSON.stringify(locationName)}, content: cmnP.serializeBlob(${paramRef})},`);
+          this.helpers.useHelper("serializeBlob");
+          chunks.push(`    {name: ${JSON.stringify(locationName)}, content: serializeBlob(${paramRef})},`);
           break;
 
         case 'list': {
@@ -404,8 +404,8 @@ export default class ProtocolXmlCodegen {
       case 'double':
         return `x => parseFloat(x.content ?? '0')`;
       case 'blob':
-        this.helpers.useHelper('Base64');
-        return `x => Base64.toUint8Array(x.content ?? '')`;
+        this.helpers.useHelper("parseBlob");
+        return `x => parseBlob(x.content) ?? ''`;
       case 'timestamp':
         return `x => xmlP.parseTimestamp(x.content)`;
       case 'map':
