@@ -4,11 +4,11 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import * as uuidv4 from "https://deno.land/std@0.86.0/uuid/v4.ts";
-import * as cmnP from "../../encoding/common.ts";
 import * as client from "../../client/common.ts";
-import type * as s from "./structs.ts";
+import * as cmnP from "../../encoding/common.ts";
 import * as jsonP from "../../encoding/json.ts";
+import * as uuidv4 from "https://deno.land/std@0.86.0/uuid/v4.ts";
+import type * as s from "./structs.ts";
 function generateIdemptToken() {
   return uuidv4.generate();
 }

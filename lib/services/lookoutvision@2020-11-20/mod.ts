@@ -4,10 +4,15 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import * as cmnP from "../../encoding/common.ts";
+import * as Base64 from "https://deno.land/std@0.86.0/encoding/base64.ts";
 import * as client from "../../client/common.ts";
-import type * as s from "./structs.ts";
+import * as cmnP from "../../encoding/common.ts";
 import * as jsonP from "../../encoding/json.ts";
+import type * as s from "./structs.ts";
+function serializeBlob(input: string | Uint8Array | null | undefined) {
+  if (input == null) return input;
+  return Base64.encode(input);
+}
 
 export default class LookoutVision {
   #client: client.ServiceClient;
@@ -394,7 +399,7 @@ export default class LookoutVision {
   ): Promise<s.UpdateDatasetEntriesResponse> {
     const headers = new Headers;
     const body: jsonP.JSONObject = {
-      Changes: jsonP.serializeBlob(params["Changes"]),
+      Changes: serializeBlob(params["Changes"]),
     };
     if (params["ClientToken"] != null) headers.append("X-Amzn-Client-Token", params["ClientToken"]);
     const resp = await this.#client.performRequest({

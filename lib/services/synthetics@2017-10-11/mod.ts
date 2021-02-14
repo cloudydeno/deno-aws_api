@@ -4,10 +4,15 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import * as cmnP from "../../encoding/common.ts";
+import * as Base64 from "https://deno.land/std@0.86.0/encoding/base64.ts";
 import * as client from "../../client/common.ts";
-import type * as s from "./structs.ts";
+import * as cmnP from "../../encoding/common.ts";
 import * as jsonP from "../../encoding/json.ts";
+import type * as s from "./structs.ts";
+function serializeBlob(input: string | Uint8Array | null | undefined) {
+  if (input == null) return input;
+  return Base64.encode(input);
+}
 
 export default class Synthetics {
   #client: client.ServiceClient;
@@ -292,7 +297,7 @@ function fromCanaryCodeInput(input?: s.CanaryCodeInput | null): jsonP.JSONValue 
     S3Bucket: input["S3Bucket"],
     S3Key: input["S3Key"],
     S3Version: input["S3Version"],
-    ZipFile: jsonP.serializeBlob(input["ZipFile"]),
+    ZipFile: serializeBlob(input["ZipFile"]),
     Handler: input["Handler"],
   }
 }

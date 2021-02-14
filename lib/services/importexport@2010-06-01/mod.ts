@@ -4,10 +4,9 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import * as cmnP from "../../encoding/common.ts";
-import * as xmlP from "../../encoding/xml.ts";
-import * as qsP from "../../encoding/querystring.ts";
 import * as client from "../../client/common.ts";
+import * as qsP from "../../encoding/querystring.ts";
+import * as xmlP from "../../encoding/xml.ts";
 import type * as s from "./structs.ts";
 
 export default class ImportExport {

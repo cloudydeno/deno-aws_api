@@ -4,10 +4,15 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import * as cmnP from "../../encoding/common.ts";
+import * as Base64 from "https://deno.land/std@0.86.0/encoding/base64.ts";
 import * as client from "../../client/common.ts";
-import type * as s from "./structs.ts";
+import * as cmnP from "../../encoding/common.ts";
 import * as jsonP from "../../encoding/json.ts";
+import type * as s from "./structs.ts";
+function serializeBlob(input: string | Uint8Array | null | undefined) {
+  if (input == null) return input;
+  return Base64.encode(input);
+}
 
 export default class ACMPCA {
   #client: client.ServiceClient;
@@ -245,8 +250,8 @@ export default class ACMPCA {
   ): Promise<void> {
     const body: jsonP.JSONObject = {
       CertificateAuthorityArn: params["CertificateAuthorityArn"],
-      Certificate: jsonP.serializeBlob(params["Certificate"]),
-      CertificateChain: jsonP.serializeBlob(params["CertificateChain"]),
+      Certificate: serializeBlob(params["Certificate"]),
+      CertificateChain: serializeBlob(params["CertificateChain"]),
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -260,7 +265,7 @@ export default class ACMPCA {
     const body: jsonP.JSONObject = {
       ApiPassthrough: fromApiPassthrough(params["ApiPassthrough"]),
       CertificateAuthorityArn: params["CertificateAuthorityArn"],
-      Csr: jsonP.serializeBlob(params["Csr"]),
+      Csr: serializeBlob(params["Csr"]),
       SigningAlgorithm: params["SigningAlgorithm"],
       TemplateArn: params["TemplateArn"],
       Validity: fromValidity(params["Validity"]),

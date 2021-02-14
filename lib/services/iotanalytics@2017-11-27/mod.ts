@@ -4,10 +4,15 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import * as cmnP from "../../encoding/common.ts";
+import * as Base64 from "https://deno.land/std@0.86.0/encoding/base64.ts";
 import * as client from "../../client/common.ts";
-import type * as s from "./structs.ts";
+import * as cmnP from "../../encoding/common.ts";
 import * as jsonP from "../../encoding/json.ts";
+import type * as s from "./structs.ts";
+function serializeBlob(input: string | Uint8Array | null | undefined) {
+  if (input == null) return input;
+  return Base64.encode(input);
+}
 
 export default class IoTAnalytics {
   #client: client.ServiceClient;
@@ -511,7 +516,7 @@ export default class IoTAnalytics {
   ): Promise<s.RunPipelineActivityResponse> {
     const body: jsonP.JSONObject = {
       pipelineActivity: fromPipelineActivity(params["pipelineActivity"]),
-      payloads: params["payloads"]?.map(x => jsonP.serializeBlob(x)),
+      payloads: params["payloads"]?.map(x => serializeBlob(x)),
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -680,7 +685,7 @@ function fromMessage(input?: s.Message | null): jsonP.JSONValue {
   if (!input) return input;
   return {
     messageId: input["messageId"],
-    payload: jsonP.serializeBlob(input["payload"]),
+    payload: serializeBlob(input["payload"]),
   }
 }
 

@@ -4,16 +4,24 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
+import * as Base64 from "https://deno.land/std@0.86.0/encoding/base64.ts";
 import * as HashMd5 from "https://deno.land/std@0.86.0/hash/md5.ts";
+import * as client from "../../client/common.ts";
 import * as cmnP from "../../encoding/common.ts";
 import * as xmlP from "../../encoding/xml.ts";
-import * as client from "../../client/common.ts";
 import type * as s from "./structs.ts";
-import * as Base64 from "https://deno.land/x/base64@v0.2.1/mod.ts";
 function hashMD5(data: HashMd5.Message): string {
   const hasher = new HashMd5.Md5();
   hasher.update(data);
   return hasher.toString('base64');
+}
+function serializeBlob(input: string | Uint8Array | null | undefined) {
+  if (input == null) return input;
+  return Base64.encode(input);
+}
+function parseBlob(input: string | null | undefined) {
+  if (input == null) return input;
+  return Base64.decode(input);
 }
 
 export default class S3 {
@@ -118,13 +126,13 @@ export default class S3 {
     if (params["StorageClass"] != null) headers.append("x-amz-storage-class", params["StorageClass"]);
     if (params["WebsiteRedirectLocation"] != null) headers.append("x-amz-website-redirect-location", params["WebsiteRedirectLocation"]);
     if (params["SSECustomerAlgorithm"] != null) headers.append("x-amz-server-side-encryption-customer-algorithm", params["SSECustomerAlgorithm"]);
-    if (params["SSECustomerKey"] != null) headers.append("x-amz-server-side-encryption-customer-key", cmnP.serializeBlob(params["SSECustomerKey"]) ?? '');
+    if (params["SSECustomerKey"] != null) headers.append("x-amz-server-side-encryption-customer-key", serializeBlob(params["SSECustomerKey"]) ?? '');
     if (params["SSECustomerKeyMD5"] != null) headers.append("x-amz-server-side-encryption-customer-key-MD5", params["SSECustomerKeyMD5"]);
     if (params["SSEKMSKeyId"] != null) headers.append("x-amz-server-side-encryption-aws-kms-key-id", params["SSEKMSKeyId"]);
     if (params["SSEKMSEncryptionContext"] != null) headers.append("x-amz-server-side-encryption-context", params["SSEKMSEncryptionContext"]);
     if (params["BucketKeyEnabled"] != null) headers.append("x-amz-server-side-encryption-bucket-key-enabled", params["BucketKeyEnabled"]?.toString() ?? '');
     if (params["CopySourceSSECustomerAlgorithm"] != null) headers.append("x-amz-copy-source-server-side-encryption-customer-algorithm", params["CopySourceSSECustomerAlgorithm"]);
-    if (params["CopySourceSSECustomerKey"] != null) headers.append("x-amz-copy-source-server-side-encryption-customer-key", cmnP.serializeBlob(params["CopySourceSSECustomerKey"]) ?? '');
+    if (params["CopySourceSSECustomerKey"] != null) headers.append("x-amz-copy-source-server-side-encryption-customer-key", serializeBlob(params["CopySourceSSECustomerKey"]) ?? '');
     if (params["CopySourceSSECustomerKeyMD5"] != null) headers.append("x-amz-copy-source-server-side-encryption-customer-key-MD5", params["CopySourceSSECustomerKeyMD5"]);
     if (params["RequestPayer"] != null) headers.append("x-amz-request-payer", params["RequestPayer"]);
     if (params["Tagging"] != null) headers.append("x-amz-tagging", params["Tagging"]);
@@ -211,7 +219,7 @@ export default class S3 {
     if (params["StorageClass"] != null) headers.append("x-amz-storage-class", params["StorageClass"]);
     if (params["WebsiteRedirectLocation"] != null) headers.append("x-amz-website-redirect-location", params["WebsiteRedirectLocation"]);
     if (params["SSECustomerAlgorithm"] != null) headers.append("x-amz-server-side-encryption-customer-algorithm", params["SSECustomerAlgorithm"]);
-    if (params["SSECustomerKey"] != null) headers.append("x-amz-server-side-encryption-customer-key", cmnP.serializeBlob(params["SSECustomerKey"]) ?? '');
+    if (params["SSECustomerKey"] != null) headers.append("x-amz-server-side-encryption-customer-key", serializeBlob(params["SSECustomerKey"]) ?? '');
     if (params["SSECustomerKeyMD5"] != null) headers.append("x-amz-server-side-encryption-customer-key-MD5", params["SSECustomerKeyMD5"]);
     if (params["SSEKMSKeyId"] != null) headers.append("x-amz-server-side-encryption-aws-kms-key-id", params["SSEKMSKeyId"]);
     if (params["SSEKMSEncryptionContext"] != null) headers.append("x-amz-server-side-encryption-context", params["SSEKMSEncryptionContext"]);
@@ -927,7 +935,7 @@ export default class S3 {
     if (params["ResponseExpires"] != null) query.set("response-expires", cmnP.serializeDate_rfc822(params["ResponseExpires"]) ?? "");
     if (params["VersionId"] != null) query.set("versionId", params["VersionId"]?.toString() ?? "");
     if (params["SSECustomerAlgorithm"] != null) headers.append("x-amz-server-side-encryption-customer-algorithm", params["SSECustomerAlgorithm"]);
-    if (params["SSECustomerKey"] != null) headers.append("x-amz-server-side-encryption-customer-key", cmnP.serializeBlob(params["SSECustomerKey"]) ?? '');
+    if (params["SSECustomerKey"] != null) headers.append("x-amz-server-side-encryption-customer-key", serializeBlob(params["SSECustomerKey"]) ?? '');
     if (params["SSECustomerKeyMD5"] != null) headers.append("x-amz-server-side-encryption-customer-key-MD5", params["SSECustomerKeyMD5"]);
     if (params["RequestPayer"] != null) headers.append("x-amz-request-payer", params["RequestPayer"]);
     if (params["PartNumber"] != null) query.set("partNumber", params["PartNumber"]?.toString() ?? "");
@@ -1137,7 +1145,7 @@ export default class S3 {
     if (params["Range"] != null) headers.append("Range", params["Range"]);
     if (params["VersionId"] != null) query.set("versionId", params["VersionId"]?.toString() ?? "");
     if (params["SSECustomerAlgorithm"] != null) headers.append("x-amz-server-side-encryption-customer-algorithm", params["SSECustomerAlgorithm"]);
-    if (params["SSECustomerKey"] != null) headers.append("x-amz-server-side-encryption-customer-key", cmnP.serializeBlob(params["SSECustomerKey"]) ?? '');
+    if (params["SSECustomerKey"] != null) headers.append("x-amz-server-side-encryption-customer-key", serializeBlob(params["SSECustomerKey"]) ?? '');
     if (params["SSECustomerKeyMD5"] != null) headers.append("x-amz-server-side-encryption-customer-key-MD5", params["SSECustomerKeyMD5"]);
     if (params["RequestPayer"] != null) headers.append("x-amz-request-payer", params["RequestPayer"]);
     if (params["PartNumber"] != null) query.set("partNumber", params["PartNumber"]?.toString() ?? "");
@@ -1922,7 +1930,7 @@ export default class S3 {
     if (params["StorageClass"] != null) headers.append("x-amz-storage-class", params["StorageClass"]);
     if (params["WebsiteRedirectLocation"] != null) headers.append("x-amz-website-redirect-location", params["WebsiteRedirectLocation"]);
     if (params["SSECustomerAlgorithm"] != null) headers.append("x-amz-server-side-encryption-customer-algorithm", params["SSECustomerAlgorithm"]);
-    if (params["SSECustomerKey"] != null) headers.append("x-amz-server-side-encryption-customer-key", cmnP.serializeBlob(params["SSECustomerKey"]) ?? '');
+    if (params["SSECustomerKey"] != null) headers.append("x-amz-server-side-encryption-customer-key", serializeBlob(params["SSECustomerKey"]) ?? '');
     if (params["SSECustomerKeyMD5"] != null) headers.append("x-amz-server-side-encryption-customer-key-MD5", params["SSECustomerKeyMD5"]);
     if (params["SSEKMSKeyId"] != null) headers.append("x-amz-server-side-encryption-aws-kms-key-id", params["SSEKMSKeyId"]);
     if (params["SSEKMSEncryptionContext"] != null) headers.append("x-amz-server-side-encryption-context", params["SSEKMSEncryptionContext"]);
@@ -2168,7 +2176,7 @@ export default class S3 {
         {name: "ScanRange", ...ScanRange_Serialize(params["ScanRange"])},
       ]});
     if (params["SSECustomerAlgorithm"] != null) headers.append("x-amz-server-side-encryption-customer-algorithm", params["SSECustomerAlgorithm"]);
-    if (params["SSECustomerKey"] != null) headers.append("x-amz-server-side-encryption-customer-key", cmnP.serializeBlob(params["SSECustomerKey"]) ?? '');
+    if (params["SSECustomerKey"] != null) headers.append("x-amz-server-side-encryption-customer-key", serializeBlob(params["SSECustomerKey"]) ?? '');
     if (params["SSECustomerKeyMD5"] != null) headers.append("x-amz-server-side-encryption-customer-key-MD5", params["SSECustomerKeyMD5"]);
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
@@ -2199,7 +2207,7 @@ export default class S3 {
     query.set("partNumber", params["PartNumber"]?.toString() ?? "");
     query.set("uploadId", params["UploadId"]?.toString() ?? "");
     if (params["SSECustomerAlgorithm"] != null) headers.append("x-amz-server-side-encryption-customer-algorithm", params["SSECustomerAlgorithm"]);
-    if (params["SSECustomerKey"] != null) headers.append("x-amz-server-side-encryption-customer-key", cmnP.serializeBlob(params["SSECustomerKey"]) ?? '');
+    if (params["SSECustomerKey"] != null) headers.append("x-amz-server-side-encryption-customer-key", serializeBlob(params["SSECustomerKey"]) ?? '');
     if (params["SSECustomerKeyMD5"] != null) headers.append("x-amz-server-side-encryption-customer-key-MD5", params["SSECustomerKeyMD5"]);
     if (params["RequestPayer"] != null) headers.append("x-amz-request-payer", params["RequestPayer"]);
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
@@ -2234,10 +2242,10 @@ export default class S3 {
     query.set("partNumber", params["PartNumber"]?.toString() ?? "");
     query.set("uploadId", params["UploadId"]?.toString() ?? "");
     if (params["SSECustomerAlgorithm"] != null) headers.append("x-amz-server-side-encryption-customer-algorithm", params["SSECustomerAlgorithm"]);
-    if (params["SSECustomerKey"] != null) headers.append("x-amz-server-side-encryption-customer-key", cmnP.serializeBlob(params["SSECustomerKey"]) ?? '');
+    if (params["SSECustomerKey"] != null) headers.append("x-amz-server-side-encryption-customer-key", serializeBlob(params["SSECustomerKey"]) ?? '');
     if (params["SSECustomerKeyMD5"] != null) headers.append("x-amz-server-side-encryption-customer-key-MD5", params["SSECustomerKeyMD5"]);
     if (params["CopySourceSSECustomerAlgorithm"] != null) headers.append("x-amz-copy-source-server-side-encryption-customer-algorithm", params["CopySourceSSECustomerAlgorithm"]);
-    if (params["CopySourceSSECustomerKey"] != null) headers.append("x-amz-copy-source-server-side-encryption-customer-key", cmnP.serializeBlob(params["CopySourceSSECustomerKey"]) ?? '');
+    if (params["CopySourceSSECustomerKey"] != null) headers.append("x-amz-copy-source-server-side-encryption-customer-key", serializeBlob(params["CopySourceSSECustomerKey"]) ?? '');
     if (params["CopySourceSSECustomerKeyMD5"] != null) headers.append("x-amz-copy-source-server-side-encryption-customer-key-MD5", params["CopySourceSSECustomerKeyMD5"]);
     if (params["RequestPayer"] != null) headers.append("x-amz-request-payer", params["RequestPayer"]);
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
@@ -3999,7 +4007,7 @@ function SelectObjectContentEventStream_Parse(node: xmlP.XmlNode): s.SelectObjec
 
 function RecordsEvent_Parse(node: xmlP.XmlNode): s.RecordsEvent {
   return {
-    Payload: node.first("Payload", false, x => Base64.toUint8Array(x.content ?? '')),
+    Payload: node.first("Payload", false, x => parseBlob(x.content) ?? ''),
   };
 }
 

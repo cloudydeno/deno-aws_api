@@ -4,12 +4,15 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import * as cmnP from "../../encoding/common.ts";
-import * as xmlP from "../../encoding/xml.ts";
-import * as qsP from "../../encoding/querystring.ts";
+import * as Base64 from "https://deno.land/std@0.86.0/encoding/base64.ts";
 import * as client from "../../client/common.ts";
+import * as qsP from "../../encoding/querystring.ts";
+import * as xmlP from "../../encoding/xml.ts";
 import type * as s from "./structs.ts";
-import * as Base64 from "https://deno.land/x/base64@v0.2.1/mod.ts";
+function parseBlob(input: string | null | undefined) {
+  if (input == null) return input;
+  return Base64.decode(input);
+}
 
 export default class IAM {
   #client: client.ServiceClient;
@@ -880,7 +883,7 @@ export default class IAM {
     });
     const xml = xmlP.readXmlResult(await resp.text(), "GetCredentialReportResult");
     return {
-      Content: xml.first("Content", false, x => Base64.toUint8Array(x.content ?? '')),
+      Content: xml.first("Content", false, x => parseBlob(x.content) ?? ''),
       ReportFormat: xml.first("ReportFormat", false, x => (x.content ?? '') as s.ReportFormatType),
       GeneratedTime: xml.first("GeneratedTime", false, x => xmlP.parseTimestamp(x.content)),
     };
@@ -2589,8 +2592,8 @@ function VirtualMFADevice_Parse(node: xmlP.XmlNode): s.VirtualMFADevice {
     ...node.strings({
       required: {"SerialNumber":true},
     }),
-    Base32StringSeed: node.first("Base32StringSeed", false, x => Base64.toUint8Array(x.content ?? '')),
-    QRCodePNG: node.first("QRCodePNG", false, x => Base64.toUint8Array(x.content ?? '')),
+    Base32StringSeed: node.first("Base32StringSeed", false, x => parseBlob(x.content) ?? ''),
+    QRCodePNG: node.first("QRCodePNG", false, x => parseBlob(x.content) ?? ''),
     User: node.first("User", false, User_Parse),
     EnableDate: node.first("EnableDate", false, x => xmlP.parseTimestamp(x.content)),
   };

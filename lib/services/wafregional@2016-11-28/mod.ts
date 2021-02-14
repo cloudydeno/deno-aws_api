@@ -4,10 +4,15 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import * as cmnP from "../../encoding/common.ts";
+import * as Base64 from "https://deno.land/std@0.86.0/encoding/base64.ts";
 import * as client from "../../client/common.ts";
-import type * as s from "./structs.ts";
+import * as cmnP from "../../encoding/common.ts";
 import * as jsonP from "../../encoding/json.ts";
+import type * as s from "./structs.ts";
+function serializeBlob(input: string | Uint8Array | null | undefined) {
+  if (input == null) return input;
+  return Base64.encode(input);
+}
 
 export default class WAFRegional {
   #client: client.ServiceClient;
@@ -1693,7 +1698,7 @@ function fromByteMatchTuple(input?: s.ByteMatchTuple | null): jsonP.JSONValue {
   if (!input) return input;
   return {
     FieldToMatch: fromFieldToMatch(input["FieldToMatch"]),
-    TargetString: jsonP.serializeBlob(input["TargetString"]),
+    TargetString: serializeBlob(input["TargetString"]),
     TextTransformation: input["TextTransformation"],
     PositionalConstraint: input["PositionalConstraint"],
   }

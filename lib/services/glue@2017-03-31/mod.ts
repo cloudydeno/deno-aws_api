@@ -4,10 +4,15 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import * as cmnP from "../../encoding/common.ts";
+import * as Base64 from "https://deno.land/std@0.86.0/encoding/base64.ts";
 import * as client from "../../client/common.ts";
-import type * as s from "./structs.ts";
+import * as cmnP from "../../encoding/common.ts";
 import * as jsonP from "../../encoding/json.ts";
+import type * as s from "./structs.ts";
+function serializeBlob(input: string | Uint8Array | null | undefined) {
+  if (input == null) return input;
+  return Base64.encode(input);
+}
 
 export default class Glue {
   #client: client.ServiceClient;
@@ -4579,7 +4584,7 @@ function toDecimalColumnStatisticsData(root: jsonP.JSONValue): s.DecimalColumnSt
 function fromDecimalNumber(input?: s.DecimalNumber | null): jsonP.JSONValue {
   if (!input) return input;
   return {
-    UnscaledValue: jsonP.serializeBlob(input["UnscaledValue"]),
+    UnscaledValue: serializeBlob(input["UnscaledValue"]),
     Scale: input["Scale"],
   }
 }

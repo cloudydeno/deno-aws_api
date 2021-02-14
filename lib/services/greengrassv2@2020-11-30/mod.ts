@@ -4,10 +4,15 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import * as cmnP from "../../encoding/common.ts";
+import * as Base64 from "https://deno.land/std@0.86.0/encoding/base64.ts";
 import * as client from "../../client/common.ts";
-import type * as s from "./structs.ts";
+import * as cmnP from "../../encoding/common.ts";
 import * as jsonP from "../../encoding/json.ts";
+import type * as s from "./structs.ts";
+function serializeBlob(input: string | Uint8Array | null | undefined) {
+  if (input == null) return input;
+  return Base64.encode(input);
+}
 
 export default class GreengrassV2 {
   #client: client.ServiceClient;
@@ -48,7 +53,7 @@ export default class GreengrassV2 {
     {abortSignal, ...params}: RequestConfig & s.CreateComponentVersionRequest = {},
   ): Promise<s.CreateComponentVersionResponse> {
     const body: jsonP.JSONObject = {
-      inlineRecipe: jsonP.serializeBlob(params["inlineRecipe"]),
+      inlineRecipe: serializeBlob(params["inlineRecipe"]),
       lambdaFunction: fromLambdaFunctionRecipeSource(params["lambdaFunction"]),
       tags: params["tags"],
     };

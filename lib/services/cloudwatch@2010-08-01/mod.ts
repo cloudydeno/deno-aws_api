@@ -4,12 +4,15 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import * as cmnP from "../../encoding/common.ts";
-import * as xmlP from "../../encoding/xml.ts";
-import * as qsP from "../../encoding/querystring.ts";
+import * as Base64 from "https://deno.land/std@0.86.0/encoding/base64.ts";
 import * as client from "../../client/common.ts";
+import * as qsP from "../../encoding/querystring.ts";
+import * as xmlP from "../../encoding/xml.ts";
 import type * as s from "./structs.ts";
-import * as Base64 from "https://deno.land/x/base64@v0.2.1/mod.ts";
+function parseBlob(input: string | null | undefined) {
+  if (input == null) return input;
+  return Base64.decode(input);
+}
 
 export default class CloudWatch {
   #client: client.ServiceClient;
@@ -374,7 +377,7 @@ export default class CloudWatch {
     });
     const xml = xmlP.readXmlResult(await resp.text(), "GetMetricWidgetImageResult");
     return {
-      MetricWidgetImage: xml.first("MetricWidgetImage", false, x => Base64.toUint8Array(x.content ?? '')),
+      MetricWidgetImage: xml.first("MetricWidgetImage", false, x => parseBlob(x.content) ?? ''),
     };
   }
 

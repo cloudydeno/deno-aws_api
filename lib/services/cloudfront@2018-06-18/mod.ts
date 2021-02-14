@@ -4,9 +4,9 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
+import * as client from "../../client/common.ts";
 import * as cmnP from "../../encoding/common.ts";
 import * as xmlP from "../../encoding/xml.ts";
-import * as client from "../../client/common.ts";
 import type * as s from "./structs.ts";
 
 export default class CloudFront {

@@ -4,10 +4,15 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import * as cmnP from "../../encoding/common.ts";
+import * as Base64 from "https://deno.land/std@0.86.0/encoding/base64.ts";
 import * as client from "../../client/common.ts";
-import type * as s from "./structs.ts";
+import * as cmnP from "../../encoding/common.ts";
 import * as jsonP from "../../encoding/json.ts";
+import type * as s from "./structs.ts";
+function serializeBlob(input: string | Uint8Array | null | undefined) {
+  if (input == null) return input;
+  return Base64.encode(input);
+}
 
 export default class Kafka {
   #client: client.ServiceClient;
@@ -88,7 +93,7 @@ export default class Kafka {
       description: params["Description"],
       kafkaVersions: params["KafkaVersions"],
       name: params["Name"],
-      serverProperties: jsonP.serializeBlob(params["ServerProperties"]),
+      serverProperties: serializeBlob(params["ServerProperties"]),
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -598,7 +603,7 @@ export default class Kafka {
   ): Promise<s.UpdateConfigurationResponse> {
     const body: jsonP.JSONObject = {
       description: params["Description"],
-      serverProperties: jsonP.serializeBlob(params["ServerProperties"]),
+      serverProperties: serializeBlob(params["ServerProperties"]),
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,

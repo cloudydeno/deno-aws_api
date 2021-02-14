@@ -4,13 +4,18 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import * as uuidv4 from "https://deno.land/std@0.86.0/uuid/v4.ts";
-import * as cmnP from "../../encoding/common.ts";
+import * as Base64 from "https://deno.land/std@0.86.0/encoding/base64.ts";
 import * as client from "../../client/common.ts";
-import type * as s from "./structs.ts";
+import * as cmnP from "../../encoding/common.ts";
 import * as jsonP from "../../encoding/json.ts";
+import * as uuidv4 from "https://deno.land/std@0.86.0/uuid/v4.ts";
+import type * as s from "./structs.ts";
 function generateIdemptToken() {
   return uuidv4.generate();
+}
+function serializeBlob(input: string | Uint8Array | null | undefined) {
+  if (input == null) return input;
+  return Base64.encode(input);
 }
 
 export default class SSM {
@@ -3842,7 +3847,7 @@ function fromMaintenanceWindowLambdaParameters(input?: s.MaintenanceWindowLambda
   return {
     ClientContext: input["ClientContext"],
     Qualifier: input["Qualifier"],
-    Payload: jsonP.serializeBlob(input["Payload"]),
+    Payload: serializeBlob(input["Payload"]),
   }
 }
 function toMaintenanceWindowLambdaParameters(root: jsonP.JSONValue): s.MaintenanceWindowLambdaParameters {

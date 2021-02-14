@@ -4,10 +4,15 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import * as cmnP from "../../encoding/common.ts";
+import * as Base64 from "https://deno.land/std@0.86.0/encoding/base64.ts";
 import * as client from "../../client/common.ts";
-import type * as s from "./structs.ts";
+import * as cmnP from "../../encoding/common.ts";
 import * as jsonP from "../../encoding/json.ts";
+import type * as s from "./structs.ts";
+function serializeBlob(input: string | Uint8Array | null | undefined) {
+  if (input == null) return input;
+  return Base64.encode(input);
+}
 
 export default class IoTEventsData {
   #client: client.ServiceClient;
@@ -114,7 +119,7 @@ function fromMessage(input?: s.Message | null): jsonP.JSONValue {
   return {
     messageId: input["messageId"],
     inputName: input["inputName"],
-    payload: jsonP.serializeBlob(input["payload"]),
+    payload: serializeBlob(input["payload"]),
   }
 }
 

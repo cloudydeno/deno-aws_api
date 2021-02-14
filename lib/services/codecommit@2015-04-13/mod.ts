@@ -4,13 +4,18 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import * as uuidv4 from "https://deno.land/std@0.86.0/uuid/v4.ts";
-import * as cmnP from "../../encoding/common.ts";
+import * as Base64 from "https://deno.land/std@0.86.0/encoding/base64.ts";
 import * as client from "../../client/common.ts";
-import type * as s from "./structs.ts";
+import * as cmnP from "../../encoding/common.ts";
 import * as jsonP from "../../encoding/json.ts";
+import * as uuidv4 from "https://deno.land/std@0.86.0/uuid/v4.ts";
+import type * as s from "./structs.ts";
 function generateIdemptToken() {
   return uuidv4.generate();
+}
+function serializeBlob(input: string | Uint8Array | null | undefined) {
+  if (input == null) return input;
+  return Base64.encode(input);
 }
 
 export default class CodeCommit {
@@ -1349,7 +1354,7 @@ export default class CodeCommit {
     const body: jsonP.JSONObject = {
       repositoryName: params["repositoryName"],
       branchName: params["branchName"],
-      fileContent: jsonP.serializeBlob(params["fileContent"]),
+      fileContent: serializeBlob(params["fileContent"]),
       filePath: params["filePath"],
       fileMode: params["fileMode"],
       parentCommitId: params["parentCommitId"],
@@ -1651,7 +1656,7 @@ function fromPutFileEntry(input?: s.PutFileEntry | null): jsonP.JSONValue {
   return {
     filePath: input["filePath"],
     fileMode: input["fileMode"],
-    fileContent: jsonP.serializeBlob(input["fileContent"]),
+    fileContent: serializeBlob(input["fileContent"]),
     sourceFile: fromSourceFileSpecifier(input["sourceFile"]),
   }
 }
@@ -1702,7 +1707,7 @@ function fromReplaceContentEntry(input?: s.ReplaceContentEntry | null): jsonP.JS
   return {
     filePath: input["filePath"],
     replacementType: input["replacementType"],
-    content: jsonP.serializeBlob(input["content"]),
+    content: serializeBlob(input["content"]),
     fileMode: input["fileMode"],
   }
 }

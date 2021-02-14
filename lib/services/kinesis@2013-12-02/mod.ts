@@ -4,10 +4,15 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import * as cmnP from "../../encoding/common.ts";
+import * as Base64 from "https://deno.land/std@0.86.0/encoding/base64.ts";
 import * as client from "../../client/common.ts";
-import type * as s from "./structs.ts";
+import * as cmnP from "../../encoding/common.ts";
 import * as jsonP from "../../encoding/json.ts";
+import type * as s from "./structs.ts";
+function serializeBlob(input: string | Uint8Array | null | undefined) {
+  if (input == null) return input;
+  return Base64.encode(input);
+}
 
 export default class Kinesis {
   #client: client.ServiceClient;
@@ -379,7 +384,7 @@ export default class Kinesis {
   ): Promise<s.PutRecordOutput> {
     const body: jsonP.JSONObject = {
       StreamName: params["StreamName"],
-      Data: jsonP.serializeBlob(params["Data"]),
+      Data: serializeBlob(params["Data"]),
       PartitionKey: params["PartitionKey"],
       ExplicitHashKey: params["ExplicitHashKey"],
       SequenceNumberForOrdering: params["SequenceNumberForOrdering"],
@@ -563,7 +568,7 @@ function fromShardFilter(input?: s.ShardFilter | null): jsonP.JSONValue {
 function fromPutRecordsRequestEntry(input?: s.PutRecordsRequestEntry | null): jsonP.JSONValue {
   if (!input) return input;
   return {
-    Data: jsonP.serializeBlob(input["Data"]),
+    Data: serializeBlob(input["Data"]),
     ExplicitHashKey: input["ExplicitHashKey"],
     PartitionKey: input["PartitionKey"],
   }

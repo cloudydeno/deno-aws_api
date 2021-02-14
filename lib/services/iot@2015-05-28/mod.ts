@@ -4,13 +4,18 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import * as uuidv4 from "https://deno.land/std@0.86.0/uuid/v4.ts";
-import * as cmnP from "../../encoding/common.ts";
+import * as Base64 from "https://deno.land/std@0.86.0/encoding/base64.ts";
 import * as client from "../../client/common.ts";
-import type * as s from "./structs.ts";
+import * as cmnP from "../../encoding/common.ts";
 import * as jsonP from "../../encoding/json.ts";
+import * as uuidv4 from "https://deno.land/std@0.86.0/uuid/v4.ts";
+import type * as s from "./structs.ts";
 function generateIdemptToken() {
   return uuidv4.generate();
+}
+function serializeBlob(input: string | Uint8Array | null | undefined) {
+  if (input == null) return input;
+  return Base64.encode(input);
 }
 
 export default class Iot {
@@ -5278,7 +5283,7 @@ function toCustomCodeSigning(root: jsonP.JSONValue): s.CustomCodeSigning {
 function fromCodeSigningSignature(input?: s.CodeSigningSignature | null): jsonP.JSONValue {
   if (!input) return input;
   return {
-    inlineDocument: jsonP.serializeBlob(input["inlineDocument"]),
+    inlineDocument: serializeBlob(input["inlineDocument"]),
   }
 }
 function toCodeSigningSignature(root: jsonP.JSONValue): s.CodeSigningSignature {
@@ -6365,7 +6370,7 @@ function fromMqttContext(input?: s.MqttContext | null): jsonP.JSONValue {
   if (!input) return input;
   return {
     username: input["username"],
-    password: jsonP.serializeBlob(input["password"]),
+    password: serializeBlob(input["password"]),
     clientId: input["clientId"],
   }
 }

@@ -4,10 +4,15 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import * as cmnP from "../../encoding/common.ts";
+import * as Base64 from "https://deno.land/std@0.86.0/encoding/base64.ts";
 import * as client from "../../client/common.ts";
-import type * as s from "./structs.ts";
+import * as cmnP from "../../encoding/common.ts";
 import * as jsonP from "../../encoding/json.ts";
+import type * as s from "./structs.ts";
+function serializeBlob(input: string | Uint8Array | null | undefined) {
+  if (input == null) return input;
+  return Base64.encode(input);
+}
 
 export default class Lambda {
   #client: client.ServiceClient;
@@ -1403,7 +1408,7 @@ export default class Lambda {
     {abortSignal, ...params}: RequestConfig & s.UpdateFunctionCodeRequest,
   ): Promise<s.FunctionConfiguration> {
     const body: jsonP.JSONObject = {
-      ZipFile: jsonP.serializeBlob(params["ZipFile"]),
+      ZipFile: serializeBlob(params["ZipFile"]),
       S3Bucket: params["S3Bucket"],
       S3Key: params["S3Key"],
       S3ObjectVersion: params["S3ObjectVersion"],
@@ -1841,7 +1846,7 @@ function toSelfManagedEventSource(root: jsonP.JSONValue): s.SelfManagedEventSour
 function fromFunctionCode(input?: s.FunctionCode | null): jsonP.JSONValue {
   if (!input) return input;
   return {
-    ZipFile: jsonP.serializeBlob(input["ZipFile"]),
+    ZipFile: serializeBlob(input["ZipFile"]),
     S3Bucket: input["S3Bucket"],
     S3Key: input["S3Key"],
     S3ObjectVersion: input["S3ObjectVersion"],
@@ -1928,7 +1933,7 @@ function fromLayerVersionContentInput(input?: s.LayerVersionContentInput | null)
     S3Bucket: input["S3Bucket"],
     S3Key: input["S3Key"],
     S3ObjectVersion: input["S3ObjectVersion"],
-    ZipFile: jsonP.serializeBlob(input["ZipFile"]),
+    ZipFile: serializeBlob(input["ZipFile"]),
   }
 }
 

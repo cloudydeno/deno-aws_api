@@ -4,10 +4,15 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import * as cmnP from "../../encoding/common.ts";
+import * as Base64 from "https://deno.land/std@0.86.0/encoding/base64.ts";
 import * as client from "../../client/common.ts";
-import type * as s from "./structs.ts";
+import * as cmnP from "../../encoding/common.ts";
 import * as jsonP from "../../encoding/json.ts";
+import type * as s from "./structs.ts";
+function serializeBlob(input: string | Uint8Array | null | undefined) {
+  if (input == null) return input;
+  return Base64.encode(input);
+}
 
 export default class GameLift {
   #client: client.ServiceClient;
@@ -321,7 +326,7 @@ export default class GameLift {
       Name: params["Name"],
       Version: params["Version"],
       StorageLocation: fromS3Location(params["StorageLocation"]),
-      ZipFile: jsonP.serializeBlob(params["ZipFile"]),
+      ZipFile: serializeBlob(params["ZipFile"]),
       Tags: params["Tags"]?.map(x => fromTag(x)),
     };
     const resp = await this.#client.performRequest({
@@ -1802,7 +1807,7 @@ export default class GameLift {
       Name: params["Name"],
       Version: params["Version"],
       StorageLocation: fromS3Location(params["StorageLocation"]),
-      ZipFile: jsonP.serializeBlob(params["ZipFile"]),
+      ZipFile: serializeBlob(params["ZipFile"]),
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,

@@ -4,12 +4,19 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import * as cmnP from "../../encoding/common.ts";
-import * as xmlP from "../../encoding/xml.ts";
-import * as qsP from "../../encoding/querystring.ts";
+import * as Base64 from "https://deno.land/std@0.86.0/encoding/base64.ts";
 import * as client from "../../client/common.ts";
+import * as qsP from "../../encoding/querystring.ts";
+import * as xmlP from "../../encoding/xml.ts";
 import type * as s from "./structs.ts";
-import * as Base64 from "https://deno.land/x/base64@v0.2.1/mod.ts";
+function serializeBlob(input: string | Uint8Array | null | undefined) {
+  if (input == null) return input;
+  return Base64.encode(input);
+}
+function parseBlob(input: string | null | undefined) {
+  if (input == null) return input;
+  return Base64.decode(input);
+}
 
 export default class SQS {
   #client: client.ServiceClient;
@@ -370,9 +377,9 @@ function DeleteMessageBatchRequestEntry_Serialize(body: URLSearchParams, prefix:
 
 function MessageAttributeValue_Serialize(body: URLSearchParams, prefix: string, params: s.MessageAttributeValue) {
     if ("StringValue" in params) body.append(prefix+".StringValue", (params["StringValue"] ?? '').toString());
-    if ("BinaryValue" in params) body.append(prefix+".BinaryValue", qsP.encodeBlob(params["BinaryValue"]));
+    if ("BinaryValue" in params) body.append(prefix+".BinaryValue", serializeBlob(params["BinaryValue"]) ?? '');
     if (params["StringListValues"]) qsP.appendList(body, prefix+".StringListValue", params["StringListValues"], {"entryPrefix":"."})
-    if (params["BinaryListValues"]) qsP.appendList(body, prefix+".BinaryListValue", params["BinaryListValues"], {"encoder":qsP.encodeBlob,"entryPrefix":"."})
+    if (params["BinaryListValues"]) qsP.appendList(body, prefix+".BinaryListValue", params["BinaryListValues"], {"encoder":(x)=>serializeBlob(x) ?? '',"entryPrefix":"."})
     body.append(prefix+".DataType", (params["DataType"] ?? '').toString());
 }
 function MessageAttributeValue_Parse(node: xmlP.XmlNode): s.MessageAttributeValue {
@@ -381,17 +388,17 @@ function MessageAttributeValue_Parse(node: xmlP.XmlNode): s.MessageAttributeValu
       required: {"DataType":true},
       optional: {"StringValue":true},
     }),
-    BinaryValue: node.first("BinaryValue", false, x => Base64.toUint8Array(x.content ?? '')),
+    BinaryValue: node.first("BinaryValue", false, x => parseBlob(x.content) ?? ''),
     StringListValues: node.getList("StringListValue").map(x => x.content ?? ''),
-    BinaryListValues: node.getList("BinaryListValue").map(x => Base64.toUint8Array(x.content ?? '')),
+    BinaryListValues: node.getList("BinaryListValue").map(x => parseBlob(x.content) ?? ''),
   };
 }
 
 function MessageSystemAttributeValue_Serialize(body: URLSearchParams, prefix: string, params: s.MessageSystemAttributeValue) {
     if ("StringValue" in params) body.append(prefix+".StringValue", (params["StringValue"] ?? '').toString());
-    if ("BinaryValue" in params) body.append(prefix+".BinaryValue", qsP.encodeBlob(params["BinaryValue"]));
+    if ("BinaryValue" in params) body.append(prefix+".BinaryValue", serializeBlob(params["BinaryValue"]) ?? '');
     if (params["StringListValues"]) qsP.appendList(body, prefix+".StringListValue", params["StringListValues"], {"entryPrefix":"."})
-    if (params["BinaryListValues"]) qsP.appendList(body, prefix+".BinaryListValue", params["BinaryListValues"], {"encoder":qsP.encodeBlob,"entryPrefix":"."})
+    if (params["BinaryListValues"]) qsP.appendList(body, prefix+".BinaryListValue", params["BinaryListValues"], {"encoder":(x)=>serializeBlob(x) ?? '',"entryPrefix":"."})
     body.append(prefix+".DataType", (params["DataType"] ?? '').toString());
 }
 

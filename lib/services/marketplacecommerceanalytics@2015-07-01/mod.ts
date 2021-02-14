@@ -4,10 +4,9 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import * as cmnP from "../../encoding/common.ts";
 import * as client from "../../client/common.ts";
-import type * as s from "./structs.ts";
 import * as jsonP from "../../encoding/json.ts";
+import type * as s from "./structs.ts";
 
 export default class MarketplaceCommerceAnalytics {
   #client: client.ServiceClient;

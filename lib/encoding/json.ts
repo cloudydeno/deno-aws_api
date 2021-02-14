@@ -1,5 +1,3 @@
-import * as Base64 from 'https://deno.land/x/base64@v0.2.1/mod.ts';
-
 // Things that JSON can encode directly
 export type JSONPrimitive = string | number | boolean | null | undefined;
 export type JSONValue = JSONPrimitive | JSONObject | JSONArray;
@@ -92,7 +90,7 @@ function readField(typeSig: FieldTypeIn | [FieldTypeIn], raw: JSONValue): unknow
       return readDate(raw);
     case 'a':
       if (typeof raw === 'string') {
-        return Base64.toUint8Array(raw);
+        return decodeBase64(raw);
       }
       break;
     default:
@@ -142,14 +140,6 @@ export function readDate(raw: JSONValue): Date | null {
 }
 
 
-export function serializeBlob(input: string | Uint8Array | null | undefined): JSONValue {
-  if (!input) return input;
-  if (typeof input === 'string') {
-    input = new TextEncoder().encode(input);
-  }
-  return Base64.fromUint8Array(input);
-}
-
 export function serializeMap<T,U extends JSONValue>(input: {[key: string]: T} | null | undefined, encoder: (x: T) => U): JSONValue {
   if (input == null) return input;
   const map: {[key: string]: U} = Object.create(null);
@@ -173,6 +163,17 @@ export function readJsonValueBase64(input: JSONValue): JSONValue {
   if (input == null) return undefined;
   if (typeof input !== 'string') throw new Error(`Server's JSON Value was ${typeof input} instead of string`);
   return JSON.parse(atob(input));
+}
+
+// from https://deno.land/std@0.87.0/encoding/base64.ts
+function decodeBase64(b64: string): Uint8Array {
+  const binString = atob(b64);
+  const size = binString.length;
+  const bytes = new Uint8Array(size);
+  for (let i = 0; i < size; i++) {
+    bytes[i] = binString.charCodeAt(i);
+  }
+  return bytes;
 }
 
 export function readMap<K extends string,V>(keyEncoder: (x: string) => K, valEncoder: (x: JSONValue) => V, input: JSONValue): Record<K,V> | null {

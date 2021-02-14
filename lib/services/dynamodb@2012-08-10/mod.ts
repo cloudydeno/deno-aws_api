@@ -4,13 +4,18 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import * as uuidv4 from "https://deno.land/std@0.86.0/uuid/v4.ts";
-import * as cmnP from "../../encoding/common.ts";
+import * as Base64 from "https://deno.land/std@0.86.0/encoding/base64.ts";
 import * as client from "../../client/common.ts";
-import type * as s from "./structs.ts";
+import * as cmnP from "../../encoding/common.ts";
 import * as jsonP from "../../encoding/json.ts";
+import * as uuidv4 from "https://deno.land/std@0.86.0/uuid/v4.ts";
+import type * as s from "./structs.ts";
 function generateIdemptToken() {
   return uuidv4.generate();
+}
+function serializeBlob(input: string | Uint8Array | null | undefined) {
+  if (input == null) return input;
+  return Base64.encode(input);
 }
 
 export default class DynamoDB {
@@ -1164,10 +1169,10 @@ function fromAttributeValue(input?: s.AttributeValue | null): jsonP.JSONValue {
   return {
     S: input["S"],
     N: input["N"],
-    B: jsonP.serializeBlob(input["B"]),
+    B: serializeBlob(input["B"]),
     SS: input["SS"],
     NS: input["NS"],
-    BS: input["BS"]?.map(x => jsonP.serializeBlob(x)),
+    BS: input["BS"]?.map(x => serializeBlob(x)),
     M: jsonP.serializeMap(input["M"], x => fromAttributeValue(x)),
     L: input["L"]?.map(x => fromAttributeValue(x)),
     NULL: input["NULL"],

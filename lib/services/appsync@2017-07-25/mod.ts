@@ -4,10 +4,15 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import * as cmnP from "../../encoding/common.ts";
+import * as Base64 from "https://deno.land/std@0.86.0/encoding/base64.ts";
 import * as client from "../../client/common.ts";
-import type * as s from "./structs.ts";
+import * as cmnP from "../../encoding/common.ts";
 import * as jsonP from "../../encoding/json.ts";
+import type * as s from "./structs.ts";
+function serializeBlob(input: string | Uint8Array | null | undefined) {
+  if (input == null) return input;
+  return Base64.encode(input);
+}
 
 export default class AppSync {
   #client: client.ServiceClient;
@@ -637,7 +642,7 @@ export default class AppSync {
     {abortSignal, ...params}: RequestConfig & s.StartSchemaCreationRequest,
   ): Promise<s.StartSchemaCreationResponse> {
     const body: jsonP.JSONObject = {
-      definition: jsonP.serializeBlob(params["definition"]),
+      definition: serializeBlob(params["definition"]),
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,

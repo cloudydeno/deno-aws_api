@@ -4,13 +4,18 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import * as uuidv4 from "https://deno.land/std@0.86.0/uuid/v4.ts";
-import * as cmnP from "../../encoding/common.ts";
+import * as Base64 from "https://deno.land/std@0.86.0/encoding/base64.ts";
 import * as client from "../../client/common.ts";
-import type * as s from "./structs.ts";
+import * as cmnP from "../../encoding/common.ts";
 import * as jsonP from "../../encoding/json.ts";
+import * as uuidv4 from "https://deno.land/std@0.86.0/uuid/v4.ts";
+import type * as s from "./structs.ts";
 function generateIdemptToken() {
   return uuidv4.generate();
+}
+function serializeBlob(input: string | Uint8Array | null | undefined) {
+  if (input == null) return input;
+  return Base64.encode(input);
 }
 
 export default class Translate {
@@ -362,7 +367,7 @@ function toEncryptionKey(root: jsonP.JSONValue): s.EncryptionKey {
 function fromTerminologyData(input?: s.TerminologyData | null): jsonP.JSONValue {
   if (!input) return input;
   return {
-    File: jsonP.serializeBlob(input["File"]),
+    File: serializeBlob(input["File"]),
     Format: input["Format"],
   }
 }

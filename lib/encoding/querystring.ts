@@ -49,15 +49,6 @@ export function appendList<T>(body: URLSearchParams, prefix: string, raw: T[], {
       });
 }
 
-import * as Base64 from 'https://deno.land/x/base64@v0.2.1/mod.ts';
-export function encodeBlob(input?: string | Uint8Array | null): string {
-  if (!input) return '';
-  if (typeof input === 'string') {
-    input = new TextEncoder().encode(input);
-  }
-  return Base64.fromUint8Array(input);
-}
-
 // TODO?: check/warn for accidental millisecond input
 export function encodeDate_iso8601(input?: Date | number | null): string {
   if (!input) return '';

@@ -4,11 +4,15 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import * as cmnP from "../../encoding/common.ts";
-import * as xmlP from "../../encoding/xml.ts";
-import * as qsP from "../../encoding/querystring.ts";
+import * as Base64 from "https://deno.land/std@0.86.0/encoding/base64.ts";
 import * as client from "../../client/common.ts";
+import * as qsP from "../../encoding/querystring.ts";
+import * as xmlP from "../../encoding/xml.ts";
 import type * as s from "./structs.ts";
+function serializeBlob(input: string | Uint8Array | null | undefined) {
+  if (input == null) return input;
+  return Base64.encode(input);
+}
 
 export default class SES {
   #client: client.ServiceClient;
@@ -1506,7 +1510,7 @@ function Body_Serialize(body: URLSearchParams, prefix: string, params: s.Body) {
 }
 
 function RawMessage_Serialize(body: URLSearchParams, prefix: string, params: s.RawMessage) {
-    body.append(prefix+".Data", qsP.encodeBlob(params["Data"]));
+    body.append(prefix+".Data", serializeBlob(params["Data"]) ?? '');
 }
 
 function ReceiptRuleSetMetadata_Parse(node: xmlP.XmlNode): s.ReceiptRuleSetMetadata {

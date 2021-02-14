@@ -4,10 +4,14 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import * as cmnP from "../../encoding/common.ts";
+import * as Base64 from "https://deno.land/std@0.86.0/encoding/base64.ts";
 import * as client from "../../client/common.ts";
-import type * as s from "./structs.ts";
 import * as jsonP from "../../encoding/json.ts";
+import type * as s from "./structs.ts";
+function serializeBlob(input: string | Uint8Array | null | undefined) {
+  if (input == null) return input;
+  return Base64.encode(input);
+}
 
 export default class QLDBSession {
   #client: client.ServiceClient;
@@ -85,7 +89,7 @@ function fromCommitTransactionRequest(input?: s.CommitTransactionRequest | null)
   if (!input) return input;
   return {
     TransactionId: input["TransactionId"],
-    CommitDigest: jsonP.serializeBlob(input["CommitDigest"]),
+    CommitDigest: serializeBlob(input["CommitDigest"]),
   }
 }
 
@@ -107,7 +111,7 @@ function fromExecuteStatementRequest(input?: s.ExecuteStatementRequest | null): 
 function fromValueHolder(input?: s.ValueHolder | null): jsonP.JSONValue {
   if (!input) return input;
   return {
-    IonBinary: jsonP.serializeBlob(input["IonBinary"]),
+    IonBinary: serializeBlob(input["IonBinary"]),
     IonText: input["IonText"],
   }
 }

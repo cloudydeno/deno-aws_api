@@ -4,10 +4,15 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import * as cmnP from "../../encoding/common.ts";
+import * as Base64 from "https://deno.land/std@0.86.0/encoding/base64.ts";
 import * as client from "../../client/common.ts";
-import type * as s from "./structs.ts";
+import * as cmnP from "../../encoding/common.ts";
 import * as jsonP from "../../encoding/json.ts";
+import type * as s from "./structs.ts";
+function serializeBlob(input: string | Uint8Array | null | undefined) {
+  if (input == null) return input;
+  return Base64.encode(input);
+}
 
 export default class ACM {
   #client: client.ServiceClient;
@@ -76,7 +81,7 @@ export default class ACM {
   ): Promise<s.ExportCertificateResponse> {
     const body: jsonP.JSONObject = {
       CertificateArn: params["CertificateArn"],
-      Passphrase: jsonP.serializeBlob(params["Passphrase"]),
+      Passphrase: serializeBlob(params["Passphrase"]),
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -116,9 +121,9 @@ export default class ACM {
   ): Promise<s.ImportCertificateResponse> {
     const body: jsonP.JSONObject = {
       CertificateArn: params["CertificateArn"],
-      Certificate: jsonP.serializeBlob(params["Certificate"]),
-      PrivateKey: jsonP.serializeBlob(params["PrivateKey"]),
-      CertificateChain: jsonP.serializeBlob(params["CertificateChain"]),
+      Certificate: serializeBlob(params["Certificate"]),
+      PrivateKey: serializeBlob(params["PrivateKey"]),
+      CertificateChain: serializeBlob(params["CertificateChain"]),
       Tags: params["Tags"]?.map(x => fromTag(x)),
     };
     const resp = await this.#client.performRequest({

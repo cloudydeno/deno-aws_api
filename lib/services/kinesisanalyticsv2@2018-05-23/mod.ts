@@ -4,10 +4,15 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import * as cmnP from "../../encoding/common.ts";
+import * as Base64 from "https://deno.land/std@0.86.0/encoding/base64.ts";
 import * as client from "../../client/common.ts";
-import type * as s from "./structs.ts";
+import * as cmnP from "../../encoding/common.ts";
 import * as jsonP from "../../encoding/json.ts";
+import type * as s from "./structs.ts";
+function serializeBlob(input: string | Uint8Array | null | undefined) {
+  if (input == null) return input;
+  return Base64.encode(input);
+}
 
 export default class KinesisAnalyticsV2 {
   #client: client.ServiceClient;
@@ -917,7 +922,7 @@ function fromCodeContent(input?: s.CodeContent | null): jsonP.JSONValue {
   if (!input) return input;
   return {
     TextContent: input["TextContent"],
-    ZipFileContent: jsonP.serializeBlob(input["ZipFileContent"]),
+    ZipFileContent: serializeBlob(input["ZipFileContent"]),
     S3ContentLocation: fromS3ContentLocation(input["S3ContentLocation"]),
   }
 }
@@ -1170,7 +1175,7 @@ function fromCodeContentUpdate(input?: s.CodeContentUpdate | null): jsonP.JSONVa
   if (!input) return input;
   return {
     TextContentUpdate: input["TextContentUpdate"],
-    ZipFileContentUpdate: jsonP.serializeBlob(input["ZipFileContentUpdate"]),
+    ZipFileContentUpdate: serializeBlob(input["ZipFileContentUpdate"]),
     S3ContentLocationUpdate: fromS3ContentLocationUpdate(input["S3ContentLocationUpdate"]),
   }
 }

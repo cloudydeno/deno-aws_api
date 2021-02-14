@@ -1,5 +1,3 @@
-import * as Base64 from 'https://deno.land/x/base64@v0.2.1/mod.ts';
-
 export function encodePath(
   strings: TemplateStringsArray,
   ...names: (string | number | boolean | string[])[]
@@ -83,15 +81,6 @@ export function readReqTimestamp(str: string | null | undefined) {
   if (!date || isNaN(date.valueOf())) throw new Error(
     `Timestamp from server is unparsable: '${str}'`);
   return date;
-}
-
-
-export function serializeBlob(input: string | Uint8Array | null | undefined) {
-  if (!input) return input;
-  if (typeof input === 'string') {
-    input = new TextEncoder().encode(input);
-  }
-  return Base64.fromUint8Array(input);
 }
 
 

@@ -4,10 +4,15 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import * as cmnP from "../../encoding/common.ts";
+import * as Base64 from "https://deno.land/std@0.86.0/encoding/base64.ts";
 import * as client from "../../client/common.ts";
-import type * as s from "./structs.ts";
+import * as cmnP from "../../encoding/common.ts";
 import * as jsonP from "../../encoding/json.ts";
+import type * as s from "./structs.ts";
+function serializeBlob(input: string | Uint8Array | null | undefined) {
+  if (input == null) return input;
+  return Base64.encode(input);
+}
 
 export default class KMS {
   #client: client.ServiceClient;
@@ -150,7 +155,7 @@ export default class KMS {
     {abortSignal, ...params}: RequestConfig & s.DecryptRequest,
   ): Promise<s.DecryptResponse> {
     const body: jsonP.JSONObject = {
-      CiphertextBlob: jsonP.serializeBlob(params["CiphertextBlob"]),
+      CiphertextBlob: serializeBlob(params["CiphertextBlob"]),
       EncryptionContext: params["EncryptionContext"],
       GrantTokens: params["GrantTokens"],
       KeyId: params["KeyId"],
@@ -321,7 +326,7 @@ export default class KMS {
   ): Promise<s.EncryptResponse> {
     const body: jsonP.JSONObject = {
       KeyId: params["KeyId"],
-      Plaintext: jsonP.serializeBlob(params["Plaintext"]),
+      Plaintext: serializeBlob(params["Plaintext"]),
       EncryptionContext: params["EncryptionContext"],
       GrantTokens: params["GrantTokens"],
       EncryptionAlgorithm: params["EncryptionAlgorithm"],
@@ -544,8 +549,8 @@ export default class KMS {
   ): Promise<s.ImportKeyMaterialResponse> {
     const body: jsonP.JSONObject = {
       KeyId: params["KeyId"],
-      ImportToken: jsonP.serializeBlob(params["ImportToken"]),
-      EncryptedKeyMaterial: jsonP.serializeBlob(params["EncryptedKeyMaterial"]),
+      ImportToken: serializeBlob(params["ImportToken"]),
+      EncryptedKeyMaterial: serializeBlob(params["EncryptedKeyMaterial"]),
       ValidTo: jsonP.serializeDate_unixTimestamp(params["ValidTo"]),
       ExpirationModel: params["ExpirationModel"],
     };
@@ -711,7 +716,7 @@ export default class KMS {
     {abortSignal, ...params}: RequestConfig & s.ReEncryptRequest,
   ): Promise<s.ReEncryptResponse> {
     const body: jsonP.JSONObject = {
-      CiphertextBlob: jsonP.serializeBlob(params["CiphertextBlob"]),
+      CiphertextBlob: serializeBlob(params["CiphertextBlob"]),
       SourceEncryptionContext: params["SourceEncryptionContext"],
       SourceKeyId: params["SourceKeyId"],
       DestinationKeyId: params["DestinationKeyId"],
@@ -788,7 +793,7 @@ export default class KMS {
   ): Promise<s.SignResponse> {
     const body: jsonP.JSONObject = {
       KeyId: params["KeyId"],
-      Message: jsonP.serializeBlob(params["Message"]),
+      Message: serializeBlob(params["Message"]),
       MessageType: params["MessageType"],
       GrantTokens: params["GrantTokens"],
       SigningAlgorithm: params["SigningAlgorithm"],
@@ -883,9 +888,9 @@ export default class KMS {
   ): Promise<s.VerifyResponse> {
     const body: jsonP.JSONObject = {
       KeyId: params["KeyId"],
-      Message: jsonP.serializeBlob(params["Message"]),
+      Message: serializeBlob(params["Message"]),
       MessageType: params["MessageType"],
-      Signature: jsonP.serializeBlob(params["Signature"]),
+      Signature: serializeBlob(params["Signature"]),
       SigningAlgorithm: params["SigningAlgorithm"],
       GrantTokens: params["GrantTokens"],
     };

@@ -4,15 +4,22 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
-import * as uuidv4 from "https://deno.land/std@0.86.0/uuid/v4.ts";
-import * as cmnP from "../../encoding/common.ts";
-import * as xmlP from "../../encoding/xml.ts";
-import * as qsP from "../../encoding/querystring.ts";
+import * as Base64 from "https://deno.land/std@0.86.0/encoding/base64.ts";
 import * as client from "../../client/common.ts";
+import * as qsP from "../../encoding/querystring.ts";
+import * as uuidv4 from "https://deno.land/std@0.86.0/uuid/v4.ts";
+import * as xmlP from "../../encoding/xml.ts";
 import type * as s from "./structs.ts";
-import * as Base64 from "https://deno.land/x/base64@v0.2.1/mod.ts";
 function generateIdemptToken() {
   return uuidv4.generate();
+}
+function serializeBlob(input: string | Uint8Array | null | undefined) {
+  if (input == null) return input;
+  return Base64.encode(input);
+}
+function parseBlob(input: string | null | undefined) {
+  if (input == null) return input;
+  return Base64.decode(input);
 }
 
 export default class EC2 {
@@ -6585,7 +6592,7 @@ export default class EC2 {
     const prefix = '';
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     body.append(prefix+"KeyName", (params["KeyName"] ?? '').toString());
-    body.append(prefix+"PublicKeyMaterial", qsP.encodeBlob(params["PublicKeyMaterial"]));
+    body.append(prefix+"PublicKeyMaterial", serializeBlob(params["PublicKeyMaterial"]) ?? '');
     if (params["TagSpecifications"]) qsP.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -9317,7 +9324,7 @@ function S3Storage_Serialize(body: URLSearchParams, prefix: string, params: s.S3
     if ("AWSAccessKeyId" in params) body.append(prefix+".AWSAccessKeyId", (params["AWSAccessKeyId"] ?? '').toString());
     if ("Bucket" in params) body.append(prefix+".Bucket", (params["Bucket"] ?? '').toString());
     if ("Prefix" in params) body.append(prefix+".Prefix", (params["Prefix"] ?? '').toString());
-    if ("UploadPolicy" in params) body.append(prefix+".UploadPolicy", qsP.encodeBlob(params["UploadPolicy"]));
+    if ("UploadPolicy" in params) body.append(prefix+".UploadPolicy", serializeBlob(params["UploadPolicy"]) ?? '');
     if ("UploadPolicySignature" in params) body.append(prefix+".UploadPolicySignature", (params["UploadPolicySignature"] ?? '').toString());
 }
 function S3Storage_Parse(node: xmlP.XmlNode): s.S3Storage {
@@ -9327,7 +9334,7 @@ function S3Storage_Parse(node: xmlP.XmlNode): s.S3Storage {
     }),
     Bucket: node.first("bucket", false, x => x.content ?? ''),
     Prefix: node.first("prefix", false, x => x.content ?? ''),
-    UploadPolicy: node.first("uploadPolicy", false, x => Base64.toUint8Array(x.content ?? '')),
+    UploadPolicy: node.first("uploadPolicy", false, x => parseBlob(x.content) ?? ''),
     UploadPolicySignature: node.first("uploadPolicySignature", false, x => x.content ?? ''),
   };
 }
@@ -9974,7 +9981,7 @@ function EbsInstanceBlockDeviceSpecification_Serialize(body: URLSearchParams, pr
 }
 
 function BlobAttributeValue_Serialize(body: URLSearchParams, prefix: string, params: s.BlobAttributeValue) {
-    if ("Value" in params) body.append(prefix+".Value", qsP.encodeBlob(params["Value"]));
+    if ("Value" in params) body.append(prefix+".Value", serializeBlob(params["Value"]) ?? '');
 }
 
 function CapacityReservationSpecification_Serialize(body: URLSearchParams, prefix: string, params: s.CapacityReservationSpecification) {
