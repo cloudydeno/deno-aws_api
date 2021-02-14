@@ -317,6 +317,7 @@ export default class ProtocolRestCodegen {
 
 
   describeOutputField(field: string, spec: Schema.ShapeRef & Schema.StructureFieldDetails, isRequired: boolean): string {
+    const namePrefix = (this.helpers.hasDep('s')) ? 's.' : '';
     const fieldShape = this.shapes.get(spec);
     // const locationName = spec.locationName ?? fieldShape.spec.locationName ?? (field[0].toUpperCase()+field.slice(1));
     switch (spec.location ?? fieldShape.spec.location) {
@@ -328,7 +329,7 @@ export default class ProtocolRestCodegen {
             return `    ${field}: cmnP.read${isRequired ? 'Req' : ''}Timestamp(resp.headers.get(${JSON.stringify(spec.locationName || field)})),`;
           case 'string':
             if (fieldShape.spec.enum) {
-              return `    ${field}: cmnP.readEnum<${fieldShape.censoredName}>(resp.headers.get(${JSON.stringify(spec.locationName || field)})),`;
+              return `    ${field}: cmnP.readEnum<${namePrefix}${fieldShape.censoredName}>(resp.headers.get(${JSON.stringify(spec.locationName || field)})),`;
             } else if (spec.jsonvalue) {
               return `    ${field}: jsonP.readJsonValueBase64(resp.headers.get(${JSON.stringify(spec.locationName || field)})),`;
             } else {

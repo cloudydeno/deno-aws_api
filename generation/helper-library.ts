@@ -38,7 +38,11 @@ export class HelperLibrary {
     for (const dep of this.#extraDeps.entries()) {
       if (deps.has(dep[0])) console.error('dup dep', dep);
       deps.add(dep[0]);
-      depChunks.push(`import * as ${dep[0]} from ${JSON.stringify(dep[1])};`);
+      if (dep[1].endsWith('/structs.ts')) {
+        depChunks.push(`import type * as ${dep[0]} from ${JSON.stringify(dep[1])};`);
+      } else {
+        depChunks.push(`import * as ${dep[0]} from ${JSON.stringify(dep[1])};`);
+      }
     }
 
     return [
