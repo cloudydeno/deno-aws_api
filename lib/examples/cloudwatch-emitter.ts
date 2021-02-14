@@ -1,5 +1,5 @@
 import { ApiFactory } from '../client/mod.ts';
-import CloudWatch from '../services/monitoring@2010-08-01/mod.ts';
+import CloudWatch from '../services/cloudwatch@2010-08-01/mod.ts';
 
 const factory = new ApiFactory();
 const cw = new CloudWatch(factory);
