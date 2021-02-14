@@ -60,6 +60,9 @@ export class ShapeLibrary {
         allNamedShapes.add(shape);
         shape.tags.add('named');
         shape.tags.add('interface');
+        if (Object.keys(shape.spec.members).length === 0) {
+          shape.tags.add('empty');
+        }
       } else if (shape.spec.type === 'string' && shape.spec.enum) {
         allNamedShapes.add(shape);
         shape.tags.add('named');
@@ -134,6 +137,7 @@ export type ShapeTag =
 | 'interface' | 'enum'
 | 'input' | 'output'
 | 'recursed' | 'recursive'
+| 'empty'
 ;
 
 export class KnownShape {

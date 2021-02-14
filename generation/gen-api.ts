@@ -30,7 +30,9 @@ export function generateApiTypescript(
     const outputShape = operation.output ? shapes.get(operation.output) : null;
 
     let signature = `(\n    {abortSignal, ...params}: RequestConfig`;
-    if (inputShape?.spec.type === 'structure') {
+    if (inputShape?.tags.has('empty')) {
+      signature += ' = {}';
+    } else if (inputShape?.spec.type === 'structure') {
       signature += ' & ' + structEmitter.specifyShapeType(inputShape, {isJson: operation.input?.jsonvalue});
       if (operation.input?.payload) {
         inputShape.payloadField = operation.input.payload;
@@ -45,7 +47,9 @@ export function generateApiTypescript(
     }
 
     signature += `,\n  ): Promise<`;
-    if (outputShape?.spec.type === 'structure') {
+    if (outputShape?.tags.has('empty')) {
+      signature += 'void';
+    } else if (outputShape?.spec.type === 'structure') {
       signature += structEmitter.specifyShapeType(outputShape, {isJson: operation.output?.jsonvalue});
     } else if (outputShape) {
       throw new Error(`TODO: ${outputShape.spec.type} output`);
@@ -58,7 +62,7 @@ export function generateApiTypescript(
     chunks.push(`  async ${cleanFuncName(lowerCamelName)}${signature} {`);
     let protoPathParts: Map<string,string> | undefined;
     const referencedInputs = new Set(['abortSignal']);
-    if (operation.input && inputShape?.spec.type === 'structure') {
+    if (operation.input && inputShape?.spec.type === 'structure' && !inputShape.tags.has('empty')) {
       const {inputParsingCode, inputVariables, pathParts} = protocol
         .generateOperationInputParsingTypescript(inputShape, operation.input);
       chunks.push(inputParsingCode);
@@ -96,7 +100,7 @@ export function generateApiTypescript(
     }
     chunks.push(`    });`);
 
-    if (outputShape?.spec.type === 'structure') {
+    if (outputShape?.spec.type === 'structure' && !outputShape.tags.has('empty')) {
       const {outputParsingCode, outputVariables} = protocol
         .generateOperationOutputParsingTypescript(outputShape, operation.output?.resultWrapper ?? outputShape?.spec.resultWrapper);
       chunks.push(outputParsingCode);
