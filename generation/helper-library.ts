@@ -47,8 +47,10 @@ export class HelperLibrary {
     for (const dep of this.#extraDeps.entries()) {
       if (deps.has(dep[0])) continue;
       deps.add(dep[0]);
-      if (dep[1].endsWith('/structs.ts')) {
+      if (dep[1] === './structs.ts') {
+        // Re-export our related structs
         depChunks.push(`import type * as ${dep[0]} from ${JSON.stringify(dep[1])};`);
+        depChunks.push(`export * from ${JSON.stringify(dep[1])};`);
       } else {
         depChunks.push(`import * as ${dep[0]} from ${JSON.stringify(dep[1])};`);
       }

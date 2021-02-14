@@ -4,6 +4,7 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
+export * from "./structs.ts";
 import * as Base64 from "https://deno.land/std@0.86.0/encoding/base64.ts";
 import * as client from "../../client/common.ts";
 import * as jsonP from "../../encoding/json.ts";

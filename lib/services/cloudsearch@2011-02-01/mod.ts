@@ -4,6 +4,7 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
+export * from "./structs.ts";
 import * as client from "../../client/common.ts";
 import * as qsP from "../../encoding/querystring.ts";
 import * as xmlP from "../../encoding/xml.ts";

@@ -4,6 +4,7 @@ interface RequestConfig {
   abortSignal?: AbortSignal;
 }
 
+export * from "./structs.ts";
 import * as client from "../../client/common.ts";
 import * as cmnP from "../../encoding/common.ts";
 import * as jsonP from "../../encoding/json.ts";
