@@ -1,5 +1,14 @@
 # `aws_api` for Deno
 
+![Test CI](https://github.com/danopia/deno-aws_api/workflows/Deno%20CI/badge.svg?branch=main)
+[![Latest /x/ version](https://img.shields.io/endpoint?url=https%3A%2F%2Fdeno-visualizer.danopia.net%2Fshields%2Flatest-version%2Fx%2Faws_api%2Fdemo.ts)][x-pkg]
+[![external dependency count](https://img.shields.io/endpoint?url=https%3A%2F%2Fdeno-visualizer.danopia.net%2Fshields%2Fdep-count%2Fx%2Faws_api%2Fdemo.ts)][dep-vis]
+[![dependency outdatedness](https://img.shields.io/endpoint?url=https%3A%2F%2Fdeno-visualizer.danopia.net%2Fshields%2Fupdates%2Fx%2Faws_api%2Fdemo.ts)][dep-vis]
+
+[x-pkg]: https://deno.land/x/aws_api
+[dep-vis]: https://deno-visualizer.danopia.net/dependencies-of/https/deno.land/x/aws_api/demo.ts
+
+
 From-scratch Typescript AWS API client built for Deno.
 
 A leading focus of this library is to be as lean as possible
