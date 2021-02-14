@@ -60,7 +60,7 @@ and working directly with a Kinesis stream.
 * `v0.2.1` on `2020-12-21`: Add EC2 instance metadata integration (IMDSv2)
   * Now supports using EC2 Instance IAM Roles automatically.
   * Using definitions from `aws-sdk-js@2.814.0`
-* next: Clean up generation
+* `v0.3.0` on `2021-02-14`: Clean up generation, rename modules to match AWS-SDK
   * Using definitions from `aws-sdk-js@2.839.0`
 
 ## Disclaimer
