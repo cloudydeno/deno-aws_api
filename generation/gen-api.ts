@@ -16,7 +16,7 @@ export function generateApiTypescript(
 ): string {
 
   const structEmitter = new StructEmitter(apiSpec, shapes, helpers, protocol, namePrefix);
-  helpers.addDep("client", "../../client/common.ts");
+  helpers.useHelper("client");
 
   const chunks = new Array<string>();
   chunks.push(`  #client: client.ServiceClient;`);
@@ -83,6 +83,9 @@ export function generateApiTypescript(
           +'`')
         : JSON.stringify(operation.http?.requestUri || '/');
       chunks.push(`      requestUri: ${formattedPath},`);
+      if (formattedPath.startsWith('cmnP.')) {
+        helpers.useHelper("cmnP");
+      }
     }
     if (operation.http?.responseCode) {
       chunks.push(`      responseCode: ${JSON.stringify(operation.http.responseCode)},`);

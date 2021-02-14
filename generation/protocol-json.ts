@@ -11,7 +11,7 @@ export default class ProtocolJsonCodegen {
 
   generateOperationInputParsingTypescript(inputShape: KnownShape, meta: Schema.LocationInfo & {paramRef?: string}): { inputParsingCode: string; inputVariables: string[]; } {
     if (inputShape.spec.type !== 'structure') throw new Error(`BUG`);
-    this.helpers.addDep("jsonP", "../../encoding/json.ts");
+    this.helpers.useHelper("jsonP");
 
     const paramRef = meta.paramRef ?? 'params';
     return {
@@ -23,7 +23,7 @@ export default class ProtocolJsonCodegen {
     if (shape.spec.type === 'string') return {
       inputParsingFunction: '',
     };
-    this.helpers.addDep("jsonP", "../../encoding/json.ts");
+    this.helpers.useHelper("jsonP");
 
     const namePrefix = (this.helpers.hasDep('s')) ? 's.' : '';
 
@@ -67,10 +67,10 @@ export default class ProtocolJsonCodegen {
       let encoder = '';
       if (innerShape.spec.type === 'timestamp') {
         const dateFmt = spec.timestampFormat ?? innerShape.spec.timestampFormat ?? 'unixTimestamp';
-        this.helpers.addDep("jsonP", "../../encoding/json.ts");
+        this.helpers.useHelper("jsonP");
         encoder = `jsonP.serializeDate_${dateFmt}(${fieldRef})`;
       } else if (innerShape.spec.type === 'blob') {
-        this.helpers.addDep("jsonP", "../../encoding/json.ts");
+        this.helpers.useHelper("jsonP");
         encoder = `jsonP.serializeBlob(${fieldRef})`;
       } else if (innerShape.spec.type === 'structure') {
         encoder = `from${innerShape.censoredName}(${fieldRef})`;
@@ -84,11 +84,11 @@ export default class ProtocolJsonCodegen {
       } else if (innerShape.spec.type === 'map') {
         const valShape = this.shapes.get(innerShape.spec.value);
         if (valShape.spec.type === 'structure' && valShape.tags.has('named')) {
-          this.helpers.addDep("jsonP", "../../encoding/json.ts");
+          this.helpers.useHelper("jsonP");
           encoder = `jsonP.serializeMap(x, from${valShape.censoredName})`;
         }
       } else if (innerShape.spec.type === 'string' && (spec.jsonvalue || (fieldShape.spec.type === 'list' && fieldShape.spec.member.jsonvalue))) {
-        this.helpers.addDep("jsonP", "../../encoding/json.ts");
+        this.helpers.useHelper("jsonP");
         encoder = `jsonP.serializeJsonValue(${fieldRef})`;
       } else if (innerShape.spec.type === 'string' && spec.idempotencyToken) {
         this.helpers.useHelper('generateIdemptToken');
@@ -99,7 +99,7 @@ export default class ProtocolJsonCodegen {
         if (isList) {
           chunks.push(`    ${locationName}: ${rootRef}[${JSON.stringify(field)}]?.map(x => ${encoder}),`);
         } else if (isMap) {
-          this.helpers.addDep("jsonP", "../../encoding/json.ts");
+          this.helpers.useHelper("jsonP");
           chunks.push(`    ${locationName}: jsonP.serializeMap(${rootRef}[${JSON.stringify(field)}], x => ${encoder}),`);
         } else {
           chunks.push(`    ${locationName}: ${encoder},`);
@@ -134,7 +134,7 @@ export default class ProtocolJsonCodegen {
   }
 
   generateShapeOutputParsingTypescript(shape: KnownShape): { outputParsingFunction: string; } {
-    this.helpers.addDep("jsonP", "../../encoding/json.ts");
+    this.helpers.useHelper("jsonP");
     const namePrefix = (this.helpers.hasDep('s')) ? 's.' : '';
 
     const chunks = new Array<string>();
@@ -180,7 +180,7 @@ export default class ProtocolJsonCodegen {
     let hasRemap = false;
     const arrays = new Set<string>();
 
-    this.helpers.addDep("jsonP", "../../encoding/json.ts");
+    this.helpers.useHelper("jsonP");
     const namePrefix = (this.helpers.hasDep('s')) ? 's.' : '';
 
     for (const [field, spec] of Object.entries(outputStruct.members)) {
@@ -199,6 +199,7 @@ export default class ProtocolJsonCodegen {
         : fieldShape;
 
       if (innerShape.spec.type === 'string' && innerShape.spec.enum) {
+        this.helpers.useHelper("cmnP");
         typeSpec = Symbol.for(`(x: jsonP.JSONValue) => cmnP.readEnum<${namePrefix}${innerShape.censoredName}>(x)`);
       } else if (innerShape.tags.has('named')) {
         typeSpec = Symbol.for('to'+innerShape.censoredName);
@@ -231,6 +232,9 @@ export default class ProtocolJsonCodegen {
           : 'String';
         const readVal = this.exprReadOutput(valShape);
         typeSpec = Symbol.for(`x => jsonP.readMap(${readKey}, ${readVal}, x)`);
+        if (readKey.includes('cmnP.')) {
+          this.helpers.useHelper("cmnP");
+        }
       } else {
         throw new Error(`TODO: json output unknown field ${innerShape.spec.type}`);
         typeSpec = 'TODO_'+innerShape.spec.type;
@@ -299,6 +303,7 @@ export default class ProtocolJsonCodegen {
     if (innerShape.tags.has('named')) {
       if (innerShape.spec.type === 'string') {
         expr = `y => cmnP.readEnum<${namePrefix}${innerShape.censoredName}>(y)`;
+        this.helpers.useHelper("cmnP");
       } else {
         expr = 'to'+innerShape.censoredName;
       }
@@ -307,17 +312,17 @@ export default class ProtocolJsonCodegen {
     } else if (innerShape.spec.type === 'string') {
       expr = 'String';
     } else if (innerShape.spec.type === 'timestamp') {
-      this.helpers.addDep("jsonP", "../../encoding/json.ts");
+      this.helpers.useHelper("jsonP");
       expr = 'jsonP.readDate';
     } else if (innerShape.spec.type === 'boolean') {
       expr = 'y => typeof y === "boolean" ? y : null';
     } else if (innerShape.spec.type === 'map') {
-      this.helpers.addDep("jsonP", "../../encoding/json.ts");
+      this.helpers.useHelper("jsonP");
       const valShape = this.shapes.get(innerShape.spec.value);
       // TODO: is this safe? when would a map have a null?
       expr = `y => jsonP.readMap(String, ${this.exprReadOutput(valShape)}, y)!`;
     } else if (innerShape.spec.type === 'list') {
-      this.helpers.addDep("jsonP", "../../encoding/json.ts");
+      this.helpers.useHelper("jsonP");
       const valShape = this.shapes.get(innerShape.spec.member);
       if (valShape.tags.has('named')) {
         // TODO: is this safe? when would an array have a null?

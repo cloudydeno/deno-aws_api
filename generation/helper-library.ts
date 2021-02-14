@@ -6,8 +6,17 @@ export class HelperLibrary {
   addHelper(name: string, helper: Helper) {
     this.#helpers.set(name, helper);
   }
+  // TODO: rename to useDepFromUrl or something
   addDep(name: string, sourceUrl: string) {
     this.#extraDeps.set(name, sourceUrl);
+  }
+  addOptionalDep(name: string, depUrl: string) {
+    this.addHelper(name, {
+      chunks: [],
+      deps: {
+        [name]: depUrl,
+      },
+    });
   }
   hasDep(name: string) {
     return this.#extraDeps.has(name);
@@ -46,7 +55,7 @@ export class HelperLibrary {
     }
 
     return [
-      ...depChunks,
+      ...depChunks.sort(),
       ...helpers.flatMap(x => x.chunks),
     ].join('\n');
   }
@@ -94,7 +103,13 @@ export function makeHelperLibrary(opts: {
 } = {}) {
   const lib = new HelperLibrary();
 
-  lib.addDep("cmnP", "../../encoding/common.ts");
+  lib.addOptionalDep('Base64', 'https://deno.land/x/base64@v0.2.1/mod.ts');
+  lib.addOptionalDep('client', '../../client/common.ts');
+
+  lib.addOptionalDep('cmnP', '../../encoding/common.ts');
+  lib.addOptionalDep('jsonP', '../../encoding/json.ts');
+  lib.addOptionalDep('qsP', '../../encoding/querystring.ts');
+  lib.addOptionalDep('xmlP', '../../encoding/xml.ts');
 
   lib.addHelper('generateIdemptToken', opts.isTest
     ? IdemptTokenMock

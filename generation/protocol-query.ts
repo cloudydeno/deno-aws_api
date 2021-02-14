@@ -9,8 +9,6 @@ import ProtocolXmlCodegen from "./protocol-xml.ts";
 export default class ProtocolQueryCodegen extends ProtocolXmlCodegen {
   constructor(shapes: ShapeLibrary, helpers: HelperLibrary, opts: {ec2?: boolean}={}) {
     super(shapes, helpers, opts);
-
-    helpers.addDep("qsP", "../../encoding/querystring.ts");
   }
 
   generateOperationInputParsingTypescript(inputShape: KnownShape): { inputParsingCode: string; inputVariables: string[]; } {
@@ -77,6 +75,7 @@ export default class ProtocolQueryCodegen extends ProtocolXmlCodegen {
             ? '.'
             : `.${shape.spec.locationName ?? shape.spec.member.locationName ?? 'member'}.`;
           const innerShape = this.shapes.get(shape.spec.member);
+          this.helpers.useHelper("qsP");
           chunks.push(`    if (${paramRef}) qsP.appendList(body, prefix+${JSON.stringify(prefix+listPrefix)}, ${paramRef}, ${this.configureInnerShapeEncoding(innerShape, listConfig)})`);
           break;
         }
@@ -92,6 +91,7 @@ export default class ProtocolQueryCodegen extends ProtocolXmlCodegen {
             ? '.'
             : `.${shape.spec.locationName ?? 'entry'}.`;
           const valueShape = this.shapes.get(shape.spec.value);
+          this.helpers.useHelper("qsP");
           chunks.push(`    if (${paramRef}) qsP.appendMap(body, prefix+${JSON.stringify(prefix+mapPrefix)}, ${paramRef}, ${this.configureInnerShapeEncoding(valueShape, mapConfig)})`);
           break;
         }
@@ -109,9 +109,11 @@ export default class ProtocolQueryCodegen extends ProtocolXmlCodegen {
           chunks.push(`    ${isRequired ? '' : `if (${JSON.stringify(field)} in params) `}body.append(prefix+${JSON.stringify(prefix+locationName)}, (${paramRef} ?? '').toString());`);
           break;
         case 'blob':
+          this.helpers.useHelper("qsP");
           chunks.push(`    ${isRequired ? '' : `if (${JSON.stringify(field)} in params) `}body.append(prefix+${JSON.stringify(prefix+locationName)}, qsP.encodeBlob(${paramRef}));`);
           break;
         case 'timestamp':
+          this.helpers.useHelper("qsP");
           const dateFmt = spec.timestampFormat ?? shape.spec.timestampFormat ?? 'iso8601';
           chunks.push(`    ${isRequired ? '' : `if (${JSON.stringify(field)} in params) `}body.append(prefix+${JSON.stringify(prefix+locationName)}, qsP.encodeDate_${dateFmt}(${paramRef}));`);
           break;
@@ -149,9 +151,11 @@ export default class ProtocolQueryCodegen extends ProtocolXmlCodegen {
     let confExtras = '';
     switch (innerShape.spec.type) {
       case 'blob':
+        this.helpers.useHelper("qsP");
         confExtras += `"encoder":qsP.encodeBlob,`;
         break;
       case 'timestamp':
+        this.helpers.useHelper("qsP");
         const dateFmt = innerShape.spec.timestampFormat ?? 'iso8601';
         confExtras += `"encoder":qsP.encodeDate_${dateFmt},`;
         break;

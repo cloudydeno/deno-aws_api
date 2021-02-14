@@ -12,7 +12,7 @@ export default class ProtocolXmlCodegen {
   ) {
     this.ec2Mode = ec2 ?? false;
 
-    helpers.addDep("xmlP", "../../encoding/xml.ts");
+    helpers.useHelper("xmlP");
   }
 
   generateOperationInputParsingTypescript(inputShape: KnownShape, meta: Schema.LocationInfo & {paramRef?: string}): { inputParsingCode: string; inputVariables: string[]; } {
@@ -103,11 +103,13 @@ export default class ProtocolXmlCodegen {
           break;
 
         case 'timestamp':
+          this.helpers.useHelper("cmnP");
           const dateFmt = spec.timestampFormat ?? shape.spec.timestampFormat ?? 'iso8601';
           chunks.push(`    {name: ${JSON.stringify(locationName)}, content: cmnP.serializeDate_${dateFmt}(${paramRef})},`);
           break;
 
         case 'blob':
+          this.helpers.useHelper("cmnP");
           chunks.push(`    {name: ${JSON.stringify(locationName)}, content: cmnP.serializeBlob(${paramRef})},`);
           break;
 
@@ -346,6 +348,7 @@ export default class ProtocolXmlCodegen {
         case 'string': {
           if (spec.xmlAttribute) {
             if (shape.spec.enum && isRequired) {
+              this.helpers.useHelper("cmnP");
               chunks.push(`    ${field}: cmnP.readEnumReq<${namePrefix}${shape.censoredName}>(${nodeRef}.attributes[${JSON.stringify(locationName)}]),`);
               break;
             }
@@ -401,7 +404,7 @@ export default class ProtocolXmlCodegen {
       case 'double':
         return `x => parseFloat(x.content ?? '0')`;
       case 'blob':
-        this.helpers.addDep('Base64', 'https://deno.land/x/base64@v0.2.1/mod.ts');
+        this.helpers.useHelper('Base64');
         return `x => Base64.toUint8Array(x.content ?? '')`;
       case 'timestamp':
         return `x => xmlP.parseTimestamp(x.content)`;

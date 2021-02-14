@@ -73,6 +73,7 @@ export class StructEmitter {
 
       case 'string':
         if (shape.spec.enum) {
+          this.helpers.useHelper("cmnP");
           return [`export type ${shape.censoredName} =`,
             ...shape.spec.enum.map(value => `| ${JSON.stringify(value)}`),
           '| cmnP.UnexpectedEnumValue;'].join('\n');
@@ -94,7 +95,7 @@ export class StructEmitter {
         if (shape.spec.enum && !opts.isDictKey) {
           return shape.spec.enum.map(x => JSON.stringify(x)).join(' | ');
         } else if (opts.isJson && !opts.isDictKey) {
-          this.helpers.addDep("jsonP", "../../encoding/json.ts");
+          this.helpers.useHelper("jsonP");
           return 'jsonP.JSONValue';
         }
       case 'boolean':

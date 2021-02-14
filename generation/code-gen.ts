@@ -44,8 +44,6 @@ export default class ServiceCodeGen {
     const helpers = makeHelperLibrary({ isTest: this.isTest });
     const protocol = makeProtocolCodegenFor(this.apiSpec.metadata, this.shapes, helpers);
 
-    helpers.addDep("client", "../../client/common.ts");
-
     const chunks = new Array<string>();
     chunks.push(`export default class ${namespace} {`);
 
@@ -81,7 +79,6 @@ export default class ServiceCodeGen {
     const helpers = makeHelperLibrary({ isTest: this.isTest });
     const protocol = makeProtocolCodegenFor(this.apiSpec.metadata, this.shapes, helpers);
 
-    helpers.addDep("client", "../../client/common.ts");
     helpers.addDep("s", "./structs.ts");
 
     const chunks = new Array<string>();

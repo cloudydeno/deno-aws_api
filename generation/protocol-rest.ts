@@ -69,6 +69,7 @@ export default class ProtocolRestCodegen {
             case 'timestamp': {
               const format  = spec.timestampFormat ?? shape.spec.timestampFormat ?? 'rfc822';
               formattedRef = `cmnP.serializeDate_${format}(${formattedRef})${format === 'unixTimestamp' ? '?.toString()' : ''} ?? ""`;
+              this.helpers.useHelper("cmnP");
               break;
             }
             case 'integer':
@@ -80,6 +81,7 @@ export default class ProtocolRestCodegen {
               break;
             case 'blob':
               formattedRef = `cmnP.serializeBlob(${formattedRef}) ?? ''`;
+              this.helpers.useHelper("cmnP");
               break;
             case 'string':
               // TODO: also headers that are MD5s of other headers
@@ -88,6 +90,7 @@ export default class ProtocolRestCodegen {
                 formattedRef = `${formattedRef} ?? hashMD5(body ?? '')`;
                 isRequired = true;
               } else if (spec.jsonvalue) {
+                this.helpers.useHelper("jsonP");
                 formattedRef = `btoa(jsonP.serializeJsonValue(${formattedRef}) ?? '')`;
                 break;
               }
@@ -114,6 +117,7 @@ export default class ProtocolRestCodegen {
           switch (shape.spec.type) {
             case 'string':
               if (spec.jsonvalue) {
+                this.helpers.useHelper("jsonP");
                 chunks.push(`    ${isRequired ? '' : `if (${paramRef} != null) `}query.set(${JSON.stringify(spec.queryName ?? locationName)}, jsonP.serializeJsonValue(${paramRef}) ?? "");`);
                 break;
               }
@@ -127,7 +131,7 @@ export default class ProtocolRestCodegen {
             case 'timestamp': {
               const format  = spec.timestampFormat ?? shape.spec.timestampFormat ?? 'iso8601';
               const helper = `cmnP.serializeDate_${format}`;
-              // this.helpers.useHelper(helper);
+              this.helpers.useHelper("cmnP");
               chunks.push(`    ${isRequired ? '' : `if (${paramRef} != null) `}query.set(${JSON.stringify(spec.queryName ?? locationName)}, ${helper}(${paramRef})${format === 'unixTimestamp' ? '?.toString()' : ''} ?? "");`);
               break;
             }
@@ -326,11 +330,14 @@ export default class ProtocolRestCodegen {
       case 'header':
         switch (fieldShape.spec.type) {
           case 'timestamp':
+            this.helpers.useHelper("cmnP");
             return `    ${field}: cmnP.read${isRequired ? 'Req' : ''}Timestamp(resp.headers.get(${JSON.stringify(spec.locationName || field)})),`;
           case 'string':
             if (fieldShape.spec.enum) {
+              this.helpers.useHelper("cmnP");
               return `    ${field}: cmnP.readEnum<${namePrefix}${fieldShape.censoredName}>(resp.headers.get(${JSON.stringify(spec.locationName || field)})),`;
             } else if (spec.jsonvalue) {
+              this.helpers.useHelper("jsonP");
               return `    ${field}: jsonP.readJsonValueBase64(resp.headers.get(${JSON.stringify(spec.locationName || field)})),`;
             } else {
               return `    ${field}: resp.headers.get(${JSON.stringify(spec.locationName || field)})${isRequired ? ' ?? ""' : ''},`;
@@ -341,8 +348,10 @@ export default class ProtocolRestCodegen {
           case 'double':
           case 'float':
           case 'long':
+            this.helpers.useHelper("cmnP");
             return `    ${field}: cmnP.readNum(resp.headers.get(${JSON.stringify(spec.locationName || field)})),`;
           case 'boolean':
+            this.helpers.useHelper("cmnP");
             return `    ${field}: cmnP.readBool(resp.headers.get(${JSON.stringify(spec.locationName || field)})),`;
           default:
             throw new Error(`TODO: rest output header ${fieldShape.spec.type} "${field}"`);
@@ -354,6 +363,7 @@ export default class ProtocolRestCodegen {
         const valShape = this.shapes.get(fieldShape.spec.value);
         switch (valShape.spec.type) {
           case 'string':
+            this.helpers.useHelper("cmnP");
             return `    ${field}: cmnP.toJsObj(resp.headers, ${spec.locationName ? JSON.stringify(spec.locationName.toLowerCase()) : 'true'}, v => v),`;
           default:
             throw new Error(`TODO: rest output headerS ${valShape.spec.type} "${field}"`);
