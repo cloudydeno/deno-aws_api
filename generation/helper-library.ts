@@ -71,7 +71,7 @@ export interface Helper {
 
 export const HashMD5: Helper = {
   deps: {
-    HashMd5: "https://deno.land/std@0.86.0/hash/md5.ts",
+    HashMd5: "https://deno.land/std@0.91.0/hash/md5.ts",
   },
   chunks: [
     `function hashMD5(data: HashMd5.Message): string {`,
@@ -84,7 +84,7 @@ export const HashMD5: Helper = {
 
 export const SerializeBlob: Helper = {
   deps: {
-    Base64: "https://deno.land/std@0.86.0/encoding/base64.ts",
+    Base64: "https://deno.land/std@0.91.0/encoding/base64.ts",
   },
   chunks: [
     `function serializeBlob(input: string | Uint8Array | null | undefined) {`,
@@ -95,7 +95,7 @@ export const SerializeBlob: Helper = {
 };
 export const ParseBlob: Helper = {
   deps: {
-    Base64: "https://deno.land/std@0.86.0/encoding/base64.ts",
+    Base64: "https://deno.land/std@0.91.0/encoding/base64.ts",
   },
   chunks: [
     `function parseBlob(input: string | null | undefined) {`,
@@ -107,7 +107,7 @@ export const ParseBlob: Helper = {
 
 export const IdemptToken: Helper = {
   deps: {
-    uuidv4: `https://deno.land/std@0.86.0/uuid/v4.ts`,
+    uuidv4: `https://deno.land/std@0.91.0/uuid/v4.ts`,
   },
   chunks: [
     `function generateIdemptToken() {`,

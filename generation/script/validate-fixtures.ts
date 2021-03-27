@@ -1,6 +1,6 @@
 #!/usr/bin/env -S deno run --allow-run --allow-env --allow-write --allow-read
 
-import { pooledMap } from "https://deno.land/std@0.86.0/async/pool.ts";
+import { pooledMap } from "https://deno.land/std@0.91.0/async/pool.ts";
 
 import type * as Schema from '../sdk-schema.ts';
 import ServiceCodeGen from '../code-gen.ts';
@@ -166,7 +166,7 @@ async function doOneRun(run: TestRun): Promise<TestRunResult> {
 
   const chunks = new Array<string>();
   chunks.push('\n/////////\n');
-  chunks.push(`import { assertEquals } from "https://deno.land/std@0.86.0/testing/asserts.ts";`);
+  chunks.push(`import { assertEquals } from "https://deno.land/std@0.91.0/testing/asserts.ts";`);
   chunks.push(`import { wrapServiceClient } from '../../client/mod.ts';\n`);
 
   chunks.push(`async function checkRequest(request: Request, opts: {hostPrefix?: string, urlPath: string}): Promise<Response> {`);

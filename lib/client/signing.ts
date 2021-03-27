@@ -1,7 +1,7 @@
 // port of https://github.com/lucacasonato/deno_aws_sign_v4
 // because that repo (as of press time) unnecesarily brings in 25 source files
 
-import { Message, Sha256, HmacSha256 } from "https://deno.land/std@0.86.0/hash/sha256.ts";
+import { Message, Sha256, HmacSha256 } from "https://deno.land/std@0.91.0/hash/sha256.ts";
 import type { Signer, Credentials } from "./common.ts";
 
 function sha256(data: Message): Sha256 {

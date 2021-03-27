@@ -5,8 +5,8 @@ const factory = new ApiFactory();
 const sqs = new SQS(factory);
 
 // we'll be taking input
-import { parse as parseFlags } from "https://deno.land/std@0.86.0/flags/mod.ts";
-import Ask from 'https://deno.land/x/ask@1.0.5/mod.ts';
+import { parse as parseFlags } from "https://deno.land/std@0.91.0/flags/mod.ts";
+import Ask from 'https://deno.land/x/ask@1.0.6/mod.ts';
 
 let { dlq, target, automatic } = parseFlags(Deno.args, {
   string: ['dlq', 'target'],
@@ -119,10 +119,10 @@ while (true) {
   while (!actioned) {
     const { action } = await ask.input({
       name: 'action',
-      type: 'string',
+      type: 'input',
       message: 'Select action: [j]son / [d]elete / [r]edeliver / [s]kip / [q]uit',
     });
-    switch (action.toString().toLowerCase()[0]) {
+    switch (action?.toString().toLowerCase()[0]) {
 
       case 'j':
         console.log(JSON.stringify(JSON.parse(message.Body ?? '{}'), null, 2));
