@@ -56,7 +56,7 @@ export const DefaultCredentialsProvider
   ]);
 
 // full spec: https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html
-import * as ini from 'https://deno.land/x/ini@v2.1.0/ini.ts';
+import * as ini from './ini.ts';
 export class SharedIniFileCredentials implements CredentialsProvider {
   #filename: string;
   #filedata?: string;
