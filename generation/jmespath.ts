@@ -1,19 +1,5 @@
-import { ASTNode, Token } from 'https://deno.land/x/jmespath@v0.2.0/Lexer.ts';
-import { compile } from 'https://deno.land/x/jmespath@v0.2.0/index.ts';
-
-// const cases = [
-//   'EndpointStatus',
-//   'length(Reservations[]) > `0`',
-//   'Reservations[].Instances[].State.Name',
-//   'length(KeyPairs[].KeyName) > `0`',
-//   'length(DBClusterSnapshots) == `0`',
-//   'length(services[?!(length(deployments) == `1` && runningCount == desiredCount)]) == `0`',
-//   'VerificationAttributes.*.VerificationStatus',
-// ];
-// for (const path of cases) {
-//   console.log(path, ' -|- ', compileJMESPath(path, 'resp'));
-// }
-
+import { ASTNode, Token } from 'https://deno.land/x/jmespath@v0.2.2/Lexer.ts';
+import { compile } from 'https://deno.land/x/jmespath@v0.2.2/index.ts';
 
 export function compileJMESPath(pathstr: string, rootRef: string): string {
   return postProcess(compilePath(compile(pathstr), rootRef));
