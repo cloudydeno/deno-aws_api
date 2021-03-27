@@ -59,16 +59,23 @@ export const DefaultCredentialsProvider
 import * as ini from 'https://deno.land/x/ini@v2.1.0/ini.ts';
 export class SharedIniFileCredentials implements CredentialsProvider {
   #filename: string;
+  #filedata?: string;
   #profile: string;
   #promise?: Promise<Credentials>;
   constructor({
     profile,
     filename,
+    filedata,
   }: {
     profile?: string,
     filename?: string,
+    filedata?: string,
   }={}) {
 
+    if (filedata) {
+      filename = filename || 'tmp://supplied-inline';
+      this.#filedata = filedata;
+    }
     if (!filename) {
       filename = Deno.env.get('AWS_SHARED_CREDENTIALS_FILE');
     }
@@ -91,7 +98,7 @@ export class SharedIniFileCredentials implements CredentialsProvider {
   }
 
   async load(): Promise<Credentials> {
-    const text = await Deno.readTextFile(this.#filename);
+    const text = this.#filedata ?? await Deno.readTextFile(this.#filename);
     const data: {[name: string]: {
       aws_access_key_id?: string;
       aws_secret_access_key?: string;
