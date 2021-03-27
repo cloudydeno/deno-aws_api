@@ -707,6 +707,7 @@ export type AttachmentStatus =
 // refs: 3 - tags: output, named, interface
 export interface PerObjectStatus {
   SyncStatus?: PerObjectSyncStatus | null;
+  UpdateToken?: string | null;
 }
 
 // refs: 3 - tags: output, named, enum

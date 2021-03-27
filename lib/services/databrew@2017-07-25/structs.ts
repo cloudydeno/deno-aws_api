@@ -11,6 +11,7 @@ export interface BatchDeleteRecipeVersionRequest {
 // refs: 1 - tags: named, input
 export interface CreateDatasetRequest {
   Name: string;
+  Format?: InputFormat | null;
   FormatOptions?: FormatOptions | null;
   Input: Input;
   Tags?: { [key: string]: string | null | undefined } | null;
@@ -29,6 +30,7 @@ export interface CreateProfileJobRequest {
   RoleArn: string;
   Tags?: { [key: string]: string | null | undefined } | null;
   Timeout?: number | null;
+  JobSample?: JobSample | null;
 }
 
 // refs: 1 - tags: named, input
@@ -233,6 +235,7 @@ export interface UntagResourceRequest {
 // refs: 1 - tags: named, input
 export interface UpdateDatasetRequest {
   Name: string;
+  Format?: InputFormat | null;
   FormatOptions?: FormatOptions | null;
   Input: Input;
 }
@@ -248,6 +251,7 @@ export interface UpdateProfileJobRequest {
   OutputLocation: S3Location;
   RoleArn: string;
   Timeout?: number | null;
+  JobSample?: JobSample | null;
 }
 
 // refs: 1 - tags: named, input
@@ -351,6 +355,7 @@ export interface DescribeDatasetResponse {
   CreatedBy?: string | null;
   CreateDate?: Date | number | null;
   Name: string;
+  Format?: InputFormat | null;
   FormatOptions?: FormatOptions | null;
   Input: Input;
   LastModifiedDate?: Date | number | null;
@@ -381,6 +386,7 @@ export interface DescribeJobResponse {
   RoleArn?: string | null;
   Tags?: { [key: string]: string | null | undefined } | null;
   Timeout?: number | null;
+  JobSample?: JobSample | null;
 }
 
 // refs: 1 - tags: named, output
@@ -399,6 +405,7 @@ export interface DescribeJobRunResponse {
   RecipeReference?: RecipeReference | null;
   StartedBy?: string | null;
   StartedOn?: Date | number | null;
+  JobSample?: JobSample | null;
 }
 
 // refs: 1 - tags: named, output
@@ -563,6 +570,14 @@ export interface UpdateScheduleResponse {
   Name: string;
 }
 
+// refs: 4 - tags: input, named, enum, output
+export type InputFormat =
+| "CSV"
+| "JSON"
+| "PARQUET"
+| "EXCEL"
+| cmnP.UnexpectedEnumValue;
+
 // refs: 4 - tags: input, named, interface, output
 export interface FormatOptions {
   Json?: JsonOptions | null;
@@ -579,11 +594,13 @@ export interface JsonOptions {
 export interface ExcelOptions {
   SheetNames?: string[] | null;
   SheetIndexes?: number[] | null;
+  HeaderRow?: boolean | null;
 }
 
 // refs: 4 - tags: input, named, interface, output
 export interface CsvOptions {
   Delimiter?: string | null;
+  HeaderRow?: boolean | null;
 }
 
 // refs: 4 - tags: input, named, interface, output
@@ -616,6 +633,18 @@ export type EncryptionMode =
 export type LogSubscription =
 | "ENABLE"
 | "DISABLE"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 6 - tags: input, named, interface, output
+export interface JobSample {
+  Mode?: SampleMode | null;
+  Size?: number | null;
+}
+
+// refs: 6 - tags: input, named, enum, output
+export type SampleMode =
+| "FULL_DATASET"
+| "CUSTOM_ROWS"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, interface, output
@@ -757,6 +786,7 @@ export interface Dataset {
   CreatedBy?: string | null;
   CreateDate?: Date | number | null;
   Name: string;
+  Format?: InputFormat | null;
   FormatOptions?: FormatOptions | null;
   Input: Input;
   LastModifiedDate?: Date | number | null;
@@ -782,6 +812,7 @@ export interface JobRun {
   RecipeReference?: RecipeReference | null;
   StartedBy?: string | null;
   StartedOn?: Date | number | null;
+  JobSample?: JobSample | null;
 }
 
 // refs: 1 - tags: output, named, interface
@@ -806,6 +837,7 @@ export interface Job {
   RoleArn?: string | null;
   Timeout?: number | null;
   Tags?: { [key: string]: string | null | undefined } | null;
+  JobSample?: JobSample | null;
 }
 
 // refs: 1 - tags: output, named, interface

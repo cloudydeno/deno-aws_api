@@ -389,8 +389,9 @@ export interface ImageSource {
 
 // refs: 2 - tags: output, named, enum
 export type ModelHostingStatus =
-| "RUNNING"
-| "STARTING"
-| "STOPPED"
-| "FAILED"
+| "STARTING_HOSTING"
+| "HOSTED"
+| "HOSTING_FAILED"
+| "STOPPING_HOSTING"
+| "SYSTEM_UPDATING"
 | cmnP.UnexpectedEnumValue;

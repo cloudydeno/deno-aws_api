@@ -8,7 +8,7 @@ export * from "./structs.ts";
 import * as client from "../../client/common.ts";
 import * as cmnP from "../../encoding/common.ts";
 import * as jsonP from "../../encoding/json.ts";
-import * as uuidv4 from "https://deno.land/std@0.86.0/uuid/v4.ts";
+import * as uuidv4 from "https://deno.land/std@0.91.0/uuid/v4.ts";
 import type * as s from "./structs.ts";
 function generateIdemptToken() {
   return uuidv4.generate();
@@ -206,6 +206,27 @@ export default class CodePipeline {
     });
   }
 
+  async getActionType(
+    {abortSignal, ...params}: RequestConfig & s.GetActionTypeInput,
+  ): Promise<s.GetActionTypeOutput> {
+    const body: jsonP.JSONObject = {
+      category: params["category"],
+      owner: params["owner"],
+      provider: params["provider"],
+      version: params["version"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "GetActionType",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "actionType": toActionTypeDeclaration,
+      },
+    }, await resp.json());
+  }
+
   async getJobDetails(
     {abortSignal, ...params}: RequestConfig & s.GetJobDetailsInput,
   ): Promise<s.GetJobDetailsOutput> {
@@ -332,6 +353,7 @@ export default class CodePipeline {
     const body: jsonP.JSONObject = {
       actionOwnerFilter: params["actionOwnerFilter"],
       nextToken: params["nextToken"],
+      regionFilter: params["regionFilter"],
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -373,6 +395,7 @@ export default class CodePipeline {
   ): Promise<s.ListPipelinesOutput> {
     const body: jsonP.JSONObject = {
       nextToken: params["nextToken"],
+      maxResults: params["maxResults"],
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -698,6 +721,18 @@ export default class CodePipeline {
       required: {},
       optional: {},
     }, await resp.json());
+  }
+
+  async updateActionType(
+    {abortSignal, ...params}: RequestConfig & s.UpdateActionTypeInput,
+  ): Promise<void> {
+    const body: jsonP.JSONObject = {
+      actionType: fromActionTypeDeclaration(params["actionType"]),
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "UpdateActionType",
+    });
   }
 
   async updatePipeline(
@@ -1104,6 +1139,207 @@ function toWebhookAuthConfiguration(root: jsonP.JSONValue): s.WebhookAuthConfigu
     optional: {
       "AllowedIPRange": "s",
       "SecretToken": "s",
+    },
+  }, root);
+}
+
+function fromActionTypeDeclaration(input?: s.ActionTypeDeclaration | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    description: input["description"],
+    executor: fromActionTypeExecutor(input["executor"]),
+    id: fromActionTypeIdentifier(input["id"]),
+    inputArtifactDetails: fromActionTypeArtifactDetails(input["inputArtifactDetails"]),
+    outputArtifactDetails: fromActionTypeArtifactDetails(input["outputArtifactDetails"]),
+    permissions: fromActionTypePermissions(input["permissions"]),
+    properties: input["properties"]?.map(x => fromActionTypeProperty(x)),
+    urls: fromActionTypeUrls(input["urls"]),
+  }
+}
+function toActionTypeDeclaration(root: jsonP.JSONValue): s.ActionTypeDeclaration {
+  return jsonP.readObj({
+    required: {
+      "executor": toActionTypeExecutor,
+      "id": toActionTypeIdentifier,
+      "inputArtifactDetails": toActionTypeArtifactDetails,
+      "outputArtifactDetails": toActionTypeArtifactDetails,
+    },
+    optional: {
+      "description": "s",
+      "permissions": toActionTypePermissions,
+      "properties": [toActionTypeProperty],
+      "urls": toActionTypeUrls,
+    },
+  }, root);
+}
+
+function fromActionTypeExecutor(input?: s.ActionTypeExecutor | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    configuration: fromExecutorConfiguration(input["configuration"]),
+    type: input["type"],
+    policyStatementsTemplate: input["policyStatementsTemplate"],
+    jobTimeout: input["jobTimeout"],
+  }
+}
+function toActionTypeExecutor(root: jsonP.JSONValue): s.ActionTypeExecutor {
+  return jsonP.readObj({
+    required: {
+      "configuration": toExecutorConfiguration,
+      "type": (x: jsonP.JSONValue) => cmnP.readEnum<s.ExecutorType>(x),
+    },
+    optional: {
+      "policyStatementsTemplate": "s",
+      "jobTimeout": "n",
+    },
+  }, root);
+}
+
+function fromExecutorConfiguration(input?: s.ExecutorConfiguration | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    lambdaExecutorConfiguration: fromLambdaExecutorConfiguration(input["lambdaExecutorConfiguration"]),
+    jobWorkerExecutorConfiguration: fromJobWorkerExecutorConfiguration(input["jobWorkerExecutorConfiguration"]),
+  }
+}
+function toExecutorConfiguration(root: jsonP.JSONValue): s.ExecutorConfiguration {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "lambdaExecutorConfiguration": toLambdaExecutorConfiguration,
+      "jobWorkerExecutorConfiguration": toJobWorkerExecutorConfiguration,
+    },
+  }, root);
+}
+
+function fromLambdaExecutorConfiguration(input?: s.LambdaExecutorConfiguration | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    lambdaFunctionArn: input["lambdaFunctionArn"],
+  }
+}
+function toLambdaExecutorConfiguration(root: jsonP.JSONValue): s.LambdaExecutorConfiguration {
+  return jsonP.readObj({
+    required: {
+      "lambdaFunctionArn": "s",
+    },
+    optional: {},
+  }, root);
+}
+
+function fromJobWorkerExecutorConfiguration(input?: s.JobWorkerExecutorConfiguration | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    pollingAccounts: input["pollingAccounts"],
+    pollingServicePrincipals: input["pollingServicePrincipals"],
+  }
+}
+function toJobWorkerExecutorConfiguration(root: jsonP.JSONValue): s.JobWorkerExecutorConfiguration {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "pollingAccounts": ["s"],
+      "pollingServicePrincipals": ["s"],
+    },
+  }, root);
+}
+
+function fromActionTypeIdentifier(input?: s.ActionTypeIdentifier | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    category: input["category"],
+    owner: input["owner"],
+    provider: input["provider"],
+    version: input["version"],
+  }
+}
+function toActionTypeIdentifier(root: jsonP.JSONValue): s.ActionTypeIdentifier {
+  return jsonP.readObj({
+    required: {
+      "category": (x: jsonP.JSONValue) => cmnP.readEnum<s.ActionCategory>(x),
+      "owner": "s",
+      "provider": "s",
+      "version": "s",
+    },
+    optional: {},
+  }, root);
+}
+
+function fromActionTypeArtifactDetails(input?: s.ActionTypeArtifactDetails | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    minimumCount: input["minimumCount"],
+    maximumCount: input["maximumCount"],
+  }
+}
+function toActionTypeArtifactDetails(root: jsonP.JSONValue): s.ActionTypeArtifactDetails {
+  return jsonP.readObj({
+    required: {
+      "minimumCount": "n",
+      "maximumCount": "n",
+    },
+    optional: {},
+  }, root);
+}
+
+function fromActionTypePermissions(input?: s.ActionTypePermissions | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    allowedAccounts: input["allowedAccounts"],
+  }
+}
+function toActionTypePermissions(root: jsonP.JSONValue): s.ActionTypePermissions {
+  return jsonP.readObj({
+    required: {
+      "allowedAccounts": ["s"],
+    },
+    optional: {},
+  }, root);
+}
+
+function fromActionTypeProperty(input?: s.ActionTypeProperty | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    name: input["name"],
+    optional: input["optional"],
+    key: input["key"],
+    noEcho: input["noEcho"],
+    queryable: input["queryable"],
+    description: input["description"],
+  }
+}
+function toActionTypeProperty(root: jsonP.JSONValue): s.ActionTypeProperty {
+  return jsonP.readObj({
+    required: {
+      "name": "s",
+      "optional": "b",
+      "key": "b",
+      "noEcho": "b",
+    },
+    optional: {
+      "queryable": "b",
+      "description": "s",
+    },
+  }, root);
+}
+
+function fromActionTypeUrls(input?: s.ActionTypeUrls | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    configurationUrl: input["configurationUrl"],
+    entityUrlTemplate: input["entityUrlTemplate"],
+    executionUrlTemplate: input["executionUrlTemplate"],
+    revisionUrlTemplate: input["revisionUrlTemplate"],
+  }
+}
+function toActionTypeUrls(root: jsonP.JSONValue): s.ActionTypeUrls {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "configurationUrl": "s",
+      "entityUrlTemplate": "s",
+      "executionUrlTemplate": "s",
+      "revisionUrlTemplate": "s",
     },
   }, root);
 }

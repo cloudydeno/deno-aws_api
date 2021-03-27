@@ -5,7 +5,7 @@ interface RequestConfig {
 }
 
 export * from "./structs.ts";
-import * as Base64 from "https://deno.land/std@0.86.0/encoding/base64.ts";
+import * as Base64 from "https://deno.land/std@0.91.0/encoding/base64.ts";
 import * as client from "../../client/common.ts";
 import * as cmnP from "../../encoding/common.ts";
 import * as jsonP from "../../encoding/json.ts";
@@ -107,6 +107,7 @@ export default class ECRPUBLIC {
     const body: jsonP.JSONObject = {
       repositoryName: params["repositoryName"],
       catalogData: fromRepositoryCatalogDataInput(params["catalogData"]),
+      tags: params["tags"]?.map(x => fromTag(x)),
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -344,6 +345,24 @@ export default class ECRPUBLIC {
     }, await resp.json());
   }
 
+  async listTagsForResource(
+    {abortSignal, ...params}: RequestConfig & s.ListTagsForResourceRequest,
+  ): Promise<s.ListTagsForResourceResponse> {
+    const body: jsonP.JSONObject = {
+      resourceArn: params["resourceArn"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "ListTagsForResource",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "tags": [toTag],
+      },
+    }, await resp.json());
+  }
+
   async putImage(
     {abortSignal, ...params}: RequestConfig & s.PutImageRequest,
   ): Promise<s.PutImageResponse> {
@@ -428,6 +447,40 @@ export default class ECRPUBLIC {
     }, await resp.json());
   }
 
+  async tagResource(
+    {abortSignal, ...params}: RequestConfig & s.TagResourceRequest,
+  ): Promise<s.TagResourceResponse> {
+    const body: jsonP.JSONObject = {
+      resourceArn: params["resourceArn"],
+      tags: params["tags"]?.map(x => fromTag(x)),
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "TagResource",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
+  }
+
+  async untagResource(
+    {abortSignal, ...params}: RequestConfig & s.UntagResourceRequest,
+  ): Promise<s.UntagResourceResponse> {
+    const body: jsonP.JSONObject = {
+      resourceArn: params["resourceArn"],
+      tagKeys: params["tagKeys"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "UntagResource",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
+  }
+
   async uploadLayerPart(
     {abortSignal, ...params}: RequestConfig & s.UploadLayerPartRequest,
   ): Promise<s.UploadLayerPartResponse> {
@@ -483,6 +536,23 @@ function fromRepositoryCatalogDataInput(input?: s.RepositoryCatalogDataInput | n
     aboutText: input["aboutText"],
     usageText: input["usageText"],
   }
+}
+
+function fromTag(input?: s.Tag | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    Key: input["Key"],
+    Value: input["Value"],
+  }
+}
+function toTag(root: jsonP.JSONValue): s.Tag {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "Key": "s",
+      "Value": "s",
+    },
+  }, root);
 }
 
 function toLayer(root: jsonP.JSONValue): s.Layer {

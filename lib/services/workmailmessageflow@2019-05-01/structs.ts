@@ -5,7 +5,29 @@ export interface GetRawMessageContentRequest {
   messageId: string;
 }
 
+// refs: 1 - tags: named, input
+export interface PutRawMessageContentRequest {
+  messageId: string;
+  content: RawMessageContent;
+}
+
 // refs: 1 - tags: named, output
 export interface GetRawMessageContentResponse {
   messageContent: Uint8Array | string;
+}
+
+// refs: 1 - tags: named, output
+export interface PutRawMessageContentResponse {
+}
+
+// refs: 1 - tags: input, named, interface
+export interface RawMessageContent {
+  s3Reference: S3Reference;
+}
+
+// refs: 1 - tags: input, named, interface
+export interface S3Reference {
+  bucket: string;
+  key: string;
+  objectVersion?: string | null;
 }

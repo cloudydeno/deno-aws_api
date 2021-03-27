@@ -64,6 +64,7 @@ export default class Detective {
     const body: jsonP.JSONObject = {
       GraphArn: params["GraphArn"],
       Message: params["Message"],
+      DisableEmailNotification: params["DisableEmailNotification"],
       Accounts: params["Accounts"]?.map(x => fromAccount(x)),
     };
     const resp = await this.#client.performRequest({
@@ -257,6 +258,7 @@ function toMemberDetail(root: jsonP.JSONValue): s.MemberDetail {
       "EmailAddress": "s",
       "GraphArn": "s",
       "MasterId": "s",
+      "AdministratorId": "s",
       "Status": (x: jsonP.JSONValue) => cmnP.readEnum<s.MemberStatus>(x),
       "DisabledReason": (x: jsonP.JSONValue) => cmnP.readEnum<s.MemberDisabledReason>(x),
       "InvitedTime": "d",

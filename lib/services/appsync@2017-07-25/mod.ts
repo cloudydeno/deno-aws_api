@@ -5,7 +5,7 @@ interface RequestConfig {
 }
 
 export * from "./structs.ts";
-import * as Base64 from "https://deno.land/std@0.86.0/encoding/base64.ts";
+import * as Base64 from "https://deno.land/std@0.91.0/encoding/base64.ts";
 import * as client from "../../client/common.ts";
 import * as cmnP from "../../encoding/common.ts";
 import * as jsonP from "../../encoding/json.ts";
@@ -114,6 +114,7 @@ export default class AppSync {
       requestMappingTemplate: params["requestMappingTemplate"],
       responseMappingTemplate: params["responseMappingTemplate"],
       functionVersion: params["functionVersion"],
+      syncConfig: fromSyncConfig(params["syncConfig"]),
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -771,6 +772,7 @@ export default class AppSync {
       requestMappingTemplate: params["requestMappingTemplate"],
       responseMappingTemplate: params["responseMappingTemplate"],
       functionVersion: params["functionVersion"],
+      syncConfig: fromSyncConfig(params["syncConfig"]),
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -1024,6 +1026,40 @@ function toRdsHttpEndpointConfig(root: jsonP.JSONValue): s.RdsHttpEndpointConfig
   }, root);
 }
 
+function fromSyncConfig(input?: s.SyncConfig | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    conflictHandler: input["conflictHandler"],
+    conflictDetection: input["conflictDetection"],
+    lambdaConflictHandlerConfig: fromLambdaConflictHandlerConfig(input["lambdaConflictHandlerConfig"]),
+  }
+}
+function toSyncConfig(root: jsonP.JSONValue): s.SyncConfig {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "conflictHandler": (x: jsonP.JSONValue) => cmnP.readEnum<s.ConflictHandlerType>(x),
+      "conflictDetection": (x: jsonP.JSONValue) => cmnP.readEnum<s.ConflictDetectionType>(x),
+      "lambdaConflictHandlerConfig": toLambdaConflictHandlerConfig,
+    },
+  }, root);
+}
+
+function fromLambdaConflictHandlerConfig(input?: s.LambdaConflictHandlerConfig | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    lambdaConflictHandlerArn: input["lambdaConflictHandlerArn"],
+  }
+}
+function toLambdaConflictHandlerConfig(root: jsonP.JSONValue): s.LambdaConflictHandlerConfig {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "lambdaConflictHandlerArn": "s",
+    },
+  }, root);
+}
+
 function fromLogConfig(input?: s.LogConfig | null): jsonP.JSONValue {
   if (!input) return input;
   return {
@@ -1142,40 +1178,6 @@ function toPipelineConfig(root: jsonP.JSONValue): s.PipelineConfig {
   }, root);
 }
 
-function fromSyncConfig(input?: s.SyncConfig | null): jsonP.JSONValue {
-  if (!input) return input;
-  return {
-    conflictHandler: input["conflictHandler"],
-    conflictDetection: input["conflictDetection"],
-    lambdaConflictHandlerConfig: fromLambdaConflictHandlerConfig(input["lambdaConflictHandlerConfig"]),
-  }
-}
-function toSyncConfig(root: jsonP.JSONValue): s.SyncConfig {
-  return jsonP.readObj({
-    required: {},
-    optional: {
-      "conflictHandler": (x: jsonP.JSONValue) => cmnP.readEnum<s.ConflictHandlerType>(x),
-      "conflictDetection": (x: jsonP.JSONValue) => cmnP.readEnum<s.ConflictDetectionType>(x),
-      "lambdaConflictHandlerConfig": toLambdaConflictHandlerConfig,
-    },
-  }, root);
-}
-
-function fromLambdaConflictHandlerConfig(input?: s.LambdaConflictHandlerConfig | null): jsonP.JSONValue {
-  if (!input) return input;
-  return {
-    lambdaConflictHandlerArn: input["lambdaConflictHandlerArn"],
-  }
-}
-function toLambdaConflictHandlerConfig(root: jsonP.JSONValue): s.LambdaConflictHandlerConfig {
-  return jsonP.readObj({
-    required: {},
-    optional: {
-      "lambdaConflictHandlerArn": "s",
-    },
-  }, root);
-}
-
 function fromCachingConfig(input?: s.CachingConfig | null): jsonP.JSONValue {
   if (!input) return input;
   return {
@@ -1249,6 +1251,7 @@ function toFunctionConfiguration(root: jsonP.JSONValue): s.FunctionConfiguration
       "requestMappingTemplate": "s",
       "responseMappingTemplate": "s",
       "functionVersion": "s",
+      "syncConfig": toSyncConfig,
     },
   }, root);
 }

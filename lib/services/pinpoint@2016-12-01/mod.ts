@@ -5,7 +5,7 @@ interface RequestConfig {
 }
 
 export * from "./structs.ts";
-import * as Base64 from "https://deno.land/std@0.86.0/encoding/base64.ts";
+import * as Base64 from "https://deno.land/std@0.91.0/encoding/base64.ts";
 import * as client from "../../client/common.ts";
 import * as cmnP from "../../encoding/common.ts";
 import * as jsonP from "../../encoding/json.ts";
@@ -2579,7 +2579,10 @@ function fromCampaignSmsMessage(input?: s.CampaignSmsMessage | null): jsonP.JSON
   return {
     Body: input["Body"],
     MessageType: input["MessageType"],
+    OriginationNumber: input["OriginationNumber"],
     SenderId: input["SenderId"],
+    EntityId: input["EntityId"],
+    TemplateId: input["TemplateId"],
   }
 }
 function toCampaignSmsMessage(root: jsonP.JSONValue): s.CampaignSmsMessage {
@@ -2588,7 +2591,10 @@ function toCampaignSmsMessage(root: jsonP.JSONValue): s.CampaignSmsMessage {
     optional: {
       "Body": "s",
       "MessageType": (x: jsonP.JSONValue) => cmnP.readEnum<s.MessageType>(x),
+      "OriginationNumber": "s",
       "SenderId": "s",
+      "EntityId": "s",
+      "TemplateId": "s",
     },
   }, root);
 }
@@ -3356,7 +3362,10 @@ function fromJourneySMSMessage(input?: s.JourneySMSMessage | null): jsonP.JSONVa
   if (!input) return input;
   return {
     MessageType: input["MessageType"],
+    OriginationNumber: input["OriginationNumber"],
     SenderId: input["SenderId"],
+    EntityId: input["EntityId"],
+    TemplateId: input["TemplateId"],
   }
 }
 function toJourneySMSMessage(root: jsonP.JSONValue): s.JourneySMSMessage {
@@ -3364,7 +3373,10 @@ function toJourneySMSMessage(root: jsonP.JSONValue): s.JourneySMSMessage {
     required: {},
     optional: {
       "MessageType": (x: jsonP.JSONValue) => cmnP.readEnum<s.MessageType>(x),
+      "OriginationNumber": "s",
       "SenderId": "s",
+      "EntityId": "s",
+      "TemplateId": "s",
     },
   }, root);
 }
@@ -4036,6 +4048,8 @@ function fromSMSMessage(input?: s.SMSMessage | null): jsonP.JSONValue {
     OriginationNumber: input["OriginationNumber"],
     SenderId: input["SenderId"],
     Substitutions: input["Substitutions"],
+    EntityId: input["EntityId"],
+    TemplateId: input["TemplateId"],
   }
 }
 

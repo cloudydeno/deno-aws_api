@@ -1947,6 +1947,7 @@ function fromDeliveryChannel(input?: s.DeliveryChannel | null): jsonP.JSONValue 
     name: input["name"],
     s3BucketName: input["s3BucketName"],
     s3KeyPrefix: input["s3KeyPrefix"],
+    s3KmsKeyArn: input["s3KmsKeyArn"],
     snsTopicARN: input["snsTopicARN"],
     configSnapshotDeliveryProperties: fromConfigSnapshotDeliveryProperties(input["configSnapshotDeliveryProperties"]),
   }
@@ -1958,6 +1959,7 @@ function toDeliveryChannel(root: jsonP.JSONValue): s.DeliveryChannel {
       "name": "s",
       "s3BucketName": "s",
       "s3KeyPrefix": "s",
+      "s3KmsKeyArn": "s",
       "snsTopicARN": "s",
       "configSnapshotDeliveryProperties": toConfigSnapshotDeliveryProperties,
     },

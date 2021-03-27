@@ -47,6 +47,7 @@ export interface CreateAddressBookRequest {
   Name: string;
   Description?: string | null;
   ClientRequestToken?: string | null;
+  Tags?: Tag[] | null;
 }
 
 // refs: 1 - tags: named, input
@@ -69,6 +70,7 @@ export interface CreateConferenceProviderRequest {
   PSTNDialIn?: PSTNDialIn | null;
   MeetingSetting: MeetingSetting;
   ClientRequestToken?: string | null;
+  Tags?: Tag[] | null;
 }
 
 // refs: 1 - tags: named, input
@@ -80,6 +82,7 @@ export interface CreateContactRequest {
   PhoneNumbers?: PhoneNumber[] | null;
   SipAddresses?: SipAddress[] | null;
   ClientRequestToken?: string | null;
+  Tags?: Tag[] | null;
 }
 
 // refs: 1 - tags: named, input
@@ -87,6 +90,7 @@ export interface CreateGatewayGroupRequest {
   Name: string;
   Description?: string | null;
   ClientRequestToken: string;
+  Tags?: Tag[] | null;
 }
 
 // refs: 1 - tags: named, input
@@ -101,6 +105,7 @@ export interface CreateNetworkProfileRequest {
   CertificateAuthorityArn?: string | null;
   TrustAnchors?: string[] | null;
   ClientRequestToken: string;
+  Tags?: Tag[] | null;
 }
 
 // refs: 1 - tags: named, input
@@ -116,6 +121,7 @@ export interface CreateProfileRequest {
   SetupModeDisabled?: boolean | null;
   MaxVolumeLimit?: number | null;
   PSTNEnabled?: boolean | null;
+  DataRetentionOptIn?: boolean | null;
   MeetingRoomConfiguration?: CreateMeetingRoomConfiguration | null;
   Tags?: Tag[] | null;
 }
@@ -424,6 +430,7 @@ export interface RegisterAVSDeviceRequest {
   DeviceSerialNumber?: string | null;
   AmazonId: string;
   RoomArn?: string | null;
+  Tags?: Tag[] | null;
 }
 
 // refs: 1 - tags: named, input
@@ -627,6 +634,7 @@ export interface UpdateProfileRequest {
   SetupModeDisabled?: boolean | null;
   MaxVolumeLimit?: number | null;
   PSTNEnabled?: boolean | null;
+  DataRetentionOptIn?: boolean | null;
   MeetingRoomConfiguration?: UpdateMeetingRoomConfiguration | null;
 }
 
@@ -1092,6 +1100,12 @@ export interface UpdateRoomResponse {
 export interface UpdateSkillGroupResponse {
 }
 
+// refs: 13 - tags: input, named, interface, output
+export interface Tag {
+  Key: string;
+  Value: string;
+}
+
 // refs: 3 - tags: input, named, enum, output
 export type BusinessReportFormat =
 | "CSV"
@@ -1113,12 +1127,6 @@ export type BusinessReportInterval =
 // refs: 3 - tags: input, named, interface, output
 export interface BusinessReportRecurrence {
   StartDate?: string | null;
-}
-
-// refs: 7 - tags: input, named, interface, output
-export interface Tag {
-  Key: string;
-  Value: string;
 }
 
 // refs: 4 - tags: input, named, enum, output
@@ -1525,6 +1533,7 @@ export interface Profile {
   SetupModeDisabled?: boolean | null;
   MaxVolumeLimit?: number | null;
   PSTNEnabled?: boolean | null;
+  DataRetentionOptIn?: boolean | null;
   AddressBookArn?: string | null;
   MeetingRoomConfiguration?: MeetingRoomConfiguration | null;
 }

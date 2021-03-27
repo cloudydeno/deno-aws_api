@@ -156,9 +156,10 @@ export interface ListTagsForResourceRequest {
 // refs: 1 - tags: named, input
 export interface PutIntegrationRequest {
   DomainName: string;
-  Uri: string;
+  Uri?: string | null;
   ObjectTypeName: string;
   Tags?: { [key: string]: string | null | undefined } | null;
+  FlowDefinition?: FlowDefinition | null;
 }
 
 // refs: 1 - tags: named, input
@@ -466,6 +467,269 @@ export interface Address {
   Country?: string | null;
   PostalCode?: string | null;
 }
+
+// refs: 1 - tags: input, named, interface
+export interface FlowDefinition {
+  Description?: string | null;
+  FlowName: string;
+  KmsArn: string;
+  SourceFlowConfig: SourceFlowConfig;
+  Tasks: Task[];
+  TriggerConfig: TriggerConfig;
+}
+
+// refs: 1 - tags: input, named, interface
+export interface SourceFlowConfig {
+  ConnectorProfileName?: string | null;
+  ConnectorType: SourceConnectorType;
+  IncrementalPullConfig?: IncrementalPullConfig | null;
+  SourceConnectorProperties: SourceConnectorProperties;
+}
+
+// refs: 1 - tags: input, named, enum
+export type SourceConnectorType =
+| "Salesforce"
+| "Marketo"
+| "Zendesk"
+| "Servicenow"
+| "S3"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 1 - tags: input, named, interface
+export interface IncrementalPullConfig {
+  DatetimeTypeFieldName?: string | null;
+}
+
+// refs: 1 - tags: input, named, interface
+export interface SourceConnectorProperties {
+  Marketo?: MarketoSourceProperties | null;
+  S3?: S3SourceProperties | null;
+  Salesforce?: SalesforceSourceProperties | null;
+  ServiceNow?: ServiceNowSourceProperties | null;
+  Zendesk?: ZendeskSourceProperties | null;
+}
+
+// refs: 1 - tags: input, named, interface
+export interface MarketoSourceProperties {
+  Object: string;
+}
+
+// refs: 1 - tags: input, named, interface
+export interface S3SourceProperties {
+  BucketName: string;
+  BucketPrefix?: string | null;
+}
+
+// refs: 1 - tags: input, named, interface
+export interface SalesforceSourceProperties {
+  Object: string;
+  EnableDynamicFieldUpdate?: boolean | null;
+  IncludeDeletedRecords?: boolean | null;
+}
+
+// refs: 1 - tags: input, named, interface
+export interface ServiceNowSourceProperties {
+  Object: string;
+}
+
+// refs: 1 - tags: input, named, interface
+export interface ZendeskSourceProperties {
+  Object: string;
+}
+
+// refs: 1 - tags: input, named, interface
+export interface Task {
+  ConnectorOperator?: ConnectorOperator | null;
+  DestinationField?: string | null;
+  SourceFields: string[];
+  TaskProperties?: { [key in OperatorPropertiesKeys]: string | null | undefined } | null;
+  TaskType: TaskType;
+}
+
+// refs: 1 - tags: input, named, interface
+export interface ConnectorOperator {
+  Marketo?: MarketoConnectorOperator | null;
+  S3?: S3ConnectorOperator | null;
+  Salesforce?: SalesforceConnectorOperator | null;
+  ServiceNow?: ServiceNowConnectorOperator | null;
+  Zendesk?: ZendeskConnectorOperator | null;
+}
+
+// refs: 1 - tags: input, named, enum
+export type MarketoConnectorOperator =
+| "PROJECTION"
+| "LESS_THAN"
+| "GREATER_THAN"
+| "BETWEEN"
+| "ADDITION"
+| "MULTIPLICATION"
+| "DIVISION"
+| "SUBTRACTION"
+| "MASK_ALL"
+| "MASK_FIRST_N"
+| "MASK_LAST_N"
+| "VALIDATE_NON_NULL"
+| "VALIDATE_NON_ZERO"
+| "VALIDATE_NON_NEGATIVE"
+| "VALIDATE_NUMERIC"
+| "NO_OP"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 1 - tags: input, named, enum
+export type S3ConnectorOperator =
+| "PROJECTION"
+| "LESS_THAN"
+| "GREATER_THAN"
+| "BETWEEN"
+| "LESS_THAN_OR_EQUAL_TO"
+| "GREATER_THAN_OR_EQUAL_TO"
+| "EQUAL_TO"
+| "NOT_EQUAL_TO"
+| "ADDITION"
+| "MULTIPLICATION"
+| "DIVISION"
+| "SUBTRACTION"
+| "MASK_ALL"
+| "MASK_FIRST_N"
+| "MASK_LAST_N"
+| "VALIDATE_NON_NULL"
+| "VALIDATE_NON_ZERO"
+| "VALIDATE_NON_NEGATIVE"
+| "VALIDATE_NUMERIC"
+| "NO_OP"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 1 - tags: input, named, enum
+export type SalesforceConnectorOperator =
+| "PROJECTION"
+| "LESS_THAN"
+| "CONTAINS"
+| "GREATER_THAN"
+| "BETWEEN"
+| "LESS_THAN_OR_EQUAL_TO"
+| "GREATER_THAN_OR_EQUAL_TO"
+| "EQUAL_TO"
+| "NOT_EQUAL_TO"
+| "ADDITION"
+| "MULTIPLICATION"
+| "DIVISION"
+| "SUBTRACTION"
+| "MASK_ALL"
+| "MASK_FIRST_N"
+| "MASK_LAST_N"
+| "VALIDATE_NON_NULL"
+| "VALIDATE_NON_ZERO"
+| "VALIDATE_NON_NEGATIVE"
+| "VALIDATE_NUMERIC"
+| "NO_OP"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 1 - tags: input, named, enum
+export type ServiceNowConnectorOperator =
+| "PROJECTION"
+| "CONTAINS"
+| "LESS_THAN"
+| "GREATER_THAN"
+| "BETWEEN"
+| "LESS_THAN_OR_EQUAL_TO"
+| "GREATER_THAN_OR_EQUAL_TO"
+| "EQUAL_TO"
+| "NOT_EQUAL_TO"
+| "ADDITION"
+| "MULTIPLICATION"
+| "DIVISION"
+| "SUBTRACTION"
+| "MASK_ALL"
+| "MASK_FIRST_N"
+| "MASK_LAST_N"
+| "VALIDATE_NON_NULL"
+| "VALIDATE_NON_ZERO"
+| "VALIDATE_NON_NEGATIVE"
+| "VALIDATE_NUMERIC"
+| "NO_OP"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 1 - tags: input, named, enum
+export type ZendeskConnectorOperator =
+| "PROJECTION"
+| "GREATER_THAN"
+| "ADDITION"
+| "MULTIPLICATION"
+| "DIVISION"
+| "SUBTRACTION"
+| "MASK_ALL"
+| "MASK_FIRST_N"
+| "MASK_LAST_N"
+| "VALIDATE_NON_NULL"
+| "VALIDATE_NON_ZERO"
+| "VALIDATE_NON_NEGATIVE"
+| "VALIDATE_NUMERIC"
+| "NO_OP"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 1 - tags: input, named, enum
+export type OperatorPropertiesKeys =
+| "VALUE"
+| "VALUES"
+| "DATA_TYPE"
+| "UPPER_BOUND"
+| "LOWER_BOUND"
+| "SOURCE_DATA_TYPE"
+| "DESTINATION_DATA_TYPE"
+| "VALIDATION_ACTION"
+| "MASK_VALUE"
+| "MASK_LENGTH"
+| "TRUNCATE_LENGTH"
+| "MATH_OPERATION_FIELDS_ORDER"
+| "CONCAT_FORMAT"
+| "SUBFIELD_CATEGORY_MAP"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 1 - tags: input, named, enum
+export type TaskType =
+| "Arithmetic"
+| "Filter"
+| "Map"
+| "Mask"
+| "Merge"
+| "Truncate"
+| "Validate"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 1 - tags: input, named, interface
+export interface TriggerConfig {
+  TriggerType: TriggerType;
+  TriggerProperties?: TriggerProperties | null;
+}
+
+// refs: 1 - tags: input, named, enum
+export type TriggerType =
+| "Scheduled"
+| "Event"
+| "OnDemand"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 1 - tags: input, named, interface
+export interface TriggerProperties {
+  Scheduled?: ScheduledTriggerProperties | null;
+}
+
+// refs: 1 - tags: input, named, interface
+export interface ScheduledTriggerProperties {
+  ScheduleExpression: string;
+  DataPullMode?: DataPullMode | null;
+  ScheduleStartTime?: Date | number | null;
+  ScheduleEndTime?: Date | number | null;
+  Timezone?: string | null;
+  ScheduleOffset?: number | null;
+  FirstExecutionFrom?: Date | number | null;
+}
+
+// refs: 1 - tags: input, named, enum
+export type DataPullMode =
+| "Incremental"
+| "Complete"
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, interface, output
 export interface ObjectTypeField {

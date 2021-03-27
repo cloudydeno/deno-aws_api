@@ -8,7 +8,7 @@ export * from "./structs.ts";
 import * as client from "../../client/common.ts";
 import * as cmnP from "../../encoding/common.ts";
 import * as jsonP from "../../encoding/json.ts";
-import * as uuidv4 from "https://deno.land/std@0.86.0/uuid/v4.ts";
+import * as uuidv4 from "https://deno.land/std@0.91.0/uuid/v4.ts";
 import type * as s from "./structs.ts";
 function generateIdemptToken() {
   return uuidv4.generate();
@@ -36,6 +36,7 @@ export default class Macie2 {
     {abortSignal, ...params}: RequestConfig & s.AcceptInvitationRequest,
   ): Promise<s.AcceptInvitationResponse> {
     const body: jsonP.JSONObject = {
+      administratorAccountId: params["administratorAccountId"],
       invitationId: params["invitationId"],
       masterAccount: params["masterAccount"],
     };
@@ -423,6 +424,22 @@ export default class Macie2 {
     }, await resp.json());
   }
 
+  async disassociateFromAdministratorAccount(
+    {abortSignal, ...params}: RequestConfig & s.DisassociateFromAdministratorAccountRequest = {},
+  ): Promise<s.DisassociateFromAdministratorAccountResponse> {
+
+    const resp = await this.#client.performRequest({
+      abortSignal,
+      action: "DisassociateFromAdministratorAccount",
+      requestUri: "/administrator/disassociate",
+      responseCode: 200,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
+  }
+
   async disassociateFromMasterAccount(
     {abortSignal, ...params}: RequestConfig & s.DisassociateFromMasterAccountRequest = {},
   ): Promise<s.DisassociateFromMasterAccountResponse> {
@@ -491,6 +508,25 @@ export default class Macie2 {
     return jsonP.readObj({
       required: {},
       optional: {},
+    }, await resp.json());
+  }
+
+  async getAdministratorAccount(
+    {abortSignal, ...params}: RequestConfig & s.GetAdministratorAccountRequest = {},
+  ): Promise<s.GetAdministratorAccountResponse> {
+
+    const resp = await this.#client.performRequest({
+      abortSignal,
+      action: "GetAdministratorAccount",
+      method: "GET",
+      requestUri: "/administrator",
+      responseCode: 200,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "administrator": toInvitation,
+      },
     }, await resp.json());
   }
 
@@ -643,6 +679,25 @@ export default class Macie2 {
     }, await resp.json());
   }
 
+  async getFindingsPublicationConfiguration(
+    {abortSignal, ...params}: RequestConfig & s.GetFindingsPublicationConfigurationRequest = {},
+  ): Promise<s.GetFindingsPublicationConfigurationResponse> {
+
+    const resp = await this.#client.performRequest({
+      abortSignal,
+      action: "GetFindingsPublicationConfiguration",
+      method: "GET",
+      requestUri: "/findings-publication-configuration",
+      responseCode: 200,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "securityHubConfiguration": toSecurityHubConfiguration,
+      },
+    }, await resp.json());
+  }
+
   async getInvitationsCount(
     {abortSignal, ...params}: RequestConfig & s.GetInvitationsCountRequest = {},
   ): Promise<s.GetInvitationsCountResponse> {
@@ -719,6 +774,7 @@ export default class Macie2 {
       required: {},
       optional: {
         "accountId": "s",
+        "administratorAccountId": "s",
         "arn": "s",
         "email": "s",
         "invitedAt": "d",
@@ -738,6 +794,7 @@ export default class Macie2 {
       maxResults: params["maxResults"],
       nextToken: params["nextToken"],
       sortBy: fromUsageStatisticsSortBy(params["sortBy"]),
+      timeRange: params["timeRange"],
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -750,6 +807,7 @@ export default class Macie2 {
       optional: {
         "nextToken": "s",
         "records": [toUsageRecord],
+        "timeRange": (x: jsonP.JSONValue) => cmnP.readEnum<s.TimeRange>(x),
       },
     }, await resp.json());
   }
@@ -757,9 +815,10 @@ export default class Macie2 {
   async getUsageTotals(
     {abortSignal, ...params}: RequestConfig & s.GetUsageTotalsRequest = {},
   ): Promise<s.GetUsageTotalsResponse> {
-
+    const query = new URLSearchParams;
+    if (params["timeRange"] != null) query.set("timeRange", params["timeRange"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
-      abortSignal,
+      abortSignal, query,
       action: "GetUsageTotals",
       method: "GET",
       requestUri: "/usage",
@@ -768,6 +827,7 @@ export default class Macie2 {
     return jsonP.readObj({
       required: {},
       optional: {
+        "timeRange": (x: jsonP.JSONValue) => cmnP.readEnum<s.TimeRange>(x),
         "usageTotals": [toUsageTotal],
       },
     }, await resp.json());
@@ -969,6 +1029,26 @@ export default class Macie2 {
       optional: {
         "configuration": toClassificationExportConfiguration,
       },
+    }, await resp.json());
+  }
+
+  async putFindingsPublicationConfiguration(
+    {abortSignal, ...params}: RequestConfig & s.PutFindingsPublicationConfigurationRequest = {},
+  ): Promise<s.PutFindingsPublicationConfigurationResponse> {
+    const body: jsonP.JSONObject = {
+      clientToken: params["clientToken"] ?? generateIdemptToken(),
+      securityHubConfiguration: fromSecurityHubConfiguration(params["securityHubConfiguration"]),
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "PutFindingsPublicationConfiguration",
+      method: "PUT",
+      requestUri: "/findings-publication-configuration",
+      responseCode: 200,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {},
     }, await resp.json());
   }
 
@@ -1504,6 +1584,23 @@ function toS3Destination(root: jsonP.JSONValue): s.S3Destination {
   }, root);
 }
 
+function fromSecurityHubConfiguration(input?: s.SecurityHubConfiguration | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    publishClassificationFindings: input["publishClassificationFindings"],
+    publishPolicyFindings: input["publishPolicyFindings"],
+  }
+}
+function toSecurityHubConfiguration(root: jsonP.JSONValue): s.SecurityHubConfiguration {
+  return jsonP.readObj({
+    required: {
+      "publishClassificationFindings": "b",
+      "publishPolicyFindings": "b",
+    },
+    optional: {},
+  }, root);
+}
+
 function toBatchGetCustomDataIdentifierSummary(root: jsonP.JSONValue): s.BatchGetCustomDataIdentifierSummary {
   return jsonP.readObj({
     required: {},
@@ -1546,6 +1643,7 @@ function toBucketMetadata(root: jsonP.JSONValue): s.BucketMetadata {
       "publicAccess": toBucketPublicAccess,
       "region": "s",
       "replicationDetails": toReplicationDetails,
+      "serverSideEncryption": toBucketServerSideEncryption,
       "sharedAccess": (x: jsonP.JSONValue) => cmnP.readEnum<s.SharedAccess>(x),
       "sizeInBytes": "n",
       "sizeInBytesCompressed": "n",
@@ -1664,6 +1762,16 @@ function toReplicationDetails(root: jsonP.JSONValue): s.ReplicationDetails {
   }, root);
 }
 
+function toBucketServerSideEncryption(root: jsonP.JSONValue): s.BucketServerSideEncryption {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "kmsMasterKeyId": "s",
+      "type": (x: jsonP.JSONValue) => cmnP.readEnum<s.Type>(x),
+    },
+  }, root);
+}
+
 function toKeyValuePair(root: jsonP.JSONValue): s.KeyValuePair {
   return jsonP.readObj({
     required: {},
@@ -1711,6 +1819,18 @@ function toUserPausedDetails(root: jsonP.JSONValue): s.UserPausedDetails {
       "jobExpiresAt": "d",
       "jobImminentExpirationHealthEventArn": "s",
       "jobPausedAt": "d",
+    },
+  }, root);
+}
+
+function toInvitation(root: jsonP.JSONValue): s.Invitation {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "accountId": "s",
+      "invitationId": "s",
+      "invitedAt": "d",
+      "relationshipStatus": (x: jsonP.JSONValue) => cmnP.readEnum<s.RelationshipStatus>(x),
     },
   }, root);
 }
@@ -2220,18 +2340,6 @@ function toSeverity(root: jsonP.JSONValue): s.Severity {
   }, root);
 }
 
-function toInvitation(root: jsonP.JSONValue): s.Invitation {
-  return jsonP.readObj({
-    required: {},
-    optional: {
-      "accountId": "s",
-      "invitationId": "s",
-      "invitedAt": "d",
-      "relationshipStatus": (x: jsonP.JSONValue) => cmnP.readEnum<s.RelationshipStatus>(x),
-    },
-  }, root);
-}
-
 function toUsageRecord(root: jsonP.JSONValue): s.UsageRecord {
   return jsonP.readObj({
     required: {},
@@ -2324,6 +2432,7 @@ function toMember(root: jsonP.JSONValue): s.Member {
     required: {},
     optional: {
       "accountId": "s",
+      "administratorAccountId": "s",
       "arn": "s",
       "email": "s",
       "invitedAt": "d",

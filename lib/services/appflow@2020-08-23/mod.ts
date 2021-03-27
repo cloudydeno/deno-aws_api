@@ -434,6 +434,7 @@ function fromConnectorProfileProperties(input?: s.ConnectorProfileProperties | n
     Datadog: fromDatadogConnectorProfileProperties(input["Datadog"]),
     Dynatrace: fromDynatraceConnectorProfileProperties(input["Dynatrace"]),
     GoogleAnalytics: fromGoogleAnalyticsConnectorProfileProperties(input["GoogleAnalytics"]),
+    Honeycode: fromHoneycodeConnectorProfileProperties(input["Honeycode"]),
     InforNexus: fromInforNexusConnectorProfileProperties(input["InforNexus"]),
     Marketo: fromMarketoConnectorProfileProperties(input["Marketo"]),
     Redshift: fromRedshiftConnectorProfileProperties(input["Redshift"]),
@@ -455,6 +456,7 @@ function toConnectorProfileProperties(root: jsonP.JSONValue): s.ConnectorProfile
       "Datadog": toDatadogConnectorProfileProperties,
       "Dynatrace": toDynatraceConnectorProfileProperties,
       "GoogleAnalytics": toGoogleAnalyticsConnectorProfileProperties,
+      "Honeycode": toHoneycodeConnectorProfileProperties,
       "InforNexus": toInforNexusConnectorProfileProperties,
       "Marketo": toMarketoConnectorProfileProperties,
       "Redshift": toRedshiftConnectorProfileProperties,
@@ -518,6 +520,18 @@ function fromGoogleAnalyticsConnectorProfileProperties(input?: s.GoogleAnalytics
   }
 }
 function toGoogleAnalyticsConnectorProfileProperties(root: jsonP.JSONValue): s.GoogleAnalyticsConnectorProfileProperties {
+  return jsonP.readObj({
+    required: {},
+    optional: {},
+  }, root);
+}
+
+function fromHoneycodeConnectorProfileProperties(input?: s.HoneycodeConnectorProfileProperties | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+  }
+}
+function toHoneycodeConnectorProfileProperties(root: jsonP.JSONValue): s.HoneycodeConnectorProfileProperties {
   return jsonP.readObj({
     required: {},
     optional: {},
@@ -712,6 +726,7 @@ function fromConnectorProfileCredentials(input?: s.ConnectorProfileCredentials |
     Datadog: fromDatadogConnectorProfileCredentials(input["Datadog"]),
     Dynatrace: fromDynatraceConnectorProfileCredentials(input["Dynatrace"]),
     GoogleAnalytics: fromGoogleAnalyticsConnectorProfileCredentials(input["GoogleAnalytics"]),
+    Honeycode: fromHoneycodeConnectorProfileCredentials(input["Honeycode"]),
     InforNexus: fromInforNexusConnectorProfileCredentials(input["InforNexus"]),
     Marketo: fromMarketoConnectorProfileCredentials(input["Marketo"]),
     Redshift: fromRedshiftConnectorProfileCredentials(input["Redshift"]),
@@ -765,6 +780,15 @@ function fromConnectorOAuthRequest(input?: s.ConnectorOAuthRequest | null): json
   return {
     authCode: input["authCode"],
     redirectUri: input["redirectUri"],
+  }
+}
+
+function fromHoneycodeConnectorProfileCredentials(input?: s.HoneycodeConnectorProfileCredentials | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    accessToken: input["accessToken"],
+    refreshToken: input["refreshToken"],
+    oAuthRequest: fromConnectorOAuthRequest(input["oAuthRequest"]),
   }
 }
 
@@ -906,6 +930,7 @@ function fromScheduledTriggerProperties(input?: s.ScheduledTriggerProperties | n
     scheduleEndTime: jsonP.serializeDate_unixTimestamp(input["scheduleEndTime"]),
     timezone: input["timezone"],
     scheduleOffset: input["scheduleOffset"],
+    firstExecutionFrom: jsonP.serializeDate_unixTimestamp(input["firstExecutionFrom"]),
   }
 }
 function toScheduledTriggerProperties(root: jsonP.JSONValue): s.ScheduledTriggerProperties {
@@ -919,6 +944,7 @@ function toScheduledTriggerProperties(root: jsonP.JSONValue): s.ScheduledTrigger
       "scheduleEndTime": "d",
       "timezone": "s",
       "scheduleOffset": "n",
+      "firstExecutionFrom": "d",
     },
   }, root);
 }
@@ -1247,7 +1273,10 @@ function fromDestinationConnectorProperties(input?: s.DestinationConnectorProper
     Salesforce: fromSalesforceDestinationProperties(input["Salesforce"]),
     Snowflake: fromSnowflakeDestinationProperties(input["Snowflake"]),
     EventBridge: fromEventBridgeDestinationProperties(input["EventBridge"]),
+    LookoutMetrics: fromLookoutMetricsDestinationProperties(input["LookoutMetrics"]),
     Upsolver: fromUpsolverDestinationProperties(input["Upsolver"]),
+    Honeycode: fromHoneycodeDestinationProperties(input["Honeycode"]),
+    CustomerProfiles: fromCustomerProfilesDestinationProperties(input["CustomerProfiles"]),
   }
 }
 function toDestinationConnectorProperties(root: jsonP.JSONValue): s.DestinationConnectorProperties {
@@ -1259,7 +1288,10 @@ function toDestinationConnectorProperties(root: jsonP.JSONValue): s.DestinationC
       "Salesforce": toSalesforceDestinationProperties,
       "Snowflake": toSnowflakeDestinationProperties,
       "EventBridge": toEventBridgeDestinationProperties,
+      "LookoutMetrics": toLookoutMetricsDestinationProperties,
       "Upsolver": toUpsolverDestinationProperties,
+      "Honeycode": toHoneycodeDestinationProperties,
+      "CustomerProfiles": toCustomerProfilesDestinationProperties,
     },
   }, root);
 }
@@ -1438,6 +1470,18 @@ function toEventBridgeDestinationProperties(root: jsonP.JSONValue): s.EventBridg
   }, root);
 }
 
+function fromLookoutMetricsDestinationProperties(input?: s.LookoutMetricsDestinationProperties | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+  }
+}
+function toLookoutMetricsDestinationProperties(root: jsonP.JSONValue): s.LookoutMetricsDestinationProperties {
+  return jsonP.readObj({
+    required: {},
+    optional: {},
+  }, root);
+}
+
 function fromUpsolverDestinationProperties(input?: s.UpsolverDestinationProperties | null): jsonP.JSONValue {
   if (!input) return input;
   return {
@@ -1474,6 +1518,42 @@ function toUpsolverS3OutputFormatConfig(root: jsonP.JSONValue): s.UpsolverS3Outp
     optional: {
       "fileType": (x: jsonP.JSONValue) => cmnP.readEnum<s.FileType>(x),
       "aggregationConfig": toAggregationConfig,
+    },
+  }, root);
+}
+
+function fromHoneycodeDestinationProperties(input?: s.HoneycodeDestinationProperties | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    object: input["object"],
+    errorHandlingConfig: fromErrorHandlingConfig(input["errorHandlingConfig"]),
+  }
+}
+function toHoneycodeDestinationProperties(root: jsonP.JSONValue): s.HoneycodeDestinationProperties {
+  return jsonP.readObj({
+    required: {
+      "object": "s",
+    },
+    optional: {
+      "errorHandlingConfig": toErrorHandlingConfig,
+    },
+  }, root);
+}
+
+function fromCustomerProfilesDestinationProperties(input?: s.CustomerProfilesDestinationProperties | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    domainName: input["domainName"],
+    objectTypeName: input["objectTypeName"],
+  }
+}
+function toCustomerProfilesDestinationProperties(root: jsonP.JSONValue): s.CustomerProfilesDestinationProperties {
+  return jsonP.readObj({
+    required: {
+      "domainName": "s",
+    },
+    optional: {
+      "objectTypeName": "s",
     },
   }, root);
 }
@@ -1656,6 +1736,8 @@ function toConnectorMetadata(root: jsonP.JSONValue): s.ConnectorMetadata {
       "Zendesk": toZendeskMetadata,
       "EventBridge": toEventBridgeMetadata,
       "Upsolver": toUpsolverMetadata,
+      "CustomerProfiles": toCustomerProfilesMetadata,
+      "Honeycode": toHoneycodeMetadata,
     },
   }, root);
 }
@@ -1793,6 +1875,22 @@ function toUpsolverMetadata(root: jsonP.JSONValue): s.UpsolverMetadata {
   return jsonP.readObj({
     required: {},
     optional: {},
+  }, root);
+}
+
+function toCustomerProfilesMetadata(root: jsonP.JSONValue): s.CustomerProfilesMetadata {
+  return jsonP.readObj({
+    required: {},
+    optional: {},
+  }, root);
+}
+
+function toHoneycodeMetadata(root: jsonP.JSONValue): s.HoneycodeMetadata {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "oAuthScopes": ["s"],
+    },
   }, root);
 }
 

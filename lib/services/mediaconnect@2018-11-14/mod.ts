@@ -549,6 +549,7 @@ export default class MediaConnect {
       destination: params["Destination"],
       encryption: fromUpdateEncryption(params["Encryption"]),
       maxLatency: params["MaxLatency"],
+      minLatency: params["MinLatency"],
       port: params["Port"],
       protocol: params["Protocol"],
       remoteId: params["RemoteId"],
@@ -582,6 +583,7 @@ export default class MediaConnect {
       ingestPort: params["IngestPort"],
       maxBitrate: params["MaxBitrate"],
       maxLatency: params["MaxLatency"],
+      minLatency: params["MinLatency"],
       protocol: params["Protocol"],
       streamId: params["StreamId"],
       vpcInterfaceName: params["VpcInterfaceName"],
@@ -613,6 +615,7 @@ function fromAddOutputRequest(input?: s.AddOutputRequest | null): jsonP.JSONValu
     destination: input["Destination"],
     encryption: fromEncryption(input["Encryption"]),
     maxLatency: input["MaxLatency"],
+    minLatency: input["MinLatency"],
     name: input["Name"],
     port: input["Port"],
     protocol: input["Protocol"],
@@ -640,10 +643,10 @@ function fromEncryption(input?: s.Encryption | null): jsonP.JSONValue {
 function toEncryption(root: jsonP.JSONValue): s.Encryption {
   return jsonP.readObj({
     required: {
-      "Algorithm": (x: jsonP.JSONValue) => cmnP.readEnum<s.Algorithm>(x),
       "RoleArn": "s",
     },
     optional: {
+      "Algorithm": (x: jsonP.JSONValue) => cmnP.readEnum<s.Algorithm>(x),
       "ConstantInitializationVector": "s",
       "DeviceId": "s",
       "KeyType": (x: jsonP.JSONValue) => cmnP.readEnum<s.KeyType>(x),
@@ -679,6 +682,7 @@ function fromSetSourceRequest(input?: s.SetSourceRequest | null): jsonP.JSONValu
     ingestPort: input["IngestPort"],
     maxBitrate: input["MaxBitrate"],
     maxLatency: input["MaxLatency"],
+    minLatency: input["MinLatency"],
     name: input["Name"],
     protocol: input["Protocol"],
     streamId: input["StreamId"],
@@ -778,6 +782,7 @@ function toTransport(root: jsonP.JSONValue): s.Transport {
       "CidrAllowList": ["s"],
       "MaxBitrate": "n",
       "MaxLatency": "n",
+      "MinLatency": "n",
       "RemoteId": "s",
       "SmoothingLatency": "n",
       "StreamId": "s",

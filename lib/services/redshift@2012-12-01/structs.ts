@@ -1488,6 +1488,7 @@ export interface Cluster {
   ResizeInfo?: ResizeInfo | null;
   AvailabilityZoneRelocationStatus?: string | null;
   ClusterNamespaceArn?: string | null;
+  TotalStorageCapacityInMegaBytes?: number | null;
 }
 
 // refs: 16 - tags: output, named, interface
@@ -1500,6 +1501,16 @@ export interface Endpoint {
 // refs: 16 - tags: output, named, interface
 export interface VpcEndpoint {
   VpcEndpointId?: string | null;
+  VpcId?: string | null;
+  NetworkInterfaces: NetworkInterface[];
+}
+
+// refs: 16 - tags: output, named, interface
+export interface NetworkInterface {
+  NetworkInterfaceId?: string | null;
+  SubnetId?: string | null;
+  PrivateIpAddress?: string | null;
+  AvailabilityZone?: string | null;
 }
 
 // refs: 16 - tags: output, named, interface

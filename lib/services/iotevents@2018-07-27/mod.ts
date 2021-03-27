@@ -127,6 +127,24 @@ export default class IoTEvents {
     }, await resp.json());
   }
 
+  async describeDetectorModelAnalysis(
+    {abortSignal, ...params}: RequestConfig & s.DescribeDetectorModelAnalysisRequest,
+  ): Promise<s.DescribeDetectorModelAnalysisResponse> {
+
+    const resp = await this.#client.performRequest({
+      abortSignal,
+      action: "DescribeDetectorModelAnalysis",
+      method: "GET",
+      requestUri: cmnP.encodePath`/analysis/detector-models/${params["analysisId"]}`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "status": (x: jsonP.JSONValue) => cmnP.readEnum<s.AnalysisStatus>(x),
+      },
+    }, await resp.json());
+  }
+
   async describeInput(
     {abortSignal, ...params}: RequestConfig & s.DescribeInputRequest,
   ): Promise<s.DescribeInputResponse> {
@@ -159,6 +177,27 @@ export default class IoTEvents {
       required: {},
       optional: {
         "loggingOptions": toLoggingOptions,
+      },
+    }, await resp.json());
+  }
+
+  async getDetectorModelAnalysisResults(
+    {abortSignal, ...params}: RequestConfig & s.GetDetectorModelAnalysisResultsRequest,
+  ): Promise<s.GetDetectorModelAnalysisResultsResponse> {
+    const query = new URLSearchParams;
+    if (params["nextToken"] != null) query.set("nextToken", params["nextToken"]?.toString() ?? "");
+    if (params["maxResults"] != null) query.set("maxResults", params["maxResults"]?.toString() ?? "");
+    const resp = await this.#client.performRequest({
+      abortSignal, query,
+      action: "GetDetectorModelAnalysisResults",
+      method: "GET",
+      requestUri: cmnP.encodePath`/analysis/detector-models/${params["analysisId"]}/results`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "analysisResults": [toAnalysisResult],
+        "nextToken": "s",
       },
     }, await resp.json());
   }
@@ -257,6 +296,25 @@ export default class IoTEvents {
       method: "PUT",
       requestUri: "/logging",
     });
+  }
+
+  async startDetectorModelAnalysis(
+    {abortSignal, ...params}: RequestConfig & s.StartDetectorModelAnalysisRequest,
+  ): Promise<s.StartDetectorModelAnalysisResponse> {
+    const body: jsonP.JSONObject = {
+      detectorModelDefinition: fromDetectorModelDefinition(params["detectorModelDefinition"]),
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "StartDetectorModelAnalysis",
+      requestUri: "/analysis/detector-models/",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "analysisId": "s",
+      },
+    }, await resp.json());
   }
 
   async tagResource(
@@ -977,6 +1035,27 @@ function toInput(root: jsonP.JSONValue): s.Input {
     optional: {
       "inputConfiguration": toInputConfiguration,
       "inputDefinition": toInputDefinition,
+    },
+  }, root);
+}
+
+function toAnalysisResult(root: jsonP.JSONValue): s.AnalysisResult {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "type": "s",
+      "level": (x: jsonP.JSONValue) => cmnP.readEnum<s.AnalysisResultLevel>(x),
+      "message": "s",
+      "locations": [toAnalysisResultLocation],
+    },
+  }, root);
+}
+
+function toAnalysisResultLocation(root: jsonP.JSONValue): s.AnalysisResultLocation {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "path": "s",
     },
   }, root);
 }

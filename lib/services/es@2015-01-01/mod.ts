@@ -112,6 +112,8 @@ export default class ES {
       LogPublishingOptions: jsonP.serializeMap(params["LogPublishingOptions"], x => fromLogPublishingOption(x)),
       DomainEndpointOptions: fromDomainEndpointOptions(params["DomainEndpointOptions"]),
       AdvancedSecurityOptions: fromAdvancedSecurityOptionsInput(params["AdvancedSecurityOptions"]),
+      AutoTuneOptions: fromAutoTuneOptionsInput(params["AutoTuneOptions"]),
+      TagList: params["TagList"]?.map(x => fromTag(x)),
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -252,6 +254,28 @@ export default class ES {
       required: {},
       optional: {
         "PackageDetails": toPackageDetails,
+      },
+    }, await resp.json());
+  }
+
+  async describeDomainAutoTunes(
+    {abortSignal, ...params}: RequestConfig & s.DescribeDomainAutoTunesRequest,
+  ): Promise<s.DescribeDomainAutoTunesResponse> {
+    const body: jsonP.JSONObject = {
+      MaxResults: params["MaxResults"],
+      NextToken: params["NextToken"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DescribeDomainAutoTunes",
+      method: "GET",
+      requestUri: cmnP.encodePath`/2015-01-01/es/domain/${params["DomainName"]}/autoTunes`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "AutoTunes": [toAutoTune],
+        "NextToken": "s",
       },
     }, await resp.json());
   }
@@ -749,6 +773,7 @@ export default class ES {
       AdvancedSecurityOptions: fromAdvancedSecurityOptionsInput(params["AdvancedSecurityOptions"]),
       NodeToNodeEncryptionOptions: fromNodeToNodeEncryptionOptions(params["NodeToNodeEncryptionOptions"]),
       EncryptionAtRestOptions: fromEncryptionAtRestOptions(params["EncryptionAtRestOptions"]),
+      AutoTuneOptions: fromAutoTuneOptions(params["AutoTuneOptions"]),
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -1061,6 +1086,50 @@ function toSAMLIdp(root: jsonP.JSONValue): s.SAMLIdp {
   }, root);
 }
 
+function fromAutoTuneOptionsInput(input?: s.AutoTuneOptionsInput | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    DesiredState: input["DesiredState"],
+    MaintenanceSchedules: input["MaintenanceSchedules"]?.map(x => fromAutoTuneMaintenanceSchedule(x)),
+  }
+}
+
+function fromAutoTuneMaintenanceSchedule(input?: s.AutoTuneMaintenanceSchedule | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    StartAt: jsonP.serializeDate_unixTimestamp(input["StartAt"]),
+    Duration: fromDuration(input["Duration"]),
+    CronExpressionForRecurrence: input["CronExpressionForRecurrence"],
+  }
+}
+function toAutoTuneMaintenanceSchedule(root: jsonP.JSONValue): s.AutoTuneMaintenanceSchedule {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "StartAt": "d",
+      "Duration": toDuration,
+      "CronExpressionForRecurrence": "s",
+    },
+  }, root);
+}
+
+function fromDuration(input?: s.Duration | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    Value: input["Value"],
+    Unit: input["Unit"],
+  }
+}
+function toDuration(root: jsonP.JSONValue): s.Duration {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "Value": "n",
+      "Unit": (x: jsonP.JSONValue) => cmnP.readEnum<s.TimeUnit>(x),
+    },
+  }, root);
+}
+
 function fromDomainInformation(input?: s.DomainInformation | null): jsonP.JSONValue {
   if (!input) return input;
   return {
@@ -1103,6 +1172,25 @@ function fromDescribePackagesFilter(input?: s.DescribePackagesFilter | null): js
     Name: input["Name"],
     Value: input["Value"],
   }
+}
+
+function fromAutoTuneOptions(input?: s.AutoTuneOptions | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    DesiredState: input["DesiredState"],
+    RollbackOnDisable: input["RollbackOnDisable"],
+    MaintenanceSchedules: input["MaintenanceSchedules"]?.map(x => fromAutoTuneMaintenanceSchedule(x)),
+  }
+}
+function toAutoTuneOptions(root: jsonP.JSONValue): s.AutoTuneOptions {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "DesiredState": (x: jsonP.JSONValue) => cmnP.readEnum<s.AutoTuneDesiredState>(x),
+      "RollbackOnDisable": (x: jsonP.JSONValue) => cmnP.readEnum<s.RollbackOnDisable>(x),
+      "MaintenanceSchedules": [toAutoTuneMaintenanceSchedule],
+    },
+  }, root);
 }
 
 function toInboundCrossClusterSearchConnection(root: jsonP.JSONValue): s.InboundCrossClusterSearchConnection {
@@ -1198,6 +1286,7 @@ function toElasticsearchDomainStatus(root: jsonP.JSONValue): s.ElasticsearchDoma
       "ServiceSoftwareOptions": toServiceSoftwareOptions,
       "DomainEndpointOptions": toDomainEndpointOptions,
       "AdvancedSecurityOptions": toAdvancedSecurityOptions,
+      "AutoTuneOptions": toAutoTuneOptionsOutput,
     },
   }, root);
 }
@@ -1234,6 +1323,16 @@ function toSAMLOptionsOutput(root: jsonP.JSONValue): s.SAMLOptionsOutput {
       "SubjectKey": "s",
       "RolesKey": "s",
       "SessionTimeoutMinutes": "n",
+    },
+  }, root);
+}
+
+function toAutoTuneOptionsOutput(root: jsonP.JSONValue): s.AutoTuneOptionsOutput {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "State": (x: jsonP.JSONValue) => cmnP.readEnum<s.AutoTuneState>(x),
+      "ErrorMessage": "s",
     },
   }, root);
 }
@@ -1278,6 +1377,37 @@ function toOutboundCrossClusterSearchConnection(root: jsonP.JSONValue): s.Outbou
   }, root);
 }
 
+function toAutoTune(root: jsonP.JSONValue): s.AutoTune {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "AutoTuneType": (x: jsonP.JSONValue) => cmnP.readEnum<s.AutoTuneType>(x),
+      "AutoTuneDetails": toAutoTuneDetails,
+    },
+  }, root);
+}
+
+function toAutoTuneDetails(root: jsonP.JSONValue): s.AutoTuneDetails {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "ScheduledAutoTuneDetails": toScheduledAutoTuneDetails,
+    },
+  }, root);
+}
+
+function toScheduledAutoTuneDetails(root: jsonP.JSONValue): s.ScheduledAutoTuneDetails {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "Date": "d",
+      "ActionType": (x: jsonP.JSONValue) => cmnP.readEnum<s.ScheduledAutoTuneActionType>(x),
+      "Action": "s",
+      "Severity": (x: jsonP.JSONValue) => cmnP.readEnum<s.ScheduledAutoTuneSeverityType>(x),
+    },
+  }, root);
+}
+
 function toElasticsearchDomainConfig(root: jsonP.JSONValue): s.ElasticsearchDomainConfig {
   return jsonP.readObj({
     required: {},
@@ -1295,6 +1425,7 @@ function toElasticsearchDomainConfig(root: jsonP.JSONValue): s.ElasticsearchDoma
       "LogPublishingOptions": toLogPublishingOptionsStatus,
       "DomainEndpointOptions": toDomainEndpointOptionsStatus,
       "AdvancedSecurityOptions": toAdvancedSecurityOptionsStatus,
+      "AutoTuneOptions": toAutoTuneOptionsStatus,
     },
   }, root);
 }
@@ -1440,6 +1571,31 @@ function toAdvancedSecurityOptionsStatus(root: jsonP.JSONValue): s.AdvancedSecur
       "Status": toOptionStatus,
     },
     optional: {},
+  }, root);
+}
+
+function toAutoTuneOptionsStatus(root: jsonP.JSONValue): s.AutoTuneOptionsStatus {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "Options": toAutoTuneOptions,
+      "Status": toAutoTuneStatus,
+    },
+  }, root);
+}
+
+function toAutoTuneStatus(root: jsonP.JSONValue): s.AutoTuneStatus {
+  return jsonP.readObj({
+    required: {
+      "CreationDate": "d",
+      "UpdateDate": "d",
+      "State": (x: jsonP.JSONValue) => cmnP.readEnum<s.AutoTuneState>(x),
+    },
+    optional: {
+      "UpdateVersion": "n",
+      "ErrorMessage": "s",
+      "PendingDeletion": "b",
+    },
   }, root);
 }
 

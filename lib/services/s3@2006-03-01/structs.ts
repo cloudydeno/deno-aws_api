@@ -419,6 +419,7 @@ export interface GetObjectTaggingRequest {
   Key: string;
   VersionId?: string | null;
   ExpectedBucketOwner?: string | null;
+  RequestPayer?: RequestPayer | null;
 }
 
 // refs: 1 - tags: named, input
@@ -806,6 +807,7 @@ export interface PutObjectTaggingRequest {
   ContentMD5?: string | null;
   Tagging: Tagging;
   ExpectedBucketOwner?: string | null;
+  RequestPayer?: RequestPayer | null;
 }
 
 // refs: 1 - tags: named, input
@@ -879,6 +881,46 @@ export interface UploadPartCopyRequest {
   RequestPayer?: RequestPayer | null;
   ExpectedBucketOwner?: string | null;
   ExpectedSourceBucketOwner?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface WriteGetObjectResponseRequest {
+  RequestRoute: string;
+  RequestToken: string;
+  Body?: Uint8Array | string | null;
+  StatusCode?: number | null;
+  ErrorCode?: string | null;
+  ErrorMessage?: string | null;
+  AcceptRanges?: string | null;
+  CacheControl?: string | null;
+  ContentDisposition?: string | null;
+  ContentEncoding?: string | null;
+  ContentLanguage?: string | null;
+  ContentLength?: number | null;
+  ContentRange?: string | null;
+  ContentType?: string | null;
+  DeleteMarker?: boolean | null;
+  ETag?: string | null;
+  Expires?: Date | number | null;
+  Expiration?: string | null;
+  LastModified?: Date | number | null;
+  MissingMeta?: number | null;
+  Metadata?: { [key: string]: string | null | undefined } | null;
+  ObjectLockMode?: ObjectLockMode | null;
+  ObjectLockLegalHoldStatus?: ObjectLockLegalHoldStatus | null;
+  ObjectLockRetainUntilDate?: Date | number | null;
+  PartsCount?: number | null;
+  ReplicationStatus?: ReplicationStatus | null;
+  RequestCharged?: RequestCharged | null;
+  Restore?: string | null;
+  ServerSideEncryption?: ServerSideEncryption | null;
+  SSECustomerAlgorithm?: string | null;
+  SSEKMSKeyId?: string | null;
+  SSECustomerKeyMD5?: string | null;
+  StorageClass?: StorageClass | null;
+  TagCount?: number | null;
+  VersionId?: string | null;
+  BucketKeyEnabled?: boolean | null;
 }
 
 // refs: 1 - tags: named, output
@@ -1375,7 +1417,7 @@ export interface UploadPartCopyOutput {
   RequestCharged?: RequestCharged | null;
 }
 
-// refs: 23 - tags: input, named, enum
+// refs: 25 - tags: input, named, enum
 export type RequestPayer =
 | "requester"
 | cmnP.UnexpectedEnumValue;
@@ -1414,13 +1456,13 @@ export type TaggingDirective =
 | "REPLACE"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 14 - tags: input, named, enum, output
+// refs: 15 - tags: input, named, enum, output
 export type ServerSideEncryption =
 | "AES256"
 | "aws:kms"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 10 - tags: input, named, enum, output
+// refs: 11 - tags: input, named, enum, output
 export type StorageClass =
 | "STANDARD"
 | "REDUCED_REDUNDANCY"
@@ -1432,13 +1474,13 @@ export type StorageClass =
 | "OUTPOSTS"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 5 - tags: input, named, enum, output
+// refs: 6 - tags: input, named, enum, output
 export type ObjectLockMode =
 | "GOVERNANCE"
 | "COMPLIANCE"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 7 - tags: input, named, enum, output
+// refs: 8 - tags: input, named, enum, output
 export type ObjectLockLegalHoldStatus =
 | "ON"
 | "OFF"
@@ -1624,6 +1666,7 @@ export interface CORSConfiguration {
 
 // refs: 2 - tags: input, named, interface, output
 export interface CORSRule {
+  ID?: string | null;
   AllowedHeaders: string[];
   AllowedMethods: string[];
   AllowedOrigins: string[];
@@ -2448,7 +2491,15 @@ export interface ScanRange {
   End?: number | null;
 }
 
-// refs: 19 - tags: output, named, enum
+// refs: 3 - tags: input, named, enum, output
+export type ReplicationStatus =
+| "COMPLETE"
+| "PENDING"
+| "FAILED"
+| "REPLICA"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 20 - tags: input, named, enum, output
 export type RequestCharged =
 | "requester"
 | cmnP.UnexpectedEnumValue;
@@ -2484,14 +2535,6 @@ export interface PolicyStatus {
 export type MFADeleteStatus =
 | "Enabled"
 | "Disabled"
-| cmnP.UnexpectedEnumValue;
-
-// refs: 2 - tags: output, named, enum
-export type ReplicationStatus =
-| "COMPLETE"
-| "PENDING"
-| "FAILED"
-| "REPLICA"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, enum

@@ -42,6 +42,7 @@ export interface CreateFunctionRequest {
   requestMappingTemplate?: string | null;
   responseMappingTemplate?: string | null;
   functionVersion: string;
+  syncConfig?: SyncConfig | null;
 }
 
 // refs: 1 - tags: named, input
@@ -285,6 +286,7 @@ export interface UpdateFunctionRequest {
   requestMappingTemplate?: string | null;
   responseMappingTemplate?: string | null;
   functionVersion: string;
+  syncConfig?: SyncConfig | null;
 }
 
 // refs: 1 - tags: named, input
@@ -629,6 +631,32 @@ export interface RdsHttpEndpointConfig {
   awsSecretStoreArn?: string | null;
 }
 
+// refs: 13 - tags: input, named, interface, output
+export interface SyncConfig {
+  conflictHandler?: ConflictHandlerType | null;
+  conflictDetection?: ConflictDetectionType | null;
+  lambdaConflictHandlerConfig?: LambdaConflictHandlerConfig | null;
+}
+
+// refs: 13 - tags: input, named, enum, output
+export type ConflictHandlerType =
+| "OPTIMISTIC_CONCURRENCY"
+| "LAMBDA"
+| "AUTOMERGE"
+| "NONE"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 13 - tags: input, named, enum, output
+export type ConflictDetectionType =
+| "VERSION"
+| "NONE"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 13 - tags: input, named, interface, output
+export interface LambdaConflictHandlerConfig {
+  lambdaConflictHandlerArn?: string | null;
+}
+
 // refs: 6 - tags: input, named, interface, output
 export interface LogConfig {
   fieldLogLevel: FieldLogLevel;
@@ -696,32 +724,6 @@ export type ResolverKind =
 // refs: 7 - tags: input, named, interface, output
 export interface PipelineConfig {
   functions?: string[] | null;
-}
-
-// refs: 7 - tags: input, named, interface, output
-export interface SyncConfig {
-  conflictHandler?: ConflictHandlerType | null;
-  conflictDetection?: ConflictDetectionType | null;
-  lambdaConflictHandlerConfig?: LambdaConflictHandlerConfig | null;
-}
-
-// refs: 7 - tags: input, named, enum, output
-export type ConflictHandlerType =
-| "OPTIMISTIC_CONCURRENCY"
-| "LAMBDA"
-| "AUTOMERGE"
-| "NONE"
-| cmnP.UnexpectedEnumValue;
-
-// refs: 7 - tags: input, named, enum, output
-export type ConflictDetectionType =
-| "VERSION"
-| "NONE"
-| cmnP.UnexpectedEnumValue;
-
-// refs: 7 - tags: input, named, interface, output
-export interface LambdaConflictHandlerConfig {
-  lambdaConflictHandlerArn?: string | null;
 }
 
 // refs: 7 - tags: input, named, interface, output
@@ -793,6 +795,7 @@ export interface FunctionConfiguration {
   requestMappingTemplate?: string | null;
   responseMappingTemplate?: string | null;
   functionVersion?: string | null;
+  syncConfig?: SyncConfig | null;
 }
 
 // refs: 4 - tags: output, named, interface

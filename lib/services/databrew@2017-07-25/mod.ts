@@ -54,6 +54,7 @@ export default class DataBrew {
   ): Promise<s.CreateDatasetResponse> {
     const body: jsonP.JSONObject = {
       Name: params["Name"],
+      Format: params["Format"],
       FormatOptions: fromFormatOptions(params["FormatOptions"]),
       Input: fromInput(params["Input"]),
       Tags: params["Tags"],
@@ -86,6 +87,7 @@ export default class DataBrew {
       RoleArn: params["RoleArn"],
       Tags: params["Tags"],
       Timeout: params["Timeout"],
+      JobSample: fromJobSample(params["JobSample"]),
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -308,6 +310,7 @@ export default class DataBrew {
       optional: {
         "CreatedBy": "s",
         "CreateDate": "d",
+        "Format": (x: jsonP.JSONValue) => cmnP.readEnum<s.InputFormat>(x),
         "FormatOptions": toFormatOptions,
         "LastModifiedDate": "d",
         "LastModifiedBy": "s",
@@ -351,6 +354,7 @@ export default class DataBrew {
         "RoleArn": "s",
         "Tags": x => jsonP.readMap(String, String, x),
         "Timeout": "n",
+        "JobSample": toJobSample,
       },
     }, await resp.json());
   }
@@ -383,6 +387,7 @@ export default class DataBrew {
         "RecipeReference": toRecipeReference,
         "StartedBy": "s",
         "StartedOn": "d",
+        "JobSample": toJobSample,
       },
     }, await resp.json());
   }
@@ -797,6 +802,7 @@ export default class DataBrew {
     {abortSignal, ...params}: RequestConfig & s.UpdateDatasetRequest,
   ): Promise<s.UpdateDatasetResponse> {
     const body: jsonP.JSONObject = {
+      Format: params["Format"],
       FormatOptions: fromFormatOptions(params["FormatOptions"]),
       Input: fromInput(params["Input"]),
     };
@@ -826,6 +832,7 @@ export default class DataBrew {
       OutputLocation: fromS3Location(params["OutputLocation"]),
       RoleArn: params["RoleArn"],
       Timeout: params["Timeout"],
+      JobSample: fromJobSample(params["JobSample"]),
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -974,6 +981,7 @@ function fromExcelOptions(input?: s.ExcelOptions | null): jsonP.JSONValue {
   return {
     SheetNames: input["SheetNames"],
     SheetIndexes: input["SheetIndexes"],
+    HeaderRow: input["HeaderRow"],
   }
 }
 function toExcelOptions(root: jsonP.JSONValue): s.ExcelOptions {
@@ -982,6 +990,7 @@ function toExcelOptions(root: jsonP.JSONValue): s.ExcelOptions {
     optional: {
       "SheetNames": ["s"],
       "SheetIndexes": ["n"],
+      "HeaderRow": "b",
     },
   }, root);
 }
@@ -990,6 +999,7 @@ function fromCsvOptions(input?: s.CsvOptions | null): jsonP.JSONValue {
   if (!input) return input;
   return {
     Delimiter: input["Delimiter"],
+    HeaderRow: input["HeaderRow"],
   }
 }
 function toCsvOptions(root: jsonP.JSONValue): s.CsvOptions {
@@ -997,6 +1007,7 @@ function toCsvOptions(root: jsonP.JSONValue): s.CsvOptions {
     required: {},
     optional: {
       "Delimiter": "s",
+      "HeaderRow": "b",
     },
   }, root);
 }
@@ -1054,6 +1065,23 @@ function toDataCatalogInputDefinition(root: jsonP.JSONValue): s.DataCatalogInput
     optional: {
       "CatalogId": "s",
       "TempDirectory": toS3Location,
+    },
+  }, root);
+}
+
+function fromJobSample(input?: s.JobSample | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    Mode: input["Mode"],
+    Size: input["Size"],
+  }
+}
+function toJobSample(root: jsonP.JSONValue): s.JobSample {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "Mode": (x: jsonP.JSONValue) => cmnP.readEnum<s.SampleMode>(x),
+      "Size": "n",
     },
   }, root);
 }
@@ -1236,6 +1264,7 @@ function toDataset(root: jsonP.JSONValue): s.Dataset {
       "AccountId": "s",
       "CreatedBy": "s",
       "CreateDate": "d",
+      "Format": (x: jsonP.JSONValue) => cmnP.readEnum<s.InputFormat>(x),
       "FormatOptions": toFormatOptions,
       "LastModifiedDate": "d",
       "LastModifiedBy": "s",
@@ -1264,6 +1293,7 @@ function toJobRun(root: jsonP.JSONValue): s.JobRun {
       "RecipeReference": toRecipeReference,
       "StartedBy": "s",
       "StartedOn": "d",
+      "JobSample": toJobSample,
     },
   }, root);
 }
@@ -1293,6 +1323,7 @@ function toJob(root: jsonP.JSONValue): s.Job {
       "RoleArn": "s",
       "Timeout": "n",
       "Tags": x => jsonP.readMap(String, String, x),
+      "JobSample": toJobSample,
     },
   }, root);
 }

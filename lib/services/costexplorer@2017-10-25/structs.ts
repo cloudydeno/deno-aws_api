@@ -17,6 +17,7 @@ export interface CreateCostCategoryDefinitionRequest {
   Name: string;
   RuleVersion: CostCategoryRuleVersion;
   Rules: CostCategoryRule[];
+  DefaultValue?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -259,6 +260,7 @@ export interface UpdateCostCategoryDefinitionRequest {
   CostCategoryArn: string;
   RuleVersion: CostCategoryRuleVersion;
   Rules: CostCategoryRule[];
+  DefaultValue?: string | null;
 }
 
 // refs: 1 - tags: named, output
@@ -596,9 +598,29 @@ export type CostCategoryRuleVersion =
 
 // refs: 3 - tags: input, named, interface, output
 export interface CostCategoryRule {
-  Value: string;
-  Rule: Expression;
+  Value?: string | null;
+  Rule?: Expression | null;
+  InheritedValue?: CostCategoryInheritedValueDimension | null;
+  Type?: CostCategoryRuleType | null;
 }
+
+// refs: 3 - tags: input, named, interface, output
+export interface CostCategoryInheritedValueDimension {
+  DimensionName?: CostCategoryInheritedValueDimensionName | null;
+  DimensionKey?: string | null;
+}
+
+// refs: 3 - tags: input, named, enum, output
+export type CostCategoryInheritedValueDimensionName =
+| "LINKED_ACCOUNT_NAME"
+| "TAG"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 3 - tags: input, named, enum, output
+export type CostCategoryRuleType =
+| "REGULAR"
+| "INHERITED_VALUE"
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface AnomalyDateInterval {
@@ -766,6 +788,7 @@ export interface CostCategory {
   RuleVersion: CostCategoryRuleVersion;
   Rules: CostCategoryRule[];
   ProcessingStatus?: CostCategoryProcessingStatus[] | null;
+  DefaultValue?: string | null;
 }
 
 // refs: 2 - tags: output, named, interface
@@ -1273,4 +1296,5 @@ export interface CostCategoryReference {
   NumberOfRules?: number | null;
   ProcessingStatus?: CostCategoryProcessingStatus[] | null;
   Values?: string[] | null;
+  DefaultValue?: string | null;
 }

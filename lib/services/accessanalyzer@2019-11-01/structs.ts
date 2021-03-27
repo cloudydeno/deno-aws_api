@@ -10,6 +10,13 @@ export interface ApplyArchiveRuleRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface CreateAccessPreviewRequest {
+  analyzerArn: string;
+  clientToken?: string | null;
+  configurations: { [key: string]: Configuration | null | undefined };
+}
+
+// refs: 1 - tags: named, input
 export interface CreateAnalyzerRequest {
   analyzerName: string;
   archiveRules?: InlineArchiveRule[] | null;
@@ -40,6 +47,12 @@ export interface DeleteArchiveRuleRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface GetAccessPreviewRequest {
+  accessPreviewId: string;
+  analyzerArn: string;
+}
+
+// refs: 1 - tags: named, input
 export interface GetAnalyzedResourceRequest {
   analyzerArn: string;
   resourceArn: string;
@@ -60,6 +73,22 @@ export interface GetArchiveRuleRequest {
 export interface GetFindingRequest {
   analyzerArn: string;
   id: string;
+}
+
+// refs: 1 - tags: named, input
+export interface ListAccessPreviewFindingsRequest {
+  accessPreviewId: string;
+  analyzerArn: string;
+  filter?: { [key: string]: Criterion | null | undefined } | null;
+  maxResults?: number | null;
+  nextToken?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface ListAccessPreviewsRequest {
+  analyzerArn: string;
+  maxResults?: number | null;
+  nextToken?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -133,9 +162,28 @@ export interface UpdateFindingsRequest {
   status: FindingStatusUpdate;
 }
 
+// refs: 1 - tags: named, input
+export interface ValidatePolicyRequest {
+  locale?: Locale | null;
+  maxResults?: number | null;
+  nextToken?: string | null;
+  policyDocument: string;
+  policyType: PolicyType;
+}
+
+// refs: 1 - tags: named, output
+export interface CreateAccessPreviewResponse {
+  id: string;
+}
+
 // refs: 1 - tags: named, output
 export interface CreateAnalyzerResponse {
   arn?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface GetAccessPreviewResponse {
+  accessPreview: AccessPreview;
 }
 
 // refs: 1 - tags: named, output
@@ -156,6 +204,18 @@ export interface GetArchiveRuleResponse {
 // refs: 1 - tags: named, output
 export interface GetFindingResponse {
   finding?: Finding | null;
+}
+
+// refs: 1 - tags: named, output
+export interface ListAccessPreviewFindingsResponse {
+  findings: AccessPreviewFinding[];
+  nextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface ListAccessPreviewsResponse {
+  accessPreviews: AccessPreviewSummary[];
+  nextToken?: string | null;
 }
 
 // refs: 1 - tags: named, output
@@ -195,13 +255,140 @@ export interface TagResourceResponse {
 export interface UntagResourceResponse {
 }
 
+// refs: 1 - tags: named, output
+export interface ValidatePolicyResponse {
+  findings: ValidatePolicyFinding[];
+  nextToken?: string | null;
+}
+
+// refs: 2 - tags: input, named, interface, output
+export interface Configuration {
+  iamRole?: IamRoleConfiguration | null;
+  kmsKey?: KmsKeyConfiguration | null;
+  s3Bucket?: S3BucketConfiguration | null;
+  secretsManagerSecret?: SecretsManagerSecretConfiguration | null;
+  sqsQueue?: SqsQueueConfiguration | null;
+}
+
+// refs: 2 - tags: input, named, interface, output
+export interface IamRoleConfiguration {
+  trustPolicy?: string | null;
+}
+
+// refs: 2 - tags: input, named, interface, output
+export interface KmsKeyConfiguration {
+  grants?: KmsGrantConfiguration[] | null;
+  keyPolicies?: { [key: string]: string | null | undefined } | null;
+}
+
+// refs: 2 - tags: input, named, interface, output
+export interface KmsGrantConfiguration {
+  constraints?: KmsGrantConstraints | null;
+  granteePrincipal: string;
+  issuingAccount: string;
+  operations: KmsGrantOperation[];
+  retiringPrincipal?: string | null;
+}
+
+// refs: 2 - tags: input, named, interface, output
+export interface KmsGrantConstraints {
+  encryptionContextEquals?: { [key: string]: string | null | undefined } | null;
+  encryptionContextSubset?: { [key: string]: string | null | undefined } | null;
+}
+
+// refs: 2 - tags: input, named, enum, output
+export type KmsGrantOperation =
+| "CreateGrant"
+| "Decrypt"
+| "DescribeKey"
+| "Encrypt"
+| "GenerateDataKey"
+| "GenerateDataKeyPair"
+| "GenerateDataKeyPairWithoutPlaintext"
+| "GenerateDataKeyWithoutPlaintext"
+| "GetPublicKey"
+| "ReEncryptFrom"
+| "ReEncryptTo"
+| "RetireGrant"
+| "Sign"
+| "Verify"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 2 - tags: input, named, interface, output
+export interface S3BucketConfiguration {
+  accessPoints?: { [key: string]: S3AccessPointConfiguration | null | undefined } | null;
+  bucketAclGrants?: S3BucketAclGrantConfiguration[] | null;
+  bucketPolicy?: string | null;
+  bucketPublicAccessBlock?: S3PublicAccessBlockConfiguration | null;
+}
+
+// refs: 2 - tags: input, named, interface, output
+export interface S3AccessPointConfiguration {
+  accessPointPolicy?: string | null;
+  networkOrigin?: NetworkOriginConfiguration | null;
+  publicAccessBlock?: S3PublicAccessBlockConfiguration | null;
+}
+
+// refs: 2 - tags: input, named, interface, output
+export interface NetworkOriginConfiguration {
+  internetConfiguration?: InternetConfiguration | null;
+  vpcConfiguration?: VpcConfiguration | null;
+}
+
+// refs: 2 - tags: input, named, interface, output
+export interface InternetConfiguration {
+}
+
+// refs: 2 - tags: input, named, interface, output
+export interface VpcConfiguration {
+  vpcId: string;
+}
+
+// refs: 4 - tags: input, named, interface, output
+export interface S3PublicAccessBlockConfiguration {
+  ignorePublicAcls: boolean;
+  restrictPublicBuckets: boolean;
+}
+
+// refs: 2 - tags: input, named, interface, output
+export interface S3BucketAclGrantConfiguration {
+  grantee: AclGrantee;
+  permission: AclPermission;
+}
+
+// refs: 2 - tags: input, named, interface, output
+export interface AclGrantee {
+  id?: string | null;
+  uri?: string | null;
+}
+
+// refs: 2 - tags: input, named, enum, output
+export type AclPermission =
+| "READ"
+| "WRITE"
+| "READ_ACP"
+| "WRITE_ACP"
+| "FULL_CONTROL"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 2 - tags: input, named, interface, output
+export interface SecretsManagerSecretConfiguration {
+  kmsKeyId?: string | null;
+  secretPolicy?: string | null;
+}
+
+// refs: 2 - tags: input, named, interface, output
+export interface SqsQueueConfiguration {
+  queuePolicy?: string | null;
+}
+
 // refs: 1 - tags: input, named, interface
 export interface InlineArchiveRule {
   filter: { [key: string]: Criterion | null | undefined };
   ruleName: string;
 }
 
-// refs: 6 - tags: input, named, interface, output
+// refs: 7 - tags: input, named, interface, output
 export interface Criterion {
   contains?: string[] | null;
   eq?: string[] | null;
@@ -215,7 +402,7 @@ export type Type =
 | "ORGANIZATION"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 5 - tags: input, named, enum, output
+// refs: 6 - tags: input, named, enum, output
 export type ResourceType =
 | "AWS::S3::Bucket"
 | "AWS::IAM::Role"
@@ -244,6 +431,55 @@ export type FindingStatusUpdate =
 | "ARCHIVED"
 | cmnP.UnexpectedEnumValue;
 
+// refs: 1 - tags: input, named, enum
+export type Locale =
+| "DE"
+| "EN"
+| "ES"
+| "FR"
+| "IT"
+| "JA"
+| "KO"
+| "PT_BR"
+| "ZH_CN"
+| "ZH_TW"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 1 - tags: input, named, enum
+export type PolicyType =
+| "IDENTITY_POLICY"
+| "RESOURCE_POLICY"
+| "SERVICE_CONTROL_POLICY"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 1 - tags: output, named, interface
+export interface AccessPreview {
+  analyzerArn: string;
+  configurations: { [key: string]: Configuration | null | undefined };
+  createdAt: Date | number;
+  id: string;
+  status: AccessPreviewStatus;
+  statusReason?: AccessPreviewStatusReason | null;
+}
+
+// refs: 2 - tags: output, named, enum
+export type AccessPreviewStatus =
+| "COMPLETED"
+| "CREATING"
+| "FAILED"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 2 - tags: output, named, interface
+export interface AccessPreviewStatusReason {
+  code: AccessPreviewStatusReasonCode;
+}
+
+// refs: 2 - tags: output, named, enum
+export type AccessPreviewStatusReasonCode =
+| "INTERNAL_ERROR"
+| "INVALID_CONFIGURATION"
+| cmnP.UnexpectedEnumValue;
+
 // refs: 1 - tags: output, named, interface
 export interface AnalyzedResource {
   actions?: string[] | null;
@@ -259,7 +495,7 @@ export interface AnalyzedResource {
   updatedAt: Date | number;
 }
 
-// refs: 3 - tags: output, named, enum
+// refs: 5 - tags: output, named, enum
 export type FindingStatus =
 | "ACTIVE"
 | "ARCHIVED"
@@ -326,23 +562,58 @@ export interface Finding {
   updatedAt: Date | number;
 }
 
-// refs: 2 - tags: output, named, interface
+// refs: 3 - tags: output, named, interface
 export interface FindingSource {
   detail?: FindingSourceDetail | null;
   type: FindingSourceType;
 }
 
-// refs: 2 - tags: output, named, interface
+// refs: 3 - tags: output, named, interface
 export interface FindingSourceDetail {
   accessPointArn?: string | null;
 }
 
-// refs: 2 - tags: output, named, enum
+// refs: 3 - tags: output, named, enum
 export type FindingSourceType =
 | "POLICY"
 | "BUCKET_ACL"
 | "S3_ACCESS_POINT"
 | cmnP.UnexpectedEnumValue;
+
+// refs: 1 - tags: output, named, interface
+export interface AccessPreviewFinding {
+  action?: string[] | null;
+  changeType: FindingChangeType;
+  condition?: { [key: string]: string | null | undefined } | null;
+  createdAt: Date | number;
+  error?: string | null;
+  existingFindingId?: string | null;
+  existingFindingStatus?: FindingStatus | null;
+  id: string;
+  isPublic?: boolean | null;
+  principal?: { [key: string]: string | null | undefined } | null;
+  resource?: string | null;
+  resourceOwnerAccount: string;
+  resourceType: ResourceType;
+  sources?: FindingSource[] | null;
+  status: FindingStatus;
+}
+
+// refs: 1 - tags: output, named, enum
+export type FindingChangeType =
+| "CHANGED"
+| "NEW"
+| "UNCHANGED"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 1 - tags: output, named, interface
+export interface AccessPreviewSummary {
+  analyzerArn: string;
+  createdAt: Date | number;
+  id: string;
+  status: AccessPreviewStatus;
+  statusReason?: AccessPreviewStatusReason | null;
+}
 
 // refs: 1 - tags: output, named, interface
 export interface AnalyzedResourceSummary {
@@ -367,4 +638,54 @@ export interface FindingSummary {
   sources?: FindingSource[] | null;
   status: FindingStatus;
   updatedAt: Date | number;
+}
+
+// refs: 1 - tags: output, named, interface
+export interface ValidatePolicyFinding {
+  findingDetails: string;
+  findingType: ValidatePolicyFindingType;
+  issueCode: string;
+  learnMoreLink: string;
+  locations: Location[];
+}
+
+// refs: 1 - tags: output, named, enum
+export type ValidatePolicyFindingType =
+| "ERROR"
+| "SECURITY_WARNING"
+| "SUGGESTION"
+| "WARNING"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 1 - tags: output, named, interface
+export interface Location {
+  path: PathElement[];
+  span: Span;
+}
+
+// refs: 1 - tags: output, named, interface
+export interface PathElement {
+  index?: number | null;
+  key?: string | null;
+  substring?: Substring | null;
+  value?: string | null;
+}
+
+// refs: 1 - tags: output, named, interface
+export interface Substring {
+  length: number;
+  start: number;
+}
+
+// refs: 1 - tags: output, named, interface
+export interface Span {
+  end: Position;
+  start: Position;
+}
+
+// refs: 2 - tags: output, named, interface
+export interface Position {
+  column: number;
+  line: number;
+  offset: number;
 }

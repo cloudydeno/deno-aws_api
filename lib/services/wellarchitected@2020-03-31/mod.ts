@@ -8,7 +8,7 @@ export * from "./structs.ts";
 import * as client from "../../client/common.ts";
 import * as cmnP from "../../encoding/common.ts";
 import * as jsonP from "../../encoding/json.ts";
-import * as uuidv4 from "https://deno.land/std@0.86.0/uuid/v4.ts";
+import * as uuidv4 from "https://deno.land/std@0.91.0/uuid/v4.ts";
 import type * as s from "./structs.ts";
 function generateIdemptToken() {
   return uuidv4.generate();
@@ -86,6 +86,7 @@ export default class WellArchitected {
       Lenses: params["Lenses"],
       Notes: params["Notes"],
       ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
+      Tags: params["Tags"],
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -449,6 +450,24 @@ export default class WellArchitected {
     }, await resp.json());
   }
 
+  async listTagsForResource(
+    {abortSignal, ...params}: RequestConfig & s.ListTagsForResourceInput,
+  ): Promise<s.ListTagsForResourceOutput> {
+
+    const resp = await this.#client.performRequest({
+      abortSignal,
+      action: "ListTagsForResource",
+      method: "GET",
+      requestUri: cmnP.encodePath`/tags/${params["WorkloadArn"]}`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
+  }
+
   async listWorkloadShares(
     {abortSignal, ...params}: RequestConfig & s.ListWorkloadSharesInput,
   ): Promise<s.ListWorkloadSharesOutput> {
@@ -491,6 +510,42 @@ export default class WellArchitected {
         "WorkloadSummaries": [toWorkloadSummary],
         "NextToken": "s",
       },
+    }, await resp.json());
+  }
+
+  async tagResource(
+    {abortSignal, ...params}: RequestConfig & s.TagResourceInput,
+  ): Promise<s.TagResourceOutput> {
+    const body: jsonP.JSONObject = {
+      Tags: params["Tags"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "TagResource",
+      requestUri: cmnP.encodePath`/tags/${params["WorkloadArn"]}`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
+  }
+
+  async untagResource(
+    {abortSignal, ...params}: RequestConfig & s.UntagResourceInput,
+  ): Promise<s.UntagResourceOutput> {
+    const query = new URLSearchParams;
+    for (const item of params["TagKeys"]) {
+      query.append("tagKeys", item?.toString() ?? "");
+    }
+    const resp = await this.#client.performRequest({
+      abortSignal, query,
+      action: "UntagResource",
+      method: "DELETE",
+      requestUri: cmnP.encodePath`/tags/${params["WorkloadArn"]}`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {},
     }, await resp.json());
   }
 
@@ -769,6 +824,7 @@ function toWorkload(root: jsonP.JSONValue): s.Workload {
       "Lenses": ["s"],
       "Owner": "s",
       "ShareInvitationId": "s",
+      "Tags": x => jsonP.readMap(String, String, x),
     },
   }, root);
 }

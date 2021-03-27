@@ -114,6 +114,26 @@ export default class DevOpsGuru {
     }, await resp.json());
   }
 
+  async describeFeedback(
+    {abortSignal, ...params}: RequestConfig & s.DescribeFeedbackRequest = {},
+  ): Promise<s.DescribeFeedbackResponse> {
+    const body: jsonP.JSONObject = {
+      InsightId: params["InsightId"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DescribeFeedback",
+      requestUri: "/feedback",
+      responseCode: 200,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "InsightFeedback": toInsightFeedback,
+      },
+    }, await resp.json());
+  }
+
   async describeInsight(
     {abortSignal, ...params}: RequestConfig & s.DescribeInsightRequest,
   ): Promise<s.DescribeInsightResponse> {
@@ -548,6 +568,15 @@ function fromInsightFeedback(input?: s.InsightFeedback | null): jsonP.JSONValue 
     Id: input["Id"],
     Feedback: input["Feedback"],
   }
+}
+function toInsightFeedback(root: jsonP.JSONValue): s.InsightFeedback {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "Id": "s",
+      "Feedback": (x: jsonP.JSONValue) => cmnP.readEnum<s.InsightFeedbackOption>(x),
+    },
+  }, root);
 }
 
 function fromSearchInsightsFilters(input?: s.SearchInsightsFilters | null): jsonP.JSONValue {

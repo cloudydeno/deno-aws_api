@@ -8,7 +8,7 @@ export * from "./structs.ts";
 import * as client from "../../client/common.ts";
 import * as cmnP from "../../encoding/common.ts";
 import * as jsonP from "../../encoding/json.ts";
-import * as uuidv4 from "https://deno.land/std@0.86.0/uuid/v4.ts";
+import * as uuidv4 from "https://deno.land/std@0.91.0/uuid/v4.ts";
 import type * as s from "./structs.ts";
 function generateIdemptToken() {
   return uuidv4.generate();
@@ -32,6 +32,48 @@ export default class EKS {
     "signingName": "eks",
     "uid": "eks-2017-11-01"
   };
+
+  async associateEncryptionConfig(
+    {abortSignal, ...params}: RequestConfig & s.AssociateEncryptionConfigRequest,
+  ): Promise<s.AssociateEncryptionConfigResponse> {
+    const body: jsonP.JSONObject = {
+      encryptionConfig: params["encryptionConfig"]?.map(x => fromEncryptionConfig(x)),
+      clientRequestToken: params["clientRequestToken"] ?? generateIdemptToken(),
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "AssociateEncryptionConfig",
+      requestUri: cmnP.encodePath`/clusters/${params["clusterName"]}/encryption-config/associate`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "update": toUpdate,
+      },
+    }, await resp.json());
+  }
+
+  async associateIdentityProviderConfig(
+    {abortSignal, ...params}: RequestConfig & s.AssociateIdentityProviderConfigRequest,
+  ): Promise<s.AssociateIdentityProviderConfigResponse> {
+    const body: jsonP.JSONObject = {
+      oidc: fromOidcIdentityProviderConfigRequest(params["oidc"]),
+      tags: params["tags"],
+      clientRequestToken: params["clientRequestToken"] ?? generateIdemptToken(),
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "AssociateIdentityProviderConfig",
+      requestUri: cmnP.encodePath`/clusters/${params["clusterName"]}/identity-provider-configs/associate`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "update": toUpdate,
+        "tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
+  }
 
   async createAddon(
     {abortSignal, ...params}: RequestConfig & s.CreateAddonRequest,
@@ -290,6 +332,25 @@ export default class EKS {
     }, await resp.json());
   }
 
+  async describeIdentityProviderConfig(
+    {abortSignal, ...params}: RequestConfig & s.DescribeIdentityProviderConfigRequest,
+  ): Promise<s.DescribeIdentityProviderConfigResponse> {
+    const body: jsonP.JSONObject = {
+      identityProviderConfig: fromIdentityProviderConfig(params["identityProviderConfig"]),
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DescribeIdentityProviderConfig",
+      requestUri: cmnP.encodePath`/clusters/${params["clusterName"]}/identity-provider-configs/describe`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "identityProviderConfig": toIdentityProviderConfigResponse,
+      },
+    }, await resp.json());
+  }
+
   async describeNodegroup(
     {abortSignal, ...params}: RequestConfig & s.DescribeNodegroupRequest,
   ): Promise<s.DescribeNodegroupResponse> {
@@ -319,6 +380,26 @@ export default class EKS {
       action: "DescribeUpdate",
       method: "GET",
       requestUri: cmnP.encodePath`/clusters/${params["name"]}/updates/${params["updateId"]}`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "update": toUpdate,
+      },
+    }, await resp.json());
+  }
+
+  async disassociateIdentityProviderConfig(
+    {abortSignal, ...params}: RequestConfig & s.DisassociateIdentityProviderConfigRequest,
+  ): Promise<s.DisassociateIdentityProviderConfigResponse> {
+    const body: jsonP.JSONObject = {
+      identityProviderConfig: fromIdentityProviderConfig(params["identityProviderConfig"]),
+      clientRequestToken: params["clientRequestToken"] ?? generateIdemptToken(),
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DisassociateIdentityProviderConfig",
+      requestUri: cmnP.encodePath`/clusters/${params["clusterName"]}/identity-provider-configs/disassociate`,
     });
     return jsonP.readObj({
       required: {},
@@ -386,6 +467,27 @@ export default class EKS {
       required: {},
       optional: {
         "fargateProfileNames": ["s"],
+        "nextToken": "s",
+      },
+    }, await resp.json());
+  }
+
+  async listIdentityProviderConfigs(
+    {abortSignal, ...params}: RequestConfig & s.ListIdentityProviderConfigsRequest,
+  ): Promise<s.ListIdentityProviderConfigsResponse> {
+    const query = new URLSearchParams;
+    if (params["maxResults"] != null) query.set("maxResults", params["maxResults"]?.toString() ?? "");
+    if (params["nextToken"] != null) query.set("nextToken", params["nextToken"]?.toString() ?? "");
+    const resp = await this.#client.performRequest({
+      abortSignal, query,
+      action: "ListIdentityProviderConfigs",
+      method: "GET",
+      requestUri: cmnP.encodePath`/clusters/${params["clusterName"]}/identity-provider-configs`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "identityProviderConfigs": [toIdentityProviderConfig],
         "nextToken": "s",
       },
     }, await resp.json());
@@ -702,6 +804,52 @@ export default class EKS {
 
 }
 
+function fromEncryptionConfig(input?: s.EncryptionConfig | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    resources: input["resources"],
+    provider: fromProvider(input["provider"]),
+  }
+}
+function toEncryptionConfig(root: jsonP.JSONValue): s.EncryptionConfig {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "resources": ["s"],
+      "provider": toProvider,
+    },
+  }, root);
+}
+
+function fromProvider(input?: s.Provider | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    keyArn: input["keyArn"],
+  }
+}
+function toProvider(root: jsonP.JSONValue): s.Provider {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "keyArn": "s",
+    },
+  }, root);
+}
+
+function fromOidcIdentityProviderConfigRequest(input?: s.OidcIdentityProviderConfigRequest | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    identityProviderConfigName: input["identityProviderConfigName"],
+    issuerUrl: input["issuerUrl"],
+    clientId: input["clientId"],
+    usernameClaim: input["usernameClaim"],
+    usernamePrefix: input["usernamePrefix"],
+    groupsClaim: input["groupsClaim"],
+    groupsPrefix: input["groupsPrefix"],
+    requiredClaims: input["requiredClaims"],
+  }
+}
+
 function fromVpcConfigRequest(input?: s.VpcConfigRequest | null): jsonP.JSONValue {
   if (!input) return input;
   return {
@@ -748,38 +896,6 @@ function toLogSetup(root: jsonP.JSONValue): s.LogSetup {
     optional: {
       "types": [(x: jsonP.JSONValue) => cmnP.readEnum<s.LogType>(x)],
       "enabled": "b",
-    },
-  }, root);
-}
-
-function fromEncryptionConfig(input?: s.EncryptionConfig | null): jsonP.JSONValue {
-  if (!input) return input;
-  return {
-    resources: input["resources"],
-    provider: fromProvider(input["provider"]),
-  }
-}
-function toEncryptionConfig(root: jsonP.JSONValue): s.EncryptionConfig {
-  return jsonP.readObj({
-    required: {},
-    optional: {
-      "resources": ["s"],
-      "provider": toProvider,
-    },
-  }, root);
-}
-
-function fromProvider(input?: s.Provider | null): jsonP.JSONValue {
-  if (!input) return input;
-  return {
-    keyArn: input["keyArn"],
-  }
-}
-function toProvider(root: jsonP.JSONValue): s.Provider {
-  return jsonP.readObj({
-    required: {},
-    optional: {
-      "keyArn": "s",
     },
   }, root);
 }
@@ -856,12 +972,64 @@ function toLaunchTemplateSpecification(root: jsonP.JSONValue): s.LaunchTemplateS
   }, root);
 }
 
+function fromIdentityProviderConfig(input?: s.IdentityProviderConfig | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    type: input["type"],
+    name: input["name"],
+  }
+}
+function toIdentityProviderConfig(root: jsonP.JSONValue): s.IdentityProviderConfig {
+  return jsonP.readObj({
+    required: {
+      "type": "s",
+      "name": "s",
+    },
+    optional: {},
+  }, root);
+}
+
 function fromUpdateLabelsPayload(input?: s.UpdateLabelsPayload | null): jsonP.JSONValue {
   if (!input) return input;
   return {
     addOrUpdateLabels: input["addOrUpdateLabels"],
     removeLabels: input["removeLabels"],
   }
+}
+
+function toUpdate(root: jsonP.JSONValue): s.Update {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "id": "s",
+      "status": (x: jsonP.JSONValue) => cmnP.readEnum<s.UpdateStatus>(x),
+      "type": (x: jsonP.JSONValue) => cmnP.readEnum<s.UpdateType>(x),
+      "params": [toUpdateParam],
+      "createdAt": "d",
+      "errors": [toErrorDetail],
+    },
+  }, root);
+}
+
+function toUpdateParam(root: jsonP.JSONValue): s.UpdateParam {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "type": (x: jsonP.JSONValue) => cmnP.readEnum<s.UpdateParamType>(x),
+      "value": "s",
+    },
+  }, root);
+}
+
+function toErrorDetail(root: jsonP.JSONValue): s.ErrorDetail {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "errorCode": (x: jsonP.JSONValue) => cmnP.readEnum<s.ErrorCode>(x),
+      "errorMessage": "s",
+      "resourceIds": ["s"],
+    },
+  }, root);
 }
 
 function toAddon(root: jsonP.JSONValue): s.Addon {
@@ -1095,37 +1263,31 @@ function toCompatibility(root: jsonP.JSONValue): s.Compatibility {
   }, root);
 }
 
-function toUpdate(root: jsonP.JSONValue): s.Update {
+function toIdentityProviderConfigResponse(root: jsonP.JSONValue): s.IdentityProviderConfigResponse {
   return jsonP.readObj({
     required: {},
     optional: {
-      "id": "s",
-      "status": (x: jsonP.JSONValue) => cmnP.readEnum<s.UpdateStatus>(x),
-      "type": (x: jsonP.JSONValue) => cmnP.readEnum<s.UpdateType>(x),
-      "params": [toUpdateParam],
-      "createdAt": "d",
-      "errors": [toErrorDetail],
+      "oidc": toOidcIdentityProviderConfig,
     },
   }, root);
 }
 
-function toUpdateParam(root: jsonP.JSONValue): s.UpdateParam {
+function toOidcIdentityProviderConfig(root: jsonP.JSONValue): s.OidcIdentityProviderConfig {
   return jsonP.readObj({
     required: {},
     optional: {
-      "type": (x: jsonP.JSONValue) => cmnP.readEnum<s.UpdateParamType>(x),
-      "value": "s",
-    },
-  }, root);
-}
-
-function toErrorDetail(root: jsonP.JSONValue): s.ErrorDetail {
-  return jsonP.readObj({
-    required: {},
-    optional: {
-      "errorCode": (x: jsonP.JSONValue) => cmnP.readEnum<s.ErrorCode>(x),
-      "errorMessage": "s",
-      "resourceIds": ["s"],
+      "identityProviderConfigName": "s",
+      "identityProviderConfigArn": "s",
+      "clusterName": "s",
+      "issuerUrl": "s",
+      "clientId": "s",
+      "usernameClaim": "s",
+      "usernamePrefix": "s",
+      "groupsClaim": "s",
+      "groupsPrefix": "s",
+      "requiredClaims": x => jsonP.readMap(String, String, x),
+      "tags": x => jsonP.readMap(String, String, x),
+      "status": (x: jsonP.JSONValue) => cmnP.readEnum<s.configStatus>(x),
     },
   }, root);
 }

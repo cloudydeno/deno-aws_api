@@ -28,6 +28,7 @@ export interface CompleteLayerUploadRequest {
 export interface CreateRepositoryRequest {
   repositoryName: string;
   catalogData?: RepositoryCatalogDataInput | null;
+  tags?: Tag[] | null;
 }
 
 // refs: 1 - tags: named, input
@@ -101,6 +102,11 @@ export interface InitiateLayerUploadRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface ListTagsForResourceRequest {
+  resourceArn: string;
+}
+
+// refs: 1 - tags: named, input
 export interface PutImageRequest {
   registryId?: string | null;
   repositoryName: string;
@@ -128,6 +134,18 @@ export interface SetRepositoryPolicyRequest {
   repositoryName: string;
   policyText: string;
   force?: boolean | null;
+}
+
+// refs: 1 - tags: named, input
+export interface TagResourceRequest {
+  resourceArn: string;
+  tags: Tag[];
+}
+
+// refs: 1 - tags: named, input
+export interface UntagResourceRequest {
+  resourceArn: string;
+  tagKeys: string[];
 }
 
 // refs: 1 - tags: named, input
@@ -231,6 +249,11 @@ export interface InitiateLayerUploadResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface ListTagsForResourceResponse {
+  tags?: Tag[] | null;
+}
+
+// refs: 1 - tags: named, output
 export interface PutImageResponse {
   image?: Image | null;
 }
@@ -250,6 +273,14 @@ export interface SetRepositoryPolicyResponse {
   registryId?: string | null;
   repositoryName?: string | null;
   policyText?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface TagResourceResponse {
+}
+
+// refs: 1 - tags: named, output
+export interface UntagResourceResponse {
 }
 
 // refs: 1 - tags: named, output
@@ -274,6 +305,12 @@ export interface RepositoryCatalogDataInput {
   logoImageBlob?: Uint8Array | string | null;
   aboutText?: string | null;
   usageText?: string | null;
+}
+
+// refs: 3 - tags: input, named, interface, output
+export interface Tag {
+  Key?: string | null;
+  Value?: string | null;
 }
 
 // refs: 1 - tags: output, named, interface

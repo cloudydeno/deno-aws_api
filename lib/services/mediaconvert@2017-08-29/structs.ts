@@ -737,6 +737,7 @@ export type CaptionSourceType =
 | "STL"
 | "SRT"
 | "SMI"
+| "SMPTE_TT"
 | "TELETEXT"
 | "NULL_SOURCE"
 | "IMSC"

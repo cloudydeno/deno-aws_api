@@ -8,7 +8,7 @@ export * from "./structs.ts";
 import * as client from "../../client/common.ts";
 import * as cmnP from "../../encoding/common.ts";
 import * as jsonP from "../../encoding/json.ts";
-import * as uuidv4 from "https://deno.land/std@0.86.0/uuid/v4.ts";
+import * as uuidv4 from "https://deno.land/std@0.91.0/uuid/v4.ts";
 import type * as s from "./structs.ts";
 function generateIdemptToken() {
   return uuidv4.generate();
@@ -156,6 +156,7 @@ export default class AlexaForBusiness {
       Name: params["Name"],
       Description: params["Description"],
       ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
+      Tags: params["Tags"]?.map(x => fromTag(x)),
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -204,6 +205,7 @@ export default class AlexaForBusiness {
       PSTNDialIn: fromPSTNDialIn(params["PSTNDialIn"]),
       MeetingSetting: fromMeetingSetting(params["MeetingSetting"]),
       ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
+      Tags: params["Tags"]?.map(x => fromTag(x)),
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -228,6 +230,7 @@ export default class AlexaForBusiness {
       PhoneNumbers: params["PhoneNumbers"]?.map(x => fromPhoneNumber(x)),
       SipAddresses: params["SipAddresses"]?.map(x => fromSipAddress(x)),
       ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
+      Tags: params["Tags"]?.map(x => fromTag(x)),
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -248,6 +251,7 @@ export default class AlexaForBusiness {
       Name: params["Name"],
       Description: params["Description"],
       ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
+      Tags: params["Tags"]?.map(x => fromTag(x)),
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -275,6 +279,7 @@ export default class AlexaForBusiness {
       CertificateAuthorityArn: params["CertificateAuthorityArn"],
       TrustAnchors: params["TrustAnchors"],
       ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
+      Tags: params["Tags"]?.map(x => fromTag(x)),
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -303,6 +308,7 @@ export default class AlexaForBusiness {
       SetupModeDisabled: params["SetupModeDisabled"],
       MaxVolumeLimit: params["MaxVolumeLimit"],
       PSTNEnabled: params["PSTNEnabled"],
+      DataRetentionOptIn: params["DataRetentionOptIn"],
       MeetingRoomConfiguration: fromCreateMeetingRoomConfiguration(params["MeetingRoomConfiguration"]),
       Tags: params["Tags"]?.map(x => fromTag(x)),
     };
@@ -1238,6 +1244,7 @@ export default class AlexaForBusiness {
       DeviceSerialNumber: params["DeviceSerialNumber"],
       AmazonId: params["AmazonId"],
       RoomArn: params["RoomArn"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -1767,6 +1774,7 @@ export default class AlexaForBusiness {
       SetupModeDisabled: params["SetupModeDisabled"],
       MaxVolumeLimit: params["MaxVolumeLimit"],
       PSTNEnabled: params["PSTNEnabled"],
+      DataRetentionOptIn: params["DataRetentionOptIn"],
       MeetingRoomConfiguration: fromUpdateMeetingRoomConfiguration(params["MeetingRoomConfiguration"]),
     };
     const resp = await this.#client.performRequest({
@@ -1819,6 +1827,23 @@ export default class AlexaForBusiness {
 
 }
 
+function fromTag(input?: s.Tag | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    Key: input["Key"],
+    Value: input["Value"],
+  }
+}
+function toTag(root: jsonP.JSONValue): s.Tag {
+  return jsonP.readObj({
+    required: {
+      "Key": "s",
+      "Value": "s",
+    },
+    optional: {},
+  }, root);
+}
+
 function fromBusinessReportContentRange(input?: s.BusinessReportContentRange | null): jsonP.JSONValue {
   if (!input) return input;
   return {
@@ -1846,23 +1871,6 @@ function toBusinessReportRecurrence(root: jsonP.JSONValue): s.BusinessReportRecu
     optional: {
       "StartDate": "s",
     },
-  }, root);
-}
-
-function fromTag(input?: s.Tag | null): jsonP.JSONValue {
-  if (!input) return input;
-  return {
-    Key: input["Key"],
-    Value: input["Value"],
-  }
-}
-function toTag(root: jsonP.JSONValue): s.Tag {
-  return jsonP.readObj({
-    required: {
-      "Key": "s",
-      "Value": "s",
-    },
-    optional: {},
   }, root);
 }
 
@@ -2252,6 +2260,7 @@ function toProfile(root: jsonP.JSONValue): s.Profile {
       "SetupModeDisabled": "b",
       "MaxVolumeLimit": "n",
       "PSTNEnabled": "b",
+      "DataRetentionOptIn": "b",
       "AddressBookArn": "s",
       "MeetingRoomConfiguration": toMeetingRoomConfiguration,
     },

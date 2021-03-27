@@ -680,6 +680,69 @@ export default class DataSync {
     }, await resp.json());
   }
 
+  async updateLocationNfs(
+    {abortSignal, ...params}: RequestConfig & s.UpdateLocationNfsRequest,
+  ): Promise<s.UpdateLocationNfsResponse> {
+    const body: jsonP.JSONObject = {
+      LocationArn: params["LocationArn"],
+      Subdirectory: params["Subdirectory"],
+      OnPremConfig: fromOnPremConfig(params["OnPremConfig"]),
+      MountOptions: fromNfsMountOptions(params["MountOptions"]),
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "UpdateLocationNfs",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
+  }
+
+  async updateLocationObjectStorage(
+    {abortSignal, ...params}: RequestConfig & s.UpdateLocationObjectStorageRequest,
+  ): Promise<s.UpdateLocationObjectStorageResponse> {
+    const body: jsonP.JSONObject = {
+      LocationArn: params["LocationArn"],
+      ServerPort: params["ServerPort"],
+      ServerProtocol: params["ServerProtocol"],
+      Subdirectory: params["Subdirectory"],
+      AccessKey: params["AccessKey"],
+      SecretKey: params["SecretKey"],
+      AgentArns: params["AgentArns"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "UpdateLocationObjectStorage",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
+  }
+
+  async updateLocationSmb(
+    {abortSignal, ...params}: RequestConfig & s.UpdateLocationSmbRequest,
+  ): Promise<s.UpdateLocationSmbResponse> {
+    const body: jsonP.JSONObject = {
+      LocationArn: params["LocationArn"],
+      Subdirectory: params["Subdirectory"],
+      User: params["User"],
+      Domain: params["Domain"],
+      Password: params["Password"],
+      AgentArns: params["AgentArns"],
+      MountOptions: fromSmbMountOptions(params["MountOptions"]),
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "UpdateLocationSmb",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
+  }
+
   async updateTask(
     {abortSignal, ...params}: RequestConfig & s.UpdateTaskRequest,
   ): Promise<s.UpdateTaskResponse> {

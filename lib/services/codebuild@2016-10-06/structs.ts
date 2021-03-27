@@ -54,6 +54,7 @@ export interface CreateProjectInput {
   logsConfig?: LogsConfig | null;
   fileSystemLocations?: ProjectFileSystemLocation[] | null;
   buildBatchConfig?: ProjectBuildBatchConfig | null;
+  concurrentBuildLimit?: number | null;
 }
 
 // refs: 1 - tags: named, input
@@ -325,6 +326,7 @@ export interface StartBuildBatchInput {
   registryCredentialOverride?: RegistryCredential | null;
   imagePullCredentialsTypeOverride?: ImagePullCredentialsType | null;
   buildBatchConfigOverride?: ProjectBuildBatchConfig | null;
+  debugSessionEnabled?: boolean | null;
 }
 
 // refs: 1 - tags: named, input
@@ -359,6 +361,7 @@ export interface UpdateProjectInput {
   logsConfig?: LogsConfig | null;
   fileSystemLocations?: ProjectFileSystemLocation[] | null;
   buildBatchConfig?: ProjectBuildBatchConfig | null;
+  concurrentBuildLimit?: number | null;
 }
 
 // refs: 1 - tags: named, input
@@ -866,6 +869,7 @@ export type ReportExportConfigType =
 // refs: 6 - tags: input, named, interface, output
 export interface S3ReportExportConfig {
   bucket?: string | null;
+  bucketOwner?: string | null;
   path?: string | null;
   packaging?: ReportPackagingType | null;
   encryptionKey?: string | null;
@@ -1038,6 +1042,7 @@ export interface BuildBatch {
   fileSystemLocations?: ProjectFileSystemLocation[] | null;
   buildBatchConfig?: ProjectBuildBatchConfig | null;
   buildGroups?: BuildGroup[] | null;
+  debugSessionEnabled?: boolean | null;
 }
 
 // refs: 4 - tags: output, named, interface
@@ -1219,6 +1224,7 @@ export interface Project {
   logsConfig?: LogsConfig | null;
   fileSystemLocations?: ProjectFileSystemLocation[] | null;
   buildBatchConfig?: ProjectBuildBatchConfig | null;
+  concurrentBuildLimit?: number | null;
 }
 
 // refs: 5 - tags: output, named, interface

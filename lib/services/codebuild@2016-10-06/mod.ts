@@ -166,6 +166,7 @@ export default class CodeBuild {
       logsConfig: fromLogsConfig(params["logsConfig"]),
       fileSystemLocations: params["fileSystemLocations"]?.map(x => fromProjectFileSystemLocation(x)),
       buildBatchConfig: fromProjectBuildBatchConfig(params["buildBatchConfig"]),
+      concurrentBuildLimit: params["concurrentBuildLimit"],
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -856,6 +857,7 @@ export default class CodeBuild {
       registryCredentialOverride: fromRegistryCredential(params["registryCredentialOverride"]),
       imagePullCredentialsTypeOverride: params["imagePullCredentialsTypeOverride"],
       buildBatchConfigOverride: fromProjectBuildBatchConfig(params["buildBatchConfigOverride"]),
+      debugSessionEnabled: params["debugSessionEnabled"],
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -929,6 +931,7 @@ export default class CodeBuild {
       logsConfig: fromLogsConfig(params["logsConfig"]),
       fileSystemLocations: params["fileSystemLocations"]?.map(x => fromProjectFileSystemLocation(x)),
       buildBatchConfig: fromProjectBuildBatchConfig(params["buildBatchConfig"]),
+      concurrentBuildLimit: params["concurrentBuildLimit"],
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -1381,6 +1384,7 @@ function fromS3ReportExportConfig(input?: s.S3ReportExportConfig | null): jsonP.
   if (!input) return input;
   return {
     bucket: input["bucket"],
+    bucketOwner: input["bucketOwner"],
     path: input["path"],
     packaging: input["packaging"],
     encryptionKey: input["encryptionKey"],
@@ -1392,6 +1396,7 @@ function toS3ReportExportConfig(root: jsonP.JSONValue): s.S3ReportExportConfig {
     required: {},
     optional: {
       "bucket": "s",
+      "bucketOwner": "s",
       "path": "s",
       "packaging": (x: jsonP.JSONValue) => cmnP.readEnum<s.ReportPackagingType>(x),
       "encryptionKey": "s",
@@ -1485,6 +1490,7 @@ function toBuildBatch(root: jsonP.JSONValue): s.BuildBatch {
       "fileSystemLocations": [toProjectFileSystemLocation],
       "buildBatchConfig": toProjectBuildBatchConfig,
       "buildGroups": [toBuildGroup],
+      "debugSessionEnabled": "b",
     },
   }, root);
 }
@@ -1692,6 +1698,7 @@ function toProject(root: jsonP.JSONValue): s.Project {
       "logsConfig": toLogsConfig,
       "fileSystemLocations": [toProjectFileSystemLocation],
       "buildBatchConfig": toProjectBuildBatchConfig,
+      "concurrentBuildLimit": "n",
     },
   }, root);
 }

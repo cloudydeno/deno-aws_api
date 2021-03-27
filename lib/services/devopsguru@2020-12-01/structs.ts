@@ -23,6 +23,11 @@ export interface DescribeAnomalyRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface DescribeFeedbackRequest {
+  InsightId?: string | null;
+}
+
+// refs: 1 - tags: named, input
 export interface DescribeInsightRequest {
   Id: string;
 }
@@ -130,6 +135,11 @@ export interface DescribeAccountOverviewResponse {
 export interface DescribeAnomalyResponse {
   ProactiveAnomaly?: ProactiveAnomaly | null;
   ReactiveAnomaly?: ReactiveAnomaly | null;
+}
+
+// refs: 1 - tags: named, output
+export interface DescribeFeedbackResponse {
+  InsightFeedback?: InsightFeedback | null;
 }
 
 // refs: 1 - tags: named, output
@@ -308,13 +318,13 @@ export interface ListInsightsAnyStatusFilter {
   StartTimeRange: StartTimeRange;
 }
 
-// refs: 1 - tags: input, named, interface
+// refs: 2 - tags: input, named, interface, output
 export interface InsightFeedback {
   Id?: string | null;
   Feedback?: InsightFeedbackOption | null;
 }
 
-// refs: 1 - tags: input, named, enum
+// refs: 2 - tags: input, named, enum, output
 export type InsightFeedbackOption =
 | "VALID_COLLECTION"
 | "RECOMMENDATION_USEFUL"

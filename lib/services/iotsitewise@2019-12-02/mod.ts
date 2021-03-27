@@ -5,11 +5,11 @@ interface RequestConfig {
 }
 
 export * from "./structs.ts";
-import * as Base64 from "https://deno.land/std@0.86.0/encoding/base64.ts";
+import * as Base64 from "https://deno.land/std@0.91.0/encoding/base64.ts";
 import * as client from "../../client/common.ts";
 import * as cmnP from "../../encoding/common.ts";
 import * as jsonP from "../../encoding/json.ts";
-import * as uuidv4 from "https://deno.land/std@0.86.0/uuid/v4.ts";
+import * as uuidv4 from "https://deno.land/std@0.91.0/uuid/v4.ts";
 import type * as s from "./structs.ts";
 function generateIdemptToken() {
   return uuidv4.generate();
@@ -276,28 +276,6 @@ export default class IoTSiteWise {
         "portalStartUrl": "s",
         "portalStatus": toPortalStatus,
         "ssoApplicationId": "s",
-      },
-      optional: {},
-    }, await resp.json());
-  }
-
-  async createPresignedPortalUrl(
-    {abortSignal, ...params}: RequestConfig & s.CreatePresignedPortalUrlRequest,
-  ): Promise<s.CreatePresignedPortalUrlResponse> {
-    const body: jsonP.JSONObject = {
-      sessionDurationSeconds: params["sessionDurationSeconds"],
-      state: params["state"],
-    };
-    const resp = await this.#client.performRequest({
-      abortSignal, body,
-      action: "CreatePresignedPortalUrl",
-      requestUri: cmnP.encodePath`/portals/${params["portalId"]}/presigned-url`,
-      responseCode: 200,
-      hostPrefix: `monitor.`,
-    });
-    return jsonP.readObj({
-      required: {
-        "presignedPortalUrl": "s",
       },
       optional: {},
     }, await resp.json());

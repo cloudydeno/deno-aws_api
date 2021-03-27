@@ -11,6 +11,7 @@ export interface AcceptInvitationRequest {
 export interface CreateMembersRequest {
   GraphArn: string;
   Message?: string | null;
+  DisableEmailNotification?: boolean | null;
   Accounts: Account[];
 }
 
@@ -119,6 +120,7 @@ export interface MemberDetail {
   EmailAddress?: string | null;
   GraphArn?: string | null;
   MasterId?: string | null;
+  AdministratorId?: string | null;
   Status?: MemberStatus | null;
   DisabledReason?: MemberDisabledReason | null;
   InvitedTime?: Date | number | null;

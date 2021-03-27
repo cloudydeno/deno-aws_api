@@ -36,13 +36,15 @@ export interface GetHLSStreamingSessionURLInput {
 
 // refs: 1 - tags: named, input
 export interface GetMediaForFragmentListInput {
-  StreamName: string;
+  StreamName?: string | null;
+  StreamARN?: string | null;
   Fragments: string[];
 }
 
 // refs: 1 - tags: named, input
 export interface ListFragmentsInput {
-  StreamName: string;
+  StreamName?: string | null;
+  StreamARN?: string | null;
   MaxResults?: number | null;
   NextToken?: string | null;
   FragmentSelector?: FragmentSelector | null;

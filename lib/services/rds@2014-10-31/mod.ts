@@ -537,6 +537,27 @@ export default class RDS {
     };
   }
 
+  async createDBProxyEndpoint(
+    {abortSignal, ...params}: RequestConfig & s.CreateDBProxyEndpointRequest,
+  ): Promise<s.CreateDBProxyEndpointResponse> {
+    const body = new URLSearchParams;
+    const prefix = '';
+    body.append(prefix+"DBProxyName", (params["DBProxyName"] ?? '').toString());
+    body.append(prefix+"DBProxyEndpointName", (params["DBProxyEndpointName"] ?? '').toString());
+    if (params["VpcSubnetIds"]) qsP.appendList(body, prefix+"VpcSubnetIds", params["VpcSubnetIds"], {"entryPrefix":".member."})
+    if (params["VpcSecurityGroupIds"]) qsP.appendList(body, prefix+"VpcSecurityGroupIds", params["VpcSecurityGroupIds"], {"entryPrefix":".member."})
+    if ("TargetRole" in params) body.append(prefix+"TargetRole", (params["TargetRole"] ?? '').toString());
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".Tag."})
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "CreateDBProxyEndpoint",
+    });
+    const xml = xmlP.readXmlResult(await resp.text(), "CreateDBProxyEndpointResult");
+    return {
+      DBProxyEndpoint: xml.first("DBProxyEndpoint", false, DBProxyEndpoint_Parse),
+    };
+  }
+
   async createDBSecurityGroup(
     {abortSignal, ...params}: RequestConfig & s.CreateDBSecurityGroupMessage,
   ): Promise<s.CreateDBSecurityGroupResult> {
@@ -793,6 +814,22 @@ export default class RDS {
     const xml = xmlP.readXmlResult(await resp.text(), "DeleteDBProxyResult");
     return {
       DBProxy: xml.first("DBProxy", false, DBProxy_Parse),
+    };
+  }
+
+  async deleteDBProxyEndpoint(
+    {abortSignal, ...params}: RequestConfig & s.DeleteDBProxyEndpointRequest,
+  ): Promise<s.DeleteDBProxyEndpointResponse> {
+    const body = new URLSearchParams;
+    const prefix = '';
+    body.append(prefix+"DBProxyEndpointName", (params["DBProxyEndpointName"] ?? '').toString());
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DeleteDBProxyEndpoint",
+    });
+    const xml = xmlP.readXmlResult(await resp.text(), "DeleteDBProxyEndpointResult");
+    return {
+      DBProxyEndpoint: xml.first("DBProxyEndpoint", false, DBProxyEndpoint_Parse),
     };
   }
 
@@ -1290,6 +1327,29 @@ export default class RDS {
         optional: {"Marker":true},
       }),
       DBProxies: xml.getList("DBProxies", "member").map(DBProxy_Parse),
+    };
+  }
+
+  async describeDBProxyEndpoints(
+    {abortSignal, ...params}: RequestConfig & s.DescribeDBProxyEndpointsRequest = {},
+  ): Promise<s.DescribeDBProxyEndpointsResponse> {
+    const body = new URLSearchParams;
+    const prefix = '';
+    if ("DBProxyName" in params) body.append(prefix+"DBProxyName", (params["DBProxyName"] ?? '').toString());
+    if ("DBProxyEndpointName" in params) body.append(prefix+"DBProxyEndpointName", (params["DBProxyEndpointName"] ?? '').toString());
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filters", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":".Filter."})
+    if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
+    if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DescribeDBProxyEndpoints",
+    });
+    const xml = xmlP.readXmlResult(await resp.text(), "DescribeDBProxyEndpointsResult");
+    return {
+      ...xml.strings({
+        optional: {"Marker":true},
+      }),
+      DBProxyEndpoints: xml.getList("DBProxyEndpoints", "member").map(DBProxyEndpoint_Parse),
     };
   }
 
@@ -1826,6 +1886,23 @@ export default class RDS {
     };
   }
 
+  async failoverGlobalCluster(
+    {abortSignal, ...params}: RequestConfig & s.FailoverGlobalClusterMessage,
+  ): Promise<s.FailoverGlobalClusterResult> {
+    const body = new URLSearchParams;
+    const prefix = '';
+    body.append(prefix+"GlobalClusterIdentifier", (params["GlobalClusterIdentifier"] ?? '').toString());
+    body.append(prefix+"TargetDbClusterIdentifier", (params["TargetDbClusterIdentifier"] ?? '').toString());
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "FailoverGlobalCluster",
+    });
+    const xml = xmlP.readXmlResult(await resp.text(), "FailoverGlobalClusterResult");
+    return {
+      GlobalCluster: xml.first("GlobalCluster", false, GlobalCluster_Parse),
+    };
+  }
+
   async importInstallationMedia(
     {abortSignal, ...params}: RequestConfig & s.ImportInstallationMediaMessage,
   ): Promise<s.InstallationMedia> {
@@ -2043,6 +2120,7 @@ export default class RDS {
     if ("CertificateRotationRestart" in params) body.append(prefix+"CertificateRotationRestart", (params["CertificateRotationRestart"] ?? '').toString());
     if ("ReplicaMode" in params) body.append(prefix+"ReplicaMode", (params["ReplicaMode"] ?? '').toString());
     if ("EnableCustomerOwnedIp" in params) body.append(prefix+"EnableCustomerOwnedIp", (params["EnableCustomerOwnedIp"] ?? '').toString());
+    if ("AwsBackupRecoveryPointArn" in params) body.append(prefix+"AwsBackupRecoveryPointArn", (params["AwsBackupRecoveryPointArn"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ModifyDBInstance",
@@ -2090,6 +2168,24 @@ export default class RDS {
     const xml = xmlP.readXmlResult(await resp.text(), "ModifyDBProxyResult");
     return {
       DBProxy: xml.first("DBProxy", false, DBProxy_Parse),
+    };
+  }
+
+  async modifyDBProxyEndpoint(
+    {abortSignal, ...params}: RequestConfig & s.ModifyDBProxyEndpointRequest,
+  ): Promise<s.ModifyDBProxyEndpointResponse> {
+    const body = new URLSearchParams;
+    const prefix = '';
+    body.append(prefix+"DBProxyEndpointName", (params["DBProxyEndpointName"] ?? '').toString());
+    if ("NewDBProxyEndpointName" in params) body.append(prefix+"NewDBProxyEndpointName", (params["NewDBProxyEndpointName"] ?? '').toString());
+    if (params["VpcSecurityGroupIds"]) qsP.appendList(body, prefix+"VpcSecurityGroupIds", params["VpcSecurityGroupIds"], {"entryPrefix":".member."})
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "ModifyDBProxyEndpoint",
+    });
+    const xml = xmlP.readXmlResult(await resp.text(), "ModifyDBProxyEndpointResult");
+    return {
+      DBProxyEndpoint: xml.first("DBProxyEndpoint", false, DBProxyEndpoint_Parse),
     };
   }
 
@@ -3220,7 +3316,7 @@ function DBClusterParameterGroup_Parse(node: xmlP.XmlNode): s.DBClusterParameter
 function DBClusterSnapshot_Parse(node: xmlP.XmlNode): s.DBClusterSnapshot {
   return {
     ...node.strings({
-      optional: {"DBClusterSnapshotIdentifier":true,"DBClusterIdentifier":true,"Engine":true,"Status":true,"VpcId":true,"MasterUsername":true,"EngineVersion":true,"LicenseModel":true,"SnapshotType":true,"KmsKeyId":true,"DBClusterSnapshotArn":true,"SourceDBClusterSnapshotArn":true},
+      optional: {"DBClusterSnapshotIdentifier":true,"DBClusterIdentifier":true,"Engine":true,"EngineMode":true,"Status":true,"VpcId":true,"MasterUsername":true,"EngineVersion":true,"LicenseModel":true,"SnapshotType":true,"KmsKeyId":true,"DBClusterSnapshotArn":true,"SourceDBClusterSnapshotArn":true},
     }),
     AvailabilityZones: node.getList("AvailabilityZones", "AvailabilityZone").map(x => x.content ?? ''),
     SnapshotCreateTime: node.first("SnapshotCreateTime", false, x => xmlP.parseTimestamp(x.content)),
@@ -3410,7 +3506,7 @@ function PendingCloudwatchLogsExports_Parse(node: xmlP.XmlNode): s.PendingCloudw
 function DBInstance_Parse(node: xmlP.XmlNode): s.DBInstance {
   return {
     ...node.strings({
-      optional: {"DBInstanceIdentifier":true,"DBInstanceClass":true,"Engine":true,"DBInstanceStatus":true,"MasterUsername":true,"DBName":true,"PreferredBackupWindow":true,"AvailabilityZone":true,"PreferredMaintenanceWindow":true,"EngineVersion":true,"ReadReplicaSourceDBInstanceIdentifier":true,"LicenseModel":true,"CharacterSetName":true,"NcharCharacterSetName":true,"SecondaryAvailabilityZone":true,"StorageType":true,"TdeCredentialArn":true,"DBClusterIdentifier":true,"KmsKeyId":true,"DbiResourceId":true,"CACertificateIdentifier":true,"EnhancedMonitoringResourceArn":true,"MonitoringRoleArn":true,"DBInstanceArn":true,"Timezone":true,"PerformanceInsightsKMSKeyId":true},
+      optional: {"DBInstanceIdentifier":true,"DBInstanceClass":true,"Engine":true,"DBInstanceStatus":true,"MasterUsername":true,"DBName":true,"PreferredBackupWindow":true,"AvailabilityZone":true,"PreferredMaintenanceWindow":true,"EngineVersion":true,"ReadReplicaSourceDBInstanceIdentifier":true,"LicenseModel":true,"CharacterSetName":true,"NcharCharacterSetName":true,"SecondaryAvailabilityZone":true,"StorageType":true,"TdeCredentialArn":true,"DBClusterIdentifier":true,"KmsKeyId":true,"DbiResourceId":true,"CACertificateIdentifier":true,"EnhancedMonitoringResourceArn":true,"MonitoringRoleArn":true,"DBInstanceArn":true,"Timezone":true,"PerformanceInsightsKMSKeyId":true,"AwsBackupRecoveryPointArn":true},
     }),
     Endpoint: node.first("Endpoint", false, Endpoint_Parse),
     AllocatedStorage: node.first("AllocatedStorage", false, x => parseInt(x.content ?? '0')),
@@ -3544,7 +3640,7 @@ function DBInstanceAutomatedBackupsReplication_Parse(node: xmlP.XmlNode): s.DBIn
 function DBProxy_Parse(node: xmlP.XmlNode): s.DBProxy {
   return {
     ...node.strings({
-      optional: {"DBProxyName":true,"DBProxyArn":true,"EngineFamily":true,"RoleArn":true,"Endpoint":true},
+      optional: {"DBProxyName":true,"DBProxyArn":true,"EngineFamily":true,"VpcId":true,"RoleArn":true,"Endpoint":true},
     }),
     Status: node.first("Status", false, x => (x.content ?? '') as s.DBProxyStatus),
     VpcSecurityGroupIds: node.getList("VpcSecurityGroupIds", "member").map(x => x.content ?? ''),
@@ -3568,6 +3664,20 @@ function UserAuthConfigInfo_Parse(node: xmlP.XmlNode): s.UserAuthConfigInfo {
   };
 }
 
+function DBProxyEndpoint_Parse(node: xmlP.XmlNode): s.DBProxyEndpoint {
+  return {
+    ...node.strings({
+      optional: {"DBProxyEndpointName":true,"DBProxyEndpointArn":true,"DBProxyName":true,"VpcId":true,"Endpoint":true},
+    }),
+    Status: node.first("Status", false, x => (x.content ?? '') as s.DBProxyEndpointStatus),
+    VpcSecurityGroupIds: node.getList("VpcSecurityGroupIds", "member").map(x => x.content ?? ''),
+    VpcSubnetIds: node.getList("VpcSubnetIds", "member").map(x => x.content ?? ''),
+    CreatedDate: node.first("CreatedDate", false, x => xmlP.parseTimestamp(x.content)),
+    TargetRole: node.first("TargetRole", false, x => (x.content ?? '') as s.DBProxyEndpointTargetRole),
+    IsDefault: node.first("IsDefault", false, x => x.content === 'true'),
+  };
+}
+
 function GlobalCluster_Parse(node: xmlP.XmlNode): s.GlobalCluster {
   return {
     ...node.strings({
@@ -3576,6 +3686,7 @@ function GlobalCluster_Parse(node: xmlP.XmlNode): s.GlobalCluster {
     StorageEncrypted: node.first("StorageEncrypted", false, x => x.content === 'true'),
     DeletionProtection: node.first("DeletionProtection", false, x => x.content === 'true'),
     GlobalClusterMembers: node.getList("GlobalClusterMembers", "GlobalClusterMember").map(GlobalClusterMember_Parse),
+    FailoverState: node.first("FailoverState", false, FailoverState_Parse),
   };
 }
 
@@ -3587,6 +3698,15 @@ function GlobalClusterMember_Parse(node: xmlP.XmlNode): s.GlobalClusterMember {
     Readers: node.getList("Readers", "member").map(x => x.content ?? ''),
     IsWriter: node.first("IsWriter", false, x => x.content === 'true'),
     GlobalWriteForwardingStatus: node.first("GlobalWriteForwardingStatus", false, x => (x.content ?? '') as s.WriteForwardingStatus),
+  };
+}
+
+function FailoverState_Parse(node: xmlP.XmlNode): s.FailoverState {
+  return {
+    ...node.strings({
+      optional: {"FromDbClusterArn":true,"ToDbClusterArn":true},
+    }),
+    Status: node.first("Status", false, x => (x.content ?? '') as s.FailoverStatus),
   };
 }
 
@@ -3693,6 +3813,9 @@ function UpgradeTarget_Parse(node: xmlP.XmlNode): s.UpgradeTarget {
     }),
     AutoUpgrade: node.first("AutoUpgrade", false, x => x.content === 'true'),
     IsMajorVersionUpgrade: node.first("IsMajorVersionUpgrade", false, x => x.content === 'true'),
+    SupportedEngineModes: node.getList("SupportedEngineModes", "member").map(x => x.content ?? ''),
+    SupportsParallelQuery: node.first("SupportsParallelQuery", false, x => x.content === 'true'),
+    SupportsGlobalDatabases: node.first("SupportsGlobalDatabases", false, x => x.content === 'true'),
   };
 }
 
@@ -3743,6 +3866,7 @@ function DBProxyTarget_Parse(node: xmlP.XmlNode): s.DBProxyTarget {
     }),
     Port: node.first("Port", false, x => parseInt(x.content ?? '0')),
     Type: node.first("Type", false, x => (x.content ?? '') as s.TargetType),
+    Role: node.first("Role", false, x => (x.content ?? '') as s.TargetRole),
     TargetHealth: node.first("TargetHealth", false, TargetHealth_Parse),
   };
 }

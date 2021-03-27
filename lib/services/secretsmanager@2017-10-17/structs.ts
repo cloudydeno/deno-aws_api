@@ -16,6 +16,8 @@ export interface CreateSecretRequest {
   SecretBinary?: Uint8Array | string | null;
   SecretString?: string | null;
   Tags?: Tag[] | null;
+  AddReplicaRegions?: ReplicaRegionType[] | null;
+  ForceOverwriteReplicaSecret?: boolean | null;
 }
 
 // refs: 1 - tags: named, input
@@ -92,6 +94,19 @@ export interface PutSecretValueRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface RemoveRegionsFromReplicationRequest {
+  SecretId: string;
+  RemoveReplicaRegions: string[];
+}
+
+// refs: 1 - tags: named, input
+export interface ReplicateSecretToRegionsRequest {
+  SecretId: string;
+  AddReplicaRegions: ReplicaRegionType[];
+  ForceOverwriteReplicaSecret?: boolean | null;
+}
+
+// refs: 1 - tags: named, input
 export interface RestoreSecretRequest {
   SecretId: string;
 }
@@ -102,6 +117,11 @@ export interface RotateSecretRequest {
   ClientRequestToken?: string | null;
   RotationLambdaARN?: string | null;
   RotationRules?: RotationRulesType | null;
+}
+
+// refs: 1 - tags: named, input
+export interface StopReplicationToReplicaRequest {
+  SecretId: string;
 }
 
 // refs: 1 - tags: named, input
@@ -152,6 +172,7 @@ export interface CreateSecretResponse {
   ARN?: string | null;
   Name?: string | null;
   VersionId?: string | null;
+  ReplicationStatus?: ReplicationStatusType[] | null;
 }
 
 // refs: 1 - tags: named, output
@@ -184,6 +205,8 @@ export interface DescribeSecretResponse {
   VersionIdsToStages?: { [key: string]: string[] | null | undefined } | null;
   OwningService?: string | null;
   CreatedDate?: Date | number | null;
+  PrimaryRegion?: string | null;
+  ReplicationStatus?: ReplicationStatusType[] | null;
 }
 
 // refs: 1 - tags: named, output
@@ -238,6 +261,18 @@ export interface PutSecretValueResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface RemoveRegionsFromReplicationResponse {
+  ARN?: string | null;
+  ReplicationStatus?: ReplicationStatusType[] | null;
+}
+
+// refs: 1 - tags: named, output
+export interface ReplicateSecretToRegionsResponse {
+  ARN?: string | null;
+  ReplicationStatus?: ReplicationStatusType[] | null;
+}
+
+// refs: 1 - tags: named, output
 export interface RestoreSecretResponse {
   ARN?: string | null;
   Name?: string | null;
@@ -248,6 +283,11 @@ export interface RotateSecretResponse {
   ARN?: string | null;
   Name?: string | null;
   VersionId?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface StopReplicationToReplicaResponse {
+  ARN?: string | null;
 }
 
 // refs: 1 - tags: named, output
@@ -275,6 +315,12 @@ export interface Tag {
   Value?: string | null;
 }
 
+// refs: 2 - tags: input, named, interface
+export interface ReplicaRegionType {
+  Region?: string | null;
+  KmsKeyId?: string | null;
+}
+
 // refs: 1 - tags: input, named, interface
 export interface Filter {
   Key?: FilterNameStringType | null;
@@ -287,6 +333,7 @@ export type FilterNameStringType =
 | "name"
 | "tag-key"
 | "tag-value"
+| "primary-region"
 | "all"
 | cmnP.UnexpectedEnumValue;
 
@@ -300,6 +347,22 @@ export type SortOrderType =
 export interface RotationRulesType {
   AutomaticallyAfterDays?: number | null;
 }
+
+// refs: 4 - tags: output, named, interface
+export interface ReplicationStatusType {
+  Region?: string | null;
+  KmsKeyId?: string | null;
+  Status?: StatusType | null;
+  StatusMessage?: string | null;
+  LastAccessedDate?: Date | number | null;
+}
+
+// refs: 4 - tags: output, named, enum
+export type StatusType =
+| "InSync"
+| "Failed"
+| "InProgress"
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface SecretVersionsListEntry {
@@ -326,6 +389,7 @@ export interface SecretListEntry {
   SecretVersionsToStages?: { [key: string]: string[] | null | undefined } | null;
   OwningService?: string | null;
   CreatedDate?: Date | number | null;
+  PrimaryRegion?: string | null;
 }
 
 // refs: 1 - tags: output, named, interface

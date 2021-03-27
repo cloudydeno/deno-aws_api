@@ -741,7 +741,7 @@ export interface ProductInformation {
 // refs: 4 - tags: input, named, interface, output
 export interface ProductInformationFilter {
   ProductInformationFilterName: string;
-  ProductInformationFilterValue: string[];
+  ProductInformationFilterValue?: string[] | null;
   ProductInformationFilterComparator: string;
 }
 

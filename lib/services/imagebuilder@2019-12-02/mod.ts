@@ -8,7 +8,7 @@ export * from "./structs.ts";
 import * as client from "../../client/common.ts";
 import * as cmnP from "../../encoding/common.ts";
 import * as jsonP from "../../encoding/json.ts";
-import * as uuidv4 from "https://deno.land/std@0.86.0/uuid/v4.ts";
+import * as uuidv4 from "https://deno.land/std@0.91.0/uuid/v4.ts";
 import type * as s from "./structs.ts";
 function generateIdemptToken() {
   return uuidv4.generate();
@@ -788,6 +788,29 @@ export default class Imagebuilder {
     }, await resp.json());
   }
 
+  async listImagePackages(
+    {abortSignal, ...params}: RequestConfig & s.ListImagePackagesRequest,
+  ): Promise<s.ListImagePackagesResponse> {
+    const body: jsonP.JSONObject = {
+      imageBuildVersionArn: params["imageBuildVersionArn"],
+      maxResults: params["maxResults"],
+      nextToken: params["nextToken"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "ListImagePackages",
+      requestUri: "/ListImagePackages",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "requestId": "s",
+        "imagePackageList": [toImagePackage],
+        "nextToken": "s",
+      },
+    }, await resp.json());
+  }
+
   async listImagePipelineImages(
     {abortSignal, ...params}: RequestConfig & s.ListImagePipelineImagesRequest,
   ): Promise<s.ListImagePipelineImagesResponse> {
@@ -1302,6 +1325,7 @@ function fromSchedule(input?: s.Schedule | null): jsonP.JSONValue {
   if (!input) return input;
   return {
     scheduleExpression: input["scheduleExpression"],
+    timezone: input["timezone"],
     pipelineExecutionStartCondition: input["pipelineExecutionStartCondition"],
   }
 }
@@ -1310,6 +1334,7 @@ function toSchedule(root: jsonP.JSONValue): s.Schedule {
     required: {},
     optional: {
       "scheduleExpression": "s",
+      "timezone": "s",
       "pipelineExecutionStartCondition": (x: jsonP.JSONValue) => cmnP.readEnum<s.PipelineExecutionStartCondition>(x),
     },
   }, root);
@@ -1691,6 +1716,16 @@ function toImageSummary(root: jsonP.JSONValue): s.ImageSummary {
   }, root);
 }
 
+function toImagePackage(root: jsonP.JSONValue): s.ImagePackage {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "packageName": "s",
+      "packageVersion": "s",
+    },
+  }, root);
+}
+
 function toImageRecipeSummary(root: jsonP.JSONValue): s.ImageRecipeSummary {
   return jsonP.readObj({
     required: {},
@@ -1733,6 +1768,8 @@ function toInfrastructureConfigurationSummary(root: jsonP.JSONValue): s.Infrastr
       "dateUpdated": "s",
       "resourceTags": x => jsonP.readMap(String, String, x),
       "tags": x => jsonP.readMap(String, String, x),
+      "instanceTypes": ["s"],
+      "instanceProfileName": "s",
     },
   }, root);
 }

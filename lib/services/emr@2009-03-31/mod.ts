@@ -888,6 +888,22 @@ export default class EMR {
     });
   }
 
+  async updateStudio(
+    {abortSignal, ...params}: RequestConfig & s.UpdateStudioInput,
+  ): Promise<void> {
+    const body: jsonP.JSONObject = {
+      StudioId: params["StudioId"],
+      Name: params["Name"],
+      Description: params["Description"],
+      SubnetIds: params["SubnetIds"],
+      DefaultS3Location: params["DefaultS3Location"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "UpdateStudio",
+    });
+  }
+
   async updateStudioSessionMapping(
     {abortSignal, ...params}: RequestConfig & s.UpdateStudioSessionMappingInput,
   ): Promise<void> {
@@ -1079,6 +1095,7 @@ function fromOnDemandProvisioningSpecification(input?: s.OnDemandProvisioningSpe
   if (!input) return input;
   return {
     AllocationStrategy: input["AllocationStrategy"],
+    CapacityReservationOptions: fromOnDemandCapacityReservationOptions(input["CapacityReservationOptions"]),
   }
 }
 function toOnDemandProvisioningSpecification(root: jsonP.JSONValue): s.OnDemandProvisioningSpecification {
@@ -1086,7 +1103,28 @@ function toOnDemandProvisioningSpecification(root: jsonP.JSONValue): s.OnDemandP
     required: {
       "AllocationStrategy": (x: jsonP.JSONValue) => cmnP.readEnum<s.OnDemandProvisioningAllocationStrategy>(x),
     },
-    optional: {},
+    optional: {
+      "CapacityReservationOptions": toOnDemandCapacityReservationOptions,
+    },
+  }, root);
+}
+
+function fromOnDemandCapacityReservationOptions(input?: s.OnDemandCapacityReservationOptions | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    UsageStrategy: input["UsageStrategy"],
+    CapacityReservationPreference: input["CapacityReservationPreference"],
+    CapacityReservationResourceGroupArn: input["CapacityReservationResourceGroupArn"],
+  }
+}
+function toOnDemandCapacityReservationOptions(root: jsonP.JSONValue): s.OnDemandCapacityReservationOptions {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "UsageStrategy": (x: jsonP.JSONValue) => cmnP.readEnum<s.OnDemandCapacityReservationUsageStrategy>(x),
+      "CapacityReservationPreference": (x: jsonP.JSONValue) => cmnP.readEnum<s.OnDemandCapacityReservationPreference>(x),
+      "CapacityReservationResourceGroupArn": "s",
+    },
   }, root);
 }
 

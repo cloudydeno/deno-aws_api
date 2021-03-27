@@ -8,7 +8,7 @@ export * from "./structs.ts";
 import * as client from "../../client/common.ts";
 import * as cmnP from "../../encoding/common.ts";
 import * as jsonP from "../../encoding/json.ts";
-import * as uuidv4 from "https://deno.land/std@0.86.0/uuid/v4.ts";
+import * as uuidv4 from "https://deno.land/std@0.91.0/uuid/v4.ts";
 import type * as s from "./structs.ts";
 function generateIdemptToken() {
   return uuidv4.generate();
@@ -37,6 +37,7 @@ export default class IoTWireless {
     const body: jsonP.JSONObject = {
       Sidewalk: fromSidewalkAccountInfo(params["Sidewalk"]),
       ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
+      Tags: params["Tags"]?.map(x => fromTag(x)),
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -47,6 +48,7 @@ export default class IoTWireless {
       required: {},
       optional: {
         "Sidewalk": toSidewalkAccountInfo,
+        "Arn": "s",
       },
     }, await resp.json());
   }
@@ -194,6 +196,7 @@ export default class IoTWireless {
       DestinationName: params["DestinationName"],
       ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
       LoRaWAN: fromLoRaWANDevice(params["LoRaWAN"]),
+      Tags: params["Tags"]?.map(x => fromTag(x)),
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -264,6 +267,7 @@ export default class IoTWireless {
       Name: params["Name"],
       Update: fromUpdateWirelessGatewayTaskCreate(params["Update"]),
       ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
+      Tags: params["Tags"]?.map(x => fromTag(x)),
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -275,6 +279,7 @@ export default class IoTWireless {
       required: {},
       optional: {
         "Id": "s",
+        "Arn": "s",
       },
     }, await resp.json());
   }
@@ -741,6 +746,7 @@ export default class IoTWireless {
         "AutoCreateTasks": "b",
         "Name": "s",
         "Update": toUpdateWirelessGatewayTaskCreate,
+        "Arn": "s",
       },
     }, await resp.json());
   }
@@ -1430,6 +1436,7 @@ function toSidewalkAccountInfoWithFingerprint(root: jsonP.JSONValue): s.Sidewalk
     optional: {
       "AmazonId": "s",
       "Fingerprint": "s",
+      "Arn": "s",
     },
   }, root);
 }
@@ -1571,6 +1578,7 @@ function toUpdateWirelessGatewayTaskEntry(root: jsonP.JSONValue): s.UpdateWirele
     optional: {
       "Id": "s",
       "LoRaWAN": toLoRaWANUpdateGatewayTaskEntry,
+      "Arn": "s",
     },
   }, root);
 }

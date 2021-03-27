@@ -271,6 +271,7 @@ export default class CodeDeploy {
       triggerConfigurations: params["triggerConfigurations"]?.map(x => fromTriggerConfig(x)),
       alarmConfiguration: fromAlarmConfiguration(params["alarmConfiguration"]),
       autoRollbackConfiguration: fromAutoRollbackConfiguration(params["autoRollbackConfiguration"]),
+      outdatedInstancesStrategy: params["outdatedInstancesStrategy"],
       deploymentStyle: fromDeploymentStyle(params["deploymentStyle"]),
       blueGreenDeploymentConfiguration: fromBlueGreenDeploymentConfiguration(params["blueGreenDeploymentConfiguration"]),
       loadBalancerInfo: fromLoadBalancerInfo(params["loadBalancerInfo"]),
@@ -896,6 +897,7 @@ export default class CodeDeploy {
       triggerConfigurations: params["triggerConfigurations"]?.map(x => fromTriggerConfig(x)),
       alarmConfiguration: fromAlarmConfiguration(params["alarmConfiguration"]),
       autoRollbackConfiguration: fromAutoRollbackConfiguration(params["autoRollbackConfiguration"]),
+      outdatedInstancesStrategy: params["outdatedInstancesStrategy"],
       deploymentStyle: fromDeploymentStyle(params["deploymentStyle"]),
       blueGreenDeploymentConfiguration: fromBlueGreenDeploymentConfiguration(params["blueGreenDeploymentConfiguration"]),
       loadBalancerInfo: fromLoadBalancerInfo(params["loadBalancerInfo"]),
@@ -1122,16 +1124,16 @@ function toAutoRollbackConfiguration(root: jsonP.JSONValue): s.AutoRollbackConfi
 function fromMinimumHealthyHosts(input?: s.MinimumHealthyHosts | null): jsonP.JSONValue {
   if (!input) return input;
   return {
-    value: input["value"],
     type: input["type"],
+    value: input["value"],
   }
 }
 function toMinimumHealthyHosts(root: jsonP.JSONValue): s.MinimumHealthyHosts {
   return jsonP.readObj({
     required: {},
     optional: {
-      "value": "n",
       "type": (x: jsonP.JSONValue) => cmnP.readEnum<s.MinimumHealthyHostsType>(x),
+      "value": "n",
     },
   }, root);
 }
@@ -1523,6 +1525,7 @@ function toDeploymentGroupInfo(root: jsonP.JSONValue): s.DeploymentGroupInfo {
       "alarmConfiguration": toAlarmConfiguration,
       "autoRollbackConfiguration": toAutoRollbackConfiguration,
       "deploymentStyle": toDeploymentStyle,
+      "outdatedInstancesStrategy": (x: jsonP.JSONValue) => cmnP.readEnum<s.OutdatedInstancesStrategy>(x),
       "blueGreenDeploymentConfiguration": toBlueGreenDeploymentConfiguration,
       "loadBalancerInfo": toLoadBalancerInfo,
       "lastSuccessfulDeployment": toLastDeploymentInfo,
@@ -1730,6 +1733,7 @@ function toDeploymentInfo(root: jsonP.JSONValue): s.DeploymentInfo {
       "deploymentStatusMessages": ["s"],
       "computePlatform": (x: jsonP.JSONValue) => cmnP.readEnum<s.ComputePlatform>(x),
       "externalId": "s",
+      "relatedDeployments": toRelatedDeployments,
     },
   }, root);
 }
@@ -1765,6 +1769,16 @@ function toRollbackInfo(root: jsonP.JSONValue): s.RollbackInfo {
       "rollbackDeploymentId": "s",
       "rollbackTriggeringDeploymentId": "s",
       "rollbackMessage": "s",
+    },
+  }, root);
+}
+
+function toRelatedDeployments(root: jsonP.JSONValue): s.RelatedDeployments {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "autoUpdateOutdatedInstancesRootDeploymentId": "s",
+      "autoUpdateOutdatedInstancesDeploymentIds": ["s"],
     },
   }, root);
 }

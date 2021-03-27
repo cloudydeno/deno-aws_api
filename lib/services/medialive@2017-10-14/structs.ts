@@ -95,6 +95,13 @@ export interface CreateMultiplexProgramRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface CreatePartnerInputRequest {
+  InputId: string;
+  RequestId?: string | null;
+  Tags?: { [key: string]: string | null | undefined } | null;
+}
+
+// refs: 1 - tags: named, input
 export interface CreateTagsRequest {
   ResourceArn: string;
   Tags?: { [key: string]: string | null | undefined } | null;
@@ -314,6 +321,7 @@ export interface StopMultiplexRequest {
 export interface TransferInputDeviceRequest {
   InputDeviceId: string;
   TargetCustomerId?: string | null;
+  TargetRegion?: string | null;
   TransferMessage?: string | null;
 }
 
@@ -442,6 +450,11 @@ export interface CreateMultiplexProgramResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface CreatePartnerInputResponse {
+  Input?: Input | null;
+}
+
+// refs: 1 - tags: named, output
 export interface DeleteChannelResponse {
   Arn?: string | null;
   CdiInputSpecification?: CdiInputSpecification | null;
@@ -548,6 +561,7 @@ export interface DescribeInputResponse {
   Id?: string | null;
   InputClass?: InputClass | null;
   InputDevices?: InputDeviceSettings[] | null;
+  InputPartnerIds?: string[] | null;
   InputSourceType?: InputSourceType | null;
   MediaConnectFlows?: MediaConnectFlow[] | null;
   Name?: string | null;
@@ -1748,6 +1762,7 @@ export type DvbSubDestinationTeletextGridControl =
 
 // refs: 9 - tags: input, named, interface, output
 export interface EbuTtDDestinationSettings {
+  CopyrightHolder?: string | null;
   FillLineGap?: EbuTtDFillLineGapControl | null;
   FontFamily?: string | null;
   StyleControl?: EbuTtDDestinationStyleControl | null;
@@ -1901,9 +1916,28 @@ export interface OutputGroupSettings {
 
 // refs: 9 - tags: input, named, interface, output
 export interface ArchiveGroupSettings {
+  ArchiveCdnSettings?: ArchiveCdnSettings | null;
   Destination: OutputLocationRef;
   RolloverInterval?: number | null;
 }
+
+// refs: 9 - tags: input, named, interface, output
+export interface ArchiveCdnSettings {
+  ArchiveS3Settings?: ArchiveS3Settings | null;
+}
+
+// refs: 9 - tags: input, named, interface, output
+export interface ArchiveS3Settings {
+  CannedAcl?: S3CannedAcl | null;
+}
+
+// refs: 27 - tags: input, named, enum, output
+export type S3CannedAcl =
+| "AUTHENTICATED_READ"
+| "BUCKET_OWNER_FULL_CONTROL"
+| "BUCKET_OWNER_READ"
+| "PUBLIC_READ"
+| cmnP.UnexpectedEnumValue;
 
 // refs: 72 - tags: input, named, interface, output
 export interface OutputLocationRef {
@@ -1913,6 +1947,17 @@ export interface OutputLocationRef {
 // refs: 9 - tags: input, named, interface, output
 export interface FrameCaptureGroupSettings {
   Destination: OutputLocationRef;
+  FrameCaptureCdnSettings?: FrameCaptureCdnSettings | null;
+}
+
+// refs: 9 - tags: input, named, interface, output
+export interface FrameCaptureCdnSettings {
+  FrameCaptureS3Settings?: FrameCaptureS3Settings | null;
+}
+
+// refs: 9 - tags: input, named, interface, output
+export interface FrameCaptureS3Settings {
+  CannedAcl?: S3CannedAcl | null;
 }
 
 // refs: 9 - tags: input, named, interface, output
@@ -2017,6 +2062,7 @@ export interface HlsCdnSettings {
   HlsAkamaiSettings?: HlsAkamaiSettings | null;
   HlsBasicPutSettings?: HlsBasicPutSettings | null;
   HlsMediaStoreSettings?: HlsMediaStoreSettings | null;
+  HlsS3Settings?: HlsS3Settings | null;
   HlsWebdavSettings?: HlsWebdavSettings | null;
 }
 
@@ -2058,6 +2104,11 @@ export interface HlsMediaStoreSettings {
 export type HlsMediaStoreStorageClass =
 | "TEMPORAL"
 | cmnP.UnexpectedEnumValue;
+
+// refs: 9 - tags: input, named, interface, output
+export interface HlsS3Settings {
+  CannedAcl?: S3CannedAcl | null;
+}
 
 // refs: 9 - tags: input, named, interface, output
 export interface HlsWebdavSettings {
@@ -3136,7 +3187,7 @@ export interface H265ColorSpaceSettings {
   Rec709Settings?: Rec709Settings | null;
 }
 
-// refs: 9 - tags: input, named, interface, output
+// refs: 19 - tags: input, named, interface, output
 export interface Hdr10Settings {
   MaxCll?: number | null;
   MaxFall?: number | null;
@@ -3486,7 +3537,16 @@ export interface Scte27SourceSettings {
 
 // refs: 10 - tags: input, named, interface, output
 export interface TeletextSourceSettings {
+  OutputRectangle?: CaptionRectangle | null;
   PageNumber?: string | null;
+}
+
+// refs: 10 - tags: input, named, interface, output
+export interface CaptionRectangle {
+  Height: number;
+  LeftOffset: number;
+  TopOffset: number;
+  Width: number;
 }
 
 // refs: 10 - tags: input, named, enum, output
@@ -3543,6 +3603,7 @@ export type InputSourceEndBehavior =
 // refs: 10 - tags: input, named, interface, output
 export interface VideoSelector {
   ColorSpace?: VideoSelectorColorSpace | null;
+  ColorSpaceSettings?: VideoSelectorColorSpaceSettings | null;
   ColorSpaceUsage?: VideoSelectorColorSpaceUsage | null;
   SelectorSettings?: VideoSelectorSettings | null;
 }
@@ -3550,9 +3611,16 @@ export interface VideoSelector {
 // refs: 10 - tags: input, named, enum, output
 export type VideoSelectorColorSpace =
 | "FOLLOW"
+| "HDR10"
+| "HLG_2020"
 | "REC_601"
 | "REC_709"
 | cmnP.UnexpectedEnumValue;
+
+// refs: 10 - tags: input, named, interface, output
+export interface VideoSelectorColorSpaceSettings {
+  Hdr10Settings?: Hdr10Settings | null;
+}
 
 // refs: 10 - tags: input, named, enum, output
 export type VideoSelectorColorSpaceUsage =
@@ -3625,7 +3693,7 @@ export interface InputDestinationRequest {
   StreamName?: string | null;
 }
 
-// refs: 5 - tags: input, named, interface, output
+// refs: 6 - tags: input, named, interface, output
 export interface InputDeviceSettings {
   Id?: string | null;
 }
@@ -3642,7 +3710,7 @@ export interface InputSourceRequest {
   Username?: string | null;
 }
 
-// refs: 5 - tags: input, named, enum, output
+// refs: 6 - tags: input, named, enum, output
 export type InputType =
 | "UDP_PUSH"
 | "RTP_PUSH"
@@ -3804,7 +3872,7 @@ export type ChannelState =
 | "UPDATE_FAILED"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 3 - tags: output, named, interface
+// refs: 4 - tags: output, named, interface
 export interface Input {
   Arn?: string | null;
   AttachedChannels?: string[] | null;
@@ -3812,6 +3880,7 @@ export interface Input {
   Id?: string | null;
   InputClass?: InputClass | null;
   InputDevices?: InputDeviceSettings[] | null;
+  InputPartnerIds?: string[] | null;
   InputSourceType?: InputSourceType | null;
   MediaConnectFlows?: MediaConnectFlow[] | null;
   Name?: string | null;
@@ -3823,7 +3892,7 @@ export interface Input {
   Type?: InputType | null;
 }
 
-// refs: 4 - tags: output, named, interface
+// refs: 5 - tags: output, named, interface
 export interface InputDestination {
   Ip?: string | null;
   Port?: string | null;
@@ -3831,37 +3900,37 @@ export interface InputDestination {
   Vpc?: InputDestinationVpc | null;
 }
 
-// refs: 4 - tags: output, named, interface
+// refs: 5 - tags: output, named, interface
 export interface InputDestinationVpc {
   AvailabilityZone?: string | null;
   NetworkInterfaceId?: string | null;
 }
 
-// refs: 4 - tags: output, named, enum
+// refs: 5 - tags: output, named, enum
 export type InputClass =
 | "STANDARD"
 | "SINGLE_PIPELINE"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 4 - tags: output, named, enum
+// refs: 5 - tags: output, named, enum
 export type InputSourceType =
 | "STATIC"
 | "DYNAMIC"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 4 - tags: output, named, interface
+// refs: 5 - tags: output, named, interface
 export interface MediaConnectFlow {
   FlowArn?: string | null;
 }
 
-// refs: 4 - tags: output, named, interface
+// refs: 5 - tags: output, named, interface
 export interface InputSource {
   PasswordParam?: string | null;
   Url?: string | null;
   Username?: string | null;
 }
 
-// refs: 4 - tags: output, named, enum
+// refs: 5 - tags: output, named, enum
 export type InputState =
 | "CREATING"
 | "DETACHED"

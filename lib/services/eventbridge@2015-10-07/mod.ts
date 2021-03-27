@@ -60,6 +60,32 @@ export default class EventBridge {
     }, await resp.json());
   }
 
+  async createApiDestination(
+    {abortSignal, ...params}: RequestConfig & s.CreateApiDestinationRequest,
+  ): Promise<s.CreateApiDestinationResponse> {
+    const body: jsonP.JSONObject = {
+      Name: params["Name"],
+      Description: params["Description"],
+      ConnectionArn: params["ConnectionArn"],
+      InvocationEndpoint: params["InvocationEndpoint"],
+      HttpMethod: params["HttpMethod"],
+      InvocationRateLimitPerSecond: params["InvocationRateLimitPerSecond"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "CreateApiDestination",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ApiDestinationArn": "s",
+        "ApiDestinationState": (x: jsonP.JSONValue) => cmnP.readEnum<s.ApiDestinationState>(x),
+        "CreationTime": "d",
+        "LastModifiedTime": "d",
+      },
+    }, await resp.json());
+  }
+
   async createArchive(
     {abortSignal, ...params}: RequestConfig & s.CreateArchiveRequest,
   ): Promise<s.CreateArchiveResponse> {
@@ -81,6 +107,30 @@ export default class EventBridge {
         "State": (x: jsonP.JSONValue) => cmnP.readEnum<s.ArchiveState>(x),
         "StateReason": "s",
         "CreationTime": "d",
+      },
+    }, await resp.json());
+  }
+
+  async createConnection(
+    {abortSignal, ...params}: RequestConfig & s.CreateConnectionRequest,
+  ): Promise<s.CreateConnectionResponse> {
+    const body: jsonP.JSONObject = {
+      Name: params["Name"],
+      Description: params["Description"],
+      AuthorizationType: params["AuthorizationType"],
+      AuthParameters: fromCreateConnectionAuthRequestParameters(params["AuthParameters"]),
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "CreateConnection",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ConnectionArn": "s",
+        "ConnectionState": (x: jsonP.JSONValue) => cmnP.readEnum<s.ConnectionState>(x),
+        "CreationTime": "d",
+        "LastModifiedTime": "d",
       },
     }, await resp.json());
   }
@@ -136,6 +186,44 @@ export default class EventBridge {
     });
   }
 
+  async deauthorizeConnection(
+    {abortSignal, ...params}: RequestConfig & s.DeauthorizeConnectionRequest,
+  ): Promise<s.DeauthorizeConnectionResponse> {
+    const body: jsonP.JSONObject = {
+      Name: params["Name"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DeauthorizeConnection",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ConnectionArn": "s",
+        "ConnectionState": (x: jsonP.JSONValue) => cmnP.readEnum<s.ConnectionState>(x),
+        "CreationTime": "d",
+        "LastModifiedTime": "d",
+        "LastAuthorizedTime": "d",
+      },
+    }, await resp.json());
+  }
+
+  async deleteApiDestination(
+    {abortSignal, ...params}: RequestConfig & s.DeleteApiDestinationRequest,
+  ): Promise<s.DeleteApiDestinationResponse> {
+    const body: jsonP.JSONObject = {
+      Name: params["Name"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DeleteApiDestination",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
+  }
+
   async deleteArchive(
     {abortSignal, ...params}: RequestConfig & s.DeleteArchiveRequest,
   ): Promise<s.DeleteArchiveResponse> {
@@ -149,6 +237,28 @@ export default class EventBridge {
     return jsonP.readObj({
       required: {},
       optional: {},
+    }, await resp.json());
+  }
+
+  async deleteConnection(
+    {abortSignal, ...params}: RequestConfig & s.DeleteConnectionRequest,
+  ): Promise<s.DeleteConnectionResponse> {
+    const body: jsonP.JSONObject = {
+      Name: params["Name"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DeleteConnection",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ConnectionArn": "s",
+        "ConnectionState": (x: jsonP.JSONValue) => cmnP.readEnum<s.ConnectionState>(x),
+        "CreationTime": "d",
+        "LastModifiedTime": "d",
+        "LastAuthorizedTime": "d",
+      },
     }, await resp.json());
   }
 
@@ -191,6 +301,33 @@ export default class EventBridge {
     });
   }
 
+  async describeApiDestination(
+    {abortSignal, ...params}: RequestConfig & s.DescribeApiDestinationRequest,
+  ): Promise<s.DescribeApiDestinationResponse> {
+    const body: jsonP.JSONObject = {
+      Name: params["Name"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DescribeApiDestination",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ApiDestinationArn": "s",
+        "Name": "s",
+        "Description": "s",
+        "ApiDestinationState": (x: jsonP.JSONValue) => cmnP.readEnum<s.ApiDestinationState>(x),
+        "ConnectionArn": "s",
+        "InvocationEndpoint": "s",
+        "HttpMethod": (x: jsonP.JSONValue) => cmnP.readEnum<s.ApiDestinationHttpMethod>(x),
+        "InvocationRateLimitPerSecond": "n",
+        "CreationTime": "d",
+        "LastModifiedTime": "d",
+      },
+    }, await resp.json());
+  }
+
   async describeArchive(
     {abortSignal, ...params}: RequestConfig & s.DescribeArchiveRequest,
   ): Promise<s.DescribeArchiveResponse> {
@@ -215,6 +352,34 @@ export default class EventBridge {
         "SizeBytes": "n",
         "EventCount": "n",
         "CreationTime": "d",
+      },
+    }, await resp.json());
+  }
+
+  async describeConnection(
+    {abortSignal, ...params}: RequestConfig & s.DescribeConnectionRequest,
+  ): Promise<s.DescribeConnectionResponse> {
+    const body: jsonP.JSONObject = {
+      Name: params["Name"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DescribeConnection",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ConnectionArn": "s",
+        "Name": "s",
+        "Description": "s",
+        "ConnectionState": (x: jsonP.JSONValue) => cmnP.readEnum<s.ConnectionState>(x),
+        "StateReason": "s",
+        "AuthorizationType": (x: jsonP.JSONValue) => cmnP.readEnum<s.ConnectionAuthorizationType>(x),
+        "SecretArn": "s",
+        "AuthParameters": toConnectionAuthResponseParameters,
+        "CreationTime": "d",
+        "LastModifiedTime": "d",
+        "LastAuthorizedTime": "d",
       },
     }, await resp.json());
   }
@@ -364,6 +529,28 @@ export default class EventBridge {
     });
   }
 
+  async listApiDestinations(
+    {abortSignal, ...params}: RequestConfig & s.ListApiDestinationsRequest = {},
+  ): Promise<s.ListApiDestinationsResponse> {
+    const body: jsonP.JSONObject = {
+      NamePrefix: params["NamePrefix"],
+      ConnectionArn: params["ConnectionArn"],
+      NextToken: params["NextToken"],
+      Limit: params["Limit"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "ListApiDestinations",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ApiDestinations": [toApiDestination],
+        "NextToken": "s",
+      },
+    }, await resp.json());
+  }
+
   async listArchives(
     {abortSignal, ...params}: RequestConfig & s.ListArchivesRequest = {},
   ): Promise<s.ListArchivesResponse> {
@@ -382,6 +569,28 @@ export default class EventBridge {
       required: {},
       optional: {
         "Archives": [toArchive],
+        "NextToken": "s",
+      },
+    }, await resp.json());
+  }
+
+  async listConnections(
+    {abortSignal, ...params}: RequestConfig & s.ListConnectionsRequest = {},
+  ): Promise<s.ListConnectionsResponse> {
+    const body: jsonP.JSONObject = {
+      NamePrefix: params["NamePrefix"],
+      ConnectionState: params["ConnectionState"],
+      NextToken: params["NextToken"],
+      Limit: params["Limit"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "ListConnections",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Connections": [toConnection],
         "NextToken": "s",
       },
     }, await resp.json());
@@ -794,6 +1003,32 @@ export default class EventBridge {
     }, await resp.json());
   }
 
+  async updateApiDestination(
+    {abortSignal, ...params}: RequestConfig & s.UpdateApiDestinationRequest,
+  ): Promise<s.UpdateApiDestinationResponse> {
+    const body: jsonP.JSONObject = {
+      Name: params["Name"],
+      Description: params["Description"],
+      ConnectionArn: params["ConnectionArn"],
+      InvocationEndpoint: params["InvocationEndpoint"],
+      HttpMethod: params["HttpMethod"],
+      InvocationRateLimitPerSecond: params["InvocationRateLimitPerSecond"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "UpdateApiDestination",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ApiDestinationArn": "s",
+        "ApiDestinationState": (x: jsonP.JSONValue) => cmnP.readEnum<s.ApiDestinationState>(x),
+        "CreationTime": "d",
+        "LastModifiedTime": "d",
+      },
+    }, await resp.json());
+  }
+
   async updateArchive(
     {abortSignal, ...params}: RequestConfig & s.UpdateArchiveRequest,
   ): Promise<s.UpdateArchiveResponse> {
@@ -818,6 +1053,151 @@ export default class EventBridge {
     }, await resp.json());
   }
 
+  async updateConnection(
+    {abortSignal, ...params}: RequestConfig & s.UpdateConnectionRequest,
+  ): Promise<s.UpdateConnectionResponse> {
+    const body: jsonP.JSONObject = {
+      Name: params["Name"],
+      Description: params["Description"],
+      AuthorizationType: params["AuthorizationType"],
+      AuthParameters: fromUpdateConnectionAuthRequestParameters(params["AuthParameters"]),
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "UpdateConnection",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ConnectionArn": "s",
+        "ConnectionState": (x: jsonP.JSONValue) => cmnP.readEnum<s.ConnectionState>(x),
+        "CreationTime": "d",
+        "LastModifiedTime": "d",
+        "LastAuthorizedTime": "d",
+      },
+    }, await resp.json());
+  }
+
+}
+
+function fromCreateConnectionAuthRequestParameters(input?: s.CreateConnectionAuthRequestParameters | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    BasicAuthParameters: fromCreateConnectionBasicAuthRequestParameters(input["BasicAuthParameters"]),
+    OAuthParameters: fromCreateConnectionOAuthRequestParameters(input["OAuthParameters"]),
+    ApiKeyAuthParameters: fromCreateConnectionApiKeyAuthRequestParameters(input["ApiKeyAuthParameters"]),
+    InvocationHttpParameters: fromConnectionHttpParameters(input["InvocationHttpParameters"]),
+  }
+}
+
+function fromCreateConnectionBasicAuthRequestParameters(input?: s.CreateConnectionBasicAuthRequestParameters | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    Username: input["Username"],
+    Password: input["Password"],
+  }
+}
+
+function fromCreateConnectionOAuthRequestParameters(input?: s.CreateConnectionOAuthRequestParameters | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    ClientParameters: fromCreateConnectionOAuthClientRequestParameters(input["ClientParameters"]),
+    AuthorizationEndpoint: input["AuthorizationEndpoint"],
+    HttpMethod: input["HttpMethod"],
+    OAuthHttpParameters: fromConnectionHttpParameters(input["OAuthHttpParameters"]),
+  }
+}
+
+function fromCreateConnectionOAuthClientRequestParameters(input?: s.CreateConnectionOAuthClientRequestParameters | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    ClientID: input["ClientID"],
+    ClientSecret: input["ClientSecret"],
+  }
+}
+
+function fromConnectionHttpParameters(input?: s.ConnectionHttpParameters | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    HeaderParameters: input["HeaderParameters"]?.map(x => fromConnectionHeaderParameter(x)),
+    QueryStringParameters: input["QueryStringParameters"]?.map(x => fromConnectionQueryStringParameter(x)),
+    BodyParameters: input["BodyParameters"]?.map(x => fromConnectionBodyParameter(x)),
+  }
+}
+function toConnectionHttpParameters(root: jsonP.JSONValue): s.ConnectionHttpParameters {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "HeaderParameters": [toConnectionHeaderParameter],
+      "QueryStringParameters": [toConnectionQueryStringParameter],
+      "BodyParameters": [toConnectionBodyParameter],
+    },
+  }, root);
+}
+
+function fromConnectionHeaderParameter(input?: s.ConnectionHeaderParameter | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    Key: input["Key"],
+    Value: input["Value"],
+    IsValueSecret: input["IsValueSecret"],
+  }
+}
+function toConnectionHeaderParameter(root: jsonP.JSONValue): s.ConnectionHeaderParameter {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "Key": "s",
+      "Value": "s",
+      "IsValueSecret": "b",
+    },
+  }, root);
+}
+
+function fromConnectionQueryStringParameter(input?: s.ConnectionQueryStringParameter | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    Key: input["Key"],
+    Value: input["Value"],
+    IsValueSecret: input["IsValueSecret"],
+  }
+}
+function toConnectionQueryStringParameter(root: jsonP.JSONValue): s.ConnectionQueryStringParameter {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "Key": "s",
+      "Value": "s",
+      "IsValueSecret": "b",
+    },
+  }, root);
+}
+
+function fromConnectionBodyParameter(input?: s.ConnectionBodyParameter | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    Key: input["Key"],
+    Value: input["Value"],
+    IsValueSecret: input["IsValueSecret"],
+  }
+}
+function toConnectionBodyParameter(root: jsonP.JSONValue): s.ConnectionBodyParameter {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "Key": "s",
+      "Value": "s",
+      "IsValueSecret": "b",
+    },
+  }, root);
+}
+
+function fromCreateConnectionApiKeyAuthRequestParameters(input?: s.CreateConnectionApiKeyAuthRequestParameters | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    ApiKeyName: input["ApiKeyName"],
+    ApiKeyValue: input["ApiKeyValue"],
+  }
 }
 
 function fromTag(input?: s.Tag | null): jsonP.JSONValue {
@@ -846,6 +1226,7 @@ function fromPutEventsRequestEntry(input?: s.PutEventsRequestEntry | null): json
     DetailType: input["DetailType"],
     Detail: input["Detail"],
     EventBusName: input["EventBusName"],
+    TraceHeader: input["TraceHeader"],
   }
 }
 
@@ -885,6 +1266,7 @@ function fromTarget(input?: s.Target | null): jsonP.JSONValue {
     SqsParameters: fromSqsParameters(input["SqsParameters"]),
     HttpParameters: fromHttpParameters(input["HttpParameters"]),
     RedshiftDataParameters: fromRedshiftDataParameters(input["RedshiftDataParameters"]),
+    SageMakerPipelineParameters: fromSageMakerPipelineParameters(input["SageMakerPipelineParameters"]),
     DeadLetterConfig: fromDeadLetterConfig(input["DeadLetterConfig"]),
     RetryPolicy: fromRetryPolicy(input["RetryPolicy"]),
   }
@@ -907,6 +1289,7 @@ function toTarget(root: jsonP.JSONValue): s.Target {
       "SqsParameters": toSqsParameters,
       "HttpParameters": toHttpParameters,
       "RedshiftDataParameters": toRedshiftDataParameters,
+      "SageMakerPipelineParameters": toSageMakerPipelineParameters,
       "DeadLetterConfig": toDeadLetterConfig,
       "RetryPolicy": toRetryPolicy,
     },
@@ -1151,6 +1534,38 @@ function toRedshiftDataParameters(root: jsonP.JSONValue): s.RedshiftDataParamete
   }, root);
 }
 
+function fromSageMakerPipelineParameters(input?: s.SageMakerPipelineParameters | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    PipelineParameterList: input["PipelineParameterList"]?.map(x => fromSageMakerPipelineParameter(x)),
+  }
+}
+function toSageMakerPipelineParameters(root: jsonP.JSONValue): s.SageMakerPipelineParameters {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "PipelineParameterList": [toSageMakerPipelineParameter],
+    },
+  }, root);
+}
+
+function fromSageMakerPipelineParameter(input?: s.SageMakerPipelineParameter | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    Name: input["Name"],
+    Value: input["Value"],
+  }
+}
+function toSageMakerPipelineParameter(root: jsonP.JSONValue): s.SageMakerPipelineParameter {
+  return jsonP.readObj({
+    required: {
+      "Name": "s",
+      "Value": "s",
+    },
+    optional: {},
+  }, root);
+}
+
 function fromDeadLetterConfig(input?: s.DeadLetterConfig | null): jsonP.JSONValue {
   if (!input) return input;
   return {
@@ -1201,6 +1616,118 @@ function toReplayDestination(root: jsonP.JSONValue): s.ReplayDestination {
   }, root);
 }
 
+function fromUpdateConnectionAuthRequestParameters(input?: s.UpdateConnectionAuthRequestParameters | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    BasicAuthParameters: fromUpdateConnectionBasicAuthRequestParameters(input["BasicAuthParameters"]),
+    OAuthParameters: fromUpdateConnectionOAuthRequestParameters(input["OAuthParameters"]),
+    ApiKeyAuthParameters: fromUpdateConnectionApiKeyAuthRequestParameters(input["ApiKeyAuthParameters"]),
+    InvocationHttpParameters: fromConnectionHttpParameters(input["InvocationHttpParameters"]),
+  }
+}
+
+function fromUpdateConnectionBasicAuthRequestParameters(input?: s.UpdateConnectionBasicAuthRequestParameters | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    Username: input["Username"],
+    Password: input["Password"],
+  }
+}
+
+function fromUpdateConnectionOAuthRequestParameters(input?: s.UpdateConnectionOAuthRequestParameters | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    ClientParameters: fromUpdateConnectionOAuthClientRequestParameters(input["ClientParameters"]),
+    AuthorizationEndpoint: input["AuthorizationEndpoint"],
+    HttpMethod: input["HttpMethod"],
+    OAuthHttpParameters: fromConnectionHttpParameters(input["OAuthHttpParameters"]),
+  }
+}
+
+function fromUpdateConnectionOAuthClientRequestParameters(input?: s.UpdateConnectionOAuthClientRequestParameters | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    ClientID: input["ClientID"],
+    ClientSecret: input["ClientSecret"],
+  }
+}
+
+function fromUpdateConnectionApiKeyAuthRequestParameters(input?: s.UpdateConnectionApiKeyAuthRequestParameters | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    ApiKeyName: input["ApiKeyName"],
+    ApiKeyValue: input["ApiKeyValue"],
+  }
+}
+
+function toConnectionAuthResponseParameters(root: jsonP.JSONValue): s.ConnectionAuthResponseParameters {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "BasicAuthParameters": toConnectionBasicAuthResponseParameters,
+      "OAuthParameters": toConnectionOAuthResponseParameters,
+      "ApiKeyAuthParameters": toConnectionApiKeyAuthResponseParameters,
+      "InvocationHttpParameters": toConnectionHttpParameters,
+    },
+  }, root);
+}
+
+function toConnectionBasicAuthResponseParameters(root: jsonP.JSONValue): s.ConnectionBasicAuthResponseParameters {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "Username": "s",
+    },
+  }, root);
+}
+
+function toConnectionOAuthResponseParameters(root: jsonP.JSONValue): s.ConnectionOAuthResponseParameters {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "ClientParameters": toConnectionOAuthClientResponseParameters,
+      "AuthorizationEndpoint": "s",
+      "HttpMethod": (x: jsonP.JSONValue) => cmnP.readEnum<s.ConnectionOAuthHttpMethod>(x),
+      "OAuthHttpParameters": toConnectionHttpParameters,
+    },
+  }, root);
+}
+
+function toConnectionOAuthClientResponseParameters(root: jsonP.JSONValue): s.ConnectionOAuthClientResponseParameters {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "ClientID": "s",
+    },
+  }, root);
+}
+
+function toConnectionApiKeyAuthResponseParameters(root: jsonP.JSONValue): s.ConnectionApiKeyAuthResponseParameters {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "ApiKeyName": "s",
+    },
+  }, root);
+}
+
+function toApiDestination(root: jsonP.JSONValue): s.ApiDestination {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "ApiDestinationArn": "s",
+      "Name": "s",
+      "ApiDestinationState": (x: jsonP.JSONValue) => cmnP.readEnum<s.ApiDestinationState>(x),
+      "ConnectionArn": "s",
+      "InvocationEndpoint": "s",
+      "HttpMethod": (x: jsonP.JSONValue) => cmnP.readEnum<s.ApiDestinationHttpMethod>(x),
+      "InvocationRateLimitPerSecond": "n",
+      "CreationTime": "d",
+      "LastModifiedTime": "d",
+    },
+  }, root);
+}
+
 function toArchive(root: jsonP.JSONValue): s.Archive {
   return jsonP.readObj({
     required: {},
@@ -1213,6 +1740,22 @@ function toArchive(root: jsonP.JSONValue): s.Archive {
       "SizeBytes": "n",
       "EventCount": "n",
       "CreationTime": "d",
+    },
+  }, root);
+}
+
+function toConnection(root: jsonP.JSONValue): s.Connection {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "ConnectionArn": "s",
+      "Name": "s",
+      "ConnectionState": (x: jsonP.JSONValue) => cmnP.readEnum<s.ConnectionState>(x),
+      "StateReason": "s",
+      "AuthorizationType": (x: jsonP.JSONValue) => cmnP.readEnum<s.ConnectionAuthorizationType>(x),
+      "CreationTime": "d",
+      "LastModifiedTime": "d",
+      "LastAuthorizedTime": "d",
     },
   }, root);
 }

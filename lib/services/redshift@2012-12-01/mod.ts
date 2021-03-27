@@ -2194,6 +2194,7 @@ function Cluster_Parse(node: xmlP.XmlNode): s.Cluster {
     ExpectedNextSnapshotScheduleTime: node.first("ExpectedNextSnapshotScheduleTime", false, x => xmlP.parseTimestamp(x.content)),
     NextMaintenanceWindowStartTime: node.first("NextMaintenanceWindowStartTime", false, x => xmlP.parseTimestamp(x.content)),
     ResizeInfo: node.first("ResizeInfo", false, ResizeInfo_Parse),
+    TotalStorageCapacityInMegaBytes: node.first("TotalStorageCapacityInMegaBytes", false, x => parseInt(x.content ?? '0')),
   };
 }
 
@@ -2208,8 +2209,17 @@ function Endpoint_Parse(node: xmlP.XmlNode): s.Endpoint {
 }
 
 function VpcEndpoint_Parse(node: xmlP.XmlNode): s.VpcEndpoint {
+  return {
+    ...node.strings({
+      optional: {"VpcEndpointId":true,"VpcId":true},
+    }),
+    NetworkInterfaces: node.getList("NetworkInterfaces", "NetworkInterface").map(NetworkInterface_Parse),
+  };
+}
+
+function NetworkInterface_Parse(node: xmlP.XmlNode): s.NetworkInterface {
   return node.strings({
-    optional: {"VpcEndpointId":true},
+    optional: {"NetworkInterfaceId":true,"SubnetId":true,"PrivateIpAddress":true,"AvailabilityZone":true},
   });
 }
 

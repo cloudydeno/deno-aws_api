@@ -29,6 +29,32 @@ export default class MediaPackageVod {
     "uid": "mediapackage-vod-2018-11-07"
   };
 
+  async configureLogs(
+    {abortSignal, ...params}: RequestConfig & s.ConfigureLogsRequest,
+  ): Promise<s.ConfigureLogsResponse> {
+    const body: jsonP.JSONObject = {
+      egressAccessLogs: fromEgressAccessLogs(params["EgressAccessLogs"]),
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "ConfigureLogs",
+      method: "PUT",
+      requestUri: cmnP.encodePath`/packaging_groups/${params["Id"]}/configure_logs`,
+      responseCode: 200,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+        "Authorization": toAuthorization,
+        "DomainName": "s",
+        "EgressAccessLogs": toEgressAccessLogs,
+        "Id": "s",
+        "Tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
+  }
+
   async createAsset(
     {abortSignal, ...params}: RequestConfig & s.CreateAssetRequest,
   ): Promise<s.CreateAssetResponse> {
@@ -100,6 +126,7 @@ export default class MediaPackageVod {
   ): Promise<s.CreatePackagingGroupResponse> {
     const body: jsonP.JSONObject = {
       authorization: fromAuthorization(params["Authorization"]),
+      egressAccessLogs: fromEgressAccessLogs(params["EgressAccessLogs"]),
       id: params["Id"],
       tags: params["Tags"],
     };
@@ -115,6 +142,7 @@ export default class MediaPackageVod {
         "Arn": "s",
         "Authorization": toAuthorization,
         "DomainName": "s",
+        "EgressAccessLogs": toEgressAccessLogs,
         "Id": "s",
         "Tags": x => jsonP.readMap(String, String, x),
       },
@@ -242,6 +270,7 @@ export default class MediaPackageVod {
         "Arn": "s",
         "Authorization": toAuthorization,
         "DomainName": "s",
+        "EgressAccessLogs": toEgressAccessLogs,
         "Id": "s",
         "Tags": x => jsonP.readMap(String, String, x),
       },
@@ -384,12 +413,28 @@ export default class MediaPackageVod {
         "Arn": "s",
         "Authorization": toAuthorization,
         "DomainName": "s",
+        "EgressAccessLogs": toEgressAccessLogs,
         "Id": "s",
         "Tags": x => jsonP.readMap(String, String, x),
       },
     }, await resp.json());
   }
 
+}
+
+function fromEgressAccessLogs(input?: s.EgressAccessLogs | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    logGroupName: input["LogGroupName"],
+  }
+}
+function toEgressAccessLogs(root: jsonP.JSONValue): s.EgressAccessLogs {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "LogGroupName": "s",
+    },
+  }, root);
 }
 
 function fromCmafPackage(input?: s.CmafPackage | null): jsonP.JSONValue {
@@ -712,6 +757,7 @@ function toPackagingGroup(root: jsonP.JSONValue): s.PackagingGroup {
       "Arn": "s",
       "Authorization": toAuthorization,
       "DomainName": "s",
+      "EgressAccessLogs": toEgressAccessLogs,
       "Id": "s",
       "Tags": x => jsonP.readMap(String, String, x),
     },

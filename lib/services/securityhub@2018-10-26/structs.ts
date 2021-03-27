@@ -537,12 +537,12 @@ export interface AwsSecurityFinding {
   ProductArn: string;
   GeneratorId: string;
   AwsAccountId: string;
-  Types: string[];
+  Types?: string[] | null;
   FirstObservedAt?: string | null;
   LastObservedAt?: string | null;
   CreatedAt: string;
   UpdatedAt: string;
-  Severity: Severity;
+  Severity?: Severity | null;
   Confidence?: number | null;
   Criticality?: number | null;
   Title: string;
@@ -567,6 +567,7 @@ export interface AwsSecurityFinding {
   Vulnerabilities?: Vulnerability[] | null;
   PatchSummary?: PatchSummary | null;
   Action?: Action | null;
+  FindingProviderFields?: FindingProviderFields | null;
 }
 
 // refs: 2 - tags: input, named, interface, output
@@ -577,7 +578,7 @@ export interface Severity {
   Original?: string | null;
 }
 
-// refs: 3 - tags: input, named, enum, output
+// refs: 5 - tags: input, named, enum, output
 export type SeverityLabel =
 | "INFORMATIONAL"
 | "LOW"
@@ -733,6 +734,7 @@ export interface Resource {
   Region?: string | null;
   ResourceRole?: string | null;
   Tags?: { [key: string]: string | null | undefined } | null;
+  DataClassification?: DataClassificationDetails | null;
   Details?: ResourceDetails | null;
 }
 
@@ -742,6 +744,93 @@ export type Partition =
 | "aws-cn"
 | "aws-us-gov"
 | cmnP.UnexpectedEnumValue;
+
+// refs: 2 - tags: input, named, interface, output
+export interface DataClassificationDetails {
+  DetailedResultsLocation?: string | null;
+  Result?: ClassificationResult | null;
+}
+
+// refs: 2 - tags: input, named, interface, output
+export interface ClassificationResult {
+  MimeType?: string | null;
+  SizeClassified?: number | null;
+  AdditionalOccurrences?: boolean | null;
+  Status?: ClassificationStatus | null;
+  SensitiveData?: SensitiveDataResult[] | null;
+  CustomDataIdentifiers?: CustomDataIdentifiersResult | null;
+}
+
+// refs: 2 - tags: input, named, interface, output
+export interface ClassificationStatus {
+  Code?: string | null;
+  Reason?: string | null;
+}
+
+// refs: 2 - tags: input, named, interface, output
+export interface SensitiveDataResult {
+  Category?: string | null;
+  Detections?: SensitiveDataDetections[] | null;
+  TotalCount?: number | null;
+}
+
+// refs: 2 - tags: input, named, interface, output
+export interface SensitiveDataDetections {
+  Count?: number | null;
+  Type?: string | null;
+  Occurrences?: Occurrences | null;
+}
+
+// refs: 4 - tags: input, named, interface, output
+export interface Occurrences {
+  LineRanges?: Range[] | null;
+  OffsetRanges?: Range[] | null;
+  Pages?: Page[] | null;
+  Records?: Record[] | null;
+  Cells?: Cell[] | null;
+}
+
+// refs: 16 - tags: input, named, interface, output
+export interface Range {
+  Start?: number | null;
+  End?: number | null;
+  StartColumn?: number | null;
+}
+
+// refs: 4 - tags: input, named, interface, output
+export interface Page {
+  PageNumber?: number | null;
+  LineRange?: Range | null;
+  OffsetRange?: Range | null;
+}
+
+// refs: 4 - tags: input, named, interface, output
+export interface Record {
+  JsonPath?: string | null;
+  RecordIndex?: number | null;
+}
+
+// refs: 4 - tags: input, named, interface, output
+export interface Cell {
+  Column?: number | null;
+  Row?: number | null;
+  ColumnName?: string | null;
+  CellReference?: string | null;
+}
+
+// refs: 2 - tags: input, named, interface, output
+export interface CustomDataIdentifiersResult {
+  Detections?: CustomDataIdentifiersDetections[] | null;
+  TotalCount?: number | null;
+}
+
+// refs: 2 - tags: input, named, interface, output
+export interface CustomDataIdentifiersDetections {
+  Count?: number | null;
+  Arn?: string | null;
+  Name?: string | null;
+  Occurrences?: Occurrences | null;
+}
 
 // refs: 2 - tags: input, named, interface, output
 export interface ResourceDetails {
@@ -757,6 +846,7 @@ export interface ResourceDetails {
   AwsElbv2LoadBalancer?: AwsElbv2LoadBalancerDetails | null;
   AwsElasticsearchDomain?: AwsElasticsearchDomainDetails | null;
   AwsS3Bucket?: AwsS3BucketDetails | null;
+  AwsS3AccountPublicAccessBlock?: AwsS3AccountPublicAccessBlockDetails | null;
   AwsS3Object?: AwsS3ObjectDetails | null;
   AwsSecretsManagerSecret?: AwsSecretsManagerSecretDetails | null;
   AwsIamAccessKey?: AwsIamAccessKeyDetails | null;
@@ -1138,6 +1228,7 @@ export interface AwsS3BucketDetails {
   OwnerName?: string | null;
   CreatedAt?: string | null;
   ServerSideEncryptionConfiguration?: AwsS3BucketServerSideEncryptionConfiguration | null;
+  PublicAccessBlockConfiguration?: AwsS3AccountPublicAccessBlockDetails | null;
 }
 
 // refs: 2 - tags: input, named, interface, output
@@ -1154,6 +1245,14 @@ export interface AwsS3BucketServerSideEncryptionRule {
 export interface AwsS3BucketServerSideEncryptionByDefault {
   SSEAlgorithm?: string | null;
   KMSMasterKeyID?: string | null;
+}
+
+// refs: 4 - tags: input, named, interface, output
+export interface AwsS3AccountPublicAccessBlockDetails {
+  BlockPublicAcls?: boolean | null;
+  BlockPublicPolicy?: boolean | null;
+  IgnorePublicAcls?: boolean | null;
+  RestrictPublicBuckets?: boolean | null;
 }
 
 // refs: 2 - tags: input, named, interface, output
@@ -2427,7 +2526,7 @@ export type RecordState =
 | "ARCHIVED"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 3 - tags: input, named, interface, output
+// refs: 5 - tags: input, named, interface, output
 export interface RelatedFinding {
   ProductArn: string;
   Id: string;
@@ -2597,6 +2696,21 @@ export interface ActionLocalIpDetails {
   IpAddressV4?: string | null;
 }
 
+// refs: 2 - tags: input, named, interface, output
+export interface FindingProviderFields {
+  Confidence?: number | null;
+  Criticality?: number | null;
+  RelatedFindings?: RelatedFinding[] | null;
+  Severity?: FindingProviderSeverity | null;
+  Types?: string[] | null;
+}
+
+// refs: 2 - tags: input, named, interface, output
+export interface FindingProviderSeverity {
+  Label?: SeverityLabel | null;
+  Original?: string | null;
+}
+
 // refs: 3 - tags: input, named, interface, output
 export interface AwsSecurityFindingIdentifier {
   Id: string;
@@ -2707,15 +2821,22 @@ export interface AwsSecurityFindingFilters {
   NoteUpdatedAt?: DateFilter[] | null;
   NoteUpdatedBy?: StringFilter[] | null;
   Keyword?: KeywordFilter[] | null;
+  FindingProviderFieldsConfidence?: NumberFilter[] | null;
+  FindingProviderFieldsCriticality?: NumberFilter[] | null;
+  FindingProviderFieldsRelatedFindingsId?: StringFilter[] | null;
+  FindingProviderFieldsRelatedFindingsProductArn?: StringFilter[] | null;
+  FindingProviderFieldsSeverityLabel?: StringFilter[] | null;
+  FindingProviderFieldsSeverityOriginal?: StringFilter[] | null;
+  FindingProviderFieldsTypes?: StringFilter[] | null;
 }
 
-// refs: 270 - tags: input, named, interface, output
+// refs: 295 - tags: input, named, interface, output
 export interface StringFilter {
   Value?: string | null;
   Comparison?: StringFilterComparison | null;
 }
 
-// refs: 270 - tags: input, named, enum, output
+// refs: 295 - tags: input, named, enum, output
 export type StringFilterComparison =
 | "EQUALS"
 | "PREFIX"
@@ -2741,7 +2862,7 @@ export type DateRangeUnit =
 | "DAYS"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 40 - tags: input, named, interface, output
+// refs: 50 - tags: input, named, interface, output
 export interface NumberFilter {
   Gte?: number | null;
   Lte?: number | null;

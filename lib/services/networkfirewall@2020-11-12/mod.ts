@@ -1196,6 +1196,7 @@ function toPerObjectStatus(root: jsonP.JSONValue): s.PerObjectStatus {
     required: {},
     optional: {
       "SyncStatus": (x: jsonP.JSONValue) => cmnP.readEnum<s.PerObjectSyncStatus>(x),
+      "UpdateToken": "s",
     },
   }, root);
 }

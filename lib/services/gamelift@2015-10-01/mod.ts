@@ -5,7 +5,7 @@ interface RequestConfig {
 }
 
 export * from "./structs.ts";
-import * as Base64 from "https://deno.land/std@0.86.0/encoding/base64.ts";
+import * as Base64 from "https://deno.land/std@0.91.0/encoding/base64.ts";
 import * as client from "../../client/common.ts";
 import * as cmnP from "../../encoding/common.ts";
 import * as jsonP from "../../encoding/json.ts";
@@ -138,6 +138,7 @@ export default class GameLift {
       FleetType: params["FleetType"],
       InstanceRoleArn: params["InstanceRoleArn"],
       CertificateConfiguration: fromCertificateConfiguration(params["CertificateConfiguration"]),
+      Locations: params["Locations"]?.map(x => fromLocationConfiguration(x)),
       Tags: params["Tags"]?.map(x => fromTag(x)),
     };
     const resp = await this.#client.performRequest({
@@ -148,6 +149,28 @@ export default class GameLift {
       required: {},
       optional: {
         "FleetAttributes": toFleetAttributes,
+        "LocationStates": [toLocationState],
+      },
+    }, await resp.json());
+  }
+
+  async createFleetLocations(
+    {abortSignal, ...params}: RequestConfig & s.CreateFleetLocationsInput,
+  ): Promise<s.CreateFleetLocationsOutput> {
+    const body: jsonP.JSONObject = {
+      FleetId: params["FleetId"],
+      Locations: params["Locations"]?.map(x => fromLocationConfiguration(x)),
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "CreateFleetLocations",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "FleetId": "s",
+        "FleetArn": "s",
+        "LocationStates": [toLocationState],
       },
     }, await resp.json());
   }
@@ -193,6 +216,7 @@ export default class GameLift {
       GameSessionId: params["GameSessionId"],
       IdempotencyToken: params["IdempotencyToken"],
       GameSessionData: params["GameSessionData"],
+      Location: params["Location"],
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -214,6 +238,10 @@ export default class GameLift {
       TimeoutInSeconds: params["TimeoutInSeconds"],
       PlayerLatencyPolicies: params["PlayerLatencyPolicies"]?.map(x => fromPlayerLatencyPolicy(x)),
       Destinations: params["Destinations"]?.map(x => fromGameSessionQueueDestination(x)),
+      FilterConfiguration: fromFilterConfiguration(params["FilterConfiguration"]),
+      PriorityConfiguration: fromPriorityConfiguration(params["PriorityConfiguration"]),
+      CustomEventData: params["CustomEventData"],
+      NotificationTarget: params["NotificationTarget"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
     };
     const resp = await this.#client.performRequest({
@@ -415,6 +443,27 @@ export default class GameLift {
     });
   }
 
+  async deleteFleetLocations(
+    {abortSignal, ...params}: RequestConfig & s.DeleteFleetLocationsInput,
+  ): Promise<s.DeleteFleetLocationsOutput> {
+    const body: jsonP.JSONObject = {
+      FleetId: params["FleetId"],
+      Locations: params["Locations"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DeleteFleetLocations",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "FleetId": "s",
+        "FleetArn": "s",
+        "LocationStates": [toLocationState],
+      },
+    }, await resp.json());
+  }
+
   async deleteGameServerGroup(
     {abortSignal, ...params}: RequestConfig & s.DeleteGameServerGroupInput,
   ): Promise<s.DeleteGameServerGroupOutput> {
@@ -595,6 +644,7 @@ export default class GameLift {
   ): Promise<s.DescribeEC2InstanceLimitsOutput> {
     const body: jsonP.JSONObject = {
       EC2InstanceType: params["EC2InstanceType"],
+      Location: params["Location"],
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -673,11 +723,74 @@ export default class GameLift {
     }, await resp.json());
   }
 
+  async describeFleetLocationAttributes(
+    {abortSignal, ...params}: RequestConfig & s.DescribeFleetLocationAttributesInput,
+  ): Promise<s.DescribeFleetLocationAttributesOutput> {
+    const body: jsonP.JSONObject = {
+      FleetId: params["FleetId"],
+      Locations: params["Locations"],
+      Limit: params["Limit"],
+      NextToken: params["NextToken"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DescribeFleetLocationAttributes",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "FleetId": "s",
+        "FleetArn": "s",
+        "LocationAttributes": [toLocationAttributes],
+        "NextToken": "s",
+      },
+    }, await resp.json());
+  }
+
+  async describeFleetLocationCapacity(
+    {abortSignal, ...params}: RequestConfig & s.DescribeFleetLocationCapacityInput,
+  ): Promise<s.DescribeFleetLocationCapacityOutput> {
+    const body: jsonP.JSONObject = {
+      FleetId: params["FleetId"],
+      Location: params["Location"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DescribeFleetLocationCapacity",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "FleetCapacity": toFleetCapacity,
+      },
+    }, await resp.json());
+  }
+
+  async describeFleetLocationUtilization(
+    {abortSignal, ...params}: RequestConfig & s.DescribeFleetLocationUtilizationInput,
+  ): Promise<s.DescribeFleetLocationUtilizationOutput> {
+    const body: jsonP.JSONObject = {
+      FleetId: params["FleetId"],
+      Location: params["Location"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DescribeFleetLocationUtilization",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "FleetUtilization": toFleetUtilization,
+      },
+    }, await resp.json());
+  }
+
   async describeFleetPortSettings(
     {abortSignal, ...params}: RequestConfig & s.DescribeFleetPortSettingsInput,
   ): Promise<s.DescribeFleetPortSettingsOutput> {
     const body: jsonP.JSONObject = {
       FleetId: params["FleetId"],
+      Location: params["Location"],
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -686,7 +799,11 @@ export default class GameLift {
     return jsonP.readObj({
       required: {},
       optional: {
+        "FleetId": "s",
+        "FleetArn": "s",
         "InboundPermissions": [toIpPermission],
+        "UpdateStatus": (x: jsonP.JSONValue) => cmnP.readEnum<s.LocationUpdateStatus>(x),
+        "Location": "s",
       },
     }, await resp.json());
   }
@@ -778,6 +895,7 @@ export default class GameLift {
       FleetId: params["FleetId"],
       GameSessionId: params["GameSessionId"],
       AliasId: params["AliasId"],
+      Location: params["Location"],
       StatusFilter: params["StatusFilter"],
       Limit: params["Limit"],
       NextToken: params["NextToken"],
@@ -841,6 +959,7 @@ export default class GameLift {
       FleetId: params["FleetId"],
       GameSessionId: params["GameSessionId"],
       AliasId: params["AliasId"],
+      Location: params["Location"],
       StatusFilter: params["StatusFilter"],
       Limit: params["Limit"],
       NextToken: params["NextToken"],
@@ -866,6 +985,7 @@ export default class GameLift {
       InstanceId: params["InstanceId"],
       Limit: params["Limit"],
       NextToken: params["NextToken"],
+      Location: params["Location"],
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -992,6 +1112,7 @@ export default class GameLift {
       StatusFilter: params["StatusFilter"],
       Limit: params["Limit"],
       NextToken: params["NextToken"],
+      Location: params["Location"],
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -1353,6 +1474,7 @@ export default class GameLift {
     const body: jsonP.JSONObject = {
       FleetId: params["FleetId"],
       AliasId: params["AliasId"],
+      Location: params["Location"],
       FilterExpression: params["FilterExpression"],
       SortExpression: params["SortExpression"],
       Limit: params["Limit"],
@@ -1377,6 +1499,7 @@ export default class GameLift {
     const body: jsonP.JSONObject = {
       FleetId: params["FleetId"],
       Actions: params["Actions"],
+      Location: params["Location"],
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -1384,7 +1507,10 @@ export default class GameLift {
     });
     return jsonP.readObj({
       required: {},
-      optional: {},
+      optional: {
+        "FleetId": "s",
+        "FleetArn": "s",
+      },
     }, await resp.json());
   }
 
@@ -1460,6 +1586,7 @@ export default class GameLift {
     const body: jsonP.JSONObject = {
       FleetId: params["FleetId"],
       Actions: params["Actions"],
+      Location: params["Location"],
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -1467,7 +1594,10 @@ export default class GameLift {
     });
     return jsonP.readObj({
       required: {},
-      optional: {},
+      optional: {
+        "FleetId": "s",
+        "FleetArn": "s",
+      },
     }, await resp.json());
   }
 
@@ -1630,6 +1760,7 @@ export default class GameLift {
       DesiredInstances: params["DesiredInstances"],
       MinSize: params["MinSize"],
       MaxSize: params["MaxSize"],
+      Location: params["Location"],
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -1639,6 +1770,8 @@ export default class GameLift {
       required: {},
       optional: {
         "FleetId": "s",
+        "FleetArn": "s",
+        "Location": "s",
       },
     }, await resp.json());
   }
@@ -1737,6 +1870,10 @@ export default class GameLift {
       TimeoutInSeconds: params["TimeoutInSeconds"],
       PlayerLatencyPolicies: params["PlayerLatencyPolicies"]?.map(x => fromPlayerLatencyPolicy(x)),
       Destinations: params["Destinations"]?.map(x => fromGameSessionQueueDestination(x)),
+      FilterConfiguration: fromFilterConfiguration(params["FilterConfiguration"]),
+      PriorityConfiguration: fromPriorityConfiguration(params["PriorityConfiguration"]),
+      CustomEventData: params["CustomEventData"],
+      NotificationTarget: params["NotificationTarget"],
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -1991,6 +2128,13 @@ function toCertificateConfiguration(root: jsonP.JSONValue): s.CertificateConfigu
   }, root);
 }
 
+function fromLocationConfiguration(input?: s.LocationConfiguration | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    Location: input["Location"],
+  }
+}
+
 function fromLaunchTemplateSpecification(input?: s.LaunchTemplateSpecification | null): jsonP.JSONValue {
   if (!input) return input;
   return {
@@ -2078,6 +2222,38 @@ function toGameSessionQueueDestination(root: jsonP.JSONValue): s.GameSessionQueu
     required: {},
     optional: {
       "DestinationArn": "s",
+    },
+  }, root);
+}
+
+function fromFilterConfiguration(input?: s.FilterConfiguration | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    AllowedLocations: input["AllowedLocations"],
+  }
+}
+function toFilterConfiguration(root: jsonP.JSONValue): s.FilterConfiguration {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "AllowedLocations": ["s"],
+    },
+  }, root);
+}
+
+function fromPriorityConfiguration(input?: s.PriorityConfiguration | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    PriorityOrder: input["PriorityOrder"],
+    LocationOrder: input["LocationOrder"],
+  }
+}
+function toPriorityConfiguration(root: jsonP.JSONValue): s.PriorityConfiguration {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "PriorityOrder": [(x: jsonP.JSONValue) => cmnP.readEnum<s.PriorityType>(x)],
+      "LocationOrder": ["s"],
     },
   }, root);
 }
@@ -2258,6 +2434,16 @@ function toFleetAttributes(root: jsonP.JSONValue): s.FleetAttributes {
   }, root);
 }
 
+function toLocationState(root: jsonP.JSONValue): s.LocationState {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "Location": "s",
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<s.FleetStatus>(x),
+    },
+  }, root);
+}
+
 function toGameServerGroup(root: jsonP.JSONValue): s.GameServerGroup {
   return jsonP.readObj({
     required: {},
@@ -2300,6 +2486,7 @@ function toGameSession(root: jsonP.JSONValue): s.GameSession {
       "CreatorId": "s",
       "GameSessionData": "s",
       "MatchmakerData": "s",
+      "Location": "s",
     },
   }, root);
 }
@@ -2313,6 +2500,10 @@ function toGameSessionQueue(root: jsonP.JSONValue): s.GameSessionQueue {
       "TimeoutInSeconds": "n",
       "PlayerLatencyPolicies": [toPlayerLatencyPolicy],
       "Destinations": [toGameSessionQueueDestination],
+      "FilterConfiguration": toFilterConfiguration,
+      "PriorityConfiguration": toPriorityConfiguration,
+      "CustomEventData": "s",
+      "NotificationTarget": "s",
     },
   }, root);
 }
@@ -2410,6 +2601,7 @@ function toEC2InstanceLimit(root: jsonP.JSONValue): s.EC2InstanceLimit {
       "EC2InstanceType": (x: jsonP.JSONValue) => cmnP.readEnum<s.EC2InstanceType>(x),
       "CurrentInstances": "n",
       "InstanceLimit": "n",
+      "Location": "s",
     },
   }, root);
 }
@@ -2419,8 +2611,10 @@ function toFleetCapacity(root: jsonP.JSONValue): s.FleetCapacity {
     required: {},
     optional: {
       "FleetId": "s",
+      "FleetArn": "s",
       "InstanceType": (x: jsonP.JSONValue) => cmnP.readEnum<s.EC2InstanceType>(x),
       "InstanceCounts": toEC2InstanceCounts,
+      "Location": "s",
     },
   }, root);
 }
@@ -2454,15 +2648,28 @@ function toEvent(root: jsonP.JSONValue): s.Event {
   }, root);
 }
 
+function toLocationAttributes(root: jsonP.JSONValue): s.LocationAttributes {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "LocationState": toLocationState,
+      "StoppedActions": [(x: jsonP.JSONValue) => cmnP.readEnum<s.FleetAction>(x)],
+      "UpdateStatus": (x: jsonP.JSONValue) => cmnP.readEnum<s.LocationUpdateStatus>(x),
+    },
+  }, root);
+}
+
 function toFleetUtilization(root: jsonP.JSONValue): s.FleetUtilization {
   return jsonP.readObj({
     required: {},
     optional: {
       "FleetId": "s",
+      "FleetArn": "s",
       "ActiveServerProcessCount": "n",
       "ActiveGameSessionCount": "n",
       "CurrentPlayerSessionCount": "n",
       "MaximumPlayerSessionCount": "n",
+      "Location": "s",
     },
   }, root);
 }
@@ -2530,6 +2737,7 @@ function toInstance(root: jsonP.JSONValue): s.Instance {
     required: {},
     optional: {
       "FleetId": "s",
+      "FleetArn": "s",
       "InstanceId": "s",
       "IpAddress": "s",
       "DnsName": "s",
@@ -2537,6 +2745,7 @@ function toInstance(root: jsonP.JSONValue): s.Instance {
       "Type": (x: jsonP.JSONValue) => cmnP.readEnum<s.EC2InstanceType>(x),
       "Status": (x: jsonP.JSONValue) => cmnP.readEnum<s.InstanceStatus>(x),
       "CreationTime": "d",
+      "Location": "s",
     },
   }, root);
 }
@@ -2588,6 +2797,7 @@ function toScalingPolicy(root: jsonP.JSONValue): s.ScalingPolicy {
     required: {},
     optional: {
       "FleetId": "s",
+      "FleetArn": "s",
       "Name": "s",
       "Status": (x: jsonP.JSONValue) => cmnP.readEnum<s.ScalingStatusType>(x),
       "ScalingAdjustment": "n",
@@ -2598,6 +2808,8 @@ function toScalingPolicy(root: jsonP.JSONValue): s.ScalingPolicy {
       "MetricName": (x: jsonP.JSONValue) => cmnP.readEnum<s.MetricName>(x),
       "PolicyType": (x: jsonP.JSONValue) => cmnP.readEnum<s.PolicyType>(x),
       "TargetConfiguration": toTargetConfiguration,
+      "UpdateStatus": (x: jsonP.JSONValue) => cmnP.readEnum<s.LocationUpdateStatus>(x),
+      "Location": "s",
     },
   }, root);
 }

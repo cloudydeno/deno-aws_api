@@ -5,7 +5,7 @@ interface RequestConfig {
 }
 
 export * from "./structs.ts";
-import * as Base64 from "https://deno.land/std@0.86.0/encoding/base64.ts";
+import * as Base64 from "https://deno.land/std@0.91.0/encoding/base64.ts";
 import * as client from "../../client/common.ts";
 import * as cmnP from "../../encoding/common.ts";
 import * as jsonP from "../../encoding/json.ts";
@@ -98,6 +98,21 @@ export default class ACM {
     }, await resp.json());
   }
 
+  async getAccountConfiguration(
+    {abortSignal, ...params}: RequestConfig = {},
+  ): Promise<s.GetAccountConfigurationResponse> {
+    const resp = await this.#client.performRequest({
+      abortSignal,
+      action: "GetAccountConfiguration",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ExpiryEvents": toExpiryEventsConfiguration,
+      },
+    }, await resp.json());
+  }
+
   async getCertificate(
     {abortSignal, ...params}: RequestConfig & s.GetCertificateRequest,
   ): Promise<s.GetCertificateResponse> {
@@ -177,6 +192,19 @@ export default class ACM {
         "Tags": [toTag],
       },
     }, await resp.json());
+  }
+
+  async putAccountConfiguration(
+    {abortSignal, ...params}: RequestConfig & s.PutAccountConfigurationRequest,
+  ): Promise<void> {
+    const body: jsonP.JSONObject = {
+      ExpiryEvents: fromExpiryEventsConfiguration(params["ExpiryEvents"]),
+      IdempotencyToken: params["IdempotencyToken"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "PutAccountConfiguration",
+    });
   }
 
   async removeTagsFromCertificate(
@@ -305,6 +333,21 @@ function fromFilters(input?: s.Filters | null): jsonP.JSONValue {
     keyUsage: input["keyUsage"],
     keyTypes: input["keyTypes"],
   }
+}
+
+function fromExpiryEventsConfiguration(input?: s.ExpiryEventsConfiguration | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    DaysBeforeExpiry: input["DaysBeforeExpiry"],
+  }
+}
+function toExpiryEventsConfiguration(root: jsonP.JSONValue): s.ExpiryEventsConfiguration {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "DaysBeforeExpiry": "n",
+    },
+  }, root);
 }
 
 function fromDomainValidationOption(input?: s.DomainValidationOption | null): jsonP.JSONValue {

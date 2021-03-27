@@ -14,6 +14,7 @@ export interface CreateClusterRequest {
   clusterName?: string | null;
   tags?: Tag[] | null;
   settings?: ClusterSetting[] | null;
+  configuration?: ClusterConfiguration | null;
   capacityProviders?: string[] | null;
   defaultCapacityProviderStrategy?: CapacityProviderStrategyItem[] | null;
 }
@@ -41,6 +42,7 @@ export interface CreateServiceRequest {
   tags?: Tag[] | null;
   enableECSManagedTags?: boolean | null;
   propagateTags?: PropagateTags | null;
+  enableExecuteCommand?: boolean | null;
 }
 
 // refs: 1 - tags: named, input
@@ -162,6 +164,15 @@ export interface DescribeTasksRequest {
 export interface DiscoverPollEndpointRequest {
   containerInstance?: string | null;
   cluster?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface ExecuteCommandRequest {
+  cluster?: string | null;
+  container?: string | null;
+  command: string;
+  interactive: boolean;
+  task: string;
 }
 
 // refs: 1 - tags: named, input
@@ -307,6 +318,7 @@ export interface RunTaskRequest {
   cluster?: string | null;
   count?: number | null;
   enableECSManagedTags?: boolean | null;
+  enableExecuteCommand?: boolean | null;
   group?: string | null;
   launchType?: LaunchType | null;
   networkConfiguration?: NetworkConfiguration | null;
@@ -326,6 +338,7 @@ export interface StartTaskRequest {
   cluster?: string | null;
   containerInstances: string[];
   enableECSManagedTags?: boolean | null;
+  enableExecuteCommand?: boolean | null;
   group?: string | null;
   networkConfiguration?: NetworkConfiguration | null;
   overrides?: TaskOverride | null;
@@ -369,6 +382,7 @@ export interface SubmitTaskStateChangeRequest {
   reason?: string | null;
   containers?: ContainerStateChange[] | null;
   attachments?: AttachmentStateChange[] | null;
+  managedAgents?: ManagedAgentStateChange[] | null;
   pullStartedAt?: Date | number | null;
   pullStoppedAt?: Date | number | null;
   executionStoppedAt?: Date | number | null;
@@ -390,6 +404,13 @@ export interface UntagResourceRequest {
 export interface UpdateCapacityProviderRequest {
   name: string;
   autoScalingGroupProvider: AutoScalingGroupProviderUpdate;
+}
+
+// refs: 1 - tags: named, input
+export interface UpdateClusterRequest {
+  cluster: string;
+  settings?: ClusterSetting[] | null;
+  configuration?: ClusterConfiguration | null;
 }
 
 // refs: 1 - tags: named, input
@@ -425,6 +446,7 @@ export interface UpdateServiceRequest {
   platformVersion?: string | null;
   forceNewDeployment?: boolean | null;
   healthCheckGracePeriodSeconds?: number | null;
+  enableExecuteCommand?: boolean | null;
 }
 
 // refs: 1 - tags: named, input
@@ -549,6 +571,16 @@ export interface DescribeTasksResponse {
 export interface DiscoverPollEndpointResponse {
   endpoint?: string | null;
   telemetryEndpoint?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface ExecuteCommandResponse {
+  clusterArn?: string | null;
+  containerArn?: string | null;
+  containerName?: string | null;
+  interactive?: boolean | null;
+  session?: Session | null;
+  taskArn?: string | null;
 }
 
 // refs: 1 - tags: named, output
@@ -681,6 +713,11 @@ export interface UpdateCapacityProviderResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface UpdateClusterResponse {
+  cluster?: Cluster | null;
+}
+
+// refs: 1 - tags: named, output
 export interface UpdateClusterSettingsResponse {
   cluster?: Cluster | null;
 }
@@ -739,24 +776,52 @@ export type ManagedTerminationProtection =
 | "DISABLED"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 43 - tags: input, named, interface, output
+// refs: 44 - tags: input, named, interface, output
 export interface Tag {
   key?: string | null;
   value?: string | null;
 }
 
-// refs: 7 - tags: input, named, interface, output
+// refs: 9 - tags: input, named, interface, output
 export interface ClusterSetting {
   name?: ClusterSettingName | null;
   value?: string | null;
 }
 
-// refs: 7 - tags: input, named, enum, output
+// refs: 9 - tags: input, named, enum, output
 export type ClusterSettingName =
 | "containerInsights"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 28 - tags: input, named, interface, output
+// refs: 8 - tags: input, named, interface, output
+export interface ClusterConfiguration {
+  executeCommandConfiguration?: ExecuteCommandConfiguration | null;
+}
+
+// refs: 8 - tags: input, named, interface, output
+export interface ExecuteCommandConfiguration {
+  kmsKeyId?: string | null;
+  logging?: ExecuteCommandLogging | null;
+  logConfiguration?: ExecuteCommandLogConfiguration | null;
+}
+
+// refs: 8 - tags: input, named, enum, output
+export type ExecuteCommandLogging =
+| "NONE"
+| "DEFAULT"
+| "OVERRIDE"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 8 - tags: input, named, interface, output
+export interface ExecuteCommandLogConfiguration {
+  cloudWatchLogGroupName?: string | null;
+  cloudWatchEncryptionEnabled?: boolean | null;
+  s3BucketName?: string | null;
+  s3EncryptionEnabled?: boolean | null;
+  s3KeyPrefix?: string | null;
+}
+
+// refs: 29 - tags: input, named, interface, output
 export interface CapacityProviderStrategyItem {
   capacityProvider: string;
   weight?: number | null;
@@ -906,6 +971,7 @@ export type CapacityProviderField =
 // refs: 1 - tags: input, named, enum
 export type ClusterField =
 | "ATTACHMENTS"
+| "CONFIGURATIONS"
 | "SETTINGS"
 | "STATISTICS"
 | "TAGS"
@@ -1068,7 +1134,7 @@ export type TransportProtocol =
 | "udp"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 33 - tags: input, named, interface, output
+// refs: 35 - tags: input, named, interface, output
 export interface KeyValuePair {
   name?: string | null;
   value?: string | null;
@@ -1417,6 +1483,19 @@ export interface ContainerStateChange {
 }
 
 // refs: 1 - tags: input, named, interface
+export interface ManagedAgentStateChange {
+  containerName: string;
+  managedAgentName: ManagedAgentName;
+  status: string;
+  reason?: string | null;
+}
+
+// refs: 5 - tags: input, named, enum, output
+export type ManagedAgentName =
+| "ExecuteCommandAgent"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 1 - tags: input, named, interface
 export interface AutoScalingGroupProviderUpdate {
   managedScaling?: ManagedScaling | null;
   managedTerminationProtection?: ManagedTerminationProtection | null;
@@ -1449,10 +1528,11 @@ export type CapacityProviderUpdateStatus =
 | "UPDATE_FAILED"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 5 - tags: output, named, interface
+// refs: 6 - tags: output, named, interface
 export interface Cluster {
   clusterArn?: string | null;
   clusterName?: string | null;
+  configuration?: ClusterConfiguration | null;
   status?: string | null;
   registeredContainerInstancesCount?: number | null;
   runningTasksCount?: number | null;
@@ -1467,7 +1547,7 @@ export interface Cluster {
   attachmentsStatus?: string | null;
 }
 
-// refs: 14 - tags: output, named, interface
+// refs: 15 - tags: output, named, interface
 export interface Attachment {
   id?: string | null;
   type?: string | null;
@@ -1506,6 +1586,7 @@ export interface Service {
   createdBy?: string | null;
   enableECSManagedTags?: boolean | null;
   propagateTags?: PropagateTags | null;
+  enableExecuteCommand?: boolean | null;
 }
 
 // refs: 9 - tags: output, named, interface
@@ -1659,6 +1740,7 @@ export interface Task {
   cpu?: string | null;
   createdAt?: Date | number | null;
   desiredStatus?: string | null;
+  enableExecuteCommand?: boolean | null;
   executionStoppedAt?: Date | number | null;
   group?: string | null;
   healthStatus?: HealthStatus | null;
@@ -1702,6 +1784,7 @@ export interface Container {
   networkBindings?: NetworkBinding[] | null;
   networkInterfaces?: NetworkInterface[] | null;
   healthStatus?: HealthStatus | null;
+  managedAgents?: ManagedAgent[] | null;
   cpu?: string | null;
   memory?: string | null;
   memoryReservation?: string | null;
@@ -1722,9 +1805,24 @@ export type HealthStatus =
 | "UNKNOWN"
 | cmnP.UnexpectedEnumValue;
 
+// refs: 4 - tags: output, named, interface
+export interface ManagedAgent {
+  lastStartedAt?: Date | number | null;
+  name?: ManagedAgentName | null;
+  reason?: string | null;
+  lastStatus?: string | null;
+}
+
 // refs: 4 - tags: output, named, enum
 export type TaskStopCode =
 | "TaskFailedToStart"
 | "EssentialContainerExited"
 | "UserInitiated"
 | cmnP.UnexpectedEnumValue;
+
+// refs: 1 - tags: output, named, interface
+export interface Session {
+  sessionId?: string | null;
+  streamUrl?: string | null;
+  tokenValue?: string | null;
+}

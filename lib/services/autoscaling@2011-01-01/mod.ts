@@ -569,6 +569,7 @@ export default class AutoScaling {
     const prefix = '';
     if (params["ActivityIds"]) qsP.appendList(body, prefix+"ActivityIds", params["ActivityIds"], {"entryPrefix":".member."})
     if ("AutoScalingGroupName" in params) body.append(prefix+"AutoScalingGroupName", (params["AutoScalingGroupName"] ?? '').toString());
+    if ("IncludeDeletedGroups" in params) body.append(prefix+"IncludeDeletedGroups", (params["IncludeDeletedGroups"] ?? '').toString());
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     const resp = await this.#client.performRequest({
@@ -861,6 +862,7 @@ export default class AutoScaling {
     if ("MinSize" in params) body.append(prefix+"MinSize", (params["MinSize"] ?? '').toString());
     if ("MaxSize" in params) body.append(prefix+"MaxSize", (params["MaxSize"] ?? '').toString());
     if ("DesiredCapacity" in params) body.append(prefix+"DesiredCapacity", (params["DesiredCapacity"] ?? '').toString());
+    if ("TimeZone" in params) body.append(prefix+"TimeZone", (params["TimeZone"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PutScheduledUpdateGroupAction",
@@ -1028,6 +1030,7 @@ function ScheduledUpdateGroupActionRequest_Serialize(body: URLSearchParams, pref
     if ("MinSize" in params) body.append(prefix+".MinSize", (params["MinSize"] ?? '').toString());
     if ("MaxSize" in params) body.append(prefix+".MaxSize", (params["MaxSize"] ?? '').toString());
     if ("DesiredCapacity" in params) body.append(prefix+".DesiredCapacity", (params["DesiredCapacity"] ?? '').toString());
+    if ("TimeZone" in params) body.append(prefix+".TimeZone", (params["TimeZone"] ?? '').toString());
 }
 
 function LaunchTemplateSpecification_Serialize(body: URLSearchParams, prefix: string, params: s.LaunchTemplateSpecification) {
@@ -1250,6 +1253,8 @@ function MetricDimension_Parse(node: xmlP.XmlNode): s.MetricDimension {
 function RefreshPreferences_Serialize(body: URLSearchParams, prefix: string, params: s.RefreshPreferences) {
     if ("MinHealthyPercentage" in params) body.append(prefix+".MinHealthyPercentage", (params["MinHealthyPercentage"] ?? '').toString());
     if ("InstanceWarmup" in params) body.append(prefix+".InstanceWarmup", (params["InstanceWarmup"] ?? '').toString());
+    if (params["CheckpointPercentages"]) qsP.appendList(body, prefix+".CheckpointPercentages", params["CheckpointPercentages"], {"entryPrefix":".member."})
+    if ("CheckpointDelay" in params) body.append(prefix+".CheckpointDelay", (params["CheckpointDelay"] ?? '').toString());
 }
 
 function FailedScheduledUpdateGroupActionRequest_Parse(node: xmlP.XmlNode): s.FailedScheduledUpdateGroupActionRequest {
@@ -1434,7 +1439,7 @@ function Activity_Parse(node: xmlP.XmlNode): s.Activity {
   return {
     ...node.strings({
       required: {"ActivityId":true,"AutoScalingGroupName":true,"Cause":true},
-      optional: {"Description":true,"StatusMessage":true,"Details":true},
+      optional: {"Description":true,"StatusMessage":true,"Details":true,"AutoScalingGroupState":true,"AutoScalingGroupARN":true},
     }),
     StartTime: node.first("StartTime", true, x => xmlP.parseTimestamp(x.content)),
     EndTime: node.first("EndTime", false, x => xmlP.parseTimestamp(x.content)),
@@ -1452,7 +1457,7 @@ function ProcessType_Parse(node: xmlP.XmlNode): s.ProcessType {
 function ScheduledUpdateGroupAction_Parse(node: xmlP.XmlNode): s.ScheduledUpdateGroupAction {
   return {
     ...node.strings({
-      optional: {"AutoScalingGroupName":true,"ScheduledActionName":true,"ScheduledActionARN":true,"Recurrence":true},
+      optional: {"AutoScalingGroupName":true,"ScheduledActionName":true,"ScheduledActionARN":true,"Recurrence":true,"TimeZone":true},
     }),
     Time: node.first("Time", false, x => xmlP.parseTimestamp(x.content)),
     StartTime: node.first("StartTime", false, x => xmlP.parseTimestamp(x.content)),

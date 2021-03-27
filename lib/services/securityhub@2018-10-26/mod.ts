@@ -1015,6 +1015,7 @@ function fromAwsSecurityFinding(input?: s.AwsSecurityFinding | null): jsonP.JSON
     Vulnerabilities: input["Vulnerabilities"]?.map(x => fromVulnerability(x)),
     PatchSummary: fromPatchSummary(input["PatchSummary"]),
     Action: fromAction(input["Action"]),
+    FindingProviderFields: fromFindingProviderFields(input["FindingProviderFields"]),
   }
 }
 function toAwsSecurityFinding(root: jsonP.JSONValue): s.AwsSecurityFinding {
@@ -1025,17 +1026,17 @@ function toAwsSecurityFinding(root: jsonP.JSONValue): s.AwsSecurityFinding {
       "ProductArn": "s",
       "GeneratorId": "s",
       "AwsAccountId": "s",
-      "Types": ["s"],
       "CreatedAt": "s",
       "UpdatedAt": "s",
-      "Severity": toSeverity,
       "Title": "s",
       "Description": "s",
       "Resources": [toResource],
     },
     optional: {
+      "Types": ["s"],
       "FirstObservedAt": "s",
       "LastObservedAt": "s",
+      "Severity": toSeverity,
       "Confidence": "n",
       "Criticality": "n",
       "Remediation": toRemediation,
@@ -1057,6 +1058,7 @@ function toAwsSecurityFinding(root: jsonP.JSONValue): s.AwsSecurityFinding {
       "Vulnerabilities": [toVulnerability],
       "PatchSummary": toPatchSummary,
       "Action": toAction,
+      "FindingProviderFields": toFindingProviderFields,
     },
   }, root);
 }
@@ -1306,6 +1308,7 @@ function fromResource(input?: s.Resource | null): jsonP.JSONValue {
     Region: input["Region"],
     ResourceRole: input["ResourceRole"],
     Tags: input["Tags"],
+    DataClassification: fromDataClassificationDetails(input["DataClassification"]),
     Details: fromResourceDetails(input["Details"]),
   }
 }
@@ -1320,7 +1323,242 @@ function toResource(root: jsonP.JSONValue): s.Resource {
       "Region": "s",
       "ResourceRole": "s",
       "Tags": x => jsonP.readMap(String, String, x),
+      "DataClassification": toDataClassificationDetails,
       "Details": toResourceDetails,
+    },
+  }, root);
+}
+
+function fromDataClassificationDetails(input?: s.DataClassificationDetails | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    DetailedResultsLocation: input["DetailedResultsLocation"],
+    Result: fromClassificationResult(input["Result"]),
+  }
+}
+function toDataClassificationDetails(root: jsonP.JSONValue): s.DataClassificationDetails {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "DetailedResultsLocation": "s",
+      "Result": toClassificationResult,
+    },
+  }, root);
+}
+
+function fromClassificationResult(input?: s.ClassificationResult | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    MimeType: input["MimeType"],
+    SizeClassified: input["SizeClassified"],
+    AdditionalOccurrences: input["AdditionalOccurrences"],
+    Status: fromClassificationStatus(input["Status"]),
+    SensitiveData: input["SensitiveData"]?.map(x => fromSensitiveDataResult(x)),
+    CustomDataIdentifiers: fromCustomDataIdentifiersResult(input["CustomDataIdentifiers"]),
+  }
+}
+function toClassificationResult(root: jsonP.JSONValue): s.ClassificationResult {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "MimeType": "s",
+      "SizeClassified": "n",
+      "AdditionalOccurrences": "b",
+      "Status": toClassificationStatus,
+      "SensitiveData": [toSensitiveDataResult],
+      "CustomDataIdentifiers": toCustomDataIdentifiersResult,
+    },
+  }, root);
+}
+
+function fromClassificationStatus(input?: s.ClassificationStatus | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    Code: input["Code"],
+    Reason: input["Reason"],
+  }
+}
+function toClassificationStatus(root: jsonP.JSONValue): s.ClassificationStatus {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "Code": "s",
+      "Reason": "s",
+    },
+  }, root);
+}
+
+function fromSensitiveDataResult(input?: s.SensitiveDataResult | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    Category: input["Category"],
+    Detections: input["Detections"]?.map(x => fromSensitiveDataDetections(x)),
+    TotalCount: input["TotalCount"],
+  }
+}
+function toSensitiveDataResult(root: jsonP.JSONValue): s.SensitiveDataResult {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "Category": "s",
+      "Detections": [toSensitiveDataDetections],
+      "TotalCount": "n",
+    },
+  }, root);
+}
+
+function fromSensitiveDataDetections(input?: s.SensitiveDataDetections | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    Count: input["Count"],
+    Type: input["Type"],
+    Occurrences: fromOccurrences(input["Occurrences"]),
+  }
+}
+function toSensitiveDataDetections(root: jsonP.JSONValue): s.SensitiveDataDetections {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "Count": "n",
+      "Type": "s",
+      "Occurrences": toOccurrences,
+    },
+  }, root);
+}
+
+function fromOccurrences(input?: s.Occurrences | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    LineRanges: input["LineRanges"]?.map(x => fromRange(x)),
+    OffsetRanges: input["OffsetRanges"]?.map(x => fromRange(x)),
+    Pages: input["Pages"]?.map(x => fromPage(x)),
+    Records: input["Records"]?.map(x => fromRecord(x)),
+    Cells: input["Cells"]?.map(x => fromCell(x)),
+  }
+}
+function toOccurrences(root: jsonP.JSONValue): s.Occurrences {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "LineRanges": [toRange],
+      "OffsetRanges": [toRange],
+      "Pages": [toPage],
+      "Records": [toRecord],
+      "Cells": [toCell],
+    },
+  }, root);
+}
+
+function fromRange(input?: s.Range | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    Start: input["Start"],
+    End: input["End"],
+    StartColumn: input["StartColumn"],
+  }
+}
+function toRange(root: jsonP.JSONValue): s.Range {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "Start": "n",
+      "End": "n",
+      "StartColumn": "n",
+    },
+  }, root);
+}
+
+function fromPage(input?: s.Page | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    PageNumber: input["PageNumber"],
+    LineRange: fromRange(input["LineRange"]),
+    OffsetRange: fromRange(input["OffsetRange"]),
+  }
+}
+function toPage(root: jsonP.JSONValue): s.Page {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "PageNumber": "n",
+      "LineRange": toRange,
+      "OffsetRange": toRange,
+    },
+  }, root);
+}
+
+function fromRecord(input?: s.Record | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    JsonPath: input["JsonPath"],
+    RecordIndex: input["RecordIndex"],
+  }
+}
+function toRecord(root: jsonP.JSONValue): s.Record {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "JsonPath": "s",
+      "RecordIndex": "n",
+    },
+  }, root);
+}
+
+function fromCell(input?: s.Cell | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    Column: input["Column"],
+    Row: input["Row"],
+    ColumnName: input["ColumnName"],
+    CellReference: input["CellReference"],
+  }
+}
+function toCell(root: jsonP.JSONValue): s.Cell {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "Column": "n",
+      "Row": "n",
+      "ColumnName": "s",
+      "CellReference": "s",
+    },
+  }, root);
+}
+
+function fromCustomDataIdentifiersResult(input?: s.CustomDataIdentifiersResult | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    Detections: input["Detections"]?.map(x => fromCustomDataIdentifiersDetections(x)),
+    TotalCount: input["TotalCount"],
+  }
+}
+function toCustomDataIdentifiersResult(root: jsonP.JSONValue): s.CustomDataIdentifiersResult {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "Detections": [toCustomDataIdentifiersDetections],
+      "TotalCount": "n",
+    },
+  }, root);
+}
+
+function fromCustomDataIdentifiersDetections(input?: s.CustomDataIdentifiersDetections | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    Count: input["Count"],
+    Arn: input["Arn"],
+    Name: input["Name"],
+    Occurrences: fromOccurrences(input["Occurrences"]),
+  }
+}
+function toCustomDataIdentifiersDetections(root: jsonP.JSONValue): s.CustomDataIdentifiersDetections {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "Count": "n",
+      "Arn": "s",
+      "Name": "s",
+      "Occurrences": toOccurrences,
     },
   }, root);
 }
@@ -1340,6 +1578,7 @@ function fromResourceDetails(input?: s.ResourceDetails | null): jsonP.JSONValue 
     AwsElbv2LoadBalancer: fromAwsElbv2LoadBalancerDetails(input["AwsElbv2LoadBalancer"]),
     AwsElasticsearchDomain: fromAwsElasticsearchDomainDetails(input["AwsElasticsearchDomain"]),
     AwsS3Bucket: fromAwsS3BucketDetails(input["AwsS3Bucket"]),
+    AwsS3AccountPublicAccessBlock: fromAwsS3AccountPublicAccessBlockDetails(input["AwsS3AccountPublicAccessBlock"]),
     AwsS3Object: fromAwsS3ObjectDetails(input["AwsS3Object"]),
     AwsSecretsManagerSecret: fromAwsSecretsManagerSecretDetails(input["AwsSecretsManagerSecret"]),
     AwsIamAccessKey: fromAwsIamAccessKeyDetails(input["AwsIamAccessKey"]),
@@ -1387,6 +1626,7 @@ function toResourceDetails(root: jsonP.JSONValue): s.ResourceDetails {
       "AwsElbv2LoadBalancer": toAwsElbv2LoadBalancerDetails,
       "AwsElasticsearchDomain": toAwsElasticsearchDomainDetails,
       "AwsS3Bucket": toAwsS3BucketDetails,
+      "AwsS3AccountPublicAccessBlock": toAwsS3AccountPublicAccessBlockDetails,
       "AwsS3Object": toAwsS3ObjectDetails,
       "AwsSecretsManagerSecret": toAwsSecretsManagerSecretDetails,
       "AwsIamAccessKey": toAwsIamAccessKeyDetails,
@@ -2335,6 +2575,7 @@ function fromAwsS3BucketDetails(input?: s.AwsS3BucketDetails | null): jsonP.JSON
     OwnerName: input["OwnerName"],
     CreatedAt: input["CreatedAt"],
     ServerSideEncryptionConfiguration: fromAwsS3BucketServerSideEncryptionConfiguration(input["ServerSideEncryptionConfiguration"]),
+    PublicAccessBlockConfiguration: fromAwsS3AccountPublicAccessBlockDetails(input["PublicAccessBlockConfiguration"]),
   }
 }
 function toAwsS3BucketDetails(root: jsonP.JSONValue): s.AwsS3BucketDetails {
@@ -2345,6 +2586,7 @@ function toAwsS3BucketDetails(root: jsonP.JSONValue): s.AwsS3BucketDetails {
       "OwnerName": "s",
       "CreatedAt": "s",
       "ServerSideEncryptionConfiguration": toAwsS3BucketServerSideEncryptionConfiguration,
+      "PublicAccessBlockConfiguration": toAwsS3AccountPublicAccessBlockDetails,
     },
   }, root);
 }
@@ -2392,6 +2634,27 @@ function toAwsS3BucketServerSideEncryptionByDefault(root: jsonP.JSONValue): s.Aw
     optional: {
       "SSEAlgorithm": "s",
       "KMSMasterKeyID": "s",
+    },
+  }, root);
+}
+
+function fromAwsS3AccountPublicAccessBlockDetails(input?: s.AwsS3AccountPublicAccessBlockDetails | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    BlockPublicAcls: input["BlockPublicAcls"],
+    BlockPublicPolicy: input["BlockPublicPolicy"],
+    IgnorePublicAcls: input["IgnorePublicAcls"],
+    RestrictPublicBuckets: input["RestrictPublicBuckets"],
+  }
+}
+function toAwsS3AccountPublicAccessBlockDetails(root: jsonP.JSONValue): s.AwsS3AccountPublicAccessBlockDetails {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "BlockPublicAcls": "b",
+      "BlockPublicPolicy": "b",
+      "IgnorePublicAcls": "b",
+      "RestrictPublicBuckets": "b",
     },
   }, root);
 }
@@ -5932,6 +6195,46 @@ function toActionLocalIpDetails(root: jsonP.JSONValue): s.ActionLocalIpDetails {
   }, root);
 }
 
+function fromFindingProviderFields(input?: s.FindingProviderFields | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    Confidence: input["Confidence"],
+    Criticality: input["Criticality"],
+    RelatedFindings: input["RelatedFindings"]?.map(x => fromRelatedFinding(x)),
+    Severity: fromFindingProviderSeverity(input["Severity"]),
+    Types: input["Types"],
+  }
+}
+function toFindingProviderFields(root: jsonP.JSONValue): s.FindingProviderFields {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "Confidence": "n",
+      "Criticality": "n",
+      "RelatedFindings": [toRelatedFinding],
+      "Severity": toFindingProviderSeverity,
+      "Types": ["s"],
+    },
+  }, root);
+}
+
+function fromFindingProviderSeverity(input?: s.FindingProviderSeverity | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    Label: input["Label"],
+    Original: input["Original"],
+  }
+}
+function toFindingProviderSeverity(root: jsonP.JSONValue): s.FindingProviderSeverity {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "Label": (x: jsonP.JSONValue) => cmnP.readEnum<s.SeverityLabel>(x),
+      "Original": "s",
+    },
+  }, root);
+}
+
 function fromAwsSecurityFindingIdentifier(input?: s.AwsSecurityFindingIdentifier | null): jsonP.JSONValue {
   if (!input) return input;
   return {
@@ -6060,6 +6363,13 @@ function fromAwsSecurityFindingFilters(input?: s.AwsSecurityFindingFilters | nul
     NoteUpdatedAt: input["NoteUpdatedAt"]?.map(x => fromDateFilter(x)),
     NoteUpdatedBy: input["NoteUpdatedBy"]?.map(x => fromStringFilter(x)),
     Keyword: input["Keyword"]?.map(x => fromKeywordFilter(x)),
+    FindingProviderFieldsConfidence: input["FindingProviderFieldsConfidence"]?.map(x => fromNumberFilter(x)),
+    FindingProviderFieldsCriticality: input["FindingProviderFieldsCriticality"]?.map(x => fromNumberFilter(x)),
+    FindingProviderFieldsRelatedFindingsId: input["FindingProviderFieldsRelatedFindingsId"]?.map(x => fromStringFilter(x)),
+    FindingProviderFieldsRelatedFindingsProductArn: input["FindingProviderFieldsRelatedFindingsProductArn"]?.map(x => fromStringFilter(x)),
+    FindingProviderFieldsSeverityLabel: input["FindingProviderFieldsSeverityLabel"]?.map(x => fromStringFilter(x)),
+    FindingProviderFieldsSeverityOriginal: input["FindingProviderFieldsSeverityOriginal"]?.map(x => fromStringFilter(x)),
+    FindingProviderFieldsTypes: input["FindingProviderFieldsTypes"]?.map(x => fromStringFilter(x)),
   }
 }
 function toAwsSecurityFindingFilters(root: jsonP.JSONValue): s.AwsSecurityFindingFilters {
@@ -6150,6 +6460,13 @@ function toAwsSecurityFindingFilters(root: jsonP.JSONValue): s.AwsSecurityFindin
       "NoteUpdatedAt": [toDateFilter],
       "NoteUpdatedBy": [toStringFilter],
       "Keyword": [toKeywordFilter],
+      "FindingProviderFieldsConfidence": [toNumberFilter],
+      "FindingProviderFieldsCriticality": [toNumberFilter],
+      "FindingProviderFieldsRelatedFindingsId": [toStringFilter],
+      "FindingProviderFieldsRelatedFindingsProductArn": [toStringFilter],
+      "FindingProviderFieldsSeverityLabel": [toStringFilter],
+      "FindingProviderFieldsSeverityOriginal": [toStringFilter],
+      "FindingProviderFieldsTypes": [toStringFilter],
     },
   }, root);
 }

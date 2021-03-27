@@ -94,6 +94,7 @@ export interface CreateDeploymentGroupInput {
   triggerConfigurations?: TriggerConfig[] | null;
   alarmConfiguration?: AlarmConfiguration | null;
   autoRollbackConfiguration?: AutoRollbackConfiguration | null;
+  outdatedInstancesStrategy?: OutdatedInstancesStrategy | null;
   deploymentStyle?: DeploymentStyle | null;
   blueGreenDeploymentConfiguration?: BlueGreenDeploymentConfiguration | null;
   loadBalancerInfo?: LoadBalancerInfo | null;
@@ -317,6 +318,7 @@ export interface UpdateDeploymentGroupInput {
   triggerConfigurations?: TriggerConfig[] | null;
   alarmConfiguration?: AlarmConfiguration | null;
   autoRollbackConfiguration?: AutoRollbackConfiguration | null;
+  outdatedInstancesStrategy?: OutdatedInstancesStrategy | null;
   deploymentStyle?: DeploymentStyle | null;
   blueGreenDeploymentConfiguration?: BlueGreenDeploymentConfiguration | null;
   loadBalancerInfo?: LoadBalancerInfo | null;
@@ -645,8 +647,8 @@ export type FileExistsBehavior =
 
 // refs: 2 - tags: input, named, interface, output
 export interface MinimumHealthyHosts {
-  value?: number | null;
   type?: MinimumHealthyHostsType | null;
+  value?: number | null;
 }
 
 // refs: 2 - tags: input, named, enum, output
@@ -727,6 +729,12 @@ export interface AlarmConfiguration {
 export interface Alarm {
   name?: string | null;
 }
+
+// refs: 4 - tags: input, named, enum, output
+export type OutdatedInstancesStrategy =
+| "UPDATE"
+| "IGNORE"
+| cmnP.UnexpectedEnumValue;
 
 // refs: 6 - tags: input, named, interface, output
 export interface DeploymentStyle {
@@ -945,6 +953,7 @@ export interface DeploymentGroupInfo {
   alarmConfiguration?: AlarmConfiguration | null;
   autoRollbackConfiguration?: AutoRollbackConfiguration | null;
   deploymentStyle?: DeploymentStyle | null;
+  outdatedInstancesStrategy?: OutdatedInstancesStrategy | null;
   blueGreenDeploymentConfiguration?: BlueGreenDeploymentConfiguration | null;
   loadBalancerInfo?: LoadBalancerInfo | null;
   lastSuccessfulDeployment?: LastDeploymentInfo | null;
@@ -1135,6 +1144,7 @@ export interface DeploymentInfo {
   deploymentStatusMessages?: string[] | null;
   computePlatform?: ComputePlatform | null;
   externalId?: string | null;
+  relatedDeployments?: RelatedDeployments | null;
 }
 
 // refs: 2 - tags: output, named, interface
@@ -1197,6 +1207,7 @@ export type DeploymentCreator =
 | "autoscaling"
 | "codeDeployRollback"
 | "CodeDeploy"
+| "CodeDeployAutoUpdate"
 | "CloudFormation"
 | "CloudFormationRollback"
 | cmnP.UnexpectedEnumValue;
@@ -1206,6 +1217,12 @@ export interface RollbackInfo {
   rollbackDeploymentId?: string | null;
   rollbackTriggeringDeploymentId?: string | null;
   rollbackMessage?: string | null;
+}
+
+// refs: 2 - tags: output, named, interface
+export interface RelatedDeployments {
+  autoUpdateOutdatedInstancesRootDeploymentId?: string | null;
+  autoUpdateOutdatedInstancesDeploymentIds?: string[] | null;
 }
 
 // refs: 2 - tags: output, named, interface

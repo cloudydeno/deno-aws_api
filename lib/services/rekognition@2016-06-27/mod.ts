@@ -5,7 +5,7 @@ interface RequestConfig {
 }
 
 export * from "./structs.ts";
-import * as Base64 from "https://deno.land/std@0.86.0/encoding/base64.ts";
+import * as Base64 from "https://deno.land/std@0.91.0/encoding/base64.ts";
 import * as client from "../../client/common.ts";
 import * as cmnP from "../../encoding/common.ts";
 import * as jsonP from "../../encoding/json.ts";
@@ -63,6 +63,7 @@ export default class Rekognition {
   ): Promise<s.CreateCollectionResponse> {
     const body: jsonP.JSONObject = {
       CollectionId: params["CollectionId"],
+      Tags: params["Tags"],
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -105,6 +106,7 @@ export default class Rekognition {
       OutputConfig: fromOutputConfig(params["OutputConfig"]),
       TrainingData: fromTrainingData(params["TrainingData"]),
       TestingData: fromTestingData(params["TestingData"]),
+      Tags: params["Tags"],
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -127,6 +129,7 @@ export default class Rekognition {
       Name: params["Name"],
       Settings: fromStreamProcessorSettings(params["Settings"]),
       RoleArn: params["RoleArn"],
+      Tags: params["Tags"],
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -755,6 +758,24 @@ export default class Rekognition {
     }, await resp.json());
   }
 
+  async listTagsForResource(
+    {abortSignal, ...params}: RequestConfig & s.ListTagsForResourceRequest,
+  ): Promise<s.ListTagsForResourceResponse> {
+    const body: jsonP.JSONObject = {
+      ResourceArn: params["ResourceArn"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "ListTagsForResource",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
+  }
+
   async recognizeCelebrities(
     {abortSignal, ...params}: RequestConfig & s.RecognizeCelebritiesRequest,
   ): Promise<s.RecognizeCelebritiesResponse> {
@@ -1061,6 +1082,40 @@ export default class Rekognition {
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopStreamProcessor",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
+  }
+
+  async tagResource(
+    {abortSignal, ...params}: RequestConfig & s.TagResourceRequest,
+  ): Promise<s.TagResourceResponse> {
+    const body: jsonP.JSONObject = {
+      ResourceArn: params["ResourceArn"],
+      Tags: params["Tags"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "TagResource",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
+  }
+
+  async untagResource(
+    {abortSignal, ...params}: RequestConfig & s.UntagResourceRequest,
+  ): Promise<s.UntagResourceResponse> {
+    const body: jsonP.JSONObject = {
+      ResourceArn: params["ResourceArn"],
+      TagKeys: params["TagKeys"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "UntagResource",
     });
     return jsonP.readObj({
       required: {},

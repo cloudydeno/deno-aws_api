@@ -116,6 +116,7 @@ function fromReportDefinition(input?: s.ReportDefinition | null): jsonP.JSONValu
     AdditionalArtifacts: input["AdditionalArtifacts"],
     RefreshClosedReports: input["RefreshClosedReports"],
     ReportVersioning: input["ReportVersioning"],
+    BillingViewArn: input["BillingViewArn"],
   }
 }
 function toReportDefinition(root: jsonP.JSONValue): s.ReportDefinition {
@@ -134,6 +135,7 @@ function toReportDefinition(root: jsonP.JSONValue): s.ReportDefinition {
       "AdditionalArtifacts": [(x: jsonP.JSONValue) => cmnP.readEnum<s.AdditionalArtifact>(x)],
       "RefreshClosedReports": "b",
       "ReportVersioning": (x: jsonP.JSONValue) => cmnP.readEnum<s.ReportVersioning>(x),
+      "BillingViewArn": "s",
     },
   }, root);
 }

@@ -40,6 +40,8 @@ export interface CreateElasticsearchDomainRequest {
   LogPublishingOptions?: { [key in LogType]: LogPublishingOption | null | undefined } | null;
   DomainEndpointOptions?: DomainEndpointOptions | null;
   AdvancedSecurityOptions?: AdvancedSecurityOptionsInput | null;
+  AutoTuneOptions?: AutoTuneOptionsInput | null;
+  TagList?: Tag[] | null;
 }
 
 // refs: 1 - tags: named, input
@@ -75,6 +77,13 @@ export interface DeleteOutboundCrossClusterSearchConnectionRequest {
 // refs: 1 - tags: named, input
 export interface DeletePackageRequest {
   PackageID: string;
+}
+
+// refs: 1 - tags: named, input
+export interface DescribeDomainAutoTunesRequest {
+  DomainName: string;
+  MaxResults?: number | null;
+  NextToken?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -235,6 +244,7 @@ export interface UpdateElasticsearchDomainConfigRequest {
   AdvancedSecurityOptions?: AdvancedSecurityOptionsInput | null;
   NodeToNodeEncryptionOptions?: NodeToNodeEncryptionOptions | null;
   EncryptionAtRestOptions?: EncryptionAtRestOptions | null;
+  AutoTuneOptions?: AutoTuneOptions | null;
 }
 
 // refs: 1 - tags: named, input
@@ -304,6 +314,12 @@ export interface DeleteOutboundCrossClusterSearchConnectionResponse {
 // refs: 1 - tags: named, output
 export interface DeletePackageResponse {
   PackageDetails?: PackageDetails | null;
+}
+
+// refs: 1 - tags: named, output
+export interface DescribeDomainAutoTunesResponse {
+  AutoTunes?: AutoTune[] | null;
+  NextToken?: string | null;
 }
 
 // refs: 1 - tags: named, output
@@ -453,7 +469,7 @@ export interface UpgradeElasticsearchDomainResponse {
   PerformCheckOnly?: boolean | null;
 }
 
-// refs: 2 - tags: input, named, interface, output
+// refs: 3 - tags: input, named, interface, output
 export interface Tag {
   Key: string;
   Value: string;
@@ -652,6 +668,36 @@ export interface SAMLIdp {
   EntityId: string;
 }
 
+// refs: 1 - tags: input, named, interface
+export interface AutoTuneOptionsInput {
+  DesiredState?: AutoTuneDesiredState | null;
+  MaintenanceSchedules?: AutoTuneMaintenanceSchedule[] | null;
+}
+
+// refs: 4 - tags: input, named, enum, output
+export type AutoTuneDesiredState =
+| "ENABLED"
+| "DISABLED"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 4 - tags: input, named, interface, output
+export interface AutoTuneMaintenanceSchedule {
+  StartAt?: Date | number | null;
+  Duration?: Duration | null;
+  CronExpressionForRecurrence?: string | null;
+}
+
+// refs: 4 - tags: input, named, interface, output
+export interface Duration {
+  Value?: number | null;
+  Unit?: TimeUnit | null;
+}
+
+// refs: 4 - tags: input, named, enum, output
+export type TimeUnit =
+| "HOURS"
+| cmnP.UnexpectedEnumValue;
+
 // refs: 16 - tags: input, named, interface, output
 export interface DomainInformation {
   OwnerId?: string | null;
@@ -687,6 +733,19 @@ export type DescribePackagesFilterName =
 | "PackageID"
 | "PackageName"
 | "PackageStatus"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 3 - tags: input, named, interface, output
+export interface AutoTuneOptions {
+  DesiredState?: AutoTuneDesiredState | null;
+  RollbackOnDisable?: RollbackOnDisable | null;
+  MaintenanceSchedules?: AutoTuneMaintenanceSchedule[] | null;
+}
+
+// refs: 3 - tags: input, named, enum, output
+export type RollbackOnDisable =
+| "NO_ROLLBACK"
+| "DEFAULT_ROLLBACK"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: output, named, interface
@@ -787,6 +846,7 @@ export interface ElasticsearchDomainStatus {
   ServiceSoftwareOptions?: ServiceSoftwareOptions | null;
   DomainEndpointOptions?: DomainEndpointOptions | null;
   AdvancedSecurityOptions?: AdvancedSecurityOptions | null;
+  AutoTuneOptions?: AutoTuneOptionsOutput | null;
 }
 
 // refs: 6 - tags: output, named, interface
@@ -812,6 +872,25 @@ export interface SAMLOptionsOutput {
   RolesKey?: string | null;
   SessionTimeoutMinutes?: number | null;
 }
+
+// refs: 4 - tags: output, named, interface
+export interface AutoTuneOptionsOutput {
+  State?: AutoTuneState | null;
+  ErrorMessage?: string | null;
+}
+
+// refs: 6 - tags: output, named, enum
+export type AutoTuneState =
+| "ENABLED"
+| "DISABLED"
+| "ENABLE_IN_PROGRESS"
+| "DISABLE_IN_PROGRESS"
+| "DISABLED_AND_ROLLBACK_SCHEDULED"
+| "DISABLED_AND_ROLLBACK_IN_PROGRESS"
+| "DISABLED_AND_ROLLBACK_COMPLETE"
+| "DISABLED_AND_ROLLBACK_ERROR"
+| "ERROR"
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: output, named, interface
 export interface OutboundCrossClusterSearchConnectionStatus {
@@ -865,6 +944,43 @@ export interface OutboundCrossClusterSearchConnection {
   ConnectionStatus?: OutboundCrossClusterSearchConnectionStatus | null;
 }
 
+// refs: 1 - tags: output, named, interface
+export interface AutoTune {
+  AutoTuneType?: AutoTuneType | null;
+  AutoTuneDetails?: AutoTuneDetails | null;
+}
+
+// refs: 1 - tags: output, named, enum
+export type AutoTuneType =
+| "SCHEDULED_ACTION"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 1 - tags: output, named, interface
+export interface AutoTuneDetails {
+  ScheduledAutoTuneDetails?: ScheduledAutoTuneDetails | null;
+}
+
+// refs: 1 - tags: output, named, interface
+export interface ScheduledAutoTuneDetails {
+  Date?: Date | number | null;
+  ActionType?: ScheduledAutoTuneActionType | null;
+  Action?: string | null;
+  Severity?: ScheduledAutoTuneSeverityType | null;
+}
+
+// refs: 1 - tags: output, named, enum
+export type ScheduledAutoTuneActionType =
+| "JVM_HEAP_SIZE_TUNING"
+| "JVM_YOUNG_GEN_TUNING"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 1 - tags: output, named, enum
+export type ScheduledAutoTuneSeverityType =
+| "LOW"
+| "MEDIUM"
+| "HIGH"
+| cmnP.UnexpectedEnumValue;
+
 // refs: 2 - tags: output, named, interface
 export interface ElasticsearchDomainConfig {
   ElasticsearchVersion?: ElasticsearchVersionStatus | null;
@@ -880,6 +996,7 @@ export interface ElasticsearchDomainConfig {
   LogPublishingOptions?: LogPublishingOptionsStatus | null;
   DomainEndpointOptions?: DomainEndpointOptionsStatus | null;
   AdvancedSecurityOptions?: AdvancedSecurityOptionsStatus | null;
+  AutoTuneOptions?: AutoTuneOptionsStatus | null;
 }
 
 // refs: 2 - tags: output, named, interface
@@ -974,6 +1091,22 @@ export interface DomainEndpointOptionsStatus {
 export interface AdvancedSecurityOptionsStatus {
   Options: AdvancedSecurityOptions;
   Status: OptionStatus;
+}
+
+// refs: 2 - tags: output, named, interface
+export interface AutoTuneOptionsStatus {
+  Options?: AutoTuneOptions | null;
+  Status?: AutoTuneStatus | null;
+}
+
+// refs: 2 - tags: output, named, interface
+export interface AutoTuneStatus {
+  CreationDate: Date | number;
+  UpdateDate: Date | number;
+  UpdateVersion?: number | null;
+  State: AutoTuneState;
+  ErrorMessage?: string | null;
+  PendingDeletion?: boolean | null;
 }
 
 // refs: 1 - tags: output, named, interface

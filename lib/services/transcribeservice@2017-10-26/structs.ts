@@ -478,6 +478,7 @@ export interface Settings {
 export type VocabularyFilterMethod =
 | "remove"
 | "mask"
+| "tag"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, interface, output

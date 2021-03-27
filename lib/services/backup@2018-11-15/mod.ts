@@ -381,6 +381,17 @@ export default class Backup {
     }, await resp.json());
   }
 
+  async disassociateRecoveryPoint(
+    {abortSignal, ...params}: RequestConfig & s.DisassociateRecoveryPointInput,
+  ): Promise<void> {
+
+    const resp = await this.#client.performRequest({
+      abortSignal,
+      action: "DisassociateRecoveryPoint",
+      requestUri: cmnP.encodePath`/backup-vaults/${params["BackupVaultName"]}/recovery-points/${params["RecoveryPointArn"]}/disassociate`,
+    });
+  }
+
   async exportBackupPlanTemplate(
     {abortSignal, ...params}: RequestConfig & s.ExportBackupPlanTemplateInput,
   ): Promise<s.ExportBackupPlanTemplateOutput> {
@@ -1080,6 +1091,7 @@ function fromBackupRuleInput(input?: s.BackupRuleInput | null): jsonP.JSONValue 
     Lifecycle: fromLifecycle(input["Lifecycle"]),
     RecoveryPointTags: input["RecoveryPointTags"],
     CopyActions: input["CopyActions"]?.map(x => fromCopyAction(x)),
+    EnableContinuousBackup: input["EnableContinuousBackup"],
   }
 }
 
@@ -1247,6 +1259,7 @@ function toBackupRule(root: jsonP.JSONValue): s.BackupRule {
       "RecoveryPointTags": x => jsonP.readMap(String, String, x),
       "RuleId": "s",
       "CopyActions": [toCopyAction],
+      "EnableContinuousBackup": "b",
     },
   }, root);
 }

@@ -50,6 +50,17 @@ export interface CreateTagsRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface CreateWorkspaceBundleRequest {
+  BundleName: string;
+  BundleDescription: string;
+  ImageId: string;
+  ComputeType: ComputeType;
+  UserStorage: UserStorage;
+  RootStorage?: RootStorage | null;
+  Tags?: Tag[] | null;
+}
+
+// refs: 1 - tags: named, input
 export interface CreateWorkspacesRequest {
   Workspaces: WorkspaceRequest[];
 }
@@ -68,6 +79,11 @@ export interface DeleteIpGroupRequest {
 export interface DeleteTagsRequest {
   ResourceId: string;
   TagKeys: string[];
+}
+
+// refs: 1 - tags: named, input
+export interface DeleteWorkspaceBundleRequest {
+  BundleId?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -306,6 +322,12 @@ export interface UpdateRulesOfIpGroupRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface UpdateWorkspaceBundleRequest {
+  BundleId?: string | null;
+  ImageId?: string | null;
+}
+
+// refs: 1 - tags: named, input
 export interface UpdateWorkspaceImagePermissionRequest {
   ImageId: string;
   AllowCopyImage: boolean;
@@ -345,6 +367,11 @@ export interface CreateTagsResult {
 }
 
 // refs: 1 - tags: named, output
+export interface CreateWorkspaceBundleResult {
+  WorkspaceBundle?: WorkspaceBundle | null;
+}
+
+// refs: 1 - tags: named, output
 export interface CreateWorkspacesResult {
   FailedRequests?: FailedCreateWorkspaceRequest[] | null;
   PendingRequests?: Workspace[] | null;
@@ -360,6 +387,10 @@ export interface DeleteIpGroupResult {
 
 // refs: 1 - tags: named, output
 export interface DeleteTagsResult {
+}
+
+// refs: 1 - tags: named, output
+export interface DeleteWorkspaceBundleResult {
 }
 
 // refs: 1 - tags: named, output
@@ -553,6 +584,10 @@ export interface UpdateRulesOfIpGroupResult {
 }
 
 // refs: 1 - tags: named, output
+export interface UpdateWorkspaceBundleResult {
+}
+
+// refs: 1 - tags: named, output
 export interface UpdateWorkspaceImagePermissionResult {
 }
 
@@ -562,10 +597,36 @@ export interface IpRuleItem {
   ruleDesc?: string | null;
 }
 
-// refs: 9 - tags: input, named, interface, output
+// refs: 10 - tags: input, named, interface, output
 export interface Tag {
   Key: string;
   Value?: string | null;
+}
+
+// refs: 3 - tags: input, named, interface, output
+export interface ComputeType {
+  Name?: Compute | null;
+}
+
+// refs: 8 - tags: input, named, enum, output
+export type Compute =
+| "VALUE"
+| "STANDARD"
+| "PERFORMANCE"
+| "POWER"
+| "GRAPHICS"
+| "POWERPRO"
+| "GRAPHICSPRO"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 3 - tags: input, named, interface, output
+export interface UserStorage {
+  Capacity?: string | null;
+}
+
+// refs: 3 - tags: input, named, interface, output
+export interface RootStorage {
+  Capacity?: string | null;
 }
 
 // refs: 2 - tags: input, named, interface, output
@@ -593,17 +654,6 @@ export interface WorkspaceProperties {
 export type RunningMode =
 | "AUTO_STOP"
 | "ALWAYS_ON"
-| cmnP.UnexpectedEnumValue;
-
-// refs: 6 - tags: input, named, enum, output
-export type Compute =
-| "VALUE"
-| "STANDARD"
-| "PERFORMANCE"
-| "POWER"
-| "GRAPHICS"
-| "POWERPRO"
-| "GRAPHICSPRO"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
@@ -719,6 +769,20 @@ export interface TerminateRequest {
 export interface ConnectionAliasPermission {
   SharedAccountId: string;
   AllowAssociation: boolean;
+}
+
+// refs: 2 - tags: output, named, interface
+export interface WorkspaceBundle {
+  BundleId?: string | null;
+  Name?: string | null;
+  Owner?: string | null;
+  Description?: string | null;
+  ImageId?: string | null;
+  RootStorage?: RootStorage | null;
+  UserStorage?: UserStorage | null;
+  ComputeType?: ComputeType | null;
+  LastUpdatedTime?: Date | number | null;
+  CreationTime?: Date | number | null;
 }
 
 // refs: 1 - tags: output, named, interface
@@ -855,34 +919,6 @@ export interface WorkspacesIpGroup {
   groupName?: string | null;
   groupDesc?: string | null;
   userRules?: IpRuleItem[] | null;
-}
-
-// refs: 1 - tags: output, named, interface
-export interface WorkspaceBundle {
-  BundleId?: string | null;
-  Name?: string | null;
-  Owner?: string | null;
-  Description?: string | null;
-  ImageId?: string | null;
-  RootStorage?: RootStorage | null;
-  UserStorage?: UserStorage | null;
-  ComputeType?: ComputeType | null;
-  LastUpdatedTime?: Date | number | null;
-}
-
-// refs: 1 - tags: output, named, interface
-export interface RootStorage {
-  Capacity?: string | null;
-}
-
-// refs: 1 - tags: output, named, interface
-export interface UserStorage {
-  Capacity?: string | null;
-}
-
-// refs: 1 - tags: output, named, interface
-export interface ComputeType {
-  Name?: Compute | null;
 }
 
 // refs: 1 - tags: output, named, interface

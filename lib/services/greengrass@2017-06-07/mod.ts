@@ -317,7 +317,7 @@ export default class Greengrass {
   }
 
   async createGroup(
-    {abortSignal, ...params}: RequestConfig & s.CreateGroupRequest = {},
+    {abortSignal, ...params}: RequestConfig & s.CreateGroupRequest,
   ): Promise<s.CreateGroupResponse> {
     const headers = new Headers;
     const body: jsonP.JSONObject = {

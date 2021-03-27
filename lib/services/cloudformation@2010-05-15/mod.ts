@@ -7,7 +7,7 @@ interface RequestConfig {
 export * from "./structs.ts";
 import * as client from "../../client/common.ts";
 import * as qsP from "../../encoding/querystring.ts";
-import * as uuidv4 from "https://deno.land/std@0.86.0/uuid/v4.ts";
+import * as uuidv4 from "https://deno.land/std@0.91.0/uuid/v4.ts";
 import * as xmlP from "../../encoding/xml.ts";
 import type * as s from "./structs.ts";
 function generateIdemptToken() {
@@ -137,6 +137,7 @@ export default class CloudFormation {
     if (params["ParameterOverrides"]) qsP.appendList(body, prefix+"ParameterOverrides", params["ParameterOverrides"], {"appender":Parameter_Serialize,"entryPrefix":".member."})
     if (params["OperationPreferences"] != null) StackSetOperationPreferences_Serialize(body, prefix+"OperationPreferences", params["OperationPreferences"]);
     body.append(prefix+"OperationId", (params["OperationId"] ?? generateIdemptToken()).toString());
+    if ("CallAs" in params) body.append(prefix+"CallAs", (params["CallAs"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateStackInstances",
@@ -163,6 +164,7 @@ export default class CloudFormation {
     if ("ExecutionRoleName" in params) body.append(prefix+"ExecutionRoleName", (params["ExecutionRoleName"] ?? '').toString());
     if ("PermissionModel" in params) body.append(prefix+"PermissionModel", (params["PermissionModel"] ?? '').toString());
     if (params["AutoDeployment"] != null) AutoDeployment_Serialize(body, prefix+"AutoDeployment", params["AutoDeployment"]);
+    if ("CallAs" in params) body.append(prefix+"CallAs", (params["CallAs"] ?? '').toString());
     body.append(prefix+"ClientRequestToken", (params["ClientRequestToken"] ?? generateIdemptToken()).toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -216,6 +218,7 @@ export default class CloudFormation {
     if (params["OperationPreferences"] != null) StackSetOperationPreferences_Serialize(body, prefix+"OperationPreferences", params["OperationPreferences"]);
     body.append(prefix+"RetainStacks", (params["RetainStacks"] ?? '').toString());
     body.append(prefix+"OperationId", (params["OperationId"] ?? generateIdemptToken()).toString());
+    if ("CallAs" in params) body.append(prefix+"CallAs", (params["CallAs"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteStackInstances",
@@ -232,6 +235,7 @@ export default class CloudFormation {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"StackSetName", (params["StackSetName"] ?? '').toString());
+    if ("CallAs" in params) body.append(prefix+"CallAs", (params["CallAs"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteStackSet",
@@ -357,6 +361,7 @@ export default class CloudFormation {
     body.append(prefix+"StackSetName", (params["StackSetName"] ?? '').toString());
     body.append(prefix+"StackInstanceAccount", (params["StackInstanceAccount"] ?? '').toString());
     body.append(prefix+"StackInstanceRegion", (params["StackInstanceRegion"] ?? '').toString());
+    if ("CallAs" in params) body.append(prefix+"CallAs", (params["CallAs"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeStackInstance",
@@ -430,6 +435,7 @@ export default class CloudFormation {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"StackSetName", (params["StackSetName"] ?? '').toString());
+    if ("CallAs" in params) body.append(prefix+"CallAs", (params["CallAs"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeStackSet",
@@ -447,6 +453,7 @@ export default class CloudFormation {
     const prefix = '';
     body.append(prefix+"StackSetName", (params["StackSetName"] ?? '').toString());
     body.append(prefix+"OperationId", (params["OperationId"] ?? '').toString());
+    if ("CallAs" in params) body.append(prefix+"CallAs", (params["CallAs"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeStackSetOperation",
@@ -567,6 +574,7 @@ export default class CloudFormation {
     body.append(prefix+"StackSetName", (params["StackSetName"] ?? '').toString());
     if (params["OperationPreferences"] != null) StackSetOperationPreferences_Serialize(body, prefix+"OperationPreferences", params["OperationPreferences"]);
     body.append(prefix+"OperationId", (params["OperationId"] ?? generateIdemptToken()).toString());
+    if ("CallAs" in params) body.append(prefix+"CallAs", (params["CallAs"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DetectStackSetDrift",
@@ -744,6 +752,7 @@ export default class CloudFormation {
     if (params["Filters"]) qsP.appendList(body, prefix+"Filters", params["Filters"], {"appender":StackInstanceFilter_Serialize,"entryPrefix":".member."})
     if ("StackInstanceAccount" in params) body.append(prefix+"StackInstanceAccount", (params["StackInstanceAccount"] ?? '').toString());
     if ("StackInstanceRegion" in params) body.append(prefix+"StackInstanceRegion", (params["StackInstanceRegion"] ?? '').toString());
+    if ("CallAs" in params) body.append(prefix+"CallAs", (params["CallAs"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListStackInstances",
@@ -786,6 +795,7 @@ export default class CloudFormation {
     body.append(prefix+"OperationId", (params["OperationId"] ?? '').toString());
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
+    if ("CallAs" in params) body.append(prefix+"CallAs", (params["CallAs"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListStackSetOperationResults",
@@ -807,6 +817,7 @@ export default class CloudFormation {
     body.append(prefix+"StackSetName", (params["StackSetName"] ?? '').toString());
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
+    if ("CallAs" in params) body.append(prefix+"CallAs", (params["CallAs"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListStackSetOperations",
@@ -828,6 +839,7 @@ export default class CloudFormation {
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
     if ("Status" in params) body.append(prefix+"Status", (params["Status"] ?? '').toString());
+    if ("CallAs" in params) body.append(prefix+"CallAs", (params["CallAs"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListStackSets",
@@ -1027,6 +1039,7 @@ export default class CloudFormation {
     const prefix = '';
     body.append(prefix+"StackSetName", (params["StackSetName"] ?? '').toString());
     body.append(prefix+"OperationId", (params["OperationId"] ?? '').toString());
+    if ("CallAs" in params) body.append(prefix+"CallAs", (params["CallAs"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "StopStackSetOperation",
@@ -1078,6 +1091,7 @@ export default class CloudFormation {
     if (params["ParameterOverrides"]) qsP.appendList(body, prefix+"ParameterOverrides", params["ParameterOverrides"], {"appender":Parameter_Serialize,"entryPrefix":".member."})
     if (params["OperationPreferences"] != null) StackSetOperationPreferences_Serialize(body, prefix+"OperationPreferences", params["OperationPreferences"]);
     body.append(prefix+"OperationId", (params["OperationId"] ?? generateIdemptToken()).toString());
+    if ("CallAs" in params) body.append(prefix+"CallAs", (params["CallAs"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateStackInstances",
@@ -1110,6 +1124,7 @@ export default class CloudFormation {
     body.append(prefix+"OperationId", (params["OperationId"] ?? generateIdemptToken()).toString());
     if (params["Accounts"]) qsP.appendList(body, prefix+"Accounts", params["Accounts"], {"entryPrefix":".member."})
     if (params["Regions"]) qsP.appendList(body, prefix+"Regions", params["Regions"], {"entryPrefix":".member."})
+    if ("CallAs" in params) body.append(prefix+"CallAs", (params["CallAs"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateStackSet",

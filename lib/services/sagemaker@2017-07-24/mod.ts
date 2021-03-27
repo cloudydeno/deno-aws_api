@@ -8,7 +8,7 @@ export * from "./structs.ts";
 import * as client from "../../client/common.ts";
 import * as cmnP from "../../encoding/common.ts";
 import * as jsonP from "../../encoding/json.ts";
-import * as uuidv4 from "https://deno.land/std@0.86.0/uuid/v4.ts";
+import * as uuidv4 from "https://deno.land/std@0.91.0/uuid/v4.ts";
 import type * as s from "./structs.ts";
 function generateIdemptToken() {
   return uuidv4.generate();
@@ -622,6 +622,7 @@ export default class SageMaker {
       ModelName: params["ModelName"],
       PrimaryContainer: fromContainerDefinition(params["PrimaryContainer"]),
       Containers: params["Containers"]?.map(x => fromContainerDefinition(x)),
+      InferenceExecutionConfig: fromInferenceExecutionConfig(params["InferenceExecutionConfig"]),
       ExecutionRoleArn: params["ExecutionRoleArn"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
       VpcConfig: fromVpcConfig(params["VpcConfig"]),
@@ -871,6 +872,7 @@ export default class SageMaker {
       DomainId: params["DomainId"],
       UserProfileName: params["UserProfileName"],
       SessionExpirationDurationInSeconds: params["SessionExpirationDurationInSeconds"],
+      ExpiresInSeconds: params["ExpiresInSeconds"],
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -977,6 +979,7 @@ export default class SageMaker {
       ExperimentConfig: fromExperimentConfig(params["ExperimentConfig"]),
       ProfilerConfig: fromProfilerConfig(params["ProfilerConfig"]),
       ProfilerRuleConfigurations: params["ProfilerRuleConfigurations"]?.map(x => fromProfilerRuleConfiguration(x)),
+      Environment: params["Environment"],
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -2394,6 +2397,7 @@ export default class SageMaker {
       optional: {
         "PrimaryContainer": toContainerDefinition,
         "Containers": [toContainerDefinition],
+        "InferenceExecutionConfig": toInferenceExecutionConfig,
         "VpcConfig": toVpcConfig,
         "EnableNetworkIsolation": "b",
       },
@@ -2846,6 +2850,7 @@ export default class SageMaker {
         "ProfilerRuleConfigurations": [toProfilerRuleConfiguration],
         "ProfilerRuleEvaluationStatuses": [toProfilerRuleEvaluationStatus],
         "ProfilingStatus": (x: jsonP.JSONValue) => cmnP.readEnum<s.ProfilingStatus>(x),
+        "Environment": x => jsonP.readMap(String, String, x),
       },
     }, await resp.json());
   }
@@ -6380,6 +6385,7 @@ function fromInputConfig(input?: s.InputConfig | null): jsonP.JSONValue {
     S3Uri: input["S3Uri"],
     DataInputConfig: input["DataInputConfig"],
     Framework: input["Framework"],
+    FrameworkVersion: input["FrameworkVersion"],
   }
 }
 function toInputConfig(root: jsonP.JSONValue): s.InputConfig {
@@ -6389,7 +6395,9 @@ function toInputConfig(root: jsonP.JSONValue): s.InputConfig {
       "DataInputConfig": "s",
       "Framework": (x: jsonP.JSONValue) => cmnP.readEnum<s.Framework>(x),
     },
-    optional: {},
+    optional: {
+      "FrameworkVersion": "s",
+    },
   }, root);
 }
 
@@ -6843,6 +6851,7 @@ function fromProductionVariant(input?: s.ProductionVariant | null): jsonP.JSONVa
     InstanceType: input["InstanceType"],
     InitialVariantWeight: input["InitialVariantWeight"],
     AcceleratorType: input["AcceleratorType"],
+    CoreDumpConfig: fromProductionVariantCoreDumpConfig(input["CoreDumpConfig"]),
   }
 }
 function toProductionVariant(root: jsonP.JSONValue): s.ProductionVariant {
@@ -6856,6 +6865,25 @@ function toProductionVariant(root: jsonP.JSONValue): s.ProductionVariant {
     optional: {
       "InitialVariantWeight": "n",
       "AcceleratorType": (x: jsonP.JSONValue) => cmnP.readEnum<s.ProductionVariantAcceleratorType>(x),
+      "CoreDumpConfig": toProductionVariantCoreDumpConfig,
+    },
+  }, root);
+}
+
+function fromProductionVariantCoreDumpConfig(input?: s.ProductionVariantCoreDumpConfig | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    DestinationS3Uri: input["DestinationS3Uri"],
+    KmsKeyId: input["KmsKeyId"],
+  }
+}
+function toProductionVariantCoreDumpConfig(root: jsonP.JSONValue): s.ProductionVariantCoreDumpConfig {
+  return jsonP.readObj({
+    required: {
+      "DestinationS3Uri": "s",
+    },
+    optional: {
+      "KmsKeyId": "s",
     },
   }, root);
 }
@@ -6992,6 +7020,7 @@ function fromS3StorageConfig(input?: s.S3StorageConfig | null): jsonP.JSONValue 
   return {
     S3Uri: input["S3Uri"],
     KmsKeyId: input["KmsKeyId"],
+    ResolvedOutputS3Uri: input["ResolvedOutputS3Uri"],
   }
 }
 function toS3StorageConfig(root: jsonP.JSONValue): s.S3StorageConfig {
@@ -7001,6 +7030,7 @@ function toS3StorageConfig(root: jsonP.JSONValue): s.S3StorageConfig {
     },
     optional: {
       "KmsKeyId": "s",
+      "ResolvedOutputS3Uri": "s",
     },
   }, root);
 }
@@ -7669,12 +7699,30 @@ function fromImageConfig(input?: s.ImageConfig | null): jsonP.JSONValue {
   if (!input) return input;
   return {
     RepositoryAccessMode: input["RepositoryAccessMode"],
+    RepositoryAuthConfig: fromRepositoryAuthConfig(input["RepositoryAuthConfig"]),
   }
 }
 function toImageConfig(root: jsonP.JSONValue): s.ImageConfig {
   return jsonP.readObj({
     required: {
       "RepositoryAccessMode": (x: jsonP.JSONValue) => cmnP.readEnum<s.RepositoryAccessMode>(x),
+    },
+    optional: {
+      "RepositoryAuthConfig": toRepositoryAuthConfig,
+    },
+  }, root);
+}
+
+function fromRepositoryAuthConfig(input?: s.RepositoryAuthConfig | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    RepositoryCredentialsProviderArn: input["RepositoryCredentialsProviderArn"],
+  }
+}
+function toRepositoryAuthConfig(root: jsonP.JSONValue): s.RepositoryAuthConfig {
+  return jsonP.readObj({
+    required: {
+      "RepositoryCredentialsProviderArn": "s",
     },
     optional: {},
   }, root);
@@ -7692,6 +7740,21 @@ function toMultiModelConfig(root: jsonP.JSONValue): s.MultiModelConfig {
     optional: {
       "ModelCacheSetting": (x: jsonP.JSONValue) => cmnP.readEnum<s.ModelCacheSetting>(x),
     },
+  }, root);
+}
+
+function fromInferenceExecutionConfig(input?: s.InferenceExecutionConfig | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    Mode: input["Mode"],
+  }
+}
+function toInferenceExecutionConfig(root: jsonP.JSONValue): s.InferenceExecutionConfig {
+  return jsonP.readObj({
+    required: {
+      "Mode": (x: jsonP.JSONValue) => cmnP.readEnum<s.InferenceExecutionMode>(x),
+    },
+    optional: {},
   }, root);
 }
 
@@ -10462,6 +10525,7 @@ function toTrainingJob(root: jsonP.JSONValue): s.TrainingJob {
       "DebugRuleConfigurations": [toDebugRuleConfiguration],
       "TensorBoardOutputConfig": toTensorBoardOutputConfig,
       "DebugRuleEvaluationStatuses": [toDebugRuleEvaluationStatus],
+      "Environment": x => jsonP.readMap(String, String, x),
       "Tags": [toTag],
     },
   }, root);

@@ -5,8 +5,8 @@ interface RequestConfig {
 }
 
 export * from "./structs.ts";
-import * as Base64 from "https://deno.land/std@0.86.0/encoding/base64.ts";
-import * as HashMd5 from "https://deno.land/std@0.86.0/hash/md5.ts";
+import * as Base64 from "https://deno.land/std@0.91.0/encoding/base64.ts";
+import * as HashMd5 from "https://deno.land/std@0.91.0/hash/md5.ts";
 import * as client from "../../client/common.ts";
 import * as cmnP from "../../encoding/common.ts";
 import * as xmlP from "../../encoding/xml.ts";
@@ -1071,6 +1071,7 @@ export default class S3 {
     const query = new URLSearchParams;
     if (params["VersionId"] != null) query.set("versionId", params["VersionId"]?.toString() ?? "");
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
+    if (params["RequestPayer"] != null) headers.append("x-amz-request-payer", params["RequestPayer"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, query,
       action: "GetObjectTagging",
@@ -2094,6 +2095,7 @@ export default class S3 {
     if (params["VersionId"] != null) query.set("versionId", params["VersionId"]?.toString() ?? "");
     headers.append("Content-MD5", params["ContentMD5"] ?? hashMD5(body ?? ''));
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
+    if (params["RequestPayer"] != null) headers.append("x-amz-request-payer", params["RequestPayer"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, query, body,
       action: "PutObjectTagging",
@@ -2273,6 +2275,56 @@ export default class S3 {
         LastModified: xml.first("LastModified", false, x => xmlP.parseTimestamp(x.content)),
       },
   };
+  }
+
+  async writeGetObjectResponse(
+    {abortSignal, ...params}: RequestConfig & s.WriteGetObjectResponseRequest,
+  ): Promise<void> {
+    const body = typeof params["Body"] === 'string' ? new TextEncoder().encode(params["Body"]) : params["Body"];
+    const headers = new Headers;
+    headers.append("x-amz-request-route", params["RequestRoute"]);
+    headers.append("x-amz-request-token", params["RequestToken"]);
+    if (params["StatusCode"] != null) headers.append("x-amz-fwd-status", params["StatusCode"]?.toString() ?? '');
+    if (params["ErrorCode"] != null) headers.append("x-amz-fwd-error-code", params["ErrorCode"]);
+    if (params["ErrorMessage"] != null) headers.append("x-amz-fwd-error-message", params["ErrorMessage"]);
+    if (params["AcceptRanges"] != null) headers.append("x-amz-fwd-header-accept-ranges", params["AcceptRanges"]);
+    if (params["CacheControl"] != null) headers.append("x-amz-fwd-header-Cache-Control", params["CacheControl"]);
+    if (params["ContentDisposition"] != null) headers.append("x-amz-fwd-header-Content-Disposition", params["ContentDisposition"]);
+    if (params["ContentEncoding"] != null) headers.append("x-amz-fwd-header-Content-Encoding", params["ContentEncoding"]);
+    if (params["ContentLanguage"] != null) headers.append("x-amz-fwd-header-Content-Language", params["ContentLanguage"]);
+    if (params["ContentLength"] != null) headers.append("Content-Length", params["ContentLength"]?.toString() ?? '');
+    if (params["ContentRange"] != null) headers.append("x-amz-fwd-header-Content-Range", params["ContentRange"]);
+    if (params["ContentType"] != null) headers.append("x-amz-fwd-header-Content-Type", params["ContentType"]);
+    if (params["DeleteMarker"] != null) headers.append("x-amz-fwd-header-x-amz-delete-marker", params["DeleteMarker"]?.toString() ?? '');
+    if (params["ETag"] != null) headers.append("x-amz-fwd-header-ETag", params["ETag"]);
+    if (params["Expires"] != null) headers.append("x-amz-fwd-header-Expires", cmnP.serializeDate_rfc822(params["Expires"]) ?? "");
+    if (params["Expiration"] != null) headers.append("x-amz-fwd-header-x-amz-expiration", params["Expiration"]);
+    if (params["LastModified"] != null) headers.append("x-amz-fwd-header-Last-Modified", cmnP.serializeDate_rfc822(params["LastModified"]) ?? "");
+    if (params["MissingMeta"] != null) headers.append("x-amz-fwd-header-x-amz-missing-meta", params["MissingMeta"]?.toString() ?? '');
+    for (const [key, val] of Object.entries(params["Metadata"] ?? {})) {
+      headers.append("x-amz-meta-"+key, val ?? "");
+    }
+    if (params["ObjectLockMode"] != null) headers.append("x-amz-fwd-header-x-amz-object-lock-mode", params["ObjectLockMode"]);
+    if (params["ObjectLockLegalHoldStatus"] != null) headers.append("x-amz-fwd-header-x-amz-object-lock-legal-hold", params["ObjectLockLegalHoldStatus"]);
+    if (params["ObjectLockRetainUntilDate"] != null) headers.append("x-amz-fwd-header-x-amz-object-lock-retain-until-date", cmnP.serializeDate_iso8601(params["ObjectLockRetainUntilDate"]) ?? "");
+    if (params["PartsCount"] != null) headers.append("x-amz-fwd-header-x-amz-mp-parts-count", params["PartsCount"]?.toString() ?? '');
+    if (params["ReplicationStatus"] != null) headers.append("x-amz-fwd-header-x-amz-replication-status", params["ReplicationStatus"]);
+    if (params["RequestCharged"] != null) headers.append("x-amz-fwd-header-x-amz-request-charged", params["RequestCharged"]);
+    if (params["Restore"] != null) headers.append("x-amz-fwd-header-x-amz-restore", params["Restore"]);
+    if (params["ServerSideEncryption"] != null) headers.append("x-amz-fwd-header-x-amz-server-side-encryption", params["ServerSideEncryption"]);
+    if (params["SSECustomerAlgorithm"] != null) headers.append("x-amz-fwd-header-x-amz-server-side-encryption-customer-algorithm", params["SSECustomerAlgorithm"]);
+    if (params["SSEKMSKeyId"] != null) headers.append("x-amz-fwd-header-x-amz-server-side-encryption-aws-kms-key-id", params["SSEKMSKeyId"]);
+    if (params["SSECustomerKeyMD5"] != null) headers.append("x-amz-fwd-header-x-amz-server-side-encryption-customer-key-MD5", params["SSECustomerKeyMD5"]);
+    if (params["StorageClass"] != null) headers.append("x-amz-fwd-header-x-amz-storage-class", params["StorageClass"]);
+    if (params["TagCount"] != null) headers.append("x-amz-fwd-header-x-amz-tagging-count", params["TagCount"]?.toString() ?? '');
+    if (params["VersionId"] != null) headers.append("x-amz-fwd-header-x-amz-version-id", params["VersionId"]);
+    if (params["BucketKeyEnabled"] != null) headers.append("x-amz-fwd-header-x-amz-server-side-encryption-bucket-key-enabled", params["BucketKeyEnabled"]?.toString() ?? '');
+    const resp = await this.#client.performRequest({
+      abortSignal, headers, body,
+      action: "WriteGetObjectResponse",
+      requestUri: "/WriteGetObjectResponse",
+      hostPrefix: `${params.RequestRoute}.`,
+    });
   }
 
   // Resource State Waiters
@@ -2614,6 +2666,7 @@ function CORSConfiguration_Serialize(data: s.CORSConfiguration | undefined | nul
 function CORSRule_Serialize(data: s.CORSRule | undefined | null): Partial<xmlP.Node> {
   if (!data) return {};
   return {children: [
+    {name: "ID", content: data["ID"]?.toString()},
     ...(data["AllowedHeaders"]?.map(x => ({name: "AllowedHeader", content: x})) ?? []),
     ...(data["AllowedMethods"]?.map(x => ({name: "AllowedMethod", content: x})) ?? []),
     ...(data["AllowedOrigins"]?.map(x => ({name: "AllowedOrigin", content: x})) ?? []),
@@ -2623,6 +2676,9 @@ function CORSRule_Serialize(data: s.CORSRule | undefined | null): Partial<xmlP.N
 }
 function CORSRule_Parse(node: xmlP.XmlNode): s.CORSRule {
   return {
+    ...node.strings({
+      optional: {"ID":true},
+    }),
     AllowedHeaders: node.getList("AllowedHeader").map(x => x.content ?? ''),
     AllowedMethods: node.getList("AllowedMethod").map(x => x.content ?? ''),
     AllowedOrigins: node.getList("AllowedOrigin").map(x => x.content ?? ''),

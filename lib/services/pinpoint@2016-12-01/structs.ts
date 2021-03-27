@@ -1358,7 +1358,10 @@ export interface CampaignEmailMessage {
 export interface CampaignSmsMessage {
   Body?: string | null;
   MessageType?: MessageType | null;
+  OriginationNumber?: string | null;
   SenderId?: string | null;
+  EntityId?: string | null;
+  TemplateId?: string | null;
 }
 
 // refs: 28 - tags: input, named, enum, output
@@ -1739,7 +1742,10 @@ export interface SMSMessageActivity {
 // refs: 8 - tags: input, named, interface, output
 export interface JourneySMSMessage {
   MessageType?: MessageType | null;
+  OriginationNumber?: string | null;
   SenderId?: string | null;
+  EntityId?: string | null;
+  TemplateId?: string | null;
 }
 
 // refs: 8 - tags: input, named, interface, output
@@ -2204,6 +2210,8 @@ export interface SMSMessage {
   OriginationNumber?: string | null;
   SenderId?: string | null;
   Substitutions?: { [key: string]: string[] | null | undefined } | null;
+  EntityId?: string | null;
+  TemplateId?: string | null;
 }
 
 // refs: 2 - tags: input, named, interface

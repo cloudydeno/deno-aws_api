@@ -15,7 +15,8 @@ export interface DescribeStatementRequest {
 // refs: 1 - tags: named, input
 export interface DescribeTableRequest {
   ClusterIdentifier: string;
-  Database?: string | null;
+  ConnectedDatabase?: string | null;
+  Database: string;
   DbUser?: string | null;
   MaxResults?: number | null;
   NextToken?: string | null;
@@ -54,6 +55,7 @@ export interface ListDatabasesRequest {
 // refs: 1 - tags: named, input
 export interface ListSchemasRequest {
   ClusterIdentifier: string;
+  ConnectedDatabase?: string | null;
   Database: string;
   DbUser?: string | null;
   MaxResults?: number | null;
@@ -66,6 +68,7 @@ export interface ListSchemasRequest {
 export interface ListStatementsRequest {
   MaxResults?: number | null;
   NextToken?: string | null;
+  RoleLevel?: boolean | null;
   StatementName?: string | null;
   Status?: StatusString | null;
 }
@@ -73,6 +76,7 @@ export interface ListStatementsRequest {
 // refs: 1 - tags: named, input
 export interface ListTablesRequest {
   ClusterIdentifier: string;
+  ConnectedDatabase?: string | null;
   Database: string;
   DbUser?: string | null;
   MaxResults?: number | null;
@@ -95,6 +99,7 @@ export interface DescribeStatementResponse {
   DbUser?: string | null;
   Duration?: number | null;
   Error?: string | null;
+  HasResultSet?: boolean | null;
   Id: string;
   QueryString?: string | null;
   RedshiftPid?: number | null;
@@ -157,13 +162,13 @@ export interface ListTablesResponse {
 
 // refs: 3 - tags: input, named, enum, output
 export type StatusString =
-| "ABORTED"
-| "ALL"
-| "FAILED"
-| "FINISHED"
+| "SUBMITTED"
 | "PICKED"
 | "STARTED"
-| "SUBMITTED"
+| "FINISHED"
+| "ABORTED"
+| "FAILED"
+| "ALL"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface

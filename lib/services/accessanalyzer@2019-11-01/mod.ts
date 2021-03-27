@@ -8,7 +8,7 @@ export * from "./structs.ts";
 import * as client from "../../client/common.ts";
 import * as cmnP from "../../encoding/common.ts";
 import * as jsonP from "../../encoding/json.ts";
-import * as uuidv4 from "https://deno.land/std@0.86.0/uuid/v4.ts";
+import * as uuidv4 from "https://deno.land/std@0.91.0/uuid/v4.ts";
 import type * as s from "./structs.ts";
 function generateIdemptToken() {
   return uuidv4.generate();
@@ -47,6 +47,29 @@ export default class AccessAnalyzer {
       requestUri: "/archive-rule",
       responseCode: 200,
     });
+  }
+
+  async createAccessPreview(
+    {abortSignal, ...params}: RequestConfig & s.CreateAccessPreviewRequest,
+  ): Promise<s.CreateAccessPreviewResponse> {
+    const body: jsonP.JSONObject = {
+      analyzerArn: params["analyzerArn"],
+      clientToken: params["clientToken"] ?? generateIdemptToken(),
+      configurations: jsonP.serializeMap(params["configurations"], x => fromConfiguration(x)),
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "CreateAccessPreview",
+      method: "PUT",
+      requestUri: "/access-preview",
+      responseCode: 200,
+    });
+    return jsonP.readObj({
+      required: {
+        "id": "s",
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async createAnalyzer(
@@ -117,6 +140,26 @@ export default class AccessAnalyzer {
       requestUri: cmnP.encodePath`/analyzer/${params["analyzerName"]}/archive-rule/${params["ruleName"]}`,
       responseCode: 200,
     });
+  }
+
+  async getAccessPreview(
+    {abortSignal, ...params}: RequestConfig & s.GetAccessPreviewRequest,
+  ): Promise<s.GetAccessPreviewResponse> {
+    const query = new URLSearchParams;
+    query.set("analyzerArn", params["analyzerArn"]?.toString() ?? "");
+    const resp = await this.#client.performRequest({
+      abortSignal, query,
+      action: "GetAccessPreview",
+      method: "GET",
+      requestUri: cmnP.encodePath`/access-preview/${params["accessPreviewId"]}`,
+      responseCode: 200,
+    });
+    return jsonP.readObj({
+      required: {
+        "accessPreview": toAccessPreview,
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async getAnalyzedResource(
@@ -194,6 +237,55 @@ export default class AccessAnalyzer {
       required: {},
       optional: {
         "finding": toFinding,
+      },
+    }, await resp.json());
+  }
+
+  async listAccessPreviewFindings(
+    {abortSignal, ...params}: RequestConfig & s.ListAccessPreviewFindingsRequest,
+  ): Promise<s.ListAccessPreviewFindingsResponse> {
+    const body: jsonP.JSONObject = {
+      analyzerArn: params["analyzerArn"],
+      filter: jsonP.serializeMap(params["filter"], x => fromCriterion(x)),
+      maxResults: params["maxResults"],
+      nextToken: params["nextToken"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "ListAccessPreviewFindings",
+      requestUri: cmnP.encodePath`/access-preview/${params["accessPreviewId"]}`,
+      responseCode: 200,
+    });
+    return jsonP.readObj({
+      required: {
+        "findings": [toAccessPreviewFinding],
+      },
+      optional: {
+        "nextToken": "s",
+      },
+    }, await resp.json());
+  }
+
+  async listAccessPreviews(
+    {abortSignal, ...params}: RequestConfig & s.ListAccessPreviewsRequest,
+  ): Promise<s.ListAccessPreviewsResponse> {
+    const query = new URLSearchParams;
+    query.set("analyzerArn", params["analyzerArn"]?.toString() ?? "");
+    if (params["maxResults"] != null) query.set("maxResults", params["maxResults"]?.toString() ?? "");
+    if (params["nextToken"] != null) query.set("nextToken", params["nextToken"]?.toString() ?? "");
+    const resp = await this.#client.performRequest({
+      abortSignal, query,
+      action: "ListAccessPreviews",
+      method: "GET",
+      requestUri: "/access-preview",
+      responseCode: 200,
+    });
+    return jsonP.readObj({
+      required: {
+        "accessPreviews": [toAccessPreviewSummary],
+      },
+      optional: {
+        "nextToken": "s",
       },
     }, await resp.json());
   }
@@ -403,6 +495,296 @@ export default class AccessAnalyzer {
     });
   }
 
+  async validatePolicy(
+    {abortSignal, ...params}: RequestConfig & s.ValidatePolicyRequest,
+  ): Promise<s.ValidatePolicyResponse> {
+    const query = new URLSearchParams;
+    const body: jsonP.JSONObject = {
+      locale: params["locale"],
+      policyDocument: params["policyDocument"],
+      policyType: params["policyType"],
+    };
+    if (params["maxResults"] != null) query.set("maxResults", params["maxResults"]?.toString() ?? "");
+    if (params["nextToken"] != null) query.set("nextToken", params["nextToken"]?.toString() ?? "");
+    const resp = await this.#client.performRequest({
+      abortSignal, query, body,
+      action: "ValidatePolicy",
+      requestUri: "/policy/validation",
+      responseCode: 200,
+    });
+    return jsonP.readObj({
+      required: {
+        "findings": [toValidatePolicyFinding],
+      },
+      optional: {
+        "nextToken": "s",
+      },
+    }, await resp.json());
+  }
+
+}
+
+function fromConfiguration(input?: s.Configuration | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    iamRole: fromIamRoleConfiguration(input["iamRole"]),
+    kmsKey: fromKmsKeyConfiguration(input["kmsKey"]),
+    s3Bucket: fromS3BucketConfiguration(input["s3Bucket"]),
+    secretsManagerSecret: fromSecretsManagerSecretConfiguration(input["secretsManagerSecret"]),
+    sqsQueue: fromSqsQueueConfiguration(input["sqsQueue"]),
+  }
+}
+function toConfiguration(root: jsonP.JSONValue): s.Configuration {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "iamRole": toIamRoleConfiguration,
+      "kmsKey": toKmsKeyConfiguration,
+      "s3Bucket": toS3BucketConfiguration,
+      "secretsManagerSecret": toSecretsManagerSecretConfiguration,
+      "sqsQueue": toSqsQueueConfiguration,
+    },
+  }, root);
+}
+
+function fromIamRoleConfiguration(input?: s.IamRoleConfiguration | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    trustPolicy: input["trustPolicy"],
+  }
+}
+function toIamRoleConfiguration(root: jsonP.JSONValue): s.IamRoleConfiguration {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "trustPolicy": "s",
+    },
+  }, root);
+}
+
+function fromKmsKeyConfiguration(input?: s.KmsKeyConfiguration | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    grants: input["grants"]?.map(x => fromKmsGrantConfiguration(x)),
+    keyPolicies: input["keyPolicies"],
+  }
+}
+function toKmsKeyConfiguration(root: jsonP.JSONValue): s.KmsKeyConfiguration {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "grants": [toKmsGrantConfiguration],
+      "keyPolicies": x => jsonP.readMap(String, String, x),
+    },
+  }, root);
+}
+
+function fromKmsGrantConfiguration(input?: s.KmsGrantConfiguration | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    constraints: fromKmsGrantConstraints(input["constraints"]),
+    granteePrincipal: input["granteePrincipal"],
+    issuingAccount: input["issuingAccount"],
+    operations: input["operations"],
+    retiringPrincipal: input["retiringPrincipal"],
+  }
+}
+function toKmsGrantConfiguration(root: jsonP.JSONValue): s.KmsGrantConfiguration {
+  return jsonP.readObj({
+    required: {
+      "granteePrincipal": "s",
+      "issuingAccount": "s",
+      "operations": [(x: jsonP.JSONValue) => cmnP.readEnum<s.KmsGrantOperation>(x)],
+    },
+    optional: {
+      "constraints": toKmsGrantConstraints,
+      "retiringPrincipal": "s",
+    },
+  }, root);
+}
+
+function fromKmsGrantConstraints(input?: s.KmsGrantConstraints | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    encryptionContextEquals: input["encryptionContextEquals"],
+    encryptionContextSubset: input["encryptionContextSubset"],
+  }
+}
+function toKmsGrantConstraints(root: jsonP.JSONValue): s.KmsGrantConstraints {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "encryptionContextEquals": x => jsonP.readMap(String, String, x),
+      "encryptionContextSubset": x => jsonP.readMap(String, String, x),
+    },
+  }, root);
+}
+
+function fromS3BucketConfiguration(input?: s.S3BucketConfiguration | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    accessPoints: jsonP.serializeMap(input["accessPoints"], x => fromS3AccessPointConfiguration(x)),
+    bucketAclGrants: input["bucketAclGrants"]?.map(x => fromS3BucketAclGrantConfiguration(x)),
+    bucketPolicy: input["bucketPolicy"],
+    bucketPublicAccessBlock: fromS3PublicAccessBlockConfiguration(input["bucketPublicAccessBlock"]),
+  }
+}
+function toS3BucketConfiguration(root: jsonP.JSONValue): s.S3BucketConfiguration {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "accessPoints": x => jsonP.readMap(String, toS3AccessPointConfiguration, x),
+      "bucketAclGrants": [toS3BucketAclGrantConfiguration],
+      "bucketPolicy": "s",
+      "bucketPublicAccessBlock": toS3PublicAccessBlockConfiguration,
+    },
+  }, root);
+}
+
+function fromS3AccessPointConfiguration(input?: s.S3AccessPointConfiguration | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    accessPointPolicy: input["accessPointPolicy"],
+    networkOrigin: fromNetworkOriginConfiguration(input["networkOrigin"]),
+    publicAccessBlock: fromS3PublicAccessBlockConfiguration(input["publicAccessBlock"]),
+  }
+}
+function toS3AccessPointConfiguration(root: jsonP.JSONValue): s.S3AccessPointConfiguration {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "accessPointPolicy": "s",
+      "networkOrigin": toNetworkOriginConfiguration,
+      "publicAccessBlock": toS3PublicAccessBlockConfiguration,
+    },
+  }, root);
+}
+
+function fromNetworkOriginConfiguration(input?: s.NetworkOriginConfiguration | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    internetConfiguration: fromInternetConfiguration(input["internetConfiguration"]),
+    vpcConfiguration: fromVpcConfiguration(input["vpcConfiguration"]),
+  }
+}
+function toNetworkOriginConfiguration(root: jsonP.JSONValue): s.NetworkOriginConfiguration {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "internetConfiguration": toInternetConfiguration,
+      "vpcConfiguration": toVpcConfiguration,
+    },
+  }, root);
+}
+
+function fromInternetConfiguration(input?: s.InternetConfiguration | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+  }
+}
+function toInternetConfiguration(root: jsonP.JSONValue): s.InternetConfiguration {
+  return jsonP.readObj({
+    required: {},
+    optional: {},
+  }, root);
+}
+
+function fromVpcConfiguration(input?: s.VpcConfiguration | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    vpcId: input["vpcId"],
+  }
+}
+function toVpcConfiguration(root: jsonP.JSONValue): s.VpcConfiguration {
+  return jsonP.readObj({
+    required: {
+      "vpcId": "s",
+    },
+    optional: {},
+  }, root);
+}
+
+function fromS3PublicAccessBlockConfiguration(input?: s.S3PublicAccessBlockConfiguration | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    ignorePublicAcls: input["ignorePublicAcls"],
+    restrictPublicBuckets: input["restrictPublicBuckets"],
+  }
+}
+function toS3PublicAccessBlockConfiguration(root: jsonP.JSONValue): s.S3PublicAccessBlockConfiguration {
+  return jsonP.readObj({
+    required: {
+      "ignorePublicAcls": "b",
+      "restrictPublicBuckets": "b",
+    },
+    optional: {},
+  }, root);
+}
+
+function fromS3BucketAclGrantConfiguration(input?: s.S3BucketAclGrantConfiguration | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    grantee: fromAclGrantee(input["grantee"]),
+    permission: input["permission"],
+  }
+}
+function toS3BucketAclGrantConfiguration(root: jsonP.JSONValue): s.S3BucketAclGrantConfiguration {
+  return jsonP.readObj({
+    required: {
+      "grantee": toAclGrantee,
+      "permission": (x: jsonP.JSONValue) => cmnP.readEnum<s.AclPermission>(x),
+    },
+    optional: {},
+  }, root);
+}
+
+function fromAclGrantee(input?: s.AclGrantee | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    id: input["id"],
+    uri: input["uri"],
+  }
+}
+function toAclGrantee(root: jsonP.JSONValue): s.AclGrantee {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "id": "s",
+      "uri": "s",
+    },
+  }, root);
+}
+
+function fromSecretsManagerSecretConfiguration(input?: s.SecretsManagerSecretConfiguration | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    kmsKeyId: input["kmsKeyId"],
+    secretPolicy: input["secretPolicy"],
+  }
+}
+function toSecretsManagerSecretConfiguration(root: jsonP.JSONValue): s.SecretsManagerSecretConfiguration {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "kmsKeyId": "s",
+      "secretPolicy": "s",
+    },
+  }, root);
+}
+
+function fromSqsQueueConfiguration(input?: s.SqsQueueConfiguration | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    queuePolicy: input["queuePolicy"],
+  }
+}
+function toSqsQueueConfiguration(root: jsonP.JSONValue): s.SqsQueueConfiguration {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "queuePolicy": "s",
+    },
+  }, root);
 }
 
 function fromInlineArchiveRule(input?: s.InlineArchiveRule | null): jsonP.JSONValue {
@@ -440,6 +822,30 @@ function fromSortCriteria(input?: s.SortCriteria | null): jsonP.JSONValue {
     attributeName: input["attributeName"],
     orderBy: input["orderBy"],
   }
+}
+
+function toAccessPreview(root: jsonP.JSONValue): s.AccessPreview {
+  return jsonP.readObj({
+    required: {
+      "analyzerArn": "s",
+      "configurations": x => jsonP.readMap(String, toConfiguration, x),
+      "createdAt": "d",
+      "id": "s",
+      "status": (x: jsonP.JSONValue) => cmnP.readEnum<s.AccessPreviewStatus>(x),
+    },
+    optional: {
+      "statusReason": toAccessPreviewStatusReason,
+    },
+  }, root);
+}
+
+function toAccessPreviewStatusReason(root: jsonP.JSONValue): s.AccessPreviewStatusReason {
+  return jsonP.readObj({
+    required: {
+      "code": (x: jsonP.JSONValue) => cmnP.readEnum<s.AccessPreviewStatusReasonCode>(x),
+    },
+    optional: {},
+  }, root);
 }
 
 function toAnalyzedResource(root: jsonP.JSONValue): s.AnalyzedResource {
@@ -544,6 +950,44 @@ function toFindingSourceDetail(root: jsonP.JSONValue): s.FindingSourceDetail {
   }, root);
 }
 
+function toAccessPreviewFinding(root: jsonP.JSONValue): s.AccessPreviewFinding {
+  return jsonP.readObj({
+    required: {
+      "changeType": (x: jsonP.JSONValue) => cmnP.readEnum<s.FindingChangeType>(x),
+      "createdAt": "d",
+      "id": "s",
+      "resourceOwnerAccount": "s",
+      "resourceType": (x: jsonP.JSONValue) => cmnP.readEnum<s.ResourceType>(x),
+      "status": (x: jsonP.JSONValue) => cmnP.readEnum<s.FindingStatus>(x),
+    },
+    optional: {
+      "action": ["s"],
+      "condition": x => jsonP.readMap(String, String, x),
+      "error": "s",
+      "existingFindingId": "s",
+      "existingFindingStatus": (x: jsonP.JSONValue) => cmnP.readEnum<s.FindingStatus>(x),
+      "isPublic": "b",
+      "principal": x => jsonP.readMap(String, String, x),
+      "resource": "s",
+      "sources": [toFindingSource],
+    },
+  }, root);
+}
+
+function toAccessPreviewSummary(root: jsonP.JSONValue): s.AccessPreviewSummary {
+  return jsonP.readObj({
+    required: {
+      "analyzerArn": "s",
+      "createdAt": "d",
+      "id": "s",
+      "status": (x: jsonP.JSONValue) => cmnP.readEnum<s.AccessPreviewStatus>(x),
+    },
+    optional: {
+      "statusReason": toAccessPreviewStatusReason,
+    },
+  }, root);
+}
+
 function toAnalyzedResourceSummary(root: jsonP.JSONValue): s.AnalyzedResourceSummary {
   return jsonP.readObj({
     required: {
@@ -575,5 +1019,71 @@ function toFindingSummary(root: jsonP.JSONValue): s.FindingSummary {
       "resource": "s",
       "sources": [toFindingSource],
     },
+  }, root);
+}
+
+function toValidatePolicyFinding(root: jsonP.JSONValue): s.ValidatePolicyFinding {
+  return jsonP.readObj({
+    required: {
+      "findingDetails": "s",
+      "findingType": (x: jsonP.JSONValue) => cmnP.readEnum<s.ValidatePolicyFindingType>(x),
+      "issueCode": "s",
+      "learnMoreLink": "s",
+      "locations": [toLocation],
+    },
+    optional: {},
+  }, root);
+}
+
+function toLocation(root: jsonP.JSONValue): s.Location {
+  return jsonP.readObj({
+    required: {
+      "path": [toPathElement],
+      "span": toSpan,
+    },
+    optional: {},
+  }, root);
+}
+
+function toPathElement(root: jsonP.JSONValue): s.PathElement {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "index": "n",
+      "key": "s",
+      "substring": toSubstring,
+      "value": "s",
+    },
+  }, root);
+}
+
+function toSubstring(root: jsonP.JSONValue): s.Substring {
+  return jsonP.readObj({
+    required: {
+      "length": "n",
+      "start": "n",
+    },
+    optional: {},
+  }, root);
+}
+
+function toSpan(root: jsonP.JSONValue): s.Span {
+  return jsonP.readObj({
+    required: {
+      "end": toPosition,
+      "start": toPosition,
+    },
+    optional: {},
+  }, root);
+}
+
+function toPosition(root: jsonP.JSONValue): s.Position {
+  return jsonP.readObj({
+    required: {
+      "column": "n",
+      "line": "n",
+      "offset": "n",
+    },
+    optional: {},
   }, root);
 }

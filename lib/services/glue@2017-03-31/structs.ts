@@ -602,6 +602,7 @@ export interface GetPartitionsRequest {
   NextToken?: string | null;
   Segment?: Segment | null;
   MaxResults?: number | null;
+  ExcludeColumnSchema?: boolean | null;
 }
 
 // refs: 1 - tags: named, input

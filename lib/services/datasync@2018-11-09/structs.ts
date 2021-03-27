@@ -212,6 +212,36 @@ export interface UpdateAgentRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface UpdateLocationNfsRequest {
+  LocationArn: string;
+  Subdirectory?: string | null;
+  OnPremConfig?: OnPremConfig | null;
+  MountOptions?: NfsMountOptions | null;
+}
+
+// refs: 1 - tags: named, input
+export interface UpdateLocationObjectStorageRequest {
+  LocationArn: string;
+  ServerPort?: number | null;
+  ServerProtocol?: ObjectStorageServerProtocol | null;
+  Subdirectory?: string | null;
+  AccessKey?: string | null;
+  SecretKey?: string | null;
+  AgentArns?: string[] | null;
+}
+
+// refs: 1 - tags: named, input
+export interface UpdateLocationSmbRequest {
+  LocationArn: string;
+  Subdirectory?: string | null;
+  User?: string | null;
+  Domain?: string | null;
+  Password?: string | null;
+  AgentArns?: string[] | null;
+  MountOptions?: SmbMountOptions | null;
+}
+
+// refs: 1 - tags: named, input
 export interface UpdateTaskRequest {
   TaskArn: string;
   Options?: Options | null;
@@ -436,6 +466,18 @@ export interface UpdateAgentResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface UpdateLocationNfsResponse {
+}
+
+// refs: 1 - tags: named, output
+export interface UpdateLocationObjectStorageResponse {
+}
+
+// refs: 1 - tags: named, output
+export interface UpdateLocationSmbResponse {
+}
+
+// refs: 1 - tags: named, output
 export interface UpdateTaskResponse {
 }
 
@@ -455,17 +497,17 @@ export interface Ec2Config {
   SecurityGroupArns: string[];
 }
 
-// refs: 2 - tags: input, named, interface, output
+// refs: 3 - tags: input, named, interface, output
 export interface OnPremConfig {
   AgentArns: string[];
 }
 
-// refs: 2 - tags: input, named, interface, output
+// refs: 3 - tags: input, named, interface, output
 export interface NfsMountOptions {
   Version?: NfsVersion | null;
 }
 
-// refs: 2 - tags: input, named, enum, output
+// refs: 3 - tags: input, named, enum, output
 export type NfsVersion =
 | "AUTOMATIC"
 | "NFS3"
@@ -473,7 +515,7 @@ export type NfsVersion =
 | "NFS4_1"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 2 - tags: input, named, enum, output
+// refs: 3 - tags: input, named, enum, output
 export type ObjectStorageServerProtocol =
 | "HTTPS"
 | "HTTP"
@@ -495,12 +537,12 @@ export interface S3Config {
   BucketAccessRoleArn: string;
 }
 
-// refs: 2 - tags: input, named, interface, output
+// refs: 3 - tags: input, named, interface, output
 export interface SmbMountOptions {
   Version?: SmbVersion | null;
 }
 
-// refs: 2 - tags: input, named, enum, output
+// refs: 3 - tags: input, named, enum, output
 export type SmbVersion =
 | "AUTOMATIC"
 | "SMB2"

@@ -5,7 +5,7 @@ interface RequestConfig {
 }
 
 export * from "./structs.ts";
-import * as Base64 from "https://deno.land/std@0.86.0/encoding/base64.ts";
+import * as Base64 from "https://deno.land/std@0.91.0/encoding/base64.ts";
 import * as client from "../../client/common.ts";
 import * as cmnP from "../../encoding/common.ts";
 import * as jsonP from "../../encoding/json.ts";
@@ -218,7 +218,7 @@ export default class LookoutVision {
   ): Promise<s.DetectAnomaliesResponse> {
     const body = typeof params["Body"] === 'string' ? new TextEncoder().encode(params["Body"]) : params["Body"];
     const headers = new Headers;
-    headers.append("content-type", params["ContentType"]);
+    headers.append("Content-Type", params["ContentType"]);
     const resp = await this.#client.performRequest({
       abortSignal, headers, body,
       action: "DetectAnomalies",

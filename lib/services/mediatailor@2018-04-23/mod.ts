@@ -29,6 +29,155 @@ export default class MediaTailor {
     "uid": "mediatailor-2018-04-23"
   };
 
+  async createChannel(
+    {abortSignal, ...params}: RequestConfig & s.CreateChannelRequest,
+  ): Promise<s.CreateChannelResponse> {
+    const body: jsonP.JSONObject = {
+      Outputs: params["Outputs"]?.map(x => fromRequestOutputItem(x)),
+      PlaybackMode: params["PlaybackMode"],
+      tags: params["Tags"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "CreateChannel",
+      requestUri: cmnP.encodePath`/channel/${params["ChannelName"]}`,
+      responseCode: 200,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+        "ChannelName": "s",
+        "ChannelState": (x: jsonP.JSONValue) => cmnP.readEnum<s.ChannelState>(x),
+        "CreationTime": "d",
+        "LastModifiedTime": "d",
+        "Outputs": [toResponseOutputItem],
+        "PlaybackMode": "s",
+        "Tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
+  }
+
+  async createProgram(
+    {abortSignal, ...params}: RequestConfig & s.CreateProgramRequest,
+  ): Promise<s.CreateProgramResponse> {
+    const body: jsonP.JSONObject = {
+      AdBreaks: params["AdBreaks"]?.map(x => fromAdBreak(x)),
+      ScheduleConfiguration: fromScheduleConfiguration(params["ScheduleConfiguration"]),
+      SourceLocationName: params["SourceLocationName"],
+      VodSourceName: params["VodSourceName"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "CreateProgram",
+      requestUri: cmnP.encodePath`/channel/${params["ChannelName"]}/program/${params["ProgramName"]}`,
+      responseCode: 200,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "AdBreaks": [toAdBreak],
+        "Arn": "s",
+        "ChannelName": "s",
+        "CreationTime": "d",
+        "ProgramName": "s",
+        "SourceLocationName": "s",
+        "VodSourceName": "s",
+      },
+    }, await resp.json());
+  }
+
+  async createSourceLocation(
+    {abortSignal, ...params}: RequestConfig & s.CreateSourceLocationRequest,
+  ): Promise<s.CreateSourceLocationResponse> {
+    const body: jsonP.JSONObject = {
+      AccessConfiguration: fromAccessConfiguration(params["AccessConfiguration"]),
+      DefaultSegmentDeliveryConfiguration: fromDefaultSegmentDeliveryConfiguration(params["DefaultSegmentDeliveryConfiguration"]),
+      HttpConfiguration: fromHttpConfiguration(params["HttpConfiguration"]),
+      tags: params["Tags"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "CreateSourceLocation",
+      requestUri: cmnP.encodePath`/sourceLocation/${params["SourceLocationName"]}`,
+      responseCode: 200,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "AccessConfiguration": toAccessConfiguration,
+        "Arn": "s",
+        "CreationTime": "d",
+        "DefaultSegmentDeliveryConfiguration": toDefaultSegmentDeliveryConfiguration,
+        "HttpConfiguration": toHttpConfiguration,
+        "LastModifiedTime": "d",
+        "SourceLocationName": "s",
+        "Tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
+  }
+
+  async createVodSource(
+    {abortSignal, ...params}: RequestConfig & s.CreateVodSourceRequest,
+  ): Promise<s.CreateVodSourceResponse> {
+    const body: jsonP.JSONObject = {
+      HttpPackageConfigurations: params["HttpPackageConfigurations"]?.map(x => fromHttpPackageConfiguration(x)),
+      tags: params["Tags"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "CreateVodSource",
+      requestUri: cmnP.encodePath`/sourceLocation/${params["SourceLocationName"]}/vodSource/${params["VodSourceName"]}`,
+      responseCode: 200,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+        "CreationTime": "d",
+        "HttpPackageConfigurations": [toHttpPackageConfiguration],
+        "LastModifiedTime": "d",
+        "SourceLocationName": "s",
+        "Tags": x => jsonP.readMap(String, String, x),
+        "VodSourceName": "s",
+      },
+    }, await resp.json());
+  }
+
+  async deleteChannel(
+    {abortSignal, ...params}: RequestConfig & s.DeleteChannelRequest,
+  ): Promise<s.DeleteChannelResponse> {
+
+    const resp = await this.#client.performRequest({
+      abortSignal,
+      action: "DeleteChannel",
+      method: "DELETE",
+      requestUri: cmnP.encodePath`/channel/${params["ChannelName"]}`,
+      responseCode: 200,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
+  }
+
+  async deleteChannelPolicy(
+    {abortSignal, ...params}: RequestConfig & s.DeleteChannelPolicyRequest,
+  ): Promise<s.DeleteChannelPolicyResponse> {
+
+    const resp = await this.#client.performRequest({
+      abortSignal,
+      action: "DeleteChannelPolicy",
+      method: "DELETE",
+      requestUri: cmnP.encodePath`/channel/${params["ChannelName"]}/policy`,
+      responseCode: 200,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
+  }
+
   async deletePlaybackConfiguration(
     {abortSignal, ...params}: RequestConfig & s.DeletePlaybackConfigurationRequest,
   ): Promise<s.DeletePlaybackConfigurationResponse> {
@@ -43,6 +192,201 @@ export default class MediaTailor {
     return jsonP.readObj({
       required: {},
       optional: {},
+    }, await resp.json());
+  }
+
+  async deleteProgram(
+    {abortSignal, ...params}: RequestConfig & s.DeleteProgramRequest,
+  ): Promise<s.DeleteProgramResponse> {
+
+    const resp = await this.#client.performRequest({
+      abortSignal,
+      action: "DeleteProgram",
+      method: "DELETE",
+      requestUri: cmnP.encodePath`/channel/${params["ChannelName"]}/program/${params["ProgramName"]}`,
+      responseCode: 200,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
+  }
+
+  async deleteSourceLocation(
+    {abortSignal, ...params}: RequestConfig & s.DeleteSourceLocationRequest,
+  ): Promise<s.DeleteSourceLocationResponse> {
+
+    const resp = await this.#client.performRequest({
+      abortSignal,
+      action: "DeleteSourceLocation",
+      method: "DELETE",
+      requestUri: cmnP.encodePath`/sourceLocation/${params["SourceLocationName"]}`,
+      responseCode: 200,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
+  }
+
+  async deleteVodSource(
+    {abortSignal, ...params}: RequestConfig & s.DeleteVodSourceRequest,
+  ): Promise<s.DeleteVodSourceResponse> {
+
+    const resp = await this.#client.performRequest({
+      abortSignal,
+      action: "DeleteVodSource",
+      method: "DELETE",
+      requestUri: cmnP.encodePath`/sourceLocation/${params["SourceLocationName"]}/vodSource/${params["VodSourceName"]}`,
+      responseCode: 200,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
+  }
+
+  async describeChannel(
+    {abortSignal, ...params}: RequestConfig & s.DescribeChannelRequest,
+  ): Promise<s.DescribeChannelResponse> {
+
+    const resp = await this.#client.performRequest({
+      abortSignal,
+      action: "DescribeChannel",
+      method: "GET",
+      requestUri: cmnP.encodePath`/channel/${params["ChannelName"]}`,
+      responseCode: 200,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+        "ChannelName": "s",
+        "ChannelState": (x: jsonP.JSONValue) => cmnP.readEnum<s.ChannelState>(x),
+        "CreationTime": "d",
+        "LastModifiedTime": "d",
+        "Outputs": [toResponseOutputItem],
+        "PlaybackMode": "s",
+        "Tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
+  }
+
+  async describeProgram(
+    {abortSignal, ...params}: RequestConfig & s.DescribeProgramRequest,
+  ): Promise<s.DescribeProgramResponse> {
+
+    const resp = await this.#client.performRequest({
+      abortSignal,
+      action: "DescribeProgram",
+      method: "GET",
+      requestUri: cmnP.encodePath`/channel/${params["ChannelName"]}/program/${params["ProgramName"]}`,
+      responseCode: 200,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "AdBreaks": [toAdBreak],
+        "Arn": "s",
+        "ChannelName": "s",
+        "CreationTime": "d",
+        "ProgramName": "s",
+        "SourceLocationName": "s",
+        "VodSourceName": "s",
+      },
+    }, await resp.json());
+  }
+
+  async describeSourceLocation(
+    {abortSignal, ...params}: RequestConfig & s.DescribeSourceLocationRequest,
+  ): Promise<s.DescribeSourceLocationResponse> {
+
+    const resp = await this.#client.performRequest({
+      abortSignal,
+      action: "DescribeSourceLocation",
+      method: "GET",
+      requestUri: cmnP.encodePath`/sourceLocation/${params["SourceLocationName"]}`,
+      responseCode: 200,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "AccessConfiguration": toAccessConfiguration,
+        "Arn": "s",
+        "CreationTime": "d",
+        "DefaultSegmentDeliveryConfiguration": toDefaultSegmentDeliveryConfiguration,
+        "HttpConfiguration": toHttpConfiguration,
+        "LastModifiedTime": "d",
+        "SourceLocationName": "s",
+        "Tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
+  }
+
+  async describeVodSource(
+    {abortSignal, ...params}: RequestConfig & s.DescribeVodSourceRequest,
+  ): Promise<s.DescribeVodSourceResponse> {
+
+    const resp = await this.#client.performRequest({
+      abortSignal,
+      action: "DescribeVodSource",
+      method: "GET",
+      requestUri: cmnP.encodePath`/sourceLocation/${params["SourceLocationName"]}/vodSource/${params["VodSourceName"]}`,
+      responseCode: 200,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+        "CreationTime": "d",
+        "HttpPackageConfigurations": [toHttpPackageConfiguration],
+        "LastModifiedTime": "d",
+        "SourceLocationName": "s",
+        "Tags": x => jsonP.readMap(String, String, x),
+        "VodSourceName": "s",
+      },
+    }, await resp.json());
+  }
+
+  async getChannelPolicy(
+    {abortSignal, ...params}: RequestConfig & s.GetChannelPolicyRequest,
+  ): Promise<s.GetChannelPolicyResponse> {
+
+    const resp = await this.#client.performRequest({
+      abortSignal,
+      action: "GetChannelPolicy",
+      method: "GET",
+      requestUri: cmnP.encodePath`/channel/${params["ChannelName"]}/policy`,
+      responseCode: 200,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Policy": "s",
+      },
+    }, await resp.json());
+  }
+
+  async getChannelSchedule(
+    {abortSignal, ...params}: RequestConfig & s.GetChannelScheduleRequest,
+  ): Promise<s.GetChannelScheduleResponse> {
+    const query = new URLSearchParams;
+    if (params["DurationMinutes"] != null) query.set("durationMinutes", params["DurationMinutes"]?.toString() ?? "");
+    if (params["MaxResults"] != null) query.set("maxResults", params["MaxResults"]?.toString() ?? "");
+    if (params["NextToken"] != null) query.set("nextToken", params["NextToken"]?.toString() ?? "");
+    const resp = await this.#client.performRequest({
+      abortSignal, query,
+      action: "GetChannelSchedule",
+      method: "GET",
+      requestUri: cmnP.encodePath`/channel/${params["ChannelName"]}/schedule`,
+      responseCode: 200,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Items": [toScheduleEntry],
+        "NextToken": "s",
+      },
     }, await resp.json());
   }
 
@@ -64,6 +408,7 @@ export default class MediaTailor {
         "AvailSuppression": toAvailSuppression,
         "Bumper": toBumper,
         "CdnConfiguration": toCdnConfiguration,
+        "ConfigurationAliases": x => jsonP.readMap(String, y => jsonP.readMap(String, String, y)!, x),
         "DashConfiguration": toDashConfiguration,
         "HlsConfiguration": toHlsConfiguration,
         "LivePreRollConfiguration": toLivePreRollConfiguration,
@@ -77,6 +422,28 @@ export default class MediaTailor {
         "Tags": x => jsonP.readMap(String, String, x),
         "TranscodeProfileName": "s",
         "VideoContentSourceUrl": "s",
+      },
+    }, await resp.json());
+  }
+
+  async listChannels(
+    {abortSignal, ...params}: RequestConfig & s.ListChannelsRequest = {},
+  ): Promise<s.ListChannelsResponse> {
+    const query = new URLSearchParams;
+    if (params["MaxResults"] != null) query.set("maxResults", params["MaxResults"]?.toString() ?? "");
+    if (params["NextToken"] != null) query.set("nextToken", params["NextToken"]?.toString() ?? "");
+    const resp = await this.#client.performRequest({
+      abortSignal, query,
+      action: "ListChannels",
+      method: "GET",
+      requestUri: "/channels",
+      responseCode: 200,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Items": [toChannel],
+        "NextToken": "s",
       },
     }, await resp.json());
   }
@@ -103,6 +470,28 @@ export default class MediaTailor {
     }, await resp.json());
   }
 
+  async listSourceLocations(
+    {abortSignal, ...params}: RequestConfig & s.ListSourceLocationsRequest = {},
+  ): Promise<s.ListSourceLocationsResponse> {
+    const query = new URLSearchParams;
+    if (params["MaxResults"] != null) query.set("maxResults", params["MaxResults"]?.toString() ?? "");
+    if (params["NextToken"] != null) query.set("nextToken", params["NextToken"]?.toString() ?? "");
+    const resp = await this.#client.performRequest({
+      abortSignal, query,
+      action: "ListSourceLocations",
+      method: "GET",
+      requestUri: "/sourceLocations",
+      responseCode: 200,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Items": [toSourceLocation],
+        "NextToken": "s",
+      },
+    }, await resp.json());
+  }
+
   async listTagsForResource(
     {abortSignal, ...params}: RequestConfig & s.ListTagsForResourceRequest,
   ): Promise<s.ListTagsForResourceResponse> {
@@ -122,6 +511,47 @@ export default class MediaTailor {
     }, await resp.json());
   }
 
+  async listVodSources(
+    {abortSignal, ...params}: RequestConfig & s.ListVodSourcesRequest,
+  ): Promise<s.ListVodSourcesResponse> {
+    const query = new URLSearchParams;
+    if (params["MaxResults"] != null) query.set("maxResults", params["MaxResults"]?.toString() ?? "");
+    if (params["NextToken"] != null) query.set("nextToken", params["NextToken"]?.toString() ?? "");
+    const resp = await this.#client.performRequest({
+      abortSignal, query,
+      action: "ListVodSources",
+      method: "GET",
+      requestUri: cmnP.encodePath`/sourceLocation/${params["SourceLocationName"]}/vodSources`,
+      responseCode: 200,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Items": [toVodSource],
+        "NextToken": "s",
+      },
+    }, await resp.json());
+  }
+
+  async putChannelPolicy(
+    {abortSignal, ...params}: RequestConfig & s.PutChannelPolicyRequest,
+  ): Promise<s.PutChannelPolicyResponse> {
+    const body: jsonP.JSONObject = {
+      Policy: params["Policy"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "PutChannelPolicy",
+      method: "PUT",
+      requestUri: cmnP.encodePath`/channel/${params["ChannelName"]}/policy`,
+      responseCode: 200,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
+  }
+
   async putPlaybackConfiguration(
     {abortSignal, ...params}: RequestConfig & s.PutPlaybackConfigurationRequest = {},
   ): Promise<s.PutPlaybackConfigurationResponse> {
@@ -130,6 +560,7 @@ export default class MediaTailor {
       AvailSuppression: fromAvailSuppression(params["AvailSuppression"]),
       Bumper: fromBumper(params["Bumper"]),
       CdnConfiguration: fromCdnConfiguration(params["CdnConfiguration"]),
+      ConfigurationAliases: params["ConfigurationAliases"],
       DashConfiguration: fromDashConfigurationForPut(params["DashConfiguration"]),
       LivePreRollConfiguration: fromLivePreRollConfiguration(params["LivePreRollConfiguration"]),
       ManifestProcessingRules: fromManifestProcessingRules(params["ManifestProcessingRules"]),
@@ -154,6 +585,7 @@ export default class MediaTailor {
         "AvailSuppression": toAvailSuppression,
         "Bumper": toBumper,
         "CdnConfiguration": toCdnConfiguration,
+        "ConfigurationAliases": x => jsonP.readMap(String, y => jsonP.readMap(String, String, y)!, x),
         "DashConfiguration": toDashConfiguration,
         "HlsConfiguration": toHlsConfiguration,
         "LivePreRollConfiguration": toLivePreRollConfiguration,
@@ -168,6 +600,40 @@ export default class MediaTailor {
         "TranscodeProfileName": "s",
         "VideoContentSourceUrl": "s",
       },
+    }, await resp.json());
+  }
+
+  async startChannel(
+    {abortSignal, ...params}: RequestConfig & s.StartChannelRequest,
+  ): Promise<s.StartChannelResponse> {
+
+    const resp = await this.#client.performRequest({
+      abortSignal,
+      action: "StartChannel",
+      method: "PUT",
+      requestUri: cmnP.encodePath`/channel/${params["ChannelName"]}/start`,
+      responseCode: 200,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
+  }
+
+  async stopChannel(
+    {abortSignal, ...params}: RequestConfig & s.StopChannelRequest,
+  ): Promise<s.StopChannelResponse> {
+
+    const resp = await this.#client.performRequest({
+      abortSignal,
+      action: "StopChannel",
+      method: "PUT",
+      requestUri: cmnP.encodePath`/channel/${params["ChannelName"]}/stop`,
+      responseCode: 200,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {},
     }, await resp.json());
   }
 
@@ -201,6 +667,276 @@ export default class MediaTailor {
     });
   }
 
+  async updateChannel(
+    {abortSignal, ...params}: RequestConfig & s.UpdateChannelRequest,
+  ): Promise<s.UpdateChannelResponse> {
+    const body: jsonP.JSONObject = {
+      Outputs: params["Outputs"]?.map(x => fromRequestOutputItem(x)),
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "UpdateChannel",
+      method: "PUT",
+      requestUri: cmnP.encodePath`/channel/${params["ChannelName"]}`,
+      responseCode: 200,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+        "ChannelName": "s",
+        "ChannelState": (x: jsonP.JSONValue) => cmnP.readEnum<s.ChannelState>(x),
+        "CreationTime": "d",
+        "LastModifiedTime": "d",
+        "Outputs": [toResponseOutputItem],
+        "PlaybackMode": "s",
+        "Tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
+  }
+
+  async updateSourceLocation(
+    {abortSignal, ...params}: RequestConfig & s.UpdateSourceLocationRequest,
+  ): Promise<s.UpdateSourceLocationResponse> {
+    const body: jsonP.JSONObject = {
+      AccessConfiguration: fromAccessConfiguration(params["AccessConfiguration"]),
+      DefaultSegmentDeliveryConfiguration: fromDefaultSegmentDeliveryConfiguration(params["DefaultSegmentDeliveryConfiguration"]),
+      HttpConfiguration: fromHttpConfiguration(params["HttpConfiguration"]),
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "UpdateSourceLocation",
+      method: "PUT",
+      requestUri: cmnP.encodePath`/sourceLocation/${params["SourceLocationName"]}`,
+      responseCode: 200,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "AccessConfiguration": toAccessConfiguration,
+        "Arn": "s",
+        "CreationTime": "d",
+        "DefaultSegmentDeliveryConfiguration": toDefaultSegmentDeliveryConfiguration,
+        "HttpConfiguration": toHttpConfiguration,
+        "LastModifiedTime": "d",
+        "SourceLocationName": "s",
+        "Tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
+  }
+
+  async updateVodSource(
+    {abortSignal, ...params}: RequestConfig & s.UpdateVodSourceRequest,
+  ): Promise<s.UpdateVodSourceResponse> {
+    const body: jsonP.JSONObject = {
+      HttpPackageConfigurations: params["HttpPackageConfigurations"]?.map(x => fromHttpPackageConfiguration(x)),
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "UpdateVodSource",
+      method: "PUT",
+      requestUri: cmnP.encodePath`/sourceLocation/${params["SourceLocationName"]}/vodSource/${params["VodSourceName"]}`,
+      responseCode: 200,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Arn": "s",
+        "CreationTime": "d",
+        "HttpPackageConfigurations": [toHttpPackageConfiguration],
+        "LastModifiedTime": "d",
+        "SourceLocationName": "s",
+        "Tags": x => jsonP.readMap(String, String, x),
+        "VodSourceName": "s",
+      },
+    }, await resp.json());
+  }
+
+}
+
+function fromRequestOutputItem(input?: s.RequestOutputItem | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    DashPlaylistSettings: fromDashPlaylistSettings(input["DashPlaylistSettings"]),
+    HlsPlaylistSettings: fromHlsPlaylistSettings(input["HlsPlaylistSettings"]),
+    ManifestName: input["ManifestName"],
+    SourceGroup: input["SourceGroup"],
+  }
+}
+
+function fromDashPlaylistSettings(input?: s.DashPlaylistSettings | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    ManifestWindowSeconds: input["ManifestWindowSeconds"],
+    MinBufferTimeSeconds: input["MinBufferTimeSeconds"],
+    MinUpdatePeriodSeconds: input["MinUpdatePeriodSeconds"],
+    SuggestedPresentationDelaySeconds: input["SuggestedPresentationDelaySeconds"],
+  }
+}
+function toDashPlaylistSettings(root: jsonP.JSONValue): s.DashPlaylistSettings {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "ManifestWindowSeconds": "n",
+      "MinBufferTimeSeconds": "n",
+      "MinUpdatePeriodSeconds": "n",
+      "SuggestedPresentationDelaySeconds": "n",
+    },
+  }, root);
+}
+
+function fromHlsPlaylistSettings(input?: s.HlsPlaylistSettings | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    ManifestWindowSeconds: input["ManifestWindowSeconds"],
+  }
+}
+function toHlsPlaylistSettings(root: jsonP.JSONValue): s.HlsPlaylistSettings {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "ManifestWindowSeconds": "n",
+    },
+  }, root);
+}
+
+function fromAdBreak(input?: s.AdBreak | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    MessageType: input["MessageType"],
+    OffsetMillis: input["OffsetMillis"],
+    Slate: fromSlateSource(input["Slate"]),
+    SpliceInsertMessage: fromSpliceInsertMessage(input["SpliceInsertMessage"]),
+  }
+}
+function toAdBreak(root: jsonP.JSONValue): s.AdBreak {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "MessageType": (x: jsonP.JSONValue) => cmnP.readEnum<s.MessageType>(x),
+      "OffsetMillis": "n",
+      "Slate": toSlateSource,
+      "SpliceInsertMessage": toSpliceInsertMessage,
+    },
+  }, root);
+}
+
+function fromSlateSource(input?: s.SlateSource | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    SourceLocationName: input["SourceLocationName"],
+    VodSourceName: input["VodSourceName"],
+  }
+}
+function toSlateSource(root: jsonP.JSONValue): s.SlateSource {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "SourceLocationName": "s",
+      "VodSourceName": "s",
+    },
+  }, root);
+}
+
+function fromSpliceInsertMessage(input?: s.SpliceInsertMessage | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    AvailNum: input["AvailNum"],
+    AvailsExpected: input["AvailsExpected"],
+    SpliceEventId: input["SpliceEventId"],
+    UniqueProgramId: input["UniqueProgramId"],
+  }
+}
+function toSpliceInsertMessage(root: jsonP.JSONValue): s.SpliceInsertMessage {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "AvailNum": "n",
+      "AvailsExpected": "n",
+      "SpliceEventId": "n",
+      "UniqueProgramId": "n",
+    },
+  }, root);
+}
+
+function fromScheduleConfiguration(input?: s.ScheduleConfiguration | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    Transition: fromTransition(input["Transition"]),
+  }
+}
+
+function fromTransition(input?: s.Transition | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    RelativePosition: input["RelativePosition"],
+    RelativeProgram: input["RelativeProgram"],
+    Type: input["Type"],
+  }
+}
+
+function fromAccessConfiguration(input?: s.AccessConfiguration | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    AccessType: input["AccessType"],
+  }
+}
+function toAccessConfiguration(root: jsonP.JSONValue): s.AccessConfiguration {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "AccessType": (x: jsonP.JSONValue) => cmnP.readEnum<s.AccessType>(x),
+    },
+  }, root);
+}
+
+function fromDefaultSegmentDeliveryConfiguration(input?: s.DefaultSegmentDeliveryConfiguration | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    BaseUrl: input["BaseUrl"],
+  }
+}
+function toDefaultSegmentDeliveryConfiguration(root: jsonP.JSONValue): s.DefaultSegmentDeliveryConfiguration {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "BaseUrl": "s",
+    },
+  }, root);
+}
+
+function fromHttpConfiguration(input?: s.HttpConfiguration | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    BaseUrl: input["BaseUrl"],
+  }
+}
+function toHttpConfiguration(root: jsonP.JSONValue): s.HttpConfiguration {
+  return jsonP.readObj({
+    required: {
+      "BaseUrl": "s",
+    },
+    optional: {},
+  }, root);
+}
+
+function fromHttpPackageConfiguration(input?: s.HttpPackageConfiguration | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    Path: input["Path"],
+    SourceGroup: input["SourceGroup"],
+    Type: input["Type"],
+  }
+}
+function toHttpPackageConfiguration(root: jsonP.JSONValue): s.HttpPackageConfiguration {
+  return jsonP.readObj({
+    required: {
+      "Path": "s",
+      "SourceGroup": "s",
+      "Type": (x: jsonP.JSONValue) => cmnP.readEnum<s.Type>(x),
+    },
+    optional: {},
+  }, root);
 }
 
 function fromAvailSuppression(input?: s.AvailSuppression | null): jsonP.JSONValue {
@@ -309,6 +1045,36 @@ function toAdMarkerPassthrough(root: jsonP.JSONValue): s.AdMarkerPassthrough {
   }, root);
 }
 
+function toResponseOutputItem(root: jsonP.JSONValue): s.ResponseOutputItem {
+  return jsonP.readObj({
+    required: {
+      "ManifestName": "s",
+      "PlaybackUrl": "s",
+      "SourceGroup": "s",
+    },
+    optional: {
+      "DashPlaylistSettings": toDashPlaylistSettings,
+      "HlsPlaylistSettings": toHlsPlaylistSettings,
+    },
+  }, root);
+}
+
+function toScheduleEntry(root: jsonP.JSONValue): s.ScheduleEntry {
+  return jsonP.readObj({
+    required: {
+      "Arn": "s",
+      "ChannelName": "s",
+      "ProgramName": "s",
+      "SourceLocationName": "s",
+      "VodSourceName": "s",
+    },
+    optional: {
+      "ApproximateDurationSeconds": "n",
+      "ApproximateStartTime": "d",
+    },
+  }, root);
+}
+
 function toDashConfiguration(root: jsonP.JSONValue): s.DashConfiguration {
   return jsonP.readObj({
     required: {},
@@ -329,6 +1095,23 @@ function toHlsConfiguration(root: jsonP.JSONValue): s.HlsConfiguration {
   }, root);
 }
 
+function toChannel(root: jsonP.JSONValue): s.Channel {
+  return jsonP.readObj({
+    required: {
+      "Arn": "s",
+      "ChannelName": "s",
+      "ChannelState": "s",
+      "Outputs": [toResponseOutputItem],
+      "PlaybackMode": "s",
+    },
+    optional: {
+      "CreationTime": "d",
+      "LastModifiedTime": "d",
+      "Tags": x => jsonP.readMap(String, String, x),
+    },
+  }, root);
+}
+
 function toPlaybackConfiguration(root: jsonP.JSONValue): s.PlaybackConfiguration {
   return jsonP.readObj({
     required: {},
@@ -337,18 +1120,53 @@ function toPlaybackConfiguration(root: jsonP.JSONValue): s.PlaybackConfiguration
       "AvailSuppression": toAvailSuppression,
       "Bumper": toBumper,
       "CdnConfiguration": toCdnConfiguration,
+      "ConfigurationAliases": x => jsonP.readMap(String, y => jsonP.readMap(String, String, y)!, x),
       "DashConfiguration": toDashConfiguration,
       "HlsConfiguration": toHlsConfiguration,
+      "LivePreRollConfiguration": toLivePreRollConfiguration,
       "ManifestProcessingRules": toManifestProcessingRules,
       "Name": "s",
+      "PersonalizationThresholdSeconds": "n",
       "PlaybackConfigurationArn": "s",
       "PlaybackEndpointPrefix": "s",
       "SessionInitializationEndpointPrefix": "s",
       "SlateAdUrl": "s",
       "Tags": x => jsonP.readMap(String, String, x),
       "TranscodeProfileName": "s",
-      "PersonalizationThresholdSeconds": "n",
       "VideoContentSourceUrl": "s",
+    },
+  }, root);
+}
+
+function toSourceLocation(root: jsonP.JSONValue): s.SourceLocation {
+  return jsonP.readObj({
+    required: {
+      "Arn": "s",
+      "HttpConfiguration": toHttpConfiguration,
+      "SourceLocationName": "s",
+    },
+    optional: {
+      "AccessConfiguration": toAccessConfiguration,
+      "CreationTime": "d",
+      "DefaultSegmentDeliveryConfiguration": toDefaultSegmentDeliveryConfiguration,
+      "LastModifiedTime": "d",
+      "Tags": x => jsonP.readMap(String, String, x),
+    },
+  }, root);
+}
+
+function toVodSource(root: jsonP.JSONValue): s.VodSource {
+  return jsonP.readObj({
+    required: {
+      "Arn": "s",
+      "HttpPackageConfigurations": [toHttpPackageConfiguration],
+      "SourceLocationName": "s",
+      "VodSourceName": "s",
+    },
+    optional: {
+      "CreationTime": "d",
+      "LastModifiedTime": "d",
+      "Tags": x => jsonP.readMap(String, String, x),
     },
   }, root);
 }

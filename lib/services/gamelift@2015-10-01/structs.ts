@@ -53,7 +53,14 @@ export interface CreateFleetInput {
   FleetType?: FleetType | null;
   InstanceRoleArn?: string | null;
   CertificateConfiguration?: CertificateConfiguration | null;
+  Locations?: LocationConfiguration[] | null;
   Tags?: Tag[] | null;
+}
+
+// refs: 1 - tags: named, input
+export interface CreateFleetLocationsInput {
+  FleetId: string;
+  Locations: LocationConfiguration[];
 }
 
 // refs: 1 - tags: named, input
@@ -82,6 +89,7 @@ export interface CreateGameSessionInput {
   GameSessionId?: string | null;
   IdempotencyToken?: string | null;
   GameSessionData?: string | null;
+  Location?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -90,6 +98,10 @@ export interface CreateGameSessionQueueInput {
   TimeoutInSeconds?: number | null;
   PlayerLatencyPolicies?: PlayerLatencyPolicy[] | null;
   Destinations?: GameSessionQueueDestination[] | null;
+  FilterConfiguration?: FilterConfiguration | null;
+  PriorityConfiguration?: PriorityConfiguration | null;
+  CustomEventData?: string | null;
+  NotificationTarget?: string | null;
   Tags?: Tag[] | null;
 }
 
@@ -171,6 +183,12 @@ export interface DeleteFleetInput {
 }
 
 // refs: 1 - tags: named, input
+export interface DeleteFleetLocationsInput {
+  FleetId: string;
+  Locations: string[];
+}
+
+// refs: 1 - tags: named, input
 export interface DeleteGameServerGroupInput {
   GameServerGroupName: string;
   DeleteOption?: GameServerGroupDeleteOption | null;
@@ -233,6 +251,7 @@ export interface DescribeBuildInput {
 // refs: 1 - tags: named, input
 export interface DescribeEC2InstanceLimitsInput {
   EC2InstanceType?: EC2InstanceType | null;
+  Location?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -259,8 +278,29 @@ export interface DescribeFleetEventsInput {
 }
 
 // refs: 1 - tags: named, input
+export interface DescribeFleetLocationAttributesInput {
+  FleetId: string;
+  Locations?: string[] | null;
+  Limit?: number | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface DescribeFleetLocationCapacityInput {
+  FleetId: string;
+  Location: string;
+}
+
+// refs: 1 - tags: named, input
+export interface DescribeFleetLocationUtilizationInput {
+  FleetId: string;
+  Location: string;
+}
+
+// refs: 1 - tags: named, input
 export interface DescribeFleetPortSettingsInput {
   FleetId: string;
+  Location?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -294,6 +334,7 @@ export interface DescribeGameSessionDetailsInput {
   FleetId?: string | null;
   GameSessionId?: string | null;
   AliasId?: string | null;
+  Location?: string | null;
   StatusFilter?: string | null;
   Limit?: number | null;
   NextToken?: string | null;
@@ -316,6 +357,7 @@ export interface DescribeGameSessionsInput {
   FleetId?: string | null;
   GameSessionId?: string | null;
   AliasId?: string | null;
+  Location?: string | null;
   StatusFilter?: string | null;
   Limit?: number | null;
   NextToken?: string | null;
@@ -327,6 +369,7 @@ export interface DescribeInstancesInput {
   InstanceId?: string | null;
   Limit?: number | null;
   NextToken?: string | null;
+  Location?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -370,6 +413,7 @@ export interface DescribeScalingPoliciesInput {
   StatusFilter?: ScalingStatusType | null;
   Limit?: number | null;
   NextToken?: string | null;
+  Location?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -488,6 +532,7 @@ export interface ResumeGameServerGroupInput {
 export interface SearchGameSessionsInput {
   FleetId?: string | null;
   AliasId?: string | null;
+  Location?: string | null;
   FilterExpression?: string | null;
   SortExpression?: string | null;
   Limit?: number | null;
@@ -498,6 +543,7 @@ export interface SearchGameSessionsInput {
 export interface StartFleetActionsInput {
   FleetId: string;
   Actions: FleetAction[];
+  Location?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -531,6 +577,7 @@ export interface StartMatchmakingInput {
 export interface StopFleetActionsInput {
   FleetId: string;
   Actions: FleetAction[];
+  Location?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -592,6 +639,7 @@ export interface UpdateFleetCapacityInput {
   DesiredInstances?: number | null;
   MinSize?: number | null;
   MaxSize?: number | null;
+  Location?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -634,6 +682,10 @@ export interface UpdateGameSessionQueueInput {
   TimeoutInSeconds?: number | null;
   PlayerLatencyPolicies?: PlayerLatencyPolicy[] | null;
   Destinations?: GameSessionQueueDestination[] | null;
+  FilterConfiguration?: FilterConfiguration | null;
+  PriorityConfiguration?: PriorityConfiguration | null;
+  CustomEventData?: string | null;
+  NotificationTarget?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -698,6 +750,14 @@ export interface CreateBuildOutput {
 // refs: 1 - tags: named, output
 export interface CreateFleetOutput {
   FleetAttributes?: FleetAttributes | null;
+  LocationStates?: LocationState[] | null;
+}
+
+// refs: 1 - tags: named, output
+export interface CreateFleetLocationsOutput {
+  FleetId?: string | null;
+  FleetArn?: string | null;
+  LocationStates?: LocationState[] | null;
 }
 
 // refs: 1 - tags: named, output
@@ -747,6 +807,13 @@ export interface CreateVpcPeeringAuthorizationOutput {
 
 // refs: 1 - tags: named, output
 export interface CreateVpcPeeringConnectionOutput {
+}
+
+// refs: 1 - tags: named, output
+export interface DeleteFleetLocationsOutput {
+  FleetId?: string | null;
+  FleetArn?: string | null;
+  LocationStates?: LocationState[] | null;
 }
 
 // refs: 1 - tags: named, output
@@ -808,8 +875,30 @@ export interface DescribeFleetEventsOutput {
 }
 
 // refs: 1 - tags: named, output
+export interface DescribeFleetLocationAttributesOutput {
+  FleetId?: string | null;
+  FleetArn?: string | null;
+  LocationAttributes?: LocationAttributes[] | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface DescribeFleetLocationCapacityOutput {
+  FleetCapacity?: FleetCapacity | null;
+}
+
+// refs: 1 - tags: named, output
+export interface DescribeFleetLocationUtilizationOutput {
+  FleetUtilization?: FleetUtilization | null;
+}
+
+// refs: 1 - tags: named, output
 export interface DescribeFleetPortSettingsOutput {
+  FleetId?: string | null;
+  FleetArn?: string | null;
   InboundPermissions?: IpPermission[] | null;
+  UpdateStatus?: LocationUpdateStatus | null;
+  Location?: string | null;
 }
 
 // refs: 1 - tags: named, output
@@ -998,6 +1087,8 @@ export interface SearchGameSessionsOutput {
 
 // refs: 1 - tags: named, output
 export interface StartFleetActionsOutput {
+  FleetId?: string | null;
+  FleetArn?: string | null;
 }
 
 // refs: 1 - tags: named, output
@@ -1017,6 +1108,8 @@ export interface StartMatchmakingOutput {
 
 // refs: 1 - tags: named, output
 export interface StopFleetActionsOutput {
+  FleetId?: string | null;
+  FleetArn?: string | null;
 }
 
 // refs: 1 - tags: named, output
@@ -1059,6 +1152,8 @@ export interface UpdateFleetAttributesOutput {
 // refs: 1 - tags: named, output
 export interface UpdateFleetCapacityOutput {
   FleetId?: string | null;
+  FleetArn?: string | null;
+  Location?: string | null;
 }
 
 // refs: 1 - tags: named, output
@@ -1146,7 +1241,7 @@ export type OperatingSystem =
 | "AMAZON_LINUX_2"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 7 - tags: input, named, enum, output
+// refs: 8 - tags: input, named, enum, output
 export type EC2InstanceType =
 | "t2.micro"
 | "t2.small"
@@ -1289,6 +1384,11 @@ export type CertificateType =
 | "GENERATED"
 | cmnP.UnexpectedEnumValue;
 
+// refs: 2 - tags: input, named, interface
+export interface LocationConfiguration {
+  Location?: string | null;
+}
+
 // refs: 1 - tags: input, named, interface
 export interface LaunchTemplateSpecification {
   LaunchTemplateId?: string | null;
@@ -1317,6 +1417,14 @@ export type GameServerGroupInstanceType =
 | "c5.12xlarge"
 | "c5.18xlarge"
 | "c5.24xlarge"
+| "c5a.large"
+| "c5a.xlarge"
+| "c5a.2xlarge"
+| "c5a.4xlarge"
+| "c5a.8xlarge"
+| "c5a.12xlarge"
+| "c5a.16xlarge"
+| "c5a.24xlarge"
 | "r4.large"
 | "r4.xlarge"
 | "r4.2xlarge"
@@ -1331,6 +1439,14 @@ export type GameServerGroupInstanceType =
 | "r5.12xlarge"
 | "r5.16xlarge"
 | "r5.24xlarge"
+| "r5a.large"
+| "r5a.xlarge"
+| "r5a.2xlarge"
+| "r5a.4xlarge"
+| "r5a.8xlarge"
+| "r5a.12xlarge"
+| "r5a.16xlarge"
+| "r5a.24xlarge"
 | "m4.large"
 | "m4.xlarge"
 | "m4.2xlarge"
@@ -1344,6 +1460,14 @@ export type GameServerGroupInstanceType =
 | "m5.12xlarge"
 | "m5.16xlarge"
 | "m5.24xlarge"
+| "m5a.large"
+| "m5a.xlarge"
+| "m5a.2xlarge"
+| "m5a.4xlarge"
+| "m5a.8xlarge"
+| "m5a.12xlarge"
+| "m5a.16xlarge"
+| "m5a.24xlarge"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
@@ -1386,6 +1510,25 @@ export interface PlayerLatencyPolicy {
 export interface GameSessionQueueDestination {
   DestinationArn?: string | null;
 }
+
+// refs: 5 - tags: input, named, interface, output
+export interface FilterConfiguration {
+  AllowedLocations?: string[] | null;
+}
+
+// refs: 5 - tags: input, named, interface, output
+export interface PriorityConfiguration {
+  PriorityOrder?: PriorityType[] | null;
+  LocationOrder?: string[] | null;
+}
+
+// refs: 5 - tags: input, named, enum, output
+export type PriorityType =
+| "LATENCY"
+| "COST"
+| "DESTINATION"
+| "LOCATION"
+| cmnP.UnexpectedEnumValue;
 
 // refs: 5 - tags: input, named, enum, output
 export type BackfillMode =
@@ -1476,7 +1619,7 @@ export type GameServerGroupAction =
 | "REPLACE_INSTANCE_TYPES"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 4 - tags: input, named, enum, output
+// refs: 5 - tags: input, named, enum, output
 export type FleetAction =
 | "AUTO_SCALING"
 | cmnP.UnexpectedEnumValue;
@@ -1604,7 +1747,7 @@ export interface FleetAttributes {
   CertificateConfiguration?: CertificateConfiguration | null;
 }
 
-// refs: 2 - tags: output, named, enum
+// refs: 6 - tags: output, named, enum
 export type FleetStatus =
 | "NEW"
 | "DOWNLOADING"
@@ -1616,6 +1759,12 @@ export type FleetStatus =
 | "ERROR"
 | "TERMINATED"
 | cmnP.UnexpectedEnumValue;
+
+// refs: 4 - tags: output, named, interface
+export interface LocationState {
+  Location?: string | null;
+  Status?: FleetStatus | null;
+}
 
 // refs: 7 - tags: output, named, interface
 export interface GameServerGroup {
@@ -1664,6 +1813,7 @@ export interface GameSession {
   CreatorId?: string | null;
   GameSessionData?: string | null;
   MatchmakerData?: string | null;
+  Location?: string | null;
 }
 
 // refs: 5 - tags: output, named, enum
@@ -1687,6 +1837,10 @@ export interface GameSessionQueue {
   TimeoutInSeconds?: number | null;
   PlayerLatencyPolicies?: PlayerLatencyPolicy[] | null;
   Destinations?: GameSessionQueueDestination[] | null;
+  FilterConfiguration?: FilterConfiguration | null;
+  PriorityConfiguration?: PriorityConfiguration | null;
+  CustomEventData?: string | null;
+  NotificationTarget?: string | null;
 }
 
 // refs: 3 - tags: output, named, interface
@@ -1767,16 +1921,19 @@ export interface EC2InstanceLimit {
   EC2InstanceType?: EC2InstanceType | null;
   CurrentInstances?: number | null;
   InstanceLimit?: number | null;
+  Location?: string | null;
 }
 
-// refs: 1 - tags: output, named, interface
+// refs: 2 - tags: output, named, interface
 export interface FleetCapacity {
   FleetId?: string | null;
+  FleetArn?: string | null;
   InstanceType?: EC2InstanceType | null;
   InstanceCounts?: EC2InstanceCounts | null;
+  Location?: string | null;
 }
 
-// refs: 1 - tags: output, named, interface
+// refs: 2 - tags: output, named, interface
 export interface EC2InstanceCounts {
   DESIRED?: number | null;
   MINIMUM?: number | null;
@@ -1835,12 +1992,26 @@ export type EventCode =
 | cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
+export interface LocationAttributes {
+  LocationState?: LocationState | null;
+  StoppedActions?: FleetAction[] | null;
+  UpdateStatus?: LocationUpdateStatus | null;
+}
+
+// refs: 3 - tags: output, named, enum
+export type LocationUpdateStatus =
+| "PENDING_UPDATE"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 2 - tags: output, named, interface
 export interface FleetUtilization {
   FleetId?: string | null;
+  FleetArn?: string | null;
   ActiveServerProcessCount?: number | null;
   ActiveGameSessionCount?: number | null;
   CurrentPlayerSessionCount?: number | null;
   MaximumPlayerSessionCount?: number | null;
+  Location?: string | null;
 }
 
 // refs: 1 - tags: output, named, interface
@@ -1904,6 +2075,7 @@ export interface PlacedPlayerSession {
 // refs: 1 - tags: output, named, interface
 export interface Instance {
   FleetId?: string | null;
+  FleetArn?: string | null;
   InstanceId?: string | null;
   IpAddress?: string | null;
   DnsName?: string | null;
@@ -1911,6 +2083,7 @@ export interface Instance {
   Type?: EC2InstanceType | null;
   Status?: InstanceStatus | null;
   CreationTime?: Date | number | null;
+  Location?: string | null;
 }
 
 // refs: 1 - tags: output, named, enum
@@ -1965,6 +2138,7 @@ export interface MatchedPlayerSession {
 // refs: 1 - tags: output, named, interface
 export interface ScalingPolicy {
   FleetId?: string | null;
+  FleetArn?: string | null;
   Name?: string | null;
   Status?: ScalingStatusType | null;
   ScalingAdjustment?: number | null;
@@ -1975,6 +2149,8 @@ export interface ScalingPolicy {
   MetricName?: MetricName | null;
   PolicyType?: PolicyType | null;
   TargetConfiguration?: TargetConfiguration | null;
+  UpdateStatus?: LocationUpdateStatus | null;
+  Location?: string | null;
 }
 
 // refs: 1 - tags: output, named, interface

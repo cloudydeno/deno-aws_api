@@ -12,6 +12,13 @@ export interface CreateAccessPointRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface CreateAccessPointForObjectLambdaRequest {
+  AccountId: string;
+  Name: string;
+  Configuration: ObjectLambdaConfiguration;
+}
+
+// refs: 1 - tags: named, input
 export interface CreateBucketRequest {
   ACL?: BucketCannedACL | null;
   Bucket: string;
@@ -46,7 +53,19 @@ export interface DeleteAccessPointRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface DeleteAccessPointForObjectLambdaRequest {
+  AccountId: string;
+  Name: string;
+}
+
+// refs: 1 - tags: named, input
 export interface DeleteAccessPointPolicyRequest {
+  AccountId: string;
+  Name: string;
+}
+
+// refs: 1 - tags: named, input
+export interface DeleteAccessPointPolicyForObjectLambdaRequest {
   AccountId: string;
   Name: string;
 }
@@ -111,13 +130,37 @@ export interface GetAccessPointRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface GetAccessPointConfigurationForObjectLambdaRequest {
+  AccountId: string;
+  Name: string;
+}
+
+// refs: 1 - tags: named, input
+export interface GetAccessPointForObjectLambdaRequest {
+  AccountId: string;
+  Name: string;
+}
+
+// refs: 1 - tags: named, input
 export interface GetAccessPointPolicyRequest {
   AccountId: string;
   Name: string;
 }
 
 // refs: 1 - tags: named, input
+export interface GetAccessPointPolicyForObjectLambdaRequest {
+  AccountId: string;
+  Name: string;
+}
+
+// refs: 1 - tags: named, input
 export interface GetAccessPointPolicyStatusRequest {
+  AccountId: string;
+  Name: string;
+}
+
+// refs: 1 - tags: named, input
+export interface GetAccessPointPolicyStatusForObjectLambdaRequest {
   AccountId: string;
   Name: string;
 }
@@ -178,6 +221,13 @@ export interface ListAccessPointsRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface ListAccessPointsForObjectLambdaRequest {
+  AccountId: string;
+  NextToken?: string | null;
+  MaxResults?: number | null;
+}
+
+// refs: 1 - tags: named, input
 export interface ListJobsRequest {
   AccountId: string;
   JobStatuses?: JobStatus[] | null;
@@ -200,7 +250,21 @@ export interface ListStorageLensConfigurationsRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface PutAccessPointConfigurationForObjectLambdaRequest {
+  AccountId: string;
+  Name: string;
+  Configuration: ObjectLambdaConfiguration;
+}
+
+// refs: 1 - tags: named, input
 export interface PutAccessPointPolicyRequest {
+  AccountId: string;
+  Name: string;
+  Policy: string;
+}
+
+// refs: 1 - tags: named, input
+export interface PutAccessPointPolicyForObjectLambdaRequest {
   AccountId: string;
   Name: string;
   Policy: string;
@@ -277,6 +341,11 @@ export interface CreateAccessPointResult {
 }
 
 // refs: 1 - tags: named, output
+export interface CreateAccessPointForObjectLambdaResult {
+  ObjectLambdaAccessPointArn?: string | null;
+}
+
+// refs: 1 - tags: named, output
 export interface CreateBucketResult {
   Location?: string | null;
   BucketArn?: string | null;
@@ -311,12 +380,34 @@ export interface GetAccessPointResult {
 }
 
 // refs: 1 - tags: named, output
+export interface GetAccessPointConfigurationForObjectLambdaResult {
+  Configuration?: ObjectLambdaConfiguration | null;
+}
+
+// refs: 1 - tags: named, output
+export interface GetAccessPointForObjectLambdaResult {
+  Name?: string | null;
+  PublicAccessBlockConfiguration?: PublicAccessBlockConfiguration | null;
+  CreationDate?: Date | number | null;
+}
+
+// refs: 1 - tags: named, output
 export interface GetAccessPointPolicyResult {
   Policy?: string | null;
 }
 
 // refs: 1 - tags: named, output
+export interface GetAccessPointPolicyForObjectLambdaResult {
+  Policy?: string | null;
+}
+
+// refs: 1 - tags: named, output
 export interface GetAccessPointPolicyStatusResult {
+  PolicyStatus?: PolicyStatus | null;
+}
+
+// refs: 1 - tags: named, output
+export interface GetAccessPointPolicyStatusForObjectLambdaResult {
   PolicyStatus?: PolicyStatus | null;
 }
 
@@ -369,6 +460,12 @@ export interface ListAccessPointsResult {
 }
 
 // refs: 1 - tags: named, output
+export interface ListAccessPointsForObjectLambdaResult {
+  ObjectLambdaAccessPointList: ObjectLambdaAccessPoint[];
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
 export interface ListJobsResult {
   NextToken?: string | null;
   Jobs: JobListDescriptor[];
@@ -412,12 +509,48 @@ export interface VpcConfiguration {
   VpcId: string;
 }
 
-// refs: 4 - tags: input, named, interface, output
+// refs: 5 - tags: input, named, interface, output
 export interface PublicAccessBlockConfiguration {
   BlockPublicAcls?: boolean | null;
   IgnorePublicAcls?: boolean | null;
   BlockPublicPolicy?: boolean | null;
   RestrictPublicBuckets?: boolean | null;
+}
+
+// refs: 3 - tags: input, named, interface, output
+export interface ObjectLambdaConfiguration {
+  SupportingAccessPoint: string;
+  CloudWatchMetricsEnabled?: boolean | null;
+  AllowedFeatures: ObjectLambdaAllowedFeature[];
+  TransformationConfigurations: ObjectLambdaTransformationConfiguration[];
+}
+
+// refs: 3 - tags: input, named, enum, output
+export type ObjectLambdaAllowedFeature =
+| "GetObject-Range"
+| "GetObject-PartNumber"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 3 - tags: input, named, interface, output
+export interface ObjectLambdaTransformationConfiguration {
+  Actions: ObjectLambdaTransformationConfigurationAction[];
+  ContentTransformation: ObjectLambdaContentTransformation;
+}
+
+// refs: 3 - tags: input, named, enum, output
+export type ObjectLambdaTransformationConfigurationAction =
+| "GetObject"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 3 - tags: input, named, interface, output
+export interface ObjectLambdaContentTransformation {
+  AwsLambda?: AwsLambdaTransformation | null;
+}
+
+// refs: 3 - tags: input, named, interface, output
+export interface AwsLambdaTransformation {
+  FunctionArn: string;
+  FunctionPayload?: string | null;
 }
 
 // refs: 1 - tags: input, named, enum
@@ -959,7 +1092,7 @@ export type NetworkOrigin =
 | "VPC"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 1 - tags: output, named, interface
+// refs: 2 - tags: output, named, interface
 export interface PolicyStatus {
   IsPublic?: boolean | null;
 }
@@ -971,6 +1104,12 @@ export interface AccessPoint {
   VpcConfiguration?: VpcConfiguration | null;
   Bucket: string;
   AccessPointArn?: string | null;
+}
+
+// refs: 1 - tags: output, named, interface
+export interface ObjectLambdaAccessPoint {
+  Name: string;
+  ObjectLambdaAccessPointArn?: string | null;
 }
 
 // refs: 1 - tags: output, named, interface

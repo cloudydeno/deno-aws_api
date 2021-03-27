@@ -5,7 +5,7 @@ interface RequestConfig {
 }
 
 export * from "./structs.ts";
-import * as Base64 from "https://deno.land/std@0.86.0/encoding/base64.ts";
+import * as Base64 from "https://deno.land/std@0.91.0/encoding/base64.ts";
 import * as client from "../../client/common.ts";
 import * as cmnP from "../../encoding/common.ts";
 import * as jsonP from "../../encoding/json.ts";
@@ -939,6 +939,7 @@ function fromFieldToMatch(input?: s.FieldToMatch | null): jsonP.JSONValue {
     QueryString: fromQueryString(input["QueryString"]),
     Body: fromBody(input["Body"]),
     Method: fromMethod(input["Method"]),
+    JsonBody: fromJsonBody(input["JsonBody"]),
   }
 }
 function toFieldToMatch(root: jsonP.JSONValue): s.FieldToMatch {
@@ -952,6 +953,7 @@ function toFieldToMatch(root: jsonP.JSONValue): s.FieldToMatch {
       "QueryString": toQueryString,
       "Body": toBody,
       "Method": toMethod,
+      "JsonBody": toJsonBody,
     },
   }, root);
 }
@@ -1040,6 +1042,55 @@ function fromMethod(input?: s.Method | null): jsonP.JSONValue {
   }
 }
 function toMethod(root: jsonP.JSONValue): s.Method {
+  return jsonP.readObj({
+    required: {},
+    optional: {},
+  }, root);
+}
+
+function fromJsonBody(input?: s.JsonBody | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    MatchPattern: fromJsonMatchPattern(input["MatchPattern"]),
+    MatchScope: input["MatchScope"],
+    InvalidFallbackBehavior: input["InvalidFallbackBehavior"],
+  }
+}
+function toJsonBody(root: jsonP.JSONValue): s.JsonBody {
+  return jsonP.readObj({
+    required: {
+      "MatchPattern": toJsonMatchPattern,
+      "MatchScope": (x: jsonP.JSONValue) => cmnP.readEnum<s.JsonMatchScope>(x),
+    },
+    optional: {
+      "InvalidFallbackBehavior": (x: jsonP.JSONValue) => cmnP.readEnum<s.BodyParsingFallbackBehavior>(x),
+    },
+  }, root);
+}
+
+function fromJsonMatchPattern(input?: s.JsonMatchPattern | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    All: fromAll(input["All"]),
+    IncludedPaths: input["IncludedPaths"],
+  }
+}
+function toJsonMatchPattern(root: jsonP.JSONValue): s.JsonMatchPattern {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "All": toAll,
+      "IncludedPaths": ["s"],
+    },
+  }, root);
+}
+
+function fromAll(input?: s.All | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+  }
+}
+function toAll(root: jsonP.JSONValue): s.All {
   return jsonP.readObj({
     required: {},
     optional: {},

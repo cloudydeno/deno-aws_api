@@ -7,7 +7,7 @@ interface RequestConfig {
 export * from "./structs.ts";
 import * as client from "../../client/common.ts";
 import * as cmnP from "../../encoding/common.ts";
-import * as uuidv4 from "https://deno.land/std@0.86.0/uuid/v4.ts";
+import * as uuidv4 from "https://deno.land/std@0.91.0/uuid/v4.ts";
 import * as xmlP from "../../encoding/xml.ts";
 import type * as s from "./structs.ts";
 function generateIdemptToken() {
@@ -54,6 +54,30 @@ export default class S3Control {
     const xml = xmlP.readXmlResult(await resp.text());
     return xml.strings({
       optional: {"AccessPointArn":true},
+    });
+  }
+
+  async createAccessPointForObjectLambda(
+    {abortSignal, ...params}: RequestConfig & s.CreateAccessPointForObjectLambdaRequest,
+  ): Promise<s.CreateAccessPointForObjectLambdaResult> {
+    const headers = new Headers;
+    const body = xmlP.stringify({
+      name: "CreateAccessPointForObjectLambdaRequest",
+      attributes: {"xmlns":"http://awss3control.amazonaws.com/doc/2018-08-20/"},
+      children: [
+        {name: "Configuration", ...ObjectLambdaConfiguration_Serialize(params["Configuration"])},
+      ]});
+    headers.append("x-amz-account-id", params["AccountId"]);
+    const resp = await this.#client.performRequest({
+      abortSignal, headers, body,
+      action: "CreateAccessPointForObjectLambda",
+      method: "PUT",
+      requestUri: cmnP.encodePath`/v20180820/accesspointforobjectlambda/${params["Name"]}`,
+      hostPrefix: `${params.AccountId}.`,
+    });
+    const xml = xmlP.readXmlResult(await resp.text());
+    return xml.strings({
+      optional: {"ObjectLambdaAccessPointArn":true},
     });
   }
 
@@ -136,6 +160,20 @@ export default class S3Control {
     });
   }
 
+  async deleteAccessPointForObjectLambda(
+    {abortSignal, ...params}: RequestConfig & s.DeleteAccessPointForObjectLambdaRequest,
+  ): Promise<void> {
+    const headers = new Headers;
+    headers.append("x-amz-account-id", params["AccountId"]);
+    const resp = await this.#client.performRequest({
+      abortSignal, headers,
+      action: "DeleteAccessPointForObjectLambda",
+      method: "DELETE",
+      requestUri: cmnP.encodePath`/v20180820/accesspointforobjectlambda/${params["Name"]}`,
+      hostPrefix: `${params.AccountId}.`,
+    });
+  }
+
   async deleteAccessPointPolicy(
     {abortSignal, ...params}: RequestConfig & s.DeleteAccessPointPolicyRequest,
   ): Promise<void> {
@@ -146,6 +184,20 @@ export default class S3Control {
       action: "DeleteAccessPointPolicy",
       method: "DELETE",
       requestUri: cmnP.encodePath`/v20180820/accesspoint/${params["Name"]}/policy`,
+      hostPrefix: `${params.AccountId}.`,
+    });
+  }
+
+  async deleteAccessPointPolicyForObjectLambda(
+    {abortSignal, ...params}: RequestConfig & s.DeleteAccessPointPolicyForObjectLambdaRequest,
+  ): Promise<void> {
+    const headers = new Headers;
+    headers.append("x-amz-account-id", params["AccountId"]);
+    const resp = await this.#client.performRequest({
+      abortSignal, headers,
+      action: "DeleteAccessPointPolicyForObjectLambda",
+      method: "DELETE",
+      requestUri: cmnP.encodePath`/v20180820/accesspointforobjectlambda/${params["Name"]}/policy`,
       hostPrefix: `${params.AccountId}.`,
     });
   }
@@ -309,6 +361,46 @@ export default class S3Control {
     };
   }
 
+  async getAccessPointConfigurationForObjectLambda(
+    {abortSignal, ...params}: RequestConfig & s.GetAccessPointConfigurationForObjectLambdaRequest,
+  ): Promise<s.GetAccessPointConfigurationForObjectLambdaResult> {
+    const headers = new Headers;
+    headers.append("x-amz-account-id", params["AccountId"]);
+    const resp = await this.#client.performRequest({
+      abortSignal, headers,
+      action: "GetAccessPointConfigurationForObjectLambda",
+      method: "GET",
+      requestUri: cmnP.encodePath`/v20180820/accesspointforobjectlambda/${params["Name"]}/configuration`,
+      hostPrefix: `${params.AccountId}.`,
+    });
+    const xml = xmlP.readXmlResult(await resp.text());
+    return {
+      Configuration: xml.first("Configuration", false, ObjectLambdaConfiguration_Parse),
+    };
+  }
+
+  async getAccessPointForObjectLambda(
+    {abortSignal, ...params}: RequestConfig & s.GetAccessPointForObjectLambdaRequest,
+  ): Promise<s.GetAccessPointForObjectLambdaResult> {
+    const headers = new Headers;
+    headers.append("x-amz-account-id", params["AccountId"]);
+    const resp = await this.#client.performRequest({
+      abortSignal, headers,
+      action: "GetAccessPointForObjectLambda",
+      method: "GET",
+      requestUri: cmnP.encodePath`/v20180820/accesspointforobjectlambda/${params["Name"]}`,
+      hostPrefix: `${params.AccountId}.`,
+    });
+    const xml = xmlP.readXmlResult(await resp.text());
+    return {
+      ...xml.strings({
+        optional: {"Name":true},
+      }),
+      PublicAccessBlockConfiguration: xml.first("PublicAccessBlockConfiguration", false, PublicAccessBlockConfiguration_Parse),
+      CreationDate: xml.first("CreationDate", false, x => xmlP.parseTimestamp(x.content)),
+    };
+  }
+
   async getAccessPointPolicy(
     {abortSignal, ...params}: RequestConfig & s.GetAccessPointPolicyRequest,
   ): Promise<s.GetAccessPointPolicyResult> {
@@ -327,6 +419,24 @@ export default class S3Control {
     });
   }
 
+  async getAccessPointPolicyForObjectLambda(
+    {abortSignal, ...params}: RequestConfig & s.GetAccessPointPolicyForObjectLambdaRequest,
+  ): Promise<s.GetAccessPointPolicyForObjectLambdaResult> {
+    const headers = new Headers;
+    headers.append("x-amz-account-id", params["AccountId"]);
+    const resp = await this.#client.performRequest({
+      abortSignal, headers,
+      action: "GetAccessPointPolicyForObjectLambda",
+      method: "GET",
+      requestUri: cmnP.encodePath`/v20180820/accesspointforobjectlambda/${params["Name"]}/policy`,
+      hostPrefix: `${params.AccountId}.`,
+    });
+    const xml = xmlP.readXmlResult(await resp.text());
+    return xml.strings({
+      optional: {"Policy":true},
+    });
+  }
+
   async getAccessPointPolicyStatus(
     {abortSignal, ...params}: RequestConfig & s.GetAccessPointPolicyStatusRequest,
   ): Promise<s.GetAccessPointPolicyStatusResult> {
@@ -337,6 +447,24 @@ export default class S3Control {
       action: "GetAccessPointPolicyStatus",
       method: "GET",
       requestUri: cmnP.encodePath`/v20180820/accesspoint/${params["Name"]}/policyStatus`,
+      hostPrefix: `${params.AccountId}.`,
+    });
+    const xml = xmlP.readXmlResult(await resp.text());
+    return {
+      PolicyStatus: xml.first("PolicyStatus", false, PolicyStatus_Parse),
+    };
+  }
+
+  async getAccessPointPolicyStatusForObjectLambda(
+    {abortSignal, ...params}: RequestConfig & s.GetAccessPointPolicyStatusForObjectLambdaRequest,
+  ): Promise<s.GetAccessPointPolicyStatusForObjectLambdaResult> {
+    const headers = new Headers;
+    headers.append("x-amz-account-id", params["AccountId"]);
+    const resp = await this.#client.performRequest({
+      abortSignal, headers,
+      action: "GetAccessPointPolicyStatusForObjectLambda",
+      method: "GET",
+      requestUri: cmnP.encodePath`/v20180820/accesspointforobjectlambda/${params["Name"]}/policyStatus`,
       hostPrefix: `${params.AccountId}.`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
@@ -518,6 +646,30 @@ export default class S3Control {
     };
   }
 
+  async listAccessPointsForObjectLambda(
+    {abortSignal, ...params}: RequestConfig & s.ListAccessPointsForObjectLambdaRequest,
+  ): Promise<s.ListAccessPointsForObjectLambdaResult> {
+    const headers = new Headers;
+    const query = new URLSearchParams;
+    headers.append("x-amz-account-id", params["AccountId"]);
+    if (params["NextToken"] != null) query.set("nextToken", params["NextToken"]?.toString() ?? "");
+    if (params["MaxResults"] != null) query.set("maxResults", params["MaxResults"]?.toString() ?? "");
+    const resp = await this.#client.performRequest({
+      abortSignal, headers, query,
+      action: "ListAccessPointsForObjectLambda",
+      method: "GET",
+      requestUri: "/v20180820/accesspointforobjectlambda",
+      hostPrefix: `${params.AccountId}.`,
+    });
+    const xml = xmlP.readXmlResult(await resp.text());
+    return {
+      ...xml.strings({
+        optional: {"NextToken":true},
+      }),
+      ObjectLambdaAccessPointList: xml.getList("ObjectLambdaAccessPointList", "ObjectLambdaAccessPoint").map(ObjectLambdaAccessPoint_Parse),
+    };
+  }
+
   async listJobs(
     {abortSignal, ...params}: RequestConfig & s.ListJobsRequest,
   ): Promise<s.ListJobsResult> {
@@ -593,6 +745,26 @@ export default class S3Control {
     };
   }
 
+  async putAccessPointConfigurationForObjectLambda(
+    {abortSignal, ...params}: RequestConfig & s.PutAccessPointConfigurationForObjectLambdaRequest,
+  ): Promise<void> {
+    const headers = new Headers;
+    const body = xmlP.stringify({
+      name: "PutAccessPointConfigurationForObjectLambdaRequest",
+      attributes: {"xmlns":"http://awss3control.amazonaws.com/doc/2018-08-20/"},
+      children: [
+        {name: "Configuration", ...ObjectLambdaConfiguration_Serialize(params["Configuration"])},
+      ]});
+    headers.append("x-amz-account-id", params["AccountId"]);
+    const resp = await this.#client.performRequest({
+      abortSignal, headers, body,
+      action: "PutAccessPointConfigurationForObjectLambda",
+      method: "PUT",
+      requestUri: cmnP.encodePath`/v20180820/accesspointforobjectlambda/${params["Name"]}/configuration`,
+      hostPrefix: `${params.AccountId}.`,
+    });
+  }
+
   async putAccessPointPolicy(
     {abortSignal, ...params}: RequestConfig & s.PutAccessPointPolicyRequest,
   ): Promise<void> {
@@ -609,6 +781,26 @@ export default class S3Control {
       action: "PutAccessPointPolicy",
       method: "PUT",
       requestUri: cmnP.encodePath`/v20180820/accesspoint/${params["Name"]}/policy`,
+      hostPrefix: `${params.AccountId}.`,
+    });
+  }
+
+  async putAccessPointPolicyForObjectLambda(
+    {abortSignal, ...params}: RequestConfig & s.PutAccessPointPolicyForObjectLambdaRequest,
+  ): Promise<void> {
+    const headers = new Headers;
+    const body = xmlP.stringify({
+      name: "PutAccessPointPolicyForObjectLambdaRequest",
+      attributes: {"xmlns":"http://awss3control.amazonaws.com/doc/2018-08-20/"},
+      children: [
+        {name: "Policy", content: params["Policy"]?.toString()},
+      ]});
+    headers.append("x-amz-account-id", params["AccountId"]);
+    const resp = await this.#client.performRequest({
+      abortSignal, headers, body,
+      action: "PutAccessPointPolicyForObjectLambda",
+      method: "PUT",
+      requestUri: cmnP.encodePath`/v20180820/accesspointforobjectlambda/${params["Name"]}/policy`,
       hostPrefix: `${params.AccountId}.`,
     });
   }
@@ -840,6 +1032,66 @@ function PublicAccessBlockConfiguration_Parse(node: xmlP.XmlNode): s.PublicAcces
     BlockPublicPolicy: node.first("BlockPublicPolicy", false, x => x.content === 'true'),
     RestrictPublicBuckets: node.first("RestrictPublicBuckets", false, x => x.content === 'true'),
   };
+}
+
+function ObjectLambdaConfiguration_Serialize(data: s.ObjectLambdaConfiguration | undefined | null): Partial<xmlP.Node> {
+  if (!data) return {};
+  return {children: [
+    {name: "SupportingAccessPoint", content: data["SupportingAccessPoint"]?.toString()},
+    {name: "CloudWatchMetricsEnabled", content: data["CloudWatchMetricsEnabled"]?.toString()},
+    {name: "AllowedFeatures", children: data["AllowedFeatures"]?.map(x => ({name: "AllowedFeature", content: x}))},
+    {name: "TransformationConfigurations", children: data["TransformationConfigurations"]?.map(x => ({name: "TransformationConfiguration", ...ObjectLambdaTransformationConfiguration_Serialize(x)}))},
+  ]};
+}
+function ObjectLambdaConfiguration_Parse(node: xmlP.XmlNode): s.ObjectLambdaConfiguration {
+  return {
+    ...node.strings({
+      required: {"SupportingAccessPoint":true},
+    }),
+    CloudWatchMetricsEnabled: node.first("CloudWatchMetricsEnabled", false, x => x.content === 'true'),
+    AllowedFeatures: node.getList("AllowedFeatures", "AllowedFeature").map(x => (x.content ?? '') as s.ObjectLambdaAllowedFeature),
+    TransformationConfigurations: node.getList("TransformationConfigurations", "TransformationConfiguration").map(ObjectLambdaTransformationConfiguration_Parse),
+  };
+}
+
+function ObjectLambdaTransformationConfiguration_Serialize(data: s.ObjectLambdaTransformationConfiguration | undefined | null): Partial<xmlP.Node> {
+  if (!data) return {};
+  return {children: [
+    {name: "Actions", children: data["Actions"]?.map(x => ({name: "Action", content: x}))},
+    {name: "ContentTransformation", ...ObjectLambdaContentTransformation_Serialize(data["ContentTransformation"])},
+  ]};
+}
+function ObjectLambdaTransformationConfiguration_Parse(node: xmlP.XmlNode): s.ObjectLambdaTransformationConfiguration {
+  return {
+    Actions: node.getList("Actions", "Action").map(x => (x.content ?? '') as s.ObjectLambdaTransformationConfigurationAction),
+    ContentTransformation: node.first("ContentTransformation", true, ObjectLambdaContentTransformation_Parse),
+  };
+}
+
+function ObjectLambdaContentTransformation_Serialize(data: s.ObjectLambdaContentTransformation | undefined | null): Partial<xmlP.Node> {
+  if (!data) return {};
+  return {children: [
+    {name: "AwsLambda", ...AwsLambdaTransformation_Serialize(data["AwsLambda"])},
+  ]};
+}
+function ObjectLambdaContentTransformation_Parse(node: xmlP.XmlNode): s.ObjectLambdaContentTransformation {
+  return {
+    AwsLambda: node.first("AwsLambda", false, AwsLambdaTransformation_Parse),
+  };
+}
+
+function AwsLambdaTransformation_Serialize(data: s.AwsLambdaTransformation | undefined | null): Partial<xmlP.Node> {
+  if (!data) return {};
+  return {children: [
+    {name: "FunctionArn", content: data["FunctionArn"]?.toString()},
+    {name: "FunctionPayload", content: data["FunctionPayload"]?.toString()},
+  ]};
+}
+function AwsLambdaTransformation_Parse(node: xmlP.XmlNode): s.AwsLambdaTransformation {
+  return node.strings({
+    required: {"FunctionArn":true},
+    optional: {"FunctionPayload":true},
+  });
 }
 
 function CreateBucketConfiguration_Serialize(data: s.CreateBucketConfiguration | undefined | null): Partial<xmlP.Node> {
@@ -1636,6 +1888,13 @@ function AccessPoint_Parse(node: xmlP.XmlNode): s.AccessPoint {
     NetworkOrigin: node.first("NetworkOrigin", true, x => (x.content ?? '') as s.NetworkOrigin),
     VpcConfiguration: node.first("VpcConfiguration", false, VpcConfiguration_Parse),
   };
+}
+
+function ObjectLambdaAccessPoint_Parse(node: xmlP.XmlNode): s.ObjectLambdaAccessPoint {
+  return node.strings({
+    required: {"Name":true},
+    optional: {"ObjectLambdaAccessPointArn":true},
+  });
 }
 
 function JobListDescriptor_Parse(node: xmlP.XmlNode): s.JobListDescriptor {

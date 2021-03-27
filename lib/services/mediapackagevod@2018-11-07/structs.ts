@@ -3,6 +3,12 @@
 import * as cmnP from "../../encoding/common.ts";
 
 // refs: 1 - tags: named, input
+export interface ConfigureLogsRequest {
+  EgressAccessLogs?: EgressAccessLogs | null;
+  Id: string;
+}
+
+// refs: 1 - tags: named, input
 export interface CreateAssetRequest {
   Id: string;
   PackagingGroupId: string;
@@ -26,6 +32,7 @@ export interface CreatePackagingConfigurationRequest {
 // refs: 1 - tags: named, input
 export interface CreatePackagingGroupRequest {
   Authorization?: Authorization | null;
+  EgressAccessLogs?: EgressAccessLogs | null;
   Id: string;
   Tags?: { [key: string]: string | null | undefined } | null;
 }
@@ -104,6 +111,16 @@ export interface UpdatePackagingGroupRequest {
 }
 
 // refs: 1 - tags: named, output
+export interface ConfigureLogsResponse {
+  Arn?: string | null;
+  Authorization?: Authorization | null;
+  DomainName?: string | null;
+  EgressAccessLogs?: EgressAccessLogs | null;
+  Id?: string | null;
+  Tags?: { [key: string]: string | null | undefined } | null;
+}
+
+// refs: 1 - tags: named, output
 export interface CreateAssetResponse {
   Arn?: string | null;
   CreatedAt?: string | null;
@@ -133,6 +150,7 @@ export interface CreatePackagingGroupResponse {
   Arn?: string | null;
   Authorization?: Authorization | null;
   DomainName?: string | null;
+  EgressAccessLogs?: EgressAccessLogs | null;
   Id?: string | null;
   Tags?: { [key: string]: string | null | undefined } | null;
 }
@@ -179,6 +197,7 @@ export interface DescribePackagingGroupResponse {
   Arn?: string | null;
   Authorization?: Authorization | null;
   DomainName?: string | null;
+  EgressAccessLogs?: EgressAccessLogs | null;
   Id?: string | null;
   Tags?: { [key: string]: string | null | undefined } | null;
 }
@@ -211,8 +230,14 @@ export interface UpdatePackagingGroupResponse {
   Arn?: string | null;
   Authorization?: Authorization | null;
   DomainName?: string | null;
+  EgressAccessLogs?: EgressAccessLogs | null;
   Id?: string | null;
   Tags?: { [key: string]: string | null | undefined } | null;
+}
+
+// refs: 7 - tags: input, named, interface, output
+export interface EgressAccessLogs {
+  LogGroupName?: string | null;
 }
 
 // refs: 4 - tags: input, named, interface, output
@@ -351,7 +376,7 @@ export interface MssManifest {
   StreamSelection?: StreamSelection | null;
 }
 
-// refs: 6 - tags: input, named, interface, output
+// refs: 7 - tags: input, named, interface, output
 export interface Authorization {
   CdnIdentifierSecret: string;
   SecretsRoleArn: string;
@@ -392,6 +417,7 @@ export interface PackagingGroup {
   Arn?: string | null;
   Authorization?: Authorization | null;
   DomainName?: string | null;
+  EgressAccessLogs?: EgressAccessLogs | null;
   Id?: string | null;
   Tags?: { [key: string]: string | null | undefined } | null;
 }

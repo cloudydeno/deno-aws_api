@@ -3,8 +3,105 @@
 import * as cmnP from "../../encoding/common.ts";
 
 // refs: 1 - tags: named, input
+export interface CreateChannelRequest {
+  ChannelName: string;
+  Outputs: RequestOutputItem[];
+  PlaybackMode: PlaybackMode;
+  Tags?: { [key: string]: string | null | undefined } | null;
+}
+
+// refs: 1 - tags: named, input
+export interface CreateProgramRequest {
+  AdBreaks?: AdBreak[] | null;
+  ChannelName: string;
+  ProgramName: string;
+  ScheduleConfiguration: ScheduleConfiguration;
+  SourceLocationName: string;
+  VodSourceName: string;
+}
+
+// refs: 1 - tags: named, input
+export interface CreateSourceLocationRequest {
+  AccessConfiguration?: AccessConfiguration | null;
+  DefaultSegmentDeliveryConfiguration?: DefaultSegmentDeliveryConfiguration | null;
+  HttpConfiguration: HttpConfiguration;
+  SourceLocationName: string;
+  Tags?: { [key: string]: string | null | undefined } | null;
+}
+
+// refs: 1 - tags: named, input
+export interface CreateVodSourceRequest {
+  HttpPackageConfigurations: HttpPackageConfiguration[];
+  SourceLocationName: string;
+  Tags?: { [key: string]: string | null | undefined } | null;
+  VodSourceName: string;
+}
+
+// refs: 1 - tags: named, input
+export interface DeleteChannelRequest {
+  ChannelName: string;
+}
+
+// refs: 1 - tags: named, input
+export interface DeleteChannelPolicyRequest {
+  ChannelName: string;
+}
+
+// refs: 1 - tags: named, input
 export interface DeletePlaybackConfigurationRequest {
   Name: string;
+}
+
+// refs: 1 - tags: named, input
+export interface DeleteProgramRequest {
+  ChannelName: string;
+  ProgramName: string;
+}
+
+// refs: 1 - tags: named, input
+export interface DeleteSourceLocationRequest {
+  SourceLocationName: string;
+}
+
+// refs: 1 - tags: named, input
+export interface DeleteVodSourceRequest {
+  SourceLocationName: string;
+  VodSourceName: string;
+}
+
+// refs: 1 - tags: named, input
+export interface DescribeChannelRequest {
+  ChannelName: string;
+}
+
+// refs: 1 - tags: named, input
+export interface DescribeProgramRequest {
+  ChannelName: string;
+  ProgramName: string;
+}
+
+// refs: 1 - tags: named, input
+export interface DescribeSourceLocationRequest {
+  SourceLocationName: string;
+}
+
+// refs: 1 - tags: named, input
+export interface DescribeVodSourceRequest {
+  SourceLocationName: string;
+  VodSourceName: string;
+}
+
+// refs: 1 - tags: named, input
+export interface GetChannelPolicyRequest {
+  ChannelName: string;
+}
+
+// refs: 1 - tags: named, input
+export interface GetChannelScheduleRequest {
+  ChannelName: string;
+  DurationMinutes?: string | null;
+  MaxResults?: number | null;
+  NextToken?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -13,7 +110,19 @@ export interface GetPlaybackConfigurationRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface ListChannelsRequest {
+  MaxResults?: number | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, input
 export interface ListPlaybackConfigurationsRequest {
+  MaxResults?: number | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface ListSourceLocationsRequest {
   MaxResults?: number | null;
   NextToken?: string | null;
 }
@@ -24,11 +133,25 @@ export interface ListTagsForResourceRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface ListVodSourcesRequest {
+  MaxResults?: number | null;
+  NextToken?: string | null;
+  SourceLocationName: string;
+}
+
+// refs: 1 - tags: named, input
+export interface PutChannelPolicyRequest {
+  ChannelName: string;
+  Policy: string;
+}
+
+// refs: 1 - tags: named, input
 export interface PutPlaybackConfigurationRequest {
   AdDecisionServerUrl?: string | null;
   AvailSuppression?: AvailSuppression | null;
   Bumper?: Bumper | null;
   CdnConfiguration?: CdnConfiguration | null;
+  ConfigurationAliases?: { [key: string]: { [key: string]: string | null | undefined } | null | undefined } | null;
   DashConfiguration?: DashConfigurationForPut | null;
   LivePreRollConfiguration?: LivePreRollConfiguration | null;
   ManifestProcessingRules?: ManifestProcessingRules | null;
@@ -38,6 +161,16 @@ export interface PutPlaybackConfigurationRequest {
   Tags?: { [key: string]: string | null | undefined } | null;
   TranscodeProfileName?: string | null;
   VideoContentSourceUrl?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface StartChannelRequest {
+  ChannelName: string;
+}
+
+// refs: 1 - tags: named, input
+export interface StopChannelRequest {
+  ChannelName: string;
 }
 
 // refs: 1 - tags: named, input
@@ -52,8 +185,152 @@ export interface UntagResourceRequest {
   TagKeys: string[];
 }
 
+// refs: 1 - tags: named, input
+export interface UpdateChannelRequest {
+  ChannelName: string;
+  Outputs: RequestOutputItem[];
+}
+
+// refs: 1 - tags: named, input
+export interface UpdateSourceLocationRequest {
+  AccessConfiguration?: AccessConfiguration | null;
+  DefaultSegmentDeliveryConfiguration?: DefaultSegmentDeliveryConfiguration | null;
+  HttpConfiguration: HttpConfiguration;
+  SourceLocationName: string;
+}
+
+// refs: 1 - tags: named, input
+export interface UpdateVodSourceRequest {
+  HttpPackageConfigurations: HttpPackageConfiguration[];
+  SourceLocationName: string;
+  VodSourceName: string;
+}
+
+// refs: 1 - tags: named, output
+export interface CreateChannelResponse {
+  Arn?: string | null;
+  ChannelName?: string | null;
+  ChannelState?: ChannelState | null;
+  CreationTime?: Date | number | null;
+  LastModifiedTime?: Date | number | null;
+  Outputs?: ResponseOutputItem[] | null;
+  PlaybackMode?: string | null;
+  Tags?: { [key: string]: string | null | undefined } | null;
+}
+
+// refs: 1 - tags: named, output
+export interface CreateProgramResponse {
+  AdBreaks?: AdBreak[] | null;
+  Arn?: string | null;
+  ChannelName?: string | null;
+  CreationTime?: Date | number | null;
+  ProgramName?: string | null;
+  SourceLocationName?: string | null;
+  VodSourceName?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface CreateSourceLocationResponse {
+  AccessConfiguration?: AccessConfiguration | null;
+  Arn?: string | null;
+  CreationTime?: Date | number | null;
+  DefaultSegmentDeliveryConfiguration?: DefaultSegmentDeliveryConfiguration | null;
+  HttpConfiguration?: HttpConfiguration | null;
+  LastModifiedTime?: Date | number | null;
+  SourceLocationName?: string | null;
+  Tags?: { [key: string]: string | null | undefined } | null;
+}
+
+// refs: 1 - tags: named, output
+export interface CreateVodSourceResponse {
+  Arn?: string | null;
+  CreationTime?: Date | number | null;
+  HttpPackageConfigurations?: HttpPackageConfiguration[] | null;
+  LastModifiedTime?: Date | number | null;
+  SourceLocationName?: string | null;
+  Tags?: { [key: string]: string | null | undefined } | null;
+  VodSourceName?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface DeleteChannelResponse {
+}
+
+// refs: 1 - tags: named, output
+export interface DeleteChannelPolicyResponse {
+}
+
 // refs: 1 - tags: named, output
 export interface DeletePlaybackConfigurationResponse {
+}
+
+// refs: 1 - tags: named, output
+export interface DeleteProgramResponse {
+}
+
+// refs: 1 - tags: named, output
+export interface DeleteSourceLocationResponse {
+}
+
+// refs: 1 - tags: named, output
+export interface DeleteVodSourceResponse {
+}
+
+// refs: 1 - tags: named, output
+export interface DescribeChannelResponse {
+  Arn?: string | null;
+  ChannelName?: string | null;
+  ChannelState?: ChannelState | null;
+  CreationTime?: Date | number | null;
+  LastModifiedTime?: Date | number | null;
+  Outputs?: ResponseOutputItem[] | null;
+  PlaybackMode?: string | null;
+  Tags?: { [key: string]: string | null | undefined } | null;
+}
+
+// refs: 1 - tags: named, output
+export interface DescribeProgramResponse {
+  AdBreaks?: AdBreak[] | null;
+  Arn?: string | null;
+  ChannelName?: string | null;
+  CreationTime?: Date | number | null;
+  ProgramName?: string | null;
+  SourceLocationName?: string | null;
+  VodSourceName?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface DescribeSourceLocationResponse {
+  AccessConfiguration?: AccessConfiguration | null;
+  Arn?: string | null;
+  CreationTime?: Date | number | null;
+  DefaultSegmentDeliveryConfiguration?: DefaultSegmentDeliveryConfiguration | null;
+  HttpConfiguration?: HttpConfiguration | null;
+  LastModifiedTime?: Date | number | null;
+  SourceLocationName?: string | null;
+  Tags?: { [key: string]: string | null | undefined } | null;
+}
+
+// refs: 1 - tags: named, output
+export interface DescribeVodSourceResponse {
+  Arn?: string | null;
+  CreationTime?: Date | number | null;
+  HttpPackageConfigurations?: HttpPackageConfiguration[] | null;
+  LastModifiedTime?: Date | number | null;
+  SourceLocationName?: string | null;
+  Tags?: { [key: string]: string | null | undefined } | null;
+  VodSourceName?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface GetChannelPolicyResponse {
+  Policy?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface GetChannelScheduleResponse {
+  Items?: ScheduleEntry[] | null;
+  NextToken?: string | null;
 }
 
 // refs: 1 - tags: named, output
@@ -62,6 +339,7 @@ export interface GetPlaybackConfigurationResponse {
   AvailSuppression?: AvailSuppression | null;
   Bumper?: Bumper | null;
   CdnConfiguration?: CdnConfiguration | null;
+  ConfigurationAliases?: { [key: string]: { [key: string]: string | null | undefined } | null | undefined } | null;
   DashConfiguration?: DashConfiguration | null;
   HlsConfiguration?: HlsConfiguration | null;
   LivePreRollConfiguration?: LivePreRollConfiguration | null;
@@ -75,6 +353,12 @@ export interface GetPlaybackConfigurationResponse {
   Tags?: { [key: string]: string | null | undefined } | null;
   TranscodeProfileName?: string | null;
   VideoContentSourceUrl?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface ListChannelsResponse {
+  Items?: Channel[] | null;
+  NextToken?: string | null;
 }
 
 // refs: 1 - tags: named, output
@@ -84,8 +368,24 @@ export interface ListPlaybackConfigurationsResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface ListSourceLocationsResponse {
+  Items?: SourceLocation[] | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
 export interface ListTagsForResourceResponse {
   Tags?: { [key: string]: string | null | undefined } | null;
+}
+
+// refs: 1 - tags: named, output
+export interface ListVodSourcesResponse {
+  Items?: VodSource[] | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface PutChannelPolicyResponse {
 }
 
 // refs: 1 - tags: named, output
@@ -94,6 +394,7 @@ export interface PutPlaybackConfigurationResponse {
   AvailSuppression?: AvailSuppression | null;
   Bumper?: Bumper | null;
   CdnConfiguration?: CdnConfiguration | null;
+  ConfigurationAliases?: { [key: string]: { [key: string]: string | null | undefined } | null | undefined } | null;
   DashConfiguration?: DashConfiguration | null;
   HlsConfiguration?: HlsConfiguration | null;
   LivePreRollConfiguration?: LivePreRollConfiguration | null;
@@ -108,6 +409,153 @@ export interface PutPlaybackConfigurationResponse {
   TranscodeProfileName?: string | null;
   VideoContentSourceUrl?: string | null;
 }
+
+// refs: 1 - tags: named, output
+export interface StartChannelResponse {
+}
+
+// refs: 1 - tags: named, output
+export interface StopChannelResponse {
+}
+
+// refs: 1 - tags: named, output
+export interface UpdateChannelResponse {
+  Arn?: string | null;
+  ChannelName?: string | null;
+  ChannelState?: ChannelState | null;
+  CreationTime?: Date | number | null;
+  LastModifiedTime?: Date | number | null;
+  Outputs?: ResponseOutputItem[] | null;
+  PlaybackMode?: string | null;
+  Tags?: { [key: string]: string | null | undefined } | null;
+}
+
+// refs: 1 - tags: named, output
+export interface UpdateSourceLocationResponse {
+  AccessConfiguration?: AccessConfiguration | null;
+  Arn?: string | null;
+  CreationTime?: Date | number | null;
+  DefaultSegmentDeliveryConfiguration?: DefaultSegmentDeliveryConfiguration | null;
+  HttpConfiguration?: HttpConfiguration | null;
+  LastModifiedTime?: Date | number | null;
+  SourceLocationName?: string | null;
+  Tags?: { [key: string]: string | null | undefined } | null;
+}
+
+// refs: 1 - tags: named, output
+export interface UpdateVodSourceResponse {
+  Arn?: string | null;
+  CreationTime?: Date | number | null;
+  HttpPackageConfigurations?: HttpPackageConfiguration[] | null;
+  LastModifiedTime?: Date | number | null;
+  SourceLocationName?: string | null;
+  Tags?: { [key: string]: string | null | undefined } | null;
+  VodSourceName?: string | null;
+}
+
+// refs: 2 - tags: input, named, interface
+export interface RequestOutputItem {
+  DashPlaylistSettings?: DashPlaylistSettings | null;
+  HlsPlaylistSettings?: HlsPlaylistSettings | null;
+  ManifestName: string;
+  SourceGroup: string;
+}
+
+// refs: 6 - tags: input, named, interface, output
+export interface DashPlaylistSettings {
+  ManifestWindowSeconds?: number | null;
+  MinBufferTimeSeconds?: number | null;
+  MinUpdatePeriodSeconds?: number | null;
+  SuggestedPresentationDelaySeconds?: number | null;
+}
+
+// refs: 6 - tags: input, named, interface, output
+export interface HlsPlaylistSettings {
+  ManifestWindowSeconds?: number | null;
+}
+
+// refs: 1 - tags: input, named, enum
+export type PlaybackMode =
+| "LOOP"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 3 - tags: input, named, interface, output
+export interface AdBreak {
+  MessageType?: MessageType | null;
+  OffsetMillis?: number | null;
+  Slate?: SlateSource | null;
+  SpliceInsertMessage?: SpliceInsertMessage | null;
+}
+
+// refs: 3 - tags: input, named, enum, output
+export type MessageType =
+| "SPLICE_INSERT"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 3 - tags: input, named, interface, output
+export interface SlateSource {
+  SourceLocationName?: string | null;
+  VodSourceName?: string | null;
+}
+
+// refs: 3 - tags: input, named, interface, output
+export interface SpliceInsertMessage {
+  AvailNum?: number | null;
+  AvailsExpected?: number | null;
+  SpliceEventId?: number | null;
+  UniqueProgramId?: number | null;
+}
+
+// refs: 1 - tags: input, named, interface
+export interface ScheduleConfiguration {
+  Transition: Transition;
+}
+
+// refs: 1 - tags: input, named, interface
+export interface Transition {
+  RelativePosition: RelativePosition;
+  RelativeProgram?: string | null;
+  Type: string;
+}
+
+// refs: 1 - tags: input, named, enum
+export type RelativePosition =
+| "BEFORE_PROGRAM"
+| "AFTER_PROGRAM"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 6 - tags: input, named, interface, output
+export interface AccessConfiguration {
+  AccessType?: AccessType | null;
+}
+
+// refs: 6 - tags: input, named, enum, output
+export type AccessType =
+| "S3_SIGV4"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 6 - tags: input, named, interface, output
+export interface DefaultSegmentDeliveryConfiguration {
+  BaseUrl?: string | null;
+}
+
+// refs: 6 - tags: input, named, interface, output
+export interface HttpConfiguration {
+  BaseUrl: string;
+}
+
+// refs: 6 - tags: input, named, interface, output
+export interface HttpPackageConfiguration {
+  Path: string;
+  SourceGroup: string;
+  Type: Type;
+}
+
+// refs: 6 - tags: input, named, enum, output
+export type Type =
+| "DASH"
+| "HLS"
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, interface, output
 export interface AvailSuppression {
@@ -145,7 +593,7 @@ export type OriginManifestType =
 | "MULTI_PERIOD"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 3 - tags: input, named, interface, output
+// refs: 4 - tags: input, named, interface, output
 export interface LivePreRollConfiguration {
   AdDecisionServerUrl?: string | null;
   MaxDurationSeconds?: number | null;
@@ -161,6 +609,32 @@ export interface AdMarkerPassthrough {
   Enabled?: boolean | null;
 }
 
+// refs: 3 - tags: output, named, enum
+export type ChannelState =
+| "RUNNING"
+| "STOPPED"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 4 - tags: output, named, interface
+export interface ResponseOutputItem {
+  DashPlaylistSettings?: DashPlaylistSettings | null;
+  HlsPlaylistSettings?: HlsPlaylistSettings | null;
+  ManifestName: string;
+  PlaybackUrl: string;
+  SourceGroup: string;
+}
+
+// refs: 1 - tags: output, named, interface
+export interface ScheduleEntry {
+  ApproximateDurationSeconds?: number | null;
+  ApproximateStartTime?: Date | number | null;
+  Arn: string;
+  ChannelName: string;
+  ProgramName: string;
+  SourceLocationName: string;
+  VodSourceName: string;
+}
+
 // refs: 3 - tags: output, named, interface
 export interface DashConfiguration {
   ManifestEndpointPrefix?: string | null;
@@ -174,21 +648,58 @@ export interface HlsConfiguration {
 }
 
 // refs: 1 - tags: output, named, interface
+export interface Channel {
+  Arn: string;
+  ChannelName: string;
+  ChannelState: string;
+  CreationTime?: Date | number | null;
+  LastModifiedTime?: Date | number | null;
+  Outputs: ResponseOutputItem[];
+  PlaybackMode: string;
+  Tags?: { [key: string]: string | null | undefined } | null;
+}
+
+// refs: 1 - tags: output, named, interface
 export interface PlaybackConfiguration {
   AdDecisionServerUrl?: string | null;
   AvailSuppression?: AvailSuppression | null;
   Bumper?: Bumper | null;
   CdnConfiguration?: CdnConfiguration | null;
+  ConfigurationAliases?: { [key: string]: { [key: string]: string | null | undefined } | null | undefined } | null;
   DashConfiguration?: DashConfiguration | null;
   HlsConfiguration?: HlsConfiguration | null;
+  LivePreRollConfiguration?: LivePreRollConfiguration | null;
   ManifestProcessingRules?: ManifestProcessingRules | null;
   Name?: string | null;
+  PersonalizationThresholdSeconds?: number | null;
   PlaybackConfigurationArn?: string | null;
   PlaybackEndpointPrefix?: string | null;
   SessionInitializationEndpointPrefix?: string | null;
   SlateAdUrl?: string | null;
   Tags?: { [key: string]: string | null | undefined } | null;
   TranscodeProfileName?: string | null;
-  PersonalizationThresholdSeconds?: number | null;
   VideoContentSourceUrl?: string | null;
+}
+
+// refs: 1 - tags: output, named, interface
+export interface SourceLocation {
+  AccessConfiguration?: AccessConfiguration | null;
+  Arn: string;
+  CreationTime?: Date | number | null;
+  DefaultSegmentDeliveryConfiguration?: DefaultSegmentDeliveryConfiguration | null;
+  HttpConfiguration: HttpConfiguration;
+  LastModifiedTime?: Date | number | null;
+  SourceLocationName: string;
+  Tags?: { [key: string]: string | null | undefined } | null;
+}
+
+// refs: 1 - tags: output, named, interface
+export interface VodSource {
+  Arn: string;
+  CreationTime?: Date | number | null;
+  HttpPackageConfigurations: HttpPackageConfiguration[];
+  LastModifiedTime?: Date | number | null;
+  SourceLocationName: string;
+  Tags?: { [key: string]: string | null | undefined } | null;
+  VodSourceName: string;
 }

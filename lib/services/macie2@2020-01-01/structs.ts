@@ -4,8 +4,9 @@ import * as cmnP from "../../encoding/common.ts";
 
 // refs: 1 - tags: named, input
 export interface AcceptInvitationRequest {
+  administratorAccountId?: string | null;
   invitationId: string;
-  masterAccount: string;
+  masterAccount?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -120,6 +121,10 @@ export interface DisableOrganizationAdminAccountRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface DisassociateFromAdministratorAccountRequest {
+}
+
+// refs: 1 - tags: named, input
 export interface DisassociateFromMasterAccountRequest {
 }
 
@@ -139,6 +144,10 @@ export interface EnableMacieRequest {
 export interface EnableOrganizationAdminAccountRequest {
   adminAccountId: string;
   clientToken?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface GetAdministratorAccountRequest {
 }
 
 // refs: 1 - tags: named, input
@@ -175,6 +184,10 @@ export interface GetFindingsFilterRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface GetFindingsPublicationConfigurationRequest {
+}
+
+// refs: 1 - tags: named, input
 export interface GetInvitationsCountRequest {
 }
 
@@ -197,10 +210,12 @@ export interface GetUsageStatisticsRequest {
   maxResults?: number | null;
   nextToken?: string | null;
   sortBy?: UsageStatisticsSortBy | null;
+  timeRange?: TimeRange | null;
 }
 
 // refs: 1 - tags: named, input
 export interface GetUsageTotalsRequest {
+  timeRange?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -258,6 +273,12 @@ export interface ListTagsForResourceRequest {
 // refs: 1 - tags: named, input
 export interface PutClassificationExportConfigurationRequest {
   configuration: ClassificationExportConfiguration;
+}
+
+// refs: 1 - tags: named, input
+export interface PutFindingsPublicationConfigurationRequest {
+  clientToken?: string | null;
+  securityHubConfiguration?: SecurityHubConfiguration | null;
 }
 
 // refs: 1 - tags: named, input
@@ -420,6 +441,10 @@ export interface DisableOrganizationAdminAccountResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface DisassociateFromAdministratorAccountResponse {
+}
+
+// refs: 1 - tags: named, output
 export interface DisassociateFromMasterAccountResponse {
 }
 
@@ -433,6 +458,11 @@ export interface EnableMacieResponse {
 
 // refs: 1 - tags: named, output
 export interface EnableOrganizationAdminAccountResponse {
+}
+
+// refs: 1 - tags: named, output
+export interface GetAdministratorAccountResponse {
+  administrator?: Invitation | null;
 }
 
 // refs: 1 - tags: named, output
@@ -494,6 +524,11 @@ export interface GetFindingsFilterResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface GetFindingsPublicationConfigurationResponse {
+  securityHubConfiguration?: SecurityHubConfiguration | null;
+}
+
+// refs: 1 - tags: named, output
 export interface GetInvitationsCountResponse {
   invitationsCount?: number | null;
 }
@@ -515,6 +550,7 @@ export interface GetMasterAccountResponse {
 // refs: 1 - tags: named, output
 export interface GetMemberResponse {
   accountId?: string | null;
+  administratorAccountId?: string | null;
   arn?: string | null;
   email?: string | null;
   invitedAt?: Date | number | null;
@@ -528,10 +564,12 @@ export interface GetMemberResponse {
 export interface GetUsageStatisticsResponse {
   nextToken?: string | null;
   records?: UsageRecord[] | null;
+  timeRange?: TimeRange | null;
 }
 
 // refs: 1 - tags: named, output
 export interface GetUsageTotalsResponse {
+  timeRange?: TimeRange | null;
   usageTotals?: UsageTotal[] | null;
 }
 
@@ -585,6 +623,10 @@ export interface ListTagsForResourceResponse {
 // refs: 1 - tags: named, output
 export interface PutClassificationExportConfigurationResponse {
   configuration?: ClassificationExportConfiguration | null;
+}
+
+// refs: 1 - tags: named, output
+export interface PutFindingsPublicationConfigurationResponse {
 }
 
 // refs: 1 - tags: named, output
@@ -881,6 +923,12 @@ export type UsageStatisticsSortKey =
 | "freeTrialStartDate"
 | cmnP.UnexpectedEnumValue;
 
+// refs: 3 - tags: input, named, enum, output
+export type TimeRange =
+| "MONTH_TO_DATE"
+| "PAST_30_DAYS"
+| cmnP.UnexpectedEnumValue;
+
 // refs: 1 - tags: input, named, interface
 export interface ListJobsFilterCriteria {
   excludes?: ListJobsFilterTerm[] | null;
@@ -926,6 +974,12 @@ export interface S3Destination {
   bucketName: string;
   keyPrefix?: string | null;
   kmsKeyArn: string;
+}
+
+// refs: 2 - tags: input, named, interface, output
+export interface SecurityHubConfiguration {
+  publishClassificationFindings: boolean;
+  publishPolicyFindings: boolean;
 }
 
 // refs: 3 - tags: input, named, enum, output
@@ -976,6 +1030,7 @@ export interface BucketMetadata {
   publicAccess?: BucketPublicAccess | null;
   region?: string | null;
   replicationDetails?: ReplicationDetails | null;
+  serverSideEncryption?: BucketServerSideEncryption | null;
   sharedAccess?: SharedAccess | null;
   sizeInBytes?: number | null;
   sizeInBytesCompressed?: number | null;
@@ -1073,6 +1128,19 @@ export interface ReplicationDetails {
   replicationAccounts?: string[] | null;
 }
 
+// refs: 1 - tags: output, named, interface
+export interface BucketServerSideEncryption {
+  kmsMasterKeyId?: string | null;
+  type?: Type | null;
+}
+
+// refs: 1 - tags: output, named, enum
+export type Type =
+| "NONE"
+| "AES256"
+| "aws:kms"
+| cmnP.UnexpectedEnumValue;
+
 // refs: 1 - tags: output, named, enum
 export type SharedAccess =
 | "EXTERNAL"
@@ -1117,6 +1185,28 @@ export interface UserPausedDetails {
   jobImminentExpirationHealthEventArn?: string | null;
   jobPausedAt?: Date | number | null;
 }
+
+// refs: 3 - tags: output, named, interface
+export interface Invitation {
+  accountId?: string | null;
+  invitationId?: string | null;
+  invitedAt?: Date | number | null;
+  relationshipStatus?: RelationshipStatus | null;
+}
+
+// refs: 5 - tags: output, named, enum
+export type RelationshipStatus =
+| "Enabled"
+| "Paused"
+| "Invited"
+| "Created"
+| "Removed"
+| "Resigned"
+| "EmailVerificationInProgress"
+| "EmailVerificationFailed"
+| "RegionDisabled"
+| "AccountSuspended"
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface BucketCountByEffectivePermission {
@@ -1506,28 +1596,6 @@ export type SeverityDescription =
 | "High"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 2 - tags: output, named, interface
-export interface Invitation {
-  accountId?: string | null;
-  invitationId?: string | null;
-  invitedAt?: Date | number | null;
-  relationshipStatus?: RelationshipStatus | null;
-}
-
-// refs: 4 - tags: output, named, enum
-export type RelationshipStatus =
-| "Enabled"
-| "Paused"
-| "Invited"
-| "Created"
-| "Removed"
-| "Resigned"
-| "EmailVerificationInProgress"
-| "EmailVerificationFailed"
-| "RegionDisabled"
-| "AccountSuspended"
-| cmnP.UnexpectedEnumValue;
-
 // refs: 1 - tags: output, named, interface
 export interface UsageRecord {
   accountId?: string | null;
@@ -1606,6 +1674,7 @@ export interface FindingsFilterListItem {
 // refs: 1 - tags: output, named, interface
 export interface Member {
   accountId?: string | null;
+  administratorAccountId?: string | null;
   arn?: string | null;
   email?: string | null;
   invitedAt?: Date | number | null;

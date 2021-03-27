@@ -87,13 +87,6 @@ export interface CreatePortalRequest {
 }
 
 // refs: 1 - tags: named, input
-export interface CreatePresignedPortalUrlRequest {
-  portalId: string;
-  sessionDurationSeconds?: number | null;
-  state?: string | null;
-}
-
-// refs: 1 - tags: named, input
 export interface CreateProjectRequest {
   portalId: string;
   projectName: string;
@@ -475,11 +468,6 @@ export interface CreatePortalResponse {
   portalStartUrl: string;
   portalStatus: PortalStatus;
   ssoApplicationId: string;
-}
-
-// refs: 1 - tags: named, output
-export interface CreatePresignedPortalUrlResponse {
-  presignedPortalUrl: string;
 }
 
 // refs: 1 - tags: named, output

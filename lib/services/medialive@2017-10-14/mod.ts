@@ -8,7 +8,7 @@ export * from "./structs.ts";
 import * as client from "../../client/common.ts";
 import * as cmnP from "../../encoding/common.ts";
 import * as jsonP from "../../encoding/json.ts";
-import * as uuidv4 from "https://deno.land/std@0.86.0/uuid/v4.ts";
+import * as uuidv4 from "https://deno.land/std@0.91.0/uuid/v4.ts";
 import type * as s from "./structs.ts";
 function generateIdemptToken() {
   return uuidv4.generate();
@@ -285,6 +285,27 @@ export default class MediaLive {
     }, await resp.json());
   }
 
+  async createPartnerInput(
+    {abortSignal, ...params}: RequestConfig & s.CreatePartnerInputRequest,
+  ): Promise<s.CreatePartnerInputResponse> {
+    const body: jsonP.JSONObject = {
+      requestId: params["RequestId"] ?? generateIdemptToken(),
+      tags: params["Tags"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "CreatePartnerInput",
+      requestUri: cmnP.encodePath`/prod/inputs/${params["InputId"]}/partners`,
+      responseCode: 201,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Input": toInput,
+      },
+    }, await resp.json());
+  }
+
   async createTags(
     {abortSignal, ...params}: RequestConfig & s.CreateTagsRequest,
   ): Promise<void> {
@@ -543,6 +564,7 @@ export default class MediaLive {
         "Id": "s",
         "InputClass": (x: jsonP.JSONValue) => cmnP.readEnum<s.InputClass>(x),
         "InputDevices": [toInputDeviceSettings],
+        "InputPartnerIds": ["s"],
         "InputSourceType": (x: jsonP.JSONValue) => cmnP.readEnum<s.InputSourceType>(x),
         "MediaConnectFlows": [toMediaConnectFlow],
         "Name": "s",
@@ -1172,6 +1194,7 @@ export default class MediaLive {
   ): Promise<s.TransferInputDeviceResponse> {
     const body: jsonP.JSONObject = {
       targetCustomerId: params["TargetCustomerId"],
+      targetRegion: params["TargetRegion"],
       transferMessage: params["TransferMessage"],
     };
     const resp = await this.#client.performRequest({
@@ -2818,6 +2841,7 @@ function toDvbSubDestinationSettings(root: jsonP.JSONValue): s.DvbSubDestination
 function fromEbuTtDDestinationSettings(input?: s.EbuTtDDestinationSettings | null): jsonP.JSONValue {
   if (!input) return input;
   return {
+    copyrightHolder: input["CopyrightHolder"],
     fillLineGap: input["FillLineGap"],
     fontFamily: input["FontFamily"],
     styleControl: input["StyleControl"],
@@ -2827,6 +2851,7 @@ function toEbuTtDDestinationSettings(root: jsonP.JSONValue): s.EbuTtDDestination
   return jsonP.readObj({
     required: {},
     optional: {
+      "CopyrightHolder": "s",
       "FillLineGap": (x: jsonP.JSONValue) => cmnP.readEnum<s.EbuTtDFillLineGapControl>(x),
       "FontFamily": "s",
       "StyleControl": (x: jsonP.JSONValue) => cmnP.readEnum<s.EbuTtDDestinationStyleControl>(x),
@@ -3077,6 +3102,7 @@ function toOutputGroupSettings(root: jsonP.JSONValue): s.OutputGroupSettings {
 function fromArchiveGroupSettings(input?: s.ArchiveGroupSettings | null): jsonP.JSONValue {
   if (!input) return input;
   return {
+    archiveCdnSettings: fromArchiveCdnSettings(input["ArchiveCdnSettings"]),
     destination: fromOutputLocationRef(input["Destination"]),
     rolloverInterval: input["RolloverInterval"],
   }
@@ -3087,7 +3113,38 @@ function toArchiveGroupSettings(root: jsonP.JSONValue): s.ArchiveGroupSettings {
       "Destination": toOutputLocationRef,
     },
     optional: {
+      "ArchiveCdnSettings": toArchiveCdnSettings,
       "RolloverInterval": "n",
+    },
+  }, root);
+}
+
+function fromArchiveCdnSettings(input?: s.ArchiveCdnSettings | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    archiveS3Settings: fromArchiveS3Settings(input["ArchiveS3Settings"]),
+  }
+}
+function toArchiveCdnSettings(root: jsonP.JSONValue): s.ArchiveCdnSettings {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "ArchiveS3Settings": toArchiveS3Settings,
+    },
+  }, root);
+}
+
+function fromArchiveS3Settings(input?: s.ArchiveS3Settings | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    cannedAcl: input["CannedAcl"],
+  }
+}
+function toArchiveS3Settings(root: jsonP.JSONValue): s.ArchiveS3Settings {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "CannedAcl": (x: jsonP.JSONValue) => cmnP.readEnum<s.S3CannedAcl>(x),
     },
   }, root);
 }
@@ -3111,6 +3168,7 @@ function fromFrameCaptureGroupSettings(input?: s.FrameCaptureGroupSettings | nul
   if (!input) return input;
   return {
     destination: fromOutputLocationRef(input["Destination"]),
+    frameCaptureCdnSettings: fromFrameCaptureCdnSettings(input["FrameCaptureCdnSettings"]),
   }
 }
 function toFrameCaptureGroupSettings(root: jsonP.JSONValue): s.FrameCaptureGroupSettings {
@@ -3118,7 +3176,39 @@ function toFrameCaptureGroupSettings(root: jsonP.JSONValue): s.FrameCaptureGroup
     required: {
       "Destination": toOutputLocationRef,
     },
-    optional: {},
+    optional: {
+      "FrameCaptureCdnSettings": toFrameCaptureCdnSettings,
+    },
+  }, root);
+}
+
+function fromFrameCaptureCdnSettings(input?: s.FrameCaptureCdnSettings | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    frameCaptureS3Settings: fromFrameCaptureS3Settings(input["FrameCaptureS3Settings"]),
+  }
+}
+function toFrameCaptureCdnSettings(root: jsonP.JSONValue): s.FrameCaptureCdnSettings {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "FrameCaptureS3Settings": toFrameCaptureS3Settings,
+    },
+  }, root);
+}
+
+function fromFrameCaptureS3Settings(input?: s.FrameCaptureS3Settings | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    cannedAcl: input["CannedAcl"],
+  }
+}
+function toFrameCaptureS3Settings(root: jsonP.JSONValue): s.FrameCaptureS3Settings {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "CannedAcl": (x: jsonP.JSONValue) => cmnP.readEnum<s.S3CannedAcl>(x),
+    },
   }, root);
 }
 
@@ -3245,6 +3335,7 @@ function fromHlsCdnSettings(input?: s.HlsCdnSettings | null): jsonP.JSONValue {
     hlsAkamaiSettings: fromHlsAkamaiSettings(input["HlsAkamaiSettings"]),
     hlsBasicPutSettings: fromHlsBasicPutSettings(input["HlsBasicPutSettings"]),
     hlsMediaStoreSettings: fromHlsMediaStoreSettings(input["HlsMediaStoreSettings"]),
+    hlsS3Settings: fromHlsS3Settings(input["HlsS3Settings"]),
     hlsWebdavSettings: fromHlsWebdavSettings(input["HlsWebdavSettings"]),
   }
 }
@@ -3255,6 +3346,7 @@ function toHlsCdnSettings(root: jsonP.JSONValue): s.HlsCdnSettings {
       "HlsAkamaiSettings": toHlsAkamaiSettings,
       "HlsBasicPutSettings": toHlsBasicPutSettings,
       "HlsMediaStoreSettings": toHlsMediaStoreSettings,
+      "HlsS3Settings": toHlsS3Settings,
       "HlsWebdavSettings": toHlsWebdavSettings,
     },
   }, root);
@@ -3327,6 +3419,21 @@ function toHlsMediaStoreSettings(root: jsonP.JSONValue): s.HlsMediaStoreSettings
       "MediaStoreStorageClass": (x: jsonP.JSONValue) => cmnP.readEnum<s.HlsMediaStoreStorageClass>(x),
       "NumRetries": "n",
       "RestartDelay": "n",
+    },
+  }, root);
+}
+
+function fromHlsS3Settings(input?: s.HlsS3Settings | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    cannedAcl: input["CannedAcl"],
+  }
+}
+function toHlsS3Settings(root: jsonP.JSONValue): s.HlsS3Settings {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "CannedAcl": (x: jsonP.JSONValue) => cmnP.readEnum<s.S3CannedAcl>(x),
     },
   }, root);
 }
@@ -4931,6 +5038,7 @@ function toScte27SourceSettings(root: jsonP.JSONValue): s.Scte27SourceSettings {
 function fromTeletextSourceSettings(input?: s.TeletextSourceSettings | null): jsonP.JSONValue {
   if (!input) return input;
   return {
+    outputRectangle: fromCaptionRectangle(input["OutputRectangle"]),
     pageNumber: input["PageNumber"],
   }
 }
@@ -4938,8 +5046,30 @@ function toTeletextSourceSettings(root: jsonP.JSONValue): s.TeletextSourceSettin
   return jsonP.readObj({
     required: {},
     optional: {
+      "OutputRectangle": toCaptionRectangle,
       "PageNumber": "s",
     },
+  }, root);
+}
+
+function fromCaptionRectangle(input?: s.CaptionRectangle | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    height: input["Height"],
+    leftOffset: input["LeftOffset"],
+    topOffset: input["TopOffset"],
+    width: input["Width"],
+  }
+}
+function toCaptionRectangle(root: jsonP.JSONValue): s.CaptionRectangle {
+  return jsonP.readObj({
+    required: {
+      "Height": "n",
+      "LeftOffset": "n",
+      "TopOffset": "n",
+      "Width": "n",
+    },
+    optional: {},
   }, root);
 }
 
@@ -4985,6 +5115,7 @@ function fromVideoSelector(input?: s.VideoSelector | null): jsonP.JSONValue {
   if (!input) return input;
   return {
     colorSpace: input["ColorSpace"],
+    colorSpaceSettings: fromVideoSelectorColorSpaceSettings(input["ColorSpaceSettings"]),
     colorSpaceUsage: input["ColorSpaceUsage"],
     selectorSettings: fromVideoSelectorSettings(input["SelectorSettings"]),
   }
@@ -4994,8 +5125,24 @@ function toVideoSelector(root: jsonP.JSONValue): s.VideoSelector {
     required: {},
     optional: {
       "ColorSpace": (x: jsonP.JSONValue) => cmnP.readEnum<s.VideoSelectorColorSpace>(x),
+      "ColorSpaceSettings": toVideoSelectorColorSpaceSettings,
       "ColorSpaceUsage": (x: jsonP.JSONValue) => cmnP.readEnum<s.VideoSelectorColorSpaceUsage>(x),
       "SelectorSettings": toVideoSelectorSettings,
+    },
+  }, root);
+}
+
+function fromVideoSelectorColorSpaceSettings(input?: s.VideoSelectorColorSpaceSettings | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    hdr10Settings: fromHdr10Settings(input["Hdr10Settings"]),
+  }
+}
+function toVideoSelectorColorSpaceSettings(root: jsonP.JSONValue): s.VideoSelectorColorSpaceSettings {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "Hdr10Settings": toHdr10Settings,
     },
   }, root);
 }
@@ -5347,6 +5494,7 @@ function toInput(root: jsonP.JSONValue): s.Input {
       "Id": "s",
       "InputClass": (x: jsonP.JSONValue) => cmnP.readEnum<s.InputClass>(x),
       "InputDevices": [toInputDeviceSettings],
+      "InputPartnerIds": ["s"],
       "InputSourceType": (x: jsonP.JSONValue) => cmnP.readEnum<s.InputSourceType>(x),
       "MediaConnectFlows": [toMediaConnectFlow],
       "Name": "s",

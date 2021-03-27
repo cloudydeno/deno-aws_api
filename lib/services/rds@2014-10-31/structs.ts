@@ -288,6 +288,16 @@ export interface CreateDBProxyRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface CreateDBProxyEndpointRequest {
+  DBProxyName: string;
+  DBProxyEndpointName: string;
+  VpcSubnetIds: string[];
+  VpcSecurityGroupIds?: string[] | null;
+  TargetRole?: DBProxyEndpointTargetRole | null;
+  Tags?: Tag[] | null;
+}
+
+// refs: 1 - tags: named, input
 export interface CreateDBSecurityGroupMessage {
   DBSecurityGroupName: string;
   DBSecurityGroupDescription: string;
@@ -389,6 +399,11 @@ export interface DeleteDBParameterGroupMessage {
 // refs: 1 - tags: named, input
 export interface DeleteDBProxyRequest {
   DBProxyName: string;
+}
+
+// refs: 1 - tags: named, input
+export interface DeleteDBProxyEndpointRequest {
+  DBProxyEndpointName: string;
 }
 
 // refs: 1 - tags: named, input
@@ -578,6 +593,15 @@ export interface DescribeDBParametersMessage {
 // refs: 1 - tags: named, input
 export interface DescribeDBProxiesRequest {
   DBProxyName?: string | null;
+  Filters?: Filter[] | null;
+  Marker?: string | null;
+  MaxRecords?: number | null;
+}
+
+// refs: 1 - tags: named, input
+export interface DescribeDBProxyEndpointsRequest {
+  DBProxyName?: string | null;
+  DBProxyEndpointName?: string | null;
   Filters?: Filter[] | null;
   Marker?: string | null;
   MaxRecords?: number | null;
@@ -799,6 +823,12 @@ export interface FailoverDBClusterMessage {
 }
 
 // refs: 1 - tags: named, input
+export interface FailoverGlobalClusterMessage {
+  GlobalClusterIdentifier: string;
+  TargetDbClusterIdentifier: string;
+}
+
+// refs: 1 - tags: named, input
 export interface ImportInstallationMediaMessage {
   CustomAvailabilityZoneId: string;
   Engine: string;
@@ -923,6 +953,7 @@ export interface ModifyDBInstanceMessage {
   CertificateRotationRestart?: boolean | null;
   ReplicaMode?: ReplicaMode | null;
   EnableCustomerOwnedIp?: boolean | null;
+  AwsBackupRecoveryPointArn?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -941,6 +972,13 @@ export interface ModifyDBProxyRequest {
   DebugLogging?: boolean | null;
   RoleArn?: string | null;
   SecurityGroups?: string[] | null;
+}
+
+// refs: 1 - tags: named, input
+export interface ModifyDBProxyEndpointRequest {
+  DBProxyEndpointName: string;
+  NewDBProxyEndpointName?: string | null;
+  VpcSecurityGroupIds?: string[] | null;
 }
 
 // refs: 1 - tags: named, input
@@ -1474,6 +1512,11 @@ export interface CreateDBProxyResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface CreateDBProxyEndpointResponse {
+  DBProxyEndpoint?: DBProxyEndpoint | null;
+}
+
+// refs: 1 - tags: named, output
 export interface CreateDBSecurityGroupResult {
   DBSecurityGroup?: DBSecurityGroup | null;
 }
@@ -1531,6 +1574,11 @@ export interface DeleteDBInstanceAutomatedBackupResult {
 // refs: 1 - tags: named, output
 export interface DeleteDBProxyResponse {
   DBProxy?: DBProxy | null;
+}
+
+// refs: 1 - tags: named, output
+export interface DeleteDBProxyEndpointResponse {
+  DBProxyEndpoint?: DBProxyEndpoint | null;
 }
 
 // refs: 1 - tags: named, output
@@ -1661,6 +1709,12 @@ export interface DBParameterGroupDetails {
 // refs: 1 - tags: named, output
 export interface DescribeDBProxiesResponse {
   DBProxies: DBProxy[];
+  Marker?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface DescribeDBProxyEndpointsResponse {
+  DBProxyEndpoints: DBProxyEndpoint[];
   Marker?: string | null;
 }
 
@@ -1804,6 +1858,11 @@ export interface FailoverDBClusterResult {
 }
 
 // refs: 1 - tags: named, output
+export interface FailoverGlobalClusterResult {
+  GlobalCluster?: GlobalCluster | null;
+}
+
+// refs: 1 - tags: named, output
 export interface TagListMessage {
   TagList: Tag[];
 }
@@ -1850,6 +1909,11 @@ export interface DBParameterGroupNameMessage {
 // refs: 1 - tags: named, output
 export interface ModifyDBProxyResponse {
   DBProxy?: DBProxy | null;
+}
+
+// refs: 1 - tags: named, output
+export interface ModifyDBProxyEndpointResponse {
+  DBProxyEndpoint?: DBProxyEndpoint | null;
 }
 
 // refs: 1 - tags: named, output
@@ -2003,7 +2067,7 @@ export interface StopDBInstanceAutomatedBackupsReplicationResult {
   DBInstanceAutomatedBackup?: DBInstanceAutomatedBackup | null;
 }
 
-// refs: 59 - tags: input, named, interface, output
+// refs: 60 - tags: input, named, interface, output
 export interface Tag {
   Key?: string | null;
   Value?: string | null;
@@ -2056,7 +2120,13 @@ export type IAMAuthMode =
 | "REQUIRED"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 36 - tags: input, named, interface
+// refs: 5 - tags: input, named, enum, output
+export type DBProxyEndpointTargetRole =
+| "READ_WRITE"
+| "READ_ONLY"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 37 - tags: input, named, interface
 export interface Filter {
   Name: string;
   Values: string[];
@@ -2207,6 +2277,7 @@ export interface DBClusterSnapshot {
   DBClusterIdentifier?: string | null;
   SnapshotCreateTime?: Date | number | null;
   Engine?: string | null;
+  EngineMode?: string | null;
   AllocatedStorage?: number | null;
   Status?: string | null;
   Port?: number | null;
@@ -2427,7 +2498,7 @@ export interface DomainMembership {
   IAMRoleName?: string | null;
 }
 
-// refs: 16 - tags: output, named, enum
+// refs: 17 - tags: output, named, enum
 export type WriteForwardingStatus =
 | "enabled"
 | "disabled"
@@ -2516,6 +2587,7 @@ export interface DBInstance {
   TagList: Tag[];
   DBInstanceAutomatedBackupsReplications: DBInstanceAutomatedBackupsReplication[];
   CustomerOwnedIpEnabled?: boolean | null;
+  AwsBackupRecoveryPointArn?: string | null;
 }
 
 // refs: 24 - tags: output, named, interface
@@ -2611,6 +2683,7 @@ export interface DBProxy {
   DBProxyArn?: string | null;
   Status?: DBProxyStatus | null;
   EngineFamily?: string | null;
+  VpcId?: string | null;
   VpcSecurityGroupIds: string[];
   VpcSubnetIds: string[];
   Auth: UserAuthConfigInfo[];
@@ -2645,7 +2718,32 @@ export interface UserAuthConfigInfo {
   IAMAuth?: IAMAuthMode | null;
 }
 
-// refs: 5 - tags: output, named, interface
+// refs: 4 - tags: output, named, interface
+export interface DBProxyEndpoint {
+  DBProxyEndpointName?: string | null;
+  DBProxyEndpointArn?: string | null;
+  DBProxyName?: string | null;
+  Status?: DBProxyEndpointStatus | null;
+  VpcId?: string | null;
+  VpcSecurityGroupIds: string[];
+  VpcSubnetIds: string[];
+  Endpoint?: string | null;
+  CreatedDate?: Date | number | null;
+  TargetRole?: DBProxyEndpointTargetRole | null;
+  IsDefault?: boolean | null;
+}
+
+// refs: 4 - tags: output, named, enum
+export type DBProxyEndpointStatus =
+| "available"
+| "modifying"
+| "incompatible-network"
+| "insufficient-resource-limits"
+| "creating"
+| "deleting"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 6 - tags: output, named, interface
 export interface GlobalCluster {
   GlobalClusterIdentifier?: string | null;
   GlobalClusterResourceId?: string | null;
@@ -2657,15 +2755,30 @@ export interface GlobalCluster {
   StorageEncrypted?: boolean | null;
   DeletionProtection?: boolean | null;
   GlobalClusterMembers: GlobalClusterMember[];
+  FailoverState?: FailoverState | null;
 }
 
-// refs: 5 - tags: output, named, interface
+// refs: 6 - tags: output, named, interface
 export interface GlobalClusterMember {
   DBClusterArn?: string | null;
   Readers: string[];
   IsWriter?: boolean | null;
   GlobalWriteForwardingStatus?: WriteForwardingStatus | null;
 }
+
+// refs: 6 - tags: output, named, interface
+export interface FailoverState {
+  Status?: FailoverStatus | null;
+  FromDbClusterArn?: string | null;
+  ToDbClusterArn?: string | null;
+}
+
+// refs: 6 - tags: output, named, enum
+export type FailoverStatus =
+| "pending"
+| "failing-over"
+| "cancelling"
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: output, named, interface
 export interface DBInstanceAutomatedBackup {
@@ -2774,6 +2887,9 @@ export interface UpgradeTarget {
   Description?: string | null;
   AutoUpgrade?: boolean | null;
   IsMajorVersionUpgrade?: boolean | null;
+  SupportedEngineModes: string[];
+  SupportsParallelQuery?: boolean | null;
+  SupportsGlobalDatabases?: boolean | null;
 }
 
 // refs: 1 - tags: output, named, interface
@@ -2817,6 +2933,7 @@ export interface DBProxyTarget {
   RdsResourceId?: string | null;
   Port?: number | null;
   Type?: TargetType | null;
+  Role?: TargetRole | null;
   TargetHealth?: TargetHealth | null;
 }
 
@@ -2825,6 +2942,13 @@ export type TargetType =
 | "RDS_INSTANCE"
 | "RDS_SERVERLESS_ENDPOINT"
 | "TRACKED_CLUSTER"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 2 - tags: output, named, enum
+export type TargetRole =
+| "READ_WRITE"
+| "READ_ONLY"
+| "UNKNOWN"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
@@ -2847,6 +2971,7 @@ export type TargetHealthReason =
 | "CONNECTION_FAILED"
 | "AUTH_FAILURE"
 | "PENDING_PROXY_CAPACITY"
+| "INVALID_REPLICATION_STATE"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface

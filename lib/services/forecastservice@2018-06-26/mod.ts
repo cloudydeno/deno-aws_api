@@ -652,6 +652,18 @@ export default class ForecastService {
     }, await resp.json());
   }
 
+  async stopResource(
+    {abortSignal, ...params}: RequestConfig & s.StopResourceRequest,
+  ): Promise<void> {
+    const body: jsonP.JSONObject = {
+      ResourceArn: params["ResourceArn"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "StopResource",
+    });
+  }
+
   async tagResource(
     {abortSignal, ...params}: RequestConfig & s.TagResourceRequest,
   ): Promise<s.TagResourceResponse> {

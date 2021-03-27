@@ -106,6 +106,7 @@ export interface CreateOpsItemRequest {
 export interface CreateOpsMetadataRequest {
   ResourceId: string;
   Metadata?: { [key: string]: MetadataValue | null | undefined } | null;
+  Tags?: Tag[] | null;
 }
 
 // refs: 1 - tags: named, input
@@ -494,6 +495,7 @@ export interface GetDefaultPatchBaselineRequest {
 export interface GetDeployablePatchSnapshotForInstanceRequest {
   InstanceId: string;
   SnapshotId: string;
+  BaselineOverride?: BaselineOverride | null;
 }
 
 // refs: 1 - tags: named, input
@@ -1946,9 +1948,10 @@ export type ResourceTypeForTagging =
 | "Parameter"
 | "PatchBaseline"
 | "OpsItem"
+| "OpsMetadata"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 15 - tags: input, named, interface, output
+// refs: 16 - tags: input, named, interface, output
 export interface Tag {
   Key: string;
   Value: string;
@@ -2083,7 +2086,7 @@ export interface MetadataValue {
   Value?: string | null;
 }
 
-// refs: 10 - tags: input, named, enum, output
+// refs: 11 - tags: input, named, enum, output
 export type OperatingSystem =
 | "WINDOWS"
 | "AMAZON_LINUX"
@@ -2097,18 +2100,18 @@ export type OperatingSystem =
 | "MACOS"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 8 - tags: input, named, interface, output
+// refs: 10 - tags: input, named, interface, output
 export interface PatchFilterGroup {
   PatchFilters: PatchFilter[];
 }
 
-// refs: 8 - tags: input, named, interface, output
+// refs: 10 - tags: input, named, interface, output
 export interface PatchFilter {
   Key: PatchFilterKey;
   Values: string[];
 }
 
-// refs: 8 - tags: input, named, enum, output
+// refs: 10 - tags: input, named, enum, output
 export type PatchFilterKey =
 | "ARCH"
 | "ADVISORY_ID"
@@ -2131,12 +2134,12 @@ export type PatchFilterKey =
 | "VERSION"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 4 - tags: input, named, interface, output
+// refs: 5 - tags: input, named, interface, output
 export interface PatchRuleGroup {
   PatchRules: PatchRule[];
 }
 
-// refs: 4 - tags: input, named, interface, output
+// refs: 5 - tags: input, named, interface, output
 export interface PatchRule {
   PatchFilterGroup: PatchFilterGroup;
   ComplianceLevel?: PatchComplianceLevel | null;
@@ -2145,7 +2148,7 @@ export interface PatchRule {
   EnableNonSecurity?: boolean | null;
 }
 
-// refs: 9 - tags: input, named, enum, output
+// refs: 11 - tags: input, named, enum, output
 export type PatchComplianceLevel =
 | "CRITICAL"
 | "HIGH"
@@ -2155,13 +2158,13 @@ export type PatchComplianceLevel =
 | "UNSPECIFIED"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 4 - tags: input, named, enum, output
+// refs: 5 - tags: input, named, enum, output
 export type PatchAction =
 | "ALLOW_AS_DEPENDENCY"
 | "BLOCK"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 4 - tags: input, named, interface, output
+// refs: 5 - tags: input, named, interface, output
 export interface PatchSource {
   Name: string;
   Products: string[];
@@ -2194,6 +2197,7 @@ export interface ResourceDataSyncSource {
   AwsOrganizationsSource?: ResourceDataSyncAwsOrganizationsSource | null;
   SourceRegions: string[];
   IncludeFutureRegions?: boolean | null;
+  EnableAllOpsDataSources?: boolean | null;
 }
 
 // refs: 3 - tags: input, named, interface, output
@@ -2462,6 +2466,19 @@ export type SessionFilterKey =
 | "Status"
 | "SessionId"
 | cmnP.UnexpectedEnumValue;
+
+// refs: 1 - tags: input, named, interface
+export interface BaselineOverride {
+  OperatingSystem?: OperatingSystem | null;
+  GlobalFilters?: PatchFilterGroup | null;
+  ApprovalRules?: PatchRuleGroup | null;
+  ApprovedPatches?: string[] | null;
+  ApprovedPatchesComplianceLevel?: PatchComplianceLevel | null;
+  RejectedPatches?: string[] | null;
+  RejectedPatchesAction?: PatchAction | null;
+  ApprovedPatchesEnableNonSecurity?: boolean | null;
+  Sources?: PatchSource[] | null;
+}
 
 // refs: 3 - tags: input, named, interface
 export interface InventoryFilter {
@@ -4028,6 +4045,7 @@ export interface ResourceDataSyncSourceWithState {
   SourceRegions?: string[] | null;
   IncludeFutureRegions?: boolean | null;
   State?: string | null;
+  EnableAllOpsDataSources?: boolean | null;
 }
 
 // refs: 1 - tags: output, named, enum

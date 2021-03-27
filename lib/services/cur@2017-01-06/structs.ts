@@ -56,6 +56,7 @@ export interface ReportDefinition {
   AdditionalArtifacts?: AdditionalArtifact[] | null;
   RefreshClosedReports?: boolean | null;
   ReportVersioning?: ReportVersioning | null;
+  BillingViewArn?: string | null;
 }
 
 // refs: 3 - tags: input, named, enum, output

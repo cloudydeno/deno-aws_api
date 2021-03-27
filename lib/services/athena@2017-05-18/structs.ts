@@ -32,6 +32,14 @@ export interface CreateNamedQueryInput {
 }
 
 // refs: 1 - tags: named, input
+export interface CreatePreparedStatementInput {
+  StatementName: string;
+  WorkGroup: string;
+  QueryStatement: string;
+  Description?: string | null;
+}
+
+// refs: 1 - tags: named, input
 export interface CreateWorkGroupInput {
   Name: string;
   Configuration?: WorkGroupConfiguration | null;
@@ -47,6 +55,12 @@ export interface DeleteDataCatalogInput {
 // refs: 1 - tags: named, input
 export interface DeleteNamedQueryInput {
   NamedQueryId: string;
+}
+
+// refs: 1 - tags: named, input
+export interface DeletePreparedStatementInput {
+  StatementName: string;
+  WorkGroup: string;
 }
 
 // refs: 1 - tags: named, input
@@ -69,6 +83,12 @@ export interface GetDatabaseInput {
 // refs: 1 - tags: named, input
 export interface GetNamedQueryInput {
   NamedQueryId: string;
+}
+
+// refs: 1 - tags: named, input
+export interface GetPreparedStatementInput {
+  StatementName: string;
+  WorkGroup: string;
 }
 
 // refs: 1 - tags: named, input
@@ -119,6 +139,13 @@ export interface ListNamedQueriesInput {
   NextToken?: string | null;
   MaxResults?: number | null;
   WorkGroup?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface ListPreparedStatementsInput {
+  WorkGroup: string;
+  NextToken?: string | null;
+  MaxResults?: number | null;
 }
 
 // refs: 1 - tags: named, input
@@ -185,6 +212,14 @@ export interface UpdateDataCatalogInput {
 }
 
 // refs: 1 - tags: named, input
+export interface UpdatePreparedStatementInput {
+  StatementName: string;
+  WorkGroup: string;
+  QueryStatement: string;
+  Description?: string | null;
+}
+
+// refs: 1 - tags: named, input
 export interface UpdateWorkGroupInput {
   WorkGroup: string;
   Description?: string | null;
@@ -214,6 +249,10 @@ export interface CreateNamedQueryOutput {
 }
 
 // refs: 1 - tags: named, output
+export interface CreatePreparedStatementOutput {
+}
+
+// refs: 1 - tags: named, output
 export interface CreateWorkGroupOutput {
 }
 
@@ -223,6 +262,10 @@ export interface DeleteDataCatalogOutput {
 
 // refs: 1 - tags: named, output
 export interface DeleteNamedQueryOutput {
+}
+
+// refs: 1 - tags: named, output
+export interface DeletePreparedStatementOutput {
 }
 
 // refs: 1 - tags: named, output
@@ -242,6 +285,11 @@ export interface GetDatabaseOutput {
 // refs: 1 - tags: named, output
 export interface GetNamedQueryOutput {
   NamedQuery?: NamedQuery | null;
+}
+
+// refs: 1 - tags: named, output
+export interface GetPreparedStatementOutput {
+  PreparedStatement?: PreparedStatement | null;
 }
 
 // refs: 1 - tags: named, output
@@ -291,6 +339,12 @@ export interface ListNamedQueriesOutput {
 }
 
 // refs: 1 - tags: named, output
+export interface ListPreparedStatementsOutput {
+  PreparedStatements?: PreparedStatementSummary[] | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
 export interface ListQueryExecutionsOutput {
   QueryExecutionIds?: string[] | null;
   NextToken?: string | null;
@@ -333,6 +387,10 @@ export interface UntagResourceOutput {
 
 // refs: 1 - tags: named, output
 export interface UpdateDataCatalogOutput {
+}
+
+// refs: 1 - tags: named, output
+export interface UpdatePreparedStatementOutput {
 }
 
 // refs: 1 - tags: named, output
@@ -506,6 +564,15 @@ export interface Database {
 }
 
 // refs: 1 - tags: output, named, interface
+export interface PreparedStatement {
+  StatementName?: string | null;
+  QueryStatement?: string | null;
+  WorkGroupName?: string | null;
+  Description?: string | null;
+  LastModifiedTime?: Date | number | null;
+}
+
+// refs: 1 - tags: output, named, interface
 export interface ResultSet {
   Rows?: Row[] | null;
   ResultSetMetadata?: ResultSetMetadata | null;
@@ -578,6 +645,12 @@ export interface WorkGroup {
 export interface DataCatalogSummary {
   CatalogName?: string | null;
   Type?: DataCatalogType | null;
+}
+
+// refs: 1 - tags: output, named, interface
+export interface PreparedStatementSummary {
+  StatementName?: string | null;
+  LastModifiedTime?: Date | number | null;
 }
 
 // refs: 1 - tags: output, named, interface

@@ -37,6 +37,7 @@ export interface CreateServiceRequest {
   HealthCheckConfig?: HealthCheckConfig | null;
   HealthCheckCustomConfig?: HealthCheckCustomConfig | null;
   Tags?: Tag[] | null;
+  Type?: ServiceTypeOption | null;
 }
 
 // refs: 1 - tags: named, input
@@ -325,6 +326,11 @@ export interface HealthCheckCustomConfig {
 }
 
 // refs: 1 - tags: input, named, enum
+export type ServiceTypeOption =
+| "HTTP"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 1 - tags: input, named, enum
 export type HealthStatusFilter =
 | "HEALTHY"
 | "UNHEALTHY"
@@ -405,11 +411,19 @@ export interface Service {
   Description?: string | null;
   InstanceCount?: number | null;
   DnsConfig?: DnsConfig | null;
+  Type?: ServiceType | null;
   HealthCheckConfig?: HealthCheckConfig | null;
   HealthCheckCustomConfig?: HealthCheckCustomConfig | null;
   CreateDate?: Date | number | null;
   CreatorRequestId?: string | null;
 }
+
+// refs: 3 - tags: output, named, enum
+export type ServiceType =
+| "HTTP"
+| "DNS_HTTP"
+| "DNS"
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface HttpInstanceSummary {
@@ -535,6 +549,7 @@ export interface ServiceSummary {
   Id?: string | null;
   Arn?: string | null;
   Name?: string | null;
+  Type?: ServiceType | null;
   Description?: string | null;
   InstanceCount?: number | null;
   DnsConfig?: DnsConfig | null;

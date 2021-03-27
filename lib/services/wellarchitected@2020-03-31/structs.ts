@@ -31,6 +31,7 @@ export interface CreateWorkloadInput {
   Lenses: string[];
   Notes?: string | null;
   ClientRequestToken: string;
+  Tags?: { [key: string]: string | null | undefined } | null;
 }
 
 // refs: 1 - tags: named, input
@@ -155,6 +156,11 @@ export interface ListShareInvitationsInput {
 }
 
 // refs: 1 - tags: named, input
+export interface ListTagsForResourceInput {
+  WorkloadArn: string;
+}
+
+// refs: 1 - tags: named, input
 export interface ListWorkloadSharesInput {
   WorkloadId: string;
   SharedWithPrefix?: string | null;
@@ -167,6 +173,18 @@ export interface ListWorkloadsInput {
   WorkloadNamePrefix?: string | null;
   NextToken?: string | null;
   MaxResults?: number | null;
+}
+
+// refs: 1 - tags: named, input
+export interface TagResourceInput {
+  WorkloadArn: string;
+  Tags: { [key: string]: string | null | undefined };
+}
+
+// refs: 1 - tags: named, input
+export interface UntagResourceInput {
+  WorkloadArn: string;
+  TagKeys: string[];
 }
 
 // refs: 1 - tags: named, input
@@ -338,6 +356,11 @@ export interface ListShareInvitationsOutput {
 }
 
 // refs: 1 - tags: named, output
+export interface ListTagsForResourceOutput {
+  Tags?: { [key: string]: string | null | undefined } | null;
+}
+
+// refs: 1 - tags: named, output
 export interface ListWorkloadSharesOutput {
   WorkloadId?: string | null;
   WorkloadShareSummaries?: WorkloadShareSummary[] | null;
@@ -348,6 +371,14 @@ export interface ListWorkloadSharesOutput {
 export interface ListWorkloadsOutput {
   WorkloadSummaries?: WorkloadSummary[] | null;
   NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface TagResourceOutput {
+}
+
+// refs: 1 - tags: named, output
+export interface UntagResourceOutput {
 }
 
 // refs: 1 - tags: named, output
@@ -529,6 +560,7 @@ export interface Workload {
   Lenses?: string[] | null;
   Owner?: string | null;
   ShareInvitationId?: string | null;
+  Tags?: { [key: string]: string | null | undefined } | null;
 }
 
 // refs: 1 - tags: output, named, interface

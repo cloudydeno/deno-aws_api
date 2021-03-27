@@ -50,7 +50,7 @@ export interface CreateStudioInput {
   UserRole: string;
   WorkspaceSecurityGroupId: string;
   EngineSecurityGroupId: string;
-  DefaultS3Location?: string | null;
+  DefaultS3Location: string;
   Tags?: Tag[] | null;
 }
 
@@ -319,6 +319,15 @@ export interface StopNotebookExecutionInput {
 // refs: 1 - tags: named, input
 export interface TerminateJobFlowsInput {
   JobFlowIds: string[];
+}
+
+// refs: 1 - tags: named, input
+export interface UpdateStudioInput {
+  StudioId: string;
+  Name?: string | null;
+  Description?: string | null;
+  SubnetIds?: string[] | null;
+  DefaultS3Location?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -607,11 +616,30 @@ export type SpotProvisioningAllocationStrategy =
 // refs: 3 - tags: input, named, interface, output
 export interface OnDemandProvisioningSpecification {
   AllocationStrategy: OnDemandProvisioningAllocationStrategy;
+  CapacityReservationOptions?: OnDemandCapacityReservationOptions | null;
 }
 
 // refs: 3 - tags: input, named, enum, output
 export type OnDemandProvisioningAllocationStrategy =
 | "lowest-price"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 3 - tags: input, named, interface, output
+export interface OnDemandCapacityReservationOptions {
+  UsageStrategy?: OnDemandCapacityReservationUsageStrategy | null;
+  CapacityReservationPreference?: OnDemandCapacityReservationPreference | null;
+  CapacityReservationResourceGroupArn?: string | null;
+}
+
+// refs: 3 - tags: input, named, enum, output
+export type OnDemandCapacityReservationUsageStrategy =
+| "use-capacity-reservations-first"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 3 - tags: input, named, enum, output
+export type OnDemandCapacityReservationPreference =
+| "open"
+| "none"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface

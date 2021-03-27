@@ -260,6 +260,7 @@ export interface CreateModelInput {
   ModelName: string;
   PrimaryContainer?: ContainerDefinition | null;
   Containers?: ContainerDefinition[] | null;
+  InferenceExecutionConfig?: InferenceExecutionConfig | null;
   ExecutionRoleArn: string;
   Tags?: Tag[] | null;
   VpcConfig?: VpcConfig | null;
@@ -379,6 +380,7 @@ export interface CreatePresignedDomainUrlRequest {
   DomainId: string;
   UserProfileName: string;
   SessionExpirationDurationInSeconds?: number | null;
+  ExpiresInSeconds?: number | null;
 }
 
 // refs: 1 - tags: named, input
@@ -432,6 +434,7 @@ export interface CreateTrainingJobRequest {
   ExperimentConfig?: ExperimentConfig | null;
   ProfilerConfig?: ProfilerConfig | null;
   ProfilerRuleConfigurations?: ProfilerRuleConfiguration[] | null;
+  Environment?: { [key: string]: string | null | undefined } | null;
 }
 
 // refs: 1 - tags: named, input
@@ -2563,6 +2566,7 @@ export interface DescribeModelOutput {
   ModelName: string;
   PrimaryContainer?: ContainerDefinition | null;
   Containers?: ContainerDefinition[] | null;
+  InferenceExecutionConfig?: InferenceExecutionConfig | null;
   ExecutionRoleArn: string;
   VpcConfig?: VpcConfig | null;
   CreationTime: Date | number;
@@ -2814,6 +2818,7 @@ export interface DescribeTrainingJobResponse {
   ProfilerRuleConfigurations?: ProfilerRuleConfiguration[] | null;
   ProfilerRuleEvaluationStatuses?: ProfilerRuleEvaluationStatus[] | null;
   ProfilingStatus?: ProfilingStatus | null;
+  Environment?: { [key: string]: string | null | undefined } | null;
 }
 
 // refs: 1 - tags: named, output
@@ -4043,6 +4048,7 @@ export interface InputConfig {
   S3Uri: string;
   DataInputConfig: string;
   Framework: Framework;
+  FrameworkVersion?: string | null;
 }
 
 // refs: 2 - tags: input, named, enum, output
@@ -4078,6 +4084,7 @@ export type TargetDevice =
 | "ml_p3"
 | "ml_g4dn"
 | "ml_inf1"
+| "ml_eia2"
 | "jetson_tx1"
 | "jetson_tx2"
 | "jetson_nano"
@@ -4356,6 +4363,7 @@ export interface ProductionVariant {
   InstanceType: ProductionVariantInstanceType;
   InitialVariantWeight?: number | null;
   AcceleratorType?: ProductionVariantAcceleratorType | null;
+  CoreDumpConfig?: ProductionVariantCoreDumpConfig | null;
 }
 
 // refs: 2 - tags: input, named, enum, output
@@ -4367,6 +4375,12 @@ export type ProductionVariantAcceleratorType =
 | "ml.eia2.large"
 | "ml.eia2.xlarge"
 | cmnP.UnexpectedEnumValue;
+
+// refs: 2 - tags: input, named, interface, output
+export interface ProductionVariantCoreDumpConfig {
+  DestinationS3Uri: string;
+  KmsKeyId?: string | null;
+}
 
 // refs: 2 - tags: input, named, interface, output
 export interface DataCaptureConfig {
@@ -4430,6 +4444,7 @@ export interface OfflineStoreConfig {
 export interface S3StorageConfig {
   S3Uri: string;
   KmsKeyId?: string | null;
+  ResolvedOutputS3Uri?: string | null;
 }
 
 // refs: 3 - tags: input, named, interface, output
@@ -4716,6 +4731,7 @@ export interface ContainerDefinition {
 // refs: 4 - tags: input, named, interface, output
 export interface ImageConfig {
   RepositoryAccessMode: RepositoryAccessMode;
+  RepositoryAuthConfig?: RepositoryAuthConfig | null;
 }
 
 // refs: 4 - tags: input, named, enum, output
@@ -4723,6 +4739,11 @@ export type RepositoryAccessMode =
 | "Platform"
 | "Vpc"
 | cmnP.UnexpectedEnumValue;
+
+// refs: 4 - tags: input, named, interface, output
+export interface RepositoryAuthConfig {
+  RepositoryCredentialsProviderArn: string;
+}
 
 // refs: 4 - tags: input, named, enum, output
 export type ContainerMode =
@@ -4739,6 +4760,17 @@ export interface MultiModelConfig {
 export type ModelCacheSetting =
 | "Enabled"
 | "Disabled"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 2 - tags: input, named, interface, output
+export interface InferenceExecutionConfig {
+  Mode: InferenceExecutionMode;
+}
+
+// refs: 2 - tags: input, named, enum, output
+export type InferenceExecutionMode =
+| "Serial"
+| "Direct"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface, output
@@ -6098,6 +6130,9 @@ export type AutoMLJobSecondaryStatus =
 | "MaxAutoMLJobRuntimeReached"
 | "Stopping"
 | "CandidateDefinitionsGenerated"
+| "GeneratingExplainabilityReport"
+| "Completed"
+| "ExplainabilityError"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
@@ -7122,6 +7157,7 @@ export interface TrainingJob {
   DebugRuleConfigurations?: DebugRuleConfiguration[] | null;
   TensorBoardOutputConfig?: TensorBoardOutputConfig | null;
   DebugRuleEvaluationStatuses?: DebugRuleEvaluationStatus[] | null;
+  Environment?: { [key: string]: string | null | undefined } | null;
   Tags?: Tag[] | null;
 }
 

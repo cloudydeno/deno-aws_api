@@ -103,6 +103,7 @@ export default class KinesisVideoArchivedMedia {
   ): Promise<s.GetMediaForFragmentListOutput> {
     const body: jsonP.JSONObject = {
       StreamName: params["StreamName"],
+      StreamARN: params["StreamARN"],
       Fragments: params["Fragments"],
     };
     const resp = await this.#client.performRequest({
@@ -117,10 +118,11 @@ export default class KinesisVideoArchivedMedia {
   }
 
   async listFragments(
-    {abortSignal, ...params}: RequestConfig & s.ListFragmentsInput,
+    {abortSignal, ...params}: RequestConfig & s.ListFragmentsInput = {},
   ): Promise<s.ListFragmentsOutput> {
     const body: jsonP.JSONObject = {
       StreamName: params["StreamName"],
+      StreamARN: params["StreamARN"],
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
       FragmentSelector: fromFragmentSelector(params["FragmentSelector"]),

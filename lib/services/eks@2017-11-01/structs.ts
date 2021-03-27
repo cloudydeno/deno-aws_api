@@ -3,6 +3,21 @@
 import * as cmnP from "../../encoding/common.ts";
 
 // refs: 1 - tags: named, input
+export interface AssociateEncryptionConfigRequest {
+  clusterName: string;
+  encryptionConfig: EncryptionConfig[];
+  clientRequestToken?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface AssociateIdentityProviderConfigRequest {
+  clusterName: string;
+  oidc: OidcIdentityProviderConfigRequest;
+  tags?: { [key: string]: string | null | undefined } | null;
+  clientRequestToken?: string | null;
+}
+
+// refs: 1 - tags: named, input
 export interface CreateAddonRequest {
   clusterName: string;
   addonName: string;
@@ -106,6 +121,12 @@ export interface DescribeFargateProfileRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface DescribeIdentityProviderConfigRequest {
+  clusterName: string;
+  identityProviderConfig: IdentityProviderConfig;
+}
+
+// refs: 1 - tags: named, input
 export interface DescribeNodegroupRequest {
   clusterName: string;
   nodegroupName: string;
@@ -117,6 +138,13 @@ export interface DescribeUpdateRequest {
   updateId: string;
   nodegroupName?: string | null;
   addonName?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface DisassociateIdentityProviderConfigRequest {
+  clusterName: string;
+  identityProviderConfig: IdentityProviderConfig;
+  clientRequestToken?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -134,6 +162,13 @@ export interface ListClustersRequest {
 
 // refs: 1 - tags: named, input
 export interface ListFargateProfilesRequest {
+  clusterName: string;
+  maxResults?: number | null;
+  nextToken?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface ListIdentityProviderConfigsRequest {
   clusterName: string;
   maxResults?: number | null;
   nextToken?: string | null;
@@ -218,6 +253,17 @@ export interface UpdateNodegroupVersionRequest {
 }
 
 // refs: 1 - tags: named, output
+export interface AssociateEncryptionConfigResponse {
+  update?: Update | null;
+}
+
+// refs: 1 - tags: named, output
+export interface AssociateIdentityProviderConfigResponse {
+  update?: Update | null;
+  tags?: { [key: string]: string | null | undefined } | null;
+}
+
+// refs: 1 - tags: named, output
 export interface CreateAddonResponse {
   addon?: Addon | null;
 }
@@ -279,12 +325,22 @@ export interface DescribeFargateProfileResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface DescribeIdentityProviderConfigResponse {
+  identityProviderConfig?: IdentityProviderConfigResponse | null;
+}
+
+// refs: 1 - tags: named, output
 export interface DescribeNodegroupResponse {
   nodegroup?: Nodegroup | null;
 }
 
 // refs: 1 - tags: named, output
 export interface DescribeUpdateResponse {
+  update?: Update | null;
+}
+
+// refs: 1 - tags: named, output
+export interface DisassociateIdentityProviderConfigResponse {
   update?: Update | null;
 }
 
@@ -303,6 +359,12 @@ export interface ListClustersResponse {
 // refs: 1 - tags: named, output
 export interface ListFargateProfilesResponse {
   fargateProfileNames?: string[] | null;
+  nextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface ListIdentityProviderConfigsResponse {
+  identityProviderConfigs?: IdentityProviderConfig[] | null;
   nextToken?: string | null;
 }
 
@@ -356,6 +418,29 @@ export interface UpdateNodegroupVersionResponse {
   update?: Update | null;
 }
 
+// refs: 5 - tags: input, named, interface, output
+export interface EncryptionConfig {
+  resources?: string[] | null;
+  provider?: Provider | null;
+}
+
+// refs: 5 - tags: input, named, interface, output
+export interface Provider {
+  keyArn?: string | null;
+}
+
+// refs: 1 - tags: input, named, interface
+export interface OidcIdentityProviderConfigRequest {
+  identityProviderConfigName: string;
+  issuerUrl: string;
+  clientId: string;
+  usernameClaim?: string | null;
+  usernamePrefix?: string | null;
+  groupsClaim?: string | null;
+  groupsPrefix?: string | null;
+  requiredClaims?: { [key: string]: string | null | undefined } | null;
+}
+
 // refs: 2 - tags: input, named, enum
 export type ResolveConflicts =
 | "OVERWRITE"
@@ -397,17 +482,6 @@ export type LogType =
 | cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, interface, output
-export interface EncryptionConfig {
-  resources?: string[] | null;
-  provider?: Provider | null;
-}
-
-// refs: 4 - tags: input, named, interface, output
-export interface Provider {
-  keyArn?: string | null;
-}
-
-// refs: 4 - tags: input, named, interface, output
 export interface FargateProfileSelector {
   namespace?: string | null;
   labels?: { [key: string]: string | null | undefined } | null;
@@ -446,11 +520,100 @@ export type CapacityTypes =
 | "SPOT"
 | cmnP.UnexpectedEnumValue;
 
+// refs: 3 - tags: input, named, interface, output
+export interface IdentityProviderConfig {
+  type: string;
+  name: string;
+}
+
 // refs: 1 - tags: input, named, interface
 export interface UpdateLabelsPayload {
   addOrUpdateLabels?: { [key: string]: string | null | undefined } | null;
   removeLabels?: string[] | null;
 }
+
+// refs: 9 - tags: output, named, interface
+export interface Update {
+  id?: string | null;
+  status?: UpdateStatus | null;
+  type?: UpdateType | null;
+  params?: UpdateParam[] | null;
+  createdAt?: Date | number | null;
+  errors?: ErrorDetail[] | null;
+}
+
+// refs: 9 - tags: output, named, enum
+export type UpdateStatus =
+| "InProgress"
+| "Failed"
+| "Cancelled"
+| "Successful"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 9 - tags: output, named, enum
+export type UpdateType =
+| "VersionUpdate"
+| "EndpointAccessUpdate"
+| "LoggingUpdate"
+| "ConfigUpdate"
+| "AssociateIdentityProviderConfig"
+| "DisassociateIdentityProviderConfig"
+| "AssociateEncryptionConfig"
+| "AddonUpdate"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 9 - tags: output, named, interface
+export interface UpdateParam {
+  type?: UpdateParamType | null;
+  value?: string | null;
+}
+
+// refs: 9 - tags: output, named, enum
+export type UpdateParamType =
+| "Version"
+| "PlatformVersion"
+| "EndpointPrivateAccess"
+| "EndpointPublicAccess"
+| "ClusterLogging"
+| "DesiredSize"
+| "LabelsToAdd"
+| "LabelsToRemove"
+| "MaxSize"
+| "MinSize"
+| "ReleaseVersion"
+| "PublicAccessCidrs"
+| "IdentityProviderConfig"
+| "EncryptionConfig"
+| "AddonVersion"
+| "ServiceAccountRoleArn"
+| "ResolveConflicts"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 9 - tags: output, named, interface
+export interface ErrorDetail {
+  errorCode?: ErrorCode | null;
+  errorMessage?: string | null;
+  resourceIds?: string[] | null;
+}
+
+// refs: 9 - tags: output, named, enum
+export type ErrorCode =
+| "SubnetNotFound"
+| "SecurityGroupNotFound"
+| "EniLimitReached"
+| "IpNotAvailable"
+| "AccessDenied"
+| "OperationNotPermitted"
+| "VpcIdNotFound"
+| "Unknown"
+| "NodeCreationFailure"
+| "PodEvictionFailure"
+| "InsufficientFreeAddresses"
+| "ClusterUnreachable"
+| "InsufficientNumberOfReplicas"
+| "ConfigurationConflict"
+| "AdmissionRequestDenied"
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: output, named, interface
 export interface Addon {
@@ -496,6 +659,7 @@ export type AddonIssueCode =
 | "ClusterUnreachable"
 | "InsufficientNumberOfReplicas"
 | "ConfigurationConflict"
+| "AdmissionRequestDenied"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: output, named, interface
@@ -682,79 +846,30 @@ export interface Compatibility {
   defaultVersion?: boolean | null;
 }
 
-// refs: 6 - tags: output, named, interface
-export interface Update {
-  id?: string | null;
-  status?: UpdateStatus | null;
-  type?: UpdateType | null;
-  params?: UpdateParam[] | null;
-  createdAt?: Date | number | null;
-  errors?: ErrorDetail[] | null;
+// refs: 1 - tags: output, named, interface
+export interface IdentityProviderConfigResponse {
+  oidc?: OidcIdentityProviderConfig | null;
 }
 
-// refs: 6 - tags: output, named, enum
-export type UpdateStatus =
-| "InProgress"
-| "Failed"
-| "Cancelled"
-| "Successful"
-| cmnP.UnexpectedEnumValue;
-
-// refs: 6 - tags: output, named, enum
-export type UpdateType =
-| "VersionUpdate"
-| "EndpointAccessUpdate"
-| "LoggingUpdate"
-| "ConfigUpdate"
-| "AddonUpdate"
-| cmnP.UnexpectedEnumValue;
-
-// refs: 6 - tags: output, named, interface
-export interface UpdateParam {
-  type?: UpdateParamType | null;
-  value?: string | null;
+// refs: 1 - tags: output, named, interface
+export interface OidcIdentityProviderConfig {
+  identityProviderConfigName?: string | null;
+  identityProviderConfigArn?: string | null;
+  clusterName?: string | null;
+  issuerUrl?: string | null;
+  clientId?: string | null;
+  usernameClaim?: string | null;
+  usernamePrefix?: string | null;
+  groupsClaim?: string | null;
+  groupsPrefix?: string | null;
+  requiredClaims?: { [key: string]: string | null | undefined } | null;
+  tags?: { [key: string]: string | null | undefined } | null;
+  status?: configStatus | null;
 }
 
-// refs: 6 - tags: output, named, enum
-export type UpdateParamType =
-| "Version"
-| "PlatformVersion"
-| "EndpointPrivateAccess"
-| "EndpointPublicAccess"
-| "ClusterLogging"
-| "DesiredSize"
-| "LabelsToAdd"
-| "LabelsToRemove"
-| "MaxSize"
-| "MinSize"
-| "ReleaseVersion"
-| "PublicAccessCidrs"
-| "AddonVersion"
-| "ServiceAccountRoleArn"
-| "ResolveConflicts"
-| cmnP.UnexpectedEnumValue;
-
-// refs: 6 - tags: output, named, interface
-export interface ErrorDetail {
-  errorCode?: ErrorCode | null;
-  errorMessage?: string | null;
-  resourceIds?: string[] | null;
-}
-
-// refs: 6 - tags: output, named, enum
-export type ErrorCode =
-| "SubnetNotFound"
-| "SecurityGroupNotFound"
-| "EniLimitReached"
-| "IpNotAvailable"
-| "AccessDenied"
-| "OperationNotPermitted"
-| "VpcIdNotFound"
-| "Unknown"
-| "NodeCreationFailure"
-| "PodEvictionFailure"
-| "InsufficientFreeAddresses"
-| "ClusterUnreachable"
-| "InsufficientNumberOfReplicas"
-| "ConfigurationConflict"
+// refs: 1 - tags: output, named, enum
+export type configStatus =
+| "CREATING"
+| "DELETING"
+| "ACTIVE"
 | cmnP.UnexpectedEnumValue;

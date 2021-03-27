@@ -14,6 +14,7 @@ export interface CompareFacesRequest {
 // refs: 1 - tags: named, input
 export interface CreateCollectionRequest {
   CollectionId: string;
+  Tags?: { [key: string]: string | null | undefined } | null;
 }
 
 // refs: 1 - tags: named, input
@@ -28,6 +29,7 @@ export interface CreateProjectVersionRequest {
   OutputConfig: OutputConfig;
   TrainingData: TrainingData;
   TestingData: TestingData;
+  Tags?: { [key: string]: string | null | undefined } | null;
 }
 
 // refs: 1 - tags: named, input
@@ -37,6 +39,7 @@ export interface CreateStreamProcessorRequest {
   Name: string;
   Settings: StreamProcessorSettings;
   RoleArn: string;
+  Tags?: { [key: string]: string | null | undefined } | null;
 }
 
 // refs: 1 - tags: named, input
@@ -225,6 +228,11 @@ export interface ListStreamProcessorsRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface ListTagsForResourceRequest {
+  ResourceArn: string;
+}
+
+// refs: 1 - tags: named, input
 export interface RecognizeCelebritiesRequest {
   Image: Image;
 }
@@ -337,6 +345,18 @@ export interface StopProjectVersionRequest {
 // refs: 1 - tags: named, input
 export interface StopStreamProcessorRequest {
   Name: string;
+}
+
+// refs: 1 - tags: named, input
+export interface TagResourceRequest {
+  ResourceArn: string;
+  Tags: { [key: string]: string | null | undefined };
+}
+
+// refs: 1 - tags: named, input
+export interface UntagResourceRequest {
+  ResourceArn: string;
+  TagKeys: string[];
 }
 
 // refs: 1 - tags: named, output
@@ -578,6 +598,11 @@ export interface ListStreamProcessorsResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface ListTagsForResourceResponse {
+  Tags?: { [key: string]: string | null | undefined } | null;
+}
+
+// refs: 1 - tags: named, output
 export interface RecognizeCelebritiesResponse {
   CelebrityFaces?: Celebrity[] | null;
   UnrecognizedFaces?: ComparedFace[] | null;
@@ -655,6 +680,14 @@ export interface StopProjectVersionResponse {
 
 // refs: 1 - tags: named, output
 export interface StopStreamProcessorResponse {
+}
+
+// refs: 1 - tags: named, output
+export interface TagResourceResponse {
+}
+
+// refs: 1 - tags: named, output
+export interface UntagResourceResponse {
 }
 
 // refs: 11 - tags: input, named, interface

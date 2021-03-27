@@ -14,7 +14,7 @@ export interface CreateComputeEnvironmentRequest {
   type: CEType;
   state?: CEState | null;
   computeResources?: ComputeResource | null;
-  serviceRole: string;
+  serviceRole?: string | null;
   tags?: { [key: string]: string | null | undefined } | null;
 }
 

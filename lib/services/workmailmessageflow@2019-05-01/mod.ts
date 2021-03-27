@@ -7,6 +7,7 @@ interface RequestConfig {
 export * from "./structs.ts";
 import * as client from "../../client/common.ts";
 import * as cmnP from "../../encoding/common.ts";
+import * as jsonP from "../../encoding/json.ts";
 import type * as s from "./structs.ts";
 
 export default class WorkMailMessageFlow {
@@ -41,5 +42,37 @@ export default class WorkMailMessageFlow {
   };
   }
 
+  async putRawMessageContent(
+    {abortSignal, ...params}: RequestConfig & s.PutRawMessageContentRequest,
+  ): Promise<s.PutRawMessageContentResponse> {
+    const body: jsonP.JSONObject = {
+      content: fromRawMessageContent(params["content"]),
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "PutRawMessageContent",
+      requestUri: cmnP.encodePath`/messages/${params["messageId"]}`,
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
+  }
+
 }
 
+function fromRawMessageContent(input?: s.RawMessageContent | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    s3Reference: fromS3Reference(input["s3Reference"]),
+  }
+}
+
+function fromS3Reference(input?: s.S3Reference | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    bucket: input["bucket"],
+    key: input["key"],
+    objectVersion: input["objectVersion"],
+  }
+}

@@ -9,6 +9,7 @@ export interface InvokeEndpointInput {
   CustomAttributes?: string | null;
   TargetModel?: string | null;
   TargetVariant?: string | null;
+  TargetContainerHostname?: string | null;
   InferenceId?: string | null;
 }
 

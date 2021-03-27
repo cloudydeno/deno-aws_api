@@ -73,6 +73,7 @@ export default class CostExplorer {
       Name: params["Name"],
       RuleVersion: params["RuleVersion"],
       Rules: params["Rules"]?.map(x => fromCostCategoryRule(x)),
+      DefaultValue: params["DefaultValue"],
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -714,6 +715,7 @@ export default class CostExplorer {
       CostCategoryArn: params["CostCategoryArn"],
       RuleVersion: params["RuleVersion"],
       Rules: params["Rules"]?.map(x => fromCostCategoryRule(x)),
+      DefaultValue: params["DefaultValue"],
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -896,15 +898,36 @@ function fromCostCategoryRule(input?: s.CostCategoryRule | null): jsonP.JSONValu
   return {
     Value: input["Value"],
     Rule: fromExpression(input["Rule"]),
+    InheritedValue: fromCostCategoryInheritedValueDimension(input["InheritedValue"]),
+    Type: input["Type"],
   }
 }
 function toCostCategoryRule(root: jsonP.JSONValue): s.CostCategoryRule {
   return jsonP.readObj({
-    required: {
+    required: {},
+    optional: {
       "Value": "s",
       "Rule": toExpression,
+      "InheritedValue": toCostCategoryInheritedValueDimension,
+      "Type": (x: jsonP.JSONValue) => cmnP.readEnum<s.CostCategoryRuleType>(x),
     },
-    optional: {},
+  }, root);
+}
+
+function fromCostCategoryInheritedValueDimension(input?: s.CostCategoryInheritedValueDimension | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    DimensionName: input["DimensionName"],
+    DimensionKey: input["DimensionKey"],
+  }
+}
+function toCostCategoryInheritedValueDimension(root: jsonP.JSONValue): s.CostCategoryInheritedValueDimension {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "DimensionName": (x: jsonP.JSONValue) => cmnP.readEnum<s.CostCategoryInheritedValueDimensionName>(x),
+      "DimensionKey": "s",
+    },
   }, root);
 }
 
@@ -1026,6 +1049,7 @@ function toCostCategory(root: jsonP.JSONValue): s.CostCategory {
     optional: {
       "EffectiveEnd": "s",
       "ProcessingStatus": [toCostCategoryProcessingStatus],
+      "DefaultValue": "s",
     },
   }, root);
 }
@@ -1740,6 +1764,7 @@ function toCostCategoryReference(root: jsonP.JSONValue): s.CostCategoryReference
       "NumberOfRules": "n",
       "ProcessingStatus": [toCostCategoryProcessingStatus],
       "Values": ["s"],
+      "DefaultValue": "s",
     },
   }, root);
 }

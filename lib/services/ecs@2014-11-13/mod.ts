@@ -56,6 +56,7 @@ export default class ECS {
       clusterName: params["clusterName"],
       tags: params["tags"]?.map(x => fromTag(x)),
       settings: params["settings"]?.map(x => fromClusterSetting(x)),
+      configuration: fromClusterConfiguration(params["configuration"]),
       capacityProviders: params["capacityProviders"],
       defaultCapacityProviderStrategy: params["defaultCapacityProviderStrategy"]?.map(x => fromCapacityProviderStrategyItem(x)),
     };
@@ -96,6 +97,7 @@ export default class ECS {
       tags: params["tags"]?.map(x => fromTag(x)),
       enableECSManagedTags: params["enableECSManagedTags"],
       propagateTags: params["propagateTags"],
+      enableExecuteCommand: params["enableExecuteCommand"],
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -460,6 +462,33 @@ export default class ECS {
     }, await resp.json());
   }
 
+  async executeCommand(
+    {abortSignal, ...params}: RequestConfig & s.ExecuteCommandRequest,
+  ): Promise<s.ExecuteCommandResponse> {
+    const body: jsonP.JSONObject = {
+      cluster: params["cluster"],
+      container: params["container"],
+      command: params["command"],
+      interactive: params["interactive"],
+      task: params["task"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "ExecuteCommand",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "clusterArn": "s",
+        "containerArn": "s",
+        "containerName": "s",
+        "interactive": "b",
+        "session": toSession,
+        "taskArn": "s",
+      },
+    }, await resp.json());
+  }
+
   async listAccountSettings(
     {abortSignal, ...params}: RequestConfig & s.ListAccountSettingsRequest = {},
   ): Promise<s.ListAccountSettingsResponse> {
@@ -809,6 +838,7 @@ export default class ECS {
       cluster: params["cluster"],
       count: params["count"],
       enableECSManagedTags: params["enableECSManagedTags"],
+      enableExecuteCommand: params["enableExecuteCommand"],
       group: params["group"],
       launchType: params["launchType"],
       networkConfiguration: fromNetworkConfiguration(params["networkConfiguration"]),
@@ -842,6 +872,7 @@ export default class ECS {
       cluster: params["cluster"],
       containerInstances: params["containerInstances"],
       enableECSManagedTags: params["enableECSManagedTags"],
+      enableExecuteCommand: params["enableExecuteCommand"],
       group: params["group"],
       networkConfiguration: fromNetworkConfiguration(params["networkConfiguration"]),
       overrides: fromTaskOverride(params["overrides"]),
@@ -938,6 +969,7 @@ export default class ECS {
       reason: params["reason"],
       containers: params["containers"]?.map(x => fromContainerStateChange(x)),
       attachments: params["attachments"]?.map(x => fromAttachmentStateChange(x)),
+      managedAgents: params["managedAgents"]?.map(x => fromManagedAgentStateChange(x)),
       pullStartedAt: jsonP.serializeDate_unixTimestamp(params["pullStartedAt"]),
       pullStoppedAt: jsonP.serializeDate_unixTimestamp(params["pullStoppedAt"]),
       executionStoppedAt: jsonP.serializeDate_unixTimestamp(params["executionStoppedAt"]),
@@ -1003,6 +1035,26 @@ export default class ECS {
       required: {},
       optional: {
         "capacityProvider": toCapacityProvider,
+      },
+    }, await resp.json());
+  }
+
+  async updateCluster(
+    {abortSignal, ...params}: RequestConfig & s.UpdateClusterRequest,
+  ): Promise<s.UpdateClusterResponse> {
+    const body: jsonP.JSONObject = {
+      cluster: params["cluster"],
+      settings: params["settings"]?.map(x => fromClusterSetting(x)),
+      configuration: fromClusterConfiguration(params["configuration"]),
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "UpdateCluster",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "cluster": toCluster,
       },
     }, await resp.json());
   }
@@ -1082,6 +1134,7 @@ export default class ECS {
       platformVersion: params["platformVersion"],
       forceNewDeployment: params["forceNewDeployment"],
       healthCheckGracePeriodSeconds: params["healthCheckGracePeriodSeconds"],
+      enableExecuteCommand: params["enableExecuteCommand"],
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -1271,6 +1324,63 @@ function toClusterSetting(root: jsonP.JSONValue): s.ClusterSetting {
     optional: {
       "name": (x: jsonP.JSONValue) => cmnP.readEnum<s.ClusterSettingName>(x),
       "value": "s",
+    },
+  }, root);
+}
+
+function fromClusterConfiguration(input?: s.ClusterConfiguration | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    executeCommandConfiguration: fromExecuteCommandConfiguration(input["executeCommandConfiguration"]),
+  }
+}
+function toClusterConfiguration(root: jsonP.JSONValue): s.ClusterConfiguration {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "executeCommandConfiguration": toExecuteCommandConfiguration,
+    },
+  }, root);
+}
+
+function fromExecuteCommandConfiguration(input?: s.ExecuteCommandConfiguration | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    kmsKeyId: input["kmsKeyId"],
+    logging: input["logging"],
+    logConfiguration: fromExecuteCommandLogConfiguration(input["logConfiguration"]),
+  }
+}
+function toExecuteCommandConfiguration(root: jsonP.JSONValue): s.ExecuteCommandConfiguration {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "kmsKeyId": "s",
+      "logging": (x: jsonP.JSONValue) => cmnP.readEnum<s.ExecuteCommandLogging>(x),
+      "logConfiguration": toExecuteCommandLogConfiguration,
+    },
+  }, root);
+}
+
+function fromExecuteCommandLogConfiguration(input?: s.ExecuteCommandLogConfiguration | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    cloudWatchLogGroupName: input["cloudWatchLogGroupName"],
+    cloudWatchEncryptionEnabled: input["cloudWatchEncryptionEnabled"],
+    s3BucketName: input["s3BucketName"],
+    s3EncryptionEnabled: input["s3EncryptionEnabled"],
+    s3KeyPrefix: input["s3KeyPrefix"],
+  }
+}
+function toExecuteCommandLogConfiguration(root: jsonP.JSONValue): s.ExecuteCommandLogConfiguration {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "cloudWatchLogGroupName": "s",
+      "cloudWatchEncryptionEnabled": "b",
+      "s3BucketName": "s",
+      "s3EncryptionEnabled": "b",
+      "s3KeyPrefix": "s",
     },
   }, root);
 }
@@ -2298,6 +2408,16 @@ function fromContainerStateChange(input?: s.ContainerStateChange | null): jsonP.
   }
 }
 
+function fromManagedAgentStateChange(input?: s.ManagedAgentStateChange | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    containerName: input["containerName"],
+    managedAgentName: input["managedAgentName"],
+    status: input["status"],
+    reason: input["reason"],
+  }
+}
+
 function fromAutoScalingGroupProviderUpdate(input?: s.AutoScalingGroupProviderUpdate | null): jsonP.JSONValue {
   if (!input) return input;
   return {
@@ -2327,6 +2447,7 @@ function toCluster(root: jsonP.JSONValue): s.Cluster {
     optional: {
       "clusterArn": "s",
       "clusterName": "s",
+      "configuration": toClusterConfiguration,
       "status": "s",
       "registeredContainerInstancesCount": "n",
       "runningTasksCount": "n",
@@ -2388,6 +2509,7 @@ function toService(root: jsonP.JSONValue): s.Service {
       "createdBy": "s",
       "enableECSManagedTags": "b",
       "propagateTags": (x: jsonP.JSONValue) => cmnP.readEnum<s.PropagateTags>(x),
+      "enableExecuteCommand": "b",
     },
   }, root);
 }
@@ -2550,6 +2672,7 @@ function toTask(root: jsonP.JSONValue): s.Task {
       "cpu": "s",
       "createdAt": "d",
       "desiredStatus": "s",
+      "enableExecuteCommand": "b",
       "executionStoppedAt": "d",
       "group": "s",
       "healthStatus": (x: jsonP.JSONValue) => cmnP.readEnum<s.HealthStatus>(x),
@@ -2591,6 +2714,7 @@ function toContainer(root: jsonP.JSONValue): s.Container {
       "networkBindings": [toNetworkBinding],
       "networkInterfaces": [toNetworkInterface],
       "healthStatus": (x: jsonP.JSONValue) => cmnP.readEnum<s.HealthStatus>(x),
+      "managedAgents": [toManagedAgent],
       "cpu": "s",
       "memory": "s",
       "memoryReservation": "s",
@@ -2606,6 +2730,29 @@ function toNetworkInterface(root: jsonP.JSONValue): s.NetworkInterface {
       "attachmentId": "s",
       "privateIpv4Address": "s",
       "ipv6Address": "s",
+    },
+  }, root);
+}
+
+function toManagedAgent(root: jsonP.JSONValue): s.ManagedAgent {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "lastStartedAt": "d",
+      "name": (x: jsonP.JSONValue) => cmnP.readEnum<s.ManagedAgentName>(x),
+      "reason": "s",
+      "lastStatus": "s",
+    },
+  }, root);
+}
+
+function toSession(root: jsonP.JSONValue): s.Session {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "sessionId": "s",
+      "streamUrl": "s",
+      "tokenValue": "s",
     },
   }, root);
 }

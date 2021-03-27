@@ -122,6 +122,7 @@ export default class IVS {
       abortSignal, body,
       action: "DeleteChannel",
       requestUri: "/DeleteChannel",
+      responseCode: 204,
     });
   }
 
@@ -152,6 +153,7 @@ export default class IVS {
       abortSignal, body,
       action: "DeleteStreamKey",
       requestUri: "/DeleteStreamKey",
+      responseCode: 204,
     });
   }
 

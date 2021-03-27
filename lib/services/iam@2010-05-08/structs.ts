@@ -64,6 +64,7 @@ export interface CreateGroupRequest {
 export interface CreateInstanceProfileRequest {
   InstanceProfileName: string;
   Path?: string | null;
+  Tags?: Tag[] | null;
 }
 
 // refs: 1 - tags: named, input
@@ -78,6 +79,7 @@ export interface CreateOpenIDConnectProviderRequest {
   Url: string;
   ClientIDList?: string[] | null;
   ThumbprintList: string[];
+  Tags?: Tag[] | null;
 }
 
 // refs: 1 - tags: named, input
@@ -86,6 +88,7 @@ export interface CreatePolicyRequest {
   Path?: string | null;
   PolicyDocument: string;
   Description?: string | null;
+  Tags?: Tag[] | null;
 }
 
 // refs: 1 - tags: named, input
@@ -110,6 +113,7 @@ export interface CreateRoleRequest {
 export interface CreateSAMLProviderRequest {
   SAMLMetadataDocument: string;
   Name: string;
+  Tags?: Tag[] | null;
 }
 
 // refs: 1 - tags: named, input
@@ -137,6 +141,7 @@ export interface CreateUserRequest {
 export interface CreateVirtualMFADeviceRequest {
   Path?: string | null;
   VirtualMFADeviceName: string;
+  Tags?: Tag[] | null;
 }
 
 // refs: 1 - tags: named, input
@@ -499,6 +504,13 @@ export interface ListGroupsForUserRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface ListInstanceProfileTagsRequest {
+  InstanceProfileName: string;
+  Marker?: string | null;
+  MaxItems?: number | null;
+}
+
+// refs: 1 - tags: named, input
 export interface ListInstanceProfilesRequest {
   PathPrefix?: string | null;
   Marker?: string | null;
@@ -513,8 +525,22 @@ export interface ListInstanceProfilesForRoleRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface ListMFADeviceTagsRequest {
+  SerialNumber: string;
+  Marker?: string | null;
+  MaxItems?: number | null;
+}
+
+// refs: 1 - tags: named, input
 export interface ListMFADevicesRequest {
   UserName?: string | null;
+  Marker?: string | null;
+  MaxItems?: number | null;
+}
+
+// refs: 1 - tags: named, input
+export interface ListOpenIDConnectProviderTagsRequest {
+  OpenIDConnectProviderArn: string;
   Marker?: string | null;
   MaxItems?: number | null;
 }
@@ -538,6 +564,13 @@ export interface ListPoliciesGrantingServiceAccessRequest {
   Marker?: string | null;
   Arn: string;
   ServiceNamespaces: string[];
+}
+
+// refs: 1 - tags: named, input
+export interface ListPolicyTagsRequest {
+  PolicyArn: string;
+  Marker?: string | null;
+  MaxItems?: number | null;
 }
 
 // refs: 1 - tags: named, input
@@ -569,12 +602,26 @@ export interface ListRolesRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface ListSAMLProviderTagsRequest {
+  SAMLProviderArn: string;
+  Marker?: string | null;
+  MaxItems?: number | null;
+}
+
+// refs: 1 - tags: named, input
 export interface ListSAMLProvidersRequest {
 }
 
 // refs: 1 - tags: named, input
 export interface ListSSHPublicKeysRequest {
   UserName?: string | null;
+  Marker?: string | null;
+  MaxItems?: number | null;
+}
+
+// refs: 1 - tags: named, input
+export interface ListServerCertificateTagsRequest {
+  ServerCertificateName: string;
   Marker?: string | null;
   MaxItems?: number | null;
 }
@@ -735,8 +782,44 @@ export interface SimulatePrincipalPolicyRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface TagInstanceProfileRequest {
+  InstanceProfileName: string;
+  Tags: Tag[];
+}
+
+// refs: 1 - tags: named, input
+export interface TagMFADeviceRequest {
+  SerialNumber: string;
+  Tags: Tag[];
+}
+
+// refs: 1 - tags: named, input
+export interface TagOpenIDConnectProviderRequest {
+  OpenIDConnectProviderArn: string;
+  Tags: Tag[];
+}
+
+// refs: 1 - tags: named, input
+export interface TagPolicyRequest {
+  PolicyArn: string;
+  Tags: Tag[];
+}
+
+// refs: 1 - tags: named, input
 export interface TagRoleRequest {
   RoleName: string;
+  Tags: Tag[];
+}
+
+// refs: 1 - tags: named, input
+export interface TagSAMLProviderRequest {
+  SAMLProviderArn: string;
+  Tags: Tag[];
+}
+
+// refs: 1 - tags: named, input
+export interface TagServerCertificateRequest {
+  ServerCertificateName: string;
   Tags: Tag[];
 }
 
@@ -747,8 +830,44 @@ export interface TagUserRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface UntagInstanceProfileRequest {
+  InstanceProfileName: string;
+  TagKeys: string[];
+}
+
+// refs: 1 - tags: named, input
+export interface UntagMFADeviceRequest {
+  SerialNumber: string;
+  TagKeys: string[];
+}
+
+// refs: 1 - tags: named, input
+export interface UntagOpenIDConnectProviderRequest {
+  OpenIDConnectProviderArn: string;
+  TagKeys: string[];
+}
+
+// refs: 1 - tags: named, input
+export interface UntagPolicyRequest {
+  PolicyArn: string;
+  TagKeys: string[];
+}
+
+// refs: 1 - tags: named, input
 export interface UntagRoleRequest {
   RoleName: string;
+  TagKeys: string[];
+}
+
+// refs: 1 - tags: named, input
+export interface UntagSAMLProviderRequest {
+  SAMLProviderArn: string;
+  TagKeys: string[];
+}
+
+// refs: 1 - tags: named, input
+export interface UntagServerCertificateRequest {
+  ServerCertificateName: string;
   TagKeys: string[];
 }
 
@@ -871,6 +990,7 @@ export interface UploadServerCertificateRequest {
   CertificateBody: string;
   PrivateKey: string;
   CertificateChain?: string | null;
+  Tags?: Tag[] | null;
 }
 
 // refs: 1 - tags: named, input
@@ -902,6 +1022,7 @@ export interface CreateLoginProfileResponse {
 // refs: 1 - tags: named, output
 export interface CreateOpenIDConnectProviderResponse {
   OpenIDConnectProviderArn?: string | null;
+  Tags: Tag[];
 }
 
 // refs: 1 - tags: named, output
@@ -922,6 +1043,7 @@ export interface CreateRoleResponse {
 // refs: 1 - tags: named, output
 export interface CreateSAMLProviderResponse {
   SAMLProviderArn?: string | null;
+  Tags: Tag[];
 }
 
 // refs: 1 - tags: named, output
@@ -1034,6 +1156,7 @@ export interface GetOpenIDConnectProviderResponse {
   ClientIDList: string[];
   ThumbprintList: string[];
   CreateDate?: Date | number | null;
+  Tags: Tag[];
 }
 
 // refs: 1 - tags: named, output
@@ -1076,6 +1199,7 @@ export interface GetSAMLProviderResponse {
   SAMLMetadataDocument?: string | null;
   CreateDate?: Date | number | null;
   ValidUntil?: Date | number | null;
+  Tags: Tag[];
 }
 
 // refs: 1 - tags: named, output
@@ -1195,6 +1319,13 @@ export interface ListGroupsForUserResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface ListInstanceProfileTagsResponse {
+  Tags: Tag[];
+  IsTruncated?: boolean | null;
+  Marker?: string | null;
+}
+
+// refs: 1 - tags: named, output
 export interface ListInstanceProfilesResponse {
   InstanceProfiles: InstanceProfile[];
   IsTruncated?: boolean | null;
@@ -1209,8 +1340,22 @@ export interface ListInstanceProfilesForRoleResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface ListMFADeviceTagsResponse {
+  Tags: Tag[];
+  IsTruncated?: boolean | null;
+  Marker?: string | null;
+}
+
+// refs: 1 - tags: named, output
 export interface ListMFADevicesResponse {
   MFADevices: MFADevice[];
+  IsTruncated?: boolean | null;
+  Marker?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface ListOpenIDConnectProviderTagsResponse {
+  Tags: Tag[];
   IsTruncated?: boolean | null;
   Marker?: string | null;
 }
@@ -1230,6 +1375,13 @@ export interface ListPoliciesResponse {
 // refs: 1 - tags: named, output
 export interface ListPoliciesGrantingServiceAccessResponse {
   PoliciesGrantingServiceAccess: ListPoliciesGrantingServiceAccessEntry[];
+  IsTruncated?: boolean | null;
+  Marker?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface ListPolicyTagsResponse {
+  Tags: Tag[];
   IsTruncated?: boolean | null;
   Marker?: string | null;
 }
@@ -1263,6 +1415,13 @@ export interface ListRolesResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface ListSAMLProviderTagsResponse {
+  Tags: Tag[];
+  IsTruncated?: boolean | null;
+  Marker?: string | null;
+}
+
+// refs: 1 - tags: named, output
 export interface ListSAMLProvidersResponse {
   SAMLProviderList: SAMLProviderListEntry[];
 }
@@ -1270,6 +1429,13 @@ export interface ListSAMLProvidersResponse {
 // refs: 1 - tags: named, output
 export interface ListSSHPublicKeysResponse {
   SSHPublicKeys: SSHPublicKeyMetadata[];
+  IsTruncated?: boolean | null;
+  Marker?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface ListServerCertificateTagsResponse {
+  Tags: Tag[];
   IsTruncated?: boolean | null;
   Marker?: string | null;
 }
@@ -1355,6 +1521,7 @@ export interface UploadSSHPublicKeyResponse {
 // refs: 1 - tags: named, output
 export interface UploadServerCertificateResponse {
   ServerCertificateMetadata?: ServerCertificateMetadata | null;
+  Tags: Tag[];
 }
 
 // refs: 1 - tags: named, output
@@ -1362,7 +1529,7 @@ export interface UploadSigningCertificateResponse {
   Certificate: SigningCertificate;
 }
 
-// refs: 24 - tags: input, named, interface, output
+// refs: 58 - tags: input, named, interface, output
 export interface Tag {
   Key: string;
   Value: string;
@@ -1478,6 +1645,7 @@ export interface InstanceProfile {
   Arn: string;
   CreateDate: Date | number;
   Roles: Role[];
+  Tags: Tag[];
 }
 
 // refs: 10 - tags: output, named, interface
@@ -1532,6 +1700,7 @@ export interface Policy {
   Description?: string | null;
   CreateDate?: Date | number | null;
   UpdateDate?: Date | number | null;
+  Tags: Tag[];
 }
 
 // refs: 4 - tags: output, named, interface
@@ -1572,6 +1741,7 @@ export interface VirtualMFADevice {
   QRCodePNG?: Uint8Array | string | null;
   User?: User | null;
   EnableDate?: Date | number | null;
+  Tags: Tag[];
 }
 
 // refs: 1 - tags: output, named, enum
@@ -1744,6 +1914,7 @@ export interface ServerCertificate {
   ServerCertificateMetadata: ServerCertificateMetadata;
   CertificateBody: string;
   CertificateChain?: string | null;
+  Tags: Tag[];
 }
 
 // refs: 3 - tags: output, named, interface

@@ -255,6 +255,13 @@ export interface ListImageBuildVersionsRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface ListImagePackagesRequest {
+  imageBuildVersionArn: string;
+  maxResults?: number | null;
+  nextToken?: string | null;
+}
+
+// refs: 1 - tags: named, input
 export interface ListImagePipelineImagesRequest {
   imagePipelineArn: string;
   filters?: Filter[] | null;
@@ -587,6 +594,13 @@ export interface ListImageBuildVersionsResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface ListImagePackagesResponse {
+  requestId?: string | null;
+  imagePackageList?: ImagePackage[] | null;
+  nextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
 export interface ListImagePipelineImagesResponse {
   requestId?: string | null;
   imageSummaryList?: ImageSummary[] | null;
@@ -753,6 +767,7 @@ export interface ImageTestsConfiguration {
 // refs: 4 - tags: input, named, interface, output
 export interface Schedule {
   scheduleExpression?: string | null;
+  timezone?: string | null;
   pipelineExecutionStartCondition?: PipelineExecutionStartCondition | null;
 }
 
@@ -793,6 +808,7 @@ export type EbsVolumeType =
 | "io1"
 | "io2"
 | "gp2"
+| "gp3"
 | "sc1"
 | "st1"
 | cmnP.UnexpectedEnumValue;
@@ -1077,6 +1093,12 @@ export interface ImageSummary {
 }
 
 // refs: 1 - tags: output, named, interface
+export interface ImagePackage {
+  packageName?: string | null;
+  packageVersion?: string | null;
+}
+
+// refs: 1 - tags: output, named, interface
 export interface ImageRecipeSummary {
   arn?: string | null;
   name?: string | null;
@@ -1108,4 +1130,6 @@ export interface InfrastructureConfigurationSummary {
   dateUpdated?: string | null;
   resourceTags?: { [key: string]: string | null | undefined } | null;
   tags?: { [key: string]: string | null | undefined } | null;
+  instanceTypes?: string[] | null;
+  instanceProfileName?: string | null;
 }

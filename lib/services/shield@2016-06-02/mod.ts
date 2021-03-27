@@ -100,6 +100,7 @@ export default class Shield {
     const body: jsonP.JSONObject = {
       Name: params["Name"],
       ResourceArn: params["ResourceArn"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -122,6 +123,7 @@ export default class Shield {
       Pattern: params["Pattern"],
       ResourceType: params["ResourceType"],
       Members: params["Members"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -501,6 +503,58 @@ export default class Shield {
     }, await resp.json());
   }
 
+  async listTagsForResource(
+    {abortSignal, ...params}: RequestConfig & s.ListTagsForResourceRequest,
+  ): Promise<s.ListTagsForResourceResponse> {
+    const body: jsonP.JSONObject = {
+      ResourceARN: params["ResourceARN"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "ListTagsForResource",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Tags": [toTag],
+      },
+    }, await resp.json());
+  }
+
+  async tagResource(
+    {abortSignal, ...params}: RequestConfig & s.TagResourceRequest,
+  ): Promise<s.TagResourceResponse> {
+    const body: jsonP.JSONObject = {
+      ResourceARN: params["ResourceARN"],
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "TagResource",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
+  }
+
+  async untagResource(
+    {abortSignal, ...params}: RequestConfig & s.UntagResourceRequest,
+  ): Promise<s.UntagResourceResponse> {
+    const body: jsonP.JSONObject = {
+      ResourceARN: params["ResourceARN"],
+      TagKeys: params["TagKeys"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "UntagResource",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
+  }
+
   async updateEmergencyContactSettings(
     {abortSignal, ...params}: RequestConfig & s.UpdateEmergencyContactSettingsRequest = {},
   ): Promise<s.UpdateEmergencyContactSettingsResponse> {
@@ -571,6 +625,23 @@ function toEmergencyContact(root: jsonP.JSONValue): s.EmergencyContact {
     optional: {
       "PhoneNumber": "s",
       "ContactNotes": "s",
+    },
+  }, root);
+}
+
+function fromTag(input?: s.Tag | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    Key: input["Key"],
+    Value: input["Value"],
+  }
+}
+function toTag(root: jsonP.JSONValue): s.Tag {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "Key": "s",
+      "Value": "s",
     },
   }, root);
 }
@@ -716,6 +787,7 @@ function toProtection(root: jsonP.JSONValue): s.Protection {
       "Name": "s",
       "ResourceArn": "s",
       "HealthCheckIds": ["s"],
+      "ProtectionArn": "s",
     },
   }, root);
 }
@@ -730,6 +802,7 @@ function toProtectionGroup(root: jsonP.JSONValue): s.ProtectionGroup {
     },
     optional: {
       "ResourceType": (x: jsonP.JSONValue) => cmnP.readEnum<s.ProtectedResourceType>(x),
+      "ProtectionGroupArn": "s",
     },
   }, root);
 }
@@ -746,6 +819,7 @@ function toSubscription(root: jsonP.JSONValue): s.Subscription {
       "AutoRenew": (x: jsonP.JSONValue) => cmnP.readEnum<s.AutoRenew>(x),
       "Limits": [toLimit],
       "ProactiveEngagementStatus": (x: jsonP.JSONValue) => cmnP.readEnum<s.ProactiveEngagementStatus>(x),
+      "SubscriptionArn": "s",
     },
   }, root);
 }

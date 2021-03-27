@@ -5,11 +5,11 @@ interface RequestConfig {
 }
 
 export * from "./structs.ts";
-import * as Base64 from "https://deno.land/std@0.86.0/encoding/base64.ts";
+import * as Base64 from "https://deno.land/std@0.91.0/encoding/base64.ts";
 import * as client from "../../client/common.ts";
 import * as cmnP from "../../encoding/common.ts";
 import * as jsonP from "../../encoding/json.ts";
-import * as uuidv4 from "https://deno.land/std@0.86.0/uuid/v4.ts";
+import * as uuidv4 from "https://deno.land/std@0.91.0/uuid/v4.ts";
 import type * as s from "./structs.ts";
 function generateIdemptToken() {
   return uuidv4.generate();
@@ -259,6 +259,7 @@ export default class SSM {
     const body: jsonP.JSONObject = {
       ResourceId: params["ResourceId"],
       Metadata: jsonP.serializeMap(params["Metadata"], x => fromMetadataValue(x)),
+      Tags: params["Tags"]?.map(x => fromTag(x)),
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -1397,6 +1398,7 @@ export default class SSM {
     const body: jsonP.JSONObject = {
       InstanceId: params["InstanceId"],
       SnapshotId: params["SnapshotId"],
+      BaselineOverride: fromBaselineOverride(params["BaselineOverride"]),
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -3388,6 +3390,7 @@ function fromResourceDataSyncSource(input?: s.ResourceDataSyncSource | null): js
     AwsOrganizationsSource: fromResourceDataSyncAwsOrganizationsSource(input["AwsOrganizationsSource"]),
     SourceRegions: input["SourceRegions"],
     IncludeFutureRegions: input["IncludeFutureRegions"],
+    EnableAllOpsDataSources: input["EnableAllOpsDataSources"],
   }
 }
 
@@ -3537,6 +3540,21 @@ function fromSessionFilter(input?: s.SessionFilter | null): jsonP.JSONValue {
   return {
     key: input["key"],
     value: input["value"],
+  }
+}
+
+function fromBaselineOverride(input?: s.BaselineOverride | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    OperatingSystem: input["OperatingSystem"],
+    GlobalFilters: fromPatchFilterGroup(input["GlobalFilters"]),
+    ApprovalRules: fromPatchRuleGroup(input["ApprovalRules"]),
+    ApprovedPatches: input["ApprovedPatches"],
+    ApprovedPatchesComplianceLevel: input["ApprovedPatchesComplianceLevel"],
+    RejectedPatches: input["RejectedPatches"],
+    RejectedPatchesAction: input["RejectedPatchesAction"],
+    ApprovedPatchesEnableNonSecurity: input["ApprovedPatchesEnableNonSecurity"],
+    Sources: input["Sources"]?.map(x => fromPatchSource(x)),
   }
 }
 
@@ -5222,6 +5240,7 @@ function toResourceDataSyncSourceWithState(root: jsonP.JSONValue): s.ResourceDat
       "SourceRegions": ["s"],
       "IncludeFutureRegions": "b",
       "State": "s",
+      "EnableAllOpsDataSources": "b",
     },
   }, root);
 }

@@ -322,22 +322,22 @@ export type MetricType =
 
 // refs: 7 - tags: input, named, enum, output
 export type AggregationPeriod =
-| "P1D"
-| "PT1H"
 | "PT5M"
+| "PT1H"
+| "P1D"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type MetadataField =
+| "ComputePlatform"
 | "AgentId"
 | "AwsRequestId"
-| "ComputePlatform"
 | "ExecutionEnvironment"
 | "LambdaFunctionArn"
 | "LambdaMemoryLimitInMB"
-| "LambdaPreviousExecutionTimeInMilliseconds"
 | "LambdaRemainingTimeInMilliseconds"
 | "LambdaTimeGapBetweenInvokesInMilliseconds"
+| "LambdaPreviousExecutionTimeInMilliseconds"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 6 - tags: input, named, interface, output
@@ -347,14 +347,14 @@ export interface AgentOrchestrationConfig {
 
 // refs: 5 - tags: input, named, enum, output
 export type ComputePlatform =
-| "AWSLambda"
 | "Default"
+| "AWSLambda"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type OrderBy =
-| "TimestampAscending"
 | "TimestampDescending"
+| "TimestampAscending"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, enum
@@ -364,8 +364,8 @@ export type ActionGroup =
 
 // refs: 2 - tags: input, named, enum, output
 export type FeedbackType =
-| "Negative"
 | "Positive"
+| "Negative"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: output, named, interface
@@ -393,11 +393,11 @@ export interface AgentConfiguration {
 
 // refs: 1 - tags: output, named, enum
 export type AgentParameterField =
-| "MaxStackDepth"
-| "MemoryUsageLimitPercent"
-| "MinimumTimeForReportingInMilliseconds"
-| "ReportingIntervalInMilliseconds"
 | "SamplingIntervalInMilliseconds"
+| "ReportingIntervalInMilliseconds"
+| "MinimumTimeForReportingInMilliseconds"
+| "MemoryUsageLimitPercent"
+| "MaxStackDepth"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: output, named, interface

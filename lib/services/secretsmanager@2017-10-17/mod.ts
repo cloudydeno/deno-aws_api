@@ -5,10 +5,11 @@ interface RequestConfig {
 }
 
 export * from "./structs.ts";
-import * as Base64 from "https://deno.land/std@0.86.0/encoding/base64.ts";
+import * as Base64 from "https://deno.land/std@0.91.0/encoding/base64.ts";
 import * as client from "../../client/common.ts";
+import * as cmnP from "../../encoding/common.ts";
 import * as jsonP from "../../encoding/json.ts";
-import * as uuidv4 from "https://deno.land/std@0.86.0/uuid/v4.ts";
+import * as uuidv4 from "https://deno.land/std@0.91.0/uuid/v4.ts";
 import type * as s from "./structs.ts";
 function generateIdemptToken() {
   return uuidv4.generate();
@@ -68,6 +69,8 @@ export default class SecretsManager {
       SecretBinary: serializeBlob(params["SecretBinary"]),
       SecretString: params["SecretString"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
+      AddReplicaRegions: params["AddReplicaRegions"]?.map(x => fromReplicaRegionType(x)),
+      ForceOverwriteReplicaSecret: params["ForceOverwriteReplicaSecret"],
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -79,6 +82,7 @@ export default class SecretsManager {
         "ARN": "s",
         "Name": "s",
         "VersionId": "s",
+        "ReplicationStatus": [toReplicationStatusType],
       },
     }, await resp.json());
   }
@@ -152,6 +156,8 @@ export default class SecretsManager {
         "VersionIdsToStages": x => jsonP.readMap(String, l => Array.isArray(l) ? l.map(String) : [], x),
         "OwningService": "s",
         "CreatedDate": "d",
+        "PrimaryRegion": "s",
+        "ReplicationStatus": [toReplicationStatusType],
       },
     }, await resp.json());
   }
@@ -319,6 +325,47 @@ export default class SecretsManager {
     }, await resp.json());
   }
 
+  async removeRegionsFromReplication(
+    {abortSignal, ...params}: RequestConfig & s.RemoveRegionsFromReplicationRequest,
+  ): Promise<s.RemoveRegionsFromReplicationResponse> {
+    const body: jsonP.JSONObject = {
+      SecretId: params["SecretId"],
+      RemoveReplicaRegions: params["RemoveReplicaRegions"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "RemoveRegionsFromReplication",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ARN": "s",
+        "ReplicationStatus": [toReplicationStatusType],
+      },
+    }, await resp.json());
+  }
+
+  async replicateSecretToRegions(
+    {abortSignal, ...params}: RequestConfig & s.ReplicateSecretToRegionsRequest,
+  ): Promise<s.ReplicateSecretToRegionsResponse> {
+    const body: jsonP.JSONObject = {
+      SecretId: params["SecretId"],
+      AddReplicaRegions: params["AddReplicaRegions"]?.map(x => fromReplicaRegionType(x)),
+      ForceOverwriteReplicaSecret: params["ForceOverwriteReplicaSecret"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "ReplicateSecretToRegions",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ARN": "s",
+        "ReplicationStatus": [toReplicationStatusType],
+      },
+    }, await resp.json());
+  }
+
   async restoreSecret(
     {abortSignal, ...params}: RequestConfig & s.RestoreSecretRequest,
   ): Promise<s.RestoreSecretResponse> {
@@ -357,6 +404,24 @@ export default class SecretsManager {
         "ARN": "s",
         "Name": "s",
         "VersionId": "s",
+      },
+    }, await resp.json());
+  }
+
+  async stopReplicationToReplica(
+    {abortSignal, ...params}: RequestConfig & s.StopReplicationToReplicaRequest,
+  ): Promise<s.StopReplicationToReplicaResponse> {
+    const body: jsonP.JSONObject = {
+      SecretId: params["SecretId"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "StopReplicationToReplica",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ARN": "s",
       },
     }, await resp.json());
   }
@@ -473,6 +538,14 @@ function toTag(root: jsonP.JSONValue): s.Tag {
   }, root);
 }
 
+function fromReplicaRegionType(input?: s.ReplicaRegionType | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    Region: input["Region"],
+    KmsKeyId: input["KmsKeyId"],
+  }
+}
+
 function fromFilter(input?: s.Filter | null): jsonP.JSONValue {
   if (!input) return input;
   return {
@@ -492,6 +565,19 @@ function toRotationRulesType(root: jsonP.JSONValue): s.RotationRulesType {
     required: {},
     optional: {
       "AutomaticallyAfterDays": "n",
+    },
+  }, root);
+}
+
+function toReplicationStatusType(root: jsonP.JSONValue): s.ReplicationStatusType {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "Region": "s",
+      "KmsKeyId": "s",
+      "Status": (x: jsonP.JSONValue) => cmnP.readEnum<s.StatusType>(x),
+      "StatusMessage": "s",
+      "LastAccessedDate": "d",
     },
   }, root);
 }
@@ -527,6 +613,7 @@ function toSecretListEntry(root: jsonP.JSONValue): s.SecretListEntry {
       "SecretVersionsToStages": x => jsonP.readMap(String, l => Array.isArray(l) ? l.map(String) : [], x),
       "OwningService": "s",
       "CreatedDate": "d",
+      "PrimaryRegion": "s",
     },
   }, root);
 }

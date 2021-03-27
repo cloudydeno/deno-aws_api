@@ -52,6 +52,12 @@ export interface ListTagsForCertificateRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface PutAccountConfigurationRequest {
+  ExpiryEvents?: ExpiryEventsConfiguration | null;
+  IdempotencyToken: string;
+}
+
+// refs: 1 - tags: named, input
 export interface RemoveTagsFromCertificateRequest {
   CertificateArn: string;
   Tags: Tag[];
@@ -97,6 +103,11 @@ export interface ExportCertificateResponse {
   Certificate?: string | null;
   CertificateChain?: string | null;
   PrivateKey?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface GetAccountConfigurationResponse {
+  ExpiryEvents?: ExpiryEventsConfiguration | null;
 }
 
 // refs: 1 - tags: named, output
@@ -190,6 +201,11 @@ export type KeyAlgorithm =
 | "EC_secp384r1"
 | "EC_secp521r1"
 | cmnP.UnexpectedEnumValue;
+
+// refs: 2 - tags: input, named, interface, output
+export interface ExpiryEventsConfiguration {
+  DaysBeforeExpiry?: number | null;
+}
 
 // refs: 3 - tags: input, named, enum, output
 export type ValidationMethod =

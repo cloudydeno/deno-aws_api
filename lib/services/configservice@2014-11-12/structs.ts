@@ -1078,6 +1078,7 @@ export interface ConformancePackComplianceFilters {
 export type ConformancePackComplianceType =
 | "COMPLIANT"
 | "NON_COMPLIANT"
+| "INSUFFICIENT_DATA"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
@@ -1283,6 +1284,7 @@ export interface DeliveryChannel {
   name?: string | null;
   s3BucketName?: string | null;
   s3KeyPrefix?: string | null;
+  s3KmsKeyArn?: string | null;
   snsTopicARN?: string | null;
   configSnapshotDeliveryProperties?: ConfigSnapshotDeliveryProperties | null;
 }

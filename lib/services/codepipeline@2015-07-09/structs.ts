@@ -71,6 +71,14 @@ export interface EnableStageTransitionInput {
 }
 
 // refs: 1 - tags: named, input
+export interface GetActionTypeInput {
+  category: ActionCategory;
+  owner: string;
+  provider: string;
+  version: string;
+}
+
+// refs: 1 - tags: named, input
 export interface GetJobDetailsInput {
   jobId: string;
 }
@@ -110,6 +118,7 @@ export interface ListActionExecutionsInput {
 export interface ListActionTypesInput {
   actionOwnerFilter?: ActionOwner | null;
   nextToken?: string | null;
+  regionFilter?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -122,6 +131,7 @@ export interface ListPipelineExecutionsInput {
 // refs: 1 - tags: named, input
 export interface ListPipelinesInput {
   nextToken?: string | null;
+  maxResults?: number | null;
 }
 
 // refs: 1 - tags: named, input
@@ -244,6 +254,11 @@ export interface UntagResourceInput {
 }
 
 // refs: 1 - tags: named, input
+export interface UpdateActionTypeInput {
+  actionType: ActionTypeDeclaration;
+}
+
+// refs: 1 - tags: named, input
 export interface UpdatePipelineInput {
   pipeline: PipelineDeclaration;
 }
@@ -276,6 +291,11 @@ export interface DeleteWebhookOutput {
 
 // refs: 1 - tags: named, output
 export interface DeregisterWebhookWithThirdPartyOutput {
+}
+
+// refs: 1 - tags: named, output
+export interface GetActionTypeOutput {
+  actionType?: ActionTypeDeclaration | null;
 }
 
 // refs: 1 - tags: named, output
@@ -402,7 +422,7 @@ export interface UpdatePipelineOutput {
   pipeline?: PipelineDeclaration | null;
 }
 
-// refs: 15 - tags: input, named, enum, output
+// refs: 18 - tags: input, named, enum, output
 export type ActionCategory =
 | "Source"
 | "Build"
@@ -634,6 +654,86 @@ export interface WebhookAuthConfiguration {
 export type StageRetryMode =
 | "FAILED_ACTIONS"
 | cmnP.UnexpectedEnumValue;
+
+// refs: 2 - tags: input, named, interface, output
+export interface ActionTypeDeclaration {
+  description?: string | null;
+  executor: ActionTypeExecutor;
+  id: ActionTypeIdentifier;
+  inputArtifactDetails: ActionTypeArtifactDetails;
+  outputArtifactDetails: ActionTypeArtifactDetails;
+  permissions?: ActionTypePermissions | null;
+  properties?: ActionTypeProperty[] | null;
+  urls?: ActionTypeUrls | null;
+}
+
+// refs: 2 - tags: input, named, interface, output
+export interface ActionTypeExecutor {
+  configuration: ExecutorConfiguration;
+  type: ExecutorType;
+  policyStatementsTemplate?: string | null;
+  jobTimeout?: number | null;
+}
+
+// refs: 2 - tags: input, named, interface, output
+export interface ExecutorConfiguration {
+  lambdaExecutorConfiguration?: LambdaExecutorConfiguration | null;
+  jobWorkerExecutorConfiguration?: JobWorkerExecutorConfiguration | null;
+}
+
+// refs: 2 - tags: input, named, interface, output
+export interface LambdaExecutorConfiguration {
+  lambdaFunctionArn: string;
+}
+
+// refs: 2 - tags: input, named, interface, output
+export interface JobWorkerExecutorConfiguration {
+  pollingAccounts?: string[] | null;
+  pollingServicePrincipals?: string[] | null;
+}
+
+// refs: 2 - tags: input, named, enum, output
+export type ExecutorType =
+| "JobWorker"
+| "Lambda"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 2 - tags: input, named, interface, output
+export interface ActionTypeIdentifier {
+  category: ActionCategory;
+  owner: string;
+  provider: string;
+  version: string;
+}
+
+// refs: 4 - tags: input, named, interface, output
+export interface ActionTypeArtifactDetails {
+  minimumCount: number;
+  maximumCount: number;
+}
+
+// refs: 2 - tags: input, named, interface, output
+export interface ActionTypePermissions {
+  allowedAccounts: string[];
+}
+
+// refs: 2 - tags: input, named, interface, output
+export interface ActionTypeProperty {
+  name: string;
+  optional: boolean;
+  key: boolean;
+  noEcho: boolean;
+  queryable?: boolean | null;
+  description?: string | null;
+}
+
+// refs: 2 - tags: input, named, interface, output
+export interface ActionTypeUrls {
+  configurationUrl?: string | null;
+  entityUrlTemplate?: string | null;
+  executionUrlTemplate?: string | null;
+  revisionUrlTemplate?: string | null;
+}
 
 // refs: 2 - tags: output, named, enum
 export type JobStatus =

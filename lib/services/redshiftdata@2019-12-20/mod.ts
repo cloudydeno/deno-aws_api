@@ -68,6 +68,7 @@ export default class RedshiftData {
         "DbUser": "s",
         "Duration": "n",
         "Error": "s",
+        "HasResultSet": "b",
         "QueryString": "s",
         "RedshiftPid": "n",
         "RedshiftQueryId": "n",
@@ -85,6 +86,7 @@ export default class RedshiftData {
   ): Promise<s.DescribeTableResponse> {
     const body: jsonP.JSONObject = {
       ClusterIdentifier: params["ClusterIdentifier"],
+      ConnectedDatabase: params["ConnectedDatabase"],
       Database: params["Database"],
       DbUser: params["DbUser"],
       MaxResults: params["MaxResults"],
@@ -188,6 +190,7 @@ export default class RedshiftData {
   ): Promise<s.ListSchemasResponse> {
     const body: jsonP.JSONObject = {
       ClusterIdentifier: params["ClusterIdentifier"],
+      ConnectedDatabase: params["ConnectedDatabase"],
       Database: params["Database"],
       DbUser: params["DbUser"],
       MaxResults: params["MaxResults"],
@@ -214,6 +217,7 @@ export default class RedshiftData {
     const body: jsonP.JSONObject = {
       MaxResults: params["MaxResults"],
       NextToken: params["NextToken"],
+      RoleLevel: params["RoleLevel"],
       StatementName: params["StatementName"],
       Status: params["Status"],
     };
@@ -236,6 +240,7 @@ export default class RedshiftData {
   ): Promise<s.ListTablesResponse> {
     const body: jsonP.JSONObject = {
       ClusterIdentifier: params["ClusterIdentifier"],
+      ConnectedDatabase: params["ConnectedDatabase"],
       Database: params["Database"],
       DbUser: params["DbUser"],
       MaxResults: params["MaxResults"],

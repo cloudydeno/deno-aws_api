@@ -143,8 +143,8 @@ export interface AssociateRouteTableRequest {
 
 // refs: 1 - tags: named, input
 export interface AssociateSubnetCidrBlockRequest {
-  Ipv6CidrBlock: string;
   SubnetId: string;
+  Ipv6CidrBlock: string;
 }
 
 // refs: 1 - tags: named, input
@@ -544,8 +544,8 @@ export interface CreateLaunchTemplateVersionRequest {
 export interface CreateLocalGatewayRouteRequest {
   DestinationCidrBlock: string;
   LocalGatewayRouteTableId: string;
-  LocalGatewayVirtualInterfaceGroupId: string;
   DryRun?: boolean | null;
+  LocalGatewayVirtualInterfaceGroupId: string;
 }
 
 // refs: 1 - tags: named, input
@@ -569,11 +569,11 @@ export interface CreateManagedPrefixListRequest {
 
 // refs: 1 - tags: named, input
 export interface CreateNatGatewayRequest {
-  AllocationId: string;
   ClientToken?: string | null;
   DryRun?: boolean | null;
   SubnetId: string;
   TagSpecifications?: TagSpecification[] | null;
+  AllocationId: string;
 }
 
 // refs: 1 - tags: named, input
@@ -717,11 +717,11 @@ export interface CreateSubnetRequest {
   TagSpecifications?: TagSpecification[] | null;
   AvailabilityZone?: string | null;
   AvailabilityZoneId?: string | null;
-  CidrBlock: string;
   Ipv6CidrBlock?: string | null;
   OutpostArn?: string | null;
   VpcId: string;
   DryRun?: boolean | null;
+  CidrBlock: string;
 }
 
 // refs: 1 - tags: named, input
@@ -3285,6 +3285,7 @@ export interface RegisterImageRequest {
   RootDeviceName?: string | null;
   SriovNetSupport?: string | null;
   VirtualizationType?: string | null;
+  BootMode?: BootModeValues | null;
 }
 
 // refs: 1 - tags: named, input
@@ -4673,6 +4674,7 @@ export interface ImageAttribute {
   KernelId?: AttributeValue | null;
   RamdiskId?: AttributeValue | null;
   SriovNetSupport?: AttributeValue | null;
+  BootMode?: AttributeValue | null;
 }
 
 // refs: 1 - tags: named, output
@@ -6193,6 +6195,7 @@ export type SpotAllocationStrategy =
 | "lowest-price"
 | "diversified"
 | "capacity-optimized"
+| "capacity-optimized-prioritized"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
@@ -6664,6 +6667,15 @@ export type InstanceType =
 | "m6gd.12xlarge"
 | "m6gd.16xlarge"
 | "mac1.metal"
+| "x2gd.medium"
+| "x2gd.large"
+| "x2gd.xlarge"
+| "x2gd.2xlarge"
+| "x2gd.4xlarge"
+| "x2gd.8xlarge"
+| "x2gd.12xlarge"
+| "x2gd.16xlarge"
+| "x2gd.metal"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 6 - tags: input, named, interface, output
@@ -7344,6 +7356,7 @@ export type ImageAttributeName =
 | "productCodes"
 | "blockDeviceMapping"
 | "sriovNetSupport"
+| "bootMode"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, enum
@@ -7588,7 +7601,7 @@ export type PermissionGroup =
 | "all"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 21 - tags: input, named, interface, output
+// refs: 22 - tags: input, named, interface, output
 export interface AttributeValue {
   Value?: string | null;
 }
@@ -7824,6 +7837,12 @@ export interface PurchaseRequest {
   PurchaseToken: string;
 }
 
+// refs: 4 - tags: input, named, enum, output
+export type BootModeValues =
+| "legacy-bios"
+| "uefi"
+| cmnP.UnexpectedEnumValue;
+
 // refs: 1 - tags: input, named, interface
 export interface RegisterInstanceTagAttributeRequest {
   IncludeAllTagsOfInstance?: boolean | null;
@@ -7882,6 +7901,7 @@ export type AllocationStrategy =
 | "lowestPrice"
 | "diversified"
 | "capacityOptimized"
+| "capacityOptimizedPrioritized"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, enum, output
@@ -10858,6 +10878,7 @@ export interface Image {
   StateReason?: StateReason | null;
   Tags: Tag[];
   VirtualizationType?: VirtualizationType | null;
+  BootMode?: BootModeValues | null;
 }
 
 // refs: 1 - tags: output, named, enum
@@ -11107,6 +11128,7 @@ export interface InstanceTypeInfo {
   BurstablePerformanceSupported?: boolean | null;
   DedicatedHostsSupported?: boolean | null;
   AutoRecoverySupported?: boolean | null;
+  SupportedBootModes: BootModeType[];
 }
 
 // refs: 1 - tags: output, named, enum
@@ -11231,6 +11253,7 @@ export interface NetworkInfo {
   Ipv6Supported?: boolean | null;
   EnaSupport?: EnaSupport | null;
   EfaSupported?: boolean | null;
+  EfaInfo?: EfaInfo | null;
 }
 
 // refs: 1 - tags: output, named, interface
@@ -11246,6 +11269,11 @@ export type EnaSupport =
 | "supported"
 | "required"
 | cmnP.UnexpectedEnumValue;
+
+// refs: 1 - tags: output, named, interface
+export interface EfaInfo {
+  MaximumEfaInterfaces?: number | null;
+}
 
 // refs: 1 - tags: output, named, interface
 export interface GpuInfo {
@@ -11309,6 +11337,12 @@ export interface InferenceDeviceInfo {
   Manufacturer?: string | null;
 }
 
+// refs: 1 - tags: output, named, enum
+export type BootModeType =
+| "legacy-bios"
+| "uefi"
+| cmnP.UnexpectedEnumValue;
+
 // refs: 2 - tags: output, named, interface
 export interface Instance {
   AmiLaunchIndex?: number | null;
@@ -11359,6 +11393,7 @@ export interface Instance {
   Licenses: LicenseConfiguration[];
   MetadataOptions?: InstanceMetadataOptionsResponse | null;
   EnclaveOptions?: EnclaveOptions | null;
+  BootMode?: BootModeValues | null;
 }
 
 // refs: 4 - tags: output, named, interface

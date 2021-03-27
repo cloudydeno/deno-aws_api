@@ -6,6 +6,7 @@ import * as cmnP from "../../encoding/common.ts";
 export interface AssociateAwsAccountWithPartnerAccountRequest {
   Sidewalk: SidewalkAccountInfo;
   ClientRequestToken?: string | null;
+  Tags?: Tag[] | null;
 }
 
 // refs: 1 - tags: named, input
@@ -61,6 +62,7 @@ export interface CreateWirelessDeviceRequest {
   DestinationName: string;
   ClientRequestToken?: string | null;
   LoRaWAN?: LoRaWANDevice | null;
+  Tags?: Tag[] | null;
 }
 
 // refs: 1 - tags: named, input
@@ -84,6 +86,7 @@ export interface CreateWirelessGatewayTaskDefinitionRequest {
   Name?: string | null;
   Update?: UpdateWirelessGatewayTaskCreate | null;
   ClientRequestToken?: string | null;
+  Tags?: Tag[] | null;
 }
 
 // refs: 1 - tags: named, input
@@ -322,6 +325,7 @@ export interface UpdateWirelessGatewayRequest {
 // refs: 1 - tags: named, output
 export interface AssociateAwsAccountWithPartnerAccountResponse {
   Sidewalk?: SidewalkAccountInfo | null;
+  Arn?: string | null;
 }
 
 // refs: 1 - tags: named, output
@@ -376,6 +380,7 @@ export interface CreateWirelessGatewayTaskResponse {
 // refs: 1 - tags: named, output
 export interface CreateWirelessGatewayTaskDefinitionResponse {
   Id?: string | null;
+  Arn?: string | null;
 }
 
 // refs: 1 - tags: named, output
@@ -523,6 +528,7 @@ export interface GetWirelessGatewayTaskDefinitionResponse {
   AutoCreateTasks?: boolean | null;
   Name?: string | null;
   Update?: UpdateWirelessGatewayTaskCreate | null;
+  Arn?: string | null;
 }
 
 // refs: 1 - tags: named, output
@@ -612,17 +618,17 @@ export interface SidewalkAccountInfo {
   AppServerPrivateKey?: string | null;
 }
 
+// refs: 9 - tags: input, named, interface, output
+export interface Tag {
+  Key: string;
+  Value: string;
+}
+
 // refs: 4 - tags: input, named, enum, output
 export type ExpressionType =
 | "RuleName"
 | "MqttTopic"
 | cmnP.UnexpectedEnumValue;
-
-// refs: 6 - tags: input, named, interface, output
-export interface Tag {
-  Key: string;
-  Value: string;
-}
 
 // refs: 2 - tags: input, named, interface, output
 export interface LoRaWANDeviceProfile {
@@ -807,6 +813,7 @@ export type WirelessGatewayTaskStatus =
 export interface SidewalkAccountInfoWithFingerprint {
   AmazonId?: string | null;
   Fingerprint?: string | null;
+  Arn?: string | null;
 }
 
 // refs: 1 - tags: output, named, interface
@@ -904,6 +911,7 @@ export interface SidewalkListDevice {
 export interface UpdateWirelessGatewayTaskEntry {
   Id?: string | null;
   LoRaWAN?: LoRaWANUpdateGatewayTaskEntry | null;
+  Arn?: string | null;
 }
 
 // refs: 1 - tags: output, named, interface

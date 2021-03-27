@@ -210,6 +210,7 @@ export interface DescribePoliciesType {
 export interface DescribeScalingActivitiesType {
   ActivityIds?: string[] | null;
   AutoScalingGroupName?: string | null;
+  IncludeDeletedGroups?: boolean | null;
   MaxRecords?: number | null;
   NextToken?: string | null;
 }
@@ -332,6 +333,7 @@ export interface PutScheduledUpdateGroupActionType {
   MinSize?: number | null;
   MaxSize?: number | null;
   DesiredCapacity?: number | null;
+  TimeZone?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -605,6 +607,7 @@ export interface ScheduledUpdateGroupActionRequest {
   MinSize?: number | null;
   MaxSize?: number | null;
   DesiredCapacity?: number | null;
+  TimeZone?: string | null;
 }
 
 // refs: 11 - tags: input, named, interface, output
@@ -773,6 +776,8 @@ export type RefreshStrategy =
 export interface RefreshPreferences {
   MinHealthyPercentage?: number | null;
   InstanceWarmup?: number | null;
+  CheckpointPercentages?: number[] | null;
+  CheckpointDelay?: number | null;
 }
 
 // refs: 2 - tags: output, named, interface
@@ -1008,6 +1013,8 @@ export interface Activity {
   StatusMessage?: string | null;
   Progress?: number | null;
   Details?: string | null;
+  AutoScalingGroupState?: string | null;
+  AutoScalingGroupARN?: string | null;
 }
 
 // refs: 5 - tags: output, named, enum
@@ -1043,4 +1050,5 @@ export interface ScheduledUpdateGroupAction {
   MinSize?: number | null;
   MaxSize?: number | null;
   DesiredCapacity?: number | null;
+  TimeZone?: string | null;
 }

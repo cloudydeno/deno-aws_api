@@ -5,10 +5,10 @@ interface RequestConfig {
 }
 
 export * from "./structs.ts";
-import * as Base64 from "https://deno.land/std@0.86.0/encoding/base64.ts";
+import * as Base64 from "https://deno.land/std@0.91.0/encoding/base64.ts";
 import * as client from "../../client/common.ts";
 import * as qsP from "../../encoding/querystring.ts";
-import * as uuidv4 from "https://deno.land/std@0.86.0/uuid/v4.ts";
+import * as uuidv4 from "https://deno.land/std@0.91.0/uuid/v4.ts";
 import * as xmlP from "../../encoding/xml.ts";
 import type * as s from "./structs.ts";
 function generateIdemptToken() {
@@ -392,8 +392,8 @@ export default class EC2 {
   ): Promise<s.AssociateSubnetCidrBlockResult> {
     const body = new URLSearchParams;
     const prefix = '';
-    body.append(prefix+"Ipv6CidrBlock", (params["Ipv6CidrBlock"] ?? '').toString());
     body.append(prefix+"SubnetId", (params["SubnetId"] ?? '').toString());
+    body.append(prefix+"Ipv6CidrBlock", (params["Ipv6CidrBlock"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AssociateSubnetCidrBlock",
@@ -1267,8 +1267,8 @@ export default class EC2 {
     const prefix = '';
     body.append(prefix+"DestinationCidrBlock", (params["DestinationCidrBlock"] ?? '').toString());
     body.append(prefix+"LocalGatewayRouteTableId", (params["LocalGatewayRouteTableId"] ?? '').toString());
-    body.append(prefix+"LocalGatewayVirtualInterfaceGroupId", (params["LocalGatewayVirtualInterfaceGroupId"] ?? '').toString());
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
+    body.append(prefix+"LocalGatewayVirtualInterfaceGroupId", (params["LocalGatewayVirtualInterfaceGroupId"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateLocalGatewayRoute",
@@ -1325,11 +1325,11 @@ export default class EC2 {
   ): Promise<s.CreateNatGatewayResult> {
     const body = new URLSearchParams;
     const prefix = '';
-    body.append(prefix+"AllocationId", (params["AllocationId"] ?? '').toString());
     body.append(prefix+"ClientToken", (params["ClientToken"] ?? generateIdemptToken()).toString());
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     body.append(prefix+"SubnetId", (params["SubnetId"] ?? '').toString());
     if (params["TagSpecifications"]) qsP.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
+    body.append(prefix+"AllocationId", (params["AllocationId"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateNatGateway",
@@ -1623,11 +1623,11 @@ export default class EC2 {
     if (params["TagSpecifications"]) qsP.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
     if ("AvailabilityZone" in params) body.append(prefix+"AvailabilityZone", (params["AvailabilityZone"] ?? '').toString());
     if ("AvailabilityZoneId" in params) body.append(prefix+"AvailabilityZoneId", (params["AvailabilityZoneId"] ?? '').toString());
-    body.append(prefix+"CidrBlock", (params["CidrBlock"] ?? '').toString());
     if ("Ipv6CidrBlock" in params) body.append(prefix+"Ipv6CidrBlock", (params["Ipv6CidrBlock"] ?? '').toString());
     if ("OutpostArn" in params) body.append(prefix+"OutpostArn", (params["OutpostArn"] ?? '').toString());
     body.append(prefix+"VpcId", (params["VpcId"] ?? '').toString());
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
+    body.append(prefix+"CidrBlock", (params["CidrBlock"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateSubnet",
@@ -3810,6 +3810,7 @@ export default class EC2 {
       KernelId: xml.first("kernel", false, AttributeValue_Parse),
       RamdiskId: xml.first("ramdisk", false, AttributeValue_Parse),
       SriovNetSupport: xml.first("sriovNetSupport", false, AttributeValue_Parse),
+      BootMode: xml.first("bootMode", false, AttributeValue_Parse),
     };
   }
 
@@ -7677,6 +7678,7 @@ export default class EC2 {
     if ("RootDeviceName" in params) body.append(prefix+"RootDeviceName", (params["RootDeviceName"] ?? '').toString());
     if ("SriovNetSupport" in params) body.append(prefix+"SriovNetSupport", (params["SriovNetSupport"] ?? '').toString());
     if ("VirtualizationType" in params) body.append(prefix+"VirtualizationType", (params["VirtualizationType"] ?? '').toString());
+    if ("BootMode" in params) body.append(prefix+"BootMode", (params["BootMode"] ?? '').toString());
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "RegisterImage",
@@ -12782,6 +12784,7 @@ function Image_Parse(node: xmlP.XmlNode): s.Image {
     StateReason: node.first("stateReason", false, StateReason_Parse),
     Tags: node.getList("tagSet", "item").map(Tag_Parse),
     VirtualizationType: node.first("virtualizationType", false, x => (x.content ?? '') as s.VirtualizationType),
+    BootMode: node.first("bootMode", false, x => (x.content ?? '') as s.BootModeValues),
   };
 }
 
@@ -12972,6 +12975,7 @@ function InstanceTypeInfo_Parse(node: xmlP.XmlNode): s.InstanceTypeInfo {
     BurstablePerformanceSupported: node.first("burstablePerformanceSupported", false, x => x.content === 'true'),
     DedicatedHostsSupported: node.first("dedicatedHostsSupported", false, x => x.content === 'true'),
     AutoRecoverySupported: node.first("autoRecoverySupported", false, x => x.content === 'true'),
+    SupportedBootModes: node.getList("supportedBootModes", "item").map(x => (x.content ?? '') as s.BootModeType),
   };
 }
 
@@ -13046,6 +13050,7 @@ function NetworkInfo_Parse(node: xmlP.XmlNode): s.NetworkInfo {
     Ipv6Supported: node.first("ipv6Supported", false, x => x.content === 'true'),
     EnaSupport: node.first("enaSupport", false, x => (x.content ?? '') as s.EnaSupport),
     EfaSupported: node.first("efaSupported", false, x => x.content === 'true'),
+    EfaInfo: node.first("efaInfo", false, EfaInfo_Parse),
   };
 }
 
@@ -13054,6 +13059,12 @@ function NetworkCardInfo_Parse(node: xmlP.XmlNode): s.NetworkCardInfo {
     NetworkCardIndex: node.first("networkCardIndex", false, x => parseInt(x.content ?? '0')),
     NetworkPerformance: node.first("networkPerformance", false, x => x.content ?? ''),
     MaximumNetworkInterfaces: node.first("maximumNetworkInterfaces", false, x => parseInt(x.content ?? '0')),
+  };
+}
+
+function EfaInfo_Parse(node: xmlP.XmlNode): s.EfaInfo {
+  return {
+    MaximumEfaInterfaces: node.first("maximumEfaInterfaces", false, x => parseInt(x.content ?? '0')),
   };
 }
 
@@ -13171,6 +13182,7 @@ function Instance_Parse(node: xmlP.XmlNode): s.Instance {
     Licenses: node.getList("licenseSet", "item").map(LicenseConfiguration_Parse),
     MetadataOptions: node.first("metadataOptions", false, InstanceMetadataOptionsResponse_Parse),
     EnclaveOptions: node.first("enclaveOptions", false, EnclaveOptions_Parse),
+    BootMode: node.first("bootMode", false, x => (x.content ?? '') as s.BootModeValues),
   };
 }
 

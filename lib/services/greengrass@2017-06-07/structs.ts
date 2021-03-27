@@ -87,7 +87,7 @@ export interface CreateFunctionDefinitionVersionRequest {
 export interface CreateGroupRequest {
   AmznClientToken?: string | null;
   InitialVersion?: GroupVersion | null;
-  Name?: string | null;
+  Name: string;
   tags?: { [key: string]: string | null | undefined } | null;
 }
 

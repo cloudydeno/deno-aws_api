@@ -253,7 +253,10 @@ export type ConnectorType =
 | "Amplitude"
 | "Veeva"
 | "EventBridge"
+| "LookoutMetrics"
 | "Upsolver"
+| "Honeycode"
+| "CustomerProfiles"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, enum, output
@@ -274,6 +277,7 @@ export interface ConnectorProfileProperties {
   Datadog?: DatadogConnectorProfileProperties | null;
   Dynatrace?: DynatraceConnectorProfileProperties | null;
   GoogleAnalytics?: GoogleAnalyticsConnectorProfileProperties | null;
+  Honeycode?: HoneycodeConnectorProfileProperties | null;
   InforNexus?: InforNexusConnectorProfileProperties | null;
   Marketo?: MarketoConnectorProfileProperties | null;
   Redshift?: RedshiftConnectorProfileProperties | null;
@@ -303,6 +307,10 @@ export interface DynatraceConnectorProfileProperties {
 
 // refs: 3 - tags: input, named, interface, output
 export interface GoogleAnalyticsConnectorProfileProperties {
+}
+
+// refs: 3 - tags: input, named, interface, output
+export interface HoneycodeConnectorProfileProperties {
 }
 
 // refs: 3 - tags: input, named, interface, output
@@ -374,6 +382,7 @@ export interface ConnectorProfileCredentials {
   Datadog?: DatadogConnectorProfileCredentials | null;
   Dynatrace?: DynatraceConnectorProfileCredentials | null;
   GoogleAnalytics?: GoogleAnalyticsConnectorProfileCredentials | null;
+  Honeycode?: HoneycodeConnectorProfileCredentials | null;
   InforNexus?: InforNexusConnectorProfileCredentials | null;
   Marketo?: MarketoConnectorProfileCredentials | null;
   Redshift?: RedshiftConnectorProfileCredentials | null;
@@ -413,10 +422,17 @@ export interface GoogleAnalyticsConnectorProfileCredentials {
   oAuthRequest?: ConnectorOAuthRequest | null;
 }
 
-// refs: 10 - tags: input, named, interface
+// refs: 12 - tags: input, named, interface
 export interface ConnectorOAuthRequest {
   authCode?: string | null;
   redirectUri?: string | null;
+}
+
+// refs: 2 - tags: input, named, interface
+export interface HoneycodeConnectorProfileCredentials {
+  accessToken?: string | null;
+  refreshToken?: string | null;
+  oAuthRequest?: ConnectorOAuthRequest | null;
 }
 
 // refs: 2 - tags: input, named, interface
@@ -519,6 +535,7 @@ export interface ScheduledTriggerProperties {
   scheduleEndTime?: Date | number | null;
   timezone?: string | null;
   scheduleOffset?: number | null;
+  firstExecutionFrom?: Date | number | null;
 }
 
 // refs: 3 - tags: input, named, enum, output
@@ -645,7 +662,10 @@ export interface DestinationConnectorProperties {
   Salesforce?: SalesforceDestinationProperties | null;
   Snowflake?: SnowflakeDestinationProperties | null;
   EventBridge?: EventBridgeDestinationProperties | null;
+  LookoutMetrics?: LookoutMetricsDestinationProperties | null;
   Upsolver?: UpsolverDestinationProperties | null;
+  Honeycode?: HoneycodeDestinationProperties | null;
+  CustomerProfiles?: CustomerProfilesDestinationProperties | null;
 }
 
 // refs: 3 - tags: input, named, interface, output
@@ -656,7 +676,7 @@ export interface RedshiftDestinationProperties {
   errorHandlingConfig?: ErrorHandlingConfig | null;
 }
 
-// refs: 12 - tags: input, named, interface, output
+// refs: 15 - tags: input, named, interface, output
 export interface ErrorHandlingConfig {
   failOnFirstDestinationError?: boolean | null;
   bucketPrefix?: string | null;
@@ -747,6 +767,10 @@ export interface EventBridgeDestinationProperties {
 }
 
 // refs: 3 - tags: input, named, interface, output
+export interface LookoutMetricsDestinationProperties {
+}
+
+// refs: 3 - tags: input, named, interface, output
 export interface UpsolverDestinationProperties {
   bucketName: string;
   bucketPrefix?: string | null;
@@ -758,6 +782,18 @@ export interface UpsolverS3OutputFormatConfig {
   fileType?: FileType | null;
   prefixConfig: PrefixConfig;
   aggregationConfig?: AggregationConfig | null;
+}
+
+// refs: 3 - tags: input, named, interface, output
+export interface HoneycodeDestinationProperties {
+  object: string;
+  errorHandlingConfig?: ErrorHandlingConfig | null;
+}
+
+// refs: 3 - tags: input, named, interface, output
+export interface CustomerProfilesDestinationProperties {
+  domainName: string;
+  objectTypeName?: string | null;
 }
 
 // refs: 3 - tags: input, named, interface, output
@@ -1206,6 +1242,8 @@ export interface ConnectorMetadata {
   Zendesk?: ZendeskMetadata | null;
   EventBridge?: EventBridgeMetadata | null;
   Upsolver?: UpsolverMetadata | null;
+  CustomerProfiles?: CustomerProfilesMetadata | null;
+  Honeycode?: HoneycodeMetadata | null;
 }
 
 // refs: 1 - tags: output, named, interface
@@ -1283,6 +1321,15 @@ export interface EventBridgeMetadata {
 
 // refs: 1 - tags: output, named, interface
 export interface UpsolverMetadata {
+}
+
+// refs: 1 - tags: output, named, interface
+export interface CustomerProfilesMetadata {
+}
+
+// refs: 1 - tags: output, named, interface
+export interface HoneycodeMetadata {
+  oAuthScopes?: string[] | null;
 }
 
 // refs: 2 - tags: output, named, interface

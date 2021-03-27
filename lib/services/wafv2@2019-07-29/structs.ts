@@ -550,6 +550,7 @@ export interface FieldToMatch {
   QueryString?: QueryString | null;
   Body?: Body | null;
   Method?: Method | null;
+  JsonBody?: JsonBody | null;
 }
 
 // refs: 44 - tags: input, named, interface, output
@@ -581,6 +582,37 @@ export interface Body {
 // refs: 44 - tags: input, named, interface, output
 export interface Method {
 }
+
+// refs: 44 - tags: input, named, interface, output
+export interface JsonBody {
+  MatchPattern: JsonMatchPattern;
+  MatchScope: JsonMatchScope;
+  InvalidFallbackBehavior?: BodyParsingFallbackBehavior | null;
+}
+
+// refs: 44 - tags: input, named, interface, output
+export interface JsonMatchPattern {
+  All?: All | null;
+  IncludedPaths?: string[] | null;
+}
+
+// refs: 44 - tags: input, named, interface, output
+export interface All {
+}
+
+// refs: 44 - tags: input, named, enum, output
+export type JsonMatchScope =
+| "ALL"
+| "KEY"
+| "VALUE"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 44 - tags: input, named, enum, output
+export type BodyParsingFallbackBehavior =
+| "MATCH"
+| "NO_MATCH"
+| "EVALUATE_AS_STRING"
+| cmnP.UnexpectedEnumValue;
 
 // refs: 40 - tags: input, named, interface, output
 export interface TextTransformation {

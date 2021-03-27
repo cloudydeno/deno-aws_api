@@ -160,6 +160,30 @@ export default class WorkSpaces {
     }, await resp.json());
   }
 
+  async createWorkspaceBundle(
+    {abortSignal, ...params}: RequestConfig & s.CreateWorkspaceBundleRequest,
+  ): Promise<s.CreateWorkspaceBundleResult> {
+    const body: jsonP.JSONObject = {
+      BundleName: params["BundleName"],
+      BundleDescription: params["BundleDescription"],
+      ImageId: params["ImageId"],
+      ComputeType: fromComputeType(params["ComputeType"]),
+      UserStorage: fromUserStorage(params["UserStorage"]),
+      RootStorage: fromRootStorage(params["RootStorage"]),
+      Tags: params["Tags"]?.map(x => fromTag(x)),
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "CreateWorkspaceBundle",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "WorkspaceBundle": toWorkspaceBundle,
+      },
+    }, await resp.json());
+  }
+
   async createWorkspaces(
     {abortSignal, ...params}: RequestConfig & s.CreateWorkspacesRequest,
   ): Promise<s.CreateWorkspacesResult> {
@@ -221,6 +245,22 @@ export default class WorkSpaces {
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteTags",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
+  }
+
+  async deleteWorkspaceBundle(
+    {abortSignal, ...params}: RequestConfig & s.DeleteWorkspaceBundleRequest = {},
+  ): Promise<s.DeleteWorkspaceBundleResult> {
+    const body: jsonP.JSONObject = {
+      BundleId: params["BundleId"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DeleteWorkspaceBundle",
     });
     return jsonP.readObj({
       required: {},
@@ -941,6 +981,23 @@ export default class WorkSpaces {
     }, await resp.json());
   }
 
+  async updateWorkspaceBundle(
+    {abortSignal, ...params}: RequestConfig & s.UpdateWorkspaceBundleRequest = {},
+  ): Promise<s.UpdateWorkspaceBundleResult> {
+    const body: jsonP.JSONObject = {
+      BundleId: params["BundleId"],
+      ImageId: params["ImageId"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "UpdateWorkspaceBundle",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
+  }
+
   async updateWorkspaceImagePermission(
     {abortSignal, ...params}: RequestConfig & s.UpdateWorkspaceImagePermissionRequest,
   ): Promise<s.UpdateWorkspaceImagePermissionResult> {
@@ -992,6 +1049,51 @@ function toTag(root: jsonP.JSONValue): s.Tag {
     },
     optional: {
       "Value": "s",
+    },
+  }, root);
+}
+
+function fromComputeType(input?: s.ComputeType | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    Name: input["Name"],
+  }
+}
+function toComputeType(root: jsonP.JSONValue): s.ComputeType {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "Name": (x: jsonP.JSONValue) => cmnP.readEnum<s.Compute>(x),
+    },
+  }, root);
+}
+
+function fromUserStorage(input?: s.UserStorage | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    Capacity: input["Capacity"],
+  }
+}
+function toUserStorage(root: jsonP.JSONValue): s.UserStorage {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "Capacity": "s",
+    },
+  }, root);
+}
+
+function fromRootStorage(input?: s.RootStorage | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    Capacity: input["Capacity"],
+  }
+}
+function toRootStorage(root: jsonP.JSONValue): s.RootStorage {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "Capacity": "s",
     },
   }, root);
 }
@@ -1178,6 +1280,24 @@ function toConnectionAliasPermission(root: jsonP.JSONValue): s.ConnectionAliasPe
   }, root);
 }
 
+function toWorkspaceBundle(root: jsonP.JSONValue): s.WorkspaceBundle {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "BundleId": "s",
+      "Name": "s",
+      "Owner": "s",
+      "Description": "s",
+      "ImageId": "s",
+      "RootStorage": toRootStorage,
+      "UserStorage": toUserStorage,
+      "ComputeType": toComputeType,
+      "LastUpdatedTime": "d",
+      "CreationTime": "d",
+    },
+  }, root);
+}
+
 function toFailedCreateWorkspaceRequest(root: jsonP.JSONValue): s.FailedCreateWorkspaceRequest {
   return jsonP.readObj({
     required: {},
@@ -1279,50 +1399,6 @@ function toWorkspacesIpGroup(root: jsonP.JSONValue): s.WorkspacesIpGroup {
       "groupName": "s",
       "groupDesc": "s",
       "userRules": [toIpRuleItem],
-    },
-  }, root);
-}
-
-function toWorkspaceBundle(root: jsonP.JSONValue): s.WorkspaceBundle {
-  return jsonP.readObj({
-    required: {},
-    optional: {
-      "BundleId": "s",
-      "Name": "s",
-      "Owner": "s",
-      "Description": "s",
-      "ImageId": "s",
-      "RootStorage": toRootStorage,
-      "UserStorage": toUserStorage,
-      "ComputeType": toComputeType,
-      "LastUpdatedTime": "d",
-    },
-  }, root);
-}
-
-function toRootStorage(root: jsonP.JSONValue): s.RootStorage {
-  return jsonP.readObj({
-    required: {},
-    optional: {
-      "Capacity": "s",
-    },
-  }, root);
-}
-
-function toUserStorage(root: jsonP.JSONValue): s.UserStorage {
-  return jsonP.readObj({
-    required: {},
-    optional: {
-      "Capacity": "s",
-    },
-  }, root);
-}
-
-function toComputeType(root: jsonP.JSONValue): s.ComputeType {
-  return jsonP.readObj({
-    required: {},
-    optional: {
-      "Name": (x: jsonP.JSONValue) => cmnP.readEnum<s.Compute>(x),
     },
   }, root);
 }

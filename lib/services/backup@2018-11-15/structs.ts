@@ -96,6 +96,12 @@ export interface DescribeRestoreJobInput {
 }
 
 // refs: 1 - tags: named, input
+export interface DisassociateRecoveryPointInput {
+  BackupVaultName: string;
+  RecoveryPointArn: string;
+}
+
+// refs: 1 - tags: named, input
 export interface ExportBackupPlanTemplateInput {
   BackupPlanId: string;
 }
@@ -639,6 +645,7 @@ export interface BackupRuleInput {
   Lifecycle?: Lifecycle | null;
   RecoveryPointTags?: { [key: string]: string | null | undefined } | null;
   CopyActions?: CopyAction[] | null;
+  EnableContinuousBackup?: boolean | null;
 }
 
 // refs: 16 - tags: input, named, interface, output
@@ -793,6 +800,7 @@ export interface BackupRule {
   RecoveryPointTags?: { [key: string]: string | null | undefined } | null;
   RuleId?: string | null;
   CopyActions?: CopyAction[] | null;
+  EnableContinuousBackup?: boolean | null;
 }
 
 // refs: 1 - tags: output, named, interface

@@ -5,7 +5,7 @@ interface RequestConfig {
 }
 
 export * from "./structs.ts";
-import * as Base64 from "https://deno.land/std@0.86.0/encoding/base64.ts";
+import * as Base64 from "https://deno.land/std@0.91.0/encoding/base64.ts";
 import * as client from "../../client/common.ts";
 import * as cmnP from "../../encoding/common.ts";
 import * as jsonP from "../../encoding/json.ts";
@@ -1738,6 +1738,7 @@ export default class Glue {
       NextToken: params["NextToken"],
       Segment: fromSegment(params["Segment"]),
       MaxResults: params["MaxResults"],
+      ExcludeColumnSchema: params["ExcludeColumnSchema"],
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,

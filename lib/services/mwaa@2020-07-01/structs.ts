@@ -17,6 +17,7 @@ export interface CreateEnvironmentInput {
   KmsKey?: string | null;
   LoggingConfiguration?: LoggingConfigurationInput | null;
   MaxWorkers?: number | null;
+  MinWorkers?: number | null;
   Name: string;
   NetworkConfiguration: NetworkConfiguration;
   PluginsS3ObjectVersion?: string | null;
@@ -82,6 +83,7 @@ export interface UpdateEnvironmentInput {
   ExecutionRoleArn?: string | null;
   LoggingConfiguration?: LoggingConfigurationInput | null;
   MaxWorkers?: number | null;
+  MinWorkers?: number | null;
   Name: string;
   NetworkConfiguration?: UpdateNetworkConfigurationInput | null;
   PluginsS3ObjectVersion?: string | null;
@@ -256,6 +258,7 @@ export interface Environment {
   LastUpdate?: LastUpdate | null;
   LoggingConfiguration?: LoggingConfiguration | null;
   MaxWorkers?: number | null;
+  MinWorkers?: number | null;
   Name?: string | null;
   NetworkConfiguration?: NetworkConfiguration | null;
   PluginsS3ObjectVersion?: string | null;
@@ -315,4 +318,6 @@ export type EnvironmentStatus =
 | "UPDATING"
 | "DELETING"
 | "DELETED"
+| "UNAVAILABLE"
+| "UPDATE_FAILED"
 | cmnP.UnexpectedEnumValue;

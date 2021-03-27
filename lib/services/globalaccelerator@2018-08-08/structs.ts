@@ -36,6 +36,7 @@ export interface CreateAcceleratorRequest {
 export interface CreateCustomRoutingAcceleratorRequest {
   Name: string;
   IpAddressType?: IpAddressType | null;
+  IpAddresses?: string[] | null;
   Enabled?: boolean | null;
   IdempotencyToken: string;
   Tags?: Tag[] | null;

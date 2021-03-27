@@ -13,12 +13,30 @@ export interface CancelReplayRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface CreateApiDestinationRequest {
+  Name: string;
+  Description?: string | null;
+  ConnectionArn: string;
+  InvocationEndpoint: string;
+  HttpMethod: ApiDestinationHttpMethod;
+  InvocationRateLimitPerSecond?: number | null;
+}
+
+// refs: 1 - tags: named, input
 export interface CreateArchiveRequest {
   ArchiveName: string;
   EventSourceArn: string;
   Description?: string | null;
   EventPattern?: string | null;
   RetentionDays?: number | null;
+}
+
+// refs: 1 - tags: named, input
+export interface CreateConnectionRequest {
+  Name: string;
+  Description?: string | null;
+  AuthorizationType: ConnectionAuthorizationType;
+  AuthParameters: CreateConnectionAuthRequestParameters;
 }
 
 // refs: 1 - tags: named, input
@@ -40,8 +58,23 @@ export interface DeactivateEventSourceRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface DeauthorizeConnectionRequest {
+  Name: string;
+}
+
+// refs: 1 - tags: named, input
+export interface DeleteApiDestinationRequest {
+  Name: string;
+}
+
+// refs: 1 - tags: named, input
 export interface DeleteArchiveRequest {
   ArchiveName: string;
+}
+
+// refs: 1 - tags: named, input
+export interface DeleteConnectionRequest {
+  Name: string;
 }
 
 // refs: 1 - tags: named, input
@@ -63,8 +96,18 @@ export interface DeleteRuleRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface DescribeApiDestinationRequest {
+  Name: string;
+}
+
+// refs: 1 - tags: named, input
 export interface DescribeArchiveRequest {
   ArchiveName: string;
+}
+
+// refs: 1 - tags: named, input
+export interface DescribeConnectionRequest {
+  Name: string;
 }
 
 // refs: 1 - tags: named, input
@@ -106,10 +149,26 @@ export interface EnableRuleRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface ListApiDestinationsRequest {
+  NamePrefix?: string | null;
+  ConnectionArn?: string | null;
+  NextToken?: string | null;
+  Limit?: number | null;
+}
+
+// refs: 1 - tags: named, input
 export interface ListArchivesRequest {
   NamePrefix?: string | null;
   EventSourceArn?: string | null;
   State?: ArchiveState | null;
+  NextToken?: string | null;
+  Limit?: number | null;
+}
+
+// refs: 1 - tags: named, input
+export interface ListConnectionsRequest {
+  NamePrefix?: string | null;
+  ConnectionState?: ConnectionState | null;
   NextToken?: string | null;
   Limit?: number | null;
 }
@@ -263,11 +322,29 @@ export interface UntagResourceRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface UpdateApiDestinationRequest {
+  Name: string;
+  Description?: string | null;
+  ConnectionArn?: string | null;
+  InvocationEndpoint?: string | null;
+  HttpMethod?: ApiDestinationHttpMethod | null;
+  InvocationRateLimitPerSecond?: number | null;
+}
+
+// refs: 1 - tags: named, input
 export interface UpdateArchiveRequest {
   ArchiveName: string;
   Description?: string | null;
   EventPattern?: string | null;
   RetentionDays?: number | null;
+}
+
+// refs: 1 - tags: named, input
+export interface UpdateConnectionRequest {
+  Name: string;
+  Description?: string | null;
+  AuthorizationType?: ConnectionAuthorizationType | null;
+  AuthParameters?: UpdateConnectionAuthRequestParameters | null;
 }
 
 // refs: 1 - tags: named, output
@@ -278,11 +355,27 @@ export interface CancelReplayResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface CreateApiDestinationResponse {
+  ApiDestinationArn?: string | null;
+  ApiDestinationState?: ApiDestinationState | null;
+  CreationTime?: Date | number | null;
+  LastModifiedTime?: Date | number | null;
+}
+
+// refs: 1 - tags: named, output
 export interface CreateArchiveResponse {
   ArchiveArn?: string | null;
   State?: ArchiveState | null;
   StateReason?: string | null;
   CreationTime?: Date | number | null;
+}
+
+// refs: 1 - tags: named, output
+export interface CreateConnectionResponse {
+  ConnectionArn?: string | null;
+  ConnectionState?: ConnectionState | null;
+  CreationTime?: Date | number | null;
+  LastModifiedTime?: Date | number | null;
 }
 
 // refs: 1 - tags: named, output
@@ -296,7 +389,43 @@ export interface CreatePartnerEventSourceResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface DeauthorizeConnectionResponse {
+  ConnectionArn?: string | null;
+  ConnectionState?: ConnectionState | null;
+  CreationTime?: Date | number | null;
+  LastModifiedTime?: Date | number | null;
+  LastAuthorizedTime?: Date | number | null;
+}
+
+// refs: 1 - tags: named, output
+export interface DeleteApiDestinationResponse {
+}
+
+// refs: 1 - tags: named, output
 export interface DeleteArchiveResponse {
+}
+
+// refs: 1 - tags: named, output
+export interface DeleteConnectionResponse {
+  ConnectionArn?: string | null;
+  ConnectionState?: ConnectionState | null;
+  CreationTime?: Date | number | null;
+  LastModifiedTime?: Date | number | null;
+  LastAuthorizedTime?: Date | number | null;
+}
+
+// refs: 1 - tags: named, output
+export interface DescribeApiDestinationResponse {
+  ApiDestinationArn?: string | null;
+  Name?: string | null;
+  Description?: string | null;
+  ApiDestinationState?: ApiDestinationState | null;
+  ConnectionArn?: string | null;
+  InvocationEndpoint?: string | null;
+  HttpMethod?: ApiDestinationHttpMethod | null;
+  InvocationRateLimitPerSecond?: number | null;
+  CreationTime?: Date | number | null;
+  LastModifiedTime?: Date | number | null;
 }
 
 // refs: 1 - tags: named, output
@@ -312,6 +441,21 @@ export interface DescribeArchiveResponse {
   SizeBytes?: number | null;
   EventCount?: number | null;
   CreationTime?: Date | number | null;
+}
+
+// refs: 1 - tags: named, output
+export interface DescribeConnectionResponse {
+  ConnectionArn?: string | null;
+  Name?: string | null;
+  Description?: string | null;
+  ConnectionState?: ConnectionState | null;
+  StateReason?: string | null;
+  AuthorizationType?: ConnectionAuthorizationType | null;
+  SecretArn?: string | null;
+  AuthParameters?: ConnectionAuthResponseParameters | null;
+  CreationTime?: Date | number | null;
+  LastModifiedTime?: Date | number | null;
+  LastAuthorizedTime?: Date | number | null;
 }
 
 // refs: 1 - tags: named, output
@@ -368,8 +512,20 @@ export interface DescribeRuleResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface ListApiDestinationsResponse {
+  ApiDestinations?: ApiDestination[] | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
 export interface ListArchivesResponse {
   Archives?: Archive[] | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface ListConnectionsResponse {
+  Connections?: Connection[] | null;
   NextToken?: string | null;
 }
 
@@ -477,11 +633,115 @@ export interface UntagResourceResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface UpdateApiDestinationResponse {
+  ApiDestinationArn?: string | null;
+  ApiDestinationState?: ApiDestinationState | null;
+  CreationTime?: Date | number | null;
+  LastModifiedTime?: Date | number | null;
+}
+
+// refs: 1 - tags: named, output
 export interface UpdateArchiveResponse {
   ArchiveArn?: string | null;
   State?: ArchiveState | null;
   StateReason?: string | null;
   CreationTime?: Date | number | null;
+}
+
+// refs: 1 - tags: named, output
+export interface UpdateConnectionResponse {
+  ConnectionArn?: string | null;
+  ConnectionState?: ConnectionState | null;
+  CreationTime?: Date | number | null;
+  LastModifiedTime?: Date | number | null;
+  LastAuthorizedTime?: Date | number | null;
+}
+
+// refs: 4 - tags: input, named, enum, output
+export type ApiDestinationHttpMethod =
+| "POST"
+| "GET"
+| "HEAD"
+| "OPTIONS"
+| "PUT"
+| "PATCH"
+| "DELETE"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 4 - tags: input, named, enum, output
+export type ConnectionAuthorizationType =
+| "BASIC"
+| "OAUTH_CLIENT_CREDENTIALS"
+| "API_KEY"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 1 - tags: input, named, interface
+export interface CreateConnectionAuthRequestParameters {
+  BasicAuthParameters?: CreateConnectionBasicAuthRequestParameters | null;
+  OAuthParameters?: CreateConnectionOAuthRequestParameters | null;
+  ApiKeyAuthParameters?: CreateConnectionApiKeyAuthRequestParameters | null;
+  InvocationHttpParameters?: ConnectionHttpParameters | null;
+}
+
+// refs: 1 - tags: input, named, interface
+export interface CreateConnectionBasicAuthRequestParameters {
+  Username: string;
+  Password: string;
+}
+
+// refs: 1 - tags: input, named, interface
+export interface CreateConnectionOAuthRequestParameters {
+  ClientParameters: CreateConnectionOAuthClientRequestParameters;
+  AuthorizationEndpoint: string;
+  HttpMethod: ConnectionOAuthHttpMethod;
+  OAuthHttpParameters?: ConnectionHttpParameters | null;
+}
+
+// refs: 1 - tags: input, named, interface
+export interface CreateConnectionOAuthClientRequestParameters {
+  ClientID: string;
+  ClientSecret: string;
+}
+
+// refs: 3 - tags: input, named, enum, output
+export type ConnectionOAuthHttpMethod =
+| "GET"
+| "POST"
+| "PUT"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 6 - tags: input, named, interface, output
+export interface ConnectionHttpParameters {
+  HeaderParameters?: ConnectionHeaderParameter[] | null;
+  QueryStringParameters?: ConnectionQueryStringParameter[] | null;
+  BodyParameters?: ConnectionBodyParameter[] | null;
+}
+
+// refs: 6 - tags: input, named, interface, output
+export interface ConnectionHeaderParameter {
+  Key?: string | null;
+  Value?: string | null;
+  IsValueSecret?: boolean | null;
+}
+
+// refs: 6 - tags: input, named, interface, output
+export interface ConnectionQueryStringParameter {
+  Key?: string | null;
+  Value?: string | null;
+  IsValueSecret?: boolean | null;
+}
+
+// refs: 6 - tags: input, named, interface, output
+export interface ConnectionBodyParameter {
+  Key?: string | null;
+  Value?: string | null;
+  IsValueSecret?: boolean | null;
+}
+
+// refs: 1 - tags: input, named, interface
+export interface CreateConnectionApiKeyAuthRequestParameters {
+  ApiKeyName: string;
+  ApiKeyValue: string;
 }
 
 // refs: 4 - tags: input, named, interface, output
@@ -498,6 +758,17 @@ export type ArchiveState =
 | "UPDATING"
 | "CREATE_FAILED"
 | "UPDATE_FAILED"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 7 - tags: input, named, enum, output
+export type ConnectionState =
+| "CREATING"
+| "UPDATING"
+| "DELETING"
+| "AUTHORIZED"
+| "DEAUTHORIZED"
+| "AUTHORIZING"
+| "DEAUTHORIZING"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 5 - tags: input, named, enum, output
@@ -518,6 +789,7 @@ export interface PutEventsRequestEntry {
   DetailType?: string | null;
   Detail?: string | null;
   EventBusName?: string | null;
+  TraceHeader?: string | null;
 }
 
 // refs: 1 - tags: input, named, interface
@@ -557,6 +829,7 @@ export interface Target {
   SqsParameters?: SqsParameters | null;
   HttpParameters?: HttpParameters | null;
   RedshiftDataParameters?: RedshiftDataParameters | null;
+  SageMakerPipelineParameters?: SageMakerPipelineParameters | null;
   DeadLetterConfig?: DeadLetterConfig | null;
   RetryPolicy?: RetryPolicy | null;
 }
@@ -658,6 +931,17 @@ export interface RedshiftDataParameters {
 }
 
 // refs: 2 - tags: input, named, interface, output
+export interface SageMakerPipelineParameters {
+  PipelineParameterList?: SageMakerPipelineParameter[] | null;
+}
+
+// refs: 2 - tags: input, named, interface, output
+export interface SageMakerPipelineParameter {
+  Name: string;
+  Value: string;
+}
+
+// refs: 2 - tags: input, named, interface, output
 export interface DeadLetterConfig {
   Arn?: string | null;
 }
@@ -674,12 +958,96 @@ export interface ReplayDestination {
   FilterArns?: string[] | null;
 }
 
+// refs: 1 - tags: input, named, interface
+export interface UpdateConnectionAuthRequestParameters {
+  BasicAuthParameters?: UpdateConnectionBasicAuthRequestParameters | null;
+  OAuthParameters?: UpdateConnectionOAuthRequestParameters | null;
+  ApiKeyAuthParameters?: UpdateConnectionApiKeyAuthRequestParameters | null;
+  InvocationHttpParameters?: ConnectionHttpParameters | null;
+}
+
+// refs: 1 - tags: input, named, interface
+export interface UpdateConnectionBasicAuthRequestParameters {
+  Username?: string | null;
+  Password?: string | null;
+}
+
+// refs: 1 - tags: input, named, interface
+export interface UpdateConnectionOAuthRequestParameters {
+  ClientParameters?: UpdateConnectionOAuthClientRequestParameters | null;
+  AuthorizationEndpoint?: string | null;
+  HttpMethod?: ConnectionOAuthHttpMethod | null;
+  OAuthHttpParameters?: ConnectionHttpParameters | null;
+}
+
+// refs: 1 - tags: input, named, interface
+export interface UpdateConnectionOAuthClientRequestParameters {
+  ClientID?: string | null;
+  ClientSecret?: string | null;
+}
+
+// refs: 1 - tags: input, named, interface
+export interface UpdateConnectionApiKeyAuthRequestParameters {
+  ApiKeyName?: string | null;
+  ApiKeyValue?: string | null;
+}
+
+// refs: 4 - tags: output, named, enum
+export type ApiDestinationState =
+| "ACTIVE"
+| "INACTIVE"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 1 - tags: output, named, interface
+export interface ConnectionAuthResponseParameters {
+  BasicAuthParameters?: ConnectionBasicAuthResponseParameters | null;
+  OAuthParameters?: ConnectionOAuthResponseParameters | null;
+  ApiKeyAuthParameters?: ConnectionApiKeyAuthResponseParameters | null;
+  InvocationHttpParameters?: ConnectionHttpParameters | null;
+}
+
+// refs: 1 - tags: output, named, interface
+export interface ConnectionBasicAuthResponseParameters {
+  Username?: string | null;
+}
+
+// refs: 1 - tags: output, named, interface
+export interface ConnectionOAuthResponseParameters {
+  ClientParameters?: ConnectionOAuthClientResponseParameters | null;
+  AuthorizationEndpoint?: string | null;
+  HttpMethod?: ConnectionOAuthHttpMethod | null;
+  OAuthHttpParameters?: ConnectionHttpParameters | null;
+}
+
+// refs: 1 - tags: output, named, interface
+export interface ConnectionOAuthClientResponseParameters {
+  ClientID?: string | null;
+}
+
+// refs: 1 - tags: output, named, interface
+export interface ConnectionApiKeyAuthResponseParameters {
+  ApiKeyName?: string | null;
+}
+
 // refs: 3 - tags: output, named, enum
 export type EventSourceState =
 | "PENDING"
 | "ACTIVE"
 | "DELETED"
 | cmnP.UnexpectedEnumValue;
+
+// refs: 1 - tags: output, named, interface
+export interface ApiDestination {
+  ApiDestinationArn?: string | null;
+  Name?: string | null;
+  ApiDestinationState?: ApiDestinationState | null;
+  ConnectionArn?: string | null;
+  InvocationEndpoint?: string | null;
+  HttpMethod?: ApiDestinationHttpMethod | null;
+  InvocationRateLimitPerSecond?: number | null;
+  CreationTime?: Date | number | null;
+  LastModifiedTime?: Date | number | null;
+}
 
 // refs: 1 - tags: output, named, interface
 export interface Archive {
@@ -691,6 +1059,18 @@ export interface Archive {
   SizeBytes?: number | null;
   EventCount?: number | null;
   CreationTime?: Date | number | null;
+}
+
+// refs: 1 - tags: output, named, interface
+export interface Connection {
+  ConnectionArn?: string | null;
+  Name?: string | null;
+  ConnectionState?: ConnectionState | null;
+  StateReason?: string | null;
+  AuthorizationType?: ConnectionAuthorizationType | null;
+  CreationTime?: Date | number | null;
+  LastModifiedTime?: Date | number | null;
+  LastAuthorizedTime?: Date | number | null;
 }
 
 // refs: 1 - tags: output, named, interface

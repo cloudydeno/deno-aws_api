@@ -5,7 +5,7 @@ interface RequestConfig {
 }
 
 export * from "./structs.ts";
-import * as Base64 from "https://deno.land/std@0.86.0/encoding/base64.ts";
+import * as Base64 from "https://deno.land/std@0.91.0/encoding/base64.ts";
 import * as client from "../../client/common.ts";
 import * as qsP from "../../encoding/querystring.ts";
 import * as xmlP from "../../encoding/xml.ts";
@@ -177,6 +177,7 @@ export default class IAM {
     const prefix = '';
     body.append(prefix+"InstanceProfileName", (params["InstanceProfileName"] ?? '').toString());
     if ("Path" in params) body.append(prefix+"Path", (params["Path"] ?? '').toString());
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateInstanceProfile",
@@ -213,14 +214,18 @@ export default class IAM {
     body.append(prefix+"Url", (params["Url"] ?? '').toString());
     if (params["ClientIDList"]) qsP.appendList(body, prefix+"ClientIDList", params["ClientIDList"], {"entryPrefix":".member."})
     if (params["ThumbprintList"]) qsP.appendList(body, prefix+"ThumbprintList", params["ThumbprintList"], {"entryPrefix":".member."})
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateOpenIDConnectProvider",
     });
     const xml = xmlP.readXmlResult(await resp.text(), "CreateOpenIDConnectProviderResult");
-    return xml.strings({
-      optional: {"OpenIDConnectProviderArn":true},
-    });
+    return {
+      ...xml.strings({
+        optional: {"OpenIDConnectProviderArn":true},
+      }),
+      Tags: xml.getList("Tags", "member").map(Tag_Parse),
+    };
   }
 
   async createPolicy(
@@ -232,6 +237,7 @@ export default class IAM {
     if ("Path" in params) body.append(prefix+"Path", (params["Path"] ?? '').toString());
     body.append(prefix+"PolicyDocument", (params["PolicyDocument"] ?? '').toString());
     if ("Description" in params) body.append(prefix+"Description", (params["Description"] ?? '').toString());
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreatePolicy",
@@ -289,14 +295,18 @@ export default class IAM {
     const prefix = '';
     body.append(prefix+"SAMLMetadataDocument", (params["SAMLMetadataDocument"] ?? '').toString());
     body.append(prefix+"Name", (params["Name"] ?? '').toString());
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateSAMLProvider",
     });
     const xml = xmlP.readXmlResult(await resp.text(), "CreateSAMLProviderResult");
-    return xml.strings({
-      optional: {"SAMLProviderArn":true},
-    });
+    return {
+      ...xml.strings({
+        optional: {"SAMLProviderArn":true},
+      }),
+      Tags: xml.getList("Tags", "member").map(Tag_Parse),
+    };
   }
 
   async createServiceLinkedRole(
@@ -360,6 +370,7 @@ export default class IAM {
     const prefix = '';
     if ("Path" in params) body.append(prefix+"Path", (params["Path"] ?? '').toString());
     body.append(prefix+"VirtualMFADeviceName", (params["VirtualMFADeviceName"] ?? '').toString());
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateVirtualMFADevice",
@@ -980,6 +991,7 @@ export default class IAM {
       ClientIDList: xml.getList("ClientIDList", "member").map(x => x.content ?? ''),
       ThumbprintList: xml.getList("ThumbprintList", "member").map(x => x.content ?? ''),
       CreateDate: xml.first("CreateDate", false, x => xmlP.parseTimestamp(x.content)),
+      Tags: xml.getList("Tags", "member").map(Tag_Parse),
     };
   }
 
@@ -1095,6 +1107,7 @@ export default class IAM {
       }),
       CreateDate: xml.first("CreateDate", false, x => xmlP.parseTimestamp(x.content)),
       ValidUntil: xml.first("ValidUntil", false, x => xmlP.parseTimestamp(x.content)),
+      Tags: xml.getList("Tags", "member").map(Tag_Parse),
     };
   }
 
@@ -1441,6 +1454,28 @@ export default class IAM {
     };
   }
 
+  async listInstanceProfileTags(
+    {abortSignal, ...params}: RequestConfig & s.ListInstanceProfileTagsRequest,
+  ): Promise<s.ListInstanceProfileTagsResponse> {
+    const body = new URLSearchParams;
+    const prefix = '';
+    body.append(prefix+"InstanceProfileName", (params["InstanceProfileName"] ?? '').toString());
+    if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
+    if ("MaxItems" in params) body.append(prefix+"MaxItems", (params["MaxItems"] ?? '').toString());
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "ListInstanceProfileTags",
+    });
+    const xml = xmlP.readXmlResult(await resp.text(), "ListInstanceProfileTagsResult");
+    return {
+      ...xml.strings({
+        optional: {"Marker":true},
+      }),
+      Tags: xml.getList("Tags", "member").map(Tag_Parse),
+      IsTruncated: xml.first("IsTruncated", false, x => x.content === 'true'),
+    };
+  }
+
   async listInstanceProfiles(
     {abortSignal, ...params}: RequestConfig & s.ListInstanceProfilesRequest = {},
   ): Promise<s.ListInstanceProfilesResponse> {
@@ -1485,6 +1520,28 @@ export default class IAM {
     };
   }
 
+  async listMFADeviceTags(
+    {abortSignal, ...params}: RequestConfig & s.ListMFADeviceTagsRequest,
+  ): Promise<s.ListMFADeviceTagsResponse> {
+    const body = new URLSearchParams;
+    const prefix = '';
+    body.append(prefix+"SerialNumber", (params["SerialNumber"] ?? '').toString());
+    if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
+    if ("MaxItems" in params) body.append(prefix+"MaxItems", (params["MaxItems"] ?? '').toString());
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "ListMFADeviceTags",
+    });
+    const xml = xmlP.readXmlResult(await resp.text(), "ListMFADeviceTagsResult");
+    return {
+      ...xml.strings({
+        optional: {"Marker":true},
+      }),
+      Tags: xml.getList("Tags", "member").map(Tag_Parse),
+      IsTruncated: xml.first("IsTruncated", false, x => x.content === 'true'),
+    };
+  }
+
   async listMFADevices(
     {abortSignal, ...params}: RequestConfig & s.ListMFADevicesRequest = {},
   ): Promise<s.ListMFADevicesResponse> {
@@ -1503,6 +1560,28 @@ export default class IAM {
         optional: {"Marker":true},
       }),
       MFADevices: xml.getList("MFADevices", "member").map(MFADevice_Parse),
+      IsTruncated: xml.first("IsTruncated", false, x => x.content === 'true'),
+    };
+  }
+
+  async listOpenIDConnectProviderTags(
+    {abortSignal, ...params}: RequestConfig & s.ListOpenIDConnectProviderTagsRequest,
+  ): Promise<s.ListOpenIDConnectProviderTagsResponse> {
+    const body = new URLSearchParams;
+    const prefix = '';
+    body.append(prefix+"OpenIDConnectProviderArn", (params["OpenIDConnectProviderArn"] ?? '').toString());
+    if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
+    if ("MaxItems" in params) body.append(prefix+"MaxItems", (params["MaxItems"] ?? '').toString());
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "ListOpenIDConnectProviderTags",
+    });
+    const xml = xmlP.readXmlResult(await resp.text(), "ListOpenIDConnectProviderTagsResult");
+    return {
+      ...xml.strings({
+        optional: {"Marker":true},
+      }),
+      Tags: xml.getList("Tags", "member").map(Tag_Parse),
       IsTruncated: xml.first("IsTruncated", false, x => x.content === 'true'),
     };
   }
@@ -1566,6 +1645,28 @@ export default class IAM {
         optional: {"Marker":true},
       }),
       PoliciesGrantingServiceAccess: xml.getList("PoliciesGrantingServiceAccess", "member").map(ListPoliciesGrantingServiceAccessEntry_Parse),
+      IsTruncated: xml.first("IsTruncated", false, x => x.content === 'true'),
+    };
+  }
+
+  async listPolicyTags(
+    {abortSignal, ...params}: RequestConfig & s.ListPolicyTagsRequest,
+  ): Promise<s.ListPolicyTagsResponse> {
+    const body = new URLSearchParams;
+    const prefix = '';
+    body.append(prefix+"PolicyArn", (params["PolicyArn"] ?? '').toString());
+    if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
+    if ("MaxItems" in params) body.append(prefix+"MaxItems", (params["MaxItems"] ?? '').toString());
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "ListPolicyTags",
+    });
+    const xml = xmlP.readXmlResult(await resp.text(), "ListPolicyTagsResult");
+    return {
+      ...xml.strings({
+        optional: {"Marker":true},
+      }),
+      Tags: xml.getList("Tags", "member").map(Tag_Parse),
       IsTruncated: xml.first("IsTruncated", false, x => x.content === 'true'),
     };
   }
@@ -1658,6 +1759,28 @@ export default class IAM {
     };
   }
 
+  async listSAMLProviderTags(
+    {abortSignal, ...params}: RequestConfig & s.ListSAMLProviderTagsRequest,
+  ): Promise<s.ListSAMLProviderTagsResponse> {
+    const body = new URLSearchParams;
+    const prefix = '';
+    body.append(prefix+"SAMLProviderArn", (params["SAMLProviderArn"] ?? '').toString());
+    if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
+    if ("MaxItems" in params) body.append(prefix+"MaxItems", (params["MaxItems"] ?? '').toString());
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "ListSAMLProviderTags",
+    });
+    const xml = xmlP.readXmlResult(await resp.text(), "ListSAMLProviderTagsResult");
+    return {
+      ...xml.strings({
+        optional: {"Marker":true},
+      }),
+      Tags: xml.getList("Tags", "member").map(Tag_Parse),
+      IsTruncated: xml.first("IsTruncated", false, x => x.content === 'true'),
+    };
+  }
+
   async listSAMLProviders(
     {abortSignal, ...params}: RequestConfig & s.ListSAMLProvidersRequest = {},
   ): Promise<s.ListSAMLProvidersResponse> {
@@ -1692,6 +1815,28 @@ export default class IAM {
         optional: {"Marker":true},
       }),
       SSHPublicKeys: xml.getList("SSHPublicKeys", "member").map(SSHPublicKeyMetadata_Parse),
+      IsTruncated: xml.first("IsTruncated", false, x => x.content === 'true'),
+    };
+  }
+
+  async listServerCertificateTags(
+    {abortSignal, ...params}: RequestConfig & s.ListServerCertificateTagsRequest,
+  ): Promise<s.ListServerCertificateTagsResponse> {
+    const body = new URLSearchParams;
+    const prefix = '';
+    body.append(prefix+"ServerCertificateName", (params["ServerCertificateName"] ?? '').toString());
+    if ("Marker" in params) body.append(prefix+"Marker", (params["Marker"] ?? '').toString());
+    if ("MaxItems" in params) body.append(prefix+"MaxItems", (params["MaxItems"] ?? '').toString());
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "ListServerCertificateTags",
+    });
+    const xml = xmlP.readXmlResult(await resp.text(), "ListServerCertificateTagsResult");
+    return {
+      ...xml.strings({
+        optional: {"Marker":true},
+      }),
+      Tags: xml.getList("Tags", "member").map(Tag_Parse),
       IsTruncated: xml.first("IsTruncated", false, x => x.content === 'true'),
     };
   }
@@ -2070,6 +2215,58 @@ export default class IAM {
     };
   }
 
+  async tagInstanceProfile(
+    {abortSignal, ...params}: RequestConfig & s.TagInstanceProfileRequest,
+  ): Promise<void> {
+    const body = new URLSearchParams;
+    const prefix = '';
+    body.append(prefix+"InstanceProfileName", (params["InstanceProfileName"] ?? '').toString());
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".member."})
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "TagInstanceProfile",
+    });
+  }
+
+  async tagMFADevice(
+    {abortSignal, ...params}: RequestConfig & s.TagMFADeviceRequest,
+  ): Promise<void> {
+    const body = new URLSearchParams;
+    const prefix = '';
+    body.append(prefix+"SerialNumber", (params["SerialNumber"] ?? '').toString());
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".member."})
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "TagMFADevice",
+    });
+  }
+
+  async tagOpenIDConnectProvider(
+    {abortSignal, ...params}: RequestConfig & s.TagOpenIDConnectProviderRequest,
+  ): Promise<void> {
+    const body = new URLSearchParams;
+    const prefix = '';
+    body.append(prefix+"OpenIDConnectProviderArn", (params["OpenIDConnectProviderArn"] ?? '').toString());
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".member."})
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "TagOpenIDConnectProvider",
+    });
+  }
+
+  async tagPolicy(
+    {abortSignal, ...params}: RequestConfig & s.TagPolicyRequest,
+  ): Promise<void> {
+    const body = new URLSearchParams;
+    const prefix = '';
+    body.append(prefix+"PolicyArn", (params["PolicyArn"] ?? '').toString());
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".member."})
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "TagPolicy",
+    });
+  }
+
   async tagRole(
     {abortSignal, ...params}: RequestConfig & s.TagRoleRequest,
   ): Promise<void> {
@@ -2080,6 +2277,32 @@ export default class IAM {
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "TagRole",
+    });
+  }
+
+  async tagSAMLProvider(
+    {abortSignal, ...params}: RequestConfig & s.TagSAMLProviderRequest,
+  ): Promise<void> {
+    const body = new URLSearchParams;
+    const prefix = '';
+    body.append(prefix+"SAMLProviderArn", (params["SAMLProviderArn"] ?? '').toString());
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".member."})
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "TagSAMLProvider",
+    });
+  }
+
+  async tagServerCertificate(
+    {abortSignal, ...params}: RequestConfig & s.TagServerCertificateRequest,
+  ): Promise<void> {
+    const body = new URLSearchParams;
+    const prefix = '';
+    body.append(prefix+"ServerCertificateName", (params["ServerCertificateName"] ?? '').toString());
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".member."})
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "TagServerCertificate",
     });
   }
 
@@ -2096,6 +2319,58 @@ export default class IAM {
     });
   }
 
+  async untagInstanceProfile(
+    {abortSignal, ...params}: RequestConfig & s.UntagInstanceProfileRequest,
+  ): Promise<void> {
+    const body = new URLSearchParams;
+    const prefix = '';
+    body.append(prefix+"InstanceProfileName", (params["InstanceProfileName"] ?? '').toString());
+    if (params["TagKeys"]) qsP.appendList(body, prefix+"TagKeys", params["TagKeys"], {"entryPrefix":".member."})
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "UntagInstanceProfile",
+    });
+  }
+
+  async untagMFADevice(
+    {abortSignal, ...params}: RequestConfig & s.UntagMFADeviceRequest,
+  ): Promise<void> {
+    const body = new URLSearchParams;
+    const prefix = '';
+    body.append(prefix+"SerialNumber", (params["SerialNumber"] ?? '').toString());
+    if (params["TagKeys"]) qsP.appendList(body, prefix+"TagKeys", params["TagKeys"], {"entryPrefix":".member."})
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "UntagMFADevice",
+    });
+  }
+
+  async untagOpenIDConnectProvider(
+    {abortSignal, ...params}: RequestConfig & s.UntagOpenIDConnectProviderRequest,
+  ): Promise<void> {
+    const body = new URLSearchParams;
+    const prefix = '';
+    body.append(prefix+"OpenIDConnectProviderArn", (params["OpenIDConnectProviderArn"] ?? '').toString());
+    if (params["TagKeys"]) qsP.appendList(body, prefix+"TagKeys", params["TagKeys"], {"entryPrefix":".member."})
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "UntagOpenIDConnectProvider",
+    });
+  }
+
+  async untagPolicy(
+    {abortSignal, ...params}: RequestConfig & s.UntagPolicyRequest,
+  ): Promise<void> {
+    const body = new URLSearchParams;
+    const prefix = '';
+    body.append(prefix+"PolicyArn", (params["PolicyArn"] ?? '').toString());
+    if (params["TagKeys"]) qsP.appendList(body, prefix+"TagKeys", params["TagKeys"], {"entryPrefix":".member."})
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "UntagPolicy",
+    });
+  }
+
   async untagRole(
     {abortSignal, ...params}: RequestConfig & s.UntagRoleRequest,
   ): Promise<void> {
@@ -2106,6 +2381,32 @@ export default class IAM {
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UntagRole",
+    });
+  }
+
+  async untagSAMLProvider(
+    {abortSignal, ...params}: RequestConfig & s.UntagSAMLProviderRequest,
+  ): Promise<void> {
+    const body = new URLSearchParams;
+    const prefix = '';
+    body.append(prefix+"SAMLProviderArn", (params["SAMLProviderArn"] ?? '').toString());
+    if (params["TagKeys"]) qsP.appendList(body, prefix+"TagKeys", params["TagKeys"], {"entryPrefix":".member."})
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "UntagSAMLProvider",
+    });
+  }
+
+  async untagServerCertificate(
+    {abortSignal, ...params}: RequestConfig & s.UntagServerCertificateRequest,
+  ): Promise<void> {
+    const body = new URLSearchParams;
+    const prefix = '';
+    body.append(prefix+"ServerCertificateName", (params["ServerCertificateName"] ?? '').toString());
+    if (params["TagKeys"]) qsP.appendList(body, prefix+"TagKeys", params["TagKeys"], {"entryPrefix":".member."})
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "UntagServerCertificate",
     });
   }
 
@@ -2357,6 +2658,7 @@ export default class IAM {
     body.append(prefix+"CertificateBody", (params["CertificateBody"] ?? '').toString());
     body.append(prefix+"PrivateKey", (params["PrivateKey"] ?? '').toString());
     if ("CertificateChain" in params) body.append(prefix+"CertificateChain", (params["CertificateChain"] ?? '').toString());
+    if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UploadServerCertificate",
@@ -2364,6 +2666,7 @@ export default class IAM {
     const xml = xmlP.readXmlResult(await resp.text(), "UploadServerCertificateResult");
     return {
       ServerCertificateMetadata: xml.first("ServerCertificateMetadata", false, ServerCertificateMetadata_Parse),
+      Tags: xml.getList("Tags", "member").map(Tag_Parse),
     };
   }
 
@@ -2498,6 +2801,7 @@ function InstanceProfile_Parse(node: xmlP.XmlNode): s.InstanceProfile {
     }),
     CreateDate: node.first("CreateDate", true, x => xmlP.parseTimestamp(x.content)),
     Roles: node.getList("Roles", "member").map(Role_Parse),
+    Tags: node.getList("Tags", "member").map(Tag_Parse),
   };
 }
 
@@ -2553,6 +2857,7 @@ function Policy_Parse(node: xmlP.XmlNode): s.Policy {
     IsAttachable: node.first("IsAttachable", false, x => x.content === 'true'),
     CreateDate: node.first("CreateDate", false, x => xmlP.parseTimestamp(x.content)),
     UpdateDate: node.first("UpdateDate", false, x => xmlP.parseTimestamp(x.content)),
+    Tags: node.getList("Tags", "member").map(Tag_Parse),
   };
 }
 
@@ -2597,6 +2902,7 @@ function VirtualMFADevice_Parse(node: xmlP.XmlNode): s.VirtualMFADevice {
     QRCodePNG: node.first("QRCodePNG", false, x => parseBlob(x.content) ?? ''),
     User: node.first("User", false, User_Parse),
     EnableDate: node.first("EnableDate", false, x => xmlP.parseTimestamp(x.content)),
+    Tags: node.getList("Tags", "member").map(Tag_Parse),
   };
 }
 
@@ -2724,6 +3030,7 @@ function ServerCertificate_Parse(node: xmlP.XmlNode): s.ServerCertificate {
       optional: {"CertificateChain":true},
     }),
     ServerCertificateMetadata: node.first("ServerCertificateMetadata", true, ServerCertificateMetadata_Parse),
+    Tags: node.getList("Tags", "member").map(Tag_Parse),
   };
 }
 

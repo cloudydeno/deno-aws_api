@@ -320,6 +320,7 @@ export type AssetType =
 export interface RequestDetails {
   ExportAssetToSignedUrl?: ExportAssetToSignedUrlRequestDetails | null;
   ExportAssetsToS3?: ExportAssetsToS3RequestDetails | null;
+  ExportRevisionsToS3?: ExportRevisionsToS3RequestDetails | null;
   ImportAssetFromSignedUrl?: ImportAssetFromSignedUrlRequestDetails | null;
   ImportAssetsFromS3?: ImportAssetsFromS3RequestDetails | null;
 }
@@ -346,17 +347,31 @@ export interface AssetDestinationEntry {
   Key?: string | null;
 }
 
-// refs: 4 - tags: input, named, interface, output
+// refs: 8 - tags: input, named, interface, output
 export interface ExportServerSideEncryption {
   KmsKeyArn?: string | null;
   Type: ServerSideEncryptionTypes;
 }
 
-// refs: 4 - tags: input, named, enum, output
+// refs: 8 - tags: input, named, enum, output
 export type ServerSideEncryptionTypes =
 | "aws:kms"
 | "AES256"
 | cmnP.UnexpectedEnumValue;
+
+// refs: 1 - tags: input, named, interface
+export interface ExportRevisionsToS3RequestDetails {
+  DataSetId: string;
+  Encryption?: ExportServerSideEncryption | null;
+  RevisionDestinations: RevisionDestinationEntry[];
+}
+
+// refs: 4 - tags: input, named, interface, output
+export interface RevisionDestinationEntry {
+  Bucket: string;
+  KeyPattern?: string | null;
+  RevisionId: string;
+}
 
 // refs: 1 - tags: input, named, interface
 export interface ImportAssetFromSignedUrlRequestDetails {
@@ -385,6 +400,7 @@ export type Type =
 | "IMPORT_ASSET_FROM_SIGNED_URL"
 | "EXPORT_ASSETS_TO_S3"
 | "EXPORT_ASSET_TO_SIGNED_URL"
+| "EXPORT_REVISIONS_TO_S3"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: output, named, enum
@@ -402,6 +418,7 @@ export interface OriginDetails {
 export interface ResponseDetails {
   ExportAssetToSignedUrl?: ExportAssetToSignedUrlResponseDetails | null;
   ExportAssetsToS3?: ExportAssetsToS3ResponseDetails | null;
+  ExportRevisionsToS3?: ExportRevisionsToS3ResponseDetails | null;
   ImportAssetFromSignedUrl?: ImportAssetFromSignedUrlResponseDetails | null;
   ImportAssetsFromS3?: ImportAssetsFromS3ResponseDetails | null;
 }
@@ -421,6 +438,13 @@ export interface ExportAssetsToS3ResponseDetails {
   DataSetId: string;
   Encryption?: ExportServerSideEncryption | null;
   RevisionId: string;
+}
+
+// refs: 3 - tags: output, named, interface
+export interface ExportRevisionsToS3ResponseDetails {
+  DataSetId: string;
+  Encryption?: ExportServerSideEncryption | null;
+  RevisionDestinations: RevisionDestinationEntry[];
 }
 
 // refs: 3 - tags: output, named, interface

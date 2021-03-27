@@ -19,6 +19,8 @@ export interface CreateFileSystemRequest {
   KmsKeyId?: string | null;
   ThroughputMode?: ThroughputMode | null;
   ProvisionedThroughputInMibps?: number | null;
+  AvailabilityZoneName?: string | null;
+  Backup?: boolean | null;
   Tags?: Tag[] | null;
 }
 
@@ -195,6 +197,8 @@ export interface FileSystemDescription {
   KmsKeyId?: string | null;
   ThroughputMode?: ThroughputMode | null;
   ProvisionedThroughputInMibps?: number | null;
+  AvailabilityZoneName?: string | null;
+  AvailabilityZoneId?: string | null;
   Tags: Tag[];
 }
 
@@ -338,6 +342,7 @@ export type LifeCycleState =
 | "updating"
 | "deleting"
 | "deleted"
+| "error"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface

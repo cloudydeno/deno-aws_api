@@ -8,7 +8,7 @@ export * from "./structs.ts";
 import * as client from "../../client/common.ts";
 import * as cmnP from "../../encoding/common.ts";
 import * as jsonP from "../../encoding/json.ts";
-import * as uuidv4 from "https://deno.land/std@0.86.0/uuid/v4.ts";
+import * as uuidv4 from "https://deno.land/std@0.91.0/uuid/v4.ts";
 import type * as s from "./structs.ts";
 function generateIdemptToken() {
   return uuidv4.generate();
@@ -109,6 +109,7 @@ export default class ServiceDiscovery {
       HealthCheckConfig: fromHealthCheckConfig(params["HealthCheckConfig"]),
       HealthCheckCustomConfig: fromHealthCheckCustomConfig(params["HealthCheckCustomConfig"]),
       Tags: params["Tags"]?.map(x => fromTag(x)),
+      Type: params["Type"],
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -629,6 +630,7 @@ function toService(root: jsonP.JSONValue): s.Service {
       "Description": "s",
       "InstanceCount": "n",
       "DnsConfig": toDnsConfig,
+      "Type": (x: jsonP.JSONValue) => cmnP.readEnum<s.ServiceType>(x),
       "HealthCheckConfig": toHealthCheckConfig,
       "HealthCheckCustomConfig": toHealthCheckCustomConfig,
       "CreateDate": "d",
@@ -766,6 +768,7 @@ function toServiceSummary(root: jsonP.JSONValue): s.ServiceSummary {
       "Id": "s",
       "Arn": "s",
       "Name": "s",
+      "Type": (x: jsonP.JSONValue) => cmnP.readEnum<s.ServiceType>(x),
       "Description": "s",
       "InstanceCount": "n",
       "DnsConfig": toDnsConfig,

@@ -8,7 +8,7 @@ export * from "./structs.ts";
 import * as client from "../../client/common.ts";
 import * as cmnP from "../../encoding/common.ts";
 import * as jsonP from "../../encoding/json.ts";
-import * as uuidv4 from "https://deno.land/std@0.86.0/uuid/v4.ts";
+import * as uuidv4 from "https://deno.land/std@0.91.0/uuid/v4.ts";
 import type * as s from "./structs.ts";
 function generateIdemptToken() {
   return uuidv4.generate();
@@ -113,6 +113,25 @@ export default class Athena {
     }, await resp.json());
   }
 
+  async createPreparedStatement(
+    {abortSignal, ...params}: RequestConfig & s.CreatePreparedStatementInput,
+  ): Promise<s.CreatePreparedStatementOutput> {
+    const body: jsonP.JSONObject = {
+      StatementName: params["StatementName"],
+      WorkGroup: params["WorkGroup"],
+      QueryStatement: params["QueryStatement"],
+      Description: params["Description"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "CreatePreparedStatement",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
+  }
+
   async createWorkGroup(
     {abortSignal, ...params}: RequestConfig & s.CreateWorkGroupInput,
   ): Promise<s.CreateWorkGroupOutput> {
@@ -157,6 +176,23 @@ export default class Athena {
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteNamedQuery",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
+  }
+
+  async deletePreparedStatement(
+    {abortSignal, ...params}: RequestConfig & s.DeletePreparedStatementInput,
+  ): Promise<s.DeletePreparedStatementOutput> {
+    const body: jsonP.JSONObject = {
+      StatementName: params["StatementName"],
+      WorkGroup: params["WorkGroup"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "DeletePreparedStatement",
     });
     return jsonP.readObj({
       required: {},
@@ -232,6 +268,25 @@ export default class Athena {
       required: {},
       optional: {
         "NamedQuery": toNamedQuery,
+      },
+    }, await resp.json());
+  }
+
+  async getPreparedStatement(
+    {abortSignal, ...params}: RequestConfig & s.GetPreparedStatementInput,
+  ): Promise<s.GetPreparedStatementOutput> {
+    const body: jsonP.JSONObject = {
+      StatementName: params["StatementName"],
+      WorkGroup: params["WorkGroup"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "GetPreparedStatement",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "PreparedStatement": toPreparedStatement,
       },
     }, await resp.json());
   }
@@ -391,6 +446,27 @@ export default class Athena {
       required: {},
       optional: {
         "NamedQueryIds": ["s"],
+        "NextToken": "s",
+      },
+    }, await resp.json());
+  }
+
+  async listPreparedStatements(
+    {abortSignal, ...params}: RequestConfig & s.ListPreparedStatementsInput,
+  ): Promise<s.ListPreparedStatementsOutput> {
+    const body: jsonP.JSONObject = {
+      WorkGroup: params["WorkGroup"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "ListPreparedStatements",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "PreparedStatements": [toPreparedStatementSummary],
         "NextToken": "s",
       },
     }, await resp.json());
@@ -565,6 +641,25 @@ export default class Athena {
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UpdateDataCatalog",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {},
+    }, await resp.json());
+  }
+
+  async updatePreparedStatement(
+    {abortSignal, ...params}: RequestConfig & s.UpdatePreparedStatementInput,
+  ): Promise<s.UpdatePreparedStatementOutput> {
+    const body: jsonP.JSONObject = {
+      StatementName: params["StatementName"],
+      WorkGroup: params["WorkGroup"],
+      QueryStatement: params["QueryStatement"],
+      Description: params["Description"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "UpdatePreparedStatement",
     });
     return jsonP.readObj({
       required: {},
@@ -833,6 +928,19 @@ function toDatabase(root: jsonP.JSONValue): s.Database {
   }, root);
 }
 
+function toPreparedStatement(root: jsonP.JSONValue): s.PreparedStatement {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "StatementName": "s",
+      "QueryStatement": "s",
+      "WorkGroupName": "s",
+      "Description": "s",
+      "LastModifiedTime": "d",
+    },
+  }, root);
+}
+
 function toResultSet(root: jsonP.JSONValue): s.ResultSet {
   return jsonP.readObj({
     required: {},
@@ -937,6 +1045,16 @@ function toDataCatalogSummary(root: jsonP.JSONValue): s.DataCatalogSummary {
     optional: {
       "CatalogName": "s",
       "Type": (x: jsonP.JSONValue) => cmnP.readEnum<s.DataCatalogType>(x),
+    },
+  }, root);
+}
+
+function toPreparedStatementSummary(root: jsonP.JSONValue): s.PreparedStatementSummary {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "StatementName": "s",
+      "LastModifiedTime": "d",
     },
   }, root);
 }

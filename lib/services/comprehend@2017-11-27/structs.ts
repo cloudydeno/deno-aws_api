@@ -38,6 +38,12 @@ export interface ClassifyDocumentRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface ContainsPiiEntitiesRequest {
+  Text: string;
+  LanguageCode: LanguageCode;
+}
+
+// refs: 1 - tags: named, input
 export interface CreateDocumentClassifierRequest {
   DocumentClassifierName: string;
   DataAccessRoleArn: string;
@@ -450,6 +456,11 @@ export interface ClassifyDocumentResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface ContainsPiiEntitiesResponse {
+  Labels?: EntityLabel[] | null;
+}
+
+// refs: 1 - tags: named, output
 export interface CreateDocumentClassifierResponse {
   DocumentClassifierArn?: string | null;
 }
@@ -738,7 +749,7 @@ export interface UntagResourceResponse {
 export interface UpdateEndpointResponse {
 }
 
-// refs: 28 - tags: input, named, enum, output
+// refs: 29 - tags: input, named, enum, output
 export type LanguageCode =
 | "en"
 | "es"
@@ -991,7 +1002,7 @@ export interface RedactionConfig {
   MaskCharacter?: string | null;
 }
 
-// refs: 4 - tags: input, named, enum, output
+// refs: 5 - tags: input, named, enum, output
 export type PiiEntityType =
 | "BANK_ACCOUNT_NUMBER"
 | "BANK_ROUTING"
@@ -1160,6 +1171,12 @@ export interface DocumentClass {
 // refs: 1 - tags: output, named, interface
 export interface DocumentLabel {
   Name?: string | null;
+  Score?: number | null;
+}
+
+// refs: 1 - tags: output, named, interface
+export interface EntityLabel {
+  Name?: PiiEntityType | null;
   Score?: number | null;
 }
 

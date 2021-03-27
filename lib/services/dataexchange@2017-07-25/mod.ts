@@ -534,6 +534,7 @@ function fromRequestDetails(input?: s.RequestDetails | null): jsonP.JSONValue {
   return {
     ExportAssetToSignedUrl: fromExportAssetToSignedUrlRequestDetails(input["ExportAssetToSignedUrl"]),
     ExportAssetsToS3: fromExportAssetsToS3RequestDetails(input["ExportAssetsToS3"]),
+    ExportRevisionsToS3: fromExportRevisionsToS3RequestDetails(input["ExportRevisionsToS3"]),
     ImportAssetFromSignedUrl: fromImportAssetFromSignedUrlRequestDetails(input["ImportAssetFromSignedUrl"]),
     ImportAssetsFromS3: fromImportAssetsFromS3RequestDetails(input["ImportAssetsFromS3"]),
   }
@@ -596,6 +597,35 @@ function toExportServerSideEncryption(root: jsonP.JSONValue): s.ExportServerSide
   }, root);
 }
 
+function fromExportRevisionsToS3RequestDetails(input?: s.ExportRevisionsToS3RequestDetails | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    DataSetId: input["DataSetId"],
+    Encryption: fromExportServerSideEncryption(input["Encryption"]),
+    RevisionDestinations: input["RevisionDestinations"]?.map(x => fromRevisionDestinationEntry(x)),
+  }
+}
+
+function fromRevisionDestinationEntry(input?: s.RevisionDestinationEntry | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    Bucket: input["Bucket"],
+    KeyPattern: input["KeyPattern"],
+    RevisionId: input["RevisionId"],
+  }
+}
+function toRevisionDestinationEntry(root: jsonP.JSONValue): s.RevisionDestinationEntry {
+  return jsonP.readObj({
+    required: {
+      "Bucket": "s",
+      "RevisionId": "s",
+    },
+    optional: {
+      "KeyPattern": "s",
+    },
+  }, root);
+}
+
 function fromImportAssetFromSignedUrlRequestDetails(input?: s.ImportAssetFromSignedUrlRequestDetails | null): jsonP.JSONValue {
   if (!input) return input;
   return {
@@ -647,6 +677,7 @@ function toResponseDetails(root: jsonP.JSONValue): s.ResponseDetails {
     optional: {
       "ExportAssetToSignedUrl": toExportAssetToSignedUrlResponseDetails,
       "ExportAssetsToS3": toExportAssetsToS3ResponseDetails,
+      "ExportRevisionsToS3": toExportRevisionsToS3ResponseDetails,
       "ImportAssetFromSignedUrl": toImportAssetFromSignedUrlResponseDetails,
       "ImportAssetsFromS3": toImportAssetsFromS3ResponseDetails,
     },
@@ -673,6 +704,18 @@ function toExportAssetsToS3ResponseDetails(root: jsonP.JSONValue): s.ExportAsset
       "AssetDestinations": [toAssetDestinationEntry],
       "DataSetId": "s",
       "RevisionId": "s",
+    },
+    optional: {
+      "Encryption": toExportServerSideEncryption,
+    },
+  }, root);
+}
+
+function toExportRevisionsToS3ResponseDetails(root: jsonP.JSONValue): s.ExportRevisionsToS3ResponseDetails {
+  return jsonP.readObj({
+    required: {
+      "DataSetId": "s",
+      "RevisionDestinations": [toRevisionDestinationEntry],
     },
     optional: {
       "Encryption": toExportServerSideEncryption,

@@ -494,6 +494,7 @@ export default class CustomerProfiles {
       Uri: params["Uri"],
       ObjectTypeName: params["ObjectTypeName"],
       Tags: params["Tags"],
+      FlowDefinition: fromFlowDefinition(params["FlowDefinition"]),
     };
     const resp = await this.#client.performRequest({
       abortSignal, body,
@@ -738,6 +739,134 @@ function toAddress(root: jsonP.JSONValue): s.Address {
       "PostalCode": "s",
     },
   }, root);
+}
+
+function fromFlowDefinition(input?: s.FlowDefinition | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    Description: input["Description"],
+    FlowName: input["FlowName"],
+    KmsArn: input["KmsArn"],
+    SourceFlowConfig: fromSourceFlowConfig(input["SourceFlowConfig"]),
+    Tasks: input["Tasks"]?.map(x => fromTask(x)),
+    TriggerConfig: fromTriggerConfig(input["TriggerConfig"]),
+  }
+}
+
+function fromSourceFlowConfig(input?: s.SourceFlowConfig | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    ConnectorProfileName: input["ConnectorProfileName"],
+    ConnectorType: input["ConnectorType"],
+    IncrementalPullConfig: fromIncrementalPullConfig(input["IncrementalPullConfig"]),
+    SourceConnectorProperties: fromSourceConnectorProperties(input["SourceConnectorProperties"]),
+  }
+}
+
+function fromIncrementalPullConfig(input?: s.IncrementalPullConfig | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    DatetimeTypeFieldName: input["DatetimeTypeFieldName"],
+  }
+}
+
+function fromSourceConnectorProperties(input?: s.SourceConnectorProperties | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    Marketo: fromMarketoSourceProperties(input["Marketo"]),
+    S3: fromS3SourceProperties(input["S3"]),
+    Salesforce: fromSalesforceSourceProperties(input["Salesforce"]),
+    ServiceNow: fromServiceNowSourceProperties(input["ServiceNow"]),
+    Zendesk: fromZendeskSourceProperties(input["Zendesk"]),
+  }
+}
+
+function fromMarketoSourceProperties(input?: s.MarketoSourceProperties | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    Object: input["Object"],
+  }
+}
+
+function fromS3SourceProperties(input?: s.S3SourceProperties | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    BucketName: input["BucketName"],
+    BucketPrefix: input["BucketPrefix"],
+  }
+}
+
+function fromSalesforceSourceProperties(input?: s.SalesforceSourceProperties | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    Object: input["Object"],
+    EnableDynamicFieldUpdate: input["EnableDynamicFieldUpdate"],
+    IncludeDeletedRecords: input["IncludeDeletedRecords"],
+  }
+}
+
+function fromServiceNowSourceProperties(input?: s.ServiceNowSourceProperties | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    Object: input["Object"],
+  }
+}
+
+function fromZendeskSourceProperties(input?: s.ZendeskSourceProperties | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    Object: input["Object"],
+  }
+}
+
+function fromTask(input?: s.Task | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    ConnectorOperator: fromConnectorOperator(input["ConnectorOperator"]),
+    DestinationField: input["DestinationField"],
+    SourceFields: input["SourceFields"],
+    TaskProperties: input["TaskProperties"],
+    TaskType: input["TaskType"],
+  }
+}
+
+function fromConnectorOperator(input?: s.ConnectorOperator | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    Marketo: input["Marketo"],
+    S3: input["S3"],
+    Salesforce: input["Salesforce"],
+    ServiceNow: input["ServiceNow"],
+    Zendesk: input["Zendesk"],
+  }
+}
+
+function fromTriggerConfig(input?: s.TriggerConfig | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    TriggerType: input["TriggerType"],
+    TriggerProperties: fromTriggerProperties(input["TriggerProperties"]),
+  }
+}
+
+function fromTriggerProperties(input?: s.TriggerProperties | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    Scheduled: fromScheduledTriggerProperties(input["Scheduled"]),
+  }
+}
+
+function fromScheduledTriggerProperties(input?: s.ScheduledTriggerProperties | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    ScheduleExpression: input["ScheduleExpression"],
+    DataPullMode: input["DataPullMode"],
+    ScheduleStartTime: jsonP.serializeDate_unixTimestamp(input["ScheduleStartTime"]),
+    ScheduleEndTime: jsonP.serializeDate_unixTimestamp(input["ScheduleEndTime"]),
+    Timezone: input["Timezone"],
+    ScheduleOffset: input["ScheduleOffset"],
+    FirstExecutionFrom: jsonP.serializeDate_unixTimestamp(input["FirstExecutionFrom"]),
+  }
 }
 
 function fromObjectTypeField(input?: s.ObjectTypeField | null): jsonP.JSONValue {

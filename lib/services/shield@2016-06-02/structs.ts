@@ -27,6 +27,7 @@ export interface AssociateProactiveEngagementDetailsRequest {
 export interface CreateProtectionRequest {
   Name: string;
   ResourceArn: string;
+  Tags?: Tag[] | null;
 }
 
 // refs: 1 - tags: named, input
@@ -36,6 +37,7 @@ export interface CreateProtectionGroupRequest {
   Pattern: ProtectionGroupPattern;
   ResourceType?: ProtectedResourceType | null;
   Members?: string[] | null;
+  Tags?: Tag[] | null;
 }
 
 // refs: 1 - tags: named, input
@@ -141,6 +143,23 @@ export interface ListResourcesInProtectionGroupRequest {
   ProtectionGroupId: string;
   NextToken?: string | null;
   MaxResults?: number | null;
+}
+
+// refs: 1 - tags: named, input
+export interface ListTagsForResourceRequest {
+  ResourceARN: string;
+}
+
+// refs: 1 - tags: named, input
+export interface TagResourceRequest {
+  ResourceARN: string;
+  Tags: Tag[];
+}
+
+// refs: 1 - tags: named, input
+export interface UntagResourceRequest {
+  ResourceARN: string;
+  TagKeys: string[];
 }
 
 // refs: 1 - tags: named, input
@@ -290,6 +309,19 @@ export interface ListResourcesInProtectionGroupResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface ListTagsForResourceResponse {
+  Tags?: Tag[] | null;
+}
+
+// refs: 1 - tags: named, output
+export interface TagResourceResponse {
+}
+
+// refs: 1 - tags: named, output
+export interface UntagResourceResponse {
+}
+
+// refs: 1 - tags: named, output
 export interface UpdateEmergencyContactSettingsResponse {
 }
 
@@ -306,6 +338,12 @@ export interface EmergencyContact {
   EmailAddress: string;
   PhoneNumber?: string | null;
   ContactNotes?: string | null;
+}
+
+// refs: 4 - tags: input, named, interface, output
+export interface Tag {
+  Key?: string | null;
+  Value?: string | null;
 }
 
 // refs: 4 - tags: input, named, enum, output
@@ -456,6 +494,7 @@ export interface Protection {
   Name?: string | null;
   ResourceArn?: string | null;
   HealthCheckIds?: string[] | null;
+  ProtectionArn?: string | null;
 }
 
 // refs: 2 - tags: output, named, interface
@@ -465,6 +504,7 @@ export interface ProtectionGroup {
   Pattern: ProtectionGroupPattern;
   ResourceType?: ProtectedResourceType | null;
   Members: string[];
+  ProtectionGroupArn?: string | null;
 }
 
 // refs: 1 - tags: output, named, interface
@@ -476,6 +516,7 @@ export interface Subscription {
   Limits?: Limit[] | null;
   ProactiveEngagementStatus?: ProactiveEngagementStatus | null;
   SubscriptionLimits: SubscriptionLimits;
+  SubscriptionArn?: string | null;
 }
 
 // refs: 2 - tags: output, named, interface

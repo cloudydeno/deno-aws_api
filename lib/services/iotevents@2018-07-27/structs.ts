@@ -38,12 +38,24 @@ export interface DescribeDetectorModelRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface DescribeDetectorModelAnalysisRequest {
+  analysisId: string;
+}
+
+// refs: 1 - tags: named, input
 export interface DescribeInputRequest {
   inputName: string;
 }
 
 // refs: 1 - tags: named, input
 export interface DescribeLoggingOptionsRequest {
+}
+
+// refs: 1 - tags: named, input
+export interface GetDetectorModelAnalysisResultsRequest {
+  analysisId: string;
+  nextToken?: string | null;
+  maxResults?: number | null;
 }
 
 // refs: 1 - tags: named, input
@@ -73,6 +85,11 @@ export interface ListTagsForResourceRequest {
 // refs: 1 - tags: named, input
 export interface PutLoggingOptionsRequest {
   loggingOptions: LoggingOptions;
+}
+
+// refs: 1 - tags: named, input
+export interface StartDetectorModelAnalysisRequest {
+  detectorModelDefinition: DetectorModelDefinition;
 }
 
 // refs: 1 - tags: named, input
@@ -127,6 +144,11 @@ export interface DescribeDetectorModelResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface DescribeDetectorModelAnalysisResponse {
+  status?: AnalysisStatus | null;
+}
+
+// refs: 1 - tags: named, output
 export interface DescribeInputResponse {
   input?: Input | null;
 }
@@ -134,6 +156,12 @@ export interface DescribeInputResponse {
 // refs: 1 - tags: named, output
 export interface DescribeLoggingOptionsResponse {
   loggingOptions?: LoggingOptions | null;
+}
+
+// refs: 1 - tags: named, output
+export interface GetDetectorModelAnalysisResultsResponse {
+  analysisResults?: AnalysisResult[] | null;
+  nextToken?: string | null;
 }
 
 // refs: 1 - tags: named, output
@@ -160,6 +188,11 @@ export interface ListTagsForResourceResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface StartDetectorModelAnalysisResponse {
+  analysisId?: string | null;
+}
+
+// refs: 1 - tags: named, output
 export interface TagResourceResponse {
 }
 
@@ -177,13 +210,13 @@ export interface UpdateInputResponse {
   inputConfiguration?: InputConfiguration | null;
 }
 
-// refs: 3 - tags: input, named, interface, output
+// refs: 4 - tags: input, named, interface, output
 export interface DetectorModelDefinition {
   states: State[];
   initialStateName: string;
 }
 
-// refs: 3 - tags: input, named, interface, output
+// refs: 4 - tags: input, named, interface, output
 export interface State {
   stateName: string;
   onInput?: OnInputLifecycle | null;
@@ -191,20 +224,20 @@ export interface State {
   onExit?: OnExitLifecycle | null;
 }
 
-// refs: 3 - tags: input, named, interface, output
+// refs: 4 - tags: input, named, interface, output
 export interface OnInputLifecycle {
   events?: Event[] | null;
   transitionEvents?: TransitionEvent[] | null;
 }
 
-// refs: 9 - tags: input, named, interface, output
+// refs: 12 - tags: input, named, interface, output
 export interface Event {
   eventName: string;
   condition?: string | null;
   actions?: Action[] | null;
 }
 
-// refs: 12 - tags: input, named, interface, output
+// refs: 16 - tags: input, named, interface, output
 export interface Action {
   setVariable?: SetVariableAction | null;
   sns?: SNSTopicPublishAction | null;
@@ -221,80 +254,80 @@ export interface Action {
   iotSiteWise?: IotSiteWiseAction | null;
 }
 
-// refs: 12 - tags: input, named, interface, output
+// refs: 16 - tags: input, named, interface, output
 export interface SetVariableAction {
   variableName: string;
   value: string;
 }
 
-// refs: 12 - tags: input, named, interface, output
+// refs: 16 - tags: input, named, interface, output
 export interface SNSTopicPublishAction {
   targetArn: string;
   payload?: Payload | null;
 }
 
-// refs: 96 - tags: input, named, interface, output
+// refs: 128 - tags: input, named, interface, output
 export interface Payload {
   contentExpression: string;
   type: PayloadType;
 }
 
-// refs: 96 - tags: input, named, enum, output
+// refs: 128 - tags: input, named, enum, output
 export type PayloadType =
 | "STRING"
 | "JSON"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 12 - tags: input, named, interface, output
+// refs: 16 - tags: input, named, interface, output
 export interface IotTopicPublishAction {
   mqttTopic: string;
   payload?: Payload | null;
 }
 
-// refs: 12 - tags: input, named, interface, output
+// refs: 16 - tags: input, named, interface, output
 export interface SetTimerAction {
   timerName: string;
   seconds?: number | null;
   durationExpression?: string | null;
 }
 
-// refs: 12 - tags: input, named, interface, output
+// refs: 16 - tags: input, named, interface, output
 export interface ClearTimerAction {
   timerName: string;
 }
 
-// refs: 12 - tags: input, named, interface, output
+// refs: 16 - tags: input, named, interface, output
 export interface ResetTimerAction {
   timerName: string;
 }
 
-// refs: 12 - tags: input, named, interface, output
+// refs: 16 - tags: input, named, interface, output
 export interface LambdaAction {
   functionArn: string;
   payload?: Payload | null;
 }
 
-// refs: 12 - tags: input, named, interface, output
+// refs: 16 - tags: input, named, interface, output
 export interface IotEventsAction {
   inputName: string;
   payload?: Payload | null;
 }
 
-// refs: 12 - tags: input, named, interface, output
+// refs: 16 - tags: input, named, interface, output
 export interface SqsAction {
   queueUrl: string;
   useBase64?: boolean | null;
   payload?: Payload | null;
 }
 
-// refs: 12 - tags: input, named, interface, output
+// refs: 16 - tags: input, named, interface, output
 export interface FirehoseAction {
   deliveryStreamName: string;
   separator?: string | null;
   payload?: Payload | null;
 }
 
-// refs: 12 - tags: input, named, interface, output
+// refs: 16 - tags: input, named, interface, output
 export interface DynamoDBAction {
   hashKeyType?: string | null;
   hashKeyField: string;
@@ -308,13 +341,13 @@ export interface DynamoDBAction {
   payload?: Payload | null;
 }
 
-// refs: 12 - tags: input, named, interface, output
+// refs: 16 - tags: input, named, interface, output
 export interface DynamoDBv2Action {
   tableName: string;
   payload?: Payload | null;
 }
 
-// refs: 12 - tags: input, named, interface, output
+// refs: 16 - tags: input, named, interface, output
 export interface IotSiteWiseAction {
   entryId?: string | null;
   assetId?: string | null;
@@ -323,14 +356,14 @@ export interface IotSiteWiseAction {
   propertyValue: AssetPropertyValue;
 }
 
-// refs: 12 - tags: input, named, interface, output
+// refs: 16 - tags: input, named, interface, output
 export interface AssetPropertyValue {
   value: AssetPropertyVariant;
   timestamp?: AssetPropertyTimestamp | null;
   quality?: string | null;
 }
 
-// refs: 12 - tags: input, named, interface, output
+// refs: 16 - tags: input, named, interface, output
 export interface AssetPropertyVariant {
   stringValue?: string | null;
   integerValue?: string | null;
@@ -338,13 +371,13 @@ export interface AssetPropertyVariant {
   booleanValue?: string | null;
 }
 
-// refs: 12 - tags: input, named, interface, output
+// refs: 16 - tags: input, named, interface, output
 export interface AssetPropertyTimestamp {
   timeInSeconds: string;
   offsetInNanos?: string | null;
 }
 
-// refs: 3 - tags: input, named, interface, output
+// refs: 4 - tags: input, named, interface, output
 export interface TransitionEvent {
   eventName: string;
   condition: string;
@@ -352,12 +385,12 @@ export interface TransitionEvent {
   nextState: string;
 }
 
-// refs: 3 - tags: input, named, interface, output
+// refs: 4 - tags: input, named, interface, output
 export interface OnEnterLifecycle {
   events?: Event[] | null;
 }
 
-// refs: 3 - tags: input, named, interface, output
+// refs: 4 - tags: input, named, interface, output
 export interface OnExitLifecycle {
   events?: Event[] | null;
 }
@@ -454,10 +487,37 @@ export interface DetectorModel {
   detectorModelConfiguration?: DetectorModelConfiguration | null;
 }
 
+// refs: 1 - tags: output, named, enum
+export type AnalysisStatus =
+| "RUNNING"
+| "COMPLETE"
+| "FAILED"
+| cmnP.UnexpectedEnumValue;
+
 // refs: 1 - tags: output, named, interface
 export interface Input {
   inputConfiguration?: InputConfiguration | null;
   inputDefinition?: InputDefinition | null;
+}
+
+// refs: 1 - tags: output, named, interface
+export interface AnalysisResult {
+  type?: string | null;
+  level?: AnalysisResultLevel | null;
+  message?: string | null;
+  locations?: AnalysisResultLocation[] | null;
+}
+
+// refs: 1 - tags: output, named, enum
+export type AnalysisResultLevel =
+| "INFO"
+| "WARNING"
+| "ERROR"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 1 - tags: output, named, interface
+export interface AnalysisResultLocation {
+  path?: string | null;
 }
 
 // refs: 1 - tags: output, named, interface

@@ -8,7 +8,7 @@ export * from "./structs.ts";
 import * as client from "../../client/common.ts";
 import * as cmnP from "../../encoding/common.ts";
 import * as jsonP from "../../encoding/json.ts";
-import * as uuidv4 from "https://deno.land/std@0.86.0/uuid/v4.ts";
+import * as uuidv4 from "https://deno.land/std@0.91.0/uuid/v4.ts";
 import type * as s from "./structs.ts";
 function generateIdemptToken() {
   return uuidv4.generate();
@@ -148,6 +148,25 @@ export default class Comprehend {
       optional: {
         "Classes": [toDocumentClass],
         "Labels": [toDocumentLabel],
+      },
+    }, await resp.json());
+  }
+
+  async containsPiiEntities(
+    {abortSignal, ...params}: RequestConfig & s.ContainsPiiEntitiesRequest,
+  ): Promise<s.ContainsPiiEntitiesResponse> {
+    const body: jsonP.JSONObject = {
+      Text: params["Text"],
+      LanguageCode: params["LanguageCode"],
+    };
+    const resp = await this.#client.performRequest({
+      abortSignal, body,
+      action: "ContainsPiiEntities",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Labels": [toEntityLabel],
       },
     }, await resp.json());
   }
@@ -1729,6 +1748,16 @@ function toDocumentLabel(root: jsonP.JSONValue): s.DocumentLabel {
     required: {},
     optional: {
       "Name": "s",
+      "Score": "n",
+    },
+  }, root);
+}
+
+function toEntityLabel(root: jsonP.JSONValue): s.EntityLabel {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "Name": (x: jsonP.JSONValue) => cmnP.readEnum<s.PiiEntityType>(x),
       "Score": "n",
     },
   }, root);

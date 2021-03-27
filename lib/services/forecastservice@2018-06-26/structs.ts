@@ -202,6 +202,11 @@ export interface ListTagsForResourceRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface StopResourceRequest {
+  ResourceArn: string;
+}
+
+// refs: 1 - tags: named, input
 export interface TagResourceRequest {
   ResourceArn: string;
   Tags: Tag[];

@@ -164,6 +164,7 @@ export interface UpdateFlowOutputRequest {
   Encryption?: UpdateEncryption | null;
   FlowArn: string;
   MaxLatency?: number | null;
+  MinLatency?: number | null;
   OutputArn: string;
   Port?: number | null;
   Protocol?: Protocol | null;
@@ -182,6 +183,7 @@ export interface UpdateFlowSourceRequest {
   IngestPort?: number | null;
   MaxBitrate?: number | null;
   MaxLatency?: number | null;
+  MinLatency?: number | null;
   Protocol?: Protocol | null;
   SourceArn: string;
   StreamId?: string | null;
@@ -341,6 +343,7 @@ export interface AddOutputRequest {
   Destination?: string | null;
   Encryption?: Encryption | null;
   MaxLatency?: number | null;
+  MinLatency?: number | null;
   Name?: string | null;
   Port?: number | null;
   Protocol: Protocol;
@@ -352,7 +355,7 @@ export interface AddOutputRequest {
 
 // refs: 25 - tags: input, named, interface, output
 export interface Encryption {
-  Algorithm: Algorithm;
+  Algorithm?: Algorithm | null;
   ConstantInitializationVector?: string | null;
   DeviceId?: string | null;
   KeyType?: KeyType | null;
@@ -374,6 +377,7 @@ export type Algorithm =
 export type KeyType =
 | "speke"
 | "static-key"
+| "srt-password"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 20 - tags: input, named, enum, output
@@ -383,6 +387,7 @@ export type Protocol =
 | "rtp"
 | "zixi-pull"
 | "rist"
+| "srt-listener"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 8 - tags: input, named, interface, output
@@ -398,6 +403,7 @@ export interface SetSourceRequest {
   IngestPort?: number | null;
   MaxBitrate?: number | null;
   MaxLatency?: number | null;
+  MinLatency?: number | null;
   Name?: string | null;
   Protocol?: Protocol | null;
   StreamId?: string | null;
@@ -480,6 +486,7 @@ export interface Transport {
   CidrAllowList?: string[] | null;
   MaxBitrate?: number | null;
   MaxLatency?: number | null;
+  MinLatency?: number | null;
   Protocol: Protocol;
   RemoteId?: string | null;
   SmoothingLatency?: number | null;

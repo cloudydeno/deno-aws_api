@@ -1089,10 +1089,11 @@ function toProductInformationFilter(root: jsonP.JSONValue): s.ProductInformation
   return jsonP.readObj({
     required: {
       "ProductInformationFilterName": "s",
-      "ProductInformationFilterValue": ["s"],
       "ProductInformationFilterComparator": "s",
     },
-    optional: {},
+    optional: {
+      "ProductInformationFilterValue": ["s"],
+    },
   }, root);
 }
 

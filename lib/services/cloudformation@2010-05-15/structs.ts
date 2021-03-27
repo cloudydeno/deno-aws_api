@@ -67,6 +67,7 @@ export interface CreateStackInstancesInput {
   ParameterOverrides?: Parameter[] | null;
   OperationPreferences?: StackSetOperationPreferences | null;
   OperationId?: string | null;
+  CallAs?: CallAs | null;
 }
 
 // refs: 1 - tags: named, input
@@ -82,6 +83,7 @@ export interface CreateStackSetInput {
   ExecutionRoleName?: string | null;
   PermissionModel?: PermissionModels | null;
   AutoDeployment?: AutoDeployment | null;
+  CallAs?: CallAs | null;
   ClientRequestToken?: string | null;
 }
 
@@ -108,11 +110,13 @@ export interface DeleteStackInstancesInput {
   OperationPreferences?: StackSetOperationPreferences | null;
   RetainStacks: boolean;
   OperationId?: string | null;
+  CallAs?: CallAs | null;
 }
 
 // refs: 1 - tags: named, input
 export interface DeleteStackSetInput {
   StackSetName: string;
+  CallAs?: CallAs | null;
 }
 
 // refs: 1 - tags: named, input
@@ -151,6 +155,7 @@ export interface DescribeStackInstanceInput {
   StackSetName: string;
   StackInstanceAccount: string;
   StackInstanceRegion: string;
+  CallAs?: CallAs | null;
 }
 
 // refs: 1 - tags: named, input
@@ -177,12 +182,14 @@ export interface DescribeStackResourcesInput {
 // refs: 1 - tags: named, input
 export interface DescribeStackSetInput {
   StackSetName: string;
+  CallAs?: CallAs | null;
 }
 
 // refs: 1 - tags: named, input
 export interface DescribeStackSetOperationInput {
   StackSetName: string;
   OperationId: string;
+  CallAs?: CallAs | null;
 }
 
 // refs: 1 - tags: named, input
@@ -221,6 +228,7 @@ export interface DetectStackSetDriftInput {
   StackSetName: string;
   OperationPreferences?: StackSetOperationPreferences | null;
   OperationId?: string | null;
+  CallAs?: CallAs | null;
 }
 
 // refs: 1 - tags: named, input
@@ -282,6 +290,7 @@ export interface ListStackInstancesInput {
   Filters?: StackInstanceFilter[] | null;
   StackInstanceAccount?: string | null;
   StackInstanceRegion?: string | null;
+  CallAs?: CallAs | null;
 }
 
 // refs: 1 - tags: named, input
@@ -296,6 +305,7 @@ export interface ListStackSetOperationResultsInput {
   OperationId: string;
   NextToken?: string | null;
   MaxResults?: number | null;
+  CallAs?: CallAs | null;
 }
 
 // refs: 1 - tags: named, input
@@ -303,6 +313,7 @@ export interface ListStackSetOperationsInput {
   StackSetName: string;
   NextToken?: string | null;
   MaxResults?: number | null;
+  CallAs?: CallAs | null;
 }
 
 // refs: 1 - tags: named, input
@@ -310,6 +321,7 @@ export interface ListStackSetsInput {
   NextToken?: string | null;
   MaxResults?: number | null;
   Status?: StackSetStatus | null;
+  CallAs?: CallAs | null;
 }
 
 // refs: 1 - tags: named, input
@@ -396,6 +408,7 @@ export interface SignalResourceInput {
 export interface StopStackSetOperationInput {
   StackSetName: string;
   OperationId: string;
+  CallAs?: CallAs | null;
 }
 
 // refs: 1 - tags: named, input
@@ -427,6 +440,7 @@ export interface UpdateStackInstancesInput {
   ParameterOverrides?: Parameter[] | null;
   OperationPreferences?: StackSetOperationPreferences | null;
   OperationId?: string | null;
+  CallAs?: CallAs | null;
 }
 
 // refs: 1 - tags: named, input
@@ -448,6 +462,7 @@ export interface UpdateStackSetInput {
   OperationId?: string | null;
   Accounts?: string[] | null;
   Regions?: string[] | null;
+  CallAs?: CallAs | null;
 }
 
 // refs: 1 - tags: named, input
@@ -849,6 +864,12 @@ export interface StackSetOperationPreferences {
   MaxConcurrentCount?: number | null;
   MaxConcurrentPercentage?: number | null;
 }
+
+// refs: 15 - tags: input, named, enum
+export type CallAs =
+| "SELF"
+| "DELEGATED_ADMIN"
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, enum, output
 export type PermissionModels =
