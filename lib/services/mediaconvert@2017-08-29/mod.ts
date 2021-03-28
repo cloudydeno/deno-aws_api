@@ -35,7 +35,7 @@ export default class MediaConvert {
 
   async associateCertificate(
     {abortSignal, ...params}: RequestConfig & s.AssociateCertificateRequest,
-  ): Promise<s.AssociateCertificateResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       arn: params["Arn"],
     };
@@ -45,15 +45,12 @@ export default class MediaConvert {
       requestUri: "/2017-08-29/certificates",
       responseCode: 201,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async cancelJob(
     {abortSignal, ...params}: RequestConfig & s.CancelJobRequest,
-  ): Promise<s.CancelJobResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -62,10 +59,7 @@ export default class MediaConvert {
       requestUri: cmnP.encodePath`/2017-08-29/jobs/${params["Id"]}`,
       responseCode: 202,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async createJob(
@@ -180,7 +174,7 @@ export default class MediaConvert {
 
   async deleteJobTemplate(
     {abortSignal, ...params}: RequestConfig & s.DeleteJobTemplateRequest,
-  ): Promise<s.DeleteJobTemplateResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -189,15 +183,12 @@ export default class MediaConvert {
       requestUri: cmnP.encodePath`/2017-08-29/jobTemplates/${params["Name"]}`,
       responseCode: 202,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deletePreset(
     {abortSignal, ...params}: RequestConfig & s.DeletePresetRequest,
-  ): Promise<s.DeletePresetResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -206,15 +197,12 @@ export default class MediaConvert {
       requestUri: cmnP.encodePath`/2017-08-29/presets/${params["Name"]}`,
       responseCode: 202,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteQueue(
     {abortSignal, ...params}: RequestConfig & s.DeleteQueueRequest,
-  ): Promise<s.DeleteQueueResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -223,10 +211,7 @@ export default class MediaConvert {
       requestUri: cmnP.encodePath`/2017-08-29/queues/${params["Name"]}`,
       responseCode: 202,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async describeEndpoints(
@@ -254,7 +239,7 @@ export default class MediaConvert {
 
   async disassociateCertificate(
     {abortSignal, ...params}: RequestConfig & s.DisassociateCertificateRequest,
-  ): Promise<s.DisassociateCertificateResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -263,10 +248,7 @@ export default class MediaConvert {
       requestUri: cmnP.encodePath`/2017-08-29/certificates/${params["Arn"]}`,
       responseCode: 202,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async getJob(
@@ -465,7 +447,7 @@ export default class MediaConvert {
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & s.TagResourceRequest,
-  ): Promise<s.TagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       arn: params["Arn"],
       tags: params["Tags"],
@@ -476,15 +458,12 @@ export default class MediaConvert {
       requestUri: "/2017-08-29/tags",
       responseCode: 200,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async untagResource(
     {abortSignal, ...params}: RequestConfig & s.UntagResourceRequest,
-  ): Promise<s.UntagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       tagKeys: params["TagKeys"],
     };
@@ -495,10 +474,7 @@ export default class MediaConvert {
       requestUri: cmnP.encodePath`/2017-08-29/tags/${params["Arn"]}`,
       responseCode: 200,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateJobTemplate(

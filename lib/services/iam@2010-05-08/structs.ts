@@ -546,10 +546,6 @@ export interface ListOpenIDConnectProviderTagsRequest {
 }
 
 // refs: 1 - tags: named, input
-export interface ListOpenIDConnectProvidersRequest {
-}
-
-// refs: 1 - tags: named, input
 export interface ListPoliciesRequest {
   Scope?: policyScopeType | null;
   OnlyAttached?: boolean | null;
@@ -606,10 +602,6 @@ export interface ListSAMLProviderTagsRequest {
   SAMLProviderArn: string;
   Marker?: string | null;
   MaxItems?: number | null;
-}
-
-// refs: 1 - tags: named, input
-export interface ListSAMLProvidersRequest {
 }
 
 // refs: 1 - tags: named, input
@@ -1497,10 +1489,6 @@ export interface SimulatePolicyResponse {
   EvaluationResults: EvaluationResult[];
   IsTruncated?: boolean | null;
   Marker?: string | null;
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateRoleResponse {
 }
 
 // refs: 1 - tags: named, output

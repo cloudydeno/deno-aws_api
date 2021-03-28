@@ -31,7 +31,7 @@ export default class CloudTrail {
 
   async addTags(
     {abortSignal, ...params}: RequestConfig & s.AddTagsRequest,
-  ): Promise<s.AddTagsResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceId: params["ResourceId"],
       TagsList: params["TagsList"]?.map(x => fromTag(x)),
@@ -40,10 +40,7 @@ export default class CloudTrail {
       abortSignal, body,
       action: "AddTags",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async createTrail(
@@ -89,7 +86,7 @@ export default class CloudTrail {
 
   async deleteTrail(
     {abortSignal, ...params}: RequestConfig & s.DeleteTrailRequest,
-  ): Promise<s.DeleteTrailResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       Name: params["Name"],
     };
@@ -97,10 +94,7 @@ export default class CloudTrail {
       abortSignal, body,
       action: "DeleteTrail",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async describeTrails(
@@ -341,7 +335,7 @@ export default class CloudTrail {
 
   async removeTags(
     {abortSignal, ...params}: RequestConfig & s.RemoveTagsRequest,
-  ): Promise<s.RemoveTagsResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceId: params["ResourceId"],
       TagsList: params["TagsList"]?.map(x => fromTag(x)),
@@ -350,15 +344,12 @@ export default class CloudTrail {
       abortSignal, body,
       action: "RemoveTags",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async startLogging(
     {abortSignal, ...params}: RequestConfig & s.StartLoggingRequest,
-  ): Promise<s.StartLoggingResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       Name: params["Name"],
     };
@@ -366,15 +357,12 @@ export default class CloudTrail {
       abortSignal, body,
       action: "StartLogging",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async stopLogging(
     {abortSignal, ...params}: RequestConfig & s.StopLoggingRequest,
-  ): Promise<s.StopLoggingResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       Name: params["Name"],
     };
@@ -382,10 +370,7 @@ export default class CloudTrail {
       abortSignal, body,
       action: "StopLogging",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateTrail(

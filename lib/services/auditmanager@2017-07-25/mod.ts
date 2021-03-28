@@ -30,7 +30,7 @@ export default class AuditManager {
 
   async associateAssessmentReportEvidenceFolder(
     {abortSignal, ...params}: RequestConfig & s.AssociateAssessmentReportEvidenceFolderRequest,
-  ): Promise<s.AssociateAssessmentReportEvidenceFolderResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       evidenceFolderId: params["evidenceFolderId"],
     };
@@ -40,10 +40,7 @@ export default class AuditManager {
       method: "PUT",
       requestUri: cmnP.encodePath`/assessments/${params["assessmentId"]}/associateToAssessmentReport`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async batchAssociateAssessmentReportEvidence(
@@ -244,7 +241,7 @@ export default class AuditManager {
 
   async deleteAssessment(
     {abortSignal, ...params}: RequestConfig & s.DeleteAssessmentRequest,
-  ): Promise<s.DeleteAssessmentResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -252,15 +249,12 @@ export default class AuditManager {
       method: "DELETE",
       requestUri: cmnP.encodePath`/assessments/${params["assessmentId"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteAssessmentFramework(
     {abortSignal, ...params}: RequestConfig & s.DeleteAssessmentFrameworkRequest,
-  ): Promise<s.DeleteAssessmentFrameworkResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -268,15 +262,12 @@ export default class AuditManager {
       method: "DELETE",
       requestUri: cmnP.encodePath`/assessmentFrameworks/${params["frameworkId"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteAssessmentReport(
     {abortSignal, ...params}: RequestConfig & s.DeleteAssessmentReportRequest,
-  ): Promise<s.DeleteAssessmentReportResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -284,15 +275,12 @@ export default class AuditManager {
       method: "DELETE",
       requestUri: cmnP.encodePath`/assessments/${params["assessmentId"]}/reports/${params["assessmentReportId"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteControl(
     {abortSignal, ...params}: RequestConfig & s.DeleteControlRequest,
-  ): Promise<s.DeleteControlResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -300,18 +288,15 @@ export default class AuditManager {
       method: "DELETE",
       requestUri: cmnP.encodePath`/controls/${params["controlId"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deregisterAccount(
-    {abortSignal, ...params}: RequestConfig & s.DeregisterAccountRequest = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.DeregisterAccountResponse> {
-
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
-      abortSignal,
+      abortSignal, body,
       action: "DeregisterAccount",
       requestUri: "/account/deregisterAccount",
     });
@@ -325,7 +310,7 @@ export default class AuditManager {
 
   async deregisterOrganizationAdminAccount(
     {abortSignal, ...params}: RequestConfig & s.DeregisterOrganizationAdminAccountRequest = {},
-  ): Promise<s.DeregisterOrganizationAdminAccountResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       adminAccountId: params["adminAccountId"],
     };
@@ -334,15 +319,12 @@ export default class AuditManager {
       action: "DeregisterOrganizationAdminAccount",
       requestUri: "/account/deregisterOrganizationAdminAccount",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async disassociateAssessmentReportEvidenceFolder(
     {abortSignal, ...params}: RequestConfig & s.DisassociateAssessmentReportEvidenceFolderRequest,
-  ): Promise<s.DisassociateAssessmentReportEvidenceFolderResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       evidenceFolderId: params["evidenceFolderId"],
     };
@@ -352,18 +334,15 @@ export default class AuditManager {
       method: "PUT",
       requestUri: cmnP.encodePath`/assessments/${params["assessmentId"]}/disassociateFromAssessmentReport`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async getAccountStatus(
-    {abortSignal, ...params}: RequestConfig & s.GetAccountStatusRequest = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.GetAccountStatusResponse> {
-
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
-      abortSignal,
+      abortSignal, body,
       action: "GetAccountStatus",
       method: "GET",
       requestUri: "/account/status",
@@ -592,11 +571,11 @@ export default class AuditManager {
   }
 
   async getOrganizationAdminAccount(
-    {abortSignal, ...params}: RequestConfig & s.GetOrganizationAdminAccountRequest = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.GetOrganizationAdminAccountResponse> {
-
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
-      abortSignal,
+      abortSignal, body,
       action: "GetOrganizationAdminAccount",
       method: "GET",
       requestUri: "/account/organizationAdminAccount",
@@ -611,11 +590,11 @@ export default class AuditManager {
   }
 
   async getServicesInScope(
-    {abortSignal, ...params}: RequestConfig & s.GetServicesInScopeRequest = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.GetServicesInScopeResponse> {
-
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
-      abortSignal,
+      abortSignal, body,
       action: "GetServicesInScope",
       method: "GET",
       requestUri: "/services",
@@ -835,7 +814,7 @@ export default class AuditManager {
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & s.TagResourceRequest,
-  ): Promise<s.TagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       tags: params["tags"],
     };
@@ -844,15 +823,12 @@ export default class AuditManager {
       action: "TagResource",
       requestUri: cmnP.encodePath`/tags/${params["resourceArn"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async untagResource(
     {abortSignal, ...params}: RequestConfig & s.UntagResourceRequest,
-  ): Promise<s.UntagResourceResponse> {
+  ): Promise<void> {
     const query = new URLSearchParams;
     for (const item of params["tagKeys"]) {
       query.append("tagKeys", item?.toString() ?? "");
@@ -863,10 +839,7 @@ export default class AuditManager {
       method: "DELETE",
       requestUri: cmnP.encodePath`/tags/${params["resourceArn"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateAssessment(

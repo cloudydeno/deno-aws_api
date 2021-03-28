@@ -43,11 +43,12 @@ export default class CloudWatch {
       abortSignal, body,
       action: "DeleteAlarms",
     });
+    await resp.text();
   }
 
   async deleteAnomalyDetector(
     {abortSignal, ...params}: RequestConfig & s.DeleteAnomalyDetectorInput,
-  ): Promise<s.DeleteAnomalyDetectorOutput> {
+  ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"Namespace", (params["Namespace"] ?? '').toString());
@@ -58,13 +59,12 @@ export default class CloudWatch {
       abortSignal, body,
       action: "DeleteAnomalyDetector",
     });
-    const xml = xmlP.readXmlResult(await resp.text(), "DeleteAnomalyDetectorResult");
-    return {};
+    await resp.text();
   }
 
   async deleteDashboards(
     {abortSignal, ...params}: RequestConfig & s.DeleteDashboardsInput,
-  ): Promise<s.DeleteDashboardsOutput> {
+  ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     if (params["DashboardNames"]) qsP.appendList(body, prefix+"DashboardNames", params["DashboardNames"], {"entryPrefix":".member."})
@@ -72,8 +72,7 @@ export default class CloudWatch {
       abortSignal, body,
       action: "DeleteDashboards",
     });
-    const xml = xmlP.readXmlResult(await resp.text(), "DeleteDashboardsResult");
-    return {};
+    await resp.text();
   }
 
   async deleteInsightRules(
@@ -221,6 +220,7 @@ export default class CloudWatch {
       abortSignal, body,
       action: "DisableAlarmActions",
     });
+    await resp.text();
   }
 
   async disableInsightRules(
@@ -249,6 +249,7 @@ export default class CloudWatch {
       abortSignal, body,
       action: "EnableAlarmActions",
     });
+    await resp.text();
   }
 
   async enableInsightRules(
@@ -443,7 +444,7 @@ export default class CloudWatch {
 
   async putAnomalyDetector(
     {abortSignal, ...params}: RequestConfig & s.PutAnomalyDetectorInput,
-  ): Promise<s.PutAnomalyDetectorOutput> {
+  ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"Namespace", (params["Namespace"] ?? '').toString());
@@ -455,8 +456,7 @@ export default class CloudWatch {
       abortSignal, body,
       action: "PutAnomalyDetector",
     });
-    const xml = xmlP.readXmlResult(await resp.text(), "PutAnomalyDetectorResult");
-    return {};
+    await resp.text();
   }
 
   async putCompositeAlarm(
@@ -476,6 +476,7 @@ export default class CloudWatch {
       abortSignal, body,
       action: "PutCompositeAlarm",
     });
+    await resp.text();
   }
 
   async putDashboard(
@@ -497,7 +498,7 @@ export default class CloudWatch {
 
   async putInsightRule(
     {abortSignal, ...params}: RequestConfig & s.PutInsightRuleInput,
-  ): Promise<s.PutInsightRuleOutput> {
+  ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"RuleName", (params["RuleName"] ?? '').toString());
@@ -508,8 +509,7 @@ export default class CloudWatch {
       abortSignal, body,
       action: "PutInsightRule",
     });
-    const xml = xmlP.readXmlResult(await resp.text(), "PutInsightRuleResult");
-    return {};
+    await resp.text();
   }
 
   async putMetricAlarm(
@@ -543,6 +543,7 @@ export default class CloudWatch {
       abortSignal, body,
       action: "PutMetricAlarm",
     });
+    await resp.text();
   }
 
   async putMetricData(
@@ -556,6 +557,7 @@ export default class CloudWatch {
       abortSignal, body,
       action: "PutMetricData",
     });
+    await resp.text();
   }
 
   async setAlarmState(
@@ -571,11 +573,12 @@ export default class CloudWatch {
       abortSignal, body,
       action: "SetAlarmState",
     });
+    await resp.text();
   }
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & s.TagResourceInput,
-  ): Promise<s.TagResourceOutput> {
+  ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"ResourceARN", (params["ResourceARN"] ?? '').toString());
@@ -584,13 +587,12 @@ export default class CloudWatch {
       abortSignal, body,
       action: "TagResource",
     });
-    const xml = xmlP.readXmlResult(await resp.text(), "TagResourceResult");
-    return {};
+    await resp.text();
   }
 
   async untagResource(
     {abortSignal, ...params}: RequestConfig & s.UntagResourceInput,
-  ): Promise<s.UntagResourceOutput> {
+  ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"ResourceARN", (params["ResourceARN"] ?? '').toString());
@@ -599,8 +601,7 @@ export default class CloudWatch {
       abortSignal, body,
       action: "UntagResource",
     });
-    const xml = xmlP.readXmlResult(await resp.text(), "UntagResourceResult");
-    return {};
+    await resp.text();
   }
 
   // Resource State Waiters

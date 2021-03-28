@@ -17,6 +17,7 @@ export class StructEmitter {
 
     for (const shape of this.shapes.allNamedShapes) {
       if (!shape.tags.has('named')) continue;
+      if (shape.refCount < 1) continue;
       let anythingHappened = false;
 
       if (including.includes('iface')) {

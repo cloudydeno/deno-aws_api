@@ -146,6 +146,7 @@ export default class LexModelBuildingService {
       requestUri: cmnP.encodePath`/bots/${params["name"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deleteBotAlias(
@@ -159,6 +160,7 @@ export default class LexModelBuildingService {
       requestUri: cmnP.encodePath`/bots/${params["botName"]}/aliases/${params["name"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deleteBotChannelAssociation(
@@ -172,6 +174,7 @@ export default class LexModelBuildingService {
       requestUri: cmnP.encodePath`/bots/${params["botName"]}/aliases/${params["botAlias"]}/channels/${params["name"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deleteBotVersion(
@@ -185,6 +188,7 @@ export default class LexModelBuildingService {
       requestUri: cmnP.encodePath`/bots/${params["name"]}/versions/${params["version"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deleteIntent(
@@ -198,6 +202,7 @@ export default class LexModelBuildingService {
       requestUri: cmnP.encodePath`/intents/${params["name"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deleteIntentVersion(
@@ -211,6 +216,7 @@ export default class LexModelBuildingService {
       requestUri: cmnP.encodePath`/intents/${params["name"]}/versions/${params["version"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deleteSlotType(
@@ -224,6 +230,7 @@ export default class LexModelBuildingService {
       requestUri: cmnP.encodePath`/slottypes/${params["name"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deleteSlotTypeVersion(
@@ -237,6 +244,7 @@ export default class LexModelBuildingService {
       requestUri: cmnP.encodePath`/slottypes/${params["name"]}/version/${params["version"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deleteUtterances(
@@ -250,6 +258,7 @@ export default class LexModelBuildingService {
       requestUri: cmnP.encodePath`/bots/${params["botName"]}/utterances/${params["userId"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async getBot(
@@ -960,7 +969,7 @@ export default class LexModelBuildingService {
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & s.TagResourceRequest,
-  ): Promise<s.TagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       tags: params["tags"]?.map(x => fromTag(x)),
     };
@@ -970,15 +979,12 @@ export default class LexModelBuildingService {
       requestUri: cmnP.encodePath`/tags/${params["resourceArn"]}`,
       responseCode: 204,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async untagResource(
     {abortSignal, ...params}: RequestConfig & s.UntagResourceRequest,
-  ): Promise<s.UntagResourceResponse> {
+  ): Promise<void> {
     const query = new URLSearchParams;
     for (const item of params["tagKeys"]) {
       query.append("tagKeys", item?.toString() ?? "");
@@ -990,10 +996,7 @@ export default class LexModelBuildingService {
       requestUri: cmnP.encodePath`/tags/${params["resourceArn"]}`,
       responseCode: 204,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
 }

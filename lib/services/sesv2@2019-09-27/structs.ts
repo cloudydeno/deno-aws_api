@@ -142,10 +142,6 @@ export interface DeleteSuppressedDestinationRequest {
 }
 
 // refs: 1 - tags: named, input
-export interface GetAccountRequest {
-}
-
-// refs: 1 - tags: named, input
 export interface GetBlacklistReportsRequest {
   BlacklistItemNames: string[];
 }
@@ -186,10 +182,6 @@ export interface GetDedicatedIpsRequest {
   PoolName?: string | null;
   NextToken?: string | null;
   PageSize?: number | null;
-}
-
-// refs: 1 - tags: named, input
-export interface GetDeliverabilityDashboardOptionsRequest {
 }
 
 // refs: 1 - tags: named, input
@@ -525,30 +517,6 @@ export interface UpdateEmailTemplateRequest {
 }
 
 // refs: 1 - tags: named, output
-export interface CreateConfigurationSetResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface CreateConfigurationSetEventDestinationResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface CreateContactResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface CreateContactListResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface CreateCustomVerificationEmailTemplateResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface CreateDedicatedIpPoolResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface CreateDeliverabilityTestReportResponse {
   ReportId: string;
   DeliverabilityTestStatus: DeliverabilityTestStatus;
@@ -562,56 +530,8 @@ export interface CreateEmailIdentityResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface CreateEmailIdentityPolicyResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface CreateEmailTemplateResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface CreateImportJobResponse {
   JobId?: string | null;
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteConfigurationSetResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteConfigurationSetEventDestinationResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteContactResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteContactListResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteCustomVerificationEmailTemplateResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteDedicatedIpPoolResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteEmailIdentityResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteEmailIdentityPolicyResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteEmailTemplateResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteSuppressedDestinationResponse {
 }
 
 // refs: 1 - tags: named, output
@@ -831,77 +751,9 @@ export interface ListTagsForResourceResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface PutAccountDedicatedIpWarmupAttributesResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface PutAccountDetailsResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface PutAccountSendingAttributesResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface PutAccountSuppressionAttributesResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface PutConfigurationSetDeliveryOptionsResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface PutConfigurationSetReputationOptionsResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface PutConfigurationSetSendingOptionsResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface PutConfigurationSetSuppressionOptionsResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface PutConfigurationSetTrackingOptionsResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface PutDedicatedIpInPoolResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface PutDedicatedIpWarmupAttributesResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface PutDeliverabilityDashboardOptionResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface PutEmailIdentityConfigurationSetAttributesResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface PutEmailIdentityDkimAttributesResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface PutEmailIdentityDkimSigningAttributesResponse {
   DkimStatus?: DkimStatus | null;
   DkimTokens?: string[] | null;
-}
-
-// refs: 1 - tags: named, output
-export interface PutEmailIdentityFeedbackAttributesResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface PutEmailIdentityMailFromAttributesResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface PutSuppressedDestinationResponse {
 }
 
 // refs: 1 - tags: named, output
@@ -920,40 +772,8 @@ export interface SendEmailResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface TagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface TestRenderEmailTemplateResponse {
   RenderedTemplate: string;
-}
-
-// refs: 1 - tags: named, output
-export interface UntagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateConfigurationSetEventDestinationResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateContactResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateContactListResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateCustomVerificationEmailTemplateResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateEmailIdentityPolicyResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateEmailTemplateResponse {
 }
 
 // refs: 2 - tags: input, named, interface, output

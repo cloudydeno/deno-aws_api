@@ -29,10 +29,9 @@ export default class ResourceGroupsTaggingAPI {
   };
 
   async describeReportCreation(
-    {abortSignal, ...params}: RequestConfig & s.DescribeReportCreationInput = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.DescribeReportCreationOutput> {
-    const body: jsonP.JSONObject = {
-    };
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeReportCreation",
@@ -139,7 +138,7 @@ export default class ResourceGroupsTaggingAPI {
 
   async startReportCreation(
     {abortSignal, ...params}: RequestConfig & s.StartReportCreationInput,
-  ): Promise<s.StartReportCreationOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       S3Bucket: params["S3Bucket"],
     };
@@ -147,10 +146,7 @@ export default class ResourceGroupsTaggingAPI {
       abortSignal, body,
       action: "StartReportCreation",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async tagResources(

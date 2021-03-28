@@ -1234,22 +1234,6 @@ export interface CheckSchemaVersionValidityResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface CreateClassifierResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface CreateConnectionResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface CreateCrawlerResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface CreateDatabaseResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface CreateDevEndpointResponse {
   EndpointName?: string | null;
   Status?: string | null;
@@ -1280,14 +1264,6 @@ export interface CreateJobResponse {
 // refs: 1 - tags: named, output
 export interface CreateMLTransformResponse {
   TransformId?: string | null;
-}
-
-// refs: 1 - tags: named, output
-export interface CreatePartitionResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface CreatePartitionIndexResponse {
 }
 
 // refs: 1 - tags: named, output
@@ -1329,49 +1305,13 @@ export interface CreateSecurityConfigurationResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface CreateTableResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface CreateTriggerResponse {
   Name?: string | null;
 }
 
 // refs: 1 - tags: named, output
-export interface CreateUserDefinedFunctionResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface CreateWorkflowResponse {
   Name?: string | null;
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteClassifierResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteColumnStatisticsForPartitionResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteColumnStatisticsForTableResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteConnectionResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteCrawlerResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteDatabaseResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteDevEndpointResponse {
 }
 
 // refs: 1 - tags: named, output
@@ -1385,22 +1325,10 @@ export interface DeleteMLTransformResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface DeletePartitionResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeletePartitionIndexResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface DeleteRegistryResponse {
   RegistryName?: string | null;
   RegistryArn?: string | null;
   Status?: RegistryStatus | null;
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteResourcePolicyResponse {
 }
 
 // refs: 1 - tags: named, output
@@ -1416,24 +1344,8 @@ export interface DeleteSchemaVersionsResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface DeleteSecurityConfigurationResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteTableResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteTableVersionResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface DeleteTriggerResponse {
   Name?: string | null;
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteUserDefinedFunctionResponse {
 }
 
 // refs: 1 - tags: named, output
@@ -1782,10 +1694,6 @@ export interface GetWorkflowRunsResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface ImportCatalogToGlueResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface ListCrawlersResponse {
   CrawlerNames?: string[] | null;
   NextToken?: string | null;
@@ -1840,10 +1748,6 @@ export interface ListWorkflowsResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface PutDataCatalogEncryptionSettingsResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface PutResourcePolicyResponse {
   PolicyHash?: string | null;
 }
@@ -1858,10 +1762,6 @@ export interface PutSchemaVersionMetadataResponse {
   SchemaVersionId?: string | null;
   MetadataKey?: string | null;
   MetadataValue?: string | null;
-}
-
-// refs: 1 - tags: named, output
-export interface PutWorkflowRunPropertiesResponse {
 }
 
 // refs: 1 - tags: named, output
@@ -1908,14 +1808,6 @@ export interface SearchTablesResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface StartCrawlerResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface StartCrawlerScheduleResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface StartExportLabelsTaskRunResponse {
   TaskRunId?: string | null;
 }
@@ -1951,32 +1843,8 @@ export interface StartWorkflowRunResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface StopCrawlerResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface StopCrawlerScheduleResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface StopTriggerResponse {
   Name?: string | null;
-}
-
-// refs: 1 - tags: named, output
-export interface StopWorkflowRunResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface TagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UntagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateClassifierResponse {
 }
 
 // refs: 1 - tags: named, output
@@ -1990,26 +1858,6 @@ export interface UpdateColumnStatisticsForTableResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface UpdateConnectionResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateCrawlerResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateCrawlerScheduleResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateDatabaseResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateDevEndpointResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface UpdateJobResponse {
   JobName?: string | null;
 }
@@ -2017,10 +1865,6 @@ export interface UpdateJobResponse {
 // refs: 1 - tags: named, output
 export interface UpdateMLTransformResponse {
   TransformId?: string | null;
-}
-
-// refs: 1 - tags: named, output
-export interface UpdatePartitionResponse {
 }
 
 // refs: 1 - tags: named, output
@@ -2037,16 +1881,8 @@ export interface UpdateSchemaResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface UpdateTableResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface UpdateTriggerResponse {
   Trigger?: Trigger | null;
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateUserDefinedFunctionResponse {
 }
 
 // refs: 1 - tags: named, output

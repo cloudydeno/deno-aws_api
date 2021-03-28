@@ -39,6 +39,7 @@ export default class ElasticBeanstalk {
       abortSignal, body,
       action: "AbortEnvironmentUpdate",
     });
+    await resp.text();
   }
 
   async applyEnvironmentManagedAction(
@@ -73,6 +74,7 @@ export default class ElasticBeanstalk {
       abortSignal, body,
       action: "AssociateEnvironmentOperationsRole",
     });
+    await resp.text();
   }
 
   async checkDNSAvailability(
@@ -230,7 +232,7 @@ export default class ElasticBeanstalk {
   }
 
   async createStorageLocation(
-    {abortSignal, ...params}: RequestConfig = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.CreateStorageLocationResultMessage> {
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -253,6 +255,7 @@ export default class ElasticBeanstalk {
       abortSignal, body,
       action: "DeleteApplication",
     });
+    await resp.text();
   }
 
   async deleteApplicationVersion(
@@ -267,6 +270,7 @@ export default class ElasticBeanstalk {
       abortSignal, body,
       action: "DeleteApplicationVersion",
     });
+    await resp.text();
   }
 
   async deleteConfigurationTemplate(
@@ -280,6 +284,7 @@ export default class ElasticBeanstalk {
       abortSignal, body,
       action: "DeleteConfigurationTemplate",
     });
+    await resp.text();
   }
 
   async deleteEnvironmentConfiguration(
@@ -293,6 +298,7 @@ export default class ElasticBeanstalk {
       abortSignal, body,
       action: "DeleteEnvironmentConfiguration",
     });
+    await resp.text();
   }
 
   async deletePlatformVersion(
@@ -312,7 +318,7 @@ export default class ElasticBeanstalk {
   }
 
   async describeAccountAttributes(
-    {abortSignal, ...params}: RequestConfig = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.DescribeAccountAttributesResult> {
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -591,10 +597,11 @@ export default class ElasticBeanstalk {
       abortSignal, body,
       action: "DisassociateEnvironmentOperationsRole",
     });
+    await resp.text();
   }
 
   async listAvailableSolutionStacks(
-    {abortSignal, ...params}: RequestConfig = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.ListAvailableSolutionStacksResultMessage> {
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -679,6 +686,7 @@ export default class ElasticBeanstalk {
       abortSignal, body,
       action: "RebuildEnvironment",
     });
+    await resp.text();
   }
 
   async requestEnvironmentInfo(
@@ -693,6 +701,7 @@ export default class ElasticBeanstalk {
       abortSignal, body,
       action: "RequestEnvironmentInfo",
     });
+    await resp.text();
   }
 
   async restartAppServer(
@@ -706,6 +715,7 @@ export default class ElasticBeanstalk {
       abortSignal, body,
       action: "RestartAppServer",
     });
+    await resp.text();
   }
 
   async retrieveEnvironmentInfo(
@@ -739,6 +749,7 @@ export default class ElasticBeanstalk {
       abortSignal, body,
       action: "SwapEnvironmentCNAMEs",
     });
+    await resp.text();
   }
 
   async terminateEnvironment(
@@ -868,6 +879,7 @@ export default class ElasticBeanstalk {
       abortSignal, body,
       action: "UpdateTagsForResource",
     });
+    await resp.text();
   }
 
   async validateConfigurationSettings(

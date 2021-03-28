@@ -319,10 +319,6 @@ export interface DescribeTagOptionInput {
 }
 
 // refs: 1 - tags: named, input
-export interface DisableAWSOrganizationsAccessInput {
-}
-
-// refs: 1 - tags: named, input
 export interface DisassociateBudgetFromResourceInput {
   BudgetName: string;
   ResourceId: string;
@@ -357,10 +353,6 @@ export interface DisassociateTagOptionFromResourceInput {
 }
 
 // refs: 1 - tags: named, input
-export interface EnableAWSOrganizationsAccessInput {
-}
-
-// refs: 1 - tags: named, input
 export interface ExecuteProvisionedProductPlanInput {
   AcceptLanguage?: string | null;
   PlanId: string;
@@ -374,10 +366,6 @@ export interface ExecuteProvisionedProductServiceActionInput {
   ExecuteToken: string;
   AcceptLanguage?: string | null;
   Parameters?: { [key: string]: string[] | null | undefined } | null;
-}
-
-// refs: 1 - tags: named, input
-export interface GetAWSOrganizationsAccessStatusInput {
 }
 
 // refs: 1 - tags: named, input
@@ -716,30 +704,6 @@ export interface UpdateTagOptionInput {
 }
 
 // refs: 1 - tags: named, output
-export interface AcceptPortfolioShareOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface AssociateBudgetWithResourceOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface AssociatePrincipalWithPortfolioOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface AssociateProductWithPortfolioOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface AssociateServiceActionWithProvisioningArtifactOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface AssociateTagOptionWithResourceOutput {
-}
-
-// refs: 1 - tags: named, output
 export interface BatchAssociateServiceActionWithProvisioningArtifactOutput {
   FailedServiceActionAssociations?: FailedServiceActionAssociation[] | null;
 }
@@ -806,36 +770,8 @@ export interface CreateTagOptionOutput {
 }
 
 // refs: 1 - tags: named, output
-export interface DeleteConstraintOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface DeletePortfolioOutput {
-}
-
-// refs: 1 - tags: named, output
 export interface DeletePortfolioShareOutput {
   PortfolioShareToken?: string | null;
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteProductOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteProvisionedProductPlanOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteProvisioningArtifactOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteServiceActionOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteTagOptionOutput {
 }
 
 // refs: 1 - tags: named, output
@@ -948,34 +884,6 @@ export interface DescribeServiceActionExecutionParametersOutput {
 // refs: 1 - tags: named, output
 export interface DescribeTagOptionOutput {
   TagOptionDetail?: TagOptionDetail | null;
-}
-
-// refs: 1 - tags: named, output
-export interface DisableAWSOrganizationsAccessOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface DisassociateBudgetFromResourceOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface DisassociatePrincipalFromPortfolioOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface DisassociateProductFromPortfolioOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface DisassociateServiceActionFromProvisioningArtifactOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface DisassociateTagOptionFromResourceOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface EnableAWSOrganizationsAccessOutput {
 }
 
 // refs: 1 - tags: named, output
@@ -1115,10 +1023,6 @@ export interface ListTagOptionsOutput {
 // refs: 1 - tags: named, output
 export interface ProvisionProductOutput {
   RecordDetail?: RecordDetail | null;
-}
-
-// refs: 1 - tags: named, output
-export interface RejectPortfolioShareOutput {
 }
 
 // refs: 1 - tags: named, output

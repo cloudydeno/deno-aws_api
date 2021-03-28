@@ -75,7 +75,7 @@ export default class KinesisVideo {
 
   async deleteSignalingChannel(
     {abortSignal, ...params}: RequestConfig & s.DeleteSignalingChannelInput,
-  ): Promise<s.DeleteSignalingChannelOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ChannelARN: params["ChannelARN"],
       CurrentVersion: params["CurrentVersion"],
@@ -85,15 +85,12 @@ export default class KinesisVideo {
       action: "DeleteSignalingChannel",
       requestUri: "/deleteSignalingChannel",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteStream(
     {abortSignal, ...params}: RequestConfig & s.DeleteStreamInput,
-  ): Promise<s.DeleteStreamOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       StreamARN: params["StreamARN"],
       CurrentVersion: params["CurrentVersion"],
@@ -103,10 +100,7 @@ export default class KinesisVideo {
       action: "DeleteStream",
       requestUri: "/deleteStream",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async describeSignalingChannel(
@@ -279,7 +273,7 @@ export default class KinesisVideo {
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & s.TagResourceInput,
-  ): Promise<s.TagResourceOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceARN: params["ResourceARN"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
@@ -289,15 +283,12 @@ export default class KinesisVideo {
       action: "TagResource",
       requestUri: "/TagResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async tagStream(
     {abortSignal, ...params}: RequestConfig & s.TagStreamInput,
-  ): Promise<s.TagStreamOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       StreamARN: params["StreamARN"],
       StreamName: params["StreamName"],
@@ -308,15 +299,12 @@ export default class KinesisVideo {
       action: "TagStream",
       requestUri: "/tagStream",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async untagResource(
     {abortSignal, ...params}: RequestConfig & s.UntagResourceInput,
-  ): Promise<s.UntagResourceOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceARN: params["ResourceARN"],
       TagKeyList: params["TagKeyList"],
@@ -326,15 +314,12 @@ export default class KinesisVideo {
       action: "UntagResource",
       requestUri: "/UntagResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async untagStream(
     {abortSignal, ...params}: RequestConfig & s.UntagStreamInput,
-  ): Promise<s.UntagStreamOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       StreamARN: params["StreamARN"],
       StreamName: params["StreamName"],
@@ -345,15 +330,12 @@ export default class KinesisVideo {
       action: "UntagStream",
       requestUri: "/untagStream",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateDataRetention(
     {abortSignal, ...params}: RequestConfig & s.UpdateDataRetentionInput,
-  ): Promise<s.UpdateDataRetentionOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       StreamName: params["StreamName"],
       StreamARN: params["StreamARN"],
@@ -366,15 +348,12 @@ export default class KinesisVideo {
       action: "UpdateDataRetention",
       requestUri: "/updateDataRetention",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateSignalingChannel(
     {abortSignal, ...params}: RequestConfig & s.UpdateSignalingChannelInput,
-  ): Promise<s.UpdateSignalingChannelOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ChannelARN: params["ChannelARN"],
       CurrentVersion: params["CurrentVersion"],
@@ -385,15 +364,12 @@ export default class KinesisVideo {
       action: "UpdateSignalingChannel",
       requestUri: "/updateSignalingChannel",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateStream(
     {abortSignal, ...params}: RequestConfig & s.UpdateStreamInput,
-  ): Promise<s.UpdateStreamOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       StreamName: params["StreamName"],
       StreamARN: params["StreamARN"],
@@ -406,10 +382,7 @@ export default class KinesisVideo {
       action: "UpdateStream",
       requestUri: "/updateStream",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
 }

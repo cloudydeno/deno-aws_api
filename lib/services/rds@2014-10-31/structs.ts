@@ -450,10 +450,6 @@ export interface DeregisterDBProxyTargetsRequest {
 }
 
 // refs: 1 - tags: named, input
-export interface DescribeAccountAttributesMessage {
-}
-
-// refs: 1 - tags: named, input
 export interface DescribeCertificatesMessage {
   CertificateIdentifier?: string | null;
   Filters?: Filter[] | null;
@@ -1606,10 +1602,6 @@ export interface InstallationMedia {
   OSInstallationMediaPath?: string | null;
   Status?: string | null;
   FailureCause?: InstallationMediaFailureCause | null;
-}
-
-// refs: 1 - tags: named, output
-export interface DeregisterDBProxyTargetsResponse {
 }
 
 // refs: 1 - tags: named, output

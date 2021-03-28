@@ -244,14 +244,6 @@ export interface CreateApplicationPresignedUrlResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface CreateApplicationSnapshotResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteApplicationResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface DeleteApplicationCloudWatchLoggingOptionResponse {
   ApplicationARN?: string | null;
   ApplicationVersionId?: number | null;
@@ -274,10 +266,6 @@ export interface DeleteApplicationOutputResponse {
 export interface DeleteApplicationReferenceDataSourceResponse {
   ApplicationARN?: string | null;
   ApplicationVersionId?: number | null;
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteApplicationSnapshotResponse {
 }
 
 // refs: 1 - tags: named, output
@@ -319,22 +307,6 @@ export interface ListApplicationsResponse {
 // refs: 1 - tags: named, output
 export interface ListTagsForResourceResponse {
   Tags?: Tag[] | null;
-}
-
-// refs: 1 - tags: named, output
-export interface StartApplicationResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface StopApplicationResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface TagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UntagResourceResponse {
 }
 
 // refs: 1 - tags: named, output

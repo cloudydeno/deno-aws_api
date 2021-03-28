@@ -258,10 +258,6 @@ export interface UpdateTaskExecutionRequest {
 }
 
 // refs: 1 - tags: named, output
-export interface CancelTaskExecutionResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface CreateAgentResponse {
   AgentArn?: string | null;
 }
@@ -299,18 +295,6 @@ export interface CreateLocationSmbResponse {
 // refs: 1 - tags: named, output
 export interface CreateTaskResponse {
   TaskArn?: string | null;
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteAgentResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteLocationResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteTaskResponse {
 }
 
 // refs: 1 - tags: named, output
@@ -451,38 +435,6 @@ export interface ListTasksResponse {
 // refs: 1 - tags: named, output
 export interface StartTaskExecutionResponse {
   TaskExecutionArn?: string | null;
-}
-
-// refs: 1 - tags: named, output
-export interface TagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UntagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateAgentResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateLocationNfsResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateLocationObjectStorageResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateLocationSmbResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateTaskResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateTaskExecutionResponse {
 }
 
 // refs: 10 - tags: input, named, interface, output

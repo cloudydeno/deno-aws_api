@@ -36,10 +36,6 @@ export interface PutObjectRequest {
 }
 
 // refs: 1 - tags: named, output
-export interface DeleteObjectResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface DescribeObjectResponse {
   ETag?: string | null;
   ContentType?: string | null;

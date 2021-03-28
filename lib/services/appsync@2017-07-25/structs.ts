@@ -359,38 +359,6 @@ export interface CreateTypeResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface DeleteApiCacheResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteApiKeyResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteDataSourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteFunctionResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteGraphqlApiResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteResolverResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteTypeResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface FlushApiCacheResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface GetApiCacheResponse {
   apiCache?: ApiCache | null;
 }
@@ -481,14 +449,6 @@ export interface ListTypesResponse {
 // refs: 1 - tags: named, output
 export interface StartSchemaCreationResponse {
   status?: SchemaStatus | null;
-}
-
-// refs: 1 - tags: named, output
-export interface TagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UntagResourceResponse {
 }
 
 // refs: 1 - tags: named, output

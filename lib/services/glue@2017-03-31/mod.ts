@@ -338,7 +338,7 @@ export default class Glue {
 
   async createClassifier(
     {abortSignal, ...params}: RequestConfig & s.CreateClassifierRequest = {},
-  ): Promise<s.CreateClassifierResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       GrokClassifier: fromCreateGrokClassifierRequest(params["GrokClassifier"]),
       XMLClassifier: fromCreateXMLClassifierRequest(params["XMLClassifier"]),
@@ -349,15 +349,12 @@ export default class Glue {
       abortSignal, body,
       action: "CreateClassifier",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async createConnection(
     {abortSignal, ...params}: RequestConfig & s.CreateConnectionRequest,
-  ): Promise<s.CreateConnectionResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       CatalogId: params["CatalogId"],
       ConnectionInput: fromConnectionInput(params["ConnectionInput"]),
@@ -366,15 +363,12 @@ export default class Glue {
       abortSignal, body,
       action: "CreateConnection",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async createCrawler(
     {abortSignal, ...params}: RequestConfig & s.CreateCrawlerRequest,
-  ): Promise<s.CreateCrawlerResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       Name: params["Name"],
       Role: params["Role"],
@@ -395,15 +389,12 @@ export default class Glue {
       abortSignal, body,
       action: "CreateCrawler",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async createDatabase(
     {abortSignal, ...params}: RequestConfig & s.CreateDatabaseRequest,
-  ): Promise<s.CreateDatabaseResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       CatalogId: params["CatalogId"],
       DatabaseInput: fromDatabaseInput(params["DatabaseInput"]),
@@ -412,10 +403,7 @@ export default class Glue {
       abortSignal, body,
       action: "CreateDatabase",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async createDevEndpoint(
@@ -536,7 +524,7 @@ export default class Glue {
 
   async createPartition(
     {abortSignal, ...params}: RequestConfig & s.CreatePartitionRequest,
-  ): Promise<s.CreatePartitionResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       CatalogId: params["CatalogId"],
       DatabaseName: params["DatabaseName"],
@@ -547,15 +535,12 @@ export default class Glue {
       abortSignal, body,
       action: "CreatePartition",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async createPartitionIndex(
     {abortSignal, ...params}: RequestConfig & s.CreatePartitionIndexRequest,
-  ): Promise<s.CreatePartitionIndexResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       CatalogId: params["CatalogId"],
       DatabaseName: params["DatabaseName"],
@@ -566,10 +551,7 @@ export default class Glue {
       abortSignal, body,
       action: "CreatePartitionIndex",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async createRegistry(
@@ -675,7 +657,7 @@ export default class Glue {
 
   async createTable(
     {abortSignal, ...params}: RequestConfig & s.CreateTableRequest,
-  ): Promise<s.CreateTableResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       CatalogId: params["CatalogId"],
       DatabaseName: params["DatabaseName"],
@@ -686,10 +668,7 @@ export default class Glue {
       abortSignal, body,
       action: "CreateTable",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async createTrigger(
@@ -720,7 +699,7 @@ export default class Glue {
 
   async createUserDefinedFunction(
     {abortSignal, ...params}: RequestConfig & s.CreateUserDefinedFunctionRequest,
-  ): Promise<s.CreateUserDefinedFunctionResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       CatalogId: params["CatalogId"],
       DatabaseName: params["DatabaseName"],
@@ -730,10 +709,7 @@ export default class Glue {
       abortSignal, body,
       action: "CreateUserDefinedFunction",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async createWorkflow(
@@ -760,7 +736,7 @@ export default class Glue {
 
   async deleteClassifier(
     {abortSignal, ...params}: RequestConfig & s.DeleteClassifierRequest,
-  ): Promise<s.DeleteClassifierResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       Name: params["Name"],
     };
@@ -768,15 +744,12 @@ export default class Glue {
       abortSignal, body,
       action: "DeleteClassifier",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteColumnStatisticsForPartition(
     {abortSignal, ...params}: RequestConfig & s.DeleteColumnStatisticsForPartitionRequest,
-  ): Promise<s.DeleteColumnStatisticsForPartitionResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       CatalogId: params["CatalogId"],
       DatabaseName: params["DatabaseName"],
@@ -788,15 +761,12 @@ export default class Glue {
       abortSignal, body,
       action: "DeleteColumnStatisticsForPartition",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteColumnStatisticsForTable(
     {abortSignal, ...params}: RequestConfig & s.DeleteColumnStatisticsForTableRequest,
-  ): Promise<s.DeleteColumnStatisticsForTableResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       CatalogId: params["CatalogId"],
       DatabaseName: params["DatabaseName"],
@@ -807,15 +777,12 @@ export default class Glue {
       abortSignal, body,
       action: "DeleteColumnStatisticsForTable",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteConnection(
     {abortSignal, ...params}: RequestConfig & s.DeleteConnectionRequest,
-  ): Promise<s.DeleteConnectionResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       CatalogId: params["CatalogId"],
       ConnectionName: params["ConnectionName"],
@@ -824,15 +791,12 @@ export default class Glue {
       abortSignal, body,
       action: "DeleteConnection",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteCrawler(
     {abortSignal, ...params}: RequestConfig & s.DeleteCrawlerRequest,
-  ): Promise<s.DeleteCrawlerResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       Name: params["Name"],
     };
@@ -840,15 +804,12 @@ export default class Glue {
       abortSignal, body,
       action: "DeleteCrawler",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteDatabase(
     {abortSignal, ...params}: RequestConfig & s.DeleteDatabaseRequest,
-  ): Promise<s.DeleteDatabaseResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       CatalogId: params["CatalogId"],
       Name: params["Name"],
@@ -857,15 +818,12 @@ export default class Glue {
       abortSignal, body,
       action: "DeleteDatabase",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteDevEndpoint(
     {abortSignal, ...params}: RequestConfig & s.DeleteDevEndpointRequest,
-  ): Promise<s.DeleteDevEndpointResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       EndpointName: params["EndpointName"],
     };
@@ -873,10 +831,7 @@ export default class Glue {
       abortSignal, body,
       action: "DeleteDevEndpoint",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteJob(
@@ -917,7 +872,7 @@ export default class Glue {
 
   async deletePartition(
     {abortSignal, ...params}: RequestConfig & s.DeletePartitionRequest,
-  ): Promise<s.DeletePartitionResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       CatalogId: params["CatalogId"],
       DatabaseName: params["DatabaseName"],
@@ -928,15 +883,12 @@ export default class Glue {
       abortSignal, body,
       action: "DeletePartition",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deletePartitionIndex(
     {abortSignal, ...params}: RequestConfig & s.DeletePartitionIndexRequest,
-  ): Promise<s.DeletePartitionIndexResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       CatalogId: params["CatalogId"],
       DatabaseName: params["DatabaseName"],
@@ -947,10 +899,7 @@ export default class Glue {
       abortSignal, body,
       action: "DeletePartitionIndex",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteRegistry(
@@ -975,7 +924,7 @@ export default class Glue {
 
   async deleteResourcePolicy(
     {abortSignal, ...params}: RequestConfig & s.DeleteResourcePolicyRequest = {},
-  ): Promise<s.DeleteResourcePolicyResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       PolicyHashCondition: params["PolicyHashCondition"],
       ResourceArn: params["ResourceArn"],
@@ -984,10 +933,7 @@ export default class Glue {
       abortSignal, body,
       action: "DeleteResourcePolicy",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteSchema(
@@ -1031,7 +977,7 @@ export default class Glue {
 
   async deleteSecurityConfiguration(
     {abortSignal, ...params}: RequestConfig & s.DeleteSecurityConfigurationRequest,
-  ): Promise<s.DeleteSecurityConfigurationResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       Name: params["Name"],
     };
@@ -1039,15 +985,12 @@ export default class Glue {
       abortSignal, body,
       action: "DeleteSecurityConfiguration",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteTable(
     {abortSignal, ...params}: RequestConfig & s.DeleteTableRequest,
-  ): Promise<s.DeleteTableResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       CatalogId: params["CatalogId"],
       DatabaseName: params["DatabaseName"],
@@ -1057,15 +1000,12 @@ export default class Glue {
       abortSignal, body,
       action: "DeleteTable",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteTableVersion(
     {abortSignal, ...params}: RequestConfig & s.DeleteTableVersionRequest,
-  ): Promise<s.DeleteTableVersionResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       CatalogId: params["CatalogId"],
       DatabaseName: params["DatabaseName"],
@@ -1076,10 +1016,7 @@ export default class Glue {
       abortSignal, body,
       action: "DeleteTableVersion",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteTrigger(
@@ -1102,7 +1039,7 @@ export default class Glue {
 
   async deleteUserDefinedFunction(
     {abortSignal, ...params}: RequestConfig & s.DeleteUserDefinedFunctionRequest,
-  ): Promise<s.DeleteUserDefinedFunctionResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       CatalogId: params["CatalogId"],
       DatabaseName: params["DatabaseName"],
@@ -1112,10 +1049,7 @@ export default class Glue {
       abortSignal, body,
       action: "DeleteUserDefinedFunction",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteWorkflow(
@@ -2248,7 +2182,7 @@ export default class Glue {
 
   async importCatalogToGlue(
     {abortSignal, ...params}: RequestConfig & s.ImportCatalogToGlueRequest = {},
-  ): Promise<s.ImportCatalogToGlueResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       CatalogId: params["CatalogId"],
     };
@@ -2256,10 +2190,7 @@ export default class Glue {
       abortSignal, body,
       action: "ImportCatalogToGlue",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async listCrawlers(
@@ -2455,7 +2386,7 @@ export default class Glue {
 
   async putDataCatalogEncryptionSettings(
     {abortSignal, ...params}: RequestConfig & s.PutDataCatalogEncryptionSettingsRequest,
-  ): Promise<s.PutDataCatalogEncryptionSettingsResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       CatalogId: params["CatalogId"],
       DataCatalogEncryptionSettings: fromDataCatalogEncryptionSettings(params["DataCatalogEncryptionSettings"]),
@@ -2464,10 +2395,7 @@ export default class Glue {
       abortSignal, body,
       action: "PutDataCatalogEncryptionSettings",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async putResourcePolicy(
@@ -2522,7 +2450,7 @@ export default class Glue {
 
   async putWorkflowRunProperties(
     {abortSignal, ...params}: RequestConfig & s.PutWorkflowRunPropertiesRequest,
-  ): Promise<s.PutWorkflowRunPropertiesResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       Name: params["Name"],
       RunId: params["RunId"],
@@ -2532,10 +2460,7 @@ export default class Glue {
       abortSignal, body,
       action: "PutWorkflowRunProperties",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async querySchemaVersionMetadata(
@@ -2679,7 +2604,7 @@ export default class Glue {
 
   async startCrawler(
     {abortSignal, ...params}: RequestConfig & s.StartCrawlerRequest,
-  ): Promise<s.StartCrawlerResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       Name: params["Name"],
     };
@@ -2687,15 +2612,12 @@ export default class Glue {
       abortSignal, body,
       action: "StartCrawler",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async startCrawlerSchedule(
     {abortSignal, ...params}: RequestConfig & s.StartCrawlerScheduleRequest,
-  ): Promise<s.StartCrawlerScheduleResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       CrawlerName: params["CrawlerName"],
     };
@@ -2703,10 +2625,7 @@ export default class Glue {
       abortSignal, body,
       action: "StartCrawlerSchedule",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async startExportLabelsTaskRun(
@@ -2850,7 +2769,7 @@ export default class Glue {
 
   async stopCrawler(
     {abortSignal, ...params}: RequestConfig & s.StopCrawlerRequest,
-  ): Promise<s.StopCrawlerResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       Name: params["Name"],
     };
@@ -2858,15 +2777,12 @@ export default class Glue {
       abortSignal, body,
       action: "StopCrawler",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async stopCrawlerSchedule(
     {abortSignal, ...params}: RequestConfig & s.StopCrawlerScheduleRequest,
-  ): Promise<s.StopCrawlerScheduleResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       CrawlerName: params["CrawlerName"],
     };
@@ -2874,10 +2790,7 @@ export default class Glue {
       abortSignal, body,
       action: "StopCrawlerSchedule",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async stopTrigger(
@@ -2900,7 +2813,7 @@ export default class Glue {
 
   async stopWorkflowRun(
     {abortSignal, ...params}: RequestConfig & s.StopWorkflowRunRequest,
-  ): Promise<s.StopWorkflowRunResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       Name: params["Name"],
       RunId: params["RunId"],
@@ -2909,15 +2822,12 @@ export default class Glue {
       abortSignal, body,
       action: "StopWorkflowRun",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & s.TagResourceRequest,
-  ): Promise<s.TagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
       TagsToAdd: params["TagsToAdd"],
@@ -2926,15 +2836,12 @@ export default class Glue {
       abortSignal, body,
       action: "TagResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async untagResource(
     {abortSignal, ...params}: RequestConfig & s.UntagResourceRequest,
-  ): Promise<s.UntagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
       TagsToRemove: params["TagsToRemove"],
@@ -2943,15 +2850,12 @@ export default class Glue {
       abortSignal, body,
       action: "UntagResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateClassifier(
     {abortSignal, ...params}: RequestConfig & s.UpdateClassifierRequest = {},
-  ): Promise<s.UpdateClassifierResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       GrokClassifier: fromUpdateGrokClassifierRequest(params["GrokClassifier"]),
       XMLClassifier: fromUpdateXMLClassifierRequest(params["XMLClassifier"]),
@@ -2962,10 +2866,7 @@ export default class Glue {
       abortSignal, body,
       action: "UpdateClassifier",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateColumnStatisticsForPartition(
@@ -3013,7 +2914,7 @@ export default class Glue {
 
   async updateConnection(
     {abortSignal, ...params}: RequestConfig & s.UpdateConnectionRequest,
-  ): Promise<s.UpdateConnectionResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       CatalogId: params["CatalogId"],
       Name: params["Name"],
@@ -3023,15 +2924,12 @@ export default class Glue {
       abortSignal, body,
       action: "UpdateConnection",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateCrawler(
     {abortSignal, ...params}: RequestConfig & s.UpdateCrawlerRequest,
-  ): Promise<s.UpdateCrawlerResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       Name: params["Name"],
       Role: params["Role"],
@@ -3051,15 +2949,12 @@ export default class Glue {
       abortSignal, body,
       action: "UpdateCrawler",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateCrawlerSchedule(
     {abortSignal, ...params}: RequestConfig & s.UpdateCrawlerScheduleRequest,
-  ): Promise<s.UpdateCrawlerScheduleResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       CrawlerName: params["CrawlerName"],
       Schedule: params["Schedule"],
@@ -3068,15 +2963,12 @@ export default class Glue {
       abortSignal, body,
       action: "UpdateCrawlerSchedule",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateDatabase(
     {abortSignal, ...params}: RequestConfig & s.UpdateDatabaseRequest,
-  ): Promise<s.UpdateDatabaseResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       CatalogId: params["CatalogId"],
       Name: params["Name"],
@@ -3086,15 +2978,12 @@ export default class Glue {
       abortSignal, body,
       action: "UpdateDatabase",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateDevEndpoint(
     {abortSignal, ...params}: RequestConfig & s.UpdateDevEndpointRequest,
-  ): Promise<s.UpdateDevEndpointResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       EndpointName: params["EndpointName"],
       PublicKey: params["PublicKey"],
@@ -3109,10 +2998,7 @@ export default class Glue {
       abortSignal, body,
       action: "UpdateDevEndpoint",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateJob(
@@ -3164,7 +3050,7 @@ export default class Glue {
 
   async updatePartition(
     {abortSignal, ...params}: RequestConfig & s.UpdatePartitionRequest,
-  ): Promise<s.UpdatePartitionResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       CatalogId: params["CatalogId"],
       DatabaseName: params["DatabaseName"],
@@ -3176,10 +3062,7 @@ export default class Glue {
       abortSignal, body,
       action: "UpdatePartition",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateRegistry(
@@ -3227,7 +3110,7 @@ export default class Glue {
 
   async updateTable(
     {abortSignal, ...params}: RequestConfig & s.UpdateTableRequest,
-  ): Promise<s.UpdateTableResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       CatalogId: params["CatalogId"],
       DatabaseName: params["DatabaseName"],
@@ -3238,10 +3121,7 @@ export default class Glue {
       abortSignal, body,
       action: "UpdateTable",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateTrigger(
@@ -3265,7 +3145,7 @@ export default class Glue {
 
   async updateUserDefinedFunction(
     {abortSignal, ...params}: RequestConfig & s.UpdateUserDefinedFunctionRequest,
-  ): Promise<s.UpdateUserDefinedFunctionResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       CatalogId: params["CatalogId"],
       DatabaseName: params["DatabaseName"],
@@ -3276,10 +3156,7 @@ export default class Glue {
       abortSignal, body,
       action: "UpdateUserDefinedFunction",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateWorkflow(

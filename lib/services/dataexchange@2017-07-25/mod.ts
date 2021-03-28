@@ -39,6 +39,7 @@ export default class DataExchange {
       requestUri: cmnP.encodePath`/v1/jobs/${params["JobId"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async createDataSet(
@@ -142,6 +143,7 @@ export default class DataExchange {
       requestUri: cmnP.encodePath`/v1/data-sets/${params["DataSetId"]}/revisions/${params["RevisionId"]}/assets/${params["AssetId"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deleteDataSet(
@@ -155,6 +157,7 @@ export default class DataExchange {
       requestUri: cmnP.encodePath`/v1/data-sets/${params["DataSetId"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deleteRevision(
@@ -168,6 +171,7 @@ export default class DataExchange {
       requestUri: cmnP.encodePath`/v1/data-sets/${params["DataSetId"]}/revisions/${params["RevisionId"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async getAsset(
@@ -392,7 +396,7 @@ export default class DataExchange {
 
   async startJob(
     {abortSignal, ...params}: RequestConfig & s.StartJobRequest,
-  ): Promise<s.StartJobResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -401,10 +405,7 @@ export default class DataExchange {
       requestUri: cmnP.encodePath`/v1/jobs/${params["JobId"]}`,
       responseCode: 202,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async tagResource(
@@ -419,6 +420,7 @@ export default class DataExchange {
       requestUri: cmnP.encodePath`/tags/${params["ResourceArn"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async untagResource(
@@ -435,6 +437,7 @@ export default class DataExchange {
       requestUri: cmnP.encodePath`/tags/${params["ResourceArn"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async updateAsset(

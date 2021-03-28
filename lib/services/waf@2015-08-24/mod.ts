@@ -364,7 +364,7 @@ export default class WAF {
 
   async deleteLoggingConfiguration(
     {abortSignal, ...params}: RequestConfig & s.DeleteLoggingConfigurationRequest,
-  ): Promise<s.DeleteLoggingConfigurationResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
     };
@@ -372,15 +372,12 @@ export default class WAF {
       abortSignal, body,
       action: "DeleteLoggingConfiguration",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deletePermissionPolicy(
     {abortSignal, ...params}: RequestConfig & s.DeletePermissionPolicyRequest,
-  ): Promise<s.DeletePermissionPolicyResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
     };
@@ -388,10 +385,7 @@ export default class WAF {
       abortSignal, body,
       action: "DeletePermissionPolicy",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteRateBasedRule(
@@ -584,10 +578,9 @@ export default class WAF {
   }
 
   async getChangeToken(
-    {abortSignal, ...params}: RequestConfig & s.GetChangeTokenRequest = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.GetChangeTokenResponse> {
-    const body: jsonP.JSONObject = {
-    };
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetChangeToken",
@@ -1237,7 +1230,7 @@ export default class WAF {
 
   async putPermissionPolicy(
     {abortSignal, ...params}: RequestConfig & s.PutPermissionPolicyRequest,
-  ): Promise<s.PutPermissionPolicyResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
       Policy: params["Policy"],
@@ -1246,15 +1239,12 @@ export default class WAF {
       abortSignal, body,
       action: "PutPermissionPolicy",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & s.TagResourceRequest,
-  ): Promise<s.TagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceARN: params["ResourceARN"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
@@ -1263,15 +1253,12 @@ export default class WAF {
       abortSignal, body,
       action: "TagResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async untagResource(
     {abortSignal, ...params}: RequestConfig & s.UntagResourceRequest,
-  ): Promise<s.UntagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceARN: params["ResourceARN"],
       TagKeys: params["TagKeys"],
@@ -1280,10 +1267,7 @@ export default class WAF {
       abortSignal, body,
       action: "UntagResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateByteMatchSet(

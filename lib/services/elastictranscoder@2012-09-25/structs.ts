@@ -123,10 +123,6 @@ export interface UpdatePipelineStatusRequest {
 }
 
 // refs: 1 - tags: named, output
-export interface CancelJobResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface CreateJobResponse {
   Job?: Job | null;
 }
@@ -141,14 +137,6 @@ export interface CreatePipelineResponse {
 export interface CreatePresetResponse {
   Preset?: Preset | null;
   Warning?: string | null;
-}
-
-// refs: 1 - tags: named, output
-export interface DeletePipelineResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeletePresetResponse {
 }
 
 // refs: 1 - tags: named, output

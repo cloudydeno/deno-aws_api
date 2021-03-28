@@ -218,7 +218,7 @@ export default class Rekognition {
 
   async deleteStreamProcessor(
     {abortSignal, ...params}: RequestConfig & s.DeleteStreamProcessorRequest,
-  ): Promise<s.DeleteStreamProcessorResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       Name: params["Name"],
     };
@@ -226,10 +226,7 @@ export default class Rekognition {
       abortSignal, body,
       action: "DeleteStreamProcessor",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async describeCollection(
@@ -1019,7 +1016,7 @@ export default class Rekognition {
 
   async startStreamProcessor(
     {abortSignal, ...params}: RequestConfig & s.StartStreamProcessorRequest,
-  ): Promise<s.StartStreamProcessorResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       Name: params["Name"],
     };
@@ -1027,10 +1024,7 @@ export default class Rekognition {
       abortSignal, body,
       action: "StartStreamProcessor",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async startTextDetection(
@@ -1075,7 +1069,7 @@ export default class Rekognition {
 
   async stopStreamProcessor(
     {abortSignal, ...params}: RequestConfig & s.StopStreamProcessorRequest,
-  ): Promise<s.StopStreamProcessorResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       Name: params["Name"],
     };
@@ -1083,15 +1077,12 @@ export default class Rekognition {
       abortSignal, body,
       action: "StopStreamProcessor",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & s.TagResourceRequest,
-  ): Promise<s.TagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
       Tags: params["Tags"],
@@ -1100,15 +1091,12 @@ export default class Rekognition {
       abortSignal, body,
       action: "TagResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async untagResource(
     {abortSignal, ...params}: RequestConfig & s.UntagResourceRequest,
-  ): Promise<s.UntagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
       TagKeys: params["TagKeys"],
@@ -1117,10 +1105,7 @@ export default class Rekognition {
       abortSignal, body,
       action: "UntagResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   // Resource State Waiters

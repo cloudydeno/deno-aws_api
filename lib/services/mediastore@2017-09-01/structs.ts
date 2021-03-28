@@ -121,26 +121,6 @@ export interface CreateContainerOutput {
 }
 
 // refs: 1 - tags: named, output
-export interface DeleteContainerOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteContainerPolicyOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteCorsPolicyOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteLifecyclePolicyOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteMetricPolicyOutput {
-}
-
-// refs: 1 - tags: named, output
 export interface DescribeContainerOutput {
   Container?: Container | null;
 }
@@ -174,38 +154,6 @@ export interface ListContainersOutput {
 // refs: 1 - tags: named, output
 export interface ListTagsForResourceOutput {
   Tags?: Tag[] | null;
-}
-
-// refs: 1 - tags: named, output
-export interface PutContainerPolicyOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface PutCorsPolicyOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface PutLifecyclePolicyOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface PutMetricPolicyOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface StartAccessLoggingOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface StopAccessLoggingOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface TagResourceOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface UntagResourceOutput {
 }
 
 // refs: 3 - tags: input, named, interface, output

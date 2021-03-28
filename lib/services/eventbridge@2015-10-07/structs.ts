@@ -398,14 +398,6 @@ export interface DeauthorizeConnectionResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface DeleteApiDestinationResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteArchiveResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface DeleteConnectionResponse {
   ConnectionArn?: string | null;
   ConnectionState?: ConnectionState | null;
@@ -620,16 +612,8 @@ export interface StartReplayResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface TagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface TestEventPatternResponse {
   Result?: boolean | null;
-}
-
-// refs: 1 - tags: named, output
-export interface UntagResourceResponse {
 }
 
 // refs: 1 - tags: named, output

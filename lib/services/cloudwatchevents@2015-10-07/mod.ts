@@ -38,6 +38,7 @@ export default class CloudWatchEvents {
       abortSignal, body,
       action: "ActivateEventSource",
     });
+    await resp.text();
   }
 
   async cancelReplay(
@@ -184,6 +185,7 @@ export default class CloudWatchEvents {
       abortSignal, body,
       action: "DeactivateEventSource",
     });
+    await resp.text();
   }
 
   async deauthorizeConnection(
@@ -210,7 +212,7 @@ export default class CloudWatchEvents {
 
   async deleteApiDestination(
     {abortSignal, ...params}: RequestConfig & s.DeleteApiDestinationRequest,
-  ): Promise<s.DeleteApiDestinationResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       Name: params["Name"],
     };
@@ -218,15 +220,12 @@ export default class CloudWatchEvents {
       abortSignal, body,
       action: "DeleteApiDestination",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteArchive(
     {abortSignal, ...params}: RequestConfig & s.DeleteArchiveRequest,
-  ): Promise<s.DeleteArchiveResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ArchiveName: params["ArchiveName"],
     };
@@ -234,10 +233,7 @@ export default class CloudWatchEvents {
       abortSignal, body,
       action: "DeleteArchive",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteConnection(
@@ -272,6 +268,7 @@ export default class CloudWatchEvents {
       abortSignal, body,
       action: "DeleteEventBus",
     });
+    await resp.text();
   }
 
   async deletePartnerEventSource(
@@ -285,6 +282,7 @@ export default class CloudWatchEvents {
       abortSignal, body,
       action: "DeletePartnerEventSource",
     });
+    await resp.text();
   }
 
   async deleteRule(
@@ -299,6 +297,7 @@ export default class CloudWatchEvents {
       abortSignal, body,
       action: "DeleteRule",
     });
+    await resp.text();
   }
 
   async describeApiDestination(
@@ -514,6 +513,7 @@ export default class CloudWatchEvents {
       abortSignal, body,
       action: "DisableRule",
     });
+    await resp.text();
   }
 
   async enableRule(
@@ -527,6 +527,7 @@ export default class CloudWatchEvents {
       abortSignal, body,
       action: "EnableRule",
     });
+    await resp.text();
   }
 
   async listApiDestinations(
@@ -840,6 +841,7 @@ export default class CloudWatchEvents {
       abortSignal, body,
       action: "PutPermission",
     });
+    await resp.text();
   }
 
   async putRule(
@@ -900,6 +902,7 @@ export default class CloudWatchEvents {
       abortSignal, body,
       action: "RemovePermission",
     });
+    await resp.text();
   }
 
   async removeTargets(
@@ -952,7 +955,7 @@ export default class CloudWatchEvents {
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & s.TagResourceRequest,
-  ): Promise<s.TagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceARN: params["ResourceARN"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
@@ -961,10 +964,7 @@ export default class CloudWatchEvents {
       abortSignal, body,
       action: "TagResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async testEventPattern(
@@ -988,7 +988,7 @@ export default class CloudWatchEvents {
 
   async untagResource(
     {abortSignal, ...params}: RequestConfig & s.UntagResourceRequest,
-  ): Promise<s.UntagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceARN: params["ResourceARN"],
       TagKeys: params["TagKeys"],
@@ -997,10 +997,7 @@ export default class CloudWatchEvents {
       abortSignal, body,
       action: "UntagResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateApiDestination(

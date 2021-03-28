@@ -253,30 +253,6 @@ export interface CreateVodSourceResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface DeleteChannelResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteChannelPolicyResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeletePlaybackConfigurationResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteProgramResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteSourceLocationResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteVodSourceResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface DescribeChannelResponse {
   Arn?: string | null;
   ChannelName?: string | null;
@@ -385,10 +361,6 @@ export interface ListVodSourcesResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface PutChannelPolicyResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface PutPlaybackConfigurationResponse {
   AdDecisionServerUrl?: string | null;
   AvailSuppression?: AvailSuppression | null;
@@ -408,14 +380,6 @@ export interface PutPlaybackConfigurationResponse {
   Tags?: { [key: string]: string | null | undefined } | null;
   TranscodeProfileName?: string | null;
   VideoContentSourceUrl?: string | null;
-}
-
-// refs: 1 - tags: named, output
-export interface StartChannelResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface StopChannelResponse {
 }
 
 // refs: 1 - tags: named, output

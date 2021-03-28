@@ -139,10 +139,6 @@ export interface DeleteProvisionedConcurrencyConfigRequest {
 }
 
 // refs: 1 - tags: named, input
-export interface GetAccountSettingsRequest {
-}
-
-// refs: 1 - tags: named, input
 export interface GetAliasRequest {
   FunctionName: string;
   Name: string;
@@ -544,10 +540,6 @@ export interface FunctionConfiguration {
   ImageConfigResponse?: ImageConfigResponse | null;
   SigningProfileVersionArn?: string | null;
   SigningJobArn?: string | null;
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteCodeSigningConfigResponse {
 }
 
 // refs: 1 - tags: named, output

@@ -195,14 +195,6 @@ export interface CreateProposalOutput {
 }
 
 // refs: 1 - tags: named, output
-export interface DeleteMemberOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteNodeOutput {
-}
-
-// refs: 1 - tags: named, output
 export interface GetMemberOutput {
   Member?: Member | null;
 }
@@ -261,30 +253,6 @@ export interface ListProposalsOutput {
 // refs: 1 - tags: named, output
 export interface ListTagsForResourceResponse {
   Tags?: { [key: string]: string | null | undefined } | null;
-}
-
-// refs: 1 - tags: named, output
-export interface RejectInvitationOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface TagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UntagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateMemberOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateNodeOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface VoteOnProposalOutput {
 }
 
 // refs: 2 - tags: input, named, interface

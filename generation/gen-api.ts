@@ -26,10 +26,19 @@ export function generateApiTypescript(
   chunks.push(`  static ApiMetadata: client.ApiMetadata = ${JSON.stringify(apiSpec.metadata, null, 2).replace(/\n/g, `\n  `)};\n`);
 
   for (const operation of Object.values(apiSpec.operations)) {
-    const inputShape =  operation.input ? shapes.get(operation.input) : null;
-    const outputShape = operation.output ? shapes.get(operation.output) : null;
+    let inputShape =  operation.input ? shapes.get(operation.input) : null;
+    if (inputShape?.spec.type === 'structure' && Object.values(inputShape.spec.members).length === 0) {
+      inputShape.refCount--;
+      inputShape = null;
+    }
 
-    let signature = `(\n    {abortSignal, ...params}: RequestConfig`;
+    let outputShape = operation.output ? shapes.get(operation.output) : null;
+    if (outputShape?.spec.type === 'structure' && Object.values(outputShape.spec.members).length === 0) {
+      outputShape.refCount--;
+      outputShape = null;
+    }
+
+    let signature = `(\n    {abortSignal${inputShape ? ', ...params' : ''}}: RequestConfig`;
     if (inputShape?.spec.type === 'structure') {
       signature += ' & ' + structEmitter.specifyShapeType(inputShape, {isJson: operation.input?.jsonvalue});
       if (operation.input?.payload) {
@@ -58,7 +67,7 @@ export function generateApiTypescript(
     chunks.push(`  async ${cleanFuncName(lowerCamelName)}${signature} {`);
     let protoPathParts: Map<string,string> | undefined;
     const referencedInputs = new Set(['abortSignal']);
-    if (operation.input && inputShape?.spec.type === 'structure') {
+    if (operation.input) {// && inputShape?.spec.type === 'structure') {
       const {inputParsingCode, inputVariables, pathParts} = protocol
         .generateOperationInputParsingTypescript(inputShape, operation.input);
       chunks.push(inputParsingCode);
@@ -100,6 +109,9 @@ export function generateApiTypescript(
       const {outputParsingCode, outputVariables} = protocol
         .generateOperationOutputParsingTypescript(outputShape, operation.output?.resultWrapper ?? outputShape?.spec.resultWrapper);
       chunks.push(outputParsingCode);
+    } else {
+      // probably good to consume the response body
+      chunks.push(`    await resp.text();`);
     }
 
     // TODO: is this a sane way of doing pagination?

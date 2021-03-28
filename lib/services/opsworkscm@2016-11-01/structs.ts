@@ -52,10 +52,6 @@ export interface DeleteServerRequest {
 }
 
 // refs: 1 - tags: named, input
-export interface DescribeAccountAttributesRequest {
-}
-
-// refs: 1 - tags: named, input
 export interface DescribeBackupsRequest {
   BackupId?: string | null;
   ServerName?: string | null;
@@ -162,14 +158,6 @@ export interface CreateServerResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface DeleteBackupResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteServerResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface DescribeAccountAttributesResponse {
   Attributes?: AccountAttribute[] | null;
 }
@@ -216,20 +204,8 @@ export interface ListTagsForResourceResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface RestoreServerResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface StartMaintenanceResponse {
   Server?: Server | null;
-}
-
-// refs: 1 - tags: named, output
-export interface TagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UntagResourceResponse {
 }
 
 // refs: 1 - tags: named, output

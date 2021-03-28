@@ -34,7 +34,7 @@ export default class Macie2 {
 
   async acceptInvitation(
     {abortSignal, ...params}: RequestConfig & s.AcceptInvitationRequest,
-  ): Promise<s.AcceptInvitationResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       administratorAccountId: params["administratorAccountId"],
       invitationId: params["invitationId"],
@@ -46,10 +46,7 @@ export default class Macie2 {
       requestUri: "/invitations/accept",
       responseCode: 200,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async batchGetCustomDataIdentifiers(
@@ -202,7 +199,7 @@ export default class Macie2 {
 
   async createSampleFindings(
     {abortSignal, ...params}: RequestConfig & s.CreateSampleFindingsRequest = {},
-  ): Promise<s.CreateSampleFindingsResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       findingTypes: params["findingTypes"],
     };
@@ -212,10 +209,7 @@ export default class Macie2 {
       requestUri: "/findings/sample",
       responseCode: 200,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async declineInvitations(
@@ -240,7 +234,7 @@ export default class Macie2 {
 
   async deleteCustomDataIdentifier(
     {abortSignal, ...params}: RequestConfig & s.DeleteCustomDataIdentifierRequest,
-  ): Promise<s.DeleteCustomDataIdentifierResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -249,15 +243,12 @@ export default class Macie2 {
       requestUri: cmnP.encodePath`/custom-data-identifiers/${params["id"]}`,
       responseCode: 200,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteFindingsFilter(
     {abortSignal, ...params}: RequestConfig & s.DeleteFindingsFilterRequest,
-  ): Promise<s.DeleteFindingsFilterResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -266,10 +257,7 @@ export default class Macie2 {
       requestUri: cmnP.encodePath`/findingsfilters/${params["id"]}`,
       responseCode: 200,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteInvitations(
@@ -294,7 +282,7 @@ export default class Macie2 {
 
   async deleteMember(
     {abortSignal, ...params}: RequestConfig & s.DeleteMemberRequest,
-  ): Promise<s.DeleteMemberResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -303,10 +291,7 @@ export default class Macie2 {
       requestUri: cmnP.encodePath`/members/${params["id"]}`,
       responseCode: 200,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async describeBuckets(
@@ -370,11 +355,11 @@ export default class Macie2 {
   }
 
   async describeOrganizationConfiguration(
-    {abortSignal, ...params}: RequestConfig & s.DescribeOrganizationConfigurationRequest = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.DescribeOrganizationConfigurationResponse> {
-
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
-      abortSignal,
+      abortSignal, body,
       action: "DescribeOrganizationConfiguration",
       method: "GET",
       requestUri: "/admin/configuration",
@@ -390,25 +375,22 @@ export default class Macie2 {
   }
 
   async disableMacie(
-    {abortSignal, ...params}: RequestConfig & s.DisableMacieRequest = {},
-  ): Promise<s.DisableMacieResponse> {
-
+    {abortSignal}: RequestConfig = {},
+  ): Promise<void> {
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
-      abortSignal,
+      abortSignal, body,
       action: "DisableMacie",
       method: "DELETE",
       requestUri: "/macie",
       responseCode: 200,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async disableOrganizationAdminAccount(
     {abortSignal, ...params}: RequestConfig & s.DisableOrganizationAdminAccountRequest,
-  ): Promise<s.DisableOrganizationAdminAccountResponse> {
+  ): Promise<void> {
     const query = new URLSearchParams;
     query.set("adminAccountId", params["adminAccountId"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
@@ -418,47 +400,38 @@ export default class Macie2 {
       requestUri: "/admin",
       responseCode: 200,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async disassociateFromAdministratorAccount(
-    {abortSignal, ...params}: RequestConfig & s.DisassociateFromAdministratorAccountRequest = {},
-  ): Promise<s.DisassociateFromAdministratorAccountResponse> {
-
+    {abortSignal}: RequestConfig = {},
+  ): Promise<void> {
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
-      abortSignal,
+      abortSignal, body,
       action: "DisassociateFromAdministratorAccount",
       requestUri: "/administrator/disassociate",
       responseCode: 200,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async disassociateFromMasterAccount(
-    {abortSignal, ...params}: RequestConfig & s.DisassociateFromMasterAccountRequest = {},
-  ): Promise<s.DisassociateFromMasterAccountResponse> {
-
+    {abortSignal}: RequestConfig = {},
+  ): Promise<void> {
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
-      abortSignal,
+      abortSignal, body,
       action: "DisassociateFromMasterAccount",
       requestUri: "/master/disassociate",
       responseCode: 200,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async disassociateMember(
     {abortSignal, ...params}: RequestConfig & s.DisassociateMemberRequest,
-  ): Promise<s.DisassociateMemberResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -466,15 +439,12 @@ export default class Macie2 {
       requestUri: cmnP.encodePath`/members/disassociate/${params["id"]}`,
       responseCode: 200,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async enableMacie(
     {abortSignal, ...params}: RequestConfig & s.EnableMacieRequest = {},
-  ): Promise<s.EnableMacieResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       clientToken: params["clientToken"] ?? generateIdemptToken(),
       findingPublishingFrequency: params["findingPublishingFrequency"],
@@ -486,15 +456,12 @@ export default class Macie2 {
       requestUri: "/macie",
       responseCode: 200,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async enableOrganizationAdminAccount(
     {abortSignal, ...params}: RequestConfig & s.EnableOrganizationAdminAccountRequest,
-  ): Promise<s.EnableOrganizationAdminAccountResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       adminAccountId: params["adminAccountId"],
       clientToken: params["clientToken"] ?? generateIdemptToken(),
@@ -505,18 +472,15 @@ export default class Macie2 {
       requestUri: "/admin",
       responseCode: 200,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async getAdministratorAccount(
-    {abortSignal, ...params}: RequestConfig & s.GetAdministratorAccountRequest = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.GetAdministratorAccountResponse> {
-
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
-      abortSignal,
+      abortSignal, body,
       action: "GetAdministratorAccount",
       method: "GET",
       requestUri: "/administrator",
@@ -562,11 +526,11 @@ export default class Macie2 {
   }
 
   async getClassificationExportConfiguration(
-    {abortSignal, ...params}: RequestConfig & s.GetClassificationExportConfigurationRequest = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.GetClassificationExportConfigurationResponse> {
-
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
-      abortSignal,
+      abortSignal, body,
       action: "GetClassificationExportConfiguration",
       method: "GET",
       requestUri: "/classification-export-configuration",
@@ -680,11 +644,11 @@ export default class Macie2 {
   }
 
   async getFindingsPublicationConfiguration(
-    {abortSignal, ...params}: RequestConfig & s.GetFindingsPublicationConfigurationRequest = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.GetFindingsPublicationConfigurationResponse> {
-
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
-      abortSignal,
+      abortSignal, body,
       action: "GetFindingsPublicationConfiguration",
       method: "GET",
       requestUri: "/findings-publication-configuration",
@@ -699,11 +663,11 @@ export default class Macie2 {
   }
 
   async getInvitationsCount(
-    {abortSignal, ...params}: RequestConfig & s.GetInvitationsCountRequest = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.GetInvitationsCountResponse> {
-
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
-      abortSignal,
+      abortSignal, body,
       action: "GetInvitationsCount",
       method: "GET",
       requestUri: "/invitations/count",
@@ -718,11 +682,11 @@ export default class Macie2 {
   }
 
   async getMacieSession(
-    {abortSignal, ...params}: RequestConfig & s.GetMacieSessionRequest = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.GetMacieSessionResponse> {
-
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
-      abortSignal,
+      abortSignal, body,
       action: "GetMacieSession",
       method: "GET",
       requestUri: "/macie",
@@ -741,11 +705,11 @@ export default class Macie2 {
   }
 
   async getMasterAccount(
-    {abortSignal, ...params}: RequestConfig & s.GetMasterAccountRequest = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.GetMasterAccountResponse> {
-
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
-      abortSignal,
+      abortSignal, body,
       action: "GetMasterAccount",
       method: "GET",
       requestUri: "/master",
@@ -1034,7 +998,7 @@ export default class Macie2 {
 
   async putFindingsPublicationConfiguration(
     {abortSignal, ...params}: RequestConfig & s.PutFindingsPublicationConfigurationRequest = {},
-  ): Promise<s.PutFindingsPublicationConfigurationResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       clientToken: params["clientToken"] ?? generateIdemptToken(),
       securityHubConfiguration: fromSecurityHubConfiguration(params["securityHubConfiguration"]),
@@ -1046,15 +1010,12 @@ export default class Macie2 {
       requestUri: "/findings-publication-configuration",
       responseCode: 200,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & s.TagResourceRequest,
-  ): Promise<s.TagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       tags: params["tags"],
     };
@@ -1064,10 +1025,7 @@ export default class Macie2 {
       requestUri: cmnP.encodePath`/tags/${params["resourceArn"]}`,
       responseCode: 204,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async testCustomDataIdentifier(
@@ -1096,7 +1054,7 @@ export default class Macie2 {
 
   async untagResource(
     {abortSignal, ...params}: RequestConfig & s.UntagResourceRequest,
-  ): Promise<s.UntagResourceResponse> {
+  ): Promise<void> {
     const query = new URLSearchParams;
     for (const item of params["tagKeys"]) {
       query.append("tagKeys", item?.toString() ?? "");
@@ -1108,15 +1066,12 @@ export default class Macie2 {
       requestUri: cmnP.encodePath`/tags/${params["resourceArn"]}`,
       responseCode: 204,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateClassificationJob(
     {abortSignal, ...params}: RequestConfig & s.UpdateClassificationJobRequest,
-  ): Promise<s.UpdateClassificationJobResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       jobStatus: params["jobStatus"],
     };
@@ -1127,10 +1082,7 @@ export default class Macie2 {
       requestUri: cmnP.encodePath`/jobs/${params["jobId"]}`,
       responseCode: 200,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateFindingsFilter(
@@ -1161,7 +1113,7 @@ export default class Macie2 {
 
   async updateMacieSession(
     {abortSignal, ...params}: RequestConfig & s.UpdateMacieSessionRequest = {},
-  ): Promise<s.UpdateMacieSessionResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       findingPublishingFrequency: params["findingPublishingFrequency"],
       status: params["status"],
@@ -1173,15 +1125,12 @@ export default class Macie2 {
       requestUri: "/macie",
       responseCode: 200,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateMemberSession(
     {abortSignal, ...params}: RequestConfig & s.UpdateMemberSessionRequest,
-  ): Promise<s.UpdateMemberSessionResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       status: params["status"],
     };
@@ -1192,15 +1141,12 @@ export default class Macie2 {
       requestUri: cmnP.encodePath`/macie/members/${params["id"]}`,
       responseCode: 200,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateOrganizationConfiguration(
     {abortSignal, ...params}: RequestConfig & s.UpdateOrganizationConfigurationRequest,
-  ): Promise<s.UpdateOrganizationConfigurationResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       autoEnable: params["autoEnable"],
     };
@@ -1211,10 +1157,7 @@ export default class Macie2 {
       requestUri: "/admin/configuration",
       responseCode: 200,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
 }

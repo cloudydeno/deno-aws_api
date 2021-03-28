@@ -36,7 +36,7 @@ export default class SES {
 
   async cloneReceiptRuleSet(
     {abortSignal, ...params}: RequestConfig & s.CloneReceiptRuleSetRequest,
-  ): Promise<s.CloneReceiptRuleSetResponse> {
+  ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"RuleSetName", (params["RuleSetName"] ?? '').toString());
@@ -45,13 +45,12 @@ export default class SES {
       abortSignal, body,
       action: "CloneReceiptRuleSet",
     });
-    const xml = xmlP.readXmlResult(await resp.text(), "CloneReceiptRuleSetResult");
-    return {};
+    await resp.text();
   }
 
   async createConfigurationSet(
     {abortSignal, ...params}: RequestConfig & s.CreateConfigurationSetRequest,
-  ): Promise<s.CreateConfigurationSetResponse> {
+  ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     ConfigurationSet_Serialize(body, prefix+"ConfigurationSet", params["ConfigurationSet"]);
@@ -59,13 +58,12 @@ export default class SES {
       abortSignal, body,
       action: "CreateConfigurationSet",
     });
-    const xml = xmlP.readXmlResult(await resp.text(), "CreateConfigurationSetResult");
-    return {};
+    await resp.text();
   }
 
   async createConfigurationSetEventDestination(
     {abortSignal, ...params}: RequestConfig & s.CreateConfigurationSetEventDestinationRequest,
-  ): Promise<s.CreateConfigurationSetEventDestinationResponse> {
+  ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"ConfigurationSetName", (params["ConfigurationSetName"] ?? '').toString());
@@ -74,13 +72,12 @@ export default class SES {
       abortSignal, body,
       action: "CreateConfigurationSetEventDestination",
     });
-    const xml = xmlP.readXmlResult(await resp.text(), "CreateConfigurationSetEventDestinationResult");
-    return {};
+    await resp.text();
   }
 
   async createConfigurationSetTrackingOptions(
     {abortSignal, ...params}: RequestConfig & s.CreateConfigurationSetTrackingOptionsRequest,
-  ): Promise<s.CreateConfigurationSetTrackingOptionsResponse> {
+  ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"ConfigurationSetName", (params["ConfigurationSetName"] ?? '').toString());
@@ -89,8 +86,7 @@ export default class SES {
       abortSignal, body,
       action: "CreateConfigurationSetTrackingOptions",
     });
-    const xml = xmlP.readXmlResult(await resp.text(), "CreateConfigurationSetTrackingOptionsResult");
-    return {};
+    await resp.text();
   }
 
   async createCustomVerificationEmailTemplate(
@@ -108,11 +104,12 @@ export default class SES {
       abortSignal, body,
       action: "CreateCustomVerificationEmailTemplate",
     });
+    await resp.text();
   }
 
   async createReceiptFilter(
     {abortSignal, ...params}: RequestConfig & s.CreateReceiptFilterRequest,
-  ): Promise<s.CreateReceiptFilterResponse> {
+  ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     ReceiptFilter_Serialize(body, prefix+"Filter", params["Filter"]);
@@ -120,13 +117,12 @@ export default class SES {
       abortSignal, body,
       action: "CreateReceiptFilter",
     });
-    const xml = xmlP.readXmlResult(await resp.text(), "CreateReceiptFilterResult");
-    return {};
+    await resp.text();
   }
 
   async createReceiptRule(
     {abortSignal, ...params}: RequestConfig & s.CreateReceiptRuleRequest,
-  ): Promise<s.CreateReceiptRuleResponse> {
+  ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"RuleSetName", (params["RuleSetName"] ?? '').toString());
@@ -136,13 +132,12 @@ export default class SES {
       abortSignal, body,
       action: "CreateReceiptRule",
     });
-    const xml = xmlP.readXmlResult(await resp.text(), "CreateReceiptRuleResult");
-    return {};
+    await resp.text();
   }
 
   async createReceiptRuleSet(
     {abortSignal, ...params}: RequestConfig & s.CreateReceiptRuleSetRequest,
-  ): Promise<s.CreateReceiptRuleSetResponse> {
+  ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"RuleSetName", (params["RuleSetName"] ?? '').toString());
@@ -150,13 +145,12 @@ export default class SES {
       abortSignal, body,
       action: "CreateReceiptRuleSet",
     });
-    const xml = xmlP.readXmlResult(await resp.text(), "CreateReceiptRuleSetResult");
-    return {};
+    await resp.text();
   }
 
   async createTemplate(
     {abortSignal, ...params}: RequestConfig & s.CreateTemplateRequest,
-  ): Promise<s.CreateTemplateResponse> {
+  ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     Template_Serialize(body, prefix+"Template", params["Template"]);
@@ -164,13 +158,12 @@ export default class SES {
       abortSignal, body,
       action: "CreateTemplate",
     });
-    const xml = xmlP.readXmlResult(await resp.text(), "CreateTemplateResult");
-    return {};
+    await resp.text();
   }
 
   async deleteConfigurationSet(
     {abortSignal, ...params}: RequestConfig & s.DeleteConfigurationSetRequest,
-  ): Promise<s.DeleteConfigurationSetResponse> {
+  ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"ConfigurationSetName", (params["ConfigurationSetName"] ?? '').toString());
@@ -178,13 +171,12 @@ export default class SES {
       abortSignal, body,
       action: "DeleteConfigurationSet",
     });
-    const xml = xmlP.readXmlResult(await resp.text(), "DeleteConfigurationSetResult");
-    return {};
+    await resp.text();
   }
 
   async deleteConfigurationSetEventDestination(
     {abortSignal, ...params}: RequestConfig & s.DeleteConfigurationSetEventDestinationRequest,
-  ): Promise<s.DeleteConfigurationSetEventDestinationResponse> {
+  ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"ConfigurationSetName", (params["ConfigurationSetName"] ?? '').toString());
@@ -193,13 +185,12 @@ export default class SES {
       abortSignal, body,
       action: "DeleteConfigurationSetEventDestination",
     });
-    const xml = xmlP.readXmlResult(await resp.text(), "DeleteConfigurationSetEventDestinationResult");
-    return {};
+    await resp.text();
   }
 
   async deleteConfigurationSetTrackingOptions(
     {abortSignal, ...params}: RequestConfig & s.DeleteConfigurationSetTrackingOptionsRequest,
-  ): Promise<s.DeleteConfigurationSetTrackingOptionsResponse> {
+  ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"ConfigurationSetName", (params["ConfigurationSetName"] ?? '').toString());
@@ -207,8 +198,7 @@ export default class SES {
       abortSignal, body,
       action: "DeleteConfigurationSetTrackingOptions",
     });
-    const xml = xmlP.readXmlResult(await resp.text(), "DeleteConfigurationSetTrackingOptionsResult");
-    return {};
+    await resp.text();
   }
 
   async deleteCustomVerificationEmailTemplate(
@@ -221,11 +211,12 @@ export default class SES {
       abortSignal, body,
       action: "DeleteCustomVerificationEmailTemplate",
     });
+    await resp.text();
   }
 
   async deleteIdentity(
     {abortSignal, ...params}: RequestConfig & s.DeleteIdentityRequest,
-  ): Promise<s.DeleteIdentityResponse> {
+  ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"Identity", (params["Identity"] ?? '').toString());
@@ -233,13 +224,12 @@ export default class SES {
       abortSignal, body,
       action: "DeleteIdentity",
     });
-    const xml = xmlP.readXmlResult(await resp.text(), "DeleteIdentityResult");
-    return {};
+    await resp.text();
   }
 
   async deleteIdentityPolicy(
     {abortSignal, ...params}: RequestConfig & s.DeleteIdentityPolicyRequest,
-  ): Promise<s.DeleteIdentityPolicyResponse> {
+  ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"Identity", (params["Identity"] ?? '').toString());
@@ -248,13 +238,12 @@ export default class SES {
       abortSignal, body,
       action: "DeleteIdentityPolicy",
     });
-    const xml = xmlP.readXmlResult(await resp.text(), "DeleteIdentityPolicyResult");
-    return {};
+    await resp.text();
   }
 
   async deleteReceiptFilter(
     {abortSignal, ...params}: RequestConfig & s.DeleteReceiptFilterRequest,
-  ): Promise<s.DeleteReceiptFilterResponse> {
+  ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"FilterName", (params["FilterName"] ?? '').toString());
@@ -262,13 +251,12 @@ export default class SES {
       abortSignal, body,
       action: "DeleteReceiptFilter",
     });
-    const xml = xmlP.readXmlResult(await resp.text(), "DeleteReceiptFilterResult");
-    return {};
+    await resp.text();
   }
 
   async deleteReceiptRule(
     {abortSignal, ...params}: RequestConfig & s.DeleteReceiptRuleRequest,
-  ): Promise<s.DeleteReceiptRuleResponse> {
+  ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"RuleSetName", (params["RuleSetName"] ?? '').toString());
@@ -277,13 +265,12 @@ export default class SES {
       abortSignal, body,
       action: "DeleteReceiptRule",
     });
-    const xml = xmlP.readXmlResult(await resp.text(), "DeleteReceiptRuleResult");
-    return {};
+    await resp.text();
   }
 
   async deleteReceiptRuleSet(
     {abortSignal, ...params}: RequestConfig & s.DeleteReceiptRuleSetRequest,
-  ): Promise<s.DeleteReceiptRuleSetResponse> {
+  ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"RuleSetName", (params["RuleSetName"] ?? '').toString());
@@ -291,13 +278,12 @@ export default class SES {
       abortSignal, body,
       action: "DeleteReceiptRuleSet",
     });
-    const xml = xmlP.readXmlResult(await resp.text(), "DeleteReceiptRuleSetResult");
-    return {};
+    await resp.text();
   }
 
   async deleteTemplate(
     {abortSignal, ...params}: RequestConfig & s.DeleteTemplateRequest,
-  ): Promise<s.DeleteTemplateResponse> {
+  ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"TemplateName", (params["TemplateName"] ?? '').toString());
@@ -305,8 +291,7 @@ export default class SES {
       abortSignal, body,
       action: "DeleteTemplate",
     });
-    const xml = xmlP.readXmlResult(await resp.text(), "DeleteTemplateResult");
-    return {};
+    await resp.text();
   }
 
   async deleteVerifiedEmailAddress(
@@ -319,14 +304,13 @@ export default class SES {
       abortSignal, body,
       action: "DeleteVerifiedEmailAddress",
     });
+    await resp.text();
   }
 
   async describeActiveReceiptRuleSet(
-    {abortSignal, ...params}: RequestConfig & s.DescribeActiveReceiptRuleSetRequest = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.DescribeActiveReceiptRuleSetResponse> {
     const body = new URLSearchParams;
-    const prefix = '';
-
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeActiveReceiptRuleSet",
@@ -394,7 +378,7 @@ export default class SES {
   }
 
   async getAccountSendingEnabled(
-    {abortSignal, ...params}: RequestConfig = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.GetAccountSendingEnabledResponse> {
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -504,7 +488,7 @@ export default class SES {
   }
 
   async getSendQuota(
-    {abortSignal, ...params}: RequestConfig = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.GetSendQuotaResponse> {
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -519,7 +503,7 @@ export default class SES {
   }
 
   async getSendStatistics(
-    {abortSignal, ...params}: RequestConfig = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.GetSendStatisticsResponse> {
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -625,11 +609,9 @@ export default class SES {
   }
 
   async listReceiptFilters(
-    {abortSignal, ...params}: RequestConfig & s.ListReceiptFiltersRequest = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.ListReceiptFiltersResponse> {
     const body = new URLSearchParams;
-    const prefix = '';
-
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListReceiptFilters",
@@ -680,7 +662,7 @@ export default class SES {
   }
 
   async listVerifiedEmailAddresses(
-    {abortSignal, ...params}: RequestConfig = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.ListVerifiedEmailAddressesResponse> {
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -694,7 +676,7 @@ export default class SES {
 
   async putConfigurationSetDeliveryOptions(
     {abortSignal, ...params}: RequestConfig & s.PutConfigurationSetDeliveryOptionsRequest,
-  ): Promise<s.PutConfigurationSetDeliveryOptionsResponse> {
+  ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"ConfigurationSetName", (params["ConfigurationSetName"] ?? '').toString());
@@ -703,13 +685,12 @@ export default class SES {
       abortSignal, body,
       action: "PutConfigurationSetDeliveryOptions",
     });
-    const xml = xmlP.readXmlResult(await resp.text(), "PutConfigurationSetDeliveryOptionsResult");
-    return {};
+    await resp.text();
   }
 
   async putIdentityPolicy(
     {abortSignal, ...params}: RequestConfig & s.PutIdentityPolicyRequest,
-  ): Promise<s.PutIdentityPolicyResponse> {
+  ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"Identity", (params["Identity"] ?? '').toString());
@@ -719,13 +700,12 @@ export default class SES {
       abortSignal, body,
       action: "PutIdentityPolicy",
     });
-    const xml = xmlP.readXmlResult(await resp.text(), "PutIdentityPolicyResult");
-    return {};
+    await resp.text();
   }
 
   async reorderReceiptRuleSet(
     {abortSignal, ...params}: RequestConfig & s.ReorderReceiptRuleSetRequest,
-  ): Promise<s.ReorderReceiptRuleSetResponse> {
+  ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"RuleSetName", (params["RuleSetName"] ?? '').toString());
@@ -734,8 +714,7 @@ export default class SES {
       abortSignal, body,
       action: "ReorderReceiptRuleSet",
     });
-    const xml = xmlP.readXmlResult(await resp.text(), "ReorderReceiptRuleSetResult");
-    return {};
+    await resp.text();
   }
 
   async sendBounce(
@@ -878,7 +857,7 @@ export default class SES {
 
   async setActiveReceiptRuleSet(
     {abortSignal, ...params}: RequestConfig & s.SetActiveReceiptRuleSetRequest = {},
-  ): Promise<s.SetActiveReceiptRuleSetResponse> {
+  ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     if ("RuleSetName" in params) body.append(prefix+"RuleSetName", (params["RuleSetName"] ?? '').toString());
@@ -886,13 +865,12 @@ export default class SES {
       abortSignal, body,
       action: "SetActiveReceiptRuleSet",
     });
-    const xml = xmlP.readXmlResult(await resp.text(), "SetActiveReceiptRuleSetResult");
-    return {};
+    await resp.text();
   }
 
   async setIdentityDkimEnabled(
     {abortSignal, ...params}: RequestConfig & s.SetIdentityDkimEnabledRequest,
-  ): Promise<s.SetIdentityDkimEnabledResponse> {
+  ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"Identity", (params["Identity"] ?? '').toString());
@@ -901,13 +879,12 @@ export default class SES {
       abortSignal, body,
       action: "SetIdentityDkimEnabled",
     });
-    const xml = xmlP.readXmlResult(await resp.text(), "SetIdentityDkimEnabledResult");
-    return {};
+    await resp.text();
   }
 
   async setIdentityFeedbackForwardingEnabled(
     {abortSignal, ...params}: RequestConfig & s.SetIdentityFeedbackForwardingEnabledRequest,
-  ): Promise<s.SetIdentityFeedbackForwardingEnabledResponse> {
+  ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"Identity", (params["Identity"] ?? '').toString());
@@ -916,13 +893,12 @@ export default class SES {
       abortSignal, body,
       action: "SetIdentityFeedbackForwardingEnabled",
     });
-    const xml = xmlP.readXmlResult(await resp.text(), "SetIdentityFeedbackForwardingEnabledResult");
-    return {};
+    await resp.text();
   }
 
   async setIdentityHeadersInNotificationsEnabled(
     {abortSignal, ...params}: RequestConfig & s.SetIdentityHeadersInNotificationsEnabledRequest,
-  ): Promise<s.SetIdentityHeadersInNotificationsEnabledResponse> {
+  ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"Identity", (params["Identity"] ?? '').toString());
@@ -932,13 +908,12 @@ export default class SES {
       abortSignal, body,
       action: "SetIdentityHeadersInNotificationsEnabled",
     });
-    const xml = xmlP.readXmlResult(await resp.text(), "SetIdentityHeadersInNotificationsEnabledResult");
-    return {};
+    await resp.text();
   }
 
   async setIdentityMailFromDomain(
     {abortSignal, ...params}: RequestConfig & s.SetIdentityMailFromDomainRequest,
-  ): Promise<s.SetIdentityMailFromDomainResponse> {
+  ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"Identity", (params["Identity"] ?? '').toString());
@@ -948,13 +923,12 @@ export default class SES {
       abortSignal, body,
       action: "SetIdentityMailFromDomain",
     });
-    const xml = xmlP.readXmlResult(await resp.text(), "SetIdentityMailFromDomainResult");
-    return {};
+    await resp.text();
   }
 
   async setIdentityNotificationTopic(
     {abortSignal, ...params}: RequestConfig & s.SetIdentityNotificationTopicRequest,
-  ): Promise<s.SetIdentityNotificationTopicResponse> {
+  ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"Identity", (params["Identity"] ?? '').toString());
@@ -964,13 +938,12 @@ export default class SES {
       abortSignal, body,
       action: "SetIdentityNotificationTopic",
     });
-    const xml = xmlP.readXmlResult(await resp.text(), "SetIdentityNotificationTopicResult");
-    return {};
+    await resp.text();
   }
 
   async setReceiptRulePosition(
     {abortSignal, ...params}: RequestConfig & s.SetReceiptRulePositionRequest,
-  ): Promise<s.SetReceiptRulePositionResponse> {
+  ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"RuleSetName", (params["RuleSetName"] ?? '').toString());
@@ -980,8 +953,7 @@ export default class SES {
       abortSignal, body,
       action: "SetReceiptRulePosition",
     });
-    const xml = xmlP.readXmlResult(await resp.text(), "SetReceiptRulePositionResult");
-    return {};
+    await resp.text();
   }
 
   async testRenderTemplate(
@@ -1011,11 +983,12 @@ export default class SES {
       abortSignal, body,
       action: "UpdateAccountSendingEnabled",
     });
+    await resp.text();
   }
 
   async updateConfigurationSetEventDestination(
     {abortSignal, ...params}: RequestConfig & s.UpdateConfigurationSetEventDestinationRequest,
-  ): Promise<s.UpdateConfigurationSetEventDestinationResponse> {
+  ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"ConfigurationSetName", (params["ConfigurationSetName"] ?? '').toString());
@@ -1024,8 +997,7 @@ export default class SES {
       abortSignal, body,
       action: "UpdateConfigurationSetEventDestination",
     });
-    const xml = xmlP.readXmlResult(await resp.text(), "UpdateConfigurationSetEventDestinationResult");
-    return {};
+    await resp.text();
   }
 
   async updateConfigurationSetReputationMetricsEnabled(
@@ -1039,6 +1011,7 @@ export default class SES {
       abortSignal, body,
       action: "UpdateConfigurationSetReputationMetricsEnabled",
     });
+    await resp.text();
   }
 
   async updateConfigurationSetSendingEnabled(
@@ -1052,11 +1025,12 @@ export default class SES {
       abortSignal, body,
       action: "UpdateConfigurationSetSendingEnabled",
     });
+    await resp.text();
   }
 
   async updateConfigurationSetTrackingOptions(
     {abortSignal, ...params}: RequestConfig & s.UpdateConfigurationSetTrackingOptionsRequest,
-  ): Promise<s.UpdateConfigurationSetTrackingOptionsResponse> {
+  ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"ConfigurationSetName", (params["ConfigurationSetName"] ?? '').toString());
@@ -1065,8 +1039,7 @@ export default class SES {
       abortSignal, body,
       action: "UpdateConfigurationSetTrackingOptions",
     });
-    const xml = xmlP.readXmlResult(await resp.text(), "UpdateConfigurationSetTrackingOptionsResult");
-    return {};
+    await resp.text();
   }
 
   async updateCustomVerificationEmailTemplate(
@@ -1084,11 +1057,12 @@ export default class SES {
       abortSignal, body,
       action: "UpdateCustomVerificationEmailTemplate",
     });
+    await resp.text();
   }
 
   async updateReceiptRule(
     {abortSignal, ...params}: RequestConfig & s.UpdateReceiptRuleRequest,
-  ): Promise<s.UpdateReceiptRuleResponse> {
+  ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"RuleSetName", (params["RuleSetName"] ?? '').toString());
@@ -1097,13 +1071,12 @@ export default class SES {
       abortSignal, body,
       action: "UpdateReceiptRule",
     });
-    const xml = xmlP.readXmlResult(await resp.text(), "UpdateReceiptRuleResult");
-    return {};
+    await resp.text();
   }
 
   async updateTemplate(
     {abortSignal, ...params}: RequestConfig & s.UpdateTemplateRequest,
-  ): Promise<s.UpdateTemplateResponse> {
+  ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     Template_Serialize(body, prefix+"Template", params["Template"]);
@@ -1111,8 +1084,7 @@ export default class SES {
       abortSignal, body,
       action: "UpdateTemplate",
     });
-    const xml = xmlP.readXmlResult(await resp.text(), "UpdateTemplateResult");
-    return {};
+    await resp.text();
   }
 
   async verifyDomainDkim(
@@ -1157,11 +1129,12 @@ export default class SES {
       abortSignal, body,
       action: "VerifyEmailAddress",
     });
+    await resp.text();
   }
 
   async verifyEmailIdentity(
     {abortSignal, ...params}: RequestConfig & s.VerifyEmailIdentityRequest,
-  ): Promise<s.VerifyEmailIdentityResponse> {
+  ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"EmailAddress", (params["EmailAddress"] ?? '').toString());
@@ -1169,8 +1142,7 @@ export default class SES {
       abortSignal, body,
       action: "VerifyEmailIdentity",
     });
-    const xml = xmlP.readXmlResult(await resp.text(), "VerifyEmailIdentityResult");
-    return {};
+    await resp.text();
   }
 
   // Resource State Waiters

@@ -11,7 +11,14 @@ export default class ProtocolQueryCodegen extends ProtocolXmlCodegen {
     super(shapes, helpers, opts);
   }
 
-  generateOperationInputParsingTypescript(inputShape: KnownShape): { inputParsingCode: string; inputVariables: string[]; } {
+  generateOperationInputParsingTypescript(inputShape: KnownShape | null): { inputParsingCode: string; inputVariables: string[]; } {
+    if (!inputShape) {
+      return {
+        inputParsingCode: `    const body = new URLSearchParams;`,
+        inputVariables: ['body'],
+      };
+    }
+
     if (inputShape.spec.type !== 'structure') throw new Error(
       `Can only generate top level structures`);
 

@@ -143,7 +143,7 @@ export default class ServiceDiscovery {
 
   async deleteService(
     {abortSignal, ...params}: RequestConfig & s.DeleteServiceRequest,
-  ): Promise<s.DeleteServiceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       Id: params["Id"],
     };
@@ -151,10 +151,7 @@ export default class ServiceDiscovery {
       abortSignal, body,
       action: "DeleteService",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deregisterInstance(
@@ -420,7 +417,7 @@ export default class ServiceDiscovery {
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & s.TagResourceRequest,
-  ): Promise<s.TagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceARN: params["ResourceARN"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
@@ -429,15 +426,12 @@ export default class ServiceDiscovery {
       abortSignal, body,
       action: "TagResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async untagResource(
     {abortSignal, ...params}: RequestConfig & s.UntagResourceRequest,
-  ): Promise<s.UntagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceARN: params["ResourceARN"],
       TagKeys: params["TagKeys"],
@@ -446,10 +440,7 @@ export default class ServiceDiscovery {
       abortSignal, body,
       action: "UntagResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateInstanceCustomHealthStatus(
@@ -464,6 +455,7 @@ export default class ServiceDiscovery {
       abortSignal, body,
       action: "UpdateInstanceCustomHealthStatus",
     });
+    await resp.text();
   }
 
   async updateService(

@@ -107,6 +107,7 @@ export default class SSO {
       action: "Logout",
       requestUri: "/logout",
     });
+    await resp.text();
   }
 
 }

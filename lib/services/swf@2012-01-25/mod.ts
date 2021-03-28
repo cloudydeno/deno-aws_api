@@ -132,6 +132,7 @@ export default class SWF {
       abortSignal, body,
       action: "DeprecateActivityType",
     });
+    await resp.text();
   }
 
   async deprecateDomain(
@@ -144,6 +145,7 @@ export default class SWF {
       abortSignal, body,
       action: "DeprecateDomain",
     });
+    await resp.text();
   }
 
   async deprecateWorkflowType(
@@ -157,6 +159,7 @@ export default class SWF {
       abortSignal, body,
       action: "DeprecateWorkflowType",
     });
+    await resp.text();
   }
 
   async describeActivityType(
@@ -507,6 +510,7 @@ export default class SWF {
       abortSignal, body,
       action: "RegisterActivityType",
     });
+    await resp.text();
   }
 
   async registerDomain(
@@ -522,6 +526,7 @@ export default class SWF {
       abortSignal, body,
       action: "RegisterDomain",
     });
+    await resp.text();
   }
 
   async registerWorkflowType(
@@ -543,6 +548,7 @@ export default class SWF {
       abortSignal, body,
       action: "RegisterWorkflowType",
     });
+    await resp.text();
   }
 
   async requestCancelWorkflowExecution(
@@ -557,6 +563,7 @@ export default class SWF {
       abortSignal, body,
       action: "RequestCancelWorkflowExecution",
     });
+    await resp.text();
   }
 
   async respondActivityTaskCanceled(
@@ -570,6 +577,7 @@ export default class SWF {
       abortSignal, body,
       action: "RespondActivityTaskCanceled",
     });
+    await resp.text();
   }
 
   async respondActivityTaskCompleted(
@@ -583,6 +591,7 @@ export default class SWF {
       abortSignal, body,
       action: "RespondActivityTaskCompleted",
     });
+    await resp.text();
   }
 
   async respondActivityTaskFailed(
@@ -597,6 +606,7 @@ export default class SWF {
       abortSignal, body,
       action: "RespondActivityTaskFailed",
     });
+    await resp.text();
   }
 
   async respondDecisionTaskCompleted(
@@ -611,6 +621,7 @@ export default class SWF {
       abortSignal, body,
       action: "RespondDecisionTaskCompleted",
     });
+    await resp.text();
   }
 
   async signalWorkflowExecution(
@@ -627,6 +638,7 @@ export default class SWF {
       abortSignal, body,
       action: "SignalWorkflowExecution",
     });
+    await resp.text();
   }
 
   async startWorkflowExecution(
@@ -668,6 +680,7 @@ export default class SWF {
       abortSignal, body,
       action: "TagResource",
     });
+    await resp.text();
   }
 
   async terminateWorkflowExecution(
@@ -685,6 +698,7 @@ export default class SWF {
       abortSignal, body,
       action: "TerminateWorkflowExecution",
     });
+    await resp.text();
   }
 
   async undeprecateActivityType(
@@ -698,6 +712,7 @@ export default class SWF {
       abortSignal, body,
       action: "UndeprecateActivityType",
     });
+    await resp.text();
   }
 
   async undeprecateDomain(
@@ -710,6 +725,7 @@ export default class SWF {
       abortSignal, body,
       action: "UndeprecateDomain",
     });
+    await resp.text();
   }
 
   async undeprecateWorkflowType(
@@ -723,6 +739,7 @@ export default class SWF {
       abortSignal, body,
       action: "UndeprecateWorkflowType",
     });
+    await resp.text();
   }
 
   async untagResource(
@@ -736,6 +753,7 @@ export default class SWF {
       abortSignal, body,
       action: "UntagResource",
     });
+    await resp.text();
   }
 
 }

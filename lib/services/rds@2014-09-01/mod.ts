@@ -56,6 +56,7 @@ export default class RDS {
       abortSignal, body,
       action: "AddTagsToResource",
     });
+    await resp.text();
   }
 
   async authorizeDBSecurityGroupIngress(
@@ -348,6 +349,7 @@ export default class RDS {
       abortSignal, body,
       action: "DeleteDBParameterGroup",
     });
+    await resp.text();
   }
 
   async deleteDBSecurityGroup(
@@ -360,6 +362,7 @@ export default class RDS {
       abortSignal, body,
       action: "DeleteDBSecurityGroup",
     });
+    await resp.text();
   }
 
   async deleteDBSnapshot(
@@ -388,6 +391,7 @@ export default class RDS {
       abortSignal, body,
       action: "DeleteDBSubnetGroup",
     });
+    await resp.text();
   }
 
   async deleteEventSubscription(
@@ -416,6 +420,7 @@ export default class RDS {
       abortSignal, body,
       action: "DeleteOptionGroup",
     });
+    await resp.text();
   }
 
   async describeDBEngineVersions(
@@ -1048,6 +1053,7 @@ export default class RDS {
       abortSignal, body,
       action: "RemoveTagsFromResource",
     });
+    await resp.text();
   }
 
   async resetDBParameterGroup(

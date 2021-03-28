@@ -485,14 +485,6 @@ export interface StopJobResult {
 }
 
 // refs: 1 - tags: named, output
-export interface TagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UntagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface UpdateAppResult {
   app: App;
 }

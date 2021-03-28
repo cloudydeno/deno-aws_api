@@ -160,14 +160,14 @@ export default class AppConfig {
       requestUri: cmnP.encodePath`/applications/${params["ApplicationId"]}/configurationprofiles/${params["ConfigurationProfileId"]}/hostedconfigurationversions`,
       responseCode: 201,
     });
-  return {
-    ApplicationId: resp.headers.get("Application-Id"),
-    ConfigurationProfileId: resp.headers.get("Configuration-Profile-Id"),
-    VersionNumber: cmnP.readNum(resp.headers.get("Version-Number")),
-    Description: resp.headers.get("Description"),
-    ContentType: resp.headers.get("Content-Type"),
-    Content: await resp.text(), // TODO: maybe allow proper body streaming,
-  };
+    return {
+      ApplicationId: resp.headers.get("Application-Id"),
+      ConfigurationProfileId: resp.headers.get("Configuration-Profile-Id"),
+      VersionNumber: cmnP.readNum(resp.headers.get("Version-Number")),
+      Description: resp.headers.get("Description"),
+      ContentType: resp.headers.get("Content-Type"),
+      Content: await resp.text(), // TODO: maybe allow proper body streaming,
+    };
   }
 
   async deleteApplication(
@@ -181,6 +181,7 @@ export default class AppConfig {
       requestUri: cmnP.encodePath`/applications/${params["ApplicationId"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deleteConfigurationProfile(
@@ -194,6 +195,7 @@ export default class AppConfig {
       requestUri: cmnP.encodePath`/applications/${params["ApplicationId"]}/configurationprofiles/${params["ConfigurationProfileId"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deleteDeploymentStrategy(
@@ -207,6 +209,7 @@ export default class AppConfig {
       requestUri: cmnP.encodePath`/deployementstrategies/${params["DeploymentStrategyId"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deleteEnvironment(
@@ -220,6 +223,7 @@ export default class AppConfig {
       requestUri: cmnP.encodePath`/applications/${params["ApplicationId"]}/environments/${params["EnvironmentId"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deleteHostedConfigurationVersion(
@@ -233,6 +237,7 @@ export default class AppConfig {
       requestUri: cmnP.encodePath`/applications/${params["ApplicationId"]}/configurationprofiles/${params["ConfigurationProfileId"]}/hostedconfigurationversions/${params["VersionNumber"].toString()}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async getApplication(
@@ -269,11 +274,11 @@ export default class AppConfig {
       requestUri: cmnP.encodePath`/applications/${params["Application"]}/environments/${params["Environment"]}/configurations/${params["Configuration"]}`,
       responseCode: 200,
     });
-  return {
-    ConfigurationVersion: resp.headers.get("Configuration-Version"),
-    ContentType: resp.headers.get("Content-Type"),
-    Content: await resp.text(), // TODO: maybe allow proper body streaming,
-  };
+    return {
+      ConfigurationVersion: resp.headers.get("Configuration-Version"),
+      ContentType: resp.headers.get("Content-Type"),
+      Content: await resp.text(), // TODO: maybe allow proper body streaming,
+    };
   }
 
   async getConfigurationProfile(
@@ -398,14 +403,14 @@ export default class AppConfig {
       requestUri: cmnP.encodePath`/applications/${params["ApplicationId"]}/configurationprofiles/${params["ConfigurationProfileId"]}/hostedconfigurationversions/${params["VersionNumber"].toString()}`,
       responseCode: 200,
     });
-  return {
-    ApplicationId: resp.headers.get("Application-Id"),
-    ConfigurationProfileId: resp.headers.get("Configuration-Profile-Id"),
-    VersionNumber: cmnP.readNum(resp.headers.get("Version-Number")),
-    Description: resp.headers.get("Description"),
-    ContentType: resp.headers.get("Content-Type"),
-    Content: await resp.text(), // TODO: maybe allow proper body streaming,
-  };
+    return {
+      ApplicationId: resp.headers.get("Application-Id"),
+      ConfigurationProfileId: resp.headers.get("Configuration-Profile-Id"),
+      VersionNumber: cmnP.readNum(resp.headers.get("Version-Number")),
+      Description: resp.headers.get("Description"),
+      ContentType: resp.headers.get("Content-Type"),
+      Content: await resp.text(), // TODO: maybe allow proper body streaming,
+    };
   }
 
   async listApplications(
@@ -648,6 +653,7 @@ export default class AppConfig {
       requestUri: cmnP.encodePath`/tags/${params["ResourceArn"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async untagResource(
@@ -664,6 +670,7 @@ export default class AppConfig {
       requestUri: cmnP.encodePath`/tags/${params["ResourceArn"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async updateApplication(
@@ -791,6 +798,7 @@ export default class AppConfig {
       requestUri: cmnP.encodePath`/applications/${params["ApplicationId"]}/configurationprofiles/${params["ConfigurationProfileId"]}/validators`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
 }

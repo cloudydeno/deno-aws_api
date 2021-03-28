@@ -47,7 +47,7 @@ export default class ELBv2 {
 
   async addTags(
     {abortSignal, ...params}: RequestConfig & s.AddTagsInput,
-  ): Promise<s.AddTagsOutput> {
+  ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     if (params["ResourceArns"]) qsP.appendList(body, prefix+"ResourceArns", params["ResourceArns"], {"entryPrefix":".member."})
@@ -56,8 +56,7 @@ export default class ELBv2 {
       abortSignal, body,
       action: "AddTags",
     });
-    const xml = xmlP.readXmlResult(await resp.text(), "AddTagsResult");
-    return {};
+    await resp.text();
   }
 
   async createListener(
@@ -160,7 +159,7 @@ export default class ELBv2 {
 
   async deleteListener(
     {abortSignal, ...params}: RequestConfig & s.DeleteListenerInput,
-  ): Promise<s.DeleteListenerOutput> {
+  ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"ListenerArn", (params["ListenerArn"] ?? '').toString());
@@ -168,13 +167,12 @@ export default class ELBv2 {
       abortSignal, body,
       action: "DeleteListener",
     });
-    const xml = xmlP.readXmlResult(await resp.text(), "DeleteListenerResult");
-    return {};
+    await resp.text();
   }
 
   async deleteLoadBalancer(
     {abortSignal, ...params}: RequestConfig & s.DeleteLoadBalancerInput,
-  ): Promise<s.DeleteLoadBalancerOutput> {
+  ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"LoadBalancerArn", (params["LoadBalancerArn"] ?? '').toString());
@@ -182,13 +180,12 @@ export default class ELBv2 {
       abortSignal, body,
       action: "DeleteLoadBalancer",
     });
-    const xml = xmlP.readXmlResult(await resp.text(), "DeleteLoadBalancerResult");
-    return {};
+    await resp.text();
   }
 
   async deleteRule(
     {abortSignal, ...params}: RequestConfig & s.DeleteRuleInput,
-  ): Promise<s.DeleteRuleOutput> {
+  ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"RuleArn", (params["RuleArn"] ?? '').toString());
@@ -196,13 +193,12 @@ export default class ELBv2 {
       abortSignal, body,
       action: "DeleteRule",
     });
-    const xml = xmlP.readXmlResult(await resp.text(), "DeleteRuleResult");
-    return {};
+    await resp.text();
   }
 
   async deleteTargetGroup(
     {abortSignal, ...params}: RequestConfig & s.DeleteTargetGroupInput,
-  ): Promise<s.DeleteTargetGroupOutput> {
+  ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"TargetGroupArn", (params["TargetGroupArn"] ?? '').toString());
@@ -210,13 +206,12 @@ export default class ELBv2 {
       abortSignal, body,
       action: "DeleteTargetGroup",
     });
-    const xml = xmlP.readXmlResult(await resp.text(), "DeleteTargetGroupResult");
-    return {};
+    await resp.text();
   }
 
   async deregisterTargets(
     {abortSignal, ...params}: RequestConfig & s.DeregisterTargetsInput,
-  ): Promise<s.DeregisterTargetsOutput> {
+  ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"TargetGroupArn", (params["TargetGroupArn"] ?? '').toString());
@@ -225,8 +220,7 @@ export default class ELBv2 {
       abortSignal, body,
       action: "DeregisterTargets",
     });
-    const xml = xmlP.readXmlResult(await resp.text(), "DeregisterTargetsResult");
-    return {};
+    await resp.text();
   }
 
   async describeAccountLimits(
@@ -546,7 +540,7 @@ export default class ELBv2 {
 
   async registerTargets(
     {abortSignal, ...params}: RequestConfig & s.RegisterTargetsInput,
-  ): Promise<s.RegisterTargetsOutput> {
+  ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"TargetGroupArn", (params["TargetGroupArn"] ?? '').toString());
@@ -555,13 +549,12 @@ export default class ELBv2 {
       abortSignal, body,
       action: "RegisterTargets",
     });
-    const xml = xmlP.readXmlResult(await resp.text(), "RegisterTargetsResult");
-    return {};
+    await resp.text();
   }
 
   async removeListenerCertificates(
     {abortSignal, ...params}: RequestConfig & s.RemoveListenerCertificatesInput,
-  ): Promise<s.RemoveListenerCertificatesOutput> {
+  ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"ListenerArn", (params["ListenerArn"] ?? '').toString());
@@ -570,13 +563,12 @@ export default class ELBv2 {
       abortSignal, body,
       action: "RemoveListenerCertificates",
     });
-    const xml = xmlP.readXmlResult(await resp.text(), "RemoveListenerCertificatesResult");
-    return {};
+    await resp.text();
   }
 
   async removeTags(
     {abortSignal, ...params}: RequestConfig & s.RemoveTagsInput,
-  ): Promise<s.RemoveTagsOutput> {
+  ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     if (params["ResourceArns"]) qsP.appendList(body, prefix+"ResourceArns", params["ResourceArns"], {"entryPrefix":".member."})
@@ -585,8 +577,7 @@ export default class ELBv2 {
       abortSignal, body,
       action: "RemoveTags",
     });
-    const xml = xmlP.readXmlResult(await resp.text(), "RemoveTagsResult");
-    return {};
+    await resp.text();
   }
 
   async setIpAddressType(

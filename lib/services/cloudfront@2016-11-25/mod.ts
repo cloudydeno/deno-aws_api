@@ -46,11 +46,11 @@ export default class CloudFront {
       responseCode: 201,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    Location: resp.headers.get("Location"),
-    ETag: resp.headers.get("ETag"),
-    CloudFrontOriginAccessIdentity: CloudFrontOriginAccessIdentity_Parse(xml),
-  };
+    return {
+      Location: resp.headers.get("Location"),
+      ETag: resp.headers.get("ETag"),
+      CloudFrontOriginAccessIdentity: CloudFrontOriginAccessIdentity_Parse(xml),
+    };
   }
 
   async createDistribution(
@@ -85,11 +85,11 @@ export default class CloudFront {
       responseCode: 201,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    Location: resp.headers.get("Location"),
-    ETag: resp.headers.get("ETag"),
-    Distribution: Distribution_Parse(xml),
-  };
+    return {
+      Location: resp.headers.get("Location"),
+      ETag: resp.headers.get("ETag"),
+      Distribution: Distribution_Parse(xml),
+    };
   }
 
   async createDistributionWithTags(
@@ -110,11 +110,11 @@ export default class CloudFront {
       responseCode: 201,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    Location: resp.headers.get("Location"),
-    ETag: resp.headers.get("ETag"),
-    Distribution: Distribution_Parse(xml),
-  };
+    return {
+      Location: resp.headers.get("Location"),
+      ETag: resp.headers.get("ETag"),
+      Distribution: Distribution_Parse(xml),
+    };
   }
 
   async createInvalidation(
@@ -135,10 +135,10 @@ export default class CloudFront {
       responseCode: 201,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    Location: resp.headers.get("Location"),
-    Invalidation: Invalidation_Parse(xml),
-  };
+    return {
+      Location: resp.headers.get("Location"),
+      Invalidation: Invalidation_Parse(xml),
+    };
   }
 
   async createStreamingDistribution(
@@ -165,11 +165,11 @@ export default class CloudFront {
       responseCode: 201,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    Location: resp.headers.get("Location"),
-    ETag: resp.headers.get("ETag"),
-    StreamingDistribution: StreamingDistribution_Parse(xml),
-  };
+    return {
+      Location: resp.headers.get("Location"),
+      ETag: resp.headers.get("ETag"),
+      StreamingDistribution: StreamingDistribution_Parse(xml),
+    };
   }
 
   async createStreamingDistributionWithTags(
@@ -190,11 +190,11 @@ export default class CloudFront {
       responseCode: 201,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    Location: resp.headers.get("Location"),
-    ETag: resp.headers.get("ETag"),
-    StreamingDistribution: StreamingDistribution_Parse(xml),
-  };
+    return {
+      Location: resp.headers.get("Location"),
+      ETag: resp.headers.get("ETag"),
+      StreamingDistribution: StreamingDistribution_Parse(xml),
+    };
   }
 
   async deleteCloudFrontOriginAccessIdentity(
@@ -209,6 +209,7 @@ export default class CloudFront {
       requestUri: cmnP.encodePath`/2016-11-25/origin-access-identity/cloudfront/${params["Id"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deleteDistribution(
@@ -223,6 +224,7 @@ export default class CloudFront {
       requestUri: cmnP.encodePath`/2016-11-25/distribution/${params["Id"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deleteStreamingDistribution(
@@ -237,6 +239,7 @@ export default class CloudFront {
       requestUri: cmnP.encodePath`/2016-11-25/streaming-distribution/${params["Id"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async getCloudFrontOriginAccessIdentity(
@@ -250,10 +253,10 @@ export default class CloudFront {
       requestUri: cmnP.encodePath`/2016-11-25/origin-access-identity/cloudfront/${params["Id"]}`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    ETag: resp.headers.get("ETag"),
-    CloudFrontOriginAccessIdentity: CloudFrontOriginAccessIdentity_Parse(xml),
-  };
+    return {
+      ETag: resp.headers.get("ETag"),
+      CloudFrontOriginAccessIdentity: CloudFrontOriginAccessIdentity_Parse(xml),
+    };
   }
 
   async getCloudFrontOriginAccessIdentityConfig(
@@ -267,10 +270,10 @@ export default class CloudFront {
       requestUri: cmnP.encodePath`/2016-11-25/origin-access-identity/cloudfront/${params["Id"]}/config`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    ETag: resp.headers.get("ETag"),
-    CloudFrontOriginAccessIdentityConfig: CloudFrontOriginAccessIdentityConfig_Parse(xml),
-  };
+    return {
+      ETag: resp.headers.get("ETag"),
+      CloudFrontOriginAccessIdentityConfig: CloudFrontOriginAccessIdentityConfig_Parse(xml),
+    };
   }
 
   async getDistribution(
@@ -284,10 +287,10 @@ export default class CloudFront {
       requestUri: cmnP.encodePath`/2016-11-25/distribution/${params["Id"]}`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    ETag: resp.headers.get("ETag"),
-    Distribution: Distribution_Parse(xml),
-  };
+    return {
+      ETag: resp.headers.get("ETag"),
+      Distribution: Distribution_Parse(xml),
+    };
   }
 
   async getDistributionConfig(
@@ -301,10 +304,10 @@ export default class CloudFront {
       requestUri: cmnP.encodePath`/2016-11-25/distribution/${params["Id"]}/config`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    ETag: resp.headers.get("ETag"),
-    DistributionConfig: DistributionConfig_Parse(xml),
-  };
+    return {
+      ETag: resp.headers.get("ETag"),
+      DistributionConfig: DistributionConfig_Parse(xml),
+    };
   }
 
   async getInvalidation(
@@ -318,9 +321,9 @@ export default class CloudFront {
       requestUri: cmnP.encodePath`/2016-11-25/distribution/${params["DistributionId"]}/invalidation/${params["Id"]}`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    Invalidation: Invalidation_Parse(xml),
-  };
+    return {
+      Invalidation: Invalidation_Parse(xml),
+    };
   }
 
   async getStreamingDistribution(
@@ -334,10 +337,10 @@ export default class CloudFront {
       requestUri: cmnP.encodePath`/2016-11-25/streaming-distribution/${params["Id"]}`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    ETag: resp.headers.get("ETag"),
-    StreamingDistribution: StreamingDistribution_Parse(xml),
-  };
+    return {
+      ETag: resp.headers.get("ETag"),
+      StreamingDistribution: StreamingDistribution_Parse(xml),
+    };
   }
 
   async getStreamingDistributionConfig(
@@ -351,10 +354,10 @@ export default class CloudFront {
       requestUri: cmnP.encodePath`/2016-11-25/streaming-distribution/${params["Id"]}/config`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    ETag: resp.headers.get("ETag"),
-    StreamingDistributionConfig: StreamingDistributionConfig_Parse(xml),
-  };
+    return {
+      ETag: resp.headers.get("ETag"),
+      StreamingDistributionConfig: StreamingDistributionConfig_Parse(xml),
+    };
   }
 
   async listCloudFrontOriginAccessIdentities(
@@ -370,8 +373,8 @@ export default class CloudFront {
       requestUri: "/2016-11-25/origin-access-identity/cloudfront",
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    CloudFrontOriginAccessIdentityList: {
+    return {
+      CloudFrontOriginAccessIdentityList: {
         ...xml.strings({
           required: {"Marker":true},
           optional: {"NextMarker":true},
@@ -381,7 +384,7 @@ export default class CloudFront {
         Quantity: xml.first("Quantity", true, x => parseInt(x.content ?? '0')),
         Items: xml.getList("Items", "CloudFrontOriginAccessIdentitySummary").map(CloudFrontOriginAccessIdentitySummary_Parse),
       },
-  };
+    };
   }
 
   async listDistributions(
@@ -397,9 +400,9 @@ export default class CloudFront {
       requestUri: "/2016-11-25/distribution",
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    DistributionList: DistributionList_Parse(xml),
-  };
+    return {
+      DistributionList: DistributionList_Parse(xml),
+    };
   }
 
   async listDistributionsByWebACLId(
@@ -415,9 +418,9 @@ export default class CloudFront {
       requestUri: cmnP.encodePath`/2016-11-25/distributionsByWebACLId/${params["WebACLId"]}`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    DistributionList: DistributionList_Parse(xml),
-  };
+    return {
+      DistributionList: DistributionList_Parse(xml),
+    };
   }
 
   async listInvalidations(
@@ -433,8 +436,8 @@ export default class CloudFront {
       requestUri: cmnP.encodePath`/2016-11-25/distribution/${params["DistributionId"]}/invalidation`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    InvalidationList: {
+    return {
+      InvalidationList: {
         ...xml.strings({
           required: {"Marker":true},
           optional: {"NextMarker":true},
@@ -444,7 +447,7 @@ export default class CloudFront {
         Quantity: xml.first("Quantity", true, x => parseInt(x.content ?? '0')),
         Items: xml.getList("Items", "InvalidationSummary").map(InvalidationSummary_Parse),
       },
-  };
+    };
   }
 
   async listStreamingDistributions(
@@ -460,8 +463,8 @@ export default class CloudFront {
       requestUri: "/2016-11-25/streaming-distribution",
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    StreamingDistributionList: {
+    return {
+      StreamingDistributionList: {
         ...xml.strings({
           required: {"Marker":true},
           optional: {"NextMarker":true},
@@ -471,7 +474,7 @@ export default class CloudFront {
         Quantity: xml.first("Quantity", true, x => parseInt(x.content ?? '0')),
         Items: xml.getList("Items", "StreamingDistributionSummary").map(StreamingDistributionSummary_Parse),
       },
-  };
+    };
   }
 
   async listTagsForResource(
@@ -486,9 +489,9 @@ export default class CloudFront {
       requestUri: "/2016-11-25/tagging",
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    Tags: Tags_Parse(xml),
-  };
+    return {
+      Tags: Tags_Parse(xml),
+    };
   }
 
   async tagResource(
@@ -509,6 +512,7 @@ export default class CloudFront {
       requestUri: "/2016-11-25/tagging?Operation=Tag",
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async untagResource(
@@ -529,6 +533,7 @@ export default class CloudFront {
       requestUri: "/2016-11-25/tagging?Operation=Untag",
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async updateCloudFrontOriginAccessIdentity(
@@ -551,10 +556,10 @@ export default class CloudFront {
       requestUri: cmnP.encodePath`/2016-11-25/origin-access-identity/cloudfront/${params["Id"]}/config`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    ETag: resp.headers.get("ETag"),
-    CloudFrontOriginAccessIdentity: CloudFrontOriginAccessIdentity_Parse(xml),
-  };
+    return {
+      ETag: resp.headers.get("ETag"),
+      CloudFrontOriginAccessIdentity: CloudFrontOriginAccessIdentity_Parse(xml),
+    };
   }
 
   async updateDistribution(
@@ -591,10 +596,10 @@ export default class CloudFront {
       requestUri: cmnP.encodePath`/2016-11-25/distribution/${params["Id"]}/config`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    ETag: resp.headers.get("ETag"),
-    Distribution: Distribution_Parse(xml),
-  };
+    return {
+      ETag: resp.headers.get("ETag"),
+      Distribution: Distribution_Parse(xml),
+    };
   }
 
   async updateStreamingDistribution(
@@ -623,10 +628,10 @@ export default class CloudFront {
       requestUri: cmnP.encodePath`/2016-11-25/streaming-distribution/${params["Id"]}/config`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    ETag: resp.headers.get("ETag"),
-    StreamingDistribution: StreamingDistribution_Parse(xml),
-  };
+    return {
+      ETag: resp.headers.get("ETag"),
+      StreamingDistribution: StreamingDistribution_Parse(xml),
+    };
   }
 
   // Resource State Waiters

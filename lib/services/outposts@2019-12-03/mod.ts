@@ -55,7 +55,7 @@ export default class Outposts {
 
   async deleteOutpost(
     {abortSignal, ...params}: RequestConfig & s.DeleteOutpostInput,
-  ): Promise<s.DeleteOutpostOutput> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -63,15 +63,12 @@ export default class Outposts {
       method: "DELETE",
       requestUri: cmnP.encodePath`/outposts/${params["OutpostId"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteSite(
     {abortSignal, ...params}: RequestConfig & s.DeleteSiteInput,
-  ): Promise<s.DeleteSiteOutput> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -79,10 +76,7 @@ export default class Outposts {
       method: "DELETE",
       requestUri: cmnP.encodePath`/sites/${params["SiteId"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async getOutpost(
@@ -188,7 +182,7 @@ export default class Outposts {
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & s.TagResourceRequest,
-  ): Promise<s.TagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       Tags: params["Tags"],
     };
@@ -197,15 +191,12 @@ export default class Outposts {
       action: "TagResource",
       requestUri: cmnP.encodePath`/tags/${params["ResourceArn"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async untagResource(
     {abortSignal, ...params}: RequestConfig & s.UntagResourceRequest,
-  ): Promise<s.UntagResourceResponse> {
+  ): Promise<void> {
     const query = new URLSearchParams;
     for (const item of params["TagKeys"]) {
       query.append("tagKeys", item?.toString() ?? "");
@@ -216,10 +207,7 @@ export default class Outposts {
       method: "DELETE",
       requestUri: cmnP.encodePath`/tags/${params["ResourceArn"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
 }

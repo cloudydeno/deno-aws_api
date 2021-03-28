@@ -196,7 +196,7 @@ export default class CodeStar {
 
   async disassociateTeamMember(
     {abortSignal, ...params}: RequestConfig & s.DisassociateTeamMemberRequest,
-  ): Promise<s.DisassociateTeamMemberResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       projectId: params["projectId"],
       userArn: params["userArn"],
@@ -205,10 +205,7 @@ export default class CodeStar {
       abortSignal, body,
       action: "DisassociateTeamMember",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async listProjects(
@@ -338,7 +335,7 @@ export default class CodeStar {
 
   async untagProject(
     {abortSignal, ...params}: RequestConfig & s.UntagProjectRequest,
-  ): Promise<s.UntagProjectResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       id: params["id"],
       tags: params["tags"],
@@ -347,15 +344,12 @@ export default class CodeStar {
       abortSignal, body,
       action: "UntagProject",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateProject(
     {abortSignal, ...params}: RequestConfig & s.UpdateProjectRequest,
-  ): Promise<s.UpdateProjectResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       id: params["id"],
       name: params["name"],
@@ -365,10 +359,7 @@ export default class CodeStar {
       abortSignal, body,
       action: "UpdateProject",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateTeamMember(

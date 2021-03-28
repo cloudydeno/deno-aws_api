@@ -512,6 +512,7 @@ export default class Kafka {
       requestUri: cmnP.encodePath`/v1/tags/${params["ResourceArn"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async untagResource(
@@ -528,6 +529,7 @@ export default class Kafka {
       requestUri: cmnP.encodePath`/v1/tags/${params["ResourceArn"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async updateBrokerCount(

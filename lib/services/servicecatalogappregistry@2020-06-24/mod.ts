@@ -365,7 +365,7 @@ export default class ServiceCatalogAppRegistry {
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & s.TagResourceRequest,
-  ): Promise<s.TagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       tags: params["tags"],
     };
@@ -374,15 +374,12 @@ export default class ServiceCatalogAppRegistry {
       action: "TagResource",
       requestUri: cmnP.encodePath`/tags/${params["resourceArn"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async untagResource(
     {abortSignal, ...params}: RequestConfig & s.UntagResourceRequest,
-  ): Promise<s.UntagResourceResponse> {
+  ): Promise<void> {
     const query = new URLSearchParams;
     for (const item of params["tagKeys"]) {
       query.append("tagKeys", item?.toString() ?? "");
@@ -393,10 +390,7 @@ export default class ServiceCatalogAppRegistry {
       method: "DELETE",
       requestUri: cmnP.encodePath`/tags/${params["resourceArn"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateApplication(

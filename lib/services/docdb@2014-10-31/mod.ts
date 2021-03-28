@@ -40,6 +40,7 @@ export default class DocDB {
       abortSignal, body,
       action: "AddTagsToResource",
     });
+    await resp.text();
   }
 
   async applyPendingMaintenanceAction(
@@ -242,6 +243,7 @@ export default class DocDB {
       abortSignal, body,
       action: "DeleteDBClusterParameterGroup",
     });
+    await resp.text();
   }
 
   async deleteDBClusterSnapshot(
@@ -286,6 +288,7 @@ export default class DocDB {
       abortSignal, body,
       action: "DeleteDBSubnetGroup",
     });
+    await resp.text();
   }
 
   async describeCertificates(
@@ -768,6 +771,7 @@ export default class DocDB {
       abortSignal, body,
       action: "RemoveTagsFromResource",
     });
+    await resp.text();
   }
 
   async resetDBClusterParameterGroup(

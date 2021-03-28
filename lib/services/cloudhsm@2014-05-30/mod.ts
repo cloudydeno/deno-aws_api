@@ -275,10 +275,9 @@ export default class CloudHSM {
   }
 
   async listAvailableZones(
-    {abortSignal, ...params}: RequestConfig & s.ListAvailableZonesRequest = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.ListAvailableZonesResponse> {
-    const body: jsonP.JSONObject = {
-    };
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListAvailableZones",

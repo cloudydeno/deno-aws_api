@@ -261,10 +261,6 @@ export interface AddListenerCertificatesOutput {
 }
 
 // refs: 1 - tags: named, output
-export interface AddTagsOutput {
-}
-
-// refs: 1 - tags: named, output
 export interface CreateListenerOutput {
   Listeners: Listener[];
 }
@@ -282,26 +278,6 @@ export interface CreateRuleOutput {
 // refs: 1 - tags: named, output
 export interface CreateTargetGroupOutput {
   TargetGroups: TargetGroup[];
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteListenerOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteLoadBalancerOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteRuleOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteTargetGroupOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface DeregisterTargetsOutput {
 }
 
 // refs: 1 - tags: named, output
@@ -389,18 +365,6 @@ export interface ModifyTargetGroupOutput {
 // refs: 1 - tags: named, output
 export interface ModifyTargetGroupAttributesOutput {
   Attributes: TargetGroupAttribute[];
-}
-
-// refs: 1 - tags: named, output
-export interface RegisterTargetsOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface RemoveListenerCertificatesOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface RemoveTagsOutput {
 }
 
 // refs: 1 - tags: named, output

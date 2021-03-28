@@ -791,32 +791,8 @@ export interface VerifyUserAttributeRequest {
 }
 
 // refs: 1 - tags: named, output
-export interface AddCustomAttributesResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface AdminConfirmSignUpResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface AdminCreateUserResponse {
   User?: UserType | null;
-}
-
-// refs: 1 - tags: named, output
-export interface AdminDeleteUserAttributesResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface AdminDisableProviderForUserResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface AdminDisableUserResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface AdminEnableUserResponse {
 }
 
 // refs: 1 - tags: named, output
@@ -846,10 +822,6 @@ export interface AdminInitiateAuthResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface AdminLinkProviderForUserResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface AdminListDevicesResponse {
   Devices?: DeviceType[] | null;
   PaginationToken?: string | null;
@@ -868,43 +840,11 @@ export interface AdminListUserAuthEventsResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface AdminResetUserPasswordResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface AdminRespondToAuthChallengeResponse {
   ChallengeName?: ChallengeNameType | null;
   Session?: string | null;
   ChallengeParameters?: { [key: string]: string | null | undefined } | null;
   AuthenticationResult?: AuthenticationResultType | null;
-}
-
-// refs: 1 - tags: named, output
-export interface AdminSetUserMFAPreferenceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface AdminSetUserPasswordResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface AdminSetUserSettingsResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface AdminUpdateAuthEventFeedbackResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface AdminUpdateDeviceStatusResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface AdminUpdateUserAttributesResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface AdminUserGlobalSignOutResponse {
 }
 
 // refs: 1 - tags: named, output
@@ -914,20 +854,8 @@ export interface AssociateSoftwareTokenResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface ChangePasswordResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface ConfirmDeviceResponse {
   UserConfirmationNecessary?: boolean | null;
-}
-
-// refs: 1 - tags: named, output
-export interface ConfirmForgotPasswordResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface ConfirmSignUpResponse {
 }
 
 // refs: 1 - tags: named, output
@@ -963,14 +891,6 @@ export interface CreateUserPoolClientResponse {
 // refs: 1 - tags: named, output
 export interface CreateUserPoolDomainResponse {
   CloudFrontDomain?: string | null;
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteUserAttributesResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteUserPoolDomainResponse {
 }
 
 // refs: 1 - tags: named, output
@@ -1066,10 +986,6 @@ export interface GetUserPoolMfaConfigResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface GlobalSignOutResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface InitiateAuthResponse {
   ChallengeName?: ChallengeNameType | null;
   Session?: string | null;
@@ -1160,18 +1076,10 @@ export interface SetUICustomizationResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface SetUserMFAPreferenceResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface SetUserPoolMfaConfigResponse {
   SmsMfaConfiguration?: SmsMfaConfigType | null;
   SoftwareTokenMfaConfiguration?: SoftwareTokenMfaConfigType | null;
   MfaConfiguration?: UserPoolMfaType | null;
-}
-
-// refs: 1 - tags: named, output
-export interface SetUserSettingsResponse {
 }
 
 // refs: 1 - tags: named, output
@@ -1189,22 +1097,6 @@ export interface StartUserImportJobResponse {
 // refs: 1 - tags: named, output
 export interface StopUserImportJobResponse {
   UserImportJob?: UserImportJobType | null;
-}
-
-// refs: 1 - tags: named, output
-export interface TagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UntagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateAuthEventFeedbackResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateDeviceStatusResponse {
 }
 
 // refs: 1 - tags: named, output
@@ -1228,10 +1120,6 @@ export interface UpdateUserAttributesResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface UpdateUserPoolResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface UpdateUserPoolClientResponse {
   UserPoolClient?: UserPoolClientType | null;
 }
@@ -1245,10 +1133,6 @@ export interface UpdateUserPoolDomainResponse {
 export interface VerifySoftwareTokenResponse {
   Status?: VerifySoftwareTokenResponseType | null;
   Session?: string | null;
-}
-
-// refs: 1 - tags: named, output
-export interface VerifyUserAttributeResponse {
 }
 
 // refs: 4 - tags: input, named, interface, output

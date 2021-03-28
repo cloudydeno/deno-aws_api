@@ -185,10 +185,6 @@ export interface ListBuildsForProjectInput {
 }
 
 // refs: 1 - tags: named, input
-export interface ListCuratedEnvironmentImagesInput {
-}
-
-// refs: 1 - tags: named, input
 export interface ListProjectsInput {
   sortBy?: ProjectSortByType | null;
   sortOrder?: SortOrderType | null;
@@ -234,10 +230,6 @@ export interface ListSharedReportGroupsInput {
   sortBy?: SharedResourceSortByType | null;
   nextToken?: string | null;
   maxResults?: number | null;
-}
-
-// refs: 1 - tags: named, input
-export interface ListSourceCredentialsInput {
 }
 
 // refs: 1 - tags: named, input
@@ -439,28 +431,8 @@ export interface DeleteBuildBatchOutput {
 }
 
 // refs: 1 - tags: named, output
-export interface DeleteProjectOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteReportOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteReportGroupOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteResourcePolicyOutput {
-}
-
-// refs: 1 - tags: named, output
 export interface DeleteSourceCredentialsOutput {
   arn?: string | null;
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteWebhookOutput {
 }
 
 // refs: 1 - tags: named, output
@@ -489,10 +461,6 @@ export interface GetResourcePolicyOutput {
 // refs: 1 - tags: named, output
 export interface ImportSourceCredentialsOutput {
   arn?: string | null;
-}
-
-// refs: 1 - tags: named, output
-export interface InvalidateProjectCacheOutput {
 }
 
 // refs: 1 - tags: named, output

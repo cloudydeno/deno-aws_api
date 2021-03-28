@@ -537,10 +537,6 @@ export interface CreateStreamingDistributionWithTagsResult {
 }
 
 // refs: 1 - tags: named, output
-export interface DeleteMonitoringSubscriptionResult {
-}
-
-// refs: 1 - tags: named, output
 export interface GetCachePolicyResult {
   CachePolicy?: CachePolicy | null;
   ETag?: string | null;

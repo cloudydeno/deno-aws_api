@@ -188,11 +188,11 @@ export default class RAM {
   }
 
   async enableSharingWithAwsOrganization(
-    {abortSignal, ...params}: RequestConfig & s.EnableSharingWithAwsOrganizationRequest = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.EnableSharingWithAwsOrganizationResponse> {
-
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
-      abortSignal,
+      abortSignal, body,
       action: "EnableSharingWithAwsOrganization",
       requestUri: "/enablesharingwithawsorganization",
     });
@@ -502,7 +502,7 @@ export default class RAM {
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & s.TagResourceRequest,
-  ): Promise<s.TagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       resourceShareArn: params["resourceShareArn"],
       tags: params["tags"]?.map(x => fromTag(x)),
@@ -512,15 +512,12 @@ export default class RAM {
       action: "TagResource",
       requestUri: "/tagresource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async untagResource(
     {abortSignal, ...params}: RequestConfig & s.UntagResourceRequest,
-  ): Promise<s.UntagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       resourceShareArn: params["resourceShareArn"],
       tagKeys: params["tagKeys"],
@@ -530,10 +527,7 @@ export default class RAM {
       action: "UntagResource",
       requestUri: "/untagresource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateResourceShare(

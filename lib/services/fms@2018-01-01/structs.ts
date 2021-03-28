@@ -13,10 +13,6 @@ export interface DeleteAppsListRequest {
 }
 
 // refs: 1 - tags: named, input
-export interface DeleteNotificationChannelRequest {
-}
-
-// refs: 1 - tags: named, input
 export interface DeletePolicyRequest {
   PolicyId: string;
   DeleteAllPolicyResources?: boolean | null;
@@ -25,14 +21,6 @@ export interface DeletePolicyRequest {
 // refs: 1 - tags: named, input
 export interface DeleteProtocolsListRequest {
   ListId: string;
-}
-
-// refs: 1 - tags: named, input
-export interface DisassociateAdminAccountRequest {
-}
-
-// refs: 1 - tags: named, input
-export interface GetAdminAccountRequest {
 }
 
 // refs: 1 - tags: named, input
@@ -45,10 +33,6 @@ export interface GetAppsListRequest {
 export interface GetComplianceDetailRequest {
   PolicyId: string;
   MemberAccount: string;
-}
-
-// refs: 1 - tags: named, input
-export interface GetNotificationChannelRequest {
 }
 
 // refs: 1 - tags: named, input
@@ -253,14 +237,6 @@ export interface PutPolicyResponse {
 export interface PutProtocolsListResponse {
   ProtocolsList?: ProtocolsListData | null;
   ProtocolsListArn?: string | null;
-}
-
-// refs: 1 - tags: named, output
-export interface TagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UntagResourceResponse {
 }
 
 // refs: 3 - tags: input, named, interface, output

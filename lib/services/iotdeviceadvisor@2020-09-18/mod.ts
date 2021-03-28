@@ -54,7 +54,7 @@ export default class IotDeviceAdvisor {
 
   async deleteSuiteDefinition(
     {abortSignal, ...params}: RequestConfig & s.DeleteSuiteDefinitionRequest,
-  ): Promise<s.DeleteSuiteDefinitionResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -62,10 +62,7 @@ export default class IotDeviceAdvisor {
       method: "DELETE",
       requestUri: cmnP.encodePath`/suiteDefinitions/${params["suiteDefinitionId"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async getSuiteDefinition(
@@ -251,7 +248,7 @@ export default class IotDeviceAdvisor {
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & s.TagResourceRequest,
-  ): Promise<s.TagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       tags: params["tags"],
     };
@@ -260,15 +257,12 @@ export default class IotDeviceAdvisor {
       action: "TagResource",
       requestUri: cmnP.encodePath`/tags/${params["resourceArn"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async untagResource(
     {abortSignal, ...params}: RequestConfig & s.UntagResourceRequest,
-  ): Promise<s.UntagResourceResponse> {
+  ): Promise<void> {
     const query = new URLSearchParams;
     for (const item of params["tagKeys"]) {
       query.append("tagKeys", item?.toString() ?? "");
@@ -279,10 +273,7 @@ export default class IotDeviceAdvisor {
       method: "DELETE",
       requestUri: cmnP.encodePath`/tags/${params["resourceArn"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateSuiteDefinition(

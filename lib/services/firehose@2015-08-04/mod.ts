@@ -64,7 +64,7 @@ export default class Firehose {
 
   async deleteDeliveryStream(
     {abortSignal, ...params}: RequestConfig & s.DeleteDeliveryStreamInput,
-  ): Promise<s.DeleteDeliveryStreamOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       DeliveryStreamName: params["DeliveryStreamName"],
       AllowForceDelete: params["AllowForceDelete"],
@@ -73,10 +73,7 @@ export default class Firehose {
       abortSignal, body,
       action: "DeleteDeliveryStream",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async describeDeliveryStream(
@@ -186,7 +183,7 @@ export default class Firehose {
 
   async startDeliveryStreamEncryption(
     {abortSignal, ...params}: RequestConfig & s.StartDeliveryStreamEncryptionInput,
-  ): Promise<s.StartDeliveryStreamEncryptionOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       DeliveryStreamName: params["DeliveryStreamName"],
       DeliveryStreamEncryptionConfigurationInput: fromDeliveryStreamEncryptionConfigurationInput(params["DeliveryStreamEncryptionConfigurationInput"]),
@@ -195,15 +192,12 @@ export default class Firehose {
       abortSignal, body,
       action: "StartDeliveryStreamEncryption",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async stopDeliveryStreamEncryption(
     {abortSignal, ...params}: RequestConfig & s.StopDeliveryStreamEncryptionInput,
-  ): Promise<s.StopDeliveryStreamEncryptionOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       DeliveryStreamName: params["DeliveryStreamName"],
     };
@@ -211,15 +205,12 @@ export default class Firehose {
       abortSignal, body,
       action: "StopDeliveryStreamEncryption",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async tagDeliveryStream(
     {abortSignal, ...params}: RequestConfig & s.TagDeliveryStreamInput,
-  ): Promise<s.TagDeliveryStreamOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       DeliveryStreamName: params["DeliveryStreamName"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
@@ -228,15 +219,12 @@ export default class Firehose {
       abortSignal, body,
       action: "TagDeliveryStream",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async untagDeliveryStream(
     {abortSignal, ...params}: RequestConfig & s.UntagDeliveryStreamInput,
-  ): Promise<s.UntagDeliveryStreamOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       DeliveryStreamName: params["DeliveryStreamName"],
       TagKeys: params["TagKeys"],
@@ -245,15 +233,12 @@ export default class Firehose {
       abortSignal, body,
       action: "UntagDeliveryStream",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateDestination(
     {abortSignal, ...params}: RequestConfig & s.UpdateDestinationInput,
-  ): Promise<s.UpdateDestinationOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       DeliveryStreamName: params["DeliveryStreamName"],
       CurrentDeliveryStreamVersionId: params["CurrentDeliveryStreamVersionId"],
@@ -269,10 +254,7 @@ export default class Firehose {
       abortSignal, body,
       action: "UpdateDestination",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
 }

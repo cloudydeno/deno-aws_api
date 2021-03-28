@@ -31,7 +31,7 @@ export default class Shield {
 
   async associateDRTLogBucket(
     {abortSignal, ...params}: RequestConfig & s.AssociateDRTLogBucketRequest,
-  ): Promise<s.AssociateDRTLogBucketResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       LogBucket: params["LogBucket"],
     };
@@ -39,15 +39,12 @@ export default class Shield {
       abortSignal, body,
       action: "AssociateDRTLogBucket",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async associateDRTRole(
     {abortSignal, ...params}: RequestConfig & s.AssociateDRTRoleRequest,
-  ): Promise<s.AssociateDRTRoleResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       RoleArn: params["RoleArn"],
     };
@@ -55,15 +52,12 @@ export default class Shield {
       abortSignal, body,
       action: "AssociateDRTRole",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async associateHealthCheck(
     {abortSignal, ...params}: RequestConfig & s.AssociateHealthCheckRequest,
-  ): Promise<s.AssociateHealthCheckResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ProtectionId: params["ProtectionId"],
       HealthCheckArn: params["HealthCheckArn"],
@@ -72,15 +66,12 @@ export default class Shield {
       abortSignal, body,
       action: "AssociateHealthCheck",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async associateProactiveEngagementDetails(
     {abortSignal, ...params}: RequestConfig & s.AssociateProactiveEngagementDetailsRequest,
-  ): Promise<s.AssociateProactiveEngagementDetailsResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       EmergencyContactList: params["EmergencyContactList"]?.map(x => fromEmergencyContact(x)),
     };
@@ -88,10 +79,7 @@ export default class Shield {
       abortSignal, body,
       action: "AssociateProactiveEngagementDetails",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async createProtection(
@@ -116,7 +104,7 @@ export default class Shield {
 
   async createProtectionGroup(
     {abortSignal, ...params}: RequestConfig & s.CreateProtectionGroupRequest,
-  ): Promise<s.CreateProtectionGroupResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ProtectionGroupId: params["ProtectionGroupId"],
       Aggregation: params["Aggregation"],
@@ -129,30 +117,23 @@ export default class Shield {
       abortSignal, body,
       action: "CreateProtectionGroup",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async createSubscription(
-    {abortSignal, ...params}: RequestConfig & s.CreateSubscriptionRequest = {},
-  ): Promise<s.CreateSubscriptionResponse> {
-    const body: jsonP.JSONObject = {
-    };
+    {abortSignal}: RequestConfig = {},
+  ): Promise<void> {
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateSubscription",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteProtection(
     {abortSignal, ...params}: RequestConfig & s.DeleteProtectionRequest,
-  ): Promise<s.DeleteProtectionResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ProtectionId: params["ProtectionId"],
     };
@@ -160,15 +141,12 @@ export default class Shield {
       abortSignal, body,
       action: "DeleteProtection",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteProtectionGroup(
     {abortSignal, ...params}: RequestConfig & s.DeleteProtectionGroupRequest,
-  ): Promise<s.DeleteProtectionGroupResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ProtectionGroupId: params["ProtectionGroupId"],
     };
@@ -176,25 +154,18 @@ export default class Shield {
       abortSignal, body,
       action: "DeleteProtectionGroup",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteSubscription(
-    {abortSignal, ...params}: RequestConfig & s.DeleteSubscriptionRequest = {},
-  ): Promise<s.DeleteSubscriptionResponse> {
-    const body: jsonP.JSONObject = {
-    };
+    {abortSignal}: RequestConfig = {},
+  ): Promise<void> {
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteSubscription",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async describeAttack(
@@ -216,10 +187,9 @@ export default class Shield {
   }
 
   async describeAttackStatistics(
-    {abortSignal, ...params}: RequestConfig & s.DescribeAttackStatisticsRequest = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.DescribeAttackStatisticsResponse> {
-    const body: jsonP.JSONObject = {
-    };
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeAttackStatistics",
@@ -234,10 +204,9 @@ export default class Shield {
   }
 
   async describeDRTAccess(
-    {abortSignal, ...params}: RequestConfig & s.DescribeDRTAccessRequest = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.DescribeDRTAccessResponse> {
-    const body: jsonP.JSONObject = {
-    };
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeDRTAccess",
@@ -252,10 +221,9 @@ export default class Shield {
   }
 
   async describeEmergencyContactSettings(
-    {abortSignal, ...params}: RequestConfig & s.DescribeEmergencyContactSettingsRequest = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.DescribeEmergencyContactSettingsResponse> {
-    const body: jsonP.JSONObject = {
-    };
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeEmergencyContactSettings",
@@ -306,10 +274,9 @@ export default class Shield {
   }
 
   async describeSubscription(
-    {abortSignal, ...params}: RequestConfig & s.DescribeSubscriptionRequest = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.DescribeSubscriptionResponse> {
-    const body: jsonP.JSONObject = {
-    };
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeSubscription",
@@ -323,23 +290,19 @@ export default class Shield {
   }
 
   async disableProactiveEngagement(
-    {abortSignal, ...params}: RequestConfig & s.DisableProactiveEngagementRequest = {},
-  ): Promise<s.DisableProactiveEngagementResponse> {
-    const body: jsonP.JSONObject = {
-    };
+    {abortSignal}: RequestConfig = {},
+  ): Promise<void> {
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisableProactiveEngagement",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async disassociateDRTLogBucket(
     {abortSignal, ...params}: RequestConfig & s.DisassociateDRTLogBucketRequest,
-  ): Promise<s.DisassociateDRTLogBucketResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       LogBucket: params["LogBucket"],
     };
@@ -347,30 +310,23 @@ export default class Shield {
       abortSignal, body,
       action: "DisassociateDRTLogBucket",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async disassociateDRTRole(
-    {abortSignal, ...params}: RequestConfig & s.DisassociateDRTRoleRequest = {},
-  ): Promise<s.DisassociateDRTRoleResponse> {
-    const body: jsonP.JSONObject = {
-    };
+    {abortSignal}: RequestConfig = {},
+  ): Promise<void> {
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisassociateDRTRole",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async disassociateHealthCheck(
     {abortSignal, ...params}: RequestConfig & s.DisassociateHealthCheckRequest,
-  ): Promise<s.DisassociateHealthCheckResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ProtectionId: params["ProtectionId"],
       HealthCheckArn: params["HealthCheckArn"],
@@ -379,32 +335,24 @@ export default class Shield {
       abortSignal, body,
       action: "DisassociateHealthCheck",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async enableProactiveEngagement(
-    {abortSignal, ...params}: RequestConfig & s.EnableProactiveEngagementRequest = {},
-  ): Promise<s.EnableProactiveEngagementResponse> {
-    const body: jsonP.JSONObject = {
-    };
+    {abortSignal}: RequestConfig = {},
+  ): Promise<void> {
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "EnableProactiveEngagement",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async getSubscriptionState(
-    {abortSignal, ...params}: RequestConfig & s.GetSubscriptionStateRequest = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.GetSubscriptionStateResponse> {
-    const body: jsonP.JSONObject = {
-    };
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetSubscriptionState",
@@ -523,7 +471,7 @@ export default class Shield {
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & s.TagResourceRequest,
-  ): Promise<s.TagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceARN: params["ResourceARN"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
@@ -532,15 +480,12 @@ export default class Shield {
       abortSignal, body,
       action: "TagResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async untagResource(
     {abortSignal, ...params}: RequestConfig & s.UntagResourceRequest,
-  ): Promise<s.UntagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceARN: params["ResourceARN"],
       TagKeys: params["TagKeys"],
@@ -549,15 +494,12 @@ export default class Shield {
       abortSignal, body,
       action: "UntagResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateEmergencyContactSettings(
     {abortSignal, ...params}: RequestConfig & s.UpdateEmergencyContactSettingsRequest = {},
-  ): Promise<s.UpdateEmergencyContactSettingsResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       EmergencyContactList: params["EmergencyContactList"]?.map(x => fromEmergencyContact(x)),
     };
@@ -565,15 +507,12 @@ export default class Shield {
       abortSignal, body,
       action: "UpdateEmergencyContactSettings",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateProtectionGroup(
     {abortSignal, ...params}: RequestConfig & s.UpdateProtectionGroupRequest,
-  ): Promise<s.UpdateProtectionGroupResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ProtectionGroupId: params["ProtectionGroupId"],
       Aggregation: params["Aggregation"],
@@ -585,15 +524,12 @@ export default class Shield {
       abortSignal, body,
       action: "UpdateProtectionGroup",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateSubscription(
     {abortSignal, ...params}: RequestConfig & s.UpdateSubscriptionRequest = {},
-  ): Promise<s.UpdateSubscriptionResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       AutoRenew: params["AutoRenew"],
     };
@@ -601,10 +537,7 @@ export default class Shield {
       abortSignal, body,
       action: "UpdateSubscription",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
 }

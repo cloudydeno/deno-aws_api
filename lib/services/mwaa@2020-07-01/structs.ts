@@ -113,10 +113,6 @@ export interface CreateWebLoginTokenResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface DeleteEnvironmentOutput {
-}
-
-// refs: 1 - tags: named, output
 export interface GetEnvironmentOutput {
   Environment?: Environment | null;
 }
@@ -130,18 +126,6 @@ export interface ListEnvironmentsOutput {
 // refs: 1 - tags: named, output
 export interface ListTagsForResourceOutput {
   Tags?: { [key: string]: string | null | undefined } | null;
-}
-
-// refs: 1 - tags: named, output
-export interface PublishMetricsOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface TagResourceOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface UntagResourceOutput {
 }
 
 // refs: 1 - tags: named, output

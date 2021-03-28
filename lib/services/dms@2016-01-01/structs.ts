@@ -153,10 +153,6 @@ export interface DeleteReplicationTaskAssessmentRunMessage {
 }
 
 // refs: 1 - tags: named, input
-export interface DescribeAccountAttributesMessage {
-}
-
-// refs: 1 - tags: named, input
 export interface DescribeApplicableIndividualAssessmentsMessage {
   ReplicationTaskArn?: string | null;
   ReplicationInstanceArn?: string | null;
@@ -467,10 +463,6 @@ export interface TestConnectionMessage {
 }
 
 // refs: 1 - tags: named, output
-export interface AddTagsToResourceResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface ApplyPendingMaintenanceActionResponse {
   ResourcePendingMaintenanceActions?: ResourcePendingMaintenanceActions | null;
 }
@@ -528,10 +520,6 @@ export interface DeleteEventSubscriptionResponse {
 // refs: 1 - tags: named, output
 export interface DeleteReplicationInstanceResponse {
   ReplicationInstance?: ReplicationInstance | null;
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteReplicationSubnetGroupResponse {
 }
 
 // refs: 1 - tags: named, output
@@ -724,10 +712,6 @@ export interface RefreshSchemasResponse {
 // refs: 1 - tags: named, output
 export interface ReloadTablesResponse {
   ReplicationTaskArn?: string | null;
-}
-
-// refs: 1 - tags: named, output
-export interface RemoveTagsFromResourceResponse {
 }
 
 // refs: 1 - tags: named, output

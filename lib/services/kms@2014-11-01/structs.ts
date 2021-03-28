@@ -333,10 +333,6 @@ export interface CancelKeyDeletionResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface ConnectCustomKeyStoreResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface CreateCustomKeyStoreResponse {
   CustomKeyStoreId?: string | null;
 }
@@ -360,10 +356,6 @@ export interface DecryptResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface DeleteCustomKeyStoreResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface DescribeCustomKeyStoresResponse {
   CustomKeyStores?: CustomKeyStoresListEntry[] | null;
   NextMarker?: string | null;
@@ -373,10 +365,6 @@ export interface DescribeCustomKeyStoresResponse {
 // refs: 1 - tags: named, output
 export interface DescribeKeyResponse {
   KeyMetadata?: KeyMetadata | null;
-}
-
-// refs: 1 - tags: named, output
-export interface DisconnectCustomKeyStoreResponse {
 }
 
 // refs: 1 - tags: named, output
@@ -450,10 +438,6 @@ export interface GetPublicKeyResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface ImportKeyMaterialResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface ListAliasesResponse {
   Aliases?: AliasListEntry[] | null;
   NextMarker?: string | null;
@@ -508,10 +492,6 @@ export interface SignResponse {
   KeyId?: string | null;
   Signature?: Uint8Array | string | null;
   SigningAlgorithm?: SigningAlgorithmSpec | null;
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateCustomKeyStoreResponse {
 }
 
 // refs: 1 - tags: named, output

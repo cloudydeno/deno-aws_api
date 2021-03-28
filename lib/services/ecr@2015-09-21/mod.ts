@@ -168,10 +168,9 @@ export default class ECR {
   }
 
   async deleteRegistryPolicy(
-    {abortSignal, ...params}: RequestConfig & s.DeleteRegistryPolicyRequest = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.DeleteRegistryPolicyResponse> {
-    const body: jsonP.JSONObject = {
-    };
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteRegistryPolicy",
@@ -278,10 +277,9 @@ export default class ECR {
   }
 
   async describeRegistry(
-    {abortSignal, ...params}: RequestConfig & s.DescribeRegistryRequest = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.DescribeRegistryResponse> {
-    const body: jsonP.JSONObject = {
-    };
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeRegistry",
@@ -408,10 +406,9 @@ export default class ECR {
   }
 
   async getRegistryPolicy(
-    {abortSignal, ...params}: RequestConfig & s.GetRegistryPolicyRequest = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.GetRegistryPolicyResponse> {
-    const body: jsonP.JSONObject = {
-    };
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetRegistryPolicy",
@@ -704,7 +701,7 @@ export default class ECR {
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & s.TagResourceRequest,
-  ): Promise<s.TagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       resourceArn: params["resourceArn"],
       tags: params["tags"]?.map(x => fromTag(x)),
@@ -713,15 +710,12 @@ export default class ECR {
       abortSignal, body,
       action: "TagResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async untagResource(
     {abortSignal, ...params}: RequestConfig & s.UntagResourceRequest,
-  ): Promise<s.UntagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       resourceArn: params["resourceArn"],
       tagKeys: params["tagKeys"],
@@ -730,10 +724,7 @@ export default class ECR {
       abortSignal, body,
       action: "UntagResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async uploadLayerPart(

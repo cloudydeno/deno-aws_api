@@ -417,14 +417,6 @@ export interface SearchProfilesResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface TagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UntagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface UpdateDomainResponse {
   DomainName: string;
   DefaultExpirationDays?: number | null;

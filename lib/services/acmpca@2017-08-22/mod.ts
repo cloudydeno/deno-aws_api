@@ -90,6 +90,7 @@ export default class ACMPCA {
       abortSignal, body,
       action: "CreatePermission",
     });
+    await resp.text();
   }
 
   async deleteCertificateAuthority(
@@ -103,6 +104,7 @@ export default class ACMPCA {
       abortSignal, body,
       action: "DeleteCertificateAuthority",
     });
+    await resp.text();
   }
 
   async deletePermission(
@@ -117,6 +119,7 @@ export default class ACMPCA {
       abortSignal, body,
       action: "DeletePermission",
     });
+    await resp.text();
   }
 
   async deletePolicy(
@@ -129,6 +132,7 @@ export default class ACMPCA {
       abortSignal, body,
       action: "DeletePolicy",
     });
+    await resp.text();
   }
 
   async describeCertificateAuthority(
@@ -258,6 +262,7 @@ export default class ACMPCA {
       abortSignal, body,
       action: "ImportCertificateAuthorityCertificate",
     });
+    await resp.text();
   }
 
   async issueCertificate(
@@ -359,6 +364,7 @@ export default class ACMPCA {
       abortSignal, body,
       action: "PutPolicy",
     });
+    await resp.text();
   }
 
   async restoreCertificateAuthority(
@@ -371,6 +377,7 @@ export default class ACMPCA {
       abortSignal, body,
       action: "RestoreCertificateAuthority",
     });
+    await resp.text();
   }
 
   async revokeCertificate(
@@ -385,6 +392,7 @@ export default class ACMPCA {
       abortSignal, body,
       action: "RevokeCertificate",
     });
+    await resp.text();
   }
 
   async tagCertificateAuthority(
@@ -398,6 +406,7 @@ export default class ACMPCA {
       abortSignal, body,
       action: "TagCertificateAuthority",
     });
+    await resp.text();
   }
 
   async untagCertificateAuthority(
@@ -411,6 +420,7 @@ export default class ACMPCA {
       abortSignal, body,
       action: "UntagCertificateAuthority",
     });
+    await resp.text();
   }
 
   async updateCertificateAuthority(
@@ -425,6 +435,7 @@ export default class ACMPCA {
       abortSignal, body,
       action: "UpdateCertificateAuthority",
     });
+    await resp.text();
   }
 
   // Resource State Waiters

@@ -237,14 +237,6 @@ export interface StartSigningJobResponse {
   jobOwner?: string | null;
 }
 
-// refs: 1 - tags: named, output
-export interface TagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UntagResourceResponse {
-}
-
 // refs: 3 - tags: input, named, enum, output
 export type SigningStatus =
 | "InProgress"

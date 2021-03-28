@@ -47,6 +47,7 @@ export default class AccessAnalyzer {
       requestUri: "/archive-rule",
       responseCode: 200,
     });
+    await resp.text();
   }
 
   async createAccessPreview(
@@ -112,6 +113,7 @@ export default class AccessAnalyzer {
       requestUri: cmnP.encodePath`/analyzer/${params["analyzerName"]}/archive-rule`,
       responseCode: 200,
     });
+    await resp.text();
   }
 
   async deleteAnalyzer(
@@ -126,6 +128,7 @@ export default class AccessAnalyzer {
       requestUri: cmnP.encodePath`/analyzer/${params["analyzerName"]}`,
       responseCode: 200,
     });
+    await resp.text();
   }
 
   async deleteArchiveRule(
@@ -140,6 +143,7 @@ export default class AccessAnalyzer {
       requestUri: cmnP.encodePath`/analyzer/${params["analyzerName"]}/archive-rule/${params["ruleName"]}`,
       responseCode: 200,
     });
+    await resp.text();
   }
 
   async getAccessPreview(
@@ -420,11 +424,12 @@ export default class AccessAnalyzer {
       requestUri: "/resource/scan",
       responseCode: 200,
     });
+    await resp.text();
   }
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & s.TagResourceRequest,
-  ): Promise<s.TagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       tags: params["tags"],
     };
@@ -434,15 +439,12 @@ export default class AccessAnalyzer {
       requestUri: cmnP.encodePath`/tags/${params["resourceArn"]}`,
       responseCode: 200,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async untagResource(
     {abortSignal, ...params}: RequestConfig & s.UntagResourceRequest,
-  ): Promise<s.UntagResourceResponse> {
+  ): Promise<void> {
     const query = new URLSearchParams;
     for (const item of params["tagKeys"]) {
       query.append("tagKeys", item?.toString() ?? "");
@@ -454,10 +456,7 @@ export default class AccessAnalyzer {
       requestUri: cmnP.encodePath`/tags/${params["resourceArn"]}`,
       responseCode: 200,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateArchiveRule(
@@ -474,6 +473,7 @@ export default class AccessAnalyzer {
       requestUri: cmnP.encodePath`/analyzer/${params["analyzerName"]}/archive-rule/${params["ruleName"]}`,
       responseCode: 200,
     });
+    await resp.text();
   }
 
   async updateFindings(
@@ -493,6 +493,7 @@ export default class AccessAnalyzer {
       requestUri: "/finding",
       responseCode: 200,
     });
+    await resp.text();
   }
 
   async validatePolicy(

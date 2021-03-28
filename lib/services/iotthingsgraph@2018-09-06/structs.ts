@@ -38,10 +38,6 @@ export interface DeleteFlowTemplateRequest {
 }
 
 // refs: 1 - tags: named, input
-export interface DeleteNamespaceRequest {
-}
-
-// refs: 1 - tags: named, input
 export interface DeleteSystemInstanceRequest {
   id?: string | null;
 }
@@ -94,10 +90,6 @@ export interface GetFlowTemplateRevisionsRequest {
   id: string;
   nextToken?: string | null;
   maxResults?: number | null;
-}
-
-// refs: 1 - tags: named, input
-export interface GetNamespaceDeletionStatusRequest {
 }
 
 // refs: 1 - tags: named, input
@@ -224,10 +216,6 @@ export interface UploadEntityDefinitionsRequest {
 }
 
 // refs: 1 - tags: named, output
-export interface AssociateEntityToThingResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface CreateFlowTemplateResponse {
   summary?: FlowTemplateSummary | null;
 }
@@ -243,21 +231,9 @@ export interface CreateSystemTemplateResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface DeleteFlowTemplateResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface DeleteNamespaceResponse {
   namespaceArn?: string | null;
   namespaceName?: string | null;
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteSystemInstanceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteSystemTemplateResponse {
 }
 
 // refs: 1 - tags: named, output
@@ -267,24 +243,12 @@ export interface DeploySystemInstanceResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface DeprecateFlowTemplateResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeprecateSystemTemplateResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface DescribeNamespaceResponse {
   namespaceArn?: string | null;
   namespaceName?: string | null;
   trackingNamespaceName?: string | null;
   trackingNamespaceVersion?: number | null;
   namespaceVersion?: number | null;
-}
-
-// refs: 1 - tags: named, output
-export interface DissociateEntityFromThingResponse {
 }
 
 // refs: 1 - tags: named, output
@@ -388,16 +352,8 @@ export interface SearchThingsResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface TagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface UndeploySystemInstanceResponse {
   summary?: SystemInstanceSummary | null;
-}
-
-// refs: 1 - tags: named, output
-export interface UntagResourceResponse {
 }
 
 // refs: 1 - tags: named, output

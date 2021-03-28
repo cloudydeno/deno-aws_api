@@ -177,6 +177,7 @@ export default class ServerlessApplicationRepository {
       requestUri: cmnP.encodePath`/applications/${params["ApplicationId"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async getApplication(
@@ -355,6 +356,7 @@ export default class ServerlessApplicationRepository {
       requestUri: cmnP.encodePath`/applications/${params["ApplicationId"]}/unshare`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async updateApplication(

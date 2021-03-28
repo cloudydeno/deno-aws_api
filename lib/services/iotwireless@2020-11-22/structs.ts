@@ -329,16 +329,8 @@ export interface AssociateAwsAccountWithPartnerAccountResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface AssociateWirelessDeviceWithThingResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface AssociateWirelessGatewayWithCertificateResponse {
   IotCertificateId?: string | null;
-}
-
-// refs: 1 - tags: named, output
-export interface AssociateWirelessGatewayWithThingResponse {
 }
 
 // refs: 1 - tags: named, output
@@ -381,50 +373,6 @@ export interface CreateWirelessGatewayTaskResponse {
 export interface CreateWirelessGatewayTaskDefinitionResponse {
   Id?: string | null;
   Arn?: string | null;
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteDestinationResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteDeviceProfileResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteServiceProfileResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteWirelessDeviceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteWirelessGatewayResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteWirelessGatewayTaskResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteWirelessGatewayTaskDefinitionResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DisassociateAwsAccountFromPartnerAccountResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DisassociateWirelessDeviceFromThingResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DisassociateWirelessGatewayFromCertificateResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DisassociateWirelessGatewayFromThingResponse {
 }
 
 // refs: 1 - tags: named, output
@@ -584,32 +532,8 @@ export interface SendDataToWirelessDeviceResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface TagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface TestWirelessDeviceResponse {
   Result?: string | null;
-}
-
-// refs: 1 - tags: named, output
-export interface UntagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateDestinationResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdatePartnerAccountResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateWirelessDeviceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateWirelessGatewayResponse {
 }
 
 // refs: 2 - tags: input, named, interface, output

@@ -102,10 +102,6 @@ export interface DeleteNotificationRuleResult {
 }
 
 // refs: 1 - tags: named, output
-export interface DeleteTargetResult {
-}
-
-// refs: 1 - tags: named, output
 export interface DescribeNotificationRuleResult {
   Arn: string;
   Name?: string | null;
@@ -156,14 +152,6 @@ export interface TagResourceResult {
 // refs: 1 - tags: named, output
 export interface UnsubscribeResult {
   Arn: string;
-}
-
-// refs: 1 - tags: named, output
-export interface UntagResourceResult {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateNotificationRuleResult {
 }
 
 // refs: 3 - tags: input, named, interface

@@ -87,24 +87,24 @@ export default class LexRuntime {
       action: "PostContent",
       requestUri: cmnP.encodePath`/bot/${params["botName"]}/alias/${params["botAlias"]}/user/${params["userId"]}/content`,
     });
-  return {
-    contentType: resp.headers.get("Content-Type"),
-    intentName: resp.headers.get("x-amz-lex-intent-name"),
-    nluIntentConfidence: jsonP.readJsonValueBase64(resp.headers.get("x-amz-lex-nlu-intent-confidence")),
-    alternativeIntents: jsonP.readJsonValueBase64(resp.headers.get("x-amz-lex-alternative-intents")),
-    slots: jsonP.readJsonValueBase64(resp.headers.get("x-amz-lex-slots")),
-    sessionAttributes: jsonP.readJsonValueBase64(resp.headers.get("x-amz-lex-session-attributes")),
-    sentimentResponse: resp.headers.get("x-amz-lex-sentiment"),
-    message: resp.headers.get("x-amz-lex-message"),
-    messageFormat: cmnP.readEnum<s.MessageFormatType>(resp.headers.get("x-amz-lex-message-format")),
-    dialogState: cmnP.readEnum<s.DialogState>(resp.headers.get("x-amz-lex-dialog-state")),
-    slotToElicit: resp.headers.get("x-amz-lex-slot-to-elicit"),
-    inputTranscript: resp.headers.get("x-amz-lex-input-transcript"),
-    botVersion: resp.headers.get("x-amz-lex-bot-version"),
-    sessionId: resp.headers.get("x-amz-lex-session-id"),
-    activeContexts: jsonP.readJsonValueBase64(resp.headers.get("x-amz-lex-active-contexts")),
-    audioStream: await resp.text(), // TODO: maybe allow proper body streaming,
-  };
+    return {
+      contentType: resp.headers.get("Content-Type"),
+      intentName: resp.headers.get("x-amz-lex-intent-name"),
+      nluIntentConfidence: jsonP.readJsonValueBase64(resp.headers.get("x-amz-lex-nlu-intent-confidence")),
+      alternativeIntents: jsonP.readJsonValueBase64(resp.headers.get("x-amz-lex-alternative-intents")),
+      slots: jsonP.readJsonValueBase64(resp.headers.get("x-amz-lex-slots")),
+      sessionAttributes: jsonP.readJsonValueBase64(resp.headers.get("x-amz-lex-session-attributes")),
+      sentimentResponse: resp.headers.get("x-amz-lex-sentiment"),
+      message: resp.headers.get("x-amz-lex-message"),
+      messageFormat: cmnP.readEnum<s.MessageFormatType>(resp.headers.get("x-amz-lex-message-format")),
+      dialogState: cmnP.readEnum<s.DialogState>(resp.headers.get("x-amz-lex-dialog-state")),
+      slotToElicit: resp.headers.get("x-amz-lex-slot-to-elicit"),
+      inputTranscript: resp.headers.get("x-amz-lex-input-transcript"),
+      botVersion: resp.headers.get("x-amz-lex-bot-version"),
+      sessionId: resp.headers.get("x-amz-lex-session-id"),
+      activeContexts: jsonP.readJsonValueBase64(resp.headers.get("x-amz-lex-active-contexts")),
+      audioStream: await resp.text(), // TODO: maybe allow proper body streaming,
+    };
   }
 
   async postText(
@@ -158,19 +158,19 @@ export default class LexRuntime {
       action: "PutSession",
       requestUri: cmnP.encodePath`/bot/${params["botName"]}/alias/${params["botAlias"]}/user/${params["userId"]}/session`,
     });
-  return {
-    contentType: resp.headers.get("Content-Type"),
-    intentName: resp.headers.get("x-amz-lex-intent-name"),
-    slots: jsonP.readJsonValueBase64(resp.headers.get("x-amz-lex-slots")),
-    sessionAttributes: jsonP.readJsonValueBase64(resp.headers.get("x-amz-lex-session-attributes")),
-    message: resp.headers.get("x-amz-lex-message"),
-    messageFormat: cmnP.readEnum<s.MessageFormatType>(resp.headers.get("x-amz-lex-message-format")),
-    dialogState: cmnP.readEnum<s.DialogState>(resp.headers.get("x-amz-lex-dialog-state")),
-    slotToElicit: resp.headers.get("x-amz-lex-slot-to-elicit"),
-    sessionId: resp.headers.get("x-amz-lex-session-id"),
-    activeContexts: jsonP.readJsonValueBase64(resp.headers.get("x-amz-lex-active-contexts")),
-    audioStream: await resp.text(), // TODO: maybe allow proper body streaming,
-  };
+    return {
+      contentType: resp.headers.get("Content-Type"),
+      intentName: resp.headers.get("x-amz-lex-intent-name"),
+      slots: jsonP.readJsonValueBase64(resp.headers.get("x-amz-lex-slots")),
+      sessionAttributes: jsonP.readJsonValueBase64(resp.headers.get("x-amz-lex-session-attributes")),
+      message: resp.headers.get("x-amz-lex-message"),
+      messageFormat: cmnP.readEnum<s.MessageFormatType>(resp.headers.get("x-amz-lex-message-format")),
+      dialogState: cmnP.readEnum<s.DialogState>(resp.headers.get("x-amz-lex-dialog-state")),
+      slotToElicit: resp.headers.get("x-amz-lex-slot-to-elicit"),
+      sessionId: resp.headers.get("x-amz-lex-session-id"),
+      activeContexts: jsonP.readJsonValueBase64(resp.headers.get("x-amz-lex-active-contexts")),
+      audioStream: await resp.text(), // TODO: maybe allow proper body streaming,
+    };
   }
 
 }

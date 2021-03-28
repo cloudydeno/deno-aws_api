@@ -215,7 +215,7 @@ export default class KinesisAnalyticsV2 {
 
   async createApplicationSnapshot(
     {abortSignal, ...params}: RequestConfig & s.CreateApplicationSnapshotRequest,
-  ): Promise<s.CreateApplicationSnapshotResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ApplicationName: params["ApplicationName"],
       SnapshotName: params["SnapshotName"],
@@ -224,15 +224,12 @@ export default class KinesisAnalyticsV2 {
       abortSignal, body,
       action: "CreateApplicationSnapshot",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteApplication(
     {abortSignal, ...params}: RequestConfig & s.DeleteApplicationRequest,
-  ): Promise<s.DeleteApplicationResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ApplicationName: params["ApplicationName"],
       CreateTimestamp: jsonP.serializeDate_unixTimestamp(params["CreateTimestamp"]),
@@ -241,10 +238,7 @@ export default class KinesisAnalyticsV2 {
       abortSignal, body,
       action: "DeleteApplication",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteApplicationCloudWatchLoggingOption(
@@ -334,7 +328,7 @@ export default class KinesisAnalyticsV2 {
 
   async deleteApplicationSnapshot(
     {abortSignal, ...params}: RequestConfig & s.DeleteApplicationSnapshotRequest,
-  ): Promise<s.DeleteApplicationSnapshotResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ApplicationName: params["ApplicationName"],
       SnapshotName: params["SnapshotName"],
@@ -344,10 +338,7 @@ export default class KinesisAnalyticsV2 {
       abortSignal, body,
       action: "DeleteApplicationSnapshot",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteApplicationVpcConfiguration(
@@ -496,7 +487,7 @@ export default class KinesisAnalyticsV2 {
 
   async startApplication(
     {abortSignal, ...params}: RequestConfig & s.StartApplicationRequest,
-  ): Promise<s.StartApplicationResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ApplicationName: params["ApplicationName"],
       RunConfiguration: fromRunConfiguration(params["RunConfiguration"]),
@@ -505,15 +496,12 @@ export default class KinesisAnalyticsV2 {
       abortSignal, body,
       action: "StartApplication",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async stopApplication(
     {abortSignal, ...params}: RequestConfig & s.StopApplicationRequest,
-  ): Promise<s.StopApplicationResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ApplicationName: params["ApplicationName"],
       Force: params["Force"],
@@ -522,15 +510,12 @@ export default class KinesisAnalyticsV2 {
       abortSignal, body,
       action: "StopApplication",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & s.TagResourceRequest,
-  ): Promise<s.TagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceARN: params["ResourceARN"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
@@ -539,15 +524,12 @@ export default class KinesisAnalyticsV2 {
       abortSignal, body,
       action: "TagResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async untagResource(
     {abortSignal, ...params}: RequestConfig & s.UntagResourceRequest,
-  ): Promise<s.UntagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceARN: params["ResourceARN"],
       TagKeys: params["TagKeys"],
@@ -556,10 +538,7 @@ export default class KinesisAnalyticsV2 {
       abortSignal, body,
       action: "UntagResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateApplication(

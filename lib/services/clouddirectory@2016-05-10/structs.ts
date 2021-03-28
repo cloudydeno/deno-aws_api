@@ -472,10 +472,6 @@ export interface UpgradePublishedSchemaRequest {
 }
 
 // refs: 1 - tags: named, output
-export interface AddFacetToObjectResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface ApplySchemaResponse {
   AppliedSchemaArn?: string | null;
   DirectoryArn?: string | null;
@@ -484,10 +480,6 @@ export interface ApplySchemaResponse {
 // refs: 1 - tags: named, output
 export interface AttachObjectResponse {
   AttachedObjectIdentifier?: string | null;
-}
-
-// refs: 1 - tags: named, output
-export interface AttachPolicyResponse {
 }
 
 // refs: 1 - tags: named, output
@@ -519,10 +511,6 @@ export interface CreateDirectoryResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface CreateFacetResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface CreateIndexResponse {
   ObjectIdentifier?: string | null;
 }
@@ -538,29 +526,13 @@ export interface CreateSchemaResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface CreateTypedLinkFacetResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface DeleteDirectoryResponse {
   DirectoryArn: string;
 }
 
 // refs: 1 - tags: named, output
-export interface DeleteFacetResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteObjectResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface DeleteSchemaResponse {
   SchemaArn?: string | null;
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteTypedLinkFacetResponse {
 }
 
 // refs: 1 - tags: named, output
@@ -571,10 +543,6 @@ export interface DetachFromIndexResponse {
 // refs: 1 - tags: named, output
 export interface DetachObjectResponse {
   DetachedObjectIdentifier?: string | null;
-}
-
-// refs: 1 - tags: named, output
-export interface DetachPolicyResponse {
 }
 
 // refs: 1 - tags: named, output
@@ -760,26 +728,6 @@ export interface PutSchemaFromJsonResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface RemoveFacetFromObjectResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface TagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UntagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateFacetResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateLinkAttributesResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface UpdateObjectAttributesResponse {
   ObjectIdentifier?: string | null;
 }
@@ -787,10 +735,6 @@ export interface UpdateObjectAttributesResponse {
 // refs: 1 - tags: named, output
 export interface UpdateSchemaResponse {
   SchemaArn?: string | null;
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateTypedLinkFacetResponse {
 }
 
 // refs: 1 - tags: named, output

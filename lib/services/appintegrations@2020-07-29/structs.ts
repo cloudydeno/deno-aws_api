@@ -62,10 +62,6 @@ export interface CreateEventIntegrationResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface DeleteEventIntegrationResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface GetEventIntegrationResponse {
   Name?: string | null;
   Description?: string | null;
@@ -90,18 +86,6 @@ export interface ListEventIntegrationsResponse {
 // refs: 1 - tags: named, output
 export interface ListTagsForResourceResponse {
   tags?: { [key: string]: string | null | undefined } | null;
-}
-
-// refs: 1 - tags: named, output
-export interface TagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UntagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateEventIntegrationResponse {
 }
 
 // refs: 3 - tags: input, named, interface, output

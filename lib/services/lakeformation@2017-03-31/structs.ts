@@ -102,10 +102,6 @@ export interface BatchRevokePermissionsResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface DeregisterResourceResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface DescribeResourceResponse {
   ResourceInfo?: ResourceInfo | null;
 }
@@ -122,10 +118,6 @@ export interface GetEffectivePermissionsForPathResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface GrantPermissionsResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface ListPermissionsResponse {
   PrincipalResourcePermissions?: PrincipalResourcePermissions[] | null;
   NextToken?: string | null;
@@ -135,22 +127,6 @@ export interface ListPermissionsResponse {
 export interface ListResourcesResponse {
   ResourceInfoList?: ResourceInfo[] | null;
   NextToken?: string | null;
-}
-
-// refs: 1 - tags: named, output
-export interface PutDataLakeSettingsResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface RegisterResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface RevokePermissionsResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateResourceResponse {
 }
 
 // refs: 4 - tags: input, named, interface, output

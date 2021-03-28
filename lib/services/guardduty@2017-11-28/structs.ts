@@ -187,10 +187,6 @@ export interface GetIPSetRequest {
 }
 
 // refs: 1 - tags: named, input
-export interface GetInvitationsCountRequest {
-}
-
-// refs: 1 - tags: named, input
 export interface GetMasterAccountRequest {
   DetectorId: string;
 }
@@ -395,14 +391,6 @@ export interface UpdateThreatIntelSetRequest {
 }
 
 // refs: 1 - tags: named, output
-export interface AcceptInvitationResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface ArchiveFindingsResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface CreateDetectorResponse {
   DetectorId?: string | null;
 }
@@ -428,10 +416,6 @@ export interface CreatePublishingDestinationResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface CreateSampleFindingsResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface CreateThreatIntelSetResponse {
   ThreatIntelSetId: string;
 }
@@ -442,18 +426,6 @@ export interface DeclineInvitationsResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface DeleteDetectorResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteFilterResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteIPSetResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface DeleteInvitationsResponse {
   UnprocessedAccounts: UnprocessedAccount[];
 }
@@ -461,14 +433,6 @@ export interface DeleteInvitationsResponse {
 // refs: 1 - tags: named, output
 export interface DeleteMembersResponse {
   UnprocessedAccounts: UnprocessedAccount[];
-}
-
-// refs: 1 - tags: named, output
-export interface DeletePublishingDestinationResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteThreatIntelSetResponse {
 }
 
 // refs: 1 - tags: named, output
@@ -488,20 +452,8 @@ export interface DescribePublishingDestinationResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface DisableOrganizationAdminAccountResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DisassociateFromMasterAccountResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface DisassociateMembersResponse {
   UnprocessedAccounts: UnprocessedAccount[];
-}
-
-// refs: 1 - tags: named, output
-export interface EnableOrganizationAdminAccountResponse {
 }
 
 // refs: 1 - tags: named, output
@@ -656,49 +608,13 @@ export interface StopMonitoringMembersResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface TagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UnarchiveFindingsResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UntagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateDetectorResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface UpdateFilterResponse {
   Name: string;
 }
 
 // refs: 1 - tags: named, output
-export interface UpdateFindingsFeedbackResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateIPSetResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface UpdateMemberDetectorsResponse {
   UnprocessedAccounts: UnprocessedAccount[];
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateOrganizationConfigurationResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdatePublishingDestinationResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateThreatIntelSetResponse {
 }
 
 // refs: 3 - tags: input, named, enum, output

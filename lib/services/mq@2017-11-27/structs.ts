@@ -186,16 +186,8 @@ export interface CreateConfigurationResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface CreateUserResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface DeleteBrokerResponse {
   BrokerId?: string | null;
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteUserResponse {
 }
 
 // refs: 1 - tags: named, output
@@ -310,10 +302,6 @@ export interface ListUsersResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface RebootBrokerResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface UpdateBrokerResponse {
   AuthenticationStrategy?: AuthenticationStrategy | null;
   AutoMinorVersionUpgrade?: boolean | null;
@@ -334,10 +322,6 @@ export interface UpdateConfigurationResponse {
   LatestRevision?: ConfigurationRevision | null;
   Name?: string | null;
   Warnings?: SanitizationWarning[] | null;
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateUserResponse {
 }
 
 // refs: 9 - tags: input, named, enum, output

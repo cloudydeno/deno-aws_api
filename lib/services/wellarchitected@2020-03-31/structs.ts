@@ -374,14 +374,6 @@ export interface ListWorkloadsOutput {
 }
 
 // refs: 1 - tags: named, output
-export interface TagResourceOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface UntagResourceOutput {
-}
-
-// refs: 1 - tags: named, output
 export interface UpdateAnswerOutput {
   WorkloadId?: string | null;
   LensAlias?: string | null;

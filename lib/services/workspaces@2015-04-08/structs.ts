@@ -97,10 +97,6 @@ export interface DeregisterWorkspaceDirectoryRequest {
 }
 
 // refs: 1 - tags: named, input
-export interface DescribeAccountRequest {
-}
-
-// refs: 1 - tags: named, input
 export interface DescribeAccountModificationsRequest {
   NextToken?: string | null;
 }
@@ -340,14 +336,6 @@ export interface AssociateConnectionAliasResult {
 }
 
 // refs: 1 - tags: named, output
-export interface AssociateIpGroupsResult {
-}
-
-// refs: 1 - tags: named, output
-export interface AuthorizeIpRulesResult {
-}
-
-// refs: 1 - tags: named, output
 export interface CopyWorkspaceImageResult {
   ImageId?: string | null;
 }
@@ -363,10 +351,6 @@ export interface CreateIpGroupResult {
 }
 
 // refs: 1 - tags: named, output
-export interface CreateTagsResult {
-}
-
-// refs: 1 - tags: named, output
 export interface CreateWorkspaceBundleResult {
   WorkspaceBundle?: WorkspaceBundle | null;
 }
@@ -375,30 +359,6 @@ export interface CreateWorkspaceBundleResult {
 export interface CreateWorkspacesResult {
   FailedRequests?: FailedCreateWorkspaceRequest[] | null;
   PendingRequests?: Workspace[] | null;
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteConnectionAliasResult {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteIpGroupResult {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteTagsResult {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteWorkspaceBundleResult {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteWorkspaceImageResult {
-}
-
-// refs: 1 - tags: named, output
-export interface DeregisterWorkspaceDirectoryResult {
 }
 
 // refs: 1 - tags: named, output
@@ -486,14 +446,6 @@ export interface DescribeWorkspacesConnectionStatusResult {
 }
 
 // refs: 1 - tags: named, output
-export interface DisassociateConnectionAliasResult {
-}
-
-// refs: 1 - tags: named, output
-export interface DisassociateIpGroupsResult {
-}
-
-// refs: 1 - tags: named, output
 export interface ImportWorkspaceImageResult {
   ImageId?: string | null;
 }
@@ -511,34 +463,6 @@ export interface MigrateWorkspaceResult {
 }
 
 // refs: 1 - tags: named, output
-export interface ModifyAccountResult {
-}
-
-// refs: 1 - tags: named, output
-export interface ModifyClientPropertiesResult {
-}
-
-// refs: 1 - tags: named, output
-export interface ModifySelfservicePermissionsResult {
-}
-
-// refs: 1 - tags: named, output
-export interface ModifyWorkspaceAccessPropertiesResult {
-}
-
-// refs: 1 - tags: named, output
-export interface ModifyWorkspaceCreationPropertiesResult {
-}
-
-// refs: 1 - tags: named, output
-export interface ModifyWorkspacePropertiesResult {
-}
-
-// refs: 1 - tags: named, output
-export interface ModifyWorkspaceStateResult {
-}
-
-// refs: 1 - tags: named, output
 export interface RebootWorkspacesResult {
   FailedRequests?: FailedWorkspaceChangeRequest[] | null;
 }
@@ -546,18 +470,6 @@ export interface RebootWorkspacesResult {
 // refs: 1 - tags: named, output
 export interface RebuildWorkspacesResult {
   FailedRequests?: FailedWorkspaceChangeRequest[] | null;
-}
-
-// refs: 1 - tags: named, output
-export interface RegisterWorkspaceDirectoryResult {
-}
-
-// refs: 1 - tags: named, output
-export interface RestoreWorkspaceResult {
-}
-
-// refs: 1 - tags: named, output
-export interface RevokeIpRulesResult {
 }
 
 // refs: 1 - tags: named, output
@@ -573,22 +485,6 @@ export interface StopWorkspacesResult {
 // refs: 1 - tags: named, output
 export interface TerminateWorkspacesResult {
   FailedRequests?: FailedWorkspaceChangeRequest[] | null;
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateConnectionAliasPermissionResult {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateRulesOfIpGroupResult {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateWorkspaceBundleResult {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateWorkspaceImagePermissionResult {
 }
 
 // refs: 4 - tags: input, named, interface, output

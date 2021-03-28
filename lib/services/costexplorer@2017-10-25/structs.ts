@@ -280,14 +280,6 @@ export interface CreateCostCategoryDefinitionResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface DeleteAnomalyMonitorResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteAnomalySubscriptionResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface DeleteCostCategoryDefinitionResponse {
   CostCategoryArn?: string | null;
   EffectiveEnd?: string | null;

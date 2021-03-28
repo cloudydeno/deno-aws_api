@@ -46,6 +46,7 @@ export default class SNS {
       abortSignal, body,
       action: "AddPermission",
     });
+    await resp.text();
   }
 
   async checkIfPhoneNumberIsOptedOut(
@@ -147,6 +148,7 @@ export default class SNS {
       abortSignal, body,
       action: "DeleteEndpoint",
     });
+    await resp.text();
   }
 
   async deletePlatformApplication(
@@ -159,6 +161,7 @@ export default class SNS {
       abortSignal, body,
       action: "DeletePlatformApplication",
     });
+    await resp.text();
   }
 
   async deleteTopic(
@@ -171,6 +174,7 @@ export default class SNS {
       abortSignal, body,
       action: "DeleteTopic",
     });
+    await resp.text();
   }
 
   async getEndpointAttributes(
@@ -387,7 +391,7 @@ export default class SNS {
 
   async optInPhoneNumber(
     {abortSignal, ...params}: RequestConfig & s.OptInPhoneNumberInput,
-  ): Promise<s.OptInPhoneNumberResponse> {
+  ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"phoneNumber", (params["phoneNumber"] ?? '').toString());
@@ -395,8 +399,7 @@ export default class SNS {
       abortSignal, body,
       action: "OptInPhoneNumber",
     });
-    const xml = xmlP.readXmlResult(await resp.text(), "OptInPhoneNumberResult");
-    return {};
+    await resp.text();
   }
 
   async publish(
@@ -434,6 +437,7 @@ export default class SNS {
       abortSignal, body,
       action: "RemovePermission",
     });
+    await resp.text();
   }
 
   async setEndpointAttributes(
@@ -447,6 +451,7 @@ export default class SNS {
       abortSignal, body,
       action: "SetEndpointAttributes",
     });
+    await resp.text();
   }
 
   async setPlatformApplicationAttributes(
@@ -460,11 +465,12 @@ export default class SNS {
       abortSignal, body,
       action: "SetPlatformApplicationAttributes",
     });
+    await resp.text();
   }
 
   async setSMSAttributes(
     {abortSignal, ...params}: RequestConfig & s.SetSMSAttributesInput,
-  ): Promise<s.SetSMSAttributesResponse> {
+  ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     if (params["attributes"]) qsP.appendMap(body, prefix+"attributes", params["attributes"], {"entryPrefix":".entry."})
@@ -472,8 +478,7 @@ export default class SNS {
       abortSignal, body,
       action: "SetSMSAttributes",
     });
-    const xml = xmlP.readXmlResult(await resp.text(), "SetSMSAttributesResult");
-    return {};
+    await resp.text();
   }
 
   async setSubscriptionAttributes(
@@ -488,6 +493,7 @@ export default class SNS {
       abortSignal, body,
       action: "SetSubscriptionAttributes",
     });
+    await resp.text();
   }
 
   async setTopicAttributes(
@@ -502,6 +508,7 @@ export default class SNS {
       abortSignal, body,
       action: "SetTopicAttributes",
     });
+    await resp.text();
   }
 
   async subscribe(
@@ -526,7 +533,7 @@ export default class SNS {
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & s.TagResourceRequest,
-  ): Promise<s.TagResourceResponse> {
+  ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"ResourceArn", (params["ResourceArn"] ?? '').toString());
@@ -535,8 +542,7 @@ export default class SNS {
       abortSignal, body,
       action: "TagResource",
     });
-    const xml = xmlP.readXmlResult(await resp.text(), "TagResourceResult");
-    return {};
+    await resp.text();
   }
 
   async unsubscribe(
@@ -549,11 +555,12 @@ export default class SNS {
       abortSignal, body,
       action: "Unsubscribe",
     });
+    await resp.text();
   }
 
   async untagResource(
     {abortSignal, ...params}: RequestConfig & s.UntagResourceRequest,
-  ): Promise<s.UntagResourceResponse> {
+  ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"ResourceArn", (params["ResourceArn"] ?? '').toString());
@@ -562,8 +569,7 @@ export default class SNS {
       abortSignal, body,
       action: "UntagResource",
     });
-    const xml = xmlP.readXmlResult(await resp.text(), "UntagResourceResult");
-    return {};
+    await resp.text();
   }
 
 }

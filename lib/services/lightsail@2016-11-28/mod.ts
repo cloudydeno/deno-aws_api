@@ -287,10 +287,9 @@ export default class Lightsail {
   }
 
   async createContainerServiceRegistryLogin(
-    {abortSignal, ...params}: RequestConfig & s.CreateContainerServiceRegistryLoginRequest = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.CreateContainerServiceRegistryLoginResult> {
-    const body: jsonP.JSONObject = {
-    };
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "CreateContainerServiceRegistryLogin",
@@ -731,7 +730,7 @@ export default class Lightsail {
 
   async deleteContainerImage(
     {abortSignal, ...params}: RequestConfig & s.DeleteContainerImageRequest,
-  ): Promise<s.DeleteContainerImageResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       serviceName: params["serviceName"],
       image: params["image"],
@@ -740,15 +739,12 @@ export default class Lightsail {
       abortSignal, body,
       action: "DeleteContainerImage",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteContainerService(
     {abortSignal, ...params}: RequestConfig & s.DeleteContainerServiceRequest,
-  ): Promise<s.DeleteContainerServiceResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       serviceName: params["serviceName"],
     };
@@ -756,10 +752,7 @@ export default class Lightsail {
       abortSignal, body,
       action: "DeleteContainerService",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteDisk(
@@ -1096,10 +1089,9 @@ export default class Lightsail {
   }
 
   async downloadDefaultKeyPair(
-    {abortSignal, ...params}: RequestConfig & s.DownloadDefaultKeyPairRequest = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.DownloadDefaultKeyPairResult> {
-    const body: jsonP.JSONObject = {
-    };
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DownloadDefaultKeyPair",
@@ -1308,10 +1300,9 @@ export default class Lightsail {
   }
 
   async getContainerAPIMetadata(
-    {abortSignal, ...params}: RequestConfig & s.GetContainerAPIMetadataRequest = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.GetContainerAPIMetadataResult> {
-    const body: jsonP.JSONObject = {
-    };
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetContainerAPIMetadata",
@@ -1409,10 +1400,9 @@ export default class Lightsail {
   }
 
   async getContainerServicePowers(
-    {abortSignal, ...params}: RequestConfig & s.GetContainerServicePowersRequest = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.GetContainerServicePowersResult> {
-    const body: jsonP.JSONObject = {
-    };
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetContainerServicePowers",
@@ -1518,10 +1508,9 @@ export default class Lightsail {
   }
 
   async getDistributionBundles(
-    {abortSignal, ...params}: RequestConfig & s.GetDistributionBundlesRequest = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.GetDistributionBundlesResult> {
-    const body: jsonP.JSONObject = {
-    };
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetDistributionBundles",
@@ -2300,10 +2289,9 @@ export default class Lightsail {
   }
 
   async isVpcPeered(
-    {abortSignal, ...params}: RequestConfig & s.IsVpcPeeredRequest = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.IsVpcPeeredResult> {
-    const body: jsonP.JSONObject = {
-    };
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "IsVpcPeered",
@@ -2336,10 +2324,9 @@ export default class Lightsail {
   }
 
   async peerVpc(
-    {abortSignal, ...params}: RequestConfig & s.PeerVpcRequest = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.PeerVpcResult> {
-    const body: jsonP.JSONObject = {
-    };
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "PeerVpc",
@@ -2645,10 +2632,9 @@ export default class Lightsail {
   }
 
   async unpeerVpc(
-    {abortSignal, ...params}: RequestConfig & s.UnpeerVpcRequest = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.UnpeerVpcResult> {
-    const body: jsonP.JSONObject = {
-    };
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "UnpeerVpc",

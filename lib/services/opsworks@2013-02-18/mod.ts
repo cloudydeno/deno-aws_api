@@ -39,6 +39,7 @@ export default class OpsWorks {
       abortSignal, body,
       action: "AssignInstance",
     });
+    await resp.text();
   }
 
   async assignVolume(
@@ -52,6 +53,7 @@ export default class OpsWorks {
       abortSignal, body,
       action: "AssignVolume",
     });
+    await resp.text();
   }
 
   async associateElasticIp(
@@ -65,6 +67,7 @@ export default class OpsWorks {
       abortSignal, body,
       action: "AssociateElasticIp",
     });
+    await resp.text();
   }
 
   async attachElasticLoadBalancer(
@@ -78,6 +81,7 @@ export default class OpsWorks {
       abortSignal, body,
       action: "AttachElasticLoadBalancer",
     });
+    await resp.text();
   }
 
   async cloneStack(
@@ -309,6 +313,7 @@ export default class OpsWorks {
       abortSignal, body,
       action: "DeleteApp",
     });
+    await resp.text();
   }
 
   async deleteInstance(
@@ -323,6 +328,7 @@ export default class OpsWorks {
       abortSignal, body,
       action: "DeleteInstance",
     });
+    await resp.text();
   }
 
   async deleteLayer(
@@ -335,6 +341,7 @@ export default class OpsWorks {
       abortSignal, body,
       action: "DeleteLayer",
     });
+    await resp.text();
   }
 
   async deleteStack(
@@ -347,6 +354,7 @@ export default class OpsWorks {
       abortSignal, body,
       action: "DeleteStack",
     });
+    await resp.text();
   }
 
   async deleteUserProfile(
@@ -359,6 +367,7 @@ export default class OpsWorks {
       abortSignal, body,
       action: "DeleteUserProfile",
     });
+    await resp.text();
   }
 
   async deregisterEcsCluster(
@@ -371,6 +380,7 @@ export default class OpsWorks {
       abortSignal, body,
       action: "DeregisterEcsCluster",
     });
+    await resp.text();
   }
 
   async deregisterElasticIp(
@@ -383,6 +393,7 @@ export default class OpsWorks {
       abortSignal, body,
       action: "DeregisterElasticIp",
     });
+    await resp.text();
   }
 
   async deregisterInstance(
@@ -395,6 +406,7 @@ export default class OpsWorks {
       abortSignal, body,
       action: "DeregisterInstance",
     });
+    await resp.text();
   }
 
   async deregisterRdsDbInstance(
@@ -407,6 +419,7 @@ export default class OpsWorks {
       abortSignal, body,
       action: "DeregisterRdsDbInstance",
     });
+    await resp.text();
   }
 
   async deregisterVolume(
@@ -419,6 +432,7 @@ export default class OpsWorks {
       abortSignal, body,
       action: "DeregisterVolume",
     });
+    await resp.text();
   }
 
   async describeAgentVersions(
@@ -618,7 +632,7 @@ export default class OpsWorks {
   }
 
   async describeMyUserProfile(
-    {abortSignal, ...params}: RequestConfig = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.DescribeMyUserProfileResult> {
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -633,7 +647,7 @@ export default class OpsWorks {
   }
 
   async describeOperatingSystems(
-    {abortSignal, ...params}: RequestConfig = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.DescribeOperatingSystemsResponse> {
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -848,6 +862,7 @@ export default class OpsWorks {
       abortSignal, body,
       action: "DetachElasticLoadBalancer",
     });
+    await resp.text();
   }
 
   async disassociateElasticIp(
@@ -860,6 +875,7 @@ export default class OpsWorks {
       abortSignal, body,
       action: "DisassociateElasticIp",
     });
+    await resp.text();
   }
 
   async getHostnameSuggestion(
@@ -931,6 +947,7 @@ export default class OpsWorks {
       abortSignal, body,
       action: "RebootInstance",
     });
+    await resp.text();
   }
 
   async registerEcsCluster(
@@ -1008,6 +1025,7 @@ export default class OpsWorks {
       abortSignal, body,
       action: "RegisterRdsDbInstance",
     });
+    await resp.text();
   }
 
   async registerVolume(
@@ -1042,6 +1060,7 @@ export default class OpsWorks {
       abortSignal, body,
       action: "SetLoadBasedAutoScaling",
     });
+    await resp.text();
   }
 
   async setPermission(
@@ -1058,6 +1077,7 @@ export default class OpsWorks {
       abortSignal, body,
       action: "SetPermission",
     });
+    await resp.text();
   }
 
   async setTimeBasedAutoScaling(
@@ -1071,6 +1091,7 @@ export default class OpsWorks {
       abortSignal, body,
       action: "SetTimeBasedAutoScaling",
     });
+    await resp.text();
   }
 
   async startInstance(
@@ -1083,6 +1104,7 @@ export default class OpsWorks {
       abortSignal, body,
       action: "StartInstance",
     });
+    await resp.text();
   }
 
   async startStack(
@@ -1095,6 +1117,7 @@ export default class OpsWorks {
       abortSignal, body,
       action: "StartStack",
     });
+    await resp.text();
   }
 
   async stopInstance(
@@ -1108,6 +1131,7 @@ export default class OpsWorks {
       abortSignal, body,
       action: "StopInstance",
     });
+    await resp.text();
   }
 
   async stopStack(
@@ -1120,6 +1144,7 @@ export default class OpsWorks {
       abortSignal, body,
       action: "StopStack",
     });
+    await resp.text();
   }
 
   async tagResource(
@@ -1133,6 +1158,7 @@ export default class OpsWorks {
       abortSignal, body,
       action: "TagResource",
     });
+    await resp.text();
   }
 
   async unassignInstance(
@@ -1145,6 +1171,7 @@ export default class OpsWorks {
       abortSignal, body,
       action: "UnassignInstance",
     });
+    await resp.text();
   }
 
   async unassignVolume(
@@ -1157,6 +1184,7 @@ export default class OpsWorks {
       abortSignal, body,
       action: "UnassignVolume",
     });
+    await resp.text();
   }
 
   async untagResource(
@@ -1170,6 +1198,7 @@ export default class OpsWorks {
       abortSignal, body,
       action: "UntagResource",
     });
+    await resp.text();
   }
 
   async updateApp(
@@ -1192,6 +1221,7 @@ export default class OpsWorks {
       abortSignal, body,
       action: "UpdateApp",
     });
+    await resp.text();
   }
 
   async updateElasticIp(
@@ -1205,6 +1235,7 @@ export default class OpsWorks {
       abortSignal, body,
       action: "UpdateElasticIp",
     });
+    await resp.text();
   }
 
   async updateInstance(
@@ -1228,6 +1259,7 @@ export default class OpsWorks {
       abortSignal, body,
       action: "UpdateInstance",
     });
+    await resp.text();
   }
 
   async updateLayer(
@@ -1256,6 +1288,7 @@ export default class OpsWorks {
       abortSignal, body,
       action: "UpdateLayer",
     });
+    await resp.text();
   }
 
   async updateMyUserProfile(
@@ -1268,6 +1301,7 @@ export default class OpsWorks {
       abortSignal, body,
       action: "UpdateMyUserProfile",
     });
+    await resp.text();
   }
 
   async updateRdsDbInstance(
@@ -1282,6 +1316,7 @@ export default class OpsWorks {
       abortSignal, body,
       action: "UpdateRdsDbInstance",
     });
+    await resp.text();
   }
 
   async updateStack(
@@ -1311,6 +1346,7 @@ export default class OpsWorks {
       abortSignal, body,
       action: "UpdateStack",
     });
+    await resp.text();
   }
 
   async updateUserProfile(
@@ -1326,6 +1362,7 @@ export default class OpsWorks {
       abortSignal, body,
       action: "UpdateUserProfile",
     });
+    await resp.text();
   }
 
   async updateVolume(
@@ -1340,6 +1377,7 @@ export default class OpsWorks {
       abortSignal, body,
       action: "UpdateVolume",
     });
+    await resp.text();
   }
 
   // Resource State Waiters

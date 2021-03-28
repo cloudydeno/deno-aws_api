@@ -49,7 +49,7 @@ export default class WorkSpaces {
 
   async associateIpGroups(
     {abortSignal, ...params}: RequestConfig & s.AssociateIpGroupsRequest,
-  ): Promise<s.AssociateIpGroupsResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       DirectoryId: params["DirectoryId"],
       GroupIds: params["GroupIds"],
@@ -58,15 +58,12 @@ export default class WorkSpaces {
       abortSignal, body,
       action: "AssociateIpGroups",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async authorizeIpRules(
     {abortSignal, ...params}: RequestConfig & s.AuthorizeIpRulesRequest,
-  ): Promise<s.AuthorizeIpRulesResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       GroupId: params["GroupId"],
       UserRules: params["UserRules"]?.map(x => fromIpRuleItem(x)),
@@ -75,10 +72,7 @@ export default class WorkSpaces {
       abortSignal, body,
       action: "AuthorizeIpRules",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async copyWorkspaceImage(
@@ -145,7 +139,7 @@ export default class WorkSpaces {
 
   async createTags(
     {abortSignal, ...params}: RequestConfig & s.CreateTagsRequest,
-  ): Promise<s.CreateTagsResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceId: params["ResourceId"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
@@ -154,10 +148,7 @@ export default class WorkSpaces {
       abortSignal, body,
       action: "CreateTags",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async createWorkspaceBundle(
@@ -205,7 +196,7 @@ export default class WorkSpaces {
 
   async deleteConnectionAlias(
     {abortSignal, ...params}: RequestConfig & s.DeleteConnectionAliasRequest,
-  ): Promise<s.DeleteConnectionAliasResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       AliasId: params["AliasId"],
     };
@@ -213,15 +204,12 @@ export default class WorkSpaces {
       abortSignal, body,
       action: "DeleteConnectionAlias",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteIpGroup(
     {abortSignal, ...params}: RequestConfig & s.DeleteIpGroupRequest,
-  ): Promise<s.DeleteIpGroupResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       GroupId: params["GroupId"],
     };
@@ -229,15 +217,12 @@ export default class WorkSpaces {
       abortSignal, body,
       action: "DeleteIpGroup",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteTags(
     {abortSignal, ...params}: RequestConfig & s.DeleteTagsRequest,
-  ): Promise<s.DeleteTagsResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceId: params["ResourceId"],
       TagKeys: params["TagKeys"],
@@ -246,15 +231,12 @@ export default class WorkSpaces {
       abortSignal, body,
       action: "DeleteTags",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteWorkspaceBundle(
     {abortSignal, ...params}: RequestConfig & s.DeleteWorkspaceBundleRequest = {},
-  ): Promise<s.DeleteWorkspaceBundleResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       BundleId: params["BundleId"],
     };
@@ -262,15 +244,12 @@ export default class WorkSpaces {
       abortSignal, body,
       action: "DeleteWorkspaceBundle",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteWorkspaceImage(
     {abortSignal, ...params}: RequestConfig & s.DeleteWorkspaceImageRequest,
-  ): Promise<s.DeleteWorkspaceImageResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ImageId: params["ImageId"],
     };
@@ -278,15 +257,12 @@ export default class WorkSpaces {
       abortSignal, body,
       action: "DeleteWorkspaceImage",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deregisterWorkspaceDirectory(
     {abortSignal, ...params}: RequestConfig & s.DeregisterWorkspaceDirectoryRequest,
-  ): Promise<s.DeregisterWorkspaceDirectoryResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       DirectoryId: params["DirectoryId"],
     };
@@ -294,17 +270,13 @@ export default class WorkSpaces {
       abortSignal, body,
       action: "DeregisterWorkspaceDirectory",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async describeAccount(
-    {abortSignal, ...params}: RequestConfig & s.DescribeAccountRequest = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.DescribeAccountResult> {
-    const body: jsonP.JSONObject = {
-    };
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeAccount",
@@ -589,7 +561,7 @@ export default class WorkSpaces {
 
   async disassociateConnectionAlias(
     {abortSignal, ...params}: RequestConfig & s.DisassociateConnectionAliasRequest,
-  ): Promise<s.DisassociateConnectionAliasResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       AliasId: params["AliasId"],
     };
@@ -597,15 +569,12 @@ export default class WorkSpaces {
       abortSignal, body,
       action: "DisassociateConnectionAlias",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async disassociateIpGroups(
     {abortSignal, ...params}: RequestConfig & s.DisassociateIpGroupsRequest,
-  ): Promise<s.DisassociateIpGroupsResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       DirectoryId: params["DirectoryId"],
       GroupIds: params["GroupIds"],
@@ -614,10 +583,7 @@ export default class WorkSpaces {
       abortSignal, body,
       action: "DisassociateIpGroups",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async importWorkspaceImage(
@@ -686,7 +652,7 @@ export default class WorkSpaces {
 
   async modifyAccount(
     {abortSignal, ...params}: RequestConfig & s.ModifyAccountRequest = {},
-  ): Promise<s.ModifyAccountResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       DedicatedTenancySupport: params["DedicatedTenancySupport"],
       DedicatedTenancyManagementCidrRange: params["DedicatedTenancyManagementCidrRange"],
@@ -695,15 +661,12 @@ export default class WorkSpaces {
       abortSignal, body,
       action: "ModifyAccount",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async modifyClientProperties(
     {abortSignal, ...params}: RequestConfig & s.ModifyClientPropertiesRequest,
-  ): Promise<s.ModifyClientPropertiesResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceId: params["ResourceId"],
       ClientProperties: fromClientProperties(params["ClientProperties"]),
@@ -712,15 +675,12 @@ export default class WorkSpaces {
       abortSignal, body,
       action: "ModifyClientProperties",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async modifySelfservicePermissions(
     {abortSignal, ...params}: RequestConfig & s.ModifySelfservicePermissionsRequest,
-  ): Promise<s.ModifySelfservicePermissionsResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceId: params["ResourceId"],
       SelfservicePermissions: fromSelfservicePermissions(params["SelfservicePermissions"]),
@@ -729,15 +689,12 @@ export default class WorkSpaces {
       abortSignal, body,
       action: "ModifySelfservicePermissions",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async modifyWorkspaceAccessProperties(
     {abortSignal, ...params}: RequestConfig & s.ModifyWorkspaceAccessPropertiesRequest,
-  ): Promise<s.ModifyWorkspaceAccessPropertiesResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceId: params["ResourceId"],
       WorkspaceAccessProperties: fromWorkspaceAccessProperties(params["WorkspaceAccessProperties"]),
@@ -746,15 +703,12 @@ export default class WorkSpaces {
       abortSignal, body,
       action: "ModifyWorkspaceAccessProperties",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async modifyWorkspaceCreationProperties(
     {abortSignal, ...params}: RequestConfig & s.ModifyWorkspaceCreationPropertiesRequest,
-  ): Promise<s.ModifyWorkspaceCreationPropertiesResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceId: params["ResourceId"],
       WorkspaceCreationProperties: fromWorkspaceCreationProperties(params["WorkspaceCreationProperties"]),
@@ -763,15 +717,12 @@ export default class WorkSpaces {
       abortSignal, body,
       action: "ModifyWorkspaceCreationProperties",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async modifyWorkspaceProperties(
     {abortSignal, ...params}: RequestConfig & s.ModifyWorkspacePropertiesRequest,
-  ): Promise<s.ModifyWorkspacePropertiesResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       WorkspaceId: params["WorkspaceId"],
       WorkspaceProperties: fromWorkspaceProperties(params["WorkspaceProperties"]),
@@ -780,15 +731,12 @@ export default class WorkSpaces {
       abortSignal, body,
       action: "ModifyWorkspaceProperties",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async modifyWorkspaceState(
     {abortSignal, ...params}: RequestConfig & s.ModifyWorkspaceStateRequest,
-  ): Promise<s.ModifyWorkspaceStateResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       WorkspaceId: params["WorkspaceId"],
       WorkspaceState: params["WorkspaceState"],
@@ -797,10 +745,7 @@ export default class WorkSpaces {
       abortSignal, body,
       action: "ModifyWorkspaceState",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async rebootWorkspaces(
@@ -841,7 +786,7 @@ export default class WorkSpaces {
 
   async registerWorkspaceDirectory(
     {abortSignal, ...params}: RequestConfig & s.RegisterWorkspaceDirectoryRequest,
-  ): Promise<s.RegisterWorkspaceDirectoryResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       DirectoryId: params["DirectoryId"],
       SubnetIds: params["SubnetIds"],
@@ -854,15 +799,12 @@ export default class WorkSpaces {
       abortSignal, body,
       action: "RegisterWorkspaceDirectory",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async restoreWorkspace(
     {abortSignal, ...params}: RequestConfig & s.RestoreWorkspaceRequest,
-  ): Promise<s.RestoreWorkspaceResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       WorkspaceId: params["WorkspaceId"],
     };
@@ -870,15 +812,12 @@ export default class WorkSpaces {
       abortSignal, body,
       action: "RestoreWorkspace",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async revokeIpRules(
     {abortSignal, ...params}: RequestConfig & s.RevokeIpRulesRequest,
-  ): Promise<s.RevokeIpRulesResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       GroupId: params["GroupId"],
       UserRules: params["UserRules"],
@@ -887,10 +826,7 @@ export default class WorkSpaces {
       abortSignal, body,
       action: "RevokeIpRules",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async startWorkspaces(
@@ -949,7 +885,7 @@ export default class WorkSpaces {
 
   async updateConnectionAliasPermission(
     {abortSignal, ...params}: RequestConfig & s.UpdateConnectionAliasPermissionRequest,
-  ): Promise<s.UpdateConnectionAliasPermissionResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       AliasId: params["AliasId"],
       ConnectionAliasPermission: fromConnectionAliasPermission(params["ConnectionAliasPermission"]),
@@ -958,15 +894,12 @@ export default class WorkSpaces {
       abortSignal, body,
       action: "UpdateConnectionAliasPermission",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateRulesOfIpGroup(
     {abortSignal, ...params}: RequestConfig & s.UpdateRulesOfIpGroupRequest,
-  ): Promise<s.UpdateRulesOfIpGroupResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       GroupId: params["GroupId"],
       UserRules: params["UserRules"]?.map(x => fromIpRuleItem(x)),
@@ -975,15 +908,12 @@ export default class WorkSpaces {
       abortSignal, body,
       action: "UpdateRulesOfIpGroup",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateWorkspaceBundle(
     {abortSignal, ...params}: RequestConfig & s.UpdateWorkspaceBundleRequest = {},
-  ): Promise<s.UpdateWorkspaceBundleResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       BundleId: params["BundleId"],
       ImageId: params["ImageId"],
@@ -992,15 +922,12 @@ export default class WorkSpaces {
       abortSignal, body,
       action: "UpdateWorkspaceBundle",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateWorkspaceImagePermission(
     {abortSignal, ...params}: RequestConfig & s.UpdateWorkspaceImagePermissionRequest,
-  ): Promise<s.UpdateWorkspaceImagePermissionResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ImageId: params["ImageId"],
       AllowCopyImage: params["AllowCopyImage"],
@@ -1010,10 +937,7 @@ export default class WorkSpaces {
       abortSignal, body,
       action: "UpdateWorkspaceImagePermission",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
 }

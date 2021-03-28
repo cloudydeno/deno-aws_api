@@ -32,7 +32,7 @@ export default class Chime {
 
   async associatePhoneNumberWithUser(
     {abortSignal, ...params}: RequestConfig & s.AssociatePhoneNumberWithUserRequest,
-  ): Promise<s.AssociatePhoneNumberWithUserResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       E164PhoneNumber: params["E164PhoneNumber"],
     };
@@ -42,10 +42,7 @@ export default class Chime {
       requestUri: cmnP.encodePath`/accounts/${params["AccountId"]}/users/${params["UserId"]}?operation=associate-phone-number`,
       responseCode: 200,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async associatePhoneNumbersWithVoiceConnector(
@@ -92,7 +89,7 @@ export default class Chime {
 
   async associateSigninDelegateGroupsWithAccount(
     {abortSignal, ...params}: RequestConfig & s.AssociateSigninDelegateGroupsWithAccountRequest,
-  ): Promise<s.AssociateSigninDelegateGroupsWithAccountResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       SigninDelegateGroups: params["SigninDelegateGroups"]?.map(x => fromSigninDelegateGroup(x)),
     };
@@ -102,10 +99,7 @@ export default class Chime {
       requestUri: cmnP.encodePath`/accounts/${params["AccountId"]}?operation=associate-signin-delegate-groups`,
       responseCode: 200,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async batchCreateAttendee(
@@ -783,7 +777,7 @@ export default class Chime {
 
   async deleteAccount(
     {abortSignal, ...params}: RequestConfig & s.DeleteAccountRequest,
-  ): Promise<s.DeleteAccountResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -792,10 +786,7 @@ export default class Chime {
       requestUri: cmnP.encodePath`/accounts/${params["AccountId"]}`,
       responseCode: 204,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteAppInstance(
@@ -810,6 +801,7 @@ export default class Chime {
       responseCode: 204,
       hostPrefix: `identity-`,
     });
+    await resp.text();
   }
 
   async deleteAppInstanceAdmin(
@@ -824,6 +816,7 @@ export default class Chime {
       responseCode: 204,
       hostPrefix: `identity-`,
     });
+    await resp.text();
   }
 
   async deleteAppInstanceStreamingConfigurations(
@@ -837,6 +830,7 @@ export default class Chime {
       requestUri: cmnP.encodePath`/app-instances/${params["AppInstanceArn"]}/streaming-configurations`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deleteAppInstanceUser(
@@ -851,6 +845,7 @@ export default class Chime {
       responseCode: 204,
       hostPrefix: `identity-`,
     });
+    await resp.text();
   }
 
   async deleteAttendee(
@@ -864,6 +859,7 @@ export default class Chime {
       requestUri: cmnP.encodePath`/meetings/${params["MeetingId"]}/attendees/${params["AttendeeId"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deleteChannel(
@@ -879,6 +875,7 @@ export default class Chime {
       responseCode: 204,
       hostPrefix: `messaging-`,
     });
+    await resp.text();
   }
 
   async deleteChannelBan(
@@ -894,6 +891,7 @@ export default class Chime {
       responseCode: 204,
       hostPrefix: `messaging-`,
     });
+    await resp.text();
   }
 
   async deleteChannelMembership(
@@ -909,6 +907,7 @@ export default class Chime {
       responseCode: 204,
       hostPrefix: `messaging-`,
     });
+    await resp.text();
   }
 
   async deleteChannelMessage(
@@ -924,6 +923,7 @@ export default class Chime {
       responseCode: 204,
       hostPrefix: `messaging-`,
     });
+    await resp.text();
   }
 
   async deleteChannelModerator(
@@ -939,6 +939,7 @@ export default class Chime {
       responseCode: 204,
       hostPrefix: `messaging-`,
     });
+    await resp.text();
   }
 
   async deleteEventsConfiguration(
@@ -952,6 +953,7 @@ export default class Chime {
       requestUri: cmnP.encodePath`/accounts/${params["AccountId"]}/bots/${params["BotId"]}/events-configuration`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deleteMeeting(
@@ -965,6 +967,7 @@ export default class Chime {
       requestUri: cmnP.encodePath`/meetings/${params["MeetingId"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deletePhoneNumber(
@@ -978,6 +981,7 @@ export default class Chime {
       requestUri: cmnP.encodePath`/phone-numbers/${params["PhoneNumberId"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deleteProxySession(
@@ -991,6 +995,7 @@ export default class Chime {
       requestUri: cmnP.encodePath`/voice-connectors/${params["VoiceConnectorId"]}/proxy-sessions/${params["ProxySessionId"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deleteRoom(
@@ -1004,6 +1009,7 @@ export default class Chime {
       requestUri: cmnP.encodePath`/accounts/${params["AccountId"]}/rooms/${params["RoomId"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deleteRoomMembership(
@@ -1017,6 +1023,7 @@ export default class Chime {
       requestUri: cmnP.encodePath`/accounts/${params["AccountId"]}/rooms/${params["RoomId"]}/memberships/${params["MemberId"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deleteSipMediaApplication(
@@ -1030,6 +1037,7 @@ export default class Chime {
       requestUri: cmnP.encodePath`/sip-media-applications/${params["SipMediaApplicationId"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deleteSipRule(
@@ -1043,6 +1051,7 @@ export default class Chime {
       requestUri: cmnP.encodePath`/sip-rules/${params["SipRuleId"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deleteVoiceConnector(
@@ -1056,6 +1065,7 @@ export default class Chime {
       requestUri: cmnP.encodePath`/voice-connectors/${params["VoiceConnectorId"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deleteVoiceConnectorEmergencyCallingConfiguration(
@@ -1069,6 +1079,7 @@ export default class Chime {
       requestUri: cmnP.encodePath`/voice-connectors/${params["VoiceConnectorId"]}/emergency-calling-configuration`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deleteVoiceConnectorGroup(
@@ -1082,6 +1093,7 @@ export default class Chime {
       requestUri: cmnP.encodePath`/voice-connector-groups/${params["VoiceConnectorGroupId"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deleteVoiceConnectorOrigination(
@@ -1095,6 +1107,7 @@ export default class Chime {
       requestUri: cmnP.encodePath`/voice-connectors/${params["VoiceConnectorId"]}/origination`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deleteVoiceConnectorProxy(
@@ -1108,6 +1121,7 @@ export default class Chime {
       requestUri: cmnP.encodePath`/voice-connectors/${params["VoiceConnectorId"]}/programmable-numbers/proxy`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deleteVoiceConnectorStreamingConfiguration(
@@ -1121,6 +1135,7 @@ export default class Chime {
       requestUri: cmnP.encodePath`/voice-connectors/${params["VoiceConnectorId"]}/streaming-configuration`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deleteVoiceConnectorTermination(
@@ -1134,6 +1149,7 @@ export default class Chime {
       requestUri: cmnP.encodePath`/voice-connectors/${params["VoiceConnectorId"]}/termination`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deleteVoiceConnectorTerminationCredentials(
@@ -1148,6 +1164,7 @@ export default class Chime {
       requestUri: cmnP.encodePath`/voice-connectors/${params["VoiceConnectorId"]}/termination/credentials?operation=delete`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async describeAppInstance(
@@ -1342,7 +1359,7 @@ export default class Chime {
 
   async disassociatePhoneNumberFromUser(
     {abortSignal, ...params}: RequestConfig & s.DisassociatePhoneNumberFromUserRequest,
-  ): Promise<s.DisassociatePhoneNumberFromUserResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -1350,10 +1367,7 @@ export default class Chime {
       requestUri: cmnP.encodePath`/accounts/${params["AccountId"]}/users/${params["UserId"]}?operation=disassociate-phone-number`,
       responseCode: 200,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async disassociatePhoneNumbersFromVoiceConnector(
@@ -1398,7 +1412,7 @@ export default class Chime {
 
   async disassociateSigninDelegateGroupsFromAccount(
     {abortSignal, ...params}: RequestConfig & s.DisassociateSigninDelegateGroupsFromAccountRequest,
-  ): Promise<s.DisassociateSigninDelegateGroupsFromAccountResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       GroupNames: params["GroupNames"],
     };
@@ -1408,10 +1422,7 @@ export default class Chime {
       requestUri: cmnP.encodePath`/accounts/${params["AccountId"]}?operation=disassociate-signin-delegate-groups`,
       responseCode: 200,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async getAccount(
@@ -1569,7 +1580,7 @@ export default class Chime {
   }
 
   async getGlobalSettings(
-    {abortSignal, ...params}: RequestConfig = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.GetGlobalSettingsResponse> {
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -1607,11 +1618,11 @@ export default class Chime {
   }
 
   async getMessagingSessionEndpoint(
-    {abortSignal, ...params}: RequestConfig & s.GetMessagingSessionEndpointRequest = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.GetMessagingSessionEndpointResponse> {
-
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
-      abortSignal,
+      abortSignal, body,
       action: "GetMessagingSessionEndpoint",
       method: "GET",
       requestUri: "/endpoints/messaging-session",
@@ -1664,7 +1675,7 @@ export default class Chime {
   }
 
   async getPhoneNumberSettings(
-    {abortSignal, ...params}: RequestConfig = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.GetPhoneNumberSettingsResponse> {
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -2680,7 +2691,7 @@ export default class Chime {
 
   async logoutUser(
     {abortSignal, ...params}: RequestConfig & s.LogoutUserRequest,
-  ): Promise<s.LogoutUserResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -2688,10 +2699,7 @@ export default class Chime {
       requestUri: cmnP.encodePath`/accounts/${params["AccountId"]}/users/${params["UserId"]}?operation=logout`,
       responseCode: 204,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async putAppInstanceRetentionSettings(
@@ -2943,6 +2951,7 @@ export default class Chime {
       requestUri: cmnP.encodePath`/voice-connectors/${params["VoiceConnectorId"]}/termination/credentials?operation=put`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async redactChannelMessage(
@@ -2968,7 +2977,7 @@ export default class Chime {
 
   async redactConversationMessage(
     {abortSignal, ...params}: RequestConfig & s.RedactConversationMessageRequest,
-  ): Promise<s.RedactConversationMessageResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -2976,15 +2985,12 @@ export default class Chime {
       requestUri: cmnP.encodePath`/accounts/${params["AccountId"]}/conversations/${params["ConversationId"]}/messages/${params["MessageId"]}?operation=redact`,
       responseCode: 200,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async redactRoomMessage(
     {abortSignal, ...params}: RequestConfig & s.RedactRoomMessageRequest,
-  ): Promise<s.RedactRoomMessageResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -2992,10 +2998,7 @@ export default class Chime {
       requestUri: cmnP.encodePath`/accounts/${params["AccountId"]}/rooms/${params["RoomId"]}/messages/${params["MessageId"]}?operation=redact`,
       responseCode: 200,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async regenerateSecurityToken(
@@ -3117,6 +3120,7 @@ export default class Chime {
       requestUri: cmnP.encodePath`/meetings/${params["MeetingId"]}/attendees/${params["AttendeeId"]}/tags?operation=add`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async tagMeeting(
@@ -3131,6 +3135,7 @@ export default class Chime {
       requestUri: cmnP.encodePath`/meetings/${params["MeetingId"]}/tags?operation=add`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async tagResource(
@@ -3146,6 +3151,7 @@ export default class Chime {
       requestUri: "/tags?operation=tag-resource",
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async untagAttendee(
@@ -3160,6 +3166,7 @@ export default class Chime {
       requestUri: cmnP.encodePath`/meetings/${params["MeetingId"]}/attendees/${params["AttendeeId"]}/tags?operation=delete`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async untagMeeting(
@@ -3174,6 +3181,7 @@ export default class Chime {
       requestUri: cmnP.encodePath`/meetings/${params["MeetingId"]}/tags?operation=delete`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async untagResource(
@@ -3189,6 +3197,7 @@ export default class Chime {
       requestUri: "/tags?operation=untag-resource",
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async updateAccount(
@@ -3213,7 +3222,7 @@ export default class Chime {
 
   async updateAccountSettings(
     {abortSignal, ...params}: RequestConfig & s.UpdateAccountSettingsRequest,
-  ): Promise<s.UpdateAccountSettingsResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       AccountSettings: fromAccountSettings(params["AccountSettings"]),
     };
@@ -3224,10 +3233,7 @@ export default class Chime {
       requestUri: cmnP.encodePath`/accounts/${params["AccountId"]}/settings`,
       responseCode: 204,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateAppInstance(
@@ -3383,6 +3389,7 @@ export default class Chime {
       requestUri: "/settings",
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async updatePhoneNumber(
@@ -3419,6 +3426,7 @@ export default class Chime {
       requestUri: "/settings/phone-number",
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async updateProxySession(
@@ -3562,6 +3570,7 @@ export default class Chime {
       requestUri: cmnP.encodePath`/accounts/${params["AccountId"]}/users/${params["UserId"]}/settings`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async updateVoiceConnector(

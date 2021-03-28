@@ -265,10 +265,6 @@ export interface DeleteFirewallPolicyResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface DeleteResourcePolicyResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface DeleteRuleGroupResponse {
   RuleGroupResponse: RuleGroupResponse;
 }
@@ -335,18 +331,6 @@ export interface ListRuleGroupsResponse {
 export interface ListTagsForResourceResponse {
   NextToken?: string | null;
   Tags?: Tag[] | null;
-}
-
-// refs: 1 - tags: named, output
-export interface PutResourcePolicyResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface TagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UntagResourceResponse {
 }
 
 // refs: 1 - tags: named, output

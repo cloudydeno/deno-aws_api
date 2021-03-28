@@ -129,7 +129,7 @@ export default class ManagedBlockchain {
 
   async deleteMember(
     {abortSignal, ...params}: RequestConfig & s.DeleteMemberInput,
-  ): Promise<s.DeleteMemberOutput> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -137,15 +137,12 @@ export default class ManagedBlockchain {
       method: "DELETE",
       requestUri: cmnP.encodePath`/networks/${params["NetworkId"]}/members/${params["MemberId"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteNode(
     {abortSignal, ...params}: RequestConfig & s.DeleteNodeInput,
-  ): Promise<s.DeleteNodeOutput> {
+  ): Promise<void> {
     const query = new URLSearchParams;
     if (params["MemberId"] != null) query.set("memberId", params["MemberId"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
@@ -154,10 +151,7 @@ export default class ManagedBlockchain {
       method: "DELETE",
       requestUri: cmnP.encodePath`/networks/${params["NetworkId"]}/nodes/${params["NodeId"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async getMember(
@@ -387,7 +381,7 @@ export default class ManagedBlockchain {
 
   async rejectInvitation(
     {abortSignal, ...params}: RequestConfig & s.RejectInvitationInput,
-  ): Promise<s.RejectInvitationOutput> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -395,15 +389,12 @@ export default class ManagedBlockchain {
       method: "DELETE",
       requestUri: cmnP.encodePath`/invitations/${params["InvitationId"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & s.TagResourceRequest,
-  ): Promise<s.TagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       Tags: params["Tags"],
     };
@@ -412,15 +403,12 @@ export default class ManagedBlockchain {
       action: "TagResource",
       requestUri: cmnP.encodePath`/tags/${params["ResourceArn"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async untagResource(
     {abortSignal, ...params}: RequestConfig & s.UntagResourceRequest,
-  ): Promise<s.UntagResourceResponse> {
+  ): Promise<void> {
     const query = new URLSearchParams;
     for (const item of params["TagKeys"]) {
       query.append("tagKeys", item?.toString() ?? "");
@@ -431,15 +419,12 @@ export default class ManagedBlockchain {
       method: "DELETE",
       requestUri: cmnP.encodePath`/tags/${params["ResourceArn"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateMember(
     {abortSignal, ...params}: RequestConfig & s.UpdateMemberInput,
-  ): Promise<s.UpdateMemberOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       LogPublishingConfiguration: fromMemberLogPublishingConfiguration(params["LogPublishingConfiguration"]),
     };
@@ -449,15 +434,12 @@ export default class ManagedBlockchain {
       method: "PATCH",
       requestUri: cmnP.encodePath`/networks/${params["NetworkId"]}/members/${params["MemberId"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateNode(
     {abortSignal, ...params}: RequestConfig & s.UpdateNodeInput,
-  ): Promise<s.UpdateNodeOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       MemberId: params["MemberId"],
       LogPublishingConfiguration: fromNodeLogPublishingConfiguration(params["LogPublishingConfiguration"]),
@@ -468,15 +450,12 @@ export default class ManagedBlockchain {
       method: "PATCH",
       requestUri: cmnP.encodePath`/networks/${params["NetworkId"]}/nodes/${params["NodeId"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async voteOnProposal(
     {abortSignal, ...params}: RequestConfig & s.VoteOnProposalInput,
-  ): Promise<s.VoteOnProposalOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       VoterMemberId: params["VoterMemberId"],
       Vote: params["Vote"],
@@ -486,10 +465,7 @@ export default class ManagedBlockchain {
       action: "VoteOnProposal",
       requestUri: cmnP.encodePath`/networks/${params["NetworkId"]}/proposals/${params["ProposalId"]}/votes`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
 }

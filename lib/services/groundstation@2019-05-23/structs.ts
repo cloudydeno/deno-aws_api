@@ -298,14 +298,6 @@ export interface ListTagsForResourceResponse {
   tags?: { [key: string]: string | null | undefined } | null;
 }
 
-// refs: 1 - tags: named, output
-export interface TagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UntagResourceResponse {
-}
-
 // refs: 3 - tags: input, named, interface, output
 export interface ConfigTypeData {
   antennaDownlinkConfig?: AntennaDownlinkConfig | null;

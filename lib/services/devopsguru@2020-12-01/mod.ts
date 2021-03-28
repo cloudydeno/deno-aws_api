@@ -50,11 +50,11 @@ export default class DevOpsGuru {
   }
 
   async describeAccountHealth(
-    {abortSignal, ...params}: RequestConfig & s.DescribeAccountHealthRequest = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.DescribeAccountHealthResponse> {
-
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
-      abortSignal,
+      abortSignal, body,
       action: "DescribeAccountHealth",
       method: "GET",
       requestUri: "/accounts/health",
@@ -177,11 +177,11 @@ export default class DevOpsGuru {
   }
 
   async describeServiceIntegration(
-    {abortSignal, ...params}: RequestConfig & s.DescribeServiceIntegrationRequest = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.DescribeServiceIntegrationResponse> {
-
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
-      abortSignal,
+      abortSignal, body,
       action: "DescribeServiceIntegration",
       method: "GET",
       requestUri: "/service-integrations",
@@ -333,7 +333,7 @@ export default class DevOpsGuru {
 
   async putFeedback(
     {abortSignal, ...params}: RequestConfig & s.PutFeedbackRequest = {},
-  ): Promise<s.PutFeedbackResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       InsightFeedback: fromInsightFeedback(params["InsightFeedback"]),
     };
@@ -344,15 +344,12 @@ export default class DevOpsGuru {
       requestUri: "/feedback",
       responseCode: 200,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async removeNotificationChannel(
     {abortSignal, ...params}: RequestConfig & s.RemoveNotificationChannelRequest,
-  ): Promise<s.RemoveNotificationChannelResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -361,10 +358,7 @@ export default class DevOpsGuru {
       requestUri: cmnP.encodePath`/channels/${params["Id"]}`,
       responseCode: 200,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async searchInsights(
@@ -395,7 +389,7 @@ export default class DevOpsGuru {
 
   async updateResourceCollection(
     {abortSignal, ...params}: RequestConfig & s.UpdateResourceCollectionRequest,
-  ): Promise<s.UpdateResourceCollectionResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       Action: params["Action"],
       ResourceCollection: fromUpdateResourceCollectionFilter(params["ResourceCollection"]),
@@ -407,15 +401,12 @@ export default class DevOpsGuru {
       requestUri: "/resource-collections",
       responseCode: 200,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateServiceIntegration(
     {abortSignal, ...params}: RequestConfig & s.UpdateServiceIntegrationRequest,
-  ): Promise<s.UpdateServiceIntegrationResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ServiceIntegration: fromUpdateServiceIntegrationConfig(params["ServiceIntegration"]),
     };
@@ -426,10 +417,7 @@ export default class DevOpsGuru {
       requestUri: "/service-integrations",
       responseCode: 200,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
 }

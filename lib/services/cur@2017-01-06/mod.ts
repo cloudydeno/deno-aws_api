@@ -69,7 +69,7 @@ export default class CUR {
 
   async modifyReportDefinition(
     {abortSignal, ...params}: RequestConfig & s.ModifyReportDefinitionRequest,
-  ): Promise<s.ModifyReportDefinitionResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ReportName: params["ReportName"],
       ReportDefinition: fromReportDefinition(params["ReportDefinition"]),
@@ -78,15 +78,12 @@ export default class CUR {
       abortSignal, body,
       action: "ModifyReportDefinition",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async putReportDefinition(
     {abortSignal, ...params}: RequestConfig & s.PutReportDefinitionRequest,
-  ): Promise<s.PutReportDefinitionResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ReportDefinition: fromReportDefinition(params["ReportDefinition"]),
     };
@@ -94,10 +91,7 @@ export default class CUR {
       abortSignal, body,
       action: "PutReportDefinition",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
 }

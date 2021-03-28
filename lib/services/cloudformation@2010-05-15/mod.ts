@@ -42,11 +42,12 @@ export default class CloudFormation {
       abortSignal, body,
       action: "CancelUpdateStack",
     });
+    await resp.text();
   }
 
   async continueUpdateRollback(
     {abortSignal, ...params}: RequestConfig & s.ContinueUpdateRollbackInput,
-  ): Promise<s.ContinueUpdateRollbackOutput> {
+  ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"StackName", (params["StackName"] ?? '').toString());
@@ -57,8 +58,7 @@ export default class CloudFormation {
       abortSignal, body,
       action: "ContinueUpdateRollback",
     });
-    const xml = xmlP.readXmlResult(await resp.text(), "ContinueUpdateRollbackResult");
-    return {};
+    await resp.text();
   }
 
   async createChangeSet(
@@ -178,7 +178,7 @@ export default class CloudFormation {
 
   async deleteChangeSet(
     {abortSignal, ...params}: RequestConfig & s.DeleteChangeSetInput,
-  ): Promise<s.DeleteChangeSetOutput> {
+  ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"ChangeSetName", (params["ChangeSetName"] ?? '').toString());
@@ -187,8 +187,7 @@ export default class CloudFormation {
       abortSignal, body,
       action: "DeleteChangeSet",
     });
-    const xml = xmlP.readXmlResult(await resp.text(), "DeleteChangeSetResult");
-    return {};
+    await resp.text();
   }
 
   async deleteStack(
@@ -204,6 +203,7 @@ export default class CloudFormation {
       abortSignal, body,
       action: "DeleteStack",
     });
+    await resp.text();
   }
 
   async deleteStackInstances(
@@ -231,7 +231,7 @@ export default class CloudFormation {
 
   async deleteStackSet(
     {abortSignal, ...params}: RequestConfig & s.DeleteStackSetInput,
-  ): Promise<s.DeleteStackSetOutput> {
+  ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"StackSetName", (params["StackSetName"] ?? '').toString());
@@ -240,13 +240,12 @@ export default class CloudFormation {
       abortSignal, body,
       action: "DeleteStackSet",
     });
-    const xml = xmlP.readXmlResult(await resp.text(), "DeleteStackSetResult");
-    return {};
+    await resp.text();
   }
 
   async deregisterType(
     {abortSignal, ...params}: RequestConfig & s.DeregisterTypeInput = {},
-  ): Promise<s.DeregisterTypeOutput> {
+  ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     if ("Arn" in params) body.append(prefix+"Arn", (params["Arn"] ?? '').toString());
@@ -257,8 +256,7 @@ export default class CloudFormation {
       abortSignal, body,
       action: "DeregisterType",
     });
-    const xml = xmlP.readXmlResult(await resp.text(), "DeregisterTypeResult");
-    return {};
+    await resp.text();
   }
 
   async describeAccountLimits(
@@ -605,7 +603,7 @@ export default class CloudFormation {
 
   async executeChangeSet(
     {abortSignal, ...params}: RequestConfig & s.ExecuteChangeSetInput,
-  ): Promise<s.ExecuteChangeSetOutput> {
+  ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"ChangeSetName", (params["ChangeSetName"] ?? '').toString());
@@ -615,8 +613,7 @@ export default class CloudFormation {
       abortSignal, body,
       action: "ExecuteChangeSet",
     });
-    const xml = xmlP.readXmlResult(await resp.text(), "ExecuteChangeSetResult");
-    return {};
+    await resp.text();
   }
 
   async getStackPolicy(
@@ -947,7 +944,7 @@ export default class CloudFormation {
 
   async recordHandlerProgress(
     {abortSignal, ...params}: RequestConfig & s.RecordHandlerProgressInput,
-  ): Promise<s.RecordHandlerProgressOutput> {
+  ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"BearerToken", (params["BearerToken"] ?? '').toString());
@@ -961,8 +958,7 @@ export default class CloudFormation {
       abortSignal, body,
       action: "RecordHandlerProgress",
     });
-    const xml = xmlP.readXmlResult(await resp.text(), "RecordHandlerProgressResult");
-    return {};
+    await resp.text();
   }
 
   async registerType(
@@ -998,11 +994,12 @@ export default class CloudFormation {
       abortSignal, body,
       action: "SetStackPolicy",
     });
+    await resp.text();
   }
 
   async setTypeDefaultVersion(
     {abortSignal, ...params}: RequestConfig & s.SetTypeDefaultVersionInput = {},
-  ): Promise<s.SetTypeDefaultVersionOutput> {
+  ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     if ("Arn" in params) body.append(prefix+"Arn", (params["Arn"] ?? '').toString());
@@ -1013,8 +1010,7 @@ export default class CloudFormation {
       abortSignal, body,
       action: "SetTypeDefaultVersion",
     });
-    const xml = xmlP.readXmlResult(await resp.text(), "SetTypeDefaultVersionResult");
-    return {};
+    await resp.text();
   }
 
   async signalResource(
@@ -1030,11 +1026,12 @@ export default class CloudFormation {
       abortSignal, body,
       action: "SignalResource",
     });
+    await resp.text();
   }
 
   async stopStackSetOperation(
     {abortSignal, ...params}: RequestConfig & s.StopStackSetOperationInput,
-  ): Promise<s.StopStackSetOperationOutput> {
+  ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"StackSetName", (params["StackSetName"] ?? '').toString());
@@ -1044,8 +1041,7 @@ export default class CloudFormation {
       abortSignal, body,
       action: "StopStackSetOperation",
     });
-    const xml = xmlP.readXmlResult(await resp.text(), "StopStackSetOperationResult");
-    return {};
+    await resp.text();
   }
 
   async updateStack(

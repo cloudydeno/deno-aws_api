@@ -161,18 +161,6 @@ export interface ListTagsForResourceResponse {
   Tags?: { [key: string]: string | null | undefined } | null;
 }
 
-// refs: 1 - tags: named, output
-export interface PutRecommendationFeedbackResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface TagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UntagResourceResponse {
-}
-
 // refs: 1 - tags: input, named, interface
 export interface Repository {
   CodeCommit?: CodeCommitRepository | null;

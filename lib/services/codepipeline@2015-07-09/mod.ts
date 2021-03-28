@@ -131,6 +131,7 @@ export default class CodePipeline {
       abortSignal, body,
       action: "DeleteCustomActionType",
     });
+    await resp.text();
   }
 
   async deletePipeline(
@@ -143,11 +144,12 @@ export default class CodePipeline {
       abortSignal, body,
       action: "DeletePipeline",
     });
+    await resp.text();
   }
 
   async deleteWebhook(
     {abortSignal, ...params}: RequestConfig & s.DeleteWebhookInput,
-  ): Promise<s.DeleteWebhookOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       name: params["name"],
     };
@@ -155,15 +157,12 @@ export default class CodePipeline {
       abortSignal, body,
       action: "DeleteWebhook",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deregisterWebhookWithThirdParty(
     {abortSignal, ...params}: RequestConfig & s.DeregisterWebhookWithThirdPartyInput = {},
-  ): Promise<s.DeregisterWebhookWithThirdPartyOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       webhookName: params["webhookName"],
     };
@@ -171,10 +170,7 @@ export default class CodePipeline {
       abortSignal, body,
       action: "DeregisterWebhookWithThirdParty",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async disableStageTransition(
@@ -190,6 +186,7 @@ export default class CodePipeline {
       abortSignal, body,
       action: "DisableStageTransition",
     });
+    await resp.text();
   }
 
   async enableStageTransition(
@@ -204,6 +201,7 @@ export default class CodePipeline {
       abortSignal, body,
       action: "EnableStageTransition",
     });
+    await resp.text();
   }
 
   async getActionType(
@@ -545,6 +543,7 @@ export default class CodePipeline {
       abortSignal, body,
       action: "PutJobFailureResult",
     });
+    await resp.text();
   }
 
   async putJobSuccessResult(
@@ -561,6 +560,7 @@ export default class CodePipeline {
       abortSignal, body,
       action: "PutJobSuccessResult",
     });
+    await resp.text();
   }
 
   async putThirdPartyJobFailureResult(
@@ -575,6 +575,7 @@ export default class CodePipeline {
       abortSignal, body,
       action: "PutThirdPartyJobFailureResult",
     });
+    await resp.text();
   }
 
   async putThirdPartyJobSuccessResult(
@@ -591,6 +592,7 @@ export default class CodePipeline {
       abortSignal, body,
       action: "PutThirdPartyJobSuccessResult",
     });
+    await resp.text();
   }
 
   async putWebhook(
@@ -614,7 +616,7 @@ export default class CodePipeline {
 
   async registerWebhookWithThirdParty(
     {abortSignal, ...params}: RequestConfig & s.RegisterWebhookWithThirdPartyInput = {},
-  ): Promise<s.RegisterWebhookWithThirdPartyOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       webhookName: params["webhookName"],
     };
@@ -622,10 +624,7 @@ export default class CodePipeline {
       abortSignal, body,
       action: "RegisterWebhookWithThirdParty",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async retryStageExecution(
@@ -691,7 +690,7 @@ export default class CodePipeline {
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & s.TagResourceInput,
-  ): Promise<s.TagResourceOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       resourceArn: params["resourceArn"],
       tags: params["tags"]?.map(x => fromTag(x)),
@@ -700,15 +699,12 @@ export default class CodePipeline {
       abortSignal, body,
       action: "TagResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async untagResource(
     {abortSignal, ...params}: RequestConfig & s.UntagResourceInput,
-  ): Promise<s.UntagResourceOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       resourceArn: params["resourceArn"],
       tagKeys: params["tagKeys"],
@@ -717,10 +713,7 @@ export default class CodePipeline {
       abortSignal, body,
       action: "UntagResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateActionType(
@@ -733,6 +726,7 @@ export default class CodePipeline {
       abortSignal, body,
       action: "UpdateActionType",
     });
+    await resp.text();
   }
 
   async updatePipeline(

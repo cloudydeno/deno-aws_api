@@ -63,6 +63,7 @@ export default class SagemakerEdge {
       action: "SendHeartbeat",
       requestUri: "/SendHeartbeat",
     });
+    await resp.text();
   }
 
 }

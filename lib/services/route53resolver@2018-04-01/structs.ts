@@ -392,14 +392,6 @@ export interface PutResolverRulePolicyResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface TagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UntagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface UpdateResolverDnssecConfigResponse {
   ResolverDNSSECConfig?: ResolverDnssecConfig | null;
 }

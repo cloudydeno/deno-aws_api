@@ -83,7 +83,7 @@ export default class SMS {
 
   async deleteApp(
     {abortSignal, ...params}: RequestConfig & s.DeleteAppRequest = {},
-  ): Promise<s.DeleteAppResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       appId: params["appId"],
       forceStopAppReplication: params["forceStopAppReplication"],
@@ -93,15 +93,12 @@ export default class SMS {
       abortSignal, body,
       action: "DeleteApp",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteAppLaunchConfiguration(
     {abortSignal, ...params}: RequestConfig & s.DeleteAppLaunchConfigurationRequest = {},
-  ): Promise<s.DeleteAppLaunchConfigurationResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       appId: params["appId"],
     };
@@ -109,15 +106,12 @@ export default class SMS {
       abortSignal, body,
       action: "DeleteAppLaunchConfiguration",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteAppReplicationConfiguration(
     {abortSignal, ...params}: RequestConfig & s.DeleteAppReplicationConfigurationRequest = {},
-  ): Promise<s.DeleteAppReplicationConfigurationResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       appId: params["appId"],
     };
@@ -125,15 +119,12 @@ export default class SMS {
       abortSignal, body,
       action: "DeleteAppReplicationConfiguration",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteAppValidationConfiguration(
     {abortSignal, ...params}: RequestConfig & s.DeleteAppValidationConfigurationRequest,
-  ): Promise<s.DeleteAppValidationConfigurationResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       appId: params["appId"],
     };
@@ -141,15 +132,12 @@ export default class SMS {
       abortSignal, body,
       action: "DeleteAppValidationConfiguration",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteReplicationJob(
     {abortSignal, ...params}: RequestConfig & s.DeleteReplicationJobRequest,
-  ): Promise<s.DeleteReplicationJobResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       replicationJobId: params["replicationJobId"],
     };
@@ -157,30 +145,23 @@ export default class SMS {
       abortSignal, body,
       action: "DeleteReplicationJob",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteServerCatalog(
-    {abortSignal, ...params}: RequestConfig & s.DeleteServerCatalogRequest = {},
-  ): Promise<s.DeleteServerCatalogResponse> {
-    const body: jsonP.JSONObject = {
-    };
+    {abortSignal}: RequestConfig = {},
+  ): Promise<void> {
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteServerCatalog",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async disassociateConnector(
     {abortSignal, ...params}: RequestConfig & s.DisassociateConnectorRequest,
-  ): Promise<s.DisassociateConnectorResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       connectorId: params["connectorId"],
     };
@@ -188,10 +169,7 @@ export default class SMS {
       abortSignal, body,
       action: "DisassociateConnector",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async generateChangeSet(
@@ -416,7 +394,7 @@ export default class SMS {
 
   async importAppCatalog(
     {abortSignal, ...params}: RequestConfig & s.ImportAppCatalogRequest = {},
-  ): Promise<s.ImportAppCatalogResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       roleName: params["roleName"],
     };
@@ -424,30 +402,23 @@ export default class SMS {
       abortSignal, body,
       action: "ImportAppCatalog",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async importServerCatalog(
-    {abortSignal, ...params}: RequestConfig & s.ImportServerCatalogRequest = {},
-  ): Promise<s.ImportServerCatalogResponse> {
-    const body: jsonP.JSONObject = {
-    };
+    {abortSignal}: RequestConfig = {},
+  ): Promise<void> {
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ImportServerCatalog",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async launchApp(
     {abortSignal, ...params}: RequestConfig & s.LaunchAppRequest = {},
-  ): Promise<s.LaunchAppResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       appId: params["appId"],
     };
@@ -455,10 +426,7 @@ export default class SMS {
       abortSignal, body,
       action: "LaunchApp",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async listApps(
@@ -484,7 +452,7 @@ export default class SMS {
 
   async notifyAppValidationOutput(
     {abortSignal, ...params}: RequestConfig & s.NotifyAppValidationOutputRequest,
-  ): Promise<s.NotifyAppValidationOutputResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       appId: params["appId"],
       notificationContext: fromNotificationContext(params["notificationContext"]),
@@ -493,15 +461,12 @@ export default class SMS {
       abortSignal, body,
       action: "NotifyAppValidationOutput",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async putAppLaunchConfiguration(
     {abortSignal, ...params}: RequestConfig & s.PutAppLaunchConfigurationRequest = {},
-  ): Promise<s.PutAppLaunchConfigurationResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       appId: params["appId"],
       roleName: params["roleName"],
@@ -512,15 +477,12 @@ export default class SMS {
       abortSignal, body,
       action: "PutAppLaunchConfiguration",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async putAppReplicationConfiguration(
     {abortSignal, ...params}: RequestConfig & s.PutAppReplicationConfigurationRequest = {},
-  ): Promise<s.PutAppReplicationConfigurationResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       appId: params["appId"],
       serverGroupReplicationConfigurations: params["serverGroupReplicationConfigurations"]?.map(x => fromServerGroupReplicationConfiguration(x)),
@@ -529,15 +491,12 @@ export default class SMS {
       abortSignal, body,
       action: "PutAppReplicationConfiguration",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async putAppValidationConfiguration(
     {abortSignal, ...params}: RequestConfig & s.PutAppValidationConfigurationRequest,
-  ): Promise<s.PutAppValidationConfigurationResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       appId: params["appId"],
       appValidationConfigurations: params["appValidationConfigurations"]?.map(x => fromAppValidationConfiguration(x)),
@@ -547,15 +506,12 @@ export default class SMS {
       abortSignal, body,
       action: "PutAppValidationConfiguration",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async startAppReplication(
     {abortSignal, ...params}: RequestConfig & s.StartAppReplicationRequest = {},
-  ): Promise<s.StartAppReplicationResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       appId: params["appId"],
     };
@@ -563,15 +519,12 @@ export default class SMS {
       abortSignal, body,
       action: "StartAppReplication",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async startOnDemandAppReplication(
     {abortSignal, ...params}: RequestConfig & s.StartOnDemandAppReplicationRequest,
-  ): Promise<s.StartOnDemandAppReplicationResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       appId: params["appId"],
       description: params["description"],
@@ -580,10 +533,7 @@ export default class SMS {
       abortSignal, body,
       action: "StartOnDemandAppReplication",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async startOnDemandReplicationRun(
@@ -607,7 +557,7 @@ export default class SMS {
 
   async stopAppReplication(
     {abortSignal, ...params}: RequestConfig & s.StopAppReplicationRequest = {},
-  ): Promise<s.StopAppReplicationResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       appId: params["appId"],
     };
@@ -615,15 +565,12 @@ export default class SMS {
       abortSignal, body,
       action: "StopAppReplication",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async terminateApp(
     {abortSignal, ...params}: RequestConfig & s.TerminateAppRequest = {},
-  ): Promise<s.TerminateAppResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       appId: params["appId"],
     };
@@ -631,10 +578,7 @@ export default class SMS {
       abortSignal, body,
       action: "TerminateApp",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateApp(
@@ -664,7 +608,7 @@ export default class SMS {
 
   async updateReplicationJob(
     {abortSignal, ...params}: RequestConfig & s.UpdateReplicationJobRequest,
-  ): Promise<s.UpdateReplicationJobResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       replicationJobId: params["replicationJobId"],
       frequency: params["frequency"],
@@ -680,10 +624,7 @@ export default class SMS {
       abortSignal, body,
       action: "UpdateReplicationJob",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
 }

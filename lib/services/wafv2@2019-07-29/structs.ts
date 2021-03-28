@@ -297,10 +297,6 @@ export interface UpdateWebACLRequest {
 }
 
 // refs: 1 - tags: named, output
-export interface AssociateWebACLResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface CheckCapacityResponse {
   Capacity?: number | null;
 }
@@ -331,37 +327,9 @@ export interface DeleteFirewallManagerRuleGroupsResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface DeleteIPSetResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteLoggingConfigurationResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeletePermissionPolicyResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteRegexPatternSetResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteRuleGroupResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteWebACLResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface DescribeManagedRuleGroupResponse {
   Capacity?: number | null;
   Rules?: RuleSummary[] | null;
-}
-
-// refs: 1 - tags: named, output
-export interface DisassociateWebACLResponse {
 }
 
 // refs: 1 - tags: named, output
@@ -466,18 +434,6 @@ export interface ListWebACLsResponse {
 // refs: 1 - tags: named, output
 export interface PutLoggingConfigurationResponse {
   LoggingConfiguration?: LoggingConfiguration | null;
-}
-
-// refs: 1 - tags: named, output
-export interface PutPermissionPolicyResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface TagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UntagResourceResponse {
 }
 
 // refs: 1 - tags: named, output

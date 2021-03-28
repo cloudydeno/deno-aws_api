@@ -8,10 +8,6 @@ export interface AddNotificationChannelRequest {
 }
 
 // refs: 1 - tags: named, input
-export interface DescribeAccountHealthRequest {
-}
-
-// refs: 1 - tags: named, input
 export interface DescribeAccountOverviewRequest {
   FromTime: Date | number;
   ToTime?: Date | number | null;
@@ -36,10 +32,6 @@ export interface DescribeInsightRequest {
 export interface DescribeResourceCollectionHealthRequest {
   ResourceCollectionType: ResourceCollectionType;
   NextToken?: string | null;
-}
-
-// refs: 1 - tags: named, input
-export interface DescribeServiceIntegrationRequest {
 }
 
 // refs: 1 - tags: named, input
@@ -198,26 +190,10 @@ export interface ListRecommendationsResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface PutFeedbackResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface RemoveNotificationChannelResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface SearchInsightsResponse {
   ProactiveInsights?: ProactiveInsightSummary[] | null;
   ReactiveInsights?: ReactiveInsightSummary[] | null;
   NextToken?: string | null;
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateResourceCollectionResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateServiceIntegrationResponse {
 }
 
 // refs: 2 - tags: input, named, interface, output

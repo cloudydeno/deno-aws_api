@@ -34,7 +34,7 @@ export default class WorkMail {
 
   async associateDelegateToResource(
     {abortSignal, ...params}: RequestConfig & s.AssociateDelegateToResourceRequest,
-  ): Promise<s.AssociateDelegateToResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       OrganizationId: params["OrganizationId"],
       ResourceId: params["ResourceId"],
@@ -44,15 +44,12 @@ export default class WorkMail {
       abortSignal, body,
       action: "AssociateDelegateToResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async associateMemberToGroup(
     {abortSignal, ...params}: RequestConfig & s.AssociateMemberToGroupRequest,
-  ): Promise<s.AssociateMemberToGroupResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       OrganizationId: params["OrganizationId"],
       GroupId: params["GroupId"],
@@ -62,15 +59,12 @@ export default class WorkMail {
       abortSignal, body,
       action: "AssociateMemberToGroup",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async cancelMailboxExportJob(
     {abortSignal, ...params}: RequestConfig & s.CancelMailboxExportJobRequest,
-  ): Promise<s.CancelMailboxExportJobResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ClientToken: params["ClientToken"] ?? generateIdemptToken(),
       JobId: params["JobId"],
@@ -80,15 +74,12 @@ export default class WorkMail {
       abortSignal, body,
       action: "CancelMailboxExportJob",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async createAlias(
     {abortSignal, ...params}: RequestConfig & s.CreateAliasRequest,
-  ): Promise<s.CreateAliasResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       OrganizationId: params["OrganizationId"],
       EntityId: params["EntityId"],
@@ -98,10 +89,7 @@ export default class WorkMail {
       abortSignal, body,
       action: "CreateAlias",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async createGroup(
@@ -189,7 +177,7 @@ export default class WorkMail {
 
   async deleteAccessControlRule(
     {abortSignal, ...params}: RequestConfig & s.DeleteAccessControlRuleRequest,
-  ): Promise<s.DeleteAccessControlRuleResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       OrganizationId: params["OrganizationId"],
       Name: params["Name"],
@@ -198,15 +186,12 @@ export default class WorkMail {
       abortSignal, body,
       action: "DeleteAccessControlRule",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteAlias(
     {abortSignal, ...params}: RequestConfig & s.DeleteAliasRequest,
-  ): Promise<s.DeleteAliasResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       OrganizationId: params["OrganizationId"],
       EntityId: params["EntityId"],
@@ -216,15 +201,12 @@ export default class WorkMail {
       abortSignal, body,
       action: "DeleteAlias",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteGroup(
     {abortSignal, ...params}: RequestConfig & s.DeleteGroupRequest,
-  ): Promise<s.DeleteGroupResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       OrganizationId: params["OrganizationId"],
       GroupId: params["GroupId"],
@@ -233,15 +215,12 @@ export default class WorkMail {
       abortSignal, body,
       action: "DeleteGroup",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteMailboxPermissions(
     {abortSignal, ...params}: RequestConfig & s.DeleteMailboxPermissionsRequest,
-  ): Promise<s.DeleteMailboxPermissionsResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       OrganizationId: params["OrganizationId"],
       EntityId: params["EntityId"],
@@ -251,10 +230,7 @@ export default class WorkMail {
       abortSignal, body,
       action: "DeleteMailboxPermissions",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteOrganization(
@@ -280,7 +256,7 @@ export default class WorkMail {
 
   async deleteResource(
     {abortSignal, ...params}: RequestConfig & s.DeleteResourceRequest,
-  ): Promise<s.DeleteResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       OrganizationId: params["OrganizationId"],
       ResourceId: params["ResourceId"],
@@ -289,15 +265,12 @@ export default class WorkMail {
       abortSignal, body,
       action: "DeleteResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteRetentionPolicy(
     {abortSignal, ...params}: RequestConfig & s.DeleteRetentionPolicyRequest,
-  ): Promise<s.DeleteRetentionPolicyResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       OrganizationId: params["OrganizationId"],
       Id: params["Id"],
@@ -306,15 +279,12 @@ export default class WorkMail {
       abortSignal, body,
       action: "DeleteRetentionPolicy",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteUser(
     {abortSignal, ...params}: RequestConfig & s.DeleteUserRequest,
-  ): Promise<s.DeleteUserResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       OrganizationId: params["OrganizationId"],
       UserId: params["UserId"],
@@ -323,15 +293,12 @@ export default class WorkMail {
       abortSignal, body,
       action: "DeleteUser",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deregisterFromWorkMail(
     {abortSignal, ...params}: RequestConfig & s.DeregisterFromWorkMailRequest,
-  ): Promise<s.DeregisterFromWorkMailResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       OrganizationId: params["OrganizationId"],
       EntityId: params["EntityId"],
@@ -340,10 +307,7 @@ export default class WorkMail {
       abortSignal, body,
       action: "DeregisterFromWorkMail",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async describeGroup(
@@ -480,7 +444,7 @@ export default class WorkMail {
 
   async disassociateDelegateFromResource(
     {abortSignal, ...params}: RequestConfig & s.DisassociateDelegateFromResourceRequest,
-  ): Promise<s.DisassociateDelegateFromResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       OrganizationId: params["OrganizationId"],
       ResourceId: params["ResourceId"],
@@ -490,15 +454,12 @@ export default class WorkMail {
       abortSignal, body,
       action: "DisassociateDelegateFromResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async disassociateMemberFromGroup(
     {abortSignal, ...params}: RequestConfig & s.DisassociateMemberFromGroupRequest,
-  ): Promise<s.DisassociateMemberFromGroupResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       OrganizationId: params["OrganizationId"],
       GroupId: params["GroupId"],
@@ -508,10 +469,7 @@ export default class WorkMail {
       abortSignal, body,
       action: "DisassociateMemberFromGroup",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async getAccessControlEffect(
@@ -807,7 +765,7 @@ export default class WorkMail {
 
   async putAccessControlRule(
     {abortSignal, ...params}: RequestConfig & s.PutAccessControlRuleRequest,
-  ): Promise<s.PutAccessControlRuleResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       Name: params["Name"],
       Effect: params["Effect"],
@@ -824,15 +782,12 @@ export default class WorkMail {
       abortSignal, body,
       action: "PutAccessControlRule",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async putMailboxPermissions(
     {abortSignal, ...params}: RequestConfig & s.PutMailboxPermissionsRequest,
-  ): Promise<s.PutMailboxPermissionsResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       OrganizationId: params["OrganizationId"],
       EntityId: params["EntityId"],
@@ -843,15 +798,12 @@ export default class WorkMail {
       abortSignal, body,
       action: "PutMailboxPermissions",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async putRetentionPolicy(
     {abortSignal, ...params}: RequestConfig & s.PutRetentionPolicyRequest,
-  ): Promise<s.PutRetentionPolicyResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       OrganizationId: params["OrganizationId"],
       Id: params["Id"],
@@ -863,15 +815,12 @@ export default class WorkMail {
       abortSignal, body,
       action: "PutRetentionPolicy",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async registerToWorkMail(
     {abortSignal, ...params}: RequestConfig & s.RegisterToWorkMailRequest,
-  ): Promise<s.RegisterToWorkMailResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       OrganizationId: params["OrganizationId"],
       EntityId: params["EntityId"],
@@ -881,15 +830,12 @@ export default class WorkMail {
       abortSignal, body,
       action: "RegisterToWorkMail",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async resetPassword(
     {abortSignal, ...params}: RequestConfig & s.ResetPasswordRequest,
-  ): Promise<s.ResetPasswordResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       OrganizationId: params["OrganizationId"],
       UserId: params["UserId"],
@@ -899,10 +845,7 @@ export default class WorkMail {
       abortSignal, body,
       action: "ResetPassword",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async startMailboxExportJob(
@@ -932,7 +875,7 @@ export default class WorkMail {
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & s.TagResourceRequest,
-  ): Promise<s.TagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceARN: params["ResourceARN"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
@@ -941,15 +884,12 @@ export default class WorkMail {
       abortSignal, body,
       action: "TagResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async untagResource(
     {abortSignal, ...params}: RequestConfig & s.UntagResourceRequest,
-  ): Promise<s.UntagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceARN: params["ResourceARN"],
       TagKeys: params["TagKeys"],
@@ -958,15 +898,12 @@ export default class WorkMail {
       abortSignal, body,
       action: "UntagResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateMailboxQuota(
     {abortSignal, ...params}: RequestConfig & s.UpdateMailboxQuotaRequest,
-  ): Promise<s.UpdateMailboxQuotaResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       OrganizationId: params["OrganizationId"],
       UserId: params["UserId"],
@@ -976,15 +913,12 @@ export default class WorkMail {
       abortSignal, body,
       action: "UpdateMailboxQuota",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updatePrimaryEmailAddress(
     {abortSignal, ...params}: RequestConfig & s.UpdatePrimaryEmailAddressRequest,
-  ): Promise<s.UpdatePrimaryEmailAddressResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       OrganizationId: params["OrganizationId"],
       EntityId: params["EntityId"],
@@ -994,15 +928,12 @@ export default class WorkMail {
       abortSignal, body,
       action: "UpdatePrimaryEmailAddress",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateResource(
     {abortSignal, ...params}: RequestConfig & s.UpdateResourceRequest,
-  ): Promise<s.UpdateResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       OrganizationId: params["OrganizationId"],
       ResourceId: params["ResourceId"],
@@ -1013,10 +944,7 @@ export default class WorkMail {
       abortSignal, body,
       action: "UpdateResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
 }

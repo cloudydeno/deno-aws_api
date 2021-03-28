@@ -34,7 +34,7 @@ export default class CloudDirectory {
 
   async addFacetToObject(
     {abortSignal, ...params}: RequestConfig & s.AddFacetToObjectRequest,
-  ): Promise<s.AddFacetToObjectResponse> {
+  ): Promise<void> {
     const headers = new Headers;
     const body: jsonP.JSONObject = {
       SchemaFacet: fromSchemaFacet(params["SchemaFacet"]),
@@ -49,10 +49,7 @@ export default class CloudDirectory {
       requestUri: "/amazonclouddirectory/2017-01-11/object/facets",
       responseCode: 200,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async applySchema(
@@ -106,7 +103,7 @@ export default class CloudDirectory {
 
   async attachPolicy(
     {abortSignal, ...params}: RequestConfig & s.AttachPolicyRequest,
-  ): Promise<s.AttachPolicyResponse> {
+  ): Promise<void> {
     const headers = new Headers;
     const body: jsonP.JSONObject = {
       PolicyReference: fromObjectReference(params["PolicyReference"]),
@@ -120,10 +117,7 @@ export default class CloudDirectory {
       requestUri: "/amazonclouddirectory/2017-01-11/policy/attach",
       responseCode: 200,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async attachToIndex(
@@ -250,7 +244,7 @@ export default class CloudDirectory {
 
   async createFacet(
     {abortSignal, ...params}: RequestConfig & s.CreateFacetRequest,
-  ): Promise<s.CreateFacetResponse> {
+  ): Promise<void> {
     const headers = new Headers;
     const body: jsonP.JSONObject = {
       Name: params["Name"],
@@ -266,10 +260,7 @@ export default class CloudDirectory {
       requestUri: "/amazonclouddirectory/2017-01-11/facet/create",
       responseCode: 200,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async createIndex(
@@ -347,7 +338,7 @@ export default class CloudDirectory {
 
   async createTypedLinkFacet(
     {abortSignal, ...params}: RequestConfig & s.CreateTypedLinkFacetRequest,
-  ): Promise<s.CreateTypedLinkFacetResponse> {
+  ): Promise<void> {
     const headers = new Headers;
     const body: jsonP.JSONObject = {
       Facet: fromTypedLinkFacet(params["Facet"]),
@@ -360,10 +351,7 @@ export default class CloudDirectory {
       requestUri: "/amazonclouddirectory/2017-01-11/typedlink/facet/create",
       responseCode: 200,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteDirectory(
@@ -388,7 +376,7 @@ export default class CloudDirectory {
 
   async deleteFacet(
     {abortSignal, ...params}: RequestConfig & s.DeleteFacetRequest,
-  ): Promise<s.DeleteFacetResponse> {
+  ): Promise<void> {
     const headers = new Headers;
     const body: jsonP.JSONObject = {
       Name: params["Name"],
@@ -401,15 +389,12 @@ export default class CloudDirectory {
       requestUri: "/amazonclouddirectory/2017-01-11/facet/delete",
       responseCode: 200,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteObject(
     {abortSignal, ...params}: RequestConfig & s.DeleteObjectRequest,
-  ): Promise<s.DeleteObjectResponse> {
+  ): Promise<void> {
     const headers = new Headers;
     const body: jsonP.JSONObject = {
       ObjectReference: fromObjectReference(params["ObjectReference"]),
@@ -422,10 +407,7 @@ export default class CloudDirectory {
       requestUri: "/amazonclouddirectory/2017-01-11/object/delete",
       responseCode: 200,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteSchema(
@@ -450,7 +432,7 @@ export default class CloudDirectory {
 
   async deleteTypedLinkFacet(
     {abortSignal, ...params}: RequestConfig & s.DeleteTypedLinkFacetRequest,
-  ): Promise<s.DeleteTypedLinkFacetResponse> {
+  ): Promise<void> {
     const headers = new Headers;
     const body: jsonP.JSONObject = {
       Name: params["Name"],
@@ -463,10 +445,7 @@ export default class CloudDirectory {
       requestUri: "/amazonclouddirectory/2017-01-11/typedlink/facet/delete",
       responseCode: 200,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async detachFromIndex(
@@ -519,7 +498,7 @@ export default class CloudDirectory {
 
   async detachPolicy(
     {abortSignal, ...params}: RequestConfig & s.DetachPolicyRequest,
-  ): Promise<s.DetachPolicyResponse> {
+  ): Promise<void> {
     const headers = new Headers;
     const body: jsonP.JSONObject = {
       PolicyReference: fromObjectReference(params["PolicyReference"]),
@@ -533,10 +512,7 @@ export default class CloudDirectory {
       requestUri: "/amazonclouddirectory/2017-01-11/policy/detach",
       responseCode: 200,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async detachTypedLink(
@@ -554,6 +530,7 @@ export default class CloudDirectory {
       requestUri: "/amazonclouddirectory/2017-01-11/typedlink/detach",
       responseCode: 200,
     });
+    await resp.text();
   }
 
   async disableDirectory(
@@ -1351,7 +1328,7 @@ export default class CloudDirectory {
 
   async removeFacetFromObject(
     {abortSignal, ...params}: RequestConfig & s.RemoveFacetFromObjectRequest,
-  ): Promise<s.RemoveFacetFromObjectResponse> {
+  ): Promise<void> {
     const headers = new Headers;
     const body: jsonP.JSONObject = {
       SchemaFacet: fromSchemaFacet(params["SchemaFacet"]),
@@ -1365,15 +1342,12 @@ export default class CloudDirectory {
       requestUri: "/amazonclouddirectory/2017-01-11/object/facets/delete",
       responseCode: 200,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & s.TagResourceRequest,
-  ): Promise<s.TagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
@@ -1385,15 +1359,12 @@ export default class CloudDirectory {
       requestUri: "/amazonclouddirectory/2017-01-11/tags/add",
       responseCode: 200,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async untagResource(
     {abortSignal, ...params}: RequestConfig & s.UntagResourceRequest,
-  ): Promise<s.UntagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
       TagKeys: params["TagKeys"],
@@ -1405,15 +1376,12 @@ export default class CloudDirectory {
       requestUri: "/amazonclouddirectory/2017-01-11/tags/remove",
       responseCode: 200,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateFacet(
     {abortSignal, ...params}: RequestConfig & s.UpdateFacetRequest,
-  ): Promise<s.UpdateFacetResponse> {
+  ): Promise<void> {
     const headers = new Headers;
     const body: jsonP.JSONObject = {
       Name: params["Name"],
@@ -1428,15 +1396,12 @@ export default class CloudDirectory {
       requestUri: "/amazonclouddirectory/2017-01-11/facet",
       responseCode: 200,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateLinkAttributes(
     {abortSignal, ...params}: RequestConfig & s.UpdateLinkAttributesRequest,
-  ): Promise<s.UpdateLinkAttributesResponse> {
+  ): Promise<void> {
     const headers = new Headers;
     const body: jsonP.JSONObject = {
       TypedLinkSpecifier: fromTypedLinkSpecifier(params["TypedLinkSpecifier"]),
@@ -1449,10 +1414,7 @@ export default class CloudDirectory {
       requestUri: "/amazonclouddirectory/2017-01-11/typedlink/attributes/update",
       responseCode: 200,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateObjectAttributes(
@@ -1504,7 +1466,7 @@ export default class CloudDirectory {
 
   async updateTypedLinkFacet(
     {abortSignal, ...params}: RequestConfig & s.UpdateTypedLinkFacetRequest,
-  ): Promise<s.UpdateTypedLinkFacetResponse> {
+  ): Promise<void> {
     const headers = new Headers;
     const body: jsonP.JSONObject = {
       Name: params["Name"],
@@ -1519,10 +1481,7 @@ export default class CloudDirectory {
       requestUri: "/amazonclouddirectory/2017-01-11/typedlink/facet",
       responseCode: 200,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async upgradeAppliedSchema(

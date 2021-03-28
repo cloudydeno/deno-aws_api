@@ -31,7 +31,7 @@ export default class IoTThingsGraph {
 
   async associateEntityToThing(
     {abortSignal, ...params}: RequestConfig & s.AssociateEntityToThingRequest,
-  ): Promise<s.AssociateEntityToThingResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       thingName: params["thingName"],
       entityId: params["entityId"],
@@ -41,10 +41,7 @@ export default class IoTThingsGraph {
       abortSignal, body,
       action: "AssociateEntityToThing",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async createFlowTemplate(
@@ -111,7 +108,7 @@ export default class IoTThingsGraph {
 
   async deleteFlowTemplate(
     {abortSignal, ...params}: RequestConfig & s.DeleteFlowTemplateRequest,
-  ): Promise<s.DeleteFlowTemplateResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       id: params["id"],
     };
@@ -119,17 +116,13 @@ export default class IoTThingsGraph {
       abortSignal, body,
       action: "DeleteFlowTemplate",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteNamespace(
-    {abortSignal, ...params}: RequestConfig & s.DeleteNamespaceRequest = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.DeleteNamespaceResponse> {
-    const body: jsonP.JSONObject = {
-    };
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteNamespace",
@@ -145,7 +138,7 @@ export default class IoTThingsGraph {
 
   async deleteSystemInstance(
     {abortSignal, ...params}: RequestConfig & s.DeleteSystemInstanceRequest = {},
-  ): Promise<s.DeleteSystemInstanceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       id: params["id"],
     };
@@ -153,15 +146,12 @@ export default class IoTThingsGraph {
       abortSignal, body,
       action: "DeleteSystemInstance",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteSystemTemplate(
     {abortSignal, ...params}: RequestConfig & s.DeleteSystemTemplateRequest,
-  ): Promise<s.DeleteSystemTemplateResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       id: params["id"],
     };
@@ -169,10 +159,7 @@ export default class IoTThingsGraph {
       abortSignal, body,
       action: "DeleteSystemTemplate",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deploySystemInstance(
@@ -197,7 +184,7 @@ export default class IoTThingsGraph {
 
   async deprecateFlowTemplate(
     {abortSignal, ...params}: RequestConfig & s.DeprecateFlowTemplateRequest,
-  ): Promise<s.DeprecateFlowTemplateResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       id: params["id"],
     };
@@ -205,15 +192,12 @@ export default class IoTThingsGraph {
       abortSignal, body,
       action: "DeprecateFlowTemplate",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deprecateSystemTemplate(
     {abortSignal, ...params}: RequestConfig & s.DeprecateSystemTemplateRequest,
-  ): Promise<s.DeprecateSystemTemplateResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       id: params["id"],
     };
@@ -221,10 +205,7 @@ export default class IoTThingsGraph {
       abortSignal, body,
       action: "DeprecateSystemTemplate",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async describeNamespace(
@@ -251,7 +232,7 @@ export default class IoTThingsGraph {
 
   async dissociateEntityFromThing(
     {abortSignal, ...params}: RequestConfig & s.DissociateEntityFromThingRequest,
-  ): Promise<s.DissociateEntityFromThingResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       thingName: params["thingName"],
       entityType: params["entityType"],
@@ -260,10 +241,7 @@ export default class IoTThingsGraph {
       abortSignal, body,
       action: "DissociateEntityFromThing",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async getEntities(
@@ -326,10 +304,9 @@ export default class IoTThingsGraph {
   }
 
   async getNamespaceDeletionStatus(
-    {abortSignal, ...params}: RequestConfig & s.GetNamespaceDeletionStatusRequest = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.GetNamespaceDeletionStatusResponse> {
-    const body: jsonP.JSONObject = {
-    };
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetNamespaceDeletionStatus",
@@ -605,7 +582,7 @@ export default class IoTThingsGraph {
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & s.TagResourceRequest,
-  ): Promise<s.TagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       resourceArn: params["resourceArn"],
       tags: params["tags"]?.map(x => fromTag(x)),
@@ -614,10 +591,7 @@ export default class IoTThingsGraph {
       abortSignal, body,
       action: "TagResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async undeploySystemInstance(
@@ -640,7 +614,7 @@ export default class IoTThingsGraph {
 
   async untagResource(
     {abortSignal, ...params}: RequestConfig & s.UntagResourceRequest,
-  ): Promise<s.UntagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       resourceArn: params["resourceArn"],
       tagKeys: params["tagKeys"],
@@ -649,10 +623,7 @@ export default class IoTThingsGraph {
       abortSignal, body,
       action: "UntagResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateFlowTemplate(

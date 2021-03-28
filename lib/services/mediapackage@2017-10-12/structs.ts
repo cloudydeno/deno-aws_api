@@ -195,14 +195,6 @@ export interface CreateOriginEndpointResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface DeleteChannelResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteOriginEndpointResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface DescribeChannelResponse {
   Arn?: string | null;
   Description?: string | null;

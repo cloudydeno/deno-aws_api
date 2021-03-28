@@ -30,7 +30,7 @@ export default class Batch {
 
   async cancelJob(
     {abortSignal, ...params}: RequestConfig & s.CancelJobRequest,
-  ): Promise<s.CancelJobResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       jobId: params["jobId"],
       reason: params["reason"],
@@ -40,10 +40,7 @@ export default class Batch {
       action: "CancelJob",
       requestUri: "/v1/canceljob",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async createComputeEnvironment(
@@ -97,7 +94,7 @@ export default class Batch {
 
   async deleteComputeEnvironment(
     {abortSignal, ...params}: RequestConfig & s.DeleteComputeEnvironmentRequest,
-  ): Promise<s.DeleteComputeEnvironmentResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       computeEnvironment: params["computeEnvironment"],
     };
@@ -106,15 +103,12 @@ export default class Batch {
       action: "DeleteComputeEnvironment",
       requestUri: "/v1/deletecomputeenvironment",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteJobQueue(
     {abortSignal, ...params}: RequestConfig & s.DeleteJobQueueRequest,
-  ): Promise<s.DeleteJobQueueResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       jobQueue: params["jobQueue"],
     };
@@ -123,15 +117,12 @@ export default class Batch {
       action: "DeleteJobQueue",
       requestUri: "/v1/deletejobqueue",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deregisterJobDefinition(
     {abortSignal, ...params}: RequestConfig & s.DeregisterJobDefinitionRequest,
-  ): Promise<s.DeregisterJobDefinitionResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       jobDefinition: params["jobDefinition"],
     };
@@ -140,10 +131,7 @@ export default class Batch {
       action: "DeregisterJobDefinition",
       requestUri: "/v1/deregisterjobdefinition",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async describeComputeEnvironments(
@@ -342,7 +330,7 @@ export default class Batch {
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & s.TagResourceRequest,
-  ): Promise<s.TagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       tags: params["tags"],
     };
@@ -351,15 +339,12 @@ export default class Batch {
       action: "TagResource",
       requestUri: cmnP.encodePath`/v1/tags/${params["resourceArn"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async terminateJob(
     {abortSignal, ...params}: RequestConfig & s.TerminateJobRequest,
-  ): Promise<s.TerminateJobResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       jobId: params["jobId"],
       reason: params["reason"],
@@ -369,15 +354,12 @@ export default class Batch {
       action: "TerminateJob",
       requestUri: "/v1/terminatejob",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async untagResource(
     {abortSignal, ...params}: RequestConfig & s.UntagResourceRequest,
-  ): Promise<s.UntagResourceResponse> {
+  ): Promise<void> {
     const query = new URLSearchParams;
     for (const item of params["tagKeys"]) {
       query.append("tagKeys", item?.toString() ?? "");
@@ -388,10 +370,7 @@ export default class Batch {
       method: "DELETE",
       requestUri: cmnP.encodePath`/v1/tags/${params["resourceArn"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateComputeEnvironment(

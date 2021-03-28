@@ -272,10 +272,6 @@ export interface EnableSsoRequest {
 }
 
 // refs: 1 - tags: named, input
-export interface GetDirectoryLimitsRequest {
-}
-
-// refs: 1 - tags: named, input
 export interface GetSnapshotLimitsRequest {
   DirectoryId: string;
 }
@@ -421,22 +417,6 @@ export interface AcceptSharedDirectoryResult {
 }
 
 // refs: 1 - tags: named, output
-export interface AddIpRoutesResult {
-}
-
-// refs: 1 - tags: named, output
-export interface AddRegionResult {
-}
-
-// refs: 1 - tags: named, output
-export interface AddTagsToResourceResult {
-}
-
-// refs: 1 - tags: named, output
-export interface CancelSchemaExtensionResult {
-}
-
-// refs: 1 - tags: named, output
 export interface ConnectDirectoryResult {
   DirectoryId?: string | null;
 }
@@ -453,16 +433,8 @@ export interface CreateComputerResult {
 }
 
 // refs: 1 - tags: named, output
-export interface CreateConditionalForwarderResult {
-}
-
-// refs: 1 - tags: named, output
 export interface CreateDirectoryResult {
   DirectoryId?: string | null;
-}
-
-// refs: 1 - tags: named, output
-export interface CreateLogSubscriptionResult {
 }
 
 // refs: 1 - tags: named, output
@@ -481,16 +453,8 @@ export interface CreateTrustResult {
 }
 
 // refs: 1 - tags: named, output
-export interface DeleteConditionalForwarderResult {
-}
-
-// refs: 1 - tags: named, output
 export interface DeleteDirectoryResult {
   DirectoryId?: string | null;
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteLogSubscriptionResult {
 }
 
 // refs: 1 - tags: named, output
@@ -501,14 +465,6 @@ export interface DeleteSnapshotResult {
 // refs: 1 - tags: named, output
 export interface DeleteTrustResult {
   TrustId?: string | null;
-}
-
-// refs: 1 - tags: named, output
-export interface DeregisterCertificateResult {
-}
-
-// refs: 1 - tags: named, output
-export interface DeregisterEventTopicResult {
 }
 
 // refs: 1 - tags: named, output
@@ -569,38 +525,6 @@ export interface DescribeTrustsResult {
 }
 
 // refs: 1 - tags: named, output
-export interface DisableClientAuthenticationResult {
-}
-
-// refs: 1 - tags: named, output
-export interface DisableLDAPSResult {
-}
-
-// refs: 1 - tags: named, output
-export interface DisableRadiusResult {
-}
-
-// refs: 1 - tags: named, output
-export interface DisableSsoResult {
-}
-
-// refs: 1 - tags: named, output
-export interface EnableClientAuthenticationResult {
-}
-
-// refs: 1 - tags: named, output
-export interface EnableLDAPSResult {
-}
-
-// refs: 1 - tags: named, output
-export interface EnableRadiusResult {
-}
-
-// refs: 1 - tags: named, output
-export interface EnableSsoResult {
-}
-
-// refs: 1 - tags: named, output
 export interface GetDirectoryLimitsResult {
   DirectoryLimits?: DirectoryLimits | null;
 }
@@ -646,32 +570,8 @@ export interface RegisterCertificateResult {
 }
 
 // refs: 1 - tags: named, output
-export interface RegisterEventTopicResult {
-}
-
-// refs: 1 - tags: named, output
 export interface RejectSharedDirectoryResult {
   SharedDirectoryId?: string | null;
-}
-
-// refs: 1 - tags: named, output
-export interface RemoveIpRoutesResult {
-}
-
-// refs: 1 - tags: named, output
-export interface RemoveRegionResult {
-}
-
-// refs: 1 - tags: named, output
-export interface RemoveTagsFromResourceResult {
-}
-
-// refs: 1 - tags: named, output
-export interface ResetUserPasswordResult {
-}
-
-// refs: 1 - tags: named, output
-export interface RestoreFromSnapshotResult {
 }
 
 // refs: 1 - tags: named, output
@@ -687,18 +587,6 @@ export interface StartSchemaExtensionResult {
 // refs: 1 - tags: named, output
 export interface UnshareDirectoryResult {
   SharedDirectoryId?: string | null;
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateConditionalForwarderResult {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateNumberOfDomainControllersResult {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateRadiusResult {
 }
 
 // refs: 1 - tags: named, output

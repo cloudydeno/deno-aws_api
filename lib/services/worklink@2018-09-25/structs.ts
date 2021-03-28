@@ -209,10 +209,6 @@ export interface UpdateIdentityProviderConfigurationRequest {
 }
 
 // refs: 1 - tags: named, output
-export interface AssociateDomainResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface AssociateWebsiteAuthorizationProviderResponse {
   AuthorizationProviderId?: string | null;
 }
@@ -225,10 +221,6 @@ export interface AssociateWebsiteCertificateAuthorityResponse {
 // refs: 1 - tags: named, output
 export interface CreateFleetResponse {
   FleetArn?: string | null;
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteFleetResponse {
 }
 
 // refs: 1 - tags: named, output
@@ -297,18 +289,6 @@ export interface DescribeWebsiteCertificateAuthorityResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface DisassociateDomainResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DisassociateWebsiteAuthorizationProviderResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DisassociateWebsiteCertificateAuthorityResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface ListDevicesResponse {
   Devices?: DeviceSummary[] | null;
   NextToken?: string | null;
@@ -341,50 +321,6 @@ export interface ListWebsiteAuthorizationProvidersResponse {
 export interface ListWebsiteCertificateAuthoritiesResponse {
   WebsiteCertificateAuthorities?: WebsiteCaSummary[] | null;
   NextToken?: string | null;
-}
-
-// refs: 1 - tags: named, output
-export interface RestoreDomainAccessResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface RevokeDomainAccessResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface SignOutUserResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface TagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UntagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateAuditStreamConfigurationResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateCompanyNetworkConfigurationResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateDevicePolicyConfigurationResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateDomainMetadataResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateFleetMetadataResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateIdentityProviderConfigurationResponse {
 }
 
 // refs: 2 - tags: input, named, enum, output

@@ -100,10 +100,6 @@ export interface DescribeDatastoreRequest {
 }
 
 // refs: 1 - tags: named, input
-export interface DescribeLoggingOptionsRequest {
-}
-
-// refs: 1 - tags: named, input
 export interface DescribePipelineRequest {
   pipelineName: string;
 }
@@ -229,10 +225,6 @@ export interface BatchPutMessageResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface CancelPipelineReprocessingResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface CreateChannelResponse {
   channelName?: string | null;
   channelArn?: string | null;
@@ -347,14 +339,6 @@ export interface SampleChannelDataResponse {
 // refs: 1 - tags: named, output
 export interface StartPipelineReprocessingResponse {
   reprocessingId?: string | null;
-}
-
-// refs: 1 - tags: named, output
-export interface TagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UntagResourceResponse {
 }
 
 // refs: 1 - tags: input, named, interface

@@ -36,7 +36,7 @@ export default class PinpointEmail {
 
   async createConfigurationSet(
     {abortSignal, ...params}: RequestConfig & s.CreateConfigurationSetRequest,
-  ): Promise<s.CreateConfigurationSetResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ConfigurationSetName: params["ConfigurationSetName"],
       TrackingOptions: fromTrackingOptions(params["TrackingOptions"]),
@@ -50,15 +50,12 @@ export default class PinpointEmail {
       action: "CreateConfigurationSet",
       requestUri: "/v1/email/configuration-sets",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async createConfigurationSetEventDestination(
     {abortSignal, ...params}: RequestConfig & s.CreateConfigurationSetEventDestinationRequest,
-  ): Promise<s.CreateConfigurationSetEventDestinationResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       EventDestinationName: params["EventDestinationName"],
       EventDestination: fromEventDestinationDefinition(params["EventDestination"]),
@@ -68,15 +65,12 @@ export default class PinpointEmail {
       action: "CreateConfigurationSetEventDestination",
       requestUri: cmnP.encodePath`/v1/email/configuration-sets/${params["ConfigurationSetName"]}/event-destinations`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async createDedicatedIpPool(
     {abortSignal, ...params}: RequestConfig & s.CreateDedicatedIpPoolRequest,
-  ): Promise<s.CreateDedicatedIpPoolResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       PoolName: params["PoolName"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
@@ -86,10 +80,7 @@ export default class PinpointEmail {
       action: "CreateDedicatedIpPool",
       requestUri: "/v1/email/dedicated-ip-pools",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async createDeliverabilityTestReport(
@@ -139,7 +130,7 @@ export default class PinpointEmail {
 
   async deleteConfigurationSet(
     {abortSignal, ...params}: RequestConfig & s.DeleteConfigurationSetRequest,
-  ): Promise<s.DeleteConfigurationSetResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -147,15 +138,12 @@ export default class PinpointEmail {
       method: "DELETE",
       requestUri: cmnP.encodePath`/v1/email/configuration-sets/${params["ConfigurationSetName"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteConfigurationSetEventDestination(
     {abortSignal, ...params}: RequestConfig & s.DeleteConfigurationSetEventDestinationRequest,
-  ): Promise<s.DeleteConfigurationSetEventDestinationResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -163,15 +151,12 @@ export default class PinpointEmail {
       method: "DELETE",
       requestUri: cmnP.encodePath`/v1/email/configuration-sets/${params["ConfigurationSetName"]}/event-destinations/${params["EventDestinationName"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteDedicatedIpPool(
     {abortSignal, ...params}: RequestConfig & s.DeleteDedicatedIpPoolRequest,
-  ): Promise<s.DeleteDedicatedIpPoolResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -179,15 +164,12 @@ export default class PinpointEmail {
       method: "DELETE",
       requestUri: cmnP.encodePath`/v1/email/dedicated-ip-pools/${params["PoolName"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteEmailIdentity(
     {abortSignal, ...params}: RequestConfig & s.DeleteEmailIdentityRequest,
-  ): Promise<s.DeleteEmailIdentityResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -195,18 +177,15 @@ export default class PinpointEmail {
       method: "DELETE",
       requestUri: cmnP.encodePath`/v1/email/identities/${params["EmailIdentity"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async getAccount(
-    {abortSignal, ...params}: RequestConfig & s.GetAccountRequest = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.GetAccountResponse> {
-
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
-      abortSignal,
+      abortSignal, body,
       action: "GetAccount",
       method: "GET",
       requestUri: "/v1/email/account",
@@ -326,11 +305,11 @@ export default class PinpointEmail {
   }
 
   async getDeliverabilityDashboardOptions(
-    {abortSignal, ...params}: RequestConfig & s.GetDeliverabilityDashboardOptionsRequest = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.GetDeliverabilityDashboardOptionsResponse> {
-
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
-      abortSignal,
+      abortSignal, body,
       action: "GetDeliverabilityDashboardOptions",
       method: "GET",
       requestUri: "/v1/email/deliverability-dashboard",
@@ -563,7 +542,7 @@ export default class PinpointEmail {
 
   async putAccountDedicatedIpWarmupAttributes(
     {abortSignal, ...params}: RequestConfig & s.PutAccountDedicatedIpWarmupAttributesRequest = {},
-  ): Promise<s.PutAccountDedicatedIpWarmupAttributesResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       AutoWarmupEnabled: params["AutoWarmupEnabled"],
     };
@@ -573,15 +552,12 @@ export default class PinpointEmail {
       method: "PUT",
       requestUri: "/v1/email/account/dedicated-ips/warmup",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async putAccountSendingAttributes(
     {abortSignal, ...params}: RequestConfig & s.PutAccountSendingAttributesRequest = {},
-  ): Promise<s.PutAccountSendingAttributesResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       SendingEnabled: params["SendingEnabled"],
     };
@@ -591,15 +567,12 @@ export default class PinpointEmail {
       method: "PUT",
       requestUri: "/v1/email/account/sending",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async putConfigurationSetDeliveryOptions(
     {abortSignal, ...params}: RequestConfig & s.PutConfigurationSetDeliveryOptionsRequest,
-  ): Promise<s.PutConfigurationSetDeliveryOptionsResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       TlsPolicy: params["TlsPolicy"],
       SendingPoolName: params["SendingPoolName"],
@@ -610,15 +583,12 @@ export default class PinpointEmail {
       method: "PUT",
       requestUri: cmnP.encodePath`/v1/email/configuration-sets/${params["ConfigurationSetName"]}/delivery-options`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async putConfigurationSetReputationOptions(
     {abortSignal, ...params}: RequestConfig & s.PutConfigurationSetReputationOptionsRequest,
-  ): Promise<s.PutConfigurationSetReputationOptionsResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ReputationMetricsEnabled: params["ReputationMetricsEnabled"],
     };
@@ -628,15 +598,12 @@ export default class PinpointEmail {
       method: "PUT",
       requestUri: cmnP.encodePath`/v1/email/configuration-sets/${params["ConfigurationSetName"]}/reputation-options`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async putConfigurationSetSendingOptions(
     {abortSignal, ...params}: RequestConfig & s.PutConfigurationSetSendingOptionsRequest,
-  ): Promise<s.PutConfigurationSetSendingOptionsResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       SendingEnabled: params["SendingEnabled"],
     };
@@ -646,15 +613,12 @@ export default class PinpointEmail {
       method: "PUT",
       requestUri: cmnP.encodePath`/v1/email/configuration-sets/${params["ConfigurationSetName"]}/sending`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async putConfigurationSetTrackingOptions(
     {abortSignal, ...params}: RequestConfig & s.PutConfigurationSetTrackingOptionsRequest,
-  ): Promise<s.PutConfigurationSetTrackingOptionsResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       CustomRedirectDomain: params["CustomRedirectDomain"],
     };
@@ -664,15 +628,12 @@ export default class PinpointEmail {
       method: "PUT",
       requestUri: cmnP.encodePath`/v1/email/configuration-sets/${params["ConfigurationSetName"]}/tracking-options`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async putDedicatedIpInPool(
     {abortSignal, ...params}: RequestConfig & s.PutDedicatedIpInPoolRequest,
-  ): Promise<s.PutDedicatedIpInPoolResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       DestinationPoolName: params["DestinationPoolName"],
     };
@@ -682,15 +643,12 @@ export default class PinpointEmail {
       method: "PUT",
       requestUri: cmnP.encodePath`/v1/email/dedicated-ips/${params["Ip"]}/pool`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async putDedicatedIpWarmupAttributes(
     {abortSignal, ...params}: RequestConfig & s.PutDedicatedIpWarmupAttributesRequest,
-  ): Promise<s.PutDedicatedIpWarmupAttributesResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       WarmupPercentage: params["WarmupPercentage"],
     };
@@ -700,15 +658,12 @@ export default class PinpointEmail {
       method: "PUT",
       requestUri: cmnP.encodePath`/v1/email/dedicated-ips/${params["Ip"]}/warmup`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async putDeliverabilityDashboardOption(
     {abortSignal, ...params}: RequestConfig & s.PutDeliverabilityDashboardOptionRequest,
-  ): Promise<s.PutDeliverabilityDashboardOptionResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       DashboardEnabled: params["DashboardEnabled"],
       SubscribedDomains: params["SubscribedDomains"]?.map(x => fromDomainDeliverabilityTrackingOption(x)),
@@ -719,15 +674,12 @@ export default class PinpointEmail {
       method: "PUT",
       requestUri: "/v1/email/deliverability-dashboard",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async putEmailIdentityDkimAttributes(
     {abortSignal, ...params}: RequestConfig & s.PutEmailIdentityDkimAttributesRequest,
-  ): Promise<s.PutEmailIdentityDkimAttributesResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       SigningEnabled: params["SigningEnabled"],
     };
@@ -737,15 +689,12 @@ export default class PinpointEmail {
       method: "PUT",
       requestUri: cmnP.encodePath`/v1/email/identities/${params["EmailIdentity"]}/dkim`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async putEmailIdentityFeedbackAttributes(
     {abortSignal, ...params}: RequestConfig & s.PutEmailIdentityFeedbackAttributesRequest,
-  ): Promise<s.PutEmailIdentityFeedbackAttributesResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       EmailForwardingEnabled: params["EmailForwardingEnabled"],
     };
@@ -755,15 +704,12 @@ export default class PinpointEmail {
       method: "PUT",
       requestUri: cmnP.encodePath`/v1/email/identities/${params["EmailIdentity"]}/feedback`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async putEmailIdentityMailFromAttributes(
     {abortSignal, ...params}: RequestConfig & s.PutEmailIdentityMailFromAttributesRequest,
-  ): Promise<s.PutEmailIdentityMailFromAttributesResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       MailFromDomain: params["MailFromDomain"],
       BehaviorOnMxFailure: params["BehaviorOnMxFailure"],
@@ -774,10 +720,7 @@ export default class PinpointEmail {
       method: "PUT",
       requestUri: cmnP.encodePath`/v1/email/identities/${params["EmailIdentity"]}/mail-from`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async sendEmail(
@@ -807,7 +750,7 @@ export default class PinpointEmail {
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & s.TagResourceRequest,
-  ): Promise<s.TagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
@@ -817,15 +760,12 @@ export default class PinpointEmail {
       action: "TagResource",
       requestUri: "/v1/email/tags",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async untagResource(
     {abortSignal, ...params}: RequestConfig & s.UntagResourceRequest,
-  ): Promise<s.UntagResourceResponse> {
+  ): Promise<void> {
     const query = new URLSearchParams;
     query.set("ResourceArn", params["ResourceArn"]?.toString() ?? "");
     for (const item of params["TagKeys"]) {
@@ -837,15 +777,12 @@ export default class PinpointEmail {
       method: "DELETE",
       requestUri: "/v1/email/tags",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateConfigurationSetEventDestination(
     {abortSignal, ...params}: RequestConfig & s.UpdateConfigurationSetEventDestinationRequest,
-  ): Promise<s.UpdateConfigurationSetEventDestinationResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       EventDestination: fromEventDestinationDefinition(params["EventDestination"]),
     };
@@ -855,10 +792,7 @@ export default class PinpointEmail {
       method: "PUT",
       requestUri: cmnP.encodePath`/v1/email/configuration-sets/${params["ConfigurationSetName"]}/event-destinations/${params["EventDestinationName"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
 }

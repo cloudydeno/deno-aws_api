@@ -54,7 +54,7 @@ export default class ApplicationInsights {
 
   async createComponent(
     {abortSignal, ...params}: RequestConfig & s.CreateComponentRequest,
-  ): Promise<s.CreateComponentResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceGroupName: params["ResourceGroupName"],
       ComponentName: params["ComponentName"],
@@ -64,10 +64,7 @@ export default class ApplicationInsights {
       abortSignal, body,
       action: "CreateComponent",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async createLogPattern(
@@ -95,7 +92,7 @@ export default class ApplicationInsights {
 
   async deleteApplication(
     {abortSignal, ...params}: RequestConfig & s.DeleteApplicationRequest,
-  ): Promise<s.DeleteApplicationResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceGroupName: params["ResourceGroupName"],
     };
@@ -103,15 +100,12 @@ export default class ApplicationInsights {
       abortSignal, body,
       action: "DeleteApplication",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteComponent(
     {abortSignal, ...params}: RequestConfig & s.DeleteComponentRequest,
-  ): Promise<s.DeleteComponentResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceGroupName: params["ResourceGroupName"],
       ComponentName: params["ComponentName"],
@@ -120,15 +114,12 @@ export default class ApplicationInsights {
       abortSignal, body,
       action: "DeleteComponent",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteLogPattern(
     {abortSignal, ...params}: RequestConfig & s.DeleteLogPatternRequest,
-  ): Promise<s.DeleteLogPatternResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceGroupName: params["ResourceGroupName"],
       PatternSetName: params["PatternSetName"],
@@ -138,10 +129,7 @@ export default class ApplicationInsights {
       abortSignal, body,
       action: "DeleteLogPattern",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async describeApplication(
@@ -451,7 +439,7 @@ export default class ApplicationInsights {
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & s.TagResourceRequest,
-  ): Promise<s.TagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceARN: params["ResourceARN"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
@@ -460,15 +448,12 @@ export default class ApplicationInsights {
       abortSignal, body,
       action: "TagResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async untagResource(
     {abortSignal, ...params}: RequestConfig & s.UntagResourceRequest,
-  ): Promise<s.UntagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceARN: params["ResourceARN"],
       TagKeys: params["TagKeys"],
@@ -477,10 +462,7 @@ export default class ApplicationInsights {
       abortSignal, body,
       action: "UntagResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateApplication(
@@ -507,7 +489,7 @@ export default class ApplicationInsights {
 
   async updateComponent(
     {abortSignal, ...params}: RequestConfig & s.UpdateComponentRequest,
-  ): Promise<s.UpdateComponentResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceGroupName: params["ResourceGroupName"],
       ComponentName: params["ComponentName"],
@@ -518,15 +500,12 @@ export default class ApplicationInsights {
       abortSignal, body,
       action: "UpdateComponent",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateComponentConfiguration(
     {abortSignal, ...params}: RequestConfig & s.UpdateComponentConfigurationRequest,
-  ): Promise<s.UpdateComponentConfigurationResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceGroupName: params["ResourceGroupName"],
       ComponentName: params["ComponentName"],
@@ -538,10 +517,7 @@ export default class ApplicationInsights {
       abortSignal, body,
       action: "UpdateComponentConfiguration",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateLogPattern(

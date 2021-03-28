@@ -86,7 +86,7 @@ export default class Route53 {
 
   async changeTagsForResource(
     {abortSignal, ...params}: RequestConfig & s.ChangeTagsForResourceRequest,
-  ): Promise<s.ChangeTagsForResourceResponse> {
+  ): Promise<void> {
     const body = xmlP.stringify({
       name: "ChangeTagsForResourceRequest",
       attributes: {"xmlns":"https://route53.amazonaws.com/doc/2013-04-01/"},
@@ -99,8 +99,7 @@ export default class Route53 {
       action: "ChangeTagsForResource",
       requestUri: cmnP.encodePath`/2013-04-01/tags/${params["ResourceType"]}/${params["ResourceId"]}`,
     });
-    return {
-    };
+    await resp.text();
   }
 
   async createHealthCheck(
@@ -357,7 +356,7 @@ export default class Route53 {
 
   async deleteHealthCheck(
     {abortSignal, ...params}: RequestConfig & s.DeleteHealthCheckRequest,
-  ): Promise<s.DeleteHealthCheckResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -365,8 +364,7 @@ export default class Route53 {
       method: "DELETE",
       requestUri: cmnP.encodePath`/2013-04-01/healthcheck/${params["HealthCheckId"]}`,
     });
-    return {
-    };
+    await resp.text();
   }
 
   async deleteHostedZone(
@@ -403,7 +401,7 @@ export default class Route53 {
 
   async deleteQueryLoggingConfig(
     {abortSignal, ...params}: RequestConfig & s.DeleteQueryLoggingConfigRequest,
-  ): Promise<s.DeleteQueryLoggingConfigResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -411,13 +409,12 @@ export default class Route53 {
       method: "DELETE",
       requestUri: cmnP.encodePath`/2013-04-01/queryloggingconfig/${params["Id"]}`,
     });
-    return {
-    };
+    await resp.text();
   }
 
   async deleteReusableDelegationSet(
     {abortSignal, ...params}: RequestConfig & s.DeleteReusableDelegationSetRequest,
-  ): Promise<s.DeleteReusableDelegationSetResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -425,13 +422,12 @@ export default class Route53 {
       method: "DELETE",
       requestUri: cmnP.encodePath`/2013-04-01/delegationset/${params["Id"]}`,
     });
-    return {
-    };
+    await resp.text();
   }
 
   async deleteTrafficPolicy(
     {abortSignal, ...params}: RequestConfig & s.DeleteTrafficPolicyRequest,
-  ): Promise<s.DeleteTrafficPolicyResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -439,13 +435,12 @@ export default class Route53 {
       method: "DELETE",
       requestUri: cmnP.encodePath`/2013-04-01/trafficpolicy/${params["Id"]}/${params["Version"].toString()}`,
     });
-    return {
-    };
+    await resp.text();
   }
 
   async deleteTrafficPolicyInstance(
     {abortSignal, ...params}: RequestConfig & s.DeleteTrafficPolicyInstanceRequest,
-  ): Promise<s.DeleteTrafficPolicyInstanceResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -453,13 +448,12 @@ export default class Route53 {
       method: "DELETE",
       requestUri: cmnP.encodePath`/2013-04-01/trafficpolicyinstance/${params["Id"]}`,
     });
-    return {
-    };
+    await resp.text();
   }
 
   async deleteVPCAssociationAuthorization(
     {abortSignal, ...params}: RequestConfig & s.DeleteVPCAssociationAuthorizationRequest,
-  ): Promise<s.DeleteVPCAssociationAuthorizationResponse> {
+  ): Promise<void> {
     const body = xmlP.stringify({
       name: "DeleteVPCAssociationAuthorizationRequest",
       attributes: {"xmlns":"https://route53.amazonaws.com/doc/2013-04-01/"},
@@ -471,8 +465,7 @@ export default class Route53 {
       action: "DeleteVPCAssociationAuthorization",
       requestUri: cmnP.encodePath`/2013-04-01/hostedzone/${params["HostedZoneId"]}/deauthorizevpcassociation`,
     });
-    return {
-    };
+    await resp.text();
   }
 
   async disableHostedZoneDNSSEC(
@@ -560,11 +553,11 @@ export default class Route53 {
   }
 
   async getCheckerIpRanges(
-    {abortSignal, ...params}: RequestConfig & s.GetCheckerIpRangesRequest = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.GetCheckerIpRangesResponse> {
-
+    const body = ''; // TODO: anything more appropriate when no input?
     const resp = await this.#client.performRequest({
-      abortSignal,
+      abortSignal, body,
       action: "GetCheckerIpRanges",
       method: "GET",
       requestUri: "/2013-04-01/checkeripranges",
@@ -628,11 +621,11 @@ export default class Route53 {
   }
 
   async getHealthCheckCount(
-    {abortSignal, ...params}: RequestConfig & s.GetHealthCheckCountRequest = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.GetHealthCheckCountResponse> {
-
+    const body = ''; // TODO: anything more appropriate when no input?
     const resp = await this.#client.performRequest({
-      abortSignal,
+      abortSignal, body,
       action: "GetHealthCheckCount",
       method: "GET",
       requestUri: "/2013-04-01/healthcheckcount",
@@ -694,11 +687,11 @@ export default class Route53 {
   }
 
   async getHostedZoneCount(
-    {abortSignal, ...params}: RequestConfig & s.GetHostedZoneCountRequest = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.GetHostedZoneCountResponse> {
-
+    const body = ''; // TODO: anything more appropriate when no input?
     const resp = await this.#client.performRequest({
-      abortSignal,
+      abortSignal, body,
       action: "GetHostedZoneCount",
       method: "GET",
       requestUri: "/2013-04-01/hostedzonecount",
@@ -808,11 +801,11 @@ export default class Route53 {
   }
 
   async getTrafficPolicyInstanceCount(
-    {abortSignal, ...params}: RequestConfig & s.GetTrafficPolicyInstanceCountRequest = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.GetTrafficPolicyInstanceCountResponse> {
-
+    const body = ''; // TODO: anything more appropriate when no input?
     const resp = await this.#client.performRequest({
-      abortSignal,
+      abortSignal, body,
       action: "GetTrafficPolicyInstanceCount",
       method: "GET",
       requestUri: "/2013-04-01/trafficpolicyinstancecount",

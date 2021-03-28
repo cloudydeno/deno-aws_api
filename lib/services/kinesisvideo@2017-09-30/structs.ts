@@ -146,14 +146,6 @@ export interface CreateStreamOutput {
 }
 
 // refs: 1 - tags: named, output
-export interface DeleteSignalingChannelOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteStreamOutput {
-}
-
-// refs: 1 - tags: named, output
 export interface DescribeSignalingChannelOutput {
   ChannelInfo?: ChannelInfo | null;
 }
@@ -195,34 +187,6 @@ export interface ListTagsForResourceOutput {
 export interface ListTagsForStreamOutput {
   NextToken?: string | null;
   Tags?: { [key: string]: string | null | undefined } | null;
-}
-
-// refs: 1 - tags: named, output
-export interface TagResourceOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface TagStreamOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface UntagResourceOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface UntagStreamOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateDataRetentionOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateSignalingChannelOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateStreamOutput {
 }
 
 // refs: 3 - tags: input, named, enum, output

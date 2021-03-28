@@ -56,6 +56,7 @@ export default class ES {
       action: "AddTags",
       requestUri: "/2015-01-01/tags",
     });
+    await resp.text();
   }
 
   async associatePackage(
@@ -194,7 +195,7 @@ export default class ES {
   }
 
   async deleteElasticsearchServiceRole(
-    {abortSignal, ...params}: RequestConfig = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<void> {
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -202,6 +203,7 @@ export default class ES {
       method: "DELETE",
       requestUri: "/2015-01-01/es/role",
     });
+    await resp.text();
   }
 
   async deleteInboundCrossClusterSearchConnection(
@@ -564,7 +566,7 @@ export default class ES {
   }
 
   async listDomainNames(
-    {abortSignal, ...params}: RequestConfig = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.ListDomainNamesResponse> {
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -736,6 +738,7 @@ export default class ES {
       action: "RemoveTags",
       requestUri: "/2015-01-01/tags-removal",
     });
+    await resp.text();
   }
 
   async startElasticsearchServiceSoftwareUpdate(

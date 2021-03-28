@@ -476,18 +476,6 @@ export interface CreateEntityRecognizerResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface DeleteDocumentClassifierResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteEndpointResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteEntityRecognizerResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface DescribeDocumentClassificationJobResponse {
   DocumentClassificationJobProperties?: DocumentClassificationJobProperties | null;
 }
@@ -727,26 +715,6 @@ export interface StopPiiEntitiesDetectionJobResponse {
 export interface StopSentimentDetectionJobResponse {
   JobId?: string | null;
   JobStatus?: JobStatus | null;
-}
-
-// refs: 1 - tags: named, output
-export interface StopTrainingDocumentClassifierResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface StopTrainingEntityRecognizerResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface TagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UntagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateEndpointResponse {
 }
 
 // refs: 29 - tags: input, named, enum, output

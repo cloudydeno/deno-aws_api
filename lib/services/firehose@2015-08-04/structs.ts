@@ -98,10 +98,6 @@ export interface CreateDeliveryStreamOutput {
 }
 
 // refs: 1 - tags: named, output
-export interface DeleteDeliveryStreamOutput {
-}
-
-// refs: 1 - tags: named, output
 export interface DescribeDeliveryStreamOutput {
   DeliveryStreamDescription: DeliveryStreamDescription;
 }
@@ -129,26 +125,6 @@ export interface PutRecordBatchOutput {
   FailedPutCount: number;
   Encrypted?: boolean | null;
   RequestResponses: PutRecordBatchResponseEntry[];
-}
-
-// refs: 1 - tags: named, output
-export interface StartDeliveryStreamEncryptionOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface StopDeliveryStreamEncryptionOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface TagDeliveryStreamOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface UntagDeliveryStreamOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateDestinationOutput {
 }
 
 // refs: 3 - tags: input, named, enum, output

@@ -396,6 +396,7 @@ export default class LexModelsV2 {
       requestUri: cmnP.encodePath`/bots/${params["botId"]}/botversions/${params["botVersion"]}/botlocales/${params["localeId"]}/intents/${params["intentId"]}/`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deleteSlot(
@@ -409,6 +410,7 @@ export default class LexModelsV2 {
       requestUri: cmnP.encodePath`/bots/${params["botId"]}/botversions/${params["botVersion"]}/botlocales/${params["localeId"]}/intents/${params["intentId"]}/slots/${params["slotId"]}/`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deleteSlotType(
@@ -423,6 +425,7 @@ export default class LexModelsV2 {
       requestUri: cmnP.encodePath`/bots/${params["botId"]}/botversions/${params["botVersion"]}/botlocales/${params["localeId"]}/slottypes/${params["slotTypeId"]}/`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async describeBot(
@@ -886,7 +889,7 @@ export default class LexModelsV2 {
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & s.TagResourceRequest,
-  ): Promise<s.TagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       tags: params["tags"],
     };
@@ -896,15 +899,12 @@ export default class LexModelsV2 {
       requestUri: cmnP.encodePath`/tags/${params["resourceARN"]}`,
       responseCode: 200,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async untagResource(
     {abortSignal, ...params}: RequestConfig & s.UntagResourceRequest,
-  ): Promise<s.UntagResourceResponse> {
+  ): Promise<void> {
     const query = new URLSearchParams;
     for (const item of params["tagKeys"]) {
       query.append("tagKeys", item?.toString() ?? "");
@@ -916,10 +916,7 @@ export default class LexModelsV2 {
       requestUri: cmnP.encodePath`/tags/${params["resourceARN"]}`,
       responseCode: 200,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateBot(

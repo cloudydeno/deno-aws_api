@@ -180,10 +180,6 @@ export interface GetByteMatchSetRequest {
 }
 
 // refs: 1 - tags: named, input
-export interface GetChangeTokenRequest {
-}
-
-// refs: 1 - tags: named, input
 export interface GetChangeTokenStatusRequest {
   ChangeToken: string;
 }
@@ -567,14 +563,6 @@ export interface DeleteIPSetResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface DeleteLoggingConfigurationResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeletePermissionPolicyResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface DeleteRateBasedRuleResponse {
   ChangeToken?: string | null;
 }
@@ -811,18 +799,6 @@ export interface ListXssMatchSetsResponse {
 // refs: 1 - tags: named, output
 export interface PutLoggingConfigurationResponse {
   LoggingConfiguration?: LoggingConfiguration | null;
-}
-
-// refs: 1 - tags: named, output
-export interface PutPermissionPolicyResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface TagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UntagResourceResponse {
 }
 
 // refs: 1 - tags: named, output

@@ -103,10 +103,6 @@ export interface CreateStreamingURLRequest {
 }
 
 // refs: 1 - tags: named, input
-export interface CreateUsageReportSubscriptionRequest {
-}
-
-// refs: 1 - tags: named, input
 export interface CreateUserRequest {
   UserName: string;
   MessageAction?: MessageAction | null;
@@ -144,10 +140,6 @@ export interface DeleteImagePermissionsRequest {
 // refs: 1 - tags: named, input
 export interface DeleteStackRequest {
   Name: string;
-}
-
-// refs: 1 - tags: named, input
-export interface DeleteUsageReportSubscriptionRequest {
 }
 
 // refs: 1 - tags: named, input
@@ -356,10 +348,6 @@ export interface UpdateStackRequest {
 }
 
 // refs: 1 - tags: named, output
-export interface AssociateFleetResult {
-}
-
-// refs: 1 - tags: named, output
 export interface BatchAssociateUserStackResult {
   errors?: UserStackAssociationError[] | null;
 }
@@ -413,18 +401,6 @@ export interface CreateUsageReportSubscriptionResult {
 }
 
 // refs: 1 - tags: named, output
-export interface CreateUserResult {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteDirectoryConfigResult {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteFleetResult {
-}
-
-// refs: 1 - tags: named, output
 export interface DeleteImageResult {
   Image?: Image | null;
 }
@@ -432,22 +408,6 @@ export interface DeleteImageResult {
 // refs: 1 - tags: named, output
 export interface DeleteImageBuilderResult {
   ImageBuilder?: ImageBuilder | null;
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteImagePermissionsResult {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteStackResult {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteUsageReportSubscriptionResult {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteUserResult {
 }
 
 // refs: 1 - tags: named, output
@@ -512,22 +472,6 @@ export interface DescribeUsersResult {
 }
 
 // refs: 1 - tags: named, output
-export interface DisableUserResult {
-}
-
-// refs: 1 - tags: named, output
-export interface DisassociateFleetResult {
-}
-
-// refs: 1 - tags: named, output
-export interface EnableUserResult {
-}
-
-// refs: 1 - tags: named, output
-export interface ExpireSessionResult {
-}
-
-// refs: 1 - tags: named, output
 export interface ListAssociatedFleetsResult {
   Names?: string[] | null;
   NextToken?: string | null;
@@ -545,29 +489,13 @@ export interface ListTagsForResourceResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface StartFleetResult {
-}
-
-// refs: 1 - tags: named, output
 export interface StartImageBuilderResult {
   ImageBuilder?: ImageBuilder | null;
 }
 
 // refs: 1 - tags: named, output
-export interface StopFleetResult {
-}
-
-// refs: 1 - tags: named, output
 export interface StopImageBuilderResult {
   ImageBuilder?: ImageBuilder | null;
-}
-
-// refs: 1 - tags: named, output
-export interface TagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UntagResourceResponse {
 }
 
 // refs: 1 - tags: named, output
@@ -578,10 +506,6 @@ export interface UpdateDirectoryConfigResult {
 // refs: 1 - tags: named, output
 export interface UpdateFleetResult {
   Fleet?: Fleet | null;
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateImagePermissionsResult {
 }
 
 // refs: 1 - tags: named, output

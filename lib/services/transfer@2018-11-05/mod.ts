@@ -96,6 +96,7 @@ export default class Transfer {
       abortSignal, body,
       action: "DeleteServer",
     });
+    await resp.text();
   }
 
   async deleteSshPublicKey(
@@ -110,6 +111,7 @@ export default class Transfer {
       abortSignal, body,
       action: "DeleteSshPublicKey",
     });
+    await resp.text();
   }
 
   async deleteUser(
@@ -123,6 +125,7 @@ export default class Transfer {
       abortSignal, body,
       action: "DeleteUser",
     });
+    await resp.text();
   }
 
   async describeSecurityPolicy(
@@ -300,6 +303,7 @@ export default class Transfer {
       abortSignal, body,
       action: "StartServer",
     });
+    await resp.text();
   }
 
   async stopServer(
@@ -312,6 +316,7 @@ export default class Transfer {
       abortSignal, body,
       action: "StopServer",
     });
+    await resp.text();
   }
 
   async tagResource(
@@ -325,6 +330,7 @@ export default class Transfer {
       abortSignal, body,
       action: "TagResource",
     });
+    await resp.text();
   }
 
   async testIdentityProvider(
@@ -364,6 +370,7 @@ export default class Transfer {
       abortSignal, body,
       action: "UntagResource",
     });
+    await resp.text();
   }
 
   async updateServer(

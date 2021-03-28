@@ -34,10 +34,6 @@ export interface DeregisterStreamConsumerInput {
 }
 
 // refs: 1 - tags: named, input
-export interface DescribeLimitsInput {
-}
-
-// refs: 1 - tags: named, input
 export interface DescribeStreamInput {
   StreamName: string;
   Limit?: number | null;

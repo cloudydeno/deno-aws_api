@@ -95,10 +95,6 @@ export interface CancelJobExecutionRequest {
 }
 
 // refs: 1 - tags: named, input
-export interface ClearDefaultAuthorizerRequest {
-}
-
-// refs: 1 - tags: named, input
 export interface ConfirmTopicRuleDestinationRequest {
   confirmationToken: string;
 }
@@ -437,10 +433,6 @@ export interface DeleteProvisioningTemplateVersionRequest {
 }
 
 // refs: 1 - tags: named, input
-export interface DeleteRegistrationCodeRequest {
-}
-
-// refs: 1 - tags: named, input
 export interface DeleteRoleAliasRequest {
   roleAlias: string;
 }
@@ -501,10 +493,6 @@ export interface DeprecateThingTypeRequest {
 }
 
 // refs: 1 - tags: named, input
-export interface DescribeAccountAuditConfigurationRequest {
-}
-
-// refs: 1 - tags: named, input
 export interface DescribeAuditFindingRequest {
   findingId: string;
 }
@@ -551,10 +539,6 @@ export interface DescribeCustomMetricRequest {
 }
 
 // refs: 1 - tags: named, input
-export interface DescribeDefaultAuthorizerRequest {
-}
-
-// refs: 1 - tags: named, input
 export interface DescribeDetectMitigationActionsTaskRequest {
   taskId: string;
 }
@@ -572,10 +556,6 @@ export interface DescribeDomainConfigurationRequest {
 // refs: 1 - tags: named, input
 export interface DescribeEndpointRequest {
   endpointType?: string | null;
-}
-
-// refs: 1 - tags: named, input
-export interface DescribeEventConfigurationsRequest {
 }
 
 // refs: 1 - tags: named, input
@@ -708,16 +688,8 @@ export interface GetEffectivePoliciesRequest {
 }
 
 // refs: 1 - tags: named, input
-export interface GetIndexingConfigurationRequest {
-}
-
-// refs: 1 - tags: named, input
 export interface GetJobDocumentRequest {
   jobId: string;
-}
-
-// refs: 1 - tags: named, input
-export interface GetLoggingOptionsRequest {
 }
 
 // refs: 1 - tags: named, input
@@ -746,10 +718,6 @@ export interface GetPolicyVersionRequest {
 }
 
 // refs: 1 - tags: named, input
-export interface GetRegistrationCodeRequest {
-}
-
-// refs: 1 - tags: named, input
 export interface GetStatisticsRequest {
   indexName?: string | null;
   queryString: string;
@@ -765,10 +733,6 @@ export interface GetTopicRuleRequest {
 // refs: 1 - tags: named, input
 export interface GetTopicRuleDestinationRequest {
   arn: string;
-}
-
-// refs: 1 - tags: named, input
-export interface GetV2LoggingOptionsRequest {
 }
 
 // refs: 1 - tags: named, input
@@ -1539,14 +1503,6 @@ export interface ValidateSecurityProfileBehaviorsRequest {
 }
 
 // refs: 1 - tags: named, output
-export interface AddThingToBillingGroupResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface AddThingToThingGroupResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface AssociateTargetsWithJobResponse {
   jobArn?: string | null;
   jobId?: string | null;
@@ -1554,42 +1510,10 @@ export interface AssociateTargetsWithJobResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface AttachSecurityProfileResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface AttachThingPrincipalResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface CancelAuditMitigationActionsTaskResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface CancelAuditTaskResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface CancelDetectMitigationActionsTaskResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface CancelJobResponse {
   jobArn?: string | null;
   jobId?: string | null;
   description?: string | null;
-}
-
-// refs: 1 - tags: named, output
-export interface ClearDefaultAuthorizerResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface ConfirmTopicRuleDestinationResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface CreateAuditSuppressionResponse {
 }
 
 // refs: 1 - tags: named, output
@@ -1758,98 +1682,6 @@ export interface CreateThingTypeResponse {
 // refs: 1 - tags: named, output
 export interface CreateTopicRuleDestinationResponse {
   topicRuleDestination?: TopicRuleDestination | null;
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteAccountAuditConfigurationResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteAuditSuppressionResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteAuthorizerResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteBillingGroupResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteCACertificateResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteCustomMetricResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteDimensionResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteDomainConfigurationResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteDynamicThingGroupResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteMitigationActionResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteOTAUpdateResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteProvisioningTemplateResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteProvisioningTemplateVersionResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteRegistrationCodeResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteRoleAliasResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteScheduledAuditResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteSecurityProfileResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteStreamResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteThingResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteThingGroupResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteThingTypeResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteTopicRuleDestinationResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeprecateThingTypeResponse {
 }
 
 // refs: 1 - tags: named, output
@@ -2110,14 +1942,6 @@ export interface DescribeThingTypeResponse {
   thingTypeArn?: string | null;
   thingTypeProperties?: ThingTypeProperties | null;
   thingTypeMetadata?: ThingTypeMetadata | null;
-}
-
-// refs: 1 - tags: named, output
-export interface DetachSecurityProfileResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DetachThingPrincipalResponse {
 }
 
 // refs: 1 - tags: named, output
@@ -2551,14 +2375,6 @@ export interface RegisterThingResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface RemoveThingFromBillingGroupResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface RemoveThingFromThingGroupResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface SearchIndexResponse {
   nextToken?: string | null;
   things?: ThingDocument[] | null;
@@ -2592,14 +2408,6 @@ export interface StartThingRegistrationTaskResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface StopThingRegistrationTaskResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface TagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface TestAuthorizationResponse {
   authResults?: AuthResult[] | null;
 }
@@ -2616,18 +2424,6 @@ export interface TestInvokeAuthorizerResponse {
 // refs: 1 - tags: named, output
 export interface TransferCertificateResponse {
   transferredCertificateArn?: string | null;
-}
-
-// refs: 1 - tags: named, output
-export interface UntagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateAccountAuditConfigurationResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateAuditSuppressionResponse {
 }
 
 // refs: 1 - tags: named, output
@@ -2673,21 +2469,9 @@ export interface UpdateDynamicThingGroupResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface UpdateEventConfigurationsResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateIndexingConfigurationResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface UpdateMitigationActionResponse {
   actionArn?: string | null;
   actionId?: string | null;
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateProvisioningTemplateResponse {
 }
 
 // refs: 1 - tags: named, output
@@ -2724,20 +2508,8 @@ export interface UpdateStreamResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface UpdateThingResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface UpdateThingGroupResponse {
   version?: number | null;
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateThingGroupsForThingResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateTopicRuleDestinationResponse {
 }
 
 // refs: 1 - tags: named, output

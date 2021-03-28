@@ -167,7 +167,7 @@ export default class MediaPackage {
 
   async deleteChannel(
     {abortSignal, ...params}: RequestConfig & s.DeleteChannelRequest,
-  ): Promise<s.DeleteChannelResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -176,15 +176,12 @@ export default class MediaPackage {
       requestUri: cmnP.encodePath`/channels/${params["Id"]}`,
       responseCode: 202,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteOriginEndpoint(
     {abortSignal, ...params}: RequestConfig & s.DeleteOriginEndpointRequest,
-  ): Promise<s.DeleteOriginEndpointResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -193,10 +190,7 @@ export default class MediaPackage {
       requestUri: cmnP.encodePath`/origin_endpoints/${params["Id"]}`,
       responseCode: 202,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async describeChannel(
@@ -435,6 +429,7 @@ export default class MediaPackage {
       requestUri: cmnP.encodePath`/tags/${params["ResourceArn"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async untagResource(
@@ -451,6 +446,7 @@ export default class MediaPackage {
       requestUri: cmnP.encodePath`/tags/${params["ResourceArn"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async updateChannel(

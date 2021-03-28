@@ -74,7 +74,7 @@ export default class RoboMaker {
 
   async cancelDeploymentJob(
     {abortSignal, ...params}: RequestConfig & s.CancelDeploymentJobRequest,
-  ): Promise<s.CancelDeploymentJobResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       job: params["job"],
     };
@@ -83,15 +83,12 @@ export default class RoboMaker {
       action: "CancelDeploymentJob",
       requestUri: "/cancelDeploymentJob",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async cancelSimulationJob(
     {abortSignal, ...params}: RequestConfig & s.CancelSimulationJobRequest,
-  ): Promise<s.CancelSimulationJobResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       job: params["job"],
     };
@@ -100,15 +97,12 @@ export default class RoboMaker {
       action: "CancelSimulationJob",
       requestUri: "/cancelSimulationJob",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async cancelSimulationJobBatch(
     {abortSignal, ...params}: RequestConfig & s.CancelSimulationJobBatchRequest,
-  ): Promise<s.CancelSimulationJobBatchResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       batch: params["batch"],
     };
@@ -117,15 +111,12 @@ export default class RoboMaker {
       action: "CancelSimulationJobBatch",
       requestUri: "/cancelSimulationJobBatch",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async cancelWorldExportJob(
     {abortSignal, ...params}: RequestConfig & s.CancelWorldExportJobRequest,
-  ): Promise<s.CancelWorldExportJobResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       job: params["job"],
     };
@@ -134,15 +125,12 @@ export default class RoboMaker {
       action: "CancelWorldExportJob",
       requestUri: "/cancelWorldExportJob",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async cancelWorldGenerationJob(
     {abortSignal, ...params}: RequestConfig & s.CancelWorldGenerationJobRequest,
-  ): Promise<s.CancelWorldGenerationJobResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       job: params["job"],
     };
@@ -151,10 +139,7 @@ export default class RoboMaker {
       action: "CancelWorldGenerationJob",
       requestUri: "/cancelWorldGenerationJob",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async createDeploymentJob(
@@ -491,7 +476,7 @@ export default class RoboMaker {
 
   async deleteFleet(
     {abortSignal, ...params}: RequestConfig & s.DeleteFleetRequest,
-  ): Promise<s.DeleteFleetResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       fleet: params["fleet"],
     };
@@ -500,15 +485,12 @@ export default class RoboMaker {
       action: "DeleteFleet",
       requestUri: "/deleteFleet",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteRobot(
     {abortSignal, ...params}: RequestConfig & s.DeleteRobotRequest,
-  ): Promise<s.DeleteRobotResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       robot: params["robot"],
     };
@@ -517,15 +499,12 @@ export default class RoboMaker {
       action: "DeleteRobot",
       requestUri: "/deleteRobot",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteRobotApplication(
     {abortSignal, ...params}: RequestConfig & s.DeleteRobotApplicationRequest,
-  ): Promise<s.DeleteRobotApplicationResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       application: params["application"],
       applicationVersion: params["applicationVersion"],
@@ -535,15 +514,12 @@ export default class RoboMaker {
       action: "DeleteRobotApplication",
       requestUri: "/deleteRobotApplication",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteSimulationApplication(
     {abortSignal, ...params}: RequestConfig & s.DeleteSimulationApplicationRequest,
-  ): Promise<s.DeleteSimulationApplicationResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       application: params["application"],
       applicationVersion: params["applicationVersion"],
@@ -553,15 +529,12 @@ export default class RoboMaker {
       action: "DeleteSimulationApplication",
       requestUri: "/deleteSimulationApplication",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteWorldTemplate(
     {abortSignal, ...params}: RequestConfig & s.DeleteWorldTemplateRequest,
-  ): Promise<s.DeleteWorldTemplateResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       template: params["template"],
     };
@@ -570,10 +543,7 @@ export default class RoboMaker {
       action: "DeleteWorldTemplate",
       requestUri: "/deleteWorldTemplate",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deregisterRobot(
@@ -1215,7 +1185,7 @@ export default class RoboMaker {
 
   async restartSimulationJob(
     {abortSignal, ...params}: RequestConfig & s.RestartSimulationJobRequest,
-  ): Promise<s.RestartSimulationJobResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       job: params["job"],
     };
@@ -1224,10 +1194,7 @@ export default class RoboMaker {
       action: "RestartSimulationJob",
       requestUri: "/restartSimulationJob",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async startSimulationJobBatch(
@@ -1291,7 +1258,7 @@ export default class RoboMaker {
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & s.TagResourceRequest,
-  ): Promise<s.TagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       tags: params["tags"],
     };
@@ -1300,15 +1267,12 @@ export default class RoboMaker {
       action: "TagResource",
       requestUri: cmnP.encodePath`/tags/${params["resourceArn"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async untagResource(
     {abortSignal, ...params}: RequestConfig & s.UntagResourceRequest,
-  ): Promise<s.UntagResourceResponse> {
+  ): Promise<void> {
     const query = new URLSearchParams;
     for (const item of params["tagKeys"]) {
       query.append("tagKeys", item?.toString() ?? "");
@@ -1319,10 +1283,7 @@ export default class RoboMaker {
       method: "DELETE",
       requestUri: cmnP.encodePath`/tags/${params["resourceArn"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateRobotApplication(

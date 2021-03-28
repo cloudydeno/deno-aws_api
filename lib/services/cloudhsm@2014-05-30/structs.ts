@@ -71,10 +71,6 @@ export interface GetConfigRequest {
 }
 
 // refs: 1 - tags: named, input
-export interface ListAvailableZonesRequest {
-}
-
-// refs: 1 - tags: named, input
 export interface ListHapgsRequest {
   NextToken?: string | null;
 }

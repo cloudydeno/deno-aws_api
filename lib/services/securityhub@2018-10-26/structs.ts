@@ -94,10 +94,6 @@ export interface DescribeHubRequest {
 }
 
 // refs: 1 - tags: named, input
-export interface DescribeOrganizationConfigurationRequest {
-}
-
-// refs: 1 - tags: named, input
 export interface DescribeProductsRequest {
   NextToken?: string | null;
   MaxResults?: number | null;
@@ -125,14 +121,6 @@ export interface DisableImportFindingsForProductRequest {
 // refs: 1 - tags: named, input
 export interface DisableOrganizationAdminAccountRequest {
   AdminAccountId: string;
-}
-
-// refs: 1 - tags: named, input
-export interface DisableSecurityHubRequest {
-}
-
-// refs: 1 - tags: named, input
-export interface DisassociateFromMasterAccountRequest {
 }
 
 // refs: 1 - tags: named, input
@@ -181,14 +169,6 @@ export interface GetInsightsRequest {
   InsightArns?: string[] | null;
   NextToken?: string | null;
   MaxResults?: number | null;
-}
-
-// refs: 1 - tags: named, input
-export interface GetInvitationsCountRequest {
-}
-
-// refs: 1 - tags: named, input
-export interface GetMasterAccountRequest {
 }
 
 // refs: 1 - tags: named, input
@@ -280,10 +260,6 @@ export interface UpdateStandardsControlRequest {
   StandardsControlArn: string;
   ControlStatus?: ControlStatus | null;
   DisabledReason?: string | null;
-}
-
-// refs: 1 - tags: named, output
-export interface AcceptInvitationResponse {
 }
 
 // refs: 1 - tags: named, output
@@ -387,36 +363,8 @@ export interface DescribeStandardsControlsResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface DisableImportFindingsForProductResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DisableOrganizationAdminAccountResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DisableSecurityHubResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DisassociateFromMasterAccountResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DisassociateMembersResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface EnableImportFindingsForProductResponse {
   ProductSubscriptionArn?: string | null;
-}
-
-// refs: 1 - tags: named, output
-export interface EnableOrganizationAdminAccountResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface EnableSecurityHubResponse {
 }
 
 // refs: 1 - tags: named, output
@@ -490,38 +438,6 @@ export interface ListOrganizationAdminAccountsResponse {
 // refs: 1 - tags: named, output
 export interface ListTagsForResourceResponse {
   Tags?: { [key: string]: string | null | undefined } | null;
-}
-
-// refs: 1 - tags: named, output
-export interface TagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UntagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateActionTargetResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateFindingsResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateInsightResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateOrganizationConfigurationResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateSecurityHubConfigurationResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateStandardsControlResponse {
 }
 
 // refs: 1 - tags: input, named, interface

@@ -51,7 +51,7 @@ export default class MediaStore {
 
   async deleteContainer(
     {abortSignal, ...params}: RequestConfig & s.DeleteContainerInput,
-  ): Promise<s.DeleteContainerOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ContainerName: params["ContainerName"],
     };
@@ -59,15 +59,12 @@ export default class MediaStore {
       abortSignal, body,
       action: "DeleteContainer",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteContainerPolicy(
     {abortSignal, ...params}: RequestConfig & s.DeleteContainerPolicyInput,
-  ): Promise<s.DeleteContainerPolicyOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ContainerName: params["ContainerName"],
     };
@@ -75,15 +72,12 @@ export default class MediaStore {
       abortSignal, body,
       action: "DeleteContainerPolicy",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteCorsPolicy(
     {abortSignal, ...params}: RequestConfig & s.DeleteCorsPolicyInput,
-  ): Promise<s.DeleteCorsPolicyOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ContainerName: params["ContainerName"],
     };
@@ -91,15 +85,12 @@ export default class MediaStore {
       abortSignal, body,
       action: "DeleteCorsPolicy",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteLifecyclePolicy(
     {abortSignal, ...params}: RequestConfig & s.DeleteLifecyclePolicyInput,
-  ): Promise<s.DeleteLifecyclePolicyOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ContainerName: params["ContainerName"],
     };
@@ -107,15 +98,12 @@ export default class MediaStore {
       abortSignal, body,
       action: "DeleteLifecyclePolicy",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteMetricPolicy(
     {abortSignal, ...params}: RequestConfig & s.DeleteMetricPolicyInput,
-  ): Promise<s.DeleteMetricPolicyOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ContainerName: params["ContainerName"],
     };
@@ -123,10 +111,7 @@ export default class MediaStore {
       abortSignal, body,
       action: "DeleteMetricPolicy",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async describeContainer(
@@ -260,7 +245,7 @@ export default class MediaStore {
 
   async putContainerPolicy(
     {abortSignal, ...params}: RequestConfig & s.PutContainerPolicyInput,
-  ): Promise<s.PutContainerPolicyOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ContainerName: params["ContainerName"],
       Policy: params["Policy"],
@@ -269,15 +254,12 @@ export default class MediaStore {
       abortSignal, body,
       action: "PutContainerPolicy",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async putCorsPolicy(
     {abortSignal, ...params}: RequestConfig & s.PutCorsPolicyInput,
-  ): Promise<s.PutCorsPolicyOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ContainerName: params["ContainerName"],
       CorsPolicy: params["CorsPolicy"]?.map(x => fromCorsRule(x)),
@@ -286,15 +268,12 @@ export default class MediaStore {
       abortSignal, body,
       action: "PutCorsPolicy",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async putLifecyclePolicy(
     {abortSignal, ...params}: RequestConfig & s.PutLifecyclePolicyInput,
-  ): Promise<s.PutLifecyclePolicyOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ContainerName: params["ContainerName"],
       LifecyclePolicy: params["LifecyclePolicy"],
@@ -303,15 +282,12 @@ export default class MediaStore {
       abortSignal, body,
       action: "PutLifecyclePolicy",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async putMetricPolicy(
     {abortSignal, ...params}: RequestConfig & s.PutMetricPolicyInput,
-  ): Promise<s.PutMetricPolicyOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ContainerName: params["ContainerName"],
       MetricPolicy: fromMetricPolicy(params["MetricPolicy"]),
@@ -320,15 +296,12 @@ export default class MediaStore {
       abortSignal, body,
       action: "PutMetricPolicy",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async startAccessLogging(
     {abortSignal, ...params}: RequestConfig & s.StartAccessLoggingInput,
-  ): Promise<s.StartAccessLoggingOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ContainerName: params["ContainerName"],
     };
@@ -336,15 +309,12 @@ export default class MediaStore {
       abortSignal, body,
       action: "StartAccessLogging",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async stopAccessLogging(
     {abortSignal, ...params}: RequestConfig & s.StopAccessLoggingInput,
-  ): Promise<s.StopAccessLoggingOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ContainerName: params["ContainerName"],
     };
@@ -352,15 +322,12 @@ export default class MediaStore {
       abortSignal, body,
       action: "StopAccessLogging",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & s.TagResourceInput,
-  ): Promise<s.TagResourceOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       Resource: params["Resource"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
@@ -369,15 +336,12 @@ export default class MediaStore {
       abortSignal, body,
       action: "TagResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async untagResource(
     {abortSignal, ...params}: RequestConfig & s.UntagResourceInput,
-  ): Promise<s.UntagResourceOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       Resource: params["Resource"],
       TagKeys: params["TagKeys"],
@@ -386,10 +350,7 @@ export default class MediaStore {
       abortSignal, body,
       action: "UntagResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
 }

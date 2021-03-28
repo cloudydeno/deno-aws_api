@@ -16,10 +16,6 @@ export interface GetRawMessageContentResponse {
   messageContent: Uint8Array | string;
 }
 
-// refs: 1 - tags: named, output
-export interface PutRawMessageContentResponse {
-}
-
 // refs: 1 - tags: input, named, interface
 export interface RawMessageContent {
   s3Reference: S3Reference;

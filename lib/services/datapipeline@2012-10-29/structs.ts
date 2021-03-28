@@ -133,20 +133,8 @@ export interface ValidatePipelineDefinitionInput {
 }
 
 // refs: 1 - tags: named, output
-export interface ActivatePipelineOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface AddTagsOutput {
-}
-
-// refs: 1 - tags: named, output
 export interface CreatePipelineOutput {
   pipelineId: string;
-}
-
-// refs: 1 - tags: named, output
-export interface DeactivatePipelineOutput {
 }
 
 // refs: 1 - tags: named, output
@@ -200,10 +188,6 @@ export interface QueryObjectsOutput {
 }
 
 // refs: 1 - tags: named, output
-export interface RemoveTagsOutput {
-}
-
-// refs: 1 - tags: named, output
 export interface ReportTaskProgressOutput {
   canceled: boolean;
 }
@@ -211,10 +195,6 @@ export interface ReportTaskProgressOutput {
 // refs: 1 - tags: named, output
 export interface ReportTaskRunnerHeartbeatOutput {
   terminate: boolean;
-}
-
-// refs: 1 - tags: named, output
-export interface SetTaskStatusOutput {
 }
 
 // refs: 1 - tags: named, output

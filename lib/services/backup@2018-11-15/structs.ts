@@ -72,10 +72,6 @@ export interface DescribeCopyJobInput {
 }
 
 // refs: 1 - tags: named, input
-export interface DescribeGlobalSettingsInput {
-}
-
-// refs: 1 - tags: named, input
 export interface DescribeProtectedResourceInput {
   ResourceArn: string;
 }
@@ -84,10 +80,6 @@ export interface DescribeProtectedResourceInput {
 export interface DescribeRecoveryPointInput {
   BackupVaultName: string;
   RecoveryPointArn: string;
-}
-
-// refs: 1 - tags: named, input
-export interface DescribeRegionSettingsInput {
 }
 
 // refs: 1 - tags: named, input

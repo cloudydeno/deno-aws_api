@@ -31,7 +31,7 @@ export default class WorkLink {
 
   async associateDomain(
     {abortSignal, ...params}: RequestConfig & s.AssociateDomainRequest,
-  ): Promise<s.AssociateDomainResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       FleetArn: params["FleetArn"],
       DomainName: params["DomainName"],
@@ -43,10 +43,7 @@ export default class WorkLink {
       action: "AssociateDomain",
       requestUri: "/associateDomain",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async associateWebsiteAuthorizationProvider(
@@ -115,7 +112,7 @@ export default class WorkLink {
 
   async deleteFleet(
     {abortSignal, ...params}: RequestConfig & s.DeleteFleetRequest,
-  ): Promise<s.DeleteFleetResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       FleetArn: params["FleetArn"],
     };
@@ -124,10 +121,7 @@ export default class WorkLink {
       action: "DeleteFleet",
       requestUri: "/deleteFleet",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async describeAuditStreamConfiguration(
@@ -312,7 +306,7 @@ export default class WorkLink {
 
   async disassociateDomain(
     {abortSignal, ...params}: RequestConfig & s.DisassociateDomainRequest,
-  ): Promise<s.DisassociateDomainResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       FleetArn: params["FleetArn"],
       DomainName: params["DomainName"],
@@ -322,15 +316,12 @@ export default class WorkLink {
       action: "DisassociateDomain",
       requestUri: "/disassociateDomain",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async disassociateWebsiteAuthorizationProvider(
     {abortSignal, ...params}: RequestConfig & s.DisassociateWebsiteAuthorizationProviderRequest,
-  ): Promise<s.DisassociateWebsiteAuthorizationProviderResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       FleetArn: params["FleetArn"],
       AuthorizationProviderId: params["AuthorizationProviderId"],
@@ -340,15 +331,12 @@ export default class WorkLink {
       action: "DisassociateWebsiteAuthorizationProvider",
       requestUri: "/disassociateWebsiteAuthorizationProvider",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async disassociateWebsiteCertificateAuthority(
     {abortSignal, ...params}: RequestConfig & s.DisassociateWebsiteCertificateAuthorityRequest,
-  ): Promise<s.DisassociateWebsiteCertificateAuthorityResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       FleetArn: params["FleetArn"],
       WebsiteCaId: params["WebsiteCaId"],
@@ -358,10 +346,7 @@ export default class WorkLink {
       action: "DisassociateWebsiteCertificateAuthority",
       requestUri: "/disassociateWebsiteCertificateAuthority",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async listDevices(
@@ -493,7 +478,7 @@ export default class WorkLink {
 
   async restoreDomainAccess(
     {abortSignal, ...params}: RequestConfig & s.RestoreDomainAccessRequest,
-  ): Promise<s.RestoreDomainAccessResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       FleetArn: params["FleetArn"],
       DomainName: params["DomainName"],
@@ -503,15 +488,12 @@ export default class WorkLink {
       action: "RestoreDomainAccess",
       requestUri: "/restoreDomainAccess",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async revokeDomainAccess(
     {abortSignal, ...params}: RequestConfig & s.RevokeDomainAccessRequest,
-  ): Promise<s.RevokeDomainAccessResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       FleetArn: params["FleetArn"],
       DomainName: params["DomainName"],
@@ -521,15 +503,12 @@ export default class WorkLink {
       action: "RevokeDomainAccess",
       requestUri: "/revokeDomainAccess",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async signOutUser(
     {abortSignal, ...params}: RequestConfig & s.SignOutUserRequest,
-  ): Promise<s.SignOutUserResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       FleetArn: params["FleetArn"],
       Username: params["Username"],
@@ -539,15 +518,12 @@ export default class WorkLink {
       action: "SignOutUser",
       requestUri: "/signOutUser",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & s.TagResourceRequest,
-  ): Promise<s.TagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       Tags: params["Tags"],
     };
@@ -556,15 +532,12 @@ export default class WorkLink {
       action: "TagResource",
       requestUri: cmnP.encodePath`/tags/${params["ResourceArn"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async untagResource(
     {abortSignal, ...params}: RequestConfig & s.UntagResourceRequest,
-  ): Promise<s.UntagResourceResponse> {
+  ): Promise<void> {
     const query = new URLSearchParams;
     for (const item of params["TagKeys"]) {
       query.append("tagKeys", item?.toString() ?? "");
@@ -575,15 +548,12 @@ export default class WorkLink {
       method: "DELETE",
       requestUri: cmnP.encodePath`/tags/${params["ResourceArn"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateAuditStreamConfiguration(
     {abortSignal, ...params}: RequestConfig & s.UpdateAuditStreamConfigurationRequest,
-  ): Promise<s.UpdateAuditStreamConfigurationResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       FleetArn: params["FleetArn"],
       AuditStreamArn: params["AuditStreamArn"],
@@ -593,15 +563,12 @@ export default class WorkLink {
       action: "UpdateAuditStreamConfiguration",
       requestUri: "/updateAuditStreamConfiguration",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateCompanyNetworkConfiguration(
     {abortSignal, ...params}: RequestConfig & s.UpdateCompanyNetworkConfigurationRequest,
-  ): Promise<s.UpdateCompanyNetworkConfigurationResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       FleetArn: params["FleetArn"],
       VpcId: params["VpcId"],
@@ -613,15 +580,12 @@ export default class WorkLink {
       action: "UpdateCompanyNetworkConfiguration",
       requestUri: "/updateCompanyNetworkConfiguration",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateDevicePolicyConfiguration(
     {abortSignal, ...params}: RequestConfig & s.UpdateDevicePolicyConfigurationRequest,
-  ): Promise<s.UpdateDevicePolicyConfigurationResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       FleetArn: params["FleetArn"],
       DeviceCaCertificate: params["DeviceCaCertificate"],
@@ -631,15 +595,12 @@ export default class WorkLink {
       action: "UpdateDevicePolicyConfiguration",
       requestUri: "/updateDevicePolicyConfiguration",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateDomainMetadata(
     {abortSignal, ...params}: RequestConfig & s.UpdateDomainMetadataRequest,
-  ): Promise<s.UpdateDomainMetadataResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       FleetArn: params["FleetArn"],
       DomainName: params["DomainName"],
@@ -650,15 +611,12 @@ export default class WorkLink {
       action: "UpdateDomainMetadata",
       requestUri: "/updateDomainMetadata",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateFleetMetadata(
     {abortSignal, ...params}: RequestConfig & s.UpdateFleetMetadataRequest,
-  ): Promise<s.UpdateFleetMetadataResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       FleetArn: params["FleetArn"],
       DisplayName: params["DisplayName"],
@@ -669,15 +627,12 @@ export default class WorkLink {
       action: "UpdateFleetMetadata",
       requestUri: "/UpdateFleetMetadata",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateIdentityProviderConfiguration(
     {abortSignal, ...params}: RequestConfig & s.UpdateIdentityProviderConfigurationRequest,
-  ): Promise<s.UpdateIdentityProviderConfigurationResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       FleetArn: params["FleetArn"],
       IdentityProviderType: params["IdentityProviderType"],
@@ -688,10 +643,7 @@ export default class WorkLink {
       action: "UpdateIdentityProviderConfiguration",
       requestUri: "/updateIdentityProviderConfiguration",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
 }

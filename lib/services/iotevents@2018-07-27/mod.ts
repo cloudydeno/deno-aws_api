@@ -77,7 +77,7 @@ export default class IoTEvents {
 
   async deleteDetectorModel(
     {abortSignal, ...params}: RequestConfig & s.DeleteDetectorModelRequest,
-  ): Promise<s.DeleteDetectorModelResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -86,15 +86,12 @@ export default class IoTEvents {
       requestUri: cmnP.encodePath`/detector-models/${params["detectorModelName"]}`,
       responseCode: 204,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteInput(
     {abortSignal, ...params}: RequestConfig & s.DeleteInputRequest,
-  ): Promise<s.DeleteInputResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -102,10 +99,7 @@ export default class IoTEvents {
       method: "DELETE",
       requestUri: cmnP.encodePath`/inputs/${params["inputName"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async describeDetectorModel(
@@ -164,11 +158,11 @@ export default class IoTEvents {
   }
 
   async describeLoggingOptions(
-    {abortSignal, ...params}: RequestConfig & s.DescribeLoggingOptionsRequest = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.DescribeLoggingOptionsResponse> {
-
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
-      abortSignal,
+      abortSignal, body,
       action: "DescribeLoggingOptions",
       method: "GET",
       requestUri: "/logging",
@@ -296,6 +290,7 @@ export default class IoTEvents {
       method: "PUT",
       requestUri: "/logging",
     });
+    await resp.text();
   }
 
   async startDetectorModelAnalysis(
@@ -319,7 +314,7 @@ export default class IoTEvents {
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & s.TagResourceRequest,
-  ): Promise<s.TagResourceResponse> {
+  ): Promise<void> {
     const query = new URLSearchParams;
     const body: jsonP.JSONObject = {
       tags: params["tags"]?.map(x => fromTag(x)),
@@ -330,15 +325,12 @@ export default class IoTEvents {
       action: "TagResource",
       requestUri: "/tags",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async untagResource(
     {abortSignal, ...params}: RequestConfig & s.UntagResourceRequest,
-  ): Promise<s.UntagResourceResponse> {
+  ): Promise<void> {
     const query = new URLSearchParams;
     query.set("resourceArn", params["resourceArn"]?.toString() ?? "");
     for (const item of params["tagKeys"]) {
@@ -350,10 +342,7 @@ export default class IoTEvents {
       method: "DELETE",
       requestUri: "/tags",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateDetectorModel(

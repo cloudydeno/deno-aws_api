@@ -35,7 +35,7 @@ export default class MediaLive {
 
   async acceptInputDeviceTransfer(
     {abortSignal, ...params}: RequestConfig & s.AcceptInputDeviceTransferRequest,
-  ): Promise<s.AcceptInputDeviceTransferResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -43,10 +43,7 @@ export default class MediaLive {
       requestUri: cmnP.encodePath`/prod/inputDevices/${params["InputDeviceId"]}/accept`,
       responseCode: 200,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async batchDelete(
@@ -142,7 +139,7 @@ export default class MediaLive {
 
   async cancelInputDeviceTransfer(
     {abortSignal, ...params}: RequestConfig & s.CancelInputDeviceTransferRequest,
-  ): Promise<s.CancelInputDeviceTransferResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -150,10 +147,7 @@ export default class MediaLive {
       requestUri: cmnP.encodePath`/prod/inputDevices/${params["InputDeviceId"]}/cancel`,
       responseCode: 200,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async createChannel(
@@ -318,6 +312,7 @@ export default class MediaLive {
       requestUri: cmnP.encodePath`/prod/tags/${params["ResourceArn"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deleteChannel(
@@ -357,7 +352,7 @@ export default class MediaLive {
 
   async deleteInput(
     {abortSignal, ...params}: RequestConfig & s.DeleteInputRequest,
-  ): Promise<s.DeleteInputResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -366,15 +361,12 @@ export default class MediaLive {
       requestUri: cmnP.encodePath`/prod/inputs/${params["InputId"]}`,
       responseCode: 200,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteInputSecurityGroup(
     {abortSignal, ...params}: RequestConfig & s.DeleteInputSecurityGroupRequest,
-  ): Promise<s.DeleteInputSecurityGroupResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -383,10 +375,7 @@ export default class MediaLive {
       requestUri: cmnP.encodePath`/prod/inputSecurityGroups/${params["InputSecurityGroupId"]}`,
       responseCode: 200,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteMultiplex(
@@ -478,7 +467,7 @@ export default class MediaLive {
 
   async deleteSchedule(
     {abortSignal, ...params}: RequestConfig & s.DeleteScheduleRequest,
-  ): Promise<s.DeleteScheduleResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -487,10 +476,7 @@ export default class MediaLive {
       requestUri: cmnP.encodePath`/prod/channels/${params["ChannelId"]}/schedule`,
       responseCode: 200,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteTags(
@@ -507,6 +493,7 @@ export default class MediaLive {
       requestUri: cmnP.encodePath`/prod/tags/${params["ResourceArn"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async describeChannel(
@@ -620,13 +607,13 @@ export default class MediaLive {
       requestUri: cmnP.encodePath`/prod/inputDevices/${params["InputDeviceId"]}/thumbnailData`,
       responseCode: 200,
     });
-  return {
-    ContentType: cmnP.readEnum<s.ContentType>(resp.headers.get("Content-Type")),
-    ContentLength: cmnP.readNum(resp.headers.get("Content-Length")),
-    ETag: resp.headers.get("ETag"),
-    LastModified: cmnP.readTimestamp(resp.headers.get("Last-Modified")),
-    Body: await resp.text(), // TODO: maybe allow proper body streaming,
-  };
+    return {
+      ContentType: cmnP.readEnum<s.ContentType>(resp.headers.get("Content-Type")),
+      ContentLength: cmnP.readNum(resp.headers.get("Content-Length")),
+      ETag: resp.headers.get("ETag"),
+      LastModified: cmnP.readTimestamp(resp.headers.get("Last-Modified")),
+      Body: await resp.text(), // TODO: maybe allow proper body streaming,
+    };
   }
 
   async describeInputSecurityGroup(
@@ -1053,7 +1040,7 @@ export default class MediaLive {
 
   async rejectInputDeviceTransfer(
     {abortSignal, ...params}: RequestConfig & s.RejectInputDeviceTransferRequest,
-  ): Promise<s.RejectInputDeviceTransferResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -1061,10 +1048,7 @@ export default class MediaLive {
       requestUri: cmnP.encodePath`/prod/inputDevices/${params["InputDeviceId"]}/reject`,
       responseCode: 200,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async startChannel(
@@ -1191,7 +1175,7 @@ export default class MediaLive {
 
   async transferInputDevice(
     {abortSignal, ...params}: RequestConfig & s.TransferInputDeviceRequest,
-  ): Promise<s.TransferInputDeviceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       targetCustomerId: params["TargetCustomerId"],
       targetRegion: params["TargetRegion"],
@@ -1203,10 +1187,7 @@ export default class MediaLive {
       requestUri: cmnP.encodePath`/prod/inputDevices/${params["InputDeviceId"]}/transfer`,
       responseCode: 200,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateChannel(

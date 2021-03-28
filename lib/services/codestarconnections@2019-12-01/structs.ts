@@ -88,14 +88,6 @@ export interface CreateHostOutput {
 }
 
 // refs: 1 - tags: named, output
-export interface DeleteConnectionOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteHostOutput {
-}
-
-// refs: 1 - tags: named, output
 export interface GetConnectionOutput {
   Connection?: Connection | null;
 }
@@ -124,18 +116,6 @@ export interface ListHostsOutput {
 // refs: 1 - tags: named, output
 export interface ListTagsForResourceOutput {
   Tags?: Tag[] | null;
-}
-
-// refs: 1 - tags: named, output
-export interface TagResourceOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface UntagResourceOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateHostOutput {
 }
 
 // refs: 7 - tags: input, named, enum, output

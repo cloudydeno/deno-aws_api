@@ -156,18 +156,6 @@ export interface CreatePackagingGroupResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface DeleteAssetResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeletePackagingConfigurationResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeletePackagingGroupResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface DescribeAssetResponse {
   Arn?: string | null;
   CreatedAt?: string | null;

@@ -30,7 +30,7 @@ export default class AugmentedAIRuntime {
 
   async deleteHumanLoop(
     {abortSignal, ...params}: RequestConfig & s.DeleteHumanLoopRequest,
-  ): Promise<s.DeleteHumanLoopResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -38,10 +38,7 @@ export default class AugmentedAIRuntime {
       method: "DELETE",
       requestUri: cmnP.encodePath`/human-loops/${params["HumanLoopName"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async describeHumanLoop(
@@ -120,7 +117,7 @@ export default class AugmentedAIRuntime {
 
   async stopHumanLoop(
     {abortSignal, ...params}: RequestConfig & s.StopHumanLoopRequest,
-  ): Promise<s.StopHumanLoopResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       HumanLoopName: params["HumanLoopName"],
     };
@@ -129,10 +126,7 @@ export default class AugmentedAIRuntime {
       action: "StopHumanLoop",
       requestUri: "/human-loops/stop",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
 }

@@ -40,7 +40,7 @@ export default class SSM {
 
   async addTagsToResource(
     {abortSignal, ...params}: RequestConfig & s.AddTagsToResourceRequest,
-  ): Promise<s.AddTagsToResourceResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceType: params["ResourceType"],
       ResourceId: params["ResourceId"],
@@ -50,15 +50,12 @@ export default class SSM {
       abortSignal, body,
       action: "AddTagsToResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async cancelCommand(
     {abortSignal, ...params}: RequestConfig & s.CancelCommandRequest,
-  ): Promise<s.CancelCommandResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       CommandId: params["CommandId"],
       InstanceIds: params["InstanceIds"],
@@ -67,10 +64,7 @@ export default class SSM {
       abortSignal, body,
       action: "CancelCommand",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async cancelMaintenanceWindowExecution(
@@ -305,7 +299,7 @@ export default class SSM {
 
   async createResourceDataSync(
     {abortSignal, ...params}: RequestConfig & s.CreateResourceDataSyncRequest,
-  ): Promise<s.CreateResourceDataSyncResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       SyncName: params["SyncName"],
       S3Destination: fromResourceDataSyncS3Destination(params["S3Destination"]),
@@ -316,15 +310,12 @@ export default class SSM {
       abortSignal, body,
       action: "CreateResourceDataSync",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteActivation(
     {abortSignal, ...params}: RequestConfig & s.DeleteActivationRequest,
-  ): Promise<s.DeleteActivationResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ActivationId: params["ActivationId"],
     };
@@ -332,15 +323,12 @@ export default class SSM {
       abortSignal, body,
       action: "DeleteActivation",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteAssociation(
     {abortSignal, ...params}: RequestConfig & s.DeleteAssociationRequest = {},
-  ): Promise<s.DeleteAssociationResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       Name: params["Name"],
       InstanceId: params["InstanceId"],
@@ -350,15 +338,12 @@ export default class SSM {
       abortSignal, body,
       action: "DeleteAssociation",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteDocument(
     {abortSignal, ...params}: RequestConfig & s.DeleteDocumentRequest,
-  ): Promise<s.DeleteDocumentResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       Name: params["Name"],
       DocumentVersion: params["DocumentVersion"],
@@ -369,10 +354,7 @@ export default class SSM {
       abortSignal, body,
       action: "DeleteDocument",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteInventory(
@@ -418,7 +400,7 @@ export default class SSM {
 
   async deleteOpsMetadata(
     {abortSignal, ...params}: RequestConfig & s.DeleteOpsMetadataRequest,
-  ): Promise<s.DeleteOpsMetadataResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       OpsMetadataArn: params["OpsMetadataArn"],
     };
@@ -426,15 +408,12 @@ export default class SSM {
       abortSignal, body,
       action: "DeleteOpsMetadata",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteParameter(
     {abortSignal, ...params}: RequestConfig & s.DeleteParameterRequest,
-  ): Promise<s.DeleteParameterResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       Name: params["Name"],
     };
@@ -442,10 +421,7 @@ export default class SSM {
       abortSignal, body,
       action: "DeleteParameter",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteParameters(
@@ -487,7 +463,7 @@ export default class SSM {
 
   async deleteResourceDataSync(
     {abortSignal, ...params}: RequestConfig & s.DeleteResourceDataSyncRequest,
-  ): Promise<s.DeleteResourceDataSyncResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       SyncName: params["SyncName"],
       SyncType: params["SyncType"],
@@ -496,15 +472,12 @@ export default class SSM {
       abortSignal, body,
       action: "DeleteResourceDataSync",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deregisterManagedInstance(
     {abortSignal, ...params}: RequestConfig & s.DeregisterManagedInstanceRequest,
-  ): Promise<s.DeregisterManagedInstanceResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       InstanceId: params["InstanceId"],
     };
@@ -512,10 +485,7 @@ export default class SSM {
       abortSignal, body,
       action: "DeregisterManagedInstance",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deregisterPatchBaselineForPatchGroup(
@@ -2216,7 +2186,7 @@ export default class SSM {
 
   async modifyDocumentPermission(
     {abortSignal, ...params}: RequestConfig & s.ModifyDocumentPermissionRequest,
-  ): Promise<s.ModifyDocumentPermissionResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       Name: params["Name"],
       PermissionType: params["PermissionType"],
@@ -2228,15 +2198,12 @@ export default class SSM {
       abortSignal, body,
       action: "ModifyDocumentPermission",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async putComplianceItems(
     {abortSignal, ...params}: RequestConfig & s.PutComplianceItemsRequest,
-  ): Promise<s.PutComplianceItemsResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceId: params["ResourceId"],
       ResourceType: params["ResourceType"],
@@ -2250,10 +2217,7 @@ export default class SSM {
       abortSignal, body,
       action: "PutComplianceItems",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async putInventory(
@@ -2399,7 +2363,7 @@ export default class SSM {
 
   async removeTagsFromResource(
     {abortSignal, ...params}: RequestConfig & s.RemoveTagsFromResourceRequest,
-  ): Promise<s.RemoveTagsFromResourceResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceType: params["ResourceType"],
       ResourceId: params["ResourceId"],
@@ -2409,10 +2373,7 @@ export default class SSM {
       abortSignal, body,
       action: "RemoveTagsFromResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async resetServiceSetting(
@@ -2455,7 +2416,7 @@ export default class SSM {
 
   async sendAutomationSignal(
     {abortSignal, ...params}: RequestConfig & s.SendAutomationSignalRequest,
-  ): Promise<s.SendAutomationSignalResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       AutomationExecutionId: params["AutomationExecutionId"],
       SignalType: params["SignalType"],
@@ -2465,10 +2426,7 @@ export default class SSM {
       abortSignal, body,
       action: "SendAutomationSignal",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async sendCommand(
@@ -2507,7 +2465,7 @@ export default class SSM {
 
   async startAssociationsOnce(
     {abortSignal, ...params}: RequestConfig & s.StartAssociationsOnceRequest,
-  ): Promise<s.StartAssociationsOnceResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       AssociationIds: params["AssociationIds"],
     };
@@ -2515,10 +2473,7 @@ export default class SSM {
       abortSignal, body,
       action: "StartAssociationsOnce",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async startAutomationExecution(
@@ -2599,7 +2554,7 @@ export default class SSM {
 
   async stopAutomationExecution(
     {abortSignal, ...params}: RequestConfig & s.StopAutomationExecutionRequest,
-  ): Promise<s.StopAutomationExecutionResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       AutomationExecutionId: params["AutomationExecutionId"],
       Type: params["Type"],
@@ -2608,10 +2563,7 @@ export default class SSM {
       abortSignal, body,
       action: "StopAutomationExecution",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async terminateSession(
@@ -2730,7 +2682,7 @@ export default class SSM {
 
   async updateDocumentMetadata(
     {abortSignal, ...params}: RequestConfig & s.UpdateDocumentMetadataRequest,
-  ): Promise<s.UpdateDocumentMetadataResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       Name: params["Name"],
       DocumentVersion: params["DocumentVersion"],
@@ -2740,10 +2692,7 @@ export default class SSM {
       abortSignal, body,
       action: "UpdateDocumentMetadata",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateMaintenanceWindow(
@@ -2861,7 +2810,7 @@ export default class SSM {
 
   async updateManagedInstanceRole(
     {abortSignal, ...params}: RequestConfig & s.UpdateManagedInstanceRoleRequest,
-  ): Promise<s.UpdateManagedInstanceRoleResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       InstanceId: params["InstanceId"],
       IamRole: params["IamRole"],
@@ -2870,15 +2819,12 @@ export default class SSM {
       abortSignal, body,
       action: "UpdateManagedInstanceRole",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateOpsItem(
     {abortSignal, ...params}: RequestConfig & s.UpdateOpsItemRequest,
-  ): Promise<s.UpdateOpsItemResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       Description: params["Description"],
       OperationalData: jsonP.serializeMap(params["OperationalData"], x => fromOpsItemDataValue(x)),
@@ -2900,10 +2846,7 @@ export default class SSM {
       abortSignal, body,
       action: "UpdateOpsItem",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateOpsMetadata(
@@ -2970,7 +2913,7 @@ export default class SSM {
 
   async updateResourceDataSync(
     {abortSignal, ...params}: RequestConfig & s.UpdateResourceDataSyncRequest,
-  ): Promise<s.UpdateResourceDataSyncResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       SyncName: params["SyncName"],
       SyncType: params["SyncType"],
@@ -2980,15 +2923,12 @@ export default class SSM {
       abortSignal, body,
       action: "UpdateResourceDataSync",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateServiceSetting(
     {abortSignal, ...params}: RequestConfig & s.UpdateServiceSettingRequest,
-  ): Promise<s.UpdateServiceSettingResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       SettingId: params["SettingId"],
       SettingValue: params["SettingValue"],
@@ -2997,10 +2937,7 @@ export default class SSM {
       abortSignal, body,
       action: "UpdateServiceSetting",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   // Resource State Waiters

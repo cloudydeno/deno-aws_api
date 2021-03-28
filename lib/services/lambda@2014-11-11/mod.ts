@@ -68,6 +68,7 @@ export default class Lambda {
       requestUri: cmnP.encodePath`/2014-11-13/functions/${params["FunctionName"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async getEventSource(
@@ -223,6 +224,7 @@ export default class Lambda {
       requestUri: cmnP.encodePath`/2014-11-13/event-source-mappings/${params["UUID"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async updateFunctionConfiguration(

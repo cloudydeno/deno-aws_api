@@ -67,10 +67,6 @@ export interface GetEC2RecommendationProjectedMetricsRequest {
 }
 
 // refs: 1 - tags: named, input
-export interface GetEnrollmentStatusRequest {
-}
-
-// refs: 1 - tags: named, input
 export interface GetLambdaFunctionRecommendationsRequest {
   functionArns?: string[] | null;
   accountIds?: string[] | null;

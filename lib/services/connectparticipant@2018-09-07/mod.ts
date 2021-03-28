@@ -35,7 +35,7 @@ export default class ConnectParticipant {
 
   async completeAttachmentUpload(
     {abortSignal, ...params}: RequestConfig & s.CompleteAttachmentUploadRequest,
-  ): Promise<s.CompleteAttachmentUploadResponse> {
+  ): Promise<void> {
     const headers = new Headers;
     const body: jsonP.JSONObject = {
       AttachmentIds: params["AttachmentIds"],
@@ -47,10 +47,7 @@ export default class ConnectParticipant {
       action: "CompleteAttachmentUpload",
       requestUri: "/participant/complete-attachment-upload",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async createParticipantConnection(
@@ -77,7 +74,7 @@ export default class ConnectParticipant {
 
   async disconnectParticipant(
     {abortSignal, ...params}: RequestConfig & s.DisconnectParticipantRequest,
-  ): Promise<s.DisconnectParticipantResponse> {
+  ): Promise<void> {
     const headers = new Headers;
     const body: jsonP.JSONObject = {
       ClientToken: params["ClientToken"] ?? generateIdemptToken(),
@@ -88,10 +85,7 @@ export default class ConnectParticipant {
       action: "DisconnectParticipant",
       requestUri: "/participant/disconnect",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async getAttachment(

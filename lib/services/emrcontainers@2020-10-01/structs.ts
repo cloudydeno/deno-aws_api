@@ -197,14 +197,6 @@ export interface StartJobRunResponse {
   virtualClusterId?: string | null;
 }
 
-// refs: 1 - tags: named, output
-export interface TagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UntagResourceResponse {
-}
-
 // refs: 6 - tags: input, named, interface, output
 export interface ConfigurationOverrides {
   applicationConfiguration?: Configuration[] | null;

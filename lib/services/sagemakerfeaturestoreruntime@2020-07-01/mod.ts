@@ -40,6 +40,7 @@ export default class SageMakerFeatureStoreRuntime {
       method: "DELETE",
       requestUri: cmnP.encodePath`/FeatureGroup/${params["FeatureGroupName"]}`,
     });
+    await resp.text();
   }
 
   async getRecord(
@@ -76,6 +77,7 @@ export default class SageMakerFeatureStoreRuntime {
       method: "PUT",
       requestUri: cmnP.encodePath`/FeatureGroup/${params["FeatureGroupName"]}`,
     });
+    await resp.text();
   }
 
 }

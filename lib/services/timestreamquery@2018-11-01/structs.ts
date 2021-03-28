@@ -8,10 +8,6 @@ export interface CancelQueryRequest {
 }
 
 // refs: 1 - tags: named, input
-export interface DescribeEndpointsRequest {
-}
-
-// refs: 1 - tags: named, input
 export interface QueryRequest {
   QueryString: string;
   ClientToken?: string | null;

@@ -50,7 +50,7 @@ export default class LicenseManager {
 
   async checkInLicense(
     {abortSignal, ...params}: RequestConfig & s.CheckInLicenseRequest,
-  ): Promise<s.CheckInLicenseResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       LicenseConsumptionToken: params["LicenseConsumptionToken"],
       Beneficiary: params["Beneficiary"],
@@ -59,10 +59,7 @@ export default class LicenseManager {
       abortSignal, body,
       action: "CheckInLicense",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async checkoutBorrowLicense(
@@ -329,7 +326,7 @@ export default class LicenseManager {
 
   async deleteLicenseConfiguration(
     {abortSignal, ...params}: RequestConfig & s.DeleteLicenseConfigurationRequest,
-  ): Promise<s.DeleteLicenseConfigurationResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       LicenseConfigurationArn: params["LicenseConfigurationArn"],
     };
@@ -337,15 +334,12 @@ export default class LicenseManager {
       abortSignal, body,
       action: "DeleteLicenseConfiguration",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteToken(
     {abortSignal, ...params}: RequestConfig & s.DeleteTokenRequest,
-  ): Promise<s.DeleteTokenResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       TokenId: params["TokenId"],
     };
@@ -353,10 +347,7 @@ export default class LicenseManager {
       abortSignal, body,
       action: "DeleteToken",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async extendLicenseConsumption(
@@ -489,10 +480,9 @@ export default class LicenseManager {
   }
 
   async getServiceSettings(
-    {abortSignal, ...params}: RequestConfig & s.GetServiceSettingsRequest = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.GetServiceSettingsResponse> {
-    const body: jsonP.JSONObject = {
-    };
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetServiceSettings",
@@ -808,7 +798,7 @@ export default class LicenseManager {
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & s.TagResourceRequest,
-  ): Promise<s.TagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
@@ -817,15 +807,12 @@ export default class LicenseManager {
       abortSignal, body,
       action: "TagResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async untagResource(
     {abortSignal, ...params}: RequestConfig & s.UntagResourceRequest,
-  ): Promise<s.UntagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
       TagKeys: params["TagKeys"],
@@ -834,15 +821,12 @@ export default class LicenseManager {
       abortSignal, body,
       action: "UntagResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateLicenseConfiguration(
     {abortSignal, ...params}: RequestConfig & s.UpdateLicenseConfigurationRequest,
-  ): Promise<s.UpdateLicenseConfigurationResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       LicenseConfigurationArn: params["LicenseConfigurationArn"],
       LicenseConfigurationStatus: params["LicenseConfigurationStatus"],
@@ -858,15 +842,12 @@ export default class LicenseManager {
       abortSignal, body,
       action: "UpdateLicenseConfiguration",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateLicenseSpecificationsForResource(
     {abortSignal, ...params}: RequestConfig & s.UpdateLicenseSpecificationsForResourceRequest,
-  ): Promise<s.UpdateLicenseSpecificationsForResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
       AddLicenseSpecifications: params["AddLicenseSpecifications"]?.map(x => fromLicenseSpecification(x)),
@@ -876,15 +857,12 @@ export default class LicenseManager {
       abortSignal, body,
       action: "UpdateLicenseSpecificationsForResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateServiceSettings(
     {abortSignal, ...params}: RequestConfig & s.UpdateServiceSettingsRequest = {},
-  ): Promise<s.UpdateServiceSettingsResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       S3BucketArn: params["S3BucketArn"],
       SnsTopicArn: params["SnsTopicArn"],
@@ -895,10 +873,7 @@ export default class LicenseManager {
       abortSignal, body,
       action: "UpdateServiceSettings",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
 }

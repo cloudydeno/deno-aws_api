@@ -44,12 +44,12 @@ export default class SageMakerRuntime {
       action: "InvokeEndpoint",
       requestUri: cmnP.encodePath`/endpoints/${params["EndpointName"]}/invocations`,
     });
-  return {
-    ContentType: resp.headers.get("Content-Type"),
-    InvokedProductionVariant: resp.headers.get("x-Amzn-Invoked-Production-Variant"),
-    CustomAttributes: resp.headers.get("X-Amzn-SageMaker-Custom-Attributes"),
-    Body: await resp.text(), // TODO: maybe allow proper body streaming,
-  };
+    return {
+      ContentType: resp.headers.get("Content-Type"),
+      InvokedProductionVariant: resp.headers.get("x-Amzn-Invoked-Production-Variant"),
+      CustomAttributes: resp.headers.get("X-Amzn-SageMaker-Custom-Attributes"),
+      Body: await resp.text(), // TODO: maybe allow proper body streaming,
+    };
   }
 
 }

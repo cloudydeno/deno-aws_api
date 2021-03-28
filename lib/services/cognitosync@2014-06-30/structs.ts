@@ -207,14 +207,6 @@ export interface SetIdentityPoolConfigurationResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface SubscribeToDatasetResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UnsubscribeFromDatasetResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface UpdateRecordsResponse {
   Records?: Record[] | null;
 }

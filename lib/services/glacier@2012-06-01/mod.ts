@@ -38,6 +38,7 @@ export default class Glacier {
       requestUri: cmnP.encodePath`/${params["accountId"]}/vaults/${params["vaultName"]}/multipart-uploads/${params["uploadId"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async abortVaultLock(
@@ -51,6 +52,7 @@ export default class Glacier {
       requestUri: cmnP.encodePath`/${params["accountId"]}/vaults/${params["vaultName"]}/lock-policy`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async addTagsToVault(
@@ -65,6 +67,7 @@ export default class Glacier {
       requestUri: cmnP.encodePath`/${params["accountId"]}/vaults/${params["vaultName"]}/tags?operation=add`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async completeMultipartUpload(
@@ -100,6 +103,7 @@ export default class Glacier {
       requestUri: cmnP.encodePath`/${params["accountId"]}/vaults/${params["vaultName"]}/lock-policy/${params["lockId"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async createVault(
@@ -133,6 +137,7 @@ export default class Glacier {
       requestUri: cmnP.encodePath`/${params["accountId"]}/vaults/${params["vaultName"]}/archives/${params["archiveId"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deleteVault(
@@ -146,6 +151,7 @@ export default class Glacier {
       requestUri: cmnP.encodePath`/${params["accountId"]}/vaults/${params["vaultName"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deleteVaultAccessPolicy(
@@ -159,6 +165,7 @@ export default class Glacier {
       requestUri: cmnP.encodePath`/${params["accountId"]}/vaults/${params["vaultName"]}/access-policy`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deleteVaultNotifications(
@@ -172,6 +179,7 @@ export default class Glacier {
       requestUri: cmnP.encodePath`/${params["accountId"]}/vaults/${params["vaultName"]}/notification-configuration`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async describeJob(
@@ -264,15 +272,15 @@ export default class Glacier {
       method: "GET",
       requestUri: cmnP.encodePath`/${params["accountId"]}/vaults/${params["vaultName"]}/jobs/${params["jobId"]}/output`,
     });
-  return {
-    checksum: resp.headers.get("x-amz-sha256-tree-hash"),
-    status: resp.status,
-    contentRange: resp.headers.get("Content-Range"),
-    acceptRanges: resp.headers.get("Accept-Ranges"),
-    contentType: resp.headers.get("Content-Type"),
-    archiveDescription: resp.headers.get("x-amz-archive-description"),
-    body: await resp.text(), // TODO: maybe allow proper body streaming,
-  };
+    return {
+      checksum: resp.headers.get("x-amz-sha256-tree-hash"),
+      status: resp.status,
+      contentRange: resp.headers.get("Content-Range"),
+      acceptRanges: resp.headers.get("Accept-Ranges"),
+      contentType: resp.headers.get("Content-Type"),
+      archiveDescription: resp.headers.get("x-amz-archive-description"),
+      body: await resp.text(), // TODO: maybe allow proper body streaming,
+    };
   }
 
   async getVaultAccessPolicy(
@@ -285,9 +293,9 @@ export default class Glacier {
       method: "GET",
       requestUri: cmnP.encodePath`/${params["accountId"]}/vaults/${params["vaultName"]}/access-policy`,
     });
-  return {
-    policy: toVaultAccessPolicy(await resp.json()),
-  };
+    return {
+      policy: toVaultAccessPolicy(await resp.json()),
+    };
   }
 
   async getVaultLock(
@@ -321,9 +329,9 @@ export default class Glacier {
       method: "GET",
       requestUri: cmnP.encodePath`/${params["accountId"]}/vaults/${params["vaultName"]}/notification-configuration`,
     });
-  return {
-    vaultNotificationConfig: toVaultNotificationConfig(await resp.json()),
-  };
+    return {
+      vaultNotificationConfig: toVaultNotificationConfig(await resp.json()),
+    };
   }
 
   async initiateJob(
@@ -561,6 +569,7 @@ export default class Glacier {
       requestUri: cmnP.encodePath`/${params["accountId"]}/vaults/${params["vaultName"]}/tags?operation=remove`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async setDataRetrievalPolicy(
@@ -576,6 +585,7 @@ export default class Glacier {
       requestUri: cmnP.encodePath`/${params["accountId"]}/policies/data-retrieval`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async setVaultAccessPolicy(
@@ -592,6 +602,7 @@ export default class Glacier {
       requestUri: cmnP.encodePath`/${params["accountId"]}/vaults/${params["vaultName"]}/access-policy`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async setVaultNotifications(
@@ -609,6 +620,7 @@ export default class Glacier {
       requestUri: cmnP.encodePath`/${params["accountId"]}/vaults/${params["vaultName"]}/notification-configuration`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async uploadArchive(

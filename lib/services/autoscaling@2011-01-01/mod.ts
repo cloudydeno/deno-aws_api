@@ -38,11 +38,12 @@ export default class AutoScaling {
       abortSignal, body,
       action: "AttachInstances",
     });
+    await resp.text();
   }
 
   async attachLoadBalancerTargetGroups(
     {abortSignal, ...params}: RequestConfig & s.AttachLoadBalancerTargetGroupsType,
-  ): Promise<s.AttachLoadBalancerTargetGroupsResultType> {
+  ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"AutoScalingGroupName", (params["AutoScalingGroupName"] ?? '').toString());
@@ -51,13 +52,12 @@ export default class AutoScaling {
       abortSignal, body,
       action: "AttachLoadBalancerTargetGroups",
     });
-    const xml = xmlP.readXmlResult(await resp.text(), "AttachLoadBalancerTargetGroupsResult");
-    return {};
+    await resp.text();
   }
 
   async attachLoadBalancers(
     {abortSignal, ...params}: RequestConfig & s.AttachLoadBalancersType,
-  ): Promise<s.AttachLoadBalancersResultType> {
+  ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"AutoScalingGroupName", (params["AutoScalingGroupName"] ?? '').toString());
@@ -66,8 +66,7 @@ export default class AutoScaling {
       abortSignal, body,
       action: "AttachLoadBalancers",
     });
-    const xml = xmlP.readXmlResult(await resp.text(), "AttachLoadBalancersResult");
-    return {};
+    await resp.text();
   }
 
   async batchDeleteScheduledAction(
@@ -122,7 +121,7 @@ export default class AutoScaling {
 
   async completeLifecycleAction(
     {abortSignal, ...params}: RequestConfig & s.CompleteLifecycleActionType,
-  ): Promise<s.CompleteLifecycleActionAnswer> {
+  ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"LifecycleHookName", (params["LifecycleHookName"] ?? '').toString());
@@ -134,8 +133,7 @@ export default class AutoScaling {
       abortSignal, body,
       action: "CompleteLifecycleAction",
     });
-    const xml = xmlP.readXmlResult(await resp.text(), "CompleteLifecycleActionResult");
-    return {};
+    await resp.text();
   }
 
   async createAutoScalingGroup(
@@ -170,6 +168,7 @@ export default class AutoScaling {
       abortSignal, body,
       action: "CreateAutoScalingGroup",
     });
+    await resp.text();
   }
 
   async createLaunchConfiguration(
@@ -200,6 +199,7 @@ export default class AutoScaling {
       abortSignal, body,
       action: "CreateLaunchConfiguration",
     });
+    await resp.text();
   }
 
   async createOrUpdateTags(
@@ -212,6 +212,7 @@ export default class AutoScaling {
       abortSignal, body,
       action: "CreateOrUpdateTags",
     });
+    await resp.text();
   }
 
   async deleteAutoScalingGroup(
@@ -225,6 +226,7 @@ export default class AutoScaling {
       abortSignal, body,
       action: "DeleteAutoScalingGroup",
     });
+    await resp.text();
   }
 
   async deleteLaunchConfiguration(
@@ -237,11 +239,12 @@ export default class AutoScaling {
       abortSignal, body,
       action: "DeleteLaunchConfiguration",
     });
+    await resp.text();
   }
 
   async deleteLifecycleHook(
     {abortSignal, ...params}: RequestConfig & s.DeleteLifecycleHookType,
-  ): Promise<s.DeleteLifecycleHookAnswer> {
+  ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"LifecycleHookName", (params["LifecycleHookName"] ?? '').toString());
@@ -250,8 +253,7 @@ export default class AutoScaling {
       abortSignal, body,
       action: "DeleteLifecycleHook",
     });
-    const xml = xmlP.readXmlResult(await resp.text(), "DeleteLifecycleHookResult");
-    return {};
+    await resp.text();
   }
 
   async deleteNotificationConfiguration(
@@ -265,6 +267,7 @@ export default class AutoScaling {
       abortSignal, body,
       action: "DeleteNotificationConfiguration",
     });
+    await resp.text();
   }
 
   async deletePolicy(
@@ -278,6 +281,7 @@ export default class AutoScaling {
       abortSignal, body,
       action: "DeletePolicy",
     });
+    await resp.text();
   }
 
   async deleteScheduledAction(
@@ -291,6 +295,7 @@ export default class AutoScaling {
       abortSignal, body,
       action: "DeleteScheduledAction",
     });
+    await resp.text();
   }
 
   async deleteTags(
@@ -303,10 +308,11 @@ export default class AutoScaling {
       abortSignal, body,
       action: "DeleteTags",
     });
+    await resp.text();
   }
 
   async describeAccountLimits(
-    {abortSignal, ...params}: RequestConfig = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.DescribeAccountLimitsAnswer> {
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -322,7 +328,7 @@ export default class AutoScaling {
   }
 
   async describeAdjustmentTypes(
-    {abortSignal, ...params}: RequestConfig = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.DescribeAdjustmentTypesAnswer> {
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -377,7 +383,7 @@ export default class AutoScaling {
   }
 
   async describeAutoScalingNotificationTypes(
-    {abortSignal, ...params}: RequestConfig = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.DescribeAutoScalingNotificationTypesAnswer> {
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -433,7 +439,7 @@ export default class AutoScaling {
   }
 
   async describeLifecycleHookTypes(
-    {abortSignal, ...params}: RequestConfig = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.DescribeLifecycleHookTypesAnswer> {
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -505,7 +511,7 @@ export default class AutoScaling {
   }
 
   async describeMetricCollectionTypes(
-    {abortSignal, ...params}: RequestConfig = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.DescribeMetricCollectionTypesAnswer> {
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -586,7 +592,7 @@ export default class AutoScaling {
   }
 
   async describeScalingProcessTypes(
-    {abortSignal, ...params}: RequestConfig = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.ProcessesType> {
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -644,7 +650,7 @@ export default class AutoScaling {
   }
 
   async describeTerminationPolicyTypes(
-    {abortSignal, ...params}: RequestConfig = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.DescribeTerminationPolicyTypesAnswer> {
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -676,7 +682,7 @@ export default class AutoScaling {
 
   async detachLoadBalancerTargetGroups(
     {abortSignal, ...params}: RequestConfig & s.DetachLoadBalancerTargetGroupsType,
-  ): Promise<s.DetachLoadBalancerTargetGroupsResultType> {
+  ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"AutoScalingGroupName", (params["AutoScalingGroupName"] ?? '').toString());
@@ -685,13 +691,12 @@ export default class AutoScaling {
       abortSignal, body,
       action: "DetachLoadBalancerTargetGroups",
     });
-    const xml = xmlP.readXmlResult(await resp.text(), "DetachLoadBalancerTargetGroupsResult");
-    return {};
+    await resp.text();
   }
 
   async detachLoadBalancers(
     {abortSignal, ...params}: RequestConfig & s.DetachLoadBalancersType,
-  ): Promise<s.DetachLoadBalancersResultType> {
+  ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"AutoScalingGroupName", (params["AutoScalingGroupName"] ?? '').toString());
@@ -700,8 +705,7 @@ export default class AutoScaling {
       abortSignal, body,
       action: "DetachLoadBalancers",
     });
-    const xml = xmlP.readXmlResult(await resp.text(), "DetachLoadBalancersResult");
-    return {};
+    await resp.text();
   }
 
   async disableMetricsCollection(
@@ -715,6 +719,7 @@ export default class AutoScaling {
       abortSignal, body,
       action: "DisableMetricsCollection",
     });
+    await resp.text();
   }
 
   async enableMetricsCollection(
@@ -729,6 +734,7 @@ export default class AutoScaling {
       abortSignal, body,
       action: "EnableMetricsCollection",
     });
+    await resp.text();
   }
 
   async enterStandby(
@@ -763,6 +769,7 @@ export default class AutoScaling {
       abortSignal, body,
       action: "ExecutePolicy",
     });
+    await resp.text();
   }
 
   async exitStandby(
@@ -784,7 +791,7 @@ export default class AutoScaling {
 
   async putLifecycleHook(
     {abortSignal, ...params}: RequestConfig & s.PutLifecycleHookType,
-  ): Promise<s.PutLifecycleHookAnswer> {
+  ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"LifecycleHookName", (params["LifecycleHookName"] ?? '').toString());
@@ -799,8 +806,7 @@ export default class AutoScaling {
       abortSignal, body,
       action: "PutLifecycleHook",
     });
-    const xml = xmlP.readXmlResult(await resp.text(), "PutLifecycleHookResult");
-    return {};
+    await resp.text();
   }
 
   async putNotificationConfiguration(
@@ -815,6 +821,7 @@ export default class AutoScaling {
       abortSignal, body,
       action: "PutNotificationConfiguration",
     });
+    await resp.text();
   }
 
   async putScalingPolicy(
@@ -867,11 +874,12 @@ export default class AutoScaling {
       abortSignal, body,
       action: "PutScheduledUpdateGroupAction",
     });
+    await resp.text();
   }
 
   async recordLifecycleActionHeartbeat(
     {abortSignal, ...params}: RequestConfig & s.RecordLifecycleActionHeartbeatType,
-  ): Promise<s.RecordLifecycleActionHeartbeatAnswer> {
+  ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"LifecycleHookName", (params["LifecycleHookName"] ?? '').toString());
@@ -882,8 +890,7 @@ export default class AutoScaling {
       abortSignal, body,
       action: "RecordLifecycleActionHeartbeat",
     });
-    const xml = xmlP.readXmlResult(await resp.text(), "RecordLifecycleActionHeartbeatResult");
-    return {};
+    await resp.text();
   }
 
   async resumeProcesses(
@@ -897,6 +904,7 @@ export default class AutoScaling {
       abortSignal, body,
       action: "ResumeProcesses",
     });
+    await resp.text();
   }
 
   async setDesiredCapacity(
@@ -911,6 +919,7 @@ export default class AutoScaling {
       abortSignal, body,
       action: "SetDesiredCapacity",
     });
+    await resp.text();
   }
 
   async setInstanceHealth(
@@ -925,11 +934,12 @@ export default class AutoScaling {
       abortSignal, body,
       action: "SetInstanceHealth",
     });
+    await resp.text();
   }
 
   async setInstanceProtection(
     {abortSignal, ...params}: RequestConfig & s.SetInstanceProtectionQuery,
-  ): Promise<s.SetInstanceProtectionAnswer> {
+  ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     if (params["InstanceIds"]) qsP.appendList(body, prefix+"InstanceIds", params["InstanceIds"], {"entryPrefix":".member."})
@@ -939,8 +949,7 @@ export default class AutoScaling {
       abortSignal, body,
       action: "SetInstanceProtection",
     });
-    const xml = xmlP.readXmlResult(await resp.text(), "SetInstanceProtectionResult");
-    return {};
+    await resp.text();
   }
 
   async startInstanceRefresh(
@@ -972,6 +981,7 @@ export default class AutoScaling {
       abortSignal, body,
       action: "SuspendProcesses",
     });
+    await resp.text();
   }
 
   async terminateInstanceInAutoScalingGroup(
@@ -1018,6 +1028,7 @@ export default class AutoScaling {
       abortSignal, body,
       action: "UpdateAutoScalingGroup",
     });
+    await resp.text();
   }
 
 }

@@ -35,7 +35,7 @@ export default class DMS {
 
   async addTagsToResource(
     {abortSignal, ...params}: RequestConfig & s.AddTagsToResourceMessage,
-  ): Promise<s.AddTagsToResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
@@ -44,10 +44,7 @@ export default class DMS {
       abortSignal, body,
       action: "AddTagsToResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async applyPendingMaintenanceAction(
@@ -337,7 +334,7 @@ export default class DMS {
 
   async deleteReplicationSubnetGroup(
     {abortSignal, ...params}: RequestConfig & s.DeleteReplicationSubnetGroupMessage,
-  ): Promise<s.DeleteReplicationSubnetGroupResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ReplicationSubnetGroupIdentifier: params["ReplicationSubnetGroupIdentifier"],
     };
@@ -345,10 +342,7 @@ export default class DMS {
       abortSignal, body,
       action: "DeleteReplicationSubnetGroup",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteReplicationTask(
@@ -388,10 +382,9 @@ export default class DMS {
   }
 
   async describeAccountAttributes(
-    {abortSignal, ...params}: RequestConfig & s.DescribeAccountAttributesMessage = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.DescribeAccountAttributesResponse> {
-    const body: jsonP.JSONObject = {
-    };
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeAccountAttributes",
@@ -1097,7 +1090,7 @@ export default class DMS {
 
   async removeTagsFromResource(
     {abortSignal, ...params}: RequestConfig & s.RemoveTagsFromResourceMessage,
-  ): Promise<s.RemoveTagsFromResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
       TagKeys: params["TagKeys"],
@@ -1106,10 +1099,7 @@ export default class DMS {
       abortSignal, body,
       action: "RemoveTagsFromResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async startReplicationTask(

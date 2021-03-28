@@ -87,10 +87,6 @@ export interface DescribeContributorInsightsInput {
 }
 
 // refs: 1 - tags: named, input
-export interface DescribeEndpointsRequest {
-}
-
-// refs: 1 - tags: named, input
 export interface DescribeExportInput {
   ExportArn: string;
 }
@@ -108,10 +104,6 @@ export interface DescribeGlobalTableSettingsInput {
 // refs: 1 - tags: named, input
 export interface DescribeKinesisStreamingDestinationInput {
   TableName: string;
-}
-
-// refs: 1 - tags: named, input
-export interface DescribeLimitsInput {
 }
 
 // refs: 1 - tags: named, input

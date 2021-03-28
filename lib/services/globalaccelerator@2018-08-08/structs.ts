@@ -471,14 +471,6 @@ export interface ProvisionByoipCidrResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface TagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UntagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface UpdateAcceleratorResponse {
   Accelerator?: Accelerator | null;
 }

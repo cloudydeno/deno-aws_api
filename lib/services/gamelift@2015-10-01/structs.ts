@@ -422,10 +422,6 @@ export interface DescribeScriptInput {
 }
 
 // refs: 1 - tags: named, input
-export interface DescribeVpcPeeringAuthorizationsInput {
-}
-
-// refs: 1 - tags: named, input
 export interface DescribeVpcPeeringConnectionsInput {
   FleetId?: string | null;
 }
@@ -727,10 +723,6 @@ export interface ValidateMatchmakingRuleSetInput {
 }
 
 // refs: 1 - tags: named, output
-export interface AcceptMatchOutput {
-}
-
-// refs: 1 - tags: named, output
 export interface ClaimGameServerOutput {
   GameServer?: GameServer | null;
 }
@@ -806,10 +798,6 @@ export interface CreateVpcPeeringAuthorizationOutput {
 }
 
 // refs: 1 - tags: named, output
-export interface CreateVpcPeeringConnectionOutput {
-}
-
-// refs: 1 - tags: named, output
 export interface DeleteFleetLocationsOutput {
   FleetId?: string | null;
   FleetArn?: string | null;
@@ -819,26 +807,6 @@ export interface DeleteFleetLocationsOutput {
 // refs: 1 - tags: named, output
 export interface DeleteGameServerGroupOutput {
   GameServerGroup?: GameServerGroup | null;
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteGameSessionQueueOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteMatchmakingConfigurationOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteMatchmakingRuleSetOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteVpcPeeringAuthorizationOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteVpcPeeringConnectionOutput {
 }
 
 // refs: 1 - tags: named, output
@@ -1118,20 +1086,8 @@ export interface StopGameSessionPlacementOutput {
 }
 
 // refs: 1 - tags: named, output
-export interface StopMatchmakingOutput {
-}
-
-// refs: 1 - tags: named, output
 export interface SuspendGameServerGroupOutput {
   GameServerGroup?: GameServerGroup | null;
-}
-
-// refs: 1 - tags: named, output
-export interface TagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UntagResourceResponse {
 }
 
 // refs: 1 - tags: named, output

@@ -31,7 +31,7 @@ export default class Budgets {
 
   async createBudget(
     {abortSignal, ...params}: RequestConfig & s.CreateBudgetRequest,
-  ): Promise<s.CreateBudgetResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       AccountId: params["AccountId"],
       Budget: fromBudget(params["Budget"]),
@@ -41,10 +41,7 @@ export default class Budgets {
       abortSignal, body,
       action: "CreateBudget",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async createBudgetAction(
@@ -77,7 +74,7 @@ export default class Budgets {
 
   async createNotification(
     {abortSignal, ...params}: RequestConfig & s.CreateNotificationRequest,
-  ): Promise<s.CreateNotificationResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       AccountId: params["AccountId"],
       BudgetName: params["BudgetName"],
@@ -88,15 +85,12 @@ export default class Budgets {
       abortSignal, body,
       action: "CreateNotification",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async createSubscriber(
     {abortSignal, ...params}: RequestConfig & s.CreateSubscriberRequest,
-  ): Promise<s.CreateSubscriberResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       AccountId: params["AccountId"],
       BudgetName: params["BudgetName"],
@@ -107,15 +101,12 @@ export default class Budgets {
       abortSignal, body,
       action: "CreateSubscriber",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteBudget(
     {abortSignal, ...params}: RequestConfig & s.DeleteBudgetRequest,
-  ): Promise<s.DeleteBudgetResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       AccountId: params["AccountId"],
       BudgetName: params["BudgetName"],
@@ -124,10 +115,7 @@ export default class Budgets {
       abortSignal, body,
       action: "DeleteBudget",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteBudgetAction(
@@ -154,7 +142,7 @@ export default class Budgets {
 
   async deleteNotification(
     {abortSignal, ...params}: RequestConfig & s.DeleteNotificationRequest,
-  ): Promise<s.DeleteNotificationResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       AccountId: params["AccountId"],
       BudgetName: params["BudgetName"],
@@ -164,15 +152,12 @@ export default class Budgets {
       abortSignal, body,
       action: "DeleteNotification",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteSubscriber(
     {abortSignal, ...params}: RequestConfig & s.DeleteSubscriberRequest,
-  ): Promise<s.DeleteSubscriberResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       AccountId: params["AccountId"],
       BudgetName: params["BudgetName"],
@@ -183,10 +168,7 @@ export default class Budgets {
       abortSignal, body,
       action: "DeleteSubscriber",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async describeBudget(
@@ -415,7 +397,7 @@ export default class Budgets {
 
   async updateBudget(
     {abortSignal, ...params}: RequestConfig & s.UpdateBudgetRequest,
-  ): Promise<s.UpdateBudgetResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       AccountId: params["AccountId"],
       NewBudget: fromBudget(params["NewBudget"]),
@@ -424,10 +406,7 @@ export default class Budgets {
       abortSignal, body,
       action: "UpdateBudget",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateBudgetAction(
@@ -461,7 +440,7 @@ export default class Budgets {
 
   async updateNotification(
     {abortSignal, ...params}: RequestConfig & s.UpdateNotificationRequest,
-  ): Promise<s.UpdateNotificationResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       AccountId: params["AccountId"],
       BudgetName: params["BudgetName"],
@@ -472,15 +451,12 @@ export default class Budgets {
       abortSignal, body,
       action: "UpdateNotification",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateSubscriber(
     {abortSignal, ...params}: RequestConfig & s.UpdateSubscriberRequest,
-  ): Promise<s.UpdateSubscriberResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       AccountId: params["AccountId"],
       BudgetName: params["BudgetName"],
@@ -492,10 +468,7 @@ export default class Budgets {
       abortSignal, body,
       action: "UpdateSubscriber",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
 }

@@ -77,6 +77,7 @@ export default class CognitoIdentity {
       abortSignal, body,
       action: "DeleteIdentityPool",
     });
+    await resp.text();
   }
 
   async describeIdentity(
@@ -352,6 +353,7 @@ export default class CognitoIdentity {
       abortSignal, body,
       action: "SetIdentityPoolRoles",
     });
+    await resp.text();
   }
 
   async setPrincipalTagAttributeMap(
@@ -380,7 +382,7 @@ export default class CognitoIdentity {
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & s.TagResourceInput,
-  ): Promise<s.TagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
       Tags: params["Tags"],
@@ -389,10 +391,7 @@ export default class CognitoIdentity {
       abortSignal, body,
       action: "TagResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async unlinkDeveloperIdentity(
@@ -408,6 +407,7 @@ export default class CognitoIdentity {
       abortSignal, body,
       action: "UnlinkDeveloperIdentity",
     });
+    await resp.text();
   }
 
   async unlinkIdentity(
@@ -422,11 +422,12 @@ export default class CognitoIdentity {
       abortSignal, body,
       action: "UnlinkIdentity",
     });
+    await resp.text();
   }
 
   async untagResource(
     {abortSignal, ...params}: RequestConfig & s.UntagResourceInput,
-  ): Promise<s.UntagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
       TagKeys: params["TagKeys"],
@@ -435,10 +436,7 @@ export default class CognitoIdentity {
       abortSignal, body,
       action: "UntagResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateIdentityPool(

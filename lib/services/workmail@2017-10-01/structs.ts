@@ -348,22 +348,6 @@ export interface UpdateResourceRequest {
 }
 
 // refs: 1 - tags: named, output
-export interface AssociateDelegateToResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface AssociateMemberToGroupResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface CancelMailboxExportJobResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface CreateAliasResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface CreateGroupResponse {
   GroupId?: string | null;
 }
@@ -384,41 +368,9 @@ export interface CreateUserResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface DeleteAccessControlRuleResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteAliasResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteGroupResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteMailboxPermissionsResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface DeleteOrganizationResponse {
   OrganizationId?: string | null;
   State?: string | null;
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteRetentionPolicyResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteUserResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeregisterFromWorkMailResponse {
 }
 
 // refs: 1 - tags: named, output
@@ -482,14 +434,6 @@ export interface DescribeUserResponse {
   UserRole?: UserRole | null;
   EnabledDate?: Date | number | null;
   DisabledDate?: Date | number | null;
-}
-
-// refs: 1 - tags: named, output
-export interface DisassociateDelegateFromResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DisassociateMemberFromGroupResponse {
 }
 
 // refs: 1 - tags: named, output
@@ -577,48 +521,8 @@ export interface ListUsersResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface PutAccessControlRuleResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface PutMailboxPermissionsResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface PutRetentionPolicyResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface RegisterToWorkMailResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface ResetPasswordResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface StartMailboxExportJobResponse {
   JobId?: string | null;
-}
-
-// refs: 1 - tags: named, output
-export interface TagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UntagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateMailboxQuotaResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdatePrimaryEmailAddressResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateResourceResponse {
 }
 
 // refs: 1 - tags: input, named, interface

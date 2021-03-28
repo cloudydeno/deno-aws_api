@@ -228,16 +228,8 @@ export interface UpdatePermissionSetRequest {
 }
 
 // refs: 1 - tags: named, output
-export interface AttachManagedPolicyToPermissionSetResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface CreateAccountAssignmentResponse {
   AccountAssignmentCreationStatus?: AccountAssignmentOperationStatus | null;
-}
-
-// refs: 1 - tags: named, output
-export interface CreateInstanceAccessControlAttributeConfigurationResponse {
 }
 
 // refs: 1 - tags: named, output
@@ -248,18 +240,6 @@ export interface CreatePermissionSetResponse {
 // refs: 1 - tags: named, output
 export interface DeleteAccountAssignmentResponse {
   AccountAssignmentDeletionStatus?: AccountAssignmentOperationStatus | null;
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteInlinePolicyFromPermissionSetResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteInstanceAccessControlAttributeConfigurationResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeletePermissionSetResponse {
 }
 
 // refs: 1 - tags: named, output
@@ -287,10 +267,6 @@ export interface DescribePermissionSetResponse {
 // refs: 1 - tags: named, output
 export interface DescribePermissionSetProvisioningStatusResponse {
   PermissionSetProvisioningStatus?: PermissionSetProvisioningStatus | null;
-}
-
-// refs: 1 - tags: named, output
-export interface DetachManagedPolicyFromPermissionSetResponse {
 }
 
 // refs: 1 - tags: named, output
@@ -361,26 +337,6 @@ export interface ListTagsForResourceResponse {
 // refs: 1 - tags: named, output
 export interface ProvisionPermissionSetResponse {
   PermissionSetProvisioningStatus?: PermissionSetProvisioningStatus | null;
-}
-
-// refs: 1 - tags: named, output
-export interface PutInlinePolicyToPermissionSetResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface TagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UntagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateInstanceAccessControlAttributeConfigurationResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdatePermissionSetResponse {
 }
 
 // refs: 6 - tags: input, named, enum, output

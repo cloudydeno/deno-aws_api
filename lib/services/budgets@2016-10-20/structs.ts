@@ -182,10 +182,6 @@ export interface UpdateSubscriberRequest {
 }
 
 // refs: 1 - tags: named, output
-export interface CreateBudgetResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface CreateBudgetActionResponse {
   AccountId: string;
   BudgetName: string;
@@ -193,30 +189,10 @@ export interface CreateBudgetActionResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface CreateNotificationResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface CreateSubscriberResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteBudgetResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface DeleteBudgetActionResponse {
   AccountId: string;
   BudgetName: string;
   Action: Action;
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteNotificationResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteSubscriberResponse {
 }
 
 // refs: 1 - tags: named, output
@@ -282,23 +258,11 @@ export interface ExecuteBudgetActionResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface UpdateBudgetResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface UpdateBudgetActionResponse {
   AccountId: string;
   BudgetName: string;
   OldAction: Action;
   NewAction: Action;
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateNotificationResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateSubscriberResponse {
 }
 
 // refs: 4 - tags: input, named, interface, output

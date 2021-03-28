@@ -39,10 +39,10 @@ export default class KinesisVideoArchivedMedia {
       action: "GetClip",
       requestUri: "/getClip",
     });
-  return {
-    ContentType: resp.headers.get("Content-Type"),
-    Payload: await resp.text(), // TODO: maybe allow proper body streaming,
-  };
+    return {
+      ContentType: resp.headers.get("Content-Type"),
+      Payload: await resp.text(), // TODO: maybe allow proper body streaming,
+    };
   }
 
   async getDASHStreamingSessionURL(
@@ -111,10 +111,10 @@ export default class KinesisVideoArchivedMedia {
       action: "GetMediaForFragmentList",
       requestUri: "/getMediaForFragmentList",
     });
-  return {
-    ContentType: resp.headers.get("Content-Type"),
-    Payload: await resp.text(), // TODO: maybe allow proper body streaming,
-  };
+    return {
+      ContentType: resp.headers.get("Content-Type"),
+      Payload: await resp.text(), // TODO: maybe allow proper body streaming,
+    };
   }
 
   async listFragments(

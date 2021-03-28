@@ -69,7 +69,7 @@ export default class LakeFormation {
 
   async deregisterResource(
     {abortSignal, ...params}: RequestConfig & s.DeregisterResourceRequest,
-  ): Promise<s.DeregisterResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
     };
@@ -77,10 +77,7 @@ export default class LakeFormation {
       abortSignal, body,
       action: "DeregisterResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async describeResource(
@@ -143,7 +140,7 @@ export default class LakeFormation {
 
   async grantPermissions(
     {abortSignal, ...params}: RequestConfig & s.GrantPermissionsRequest,
-  ): Promise<s.GrantPermissionsResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       CatalogId: params["CatalogId"],
       Principal: fromDataLakePrincipal(params["Principal"]),
@@ -155,10 +152,7 @@ export default class LakeFormation {
       abortSignal, body,
       action: "GrantPermissions",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async listPermissions(
@@ -208,7 +202,7 @@ export default class LakeFormation {
 
   async putDataLakeSettings(
     {abortSignal, ...params}: RequestConfig & s.PutDataLakeSettingsRequest,
-  ): Promise<s.PutDataLakeSettingsResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       CatalogId: params["CatalogId"],
       DataLakeSettings: fromDataLakeSettings(params["DataLakeSettings"]),
@@ -217,15 +211,12 @@ export default class LakeFormation {
       abortSignal, body,
       action: "PutDataLakeSettings",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async registerResource(
     {abortSignal, ...params}: RequestConfig & s.RegisterResourceRequest,
-  ): Promise<s.RegisterResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
       UseServiceLinkedRole: params["UseServiceLinkedRole"],
@@ -235,15 +226,12 @@ export default class LakeFormation {
       abortSignal, body,
       action: "RegisterResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async revokePermissions(
     {abortSignal, ...params}: RequestConfig & s.RevokePermissionsRequest,
-  ): Promise<s.RevokePermissionsResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       CatalogId: params["CatalogId"],
       Principal: fromDataLakePrincipal(params["Principal"]),
@@ -255,15 +243,12 @@ export default class LakeFormation {
       abortSignal, body,
       action: "RevokePermissions",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateResource(
     {abortSignal, ...params}: RequestConfig & s.UpdateResourceRequest,
-  ): Promise<s.UpdateResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       RoleArn: params["RoleArn"],
       ResourceArn: params["ResourceArn"],
@@ -272,10 +257,7 @@ export default class LakeFormation {
       abortSignal, body,
       action: "UpdateResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
 }

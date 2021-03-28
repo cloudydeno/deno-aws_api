@@ -108,24 +108,8 @@ export interface DescribeClassificationJobRequest {
 }
 
 // refs: 1 - tags: named, input
-export interface DescribeOrganizationConfigurationRequest {
-}
-
-// refs: 1 - tags: named, input
-export interface DisableMacieRequest {
-}
-
-// refs: 1 - tags: named, input
 export interface DisableOrganizationAdminAccountRequest {
   adminAccountId: string;
-}
-
-// refs: 1 - tags: named, input
-export interface DisassociateFromAdministratorAccountRequest {
-}
-
-// refs: 1 - tags: named, input
-export interface DisassociateFromMasterAccountRequest {
 }
 
 // refs: 1 - tags: named, input
@@ -147,16 +131,8 @@ export interface EnableOrganizationAdminAccountRequest {
 }
 
 // refs: 1 - tags: named, input
-export interface GetAdministratorAccountRequest {
-}
-
-// refs: 1 - tags: named, input
 export interface GetBucketStatisticsRequest {
   accountId?: string | null;
-}
-
-// refs: 1 - tags: named, input
-export interface GetClassificationExportConfigurationRequest {
 }
 
 // refs: 1 - tags: named, input
@@ -181,22 +157,6 @@ export interface GetFindingsRequest {
 // refs: 1 - tags: named, input
 export interface GetFindingsFilterRequest {
   id: string;
-}
-
-// refs: 1 - tags: named, input
-export interface GetFindingsPublicationConfigurationRequest {
-}
-
-// refs: 1 - tags: named, input
-export interface GetInvitationsCountRequest {
-}
-
-// refs: 1 - tags: named, input
-export interface GetMacieSessionRequest {
-}
-
-// refs: 1 - tags: named, input
-export interface GetMasterAccountRequest {
 }
 
 // refs: 1 - tags: named, input
@@ -336,10 +296,6 @@ export interface UpdateOrganizationConfigurationRequest {
 }
 
 // refs: 1 - tags: named, output
-export interface AcceptInvitationResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface BatchGetCustomDataIdentifiersResponse {
   customDataIdentifiers?: BatchGetCustomDataIdentifierSummary[] | null;
   notFoundIdentifierIds?: string[] | null;
@@ -373,29 +329,13 @@ export interface CreateMemberResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface CreateSampleFindingsResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface DeclineInvitationsResponse {
   unprocessedAccounts?: UnprocessedAccount[] | null;
 }
 
 // refs: 1 - tags: named, output
-export interface DeleteCustomDataIdentifierResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteFindingsFilterResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface DeleteInvitationsResponse {
   unprocessedAccounts?: UnprocessedAccount[] | null;
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteMemberResponse {
 }
 
 // refs: 1 - tags: named, output
@@ -430,34 +370,6 @@ export interface DescribeClassificationJobResponse {
 export interface DescribeOrganizationConfigurationResponse {
   autoEnable?: boolean | null;
   maxAccountLimitReached?: boolean | null;
-}
-
-// refs: 1 - tags: named, output
-export interface DisableMacieResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DisableOrganizationAdminAccountResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DisassociateFromAdministratorAccountResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DisassociateFromMasterAccountResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DisassociateMemberResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface EnableMacieResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface EnableOrganizationAdminAccountResponse {
 }
 
 // refs: 1 - tags: named, output
@@ -626,42 +538,14 @@ export interface PutClassificationExportConfigurationResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface PutFindingsPublicationConfigurationResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface TagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface TestCustomDataIdentifierResponse {
   matchCount?: number | null;
-}
-
-// refs: 1 - tags: named, output
-export interface UntagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateClassificationJobResponse {
 }
 
 // refs: 1 - tags: named, output
 export interface UpdateFindingsFilterResponse {
   arn?: string | null;
   id?: string | null;
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateMacieSessionResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateMemberSessionResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateOrganizationConfigurationResponse {
 }
 
 // refs: 3 - tags: input, named, enum, output

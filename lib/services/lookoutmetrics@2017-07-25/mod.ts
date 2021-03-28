@@ -31,7 +31,7 @@ export default class LookoutMetrics {
 
   async activateAnomalyDetector(
     {abortSignal, ...params}: RequestConfig & s.ActivateAnomalyDetectorRequest,
-  ): Promise<s.ActivateAnomalyDetectorResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       AnomalyDetectorArn: params["AnomalyDetectorArn"],
     };
@@ -40,15 +40,12 @@ export default class LookoutMetrics {
       action: "ActivateAnomalyDetector",
       requestUri: "/ActivateAnomalyDetector",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async backTestAnomalyDetector(
     {abortSignal, ...params}: RequestConfig & s.BackTestAnomalyDetectorRequest,
-  ): Promise<s.BackTestAnomalyDetectorResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       AnomalyDetectorArn: params["AnomalyDetectorArn"],
     };
@@ -57,10 +54,7 @@ export default class LookoutMetrics {
       action: "BackTestAnomalyDetector",
       requestUri: "/BackTestAnomalyDetector",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async createAlert(
@@ -141,7 +135,7 @@ export default class LookoutMetrics {
 
   async deleteAlert(
     {abortSignal, ...params}: RequestConfig & s.DeleteAlertRequest,
-  ): Promise<s.DeleteAlertResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       AlertArn: params["AlertArn"],
     };
@@ -150,15 +144,12 @@ export default class LookoutMetrics {
       action: "DeleteAlert",
       requestUri: "/DeleteAlert",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteAnomalyDetector(
     {abortSignal, ...params}: RequestConfig & s.DeleteAnomalyDetectorRequest,
-  ): Promise<s.DeleteAnomalyDetectorResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       AnomalyDetectorArn: params["AnomalyDetectorArn"],
     };
@@ -167,10 +158,7 @@ export default class LookoutMetrics {
       action: "DeleteAnomalyDetector",
       requestUri: "/DeleteAnomalyDetector",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async describeAlert(
@@ -473,7 +461,7 @@ export default class LookoutMetrics {
 
   async putFeedback(
     {abortSignal, ...params}: RequestConfig & s.PutFeedbackRequest,
-  ): Promise<s.PutFeedbackResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       AnomalyDetectorArn: params["AnomalyDetectorArn"],
       AnomalyGroupTimeSeriesFeedback: fromAnomalyGroupTimeSeriesFeedback(params["AnomalyGroupTimeSeriesFeedback"]),
@@ -483,15 +471,12 @@ export default class LookoutMetrics {
       action: "PutFeedback",
       requestUri: "/PutFeedback",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & s.TagResourceRequest,
-  ): Promise<s.TagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       tags: params["Tags"],
     };
@@ -501,15 +486,12 @@ export default class LookoutMetrics {
       requestUri: cmnP.encodePath`/tags/${params["ResourceArn"]}`,
       responseCode: 204,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async untagResource(
     {abortSignal, ...params}: RequestConfig & s.UntagResourceRequest,
-  ): Promise<s.UntagResourceResponse> {
+  ): Promise<void> {
     const query = new URLSearchParams;
     for (const item of params["TagKeys"]) {
       query.append("tagKeys", item?.toString() ?? "");
@@ -521,10 +503,7 @@ export default class LookoutMetrics {
       requestUri: cmnP.encodePath`/tags/${params["ResourceArn"]}`,
       responseCode: 204,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateAnomalyDetector(

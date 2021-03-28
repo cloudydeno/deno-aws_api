@@ -193,10 +193,6 @@ export interface CreateProfilingGroupResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface DeleteProfilingGroupResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface DescribeProfilingGroupResponse {
   profilingGroup: ProfilingGroupDescription;
 }
@@ -259,10 +255,6 @@ export interface ListTagsForResourceResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface PostAgentProfileResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface PutPermissionResponse {
   policy: string;
   revisionId: string;
@@ -277,18 +269,6 @@ export interface RemoveNotificationChannelResponse {
 export interface RemovePermissionResponse {
   policy: string;
   revisionId: string;
-}
-
-// refs: 1 - tags: named, output
-export interface SubmitFeedbackResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface TagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UntagResourceResponse {
 }
 
 // refs: 1 - tags: named, output

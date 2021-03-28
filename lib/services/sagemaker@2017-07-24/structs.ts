@@ -946,17 +946,9 @@ export interface DescribeWorkteamRequest {
 }
 
 // refs: 1 - tags: named, input
-export interface DisableSagemakerServicecatalogPortfolioInput {
-}
-
-// refs: 1 - tags: named, input
 export interface DisassociateTrialComponentRequest {
   TrialComponentName: string;
   TrialName: string;
-}
-
-// refs: 1 - tags: named, input
-export interface EnableSagemakerServicecatalogPortfolioInput {
 }
 
 // refs: 1 - tags: named, input
@@ -967,10 +959,6 @@ export interface GetDeviceFleetReportRequest {
 // refs: 1 - tags: named, input
 export interface GetModelPackageGroupPolicyInput {
   ModelPackageGroupName: string;
-}
-
-// refs: 1 - tags: named, input
-export interface GetSagemakerServicecatalogPortfolioStatusInput {
 }
 
 // refs: 1 - tags: named, input
@@ -2161,28 +2149,8 @@ export interface DeleteExperimentResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface DeleteFlowDefinitionResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteHumanTaskUiResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteImageResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteImageVersionResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface DeletePipelineResponse {
   PipelineArn?: string | null;
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteTagsOutput {
 }
 
 // refs: 1 - tags: named, output
@@ -2193,10 +2161,6 @@ export interface DeleteTrialResponse {
 // refs: 1 - tags: named, output
 export interface DeleteTrialComponentResponse {
   TrialComponentArn?: string | null;
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteWorkforceResponse {
 }
 
 // refs: 1 - tags: named, output
@@ -2905,17 +2869,9 @@ export interface DescribeWorkteamResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface DisableSagemakerServicecatalogPortfolioOutput {
-}
-
-// refs: 1 - tags: named, output
 export interface DisassociateTrialComponentResponse {
   TrialComponentArn?: string | null;
   TrialArn?: string | null;
-}
-
-// refs: 1 - tags: named, output
-export interface EnableSagemakerServicecatalogPortfolioOutput {
 }
 
 // refs: 1 - tags: named, output
@@ -3348,14 +3304,6 @@ export interface UpdateModelPackageOutput {
 // refs: 1 - tags: named, output
 export interface UpdateMonitoringScheduleResponse {
   MonitoringScheduleArn: string;
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateNotebookInstanceOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateNotebookInstanceLifecycleConfigOutput {
 }
 
 // refs: 1 - tags: named, output

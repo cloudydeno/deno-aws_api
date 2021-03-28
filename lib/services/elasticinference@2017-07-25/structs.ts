@@ -9,10 +9,6 @@ export interface DescribeAcceleratorOfferingsRequest {
 }
 
 // refs: 1 - tags: named, input
-export interface DescribeAcceleratorTypesRequest {
-}
-
-// refs: 1 - tags: named, input
 export interface DescribeAcceleratorsRequest {
   acceleratorIds?: string[] | null;
   filters?: Filter[] | null;
@@ -56,14 +52,6 @@ export interface DescribeAcceleratorsResponse {
 // refs: 1 - tags: named, output
 export interface ListTagsForResourceResult {
   tags?: { [key: string]: string | null | undefined } | null;
-}
-
-// refs: 1 - tags: named, output
-export interface TagResourceResult {
-}
-
-// refs: 1 - tags: named, output
-export interface UntagResourceResult {
 }
 
 // refs: 2 - tags: input, named, enum, output

@@ -124,6 +124,7 @@ export default class Schemas {
       requestUri: cmnP.encodePath`/v1/discoverers/id/${params["DiscovererId"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deleteRegistry(
@@ -137,6 +138,7 @@ export default class Schemas {
       requestUri: cmnP.encodePath`/v1/registries/name/${params["RegistryName"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deleteResourcePolicy(
@@ -151,6 +153,7 @@ export default class Schemas {
       requestUri: "/v1/policy",
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deleteSchema(
@@ -164,6 +167,7 @@ export default class Schemas {
       requestUri: cmnP.encodePath`/v1/registries/name/${params["RegistryName"]}/schemas/name/${params["SchemaName"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deleteSchemaVersion(
@@ -177,6 +181,7 @@ export default class Schemas {
       requestUri: cmnP.encodePath`/v1/registries/name/${params["RegistryName"]}/schemas/name/${params["SchemaName"]}/version/${params["SchemaVersion"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async describeCodeBinding(
@@ -313,9 +318,9 @@ export default class Schemas {
       requestUri: cmnP.encodePath`/v1/registries/name/${params["RegistryName"]}/schemas/name/${params["SchemaName"]}/language/${params["Language"]}/source`,
       responseCode: 200,
     });
-  return {
-    Body: await resp.text(), // TODO: maybe allow proper body streaming,
-  };
+    return {
+      Body: await resp.text(), // TODO: maybe allow proper body streaming,
+    };
   }
 
   async getDiscoveredSchema(
@@ -592,6 +597,7 @@ export default class Schemas {
       requestUri: cmnP.encodePath`/tags/${params["ResourceArn"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async untagResource(
@@ -608,6 +614,7 @@ export default class Schemas {
       requestUri: cmnP.encodePath`/tags/${params["ResourceArn"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async updateDiscoverer(

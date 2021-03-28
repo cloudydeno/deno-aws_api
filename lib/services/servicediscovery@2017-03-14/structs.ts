@@ -187,10 +187,6 @@ export interface DeleteNamespaceResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface DeleteServiceResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface DeregisterInstanceResponse {
   OperationId?: string | null;
 }
@@ -258,14 +254,6 @@ export interface ListTagsForResourceResponse {
 // refs: 1 - tags: named, output
 export interface RegisterInstanceResponse {
   OperationId?: string | null;
-}
-
-// refs: 1 - tags: named, output
-export interface TagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UntagResourceResponse {
 }
 
 // refs: 1 - tags: named, output

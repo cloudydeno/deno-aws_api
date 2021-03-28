@@ -285,7 +285,7 @@ export default class CodeGuruReviewer {
 
   async putRecommendationFeedback(
     {abortSignal, ...params}: RequestConfig & s.PutRecommendationFeedbackRequest,
-  ): Promise<s.PutRecommendationFeedbackResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       CodeReviewArn: params["CodeReviewArn"],
       RecommendationId: params["RecommendationId"],
@@ -297,15 +297,12 @@ export default class CodeGuruReviewer {
       method: "PUT",
       requestUri: "/feedback",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & s.TagResourceRequest,
-  ): Promise<s.TagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       Tags: params["Tags"],
     };
@@ -314,15 +311,12 @@ export default class CodeGuruReviewer {
       action: "TagResource",
       requestUri: cmnP.encodePath`/tags/${params["resourceArn"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async untagResource(
     {abortSignal, ...params}: RequestConfig & s.UntagResourceRequest,
-  ): Promise<s.UntagResourceResponse> {
+  ): Promise<void> {
     const query = new URLSearchParams;
     for (const item of params["TagKeys"]) {
       query.append("tagKeys", item?.toString() ?? "");
@@ -333,10 +327,7 @@ export default class CodeGuruReviewer {
       method: "DELETE",
       requestUri: cmnP.encodePath`/tags/${params["resourceArn"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
 }

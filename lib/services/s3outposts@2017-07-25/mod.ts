@@ -62,6 +62,7 @@ export default class S3Outposts {
       method: "DELETE",
       requestUri: "/S3Outposts/DeleteEndpoint",
     });
+    await resp.text();
   }
 
   async listEndpoints(

@@ -182,10 +182,6 @@ export interface DescribeUserProfileResult {
 }
 
 // refs: 1 - tags: named, output
-export interface DisassociateTeamMemberResult {
-}
-
-// refs: 1 - tags: named, output
 export interface ListProjectsResult {
   projects: ProjectSummary[];
   nextToken?: string | null;
@@ -218,14 +214,6 @@ export interface ListUserProfilesResult {
 // refs: 1 - tags: named, output
 export interface TagProjectResult {
   tags?: { [key: string]: string | null | undefined } | null;
-}
-
-// refs: 1 - tags: named, output
-export interface UntagProjectResult {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateProjectResult {
 }
 
 // refs: 1 - tags: named, output

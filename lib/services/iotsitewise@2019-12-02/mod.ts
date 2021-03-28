@@ -51,6 +51,7 @@ export default class IoTSiteWise {
       requestUri: cmnP.encodePath`/assets/${params["assetId"]}/associate`,
       hostPrefix: `model.`,
     });
+    await resp.text();
   }
 
   async batchAssociateProjectAssets(
@@ -309,7 +310,7 @@ export default class IoTSiteWise {
 
   async deleteAccessPolicy(
     {abortSignal, ...params}: RequestConfig & s.DeleteAccessPolicyRequest,
-  ): Promise<s.DeleteAccessPolicyResponse> {
+  ): Promise<void> {
     const query = new URLSearchParams;
     if (params["clientToken"] != null) query.set("clientToken", params["clientToken"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
@@ -320,10 +321,7 @@ export default class IoTSiteWise {
       responseCode: 204,
       hostPrefix: `monitor.`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteAsset(
@@ -370,7 +368,7 @@ export default class IoTSiteWise {
 
   async deleteDashboard(
     {abortSignal, ...params}: RequestConfig & s.DeleteDashboardRequest,
-  ): Promise<s.DeleteDashboardResponse> {
+  ): Promise<void> {
     const query = new URLSearchParams;
     if (params["clientToken"] != null) query.set("clientToken", params["clientToken"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
@@ -381,10 +379,7 @@ export default class IoTSiteWise {
       responseCode: 204,
       hostPrefix: `monitor.`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteGateway(
@@ -398,6 +393,7 @@ export default class IoTSiteWise {
       requestUri: cmnP.encodePath`/20200301/gateways/${params["gatewayId"]}`,
       hostPrefix: `edge.`,
     });
+    await resp.text();
   }
 
   async deletePortal(
@@ -423,7 +419,7 @@ export default class IoTSiteWise {
 
   async deleteProject(
     {abortSignal, ...params}: RequestConfig & s.DeleteProjectRequest,
-  ): Promise<s.DeleteProjectResponse> {
+  ): Promise<void> {
     const query = new URLSearchParams;
     if (params["clientToken"] != null) query.set("clientToken", params["clientToken"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
@@ -434,10 +430,7 @@ export default class IoTSiteWise {
       responseCode: 204,
       hostPrefix: `monitor.`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async describeAccessPolicy(
@@ -577,11 +570,11 @@ export default class IoTSiteWise {
   }
 
   async describeDefaultEncryptionConfiguration(
-    {abortSignal, ...params}: RequestConfig & s.DescribeDefaultEncryptionConfigurationRequest = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.DescribeDefaultEncryptionConfigurationResponse> {
-
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
-      abortSignal,
+      abortSignal, body,
       action: "DescribeDefaultEncryptionConfiguration",
       method: "GET",
       requestUri: "/configuration/account/encryption",
@@ -646,11 +639,11 @@ export default class IoTSiteWise {
   }
 
   async describeLoggingOptions(
-    {abortSignal, ...params}: RequestConfig & s.DescribeLoggingOptionsRequest = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.DescribeLoggingOptionsResponse> {
-
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
-      abortSignal,
+      abortSignal, body,
       action: "DescribeLoggingOptions",
       method: "GET",
       requestUri: "/logging",
@@ -738,6 +731,7 @@ export default class IoTSiteWise {
       requestUri: cmnP.encodePath`/assets/${params["assetId"]}/disassociate`,
       hostPrefix: `model.`,
     });
+    await resp.text();
   }
 
   async getAssetPropertyAggregates(
@@ -1120,7 +1114,7 @@ export default class IoTSiteWise {
 
   async putLoggingOptions(
     {abortSignal, ...params}: RequestConfig & s.PutLoggingOptionsRequest,
-  ): Promise<s.PutLoggingOptionsResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       loggingOptions: fromLoggingOptions(params["loggingOptions"]),
     };
@@ -1131,15 +1125,12 @@ export default class IoTSiteWise {
       requestUri: "/logging",
       hostPrefix: `model.`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & s.TagResourceRequest,
-  ): Promise<s.TagResourceResponse> {
+  ): Promise<void> {
     const query = new URLSearchParams;
     const body: jsonP.JSONObject = {
       tags: params["tags"],
@@ -1150,15 +1141,12 @@ export default class IoTSiteWise {
       action: "TagResource",
       requestUri: "/tags",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async untagResource(
     {abortSignal, ...params}: RequestConfig & s.UntagResourceRequest,
-  ): Promise<s.UntagResourceResponse> {
+  ): Promise<void> {
     const query = new URLSearchParams;
     query.set("resourceArn", params["resourceArn"]?.toString() ?? "");
     for (const item of params["tagKeys"]) {
@@ -1170,15 +1158,12 @@ export default class IoTSiteWise {
       method: "DELETE",
       requestUri: "/tags",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateAccessPolicy(
     {abortSignal, ...params}: RequestConfig & s.UpdateAccessPolicyRequest,
-  ): Promise<s.UpdateAccessPolicyResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       accessPolicyIdentity: fromIdentity(params["accessPolicyIdentity"]),
       accessPolicyResource: fromResource(params["accessPolicyResource"]),
@@ -1193,10 +1178,7 @@ export default class IoTSiteWise {
       responseCode: 200,
       hostPrefix: `monitor.`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateAsset(
@@ -1264,11 +1246,12 @@ export default class IoTSiteWise {
       requestUri: cmnP.encodePath`/assets/${params["assetId"]}/properties/${params["propertyId"]}`,
       hostPrefix: `model.`,
     });
+    await resp.text();
   }
 
   async updateDashboard(
     {abortSignal, ...params}: RequestConfig & s.UpdateDashboardRequest,
-  ): Promise<s.UpdateDashboardResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       dashboardName: params["dashboardName"],
       dashboardDescription: params["dashboardDescription"],
@@ -1283,10 +1266,7 @@ export default class IoTSiteWise {
       responseCode: 200,
       hostPrefix: `monitor.`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateGateway(
@@ -1302,6 +1282,7 @@ export default class IoTSiteWise {
       requestUri: cmnP.encodePath`/20200301/gateways/${params["gatewayId"]}`,
       hostPrefix: `edge.`,
     });
+    await resp.text();
   }
 
   async updateGatewayCapabilityConfiguration(
@@ -1356,7 +1337,7 @@ export default class IoTSiteWise {
 
   async updateProject(
     {abortSignal, ...params}: RequestConfig & s.UpdateProjectRequest,
-  ): Promise<s.UpdateProjectResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       projectName: params["projectName"],
       projectDescription: params["projectDescription"],
@@ -1370,10 +1351,7 @@ export default class IoTSiteWise {
       responseCode: 200,
       hostPrefix: `monitor.`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   // Resource State Waiters

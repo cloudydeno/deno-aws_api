@@ -59,7 +59,7 @@ export default class IoTFleetHub {
 
   async deleteApplication(
     {abortSignal, ...params}: RequestConfig & s.DeleteApplicationRequest,
-  ): Promise<s.DeleteApplicationResponse> {
+  ): Promise<void> {
     const query = new URLSearchParams;
     if (params["clientToken"] != null) query.set("clientToken", params["clientToken"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
@@ -69,10 +69,7 @@ export default class IoTFleetHub {
       requestUri: cmnP.encodePath`/applications/${params["applicationId"]}`,
       responseCode: 204,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async describeApplication(
@@ -147,7 +144,7 @@ export default class IoTFleetHub {
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & s.TagResourceRequest,
-  ): Promise<s.TagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       tags: params["tags"],
     };
@@ -156,15 +153,12 @@ export default class IoTFleetHub {
       action: "TagResource",
       requestUri: cmnP.encodePath`/tags/${params["resourceArn"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async untagResource(
     {abortSignal, ...params}: RequestConfig & s.UntagResourceRequest,
-  ): Promise<s.UntagResourceResponse> {
+  ): Promise<void> {
     const query = new URLSearchParams;
     for (const item of params["tagKeys"]) {
       query.append("tagKeys", item?.toString() ?? "");
@@ -175,15 +169,12 @@ export default class IoTFleetHub {
       method: "DELETE",
       requestUri: cmnP.encodePath`/tags/${params["resourceArn"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateApplication(
     {abortSignal, ...params}: RequestConfig & s.UpdateApplicationRequest,
-  ): Promise<s.UpdateApplicationResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       applicationName: params["applicationName"],
       applicationDescription: params["applicationDescription"],
@@ -196,10 +187,7 @@ export default class IoTFleetHub {
       requestUri: cmnP.encodePath`/applications/${params["applicationId"]}`,
       responseCode: 202,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
 }

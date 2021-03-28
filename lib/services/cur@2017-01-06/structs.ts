@@ -35,14 +35,6 @@ export interface DescribeReportDefinitionsResponse {
   NextToken?: string | null;
 }
 
-// refs: 1 - tags: named, output
-export interface ModifyReportDefinitionResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface PutReportDefinitionResponse {
-}
-
 // refs: 3 - tags: input, named, interface, output
 export interface ReportDefinition {
   ReportName: string;

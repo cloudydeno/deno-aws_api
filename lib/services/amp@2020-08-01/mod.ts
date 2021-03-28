@@ -67,6 +67,7 @@ export default class Amp {
       requestUri: cmnP.encodePath`/workspaces/${params["workspaceId"]}`,
       responseCode: 202,
     });
+    await resp.text();
   }
 
   async describeWorkspace(
@@ -125,6 +126,7 @@ export default class Amp {
       requestUri: cmnP.encodePath`/workspaces/${params["workspaceId"]}/alias`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
 }

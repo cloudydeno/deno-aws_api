@@ -13,7 +13,14 @@ export default class ProtocolXmlCodegen {
     this.ec2Mode = ec2 ?? false;
   }
 
-  generateOperationInputParsingTypescript(inputShape: KnownShape, meta: Schema.LocationInfo & {paramRef?: string}): { inputParsingCode: string; inputVariables: string[]; } {
+  generateOperationInputParsingTypescript(inputShape: KnownShape | null, meta: Schema.LocationInfo & {paramRef?: string}): { inputParsingCode: string; inputVariables: string[]; } {
+    if (!inputShape) {
+      return {
+        inputParsingCode: `    const body = ''; // TODO: anything more appropriate when no input?`,
+        inputVariables: ['body'],
+      };
+    }
+
     if (inputShape.spec.type !== 'structure') throw new Error(
       `Can only generate top level structures`);
 

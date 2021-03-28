@@ -290,10 +290,9 @@ export default class DynamoDB {
   }
 
   async describeEndpoints(
-    {abortSignal, ...params}: RequestConfig & s.DescribeEndpointsRequest = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.DescribeEndpointsResponse> {
-    const body: jsonP.JSONObject = {
-    };
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeEndpoints",
@@ -381,10 +380,9 @@ export default class DynamoDB {
   }
 
   async describeLimits(
-    {abortSignal, ...params}: RequestConfig & s.DescribeLimitsInput = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.DescribeLimitsOutput> {
-    const body: jsonP.JSONObject = {
-    };
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeLimits",
@@ -881,6 +879,7 @@ export default class DynamoDB {
       abortSignal, body,
       action: "TagResource",
     });
+    await resp.text();
   }
 
   async transactGetItems(
@@ -936,6 +935,7 @@ export default class DynamoDB {
       abortSignal, body,
       action: "UntagResource",
     });
+    await resp.text();
   }
 
   async updateContinuousBackups(

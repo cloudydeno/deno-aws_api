@@ -36,10 +36,6 @@ export interface StopHumanLoopRequest {
 }
 
 // refs: 1 - tags: named, output
-export interface DeleteHumanLoopResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface DescribeHumanLoopResponse {
   CreationTime: Date | number;
   FailureReason?: string | null;
@@ -60,10 +56,6 @@ export interface ListHumanLoopsResponse {
 // refs: 1 - tags: named, output
 export interface StartHumanLoopResponse {
   HumanLoopArn?: string | null;
-}
-
-// refs: 1 - tags: named, output
-export interface StopHumanLoopResponse {
 }
 
 // refs: 1 - tags: input, named, enum

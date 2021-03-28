@@ -617,14 +617,6 @@ export interface StartImportResponse {
   createdDate?: Date | number | null;
 }
 
-// refs: 1 - tags: named, output
-export interface TagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UntagResourceResponse {
-}
-
 // refs: 9 - tags: input, named, enum, output
 export type Locale =
 | "de-DE"

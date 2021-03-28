@@ -91,10 +91,6 @@ export interface CreateContainerServiceDeploymentRequest {
 }
 
 // refs: 1 - tags: named, input
-export interface CreateContainerServiceRegistryLoginRequest {
-}
-
-// refs: 1 - tags: named, input
 export interface CreateDiskRequest {
   diskName: string;
   availabilityZone: string;
@@ -380,10 +376,6 @@ export interface DisableAddOnRequest {
 }
 
 // refs: 1 - tags: named, input
-export interface DownloadDefaultKeyPairRequest {
-}
-
-// refs: 1 - tags: named, input
 export interface EnableAddOnRequest {
   resourceName: string;
   addOnRequest: AddOnRequest;
@@ -441,10 +433,6 @@ export interface GetContactMethodsRequest {
 }
 
 // refs: 1 - tags: named, input
-export interface GetContainerAPIMetadataRequest {
-}
-
-// refs: 1 - tags: named, input
 export interface GetContainerImagesRequest {
   serviceName: string;
 }
@@ -475,10 +463,6 @@ export interface GetContainerServiceMetricDataRequest {
 }
 
 // refs: 1 - tags: named, input
-export interface GetContainerServicePowersRequest {
-}
-
-// refs: 1 - tags: named, input
 export interface GetContainerServicesRequest {
   serviceName?: string | null;
 }
@@ -501,10 +485,6 @@ export interface GetDiskSnapshotsRequest {
 // refs: 1 - tags: named, input
 export interface GetDisksRequest {
   pageToken?: string | null;
-}
-
-// refs: 1 - tags: named, input
-export interface GetDistributionBundlesRequest {
 }
 
 // refs: 1 - tags: named, input
@@ -741,17 +721,9 @@ export interface ImportKeyPairRequest {
 }
 
 // refs: 1 - tags: named, input
-export interface IsVpcPeeredRequest {
-}
-
-// refs: 1 - tags: named, input
 export interface OpenInstancePublicPortsRequest {
   portInfo: PortInfo;
   instanceName: string;
-}
-
-// refs: 1 - tags: named, input
-export interface PeerVpcRequest {
 }
 
 // refs: 1 - tags: named, input
@@ -847,10 +819,6 @@ export interface TagResourceRequest {
 export interface TestAlarmRequest {
   alarmName: string;
   state: AlarmState;
-}
-
-// refs: 1 - tags: named, input
-export interface UnpeerVpcRequest {
 }
 
 // refs: 1 - tags: named, input
@@ -1086,14 +1054,6 @@ export interface DeleteCertificateResult {
 // refs: 1 - tags: named, output
 export interface DeleteContactMethodResult {
   operations?: Operation[] | null;
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteContainerImageResult {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteContainerServiceResult {
 }
 
 // refs: 1 - tags: named, output

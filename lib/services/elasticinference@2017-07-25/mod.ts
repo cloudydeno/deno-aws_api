@@ -50,11 +50,11 @@ export default class ElasticInference {
   }
 
   async describeAcceleratorTypes(
-    {abortSignal, ...params}: RequestConfig & s.DescribeAcceleratorTypesRequest = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.DescribeAcceleratorTypesResponse> {
-
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
-      abortSignal,
+      abortSignal, body,
       action: "DescribeAcceleratorTypes",
       method: "GET",
       requestUri: "/describe-accelerator-types",
@@ -110,7 +110,7 @@ export default class ElasticInference {
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & s.TagResourceRequest,
-  ): Promise<s.TagResourceResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       tags: params["tags"],
     };
@@ -119,15 +119,12 @@ export default class ElasticInference {
       action: "TagResource",
       requestUri: cmnP.encodePath`/tags/${params["resourceArn"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async untagResource(
     {abortSignal, ...params}: RequestConfig & s.UntagResourceRequest,
-  ): Promise<s.UntagResourceResult> {
+  ): Promise<void> {
     const query = new URLSearchParams;
     for (const item of params["tagKeys"]) {
       query.append("tagKeys", item?.toString() ?? "");
@@ -138,10 +135,7 @@ export default class ElasticInference {
       method: "DELETE",
       requestUri: cmnP.encodePath`/tags/${params["resourceArn"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
 }

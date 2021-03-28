@@ -383,7 +383,7 @@ export default class CloudSearch {
   }
 
   async listDomainNames(
-    {abortSignal, ...params}: RequestConfig = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.ListDomainNamesResponse> {
     const resp = await this.#client.performRequest({
       abortSignal,

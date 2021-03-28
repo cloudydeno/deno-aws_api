@@ -93,10 +93,6 @@ export interface GetJobUnlockCodeRequest {
 }
 
 // refs: 1 - tags: named, input
-export interface GetSnowballUsageRequest {
-}
-
-// refs: 1 - tags: named, input
 export interface GetSoftwareUpdatesRequest {
   JobId: string;
 }
@@ -155,14 +151,6 @@ export interface UpdateJobRequest {
 export interface UpdateJobShipmentStateRequest {
   JobId: string;
   ShipmentState: ShipmentState;
-}
-
-// refs: 1 - tags: named, output
-export interface CancelClusterResult {
-}
-
-// refs: 1 - tags: named, output
-export interface CancelJobResult {
 }
 
 // refs: 1 - tags: named, output
@@ -256,18 +244,6 @@ export interface ListCompatibleImagesResult {
 export interface ListJobsResult {
   JobListEntries?: JobListEntry[] | null;
   NextToken?: string | null;
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateClusterResult {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateJobResult {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateJobShipmentStateResult {
 }
 
 // refs: 3 - tags: input, named, interface, output

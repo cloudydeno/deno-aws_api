@@ -89,10 +89,6 @@ export interface CreateSavingsPlanResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface DeleteQueuedSavingsPlanResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface DescribeSavingsPlanRatesResponse {
   savingsPlanId?: string | null;
   searchResults?: SavingsPlanRate[] | null;
@@ -120,14 +116,6 @@ export interface DescribeSavingsPlansOfferingsResponse {
 // refs: 1 - tags: named, output
 export interface ListTagsForResourceResponse {
   tags?: { [key: string]: string | null | undefined } | null;
-}
-
-// refs: 1 - tags: named, output
-export interface TagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UntagResourceResponse {
 }
 
 // refs: 1 - tags: input, named, interface

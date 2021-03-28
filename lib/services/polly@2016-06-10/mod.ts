@@ -28,7 +28,7 @@ export default class Polly {
 
   async deleteLexicon(
     {abortSignal, ...params}: RequestConfig & s.DeleteLexiconInput,
-  ): Promise<s.DeleteLexiconOutput> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -37,10 +37,7 @@ export default class Polly {
       requestUri: cmnP.encodePath`/v1/lexicons/${params["Name"]}`,
       responseCode: 200,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async describeVoices(
@@ -152,7 +149,7 @@ export default class Polly {
 
   async putLexicon(
     {abortSignal, ...params}: RequestConfig & s.PutLexiconInput,
-  ): Promise<s.PutLexiconOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       Content: params["Content"],
     };
@@ -163,10 +160,7 @@ export default class Polly {
       requestUri: cmnP.encodePath`/v1/lexicons/${params["Name"]}`,
       responseCode: 200,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async startSpeechSynthesisTask(
@@ -220,11 +214,11 @@ export default class Polly {
       requestUri: "/v1/speech",
       responseCode: 200,
     });
-  return {
-    ContentType: resp.headers.get("Content-Type"),
-    RequestCharacters: cmnP.readNum(resp.headers.get("x-amzn-RequestCharacters")),
-    AudioStream: await resp.text(), // TODO: maybe allow proper body streaming,
-  };
+    return {
+      ContentType: resp.headers.get("Content-Type"),
+      RequestCharacters: cmnP.readNum(resp.headers.get("x-amzn-RequestCharacters")),
+      AudioStream: await resp.text(), // TODO: maybe allow proper body streaming,
+    };
   }
 
 }

@@ -47,9 +47,9 @@ export default class Pinpoint {
       requestUri: "/v1/apps",
       responseCode: 201,
     });
-  return {
-    ApplicationResponse: toApplicationResponse(await resp.json()),
-  };
+    return {
+      ApplicationResponse: toApplicationResponse(await resp.json()),
+    };
   }
 
   async createCampaign(
@@ -80,9 +80,9 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/apps/${params["ApplicationId"]}/campaigns`,
       responseCode: 201,
     });
-  return {
-    CampaignResponse: toCampaignResponse(await resp.json()),
-  };
+    return {
+      CampaignResponse: toCampaignResponse(await resp.json()),
+    };
   }
 
   async createEmailTemplate(
@@ -104,9 +104,9 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/templates/${params["TemplateName"]}/email`,
       responseCode: 201,
     });
-  return {
-    CreateTemplateMessageBody: toCreateTemplateMessageBody(await resp.json()),
-  };
+    return {
+      CreateTemplateMessageBody: toCreateTemplateMessageBody(await resp.json()),
+    };
   }
 
   async createExportJob(
@@ -125,9 +125,9 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/apps/${params["ApplicationId"]}/jobs/export`,
       responseCode: 202,
     });
-  return {
-    ExportJobResponse: toExportJobResponse(await resp.json()),
-  };
+    return {
+      ExportJobResponse: toExportJobResponse(await resp.json()),
+    };
   }
 
   async createImportJob(
@@ -150,9 +150,9 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/apps/${params["ApplicationId"]}/jobs/import`,
       responseCode: 201,
     });
-  return {
-    ImportJobResponse: toImportJobResponse(await resp.json()),
-  };
+    return {
+      ImportJobResponse: toImportJobResponse(await resp.json()),
+    };
   }
 
   async createJourney(
@@ -179,9 +179,9 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/apps/${params["ApplicationId"]}/journeys`,
       responseCode: 201,
     });
-  return {
-    JourneyResponse: toJourneyResponse(await resp.json()),
-  };
+    return {
+      JourneyResponse: toJourneyResponse(await resp.json()),
+    };
   }
 
   async createPushTemplate(
@@ -205,9 +205,9 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/templates/${params["TemplateName"]}/push`,
       responseCode: 201,
     });
-  return {
-    CreateTemplateMessageBody: toCreateTemplateMessageBody(await resp.json()),
-  };
+    return {
+      CreateTemplateMessageBody: toCreateTemplateMessageBody(await resp.json()),
+    };
   }
 
   async createRecommenderConfiguration(
@@ -231,9 +231,9 @@ export default class Pinpoint {
       requestUri: "/v1/recommenders",
       responseCode: 201,
     });
-  return {
-    RecommenderConfigurationResponse: toRecommenderConfigurationResponse(await resp.json()),
-  };
+    return {
+      RecommenderConfigurationResponse: toRecommenderConfigurationResponse(await resp.json()),
+    };
   }
 
   async createSegment(
@@ -252,9 +252,9 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/apps/${params["ApplicationId"]}/segments`,
       responseCode: 201,
     });
-  return {
-    SegmentResponse: toSegmentResponse(await resp.json()),
-  };
+    return {
+      SegmentResponse: toSegmentResponse(await resp.json()),
+    };
   }
 
   async createSmsTemplate(
@@ -274,9 +274,9 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/templates/${params["TemplateName"]}/sms`,
       responseCode: 201,
     });
-  return {
-    CreateTemplateMessageBody: toCreateTemplateMessageBody(await resp.json()),
-  };
+    return {
+      CreateTemplateMessageBody: toCreateTemplateMessageBody(await resp.json()),
+    };
   }
 
   async createVoiceTemplate(
@@ -297,9 +297,9 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/templates/${params["TemplateName"]}/voice`,
       responseCode: 201,
     });
-  return {
-    CreateTemplateMessageBody: toCreateTemplateMessageBody(await resp.json()),
-  };
+    return {
+      CreateTemplateMessageBody: toCreateTemplateMessageBody(await resp.json()),
+    };
   }
 
   async deleteAdmChannel(
@@ -313,9 +313,9 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/apps/${params["ApplicationId"]}/channels/adm`,
       responseCode: 200,
     });
-  return {
-    ADMChannelResponse: toADMChannelResponse(await resp.json()),
-  };
+    return {
+      ADMChannelResponse: toADMChannelResponse(await resp.json()),
+    };
   }
 
   async deleteApnsChannel(
@@ -329,9 +329,9 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/apps/${params["ApplicationId"]}/channels/apns`,
       responseCode: 200,
     });
-  return {
-    APNSChannelResponse: toAPNSChannelResponse(await resp.json()),
-  };
+    return {
+      APNSChannelResponse: toAPNSChannelResponse(await resp.json()),
+    };
   }
 
   async deleteApnsSandboxChannel(
@@ -345,9 +345,9 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/apps/${params["ApplicationId"]}/channels/apns_sandbox`,
       responseCode: 200,
     });
-  return {
-    APNSSandboxChannelResponse: toAPNSSandboxChannelResponse(await resp.json()),
-  };
+    return {
+      APNSSandboxChannelResponse: toAPNSSandboxChannelResponse(await resp.json()),
+    };
   }
 
   async deleteApnsVoipChannel(
@@ -361,9 +361,9 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/apps/${params["ApplicationId"]}/channels/apns_voip`,
       responseCode: 200,
     });
-  return {
-    APNSVoipChannelResponse: toAPNSVoipChannelResponse(await resp.json()),
-  };
+    return {
+      APNSVoipChannelResponse: toAPNSVoipChannelResponse(await resp.json()),
+    };
   }
 
   async deleteApnsVoipSandboxChannel(
@@ -377,9 +377,9 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/apps/${params["ApplicationId"]}/channels/apns_voip_sandbox`,
       responseCode: 200,
     });
-  return {
-    APNSVoipSandboxChannelResponse: toAPNSVoipSandboxChannelResponse(await resp.json()),
-  };
+    return {
+      APNSVoipSandboxChannelResponse: toAPNSVoipSandboxChannelResponse(await resp.json()),
+    };
   }
 
   async deleteApp(
@@ -393,9 +393,9 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/apps/${params["ApplicationId"]}`,
       responseCode: 200,
     });
-  return {
-    ApplicationResponse: toApplicationResponse(await resp.json()),
-  };
+    return {
+      ApplicationResponse: toApplicationResponse(await resp.json()),
+    };
   }
 
   async deleteBaiduChannel(
@@ -409,9 +409,9 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/apps/${params["ApplicationId"]}/channels/baidu`,
       responseCode: 200,
     });
-  return {
-    BaiduChannelResponse: toBaiduChannelResponse(await resp.json()),
-  };
+    return {
+      BaiduChannelResponse: toBaiduChannelResponse(await resp.json()),
+    };
   }
 
   async deleteCampaign(
@@ -425,9 +425,9 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/apps/${params["ApplicationId"]}/campaigns/${params["CampaignId"]}`,
       responseCode: 200,
     });
-  return {
-    CampaignResponse: toCampaignResponse(await resp.json()),
-  };
+    return {
+      CampaignResponse: toCampaignResponse(await resp.json()),
+    };
   }
 
   async deleteEmailChannel(
@@ -441,9 +441,9 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/apps/${params["ApplicationId"]}/channels/email`,
       responseCode: 200,
     });
-  return {
-    EmailChannelResponse: toEmailChannelResponse(await resp.json()),
-  };
+    return {
+      EmailChannelResponse: toEmailChannelResponse(await resp.json()),
+    };
   }
 
   async deleteEmailTemplate(
@@ -458,9 +458,9 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/templates/${params["TemplateName"]}/email`,
       responseCode: 202,
     });
-  return {
-    MessageBody: toMessageBody(await resp.json()),
-  };
+    return {
+      MessageBody: toMessageBody(await resp.json()),
+    };
   }
 
   async deleteEndpoint(
@@ -474,9 +474,9 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/apps/${params["ApplicationId"]}/endpoints/${params["EndpointId"]}`,
       responseCode: 202,
     });
-  return {
-    EndpointResponse: toEndpointResponse(await resp.json()),
-  };
+    return {
+      EndpointResponse: toEndpointResponse(await resp.json()),
+    };
   }
 
   async deleteEventStream(
@@ -490,9 +490,9 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/apps/${params["ApplicationId"]}/eventstream`,
       responseCode: 200,
     });
-  return {
-    EventStream: toEventStream(await resp.json()),
-  };
+    return {
+      EventStream: toEventStream(await resp.json()),
+    };
   }
 
   async deleteGcmChannel(
@@ -506,9 +506,9 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/apps/${params["ApplicationId"]}/channels/gcm`,
       responseCode: 200,
     });
-  return {
-    GCMChannelResponse: toGCMChannelResponse(await resp.json()),
-  };
+    return {
+      GCMChannelResponse: toGCMChannelResponse(await resp.json()),
+    };
   }
 
   async deleteJourney(
@@ -522,9 +522,9 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/apps/${params["ApplicationId"]}/journeys/${params["JourneyId"]}`,
       responseCode: 200,
     });
-  return {
-    JourneyResponse: toJourneyResponse(await resp.json()),
-  };
+    return {
+      JourneyResponse: toJourneyResponse(await resp.json()),
+    };
   }
 
   async deletePushTemplate(
@@ -539,9 +539,9 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/templates/${params["TemplateName"]}/push`,
       responseCode: 202,
     });
-  return {
-    MessageBody: toMessageBody(await resp.json()),
-  };
+    return {
+      MessageBody: toMessageBody(await resp.json()),
+    };
   }
 
   async deleteRecommenderConfiguration(
@@ -555,9 +555,9 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/recommenders/${params["RecommenderId"]}`,
       responseCode: 200,
     });
-  return {
-    RecommenderConfigurationResponse: toRecommenderConfigurationResponse(await resp.json()),
-  };
+    return {
+      RecommenderConfigurationResponse: toRecommenderConfigurationResponse(await resp.json()),
+    };
   }
 
   async deleteSegment(
@@ -571,9 +571,9 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/apps/${params["ApplicationId"]}/segments/${params["SegmentId"]}`,
       responseCode: 200,
     });
-  return {
-    SegmentResponse: toSegmentResponse(await resp.json()),
-  };
+    return {
+      SegmentResponse: toSegmentResponse(await resp.json()),
+    };
   }
 
   async deleteSmsChannel(
@@ -587,9 +587,9 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/apps/${params["ApplicationId"]}/channels/sms`,
       responseCode: 200,
     });
-  return {
-    SMSChannelResponse: toSMSChannelResponse(await resp.json()),
-  };
+    return {
+      SMSChannelResponse: toSMSChannelResponse(await resp.json()),
+    };
   }
 
   async deleteSmsTemplate(
@@ -604,9 +604,9 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/templates/${params["TemplateName"]}/sms`,
       responseCode: 202,
     });
-  return {
-    MessageBody: toMessageBody(await resp.json()),
-  };
+    return {
+      MessageBody: toMessageBody(await resp.json()),
+    };
   }
 
   async deleteUserEndpoints(
@@ -620,9 +620,9 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/apps/${params["ApplicationId"]}/users/${params["UserId"]}`,
       responseCode: 202,
     });
-  return {
-    EndpointsResponse: toEndpointsResponse(await resp.json()),
-  };
+    return {
+      EndpointsResponse: toEndpointsResponse(await resp.json()),
+    };
   }
 
   async deleteVoiceChannel(
@@ -636,9 +636,9 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/apps/${params["ApplicationId"]}/channels/voice`,
       responseCode: 200,
     });
-  return {
-    VoiceChannelResponse: toVoiceChannelResponse(await resp.json()),
-  };
+    return {
+      VoiceChannelResponse: toVoiceChannelResponse(await resp.json()),
+    };
   }
 
   async deleteVoiceTemplate(
@@ -653,9 +653,9 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/templates/${params["TemplateName"]}/voice`,
       responseCode: 202,
     });
-  return {
-    MessageBody: toMessageBody(await resp.json()),
-  };
+    return {
+      MessageBody: toMessageBody(await resp.json()),
+    };
   }
 
   async getAdmChannel(
@@ -669,9 +669,9 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/apps/${params["ApplicationId"]}/channels/adm`,
       responseCode: 200,
     });
-  return {
-    ADMChannelResponse: toADMChannelResponse(await resp.json()),
-  };
+    return {
+      ADMChannelResponse: toADMChannelResponse(await resp.json()),
+    };
   }
 
   async getApnsChannel(
@@ -685,9 +685,9 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/apps/${params["ApplicationId"]}/channels/apns`,
       responseCode: 200,
     });
-  return {
-    APNSChannelResponse: toAPNSChannelResponse(await resp.json()),
-  };
+    return {
+      APNSChannelResponse: toAPNSChannelResponse(await resp.json()),
+    };
   }
 
   async getApnsSandboxChannel(
@@ -701,9 +701,9 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/apps/${params["ApplicationId"]}/channels/apns_sandbox`,
       responseCode: 200,
     });
-  return {
-    APNSSandboxChannelResponse: toAPNSSandboxChannelResponse(await resp.json()),
-  };
+    return {
+      APNSSandboxChannelResponse: toAPNSSandboxChannelResponse(await resp.json()),
+    };
   }
 
   async getApnsVoipChannel(
@@ -717,9 +717,9 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/apps/${params["ApplicationId"]}/channels/apns_voip`,
       responseCode: 200,
     });
-  return {
-    APNSVoipChannelResponse: toAPNSVoipChannelResponse(await resp.json()),
-  };
+    return {
+      APNSVoipChannelResponse: toAPNSVoipChannelResponse(await resp.json()),
+    };
   }
 
   async getApnsVoipSandboxChannel(
@@ -733,9 +733,9 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/apps/${params["ApplicationId"]}/channels/apns_voip_sandbox`,
       responseCode: 200,
     });
-  return {
-    APNSVoipSandboxChannelResponse: toAPNSVoipSandboxChannelResponse(await resp.json()),
-  };
+    return {
+      APNSVoipSandboxChannelResponse: toAPNSVoipSandboxChannelResponse(await resp.json()),
+    };
   }
 
   async getApp(
@@ -749,9 +749,9 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/apps/${params["ApplicationId"]}`,
       responseCode: 200,
     });
-  return {
-    ApplicationResponse: toApplicationResponse(await resp.json()),
-  };
+    return {
+      ApplicationResponse: toApplicationResponse(await resp.json()),
+    };
   }
 
   async getApplicationDateRangeKpi(
@@ -769,8 +769,8 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/apps/${params["ApplicationId"]}/kpis/daterange/${params["KpiName"]}`,
       responseCode: 200,
     });
-  return {
-    ApplicationDateRangeKpiResponse: jsonP.readObj({
+    return {
+      ApplicationDateRangeKpiResponse: jsonP.readObj({
         required: {
           "ApplicationId": "s",
           "EndTime": "d",
@@ -782,7 +782,7 @@ export default class Pinpoint {
           "NextToken": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async getApplicationSettings(
@@ -796,9 +796,9 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/apps/${params["ApplicationId"]}/settings`,
       responseCode: 200,
     });
-  return {
-    ApplicationSettingsResource: toApplicationSettingsResource(await resp.json()),
-  };
+    return {
+      ApplicationSettingsResource: toApplicationSettingsResource(await resp.json()),
+    };
   }
 
   async getApps(
@@ -814,15 +814,15 @@ export default class Pinpoint {
       requestUri: "/v1/apps",
       responseCode: 200,
     });
-  return {
-    ApplicationsResponse: jsonP.readObj({
+    return {
+      ApplicationsResponse: jsonP.readObj({
         required: {},
         optional: {
           "Item": [toApplicationResponse],
           "NextToken": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async getBaiduChannel(
@@ -836,9 +836,9 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/apps/${params["ApplicationId"]}/channels/baidu`,
       responseCode: 200,
     });
-  return {
-    BaiduChannelResponse: toBaiduChannelResponse(await resp.json()),
-  };
+    return {
+      BaiduChannelResponse: toBaiduChannelResponse(await resp.json()),
+    };
   }
 
   async getCampaign(
@@ -852,9 +852,9 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/apps/${params["ApplicationId"]}/campaigns/${params["CampaignId"]}`,
       responseCode: 200,
     });
-  return {
-    CampaignResponse: toCampaignResponse(await resp.json()),
-  };
+    return {
+      CampaignResponse: toCampaignResponse(await resp.json()),
+    };
   }
 
   async getCampaignActivities(
@@ -870,8 +870,8 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/apps/${params["ApplicationId"]}/campaigns/${params["CampaignId"]}/activities`,
       responseCode: 200,
     });
-  return {
-    ActivitiesResponse: jsonP.readObj({
+    return {
+      ActivitiesResponse: jsonP.readObj({
         required: {
           "Item": [toActivityResponse],
         },
@@ -879,7 +879,7 @@ export default class Pinpoint {
           "NextToken": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async getCampaignDateRangeKpi(
@@ -897,8 +897,8 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/apps/${params["ApplicationId"]}/campaigns/${params["CampaignId"]}/kpis/daterange/${params["KpiName"]}`,
       responseCode: 200,
     });
-  return {
-    CampaignDateRangeKpiResponse: jsonP.readObj({
+    return {
+      CampaignDateRangeKpiResponse: jsonP.readObj({
         required: {
           "ApplicationId": "s",
           "CampaignId": "s",
@@ -911,7 +911,7 @@ export default class Pinpoint {
           "NextToken": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async getCampaignVersion(
@@ -925,9 +925,9 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/apps/${params["ApplicationId"]}/campaigns/${params["CampaignId"]}/versions/${params["Version"]}`,
       responseCode: 200,
     });
-  return {
-    CampaignResponse: toCampaignResponse(await resp.json()),
-  };
+    return {
+      CampaignResponse: toCampaignResponse(await resp.json()),
+    };
   }
 
   async getCampaignVersions(
@@ -943,9 +943,9 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/apps/${params["ApplicationId"]}/campaigns/${params["CampaignId"]}/versions`,
       responseCode: 200,
     });
-  return {
-    CampaignsResponse: toCampaignsResponse(await resp.json()),
-  };
+    return {
+      CampaignsResponse: toCampaignsResponse(await resp.json()),
+    };
   }
 
   async getCampaigns(
@@ -961,9 +961,9 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/apps/${params["ApplicationId"]}/campaigns`,
       responseCode: 200,
     });
-  return {
-    CampaignsResponse: toCampaignsResponse(await resp.json()),
-  };
+    return {
+      CampaignsResponse: toCampaignsResponse(await resp.json()),
+    };
   }
 
   async getChannels(
@@ -977,14 +977,14 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/apps/${params["ApplicationId"]}/channels`,
       responseCode: 200,
     });
-  return {
-    ChannelsResponse: jsonP.readObj({
+    return {
+      ChannelsResponse: jsonP.readObj({
         required: {
           "Channels": x => jsonP.readMap(String, toChannelResponse, x),
         },
         optional: {},
       }, await resp.json()),
-  };
+    };
   }
 
   async getEmailChannel(
@@ -998,9 +998,9 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/apps/${params["ApplicationId"]}/channels/email`,
       responseCode: 200,
     });
-  return {
-    EmailChannelResponse: toEmailChannelResponse(await resp.json()),
-  };
+    return {
+      EmailChannelResponse: toEmailChannelResponse(await resp.json()),
+    };
   }
 
   async getEmailTemplate(
@@ -1015,8 +1015,8 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/templates/${params["TemplateName"]}/email`,
       responseCode: 200,
     });
-  return {
-    EmailTemplateResponse: jsonP.readObj({
+    return {
+      EmailTemplateResponse: jsonP.readObj({
         required: {
           "CreationDate": "s",
           "LastModifiedDate": "s",
@@ -1035,7 +1035,7 @@ export default class Pinpoint {
           "Version": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async getEndpoint(
@@ -1049,9 +1049,9 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/apps/${params["ApplicationId"]}/endpoints/${params["EndpointId"]}`,
       responseCode: 200,
     });
-  return {
-    EndpointResponse: toEndpointResponse(await resp.json()),
-  };
+    return {
+      EndpointResponse: toEndpointResponse(await resp.json()),
+    };
   }
 
   async getEventStream(
@@ -1065,9 +1065,9 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/apps/${params["ApplicationId"]}/eventstream`,
       responseCode: 200,
     });
-  return {
-    EventStream: toEventStream(await resp.json()),
-  };
+    return {
+      EventStream: toEventStream(await resp.json()),
+    };
   }
 
   async getExportJob(
@@ -1081,9 +1081,9 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/apps/${params["ApplicationId"]}/jobs/export/${params["JobId"]}`,
       responseCode: 200,
     });
-  return {
-    ExportJobResponse: toExportJobResponse(await resp.json()),
-  };
+    return {
+      ExportJobResponse: toExportJobResponse(await resp.json()),
+    };
   }
 
   async getExportJobs(
@@ -1099,9 +1099,9 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/apps/${params["ApplicationId"]}/jobs/export`,
       responseCode: 200,
     });
-  return {
-    ExportJobsResponse: toExportJobsResponse(await resp.json()),
-  };
+    return {
+      ExportJobsResponse: toExportJobsResponse(await resp.json()),
+    };
   }
 
   async getGcmChannel(
@@ -1115,9 +1115,9 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/apps/${params["ApplicationId"]}/channels/gcm`,
       responseCode: 200,
     });
-  return {
-    GCMChannelResponse: toGCMChannelResponse(await resp.json()),
-  };
+    return {
+      GCMChannelResponse: toGCMChannelResponse(await resp.json()),
+    };
   }
 
   async getImportJob(
@@ -1131,9 +1131,9 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/apps/${params["ApplicationId"]}/jobs/import/${params["JobId"]}`,
       responseCode: 200,
     });
-  return {
-    ImportJobResponse: toImportJobResponse(await resp.json()),
-  };
+    return {
+      ImportJobResponse: toImportJobResponse(await resp.json()),
+    };
   }
 
   async getImportJobs(
@@ -1149,9 +1149,9 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/apps/${params["ApplicationId"]}/jobs/import`,
       responseCode: 200,
     });
-  return {
-    ImportJobsResponse: toImportJobsResponse(await resp.json()),
-  };
+    return {
+      ImportJobsResponse: toImportJobsResponse(await resp.json()),
+    };
   }
 
   async getJourney(
@@ -1165,9 +1165,9 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/apps/${params["ApplicationId"]}/journeys/${params["JourneyId"]}`,
       responseCode: 200,
     });
-  return {
-    JourneyResponse: toJourneyResponse(await resp.json()),
-  };
+    return {
+      JourneyResponse: toJourneyResponse(await resp.json()),
+    };
   }
 
   async getJourneyDateRangeKpi(
@@ -1185,8 +1185,8 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/apps/${params["ApplicationId"]}/journeys/${params["JourneyId"]}/kpis/daterange/${params["KpiName"]}`,
       responseCode: 200,
     });
-  return {
-    JourneyDateRangeKpiResponse: jsonP.readObj({
+    return {
+      JourneyDateRangeKpiResponse: jsonP.readObj({
         required: {
           "ApplicationId": "s",
           "EndTime": "d",
@@ -1199,7 +1199,7 @@ export default class Pinpoint {
           "NextToken": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async getJourneyExecutionActivityMetrics(
@@ -1215,8 +1215,8 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/apps/${params["ApplicationId"]}/journeys/${params["JourneyId"]}/activities/${params["JourneyActivityId"]}/execution-metrics`,
       responseCode: 200,
     });
-  return {
-    JourneyExecutionActivityMetricsResponse: jsonP.readObj({
+    return {
+      JourneyExecutionActivityMetricsResponse: jsonP.readObj({
         required: {
           "ActivityType": "s",
           "ApplicationId": "s",
@@ -1227,7 +1227,7 @@ export default class Pinpoint {
         },
         optional: {},
       }, await resp.json()),
-  };
+    };
   }
 
   async getJourneyExecutionMetrics(
@@ -1243,8 +1243,8 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/apps/${params["ApplicationId"]}/journeys/${params["JourneyId"]}/execution-metrics`,
       responseCode: 200,
     });
-  return {
-    JourneyExecutionMetricsResponse: jsonP.readObj({
+    return {
+      JourneyExecutionMetricsResponse: jsonP.readObj({
         required: {
           "ApplicationId": "s",
           "JourneyId": "s",
@@ -1253,7 +1253,7 @@ export default class Pinpoint {
         },
         optional: {},
       }, await resp.json()),
-  };
+    };
   }
 
   async getPushTemplate(
@@ -1268,8 +1268,8 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/templates/${params["TemplateName"]}/push`,
       responseCode: 200,
     });
-  return {
-    PushNotificationTemplateResponse: jsonP.readObj({
+    return {
+      PushNotificationTemplateResponse: jsonP.readObj({
         required: {
           "CreationDate": "s",
           "LastModifiedDate": "s",
@@ -1290,7 +1290,7 @@ export default class Pinpoint {
           "Version": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async getRecommenderConfiguration(
@@ -1304,9 +1304,9 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/recommenders/${params["RecommenderId"]}`,
       responseCode: 200,
     });
-  return {
-    RecommenderConfigurationResponse: toRecommenderConfigurationResponse(await resp.json()),
-  };
+    return {
+      RecommenderConfigurationResponse: toRecommenderConfigurationResponse(await resp.json()),
+    };
   }
 
   async getRecommenderConfigurations(
@@ -1322,8 +1322,8 @@ export default class Pinpoint {
       requestUri: "/v1/recommenders",
       responseCode: 200,
     });
-  return {
-    ListRecommenderConfigurationsResponse: jsonP.readObj({
+    return {
+      ListRecommenderConfigurationsResponse: jsonP.readObj({
         required: {
           "Item": [toRecommenderConfigurationResponse],
         },
@@ -1331,7 +1331,7 @@ export default class Pinpoint {
           "NextToken": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async getSegment(
@@ -1345,9 +1345,9 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/apps/${params["ApplicationId"]}/segments/${params["SegmentId"]}`,
       responseCode: 200,
     });
-  return {
-    SegmentResponse: toSegmentResponse(await resp.json()),
-  };
+    return {
+      SegmentResponse: toSegmentResponse(await resp.json()),
+    };
   }
 
   async getSegmentExportJobs(
@@ -1363,9 +1363,9 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/apps/${params["ApplicationId"]}/segments/${params["SegmentId"]}/jobs/export`,
       responseCode: 200,
     });
-  return {
-    ExportJobsResponse: toExportJobsResponse(await resp.json()),
-  };
+    return {
+      ExportJobsResponse: toExportJobsResponse(await resp.json()),
+    };
   }
 
   async getSegmentImportJobs(
@@ -1381,9 +1381,9 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/apps/${params["ApplicationId"]}/segments/${params["SegmentId"]}/jobs/import`,
       responseCode: 200,
     });
-  return {
-    ImportJobsResponse: toImportJobsResponse(await resp.json()),
-  };
+    return {
+      ImportJobsResponse: toImportJobsResponse(await resp.json()),
+    };
   }
 
   async getSegmentVersion(
@@ -1397,9 +1397,9 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/apps/${params["ApplicationId"]}/segments/${params["SegmentId"]}/versions/${params["Version"]}`,
       responseCode: 200,
     });
-  return {
-    SegmentResponse: toSegmentResponse(await resp.json()),
-  };
+    return {
+      SegmentResponse: toSegmentResponse(await resp.json()),
+    };
   }
 
   async getSegmentVersions(
@@ -1415,9 +1415,9 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/apps/${params["ApplicationId"]}/segments/${params["SegmentId"]}/versions`,
       responseCode: 200,
     });
-  return {
-    SegmentsResponse: toSegmentsResponse(await resp.json()),
-  };
+    return {
+      SegmentsResponse: toSegmentsResponse(await resp.json()),
+    };
   }
 
   async getSegments(
@@ -1433,9 +1433,9 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/apps/${params["ApplicationId"]}/segments`,
       responseCode: 200,
     });
-  return {
-    SegmentsResponse: toSegmentsResponse(await resp.json()),
-  };
+    return {
+      SegmentsResponse: toSegmentsResponse(await resp.json()),
+    };
   }
 
   async getSmsChannel(
@@ -1449,9 +1449,9 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/apps/${params["ApplicationId"]}/channels/sms`,
       responseCode: 200,
     });
-  return {
-    SMSChannelResponse: toSMSChannelResponse(await resp.json()),
-  };
+    return {
+      SMSChannelResponse: toSMSChannelResponse(await resp.json()),
+    };
   }
 
   async getSmsTemplate(
@@ -1466,8 +1466,8 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/templates/${params["TemplateName"]}/sms`,
       responseCode: 200,
     });
-  return {
-    SMSTemplateResponse: jsonP.readObj({
+    return {
+      SMSTemplateResponse: jsonP.readObj({
         required: {
           "CreationDate": "s",
           "LastModifiedDate": "s",
@@ -1484,7 +1484,7 @@ export default class Pinpoint {
           "Version": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async getUserEndpoints(
@@ -1498,9 +1498,9 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/apps/${params["ApplicationId"]}/users/${params["UserId"]}`,
       responseCode: 200,
     });
-  return {
-    EndpointsResponse: toEndpointsResponse(await resp.json()),
-  };
+    return {
+      EndpointsResponse: toEndpointsResponse(await resp.json()),
+    };
   }
 
   async getVoiceChannel(
@@ -1514,9 +1514,9 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/apps/${params["ApplicationId"]}/channels/voice`,
       responseCode: 200,
     });
-  return {
-    VoiceChannelResponse: toVoiceChannelResponse(await resp.json()),
-  };
+    return {
+      VoiceChannelResponse: toVoiceChannelResponse(await resp.json()),
+    };
   }
 
   async getVoiceTemplate(
@@ -1531,8 +1531,8 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/templates/${params["TemplateName"]}/voice`,
       responseCode: 200,
     });
-  return {
-    VoiceTemplateResponse: jsonP.readObj({
+    return {
+      VoiceTemplateResponse: jsonP.readObj({
         required: {
           "CreationDate": "s",
           "LastModifiedDate": "s",
@@ -1550,7 +1550,7 @@ export default class Pinpoint {
           "VoiceId": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async listJourneys(
@@ -1566,8 +1566,8 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/apps/${params["ApplicationId"]}/journeys`,
       responseCode: 200,
     });
-  return {
-    JourneysResponse: jsonP.readObj({
+    return {
+      JourneysResponse: jsonP.readObj({
         required: {
           "Item": [toJourneyResponse],
         },
@@ -1575,7 +1575,7 @@ export default class Pinpoint {
           "NextToken": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async listTagsForResource(
@@ -1589,9 +1589,9 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/tags/${params["ResourceArn"]}`,
       responseCode: 200,
     });
-  return {
-    TagsModel: toTagsModel(await resp.json()),
-  };
+    return {
+      TagsModel: toTagsModel(await resp.json()),
+    };
   }
 
   async listTemplateVersions(
@@ -1607,8 +1607,8 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/templates/${params["TemplateName"]}/${params["TemplateType"]}/versions`,
       responseCode: 200,
     });
-  return {
-    TemplateVersionsResponse: jsonP.readObj({
+    return {
+      TemplateVersionsResponse: jsonP.readObj({
         required: {
           "Item": [toTemplateVersionResponse],
         },
@@ -1618,7 +1618,7 @@ export default class Pinpoint {
           "RequestID": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async listTemplates(
@@ -1636,8 +1636,8 @@ export default class Pinpoint {
       requestUri: "/v1/templates",
       responseCode: 200,
     });
-  return {
-    TemplatesResponse: jsonP.readObj({
+    return {
+      TemplatesResponse: jsonP.readObj({
         required: {
           "Item": [toTemplateResponse],
         },
@@ -1645,7 +1645,7 @@ export default class Pinpoint {
           "NextToken": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async phoneNumberValidate(
@@ -1662,8 +1662,8 @@ export default class Pinpoint {
       requestUri: "/v1/phone/number/validate",
       responseCode: 200,
     });
-  return {
-    NumberValidateResponse: jsonP.readObj({
+    return {
+      NumberValidateResponse: jsonP.readObj({
         required: {},
         optional: {
           "Carrier": "s",
@@ -1682,7 +1682,7 @@ export default class Pinpoint {
           "ZipCode": "s",
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async putEventStream(
@@ -1699,9 +1699,9 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/apps/${params["ApplicationId"]}/eventstream`,
       responseCode: 200,
     });
-  return {
-    EventStream: toEventStream(await resp.json()),
-  };
+    return {
+      EventStream: toEventStream(await resp.json()),
+    };
   }
 
   async putEvents(
@@ -1717,14 +1717,14 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/apps/${params["ApplicationId"]}/events`,
       responseCode: 202,
     });
-  return {
-    EventsResponse: jsonP.readObj({
+    return {
+      EventsResponse: jsonP.readObj({
         required: {},
         optional: {
           "Results": x => jsonP.readMap(String, toItemResponse, x),
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async removeAttributes(
@@ -1741,8 +1741,8 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/apps/${params["ApplicationId"]}/attributes/${params["AttributeType"]}`,
       responseCode: 200,
     });
-  return {
-    AttributesResource: jsonP.readObj({
+    return {
+      AttributesResource: jsonP.readObj({
         required: {
           "ApplicationId": "s",
           "AttributeType": "s",
@@ -1751,7 +1751,7 @@ export default class Pinpoint {
           "Attributes": ["s"],
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async sendMessages(
@@ -1772,8 +1772,8 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/apps/${params["ApplicationId"]}/messages`,
       responseCode: 200,
     });
-  return {
-    MessageResponse: jsonP.readObj({
+    return {
+      MessageResponse: jsonP.readObj({
         required: {
           "ApplicationId": "s",
         },
@@ -1783,7 +1783,7 @@ export default class Pinpoint {
           "Result": x => jsonP.readMap(String, toMessageResult, x),
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async sendUsersMessages(
@@ -1803,8 +1803,8 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/apps/${params["ApplicationId"]}/users-messages`,
       responseCode: 200,
     });
-  return {
-    SendUsersMessageResponse: jsonP.readObj({
+    return {
+      SendUsersMessageResponse: jsonP.readObj({
         required: {
           "ApplicationId": "s",
         },
@@ -1813,7 +1813,7 @@ export default class Pinpoint {
           "Result": x => jsonP.readMap(String, y => jsonP.readMap(String, toEndpointMessageResult, y)!, x),
         },
       }, await resp.json()),
-  };
+    };
   }
 
   async tagResource(
@@ -1829,6 +1829,7 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/tags/${params["ResourceArn"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async untagResource(
@@ -1845,6 +1846,7 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/tags/${params["ResourceArn"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async updateAdmChannel(
@@ -1863,9 +1865,9 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/apps/${params["ApplicationId"]}/channels/adm`,
       responseCode: 200,
     });
-  return {
-    ADMChannelResponse: toADMChannelResponse(await resp.json()),
-  };
+    return {
+      ADMChannelResponse: toADMChannelResponse(await resp.json()),
+    };
   }
 
   async updateApnsChannel(
@@ -1889,9 +1891,9 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/apps/${params["ApplicationId"]}/channels/apns`,
       responseCode: 200,
     });
-  return {
-    APNSChannelResponse: toAPNSChannelResponse(await resp.json()),
-  };
+    return {
+      APNSChannelResponse: toAPNSChannelResponse(await resp.json()),
+    };
   }
 
   async updateApnsSandboxChannel(
@@ -1915,9 +1917,9 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/apps/${params["ApplicationId"]}/channels/apns_sandbox`,
       responseCode: 200,
     });
-  return {
-    APNSSandboxChannelResponse: toAPNSSandboxChannelResponse(await resp.json()),
-  };
+    return {
+      APNSSandboxChannelResponse: toAPNSSandboxChannelResponse(await resp.json()),
+    };
   }
 
   async updateApnsVoipChannel(
@@ -1941,9 +1943,9 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/apps/${params["ApplicationId"]}/channels/apns_voip`,
       responseCode: 200,
     });
-  return {
-    APNSVoipChannelResponse: toAPNSVoipChannelResponse(await resp.json()),
-  };
+    return {
+      APNSVoipChannelResponse: toAPNSVoipChannelResponse(await resp.json()),
+    };
   }
 
   async updateApnsVoipSandboxChannel(
@@ -1967,9 +1969,9 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/apps/${params["ApplicationId"]}/channels/apns_voip_sandbox`,
       responseCode: 200,
     });
-  return {
-    APNSVoipSandboxChannelResponse: toAPNSVoipSandboxChannelResponse(await resp.json()),
-  };
+    return {
+      APNSVoipSandboxChannelResponse: toAPNSVoipSandboxChannelResponse(await resp.json()),
+    };
   }
 
   async updateApplicationSettings(
@@ -1990,9 +1992,9 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/apps/${params["ApplicationId"]}/settings`,
       responseCode: 200,
     });
-  return {
-    ApplicationSettingsResource: toApplicationSettingsResource(await resp.json()),
-  };
+    return {
+      ApplicationSettingsResource: toApplicationSettingsResource(await resp.json()),
+    };
   }
 
   async updateBaiduChannel(
@@ -2011,9 +2013,9 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/apps/${params["ApplicationId"]}/channels/baidu`,
       responseCode: 200,
     });
-  return {
-    BaiduChannelResponse: toBaiduChannelResponse(await resp.json()),
-  };
+    return {
+      BaiduChannelResponse: toBaiduChannelResponse(await resp.json()),
+    };
   }
 
   async updateCampaign(
@@ -2045,9 +2047,9 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/apps/${params["ApplicationId"]}/campaigns/${params["CampaignId"]}`,
       responseCode: 200,
     });
-  return {
-    CampaignResponse: toCampaignResponse(await resp.json()),
-  };
+    return {
+      CampaignResponse: toCampaignResponse(await resp.json()),
+    };
   }
 
   async updateEmailChannel(
@@ -2068,9 +2070,9 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/apps/${params["ApplicationId"]}/channels/email`,
       responseCode: 200,
     });
-  return {
-    EmailChannelResponse: toEmailChannelResponse(await resp.json()),
-  };
+    return {
+      EmailChannelResponse: toEmailChannelResponse(await resp.json()),
+    };
   }
 
   async updateEmailTemplate(
@@ -2096,9 +2098,9 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/templates/${params["TemplateName"]}/email`,
       responseCode: 202,
     });
-  return {
-    MessageBody: toMessageBody(await resp.json()),
-  };
+    return {
+      MessageBody: toMessageBody(await resp.json()),
+    };
   }
 
   async updateEndpoint(
@@ -2125,9 +2127,9 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/apps/${params["ApplicationId"]}/endpoints/${params["EndpointId"]}`,
       responseCode: 202,
     });
-  return {
-    MessageBody: toMessageBody(await resp.json()),
-  };
+    return {
+      MessageBody: toMessageBody(await resp.json()),
+    };
   }
 
   async updateEndpointsBatch(
@@ -2144,9 +2146,9 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/apps/${params["ApplicationId"]}/endpoints`,
       responseCode: 202,
     });
-  return {
-    MessageBody: toMessageBody(await resp.json()),
-  };
+    return {
+      MessageBody: toMessageBody(await resp.json()),
+    };
   }
 
   async updateGcmChannel(
@@ -2164,9 +2166,9 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/apps/${params["ApplicationId"]}/channels/gcm`,
       responseCode: 200,
     });
-  return {
-    GCMChannelResponse: toGCMChannelResponse(await resp.json()),
-  };
+    return {
+      GCMChannelResponse: toGCMChannelResponse(await resp.json()),
+    };
   }
 
   async updateJourney(
@@ -2194,9 +2196,9 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/apps/${params["ApplicationId"]}/journeys/${params["JourneyId"]}`,
       responseCode: 200,
     });
-  return {
-    JourneyResponse: toJourneyResponse(await resp.json()),
-  };
+    return {
+      JourneyResponse: toJourneyResponse(await resp.json()),
+    };
   }
 
   async updateJourneyState(
@@ -2213,9 +2215,9 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/apps/${params["ApplicationId"]}/journeys/${params["JourneyId"]}/state`,
       responseCode: 200,
     });
-  return {
-    JourneyResponse: toJourneyResponse(await resp.json()),
-  };
+    return {
+      JourneyResponse: toJourneyResponse(await resp.json()),
+    };
   }
 
   async updatePushTemplate(
@@ -2243,9 +2245,9 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/templates/${params["TemplateName"]}/push`,
       responseCode: 202,
     });
-  return {
-    MessageBody: toMessageBody(await resp.json()),
-  };
+    return {
+      MessageBody: toMessageBody(await resp.json()),
+    };
   }
 
   async updateRecommenderConfiguration(
@@ -2270,9 +2272,9 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/recommenders/${params["RecommenderId"]}`,
       responseCode: 200,
     });
-  return {
-    RecommenderConfigurationResponse: toRecommenderConfigurationResponse(await resp.json()),
-  };
+    return {
+      RecommenderConfigurationResponse: toRecommenderConfigurationResponse(await resp.json()),
+    };
   }
 
   async updateSegment(
@@ -2292,9 +2294,9 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/apps/${params["ApplicationId"]}/segments/${params["SegmentId"]}`,
       responseCode: 200,
     });
-  return {
-    SegmentResponse: toSegmentResponse(await resp.json()),
-  };
+    return {
+      SegmentResponse: toSegmentResponse(await resp.json()),
+    };
   }
 
   async updateSmsChannel(
@@ -2313,9 +2315,9 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/apps/${params["ApplicationId"]}/channels/sms`,
       responseCode: 200,
     });
-  return {
-    SMSChannelResponse: toSMSChannelResponse(await resp.json()),
-  };
+    return {
+      SMSChannelResponse: toSMSChannelResponse(await resp.json()),
+    };
   }
 
   async updateSmsTemplate(
@@ -2339,9 +2341,9 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/templates/${params["TemplateName"]}/sms`,
       responseCode: 202,
     });
-  return {
-    MessageBody: toMessageBody(await resp.json()),
-  };
+    return {
+      MessageBody: toMessageBody(await resp.json()),
+    };
   }
 
   async updateTemplateActiveVersion(
@@ -2358,9 +2360,9 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/templates/${params["TemplateName"]}/${params["TemplateType"]}/active-version`,
       responseCode: 200,
     });
-  return {
-    MessageBody: toMessageBody(await resp.json()),
-  };
+    return {
+      MessageBody: toMessageBody(await resp.json()),
+    };
   }
 
   async updateVoiceChannel(
@@ -2377,9 +2379,9 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/apps/${params["ApplicationId"]}/channels/voice`,
       responseCode: 200,
     });
-  return {
-    VoiceChannelResponse: toVoiceChannelResponse(await resp.json()),
-  };
+    return {
+      VoiceChannelResponse: toVoiceChannelResponse(await resp.json()),
+    };
   }
 
   async updateVoiceTemplate(
@@ -2404,9 +2406,9 @@ export default class Pinpoint {
       requestUri: cmnP.encodePath`/v1/templates/${params["TemplateName"]}/voice`,
       responseCode: 202,
     });
-  return {
-    MessageBody: toMessageBody(await resp.json()),
-  };
+    return {
+      MessageBody: toMessageBody(await resp.json()),
+    };
   }
 
 }

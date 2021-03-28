@@ -59,7 +59,7 @@ export default class SavingsPlans {
 
   async deleteQueuedSavingsPlan(
     {abortSignal, ...params}: RequestConfig & s.DeleteQueuedSavingsPlanRequest,
-  ): Promise<s.DeleteQueuedSavingsPlanResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       savingsPlanId: params["savingsPlanId"],
     };
@@ -68,10 +68,7 @@ export default class SavingsPlans {
       action: "DeleteQueuedSavingsPlan",
       requestUri: "/DeleteQueuedSavingsPlan",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async describeSavingsPlanRates(
@@ -205,7 +202,7 @@ export default class SavingsPlans {
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & s.TagResourceRequest,
-  ): Promise<s.TagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       resourceArn: params["resourceArn"],
       tags: params["tags"],
@@ -215,15 +212,12 @@ export default class SavingsPlans {
       action: "TagResource",
       requestUri: "/TagResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async untagResource(
     {abortSignal, ...params}: RequestConfig & s.UntagResourceRequest,
-  ): Promise<s.UntagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       resourceArn: params["resourceArn"],
       tagKeys: params["tagKeys"],
@@ -233,10 +227,7 @@ export default class SavingsPlans {
       action: "UntagResource",
       requestUri: "/UntagResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
 }

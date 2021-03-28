@@ -89,14 +89,14 @@ export default class LexRuntimeV2 {
       action: "PutSession",
       requestUri: cmnP.encodePath`/bots/${params["botId"]}/botAliases/${params["botAliasId"]}/botLocales/${params["localeId"]}/sessions/${params["sessionId"]}`,
     });
-  return {
-    contentType: resp.headers.get("Content-Type"),
-    messages: resp.headers.get("x-amz-lex-messages"),
-    sessionState: resp.headers.get("x-amz-lex-session-state"),
-    requestAttributes: resp.headers.get("x-amz-lex-request-attributes"),
-    sessionId: resp.headers.get("x-amz-lex-session-id"),
-    audioStream: await resp.text(), // TODO: maybe allow proper body streaming,
-  };
+    return {
+      contentType: resp.headers.get("Content-Type"),
+      messages: resp.headers.get("x-amz-lex-messages"),
+      sessionState: resp.headers.get("x-amz-lex-session-state"),
+      requestAttributes: resp.headers.get("x-amz-lex-request-attributes"),
+      sessionId: resp.headers.get("x-amz-lex-session-id"),
+      audioStream: await resp.text(), // TODO: maybe allow proper body streaming,
+    };
   }
 
   async recognizeText(
@@ -138,17 +138,17 @@ export default class LexRuntimeV2 {
       action: "RecognizeUtterance",
       requestUri: cmnP.encodePath`/bots/${params["botId"]}/botAliases/${params["botAliasId"]}/botLocales/${params["localeId"]}/sessions/${params["sessionId"]}/utterance`,
     });
-  return {
-    inputMode: resp.headers.get("x-amz-lex-input-mode"),
-    contentType: resp.headers.get("Content-Type"),
-    messages: resp.headers.get("x-amz-lex-messages"),
-    interpretations: resp.headers.get("x-amz-lex-interpretations"),
-    sessionState: resp.headers.get("x-amz-lex-session-state"),
-    requestAttributes: resp.headers.get("x-amz-lex-request-attributes"),
-    sessionId: resp.headers.get("x-amz-lex-session-id"),
-    inputTranscript: resp.headers.get("x-amz-lex-input-transcript"),
-    audioStream: await resp.text(), // TODO: maybe allow proper body streaming,
-  };
+    return {
+      inputMode: resp.headers.get("x-amz-lex-input-mode"),
+      contentType: resp.headers.get("Content-Type"),
+      messages: resp.headers.get("x-amz-lex-messages"),
+      interpretations: resp.headers.get("x-amz-lex-interpretations"),
+      sessionState: resp.headers.get("x-amz-lex-session-state"),
+      requestAttributes: resp.headers.get("x-amz-lex-request-attributes"),
+      sessionId: resp.headers.get("x-amz-lex-session-id"),
+      inputTranscript: resp.headers.get("x-amz-lex-input-transcript"),
+      audioStream: await resp.text(), // TODO: maybe allow proper body streaming,
+    };
   }
 
 }

@@ -203,7 +203,7 @@ export default class AppSync {
 
   async deleteApiCache(
     {abortSignal, ...params}: RequestConfig & s.DeleteApiCacheRequest,
-  ): Promise<s.DeleteApiCacheResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -211,15 +211,12 @@ export default class AppSync {
       method: "DELETE",
       requestUri: cmnP.encodePath`/v1/apis/${params["apiId"]}/ApiCaches`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteApiKey(
     {abortSignal, ...params}: RequestConfig & s.DeleteApiKeyRequest,
-  ): Promise<s.DeleteApiKeyResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -227,15 +224,12 @@ export default class AppSync {
       method: "DELETE",
       requestUri: cmnP.encodePath`/v1/apis/${params["apiId"]}/apikeys/${params["id"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteDataSource(
     {abortSignal, ...params}: RequestConfig & s.DeleteDataSourceRequest,
-  ): Promise<s.DeleteDataSourceResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -243,15 +237,12 @@ export default class AppSync {
       method: "DELETE",
       requestUri: cmnP.encodePath`/v1/apis/${params["apiId"]}/datasources/${params["name"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteFunction(
     {abortSignal, ...params}: RequestConfig & s.DeleteFunctionRequest,
-  ): Promise<s.DeleteFunctionResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -259,15 +250,12 @@ export default class AppSync {
       method: "DELETE",
       requestUri: cmnP.encodePath`/v1/apis/${params["apiId"]}/functions/${params["functionId"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteGraphqlApi(
     {abortSignal, ...params}: RequestConfig & s.DeleteGraphqlApiRequest,
-  ): Promise<s.DeleteGraphqlApiResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -275,15 +263,12 @@ export default class AppSync {
       method: "DELETE",
       requestUri: cmnP.encodePath`/v1/apis/${params["apiId"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteResolver(
     {abortSignal, ...params}: RequestConfig & s.DeleteResolverRequest,
-  ): Promise<s.DeleteResolverResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -291,15 +276,12 @@ export default class AppSync {
       method: "DELETE",
       requestUri: cmnP.encodePath`/v1/apis/${params["apiId"]}/types/${params["typeName"]}/resolvers/${params["fieldName"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteType(
     {abortSignal, ...params}: RequestConfig & s.DeleteTypeRequest,
-  ): Promise<s.DeleteTypeResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -307,15 +289,12 @@ export default class AppSync {
       method: "DELETE",
       requestUri: cmnP.encodePath`/v1/apis/${params["apiId"]}/types/${params["typeName"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async flushApiCache(
     {abortSignal, ...params}: RequestConfig & s.FlushApiCacheRequest,
-  ): Promise<s.FlushApiCacheResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -323,10 +302,7 @@ export default class AppSync {
       method: "DELETE",
       requestUri: cmnP.encodePath`/v1/apis/${params["apiId"]}/FlushCache`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async getApiCache(
@@ -413,9 +389,9 @@ export default class AppSync {
       method: "GET",
       requestUri: cmnP.encodePath`/v1/apis/${params["apiId"]}/schema`,
     });
-  return {
-    schema: await resp.text(), // TODO: maybe allow proper body streaming,
-  };
+    return {
+      schema: await resp.text(), // TODO: maybe allow proper body streaming,
+    };
   }
 
   async getResolver(
@@ -661,7 +637,7 @@ export default class AppSync {
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & s.TagResourceRequest,
-  ): Promise<s.TagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       tags: params["tags"],
     };
@@ -670,15 +646,12 @@ export default class AppSync {
       action: "TagResource",
       requestUri: cmnP.encodePath`/v1/tags/${params["resourceArn"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async untagResource(
     {abortSignal, ...params}: RequestConfig & s.UntagResourceRequest,
-  ): Promise<s.UntagResourceResponse> {
+  ): Promise<void> {
     const query = new URLSearchParams;
     for (const item of params["tagKeys"]) {
       query.append("tagKeys", item?.toString() ?? "");
@@ -689,10 +662,7 @@ export default class AppSync {
       method: "DELETE",
       requestUri: cmnP.encodePath`/v1/tags/${params["resourceArn"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateApiCache(

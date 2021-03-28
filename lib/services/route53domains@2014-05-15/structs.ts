@@ -207,20 +207,8 @@ export interface CheckDomainTransferabilityResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface DeleteTagsForDomainResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DisableDomainAutoRenewResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface DisableDomainTransferLockResponse {
   OperationId: string;
-}
-
-// refs: 1 - tags: named, output
-export interface EnableDomainAutoRenewResponse {
 }
 
 // refs: 1 - tags: named, output
@@ -342,10 +330,6 @@ export interface UpdateDomainContactPrivacyResponse {
 // refs: 1 - tags: named, output
 export interface UpdateDomainNameserversResponse {
   OperationId: string;
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateTagsForDomainResponse {
 }
 
 // refs: 1 - tags: named, output

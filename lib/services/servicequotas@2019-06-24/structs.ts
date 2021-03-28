@@ -3,10 +3,6 @@
 import * as cmnP from "../../encoding/common.ts";
 
 // refs: 1 - tags: named, input
-export interface AssociateServiceQuotaTemplateRequest {
-}
-
-// refs: 1 - tags: named, input
 export interface DeleteServiceQuotaIncreaseRequestFromTemplateRequest {
   ServiceCode: string;
   QuotaCode: string;
@@ -14,17 +10,9 @@ export interface DeleteServiceQuotaIncreaseRequestFromTemplateRequest {
 }
 
 // refs: 1 - tags: named, input
-export interface DisassociateServiceQuotaTemplateRequest {
-}
-
-// refs: 1 - tags: named, input
 export interface GetAWSDefaultServiceQuotaRequest {
   ServiceCode: string;
   QuotaCode: string;
-}
-
-// refs: 1 - tags: named, input
-export interface GetAssociationForServiceQuotaTemplateRequest {
 }
 
 // refs: 1 - tags: named, input
@@ -123,18 +111,6 @@ export interface UntagResourceRequest {
 }
 
 // refs: 1 - tags: named, output
-export interface AssociateServiceQuotaTemplateResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteServiceQuotaIncreaseRequestFromTemplateResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DisassociateServiceQuotaTemplateResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface GetAWSDefaultServiceQuotaResponse {
   Quota?: ServiceQuota | null;
 }
@@ -208,14 +184,6 @@ export interface PutServiceQuotaIncreaseRequestIntoTemplateResponse {
 // refs: 1 - tags: named, output
 export interface RequestServiceQuotaIncreaseResponse {
   RequestedQuota?: RequestedServiceQuotaChange | null;
-}
-
-// refs: 1 - tags: named, output
-export interface TagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UntagResourceResponse {
 }
 
 // refs: 6 - tags: input, named, enum, output

@@ -124,11 +124,12 @@ export default class IVS {
       requestUri: "/DeleteChannel",
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deletePlaybackKeyPair(
     {abortSignal, ...params}: RequestConfig & s.DeletePlaybackKeyPairRequest,
-  ): Promise<s.DeletePlaybackKeyPairResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       arn: params["arn"],
     };
@@ -137,10 +138,7 @@ export default class IVS {
       action: "DeletePlaybackKeyPair",
       requestUri: "/DeletePlaybackKeyPair",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteStreamKey(
@@ -155,6 +153,7 @@ export default class IVS {
       requestUri: "/DeleteStreamKey",
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async getChannel(
@@ -379,11 +378,12 @@ export default class IVS {
       action: "PutMetadata",
       requestUri: "/PutMetadata",
     });
+    await resp.text();
   }
 
   async stopStream(
     {abortSignal, ...params}: RequestConfig & s.StopStreamRequest,
-  ): Promise<s.StopStreamResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       channelArn: params["channelArn"],
     };
@@ -392,15 +392,12 @@ export default class IVS {
       action: "StopStream",
       requestUri: "/StopStream",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & s.TagResourceRequest,
-  ): Promise<s.TagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       tags: params["tags"],
     };
@@ -409,15 +406,12 @@ export default class IVS {
       action: "TagResource",
       requestUri: cmnP.encodePath`/tags/${params["resourceArn"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async untagResource(
     {abortSignal, ...params}: RequestConfig & s.UntagResourceRequest,
-  ): Promise<s.UntagResourceResponse> {
+  ): Promise<void> {
     const query = new URLSearchParams;
     for (const item of params["tagKeys"]) {
       query.append("tagKeys", item?.toString() ?? "");
@@ -428,10 +422,7 @@ export default class IVS {
       method: "DELETE",
       requestUri: cmnP.encodePath`/tags/${params["resourceArn"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateChannel(

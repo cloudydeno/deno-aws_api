@@ -110,7 +110,7 @@ export default class OpsWorksCM {
 
   async deleteBackup(
     {abortSignal, ...params}: RequestConfig & s.DeleteBackupRequest,
-  ): Promise<s.DeleteBackupResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       BackupId: params["BackupId"],
     };
@@ -118,15 +118,12 @@ export default class OpsWorksCM {
       abortSignal, body,
       action: "DeleteBackup",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteServer(
     {abortSignal, ...params}: RequestConfig & s.DeleteServerRequest,
-  ): Promise<s.DeleteServerResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ServerName: params["ServerName"],
     };
@@ -134,17 +131,13 @@ export default class OpsWorksCM {
       abortSignal, body,
       action: "DeleteServer",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async describeAccountAttributes(
-    {abortSignal, ...params}: RequestConfig & s.DescribeAccountAttributesRequest = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.DescribeAccountAttributesResponse> {
-    const body: jsonP.JSONObject = {
-    };
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeAccountAttributes",
@@ -305,7 +298,7 @@ export default class OpsWorksCM {
 
   async restoreServer(
     {abortSignal, ...params}: RequestConfig & s.RestoreServerRequest,
-  ): Promise<s.RestoreServerResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       BackupId: params["BackupId"],
       ServerName: params["ServerName"],
@@ -316,10 +309,7 @@ export default class OpsWorksCM {
       abortSignal, body,
       action: "RestoreServer",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async startMaintenance(
@@ -343,7 +333,7 @@ export default class OpsWorksCM {
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & s.TagResourceRequest,
-  ): Promise<s.TagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
@@ -352,15 +342,12 @@ export default class OpsWorksCM {
       abortSignal, body,
       action: "TagResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async untagResource(
     {abortSignal, ...params}: RequestConfig & s.UntagResourceRequest,
-  ): Promise<s.UntagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
       TagKeys: params["TagKeys"],
@@ -369,10 +356,7 @@ export default class OpsWorksCM {
       abortSignal, body,
       action: "UntagResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateServer(

@@ -29,7 +29,7 @@ export default class DataPipeline {
 
   async activatePipeline(
     {abortSignal, ...params}: RequestConfig & s.ActivatePipelineInput,
-  ): Promise<s.ActivatePipelineOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       pipelineId: params["pipelineId"],
       parameterValues: params["parameterValues"]?.map(x => fromParameterValue(x)),
@@ -39,15 +39,12 @@ export default class DataPipeline {
       abortSignal, body,
       action: "ActivatePipeline",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async addTags(
     {abortSignal, ...params}: RequestConfig & s.AddTagsInput,
-  ): Promise<s.AddTagsOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       pipelineId: params["pipelineId"],
       tags: params["tags"]?.map(x => fromTag(x)),
@@ -56,10 +53,7 @@ export default class DataPipeline {
       abortSignal, body,
       action: "AddTags",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async createPipeline(
@@ -85,7 +79,7 @@ export default class DataPipeline {
 
   async deactivatePipeline(
     {abortSignal, ...params}: RequestConfig & s.DeactivatePipelineInput,
-  ): Promise<s.DeactivatePipelineOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       pipelineId: params["pipelineId"],
       cancelActive: params["cancelActive"],
@@ -94,10 +88,7 @@ export default class DataPipeline {
       abortSignal, body,
       action: "DeactivatePipeline",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deletePipeline(
@@ -110,6 +101,7 @@ export default class DataPipeline {
       abortSignal, body,
       action: "DeletePipeline",
     });
+    await resp.text();
   }
 
   async describeObjects(
@@ -286,7 +278,7 @@ export default class DataPipeline {
 
   async removeTags(
     {abortSignal, ...params}: RequestConfig & s.RemoveTagsInput,
-  ): Promise<s.RemoveTagsOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       pipelineId: params["pipelineId"],
       tagKeys: params["tagKeys"],
@@ -295,10 +287,7 @@ export default class DataPipeline {
       abortSignal, body,
       action: "RemoveTags",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async reportTaskProgress(
@@ -352,11 +341,12 @@ export default class DataPipeline {
       abortSignal, body,
       action: "SetStatus",
     });
+    await resp.text();
   }
 
   async setTaskStatus(
     {abortSignal, ...params}: RequestConfig & s.SetTaskStatusInput,
-  ): Promise<s.SetTaskStatusOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       taskId: params["taskId"],
       taskStatus: params["taskStatus"],
@@ -368,10 +358,7 @@ export default class DataPipeline {
       abortSignal, body,
       action: "SetTaskStatus",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async validatePipelineDefinition(

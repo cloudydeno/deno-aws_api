@@ -411,10 +411,6 @@ export interface DeleteProjectVersionResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface DeleteStreamProcessorResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface DescribeCollectionResponse {
   FaceCount?: number | null;
   FaceModelVersion?: string | null;
@@ -665,10 +661,6 @@ export interface StartSegmentDetectionResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface StartStreamProcessorResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface StartTextDetectionResponse {
   JobId?: string | null;
 }
@@ -676,18 +668,6 @@ export interface StartTextDetectionResponse {
 // refs: 1 - tags: named, output
 export interface StopProjectVersionResponse {
   Status?: ProjectVersionStatus | null;
-}
-
-// refs: 1 - tags: named, output
-export interface StopStreamProcessorResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface TagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UntagResourceResponse {
 }
 
 // refs: 11 - tags: input, named, interface

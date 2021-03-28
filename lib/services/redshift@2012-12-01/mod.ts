@@ -416,6 +416,7 @@ export default class Redshift {
       abortSignal, body,
       action: "CreateTags",
     });
+    await resp.text();
   }
 
   async createUsageLimit(
@@ -467,6 +468,7 @@ export default class Redshift {
       abortSignal, body,
       action: "DeleteClusterParameterGroup",
     });
+    await resp.text();
   }
 
   async deleteClusterSecurityGroup(
@@ -479,6 +481,7 @@ export default class Redshift {
       abortSignal, body,
       action: "DeleteClusterSecurityGroup",
     });
+    await resp.text();
   }
 
   async deleteClusterSnapshot(
@@ -508,6 +511,7 @@ export default class Redshift {
       abortSignal, body,
       action: "DeleteClusterSubnetGroup",
     });
+    await resp.text();
   }
 
   async deleteEventSubscription(
@@ -520,6 +524,7 @@ export default class Redshift {
       abortSignal, body,
       action: "DeleteEventSubscription",
     });
+    await resp.text();
   }
 
   async deleteHsmClientCertificate(
@@ -532,6 +537,7 @@ export default class Redshift {
       abortSignal, body,
       action: "DeleteHsmClientCertificate",
     });
+    await resp.text();
   }
 
   async deleteHsmConfiguration(
@@ -544,6 +550,7 @@ export default class Redshift {
       abortSignal, body,
       action: "DeleteHsmConfiguration",
     });
+    await resp.text();
   }
 
   async deleteScheduledAction(
@@ -556,6 +563,7 @@ export default class Redshift {
       abortSignal, body,
       action: "DeleteScheduledAction",
     });
+    await resp.text();
   }
 
   async deleteSnapshotCopyGrant(
@@ -568,6 +576,7 @@ export default class Redshift {
       abortSignal, body,
       action: "DeleteSnapshotCopyGrant",
     });
+    await resp.text();
   }
 
   async deleteSnapshotSchedule(
@@ -580,6 +589,7 @@ export default class Redshift {
       abortSignal, body,
       action: "DeleteSnapshotSchedule",
     });
+    await resp.text();
   }
 
   async deleteTags(
@@ -593,6 +603,7 @@ export default class Redshift {
       abortSignal, body,
       action: "DeleteTags",
     });
+    await resp.text();
   }
 
   async deleteUsageLimit(
@@ -605,6 +616,7 @@ export default class Redshift {
       abortSignal, body,
       action: "DeleteUsageLimit",
     });
+    await resp.text();
   }
 
   async describeAccountAttributes(
@@ -1171,7 +1183,7 @@ export default class Redshift {
   }
 
   async describeStorage(
-    {abortSignal, ...params}: RequestConfig = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.CustomerStorageMessage> {
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -1523,6 +1535,7 @@ export default class Redshift {
       abortSignal, body,
       action: "ModifyClusterSnapshotSchedule",
     });
+    await resp.text();
   }
 
   async modifyClusterSubnetGroup(

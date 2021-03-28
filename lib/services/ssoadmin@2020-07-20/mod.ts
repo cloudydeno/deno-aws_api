@@ -32,7 +32,7 @@ export default class SSOAdmin {
 
   async attachManagedPolicyToPermissionSet(
     {abortSignal, ...params}: RequestConfig & s.AttachManagedPolicyToPermissionSetRequest,
-  ): Promise<s.AttachManagedPolicyToPermissionSetResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       InstanceArn: params["InstanceArn"],
       PermissionSetArn: params["PermissionSetArn"],
@@ -42,10 +42,7 @@ export default class SSOAdmin {
       abortSignal, body,
       action: "AttachManagedPolicyToPermissionSet",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async createAccountAssignment(
@@ -73,7 +70,7 @@ export default class SSOAdmin {
 
   async createInstanceAccessControlAttributeConfiguration(
     {abortSignal, ...params}: RequestConfig & s.CreateInstanceAccessControlAttributeConfigurationRequest,
-  ): Promise<s.CreateInstanceAccessControlAttributeConfigurationResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       InstanceArn: params["InstanceArn"],
       InstanceAccessControlAttributeConfiguration: fromInstanceAccessControlAttributeConfiguration(params["InstanceAccessControlAttributeConfiguration"]),
@@ -82,10 +79,7 @@ export default class SSOAdmin {
       abortSignal, body,
       action: "CreateInstanceAccessControlAttributeConfiguration",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async createPermissionSet(
@@ -136,7 +130,7 @@ export default class SSOAdmin {
 
   async deleteInlinePolicyFromPermissionSet(
     {abortSignal, ...params}: RequestConfig & s.DeleteInlinePolicyFromPermissionSetRequest,
-  ): Promise<s.DeleteInlinePolicyFromPermissionSetResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       InstanceArn: params["InstanceArn"],
       PermissionSetArn: params["PermissionSetArn"],
@@ -145,15 +139,12 @@ export default class SSOAdmin {
       abortSignal, body,
       action: "DeleteInlinePolicyFromPermissionSet",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteInstanceAccessControlAttributeConfiguration(
     {abortSignal, ...params}: RequestConfig & s.DeleteInstanceAccessControlAttributeConfigurationRequest,
-  ): Promise<s.DeleteInstanceAccessControlAttributeConfigurationResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       InstanceArn: params["InstanceArn"],
     };
@@ -161,15 +152,12 @@ export default class SSOAdmin {
       abortSignal, body,
       action: "DeleteInstanceAccessControlAttributeConfiguration",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deletePermissionSet(
     {abortSignal, ...params}: RequestConfig & s.DeletePermissionSetRequest,
-  ): Promise<s.DeletePermissionSetResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       InstanceArn: params["InstanceArn"],
       PermissionSetArn: params["PermissionSetArn"],
@@ -178,10 +166,7 @@ export default class SSOAdmin {
       abortSignal, body,
       action: "DeletePermissionSet",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async describeAccountAssignmentCreationStatus(
@@ -282,7 +267,7 @@ export default class SSOAdmin {
 
   async detachManagedPolicyFromPermissionSet(
     {abortSignal, ...params}: RequestConfig & s.DetachManagedPolicyFromPermissionSetRequest,
-  ): Promise<s.DetachManagedPolicyFromPermissionSetResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       InstanceArn: params["InstanceArn"],
       PermissionSetArn: params["PermissionSetArn"],
@@ -292,10 +277,7 @@ export default class SSOAdmin {
       abortSignal, body,
       action: "DetachManagedPolicyFromPermissionSet",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async getInlinePolicyForPermissionSet(
@@ -559,7 +541,7 @@ export default class SSOAdmin {
 
   async putInlinePolicyToPermissionSet(
     {abortSignal, ...params}: RequestConfig & s.PutInlinePolicyToPermissionSetRequest,
-  ): Promise<s.PutInlinePolicyToPermissionSetResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       InstanceArn: params["InstanceArn"],
       PermissionSetArn: params["PermissionSetArn"],
@@ -569,15 +551,12 @@ export default class SSOAdmin {
       abortSignal, body,
       action: "PutInlinePolicyToPermissionSet",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & s.TagResourceRequest,
-  ): Promise<s.TagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       InstanceArn: params["InstanceArn"],
       ResourceArn: params["ResourceArn"],
@@ -587,15 +566,12 @@ export default class SSOAdmin {
       abortSignal, body,
       action: "TagResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async untagResource(
     {abortSignal, ...params}: RequestConfig & s.UntagResourceRequest,
-  ): Promise<s.UntagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       InstanceArn: params["InstanceArn"],
       ResourceArn: params["ResourceArn"],
@@ -605,15 +581,12 @@ export default class SSOAdmin {
       abortSignal, body,
       action: "UntagResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateInstanceAccessControlAttributeConfiguration(
     {abortSignal, ...params}: RequestConfig & s.UpdateInstanceAccessControlAttributeConfigurationRequest,
-  ): Promise<s.UpdateInstanceAccessControlAttributeConfigurationResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       InstanceArn: params["InstanceArn"],
       InstanceAccessControlAttributeConfiguration: fromInstanceAccessControlAttributeConfiguration(params["InstanceAccessControlAttributeConfiguration"]),
@@ -622,15 +595,12 @@ export default class SSOAdmin {
       abortSignal, body,
       action: "UpdateInstanceAccessControlAttributeConfiguration",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updatePermissionSet(
     {abortSignal, ...params}: RequestConfig & s.UpdatePermissionSetRequest,
-  ): Promise<s.UpdatePermissionSetResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       InstanceArn: params["InstanceArn"],
       PermissionSetArn: params["PermissionSetArn"],
@@ -642,10 +612,7 @@ export default class SSOAdmin {
       abortSignal, body,
       action: "UpdatePermissionSet",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
 }

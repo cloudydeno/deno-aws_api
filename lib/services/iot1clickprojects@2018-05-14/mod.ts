@@ -31,7 +31,7 @@ export default class IoT1ClickProjects {
 
   async associateDeviceWithPlacement(
     {abortSignal, ...params}: RequestConfig & s.AssociateDeviceWithPlacementRequest,
-  ): Promise<s.AssociateDeviceWithPlacementResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       deviceId: params["deviceId"],
     };
@@ -41,15 +41,12 @@ export default class IoT1ClickProjects {
       method: "PUT",
       requestUri: cmnP.encodePath`/projects/${params["projectName"]}/placements/${params["placementName"]}/devices/${params["deviceTemplateName"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async createPlacement(
     {abortSignal, ...params}: RequestConfig & s.CreatePlacementRequest,
-  ): Promise<s.CreatePlacementResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       placementName: params["placementName"],
       attributes: params["attributes"],
@@ -59,15 +56,12 @@ export default class IoT1ClickProjects {
       action: "CreatePlacement",
       requestUri: cmnP.encodePath`/projects/${params["projectName"]}/placements`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async createProject(
     {abortSignal, ...params}: RequestConfig & s.CreateProjectRequest,
-  ): Promise<s.CreateProjectResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       projectName: params["projectName"],
       description: params["description"],
@@ -79,15 +73,12 @@ export default class IoT1ClickProjects {
       action: "CreateProject",
       requestUri: "/projects",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deletePlacement(
     {abortSignal, ...params}: RequestConfig & s.DeletePlacementRequest,
-  ): Promise<s.DeletePlacementResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -95,15 +86,12 @@ export default class IoT1ClickProjects {
       method: "DELETE",
       requestUri: cmnP.encodePath`/projects/${params["projectName"]}/placements/${params["placementName"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteProject(
     {abortSignal, ...params}: RequestConfig & s.DeleteProjectRequest,
-  ): Promise<s.DeleteProjectResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -111,10 +99,7 @@ export default class IoT1ClickProjects {
       method: "DELETE",
       requestUri: cmnP.encodePath`/projects/${params["projectName"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async describePlacement(
@@ -155,7 +140,7 @@ export default class IoT1ClickProjects {
 
   async disassociateDeviceFromPlacement(
     {abortSignal, ...params}: RequestConfig & s.DisassociateDeviceFromPlacementRequest,
-  ): Promise<s.DisassociateDeviceFromPlacementResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -163,10 +148,7 @@ export default class IoT1ClickProjects {
       method: "DELETE",
       requestUri: cmnP.encodePath`/projects/${params["projectName"]}/placements/${params["placementName"]}/devices/${params["deviceTemplateName"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async getDevicesInPlacement(
@@ -251,7 +233,7 @@ export default class IoT1ClickProjects {
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & s.TagResourceRequest,
-  ): Promise<s.TagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       tags: params["tags"],
     };
@@ -260,15 +242,12 @@ export default class IoT1ClickProjects {
       action: "TagResource",
       requestUri: cmnP.encodePath`/tags/${params["resourceArn"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async untagResource(
     {abortSignal, ...params}: RequestConfig & s.UntagResourceRequest,
-  ): Promise<s.UntagResourceResponse> {
+  ): Promise<void> {
     const query = new URLSearchParams;
     for (const item of params["tagKeys"]) {
       query.append("tagKeys", item?.toString() ?? "");
@@ -279,15 +258,12 @@ export default class IoT1ClickProjects {
       method: "DELETE",
       requestUri: cmnP.encodePath`/tags/${params["resourceArn"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updatePlacement(
     {abortSignal, ...params}: RequestConfig & s.UpdatePlacementRequest,
-  ): Promise<s.UpdatePlacementResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       attributes: params["attributes"],
     };
@@ -297,15 +273,12 @@ export default class IoT1ClickProjects {
       method: "PUT",
       requestUri: cmnP.encodePath`/projects/${params["projectName"]}/placements/${params["placementName"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateProject(
     {abortSignal, ...params}: RequestConfig & s.UpdateProjectRequest,
-  ): Promise<s.UpdateProjectResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       description: params["description"],
       placementTemplate: fromPlacementTemplate(params["placementTemplate"]),
@@ -316,10 +289,7 @@ export default class IoT1ClickProjects {
       method: "PUT",
       requestUri: cmnP.encodePath`/projects/${params["projectName"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
 }

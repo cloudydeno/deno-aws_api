@@ -144,11 +144,9 @@ export default class STS {
   }
 
   async getCallerIdentity(
-    {abortSignal, ...params}: RequestConfig & s.GetCallerIdentityRequest = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.GetCallerIdentityResponse> {
     const body = new URLSearchParams;
-    const prefix = '';
-
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetCallerIdentity",

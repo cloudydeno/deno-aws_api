@@ -98,10 +98,6 @@ export interface CreateCanaryResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface DeleteCanaryResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface DescribeCanariesResponse {
   Canaries?: Canary[] | null;
   NextToken?: string | null;
@@ -133,26 +129,6 @@ export interface GetCanaryRunsResponse {
 // refs: 1 - tags: named, output
 export interface ListTagsForResourceResponse {
   Tags?: { [key: string]: string | null | undefined } | null;
-}
-
-// refs: 1 - tags: named, output
-export interface StartCanaryResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface StopCanaryResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface TagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UntagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateCanaryResponse {
 }
 
 // refs: 2 - tags: input, named, interface

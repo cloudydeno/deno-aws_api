@@ -286,14 +286,6 @@ export interface CreatePipelineOutput {
 }
 
 // refs: 1 - tags: named, output
-export interface DeleteWebhookOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface DeregisterWebhookWithThirdPartyOutput {
-}
-
-// refs: 1 - tags: named, output
 export interface GetActionTypeOutput {
   actionType?: ActionTypeDeclaration | null;
 }
@@ -391,10 +383,6 @@ export interface PutWebhookOutput {
 }
 
 // refs: 1 - tags: named, output
-export interface RegisterWebhookWithThirdPartyOutput {
-}
-
-// refs: 1 - tags: named, output
 export interface RetryStageExecutionOutput {
   pipelineExecutionId?: string | null;
 }
@@ -407,14 +395,6 @@ export interface StartPipelineExecutionOutput {
 // refs: 1 - tags: named, output
 export interface StopPipelineExecutionOutput {
   pipelineExecutionId?: string | null;
-}
-
-// refs: 1 - tags: named, output
-export interface TagResourceOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface UntagResourceOutput {
 }
 
 // refs: 1 - tags: named, output

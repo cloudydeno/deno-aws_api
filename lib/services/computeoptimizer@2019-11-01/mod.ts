@@ -194,10 +194,9 @@ export default class ComputeOptimizer {
   }
 
   async getEnrollmentStatus(
-    {abortSignal, ...params}: RequestConfig & s.GetEnrollmentStatusRequest = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.GetEnrollmentStatusResponse> {
-    const body: jsonP.JSONObject = {
-    };
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetEnrollmentStatus",

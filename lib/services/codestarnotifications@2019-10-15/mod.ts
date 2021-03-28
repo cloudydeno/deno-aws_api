@@ -79,7 +79,7 @@ export default class CodeStarNotifications {
 
   async deleteTarget(
     {abortSignal, ...params}: RequestConfig & s.DeleteTargetRequest,
-  ): Promise<s.DeleteTargetResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       TargetAddress: params["TargetAddress"],
       ForceUnsubscribeAll: params["ForceUnsubscribeAll"],
@@ -89,10 +89,7 @@ export default class CodeStarNotifications {
       action: "DeleteTarget",
       requestUri: "/deleteTarget",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async describeNotificationRule(
@@ -273,7 +270,7 @@ export default class CodeStarNotifications {
 
   async untagResource(
     {abortSignal, ...params}: RequestConfig & s.UntagResourceRequest,
-  ): Promise<s.UntagResourceResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       Arn: params["Arn"],
       TagKeys: params["TagKeys"],
@@ -283,15 +280,12 @@ export default class CodeStarNotifications {
       action: "UntagResource",
       requestUri: "/untagResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateNotificationRule(
     {abortSignal, ...params}: RequestConfig & s.UpdateNotificationRuleRequest,
-  ): Promise<s.UpdateNotificationRuleResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       Arn: params["Arn"],
       Name: params["Name"],
@@ -305,10 +299,7 @@ export default class CodeStarNotifications {
       action: "UpdateNotificationRule",
       requestUri: "/updateNotificationRule",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
 }

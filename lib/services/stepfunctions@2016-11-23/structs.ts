@@ -164,14 +164,6 @@ export interface CreateStateMachineOutput {
 }
 
 // refs: 1 - tags: named, output
-export interface DeleteActivityOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteStateMachineOutput {
-}
-
-// refs: 1 - tags: named, output
 export interface DescribeActivityOutput {
   activityArn: string;
   name: string;
@@ -253,18 +245,6 @@ export interface ListTagsForResourceOutput {
 }
 
 // refs: 1 - tags: named, output
-export interface SendTaskFailureOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface SendTaskHeartbeatOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface SendTaskSuccessOutput {
-}
-
-// refs: 1 - tags: named, output
 export interface StartExecutionOutput {
   executionArn: string;
   startDate: Date | number;
@@ -291,14 +271,6 @@ export interface StartSyncExecutionOutput {
 // refs: 1 - tags: named, output
 export interface StopExecutionOutput {
   stopDate: Date | number;
-}
-
-// refs: 1 - tags: named, output
-export interface TagResourceOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface UntagResourceOutput {
 }
 
 // refs: 1 - tags: named, output

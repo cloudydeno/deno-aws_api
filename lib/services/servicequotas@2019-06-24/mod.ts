@@ -29,23 +29,19 @@ export default class ServiceQuotas {
   };
 
   async associateServiceQuotaTemplate(
-    {abortSignal, ...params}: RequestConfig & s.AssociateServiceQuotaTemplateRequest = {},
-  ): Promise<s.AssociateServiceQuotaTemplateResponse> {
-    const body: jsonP.JSONObject = {
-    };
+    {abortSignal}: RequestConfig = {},
+  ): Promise<void> {
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "AssociateServiceQuotaTemplate",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteServiceQuotaIncreaseRequestFromTemplate(
     {abortSignal, ...params}: RequestConfig & s.DeleteServiceQuotaIncreaseRequestFromTemplateRequest,
-  ): Promise<s.DeleteServiceQuotaIncreaseRequestFromTemplateResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ServiceCode: params["ServiceCode"],
       QuotaCode: params["QuotaCode"],
@@ -55,25 +51,18 @@ export default class ServiceQuotas {
       abortSignal, body,
       action: "DeleteServiceQuotaIncreaseRequestFromTemplate",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async disassociateServiceQuotaTemplate(
-    {abortSignal, ...params}: RequestConfig & s.DisassociateServiceQuotaTemplateRequest = {},
-  ): Promise<s.DisassociateServiceQuotaTemplateResponse> {
-    const body: jsonP.JSONObject = {
-    };
+    {abortSignal}: RequestConfig = {},
+  ): Promise<void> {
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisassociateServiceQuotaTemplate",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async getAWSDefaultServiceQuota(
@@ -96,10 +85,9 @@ export default class ServiceQuotas {
   }
 
   async getAssociationForServiceQuotaTemplate(
-    {abortSignal, ...params}: RequestConfig & s.GetAssociationForServiceQuotaTemplateRequest = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.GetAssociationForServiceQuotaTemplateResponse> {
-    const body: jsonP.JSONObject = {
-    };
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetAssociationForServiceQuotaTemplate",
@@ -359,7 +347,7 @@ export default class ServiceQuotas {
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & s.TagResourceRequest,
-  ): Promise<s.TagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceARN: params["ResourceARN"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
@@ -368,15 +356,12 @@ export default class ServiceQuotas {
       abortSignal, body,
       action: "TagResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async untagResource(
     {abortSignal, ...params}: RequestConfig & s.UntagResourceRequest,
-  ): Promise<s.UntagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceARN: params["ResourceARN"],
       TagKeys: params["TagKeys"],
@@ -385,10 +370,7 @@ export default class ServiceQuotas {
       abortSignal, body,
       action: "UntagResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
 }

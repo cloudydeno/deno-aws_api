@@ -30,7 +30,7 @@ export default class MigrationHub {
 
   async associateCreatedArtifact(
     {abortSignal, ...params}: RequestConfig & s.AssociateCreatedArtifactRequest,
-  ): Promise<s.AssociateCreatedArtifactResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ProgressUpdateStream: params["ProgressUpdateStream"],
       MigrationTaskName: params["MigrationTaskName"],
@@ -41,15 +41,12 @@ export default class MigrationHub {
       abortSignal, body,
       action: "AssociateCreatedArtifact",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async associateDiscoveredResource(
     {abortSignal, ...params}: RequestConfig & s.AssociateDiscoveredResourceRequest,
-  ): Promise<s.AssociateDiscoveredResourceResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ProgressUpdateStream: params["ProgressUpdateStream"],
       MigrationTaskName: params["MigrationTaskName"],
@@ -60,15 +57,12 @@ export default class MigrationHub {
       abortSignal, body,
       action: "AssociateDiscoveredResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async createProgressUpdateStream(
     {abortSignal, ...params}: RequestConfig & s.CreateProgressUpdateStreamRequest,
-  ): Promise<s.CreateProgressUpdateStreamResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ProgressUpdateStreamName: params["ProgressUpdateStreamName"],
       DryRun: params["DryRun"],
@@ -77,15 +71,12 @@ export default class MigrationHub {
       abortSignal, body,
       action: "CreateProgressUpdateStream",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteProgressUpdateStream(
     {abortSignal, ...params}: RequestConfig & s.DeleteProgressUpdateStreamRequest,
-  ): Promise<s.DeleteProgressUpdateStreamResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ProgressUpdateStreamName: params["ProgressUpdateStreamName"],
       DryRun: params["DryRun"],
@@ -94,10 +85,7 @@ export default class MigrationHub {
       abortSignal, body,
       action: "DeleteProgressUpdateStream",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async describeApplicationState(
@@ -140,7 +128,7 @@ export default class MigrationHub {
 
   async disassociateCreatedArtifact(
     {abortSignal, ...params}: RequestConfig & s.DisassociateCreatedArtifactRequest,
-  ): Promise<s.DisassociateCreatedArtifactResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ProgressUpdateStream: params["ProgressUpdateStream"],
       MigrationTaskName: params["MigrationTaskName"],
@@ -151,15 +139,12 @@ export default class MigrationHub {
       abortSignal, body,
       action: "DisassociateCreatedArtifact",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async disassociateDiscoveredResource(
     {abortSignal, ...params}: RequestConfig & s.DisassociateDiscoveredResourceRequest,
-  ): Promise<s.DisassociateDiscoveredResourceResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ProgressUpdateStream: params["ProgressUpdateStream"],
       MigrationTaskName: params["MigrationTaskName"],
@@ -170,15 +155,12 @@ export default class MigrationHub {
       abortSignal, body,
       action: "DisassociateDiscoveredResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async importMigrationTask(
     {abortSignal, ...params}: RequestConfig & s.ImportMigrationTaskRequest,
-  ): Promise<s.ImportMigrationTaskResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ProgressUpdateStream: params["ProgressUpdateStream"],
       MigrationTaskName: params["MigrationTaskName"],
@@ -188,10 +170,7 @@ export default class MigrationHub {
       abortSignal, body,
       action: "ImportMigrationTask",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async listApplicationStates(
@@ -302,7 +281,7 @@ export default class MigrationHub {
 
   async notifyApplicationState(
     {abortSignal, ...params}: RequestConfig & s.NotifyApplicationStateRequest,
-  ): Promise<s.NotifyApplicationStateResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ApplicationId: params["ApplicationId"],
       Status: params["Status"],
@@ -313,15 +292,12 @@ export default class MigrationHub {
       abortSignal, body,
       action: "NotifyApplicationState",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async notifyMigrationTaskState(
     {abortSignal, ...params}: RequestConfig & s.NotifyMigrationTaskStateRequest,
-  ): Promise<s.NotifyMigrationTaskStateResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ProgressUpdateStream: params["ProgressUpdateStream"],
       MigrationTaskName: params["MigrationTaskName"],
@@ -334,15 +310,12 @@ export default class MigrationHub {
       abortSignal, body,
       action: "NotifyMigrationTaskState",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async putResourceAttributes(
     {abortSignal, ...params}: RequestConfig & s.PutResourceAttributesRequest,
-  ): Promise<s.PutResourceAttributesResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ProgressUpdateStream: params["ProgressUpdateStream"],
       MigrationTaskName: params["MigrationTaskName"],
@@ -353,10 +326,7 @@ export default class MigrationHub {
       abortSignal, body,
       action: "PutResourceAttributes",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
 }

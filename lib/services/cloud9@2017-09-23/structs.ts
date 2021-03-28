@@ -100,14 +100,6 @@ export interface CreateEnvironmentMembershipResult {
 }
 
 // refs: 1 - tags: named, output
-export interface DeleteEnvironmentResult {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteEnvironmentMembershipResult {
-}
-
-// refs: 1 - tags: named, output
 export interface DescribeEnvironmentMembershipsResult {
   memberships?: EnvironmentMember[] | null;
   nextToken?: string | null;
@@ -133,18 +125,6 @@ export interface ListEnvironmentsResult {
 // refs: 1 - tags: named, output
 export interface ListTagsForResourceResponse {
   Tags?: Tag[] | null;
-}
-
-// refs: 1 - tags: named, output
-export interface TagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UntagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateEnvironmentResult {
 }
 
 // refs: 1 - tags: named, output

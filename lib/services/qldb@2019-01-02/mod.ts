@@ -83,6 +83,7 @@ export default class QLDB {
       method: "DELETE",
       requestUri: cmnP.encodePath`/ledgers/${params["Name"]}`,
     });
+    await resp.text();
   }
 
   async describeJournalKinesisStream(
@@ -356,7 +357,7 @@ export default class QLDB {
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & s.TagResourceRequest,
-  ): Promise<s.TagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       Tags: params["Tags"],
     };
@@ -365,15 +366,12 @@ export default class QLDB {
       action: "TagResource",
       requestUri: cmnP.encodePath`/tags/${params["ResourceArn"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async untagResource(
     {abortSignal, ...params}: RequestConfig & s.UntagResourceRequest,
-  ): Promise<s.UntagResourceResponse> {
+  ): Promise<void> {
     const query = new URLSearchParams;
     for (const item of params["TagKeys"]) {
       query.append("tagKeys", item?.toString() ?? "");
@@ -384,10 +382,7 @@ export default class QLDB {
       method: "DELETE",
       requestUri: cmnP.encodePath`/tags/${params["ResourceArn"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateLedger(

@@ -40,6 +40,7 @@ export default class RDS {
       abortSignal, body,
       action: "AddRoleToDBCluster",
     });
+    await resp.text();
   }
 
   async addRoleToDBInstance(
@@ -54,6 +55,7 @@ export default class RDS {
       abortSignal, body,
       action: "AddRoleToDBInstance",
     });
+    await resp.text();
   }
 
   async addSourceIdentifierToSubscription(
@@ -84,6 +86,7 @@ export default class RDS {
       abortSignal, body,
       action: "AddTagsToResource",
     });
+    await resp.text();
   }
 
   async applyPendingMaintenanceAction(
@@ -735,6 +738,7 @@ export default class RDS {
       abortSignal, body,
       action: "DeleteDBClusterParameterGroup",
     });
+    await resp.text();
   }
 
   async deleteDBClusterSnapshot(
@@ -799,6 +803,7 @@ export default class RDS {
       abortSignal, body,
       action: "DeleteDBParameterGroup",
     });
+    await resp.text();
   }
 
   async deleteDBProxy(
@@ -843,6 +848,7 @@ export default class RDS {
       abortSignal, body,
       action: "DeleteDBSecurityGroup",
     });
+    await resp.text();
   }
 
   async deleteDBSnapshot(
@@ -871,6 +877,7 @@ export default class RDS {
       abortSignal, body,
       action: "DeleteDBSubnetGroup",
     });
+    await resp.text();
   }
 
   async deleteEventSubscription(
@@ -929,11 +936,12 @@ export default class RDS {
       abortSignal, body,
       action: "DeleteOptionGroup",
     });
+    await resp.text();
   }
 
   async deregisterDBProxyTargets(
     {abortSignal, ...params}: RequestConfig & s.DeregisterDBProxyTargetsRequest,
-  ): Promise<s.DeregisterDBProxyTargetsResponse> {
+  ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"DBProxyName", (params["DBProxyName"] ?? '').toString());
@@ -944,16 +952,13 @@ export default class RDS {
       abortSignal, body,
       action: "DeregisterDBProxyTargets",
     });
-    const xml = xmlP.readXmlResult(await resp.text(), "DeregisterDBProxyTargetsResult");
-    return {};
+    await resp.text();
   }
 
   async describeAccountAttributes(
-    {abortSignal, ...params}: RequestConfig & s.DescribeAccountAttributesMessage = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.AccountAttributesMessage> {
     const body = new URLSearchParams;
-    const prefix = '';
-
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeAccountAttributes",
@@ -2440,6 +2445,7 @@ export default class RDS {
       abortSignal, body,
       action: "RemoveRoleFromDBCluster",
     });
+    await resp.text();
   }
 
   async removeRoleFromDBInstance(
@@ -2454,6 +2460,7 @@ export default class RDS {
       abortSignal, body,
       action: "RemoveRoleFromDBInstance",
     });
+    await resp.text();
   }
 
   async removeSourceIdentifierFromSubscription(
@@ -2484,6 +2491,7 @@ export default class RDS {
       abortSignal, body,
       action: "RemoveTagsFromResource",
     });
+    await resp.text();
   }
 
   async resetDBClusterParameterGroup(

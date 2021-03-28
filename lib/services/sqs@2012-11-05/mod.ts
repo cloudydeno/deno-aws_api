@@ -50,6 +50,7 @@ export default class SQS {
       abortSignal, body,
       action: "AddPermission",
     });
+    await resp.text();
   }
 
   async changeMessageVisibility(
@@ -64,6 +65,7 @@ export default class SQS {
       abortSignal, body,
       action: "ChangeMessageVisibility",
     });
+    await resp.text();
   }
 
   async changeMessageVisibilityBatch(
@@ -113,6 +115,7 @@ export default class SQS {
       abortSignal, body,
       action: "DeleteMessage",
     });
+    await resp.text();
   }
 
   async deleteMessageBatch(
@@ -143,6 +146,7 @@ export default class SQS {
       abortSignal, body,
       action: "DeleteQueue",
     });
+    await resp.text();
   }
 
   async getQueueAttributes(
@@ -247,6 +251,7 @@ export default class SQS {
       abortSignal, body,
       action: "PurgeQueue",
     });
+    await resp.text();
   }
 
   async receiveMessage(
@@ -282,6 +287,7 @@ export default class SQS {
       abortSignal, body,
       action: "RemovePermission",
     });
+    await resp.text();
   }
 
   async sendMessage(
@@ -335,6 +341,7 @@ export default class SQS {
       abortSignal, body,
       action: "SetQueueAttributes",
     });
+    await resp.text();
   }
 
   async tagQueue(
@@ -348,6 +355,7 @@ export default class SQS {
       abortSignal, body,
       action: "TagQueue",
     });
+    await resp.text();
   }
 
   async untagQueue(
@@ -361,6 +369,7 @@ export default class SQS {
       abortSignal, body,
       action: "UntagQueue",
     });
+    await resp.text();
   }
 
 }

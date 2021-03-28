@@ -72,7 +72,7 @@ export default class Athena {
 
   async createDataCatalog(
     {abortSignal, ...params}: RequestConfig & s.CreateDataCatalogInput,
-  ): Promise<s.CreateDataCatalogOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       Name: params["Name"],
       Type: params["Type"],
@@ -84,10 +84,7 @@ export default class Athena {
       abortSignal, body,
       action: "CreateDataCatalog",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async createNamedQuery(
@@ -115,7 +112,7 @@ export default class Athena {
 
   async createPreparedStatement(
     {abortSignal, ...params}: RequestConfig & s.CreatePreparedStatementInput,
-  ): Promise<s.CreatePreparedStatementOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       StatementName: params["StatementName"],
       WorkGroup: params["WorkGroup"],
@@ -126,15 +123,12 @@ export default class Athena {
       abortSignal, body,
       action: "CreatePreparedStatement",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async createWorkGroup(
     {abortSignal, ...params}: RequestConfig & s.CreateWorkGroupInput,
-  ): Promise<s.CreateWorkGroupOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       Name: params["Name"],
       Configuration: fromWorkGroupConfiguration(params["Configuration"]),
@@ -145,15 +139,12 @@ export default class Athena {
       abortSignal, body,
       action: "CreateWorkGroup",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteDataCatalog(
     {abortSignal, ...params}: RequestConfig & s.DeleteDataCatalogInput,
-  ): Promise<s.DeleteDataCatalogOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       Name: params["Name"],
     };
@@ -161,15 +152,12 @@ export default class Athena {
       abortSignal, body,
       action: "DeleteDataCatalog",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteNamedQuery(
     {abortSignal, ...params}: RequestConfig & s.DeleteNamedQueryInput,
-  ): Promise<s.DeleteNamedQueryOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       NamedQueryId: params["NamedQueryId"] ?? generateIdemptToken(),
     };
@@ -177,15 +165,12 @@ export default class Athena {
       abortSignal, body,
       action: "DeleteNamedQuery",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deletePreparedStatement(
     {abortSignal, ...params}: RequestConfig & s.DeletePreparedStatementInput,
-  ): Promise<s.DeletePreparedStatementOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       StatementName: params["StatementName"],
       WorkGroup: params["WorkGroup"],
@@ -194,15 +179,12 @@ export default class Athena {
       abortSignal, body,
       action: "DeletePreparedStatement",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteWorkGroup(
     {abortSignal, ...params}: RequestConfig & s.DeleteWorkGroupInput,
-  ): Promise<s.DeleteWorkGroupOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       WorkGroup: params["WorkGroup"],
       RecursiveDeleteOption: params["RecursiveDeleteOption"],
@@ -211,10 +193,7 @@ export default class Athena {
       abortSignal, body,
       action: "DeleteWorkGroup",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async getDataCatalog(
@@ -581,7 +560,7 @@ export default class Athena {
 
   async stopQueryExecution(
     {abortSignal, ...params}: RequestConfig & s.StopQueryExecutionInput,
-  ): Promise<s.StopQueryExecutionOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       QueryExecutionId: params["QueryExecutionId"] ?? generateIdemptToken(),
     };
@@ -589,15 +568,12 @@ export default class Athena {
       abortSignal, body,
       action: "StopQueryExecution",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & s.TagResourceInput,
-  ): Promise<s.TagResourceOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceARN: params["ResourceARN"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
@@ -606,15 +582,12 @@ export default class Athena {
       abortSignal, body,
       action: "TagResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async untagResource(
     {abortSignal, ...params}: RequestConfig & s.UntagResourceInput,
-  ): Promise<s.UntagResourceOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceARN: params["ResourceARN"],
       TagKeys: params["TagKeys"],
@@ -623,15 +596,12 @@ export default class Athena {
       abortSignal, body,
       action: "UntagResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateDataCatalog(
     {abortSignal, ...params}: RequestConfig & s.UpdateDataCatalogInput,
-  ): Promise<s.UpdateDataCatalogOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       Name: params["Name"],
       Type: params["Type"],
@@ -642,15 +612,12 @@ export default class Athena {
       abortSignal, body,
       action: "UpdateDataCatalog",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updatePreparedStatement(
     {abortSignal, ...params}: RequestConfig & s.UpdatePreparedStatementInput,
-  ): Promise<s.UpdatePreparedStatementOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       StatementName: params["StatementName"],
       WorkGroup: params["WorkGroup"],
@@ -661,15 +628,12 @@ export default class Athena {
       abortSignal, body,
       action: "UpdatePreparedStatement",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateWorkGroup(
     {abortSignal, ...params}: RequestConfig & s.UpdateWorkGroupInput,
-  ): Promise<s.UpdateWorkGroupOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       WorkGroup: params["WorkGroup"],
       Description: params["Description"],
@@ -680,10 +644,7 @@ export default class Athena {
       abortSignal, body,
       action: "UpdateWorkGroup",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
 }

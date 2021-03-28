@@ -48,10 +48,6 @@ export interface DescribeInputRequest {
 }
 
 // refs: 1 - tags: named, input
-export interface DescribeLoggingOptionsRequest {
-}
-
-// refs: 1 - tags: named, input
 export interface GetDetectorModelAnalysisResultsRequest {
   analysisId: string;
   nextToken?: string | null;
@@ -131,14 +127,6 @@ export interface CreateInputResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface DeleteDetectorModelResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteInputResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface DescribeDetectorModelResponse {
   detectorModel?: DetectorModel | null;
 }
@@ -190,14 +178,6 @@ export interface ListTagsForResourceResponse {
 // refs: 1 - tags: named, output
 export interface StartDetectorModelAnalysisResponse {
   analysisId?: string | null;
-}
-
-// refs: 1 - tags: named, output
-export interface TagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UntagResourceResponse {
 }
 
 // refs: 1 - tags: named, output

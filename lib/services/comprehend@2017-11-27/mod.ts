@@ -247,7 +247,7 @@ export default class Comprehend {
 
   async deleteDocumentClassifier(
     {abortSignal, ...params}: RequestConfig & s.DeleteDocumentClassifierRequest,
-  ): Promise<s.DeleteDocumentClassifierResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       DocumentClassifierArn: params["DocumentClassifierArn"],
     };
@@ -255,15 +255,12 @@ export default class Comprehend {
       abortSignal, body,
       action: "DeleteDocumentClassifier",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteEndpoint(
     {abortSignal, ...params}: RequestConfig & s.DeleteEndpointRequest,
-  ): Promise<s.DeleteEndpointResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       EndpointArn: params["EndpointArn"],
     };
@@ -271,15 +268,12 @@ export default class Comprehend {
       abortSignal, body,
       action: "DeleteEndpoint",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteEntityRecognizer(
     {abortSignal, ...params}: RequestConfig & s.DeleteEntityRecognizerRequest,
-  ): Promise<s.DeleteEntityRecognizerResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       EntityRecognizerArn: params["EntityRecognizerArn"],
     };
@@ -287,10 +281,7 @@ export default class Comprehend {
       abortSignal, body,
       action: "DeleteEntityRecognizer",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async describeDocumentClassificationJob(
@@ -1179,7 +1170,7 @@ export default class Comprehend {
 
   async stopTrainingDocumentClassifier(
     {abortSignal, ...params}: RequestConfig & s.StopTrainingDocumentClassifierRequest,
-  ): Promise<s.StopTrainingDocumentClassifierResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       DocumentClassifierArn: params["DocumentClassifierArn"],
     };
@@ -1187,15 +1178,12 @@ export default class Comprehend {
       abortSignal, body,
       action: "StopTrainingDocumentClassifier",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async stopTrainingEntityRecognizer(
     {abortSignal, ...params}: RequestConfig & s.StopTrainingEntityRecognizerRequest,
-  ): Promise<s.StopTrainingEntityRecognizerResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       EntityRecognizerArn: params["EntityRecognizerArn"],
     };
@@ -1203,15 +1191,12 @@ export default class Comprehend {
       abortSignal, body,
       action: "StopTrainingEntityRecognizer",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & s.TagResourceRequest,
-  ): Promise<s.TagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
@@ -1220,15 +1205,12 @@ export default class Comprehend {
       abortSignal, body,
       action: "TagResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async untagResource(
     {abortSignal, ...params}: RequestConfig & s.UntagResourceRequest,
-  ): Promise<s.UntagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
       TagKeys: params["TagKeys"],
@@ -1237,15 +1219,12 @@ export default class Comprehend {
       abortSignal, body,
       action: "UntagResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateEndpoint(
     {abortSignal, ...params}: RequestConfig & s.UpdateEndpointRequest,
-  ): Promise<s.UpdateEndpointResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       EndpointArn: params["EndpointArn"],
       DesiredInferenceUnits: params["DesiredInferenceUnits"],
@@ -1254,10 +1233,7 @@ export default class Comprehend {
       abortSignal, body,
       action: "UpdateEndpoint",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
 }

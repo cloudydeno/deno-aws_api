@@ -456,6 +456,7 @@ export default class ApiGatewayV2 {
       requestUri: cmnP.encodePath`/v2/apis/${params["ApiId"]}/stages/${params["StageName"]}/accesslogsettings`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deleteApi(
@@ -469,6 +470,7 @@ export default class ApiGatewayV2 {
       requestUri: cmnP.encodePath`/v2/apis/${params["ApiId"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deleteApiMapping(
@@ -482,6 +484,7 @@ export default class ApiGatewayV2 {
       requestUri: cmnP.encodePath`/v2/domainnames/${params["DomainName"]}/apimappings/${params["ApiMappingId"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deleteAuthorizer(
@@ -495,6 +498,7 @@ export default class ApiGatewayV2 {
       requestUri: cmnP.encodePath`/v2/apis/${params["ApiId"]}/authorizers/${params["AuthorizerId"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deleteCorsConfiguration(
@@ -508,6 +512,7 @@ export default class ApiGatewayV2 {
       requestUri: cmnP.encodePath`/v2/apis/${params["ApiId"]}/cors`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deleteDeployment(
@@ -521,6 +526,7 @@ export default class ApiGatewayV2 {
       requestUri: cmnP.encodePath`/v2/apis/${params["ApiId"]}/deployments/${params["DeploymentId"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deleteDomainName(
@@ -534,6 +540,7 @@ export default class ApiGatewayV2 {
       requestUri: cmnP.encodePath`/v2/domainnames/${params["DomainName"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deleteIntegration(
@@ -547,6 +554,7 @@ export default class ApiGatewayV2 {
       requestUri: cmnP.encodePath`/v2/apis/${params["ApiId"]}/integrations/${params["IntegrationId"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deleteIntegrationResponse(
@@ -560,6 +568,7 @@ export default class ApiGatewayV2 {
       requestUri: cmnP.encodePath`/v2/apis/${params["ApiId"]}/integrations/${params["IntegrationId"]}/integrationresponses/${params["IntegrationResponseId"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deleteModel(
@@ -573,6 +582,7 @@ export default class ApiGatewayV2 {
       requestUri: cmnP.encodePath`/v2/apis/${params["ApiId"]}/models/${params["ModelId"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deleteRoute(
@@ -586,6 +596,7 @@ export default class ApiGatewayV2 {
       requestUri: cmnP.encodePath`/v2/apis/${params["ApiId"]}/routes/${params["RouteId"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deleteRouteRequestParameter(
@@ -599,6 +610,7 @@ export default class ApiGatewayV2 {
       requestUri: cmnP.encodePath`/v2/apis/${params["ApiId"]}/routes/${params["RouteId"]}/requestparameters/${params["RequestParameterKey"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deleteRouteResponse(
@@ -612,6 +624,7 @@ export default class ApiGatewayV2 {
       requestUri: cmnP.encodePath`/v2/apis/${params["ApiId"]}/routes/${params["RouteId"]}/routeresponses/${params["RouteResponseId"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deleteRouteSettings(
@@ -625,6 +638,7 @@ export default class ApiGatewayV2 {
       requestUri: cmnP.encodePath`/v2/apis/${params["ApiId"]}/stages/${params["StageName"]}/routesettings/${params["RouteKey"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deleteStage(
@@ -638,11 +652,12 @@ export default class ApiGatewayV2 {
       requestUri: cmnP.encodePath`/v2/apis/${params["ApiId"]}/stages/${params["StageName"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deleteVpcLink(
     {abortSignal, ...params}: RequestConfig & s.DeleteVpcLinkRequest,
-  ): Promise<s.DeleteVpcLinkResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -651,10 +666,7 @@ export default class ApiGatewayV2 {
       requestUri: cmnP.encodePath`/v2/vpclinks/${params["VpcLinkId"]}`,
       responseCode: 202,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async exportApi(
@@ -672,9 +684,9 @@ export default class ApiGatewayV2 {
       requestUri: cmnP.encodePath`/v2/apis/${params["ApiId"]}/exports/${params["Specification"]}`,
       responseCode: 200,
     });
-  return {
-    body: await resp.text(), // TODO: maybe allow proper body streaming,
-  };
+    return {
+      body: await resp.text(), // TODO: maybe allow proper body streaming,
+    };
   }
 
   async resetAuthorizersCache(
@@ -688,6 +700,7 @@ export default class ApiGatewayV2 {
       requestUri: cmnP.encodePath`/v2/apis/${params["ApiId"]}/stages/${params["StageName"]}/cache/authorizers`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async getApi(
@@ -1402,7 +1415,7 @@ export default class ApiGatewayV2 {
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & s.TagResourceRequest,
-  ): Promise<s.TagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       tags: params["Tags"],
     };
@@ -1412,10 +1425,7 @@ export default class ApiGatewayV2 {
       requestUri: cmnP.encodePath`/v2/tags/${params["ResourceArn"]}`,
       responseCode: 201,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async untagResource(
@@ -1432,6 +1442,7 @@ export default class ApiGatewayV2 {
       requestUri: cmnP.encodePath`/v2/tags/${params["ResourceArn"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async updateApi(

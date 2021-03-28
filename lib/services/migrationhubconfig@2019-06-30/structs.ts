@@ -18,10 +18,6 @@ export interface DescribeHomeRegionControlsRequest {
   NextToken?: string | null;
 }
 
-// refs: 1 - tags: named, input
-export interface GetHomeRegionRequest {
-}
-
 // refs: 1 - tags: named, output
 export interface CreateHomeRegionControlResult {
   HomeRegionControl?: HomeRegionControl | null;

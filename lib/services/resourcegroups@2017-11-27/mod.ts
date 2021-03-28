@@ -226,7 +226,7 @@ export default class ResourceGroups {
 
   async putGroupConfiguration(
     {abortSignal, ...params}: RequestConfig & s.PutGroupConfigurationInput = {},
-  ): Promise<s.PutGroupConfigurationOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       Group: params["Group"],
       Configuration: params["Configuration"]?.map(x => fromGroupConfigurationItem(x)),
@@ -237,10 +237,7 @@ export default class ResourceGroups {
       requestUri: "/put-group-configuration",
       responseCode: 202,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async searchResources(

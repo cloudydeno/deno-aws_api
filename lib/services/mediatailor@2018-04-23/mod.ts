@@ -146,7 +146,7 @@ export default class MediaTailor {
 
   async deleteChannel(
     {abortSignal, ...params}: RequestConfig & s.DeleteChannelRequest,
-  ): Promise<s.DeleteChannelResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -155,15 +155,12 @@ export default class MediaTailor {
       requestUri: cmnP.encodePath`/channel/${params["ChannelName"]}`,
       responseCode: 200,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteChannelPolicy(
     {abortSignal, ...params}: RequestConfig & s.DeleteChannelPolicyRequest,
-  ): Promise<s.DeleteChannelPolicyResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -172,15 +169,12 @@ export default class MediaTailor {
       requestUri: cmnP.encodePath`/channel/${params["ChannelName"]}/policy`,
       responseCode: 200,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deletePlaybackConfiguration(
     {abortSignal, ...params}: RequestConfig & s.DeletePlaybackConfigurationRequest,
-  ): Promise<s.DeletePlaybackConfigurationResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -189,15 +183,12 @@ export default class MediaTailor {
       requestUri: cmnP.encodePath`/playbackConfiguration/${params["Name"]}`,
       responseCode: 204,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteProgram(
     {abortSignal, ...params}: RequestConfig & s.DeleteProgramRequest,
-  ): Promise<s.DeleteProgramResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -206,15 +197,12 @@ export default class MediaTailor {
       requestUri: cmnP.encodePath`/channel/${params["ChannelName"]}/program/${params["ProgramName"]}`,
       responseCode: 200,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteSourceLocation(
     {abortSignal, ...params}: RequestConfig & s.DeleteSourceLocationRequest,
-  ): Promise<s.DeleteSourceLocationResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -223,15 +211,12 @@ export default class MediaTailor {
       requestUri: cmnP.encodePath`/sourceLocation/${params["SourceLocationName"]}`,
       responseCode: 200,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteVodSource(
     {abortSignal, ...params}: RequestConfig & s.DeleteVodSourceRequest,
-  ): Promise<s.DeleteVodSourceResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -240,10 +225,7 @@ export default class MediaTailor {
       requestUri: cmnP.encodePath`/sourceLocation/${params["SourceLocationName"]}/vodSource/${params["VodSourceName"]}`,
       responseCode: 200,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async describeChannel(
@@ -535,7 +517,7 @@ export default class MediaTailor {
 
   async putChannelPolicy(
     {abortSignal, ...params}: RequestConfig & s.PutChannelPolicyRequest,
-  ): Promise<s.PutChannelPolicyResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       Policy: params["Policy"],
     };
@@ -546,10 +528,7 @@ export default class MediaTailor {
       requestUri: cmnP.encodePath`/channel/${params["ChannelName"]}/policy`,
       responseCode: 200,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async putPlaybackConfiguration(
@@ -605,7 +584,7 @@ export default class MediaTailor {
 
   async startChannel(
     {abortSignal, ...params}: RequestConfig & s.StartChannelRequest,
-  ): Promise<s.StartChannelResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -614,15 +593,12 @@ export default class MediaTailor {
       requestUri: cmnP.encodePath`/channel/${params["ChannelName"]}/start`,
       responseCode: 200,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async stopChannel(
     {abortSignal, ...params}: RequestConfig & s.StopChannelRequest,
-  ): Promise<s.StopChannelResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -631,10 +607,7 @@ export default class MediaTailor {
       requestUri: cmnP.encodePath`/channel/${params["ChannelName"]}/stop`,
       responseCode: 200,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async tagResource(
@@ -649,6 +622,7 @@ export default class MediaTailor {
       requestUri: cmnP.encodePath`/tags/${params["ResourceArn"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async untagResource(
@@ -665,6 +639,7 @@ export default class MediaTailor {
       requestUri: cmnP.encodePath`/tags/${params["ResourceArn"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async updateChannel(

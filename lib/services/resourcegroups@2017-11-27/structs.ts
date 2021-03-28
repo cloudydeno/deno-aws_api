@@ -163,10 +163,6 @@ export interface ListGroupsOutput {
 }
 
 // refs: 1 - tags: named, output
-export interface PutGroupConfigurationOutput {
-}
-
-// refs: 1 - tags: named, output
 export interface SearchResourcesOutput {
   ResourceIdentifiers?: ResourceIdentifier[] | null;
   NextToken?: string | null;

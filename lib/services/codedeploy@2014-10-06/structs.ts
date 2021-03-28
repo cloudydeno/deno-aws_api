@@ -397,10 +397,6 @@ export interface DeleteGitHubAccountTokenOutput {
 }
 
 // refs: 1 - tags: named, output
-export interface DeleteResourcesByExternalIdOutput {
-}
-
-// refs: 1 - tags: named, output
 export interface GetApplicationOutput {
   application?: ApplicationInfo | null;
 }
@@ -512,14 +508,6 @@ export interface PutLifecycleEventHookExecutionStatusOutput {
 export interface StopDeploymentOutput {
   status?: StopStatus | null;
   statusMessage?: string | null;
-}
-
-// refs: 1 - tags: named, output
-export interface TagResourceOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface UntagResourceOutput {
 }
 
 // refs: 1 - tags: named, output

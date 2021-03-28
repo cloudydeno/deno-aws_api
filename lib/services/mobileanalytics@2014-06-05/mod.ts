@@ -40,6 +40,7 @@ export default class MobileAnalytics {
       requestUri: "/2014-06-05/events",
       responseCode: 202,
     });
+    await resp.text();
   }
 
 }

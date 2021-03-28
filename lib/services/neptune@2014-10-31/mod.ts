@@ -41,6 +41,7 @@ export default class Neptune {
       abortSignal, body,
       action: "AddRoleToDBCluster",
     });
+    await resp.text();
   }
 
   async addSourceIdentifierToSubscription(
@@ -71,6 +72,7 @@ export default class Neptune {
       abortSignal, body,
       action: "AddTagsToResource",
     });
+    await resp.text();
   }
 
   async applyPendingMaintenanceAction(
@@ -417,6 +419,7 @@ export default class Neptune {
       abortSignal, body,
       action: "DeleteDBClusterParameterGroup",
     });
+    await resp.text();
   }
 
   async deleteDBClusterSnapshot(
@@ -463,6 +466,7 @@ export default class Neptune {
       abortSignal, body,
       action: "DeleteDBParameterGroup",
     });
+    await resp.text();
   }
 
   async deleteDBSubnetGroup(
@@ -475,6 +479,7 @@ export default class Neptune {
       abortSignal, body,
       action: "DeleteDBSubnetGroup",
     });
+    await resp.text();
   }
 
   async deleteEventSubscription(
@@ -1184,6 +1189,7 @@ export default class Neptune {
       abortSignal, body,
       action: "RemoveRoleFromDBCluster",
     });
+    await resp.text();
   }
 
   async removeSourceIdentifierFromSubscription(
@@ -1214,6 +1220,7 @@ export default class Neptune {
       abortSignal, body,
       action: "RemoveTagsFromResource",
     });
+    await resp.text();
   }
 
   async resetDBClusterParameterGroup(

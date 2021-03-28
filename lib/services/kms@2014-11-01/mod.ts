@@ -54,7 +54,7 @@ export default class KMS {
 
   async connectCustomKeyStore(
     {abortSignal, ...params}: RequestConfig & s.ConnectCustomKeyStoreRequest,
-  ): Promise<s.ConnectCustomKeyStoreResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       CustomKeyStoreId: params["CustomKeyStoreId"],
     };
@@ -62,10 +62,7 @@ export default class KMS {
       abortSignal, body,
       action: "ConnectCustomKeyStore",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async createAlias(
@@ -79,6 +76,7 @@ export default class KMS {
       abortSignal, body,
       action: "CreateAlias",
     });
+    await resp.text();
   }
 
   async createCustomKeyStore(
@@ -186,11 +184,12 @@ export default class KMS {
       abortSignal, body,
       action: "DeleteAlias",
     });
+    await resp.text();
   }
 
   async deleteCustomKeyStore(
     {abortSignal, ...params}: RequestConfig & s.DeleteCustomKeyStoreRequest,
-  ): Promise<s.DeleteCustomKeyStoreResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       CustomKeyStoreId: params["CustomKeyStoreId"],
     };
@@ -198,10 +197,7 @@ export default class KMS {
       abortSignal, body,
       action: "DeleteCustomKeyStore",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteImportedKeyMaterial(
@@ -214,6 +210,7 @@ export default class KMS {
       abortSignal, body,
       action: "DeleteImportedKeyMaterial",
     });
+    await resp.text();
   }
 
   async describeCustomKeyStores(
@@ -268,6 +265,7 @@ export default class KMS {
       abortSignal, body,
       action: "DisableKey",
     });
+    await resp.text();
   }
 
   async disableKeyRotation(
@@ -280,11 +278,12 @@ export default class KMS {
       abortSignal, body,
       action: "DisableKeyRotation",
     });
+    await resp.text();
   }
 
   async disconnectCustomKeyStore(
     {abortSignal, ...params}: RequestConfig & s.DisconnectCustomKeyStoreRequest,
-  ): Promise<s.DisconnectCustomKeyStoreResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       CustomKeyStoreId: params["CustomKeyStoreId"],
     };
@@ -292,10 +291,7 @@ export default class KMS {
       abortSignal, body,
       action: "DisconnectCustomKeyStore",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async enableKey(
@@ -308,6 +304,7 @@ export default class KMS {
       abortSignal, body,
       action: "EnableKey",
     });
+    await resp.text();
   }
 
   async enableKeyRotation(
@@ -320,6 +317,7 @@ export default class KMS {
       abortSignal, body,
       action: "EnableKeyRotation",
     });
+    await resp.text();
   }
 
   async encrypt(
@@ -547,7 +545,7 @@ export default class KMS {
 
   async importKeyMaterial(
     {abortSignal, ...params}: RequestConfig & s.ImportKeyMaterialRequest,
-  ): Promise<s.ImportKeyMaterialResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       KeyId: params["KeyId"],
       ImportToken: serializeBlob(params["ImportToken"]),
@@ -559,10 +557,7 @@ export default class KMS {
       abortSignal, body,
       action: "ImportKeyMaterial",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async listAliases(
@@ -711,6 +706,7 @@ export default class KMS {
       abortSignal, body,
       action: "PutKeyPolicy",
     });
+    await resp.text();
   }
 
   async reEncrypt(
@@ -754,6 +750,7 @@ export default class KMS {
       abortSignal, body,
       action: "RetireGrant",
     });
+    await resp.text();
   }
 
   async revokeGrant(
@@ -767,6 +764,7 @@ export default class KMS {
       abortSignal, body,
       action: "RevokeGrant",
     });
+    await resp.text();
   }
 
   async scheduleKeyDeletion(
@@ -824,6 +822,7 @@ export default class KMS {
       abortSignal, body,
       action: "TagResource",
     });
+    await resp.text();
   }
 
   async untagResource(
@@ -837,6 +836,7 @@ export default class KMS {
       abortSignal, body,
       action: "UntagResource",
     });
+    await resp.text();
   }
 
   async updateAlias(
@@ -850,11 +850,12 @@ export default class KMS {
       abortSignal, body,
       action: "UpdateAlias",
     });
+    await resp.text();
   }
 
   async updateCustomKeyStore(
     {abortSignal, ...params}: RequestConfig & s.UpdateCustomKeyStoreRequest,
-  ): Promise<s.UpdateCustomKeyStoreResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       CustomKeyStoreId: params["CustomKeyStoreId"],
       NewCustomKeyStoreName: params["NewCustomKeyStoreName"],
@@ -865,10 +866,7 @@ export default class KMS {
       abortSignal, body,
       action: "UpdateCustomKeyStore",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateKeyDescription(
@@ -882,6 +880,7 @@ export default class KMS {
       abortSignal, body,
       action: "UpdateKeyDescription",
     });
+    await resp.text();
   }
 
   async verify(

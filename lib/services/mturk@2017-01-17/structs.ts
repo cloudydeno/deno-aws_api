@@ -119,10 +119,6 @@ export interface DisassociateQualificationFromWorkerRequest {
 }
 
 // refs: 1 - tags: named, input
-export interface GetAccountBalanceRequest {
-}
-
-// refs: 1 - tags: named, input
 export interface GetAssignmentRequest {
   AssignmentId: string;
 }
@@ -299,22 +295,6 @@ export interface UpdateQualificationTypeRequest {
 }
 
 // refs: 1 - tags: named, output
-export interface AcceptQualificationRequestResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface ApproveAssignmentResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface AssociateQualificationWithWorkerResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface CreateAdditionalAssignmentsForHITResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface CreateHITResponse {
   HIT?: HIT | null;
 }
@@ -332,26 +312,6 @@ export interface CreateHITWithHITTypeResponse {
 // refs: 1 - tags: named, output
 export interface CreateQualificationTypeResponse {
   QualificationType?: QualificationType | null;
-}
-
-// refs: 1 - tags: named, output
-export interface CreateWorkerBlockResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteHITResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteQualificationTypeResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteWorkerBlockResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DisassociateQualificationFromWorkerResponse {
 }
 
 // refs: 1 - tags: named, output
@@ -462,38 +422,6 @@ export interface ListWorkersWithQualificationTypeResponse {
 // refs: 1 - tags: named, output
 export interface NotifyWorkersResponse {
   NotifyWorkersFailureStatuses?: NotifyWorkersFailureStatus[] | null;
-}
-
-// refs: 1 - tags: named, output
-export interface RejectAssignmentResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface RejectQualificationRequestResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface SendBonusResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface SendTestEventNotificationResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateExpirationForHITResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateHITReviewStatusResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateHITTypeOfHITResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateNotificationSettingsResponse {
 }
 
 // refs: 1 - tags: named, output

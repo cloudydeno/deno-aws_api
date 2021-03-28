@@ -158,10 +158,6 @@ export interface CreateStreamKeyResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface DeletePlaybackKeyPairResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface GetChannelResponse {
   channel?: Channel | null;
 }
@@ -214,18 +210,6 @@ export interface ListStreamsResponse {
 export interface ListTagsForResourceResponse {
   tags: { [key: string]: string | null | undefined };
   nextToken?: string | null;
-}
-
-// refs: 1 - tags: named, output
-export interface StopStreamResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface TagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UntagResourceResponse {
 }
 
 // refs: 1 - tags: named, output

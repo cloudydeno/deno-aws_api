@@ -700,14 +700,6 @@ export interface SubmitTaskStateChangeResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface TagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UntagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface UpdateCapacityProviderResponse {
   capacityProvider?: CapacityProvider | null;
 }

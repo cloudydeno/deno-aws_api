@@ -136,6 +136,7 @@ export default class TranscribeService {
       abortSignal, body,
       action: "DeleteLanguageModel",
     });
+    await resp.text();
   }
 
   async deleteMedicalTranscriptionJob(
@@ -148,6 +149,7 @@ export default class TranscribeService {
       abortSignal, body,
       action: "DeleteMedicalTranscriptionJob",
     });
+    await resp.text();
   }
 
   async deleteMedicalVocabulary(
@@ -160,6 +162,7 @@ export default class TranscribeService {
       abortSignal, body,
       action: "DeleteMedicalVocabulary",
     });
+    await resp.text();
   }
 
   async deleteTranscriptionJob(
@@ -172,6 +175,7 @@ export default class TranscribeService {
       abortSignal, body,
       action: "DeleteTranscriptionJob",
     });
+    await resp.text();
   }
 
   async deleteVocabulary(
@@ -184,6 +188,7 @@ export default class TranscribeService {
       abortSignal, body,
       action: "DeleteVocabulary",
     });
+    await resp.text();
   }
 
   async deleteVocabularyFilter(
@@ -196,6 +201,7 @@ export default class TranscribeService {
       abortSignal, body,
       action: "DeleteVocabularyFilter",
     });
+    await resp.text();
   }
 
   async describeLanguageModel(

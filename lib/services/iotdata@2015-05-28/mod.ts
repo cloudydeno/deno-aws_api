@@ -38,9 +38,9 @@ export default class IotData {
       method: "DELETE",
       requestUri: cmnP.encodePath`/things/${params["thingName"]}/shadow`,
     });
-  return {
-    payload: await resp.text(), // TODO: maybe allow proper body streaming,
-  };
+    return {
+      payload: await resp.text(), // TODO: maybe allow proper body streaming,
+    };
   }
 
   async getThingShadow(
@@ -54,9 +54,9 @@ export default class IotData {
       method: "GET",
       requestUri: cmnP.encodePath`/things/${params["thingName"]}/shadow`,
     });
-  return {
-    payload: await resp.text(), // TODO: maybe allow proper body streaming,
-  };
+    return {
+      payload: await resp.text(), // TODO: maybe allow proper body streaming,
+    };
   }
 
   async listNamedShadowsForThing(
@@ -92,6 +92,7 @@ export default class IotData {
       action: "Publish",
       requestUri: cmnP.encodePath`/topics/${params["topic"]}`,
     });
+    await resp.text();
   }
 
   async updateThingShadow(
@@ -105,9 +106,9 @@ export default class IotData {
       action: "UpdateThingShadow",
       requestUri: cmnP.encodePath`/things/${params["thingName"]}/shadow`,
     });
-  return {
-    payload: await resp.text(), // TODO: maybe allow proper body streaming,
-  };
+    return {
+      payload: await resp.text(), // TODO: maybe allow proper body streaming,
+    };
   }
 
 }

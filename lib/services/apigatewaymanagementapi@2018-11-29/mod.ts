@@ -39,6 +39,7 @@ export default class ApiGatewayManagementApi {
       requestUri: cmnP.encodePath`/@connections/${params["ConnectionId"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async getConnection(
@@ -72,6 +73,7 @@ export default class ApiGatewayManagementApi {
       requestUri: cmnP.encodePath`/@connections/${params["ConnectionId"]}`,
       responseCode: 200,
     });
+    await resp.text();
   }
 
 }

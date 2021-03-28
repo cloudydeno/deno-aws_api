@@ -80,7 +80,7 @@ export default class Appflow {
 
   async deleteConnectorProfile(
     {abortSignal, ...params}: RequestConfig & s.DeleteConnectorProfileRequest,
-  ): Promise<s.DeleteConnectorProfileResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       connectorProfileName: params["connectorProfileName"],
       forceDelete: params["forceDelete"],
@@ -90,15 +90,12 @@ export default class Appflow {
       action: "DeleteConnectorProfile",
       requestUri: "/delete-connector-profile",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteFlow(
     {abortSignal, ...params}: RequestConfig & s.DeleteFlowRequest,
-  ): Promise<s.DeleteFlowResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       flowName: params["flowName"],
       forceDelete: params["forceDelete"],
@@ -108,10 +105,7 @@ export default class Appflow {
       action: "DeleteFlow",
       requestUri: "/delete-flow",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async describeConnectorEntity(
@@ -338,7 +332,7 @@ export default class Appflow {
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & s.TagResourceRequest,
-  ): Promise<s.TagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       tags: params["tags"],
     };
@@ -347,15 +341,12 @@ export default class Appflow {
       action: "TagResource",
       requestUri: cmnP.encodePath`/tags/${params["resourceArn"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async untagResource(
     {abortSignal, ...params}: RequestConfig & s.UntagResourceRequest,
-  ): Promise<s.UntagResourceResponse> {
+  ): Promise<void> {
     const query = new URLSearchParams;
     for (const item of params["tagKeys"]) {
       query.append("tagKeys", item?.toString() ?? "");
@@ -366,10 +357,7 @@ export default class Appflow {
       method: "DELETE",
       requestUri: cmnP.encodePath`/tags/${params["resourceArn"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateConnectorProfile(

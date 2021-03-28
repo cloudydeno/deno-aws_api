@@ -191,14 +191,6 @@ export interface UpdateQueueRequest {
 }
 
 // refs: 1 - tags: named, output
-export interface AssociateCertificateResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface CancelJobResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface CreateJobResponse {
   Job?: Job | null;
 }
@@ -219,25 +211,9 @@ export interface CreateQueueResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface DeleteJobTemplateResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeletePresetResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteQueueResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface DescribeEndpointsResponse {
   Endpoints?: Endpoint[] | null;
   NextToken?: string | null;
-}
-
-// refs: 1 - tags: named, output
-export interface DisassociateCertificateResponse {
 }
 
 // refs: 1 - tags: named, output
@@ -287,14 +263,6 @@ export interface ListQueuesResponse {
 // refs: 1 - tags: named, output
 export interface ListTagsForResourceResponse {
   ResourceTags?: ResourceTags | null;
-}
-
-// refs: 1 - tags: named, output
-export interface TagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UntagResourceResponse {
 }
 
 // refs: 1 - tags: named, output

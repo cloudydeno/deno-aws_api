@@ -62,10 +62,6 @@ export interface CreateLifecyclePolicyResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface DeleteLifecyclePolicyResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface GetLifecyclePoliciesResponse {
   Policies?: LifecyclePolicySummary[] | null;
 }
@@ -78,18 +74,6 @@ export interface GetLifecyclePolicyResponse {
 // refs: 1 - tags: named, output
 export interface ListTagsForResourceResponse {
   Tags?: { [key: string]: string | null | undefined } | null;
-}
-
-// refs: 1 - tags: named, output
-export interface TagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UntagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateLifecyclePolicyResponse {
 }
 
 // refs: 2 - tags: input, named, enum

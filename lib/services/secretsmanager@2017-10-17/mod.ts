@@ -437,6 +437,7 @@ export default class SecretsManager {
       abortSignal, body,
       action: "TagResource",
     });
+    await resp.text();
   }
 
   async untagResource(
@@ -450,6 +451,7 @@ export default class SecretsManager {
       abortSignal, body,
       action: "UntagResource",
     });
+    await resp.text();
   }
 
   async updateSecret(

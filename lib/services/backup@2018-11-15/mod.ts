@@ -131,6 +131,7 @@ export default class Backup {
       method: "DELETE",
       requestUri: cmnP.encodePath`/backup/plans/${params["BackupPlanId"]}/selections/${params["SelectionId"]}`,
     });
+    await resp.text();
   }
 
   async deleteBackupVault(
@@ -143,6 +144,7 @@ export default class Backup {
       method: "DELETE",
       requestUri: cmnP.encodePath`/backup-vaults/${params["BackupVaultName"]}`,
     });
+    await resp.text();
   }
 
   async deleteBackupVaultAccessPolicy(
@@ -155,6 +157,7 @@ export default class Backup {
       method: "DELETE",
       requestUri: cmnP.encodePath`/backup-vaults/${params["BackupVaultName"]}/access-policy`,
     });
+    await resp.text();
   }
 
   async deleteBackupVaultNotifications(
@@ -167,6 +170,7 @@ export default class Backup {
       method: "DELETE",
       requestUri: cmnP.encodePath`/backup-vaults/${params["BackupVaultName"]}/notification-configuration`,
     });
+    await resp.text();
   }
 
   async deleteRecoveryPoint(
@@ -179,6 +183,7 @@ export default class Backup {
       method: "DELETE",
       requestUri: cmnP.encodePath`/backup-vaults/${params["BackupVaultName"]}/recovery-points/${params["RecoveryPointArn"]}`,
     });
+    await resp.text();
   }
 
   async describeBackupJob(
@@ -260,11 +265,11 @@ export default class Backup {
   }
 
   async describeGlobalSettings(
-    {abortSignal, ...params}: RequestConfig & s.DescribeGlobalSettingsInput = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.DescribeGlobalSettingsOutput> {
-
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
-      abortSignal,
+      abortSignal, body,
       action: "DescribeGlobalSettings",
       method: "GET",
       requestUri: "/global-settings",
@@ -334,11 +339,11 @@ export default class Backup {
   }
 
   async describeRegionSettings(
-    {abortSignal, ...params}: RequestConfig & s.DescribeRegionSettingsInput = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.DescribeRegionSettingsOutput> {
-
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
-      abortSignal,
+      abortSignal, body,
       action: "DescribeRegionSettings",
       method: "GET",
       requestUri: "/account-settings",
@@ -390,6 +395,7 @@ export default class Backup {
       action: "DisassociateRecoveryPoint",
       requestUri: cmnP.encodePath`/backup-vaults/${params["BackupVaultName"]}/recovery-points/${params["RecoveryPointArn"]}/disassociate`,
     });
+    await resp.text();
   }
 
   async exportBackupPlanTemplate(
@@ -558,7 +564,7 @@ export default class Backup {
   }
 
   async getSupportedResourceTypes(
-    {abortSignal, ...params}: RequestConfig = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.GetSupportedResourceTypesOutput> {
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -862,6 +868,7 @@ export default class Backup {
       method: "PUT",
       requestUri: cmnP.encodePath`/backup-vaults/${params["BackupVaultName"]}/access-policy`,
     });
+    await resp.text();
   }
 
   async putBackupVaultNotifications(
@@ -877,6 +884,7 @@ export default class Backup {
       method: "PUT",
       requestUri: cmnP.encodePath`/backup-vaults/${params["BackupVaultName"]}/notification-configuration`,
     });
+    await resp.text();
   }
 
   async startBackupJob(
@@ -968,6 +976,7 @@ export default class Backup {
       action: "StopBackupJob",
       requestUri: cmnP.encodePath`/backup-jobs/${params["BackupJobId"]}`,
     });
+    await resp.text();
   }
 
   async tagResource(
@@ -981,6 +990,7 @@ export default class Backup {
       action: "TagResource",
       requestUri: cmnP.encodePath`/tags/${params["ResourceArn"]}`,
     });
+    await resp.text();
   }
 
   async untagResource(
@@ -994,6 +1004,7 @@ export default class Backup {
       action: "UntagResource",
       requestUri: cmnP.encodePath`/untag/${params["ResourceArn"]}`,
     });
+    await resp.text();
   }
 
   async updateBackupPlan(
@@ -1031,6 +1042,7 @@ export default class Backup {
       method: "PUT",
       requestUri: "/global-settings",
     });
+    await resp.text();
   }
 
   async updateRecoveryPointLifecycle(
@@ -1067,6 +1079,7 @@ export default class Backup {
       method: "PUT",
       requestUri: "/account-settings",
     });
+    await resp.text();
   }
 
 }

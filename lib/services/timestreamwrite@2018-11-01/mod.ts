@@ -81,6 +81,7 @@ export default class TimestreamWrite {
       abortSignal, body,
       action: "DeleteDatabase",
     });
+    await resp.text();
   }
 
   async deleteTable(
@@ -94,6 +95,7 @@ export default class TimestreamWrite {
       abortSignal, body,
       action: "DeleteTable",
     });
+    await resp.text();
   }
 
   async describeDatabase(
@@ -115,10 +117,9 @@ export default class TimestreamWrite {
   }
 
   async describeEndpoints(
-    {abortSignal, ...params}: RequestConfig & s.DescribeEndpointsRequest = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.DescribeEndpointsResponse> {
-    const body: jsonP.JSONObject = {
-    };
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeEndpoints",
@@ -211,7 +212,7 @@ export default class TimestreamWrite {
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & s.TagResourceRequest,
-  ): Promise<s.TagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceARN: params["ResourceARN"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
@@ -220,15 +221,12 @@ export default class TimestreamWrite {
       abortSignal, body,
       action: "TagResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async untagResource(
     {abortSignal, ...params}: RequestConfig & s.UntagResourceRequest,
-  ): Promise<s.UntagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceARN: params["ResourceARN"],
       TagKeys: params["TagKeys"],
@@ -237,10 +235,7 @@ export default class TimestreamWrite {
       abortSignal, body,
       action: "UntagResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateDatabase(
@@ -295,6 +290,7 @@ export default class TimestreamWrite {
       abortSignal, body,
       action: "WriteRecords",
     });
+    await resp.text();
   }
 
 }

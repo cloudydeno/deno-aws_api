@@ -41,10 +41,6 @@ export interface CreateProtectionGroupRequest {
 }
 
 // refs: 1 - tags: named, input
-export interface CreateSubscriptionRequest {
-}
-
-// refs: 1 - tags: named, input
 export interface DeleteProtectionRequest {
   ProtectionId: string;
 }
@@ -55,24 +51,8 @@ export interface DeleteProtectionGroupRequest {
 }
 
 // refs: 1 - tags: named, input
-export interface DeleteSubscriptionRequest {
-}
-
-// refs: 1 - tags: named, input
 export interface DescribeAttackRequest {
   AttackId: string;
-}
-
-// refs: 1 - tags: named, input
-export interface DescribeAttackStatisticsRequest {
-}
-
-// refs: 1 - tags: named, input
-export interface DescribeDRTAccessRequest {
-}
-
-// refs: 1 - tags: named, input
-export interface DescribeEmergencyContactSettingsRequest {
 }
 
 // refs: 1 - tags: named, input
@@ -87,34 +67,14 @@ export interface DescribeProtectionGroupRequest {
 }
 
 // refs: 1 - tags: named, input
-export interface DescribeSubscriptionRequest {
-}
-
-// refs: 1 - tags: named, input
-export interface DisableProactiveEngagementRequest {
-}
-
-// refs: 1 - tags: named, input
 export interface DisassociateDRTLogBucketRequest {
   LogBucket: string;
-}
-
-// refs: 1 - tags: named, input
-export interface DisassociateDRTRoleRequest {
 }
 
 // refs: 1 - tags: named, input
 export interface DisassociateHealthCheckRequest {
   ProtectionId: string;
   HealthCheckArn: string;
-}
-
-// refs: 1 - tags: named, input
-export interface EnableProactiveEngagementRequest {
-}
-
-// refs: 1 - tags: named, input
-export interface GetSubscriptionStateRequest {
 }
 
 // refs: 1 - tags: named, input
@@ -182,44 +142,8 @@ export interface UpdateSubscriptionRequest {
 }
 
 // refs: 1 - tags: named, output
-export interface AssociateDRTLogBucketResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface AssociateDRTRoleResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface AssociateHealthCheckResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface AssociateProactiveEngagementDetailsResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface CreateProtectionResponse {
   ProtectionId?: string | null;
-}
-
-// refs: 1 - tags: named, output
-export interface CreateProtectionGroupResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface CreateSubscriptionResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteProtectionResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteProtectionGroupResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteSubscriptionResponse {
 }
 
 // refs: 1 - tags: named, output
@@ -260,26 +184,6 @@ export interface DescribeSubscriptionResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface DisableProactiveEngagementResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DisassociateDRTLogBucketResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DisassociateDRTRoleResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DisassociateHealthCheckResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface EnableProactiveEngagementResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface GetSubscriptionStateResponse {
   SubscriptionState: SubscriptionState;
 }
@@ -311,26 +215,6 @@ export interface ListResourcesInProtectionGroupResponse {
 // refs: 1 - tags: named, output
 export interface ListTagsForResourceResponse {
   Tags?: Tag[] | null;
-}
-
-// refs: 1 - tags: named, output
-export interface TagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UntagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateEmergencyContactSettingsResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateProtectionGroupResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateSubscriptionResponse {
 }
 
 // refs: 3 - tags: input, named, interface, output

@@ -151,7 +151,7 @@ export default class MediaPackageVod {
 
   async deleteAsset(
     {abortSignal, ...params}: RequestConfig & s.DeleteAssetRequest,
-  ): Promise<s.DeleteAssetResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -160,15 +160,12 @@ export default class MediaPackageVod {
       requestUri: cmnP.encodePath`/assets/${params["Id"]}`,
       responseCode: 202,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deletePackagingConfiguration(
     {abortSignal, ...params}: RequestConfig & s.DeletePackagingConfigurationRequest,
-  ): Promise<s.DeletePackagingConfigurationResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -177,15 +174,12 @@ export default class MediaPackageVod {
       requestUri: cmnP.encodePath`/packaging_configurations/${params["Id"]}`,
       responseCode: 202,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deletePackagingGroup(
     {abortSignal, ...params}: RequestConfig & s.DeletePackagingGroupRequest,
-  ): Promise<s.DeletePackagingGroupResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -194,10 +188,7 @@ export default class MediaPackageVod {
       requestUri: cmnP.encodePath`/packaging_groups/${params["Id"]}`,
       responseCode: 202,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async describeAsset(
@@ -376,6 +367,7 @@ export default class MediaPackageVod {
       requestUri: cmnP.encodePath`/tags/${params["ResourceArn"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async untagResource(
@@ -392,6 +384,7 @@ export default class MediaPackageVod {
       requestUri: cmnP.encodePath`/tags/${params["ResourceArn"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async updatePackagingGroup(

@@ -73,10 +73,9 @@ export default class MigrationHubConfig {
   }
 
   async getHomeRegion(
-    {abortSignal, ...params}: RequestConfig & s.GetHomeRegionRequest = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.GetHomeRegionResult> {
-    const body: jsonP.JSONObject = {
-    };
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetHomeRegion",

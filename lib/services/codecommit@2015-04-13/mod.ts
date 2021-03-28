@@ -49,6 +49,7 @@ export default class CodeCommit {
       abortSignal, body,
       action: "AssociateApprovalRuleTemplateWithRepository",
     });
+    await resp.text();
   }
 
   async batchAssociateApprovalRuleTemplateWithRepositories(
@@ -195,6 +196,7 @@ export default class CodeCommit {
       abortSignal, body,
       action: "CreateBranch",
     });
+    await resp.text();
   }
 
   async createCommit(
@@ -505,6 +507,7 @@ export default class CodeCommit {
       abortSignal, body,
       action: "DisassociateApprovalRuleTemplateFromRepository",
     });
+    await resp.text();
   }
 
   async evaluatePullRequestApprovalRules(
@@ -1254,6 +1257,7 @@ export default class CodeCommit {
       abortSignal, body,
       action: "OverridePullRequestApprovalRules",
     });
+    await resp.text();
   }
 
   async postCommentForComparedCommit(
@@ -1347,6 +1351,7 @@ export default class CodeCommit {
       abortSignal, body,
       action: "PutCommentReaction",
     });
+    await resp.text();
   }
 
   async putFile(
@@ -1407,6 +1412,7 @@ export default class CodeCommit {
       abortSignal, body,
       action: "TagResource",
     });
+    await resp.text();
   }
 
   async testRepositoryTriggers(
@@ -1440,6 +1446,7 @@ export default class CodeCommit {
       abortSignal, body,
       action: "UntagResource",
     });
+    await resp.text();
   }
 
   async updateApprovalRuleTemplateContent(
@@ -1530,6 +1537,7 @@ export default class CodeCommit {
       abortSignal, body,
       action: "UpdateDefaultBranch",
     });
+    await resp.text();
   }
 
   async updatePullRequestApprovalRuleContent(
@@ -1565,6 +1573,7 @@ export default class CodeCommit {
       abortSignal, body,
       action: "UpdatePullRequestApprovalState",
     });
+    await resp.text();
   }
 
   async updatePullRequestDescription(
@@ -1635,6 +1644,7 @@ export default class CodeCommit {
       abortSignal, body,
       action: "UpdateRepositoryDescription",
     });
+    await resp.text();
   }
 
   async updateRepositoryName(
@@ -1648,6 +1658,7 @@ export default class CodeCommit {
       abortSignal, body,
       action: "UpdateRepositoryName",
     });
+    await resp.text();
   }
 
 }

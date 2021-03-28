@@ -132,10 +132,6 @@ export interface EnableAWSServiceAccessRequest {
 }
 
 // refs: 1 - tags: named, input
-export interface EnableAllFeaturesRequest {
-}
-
-// refs: 1 - tags: named, input
 export interface EnablePolicyTypeRequest {
   RootId: string;
   PolicyType: PolicyType;

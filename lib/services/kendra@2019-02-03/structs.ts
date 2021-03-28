@@ -378,14 +378,6 @@ export interface StartDataSourceSyncJobResponse {
   ExecutionId?: string | null;
 }
 
-// refs: 1 - tags: named, output
-export interface TagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UntagResourceResponse {
-}
-
 // refs: 1 - tags: input, named, interface
 export interface DataSourceSyncJobMetricTarget {
   DataSourceId: string;

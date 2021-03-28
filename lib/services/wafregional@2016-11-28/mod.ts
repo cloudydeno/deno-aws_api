@@ -36,7 +36,7 @@ export default class WAFRegional {
 
   async associateWebACL(
     {abortSignal, ...params}: RequestConfig & s.AssociateWebACLRequest,
-  ): Promise<s.AssociateWebACLResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       WebACLId: params["WebACLId"],
       ResourceArn: params["ResourceArn"],
@@ -45,10 +45,7 @@ export default class WAFRegional {
       abortSignal, body,
       action: "AssociateWebACL",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async createByteMatchSet(
@@ -381,7 +378,7 @@ export default class WAFRegional {
 
   async deleteLoggingConfiguration(
     {abortSignal, ...params}: RequestConfig & s.DeleteLoggingConfigurationRequest,
-  ): Promise<s.DeleteLoggingConfigurationResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
     };
@@ -389,15 +386,12 @@ export default class WAFRegional {
       abortSignal, body,
       action: "DeleteLoggingConfiguration",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deletePermissionPolicy(
     {abortSignal, ...params}: RequestConfig & s.DeletePermissionPolicyRequest,
-  ): Promise<s.DeletePermissionPolicyResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
     };
@@ -405,10 +399,7 @@ export default class WAFRegional {
       abortSignal, body,
       action: "DeletePermissionPolicy",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteRateBasedRule(
@@ -584,7 +575,7 @@ export default class WAFRegional {
 
   async disassociateWebACL(
     {abortSignal, ...params}: RequestConfig & s.DisassociateWebACLRequest,
-  ): Promise<s.DisassociateWebACLResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
     };
@@ -592,10 +583,7 @@ export default class WAFRegional {
       abortSignal, body,
       action: "DisassociateWebACL",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async getByteMatchSet(
@@ -617,10 +605,9 @@ export default class WAFRegional {
   }
 
   async getChangeToken(
-    {abortSignal, ...params}: RequestConfig & s.GetChangeTokenRequest = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.GetChangeTokenResponse> {
-    const body: jsonP.JSONObject = {
-    };
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetChangeToken",
@@ -1307,7 +1294,7 @@ export default class WAFRegional {
 
   async putPermissionPolicy(
     {abortSignal, ...params}: RequestConfig & s.PutPermissionPolicyRequest,
-  ): Promise<s.PutPermissionPolicyResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
       Policy: params["Policy"],
@@ -1316,15 +1303,12 @@ export default class WAFRegional {
       abortSignal, body,
       action: "PutPermissionPolicy",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & s.TagResourceRequest,
-  ): Promise<s.TagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceARN: params["ResourceARN"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
@@ -1333,15 +1317,12 @@ export default class WAFRegional {
       abortSignal, body,
       action: "TagResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async untagResource(
     {abortSignal, ...params}: RequestConfig & s.UntagResourceRequest,
-  ): Promise<s.UntagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceARN: params["ResourceARN"],
       TagKeys: params["TagKeys"],
@@ -1350,10 +1331,7 @@ export default class WAFRegional {
       abortSignal, body,
       action: "UntagResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateByteMatchSet(

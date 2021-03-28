@@ -393,10 +393,6 @@ export interface UpdateReservationRequest {
 }
 
 // refs: 1 - tags: named, output
-export interface AcceptInputDeviceTransferResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface BatchDeleteResponse {
   Failed?: BatchFailedResultModel[] | null;
   Successful?: BatchSuccessfulResultModel[] | null;
@@ -418,10 +414,6 @@ export interface BatchStopResponse {
 export interface BatchUpdateScheduleResponse {
   Creates?: BatchScheduleActionCreateResult | null;
   Deletes?: BatchScheduleActionDeleteResult | null;
-}
-
-// refs: 1 - tags: named, output
-export interface CancelInputDeviceTransferResponse {
 }
 
 // refs: 1 - tags: named, output
@@ -476,14 +468,6 @@ export interface DeleteChannelResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface DeleteInputResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteInputSecurityGroupResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface DeleteMultiplexResponse {
   Arn?: string | null;
   AvailabilityZones?: string[] | null;
@@ -526,10 +510,6 @@ export interface DeleteReservationResponse {
   State?: ReservationState | null;
   Tags?: { [key: string]: string | null | undefined } | null;
   UsagePrice?: number | null;
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteScheduleResponse {
 }
 
 // refs: 1 - tags: named, output
@@ -739,10 +719,6 @@ export interface PurchaseOfferingResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface RejectInputDeviceTransferResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface StartChannelResponse {
   Arn?: string | null;
   CdiInputSpecification?: CdiInputSpecification | null;
@@ -810,10 +786,6 @@ export interface StopMultiplexResponse {
   ProgramCount?: number | null;
   State?: MultiplexState | null;
   Tags?: { [key: string]: string | null | undefined } | null;
-}
-
-// refs: 1 - tags: named, output
-export interface TransferInputDeviceResponse {
 }
 
 // refs: 1 - tags: named, output

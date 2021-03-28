@@ -40,10 +40,11 @@ export default class Detective {
       method: "PUT",
       requestUri: "/invitation",
     });
+    await resp.text();
   }
 
   async createGraph(
-    {abortSignal, ...params}: RequestConfig = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.CreateGraphResponse> {
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -92,6 +93,7 @@ export default class Detective {
       action: "DeleteGraph",
       requestUri: "/graph/removal",
     });
+    await resp.text();
   }
 
   async deleteMembers(
@@ -126,6 +128,7 @@ export default class Detective {
       action: "DisassociateMembership",
       requestUri: "/membership/removal",
     });
+    await resp.text();
   }
 
   async getMembers(
@@ -224,6 +227,7 @@ export default class Detective {
       action: "RejectInvitation",
       requestUri: "/invitation/removal",
     });
+    await resp.text();
   }
 
   async startMonitoringMember(
@@ -238,6 +242,7 @@ export default class Detective {
       action: "StartMonitoringMember",
       requestUri: "/graph/member/monitoringstate",
     });
+    await resp.text();
   }
 
 }

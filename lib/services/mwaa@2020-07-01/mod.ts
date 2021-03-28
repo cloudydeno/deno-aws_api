@@ -109,7 +109,7 @@ export default class MWAA {
 
   async deleteEnvironment(
     {abortSignal, ...params}: RequestConfig & s.DeleteEnvironmentInput,
-  ): Promise<s.DeleteEnvironmentOutput> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -119,10 +119,7 @@ export default class MWAA {
       responseCode: 200,
       hostPrefix: `api.`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async getEnvironment(
@@ -191,7 +188,7 @@ export default class MWAA {
 
   async publishMetrics(
     {abortSignal, ...params}: RequestConfig & s.PublishMetricsInput,
-  ): Promise<s.PublishMetricsOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       MetricData: params["MetricData"]?.map(x => fromMetricDatum(x)),
     };
@@ -202,15 +199,12 @@ export default class MWAA {
       responseCode: 200,
       hostPrefix: `ops.`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & s.TagResourceInput,
-  ): Promise<s.TagResourceOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       Tags: params["Tags"],
     };
@@ -221,15 +215,12 @@ export default class MWAA {
       responseCode: 200,
       hostPrefix: `api.`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async untagResource(
     {abortSignal, ...params}: RequestConfig & s.UntagResourceInput,
-  ): Promise<s.UntagResourceOutput> {
+  ): Promise<void> {
     const query = new URLSearchParams;
     for (const item of params["tagKeys"]) {
       query.append("tagKeys", item?.toString() ?? "");
@@ -242,10 +233,7 @@ export default class MWAA {
       responseCode: 200,
       hostPrefix: `api.`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateEnvironment(

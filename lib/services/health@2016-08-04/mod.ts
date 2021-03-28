@@ -243,7 +243,7 @@ export default class Health {
   }
 
   async describeHealthServiceStatusForOrganization(
-    {abortSignal, ...params}: RequestConfig = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.DescribeHealthServiceStatusForOrganizationResponse> {
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -258,21 +258,23 @@ export default class Health {
   }
 
   async disableHealthServiceAccessForOrganization(
-    {abortSignal, ...params}: RequestConfig = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<void> {
     const resp = await this.#client.performRequest({
       abortSignal,
       action: "DisableHealthServiceAccessForOrganization",
     });
+    await resp.text();
   }
 
   async enableHealthServiceAccessForOrganization(
-    {abortSignal, ...params}: RequestConfig = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<void> {
     const resp = await this.#client.performRequest({
       abortSignal,
       action: "EnableHealthServiceAccessForOrganization",
     });
+    await resp.text();
   }
 
 }

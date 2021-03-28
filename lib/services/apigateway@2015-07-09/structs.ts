@@ -304,10 +304,6 @@ export interface GenerateClientCertificateRequest {
 }
 
 // refs: 1 - tags: named, input
-export interface GetAccountRequest {
-}
-
-// refs: 1 - tags: named, input
 export interface GetApiKeyRequest {
   apiKey: string;
   includeValue?: boolean | null;

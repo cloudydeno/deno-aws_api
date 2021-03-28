@@ -15,7 +15,11 @@ export default class ProtocolRestCodegen {
     this.helpers = innerProtocol.helpers;
   }
 
-  generateOperationInputParsingTypescript(inputShape: KnownShape, meta: Schema.LocationInfo) {
+  generateOperationInputParsingTypescript(inputShape: KnownShape | null, meta: Schema.LocationInfo) {
+    if (!inputShape) {
+      return this.innerProtocol.generateOperationInputParsingTypescript(inputShape, meta);
+    }
+
     const chunks = new Array<string>();
     const pathParts = new Map<string,string>();
 
@@ -254,16 +258,16 @@ export default class ProtocolRestCodegen {
       }
 
       const chunks = new Array<string>();
-      chunks.push(`  return {`);
+      chunks.push(`    return {`);
       for (const [field, spec] of Object.entries(shape.spec.members)) {
         if (spec === payloadSpec) continue;
 
         const isRequired = (shape.spec.required ?? []).map(x => x.toLowerCase()).includes(field.toLowerCase());
-        chunks.push(this.describeOutputField(field, spec, isRequired));
+        chunks.push(this.describeOutputField(field, spec, isRequired).replace(/^/gm, '  '));
 
       }
-      if (payloadChunk) chunks.push(`    ${payloadChunk},`);
-      chunks.push(`  };`);
+      if (payloadChunk) chunks.push(`      ${payloadChunk},`);
+      chunks.push(`    };`);
       return {
         outputParsingCode: [...payloadHeader, ...chunks].join('\n'),
         outputVariables: ['body'],

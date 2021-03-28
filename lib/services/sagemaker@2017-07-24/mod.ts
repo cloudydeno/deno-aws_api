@@ -342,6 +342,7 @@ export default class SageMaker {
       abortSignal, body,
       action: "CreateDeviceFleet",
     });
+    await resp.text();
   }
 
   async createDomain(
@@ -388,6 +389,7 @@ export default class SageMaker {
       abortSignal, body,
       action: "CreateEdgePackagingJob",
     });
+    await resp.text();
   }
 
   async createEndpoint(
@@ -1168,6 +1170,7 @@ export default class SageMaker {
       abortSignal, body,
       action: "DeleteAlgorithm",
     });
+    await resp.text();
   }
 
   async deleteApp(
@@ -1183,6 +1186,7 @@ export default class SageMaker {
       abortSignal, body,
       action: "DeleteApp",
     });
+    await resp.text();
   }
 
   async deleteAppImageConfig(
@@ -1195,6 +1199,7 @@ export default class SageMaker {
       abortSignal, body,
       action: "DeleteAppImageConfig",
     });
+    await resp.text();
   }
 
   async deleteArtifact(
@@ -1246,6 +1251,7 @@ export default class SageMaker {
       abortSignal, body,
       action: "DeleteCodeRepository",
     });
+    await resp.text();
   }
 
   async deleteContext(
@@ -1276,6 +1282,7 @@ export default class SageMaker {
       abortSignal, body,
       action: "DeleteDataQualityJobDefinition",
     });
+    await resp.text();
   }
 
   async deleteDeviceFleet(
@@ -1288,6 +1295,7 @@ export default class SageMaker {
       abortSignal, body,
       action: "DeleteDeviceFleet",
     });
+    await resp.text();
   }
 
   async deleteDomain(
@@ -1301,6 +1309,7 @@ export default class SageMaker {
       abortSignal, body,
       action: "DeleteDomain",
     });
+    await resp.text();
   }
 
   async deleteEndpoint(
@@ -1313,6 +1322,7 @@ export default class SageMaker {
       abortSignal, body,
       action: "DeleteEndpoint",
     });
+    await resp.text();
   }
 
   async deleteEndpointConfig(
@@ -1325,6 +1335,7 @@ export default class SageMaker {
       abortSignal, body,
       action: "DeleteEndpointConfig",
     });
+    await resp.text();
   }
 
   async deleteExperiment(
@@ -1355,11 +1366,12 @@ export default class SageMaker {
       abortSignal, body,
       action: "DeleteFeatureGroup",
     });
+    await resp.text();
   }
 
   async deleteFlowDefinition(
     {abortSignal, ...params}: RequestConfig & s.DeleteFlowDefinitionRequest,
-  ): Promise<s.DeleteFlowDefinitionResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       FlowDefinitionName: params["FlowDefinitionName"],
     };
@@ -1367,15 +1379,12 @@ export default class SageMaker {
       abortSignal, body,
       action: "DeleteFlowDefinition",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteHumanTaskUi(
     {abortSignal, ...params}: RequestConfig & s.DeleteHumanTaskUiRequest,
-  ): Promise<s.DeleteHumanTaskUiResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       HumanTaskUiName: params["HumanTaskUiName"],
     };
@@ -1383,15 +1392,12 @@ export default class SageMaker {
       abortSignal, body,
       action: "DeleteHumanTaskUi",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteImage(
     {abortSignal, ...params}: RequestConfig & s.DeleteImageRequest,
-  ): Promise<s.DeleteImageResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ImageName: params["ImageName"],
     };
@@ -1399,15 +1405,12 @@ export default class SageMaker {
       abortSignal, body,
       action: "DeleteImage",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteImageVersion(
     {abortSignal, ...params}: RequestConfig & s.DeleteImageVersionRequest,
-  ): Promise<s.DeleteImageVersionResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ImageName: params["ImageName"],
       Version: params["Version"],
@@ -1416,10 +1419,7 @@ export default class SageMaker {
       abortSignal, body,
       action: "DeleteImageVersion",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteModel(
@@ -1432,6 +1432,7 @@ export default class SageMaker {
       abortSignal, body,
       action: "DeleteModel",
     });
+    await resp.text();
   }
 
   async deleteModelBiasJobDefinition(
@@ -1444,6 +1445,7 @@ export default class SageMaker {
       abortSignal, body,
       action: "DeleteModelBiasJobDefinition",
     });
+    await resp.text();
   }
 
   async deleteModelExplainabilityJobDefinition(
@@ -1456,6 +1458,7 @@ export default class SageMaker {
       abortSignal, body,
       action: "DeleteModelExplainabilityJobDefinition",
     });
+    await resp.text();
   }
 
   async deleteModelPackage(
@@ -1468,6 +1471,7 @@ export default class SageMaker {
       abortSignal, body,
       action: "DeleteModelPackage",
     });
+    await resp.text();
   }
 
   async deleteModelPackageGroup(
@@ -1480,6 +1484,7 @@ export default class SageMaker {
       abortSignal, body,
       action: "DeleteModelPackageGroup",
     });
+    await resp.text();
   }
 
   async deleteModelPackageGroupPolicy(
@@ -1492,6 +1497,7 @@ export default class SageMaker {
       abortSignal, body,
       action: "DeleteModelPackageGroupPolicy",
     });
+    await resp.text();
   }
 
   async deleteModelQualityJobDefinition(
@@ -1504,6 +1510,7 @@ export default class SageMaker {
       abortSignal, body,
       action: "DeleteModelQualityJobDefinition",
     });
+    await resp.text();
   }
 
   async deleteMonitoringSchedule(
@@ -1516,6 +1523,7 @@ export default class SageMaker {
       abortSignal, body,
       action: "DeleteMonitoringSchedule",
     });
+    await resp.text();
   }
 
   async deleteNotebookInstance(
@@ -1528,6 +1536,7 @@ export default class SageMaker {
       abortSignal, body,
       action: "DeleteNotebookInstance",
     });
+    await resp.text();
   }
 
   async deleteNotebookInstanceLifecycleConfig(
@@ -1540,6 +1549,7 @@ export default class SageMaker {
       abortSignal, body,
       action: "DeleteNotebookInstanceLifecycleConfig",
     });
+    await resp.text();
   }
 
   async deletePipeline(
@@ -1571,11 +1581,12 @@ export default class SageMaker {
       abortSignal, body,
       action: "DeleteProject",
     });
+    await resp.text();
   }
 
   async deleteTags(
     {abortSignal, ...params}: RequestConfig & s.DeleteTagsInput,
-  ): Promise<s.DeleteTagsOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
       TagKeys: params["TagKeys"],
@@ -1584,10 +1595,7 @@ export default class SageMaker {
       abortSignal, body,
       action: "DeleteTags",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteTrial(
@@ -1637,11 +1645,12 @@ export default class SageMaker {
       abortSignal, body,
       action: "DeleteUserProfile",
     });
+    await resp.text();
   }
 
   async deleteWorkforce(
     {abortSignal, ...params}: RequestConfig & s.DeleteWorkforceRequest,
-  ): Promise<s.DeleteWorkforceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       WorkforceName: params["WorkforceName"],
     };
@@ -1649,10 +1658,7 @@ export default class SageMaker {
       abortSignal, body,
       action: "DeleteWorkforce",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteWorkteam(
@@ -1684,6 +1690,7 @@ export default class SageMaker {
       abortSignal, body,
       action: "DeregisterDevices",
     });
+    await resp.text();
   }
 
   async describeAction(
@@ -3019,18 +3026,14 @@ export default class SageMaker {
   }
 
   async disableSagemakerServicecatalogPortfolio(
-    {abortSignal, ...params}: RequestConfig & s.DisableSagemakerServicecatalogPortfolioInput = {},
-  ): Promise<s.DisableSagemakerServicecatalogPortfolioOutput> {
-    const body: jsonP.JSONObject = {
-    };
+    {abortSignal}: RequestConfig = {},
+  ): Promise<void> {
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisableSagemakerServicecatalogPortfolio",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async disassociateTrialComponent(
@@ -3054,18 +3057,14 @@ export default class SageMaker {
   }
 
   async enableSagemakerServicecatalogPortfolio(
-    {abortSignal, ...params}: RequestConfig & s.EnableSagemakerServicecatalogPortfolioInput = {},
-  ): Promise<s.EnableSagemakerServicecatalogPortfolioOutput> {
-    const body: jsonP.JSONObject = {
-    };
+    {abortSignal}: RequestConfig = {},
+  ): Promise<void> {
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "EnableSagemakerServicecatalogPortfolio",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async getDeviceFleetReport(
@@ -3113,10 +3112,9 @@ export default class SageMaker {
   }
 
   async getSagemakerServicecatalogPortfolioStatus(
-    {abortSignal, ...params}: RequestConfig & s.GetSagemakerServicecatalogPortfolioStatusInput = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.GetSagemakerServicecatalogPortfolioStatusOutput> {
-    const body: jsonP.JSONObject = {
-    };
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetSagemakerServicecatalogPortfolioStatus",
@@ -4581,6 +4579,7 @@ export default class SageMaker {
       abortSignal, body,
       action: "RegisterDevices",
     });
+    await resp.text();
   }
 
   async renderUiTemplate(
@@ -4639,6 +4638,7 @@ export default class SageMaker {
       abortSignal, body,
       action: "StartMonitoringSchedule",
     });
+    await resp.text();
   }
 
   async startNotebookInstance(
@@ -4651,6 +4651,7 @@ export default class SageMaker {
       abortSignal, body,
       action: "StartNotebookInstance",
     });
+    await resp.text();
   }
 
   async startPipelineExecution(
@@ -4685,6 +4686,7 @@ export default class SageMaker {
       abortSignal, body,
       action: "StopAutoMLJob",
     });
+    await resp.text();
   }
 
   async stopCompilationJob(
@@ -4697,6 +4699,7 @@ export default class SageMaker {
       abortSignal, body,
       action: "StopCompilationJob",
     });
+    await resp.text();
   }
 
   async stopEdgePackagingJob(
@@ -4709,6 +4712,7 @@ export default class SageMaker {
       abortSignal, body,
       action: "StopEdgePackagingJob",
     });
+    await resp.text();
   }
 
   async stopHyperParameterTuningJob(
@@ -4721,6 +4725,7 @@ export default class SageMaker {
       abortSignal, body,
       action: "StopHyperParameterTuningJob",
     });
+    await resp.text();
   }
 
   async stopLabelingJob(
@@ -4733,6 +4738,7 @@ export default class SageMaker {
       abortSignal, body,
       action: "StopLabelingJob",
     });
+    await resp.text();
   }
 
   async stopMonitoringSchedule(
@@ -4745,6 +4751,7 @@ export default class SageMaker {
       abortSignal, body,
       action: "StopMonitoringSchedule",
     });
+    await resp.text();
   }
 
   async stopNotebookInstance(
@@ -4757,6 +4764,7 @@ export default class SageMaker {
       abortSignal, body,
       action: "StopNotebookInstance",
     });
+    await resp.text();
   }
 
   async stopPipelineExecution(
@@ -4788,6 +4796,7 @@ export default class SageMaker {
       abortSignal, body,
       action: "StopProcessingJob",
     });
+    await resp.text();
   }
 
   async stopTrainingJob(
@@ -4800,6 +4809,7 @@ export default class SageMaker {
       abortSignal, body,
       action: "StopTrainingJob",
     });
+    await resp.text();
   }
 
   async stopTransformJob(
@@ -4812,6 +4822,7 @@ export default class SageMaker {
       abortSignal, body,
       action: "StopTransformJob",
     });
+    await resp.text();
   }
 
   async updateAction(
@@ -4929,6 +4940,7 @@ export default class SageMaker {
       abortSignal, body,
       action: "UpdateDeviceFleet",
     });
+    await resp.text();
   }
 
   async updateDevices(
@@ -4942,6 +4954,7 @@ export default class SageMaker {
       abortSignal, body,
       action: "UpdateDevices",
     });
+    await resp.text();
   }
 
   async updateDomain(
@@ -5087,7 +5100,7 @@ export default class SageMaker {
 
   async updateNotebookInstance(
     {abortSignal, ...params}: RequestConfig & s.UpdateNotebookInstanceInput,
-  ): Promise<s.UpdateNotebookInstanceOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       NotebookInstanceName: params["NotebookInstanceName"],
       InstanceType: params["InstanceType"],
@@ -5107,15 +5120,12 @@ export default class SageMaker {
       abortSignal, body,
       action: "UpdateNotebookInstance",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateNotebookInstanceLifecycleConfig(
     {abortSignal, ...params}: RequestConfig & s.UpdateNotebookInstanceLifecycleConfigInput,
-  ): Promise<s.UpdateNotebookInstanceLifecycleConfigOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       NotebookInstanceLifecycleConfigName: params["NotebookInstanceLifecycleConfigName"],
       OnCreate: params["OnCreate"]?.map(x => fromNotebookInstanceLifecycleHook(x)),
@@ -5125,10 +5135,7 @@ export default class SageMaker {
       abortSignal, body,
       action: "UpdateNotebookInstanceLifecycleConfig",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updatePipeline(

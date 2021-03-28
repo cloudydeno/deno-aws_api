@@ -407,14 +407,6 @@ export interface UpdateAutoScalingGroupType {
 }
 
 // refs: 1 - tags: named, output
-export interface AttachLoadBalancerTargetGroupsResultType {
-}
-
-// refs: 1 - tags: named, output
-export interface AttachLoadBalancersResultType {
-}
-
-// refs: 1 - tags: named, output
 export interface BatchDeleteScheduledActionAnswer {
   FailedScheduledActions: FailedScheduledUpdateGroupActionRequest[];
 }
@@ -427,14 +419,6 @@ export interface BatchPutScheduledUpdateGroupActionAnswer {
 // refs: 1 - tags: named, output
 export interface CancelInstanceRefreshAnswer {
   InstanceRefreshId?: string | null;
-}
-
-// refs: 1 - tags: named, output
-export interface CompleteLifecycleActionAnswer {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteLifecycleHookAnswer {
 }
 
 // refs: 1 - tags: named, output
@@ -553,14 +537,6 @@ export interface DetachInstancesAnswer {
 }
 
 // refs: 1 - tags: named, output
-export interface DetachLoadBalancerTargetGroupsResultType {
-}
-
-// refs: 1 - tags: named, output
-export interface DetachLoadBalancersResultType {
-}
-
-// refs: 1 - tags: named, output
 export interface EnterStandbyAnswer {
   Activities: Activity[];
 }
@@ -571,21 +547,9 @@ export interface ExitStandbyAnswer {
 }
 
 // refs: 1 - tags: named, output
-export interface PutLifecycleHookAnswer {
-}
-
-// refs: 1 - tags: named, output
 export interface PolicyARNType {
   PolicyARN?: string | null;
   Alarms: Alarm[];
-}
-
-// refs: 1 - tags: named, output
-export interface RecordLifecycleActionHeartbeatAnswer {
-}
-
-// refs: 1 - tags: named, output
-export interface SetInstanceProtectionAnswer {
 }
 
 // refs: 1 - tags: named, output

@@ -41,6 +41,7 @@ export default class PersonalizeEvents {
       action: "PutEvents",
       requestUri: "/events",
     });
+    await resp.text();
   }
 
   async putItems(
@@ -55,6 +56,7 @@ export default class PersonalizeEvents {
       action: "PutItems",
       requestUri: "/items",
     });
+    await resp.text();
   }
 
   async putUsers(
@@ -69,6 +71,7 @@ export default class PersonalizeEvents {
       action: "PutUsers",
       requestUri: "/users",
     });
+    await resp.text();
   }
 
 }

@@ -30,7 +30,7 @@ export default class MediaStoreData {
 
   async deleteObject(
     {abortSignal, ...params}: RequestConfig & s.DeleteObjectRequest,
-  ): Promise<s.DeleteObjectResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -38,10 +38,7 @@ export default class MediaStoreData {
       method: "DELETE",
       requestUri: cmnP.encodePath`/${params["Path"].split("/")}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async describeObject(
@@ -78,16 +75,16 @@ export default class MediaStoreData {
       method: "GET",
       requestUri: cmnP.encodePath`/${params["Path"].split("/")}`,
     });
-  return {
-    CacheControl: resp.headers.get("Cache-Control"),
-    ContentRange: resp.headers.get("Content-Range"),
-    ContentLength: cmnP.readNum(resp.headers.get("Content-Length")),
-    ContentType: resp.headers.get("Content-Type"),
-    ETag: resp.headers.get("ETag"),
-    LastModified: cmnP.readTimestamp(resp.headers.get("Last-Modified")),
-    StatusCode: resp.status,
-    Body: await resp.text(), // TODO: maybe allow proper body streaming,
-  };
+    return {
+      CacheControl: resp.headers.get("Cache-Control"),
+      ContentRange: resp.headers.get("Content-Range"),
+      ContentLength: cmnP.readNum(resp.headers.get("Content-Length")),
+      ContentType: resp.headers.get("Content-Type"),
+      ETag: resp.headers.get("ETag"),
+      LastModified: cmnP.readTimestamp(resp.headers.get("Last-Modified")),
+      StatusCode: resp.status,
+      Body: await resp.text(), // TODO: maybe allow proper body streaming,
+    };
   }
 
   async listItems(

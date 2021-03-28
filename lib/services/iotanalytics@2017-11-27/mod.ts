@@ -55,7 +55,7 @@ export default class IoTAnalytics {
 
   async cancelPipelineReprocessing(
     {abortSignal, ...params}: RequestConfig & s.CancelPipelineReprocessingRequest,
-  ): Promise<s.CancelPipelineReprocessingResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -63,10 +63,7 @@ export default class IoTAnalytics {
       method: "DELETE",
       requestUri: cmnP.encodePath`/pipelines/${params["pipelineName"]}/reprocessing/${params["reprocessingId"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async createChannel(
@@ -202,6 +199,7 @@ export default class IoTAnalytics {
       requestUri: cmnP.encodePath`/channels/${params["channelName"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deleteDataset(
@@ -215,6 +213,7 @@ export default class IoTAnalytics {
       requestUri: cmnP.encodePath`/datasets/${params["datasetName"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deleteDatasetContent(
@@ -229,6 +228,7 @@ export default class IoTAnalytics {
       requestUri: cmnP.encodePath`/datasets/${params["datasetName"]}/content`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deleteDatastore(
@@ -242,6 +242,7 @@ export default class IoTAnalytics {
       requestUri: cmnP.encodePath`/datastores/${params["datastoreName"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deletePipeline(
@@ -255,6 +256,7 @@ export default class IoTAnalytics {
       requestUri: cmnP.encodePath`/pipelines/${params["pipelineName"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async describeChannel(
@@ -316,11 +318,11 @@ export default class IoTAnalytics {
   }
 
   async describeLoggingOptions(
-    {abortSignal, ...params}: RequestConfig & s.DescribeLoggingOptionsRequest = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.DescribeLoggingOptionsResponse> {
-
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
-      abortSignal,
+      abortSignal, body,
       action: "DescribeLoggingOptions",
       method: "GET",
       requestUri: "/logging",
@@ -510,6 +512,7 @@ export default class IoTAnalytics {
       method: "PUT",
       requestUri: "/logging",
     });
+    await resp.text();
   }
 
   async runPipelineActivity(
@@ -577,7 +580,7 @@ export default class IoTAnalytics {
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & s.TagResourceRequest,
-  ): Promise<s.TagResourceResponse> {
+  ): Promise<void> {
     const query = new URLSearchParams;
     const body: jsonP.JSONObject = {
       tags: params["tags"]?.map(x => fromTag(x)),
@@ -589,15 +592,12 @@ export default class IoTAnalytics {
       requestUri: "/tags",
       responseCode: 204,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async untagResource(
     {abortSignal, ...params}: RequestConfig & s.UntagResourceRequest,
-  ): Promise<s.UntagResourceResponse> {
+  ): Promise<void> {
     const query = new URLSearchParams;
     query.set("resourceArn", params["resourceArn"]?.toString() ?? "");
     for (const item of params["tagKeys"]) {
@@ -610,10 +610,7 @@ export default class IoTAnalytics {
       requestUri: "/tags",
       responseCode: 204,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateChannel(
@@ -629,6 +626,7 @@ export default class IoTAnalytics {
       method: "PUT",
       requestUri: cmnP.encodePath`/channels/${params["channelName"]}`,
     });
+    await resp.text();
   }
 
   async updateDataset(
@@ -648,6 +646,7 @@ export default class IoTAnalytics {
       method: "PUT",
       requestUri: cmnP.encodePath`/datasets/${params["datasetName"]}`,
     });
+    await resp.text();
   }
 
   async updateDatastore(
@@ -664,6 +663,7 @@ export default class IoTAnalytics {
       method: "PUT",
       requestUri: cmnP.encodePath`/datastores/${params["datastoreName"]}`,
     });
+    await resp.text();
   }
 
   async updatePipeline(
@@ -678,6 +678,7 @@ export default class IoTAnalytics {
       method: "PUT",
       requestUri: cmnP.encodePath`/pipelines/${params["pipelineName"]}`,
     });
+    await resp.text();
   }
 
 }

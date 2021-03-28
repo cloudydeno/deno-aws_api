@@ -75,7 +75,7 @@ export default class CodeStarconnections {
 
   async deleteConnection(
     {abortSignal, ...params}: RequestConfig & s.DeleteConnectionInput,
-  ): Promise<s.DeleteConnectionOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ConnectionArn: params["ConnectionArn"],
     };
@@ -83,15 +83,12 @@ export default class CodeStarconnections {
       abortSignal, body,
       action: "DeleteConnection",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteHost(
     {abortSignal, ...params}: RequestConfig & s.DeleteHostInput,
-  ): Promise<s.DeleteHostOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       HostArn: params["HostArn"],
     };
@@ -99,10 +96,7 @@ export default class CodeStarconnections {
       abortSignal, body,
       action: "DeleteHost",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async getConnection(
@@ -207,7 +201,7 @@ export default class CodeStarconnections {
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & s.TagResourceInput,
-  ): Promise<s.TagResourceOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
@@ -216,15 +210,12 @@ export default class CodeStarconnections {
       abortSignal, body,
       action: "TagResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async untagResource(
     {abortSignal, ...params}: RequestConfig & s.UntagResourceInput,
-  ): Promise<s.UntagResourceOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
       TagKeys: params["TagKeys"],
@@ -233,15 +224,12 @@ export default class CodeStarconnections {
       abortSignal, body,
       action: "UntagResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateHost(
     {abortSignal, ...params}: RequestConfig & s.UpdateHostInput,
-  ): Promise<s.UpdateHostOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       HostArn: params["HostArn"],
       ProviderEndpoint: params["ProviderEndpoint"],
@@ -251,10 +239,7 @@ export default class CodeStarconnections {
       abortSignal, body,
       action: "UpdateHost",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
 }

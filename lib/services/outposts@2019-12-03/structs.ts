@@ -67,14 +67,6 @@ export interface CreateOutpostOutput {
 }
 
 // refs: 1 - tags: named, output
-export interface DeleteOutpostOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteSiteOutput {
-}
-
-// refs: 1 - tags: named, output
 export interface GetOutpostOutput {
   Outpost?: Outpost | null;
 }
@@ -102,14 +94,6 @@ export interface ListSitesOutput {
 // refs: 1 - tags: named, output
 export interface ListTagsForResourceResponse {
   Tags?: { [key: string]: string | null | undefined } | null;
-}
-
-// refs: 1 - tags: named, output
-export interface TagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UntagResourceResponse {
 }
 
 // refs: 3 - tags: output, named, interface

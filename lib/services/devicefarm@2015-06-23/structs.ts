@@ -132,10 +132,6 @@ export interface DeleteVPCEConfigurationRequest {
 }
 
 // refs: 1 - tags: named, input
-export interface GetAccountSettingsRequest {
-}
-
-// refs: 1 - tags: named, input
 export interface GetDeviceRequest {
   arn: string;
 }
@@ -559,42 +555,6 @@ export interface CreateVPCEConfigurationResult {
 }
 
 // refs: 1 - tags: named, output
-export interface DeleteDevicePoolResult {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteInstanceProfileResult {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteNetworkProfileResult {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteProjectResult {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteRemoteAccessSessionResult {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteRunResult {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteTestGridProjectResult {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteUploadResult {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteVPCEConfigurationResult {
-}
-
-// refs: 1 - tags: named, output
 export interface GetAccountSettingsResult {
   accountSettings?: AccountSettings | null;
 }
@@ -863,14 +823,6 @@ export interface StopRemoteAccessSessionResult {
 // refs: 1 - tags: named, output
 export interface StopRunResult {
   run?: Run | null;
-}
-
-// refs: 1 - tags: named, output
-export interface TagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UntagResourceResponse {
 }
 
 // refs: 1 - tags: named, output

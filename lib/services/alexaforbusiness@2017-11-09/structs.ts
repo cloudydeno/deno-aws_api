@@ -268,10 +268,6 @@ export interface GetAddressBookRequest {
 }
 
 // refs: 1 - tags: named, input
-export interface GetConferencePreferenceRequest {
-}
-
-// refs: 1 - tags: named, input
 export interface GetConferenceProviderRequest {
   ConferenceProviderArn: string;
 }
@@ -294,10 +290,6 @@ export interface GetGatewayRequest {
 // refs: 1 - tags: named, input
 export interface GetGatewayGroupRequest {
   GatewayGroupArn: string;
-}
-
-// refs: 1 - tags: named, input
-export interface GetInvitationConfigurationRequest {
 }
 
 // refs: 1 - tags: named, input
@@ -655,34 +647,6 @@ export interface UpdateSkillGroupRequest {
 }
 
 // refs: 1 - tags: named, output
-export interface ApproveSkillResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface AssociateContactWithAddressBookResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface AssociateDeviceWithNetworkProfileResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface AssociateDeviceWithRoomResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface AssociateSkillGroupWithRoomResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface AssociateSkillWithSkillGroupResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface AssociateSkillWithUsersResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface CreateAddressBookResponse {
   AddressBookArn?: string | null;
 }
@@ -730,86 +694,6 @@ export interface CreateSkillGroupResponse {
 // refs: 1 - tags: named, output
 export interface CreateUserResponse {
   UserArn?: string | null;
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteAddressBookResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteBusinessReportScheduleResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteConferenceProviderResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteContactResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteDeviceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteDeviceUsageDataResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteGatewayGroupResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteNetworkProfileResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteProfileResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteRoomResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteRoomSkillParameterResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteSkillAuthorizationResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteSkillGroupResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteUserResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DisassociateContactFromAddressBookResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DisassociateDeviceFromRoomResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DisassociateSkillFromSkillGroupResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DisassociateSkillFromUsersResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DisassociateSkillGroupFromRoomResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface ForgetSmartHomeAppliancesResponse {
 }
 
 // refs: 1 - tags: named, output
@@ -940,28 +824,8 @@ export interface ListTagsResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface PutConferencePreferenceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface PutInvitationConfigurationResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface PutRoomSkillParameterResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface PutSkillAuthorizationResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface RegisterAVSDeviceResponse {
   DeviceArn?: string | null;
-}
-
-// refs: 1 - tags: named, output
-export interface RejectSkillResponse {
 }
 
 // refs: 1 - tags: named, output
@@ -969,10 +833,6 @@ export interface ResolveRoomResponse {
   RoomArn?: string | null;
   RoomName?: string | null;
   RoomSkillParameters?: RoomSkillParameter[] | null;
-}
-
-// refs: 1 - tags: named, output
-export interface RevokeInvitationResponse {
 }
 
 // refs: 1 - tags: named, output
@@ -1034,70 +894,6 @@ export interface SearchUsersResponse {
 // refs: 1 - tags: named, output
 export interface SendAnnouncementResponse {
   AnnouncementArn?: string | null;
-}
-
-// refs: 1 - tags: named, output
-export interface SendInvitationResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface StartDeviceSyncResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface StartSmartHomeApplianceDiscoveryResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface TagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UntagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateAddressBookResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateBusinessReportScheduleResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateConferenceProviderResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateContactResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateDeviceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateGatewayResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateGatewayGroupResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateNetworkProfileResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateProfileResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateRoomResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateSkillGroupResponse {
 }
 
 // refs: 13 - tags: input, named, interface, output

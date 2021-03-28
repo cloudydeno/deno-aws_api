@@ -90,6 +90,7 @@ export default class Translate {
       abortSignal, body,
       action: "DeleteTerminology",
     });
+    await resp.text();
   }
 
   async describeTextTranslationJob(

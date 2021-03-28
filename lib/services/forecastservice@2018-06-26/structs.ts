@@ -415,18 +415,6 @@ export interface ListTagsForResourceResponse {
   Tags?: Tag[] | null;
 }
 
-// refs: 1 - tags: named, output
-export interface TagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UntagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateDatasetGroupResponse {
-}
-
 // refs: 5 - tags: input, named, enum, output
 export type Domain =
 | "RETAIL"

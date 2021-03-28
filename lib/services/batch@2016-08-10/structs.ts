@@ -150,10 +150,6 @@ export interface UpdateJobQueueRequest {
 }
 
 // refs: 1 - tags: named, output
-export interface CancelJobResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface CreateComputeEnvironmentResponse {
   computeEnvironmentName?: string | null;
   computeEnvironmentArn?: string | null;
@@ -163,18 +159,6 @@ export interface CreateComputeEnvironmentResponse {
 export interface CreateJobQueueResponse {
   jobQueueName: string;
   jobQueueArn: string;
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteComputeEnvironmentResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteJobQueueResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeregisterJobDefinitionResponse {
 }
 
 // refs: 1 - tags: named, output
@@ -223,18 +207,6 @@ export interface SubmitJobResponse {
   jobArn?: string | null;
   jobName: string;
   jobId: string;
-}
-
-// refs: 1 - tags: named, output
-export interface TagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface TerminateJobResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UntagResourceResponse {
 }
 
 // refs: 1 - tags: named, output

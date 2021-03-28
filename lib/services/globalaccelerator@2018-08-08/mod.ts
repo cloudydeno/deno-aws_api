@@ -85,6 +85,7 @@ export default class GlobalAccelerator {
       abortSignal, body,
       action: "AllowCustomRoutingTraffic",
     });
+    await resp.text();
   }
 
   async createAccelerator(
@@ -234,6 +235,7 @@ export default class GlobalAccelerator {
       abortSignal, body,
       action: "DeleteAccelerator",
     });
+    await resp.text();
   }
 
   async deleteCustomRoutingAccelerator(
@@ -246,6 +248,7 @@ export default class GlobalAccelerator {
       abortSignal, body,
       action: "DeleteCustomRoutingAccelerator",
     });
+    await resp.text();
   }
 
   async deleteCustomRoutingEndpointGroup(
@@ -258,6 +261,7 @@ export default class GlobalAccelerator {
       abortSignal, body,
       action: "DeleteCustomRoutingEndpointGroup",
     });
+    await resp.text();
   }
 
   async deleteCustomRoutingListener(
@@ -270,6 +274,7 @@ export default class GlobalAccelerator {
       abortSignal, body,
       action: "DeleteCustomRoutingListener",
     });
+    await resp.text();
   }
 
   async deleteEndpointGroup(
@@ -282,6 +287,7 @@ export default class GlobalAccelerator {
       abortSignal, body,
       action: "DeleteEndpointGroup",
     });
+    await resp.text();
   }
 
   async deleteListener(
@@ -294,6 +300,7 @@ export default class GlobalAccelerator {
       abortSignal, body,
       action: "DeleteListener",
     });
+    await resp.text();
   }
 
   async denyCustomRoutingTraffic(
@@ -310,6 +317,7 @@ export default class GlobalAccelerator {
       abortSignal, body,
       action: "DenyCustomRoutingTraffic",
     });
+    await resp.text();
   }
 
   async deprovisionByoipCidr(
@@ -710,11 +718,12 @@ export default class GlobalAccelerator {
       abortSignal, body,
       action: "RemoveCustomRoutingEndpoints",
     });
+    await resp.text();
   }
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & s.TagResourceRequest,
-  ): Promise<s.TagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
@@ -723,15 +732,12 @@ export default class GlobalAccelerator {
       abortSignal, body,
       action: "TagResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async untagResource(
     {abortSignal, ...params}: RequestConfig & s.UntagResourceRequest,
-  ): Promise<s.UntagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
       TagKeys: params["TagKeys"],
@@ -740,10 +746,7 @@ export default class GlobalAccelerator {
       abortSignal, body,
       action: "UntagResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateAccelerator(

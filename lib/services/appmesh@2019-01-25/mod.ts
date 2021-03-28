@@ -50,9 +50,9 @@ export default class AppMesh {
       requestUri: cmnP.encodePath`/v20190125/meshes/${params["meshName"]}/virtualGateway/${params["virtualGatewayName"]}/gatewayRoutes`,
       responseCode: 200,
     });
-  return {
-    gatewayRoute: toGatewayRouteData(await resp.json()),
-  };
+    return {
+      gatewayRoute: toGatewayRouteData(await resp.json()),
+    };
   }
 
   async createMesh(
@@ -71,9 +71,9 @@ export default class AppMesh {
       requestUri: "/v20190125/meshes",
       responseCode: 200,
     });
-  return {
-    mesh: toMeshData(await resp.json()),
-  };
+    return {
+      mesh: toMeshData(await resp.json()),
+    };
   }
 
   async createRoute(
@@ -94,9 +94,9 @@ export default class AppMesh {
       requestUri: cmnP.encodePath`/v20190125/meshes/${params["meshName"]}/virtualRouter/${params["virtualRouterName"]}/routes`,
       responseCode: 200,
     });
-  return {
-    route: toRouteData(await resp.json()),
-  };
+    return {
+      route: toRouteData(await resp.json()),
+    };
   }
 
   async createVirtualGateway(
@@ -117,9 +117,9 @@ export default class AppMesh {
       requestUri: cmnP.encodePath`/v20190125/meshes/${params["meshName"]}/virtualGateways`,
       responseCode: 200,
     });
-  return {
-    virtualGateway: toVirtualGatewayData(await resp.json()),
-  };
+    return {
+      virtualGateway: toVirtualGatewayData(await resp.json()),
+    };
   }
 
   async createVirtualNode(
@@ -140,9 +140,9 @@ export default class AppMesh {
       requestUri: cmnP.encodePath`/v20190125/meshes/${params["meshName"]}/virtualNodes`,
       responseCode: 200,
     });
-  return {
-    virtualNode: toVirtualNodeData(await resp.json()),
-  };
+    return {
+      virtualNode: toVirtualNodeData(await resp.json()),
+    };
   }
 
   async createVirtualRouter(
@@ -163,9 +163,9 @@ export default class AppMesh {
       requestUri: cmnP.encodePath`/v20190125/meshes/${params["meshName"]}/virtualRouters`,
       responseCode: 200,
     });
-  return {
-    virtualRouter: toVirtualRouterData(await resp.json()),
-  };
+    return {
+      virtualRouter: toVirtualRouterData(await resp.json()),
+    };
   }
 
   async createVirtualService(
@@ -186,9 +186,9 @@ export default class AppMesh {
       requestUri: cmnP.encodePath`/v20190125/meshes/${params["meshName"]}/virtualServices`,
       responseCode: 200,
     });
-  return {
-    virtualService: toVirtualServiceData(await resp.json()),
-  };
+    return {
+      virtualService: toVirtualServiceData(await resp.json()),
+    };
   }
 
   async deleteGatewayRoute(
@@ -203,9 +203,9 @@ export default class AppMesh {
       requestUri: cmnP.encodePath`/v20190125/meshes/${params["meshName"]}/virtualGateway/${params["virtualGatewayName"]}/gatewayRoutes/${params["gatewayRouteName"]}`,
       responseCode: 200,
     });
-  return {
-    gatewayRoute: toGatewayRouteData(await resp.json()),
-  };
+    return {
+      gatewayRoute: toGatewayRouteData(await resp.json()),
+    };
   }
 
   async deleteMesh(
@@ -219,9 +219,9 @@ export default class AppMesh {
       requestUri: cmnP.encodePath`/v20190125/meshes/${params["meshName"]}`,
       responseCode: 200,
     });
-  return {
-    mesh: toMeshData(await resp.json()),
-  };
+    return {
+      mesh: toMeshData(await resp.json()),
+    };
   }
 
   async deleteRoute(
@@ -236,9 +236,9 @@ export default class AppMesh {
       requestUri: cmnP.encodePath`/v20190125/meshes/${params["meshName"]}/virtualRouter/${params["virtualRouterName"]}/routes/${params["routeName"]}`,
       responseCode: 200,
     });
-  return {
-    route: toRouteData(await resp.json()),
-  };
+    return {
+      route: toRouteData(await resp.json()),
+    };
   }
 
   async deleteVirtualGateway(
@@ -253,9 +253,9 @@ export default class AppMesh {
       requestUri: cmnP.encodePath`/v20190125/meshes/${params["meshName"]}/virtualGateways/${params["virtualGatewayName"]}`,
       responseCode: 200,
     });
-  return {
-    virtualGateway: toVirtualGatewayData(await resp.json()),
-  };
+    return {
+      virtualGateway: toVirtualGatewayData(await resp.json()),
+    };
   }
 
   async deleteVirtualNode(
@@ -270,9 +270,9 @@ export default class AppMesh {
       requestUri: cmnP.encodePath`/v20190125/meshes/${params["meshName"]}/virtualNodes/${params["virtualNodeName"]}`,
       responseCode: 200,
     });
-  return {
-    virtualNode: toVirtualNodeData(await resp.json()),
-  };
+    return {
+      virtualNode: toVirtualNodeData(await resp.json()),
+    };
   }
 
   async deleteVirtualRouter(
@@ -287,9 +287,9 @@ export default class AppMesh {
       requestUri: cmnP.encodePath`/v20190125/meshes/${params["meshName"]}/virtualRouters/${params["virtualRouterName"]}`,
       responseCode: 200,
     });
-  return {
-    virtualRouter: toVirtualRouterData(await resp.json()),
-  };
+    return {
+      virtualRouter: toVirtualRouterData(await resp.json()),
+    };
   }
 
   async deleteVirtualService(
@@ -304,9 +304,9 @@ export default class AppMesh {
       requestUri: cmnP.encodePath`/v20190125/meshes/${params["meshName"]}/virtualServices/${params["virtualServiceName"]}`,
       responseCode: 200,
     });
-  return {
-    virtualService: toVirtualServiceData(await resp.json()),
-  };
+    return {
+      virtualService: toVirtualServiceData(await resp.json()),
+    };
   }
 
   async describeGatewayRoute(
@@ -321,9 +321,9 @@ export default class AppMesh {
       requestUri: cmnP.encodePath`/v20190125/meshes/${params["meshName"]}/virtualGateway/${params["virtualGatewayName"]}/gatewayRoutes/${params["gatewayRouteName"]}`,
       responseCode: 200,
     });
-  return {
-    gatewayRoute: toGatewayRouteData(await resp.json()),
-  };
+    return {
+      gatewayRoute: toGatewayRouteData(await resp.json()),
+    };
   }
 
   async describeMesh(
@@ -338,9 +338,9 @@ export default class AppMesh {
       requestUri: cmnP.encodePath`/v20190125/meshes/${params["meshName"]}`,
       responseCode: 200,
     });
-  return {
-    mesh: toMeshData(await resp.json()),
-  };
+    return {
+      mesh: toMeshData(await resp.json()),
+    };
   }
 
   async describeRoute(
@@ -355,9 +355,9 @@ export default class AppMesh {
       requestUri: cmnP.encodePath`/v20190125/meshes/${params["meshName"]}/virtualRouter/${params["virtualRouterName"]}/routes/${params["routeName"]}`,
       responseCode: 200,
     });
-  return {
-    route: toRouteData(await resp.json()),
-  };
+    return {
+      route: toRouteData(await resp.json()),
+    };
   }
 
   async describeVirtualGateway(
@@ -372,9 +372,9 @@ export default class AppMesh {
       requestUri: cmnP.encodePath`/v20190125/meshes/${params["meshName"]}/virtualGateways/${params["virtualGatewayName"]}`,
       responseCode: 200,
     });
-  return {
-    virtualGateway: toVirtualGatewayData(await resp.json()),
-  };
+    return {
+      virtualGateway: toVirtualGatewayData(await resp.json()),
+    };
   }
 
   async describeVirtualNode(
@@ -389,9 +389,9 @@ export default class AppMesh {
       requestUri: cmnP.encodePath`/v20190125/meshes/${params["meshName"]}/virtualNodes/${params["virtualNodeName"]}`,
       responseCode: 200,
     });
-  return {
-    virtualNode: toVirtualNodeData(await resp.json()),
-  };
+    return {
+      virtualNode: toVirtualNodeData(await resp.json()),
+    };
   }
 
   async describeVirtualRouter(
@@ -406,9 +406,9 @@ export default class AppMesh {
       requestUri: cmnP.encodePath`/v20190125/meshes/${params["meshName"]}/virtualRouters/${params["virtualRouterName"]}`,
       responseCode: 200,
     });
-  return {
-    virtualRouter: toVirtualRouterData(await resp.json()),
-  };
+    return {
+      virtualRouter: toVirtualRouterData(await resp.json()),
+    };
   }
 
   async describeVirtualService(
@@ -423,9 +423,9 @@ export default class AppMesh {
       requestUri: cmnP.encodePath`/v20190125/meshes/${params["meshName"]}/virtualServices/${params["virtualServiceName"]}`,
       responseCode: 200,
     });
-  return {
-    virtualService: toVirtualServiceData(await resp.json()),
-  };
+    return {
+      virtualService: toVirtualServiceData(await resp.json()),
+    };
   }
 
   async listGatewayRoutes(
@@ -621,7 +621,7 @@ export default class AppMesh {
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & s.TagResourceInput,
-  ): Promise<s.TagResourceOutput> {
+  ): Promise<void> {
     const query = new URLSearchParams;
     const body: jsonP.JSONObject = {
       tags: params["tags"]?.map(x => fromTagRef(x)),
@@ -634,15 +634,12 @@ export default class AppMesh {
       requestUri: "/v20190125/tag",
       responseCode: 200,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async untagResource(
     {abortSignal, ...params}: RequestConfig & s.UntagResourceInput,
-  ): Promise<s.UntagResourceOutput> {
+  ): Promise<void> {
     const query = new URLSearchParams;
     const body: jsonP.JSONObject = {
       tagKeys: params["tagKeys"],
@@ -655,10 +652,7 @@ export default class AppMesh {
       requestUri: "/v20190125/untag",
       responseCode: 200,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateGatewayRoute(
@@ -677,9 +671,9 @@ export default class AppMesh {
       requestUri: cmnP.encodePath`/v20190125/meshes/${params["meshName"]}/virtualGateway/${params["virtualGatewayName"]}/gatewayRoutes/${params["gatewayRouteName"]}`,
       responseCode: 200,
     });
-  return {
-    gatewayRoute: toGatewayRouteData(await resp.json()),
-  };
+    return {
+      gatewayRoute: toGatewayRouteData(await resp.json()),
+    };
   }
 
   async updateMesh(
@@ -696,9 +690,9 @@ export default class AppMesh {
       requestUri: cmnP.encodePath`/v20190125/meshes/${params["meshName"]}`,
       responseCode: 200,
     });
-  return {
-    mesh: toMeshData(await resp.json()),
-  };
+    return {
+      mesh: toMeshData(await resp.json()),
+    };
   }
 
   async updateRoute(
@@ -717,9 +711,9 @@ export default class AppMesh {
       requestUri: cmnP.encodePath`/v20190125/meshes/${params["meshName"]}/virtualRouter/${params["virtualRouterName"]}/routes/${params["routeName"]}`,
       responseCode: 200,
     });
-  return {
-    route: toRouteData(await resp.json()),
-  };
+    return {
+      route: toRouteData(await resp.json()),
+    };
   }
 
   async updateVirtualGateway(
@@ -738,9 +732,9 @@ export default class AppMesh {
       requestUri: cmnP.encodePath`/v20190125/meshes/${params["meshName"]}/virtualGateways/${params["virtualGatewayName"]}`,
       responseCode: 200,
     });
-  return {
-    virtualGateway: toVirtualGatewayData(await resp.json()),
-  };
+    return {
+      virtualGateway: toVirtualGatewayData(await resp.json()),
+    };
   }
 
   async updateVirtualNode(
@@ -759,9 +753,9 @@ export default class AppMesh {
       requestUri: cmnP.encodePath`/v20190125/meshes/${params["meshName"]}/virtualNodes/${params["virtualNodeName"]}`,
       responseCode: 200,
     });
-  return {
-    virtualNode: toVirtualNodeData(await resp.json()),
-  };
+    return {
+      virtualNode: toVirtualNodeData(await resp.json()),
+    };
   }
 
   async updateVirtualRouter(
@@ -780,9 +774,9 @@ export default class AppMesh {
       requestUri: cmnP.encodePath`/v20190125/meshes/${params["meshName"]}/virtualRouters/${params["virtualRouterName"]}`,
       responseCode: 200,
     });
-  return {
-    virtualRouter: toVirtualRouterData(await resp.json()),
-  };
+    return {
+      virtualRouter: toVirtualRouterData(await resp.json()),
+    };
   }
 
   async updateVirtualService(
@@ -801,9 +795,9 @@ export default class AppMesh {
       requestUri: cmnP.encodePath`/v20190125/meshes/${params["meshName"]}/virtualServices/${params["virtualServiceName"]}`,
       responseCode: 200,
     });
-  return {
-    virtualService: toVirtualServiceData(await resp.json()),
-  };
+    return {
+      virtualService: toVirtualServiceData(await resp.json()),
+    };
   }
 
 }

@@ -416,6 +416,7 @@ export default class ElastiCache {
       abortSignal, body,
       action: "DeleteCacheParameterGroup",
     });
+    await resp.text();
   }
 
   async deleteCacheSecurityGroup(
@@ -428,6 +429,7 @@ export default class ElastiCache {
       abortSignal, body,
       action: "DeleteCacheSecurityGroup",
     });
+    await resp.text();
   }
 
   async deleteCacheSubnetGroup(
@@ -440,6 +442,7 @@ export default class ElastiCache {
       abortSignal, body,
       action: "DeleteCacheSubnetGroup",
     });
+    await resp.text();
   }
 
   async deleteGlobalReplicationGroup(

@@ -810,7 +810,7 @@ export default class DirectConnect {
   }
 
   async describeLocations(
-    {abortSignal, ...params}: RequestConfig = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.Locations> {
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -843,7 +843,7 @@ export default class DirectConnect {
   }
 
   async describeVirtualGateways(
-    {abortSignal, ...params}: RequestConfig = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.VirtualGateways> {
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -954,7 +954,7 @@ export default class DirectConnect {
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & s.TagResourceRequest,
-  ): Promise<s.TagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       resourceArn: params["resourceArn"],
       tags: params["tags"]?.map(x => fromTag(x)),
@@ -963,15 +963,12 @@ export default class DirectConnect {
       abortSignal, body,
       action: "TagResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async untagResource(
     {abortSignal, ...params}: RequestConfig & s.UntagResourceRequest,
-  ): Promise<s.UntagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       resourceArn: params["resourceArn"],
       tagKeys: params["tagKeys"],
@@ -980,10 +977,7 @@ export default class DirectConnect {
       abortSignal, body,
       action: "UntagResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateDirectConnectGatewayAssociation(

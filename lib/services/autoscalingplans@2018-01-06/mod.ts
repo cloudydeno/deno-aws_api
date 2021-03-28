@@ -51,7 +51,7 @@ export default class AutoScalingPlans {
 
   async deleteScalingPlan(
     {abortSignal, ...params}: RequestConfig & s.DeleteScalingPlanRequest,
-  ): Promise<s.DeleteScalingPlanResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ScalingPlanName: params["ScalingPlanName"],
       ScalingPlanVersion: params["ScalingPlanVersion"],
@@ -60,10 +60,7 @@ export default class AutoScalingPlans {
       abortSignal, body,
       action: "DeleteScalingPlan",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async describeScalingPlanResources(
@@ -138,7 +135,7 @@ export default class AutoScalingPlans {
 
   async updateScalingPlan(
     {abortSignal, ...params}: RequestConfig & s.UpdateScalingPlanRequest,
-  ): Promise<s.UpdateScalingPlanResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ScalingPlanName: params["ScalingPlanName"],
       ScalingPlanVersion: params["ScalingPlanVersion"],
@@ -149,10 +146,7 @@ export default class AutoScalingPlans {
       abortSignal, body,
       action: "UpdateScalingPlan",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
 }

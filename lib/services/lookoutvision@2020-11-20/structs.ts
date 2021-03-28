@@ -153,10 +153,6 @@ export interface CreateProjectResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface DeleteDatasetResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface DeleteModelResponse {
   ModelArn?: string | null;
 }
@@ -217,14 +213,6 @@ export interface StartModelResponse {
 // refs: 1 - tags: named, output
 export interface StopModelResponse {
   Status?: ModelHostingStatus | null;
-}
-
-// refs: 1 - tags: named, output
-export interface TagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UntagResourceResponse {
 }
 
 // refs: 1 - tags: named, output

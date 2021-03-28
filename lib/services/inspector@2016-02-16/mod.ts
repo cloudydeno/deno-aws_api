@@ -134,6 +134,7 @@ export default class Inspector {
       abortSignal, body,
       action: "DeleteAssessmentRun",
     });
+    await resp.text();
   }
 
   async deleteAssessmentTarget(
@@ -146,6 +147,7 @@ export default class Inspector {
       abortSignal, body,
       action: "DeleteAssessmentTarget",
     });
+    await resp.text();
   }
 
   async deleteAssessmentTemplate(
@@ -158,6 +160,7 @@ export default class Inspector {
       abortSignal, body,
       action: "DeleteAssessmentTemplate",
     });
+    await resp.text();
   }
 
   async describeAssessmentRuns(
@@ -218,7 +221,7 @@ export default class Inspector {
   }
 
   async describeCrossAccountAccessRole(
-    {abortSignal, ...params}: RequestConfig = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.DescribeCrossAccountAccessRoleResponse> {
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -607,6 +610,7 @@ export default class Inspector {
       abortSignal, body,
       action: "RegisterCrossAccountAccessRole",
     });
+    await resp.text();
   }
 
   async removeAttributesFromFindings(
@@ -639,6 +643,7 @@ export default class Inspector {
       abortSignal, body,
       action: "SetTagsForResource",
     });
+    await resp.text();
   }
 
   async startAssessmentRun(
@@ -671,6 +676,7 @@ export default class Inspector {
       abortSignal, body,
       action: "StopAssessmentRun",
     });
+    await resp.text();
   }
 
   async subscribeToEvent(
@@ -685,6 +691,7 @@ export default class Inspector {
       abortSignal, body,
       action: "SubscribeToEvent",
     });
+    await resp.text();
   }
 
   async unsubscribeFromEvent(
@@ -699,6 +706,7 @@ export default class Inspector {
       abortSignal, body,
       action: "UnsubscribeFromEvent",
     });
+    await resp.text();
   }
 
   async updateAssessmentTarget(
@@ -713,6 +721,7 @@ export default class Inspector {
       abortSignal, body,
       action: "UpdateAssessmentTarget",
     });
+    await resp.text();
   }
 
 }

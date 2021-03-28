@@ -163,10 +163,6 @@ export interface DescribeDashboardRequest {
 }
 
 // refs: 1 - tags: named, input
-export interface DescribeDefaultEncryptionConfigurationRequest {
-}
-
-// refs: 1 - tags: named, input
 export interface DescribeGatewayRequest {
   gatewayId: string;
 }
@@ -175,10 +171,6 @@ export interface DescribeGatewayRequest {
 export interface DescribeGatewayCapabilityConfigurationRequest {
   gatewayId: string;
   capabilityNamespace: string;
-}
-
-// refs: 1 - tags: named, input
-export interface DescribeLoggingOptionsRequest {
 }
 
 // refs: 1 - tags: named, input
@@ -477,10 +469,6 @@ export interface CreateProjectResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface DeleteAccessPolicyResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface DeleteAssetResponse {
   assetStatus: AssetStatus;
 }
@@ -491,16 +479,8 @@ export interface DeleteAssetModelResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface DeleteDashboardResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface DeletePortalResponse {
   portalStatus: PortalStatus;
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteProjectResponse {
 }
 
 // refs: 1 - tags: named, output
@@ -712,22 +692,6 @@ export interface PutDefaultEncryptionConfigurationResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface PutLoggingOptionsResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface TagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UntagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateAccessPolicyResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface UpdateAssetResponse {
   assetStatus: AssetStatus;
 }
@@ -735,10 +699,6 @@ export interface UpdateAssetResponse {
 // refs: 1 - tags: named, output
 export interface UpdateAssetModelResponse {
   assetModelStatus: AssetModelStatus;
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateDashboardResponse {
 }
 
 // refs: 1 - tags: named, output
@@ -750,10 +710,6 @@ export interface UpdateGatewayCapabilityConfigurationResponse {
 // refs: 1 - tags: named, output
 export interface UpdatePortalResponse {
   portalStatus: PortalStatus;
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateProjectResponse {
 }
 
 // refs: 1 - tags: input, named, interface

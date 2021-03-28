@@ -38,6 +38,7 @@ export default class SimpleDB {
       abortSignal, body,
       action: "BatchDeleteAttributes",
     });
+    await resp.text();
   }
 
   async batchPutAttributes(
@@ -51,6 +52,7 @@ export default class SimpleDB {
       abortSignal, body,
       action: "BatchPutAttributes",
     });
+    await resp.text();
   }
 
   async createDomain(
@@ -63,6 +65,7 @@ export default class SimpleDB {
       abortSignal, body,
       action: "CreateDomain",
     });
+    await resp.text();
   }
 
   async deleteAttributes(
@@ -78,6 +81,7 @@ export default class SimpleDB {
       abortSignal, body,
       action: "DeleteAttributes",
     });
+    await resp.text();
   }
 
   async deleteDomain(
@@ -90,6 +94,7 @@ export default class SimpleDB {
       abortSignal, body,
       action: "DeleteDomain",
     });
+    await resp.text();
   }
 
   async domainMetadata(
@@ -166,6 +171,7 @@ export default class SimpleDB {
       abortSignal, body,
       action: "PutAttributes",
     });
+    await resp.text();
   }
 
   async select(

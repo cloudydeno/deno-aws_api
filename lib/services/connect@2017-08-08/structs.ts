@@ -996,18 +996,10 @@ export interface ListUsersResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface ResumeContactRecordingResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface StartChatContactResponse {
   ContactId?: string | null;
   ParticipantId?: string | null;
   ParticipantToken?: string | null;
-}
-
-// refs: 1 - tags: named, output
-export interface StartContactRecordingResponse {
 }
 
 // refs: 1 - tags: named, output
@@ -1018,22 +1010,6 @@ export interface StartOutboundVoiceContactResponse {
 // refs: 1 - tags: named, output
 export interface StartTaskContactResponse {
   ContactId?: string | null;
-}
-
-// refs: 1 - tags: named, output
-export interface StopContactResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface StopContactRecordingResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface SuspendContactRecordingResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateContactAttributesResponse {
 }
 
 // refs: 5 - tags: input, named, enum

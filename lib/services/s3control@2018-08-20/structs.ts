@@ -357,14 +357,6 @@ export interface CreateJobResult {
 }
 
 // refs: 1 - tags: named, output
-export interface DeleteJobTaggingResult {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteStorageLensConfigurationTaggingResult {
-}
-
-// refs: 1 - tags: named, output
 export interface DescribeJobResult {
   Job?: JobDescriptor | null;
 }
@@ -481,14 +473,6 @@ export interface ListRegionalBucketsResult {
 export interface ListStorageLensConfigurationsResult {
   NextToken?: string | null;
   StorageLensConfigurationList: ListStorageLensConfigurationEntry[];
-}
-
-// refs: 1 - tags: named, output
-export interface PutJobTaggingResult {
-}
-
-// refs: 1 - tags: named, output
-export interface PutStorageLensConfigurationTaggingResult {
 }
 
 // refs: 1 - tags: named, output

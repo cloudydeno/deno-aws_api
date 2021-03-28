@@ -57,10 +57,6 @@ export interface DisassociateResourceSharePermissionRequest {
 }
 
 // refs: 1 - tags: named, input
-export interface EnableSharingWithAwsOrganizationRequest {
-}
-
-// refs: 1 - tags: named, input
 export interface GetPermissionRequest {
   permissionArn: string;
   permissionVersion?: number | null;
@@ -305,14 +301,6 @@ export interface PromoteResourceShareCreatedFromPolicyResponse {
 export interface RejectResourceShareInvitationResponse {
   resourceShareInvitation?: ResourceShareInvitation | null;
   clientToken?: string | null;
-}
-
-// refs: 1 - tags: named, output
-export interface TagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UntagResourceResponse {
 }
 
 // refs: 1 - tags: named, output

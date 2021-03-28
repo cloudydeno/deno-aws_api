@@ -184,10 +184,6 @@ export interface SetLoadBalancerPoliciesOfListenerInput {
 }
 
 // refs: 1 - tags: named, output
-export interface AddTagsOutput {
-}
-
-// refs: 1 - tags: named, output
 export interface ApplySecurityGroupsToLoadBalancerOutput {
   SecurityGroups: string[];
 }
@@ -203,36 +199,8 @@ export interface ConfigureHealthCheckOutput {
 }
 
 // refs: 1 - tags: named, output
-export interface CreateAppCookieStickinessPolicyOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface CreateLBCookieStickinessPolicyOutput {
-}
-
-// refs: 1 - tags: named, output
 export interface CreateAccessPointOutput {
   DNSName?: string | null;
-}
-
-// refs: 1 - tags: named, output
-export interface CreateLoadBalancerListenerOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface CreateLoadBalancerPolicyOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteAccessPointOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteLoadBalancerListenerOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteLoadBalancerPolicyOutput {
 }
 
 // refs: 1 - tags: named, output
@@ -301,22 +269,6 @@ export interface ModifyLoadBalancerAttributesOutput {
 // refs: 1 - tags: named, output
 export interface RegisterEndPointsOutput {
   Instances: Instance[];
-}
-
-// refs: 1 - tags: named, output
-export interface RemoveTagsOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface SetLoadBalancerListenerSSLCertificateOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface SetLoadBalancerPoliciesForBackendServerOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface SetLoadBalancerPoliciesOfListenerOutput {
 }
 
 // refs: 3 - tags: input, named, interface, output

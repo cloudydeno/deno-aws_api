@@ -45,6 +45,7 @@ export default class Connect {
       method: "PUT",
       requestUri: cmnP.encodePath`/instance/${params["InstanceId"]}/approved-origin`,
     });
+    await resp.text();
   }
 
   async associateInstanceStorageConfig(
@@ -80,6 +81,7 @@ export default class Connect {
       method: "PUT",
       requestUri: cmnP.encodePath`/instance/${params["InstanceId"]}/lambda-function`,
     });
+    await resp.text();
   }
 
   async associateLexBot(
@@ -94,6 +96,7 @@ export default class Connect {
       method: "PUT",
       requestUri: cmnP.encodePath`/instance/${params["InstanceId"]}/lex-bot`,
     });
+    await resp.text();
   }
 
   async associateQueueQuickConnects(
@@ -107,6 +110,7 @@ export default class Connect {
       action: "AssociateQueueQuickConnects",
       requestUri: cmnP.encodePath`/queues/${params["InstanceId"]}/${params["QueueId"]}/associate-quick-connects`,
     });
+    await resp.text();
   }
 
   async associateRoutingProfileQueues(
@@ -120,6 +124,7 @@ export default class Connect {
       action: "AssociateRoutingProfileQueues",
       requestUri: cmnP.encodePath`/routing-profiles/${params["InstanceId"]}/${params["RoutingProfileId"]}/associate-queues`,
     });
+    await resp.text();
   }
 
   async associateSecurityKey(
@@ -377,6 +382,7 @@ export default class Connect {
       method: "DELETE",
       requestUri: cmnP.encodePath`/instance/${params["InstanceId"]}`,
     });
+    await resp.text();
   }
 
   async deleteIntegrationAssociation(
@@ -389,6 +395,7 @@ export default class Connect {
       method: "DELETE",
       requestUri: cmnP.encodePath`/instance/${params["InstanceId"]}/integration-associations/${params["IntegrationAssociationId"]}`,
     });
+    await resp.text();
   }
 
   async deleteQuickConnect(
@@ -401,6 +408,7 @@ export default class Connect {
       method: "DELETE",
       requestUri: cmnP.encodePath`/quick-connects/${params["InstanceId"]}/${params["QuickConnectId"]}`,
     });
+    await resp.text();
   }
 
   async deleteUseCase(
@@ -413,6 +421,7 @@ export default class Connect {
       method: "DELETE",
       requestUri: cmnP.encodePath`/instance/${params["InstanceId"]}/integration-associations/${params["IntegrationAssociationId"]}/use-cases/${params["UseCaseId"]}`,
     });
+    await resp.text();
   }
 
   async deleteUser(
@@ -425,6 +434,7 @@ export default class Connect {
       method: "DELETE",
       requestUri: cmnP.encodePath`/users/${params["InstanceId"]}/${params["UserId"]}`,
     });
+    await resp.text();
   }
 
   async deleteUserHierarchyGroup(
@@ -437,6 +447,7 @@ export default class Connect {
       method: "DELETE",
       requestUri: cmnP.encodePath`/user-hierarchy-groups/${params["InstanceId"]}/${params["HierarchyGroupId"]}`,
     });
+    await resp.text();
   }
 
   async describeContactFlow(
@@ -649,6 +660,7 @@ export default class Connect {
       method: "DELETE",
       requestUri: cmnP.encodePath`/instance/${params["InstanceId"]}/approved-origin`,
     });
+    await resp.text();
   }
 
   async disassociateInstanceStorageConfig(
@@ -662,6 +674,7 @@ export default class Connect {
       method: "DELETE",
       requestUri: cmnP.encodePath`/instance/${params["InstanceId"]}/storage-config/${params["AssociationId"]}`,
     });
+    await resp.text();
   }
 
   async disassociateLambdaFunction(
@@ -675,6 +688,7 @@ export default class Connect {
       method: "DELETE",
       requestUri: cmnP.encodePath`/instance/${params["InstanceId"]}/lambda-function`,
     });
+    await resp.text();
   }
 
   async disassociateLexBot(
@@ -689,6 +703,7 @@ export default class Connect {
       method: "DELETE",
       requestUri: cmnP.encodePath`/instance/${params["InstanceId"]}/lex-bot`,
     });
+    await resp.text();
   }
 
   async disassociateQueueQuickConnects(
@@ -702,6 +717,7 @@ export default class Connect {
       action: "DisassociateQueueQuickConnects",
       requestUri: cmnP.encodePath`/queues/${params["InstanceId"]}/${params["QueueId"]}/disassociate-quick-connects`,
     });
+    await resp.text();
   }
 
   async disassociateRoutingProfileQueues(
@@ -715,6 +731,7 @@ export default class Connect {
       action: "DisassociateRoutingProfileQueues",
       requestUri: cmnP.encodePath`/routing-profiles/${params["InstanceId"]}/${params["RoutingProfileId"]}/disassociate-queues`,
     });
+    await resp.text();
   }
 
   async disassociateSecurityKey(
@@ -727,6 +744,7 @@ export default class Connect {
       method: "DELETE",
       requestUri: cmnP.encodePath`/instance/${params["InstanceId"]}/security-key/${params["AssociationId"]}`,
     });
+    await resp.text();
   }
 
   async getContactAttributes(
@@ -1293,7 +1311,7 @@ export default class Connect {
 
   async resumeContactRecording(
     {abortSignal, ...params}: RequestConfig & s.ResumeContactRecordingRequest,
-  ): Promise<s.ResumeContactRecordingResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       InstanceId: params["InstanceId"],
       ContactId: params["ContactId"],
@@ -1304,10 +1322,7 @@ export default class Connect {
       action: "ResumeContactRecording",
       requestUri: "/contact/resume-recording",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async startChatContact(
@@ -1339,7 +1354,7 @@ export default class Connect {
 
   async startContactRecording(
     {abortSignal, ...params}: RequestConfig & s.StartContactRecordingRequest,
-  ): Promise<s.StartContactRecordingResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       InstanceId: params["InstanceId"],
       ContactId: params["ContactId"],
@@ -1351,10 +1366,7 @@ export default class Connect {
       action: "StartContactRecording",
       requestUri: "/contact/start-recording",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async startOutboundVoiceContact(
@@ -1412,7 +1424,7 @@ export default class Connect {
 
   async stopContact(
     {abortSignal, ...params}: RequestConfig & s.StopContactRequest,
-  ): Promise<s.StopContactResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ContactId: params["ContactId"],
       InstanceId: params["InstanceId"],
@@ -1422,15 +1434,12 @@ export default class Connect {
       action: "StopContact",
       requestUri: "/contact/stop",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async stopContactRecording(
     {abortSignal, ...params}: RequestConfig & s.StopContactRecordingRequest,
-  ): Promise<s.StopContactRecordingResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       InstanceId: params["InstanceId"],
       ContactId: params["ContactId"],
@@ -1441,15 +1450,12 @@ export default class Connect {
       action: "StopContactRecording",
       requestUri: "/contact/stop-recording",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async suspendContactRecording(
     {abortSignal, ...params}: RequestConfig & s.SuspendContactRecordingRequest,
-  ): Promise<s.SuspendContactRecordingResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       InstanceId: params["InstanceId"],
       ContactId: params["ContactId"],
@@ -1460,10 +1466,7 @@ export default class Connect {
       action: "SuspendContactRecording",
       requestUri: "/contact/suspend-recording",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async tagResource(
@@ -1477,6 +1480,7 @@ export default class Connect {
       action: "TagResource",
       requestUri: cmnP.encodePath`/tags/${params["resourceArn"]}`,
     });
+    await resp.text();
   }
 
   async untagResource(
@@ -1492,11 +1496,12 @@ export default class Connect {
       method: "DELETE",
       requestUri: cmnP.encodePath`/tags/${params["resourceArn"]}`,
     });
+    await resp.text();
   }
 
   async updateContactAttributes(
     {abortSignal, ...params}: RequestConfig & s.UpdateContactAttributesRequest,
-  ): Promise<s.UpdateContactAttributesResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       InitialContactId: params["InitialContactId"],
       InstanceId: params["InstanceId"],
@@ -1507,10 +1512,7 @@ export default class Connect {
       action: "UpdateContactAttributes",
       requestUri: "/contact/attributes",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateContactFlowContent(
@@ -1524,6 +1526,7 @@ export default class Connect {
       action: "UpdateContactFlowContent",
       requestUri: cmnP.encodePath`/contact-flows/${params["InstanceId"]}/${params["ContactFlowId"]}/content`,
     });
+    await resp.text();
   }
 
   async updateContactFlowName(
@@ -1538,6 +1541,7 @@ export default class Connect {
       action: "UpdateContactFlowName",
       requestUri: cmnP.encodePath`/contact-flows/${params["InstanceId"]}/${params["ContactFlowId"]}/name`,
     });
+    await resp.text();
   }
 
   async updateInstanceAttribute(
@@ -1551,6 +1555,7 @@ export default class Connect {
       action: "UpdateInstanceAttribute",
       requestUri: cmnP.encodePath`/instance/${params["InstanceId"]}/attribute/${params["AttributeType"]}`,
     });
+    await resp.text();
   }
 
   async updateInstanceStorageConfig(
@@ -1566,6 +1571,7 @@ export default class Connect {
       action: "UpdateInstanceStorageConfig",
       requestUri: cmnP.encodePath`/instance/${params["InstanceId"]}/storage-config/${params["AssociationId"]}`,
     });
+    await resp.text();
   }
 
   async updateQueueHoursOfOperation(
@@ -1579,6 +1585,7 @@ export default class Connect {
       action: "UpdateQueueHoursOfOperation",
       requestUri: cmnP.encodePath`/queues/${params["InstanceId"]}/${params["QueueId"]}/hours-of-operation`,
     });
+    await resp.text();
   }
 
   async updateQueueMaxContacts(
@@ -1592,6 +1599,7 @@ export default class Connect {
       action: "UpdateQueueMaxContacts",
       requestUri: cmnP.encodePath`/queues/${params["InstanceId"]}/${params["QueueId"]}/max-contacts`,
     });
+    await resp.text();
   }
 
   async updateQueueName(
@@ -1606,6 +1614,7 @@ export default class Connect {
       action: "UpdateQueueName",
       requestUri: cmnP.encodePath`/queues/${params["InstanceId"]}/${params["QueueId"]}/name`,
     });
+    await resp.text();
   }
 
   async updateQueueOutboundCallerConfig(
@@ -1619,6 +1628,7 @@ export default class Connect {
       action: "UpdateQueueOutboundCallerConfig",
       requestUri: cmnP.encodePath`/queues/${params["InstanceId"]}/${params["QueueId"]}/outbound-caller-config`,
     });
+    await resp.text();
   }
 
   async updateQueueStatus(
@@ -1632,6 +1642,7 @@ export default class Connect {
       action: "UpdateQueueStatus",
       requestUri: cmnP.encodePath`/queues/${params["InstanceId"]}/${params["QueueId"]}/status`,
     });
+    await resp.text();
   }
 
   async updateQuickConnectConfig(
@@ -1645,6 +1656,7 @@ export default class Connect {
       action: "UpdateQuickConnectConfig",
       requestUri: cmnP.encodePath`/quick-connects/${params["InstanceId"]}/${params["QuickConnectId"]}/config`,
     });
+    await resp.text();
   }
 
   async updateQuickConnectName(
@@ -1659,6 +1671,7 @@ export default class Connect {
       action: "UpdateQuickConnectName",
       requestUri: cmnP.encodePath`/quick-connects/${params["InstanceId"]}/${params["QuickConnectId"]}/name`,
     });
+    await resp.text();
   }
 
   async updateRoutingProfileConcurrency(
@@ -1672,6 +1685,7 @@ export default class Connect {
       action: "UpdateRoutingProfileConcurrency",
       requestUri: cmnP.encodePath`/routing-profiles/${params["InstanceId"]}/${params["RoutingProfileId"]}/concurrency`,
     });
+    await resp.text();
   }
 
   async updateRoutingProfileDefaultOutboundQueue(
@@ -1685,6 +1699,7 @@ export default class Connect {
       action: "UpdateRoutingProfileDefaultOutboundQueue",
       requestUri: cmnP.encodePath`/routing-profiles/${params["InstanceId"]}/${params["RoutingProfileId"]}/default-outbound-queue`,
     });
+    await resp.text();
   }
 
   async updateRoutingProfileName(
@@ -1699,6 +1714,7 @@ export default class Connect {
       action: "UpdateRoutingProfileName",
       requestUri: cmnP.encodePath`/routing-profiles/${params["InstanceId"]}/${params["RoutingProfileId"]}/name`,
     });
+    await resp.text();
   }
 
   async updateRoutingProfileQueues(
@@ -1712,6 +1728,7 @@ export default class Connect {
       action: "UpdateRoutingProfileQueues",
       requestUri: cmnP.encodePath`/routing-profiles/${params["InstanceId"]}/${params["RoutingProfileId"]}/queues`,
     });
+    await resp.text();
   }
 
   async updateUserHierarchy(
@@ -1725,6 +1742,7 @@ export default class Connect {
       action: "UpdateUserHierarchy",
       requestUri: cmnP.encodePath`/users/${params["InstanceId"]}/${params["UserId"]}/hierarchy`,
     });
+    await resp.text();
   }
 
   async updateUserHierarchyGroupName(
@@ -1738,6 +1756,7 @@ export default class Connect {
       action: "UpdateUserHierarchyGroupName",
       requestUri: cmnP.encodePath`/user-hierarchy-groups/${params["InstanceId"]}/${params["HierarchyGroupId"]}/name`,
     });
+    await resp.text();
   }
 
   async updateUserHierarchyStructure(
@@ -1751,6 +1770,7 @@ export default class Connect {
       action: "UpdateUserHierarchyStructure",
       requestUri: cmnP.encodePath`/user-hierarchy-structure/${params["InstanceId"]}`,
     });
+    await resp.text();
   }
 
   async updateUserIdentityInfo(
@@ -1764,6 +1784,7 @@ export default class Connect {
       action: "UpdateUserIdentityInfo",
       requestUri: cmnP.encodePath`/users/${params["InstanceId"]}/${params["UserId"]}/identity-info`,
     });
+    await resp.text();
   }
 
   async updateUserPhoneConfig(
@@ -1777,6 +1798,7 @@ export default class Connect {
       action: "UpdateUserPhoneConfig",
       requestUri: cmnP.encodePath`/users/${params["InstanceId"]}/${params["UserId"]}/phone-config`,
     });
+    await resp.text();
   }
 
   async updateUserRoutingProfile(
@@ -1790,6 +1812,7 @@ export default class Connect {
       action: "UpdateUserRoutingProfile",
       requestUri: cmnP.encodePath`/users/${params["InstanceId"]}/${params["UserId"]}/routing-profile`,
     });
+    await resp.text();
   }
 
   async updateUserSecurityProfiles(
@@ -1803,6 +1826,7 @@ export default class Connect {
       action: "UpdateUserSecurityProfiles",
       requestUri: cmnP.encodePath`/users/${params["InstanceId"]}/${params["UserId"]}/security-profiles`,
     });
+    await resp.text();
   }
 
 }

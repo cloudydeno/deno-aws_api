@@ -158,6 +158,7 @@ export default class S3Control {
       requestUri: cmnP.encodePath`/v20180820/accesspoint/${params["Name"]}`,
       hostPrefix: `${params.AccountId}.`,
     });
+    await resp.text();
   }
 
   async deleteAccessPointForObjectLambda(
@@ -172,6 +173,7 @@ export default class S3Control {
       requestUri: cmnP.encodePath`/v20180820/accesspointforobjectlambda/${params["Name"]}`,
       hostPrefix: `${params.AccountId}.`,
     });
+    await resp.text();
   }
 
   async deleteAccessPointPolicy(
@@ -186,6 +188,7 @@ export default class S3Control {
       requestUri: cmnP.encodePath`/v20180820/accesspoint/${params["Name"]}/policy`,
       hostPrefix: `${params.AccountId}.`,
     });
+    await resp.text();
   }
 
   async deleteAccessPointPolicyForObjectLambda(
@@ -200,6 +203,7 @@ export default class S3Control {
       requestUri: cmnP.encodePath`/v20180820/accesspointforobjectlambda/${params["Name"]}/policy`,
       hostPrefix: `${params.AccountId}.`,
     });
+    await resp.text();
   }
 
   async deleteBucket(
@@ -214,6 +218,7 @@ export default class S3Control {
       requestUri: cmnP.encodePath`/v20180820/bucket/${params["Bucket"]}`,
       hostPrefix: `${params.AccountId}.`,
     });
+    await resp.text();
   }
 
   async deleteBucketLifecycleConfiguration(
@@ -228,6 +233,7 @@ export default class S3Control {
       requestUri: cmnP.encodePath`/v20180820/bucket/${params["Bucket"]}/lifecycleconfiguration`,
       hostPrefix: `${params.AccountId}.`,
     });
+    await resp.text();
   }
 
   async deleteBucketPolicy(
@@ -242,6 +248,7 @@ export default class S3Control {
       requestUri: cmnP.encodePath`/v20180820/bucket/${params["Bucket"]}/policy`,
       hostPrefix: `${params.AccountId}.`,
     });
+    await resp.text();
   }
 
   async deleteBucketTagging(
@@ -257,11 +264,12 @@ export default class S3Control {
       responseCode: 204,
       hostPrefix: `${params.AccountId}.`,
     });
+    await resp.text();
   }
 
   async deleteJobTagging(
     {abortSignal, ...params}: RequestConfig & s.DeleteJobTaggingRequest,
-  ): Promise<s.DeleteJobTaggingResult> {
+  ): Promise<void> {
     const headers = new Headers;
     headers.append("x-amz-account-id", params["AccountId"]);
     const resp = await this.#client.performRequest({
@@ -271,8 +279,7 @@ export default class S3Control {
       requestUri: cmnP.encodePath`/v20180820/jobs/${params["JobId"]}/tagging`,
       hostPrefix: `${params.AccountId}.`,
     });
-    return {
-    };
+    await resp.text();
   }
 
   async deletePublicAccessBlock(
@@ -287,6 +294,7 @@ export default class S3Control {
       requestUri: "/v20180820/configuration/publicAccessBlock",
       hostPrefix: `${params.AccountId}.`,
     });
+    await resp.text();
   }
 
   async deleteStorageLensConfiguration(
@@ -301,11 +309,12 @@ export default class S3Control {
       requestUri: cmnP.encodePath`/v20180820/storagelens/${params["ConfigId"]}`,
       hostPrefix: `${params.AccountId}.`,
     });
+    await resp.text();
   }
 
   async deleteStorageLensConfigurationTagging(
     {abortSignal, ...params}: RequestConfig & s.DeleteStorageLensConfigurationTaggingRequest,
-  ): Promise<s.DeleteStorageLensConfigurationTaggingResult> {
+  ): Promise<void> {
     const headers = new Headers;
     headers.append("x-amz-account-id", params["AccountId"]);
     const resp = await this.#client.performRequest({
@@ -315,8 +324,7 @@ export default class S3Control {
       requestUri: cmnP.encodePath`/v20180820/storagelens/${params["ConfigId"]}/tagging`,
       hostPrefix: `${params.AccountId}.`,
     });
-    return {
-    };
+    await resp.text();
   }
 
   async describeJob(
@@ -580,9 +588,9 @@ export default class S3Control {
       hostPrefix: `${params.AccountId}.`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    PublicAccessBlockConfiguration: PublicAccessBlockConfiguration_Parse(xml),
-  };
+    return {
+      PublicAccessBlockConfiguration: PublicAccessBlockConfiguration_Parse(xml),
+    };
   }
 
   async getStorageLensConfiguration(
@@ -598,9 +606,9 @@ export default class S3Control {
       hostPrefix: `${params.AccountId}.`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    StorageLensConfiguration: StorageLensConfiguration_Parse(xml),
-  };
+    return {
+      StorageLensConfiguration: StorageLensConfiguration_Parse(xml),
+    };
   }
 
   async getStorageLensConfigurationTagging(
@@ -763,6 +771,7 @@ export default class S3Control {
       requestUri: cmnP.encodePath`/v20180820/accesspointforobjectlambda/${params["Name"]}/configuration`,
       hostPrefix: `${params.AccountId}.`,
     });
+    await resp.text();
   }
 
   async putAccessPointPolicy(
@@ -783,6 +792,7 @@ export default class S3Control {
       requestUri: cmnP.encodePath`/v20180820/accesspoint/${params["Name"]}/policy`,
       hostPrefix: `${params.AccountId}.`,
     });
+    await resp.text();
   }
 
   async putAccessPointPolicyForObjectLambda(
@@ -803,6 +813,7 @@ export default class S3Control {
       requestUri: cmnP.encodePath`/v20180820/accesspointforobjectlambda/${params["Name"]}/policy`,
       hostPrefix: `${params.AccountId}.`,
     });
+    await resp.text();
   }
 
   async putBucketLifecycleConfiguration(
@@ -824,6 +835,7 @@ export default class S3Control {
       requestUri: cmnP.encodePath`/v20180820/bucket/${params["Bucket"]}/lifecycleconfiguration`,
       hostPrefix: `${params.AccountId}.`,
     });
+    await resp.text();
   }
 
   async putBucketPolicy(
@@ -845,6 +857,7 @@ export default class S3Control {
       requestUri: cmnP.encodePath`/v20180820/bucket/${params["Bucket"]}/policy`,
       hostPrefix: `${params.AccountId}.`,
     });
+    await resp.text();
   }
 
   async putBucketTagging(
@@ -866,11 +879,12 @@ export default class S3Control {
       requestUri: cmnP.encodePath`/v20180820/bucket/${params["Bucket"]}/tagging`,
       hostPrefix: `${params.AccountId}.`,
     });
+    await resp.text();
   }
 
   async putJobTagging(
     {abortSignal, ...params}: RequestConfig & s.PutJobTaggingRequest,
-  ): Promise<s.PutJobTaggingResult> {
+  ): Promise<void> {
     const headers = new Headers;
     const body = xmlP.stringify({
       name: "PutJobTaggingRequest",
@@ -886,8 +900,7 @@ export default class S3Control {
       requestUri: cmnP.encodePath`/v20180820/jobs/${params["JobId"]}/tagging`,
       hostPrefix: `${params.AccountId}.`,
     });
-    return {
-    };
+    await resp.text();
   }
 
   async putPublicAccessBlock(
@@ -912,6 +925,7 @@ export default class S3Control {
       requestUri: "/v20180820/configuration/publicAccessBlock",
       hostPrefix: `${params.AccountId}.`,
     });
+    await resp.text();
   }
 
   async putStorageLensConfiguration(
@@ -933,11 +947,12 @@ export default class S3Control {
       requestUri: cmnP.encodePath`/v20180820/storagelens/${params["ConfigId"]}`,
       hostPrefix: `${params.AccountId}.`,
     });
+    await resp.text();
   }
 
   async putStorageLensConfigurationTagging(
     {abortSignal, ...params}: RequestConfig & s.PutStorageLensConfigurationTaggingRequest,
-  ): Promise<s.PutStorageLensConfigurationTaggingResult> {
+  ): Promise<void> {
     const headers = new Headers;
     const body = xmlP.stringify({
       name: "PutStorageLensConfigurationTaggingRequest",
@@ -953,8 +968,7 @@ export default class S3Control {
       requestUri: cmnP.encodePath`/v20180820/storagelens/${params["ConfigId"]}/tagging`,
       hostPrefix: `${params.AccountId}.`,
     });
-    return {
-    };
+    await resp.text();
   }
 
   async updateJobPriority(

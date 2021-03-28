@@ -149,14 +149,6 @@ export interface StopExperimentResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface TagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UntagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface UpdateExperimentTemplateResponse {
   experimentTemplate?: ExperimentTemplate | null;
 }

@@ -46,9 +46,9 @@ export default class AppMesh {
       requestUri: "/meshes",
       responseCode: 200,
     });
-  return {
-    mesh: toMeshData(await resp.json()),
-  };
+    return {
+      mesh: toMeshData(await resp.json()),
+    };
   }
 
   async createRoute(
@@ -66,9 +66,9 @@ export default class AppMesh {
       requestUri: cmnP.encodePath`/meshes/${params["meshName"]}/virtualRouter/${params["virtualRouterName"]}/routes`,
       responseCode: 200,
     });
-  return {
-    route: toRouteData(await resp.json()),
-  };
+    return {
+      route: toRouteData(await resp.json()),
+    };
   }
 
   async createVirtualNode(
@@ -86,9 +86,9 @@ export default class AppMesh {
       requestUri: cmnP.encodePath`/meshes/${params["meshName"]}/virtualNodes`,
       responseCode: 200,
     });
-  return {
-    virtualNode: toVirtualNodeData(await resp.json()),
-  };
+    return {
+      virtualNode: toVirtualNodeData(await resp.json()),
+    };
   }
 
   async createVirtualRouter(
@@ -106,9 +106,9 @@ export default class AppMesh {
       requestUri: cmnP.encodePath`/meshes/${params["meshName"]}/virtualRouters`,
       responseCode: 200,
     });
-  return {
-    virtualRouter: toVirtualRouterData(await resp.json()),
-  };
+    return {
+      virtualRouter: toVirtualRouterData(await resp.json()),
+    };
   }
 
   async deleteMesh(
@@ -122,9 +122,9 @@ export default class AppMesh {
       requestUri: cmnP.encodePath`/meshes/${params["meshName"]}`,
       responseCode: 200,
     });
-  return {
-    mesh: toMeshData(await resp.json()),
-  };
+    return {
+      mesh: toMeshData(await resp.json()),
+    };
   }
 
   async deleteRoute(
@@ -138,9 +138,9 @@ export default class AppMesh {
       requestUri: cmnP.encodePath`/meshes/${params["meshName"]}/virtualRouter/${params["virtualRouterName"]}/routes/${params["routeName"]}`,
       responseCode: 200,
     });
-  return {
-    route: toRouteData(await resp.json()),
-  };
+    return {
+      route: toRouteData(await resp.json()),
+    };
   }
 
   async deleteVirtualNode(
@@ -154,9 +154,9 @@ export default class AppMesh {
       requestUri: cmnP.encodePath`/meshes/${params["meshName"]}/virtualNodes/${params["virtualNodeName"]}`,
       responseCode: 200,
     });
-  return {
-    virtualNode: toVirtualNodeData(await resp.json()),
-  };
+    return {
+      virtualNode: toVirtualNodeData(await resp.json()),
+    };
   }
 
   async deleteVirtualRouter(
@@ -170,9 +170,9 @@ export default class AppMesh {
       requestUri: cmnP.encodePath`/meshes/${params["meshName"]}/virtualRouters/${params["virtualRouterName"]}`,
       responseCode: 200,
     });
-  return {
-    virtualRouter: toVirtualRouterData(await resp.json()),
-  };
+    return {
+      virtualRouter: toVirtualRouterData(await resp.json()),
+    };
   }
 
   async describeMesh(
@@ -186,9 +186,9 @@ export default class AppMesh {
       requestUri: cmnP.encodePath`/meshes/${params["meshName"]}`,
       responseCode: 200,
     });
-  return {
-    mesh: toMeshData(await resp.json()),
-  };
+    return {
+      mesh: toMeshData(await resp.json()),
+    };
   }
 
   async describeRoute(
@@ -202,9 +202,9 @@ export default class AppMesh {
       requestUri: cmnP.encodePath`/meshes/${params["meshName"]}/virtualRouter/${params["virtualRouterName"]}/routes/${params["routeName"]}`,
       responseCode: 200,
     });
-  return {
-    route: toRouteData(await resp.json()),
-  };
+    return {
+      route: toRouteData(await resp.json()),
+    };
   }
 
   async describeVirtualNode(
@@ -218,9 +218,9 @@ export default class AppMesh {
       requestUri: cmnP.encodePath`/meshes/${params["meshName"]}/virtualNodes/${params["virtualNodeName"]}`,
       responseCode: 200,
     });
-  return {
-    virtualNode: toVirtualNodeData(await resp.json()),
-  };
+    return {
+      virtualNode: toVirtualNodeData(await resp.json()),
+    };
   }
 
   async describeVirtualRouter(
@@ -234,9 +234,9 @@ export default class AppMesh {
       requestUri: cmnP.encodePath`/meshes/${params["meshName"]}/virtualRouters/${params["virtualRouterName"]}`,
       responseCode: 200,
     });
-  return {
-    virtualRouter: toVirtualRouterData(await resp.json()),
-  };
+    return {
+      virtualRouter: toVirtualRouterData(await resp.json()),
+    };
   }
 
   async listMeshes(
@@ -345,9 +345,9 @@ export default class AppMesh {
       requestUri: cmnP.encodePath`/meshes/${params["meshName"]}/virtualRouter/${params["virtualRouterName"]}/routes/${params["routeName"]}`,
       responseCode: 200,
     });
-  return {
-    route: toRouteData(await resp.json()),
-  };
+    return {
+      route: toRouteData(await resp.json()),
+    };
   }
 
   async updateVirtualNode(
@@ -364,9 +364,9 @@ export default class AppMesh {
       requestUri: cmnP.encodePath`/meshes/${params["meshName"]}/virtualNodes/${params["virtualNodeName"]}`,
       responseCode: 200,
     });
-  return {
-    virtualNode: toVirtualNodeData(await resp.json()),
-  };
+    return {
+      virtualNode: toVirtualNodeData(await resp.json()),
+    };
   }
 
   async updateVirtualRouter(
@@ -383,9 +383,9 @@ export default class AppMesh {
       requestUri: cmnP.encodePath`/meshes/${params["meshName"]}/virtualRouters/${params["virtualRouterName"]}`,
       responseCode: 200,
     });
-  return {
-    virtualRouter: toVirtualRouterData(await resp.json()),
-  };
+    return {
+      virtualRouter: toVirtualRouterData(await resp.json()),
+    };
   }
 
 }

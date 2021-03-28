@@ -249,6 +249,7 @@ export default class Personalize {
       abortSignal, body,
       action: "DeleteCampaign",
     });
+    await resp.text();
   }
 
   async deleteDataset(
@@ -261,6 +262,7 @@ export default class Personalize {
       abortSignal, body,
       action: "DeleteDataset",
     });
+    await resp.text();
   }
 
   async deleteDatasetGroup(
@@ -273,6 +275,7 @@ export default class Personalize {
       abortSignal, body,
       action: "DeleteDatasetGroup",
     });
+    await resp.text();
   }
 
   async deleteEventTracker(
@@ -285,6 +288,7 @@ export default class Personalize {
       abortSignal, body,
       action: "DeleteEventTracker",
     });
+    await resp.text();
   }
 
   async deleteFilter(
@@ -297,6 +301,7 @@ export default class Personalize {
       abortSignal, body,
       action: "DeleteFilter",
     });
+    await resp.text();
   }
 
   async deleteSchema(
@@ -309,6 +314,7 @@ export default class Personalize {
       abortSignal, body,
       action: "DeleteSchema",
     });
+    await resp.text();
   }
 
   async deleteSolution(
@@ -321,6 +327,7 @@ export default class Personalize {
       abortSignal, body,
       action: "DeleteSolution",
     });
+    await resp.text();
   }
 
   async describeAlgorithm(

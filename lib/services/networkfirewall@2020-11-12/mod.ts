@@ -195,7 +195,7 @@ export default class NetworkFirewall {
 
   async deleteResourcePolicy(
     {abortSignal, ...params}: RequestConfig & s.DeleteResourcePolicyRequest,
-  ): Promise<s.DeleteResourcePolicyResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
     };
@@ -203,10 +203,7 @@ export default class NetworkFirewall {
       abortSignal, body,
       action: "DeleteResourcePolicy",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteRuleGroup(
@@ -441,7 +438,7 @@ export default class NetworkFirewall {
 
   async putResourcePolicy(
     {abortSignal, ...params}: RequestConfig & s.PutResourcePolicyRequest,
-  ): Promise<s.PutResourcePolicyResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
       Policy: params["Policy"],
@@ -450,15 +447,12 @@ export default class NetworkFirewall {
       abortSignal, body,
       action: "PutResourcePolicy",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & s.TagResourceRequest,
-  ): Promise<s.TagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
@@ -467,15 +461,12 @@ export default class NetworkFirewall {
       abortSignal, body,
       action: "TagResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async untagResource(
     {abortSignal, ...params}: RequestConfig & s.UntagResourceRequest,
-  ): Promise<s.UntagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
       TagKeys: params["TagKeys"],
@@ -484,10 +475,7 @@ export default class NetworkFirewall {
       abortSignal, body,
       action: "UntagResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateFirewallDeleteProtection(

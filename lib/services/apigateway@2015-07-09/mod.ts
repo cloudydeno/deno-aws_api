@@ -505,6 +505,7 @@ export default class APIGateway {
       requestUri: cmnP.encodePath`/apikeys/${params["apiKey"]}`,
       responseCode: 202,
     });
+    await resp.text();
   }
 
   async deleteAuthorizer(
@@ -518,6 +519,7 @@ export default class APIGateway {
       requestUri: cmnP.encodePath`/restapis/${params["restApiId"]}/authorizers/${params["authorizerId"]}`,
       responseCode: 202,
     });
+    await resp.text();
   }
 
   async deleteBasePathMapping(
@@ -531,6 +533,7 @@ export default class APIGateway {
       requestUri: cmnP.encodePath`/domainnames/${params["domainName"]}/basepathmappings/${params["basePath"]}`,
       responseCode: 202,
     });
+    await resp.text();
   }
 
   async deleteClientCertificate(
@@ -544,6 +547,7 @@ export default class APIGateway {
       requestUri: cmnP.encodePath`/clientcertificates/${params["clientCertificateId"]}`,
       responseCode: 202,
     });
+    await resp.text();
   }
 
   async deleteDeployment(
@@ -557,6 +561,7 @@ export default class APIGateway {
       requestUri: cmnP.encodePath`/restapis/${params["restApiId"]}/deployments/${params["deploymentId"]}`,
       responseCode: 202,
     });
+    await resp.text();
   }
 
   async deleteDocumentationPart(
@@ -570,6 +575,7 @@ export default class APIGateway {
       requestUri: cmnP.encodePath`/restapis/${params["restApiId"]}/documentation/parts/${params["documentationPartId"]}`,
       responseCode: 202,
     });
+    await resp.text();
   }
 
   async deleteDocumentationVersion(
@@ -583,6 +589,7 @@ export default class APIGateway {
       requestUri: cmnP.encodePath`/restapis/${params["restApiId"]}/documentation/versions/${params["documentationVersion"]}`,
       responseCode: 202,
     });
+    await resp.text();
   }
 
   async deleteDomainName(
@@ -596,6 +603,7 @@ export default class APIGateway {
       requestUri: cmnP.encodePath`/domainnames/${params["domainName"]}`,
       responseCode: 202,
     });
+    await resp.text();
   }
 
   async deleteGatewayResponse(
@@ -609,6 +617,7 @@ export default class APIGateway {
       requestUri: cmnP.encodePath`/restapis/${params["restApiId"]}/gatewayresponses/${params["responseType"]}`,
       responseCode: 202,
     });
+    await resp.text();
   }
 
   async deleteIntegration(
@@ -622,6 +631,7 @@ export default class APIGateway {
       requestUri: cmnP.encodePath`/restapis/${params["restApiId"]}/resources/${params["resourceId"]}/methods/${params["httpMethod"]}/integration`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deleteIntegrationResponse(
@@ -635,6 +645,7 @@ export default class APIGateway {
       requestUri: cmnP.encodePath`/restapis/${params["restApiId"]}/resources/${params["resourceId"]}/methods/${params["httpMethod"]}/integration/responses/${params["statusCode"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deleteMethod(
@@ -648,6 +659,7 @@ export default class APIGateway {
       requestUri: cmnP.encodePath`/restapis/${params["restApiId"]}/resources/${params["resourceId"]}/methods/${params["httpMethod"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deleteMethodResponse(
@@ -661,6 +673,7 @@ export default class APIGateway {
       requestUri: cmnP.encodePath`/restapis/${params["restApiId"]}/resources/${params["resourceId"]}/methods/${params["httpMethod"]}/responses/${params["statusCode"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deleteModel(
@@ -674,6 +687,7 @@ export default class APIGateway {
       requestUri: cmnP.encodePath`/restapis/${params["restApiId"]}/models/${params["modelName"]}`,
       responseCode: 202,
     });
+    await resp.text();
   }
 
   async deleteRequestValidator(
@@ -687,6 +701,7 @@ export default class APIGateway {
       requestUri: cmnP.encodePath`/restapis/${params["restApiId"]}/requestvalidators/${params["requestValidatorId"]}`,
       responseCode: 202,
     });
+    await resp.text();
   }
 
   async deleteResource(
@@ -700,6 +715,7 @@ export default class APIGateway {
       requestUri: cmnP.encodePath`/restapis/${params["restApiId"]}/resources/${params["resourceId"]}`,
       responseCode: 202,
     });
+    await resp.text();
   }
 
   async deleteRestApi(
@@ -713,6 +729,7 @@ export default class APIGateway {
       requestUri: cmnP.encodePath`/restapis/${params["restApiId"]}`,
       responseCode: 202,
     });
+    await resp.text();
   }
 
   async deleteStage(
@@ -726,6 +743,7 @@ export default class APIGateway {
       requestUri: cmnP.encodePath`/restapis/${params["restApiId"]}/stages/${params["stageName"]}`,
       responseCode: 202,
     });
+    await resp.text();
   }
 
   async deleteUsagePlan(
@@ -739,6 +757,7 @@ export default class APIGateway {
       requestUri: cmnP.encodePath`/usageplans/${params["usagePlanId"]}`,
       responseCode: 202,
     });
+    await resp.text();
   }
 
   async deleteUsagePlanKey(
@@ -752,6 +771,7 @@ export default class APIGateway {
       requestUri: cmnP.encodePath`/usageplans/${params["usagePlanId"]}/keys/${params["keyId"]}`,
       responseCode: 202,
     });
+    await resp.text();
   }
 
   async deleteVpcLink(
@@ -765,6 +785,7 @@ export default class APIGateway {
       requestUri: cmnP.encodePath`/vpclinks/${params["vpcLinkId"]}`,
       responseCode: 202,
     });
+    await resp.text();
   }
 
   async flushStageAuthorizersCache(
@@ -778,6 +799,7 @@ export default class APIGateway {
       requestUri: cmnP.encodePath`/restapis/${params["restApiId"]}/stages/${params["stageName"]}/cache/authorizers`,
       responseCode: 202,
     });
+    await resp.text();
   }
 
   async flushStageCache(
@@ -791,6 +813,7 @@ export default class APIGateway {
       requestUri: cmnP.encodePath`/restapis/${params["restApiId"]}/stages/${params["stageName"]}/cache/data`,
       responseCode: 202,
     });
+    await resp.text();
   }
 
   async generateClientCertificate(
@@ -820,11 +843,11 @@ export default class APIGateway {
   }
 
   async getAccount(
-    {abortSignal, ...params}: RequestConfig & s.GetAccountRequest = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.Account> {
-
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
-      abortSignal,
+      abortSignal, body,
       action: "GetAccount",
       method: "GET",
       requestUri: "/account",
@@ -1227,11 +1250,11 @@ export default class APIGateway {
       requestUri: cmnP.encodePath`/restapis/${params["restApiId"]}/stages/${params["stageName"]}/exports/${params["exportType"]}`,
       responseCode: 200,
     });
-  return {
-    contentType: resp.headers.get("Content-Type"),
-    contentDisposition: resp.headers.get("Content-Disposition"),
-    body: await resp.text(), // TODO: maybe allow proper body streaming,
-  };
+    return {
+      contentType: resp.headers.get("Content-Type"),
+      contentDisposition: resp.headers.get("Content-Disposition"),
+      body: await resp.text(), // TODO: maybe allow proper body streaming,
+    };
   }
 
   async getGatewayResponse(
@@ -1597,11 +1620,11 @@ export default class APIGateway {
       requestUri: cmnP.encodePath`/restapis/${params["restApiId"]}/stages/${params["stageName"]}/sdks/${params["sdkType"]}`,
       responseCode: 200,
     });
-  return {
-    contentType: resp.headers.get("Content-Type"),
-    contentDisposition: resp.headers.get("Content-Disposition"),
-    body: await resp.text(), // TODO: maybe allow proper body streaming,
-  };
+    return {
+      contentType: resp.headers.get("Content-Type"),
+      contentDisposition: resp.headers.get("Content-Disposition"),
+      body: await resp.text(), // TODO: maybe allow proper body streaming,
+    };
   }
 
   async getSdkType(
@@ -2175,6 +2198,7 @@ export default class APIGateway {
       requestUri: cmnP.encodePath`/tags/${params["resourceArn"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async testInvokeAuthorizer(
@@ -2250,6 +2274,7 @@ export default class APIGateway {
       requestUri: cmnP.encodePath`/tags/${params["resourceArn"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async updateAccount(

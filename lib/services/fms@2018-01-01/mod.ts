@@ -39,6 +39,7 @@ export default class FMS {
       abortSignal, body,
       action: "AssociateAdminAccount",
     });
+    await resp.text();
   }
 
   async deleteAppsList(
@@ -51,17 +52,18 @@ export default class FMS {
       abortSignal, body,
       action: "DeleteAppsList",
     });
+    await resp.text();
   }
 
   async deleteNotificationChannel(
-    {abortSignal, ...params}: RequestConfig & s.DeleteNotificationChannelRequest = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<void> {
-    const body: jsonP.JSONObject = {
-    };
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DeleteNotificationChannel",
     });
+    await resp.text();
   }
 
   async deletePolicy(
@@ -75,6 +77,7 @@ export default class FMS {
       abortSignal, body,
       action: "DeletePolicy",
     });
+    await resp.text();
   }
 
   async deleteProtocolsList(
@@ -87,24 +90,24 @@ export default class FMS {
       abortSignal, body,
       action: "DeleteProtocolsList",
     });
+    await resp.text();
   }
 
   async disassociateAdminAccount(
-    {abortSignal, ...params}: RequestConfig & s.DisassociateAdminAccountRequest = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<void> {
-    const body: jsonP.JSONObject = {
-    };
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DisassociateAdminAccount",
     });
+    await resp.text();
   }
 
   async getAdminAccount(
-    {abortSignal, ...params}: RequestConfig & s.GetAdminAccountRequest = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.GetAdminAccountResponse> {
-    const body: jsonP.JSONObject = {
-    };
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetAdminAccount",
@@ -158,10 +161,9 @@ export default class FMS {
   }
 
   async getNotificationChannel(
-    {abortSignal, ...params}: RequestConfig & s.GetNotificationChannelRequest = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.GetNotificationChannelResponse> {
-    const body: jsonP.JSONObject = {
-    };
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetNotificationChannel",
@@ -413,6 +415,7 @@ export default class FMS {
       abortSignal, body,
       action: "PutNotificationChannel",
     });
+    await resp.text();
   }
 
   async putPolicy(
@@ -457,7 +460,7 @@ export default class FMS {
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & s.TagResourceRequest,
-  ): Promise<s.TagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
       TagList: params["TagList"]?.map(x => fromTag(x)),
@@ -466,15 +469,12 @@ export default class FMS {
       abortSignal, body,
       action: "TagResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async untagResource(
     {abortSignal, ...params}: RequestConfig & s.UntagResourceRequest,
-  ): Promise<s.UntagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
       TagKeys: params["TagKeys"],
@@ -483,10 +483,7 @@ export default class FMS {
       abortSignal, body,
       action: "UntagResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
 }

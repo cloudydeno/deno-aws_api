@@ -31,7 +31,7 @@ export default class Snowball {
 
   async cancelCluster(
     {abortSignal, ...params}: RequestConfig & s.CancelClusterRequest,
-  ): Promise<s.CancelClusterResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ClusterId: params["ClusterId"],
     };
@@ -39,15 +39,12 @@ export default class Snowball {
       abortSignal, body,
       action: "CancelCluster",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async cancelJob(
     {abortSignal, ...params}: RequestConfig & s.CancelJobRequest,
-  ): Promise<s.CancelJobResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       JobId: params["JobId"],
     };
@@ -55,10 +52,7 @@ export default class Snowball {
       abortSignal, body,
       action: "CancelJob",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async createAddress(
@@ -288,10 +282,9 @@ export default class Snowball {
   }
 
   async getSnowballUsage(
-    {abortSignal, ...params}: RequestConfig & s.GetSnowballUsageRequest = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.GetSnowballUsageResult> {
-    const body: jsonP.JSONObject = {
-    };
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetSnowballUsage",
@@ -406,7 +399,7 @@ export default class Snowball {
 
   async updateCluster(
     {abortSignal, ...params}: RequestConfig & s.UpdateClusterRequest,
-  ): Promise<s.UpdateClusterResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ClusterId: params["ClusterId"],
       RoleARN: params["RoleARN"],
@@ -421,15 +414,12 @@ export default class Snowball {
       abortSignal, body,
       action: "UpdateCluster",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateJob(
     {abortSignal, ...params}: RequestConfig & s.UpdateJobRequest,
-  ): Promise<s.UpdateJobResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       JobId: params["JobId"],
       RoleARN: params["RoleARN"],
@@ -445,15 +435,12 @@ export default class Snowball {
       abortSignal, body,
       action: "UpdateJob",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateJobShipmentState(
     {abortSignal, ...params}: RequestConfig & s.UpdateJobShipmentStateRequest,
-  ): Promise<s.UpdateJobShipmentStateResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       JobId: params["JobId"],
       ShipmentState: params["ShipmentState"],
@@ -462,10 +449,7 @@ export default class Snowball {
       abortSignal, body,
       action: "UpdateJobShipmentState",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
 }

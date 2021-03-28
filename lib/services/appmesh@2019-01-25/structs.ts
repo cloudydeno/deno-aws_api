@@ -463,14 +463,6 @@ export interface ListVirtualServicesOutput {
 }
 
 // refs: 1 - tags: named, output
-export interface TagResourceOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface UntagResourceOutput {
-}
-
-// refs: 1 - tags: named, output
 export interface UpdateGatewayRouteOutput {
   gatewayRoute: GatewayRouteData;
 }

@@ -116,10 +116,6 @@ export interface DescribeStudioInput {
 }
 
 // refs: 1 - tags: named, input
-export interface GetBlockPublicAccessConfigurationInput {
-}
-
-// refs: 1 - tags: named, input
 export interface GetManagedScalingPolicyInput {
   ClusterId: string;
 }
@@ -359,10 +355,6 @@ export interface AddJobFlowStepsOutput {
 }
 
 // refs: 1 - tags: named, output
-export interface AddTagsOutput {
-}
-
-// refs: 1 - tags: named, output
 export interface CancelStepsOutput {
   CancelStepsInfoList?: CancelStepsInfo[] | null;
 }
@@ -377,10 +369,6 @@ export interface CreateSecurityConfigurationOutput {
 export interface CreateStudioOutput {
   StudioId?: string | null;
   Url?: string | null;
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteSecurityConfigurationOutput {
 }
 
 // refs: 1 - tags: named, output
@@ -502,26 +490,6 @@ export interface PutAutoScalingPolicyOutput {
   InstanceGroupId?: string | null;
   AutoScalingPolicy?: AutoScalingPolicyDescription | null;
   ClusterArn?: string | null;
-}
-
-// refs: 1 - tags: named, output
-export interface PutBlockPublicAccessConfigurationOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface PutManagedScalingPolicyOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface RemoveAutoScalingPolicyOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface RemoveManagedScalingPolicyOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface RemoveTagsOutput {
 }
 
 // refs: 1 - tags: named, output

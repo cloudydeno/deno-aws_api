@@ -54,10 +54,6 @@ export interface DeleteReplicationJobRequest {
 }
 
 // refs: 1 - tags: named, input
-export interface DeleteServerCatalogRequest {
-}
-
-// refs: 1 - tags: named, input
 export interface DisassociateConnectorRequest {
   connectorId: string;
 }
@@ -129,10 +125,6 @@ export interface GetServersRequest {
 // refs: 1 - tags: named, input
 export interface ImportAppCatalogRequest {
   roleName?: string | null;
-}
-
-// refs: 1 - tags: named, input
-export interface ImportServerCatalogRequest {
 }
 
 // refs: 1 - tags: named, input
@@ -237,34 +229,6 @@ export interface CreateReplicationJobResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface DeleteAppResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteAppLaunchConfigurationResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteAppReplicationConfigurationResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteAppValidationConfigurationResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteReplicationJobResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteServerCatalogResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DisassociateConnectorResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface GenerateChangeSetResponse {
   s3Location?: S3Location | null;
 }
@@ -333,45 +297,9 @@ export interface GetServersResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface ImportAppCatalogResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface ImportServerCatalogResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface LaunchAppResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface ListAppsResponse {
   apps?: AppSummary[] | null;
   nextToken?: string | null;
-}
-
-// refs: 1 - tags: named, output
-export interface NotifyAppValidationOutputResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface PutAppLaunchConfigurationResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface PutAppReplicationConfigurationResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface PutAppValidationConfigurationResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface StartAppReplicationResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface StartOnDemandAppReplicationResponse {
 }
 
 // refs: 1 - tags: named, output
@@ -380,22 +308,10 @@ export interface StartOnDemandReplicationRunResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface StopAppReplicationResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface TerminateAppResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface UpdateAppResponse {
   appSummary?: AppSummary | null;
   serverGroups?: ServerGroup[] | null;
   tags?: Tag[] | null;
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateReplicationJobResponse {
 }
 
 // refs: 5 - tags: input, named, interface, output

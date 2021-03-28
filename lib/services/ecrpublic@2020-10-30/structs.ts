@@ -76,14 +76,6 @@ export interface DescribeRepositoriesRequest {
 }
 
 // refs: 1 - tags: named, input
-export interface GetAuthorizationTokenRequest {
-}
-
-// refs: 1 - tags: named, input
-export interface GetRegistryCatalogDataRequest {
-}
-
-// refs: 1 - tags: named, input
 export interface GetRepositoryCatalogDataRequest {
   registryId?: string | null;
   repositoryName: string;
@@ -273,14 +265,6 @@ export interface SetRepositoryPolicyResponse {
   registryId?: string | null;
   repositoryName?: string | null;
   policyText?: string | null;
-}
-
-// refs: 1 - tags: named, output
-export interface TagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UntagResourceResponse {
 }
 
 // refs: 1 - tags: named, output

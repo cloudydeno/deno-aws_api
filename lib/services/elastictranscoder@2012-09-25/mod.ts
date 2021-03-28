@@ -28,7 +28,7 @@ export default class ElasticTranscoder {
 
   async cancelJob(
     {abortSignal, ...params}: RequestConfig & s.CancelJobRequest,
-  ): Promise<s.CancelJobResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -37,10 +37,7 @@ export default class ElasticTranscoder {
       requestUri: cmnP.encodePath`/2012-09-25/jobs/${params["Id"]}`,
       responseCode: 202,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async createJob(
@@ -126,7 +123,7 @@ export default class ElasticTranscoder {
 
   async deletePipeline(
     {abortSignal, ...params}: RequestConfig & s.DeletePipelineRequest,
-  ): Promise<s.DeletePipelineResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -135,15 +132,12 @@ export default class ElasticTranscoder {
       requestUri: cmnP.encodePath`/2012-09-25/pipelines/${params["Id"]}`,
       responseCode: 202,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deletePreset(
     {abortSignal, ...params}: RequestConfig & s.DeletePresetRequest,
-  ): Promise<s.DeletePresetResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -152,10 +146,7 @@ export default class ElasticTranscoder {
       requestUri: cmnP.encodePath`/2012-09-25/presets/${params["Id"]}`,
       responseCode: 202,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async listJobsByPipeline(

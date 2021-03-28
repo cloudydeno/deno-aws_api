@@ -763,10 +763,6 @@ export interface CreateVpcLinkResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface DeleteVpcLinkResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface ExportApiResponse {
   body?: Uint8Array | string | null;
 }
@@ -1053,10 +1049,6 @@ export interface ReimportApiResponse {
   Tags?: { [key: string]: string | null | undefined } | null;
   Version?: string | null;
   Warnings?: string[] | null;
-}
-
-// refs: 1 - tags: named, output
-export interface TagResourceResponse {
 }
 
 // refs: 1 - tags: named, output

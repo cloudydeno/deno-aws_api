@@ -104,7 +104,7 @@ export default class LookoutVision {
 
   async deleteDataset(
     {abortSignal, ...params}: RequestConfig & s.DeleteDatasetRequest,
-  ): Promise<s.DeleteDatasetResponse> {
+  ): Promise<void> {
     const headers = new Headers;
     if (params["ClientToken"] != null) headers.append("X-Amzn-Client-Token", params["ClientToken"]);
     const resp = await this.#client.performRequest({
@@ -114,10 +114,7 @@ export default class LookoutVision {
       requestUri: cmnP.encodePath`/2020-11-20/projects/${params["ProjectName"]}/datasets/${params["DatasetType"]}`,
       responseCode: 202,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteModel(
@@ -361,7 +358,7 @@ export default class LookoutVision {
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & s.TagResourceRequest,
-  ): Promise<s.TagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       Tags: params["Tags"]?.map(x => fromTag(x)),
     };
@@ -370,15 +367,12 @@ export default class LookoutVision {
       action: "TagResource",
       requestUri: cmnP.encodePath`/2020-11-20/tags/${params["ResourceArn"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async untagResource(
     {abortSignal, ...params}: RequestConfig & s.UntagResourceRequest,
-  ): Promise<s.UntagResourceResponse> {
+  ): Promise<void> {
     const query = new URLSearchParams;
     for (const item of params["TagKeys"]) {
       query.append("tagKeys", item?.toString() ?? "");
@@ -389,10 +383,7 @@ export default class LookoutVision {
       method: "DELETE",
       requestUri: cmnP.encodePath`/2020-11-20/tags/${params["ResourceArn"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateDatasetEntries(

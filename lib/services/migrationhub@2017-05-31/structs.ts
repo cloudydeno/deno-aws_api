@@ -127,22 +127,6 @@ export interface PutResourceAttributesRequest {
 }
 
 // refs: 1 - tags: named, output
-export interface AssociateCreatedArtifactResult {
-}
-
-// refs: 1 - tags: named, output
-export interface AssociateDiscoveredResourceResult {
-}
-
-// refs: 1 - tags: named, output
-export interface CreateProgressUpdateStreamResult {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteProgressUpdateStreamResult {
-}
-
-// refs: 1 - tags: named, output
 export interface DescribeApplicationStateResult {
   ApplicationStatus?: ApplicationStatus | null;
   LastUpdatedTime?: Date | number | null;
@@ -151,18 +135,6 @@ export interface DescribeApplicationStateResult {
 // refs: 1 - tags: named, output
 export interface DescribeMigrationTaskResult {
   MigrationTask?: MigrationTask | null;
-}
-
-// refs: 1 - tags: named, output
-export interface DisassociateCreatedArtifactResult {
-}
-
-// refs: 1 - tags: named, output
-export interface DisassociateDiscoveredResourceResult {
-}
-
-// refs: 1 - tags: named, output
-export interface ImportMigrationTaskResult {
 }
 
 // refs: 1 - tags: named, output
@@ -193,18 +165,6 @@ export interface ListMigrationTasksResult {
 export interface ListProgressUpdateStreamsResult {
   ProgressUpdateStreamSummaryList?: ProgressUpdateStreamSummary[] | null;
   NextToken?: string | null;
-}
-
-// refs: 1 - tags: named, output
-export interface NotifyApplicationStateResult {
-}
-
-// refs: 1 - tags: named, output
-export interface NotifyMigrationTaskStateResult {
-}
-
-// refs: 1 - tags: named, output
-export interface PutResourceAttributesResult {
 }
 
 // refs: 2 - tags: input, named, interface, output

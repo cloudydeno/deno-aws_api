@@ -35,7 +35,7 @@ export default class GameLift {
 
   async acceptMatch(
     {abortSignal, ...params}: RequestConfig & s.AcceptMatchInput,
-  ): Promise<s.AcceptMatchOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       TicketId: params["TicketId"],
       PlayerIds: params["PlayerIds"],
@@ -45,10 +45,7 @@ export default class GameLift {
       abortSignal, body,
       action: "AcceptMatch",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async claimGameServer(
@@ -391,7 +388,7 @@ export default class GameLift {
 
   async createVpcPeeringConnection(
     {abortSignal, ...params}: RequestConfig & s.CreateVpcPeeringConnectionInput,
-  ): Promise<s.CreateVpcPeeringConnectionOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       FleetId: params["FleetId"],
       PeerVpcAwsAccountId: params["PeerVpcAwsAccountId"],
@@ -401,10 +398,7 @@ export default class GameLift {
       abortSignal, body,
       action: "CreateVpcPeeringConnection",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteAlias(
@@ -417,6 +411,7 @@ export default class GameLift {
       abortSignal, body,
       action: "DeleteAlias",
     });
+    await resp.text();
   }
 
   async deleteBuild(
@@ -429,6 +424,7 @@ export default class GameLift {
       abortSignal, body,
       action: "DeleteBuild",
     });
+    await resp.text();
   }
 
   async deleteFleet(
@@ -441,6 +437,7 @@ export default class GameLift {
       abortSignal, body,
       action: "DeleteFleet",
     });
+    await resp.text();
   }
 
   async deleteFleetLocations(
@@ -485,7 +482,7 @@ export default class GameLift {
 
   async deleteGameSessionQueue(
     {abortSignal, ...params}: RequestConfig & s.DeleteGameSessionQueueInput,
-  ): Promise<s.DeleteGameSessionQueueOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       Name: params["Name"],
     };
@@ -493,15 +490,12 @@ export default class GameLift {
       abortSignal, body,
       action: "DeleteGameSessionQueue",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteMatchmakingConfiguration(
     {abortSignal, ...params}: RequestConfig & s.DeleteMatchmakingConfigurationInput,
-  ): Promise<s.DeleteMatchmakingConfigurationOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       Name: params["Name"],
     };
@@ -509,15 +503,12 @@ export default class GameLift {
       abortSignal, body,
       action: "DeleteMatchmakingConfiguration",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteMatchmakingRuleSet(
     {abortSignal, ...params}: RequestConfig & s.DeleteMatchmakingRuleSetInput,
-  ): Promise<s.DeleteMatchmakingRuleSetOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       Name: params["Name"],
     };
@@ -525,10 +516,7 @@ export default class GameLift {
       abortSignal, body,
       action: "DeleteMatchmakingRuleSet",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteScalingPolicy(
@@ -542,6 +530,7 @@ export default class GameLift {
       abortSignal, body,
       action: "DeleteScalingPolicy",
     });
+    await resp.text();
   }
 
   async deleteScript(
@@ -554,11 +543,12 @@ export default class GameLift {
       abortSignal, body,
       action: "DeleteScript",
     });
+    await resp.text();
   }
 
   async deleteVpcPeeringAuthorization(
     {abortSignal, ...params}: RequestConfig & s.DeleteVpcPeeringAuthorizationInput,
-  ): Promise<s.DeleteVpcPeeringAuthorizationOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       GameLiftAwsAccountId: params["GameLiftAwsAccountId"],
       PeerVpcId: params["PeerVpcId"],
@@ -567,15 +557,12 @@ export default class GameLift {
       abortSignal, body,
       action: "DeleteVpcPeeringAuthorization",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteVpcPeeringConnection(
     {abortSignal, ...params}: RequestConfig & s.DeleteVpcPeeringConnectionInput,
-  ): Promise<s.DeleteVpcPeeringConnectionOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       FleetId: params["FleetId"],
       VpcPeeringConnectionId: params["VpcPeeringConnectionId"],
@@ -584,10 +571,7 @@ export default class GameLift {
       abortSignal, body,
       action: "DeleteVpcPeeringConnection",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deregisterGameServer(
@@ -601,6 +585,7 @@ export default class GameLift {
       abortSignal, body,
       action: "DeregisterGameServer",
     });
+    await resp.text();
   }
 
   async describeAlias(
@@ -1146,10 +1131,9 @@ export default class GameLift {
   }
 
   async describeVpcPeeringAuthorizations(
-    {abortSignal, ...params}: RequestConfig & s.DescribeVpcPeeringAuthorizationsInput = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.DescribeVpcPeeringAuthorizationsOutput> {
-    const body: jsonP.JSONObject = {
-    };
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeVpcPeeringAuthorizations",
@@ -1621,7 +1605,7 @@ export default class GameLift {
 
   async stopMatchmaking(
     {abortSignal, ...params}: RequestConfig & s.StopMatchmakingInput,
-  ): Promise<s.StopMatchmakingOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       TicketId: params["TicketId"],
     };
@@ -1629,10 +1613,7 @@ export default class GameLift {
       abortSignal, body,
       action: "StopMatchmaking",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async suspendGameServerGroup(
@@ -1656,7 +1637,7 @@ export default class GameLift {
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & s.TagResourceRequest,
-  ): Promise<s.TagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceARN: params["ResourceARN"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
@@ -1665,15 +1646,12 @@ export default class GameLift {
       abortSignal, body,
       action: "TagResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async untagResource(
     {abortSignal, ...params}: RequestConfig & s.UntagResourceRequest,
-  ): Promise<s.UntagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceARN: params["ResourceARN"],
       TagKeys: params["TagKeys"],
@@ -1682,10 +1660,7 @@ export default class GameLift {
       abortSignal, body,
       action: "UntagResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateAlias(

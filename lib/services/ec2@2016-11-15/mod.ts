@@ -328,6 +328,7 @@ export default class EC2 {
       abortSignal, body,
       action: "AssociateDhcpOptions",
     });
+    await resp.text();
   }
 
   async associateEnclaveCertificateIamRole(
@@ -496,6 +497,7 @@ export default class EC2 {
       abortSignal, body,
       action: "AttachInternetGateway",
     });
+    await resp.text();
   }
 
   async attachNetworkInterface(
@@ -594,6 +596,7 @@ export default class EC2 {
       abortSignal, body,
       action: "AuthorizeSecurityGroupEgress",
     });
+    await resp.text();
   }
 
   async authorizeSecurityGroupIngress(
@@ -615,6 +618,7 @@ export default class EC2 {
       abortSignal, body,
       action: "AuthorizeSecurityGroupIngress",
     });
+    await resp.text();
   }
 
   async bundleInstance(
@@ -681,6 +685,7 @@ export default class EC2 {
       abortSignal, body,
       action: "CancelConversionTask",
     });
+    await resp.text();
   }
 
   async cancelExportTask(
@@ -693,6 +698,7 @@ export default class EC2 {
       abortSignal, body,
       action: "CancelExportTask",
     });
+    await resp.text();
   }
 
   async cancelImportTask(
@@ -1378,6 +1384,7 @@ export default class EC2 {
       abortSignal, body,
       action: "CreateNetworkAclEntry",
     });
+    await resp.text();
   }
 
   async createNetworkInsightsPath(
@@ -1650,6 +1657,7 @@ export default class EC2 {
       abortSignal, body,
       action: "CreateTags",
     });
+    await resp.text();
   }
 
   async createTrafficMirrorFilter(
@@ -2101,6 +2109,7 @@ export default class EC2 {
       abortSignal, body,
       action: "CreateVpnConnectionRoute",
     });
+    await resp.text();
   }
 
   async createVpnGateway(
@@ -2187,6 +2196,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DeleteCustomerGateway",
     });
+    await resp.text();
   }
 
   async deleteDhcpOptions(
@@ -2200,6 +2210,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DeleteDhcpOptions",
     });
+    await resp.text();
   }
 
   async deleteEgressOnlyInternetGateway(
@@ -2283,6 +2294,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DeleteInternetGateway",
     });
+    await resp.text();
   }
 
   async deleteKeyPair(
@@ -2297,6 +2309,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DeleteKeyPair",
     });
+    await resp.text();
   }
 
   async deleteLaunchTemplate(
@@ -2417,6 +2430,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DeleteNetworkAcl",
     });
+    await resp.text();
   }
 
   async deleteNetworkAclEntry(
@@ -2432,6 +2446,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DeleteNetworkAclEntry",
     });
+    await resp.text();
   }
 
   async deleteNetworkInsightsAnalysis(
@@ -2479,6 +2494,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DeleteNetworkInterface",
     });
+    await resp.text();
   }
 
   async deleteNetworkInterfacePermission(
@@ -2510,6 +2526,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DeletePlacementGroup",
     });
+    await resp.text();
   }
 
   async deleteQueuedReservedInstances(
@@ -2544,6 +2561,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DeleteRoute",
     });
+    await resp.text();
   }
 
   async deleteRouteTable(
@@ -2557,6 +2575,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DeleteRouteTable",
     });
+    await resp.text();
   }
 
   async deleteSecurityGroup(
@@ -2571,6 +2590,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DeleteSecurityGroup",
     });
+    await resp.text();
   }
 
   async deleteSnapshot(
@@ -2584,6 +2604,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DeleteSnapshot",
     });
+    await resp.text();
   }
 
   async deleteSpotDatafeedSubscription(
@@ -2596,6 +2617,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DeleteSpotDatafeedSubscription",
     });
+    await resp.text();
   }
 
   async deleteSubnet(
@@ -2609,6 +2631,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DeleteSubnet",
     });
+    await resp.text();
   }
 
   async deleteTags(
@@ -2623,6 +2646,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DeleteTags",
     });
+    await resp.text();
   }
 
   async deleteTrafficMirrorFilter(
@@ -2859,6 +2883,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DeleteVolume",
     });
+    await resp.text();
   }
 
   async deleteVpc(
@@ -2872,6 +2897,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DeleteVpc",
     });
+    await resp.text();
   }
 
   async deleteVpcEndpointConnectionNotifications(
@@ -2953,6 +2979,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DeleteVpnConnection",
     });
+    await resp.text();
   }
 
   async deleteVpnConnectionRoute(
@@ -2966,6 +2993,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DeleteVpnConnectionRoute",
     });
+    await resp.text();
   }
 
   async deleteVpnGateway(
@@ -2979,6 +3007,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DeleteVpnGateway",
     });
+    await resp.text();
   }
 
   async deprovisionByoipCidr(
@@ -3009,6 +3038,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DeregisterImage",
     });
+    await resp.text();
   }
 
   async deregisterInstanceEventNotificationAttributes(
@@ -5587,6 +5617,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DetachInternetGateway",
     });
+    await resp.text();
   }
 
   async detachNetworkInterface(
@@ -5601,6 +5632,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DetachNetworkInterface",
     });
+    await resp.text();
   }
 
   async detachVolume(
@@ -5633,6 +5665,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DetachVpnGateway",
     });
+    await resp.text();
   }
 
   async disableEbsEncryptionByDefault(
@@ -5700,6 +5733,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DisableVgwRoutePropagation",
     });
+    await resp.text();
   }
 
   async disableVpcClassicLink(
@@ -5747,6 +5781,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DisassociateAddress",
     });
+    await resp.text();
   }
 
   async disassociateClientVpnTargetNetwork(
@@ -5813,6 +5848,7 @@ export default class EC2 {
       abortSignal, body,
       action: "DisassociateRouteTable",
     });
+    await resp.text();
   }
 
   async disassociateSubnetCidrBlock(
@@ -5952,6 +5988,7 @@ export default class EC2 {
       abortSignal, body,
       action: "EnableVgwRoutePropagation",
     });
+    await resp.text();
   }
 
   async enableVolumeIO(
@@ -5965,6 +6002,7 @@ export default class EC2 {
       abortSignal, body,
       action: "EnableVolumeIO",
     });
+    await resp.text();
   }
 
   async enableVpcClassicLink(
@@ -6852,6 +6890,7 @@ export default class EC2 {
       abortSignal, body,
       action: "ModifyIdFormat",
     });
+    await resp.text();
   }
 
   async modifyIdentityIdFormat(
@@ -6866,6 +6905,7 @@ export default class EC2 {
       abortSignal, body,
       action: "ModifyIdentityIdFormat",
     });
+    await resp.text();
   }
 
   async modifyImageAttribute(
@@ -6887,6 +6927,7 @@ export default class EC2 {
       abortSignal, body,
       action: "ModifyImageAttribute",
     });
+    await resp.text();
   }
 
   async modifyInstanceAttribute(
@@ -6914,6 +6955,7 @@ export default class EC2 {
       abortSignal, body,
       action: "ModifyInstanceAttribute",
     });
+    await resp.text();
   }
 
   async modifyInstanceCapacityReservationAttributes(
@@ -7071,6 +7113,7 @@ export default class EC2 {
       abortSignal, body,
       action: "ModifyNetworkInterfaceAttribute",
     });
+    await resp.text();
   }
 
   async modifyReservedInstances(
@@ -7107,6 +7150,7 @@ export default class EC2 {
       abortSignal, body,
       action: "ModifySnapshotAttribute",
     });
+    await resp.text();
   }
 
   async modifySpotFleetRequest(
@@ -7143,6 +7187,7 @@ export default class EC2 {
       abortSignal, body,
       action: "ModifySubnetAttribute",
     });
+    await resp.text();
   }
 
   async modifyTrafficMirrorFilterNetworkServices(
@@ -7308,6 +7353,7 @@ export default class EC2 {
       abortSignal, body,
       action: "ModifyVolumeAttribute",
     });
+    await resp.text();
   }
 
   async modifyVpcAttribute(
@@ -7322,6 +7368,7 @@ export default class EC2 {
       abortSignal, body,
       action: "ModifyVpcAttribute",
     });
+    await resp.text();
   }
 
   async modifyVpcEndpoint(
@@ -7658,6 +7705,7 @@ export default class EC2 {
       abortSignal, body,
       action: "RebootInstances",
     });
+    await resp.text();
   }
 
   async registerImage(
@@ -7845,6 +7893,7 @@ export default class EC2 {
       abortSignal, body,
       action: "ReleaseAddress",
     });
+    await resp.text();
   }
 
   async releaseHosts(
@@ -7918,6 +7967,7 @@ export default class EC2 {
       abortSignal, body,
       action: "ReplaceNetworkAclEntry",
     });
+    await resp.text();
   }
 
   async replaceRoute(
@@ -7945,6 +7995,7 @@ export default class EC2 {
       abortSignal, body,
       action: "ReplaceRoute",
     });
+    await resp.text();
   }
 
   async replaceRouteTableAssociation(
@@ -8002,6 +8053,7 @@ export default class EC2 {
       abortSignal, body,
       action: "ReportInstanceStatus",
     });
+    await resp.text();
   }
 
   async requestSpotFleet(
@@ -8113,6 +8165,7 @@ export default class EC2 {
       abortSignal, body,
       action: "ResetImageAttribute",
     });
+    await resp.text();
   }
 
   async resetInstanceAttribute(
@@ -8127,6 +8180,7 @@ export default class EC2 {
       abortSignal, body,
       action: "ResetInstanceAttribute",
     });
+    await resp.text();
   }
 
   async resetNetworkInterfaceAttribute(
@@ -8141,6 +8195,7 @@ export default class EC2 {
       abortSignal, body,
       action: "ResetNetworkInterfaceAttribute",
     });
+    await resp.text();
   }
 
   async resetSnapshotAttribute(
@@ -8155,6 +8210,7 @@ export default class EC2 {
       abortSignal, body,
       action: "ResetSnapshotAttribute",
     });
+    await resp.text();
   }
 
   async restoreAddressToClassic(
@@ -8408,6 +8464,7 @@ export default class EC2 {
       abortSignal, body,
       action: "SendDiagnosticInterrupt",
     });
+    await resp.text();
   }
 
   async startInstances(
@@ -8551,6 +8608,7 @@ export default class EC2 {
       abortSignal, body,
       action: "UnassignPrivateIpAddresses",
     });
+    await resp.text();
   }
 
   async unmonitorInstances(

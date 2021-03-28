@@ -38,6 +38,7 @@ export default class Macie {
       abortSignal, body,
       action: "AssociateMemberAccount",
     });
+    await resp.text();
   }
 
   async associateS3Resources(
@@ -69,6 +70,7 @@ export default class Macie {
       abortSignal, body,
       action: "DisassociateMemberAccount",
     });
+    await resp.text();
   }
 
   async disassociateS3Resources(

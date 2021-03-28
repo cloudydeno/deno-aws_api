@@ -45,6 +45,7 @@ export default class IAM {
       abortSignal, body,
       action: "AddClientIDToOpenIDConnectProvider",
     });
+    await resp.text();
   }
 
   async addRoleToInstanceProfile(
@@ -58,6 +59,7 @@ export default class IAM {
       abortSignal, body,
       action: "AddRoleToInstanceProfile",
     });
+    await resp.text();
   }
 
   async addUserToGroup(
@@ -71,6 +73,7 @@ export default class IAM {
       abortSignal, body,
       action: "AddUserToGroup",
     });
+    await resp.text();
   }
 
   async attachGroupPolicy(
@@ -84,6 +87,7 @@ export default class IAM {
       abortSignal, body,
       action: "AttachGroupPolicy",
     });
+    await resp.text();
   }
 
   async attachRolePolicy(
@@ -97,6 +101,7 @@ export default class IAM {
       abortSignal, body,
       action: "AttachRolePolicy",
     });
+    await resp.text();
   }
 
   async attachUserPolicy(
@@ -110,6 +115,7 @@ export default class IAM {
       abortSignal, body,
       action: "AttachUserPolicy",
     });
+    await resp.text();
   }
 
   async changePassword(
@@ -123,6 +129,7 @@ export default class IAM {
       abortSignal, body,
       action: "ChangePassword",
     });
+    await resp.text();
   }
 
   async createAccessKey(
@@ -151,6 +158,7 @@ export default class IAM {
       abortSignal, body,
       action: "CreateAccountAlias",
     });
+    await resp.text();
   }
 
   async createGroup(
@@ -392,6 +400,7 @@ export default class IAM {
       abortSignal, body,
       action: "DeactivateMFADevice",
     });
+    await resp.text();
   }
 
   async deleteAccessKey(
@@ -405,6 +414,7 @@ export default class IAM {
       abortSignal, body,
       action: "DeleteAccessKey",
     });
+    await resp.text();
   }
 
   async deleteAccountAlias(
@@ -417,15 +427,17 @@ export default class IAM {
       abortSignal, body,
       action: "DeleteAccountAlias",
     });
+    await resp.text();
   }
 
   async deleteAccountPasswordPolicy(
-    {abortSignal, ...params}: RequestConfig = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<void> {
     const resp = await this.#client.performRequest({
       abortSignal,
       action: "DeleteAccountPasswordPolicy",
     });
+    await resp.text();
   }
 
   async deleteGroup(
@@ -438,6 +450,7 @@ export default class IAM {
       abortSignal, body,
       action: "DeleteGroup",
     });
+    await resp.text();
   }
 
   async deleteGroupPolicy(
@@ -451,6 +464,7 @@ export default class IAM {
       abortSignal, body,
       action: "DeleteGroupPolicy",
     });
+    await resp.text();
   }
 
   async deleteInstanceProfile(
@@ -463,6 +477,7 @@ export default class IAM {
       abortSignal, body,
       action: "DeleteInstanceProfile",
     });
+    await resp.text();
   }
 
   async deleteLoginProfile(
@@ -475,6 +490,7 @@ export default class IAM {
       abortSignal, body,
       action: "DeleteLoginProfile",
     });
+    await resp.text();
   }
 
   async deleteOpenIDConnectProvider(
@@ -487,6 +503,7 @@ export default class IAM {
       abortSignal, body,
       action: "DeleteOpenIDConnectProvider",
     });
+    await resp.text();
   }
 
   async deletePolicy(
@@ -499,6 +516,7 @@ export default class IAM {
       abortSignal, body,
       action: "DeletePolicy",
     });
+    await resp.text();
   }
 
   async deletePolicyVersion(
@@ -512,6 +530,7 @@ export default class IAM {
       abortSignal, body,
       action: "DeletePolicyVersion",
     });
+    await resp.text();
   }
 
   async deleteRole(
@@ -524,6 +543,7 @@ export default class IAM {
       abortSignal, body,
       action: "DeleteRole",
     });
+    await resp.text();
   }
 
   async deleteRolePermissionsBoundary(
@@ -536,6 +556,7 @@ export default class IAM {
       abortSignal, body,
       action: "DeleteRolePermissionsBoundary",
     });
+    await resp.text();
   }
 
   async deleteRolePolicy(
@@ -549,6 +570,7 @@ export default class IAM {
       abortSignal, body,
       action: "DeleteRolePolicy",
     });
+    await resp.text();
   }
 
   async deleteSAMLProvider(
@@ -561,6 +583,7 @@ export default class IAM {
       abortSignal, body,
       action: "DeleteSAMLProvider",
     });
+    await resp.text();
   }
 
   async deleteSSHPublicKey(
@@ -574,6 +597,7 @@ export default class IAM {
       abortSignal, body,
       action: "DeleteSSHPublicKey",
     });
+    await resp.text();
   }
 
   async deleteServerCertificate(
@@ -586,6 +610,7 @@ export default class IAM {
       abortSignal, body,
       action: "DeleteServerCertificate",
     });
+    await resp.text();
   }
 
   async deleteServiceLinkedRole(
@@ -615,6 +640,7 @@ export default class IAM {
       abortSignal, body,
       action: "DeleteServiceSpecificCredential",
     });
+    await resp.text();
   }
 
   async deleteSigningCertificate(
@@ -628,6 +654,7 @@ export default class IAM {
       abortSignal, body,
       action: "DeleteSigningCertificate",
     });
+    await resp.text();
   }
 
   async deleteUser(
@@ -640,6 +667,7 @@ export default class IAM {
       abortSignal, body,
       action: "DeleteUser",
     });
+    await resp.text();
   }
 
   async deleteUserPermissionsBoundary(
@@ -652,6 +680,7 @@ export default class IAM {
       abortSignal, body,
       action: "DeleteUserPermissionsBoundary",
     });
+    await resp.text();
   }
 
   async deleteUserPolicy(
@@ -665,6 +694,7 @@ export default class IAM {
       abortSignal, body,
       action: "DeleteUserPolicy",
     });
+    await resp.text();
   }
 
   async deleteVirtualMFADevice(
@@ -677,6 +707,7 @@ export default class IAM {
       abortSignal, body,
       action: "DeleteVirtualMFADevice",
     });
+    await resp.text();
   }
 
   async detachGroupPolicy(
@@ -690,6 +721,7 @@ export default class IAM {
       abortSignal, body,
       action: "DetachGroupPolicy",
     });
+    await resp.text();
   }
 
   async detachRolePolicy(
@@ -703,6 +735,7 @@ export default class IAM {
       abortSignal, body,
       action: "DetachRolePolicy",
     });
+    await resp.text();
   }
 
   async detachUserPolicy(
@@ -716,6 +749,7 @@ export default class IAM {
       abortSignal, body,
       action: "DetachUserPolicy",
     });
+    await resp.text();
   }
 
   async enableMFADevice(
@@ -731,10 +765,11 @@ export default class IAM {
       abortSignal, body,
       action: "EnableMFADevice",
     });
+    await resp.text();
   }
 
   async generateCredentialReport(
-    {abortSignal, ...params}: RequestConfig = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.GenerateCredentialReportResponse> {
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -828,7 +863,7 @@ export default class IAM {
   }
 
   async getAccountPasswordPolicy(
-    {abortSignal, ...params}: RequestConfig = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.GetAccountPasswordPolicyResponse> {
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -841,7 +876,7 @@ export default class IAM {
   }
 
   async getAccountSummary(
-    {abortSignal, ...params}: RequestConfig = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.GetAccountSummaryResponse> {
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -887,7 +922,7 @@ export default class IAM {
   }
 
   async getCredentialReport(
-    {abortSignal, ...params}: RequestConfig = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.GetCredentialReportResponse> {
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -1587,11 +1622,9 @@ export default class IAM {
   }
 
   async listOpenIDConnectProviders(
-    {abortSignal, ...params}: RequestConfig & s.ListOpenIDConnectProvidersRequest = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.ListOpenIDConnectProvidersResponse> {
     const body = new URLSearchParams;
-    const prefix = '';
-
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListOpenIDConnectProviders",
@@ -1782,11 +1815,9 @@ export default class IAM {
   }
 
   async listSAMLProviders(
-    {abortSignal, ...params}: RequestConfig & s.ListSAMLProvidersRequest = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.ListSAMLProvidersResponse> {
     const body = new URLSearchParams;
-    const prefix = '';
-
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListSAMLProviders",
@@ -2002,6 +2033,7 @@ export default class IAM {
       abortSignal, body,
       action: "PutGroupPolicy",
     });
+    await resp.text();
   }
 
   async putRolePermissionsBoundary(
@@ -2015,6 +2047,7 @@ export default class IAM {
       abortSignal, body,
       action: "PutRolePermissionsBoundary",
     });
+    await resp.text();
   }
 
   async putRolePolicy(
@@ -2029,6 +2062,7 @@ export default class IAM {
       abortSignal, body,
       action: "PutRolePolicy",
     });
+    await resp.text();
   }
 
   async putUserPermissionsBoundary(
@@ -2042,6 +2076,7 @@ export default class IAM {
       abortSignal, body,
       action: "PutUserPermissionsBoundary",
     });
+    await resp.text();
   }
 
   async putUserPolicy(
@@ -2056,6 +2091,7 @@ export default class IAM {
       abortSignal, body,
       action: "PutUserPolicy",
     });
+    await resp.text();
   }
 
   async removeClientIDFromOpenIDConnectProvider(
@@ -2069,6 +2105,7 @@ export default class IAM {
       abortSignal, body,
       action: "RemoveClientIDFromOpenIDConnectProvider",
     });
+    await resp.text();
   }
 
   async removeRoleFromInstanceProfile(
@@ -2082,6 +2119,7 @@ export default class IAM {
       abortSignal, body,
       action: "RemoveRoleFromInstanceProfile",
     });
+    await resp.text();
   }
 
   async removeUserFromGroup(
@@ -2095,6 +2133,7 @@ export default class IAM {
       abortSignal, body,
       action: "RemoveUserFromGroup",
     });
+    await resp.text();
   }
 
   async resetServiceSpecificCredential(
@@ -2127,6 +2166,7 @@ export default class IAM {
       abortSignal, body,
       action: "ResyncMFADevice",
     });
+    await resp.text();
   }
 
   async setDefaultPolicyVersion(
@@ -2140,6 +2180,7 @@ export default class IAM {
       abortSignal, body,
       action: "SetDefaultPolicyVersion",
     });
+    await resp.text();
   }
 
   async setSecurityTokenServicePreferences(
@@ -2152,6 +2193,7 @@ export default class IAM {
       abortSignal, body,
       action: "SetSecurityTokenServicePreferences",
     });
+    await resp.text();
   }
 
   async simulateCustomPolicy(
@@ -2226,6 +2268,7 @@ export default class IAM {
       abortSignal, body,
       action: "TagInstanceProfile",
     });
+    await resp.text();
   }
 
   async tagMFADevice(
@@ -2239,6 +2282,7 @@ export default class IAM {
       abortSignal, body,
       action: "TagMFADevice",
     });
+    await resp.text();
   }
 
   async tagOpenIDConnectProvider(
@@ -2252,6 +2296,7 @@ export default class IAM {
       abortSignal, body,
       action: "TagOpenIDConnectProvider",
     });
+    await resp.text();
   }
 
   async tagPolicy(
@@ -2265,6 +2310,7 @@ export default class IAM {
       abortSignal, body,
       action: "TagPolicy",
     });
+    await resp.text();
   }
 
   async tagRole(
@@ -2278,6 +2324,7 @@ export default class IAM {
       abortSignal, body,
       action: "TagRole",
     });
+    await resp.text();
   }
 
   async tagSAMLProvider(
@@ -2291,6 +2338,7 @@ export default class IAM {
       abortSignal, body,
       action: "TagSAMLProvider",
     });
+    await resp.text();
   }
 
   async tagServerCertificate(
@@ -2304,6 +2352,7 @@ export default class IAM {
       abortSignal, body,
       action: "TagServerCertificate",
     });
+    await resp.text();
   }
 
   async tagUser(
@@ -2317,6 +2366,7 @@ export default class IAM {
       abortSignal, body,
       action: "TagUser",
     });
+    await resp.text();
   }
 
   async untagInstanceProfile(
@@ -2330,6 +2380,7 @@ export default class IAM {
       abortSignal, body,
       action: "UntagInstanceProfile",
     });
+    await resp.text();
   }
 
   async untagMFADevice(
@@ -2343,6 +2394,7 @@ export default class IAM {
       abortSignal, body,
       action: "UntagMFADevice",
     });
+    await resp.text();
   }
 
   async untagOpenIDConnectProvider(
@@ -2356,6 +2408,7 @@ export default class IAM {
       abortSignal, body,
       action: "UntagOpenIDConnectProvider",
     });
+    await resp.text();
   }
 
   async untagPolicy(
@@ -2369,6 +2422,7 @@ export default class IAM {
       abortSignal, body,
       action: "UntagPolicy",
     });
+    await resp.text();
   }
 
   async untagRole(
@@ -2382,6 +2436,7 @@ export default class IAM {
       abortSignal, body,
       action: "UntagRole",
     });
+    await resp.text();
   }
 
   async untagSAMLProvider(
@@ -2395,6 +2450,7 @@ export default class IAM {
       abortSignal, body,
       action: "UntagSAMLProvider",
     });
+    await resp.text();
   }
 
   async untagServerCertificate(
@@ -2408,6 +2464,7 @@ export default class IAM {
       abortSignal, body,
       action: "UntagServerCertificate",
     });
+    await resp.text();
   }
 
   async untagUser(
@@ -2421,6 +2478,7 @@ export default class IAM {
       abortSignal, body,
       action: "UntagUser",
     });
+    await resp.text();
   }
 
   async updateAccessKey(
@@ -2435,6 +2493,7 @@ export default class IAM {
       abortSignal, body,
       action: "UpdateAccessKey",
     });
+    await resp.text();
   }
 
   async updateAccountPasswordPolicy(
@@ -2455,6 +2514,7 @@ export default class IAM {
       abortSignal, body,
       action: "UpdateAccountPasswordPolicy",
     });
+    await resp.text();
   }
 
   async updateAssumeRolePolicy(
@@ -2468,6 +2528,7 @@ export default class IAM {
       abortSignal, body,
       action: "UpdateAssumeRolePolicy",
     });
+    await resp.text();
   }
 
   async updateGroup(
@@ -2482,6 +2543,7 @@ export default class IAM {
       abortSignal, body,
       action: "UpdateGroup",
     });
+    await resp.text();
   }
 
   async updateLoginProfile(
@@ -2496,6 +2558,7 @@ export default class IAM {
       abortSignal, body,
       action: "UpdateLoginProfile",
     });
+    await resp.text();
   }
 
   async updateOpenIDConnectProviderThumbprint(
@@ -2509,11 +2572,12 @@ export default class IAM {
       abortSignal, body,
       action: "UpdateOpenIDConnectProviderThumbprint",
     });
+    await resp.text();
   }
 
   async updateRole(
     {abortSignal, ...params}: RequestConfig & s.UpdateRoleRequest,
-  ): Promise<s.UpdateRoleResponse> {
+  ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"RoleName", (params["RoleName"] ?? '').toString());
@@ -2523,8 +2587,7 @@ export default class IAM {
       abortSignal, body,
       action: "UpdateRole",
     });
-    const xml = xmlP.readXmlResult(await resp.text(), "UpdateRoleResult");
-    return {};
+    await resp.text();
   }
 
   async updateRoleDescription(
@@ -2573,6 +2636,7 @@ export default class IAM {
       abortSignal, body,
       action: "UpdateSSHPublicKey",
     });
+    await resp.text();
   }
 
   async updateServerCertificate(
@@ -2587,6 +2651,7 @@ export default class IAM {
       abortSignal, body,
       action: "UpdateServerCertificate",
     });
+    await resp.text();
   }
 
   async updateServiceSpecificCredential(
@@ -2601,6 +2666,7 @@ export default class IAM {
       abortSignal, body,
       action: "UpdateServiceSpecificCredential",
     });
+    await resp.text();
   }
 
   async updateSigningCertificate(
@@ -2615,6 +2681,7 @@ export default class IAM {
       abortSignal, body,
       action: "UpdateSigningCertificate",
     });
+    await resp.text();
   }
 
   async updateUser(
@@ -2629,6 +2696,7 @@ export default class IAM {
       abortSignal, body,
       action: "UpdateUser",
     });
+    await resp.text();
   }
 
   async uploadSSHPublicKey(

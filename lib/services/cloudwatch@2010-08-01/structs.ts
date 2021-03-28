@@ -250,14 +250,6 @@ export interface UntagResourceInput {
 }
 
 // refs: 1 - tags: named, output
-export interface DeleteAnomalyDetectorOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteDashboardsOutput {
-}
-
-// refs: 1 - tags: named, output
 export interface DeleteInsightRulesOutput {
   Failures: PartialFailure[];
 }
@@ -355,24 +347,8 @@ export interface ListTagsForResourceOutput {
 }
 
 // refs: 1 - tags: named, output
-export interface PutAnomalyDetectorOutput {
-}
-
-// refs: 1 - tags: named, output
 export interface PutDashboardOutput {
   DashboardValidationMessages: DashboardValidationMessage[];
-}
-
-// refs: 1 - tags: named, output
-export interface PutInsightRuleOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface TagResourceOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface UntagResourceOutput {
 }
 
 // refs: 15 - tags: input, named, interface, output

@@ -40,6 +40,7 @@ export default class CodeDeploy {
       abortSignal, body,
       action: "AddTagsToOnPremisesInstances",
     });
+    await resp.text();
   }
 
   async batchGetApplicationRevisions(
@@ -187,6 +188,7 @@ export default class CodeDeploy {
       abortSignal, body,
       action: "ContinueDeployment",
     });
+    await resp.text();
   }
 
   async createApplication(
@@ -302,6 +304,7 @@ export default class CodeDeploy {
       abortSignal, body,
       action: "DeleteApplication",
     });
+    await resp.text();
   }
 
   async deleteDeploymentConfig(
@@ -314,6 +317,7 @@ export default class CodeDeploy {
       abortSignal, body,
       action: "DeleteDeploymentConfig",
     });
+    await resp.text();
   }
 
   async deleteDeploymentGroup(
@@ -355,7 +359,7 @@ export default class CodeDeploy {
 
   async deleteResourcesByExternalId(
     {abortSignal, ...params}: RequestConfig & s.DeleteResourcesByExternalIdInput = {},
-  ): Promise<s.DeleteResourcesByExternalIdOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       externalId: params["externalId"],
     };
@@ -363,10 +367,7 @@ export default class CodeDeploy {
       abortSignal, body,
       action: "DeleteResourcesByExternalId",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deregisterOnPremisesInstance(
@@ -379,6 +380,7 @@ export default class CodeDeploy {
       abortSignal, body,
       action: "DeregisterOnPremisesInstance",
     });
+    await resp.text();
   }
 
   async getApplication(
@@ -774,6 +776,7 @@ export default class CodeDeploy {
       abortSignal, body,
       action: "RegisterApplicationRevision",
     });
+    await resp.text();
   }
 
   async registerOnPremisesInstance(
@@ -788,6 +791,7 @@ export default class CodeDeploy {
       abortSignal, body,
       action: "RegisterOnPremisesInstance",
     });
+    await resp.text();
   }
 
   async removeTagsFromOnPremisesInstances(
@@ -801,6 +805,7 @@ export default class CodeDeploy {
       abortSignal, body,
       action: "RemoveTagsFromOnPremisesInstances",
     });
+    await resp.text();
   }
 
   async skipWaitTimeForInstanceTermination(
@@ -813,6 +818,7 @@ export default class CodeDeploy {
       abortSignal, body,
       action: "SkipWaitTimeForInstanceTermination",
     });
+    await resp.text();
   }
 
   async stopDeployment(
@@ -837,7 +843,7 @@ export default class CodeDeploy {
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & s.TagResourceInput,
-  ): Promise<s.TagResourceOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
@@ -846,15 +852,12 @@ export default class CodeDeploy {
       abortSignal, body,
       action: "TagResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async untagResource(
     {abortSignal, ...params}: RequestConfig & s.UntagResourceInput,
-  ): Promise<s.UntagResourceOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
       TagKeys: params["TagKeys"],
@@ -863,10 +866,7 @@ export default class CodeDeploy {
       abortSignal, body,
       action: "UntagResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateApplication(
@@ -880,6 +880,7 @@ export default class CodeDeploy {
       abortSignal, body,
       action: "UpdateApplication",
     });
+    await resp.text();
   }
 
   async updateDeploymentGroup(

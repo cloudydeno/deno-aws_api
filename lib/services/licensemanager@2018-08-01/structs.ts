@@ -164,10 +164,6 @@ export interface GetLicenseUsageRequest {
 }
 
 // refs: 1 - tags: named, input
-export interface GetServiceSettingsRequest {
-}
-
-// refs: 1 - tags: named, input
 export interface ListAssociationsForLicenseConfigurationRequest {
   LicenseConfigurationArn: string;
   MaxResults?: number | null;
@@ -316,10 +312,6 @@ export interface AcceptGrantResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface CheckInLicenseResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface CheckoutBorrowLicenseResponse {
   LicenseArn?: string | null;
   LicenseConsumptionToken?: string | null;
@@ -393,14 +385,6 @@ export interface DeleteGrantResponse {
 export interface DeleteLicenseResponse {
   Status?: LicenseDeletionStatus | null;
   DeletionDate?: string | null;
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteLicenseConfigurationResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteTokenResponse {
 }
 
 // refs: 1 - tags: named, output
@@ -541,26 +525,6 @@ export interface RejectGrantResponse {
   GrantArn?: string | null;
   Status?: GrantStatus | null;
   Version?: string | null;
-}
-
-// refs: 1 - tags: named, output
-export interface TagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UntagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateLicenseConfigurationResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateLicenseSpecificationsForResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateServiceSettingsResponse {
 }
 
 // refs: 4 - tags: input, named, interface, output

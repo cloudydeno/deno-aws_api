@@ -294,6 +294,7 @@ export default class CognitoSync {
       requestUri: cmnP.encodePath`/identitypools/${params["IdentityPoolId"]}/events`,
       responseCode: 200,
     });
+    await resp.text();
   }
 
   async setIdentityPoolConfiguration(
@@ -321,7 +322,7 @@ export default class CognitoSync {
 
   async subscribeToDataset(
     {abortSignal, ...params}: RequestConfig & s.SubscribeToDatasetRequest,
-  ): Promise<s.SubscribeToDatasetResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -329,15 +330,12 @@ export default class CognitoSync {
       requestUri: cmnP.encodePath`/identitypools/${params["IdentityPoolId"]}/identities/${params["IdentityId"]}/datasets/${params["DatasetName"]}/subscriptions/${params["DeviceId"]}`,
       responseCode: 200,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async unsubscribeFromDataset(
     {abortSignal, ...params}: RequestConfig & s.UnsubscribeFromDatasetRequest,
-  ): Promise<s.UnsubscribeFromDatasetResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -346,10 +344,7 @@ export default class CognitoSync {
       requestUri: cmnP.encodePath`/identitypools/${params["IdentityPoolId"]}/identities/${params["IdentityId"]}/datasets/${params["DatasetName"]}/subscriptions/${params["DeviceId"]}`,
       responseCode: 200,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateRecords(

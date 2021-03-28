@@ -30,7 +30,7 @@ export default class Location {
 
   async associateTrackerConsumer(
     {abortSignal, ...params}: RequestConfig & s.AssociateTrackerConsumerRequest,
-  ): Promise<s.AssociateTrackerConsumerResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ConsumerArn: params["ConsumerArn"],
     };
@@ -41,10 +41,7 @@ export default class Location {
       responseCode: 200,
       hostPrefix: `tracking.`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async batchDeleteGeofence(
@@ -259,7 +256,7 @@ export default class Location {
 
   async deleteGeofenceCollection(
     {abortSignal, ...params}: RequestConfig & s.DeleteGeofenceCollectionRequest,
-  ): Promise<s.DeleteGeofenceCollectionResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -269,15 +266,12 @@ export default class Location {
       responseCode: 200,
       hostPrefix: `geofencing.`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteMap(
     {abortSignal, ...params}: RequestConfig & s.DeleteMapRequest,
-  ): Promise<s.DeleteMapResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -287,15 +281,12 @@ export default class Location {
       responseCode: 200,
       hostPrefix: `maps.`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deletePlaceIndex(
     {abortSignal, ...params}: RequestConfig & s.DeletePlaceIndexRequest,
-  ): Promise<s.DeletePlaceIndexResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -305,15 +296,12 @@ export default class Location {
       responseCode: 200,
       hostPrefix: `places.`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteTracker(
     {abortSignal, ...params}: RequestConfig & s.DeleteTrackerRequest,
-  ): Promise<s.DeleteTrackerResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -323,10 +311,7 @@ export default class Location {
       responseCode: 200,
       hostPrefix: `tracking.`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async describeGeofenceCollection(
@@ -431,7 +416,7 @@ export default class Location {
 
   async disassociateTrackerConsumer(
     {abortSignal, ...params}: RequestConfig & s.DisassociateTrackerConsumerRequest,
-  ): Promise<s.DisassociateTrackerConsumerResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -441,10 +426,7 @@ export default class Location {
       responseCode: 200,
       hostPrefix: `tracking.`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async getDevicePosition(
@@ -532,10 +514,10 @@ export default class Location {
       responseCode: 200,
       hostPrefix: `maps.`,
     });
-  return {
-    ContentType: resp.headers.get("Content-Type"),
-    Blob: await resp.text(), // TODO: maybe allow proper body streaming,
-  };
+    return {
+      ContentType: resp.headers.get("Content-Type"),
+      Blob: await resp.text(), // TODO: maybe allow proper body streaming,
+    };
   }
 
   async getMapSprites(
@@ -550,10 +532,10 @@ export default class Location {
       responseCode: 200,
       hostPrefix: `maps.`,
     });
-  return {
-    ContentType: resp.headers.get("Content-Type"),
-    Blob: await resp.text(), // TODO: maybe allow proper body streaming,
-  };
+    return {
+      ContentType: resp.headers.get("Content-Type"),
+      Blob: await resp.text(), // TODO: maybe allow proper body streaming,
+    };
   }
 
   async getMapStyleDescriptor(
@@ -568,10 +550,10 @@ export default class Location {
       responseCode: 200,
       hostPrefix: `maps.`,
     });
-  return {
-    ContentType: resp.headers.get("Content-Type"),
-    Blob: await resp.text(), // TODO: maybe allow proper body streaming,
-  };
+    return {
+      ContentType: resp.headers.get("Content-Type"),
+      Blob: await resp.text(), // TODO: maybe allow proper body streaming,
+    };
   }
 
   async getMapTile(
@@ -586,10 +568,10 @@ export default class Location {
       responseCode: 200,
       hostPrefix: `maps.`,
     });
-  return {
-    ContentType: resp.headers.get("Content-Type"),
-    Blob: await resp.text(), // TODO: maybe allow proper body streaming,
-  };
+    return {
+      ContentType: resp.headers.get("Content-Type"),
+      Blob: await resp.text(), // TODO: maybe allow proper body streaming,
+    };
   }
 
   async listGeofenceCollections(

@@ -37,14 +37,14 @@ export default class WorkMailMessageFlow {
       method: "GET",
       requestUri: cmnP.encodePath`/messages/${params["messageId"]}`,
     });
-  return {
-    messageContent: await resp.text(), // TODO: maybe allow proper body streaming,
-  };
+    return {
+      messageContent: await resp.text(), // TODO: maybe allow proper body streaming,
+    };
   }
 
   async putRawMessageContent(
     {abortSignal, ...params}: RequestConfig & s.PutRawMessageContentRequest,
-  ): Promise<s.PutRawMessageContentResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       content: fromRawMessageContent(params["content"]),
     };
@@ -53,10 +53,7 @@ export default class WorkMailMessageFlow {
       action: "PutRawMessageContent",
       requestUri: cmnP.encodePath`/messages/${params["messageId"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
 }

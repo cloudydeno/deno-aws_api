@@ -31,7 +31,7 @@ export default class IoTSecureTunneling {
 
   async closeTunnel(
     {abortSignal, ...params}: RequestConfig & s.CloseTunnelRequest,
-  ): Promise<s.CloseTunnelResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       tunnelId: params["tunnelId"],
       delete: params["delete"],
@@ -40,10 +40,7 @@ export default class IoTSecureTunneling {
       abortSignal, body,
       action: "CloseTunnel",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async describeTunnel(
@@ -129,7 +126,7 @@ export default class IoTSecureTunneling {
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & s.TagResourceRequest,
-  ): Promise<s.TagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       resourceArn: params["resourceArn"],
       tags: params["tags"]?.map(x => fromTag(x)),
@@ -138,15 +135,12 @@ export default class IoTSecureTunneling {
       abortSignal, body,
       action: "TagResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async untagResource(
     {abortSignal, ...params}: RequestConfig & s.UntagResourceRequest,
-  ): Promise<s.UntagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       resourceArn: params["resourceArn"],
       tagKeys: params["tagKeys"],
@@ -155,10 +149,7 @@ export default class IoTSecureTunneling {
       abortSignal, body,
       action: "UntagResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
 }

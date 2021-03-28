@@ -39,10 +39,10 @@ export default class KinesisVideoMedia {
       action: "GetMedia",
       requestUri: "/getMedia",
     });
-  return {
-    ContentType: resp.headers.get("Content-Type"),
-    Payload: await resp.text(), // TODO: maybe allow proper body streaming,
-  };
+    return {
+      ContentType: resp.headers.get("Content-Type"),
+      Payload: await resp.text(), // TODO: maybe allow proper body streaming,
+    };
   }
 
 }

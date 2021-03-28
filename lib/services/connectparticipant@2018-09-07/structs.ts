@@ -64,17 +64,9 @@ export interface StartAttachmentUploadRequest {
 }
 
 // refs: 1 - tags: named, output
-export interface CompleteAttachmentUploadResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface CreateParticipantConnectionResponse {
   Websocket?: Websocket | null;
   ConnectionCredentials?: ConnectionCredentials | null;
-}
-
-// refs: 1 - tags: named, output
-export interface DisconnectParticipantResponse {
 }
 
 // refs: 1 - tags: named, output

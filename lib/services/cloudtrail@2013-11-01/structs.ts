@@ -128,10 +128,6 @@ export interface UpdateTrailRequest {
 }
 
 // refs: 1 - tags: named, output
-export interface AddTagsResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface CreateTrailResponse {
   Name?: string | null;
   S3BucketName?: string | null;
@@ -146,10 +142,6 @@ export interface CreateTrailResponse {
   CloudWatchLogsRoleArn?: string | null;
   KmsKeyId?: string | null;
   IsOrganizationTrail?: boolean | null;
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteTrailResponse {
 }
 
 // refs: 1 - tags: named, output
@@ -231,18 +223,6 @@ export interface PutEventSelectorsResponse {
 export interface PutInsightSelectorsResponse {
   TrailARN?: string | null;
   InsightSelectors?: InsightSelector[] | null;
-}
-
-// refs: 1 - tags: named, output
-export interface RemoveTagsResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface StartLoggingResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface StopLoggingResponse {
 }
 
 // refs: 1 - tags: named, output

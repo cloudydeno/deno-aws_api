@@ -387,26 +387,6 @@ export interface BatchDescribeSimulationJobResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface CancelDeploymentJobResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface CancelSimulationJobResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface CancelSimulationJobBatchResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface CancelWorldExportJobResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface CancelWorldGenerationJobResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface CreateDeploymentJobResponse {
   arn?: string | null;
   fleet?: string | null;
@@ -541,26 +521,6 @@ export interface CreateWorldTemplateResponse {
   createdAt?: Date | number | null;
   name?: string | null;
   tags?: { [key: string]: string | null | undefined } | null;
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteFleetResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteRobotResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteRobotApplicationResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteSimulationApplicationResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteWorldTemplateResponse {
 }
 
 // refs: 1 - tags: named, output
@@ -807,10 +767,6 @@ export interface RegisterRobotResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface RestartSimulationJobResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface StartSimulationJobBatchResponse {
   arn?: string | null;
   status?: SimulationJobBatchStatus | null;
@@ -835,14 +791,6 @@ export interface SyncDeploymentJobResponse {
   failureReason?: string | null;
   failureCode?: DeploymentJobErrorCode | null;
   createdAt?: Date | number | null;
-}
-
-// refs: 1 - tags: named, output
-export interface TagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UntagResourceResponse {
 }
 
 // refs: 1 - tags: named, output

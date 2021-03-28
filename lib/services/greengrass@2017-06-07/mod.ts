@@ -592,7 +592,7 @@ export default class Greengrass {
 
   async deleteConnectorDefinition(
     {abortSignal, ...params}: RequestConfig & s.DeleteConnectorDefinitionRequest,
-  ): Promise<s.DeleteConnectorDefinitionResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -601,15 +601,12 @@ export default class Greengrass {
       requestUri: cmnP.encodePath`/greengrass/definition/connectors/${params["ConnectorDefinitionId"]}`,
       responseCode: 200,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteCoreDefinition(
     {abortSignal, ...params}: RequestConfig & s.DeleteCoreDefinitionRequest,
-  ): Promise<s.DeleteCoreDefinitionResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -618,15 +615,12 @@ export default class Greengrass {
       requestUri: cmnP.encodePath`/greengrass/definition/cores/${params["CoreDefinitionId"]}`,
       responseCode: 200,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteDeviceDefinition(
     {abortSignal, ...params}: RequestConfig & s.DeleteDeviceDefinitionRequest,
-  ): Promise<s.DeleteDeviceDefinitionResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -635,15 +629,12 @@ export default class Greengrass {
       requestUri: cmnP.encodePath`/greengrass/definition/devices/${params["DeviceDefinitionId"]}`,
       responseCode: 200,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteFunctionDefinition(
     {abortSignal, ...params}: RequestConfig & s.DeleteFunctionDefinitionRequest,
-  ): Promise<s.DeleteFunctionDefinitionResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -652,15 +643,12 @@ export default class Greengrass {
       requestUri: cmnP.encodePath`/greengrass/definition/functions/${params["FunctionDefinitionId"]}`,
       responseCode: 200,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteGroup(
     {abortSignal, ...params}: RequestConfig & s.DeleteGroupRequest,
-  ): Promise<s.DeleteGroupResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -669,15 +657,12 @@ export default class Greengrass {
       requestUri: cmnP.encodePath`/greengrass/groups/${params["GroupId"]}`,
       responseCode: 200,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteLoggerDefinition(
     {abortSignal, ...params}: RequestConfig & s.DeleteLoggerDefinitionRequest,
-  ): Promise<s.DeleteLoggerDefinitionResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -686,15 +671,12 @@ export default class Greengrass {
       requestUri: cmnP.encodePath`/greengrass/definition/loggers/${params["LoggerDefinitionId"]}`,
       responseCode: 200,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteResourceDefinition(
     {abortSignal, ...params}: RequestConfig & s.DeleteResourceDefinitionRequest,
-  ): Promise<s.DeleteResourceDefinitionResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -703,15 +685,12 @@ export default class Greengrass {
       requestUri: cmnP.encodePath`/greengrass/definition/resources/${params["ResourceDefinitionId"]}`,
       responseCode: 200,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteSubscriptionDefinition(
     {abortSignal, ...params}: RequestConfig & s.DeleteSubscriptionDefinitionRequest,
-  ): Promise<s.DeleteSubscriptionDefinitionResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -720,10 +699,7 @@ export default class Greengrass {
       requestUri: cmnP.encodePath`/greengrass/definition/subscriptions/${params["SubscriptionDefinitionId"]}`,
       responseCode: 200,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async disassociateRoleFromGroup(
@@ -746,11 +722,11 @@ export default class Greengrass {
   }
 
   async disassociateServiceRoleFromAccount(
-    {abortSignal, ...params}: RequestConfig & s.DisassociateServiceRoleFromAccountRequest = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.DisassociateServiceRoleFromAccountResponse> {
-
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
-      abortSignal,
+      abortSignal, body,
       action: "DisassociateServiceRoleFromAccount",
       method: "DELETE",
       requestUri: "/greengrass/servicerole",
@@ -1245,11 +1221,11 @@ export default class Greengrass {
   }
 
   async getServiceRoleForAccount(
-    {abortSignal, ...params}: RequestConfig & s.GetServiceRoleForAccountRequest = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.GetServiceRoleForAccountResponse> {
-
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
-      abortSignal,
+      abortSignal, body,
       action: "GetServiceRoleForAccount",
       method: "GET",
       requestUri: "/greengrass/servicerole",
@@ -1840,7 +1816,7 @@ export default class Greengrass {
 
   async stopBulkDeployment(
     {abortSignal, ...params}: RequestConfig & s.StopBulkDeploymentRequest,
-  ): Promise<s.StopBulkDeploymentResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -1849,10 +1825,7 @@ export default class Greengrass {
       requestUri: cmnP.encodePath`/greengrass/bulk/deployments/${params["BulkDeploymentId"]}/$stop`,
       responseCode: 200,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async tagResource(
@@ -1867,6 +1840,7 @@ export default class Greengrass {
       requestUri: cmnP.encodePath`/tags/${params["ResourceArn"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async untagResource(
@@ -1883,6 +1857,7 @@ export default class Greengrass {
       requestUri: cmnP.encodePath`/tags/${params["ResourceArn"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async updateConnectivityInfo(
@@ -1909,7 +1884,7 @@ export default class Greengrass {
 
   async updateConnectorDefinition(
     {abortSignal, ...params}: RequestConfig & s.UpdateConnectorDefinitionRequest,
-  ): Promise<s.UpdateConnectorDefinitionResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       Name: params["Name"],
     };
@@ -1920,15 +1895,12 @@ export default class Greengrass {
       requestUri: cmnP.encodePath`/greengrass/definition/connectors/${params["ConnectorDefinitionId"]}`,
       responseCode: 200,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateCoreDefinition(
     {abortSignal, ...params}: RequestConfig & s.UpdateCoreDefinitionRequest,
-  ): Promise<s.UpdateCoreDefinitionResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       Name: params["Name"],
     };
@@ -1939,15 +1911,12 @@ export default class Greengrass {
       requestUri: cmnP.encodePath`/greengrass/definition/cores/${params["CoreDefinitionId"]}`,
       responseCode: 200,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateDeviceDefinition(
     {abortSignal, ...params}: RequestConfig & s.UpdateDeviceDefinitionRequest,
-  ): Promise<s.UpdateDeviceDefinitionResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       Name: params["Name"],
     };
@@ -1958,15 +1927,12 @@ export default class Greengrass {
       requestUri: cmnP.encodePath`/greengrass/definition/devices/${params["DeviceDefinitionId"]}`,
       responseCode: 200,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateFunctionDefinition(
     {abortSignal, ...params}: RequestConfig & s.UpdateFunctionDefinitionRequest,
-  ): Promise<s.UpdateFunctionDefinitionResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       Name: params["Name"],
     };
@@ -1977,15 +1943,12 @@ export default class Greengrass {
       requestUri: cmnP.encodePath`/greengrass/definition/functions/${params["FunctionDefinitionId"]}`,
       responseCode: 200,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateGroup(
     {abortSignal, ...params}: RequestConfig & s.UpdateGroupRequest,
-  ): Promise<s.UpdateGroupResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       Name: params["Name"],
     };
@@ -1996,10 +1959,7 @@ export default class Greengrass {
       requestUri: cmnP.encodePath`/greengrass/groups/${params["GroupId"]}`,
       responseCode: 200,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateGroupCertificateConfiguration(
@@ -2027,7 +1987,7 @@ export default class Greengrass {
 
   async updateLoggerDefinition(
     {abortSignal, ...params}: RequestConfig & s.UpdateLoggerDefinitionRequest,
-  ): Promise<s.UpdateLoggerDefinitionResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       Name: params["Name"],
     };
@@ -2038,15 +1998,12 @@ export default class Greengrass {
       requestUri: cmnP.encodePath`/greengrass/definition/loggers/${params["LoggerDefinitionId"]}`,
       responseCode: 200,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateResourceDefinition(
     {abortSignal, ...params}: RequestConfig & s.UpdateResourceDefinitionRequest,
-  ): Promise<s.UpdateResourceDefinitionResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       Name: params["Name"],
     };
@@ -2057,15 +2014,12 @@ export default class Greengrass {
       requestUri: cmnP.encodePath`/greengrass/definition/resources/${params["ResourceDefinitionId"]}`,
       responseCode: 200,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateSubscriptionDefinition(
     {abortSignal, ...params}: RequestConfig & s.UpdateSubscriptionDefinitionRequest,
-  ): Promise<s.UpdateSubscriptionDefinitionResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       Name: params["Name"],
     };
@@ -2076,15 +2030,12 @@ export default class Greengrass {
       requestUri: cmnP.encodePath`/greengrass/definition/subscriptions/${params["SubscriptionDefinitionId"]}`,
       responseCode: 200,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateThingRuntimeConfiguration(
     {abortSignal, ...params}: RequestConfig & s.UpdateThingRuntimeConfigurationRequest,
-  ): Promise<s.UpdateThingRuntimeConfigurationResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       TelemetryConfiguration: fromTelemetryConfigurationUpdate(params["TelemetryConfiguration"]),
     };
@@ -2095,10 +2046,7 @@ export default class Greengrass {
       requestUri: cmnP.encodePath`/greengrass/things/${params["ThingName"]}/runtimeconfig`,
       responseCode: 200,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
 }

@@ -58,7 +58,7 @@ export default class AppIntegrations {
 
   async deleteEventIntegration(
     {abortSignal, ...params}: RequestConfig & s.DeleteEventIntegrationRequest,
-  ): Promise<s.DeleteEventIntegrationResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -66,10 +66,7 @@ export default class AppIntegrations {
       method: "DELETE",
       requestUri: cmnP.encodePath`/eventIntegrations/${params["Name"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async getEventIntegration(
@@ -157,7 +154,7 @@ export default class AppIntegrations {
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & s.TagResourceRequest,
-  ): Promise<s.TagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       tags: params["tags"],
     };
@@ -166,15 +163,12 @@ export default class AppIntegrations {
       action: "TagResource",
       requestUri: cmnP.encodePath`/tags/${params["resourceArn"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async untagResource(
     {abortSignal, ...params}: RequestConfig & s.UntagResourceRequest,
-  ): Promise<s.UntagResourceResponse> {
+  ): Promise<void> {
     const query = new URLSearchParams;
     for (const item of params["tagKeys"]) {
       query.append("tagKeys", item?.toString() ?? "");
@@ -185,15 +179,12 @@ export default class AppIntegrations {
       method: "DELETE",
       requestUri: cmnP.encodePath`/tags/${params["resourceArn"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateEventIntegration(
     {abortSignal, ...params}: RequestConfig & s.UpdateEventIntegrationRequest,
-  ): Promise<s.UpdateEventIntegrationResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       Description: params["Description"],
     };
@@ -203,10 +194,7 @@ export default class AppIntegrations {
       method: "PATCH",
       requestUri: cmnP.encodePath`/eventIntegrations/${params["Name"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
 }

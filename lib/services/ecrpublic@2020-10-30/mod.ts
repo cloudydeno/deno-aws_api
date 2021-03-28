@@ -252,10 +252,9 @@ export default class ECRPUBLIC {
   }
 
   async getAuthorizationToken(
-    {abortSignal, ...params}: RequestConfig & s.GetAuthorizationTokenRequest = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.GetAuthorizationTokenResponse> {
-    const body: jsonP.JSONObject = {
-    };
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetAuthorizationToken",
@@ -269,10 +268,9 @@ export default class ECRPUBLIC {
   }
 
   async getRegistryCatalogData(
-    {abortSignal, ...params}: RequestConfig & s.GetRegistryCatalogDataRequest = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.GetRegistryCatalogDataResponse> {
-    const body: jsonP.JSONObject = {
-    };
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetRegistryCatalogData",
@@ -449,7 +447,7 @@ export default class ECRPUBLIC {
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & s.TagResourceRequest,
-  ): Promise<s.TagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       resourceArn: params["resourceArn"],
       tags: params["tags"]?.map(x => fromTag(x)),
@@ -458,15 +456,12 @@ export default class ECRPUBLIC {
       abortSignal, body,
       action: "TagResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async untagResource(
     {abortSignal, ...params}: RequestConfig & s.UntagResourceRequest,
-  ): Promise<s.UntagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       resourceArn: params["resourceArn"],
       tagKeys: params["tagKeys"],
@@ -475,10 +470,7 @@ export default class ECRPUBLIC {
       abortSignal, body,
       action: "UntagResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async uploadLayerPart(

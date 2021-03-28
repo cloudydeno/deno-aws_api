@@ -570,20 +570,8 @@ export interface BatchGetResourceConfigResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface DeleteEvaluationResultsResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteRemediationConfigurationResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface DeleteRemediationExceptionsResponse {
   FailedBatches?: FailedDeleteRemediationExceptionsBatch[] | null;
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteStoredQueryResponse {
 }
 
 // refs: 1 - tags: named, output
@@ -867,10 +855,6 @@ export interface PutEvaluationsResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface PutExternalEvaluationResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface PutOrganizationConfigRuleResponse {
   OrganizationConfigRuleArn?: string | null;
 }
@@ -912,10 +896,6 @@ export interface SelectResourceConfigResponse {
   Results?: string[] | null;
   QueryInfo?: QueryInfo | null;
   NextToken?: string | null;
-}
-
-// refs: 1 - tags: named, output
-export interface StartConfigRulesEvaluationResponse {
 }
 
 // refs: 1 - tags: named, output

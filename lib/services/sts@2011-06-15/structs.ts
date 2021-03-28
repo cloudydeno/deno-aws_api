@@ -46,10 +46,6 @@ export interface GetAccessKeyInfoRequest {
 }
 
 // refs: 1 - tags: named, input
-export interface GetCallerIdentityRequest {
-}
-
-// refs: 1 - tags: named, input
 export interface GetFederationTokenRequest {
   Name: string;
   Policy?: string | null;

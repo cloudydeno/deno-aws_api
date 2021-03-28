@@ -53,22 +53,6 @@ export interface UpdateConfigurationSetEventDestinationRequest {
 }
 
 // refs: 1 - tags: named, output
-export interface CreateConfigurationSetResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface CreateConfigurationSetEventDestinationResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteConfigurationSetResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteConfigurationSetEventDestinationResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface GetConfigurationSetEventDestinationsResponse {
   EventDestinations?: EventDestination[] | null;
 }
@@ -82,10 +66,6 @@ export interface ListConfigurationSetsResponse {
 // refs: 1 - tags: named, output
 export interface SendVoiceMessageResponse {
   MessageId?: string | null;
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateConfigurationSetEventDestinationResponse {
 }
 
 // refs: 2 - tags: input, named, interface

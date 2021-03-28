@@ -65,7 +65,7 @@ export default class Synthetics {
 
   async deleteCanary(
     {abortSignal, ...params}: RequestConfig & s.DeleteCanaryRequest,
-  ): Promise<s.DeleteCanaryResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -73,10 +73,7 @@ export default class Synthetics {
       method: "DELETE",
       requestUri: cmnP.encodePath`/canary/${params["Name"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async describeCanaries(
@@ -201,37 +198,31 @@ export default class Synthetics {
 
   async startCanary(
     {abortSignal, ...params}: RequestConfig & s.StartCanaryRequest,
-  ): Promise<s.StartCanaryResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
       action: "StartCanary",
       requestUri: cmnP.encodePath`/canary/${params["Name"]}/start`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async stopCanary(
     {abortSignal, ...params}: RequestConfig & s.StopCanaryRequest,
-  ): Promise<s.StopCanaryResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
       action: "StopCanary",
       requestUri: cmnP.encodePath`/canary/${params["Name"]}/stop`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & s.TagResourceRequest,
-  ): Promise<s.TagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       Tags: params["Tags"],
     };
@@ -240,15 +231,12 @@ export default class Synthetics {
       action: "TagResource",
       requestUri: cmnP.encodePath`/tags/${params["ResourceArn"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async untagResource(
     {abortSignal, ...params}: RequestConfig & s.UntagResourceRequest,
-  ): Promise<s.UntagResourceResponse> {
+  ): Promise<void> {
     const query = new URLSearchParams;
     for (const item of params["TagKeys"]) {
       query.append("tagKeys", item?.toString() ?? "");
@@ -259,15 +247,12 @@ export default class Synthetics {
       method: "DELETE",
       requestUri: cmnP.encodePath`/tags/${params["ResourceArn"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateCanary(
     {abortSignal, ...params}: RequestConfig & s.UpdateCanaryRequest,
-  ): Promise<s.UpdateCanaryResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       Code: fromCanaryCodeInput(params["Code"]),
       ExecutionRoleArn: params["ExecutionRoleArn"],
@@ -284,10 +269,7 @@ export default class Synthetics {
       method: "PATCH",
       requestUri: cmnP.encodePath`/canary/${params["Name"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
 }

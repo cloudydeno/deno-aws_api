@@ -154,6 +154,7 @@ export default class EFS {
       requestUri: cmnP.encodePath`/2015-02-01/create-tags/${params["FileSystemId"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deleteAccessPoint(
@@ -167,6 +168,7 @@ export default class EFS {
       requestUri: cmnP.encodePath`/2015-02-01/access-points/${params["AccessPointId"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deleteFileSystem(
@@ -180,6 +182,7 @@ export default class EFS {
       requestUri: cmnP.encodePath`/2015-02-01/file-systems/${params["FileSystemId"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deleteFileSystemPolicy(
@@ -193,6 +196,7 @@ export default class EFS {
       requestUri: cmnP.encodePath`/2015-02-01/file-systems/${params["FileSystemId"]}/policy`,
       responseCode: 200,
     });
+    await resp.text();
   }
 
   async deleteMountTarget(
@@ -206,6 +210,7 @@ export default class EFS {
       requestUri: cmnP.encodePath`/2015-02-01/mount-targets/${params["MountTargetId"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deleteTags(
@@ -220,6 +225,7 @@ export default class EFS {
       requestUri: cmnP.encodePath`/2015-02-01/delete-tags/${params["FileSystemId"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async describeAccessPoints(
@@ -433,6 +439,7 @@ export default class EFS {
       requestUri: cmnP.encodePath`/2015-02-01/mount-targets/${params["MountTargetId"]}/security-groups`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async putBackupPolicy(
@@ -512,6 +519,7 @@ export default class EFS {
       requestUri: cmnP.encodePath`/2015-02-01/resource-tags/${params["ResourceId"]}`,
       responseCode: 200,
     });
+    await resp.text();
   }
 
   async untagResource(
@@ -528,6 +536,7 @@ export default class EFS {
       requestUri: cmnP.encodePath`/2015-02-01/resource-tags/${params["ResourceId"]}`,
       responseCode: 200,
     });
+    await resp.text();
   }
 
   async updateFileSystem(

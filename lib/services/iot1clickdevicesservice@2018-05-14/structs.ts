@@ -130,10 +130,6 @@ export interface UnclaimDeviceResponse {
   State?: string | null;
 }
 
-// refs: 1 - tags: named, output
-export interface UpdateDeviceStateResponse {
-}
-
 // refs: 2 - tags: input, named, interface, output
 export interface DeviceMethod {
   DeviceType?: string | null;

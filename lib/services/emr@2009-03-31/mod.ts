@@ -92,7 +92,7 @@ export default class EMR {
 
   async addTags(
     {abortSignal, ...params}: RequestConfig & s.AddTagsInput,
-  ): Promise<s.AddTagsOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceId: params["ResourceId"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
@@ -101,10 +101,7 @@ export default class EMR {
       abortSignal, body,
       action: "AddTags",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async cancelSteps(
@@ -190,11 +187,12 @@ export default class EMR {
       abortSignal, body,
       action: "CreateStudioSessionMapping",
     });
+    await resp.text();
   }
 
   async deleteSecurityConfiguration(
     {abortSignal, ...params}: RequestConfig & s.DeleteSecurityConfigurationInput,
-  ): Promise<s.DeleteSecurityConfigurationOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       Name: params["Name"],
     };
@@ -202,10 +200,7 @@ export default class EMR {
       abortSignal, body,
       action: "DeleteSecurityConfiguration",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteStudio(
@@ -218,6 +213,7 @@ export default class EMR {
       abortSignal, body,
       action: "DeleteStudio",
     });
+    await resp.text();
   }
 
   async deleteStudioSessionMapping(
@@ -233,6 +229,7 @@ export default class EMR {
       abortSignal, body,
       action: "DeleteStudioSessionMapping",
     });
+    await resp.text();
   }
 
   async describeCluster(
@@ -350,10 +347,9 @@ export default class EMR {
   }
 
   async getBlockPublicAccessConfiguration(
-    {abortSignal, ...params}: RequestConfig & s.GetBlockPublicAccessConfigurationInput = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.GetBlockPublicAccessConfigurationOutput> {
-    const body: jsonP.JSONObject = {
-    };
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetBlockPublicAccessConfiguration",
@@ -647,6 +643,7 @@ export default class EMR {
       abortSignal, body,
       action: "ModifyInstanceFleet",
     });
+    await resp.text();
   }
 
   async modifyInstanceGroups(
@@ -660,6 +657,7 @@ export default class EMR {
       abortSignal, body,
       action: "ModifyInstanceGroups",
     });
+    await resp.text();
   }
 
   async putAutoScalingPolicy(
@@ -687,7 +685,7 @@ export default class EMR {
 
   async putBlockPublicAccessConfiguration(
     {abortSignal, ...params}: RequestConfig & s.PutBlockPublicAccessConfigurationInput,
-  ): Promise<s.PutBlockPublicAccessConfigurationOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       BlockPublicAccessConfiguration: fromBlockPublicAccessConfiguration(params["BlockPublicAccessConfiguration"]),
     };
@@ -695,15 +693,12 @@ export default class EMR {
       abortSignal, body,
       action: "PutBlockPublicAccessConfiguration",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async putManagedScalingPolicy(
     {abortSignal, ...params}: RequestConfig & s.PutManagedScalingPolicyInput,
-  ): Promise<s.PutManagedScalingPolicyOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ClusterId: params["ClusterId"],
       ManagedScalingPolicy: fromManagedScalingPolicy(params["ManagedScalingPolicy"]),
@@ -712,15 +707,12 @@ export default class EMR {
       abortSignal, body,
       action: "PutManagedScalingPolicy",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async removeAutoScalingPolicy(
     {abortSignal, ...params}: RequestConfig & s.RemoveAutoScalingPolicyInput,
-  ): Promise<s.RemoveAutoScalingPolicyOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ClusterId: params["ClusterId"],
       InstanceGroupId: params["InstanceGroupId"],
@@ -729,15 +721,12 @@ export default class EMR {
       abortSignal, body,
       action: "RemoveAutoScalingPolicy",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async removeManagedScalingPolicy(
     {abortSignal, ...params}: RequestConfig & s.RemoveManagedScalingPolicyInput,
-  ): Promise<s.RemoveManagedScalingPolicyOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ClusterId: params["ClusterId"],
     };
@@ -745,15 +734,12 @@ export default class EMR {
       abortSignal, body,
       action: "RemoveManagedScalingPolicy",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async removeTags(
     {abortSignal, ...params}: RequestConfig & s.RemoveTagsInput,
-  ): Promise<s.RemoveTagsOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceId: params["ResourceId"],
       TagKeys: params["TagKeys"],
@@ -762,10 +748,7 @@ export default class EMR {
       abortSignal, body,
       action: "RemoveTags",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async runJobFlow(
@@ -824,6 +807,7 @@ export default class EMR {
       abortSignal, body,
       action: "SetTerminationProtection",
     });
+    await resp.text();
   }
 
   async setVisibleToAllUsers(
@@ -837,6 +821,7 @@ export default class EMR {
       abortSignal, body,
       action: "SetVisibleToAllUsers",
     });
+    await resp.text();
   }
 
   async startNotebookExecution(
@@ -874,6 +859,7 @@ export default class EMR {
       abortSignal, body,
       action: "StopNotebookExecution",
     });
+    await resp.text();
   }
 
   async terminateJobFlows(
@@ -886,6 +872,7 @@ export default class EMR {
       abortSignal, body,
       action: "TerminateJobFlows",
     });
+    await resp.text();
   }
 
   async updateStudio(
@@ -902,6 +889,7 @@ export default class EMR {
       abortSignal, body,
       action: "UpdateStudio",
     });
+    await resp.text();
   }
 
   async updateStudioSessionMapping(
@@ -918,6 +906,7 @@ export default class EMR {
       abortSignal, body,
       action: "UpdateStudioSessionMapping",
     });
+    await resp.text();
   }
 
   // Resource State Waiters

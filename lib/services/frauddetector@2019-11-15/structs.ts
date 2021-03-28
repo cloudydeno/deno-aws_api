@@ -403,10 +403,6 @@ export interface CreateDetectorVersionResult {
 }
 
 // refs: 1 - tags: named, output
-export interface CreateModelResult {
-}
-
-// refs: 1 - tags: named, output
 export interface CreateModelVersionResult {
   modelId?: string | null;
   modelType?: ModelTypeEnum | null;
@@ -417,58 +413,6 @@ export interface CreateModelVersionResult {
 // refs: 1 - tags: named, output
 export interface CreateRuleResult {
   rule?: Rule | null;
-}
-
-// refs: 1 - tags: named, output
-export interface CreateVariableResult {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteDetectorResult {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteDetectorVersionResult {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteEntityTypeResult {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteEventResult {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteEventTypeResult {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteExternalModelResult {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteLabelResult {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteModelResult {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteModelVersionResult {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteOutcomeResult {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteRuleResult {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteVariableResult {
 }
 
 // refs: 1 - tags: named, output
@@ -584,58 +528,6 @@ export interface ListTagsForResourceResult {
 }
 
 // refs: 1 - tags: named, output
-export interface PutDetectorResult {
-}
-
-// refs: 1 - tags: named, output
-export interface PutEntityTypeResult {
-}
-
-// refs: 1 - tags: named, output
-export interface PutEventTypeResult {
-}
-
-// refs: 1 - tags: named, output
-export interface PutExternalModelResult {
-}
-
-// refs: 1 - tags: named, output
-export interface PutKMSEncryptionKeyResult {
-}
-
-// refs: 1 - tags: named, output
-export interface PutLabelResult {
-}
-
-// refs: 1 - tags: named, output
-export interface PutOutcomeResult {
-}
-
-// refs: 1 - tags: named, output
-export interface TagResourceResult {
-}
-
-// refs: 1 - tags: named, output
-export interface UntagResourceResult {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateDetectorVersionResult {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateDetectorVersionMetadataResult {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateDetectorVersionStatusResult {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateModelResult {
-}
-
-// refs: 1 - tags: named, output
 export interface UpdateModelVersionResult {
   modelId?: string | null;
   modelType?: ModelTypeEnum | null;
@@ -644,20 +536,8 @@ export interface UpdateModelVersionResult {
 }
 
 // refs: 1 - tags: named, output
-export interface UpdateModelVersionStatusResult {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateRuleMetadataResult {
-}
-
-// refs: 1 - tags: named, output
 export interface UpdateRuleVersionResult {
   rule?: Rule | null;
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateVariableResult {
 }
 
 // refs: 1 - tags: input, named, interface

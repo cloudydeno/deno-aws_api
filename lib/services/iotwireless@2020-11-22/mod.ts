@@ -55,7 +55,7 @@ export default class IoTWireless {
 
   async associateWirelessDeviceWithThing(
     {abortSignal, ...params}: RequestConfig & s.AssociateWirelessDeviceWithThingRequest,
-  ): Promise<s.AssociateWirelessDeviceWithThingResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ThingArn: params["ThingArn"],
     };
@@ -66,10 +66,7 @@ export default class IoTWireless {
       requestUri: cmnP.encodePath`/wireless-devices/${params["Id"]}/thing`,
       responseCode: 204,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async associateWirelessGatewayWithCertificate(
@@ -94,7 +91,7 @@ export default class IoTWireless {
 
   async associateWirelessGatewayWithThing(
     {abortSignal, ...params}: RequestConfig & s.AssociateWirelessGatewayWithThingRequest,
-  ): Promise<s.AssociateWirelessGatewayWithThingResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ThingArn: params["ThingArn"],
     };
@@ -105,10 +102,7 @@ export default class IoTWireless {
       requestUri: cmnP.encodePath`/wireless-gateways/${params["Id"]}/thing`,
       responseCode: 204,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async createDestination(
@@ -286,7 +280,7 @@ export default class IoTWireless {
 
   async deleteDestination(
     {abortSignal, ...params}: RequestConfig & s.DeleteDestinationRequest,
-  ): Promise<s.DeleteDestinationResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -295,15 +289,12 @@ export default class IoTWireless {
       requestUri: cmnP.encodePath`/destinations/${params["Name"]}`,
       responseCode: 204,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteDeviceProfile(
     {abortSignal, ...params}: RequestConfig & s.DeleteDeviceProfileRequest,
-  ): Promise<s.DeleteDeviceProfileResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -312,15 +303,12 @@ export default class IoTWireless {
       requestUri: cmnP.encodePath`/device-profiles/${params["Id"]}`,
       responseCode: 204,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteServiceProfile(
     {abortSignal, ...params}: RequestConfig & s.DeleteServiceProfileRequest,
-  ): Promise<s.DeleteServiceProfileResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -329,15 +317,12 @@ export default class IoTWireless {
       requestUri: cmnP.encodePath`/service-profiles/${params["Id"]}`,
       responseCode: 204,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteWirelessDevice(
     {abortSignal, ...params}: RequestConfig & s.DeleteWirelessDeviceRequest,
-  ): Promise<s.DeleteWirelessDeviceResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -346,15 +331,12 @@ export default class IoTWireless {
       requestUri: cmnP.encodePath`/wireless-devices/${params["Id"]}`,
       responseCode: 204,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteWirelessGateway(
     {abortSignal, ...params}: RequestConfig & s.DeleteWirelessGatewayRequest,
-  ): Promise<s.DeleteWirelessGatewayResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -363,15 +345,12 @@ export default class IoTWireless {
       requestUri: cmnP.encodePath`/wireless-gateways/${params["Id"]}`,
       responseCode: 204,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteWirelessGatewayTask(
     {abortSignal, ...params}: RequestConfig & s.DeleteWirelessGatewayTaskRequest,
-  ): Promise<s.DeleteWirelessGatewayTaskResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -380,15 +359,12 @@ export default class IoTWireless {
       requestUri: cmnP.encodePath`/wireless-gateways/${params["Id"]}/tasks`,
       responseCode: 204,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteWirelessGatewayTaskDefinition(
     {abortSignal, ...params}: RequestConfig & s.DeleteWirelessGatewayTaskDefinitionRequest,
-  ): Promise<s.DeleteWirelessGatewayTaskDefinitionResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -397,15 +373,12 @@ export default class IoTWireless {
       requestUri: cmnP.encodePath`/wireless-gateway-task-definitions/${params["Id"]}`,
       responseCode: 204,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async disassociateAwsAccountFromPartnerAccount(
     {abortSignal, ...params}: RequestConfig & s.DisassociateAwsAccountFromPartnerAccountRequest,
-  ): Promise<s.DisassociateAwsAccountFromPartnerAccountResponse> {
+  ): Promise<void> {
     const query = new URLSearchParams;
     query.set("partnerType", params["PartnerType"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
@@ -415,15 +388,12 @@ export default class IoTWireless {
       requestUri: cmnP.encodePath`/partner-accounts/${params["PartnerAccountId"]}`,
       responseCode: 204,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async disassociateWirelessDeviceFromThing(
     {abortSignal, ...params}: RequestConfig & s.DisassociateWirelessDeviceFromThingRequest,
-  ): Promise<s.DisassociateWirelessDeviceFromThingResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -432,15 +402,12 @@ export default class IoTWireless {
       requestUri: cmnP.encodePath`/wireless-devices/${params["Id"]}/thing`,
       responseCode: 204,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async disassociateWirelessGatewayFromCertificate(
     {abortSignal, ...params}: RequestConfig & s.DisassociateWirelessGatewayFromCertificateRequest,
-  ): Promise<s.DisassociateWirelessGatewayFromCertificateResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -449,15 +416,12 @@ export default class IoTWireless {
       requestUri: cmnP.encodePath`/wireless-gateways/${params["Id"]}/certificate`,
       responseCode: 204,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async disassociateWirelessGatewayFromThing(
     {abortSignal, ...params}: RequestConfig & s.DisassociateWirelessGatewayFromThingRequest,
-  ): Promise<s.DisassociateWirelessGatewayFromThingResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -466,10 +430,7 @@ export default class IoTWireless {
       requestUri: cmnP.encodePath`/wireless-gateways/${params["Id"]}/thing`,
       responseCode: 204,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async getDestination(
@@ -946,7 +907,7 @@ export default class IoTWireless {
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & s.TagResourceRequest,
-  ): Promise<s.TagResourceResponse> {
+  ): Promise<void> {
     const query = new URLSearchParams;
     const body: jsonP.JSONObject = {
       Tags: params["Tags"]?.map(x => fromTag(x)),
@@ -958,10 +919,7 @@ export default class IoTWireless {
       requestUri: "/tags",
       responseCode: 204,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async testWirelessDevice(
@@ -984,7 +942,7 @@ export default class IoTWireless {
 
   async untagResource(
     {abortSignal, ...params}: RequestConfig & s.UntagResourceRequest,
-  ): Promise<s.UntagResourceResponse> {
+  ): Promise<void> {
     const query = new URLSearchParams;
     query.set("resourceArn", params["ResourceArn"]?.toString() ?? "");
     for (const item of params["TagKeys"]) {
@@ -997,15 +955,12 @@ export default class IoTWireless {
       requestUri: "/tags",
       responseCode: 204,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateDestination(
     {abortSignal, ...params}: RequestConfig & s.UpdateDestinationRequest,
-  ): Promise<s.UpdateDestinationResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ExpressionType: params["ExpressionType"],
       Expression: params["Expression"],
@@ -1019,15 +974,12 @@ export default class IoTWireless {
       requestUri: cmnP.encodePath`/destinations/${params["Name"]}`,
       responseCode: 204,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updatePartnerAccount(
     {abortSignal, ...params}: RequestConfig & s.UpdatePartnerAccountRequest,
-  ): Promise<s.UpdatePartnerAccountResponse> {
+  ): Promise<void> {
     const query = new URLSearchParams;
     const body: jsonP.JSONObject = {
       Sidewalk: fromSidewalkUpdateAccount(params["Sidewalk"]),
@@ -1040,15 +992,12 @@ export default class IoTWireless {
       requestUri: cmnP.encodePath`/partner-accounts/${params["PartnerAccountId"]}`,
       responseCode: 204,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateWirelessDevice(
     {abortSignal, ...params}: RequestConfig & s.UpdateWirelessDeviceRequest,
-  ): Promise<s.UpdateWirelessDeviceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       DestinationName: params["DestinationName"],
       Name: params["Name"],
@@ -1062,15 +1011,12 @@ export default class IoTWireless {
       requestUri: cmnP.encodePath`/wireless-devices/${params["Id"]}`,
       responseCode: 204,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateWirelessGateway(
     {abortSignal, ...params}: RequestConfig & s.UpdateWirelessGatewayRequest,
-  ): Promise<s.UpdateWirelessGatewayResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       Name: params["Name"],
       Description: params["Description"],
@@ -1082,10 +1028,7 @@ export default class IoTWireless {
       requestUri: cmnP.encodePath`/wireless-gateways/${params["Id"]}`,
       responseCode: 204,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
 }

@@ -102,10 +102,6 @@ export interface DeleteControlRequest {
 }
 
 // refs: 1 - tags: named, input
-export interface DeregisterAccountRequest {
-}
-
-// refs: 1 - tags: named, input
 export interface DeregisterOrganizationAdminAccountRequest {
   adminAccountId?: string | null;
 }
@@ -114,10 +110,6 @@ export interface DeregisterOrganizationAdminAccountRequest {
 export interface DisassociateAssessmentReportEvidenceFolderRequest {
   assessmentId: string;
   evidenceFolderId: string;
-}
-
-// refs: 1 - tags: named, input
-export interface GetAccountStatusRequest {
 }
 
 // refs: 1 - tags: named, input
@@ -194,14 +186,6 @@ export interface GetEvidenceFoldersByAssessmentControlRequest {
   controlId: string;
   nextToken?: string | null;
   maxResults?: number | null;
-}
-
-// refs: 1 - tags: named, input
-export interface GetOrganizationAdminAccountRequest {
-}
-
-// refs: 1 - tags: named, input
-export interface GetServicesInScopeRequest {
 }
 
 // refs: 1 - tags: named, input
@@ -343,10 +327,6 @@ export interface ValidateAssessmentReportIntegrityRequest {
 }
 
 // refs: 1 - tags: named, output
-export interface AssociateAssessmentReportEvidenceFolderResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface BatchAssociateAssessmentReportEvidenceResponse {
   evidenceIds?: string[] | null;
   errors?: AssessmentReportEvidenceError[] | null;
@@ -395,32 +375,8 @@ export interface CreateControlResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface DeleteAssessmentResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteAssessmentFrameworkResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteAssessmentReportResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteControlResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface DeregisterAccountResponse {
   status?: AccountStatus | null;
-}
-
-// refs: 1 - tags: named, output
-export interface DeregisterOrganizationAdminAccountResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DisassociateAssessmentReportEvidenceFolderResponse {
 }
 
 // refs: 1 - tags: named, output
@@ -554,14 +510,6 @@ export interface RegisterAccountResponse {
 export interface RegisterOrganizationAdminAccountResponse {
   adminAccountId?: string | null;
   organizationId?: string | null;
-}
-
-// refs: 1 - tags: named, output
-export interface TagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UntagResourceResponse {
 }
 
 // refs: 1 - tags: named, output

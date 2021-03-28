@@ -47,11 +47,12 @@ export default class Iot {
       method: "PATCH",
       requestUri: cmnP.encodePath`/accept-certificate-transfer/${params["certificateId"]}`,
     });
+    await resp.text();
   }
 
   async addThingToBillingGroup(
     {abortSignal, ...params}: RequestConfig & s.AddThingToBillingGroupRequest = {},
-  ): Promise<s.AddThingToBillingGroupResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       billingGroupName: params["billingGroupName"],
       billingGroupArn: params["billingGroupArn"],
@@ -64,15 +65,12 @@ export default class Iot {
       method: "PUT",
       requestUri: "/billing-groups/addThingToBillingGroup",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async addThingToThingGroup(
     {abortSignal, ...params}: RequestConfig & s.AddThingToThingGroupRequest = {},
-  ): Promise<s.AddThingToThingGroupResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       thingGroupName: params["thingGroupName"],
       thingGroupArn: params["thingGroupArn"],
@@ -86,10 +84,7 @@ export default class Iot {
       method: "PUT",
       requestUri: "/thing-groups/addThingToThingGroup",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async associateTargetsWithJob(
@@ -128,6 +123,7 @@ export default class Iot {
       method: "PUT",
       requestUri: cmnP.encodePath`/target-policies/${params["policyName"]}`,
     });
+    await resp.text();
   }
 
   async attachPrincipalPolicy(
@@ -141,11 +137,12 @@ export default class Iot {
       method: "PUT",
       requestUri: cmnP.encodePath`/principal-policies/${params["policyName"]}`,
     });
+    await resp.text();
   }
 
   async attachSecurityProfile(
     {abortSignal, ...params}: RequestConfig & s.AttachSecurityProfileRequest,
-  ): Promise<s.AttachSecurityProfileResponse> {
+  ): Promise<void> {
     const query = new URLSearchParams;
     query.set("securityProfileTargetArn", params["securityProfileTargetArn"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
@@ -154,15 +151,12 @@ export default class Iot {
       method: "PUT",
       requestUri: cmnP.encodePath`/security-profiles/${params["securityProfileName"]}/targets`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async attachThingPrincipal(
     {abortSignal, ...params}: RequestConfig & s.AttachThingPrincipalRequest,
-  ): Promise<s.AttachThingPrincipalResponse> {
+  ): Promise<void> {
     const headers = new Headers;
     headers.append("x-amzn-principal", params["principal"]);
     const resp = await this.#client.performRequest({
@@ -171,15 +165,12 @@ export default class Iot {
       method: "PUT",
       requestUri: cmnP.encodePath`/things/${params["thingName"]}/principals`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async cancelAuditMitigationActionsTask(
     {abortSignal, ...params}: RequestConfig & s.CancelAuditMitigationActionsTaskRequest,
-  ): Promise<s.CancelAuditMitigationActionsTaskResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -187,15 +178,12 @@ export default class Iot {
       method: "PUT",
       requestUri: cmnP.encodePath`/audit/mitigationactions/tasks/${params["taskId"]}/cancel`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async cancelAuditTask(
     {abortSignal, ...params}: RequestConfig & s.CancelAuditTaskRequest,
-  ): Promise<s.CancelAuditTaskResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -203,10 +191,7 @@ export default class Iot {
       method: "PUT",
       requestUri: cmnP.encodePath`/audit/tasks/${params["taskId"]}/cancel`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async cancelCertificateTransfer(
@@ -219,11 +204,12 @@ export default class Iot {
       method: "PATCH",
       requestUri: cmnP.encodePath`/cancel-certificate-transfer/${params["certificateId"]}`,
     });
+    await resp.text();
   }
 
   async cancelDetectMitigationActionsTask(
     {abortSignal, ...params}: RequestConfig & s.CancelDetectMitigationActionsTaskRequest,
-  ): Promise<s.CancelDetectMitigationActionsTaskResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -231,10 +217,7 @@ export default class Iot {
       method: "PUT",
       requestUri: cmnP.encodePath`/detect/mitigationactions/tasks/${params["taskId"]}/cancel`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async cancelJob(
@@ -277,27 +260,25 @@ export default class Iot {
       method: "PUT",
       requestUri: cmnP.encodePath`/things/${params["thingName"]}/jobs/${params["jobId"]}/cancel`,
     });
+    await resp.text();
   }
 
   async clearDefaultAuthorizer(
-    {abortSignal, ...params}: RequestConfig & s.ClearDefaultAuthorizerRequest = {},
-  ): Promise<s.ClearDefaultAuthorizerResponse> {
-
+    {abortSignal}: RequestConfig = {},
+  ): Promise<void> {
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
-      abortSignal,
+      abortSignal, body,
       action: "ClearDefaultAuthorizer",
       method: "DELETE",
       requestUri: "/default-authorizer",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async confirmTopicRuleDestination(
     {abortSignal, ...params}: RequestConfig & s.ConfirmTopicRuleDestinationRequest,
-  ): Promise<s.ConfirmTopicRuleDestinationResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -305,15 +286,12 @@ export default class Iot {
       method: "GET",
       requestUri: cmnP.encodePath`/confirmdestination/${params["confirmationToken"].split("/")}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async createAuditSuppression(
     {abortSignal, ...params}: RequestConfig & s.CreateAuditSuppressionRequest,
-  ): Promise<s.CreateAuditSuppressionResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       checkName: params["checkName"],
       resourceIdentifier: fromResourceIdentifier(params["resourceIdentifier"]),
@@ -327,10 +305,7 @@ export default class Iot {
       action: "CreateAuditSuppression",
       requestUri: "/audit/suppressions/create",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async createAuthorizer(
@@ -911,6 +886,7 @@ export default class Iot {
       action: "CreateTopicRule",
       requestUri: cmnP.encodePath`/rules/${params["ruleName"]}`,
     });
+    await resp.text();
   }
 
   async createTopicRuleDestination(
@@ -934,7 +910,7 @@ export default class Iot {
 
   async deleteAccountAuditConfiguration(
     {abortSignal, ...params}: RequestConfig & s.DeleteAccountAuditConfigurationRequest = {},
-  ): Promise<s.DeleteAccountAuditConfigurationResponse> {
+  ): Promise<void> {
     const query = new URLSearchParams;
     if (params["deleteScheduledAudits"] != null) query.set("deleteScheduledAudits", params["deleteScheduledAudits"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
@@ -943,15 +919,12 @@ export default class Iot {
       method: "DELETE",
       requestUri: "/audit/configuration",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteAuditSuppression(
     {abortSignal, ...params}: RequestConfig & s.DeleteAuditSuppressionRequest,
-  ): Promise<s.DeleteAuditSuppressionResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       checkName: params["checkName"],
       resourceIdentifier: fromResourceIdentifier(params["resourceIdentifier"]),
@@ -961,15 +934,12 @@ export default class Iot {
       action: "DeleteAuditSuppression",
       requestUri: "/audit/suppressions/delete",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteAuthorizer(
     {abortSignal, ...params}: RequestConfig & s.DeleteAuthorizerRequest,
-  ): Promise<s.DeleteAuthorizerResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -977,15 +947,12 @@ export default class Iot {
       method: "DELETE",
       requestUri: cmnP.encodePath`/authorizer/${params["authorizerName"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteBillingGroup(
     {abortSignal, ...params}: RequestConfig & s.DeleteBillingGroupRequest,
-  ): Promise<s.DeleteBillingGroupResponse> {
+  ): Promise<void> {
     const query = new URLSearchParams;
     if (params["expectedVersion"] != null) query.set("expectedVersion", params["expectedVersion"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
@@ -994,15 +961,12 @@ export default class Iot {
       method: "DELETE",
       requestUri: cmnP.encodePath`/billing-groups/${params["billingGroupName"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteCACertificate(
     {abortSignal, ...params}: RequestConfig & s.DeleteCACertificateRequest,
-  ): Promise<s.DeleteCACertificateResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -1010,10 +974,7 @@ export default class Iot {
       method: "DELETE",
       requestUri: cmnP.encodePath`/cacertificate/${params["certificateId"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteCertificate(
@@ -1027,11 +988,12 @@ export default class Iot {
       method: "DELETE",
       requestUri: cmnP.encodePath`/certificates/${params["certificateId"]}`,
     });
+    await resp.text();
   }
 
   async deleteCustomMetric(
     {abortSignal, ...params}: RequestConfig & s.DeleteCustomMetricRequest,
-  ): Promise<s.DeleteCustomMetricResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -1039,15 +1001,12 @@ export default class Iot {
       method: "DELETE",
       requestUri: cmnP.encodePath`/custom-metric/${params["metricName"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteDimension(
     {abortSignal, ...params}: RequestConfig & s.DeleteDimensionRequest,
-  ): Promise<s.DeleteDimensionResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -1055,15 +1014,12 @@ export default class Iot {
       method: "DELETE",
       requestUri: cmnP.encodePath`/dimensions/${params["name"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteDomainConfiguration(
     {abortSignal, ...params}: RequestConfig & s.DeleteDomainConfigurationRequest,
-  ): Promise<s.DeleteDomainConfigurationResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -1071,15 +1027,12 @@ export default class Iot {
       method: "DELETE",
       requestUri: cmnP.encodePath`/domainConfigurations/${params["domainConfigurationName"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteDynamicThingGroup(
     {abortSignal, ...params}: RequestConfig & s.DeleteDynamicThingGroupRequest,
-  ): Promise<s.DeleteDynamicThingGroupResponse> {
+  ): Promise<void> {
     const query = new URLSearchParams;
     if (params["expectedVersion"] != null) query.set("expectedVersion", params["expectedVersion"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
@@ -1088,10 +1041,7 @@ export default class Iot {
       method: "DELETE",
       requestUri: cmnP.encodePath`/dynamic-thing-groups/${params["thingGroupName"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteJob(
@@ -1106,6 +1056,7 @@ export default class Iot {
       method: "DELETE",
       requestUri: cmnP.encodePath`/jobs/${params["jobId"]}`,
     });
+    await resp.text();
   }
 
   async deleteJobExecution(
@@ -1120,11 +1071,12 @@ export default class Iot {
       method: "DELETE",
       requestUri: cmnP.encodePath`/things/${params["thingName"]}/jobs/${params["jobId"]}/executionNumber/${params["executionNumber"].toString()}`,
     });
+    await resp.text();
   }
 
   async deleteMitigationAction(
     {abortSignal, ...params}: RequestConfig & s.DeleteMitigationActionRequest,
-  ): Promise<s.DeleteMitigationActionResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -1132,15 +1084,12 @@ export default class Iot {
       method: "DELETE",
       requestUri: cmnP.encodePath`/mitigationactions/actions/${params["actionName"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteOTAUpdate(
     {abortSignal, ...params}: RequestConfig & s.DeleteOTAUpdateRequest,
-  ): Promise<s.DeleteOTAUpdateResponse> {
+  ): Promise<void> {
     const query = new URLSearchParams;
     if (params["deleteStream"] != null) query.set("deleteStream", params["deleteStream"]?.toString() ?? "");
     if (params["forceDeleteAWSJob"] != null) query.set("forceDeleteAWSJob", params["forceDeleteAWSJob"]?.toString() ?? "");
@@ -1150,10 +1099,7 @@ export default class Iot {
       method: "DELETE",
       requestUri: cmnP.encodePath`/otaUpdates/${params["otaUpdateId"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deletePolicy(
@@ -1166,6 +1112,7 @@ export default class Iot {
       method: "DELETE",
       requestUri: cmnP.encodePath`/policies/${params["policyName"]}`,
     });
+    await resp.text();
   }
 
   async deletePolicyVersion(
@@ -1178,11 +1125,12 @@ export default class Iot {
       method: "DELETE",
       requestUri: cmnP.encodePath`/policies/${params["policyName"]}/version/${params["policyVersionId"]}`,
     });
+    await resp.text();
   }
 
   async deleteProvisioningTemplate(
     {abortSignal, ...params}: RequestConfig & s.DeleteProvisioningTemplateRequest,
-  ): Promise<s.DeleteProvisioningTemplateResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -1190,15 +1138,12 @@ export default class Iot {
       method: "DELETE",
       requestUri: cmnP.encodePath`/provisioning-templates/${params["templateName"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteProvisioningTemplateVersion(
     {abortSignal, ...params}: RequestConfig & s.DeleteProvisioningTemplateVersionRequest,
-  ): Promise<s.DeleteProvisioningTemplateVersionResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -1206,31 +1151,25 @@ export default class Iot {
       method: "DELETE",
       requestUri: cmnP.encodePath`/provisioning-templates/${params["templateName"]}/versions/${params["versionId"].toString()}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteRegistrationCode(
-    {abortSignal, ...params}: RequestConfig & s.DeleteRegistrationCodeRequest = {},
-  ): Promise<s.DeleteRegistrationCodeResponse> {
-
+    {abortSignal}: RequestConfig = {},
+  ): Promise<void> {
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
-      abortSignal,
+      abortSignal, body,
       action: "DeleteRegistrationCode",
       method: "DELETE",
       requestUri: "/registrationcode",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteRoleAlias(
     {abortSignal, ...params}: RequestConfig & s.DeleteRoleAliasRequest,
-  ): Promise<s.DeleteRoleAliasResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -1238,15 +1177,12 @@ export default class Iot {
       method: "DELETE",
       requestUri: cmnP.encodePath`/role-aliases/${params["roleAlias"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteScheduledAudit(
     {abortSignal, ...params}: RequestConfig & s.DeleteScheduledAuditRequest,
-  ): Promise<s.DeleteScheduledAuditResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -1254,15 +1190,12 @@ export default class Iot {
       method: "DELETE",
       requestUri: cmnP.encodePath`/audit/scheduledaudits/${params["scheduledAuditName"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteSecurityProfile(
     {abortSignal, ...params}: RequestConfig & s.DeleteSecurityProfileRequest,
-  ): Promise<s.DeleteSecurityProfileResponse> {
+  ): Promise<void> {
     const query = new URLSearchParams;
     if (params["expectedVersion"] != null) query.set("expectedVersion", params["expectedVersion"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
@@ -1271,15 +1204,12 @@ export default class Iot {
       method: "DELETE",
       requestUri: cmnP.encodePath`/security-profiles/${params["securityProfileName"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteStream(
     {abortSignal, ...params}: RequestConfig & s.DeleteStreamRequest,
-  ): Promise<s.DeleteStreamResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -1287,15 +1217,12 @@ export default class Iot {
       method: "DELETE",
       requestUri: cmnP.encodePath`/streams/${params["streamId"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteThing(
     {abortSignal, ...params}: RequestConfig & s.DeleteThingRequest,
-  ): Promise<s.DeleteThingResponse> {
+  ): Promise<void> {
     const query = new URLSearchParams;
     if (params["expectedVersion"] != null) query.set("expectedVersion", params["expectedVersion"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
@@ -1304,15 +1231,12 @@ export default class Iot {
       method: "DELETE",
       requestUri: cmnP.encodePath`/things/${params["thingName"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteThingGroup(
     {abortSignal, ...params}: RequestConfig & s.DeleteThingGroupRequest,
-  ): Promise<s.DeleteThingGroupResponse> {
+  ): Promise<void> {
     const query = new URLSearchParams;
     if (params["expectedVersion"] != null) query.set("expectedVersion", params["expectedVersion"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
@@ -1321,15 +1245,12 @@ export default class Iot {
       method: "DELETE",
       requestUri: cmnP.encodePath`/thing-groups/${params["thingGroupName"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteThingType(
     {abortSignal, ...params}: RequestConfig & s.DeleteThingTypeRequest,
-  ): Promise<s.DeleteThingTypeResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -1337,10 +1258,7 @@ export default class Iot {
       method: "DELETE",
       requestUri: cmnP.encodePath`/thing-types/${params["thingTypeName"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteTopicRule(
@@ -1353,11 +1271,12 @@ export default class Iot {
       method: "DELETE",
       requestUri: cmnP.encodePath`/rules/${params["ruleName"]}`,
     });
+    await resp.text();
   }
 
   async deleteTopicRuleDestination(
     {abortSignal, ...params}: RequestConfig & s.DeleteTopicRuleDestinationRequest,
-  ): Promise<s.DeleteTopicRuleDestinationResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -1365,10 +1284,7 @@ export default class Iot {
       method: "DELETE",
       requestUri: cmnP.encodePath`/destinations/${params["arn"].split("/")}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteV2LoggingLevel(
@@ -1383,11 +1299,12 @@ export default class Iot {
       method: "DELETE",
       requestUri: "/v2LoggingLevel",
     });
+    await resp.text();
   }
 
   async deprecateThingType(
     {abortSignal, ...params}: RequestConfig & s.DeprecateThingTypeRequest,
-  ): Promise<s.DeprecateThingTypeResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       undoDeprecate: params["undoDeprecate"],
     };
@@ -1396,18 +1313,15 @@ export default class Iot {
       action: "DeprecateThingType",
       requestUri: cmnP.encodePath`/thing-types/${params["thingTypeName"]}/deprecate`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async describeAccountAuditConfiguration(
-    {abortSignal, ...params}: RequestConfig & s.DescribeAccountAuditConfigurationRequest = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.DescribeAccountAuditConfigurationResponse> {
-
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
-      abortSignal,
+      abortSignal, body,
       action: "DescribeAccountAuditConfiguration",
       method: "GET",
       requestUri: "/audit/configuration",
@@ -1613,11 +1527,11 @@ export default class Iot {
   }
 
   async describeDefaultAuthorizer(
-    {abortSignal, ...params}: RequestConfig & s.DescribeDefaultAuthorizerRequest = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.DescribeDefaultAuthorizerResponse> {
-
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
-      abortSignal,
+      abortSignal, body,
       action: "DescribeDefaultAuthorizer",
       method: "GET",
       requestUri: "/default-authorizer",
@@ -1717,11 +1631,11 @@ export default class Iot {
   }
 
   async describeEventConfigurations(
-    {abortSignal, ...params}: RequestConfig & s.DescribeEventConfigurationsRequest = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.DescribeEventConfigurationsResponse> {
-
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
-      abortSignal,
+      abortSignal, body,
       action: "DescribeEventConfigurations",
       method: "GET",
       requestUri: "/event-configurations",
@@ -2067,6 +1981,7 @@ export default class Iot {
       action: "DetachPolicy",
       requestUri: cmnP.encodePath`/target-policies/${params["policyName"]}`,
     });
+    await resp.text();
   }
 
   async detachPrincipalPolicy(
@@ -2080,11 +1995,12 @@ export default class Iot {
       method: "DELETE",
       requestUri: cmnP.encodePath`/principal-policies/${params["policyName"]}`,
     });
+    await resp.text();
   }
 
   async detachSecurityProfile(
     {abortSignal, ...params}: RequestConfig & s.DetachSecurityProfileRequest,
-  ): Promise<s.DetachSecurityProfileResponse> {
+  ): Promise<void> {
     const query = new URLSearchParams;
     query.set("securityProfileTargetArn", params["securityProfileTargetArn"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
@@ -2093,15 +2009,12 @@ export default class Iot {
       method: "DELETE",
       requestUri: cmnP.encodePath`/security-profiles/${params["securityProfileName"]}/targets`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async detachThingPrincipal(
     {abortSignal, ...params}: RequestConfig & s.DetachThingPrincipalRequest,
-  ): Promise<s.DetachThingPrincipalResponse> {
+  ): Promise<void> {
     const headers = new Headers;
     headers.append("x-amzn-principal", params["principal"]);
     const resp = await this.#client.performRequest({
@@ -2110,10 +2023,7 @@ export default class Iot {
       method: "DELETE",
       requestUri: cmnP.encodePath`/things/${params["thingName"]}/principals`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async disableTopicRule(
@@ -2125,6 +2035,7 @@ export default class Iot {
       action: "DisableTopicRule",
       requestUri: cmnP.encodePath`/rules/${params["ruleName"]}/disable`,
     });
+    await resp.text();
   }
 
   async enableTopicRule(
@@ -2136,6 +2047,7 @@ export default class Iot {
       action: "EnableTopicRule",
       requestUri: cmnP.encodePath`/rules/${params["ruleName"]}/enable`,
     });
+    await resp.text();
   }
 
   async getBehaviorModelTrainingSummaries(
@@ -2205,11 +2117,11 @@ export default class Iot {
   }
 
   async getIndexingConfiguration(
-    {abortSignal, ...params}: RequestConfig & s.GetIndexingConfigurationRequest = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.GetIndexingConfigurationResponse> {
-
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
-      abortSignal,
+      abortSignal, body,
       action: "GetIndexingConfiguration",
       method: "GET",
       requestUri: "/indexing/config",
@@ -2242,11 +2154,11 @@ export default class Iot {
   }
 
   async getLoggingOptions(
-    {abortSignal, ...params}: RequestConfig & s.GetLoggingOptionsRequest = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.GetLoggingOptionsResponse> {
-
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
-      abortSignal,
+      abortSignal, body,
       action: "GetLoggingOptions",
       method: "GET",
       requestUri: "/loggingOptions",
@@ -2351,11 +2263,11 @@ export default class Iot {
   }
 
   async getRegistrationCode(
-    {abortSignal, ...params}: RequestConfig & s.GetRegistrationCodeRequest = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.GetRegistrationCodeResponse> {
-
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
-      abortSignal,
+      abortSignal, body,
       action: "GetRegistrationCode",
       method: "GET",
       requestUri: "/registrationcode",
@@ -2428,11 +2340,11 @@ export default class Iot {
   }
 
   async getV2LoggingOptions(
-    {abortSignal, ...params}: RequestConfig & s.GetV2LoggingOptionsRequest = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.GetV2LoggingOptionsResponse> {
-
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
-      abortSignal,
+      abortSignal, body,
       action: "GetV2LoggingOptions",
       method: "GET",
       requestUri: "/v2LoggingOptions",
@@ -3724,11 +3636,12 @@ export default class Iot {
       method: "PATCH",
       requestUri: cmnP.encodePath`/reject-certificate-transfer/${params["certificateId"]}`,
     });
+    await resp.text();
   }
 
   async removeThingFromBillingGroup(
     {abortSignal, ...params}: RequestConfig & s.RemoveThingFromBillingGroupRequest = {},
-  ): Promise<s.RemoveThingFromBillingGroupResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       billingGroupName: params["billingGroupName"],
       billingGroupArn: params["billingGroupArn"],
@@ -3741,15 +3654,12 @@ export default class Iot {
       method: "PUT",
       requestUri: "/billing-groups/removeThingFromBillingGroup",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async removeThingFromThingGroup(
     {abortSignal, ...params}: RequestConfig & s.RemoveThingFromThingGroupRequest = {},
-  ): Promise<s.RemoveThingFromThingGroupResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       thingGroupName: params["thingGroupName"],
       thingGroupArn: params["thingGroupArn"],
@@ -3762,10 +3672,7 @@ export default class Iot {
       method: "PUT",
       requestUri: "/thing-groups/removeThingFromThingGroup",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async replaceTopicRule(
@@ -3786,6 +3693,7 @@ export default class Iot {
       method: "PATCH",
       requestUri: cmnP.encodePath`/rules/${params["ruleName"]}`,
     });
+    await resp.text();
   }
 
   async searchIndex(
@@ -3843,6 +3751,7 @@ export default class Iot {
       method: "PATCH",
       requestUri: cmnP.encodePath`/policies/${params["policyName"]}/version/${params["policyVersionId"]}`,
     });
+    await resp.text();
   }
 
   async setLoggingOptions(
@@ -3858,6 +3767,7 @@ export default class Iot {
       action: "SetLoggingOptions",
       requestUri: "/loggingOptions",
     });
+    await resp.text();
   }
 
   async setV2LoggingLevel(
@@ -3872,6 +3782,7 @@ export default class Iot {
       action: "SetV2LoggingLevel",
       requestUri: "/v2LoggingLevel",
     });
+    await resp.text();
   }
 
   async setV2LoggingOptions(
@@ -3887,6 +3798,7 @@ export default class Iot {
       action: "SetV2LoggingOptions",
       requestUri: "/v2LoggingOptions",
     });
+    await resp.text();
   }
 
   async startAuditMitigationActionsTask(
@@ -3978,7 +3890,7 @@ export default class Iot {
 
   async stopThingRegistrationTask(
     {abortSignal, ...params}: RequestConfig & s.StopThingRegistrationTaskRequest,
-  ): Promise<s.StopThingRegistrationTaskResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -3986,15 +3898,12 @@ export default class Iot {
       method: "PUT",
       requestUri: cmnP.encodePath`/thing-registration-tasks/${params["taskId"]}/cancel`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & s.TagResourceRequest,
-  ): Promise<s.TagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       resourceArn: params["resourceArn"],
       tags: params["tags"]?.map(x => fromTag(x)),
@@ -4004,10 +3913,7 @@ export default class Iot {
       action: "TagResource",
       requestUri: "/tags",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async testAuthorization(
@@ -4086,7 +3992,7 @@ export default class Iot {
 
   async untagResource(
     {abortSignal, ...params}: RequestConfig & s.UntagResourceRequest,
-  ): Promise<s.UntagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       resourceArn: params["resourceArn"],
       tagKeys: params["tagKeys"],
@@ -4096,15 +4002,12 @@ export default class Iot {
       action: "UntagResource",
       requestUri: "/untag",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateAccountAuditConfiguration(
     {abortSignal, ...params}: RequestConfig & s.UpdateAccountAuditConfigurationRequest = {},
-  ): Promise<s.UpdateAccountAuditConfigurationResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       roleArn: params["roleArn"],
       auditNotificationTargetConfigurations: jsonP.serializeMap(params["auditNotificationTargetConfigurations"], x => fromAuditNotificationTarget(x)),
@@ -4116,15 +4019,12 @@ export default class Iot {
       method: "PATCH",
       requestUri: "/audit/configuration",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateAuditSuppression(
     {abortSignal, ...params}: RequestConfig & s.UpdateAuditSuppressionRequest,
-  ): Promise<s.UpdateAuditSuppressionResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       checkName: params["checkName"],
       resourceIdentifier: fromResourceIdentifier(params["resourceIdentifier"]),
@@ -4138,10 +4038,7 @@ export default class Iot {
       method: "PATCH",
       requestUri: "/audit/suppressions/update",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateAuthorizer(
@@ -4205,6 +4102,7 @@ export default class Iot {
       method: "PUT",
       requestUri: cmnP.encodePath`/cacertificate/${params["certificateId"]}`,
     });
+    await resp.text();
   }
 
   async updateCertificate(
@@ -4218,6 +4116,7 @@ export default class Iot {
       method: "PUT",
       requestUri: cmnP.encodePath`/certificates/${params["certificateId"]}`,
     });
+    await resp.text();
   }
 
   async updateCustomMetric(
@@ -4319,7 +4218,7 @@ export default class Iot {
 
   async updateEventConfigurations(
     {abortSignal, ...params}: RequestConfig & s.UpdateEventConfigurationsRequest = {},
-  ): Promise<s.UpdateEventConfigurationsResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       eventConfigurations: jsonP.serializeMap(params["eventConfigurations"], x => fromConfiguration(x)),
     };
@@ -4329,15 +4228,12 @@ export default class Iot {
       method: "PATCH",
       requestUri: "/event-configurations",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateIndexingConfiguration(
     {abortSignal, ...params}: RequestConfig & s.UpdateIndexingConfigurationRequest = {},
-  ): Promise<s.UpdateIndexingConfigurationResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       thingIndexingConfiguration: fromThingIndexingConfiguration(params["thingIndexingConfiguration"]),
       thingGroupIndexingConfiguration: fromThingGroupIndexingConfiguration(params["thingGroupIndexingConfiguration"]),
@@ -4347,10 +4243,7 @@ export default class Iot {
       action: "UpdateIndexingConfiguration",
       requestUri: "/indexing/config",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateJob(
@@ -4371,6 +4264,7 @@ export default class Iot {
       method: "PATCH",
       requestUri: cmnP.encodePath`/jobs/${params["jobId"]}`,
     });
+    await resp.text();
   }
 
   async updateMitigationAction(
@@ -4397,7 +4291,7 @@ export default class Iot {
 
   async updateProvisioningTemplate(
     {abortSignal, ...params}: RequestConfig & s.UpdateProvisioningTemplateRequest,
-  ): Promise<s.UpdateProvisioningTemplateResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       description: params["description"],
       enabled: params["enabled"],
@@ -4412,10 +4306,7 @@ export default class Iot {
       method: "PATCH",
       requestUri: cmnP.encodePath`/provisioning-templates/${params["templateName"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateRoleAlias(
@@ -4528,7 +4419,7 @@ export default class Iot {
 
   async updateThing(
     {abortSignal, ...params}: RequestConfig & s.UpdateThingRequest,
-  ): Promise<s.UpdateThingResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       thingTypeName: params["thingTypeName"],
       attributePayload: fromAttributePayload(params["attributePayload"]),
@@ -4541,10 +4432,7 @@ export default class Iot {
       method: "PATCH",
       requestUri: cmnP.encodePath`/things/${params["thingName"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateThingGroup(
@@ -4570,7 +4458,7 @@ export default class Iot {
 
   async updateThingGroupsForThing(
     {abortSignal, ...params}: RequestConfig & s.UpdateThingGroupsForThingRequest = {},
-  ): Promise<s.UpdateThingGroupsForThingResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       thingName: params["thingName"],
       thingGroupsToAdd: params["thingGroupsToAdd"],
@@ -4583,15 +4471,12 @@ export default class Iot {
       method: "PUT",
       requestUri: "/thing-groups/updateThingGroupsForThing",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateTopicRuleDestination(
     {abortSignal, ...params}: RequestConfig & s.UpdateTopicRuleDestinationRequest,
-  ): Promise<s.UpdateTopicRuleDestinationResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       arn: params["arn"],
       status: params["status"],
@@ -4602,10 +4487,7 @@ export default class Iot {
       method: "PATCH",
       requestUri: "/destinations",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async validateSecurityProfileBehaviors(

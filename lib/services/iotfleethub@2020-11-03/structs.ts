@@ -59,10 +59,6 @@ export interface CreateApplicationResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface DeleteApplicationResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface DescribeApplicationResponse {
   applicationId: string;
   applicationArn: string;
@@ -87,18 +83,6 @@ export interface ListApplicationsResponse {
 // refs: 1 - tags: named, output
 export interface ListTagsForResourceResponse {
   tags?: { [key: string]: string | null | undefined } | null;
-}
-
-// refs: 1 - tags: named, output
-export interface TagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UntagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateApplicationResponse {
 }
 
 // refs: 2 - tags: output, named, enum

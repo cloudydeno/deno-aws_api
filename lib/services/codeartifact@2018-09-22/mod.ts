@@ -416,12 +416,12 @@ export default class CodeArtifact {
       method: "GET",
       requestUri: "/v1/package/version/asset",
     });
-  return {
-    assetName: resp.headers.get("X-AssetName"),
-    packageVersion: resp.headers.get("X-PackageVersion"),
-    packageVersionRevision: resp.headers.get("X-PackageVersionRevision"),
-    asset: await resp.text(), // TODO: maybe allow proper body streaming,
-  };
+    return {
+      assetName: resp.headers.get("X-AssetName"),
+      packageVersion: resp.headers.get("X-PackageVersion"),
+      packageVersionRevision: resp.headers.get("X-PackageVersionRevision"),
+      asset: await resp.text(), // TODO: maybe allow proper body streaming,
+    };
   }
 
   async getPackageVersionReadme(
@@ -752,7 +752,7 @@ export default class CodeArtifact {
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & s.TagResourceRequest,
-  ): Promise<s.TagResourceResult> {
+  ): Promise<void> {
     const query = new URLSearchParams;
     const body: jsonP.JSONObject = {
       tags: params["tags"]?.map(x => fromTag(x)),
@@ -763,15 +763,12 @@ export default class CodeArtifact {
       action: "TagResource",
       requestUri: "/v1/tag",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async untagResource(
     {abortSignal, ...params}: RequestConfig & s.UntagResourceRequest,
-  ): Promise<s.UntagResourceResult> {
+  ): Promise<void> {
     const query = new URLSearchParams;
     const body: jsonP.JSONObject = {
       tagKeys: params["tagKeys"],
@@ -782,10 +779,7 @@ export default class CodeArtifact {
       action: "UntagResource",
       requestUri: "/v1/untag",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updatePackageVersionsStatus(

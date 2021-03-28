@@ -292,30 +292,14 @@ export interface ListTopicsResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface OptInPhoneNumberResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface PublishResponse {
   MessageId?: string | null;
   SequenceNumber?: string | null;
 }
 
 // refs: 1 - tags: named, output
-export interface SetSMSAttributesResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface SubscribeResponse {
   SubscriptionArn?: string | null;
-}
-
-// refs: 1 - tags: named, output
-export interface TagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UntagResourceResponse {
 }
 
 // refs: 3 - tags: input, named, interface, output

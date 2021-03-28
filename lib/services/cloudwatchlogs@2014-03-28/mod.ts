@@ -39,6 +39,7 @@ export default class CloudWatchLogs {
       abortSignal, body,
       action: "AssociateKmsKey",
     });
+    await resp.text();
   }
 
   async cancelExportTask(
@@ -51,6 +52,7 @@ export default class CloudWatchLogs {
       abortSignal, body,
       action: "CancelExportTask",
     });
+    await resp.text();
   }
 
   async createExportTask(
@@ -89,6 +91,7 @@ export default class CloudWatchLogs {
       abortSignal, body,
       action: "CreateLogGroup",
     });
+    await resp.text();
   }
 
   async createLogStream(
@@ -102,6 +105,7 @@ export default class CloudWatchLogs {
       abortSignal, body,
       action: "CreateLogStream",
     });
+    await resp.text();
   }
 
   async deleteDestination(
@@ -114,6 +118,7 @@ export default class CloudWatchLogs {
       abortSignal, body,
       action: "DeleteDestination",
     });
+    await resp.text();
   }
 
   async deleteLogGroup(
@@ -126,6 +131,7 @@ export default class CloudWatchLogs {
       abortSignal, body,
       action: "DeleteLogGroup",
     });
+    await resp.text();
   }
 
   async deleteLogStream(
@@ -139,6 +145,7 @@ export default class CloudWatchLogs {
       abortSignal, body,
       action: "DeleteLogStream",
     });
+    await resp.text();
   }
 
   async deleteMetricFilter(
@@ -152,6 +159,7 @@ export default class CloudWatchLogs {
       abortSignal, body,
       action: "DeleteMetricFilter",
     });
+    await resp.text();
   }
 
   async deleteQueryDefinition(
@@ -182,6 +190,7 @@ export default class CloudWatchLogs {
       abortSignal, body,
       action: "DeleteResourcePolicy",
     });
+    await resp.text();
   }
 
   async deleteRetentionPolicy(
@@ -194,6 +203,7 @@ export default class CloudWatchLogs {
       abortSignal, body,
       action: "DeleteRetentionPolicy",
     });
+    await resp.text();
   }
 
   async deleteSubscriptionFilter(
@@ -207,6 +217,7 @@ export default class CloudWatchLogs {
       abortSignal, body,
       action: "DeleteSubscriptionFilter",
     });
+    await resp.text();
   }
 
   async describeDestinations(
@@ -416,6 +427,7 @@ export default class CloudWatchLogs {
       abortSignal, body,
       action: "DisassociateKmsKey",
     });
+    await resp.text();
   }
 
   async filterLogEvents(
@@ -578,6 +590,7 @@ export default class CloudWatchLogs {
       abortSignal, body,
       action: "PutDestinationPolicy",
     });
+    await resp.text();
   }
 
   async putLogEvents(
@@ -615,6 +628,7 @@ export default class CloudWatchLogs {
       abortSignal, body,
       action: "PutMetricFilter",
     });
+    await resp.text();
   }
 
   async putQueryDefinition(
@@ -668,6 +682,7 @@ export default class CloudWatchLogs {
       abortSignal, body,
       action: "PutRetentionPolicy",
     });
+    await resp.text();
   }
 
   async putSubscriptionFilter(
@@ -685,6 +700,7 @@ export default class CloudWatchLogs {
       abortSignal, body,
       action: "PutSubscriptionFilter",
     });
+    await resp.text();
   }
 
   async startQuery(
@@ -739,6 +755,7 @@ export default class CloudWatchLogs {
       abortSignal, body,
       action: "TagLogGroup",
     });
+    await resp.text();
   }
 
   async testMetricFilter(
@@ -771,6 +788,7 @@ export default class CloudWatchLogs {
       abortSignal, body,
       action: "UntagLogGroup",
     });
+    await resp.text();
   }
 
 }

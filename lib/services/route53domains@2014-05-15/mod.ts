@@ -105,7 +105,7 @@ export default class Route53Domains {
 
   async deleteTagsForDomain(
     {abortSignal, ...params}: RequestConfig & s.DeleteTagsForDomainRequest,
-  ): Promise<s.DeleteTagsForDomainResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       DomainName: params["DomainName"],
       TagsToDelete: params["TagsToDelete"],
@@ -114,15 +114,12 @@ export default class Route53Domains {
       abortSignal, body,
       action: "DeleteTagsForDomain",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async disableDomainAutoRenew(
     {abortSignal, ...params}: RequestConfig & s.DisableDomainAutoRenewRequest,
-  ): Promise<s.DisableDomainAutoRenewResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       DomainName: params["DomainName"],
     };
@@ -130,10 +127,7 @@ export default class Route53Domains {
       abortSignal, body,
       action: "DisableDomainAutoRenew",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async disableDomainTransferLock(
@@ -156,7 +150,7 @@ export default class Route53Domains {
 
   async enableDomainAutoRenew(
     {abortSignal, ...params}: RequestConfig & s.EnableDomainAutoRenewRequest,
-  ): Promise<s.EnableDomainAutoRenewResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       DomainName: params["DomainName"],
     };
@@ -164,10 +158,7 @@ export default class Route53Domains {
       abortSignal, body,
       action: "EnableDomainAutoRenew",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async enableDomainTransferLock(
@@ -566,7 +557,7 @@ export default class Route53Domains {
 
   async updateTagsForDomain(
     {abortSignal, ...params}: RequestConfig & s.UpdateTagsForDomainRequest,
-  ): Promise<s.UpdateTagsForDomainResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       DomainName: params["DomainName"],
       TagsToUpdate: params["TagsToUpdate"]?.map(x => fromTag(x)),
@@ -575,10 +566,7 @@ export default class Route53Domains {
       abortSignal, body,
       action: "UpdateTagsForDomain",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async viewBilling(

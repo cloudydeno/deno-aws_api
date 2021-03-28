@@ -137,14 +137,6 @@ export interface CreateFlowResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface DeleteConnectorProfileResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteFlowResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface DescribeConnectorEntityResponse {
   connectorEntityFields: ConnectorEntityField[];
 }
@@ -214,14 +206,6 @@ export interface StartFlowResponse {
 export interface StopFlowResponse {
   flowArn?: string | null;
   flowStatus?: FlowStatus | null;
-}
-
-// refs: 1 - tags: named, output
-export interface TagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UntagResourceResponse {
 }
 
 // refs: 1 - tags: named, output

@@ -478,10 +478,6 @@ export interface ValidateTemplateInput {
 }
 
 // refs: 1 - tags: named, output
-export interface ContinueUpdateRollbackOutput {
-}
-
-// refs: 1 - tags: named, output
 export interface CreateChangeSetOutput {
   Id?: string | null;
   StackId?: string | null;
@@ -503,20 +499,8 @@ export interface CreateStackSetOutput {
 }
 
 // refs: 1 - tags: named, output
-export interface DeleteChangeSetOutput {
-}
-
-// refs: 1 - tags: named, output
 export interface DeleteStackInstancesOutput {
   OperationId?: string | null;
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteStackSetOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface DeregisterTypeOutput {
 }
 
 // refs: 1 - tags: named, output
@@ -651,10 +635,6 @@ export interface EstimateTemplateCostOutput {
 }
 
 // refs: 1 - tags: named, output
-export interface ExecuteChangeSetOutput {
-}
-
-// refs: 1 - tags: named, output
 export interface GetStackPolicyOutput {
   StackPolicyBody?: string | null;
 }
@@ -751,20 +731,8 @@ export interface ListTypesOutput {
 }
 
 // refs: 1 - tags: named, output
-export interface RecordHandlerProgressOutput {
-}
-
-// refs: 1 - tags: named, output
 export interface RegisterTypeOutput {
   RegistrationToken?: string | null;
-}
-
-// refs: 1 - tags: named, output
-export interface SetTypeDefaultVersionOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface StopStackSetOperationOutput {
 }
 
 // refs: 1 - tags: named, output

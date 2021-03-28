@@ -30,7 +30,7 @@ export default class SecurityHub {
 
   async acceptInvitation(
     {abortSignal, ...params}: RequestConfig & s.AcceptInvitationRequest,
-  ): Promise<s.AcceptInvitationResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       MasterId: params["MasterId"],
       InvitationId: params["InvitationId"],
@@ -40,10 +40,7 @@ export default class SecurityHub {
       action: "AcceptInvitation",
       requestUri: "/master",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async batchDisableStandards(
@@ -335,11 +332,11 @@ export default class SecurityHub {
   }
 
   async describeOrganizationConfiguration(
-    {abortSignal, ...params}: RequestConfig & s.DescribeOrganizationConfigurationRequest = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.DescribeOrganizationConfigurationResponse> {
-
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
-      abortSignal,
+      abortSignal, body,
       action: "DescribeOrganizationConfiguration",
       method: "GET",
       requestUri: "/organization/configuration",
@@ -420,7 +417,7 @@ export default class SecurityHub {
 
   async disableImportFindingsForProduct(
     {abortSignal, ...params}: RequestConfig & s.DisableImportFindingsForProductRequest,
-  ): Promise<s.DisableImportFindingsForProductResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -428,15 +425,12 @@ export default class SecurityHub {
       method: "DELETE",
       requestUri: cmnP.encodePath`/productSubscriptions/${params["ProductSubscriptionArn"].split("/")}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async disableOrganizationAdminAccount(
     {abortSignal, ...params}: RequestConfig & s.DisableOrganizationAdminAccountRequest,
-  ): Promise<s.DisableOrganizationAdminAccountResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       AdminAccountId: params["AdminAccountId"],
     };
@@ -445,46 +439,37 @@ export default class SecurityHub {
       action: "DisableOrganizationAdminAccount",
       requestUri: "/organization/admin/disable",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async disableSecurityHub(
-    {abortSignal, ...params}: RequestConfig & s.DisableSecurityHubRequest = {},
-  ): Promise<s.DisableSecurityHubResponse> {
-
+    {abortSignal}: RequestConfig = {},
+  ): Promise<void> {
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
-      abortSignal,
+      abortSignal, body,
       action: "DisableSecurityHub",
       method: "DELETE",
       requestUri: "/accounts",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async disassociateFromMasterAccount(
-    {abortSignal, ...params}: RequestConfig & s.DisassociateFromMasterAccountRequest = {},
-  ): Promise<s.DisassociateFromMasterAccountResponse> {
-
+    {abortSignal}: RequestConfig = {},
+  ): Promise<void> {
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
-      abortSignal,
+      abortSignal, body,
       action: "DisassociateFromMasterAccount",
       requestUri: "/master/disassociate",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async disassociateMembers(
     {abortSignal, ...params}: RequestConfig & s.DisassociateMembersRequest,
-  ): Promise<s.DisassociateMembersResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       AccountIds: params["AccountIds"],
     };
@@ -493,10 +478,7 @@ export default class SecurityHub {
       action: "DisassociateMembers",
       requestUri: "/members/disassociate",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async enableImportFindingsForProduct(
@@ -520,7 +502,7 @@ export default class SecurityHub {
 
   async enableOrganizationAdminAccount(
     {abortSignal, ...params}: RequestConfig & s.EnableOrganizationAdminAccountRequest,
-  ): Promise<s.EnableOrganizationAdminAccountResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       AdminAccountId: params["AdminAccountId"],
     };
@@ -529,15 +511,12 @@ export default class SecurityHub {
       action: "EnableOrganizationAdminAccount",
       requestUri: "/organization/admin/enable",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async enableSecurityHub(
     {abortSignal, ...params}: RequestConfig & s.EnableSecurityHubRequest = {},
-  ): Promise<s.EnableSecurityHubResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       Tags: params["Tags"],
       EnableDefaultStandards: params["EnableDefaultStandards"],
@@ -547,10 +526,7 @@ export default class SecurityHub {
       action: "EnableSecurityHub",
       requestUri: "/accounts",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async getEnabledStandards(
@@ -641,11 +617,11 @@ export default class SecurityHub {
   }
 
   async getInvitationsCount(
-    {abortSignal, ...params}: RequestConfig & s.GetInvitationsCountRequest = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.GetInvitationsCountResponse> {
-
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
-      abortSignal,
+      abortSignal, body,
       action: "GetInvitationsCount",
       method: "GET",
       requestUri: "/invitations/count",
@@ -659,11 +635,11 @@ export default class SecurityHub {
   }
 
   async getMasterAccount(
-    {abortSignal, ...params}: RequestConfig & s.GetMasterAccountRequest = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.GetMasterAccountResponse> {
-
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
-      abortSignal,
+      abortSignal, body,
       action: "GetMasterAccount",
       method: "GET",
       requestUri: "/master",
@@ -820,7 +796,7 @@ export default class SecurityHub {
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & s.TagResourceRequest,
-  ): Promise<s.TagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       Tags: params["Tags"],
     };
@@ -829,15 +805,12 @@ export default class SecurityHub {
       action: "TagResource",
       requestUri: cmnP.encodePath`/tags/${params["ResourceArn"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async untagResource(
     {abortSignal, ...params}: RequestConfig & s.UntagResourceRequest,
-  ): Promise<s.UntagResourceResponse> {
+  ): Promise<void> {
     const query = new URLSearchParams;
     for (const item of params["TagKeys"]) {
       query.append("tagKeys", item?.toString() ?? "");
@@ -848,15 +821,12 @@ export default class SecurityHub {
       method: "DELETE",
       requestUri: cmnP.encodePath`/tags/${params["ResourceArn"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateActionTarget(
     {abortSignal, ...params}: RequestConfig & s.UpdateActionTargetRequest,
-  ): Promise<s.UpdateActionTargetResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       Name: params["Name"],
       Description: params["Description"],
@@ -867,15 +837,12 @@ export default class SecurityHub {
       method: "PATCH",
       requestUri: cmnP.encodePath`/actionTargets/${params["ActionTargetArn"].split("/")}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateFindings(
     {abortSignal, ...params}: RequestConfig & s.UpdateFindingsRequest,
-  ): Promise<s.UpdateFindingsResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       Filters: fromAwsSecurityFindingFilters(params["Filters"]),
       Note: fromNoteUpdate(params["Note"]),
@@ -887,15 +854,12 @@ export default class SecurityHub {
       method: "PATCH",
       requestUri: "/findings",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateInsight(
     {abortSignal, ...params}: RequestConfig & s.UpdateInsightRequest,
-  ): Promise<s.UpdateInsightResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       Name: params["Name"],
       Filters: fromAwsSecurityFindingFilters(params["Filters"]),
@@ -907,15 +871,12 @@ export default class SecurityHub {
       method: "PATCH",
       requestUri: cmnP.encodePath`/insights/${params["InsightArn"].split("/")}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateOrganizationConfiguration(
     {abortSignal, ...params}: RequestConfig & s.UpdateOrganizationConfigurationRequest,
-  ): Promise<s.UpdateOrganizationConfigurationResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       AutoEnable: params["AutoEnable"],
     };
@@ -924,15 +885,12 @@ export default class SecurityHub {
       action: "UpdateOrganizationConfiguration",
       requestUri: "/organization/configuration",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateSecurityHubConfiguration(
     {abortSignal, ...params}: RequestConfig & s.UpdateSecurityHubConfigurationRequest = {},
-  ): Promise<s.UpdateSecurityHubConfigurationResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       AutoEnableControls: params["AutoEnableControls"],
     };
@@ -942,15 +900,12 @@ export default class SecurityHub {
       method: "PATCH",
       requestUri: "/accounts",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateStandardsControl(
     {abortSignal, ...params}: RequestConfig & s.UpdateStandardsControlRequest,
-  ): Promise<s.UpdateStandardsControlResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ControlStatus: params["ControlStatus"],
       DisabledReason: params["DisabledReason"],
@@ -961,10 +916,7 @@ export default class SecurityHub {
       method: "PATCH",
       requestUri: cmnP.encodePath`/standards/control/${params["StandardsControlArn"].split("/")}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
 }

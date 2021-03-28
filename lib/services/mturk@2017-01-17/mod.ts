@@ -31,7 +31,7 @@ export default class MTurk {
 
   async acceptQualificationRequest(
     {abortSignal, ...params}: RequestConfig & s.AcceptQualificationRequestRequest,
-  ): Promise<s.AcceptQualificationRequestResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       QualificationRequestId: params["QualificationRequestId"],
       IntegerValue: params["IntegerValue"],
@@ -40,15 +40,12 @@ export default class MTurk {
       abortSignal, body,
       action: "AcceptQualificationRequest",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async approveAssignment(
     {abortSignal, ...params}: RequestConfig & s.ApproveAssignmentRequest,
-  ): Promise<s.ApproveAssignmentResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       AssignmentId: params["AssignmentId"],
       RequesterFeedback: params["RequesterFeedback"],
@@ -58,15 +55,12 @@ export default class MTurk {
       abortSignal, body,
       action: "ApproveAssignment",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async associateQualificationWithWorker(
     {abortSignal, ...params}: RequestConfig & s.AssociateQualificationWithWorkerRequest,
-  ): Promise<s.AssociateQualificationWithWorkerResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       QualificationTypeId: params["QualificationTypeId"],
       WorkerId: params["WorkerId"],
@@ -77,15 +71,12 @@ export default class MTurk {
       abortSignal, body,
       action: "AssociateQualificationWithWorker",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async createAdditionalAssignmentsForHIT(
     {abortSignal, ...params}: RequestConfig & s.CreateAdditionalAssignmentsForHITRequest,
-  ): Promise<s.CreateAdditionalAssignmentsForHITResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       HITId: params["HITId"],
       NumberOfAdditionalAssignments: params["NumberOfAdditionalAssignments"],
@@ -95,10 +86,7 @@ export default class MTurk {
       abortSignal, body,
       action: "CreateAdditionalAssignmentsForHIT",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async createHIT(
@@ -214,7 +202,7 @@ export default class MTurk {
 
   async createWorkerBlock(
     {abortSignal, ...params}: RequestConfig & s.CreateWorkerBlockRequest,
-  ): Promise<s.CreateWorkerBlockResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       WorkerId: params["WorkerId"],
       Reason: params["Reason"],
@@ -223,15 +211,12 @@ export default class MTurk {
       abortSignal, body,
       action: "CreateWorkerBlock",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteHIT(
     {abortSignal, ...params}: RequestConfig & s.DeleteHITRequest,
-  ): Promise<s.DeleteHITResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       HITId: params["HITId"],
     };
@@ -239,15 +224,12 @@ export default class MTurk {
       abortSignal, body,
       action: "DeleteHIT",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteQualificationType(
     {abortSignal, ...params}: RequestConfig & s.DeleteQualificationTypeRequest,
-  ): Promise<s.DeleteQualificationTypeResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       QualificationTypeId: params["QualificationTypeId"],
     };
@@ -255,15 +237,12 @@ export default class MTurk {
       abortSignal, body,
       action: "DeleteQualificationType",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteWorkerBlock(
     {abortSignal, ...params}: RequestConfig & s.DeleteWorkerBlockRequest,
-  ): Promise<s.DeleteWorkerBlockResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       WorkerId: params["WorkerId"],
       Reason: params["Reason"],
@@ -272,15 +251,12 @@ export default class MTurk {
       abortSignal, body,
       action: "DeleteWorkerBlock",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async disassociateQualificationFromWorker(
     {abortSignal, ...params}: RequestConfig & s.DisassociateQualificationFromWorkerRequest,
-  ): Promise<s.DisassociateQualificationFromWorkerResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       WorkerId: params["WorkerId"],
       QualificationTypeId: params["QualificationTypeId"],
@@ -290,17 +266,13 @@ export default class MTurk {
       abortSignal, body,
       action: "DisassociateQualificationFromWorker",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async getAccountBalance(
-    {abortSignal, ...params}: RequestConfig & s.GetAccountBalanceRequest = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.GetAccountBalanceResponse> {
-    const body: jsonP.JSONObject = {
-    };
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetAccountBalance",
@@ -659,7 +631,7 @@ export default class MTurk {
 
   async rejectAssignment(
     {abortSignal, ...params}: RequestConfig & s.RejectAssignmentRequest,
-  ): Promise<s.RejectAssignmentResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       AssignmentId: params["AssignmentId"],
       RequesterFeedback: params["RequesterFeedback"],
@@ -668,15 +640,12 @@ export default class MTurk {
       abortSignal, body,
       action: "RejectAssignment",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async rejectQualificationRequest(
     {abortSignal, ...params}: RequestConfig & s.RejectQualificationRequestRequest,
-  ): Promise<s.RejectQualificationRequestResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       QualificationRequestId: params["QualificationRequestId"],
       Reason: params["Reason"],
@@ -685,15 +654,12 @@ export default class MTurk {
       abortSignal, body,
       action: "RejectQualificationRequest",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async sendBonus(
     {abortSignal, ...params}: RequestConfig & s.SendBonusRequest,
-  ): Promise<s.SendBonusResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       WorkerId: params["WorkerId"],
       BonusAmount: params["BonusAmount"],
@@ -705,15 +671,12 @@ export default class MTurk {
       abortSignal, body,
       action: "SendBonus",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async sendTestEventNotification(
     {abortSignal, ...params}: RequestConfig & s.SendTestEventNotificationRequest,
-  ): Promise<s.SendTestEventNotificationResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       Notification: fromNotificationSpecification(params["Notification"]),
       TestEventType: params["TestEventType"],
@@ -722,15 +685,12 @@ export default class MTurk {
       abortSignal, body,
       action: "SendTestEventNotification",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateExpirationForHIT(
     {abortSignal, ...params}: RequestConfig & s.UpdateExpirationForHITRequest,
-  ): Promise<s.UpdateExpirationForHITResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       HITId: params["HITId"],
       ExpireAt: jsonP.serializeDate_unixTimestamp(params["ExpireAt"]),
@@ -739,15 +699,12 @@ export default class MTurk {
       abortSignal, body,
       action: "UpdateExpirationForHIT",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateHITReviewStatus(
     {abortSignal, ...params}: RequestConfig & s.UpdateHITReviewStatusRequest,
-  ): Promise<s.UpdateHITReviewStatusResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       HITId: params["HITId"],
       Revert: params["Revert"],
@@ -756,15 +713,12 @@ export default class MTurk {
       abortSignal, body,
       action: "UpdateHITReviewStatus",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateHITTypeOfHIT(
     {abortSignal, ...params}: RequestConfig & s.UpdateHITTypeOfHITRequest,
-  ): Promise<s.UpdateHITTypeOfHITResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       HITId: params["HITId"],
       HITTypeId: params["HITTypeId"],
@@ -773,15 +727,12 @@ export default class MTurk {
       abortSignal, body,
       action: "UpdateHITTypeOfHIT",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateNotificationSettings(
     {abortSignal, ...params}: RequestConfig & s.UpdateNotificationSettingsRequest,
-  ): Promise<s.UpdateNotificationSettingsResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       HITTypeId: params["HITTypeId"],
       Notification: fromNotificationSpecification(params["Notification"]),
@@ -791,10 +742,7 @@ export default class MTurk {
       abortSignal, body,
       action: "UpdateNotificationSettings",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateQualificationType(

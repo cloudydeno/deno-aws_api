@@ -9,7 +9,14 @@ export default class ProtocolJsonCodegen {
     public helpers: HelperLibrary,
   ) {}
 
-  generateOperationInputParsingTypescript(inputShape: KnownShape, meta: Schema.LocationInfo & {paramRef?: string}): { inputParsingCode: string; inputVariables: string[]; } {
+  generateOperationInputParsingTypescript(inputShape: KnownShape | null, meta: Schema.LocationInfo & {paramRef?: string}): { inputParsingCode: string; inputVariables: string[]; } {
+    if (!inputShape) {
+      return {
+        inputParsingCode: `    const body: jsonP.JSONObject = {};`,
+        inputVariables: ['body'],
+      };
+    }
+
     if (inputShape.spec.type !== 'structure') throw new Error(`BUG`);
     this.helpers.useHelper("jsonP");
 

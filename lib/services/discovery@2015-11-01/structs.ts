@@ -92,10 +92,6 @@ export interface DisassociateConfigurationItemsFromApplicationRequest {
 }
 
 // refs: 1 - tags: named, input
-export interface GetDiscoverySummaryRequest {
-}
-
-// refs: 1 - tags: named, input
 export interface ListConfigurationsRequest {
   configurationType: ConfigurationItemType;
   filters?: Filter[] | null;
@@ -111,10 +107,6 @@ export interface ListServerNeighborsRequest {
   neighborConfigurationIds?: string[] | null;
   maxResults?: number | null;
   nextToken?: string | null;
-}
-
-// refs: 1 - tags: named, input
-export interface StartContinuousExportRequest {
 }
 
 // refs: 1 - tags: named, input
@@ -155,10 +147,6 @@ export interface UpdateApplicationRequest {
 }
 
 // refs: 1 - tags: named, output
-export interface AssociateConfigurationItemsToApplicationResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface BatchDeleteImportDataResponse {
   errors?: BatchDeleteImportDataError[] | null;
 }
@@ -166,18 +154,6 @@ export interface BatchDeleteImportDataResponse {
 // refs: 1 - tags: named, output
 export interface CreateApplicationResponse {
   configurationId?: string | null;
-}
-
-// refs: 1 - tags: named, output
-export interface CreateTagsResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteApplicationsResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteTagsResponse {
 }
 
 // refs: 1 - tags: named, output
@@ -219,10 +195,6 @@ export interface DescribeImportTasksResponse {
 export interface DescribeTagsResponse {
   tags?: ConfigurationTag[] | null;
   nextToken?: string | null;
-}
-
-// refs: 1 - tags: named, output
-export interface DisassociateConfigurationItemsFromApplicationResponse {
 }
 
 // refs: 1 - tags: named, output
@@ -286,10 +258,6 @@ export interface StopContinuousExportResponse {
 // refs: 1 - tags: named, output
 export interface StopDataCollectionByAgentIdsResponse {
   agentsConfigurationStatus?: AgentConfigurationStatus[] | null;
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateApplicationResponse {
 }
 
 // refs: 2 - tags: input, named, interface

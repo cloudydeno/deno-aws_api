@@ -29,7 +29,7 @@ export default class ELB {
 
   async addTags(
     {abortSignal, ...params}: RequestConfig & s.AddTagsInput,
-  ): Promise<s.AddTagsOutput> {
+  ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     if (params["LoadBalancerNames"]) qsP.appendList(body, prefix+"LoadBalancerNames", params["LoadBalancerNames"], {"entryPrefix":".member."})
@@ -38,8 +38,7 @@ export default class ELB {
       abortSignal, body,
       action: "AddTags",
     });
-    const xml = xmlP.readXmlResult(await resp.text(), "AddTagsResult");
-    return {};
+    await resp.text();
   }
 
   async applySecurityGroupsToLoadBalancer(
@@ -95,7 +94,7 @@ export default class ELB {
 
   async createAppCookieStickinessPolicy(
     {abortSignal, ...params}: RequestConfig & s.CreateAppCookieStickinessPolicyInput,
-  ): Promise<s.CreateAppCookieStickinessPolicyOutput> {
+  ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"LoadBalancerName", (params["LoadBalancerName"] ?? '').toString());
@@ -105,13 +104,12 @@ export default class ELB {
       abortSignal, body,
       action: "CreateAppCookieStickinessPolicy",
     });
-    const xml = xmlP.readXmlResult(await resp.text(), "CreateAppCookieStickinessPolicyResult");
-    return {};
+    await resp.text();
   }
 
   async createLBCookieStickinessPolicy(
     {abortSignal, ...params}: RequestConfig & s.CreateLBCookieStickinessPolicyInput,
-  ): Promise<s.CreateLBCookieStickinessPolicyOutput> {
+  ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"LoadBalancerName", (params["LoadBalancerName"] ?? '').toString());
@@ -121,8 +119,7 @@ export default class ELB {
       abortSignal, body,
       action: "CreateLBCookieStickinessPolicy",
     });
-    const xml = xmlP.readXmlResult(await resp.text(), "CreateLBCookieStickinessPolicyResult");
-    return {};
+    await resp.text();
   }
 
   async createLoadBalancer(
@@ -149,7 +146,7 @@ export default class ELB {
 
   async createLoadBalancerListeners(
     {abortSignal, ...params}: RequestConfig & s.CreateLoadBalancerListenerInput,
-  ): Promise<s.CreateLoadBalancerListenerOutput> {
+  ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"LoadBalancerName", (params["LoadBalancerName"] ?? '').toString());
@@ -158,13 +155,12 @@ export default class ELB {
       abortSignal, body,
       action: "CreateLoadBalancerListeners",
     });
-    const xml = xmlP.readXmlResult(await resp.text(), "CreateLoadBalancerListenersResult");
-    return {};
+    await resp.text();
   }
 
   async createLoadBalancerPolicy(
     {abortSignal, ...params}: RequestConfig & s.CreateLoadBalancerPolicyInput,
-  ): Promise<s.CreateLoadBalancerPolicyOutput> {
+  ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"LoadBalancerName", (params["LoadBalancerName"] ?? '').toString());
@@ -175,13 +171,12 @@ export default class ELB {
       abortSignal, body,
       action: "CreateLoadBalancerPolicy",
     });
-    const xml = xmlP.readXmlResult(await resp.text(), "CreateLoadBalancerPolicyResult");
-    return {};
+    await resp.text();
   }
 
   async deleteLoadBalancer(
     {abortSignal, ...params}: RequestConfig & s.DeleteAccessPointInput,
-  ): Promise<s.DeleteAccessPointOutput> {
+  ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"LoadBalancerName", (params["LoadBalancerName"] ?? '').toString());
@@ -189,13 +184,12 @@ export default class ELB {
       abortSignal, body,
       action: "DeleteLoadBalancer",
     });
-    const xml = xmlP.readXmlResult(await resp.text(), "DeleteLoadBalancerResult");
-    return {};
+    await resp.text();
   }
 
   async deleteLoadBalancerListeners(
     {abortSignal, ...params}: RequestConfig & s.DeleteLoadBalancerListenerInput,
-  ): Promise<s.DeleteLoadBalancerListenerOutput> {
+  ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"LoadBalancerName", (params["LoadBalancerName"] ?? '').toString());
@@ -204,13 +198,12 @@ export default class ELB {
       abortSignal, body,
       action: "DeleteLoadBalancerListeners",
     });
-    const xml = xmlP.readXmlResult(await resp.text(), "DeleteLoadBalancerListenersResult");
-    return {};
+    await resp.text();
   }
 
   async deleteLoadBalancerPolicy(
     {abortSignal, ...params}: RequestConfig & s.DeleteLoadBalancerPolicyInput,
-  ): Promise<s.DeleteLoadBalancerPolicyOutput> {
+  ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"LoadBalancerName", (params["LoadBalancerName"] ?? '').toString());
@@ -219,8 +212,7 @@ export default class ELB {
       abortSignal, body,
       action: "DeleteLoadBalancerPolicy",
     });
-    const xml = xmlP.readXmlResult(await resp.text(), "DeleteLoadBalancerPolicyResult");
-    return {};
+    await resp.text();
   }
 
   async deregisterInstancesFromLoadBalancer(
@@ -453,7 +445,7 @@ export default class ELB {
 
   async removeTags(
     {abortSignal, ...params}: RequestConfig & s.RemoveTagsInput,
-  ): Promise<s.RemoveTagsOutput> {
+  ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     if (params["LoadBalancerNames"]) qsP.appendList(body, prefix+"LoadBalancerNames", params["LoadBalancerNames"], {"entryPrefix":".member."})
@@ -462,13 +454,12 @@ export default class ELB {
       abortSignal, body,
       action: "RemoveTags",
     });
-    const xml = xmlP.readXmlResult(await resp.text(), "RemoveTagsResult");
-    return {};
+    await resp.text();
   }
 
   async setLoadBalancerListenerSSLCertificate(
     {abortSignal, ...params}: RequestConfig & s.SetLoadBalancerListenerSSLCertificateInput,
-  ): Promise<s.SetLoadBalancerListenerSSLCertificateOutput> {
+  ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"LoadBalancerName", (params["LoadBalancerName"] ?? '').toString());
@@ -478,13 +469,12 @@ export default class ELB {
       abortSignal, body,
       action: "SetLoadBalancerListenerSSLCertificate",
     });
-    const xml = xmlP.readXmlResult(await resp.text(), "SetLoadBalancerListenerSSLCertificateResult");
-    return {};
+    await resp.text();
   }
 
   async setLoadBalancerPoliciesForBackendServer(
     {abortSignal, ...params}: RequestConfig & s.SetLoadBalancerPoliciesForBackendServerInput,
-  ): Promise<s.SetLoadBalancerPoliciesForBackendServerOutput> {
+  ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"LoadBalancerName", (params["LoadBalancerName"] ?? '').toString());
@@ -494,13 +484,12 @@ export default class ELB {
       abortSignal, body,
       action: "SetLoadBalancerPoliciesForBackendServer",
     });
-    const xml = xmlP.readXmlResult(await resp.text(), "SetLoadBalancerPoliciesForBackendServerResult");
-    return {};
+    await resp.text();
   }
 
   async setLoadBalancerPoliciesOfListener(
     {abortSignal, ...params}: RequestConfig & s.SetLoadBalancerPoliciesOfListenerInput,
-  ): Promise<s.SetLoadBalancerPoliciesOfListenerOutput> {
+  ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"LoadBalancerName", (params["LoadBalancerName"] ?? '').toString());
@@ -510,8 +499,7 @@ export default class ELB {
       abortSignal, body,
       action: "SetLoadBalancerPoliciesOfListener",
     });
-    const xml = xmlP.readXmlResult(await resp.text(), "SetLoadBalancerPoliciesOfListenerResult");
-    return {};
+    await resp.text();
   }
 
   // Resource State Waiters

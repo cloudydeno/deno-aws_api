@@ -225,6 +225,7 @@ export default class IoT1ClickDevicesService {
       requestUri: cmnP.encodePath`/tags/${params["ResourceArn"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async unclaimDevice(
@@ -260,11 +261,12 @@ export default class IoT1ClickDevicesService {
       requestUri: cmnP.encodePath`/tags/${params["ResourceArn"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async updateDeviceState(
     {abortSignal, ...params}: RequestConfig & s.UpdateDeviceStateRequest,
-  ): Promise<s.UpdateDeviceStateResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       enabled: params["Enabled"],
     };
@@ -275,10 +277,7 @@ export default class IoT1ClickDevicesService {
       requestUri: cmnP.encodePath`/devices/${params["DeviceId"]}/state`,
       responseCode: 200,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
 }

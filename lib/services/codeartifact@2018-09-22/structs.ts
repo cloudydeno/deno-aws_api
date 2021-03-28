@@ -494,14 +494,6 @@ export interface PutRepositoryPermissionsPolicyResult {
 }
 
 // refs: 1 - tags: named, output
-export interface TagResourceResult {
-}
-
-// refs: 1 - tags: named, output
-export interface UntagResourceResult {
-}
-
-// refs: 1 - tags: named, output
 export interface UpdatePackageVersionsStatusResult {
   successfulVersions?: { [key: string]: SuccessfulPackageVersionInfo | null | undefined } | null;
   failedVersions?: { [key: string]: PackageVersionError | null | undefined } | null;

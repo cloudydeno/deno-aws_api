@@ -537,10 +537,6 @@ export interface GetMeetingRequest {
 }
 
 // refs: 1 - tags: named, input
-export interface GetMessagingSessionEndpointRequest {
-}
-
-// refs: 1 - tags: named, input
 export interface GetPhoneNumberRequest {
   PhoneNumberId: string;
 }
@@ -1175,10 +1171,6 @@ export interface UpdateVoiceConnectorGroupRequest {
 }
 
 // refs: 1 - tags: named, output
-export interface AssociatePhoneNumberWithUserResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface AssociatePhoneNumbersWithVoiceConnectorResponse {
   PhoneNumberErrors?: PhoneNumberError[] | null;
 }
@@ -1186,10 +1178,6 @@ export interface AssociatePhoneNumbersWithVoiceConnectorResponse {
 // refs: 1 - tags: named, output
 export interface AssociatePhoneNumbersWithVoiceConnectorGroupResponse {
   PhoneNumberErrors?: PhoneNumberError[] | null;
-}
-
-// refs: 1 - tags: named, output
-export interface AssociateSigninDelegateGroupsWithAccountResponse {
 }
 
 // refs: 1 - tags: named, output
@@ -1350,10 +1338,6 @@ export interface CreateVoiceConnectorGroupResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface DeleteAccountResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface DescribeAppInstanceResponse {
   AppInstance?: AppInstance | null;
 }
@@ -1399,10 +1383,6 @@ export interface DescribeChannelModeratorResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface DisassociatePhoneNumberFromUserResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface DisassociatePhoneNumbersFromVoiceConnectorResponse {
   PhoneNumberErrors?: PhoneNumberError[] | null;
 }
@@ -1410,10 +1390,6 @@ export interface DisassociatePhoneNumbersFromVoiceConnectorResponse {
 // refs: 1 - tags: named, output
 export interface DisassociatePhoneNumbersFromVoiceConnectorGroupResponse {
   PhoneNumberErrors?: PhoneNumberError[] | null;
-}
-
-// refs: 1 - tags: named, output
-export interface DisassociateSigninDelegateGroupsFromAccountResponse {
 }
 
 // refs: 1 - tags: named, output
@@ -1751,10 +1727,6 @@ export interface ListVoiceConnectorsResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface LogoutUserResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface PutAppInstanceRetentionSettingsResponse {
   AppInstanceRetentionSettings?: AppInstanceRetentionSettings | null;
   InitiateDeletionTimestamp?: Date | number | null;
@@ -1818,14 +1790,6 @@ export interface RedactChannelMessageResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface RedactConversationMessageResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface RedactRoomMessageResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface RegenerateSecurityTokenResponse {
   Bot?: Bot | null;
 }
@@ -1854,10 +1818,6 @@ export interface SendChannelMessageResponse {
 // refs: 1 - tags: named, output
 export interface UpdateAccountResponse {
   Account?: Account | null;
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateAccountSettingsResponse {
 }
 
 // refs: 1 - tags: named, output

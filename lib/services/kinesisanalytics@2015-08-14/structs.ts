@@ -139,48 +139,8 @@ export interface UpdateApplicationRequest {
 }
 
 // refs: 1 - tags: named, output
-export interface AddApplicationCloudWatchLoggingOptionResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface AddApplicationInputResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface AddApplicationInputProcessingConfigurationResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface AddApplicationOutputResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface AddApplicationReferenceDataSourceResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface CreateApplicationResponse {
   ApplicationSummary: ApplicationSummary;
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteApplicationResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteApplicationCloudWatchLoggingOptionResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteApplicationInputProcessingConfigurationResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteApplicationOutputResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteApplicationReferenceDataSourceResponse {
 }
 
 // refs: 1 - tags: named, output
@@ -205,26 +165,6 @@ export interface ListApplicationsResponse {
 // refs: 1 - tags: named, output
 export interface ListTagsForResourceResponse {
   Tags?: Tag[] | null;
-}
-
-// refs: 1 - tags: named, output
-export interface StartApplicationResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface StopApplicationResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface TagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UntagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateApplicationResponse {
 }
 
 // refs: 2 - tags: input, named, interface

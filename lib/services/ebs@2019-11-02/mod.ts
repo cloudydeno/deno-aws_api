@@ -65,12 +65,12 @@ export default class EBS {
       method: "GET",
       requestUri: cmnP.encodePath`/snapshots/${params["SnapshotId"]}/blocks/${params["BlockIndex"].toString()}`,
     });
-  return {
-    DataLength: cmnP.readNum(resp.headers.get("x-amz-Data-Length")),
-    Checksum: resp.headers.get("x-amz-Checksum"),
-    ChecksumAlgorithm: cmnP.readEnum<s.ChecksumAlgorithm>(resp.headers.get("x-amz-Checksum-Algorithm")),
-    BlockData: await resp.text(), // TODO: maybe allow proper body streaming,
-  };
+    return {
+      DataLength: cmnP.readNum(resp.headers.get("x-amz-Data-Length")),
+      Checksum: resp.headers.get("x-amz-Checksum"),
+      ChecksumAlgorithm: cmnP.readEnum<s.ChecksumAlgorithm>(resp.headers.get("x-amz-Checksum-Algorithm")),
+      BlockData: await resp.text(), // TODO: maybe allow proper body streaming,
+    };
   }
 
   async listChangedBlocks(

@@ -366,16 +366,8 @@ export interface CreateCommentResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface CreateCustomMetadataResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface CreateFolderResponse {
   Metadata?: FolderMetadata | null;
-}
-
-// refs: 1 - tags: named, output
-export interface CreateLabelsResponse {
 }
 
 // refs: 1 - tags: named, output
@@ -386,14 +378,6 @@ export interface CreateNotificationSubscriptionResponse {
 // refs: 1 - tags: named, output
 export interface CreateUserResponse {
   User?: User | null;
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteCustomMetadataResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteLabelsResponse {
 }
 
 // refs: 1 - tags: named, output

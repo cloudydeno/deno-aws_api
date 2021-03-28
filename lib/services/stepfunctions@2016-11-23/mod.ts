@@ -76,7 +76,7 @@ export default class StepFunctions {
 
   async deleteActivity(
     {abortSignal, ...params}: RequestConfig & s.DeleteActivityInput,
-  ): Promise<s.DeleteActivityOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       activityArn: params["activityArn"],
     };
@@ -84,15 +84,12 @@ export default class StepFunctions {
       abortSignal, body,
       action: "DeleteActivity",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteStateMachine(
     {abortSignal, ...params}: RequestConfig & s.DeleteStateMachineInput,
-  ): Promise<s.DeleteStateMachineOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       stateMachineArn: params["stateMachineArn"],
     };
@@ -100,10 +97,7 @@ export default class StepFunctions {
       abortSignal, body,
       action: "DeleteStateMachine",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async describeActivity(
@@ -336,7 +330,7 @@ export default class StepFunctions {
 
   async sendTaskFailure(
     {abortSignal, ...params}: RequestConfig & s.SendTaskFailureInput,
-  ): Promise<s.SendTaskFailureOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       taskToken: params["taskToken"],
       error: params["error"],
@@ -346,15 +340,12 @@ export default class StepFunctions {
       abortSignal, body,
       action: "SendTaskFailure",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async sendTaskHeartbeat(
     {abortSignal, ...params}: RequestConfig & s.SendTaskHeartbeatInput,
-  ): Promise<s.SendTaskHeartbeatOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       taskToken: params["taskToken"],
     };
@@ -362,15 +353,12 @@ export default class StepFunctions {
       abortSignal, body,
       action: "SendTaskHeartbeat",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async sendTaskSuccess(
     {abortSignal, ...params}: RequestConfig & s.SendTaskSuccessInput,
-  ): Promise<s.SendTaskSuccessOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       taskToken: params["taskToken"],
       output: params["output"],
@@ -379,10 +367,7 @@ export default class StepFunctions {
       abortSignal, body,
       action: "SendTaskSuccess",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async startExecution(
@@ -465,7 +450,7 @@ export default class StepFunctions {
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & s.TagResourceInput,
-  ): Promise<s.TagResourceOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       resourceArn: params["resourceArn"],
       tags: params["tags"]?.map(x => fromTag(x)),
@@ -474,15 +459,12 @@ export default class StepFunctions {
       abortSignal, body,
       action: "TagResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async untagResource(
     {abortSignal, ...params}: RequestConfig & s.UntagResourceInput,
-  ): Promise<s.UntagResourceOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       resourceArn: params["resourceArn"],
       tagKeys: params["tagKeys"],
@@ -491,10 +473,7 @@ export default class StepFunctions {
       abortSignal, body,
       action: "UntagResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateStateMachine(

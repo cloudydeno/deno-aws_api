@@ -149,24 +149,24 @@ export default class S3 {
       requestUri: cmnP.encodePath`/${params["Bucket"]}/${params["Key"].split("/")}`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    Expiration: resp.headers.get("x-amz-expiration"),
-    CopySourceVersionId: resp.headers.get("x-amz-copy-source-version-id"),
-    VersionId: resp.headers.get("x-amz-version-id"),
-    ServerSideEncryption: cmnP.readEnum<s.ServerSideEncryption>(resp.headers.get("x-amz-server-side-encryption")),
-    SSECustomerAlgorithm: resp.headers.get("x-amz-server-side-encryption-customer-algorithm"),
-    SSECustomerKeyMD5: resp.headers.get("x-amz-server-side-encryption-customer-key-MD5"),
-    SSEKMSKeyId: resp.headers.get("x-amz-server-side-encryption-aws-kms-key-id"),
-    SSEKMSEncryptionContext: resp.headers.get("x-amz-server-side-encryption-context"),
-    BucketKeyEnabled: cmnP.readBool(resp.headers.get("x-amz-server-side-encryption-bucket-key-enabled")),
-    RequestCharged: cmnP.readEnum<s.RequestCharged>(resp.headers.get("x-amz-request-charged")),
-    CopyObjectResult: {
+    return {
+      Expiration: resp.headers.get("x-amz-expiration"),
+      CopySourceVersionId: resp.headers.get("x-amz-copy-source-version-id"),
+      VersionId: resp.headers.get("x-amz-version-id"),
+      ServerSideEncryption: cmnP.readEnum<s.ServerSideEncryption>(resp.headers.get("x-amz-server-side-encryption")),
+      SSECustomerAlgorithm: resp.headers.get("x-amz-server-side-encryption-customer-algorithm"),
+      SSECustomerKeyMD5: resp.headers.get("x-amz-server-side-encryption-customer-key-MD5"),
+      SSEKMSKeyId: resp.headers.get("x-amz-server-side-encryption-aws-kms-key-id"),
+      SSEKMSEncryptionContext: resp.headers.get("x-amz-server-side-encryption-context"),
+      BucketKeyEnabled: cmnP.readBool(resp.headers.get("x-amz-server-side-encryption-bucket-key-enabled")),
+      RequestCharged: cmnP.readEnum<s.RequestCharged>(resp.headers.get("x-amz-request-charged")),
+      CopyObjectResult: {
         ...xml.strings({
           optional: {"ETag":true},
         }),
         LastModified: xml.first("LastModified", false, x => xmlP.parseTimestamp(x.content)),
       },
-  };
+    };
   }
 
   async createBucket(
@@ -265,6 +265,7 @@ export default class S3 {
       requestUri: cmnP.encodePath`/${params["Bucket"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deleteBucketAnalyticsConfiguration(
@@ -281,6 +282,7 @@ export default class S3 {
       requestUri: cmnP.encodePath`/${params["Bucket"]}?analytics`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deleteBucketCors(
@@ -295,6 +297,7 @@ export default class S3 {
       requestUri: cmnP.encodePath`/${params["Bucket"]}?cors`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deleteBucketEncryption(
@@ -309,6 +312,7 @@ export default class S3 {
       requestUri: cmnP.encodePath`/${params["Bucket"]}?encryption`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deleteBucketIntelligentTieringConfiguration(
@@ -323,6 +327,7 @@ export default class S3 {
       requestUri: cmnP.encodePath`/${params["Bucket"]}?intelligent-tiering`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deleteBucketInventoryConfiguration(
@@ -339,6 +344,7 @@ export default class S3 {
       requestUri: cmnP.encodePath`/${params["Bucket"]}?inventory`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deleteBucketLifecycle(
@@ -353,6 +359,7 @@ export default class S3 {
       requestUri: cmnP.encodePath`/${params["Bucket"]}?lifecycle`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deleteBucketMetricsConfiguration(
@@ -369,6 +376,7 @@ export default class S3 {
       requestUri: cmnP.encodePath`/${params["Bucket"]}?metrics`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deleteBucketOwnershipControls(
@@ -383,6 +391,7 @@ export default class S3 {
       requestUri: cmnP.encodePath`/${params["Bucket"]}?ownershipControls`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deleteBucketPolicy(
@@ -397,6 +406,7 @@ export default class S3 {
       requestUri: cmnP.encodePath`/${params["Bucket"]}?policy`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deleteBucketReplication(
@@ -411,6 +421,7 @@ export default class S3 {
       requestUri: cmnP.encodePath`/${params["Bucket"]}?replication`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deleteBucketTagging(
@@ -425,6 +436,7 @@ export default class S3 {
       requestUri: cmnP.encodePath`/${params["Bucket"]}?tagging`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deleteBucketWebsite(
@@ -439,6 +451,7 @@ export default class S3 {
       requestUri: cmnP.encodePath`/${params["Bucket"]}?website`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deleteObject(
@@ -527,6 +540,7 @@ export default class S3 {
       requestUri: cmnP.encodePath`/${params["Bucket"]}?publicAccessBlock`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async getBucketAccelerateConfiguration(
@@ -578,9 +592,9 @@ export default class S3 {
       requestUri: cmnP.encodePath`/${params["Bucket"]}?analytics`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    AnalyticsConfiguration: AnalyticsConfiguration_Parse(xml),
-  };
+    return {
+      AnalyticsConfiguration: AnalyticsConfiguration_Parse(xml),
+    };
   }
 
   async getBucketCors(
@@ -612,9 +626,9 @@ export default class S3 {
       requestUri: cmnP.encodePath`/${params["Bucket"]}?encryption`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    ServerSideEncryptionConfiguration: ServerSideEncryptionConfiguration_Parse(xml),
-  };
+    return {
+      ServerSideEncryptionConfiguration: ServerSideEncryptionConfiguration_Parse(xml),
+    };
   }
 
   async getBucketIntelligentTieringConfiguration(
@@ -629,9 +643,9 @@ export default class S3 {
       requestUri: cmnP.encodePath`/${params["Bucket"]}?intelligent-tiering`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    IntelligentTieringConfiguration: IntelligentTieringConfiguration_Parse(xml),
-  };
+    return {
+      IntelligentTieringConfiguration: IntelligentTieringConfiguration_Parse(xml),
+    };
   }
 
   async getBucketInventoryConfiguration(
@@ -648,9 +662,9 @@ export default class S3 {
       requestUri: cmnP.encodePath`/${params["Bucket"]}?inventory`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    InventoryConfiguration: InventoryConfiguration_Parse(xml),
-  };
+    return {
+      InventoryConfiguration: InventoryConfiguration_Parse(xml),
+    };
   }
 
   async getBucketLifecycle(
@@ -735,9 +749,9 @@ export default class S3 {
       requestUri: cmnP.encodePath`/${params["Bucket"]}?metrics`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    MetricsConfiguration: MetricsConfiguration_Parse(xml),
-  };
+    return {
+      MetricsConfiguration: MetricsConfiguration_Parse(xml),
+    };
   }
 
   async getBucketNotification(
@@ -790,9 +804,9 @@ export default class S3 {
       requestUri: cmnP.encodePath`/${params["Bucket"]}?ownershipControls`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    OwnershipControls: OwnershipControls_Parse(xml),
-  };
+    return {
+      OwnershipControls: OwnershipControls_Parse(xml),
+    };
   }
 
   async getBucketPolicy(
@@ -806,8 +820,8 @@ export default class S3 {
       method: "GET",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?policy`,
     });
-  return {
-  };
+    return {
+    };
   }
 
   async getBucketPolicyStatus(
@@ -822,11 +836,11 @@ export default class S3 {
       requestUri: cmnP.encodePath`/${params["Bucket"]}?policyStatus`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    PolicyStatus: {
+    return {
+      PolicyStatus: {
         IsPublic: xml.first("IsPublic", false, x => x.content === 'true'),
       },
-  };
+    };
   }
 
   async getBucketReplication(
@@ -841,9 +855,9 @@ export default class S3 {
       requestUri: cmnP.encodePath`/${params["Bucket"]}?replication`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    ReplicationConfiguration: ReplicationConfiguration_Parse(xml),
-  };
+    return {
+      ReplicationConfiguration: ReplicationConfiguration_Parse(xml),
+    };
   }
 
   async getBucketRequestPayment(
@@ -947,40 +961,40 @@ export default class S3 {
       method: "GET",
       requestUri: cmnP.encodePath`/${params["Bucket"]}/${params["Key"].split("/")}`,
     });
-  return {
-    DeleteMarker: cmnP.readBool(resp.headers.get("x-amz-delete-marker")),
-    AcceptRanges: resp.headers.get("accept-ranges"),
-    Expiration: resp.headers.get("x-amz-expiration"),
-    Restore: resp.headers.get("x-amz-restore"),
-    LastModified: cmnP.readTimestamp(resp.headers.get("Last-Modified")),
-    ContentLength: cmnP.readNum(resp.headers.get("Content-Length")),
-    ETag: resp.headers.get("ETag"),
-    MissingMeta: cmnP.readNum(resp.headers.get("x-amz-missing-meta")),
-    VersionId: resp.headers.get("x-amz-version-id"),
-    CacheControl: resp.headers.get("Cache-Control"),
-    ContentDisposition: resp.headers.get("Content-Disposition"),
-    ContentEncoding: resp.headers.get("Content-Encoding"),
-    ContentLanguage: resp.headers.get("Content-Language"),
-    ContentRange: resp.headers.get("Content-Range"),
-    ContentType: resp.headers.get("Content-Type"),
-    Expires: cmnP.readTimestamp(resp.headers.get("Expires")),
-    WebsiteRedirectLocation: resp.headers.get("x-amz-website-redirect-location"),
-    ServerSideEncryption: cmnP.readEnum<s.ServerSideEncryption>(resp.headers.get("x-amz-server-side-encryption")),
-    Metadata: cmnP.toJsObj(resp.headers, "x-amz-meta-", v => v),
-    SSECustomerAlgorithm: resp.headers.get("x-amz-server-side-encryption-customer-algorithm"),
-    SSECustomerKeyMD5: resp.headers.get("x-amz-server-side-encryption-customer-key-MD5"),
-    SSEKMSKeyId: resp.headers.get("x-amz-server-side-encryption-aws-kms-key-id"),
-    BucketKeyEnabled: cmnP.readBool(resp.headers.get("x-amz-server-side-encryption-bucket-key-enabled")),
-    StorageClass: cmnP.readEnum<s.StorageClass>(resp.headers.get("x-amz-storage-class")),
-    RequestCharged: cmnP.readEnum<s.RequestCharged>(resp.headers.get("x-amz-request-charged")),
-    ReplicationStatus: cmnP.readEnum<s.ReplicationStatus>(resp.headers.get("x-amz-replication-status")),
-    PartsCount: cmnP.readNum(resp.headers.get("x-amz-mp-parts-count")),
-    TagCount: cmnP.readNum(resp.headers.get("x-amz-tagging-count")),
-    ObjectLockMode: cmnP.readEnum<s.ObjectLockMode>(resp.headers.get("x-amz-object-lock-mode")),
-    ObjectLockRetainUntilDate: cmnP.readTimestamp(resp.headers.get("x-amz-object-lock-retain-until-date")),
-    ObjectLockLegalHoldStatus: cmnP.readEnum<s.ObjectLockLegalHoldStatus>(resp.headers.get("x-amz-object-lock-legal-hold")),
-    Body: await resp.text(), // TODO: maybe allow proper body streaming,
-  };
+    return {
+      DeleteMarker: cmnP.readBool(resp.headers.get("x-amz-delete-marker")),
+      AcceptRanges: resp.headers.get("accept-ranges"),
+      Expiration: resp.headers.get("x-amz-expiration"),
+      Restore: resp.headers.get("x-amz-restore"),
+      LastModified: cmnP.readTimestamp(resp.headers.get("Last-Modified")),
+      ContentLength: cmnP.readNum(resp.headers.get("Content-Length")),
+      ETag: resp.headers.get("ETag"),
+      MissingMeta: cmnP.readNum(resp.headers.get("x-amz-missing-meta")),
+      VersionId: resp.headers.get("x-amz-version-id"),
+      CacheControl: resp.headers.get("Cache-Control"),
+      ContentDisposition: resp.headers.get("Content-Disposition"),
+      ContentEncoding: resp.headers.get("Content-Encoding"),
+      ContentLanguage: resp.headers.get("Content-Language"),
+      ContentRange: resp.headers.get("Content-Range"),
+      ContentType: resp.headers.get("Content-Type"),
+      Expires: cmnP.readTimestamp(resp.headers.get("Expires")),
+      WebsiteRedirectLocation: resp.headers.get("x-amz-website-redirect-location"),
+      ServerSideEncryption: cmnP.readEnum<s.ServerSideEncryption>(resp.headers.get("x-amz-server-side-encryption")),
+      Metadata: cmnP.toJsObj(resp.headers, "x-amz-meta-", v => v),
+      SSECustomerAlgorithm: resp.headers.get("x-amz-server-side-encryption-customer-algorithm"),
+      SSECustomerKeyMD5: resp.headers.get("x-amz-server-side-encryption-customer-key-MD5"),
+      SSEKMSKeyId: resp.headers.get("x-amz-server-side-encryption-aws-kms-key-id"),
+      BucketKeyEnabled: cmnP.readBool(resp.headers.get("x-amz-server-side-encryption-bucket-key-enabled")),
+      StorageClass: cmnP.readEnum<s.StorageClass>(resp.headers.get("x-amz-storage-class")),
+      RequestCharged: cmnP.readEnum<s.RequestCharged>(resp.headers.get("x-amz-request-charged")),
+      ReplicationStatus: cmnP.readEnum<s.ReplicationStatus>(resp.headers.get("x-amz-replication-status")),
+      PartsCount: cmnP.readNum(resp.headers.get("x-amz-mp-parts-count")),
+      TagCount: cmnP.readNum(resp.headers.get("x-amz-tagging-count")),
+      ObjectLockMode: cmnP.readEnum<s.ObjectLockMode>(resp.headers.get("x-amz-object-lock-mode")),
+      ObjectLockRetainUntilDate: cmnP.readTimestamp(resp.headers.get("x-amz-object-lock-retain-until-date")),
+      ObjectLockLegalHoldStatus: cmnP.readEnum<s.ObjectLockLegalHoldStatus>(resp.headers.get("x-amz-object-lock-legal-hold")),
+      Body: await resp.text(), // TODO: maybe allow proper body streaming,
+    };
   }
 
   async getObjectAcl(
@@ -1022,9 +1036,9 @@ export default class S3 {
       requestUri: cmnP.encodePath`/${params["Bucket"]}/${params["Key"].split("/")}?legal-hold`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    LegalHold: ObjectLockLegalHold_Parse(xml),
-  };
+    return {
+      LegalHold: ObjectLockLegalHold_Parse(xml),
+    };
   }
 
   async getObjectLockConfiguration(
@@ -1039,9 +1053,9 @@ export default class S3 {
       requestUri: cmnP.encodePath`/${params["Bucket"]}?object-lock`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    ObjectLockConfiguration: ObjectLockConfiguration_Parse(xml),
-  };
+    return {
+      ObjectLockConfiguration: ObjectLockConfiguration_Parse(xml),
+    };
   }
 
   async getObjectRetention(
@@ -1059,9 +1073,9 @@ export default class S3 {
       requestUri: cmnP.encodePath`/${params["Bucket"]}/${params["Key"].split("/")}?retention`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    Retention: ObjectLockRetention_Parse(xml),
-  };
+    return {
+      Retention: ObjectLockRetention_Parse(xml),
+    };
   }
 
   async getObjectTagging(
@@ -1099,10 +1113,10 @@ export default class S3 {
       method: "GET",
       requestUri: cmnP.encodePath`/${params["Bucket"]}/${params["Key"].split("/")}?torrent`,
     });
-  return {
-    RequestCharged: cmnP.readEnum<s.RequestCharged>(resp.headers.get("x-amz-request-charged")),
-    Body: await resp.text(), // TODO: maybe allow proper body streaming,
-  };
+    return {
+      RequestCharged: cmnP.readEnum<s.RequestCharged>(resp.headers.get("x-amz-request-charged")),
+      Body: await resp.text(), // TODO: maybe allow proper body streaming,
+    };
   }
 
   async getPublicAccessBlock(
@@ -1117,9 +1131,9 @@ export default class S3 {
       requestUri: cmnP.encodePath`/${params["Bucket"]}?publicAccessBlock`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    PublicAccessBlockConfiguration: PublicAccessBlockConfiguration_Parse(xml),
-  };
+    return {
+      PublicAccessBlockConfiguration: PublicAccessBlockConfiguration_Parse(xml),
+    };
   }
 
   async headBucket(
@@ -1133,6 +1147,7 @@ export default class S3 {
       method: "HEAD",
       requestUri: cmnP.encodePath`/${params["Bucket"]}`,
     });
+    await resp.text();
   }
 
   async headObject(
@@ -1283,7 +1298,7 @@ export default class S3 {
   }
 
   async listBuckets(
-    {abortSignal, ...params}: RequestConfig = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.ListBucketsOutput> {
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -1480,6 +1495,7 @@ export default class S3 {
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?accelerate`,
     });
+    await resp.text();
   }
 
   async putBucketAcl(
@@ -1508,6 +1524,7 @@ export default class S3 {
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?acl`,
     });
+    await resp.text();
   }
 
   async putBucketAnalyticsConfiguration(
@@ -1532,6 +1549,7 @@ export default class S3 {
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?analytics`,
     });
+    await resp.text();
   }
 
   async putBucketCors(
@@ -1553,6 +1571,7 @@ export default class S3 {
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?cors`,
     });
+    await resp.text();
   }
 
   async putBucketEncryption(
@@ -1574,6 +1593,7 @@ export default class S3 {
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?encryption`,
     });
+    await resp.text();
   }
 
   async putBucketIntelligentTieringConfiguration(
@@ -1597,6 +1617,7 @@ export default class S3 {
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?intelligent-tiering`,
     });
+    await resp.text();
   }
 
   async putBucketInventoryConfiguration(
@@ -1625,6 +1646,7 @@ export default class S3 {
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?inventory`,
     });
+    await resp.text();
   }
 
   async putBucketLifecycle(
@@ -1646,6 +1668,7 @@ export default class S3 {
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?lifecycle`,
     });
+    await resp.text();
   }
 
   async putBucketLifecycleConfiguration(
@@ -1666,6 +1689,7 @@ export default class S3 {
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?lifecycle`,
     });
+    await resp.text();
   }
 
   async putBucketLogging(
@@ -1687,6 +1711,7 @@ export default class S3 {
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?logging`,
     });
+    await resp.text();
   }
 
   async putBucketMetricsConfiguration(
@@ -1710,6 +1735,7 @@ export default class S3 {
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?metrics`,
     });
+    await resp.text();
   }
 
   async putBucketNotification(
@@ -1733,6 +1759,7 @@ export default class S3 {
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?notification`,
     });
+    await resp.text();
   }
 
   async putBucketNotificationConfiguration(
@@ -1755,6 +1782,7 @@ export default class S3 {
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?notification`,
     });
+    await resp.text();
   }
 
   async putBucketOwnershipControls(
@@ -1776,6 +1804,7 @@ export default class S3 {
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?ownershipControls`,
     });
+    await resp.text();
   }
 
   async putBucketPolicy(
@@ -1792,6 +1821,7 @@ export default class S3 {
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?policy`,
     });
+    await resp.text();
   }
 
   async putBucketReplication(
@@ -1815,6 +1845,7 @@ export default class S3 {
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?replication`,
     });
+    await resp.text();
   }
 
   async putBucketRequestPayment(
@@ -1836,6 +1867,7 @@ export default class S3 {
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?requestPayment`,
     });
+    await resp.text();
   }
 
   async putBucketTagging(
@@ -1858,6 +1890,7 @@ export default class S3 {
       requestUri: cmnP.encodePath`/${params["Bucket"]}?tagging`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async putBucketVersioning(
@@ -1881,6 +1914,7 @@ export default class S3 {
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?versioning`,
     });
+    await resp.text();
   }
 
   async putBucketWebsite(
@@ -1905,6 +1939,7 @@ export default class S3 {
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?website`,
     });
+    await resp.text();
   }
 
   async putObject(
@@ -2129,6 +2164,7 @@ export default class S3 {
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?publicAccessBlock`,
     });
+    await resp.text();
   }
 
   async restoreObject(
@@ -2188,15 +2224,15 @@ export default class S3 {
       requestUri: cmnP.encodePath`/${params["Bucket"]}/${params["Key"].split("/")}?select&select-type=2`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    Payload: {
+    return {
+      Payload: {
         Records: xml.first("Records", false, RecordsEvent_Parse),
         Stats: xml.first("Stats", false, StatsEvent_Parse),
         Progress: xml.first("Progress", false, ProgressEvent_Parse),
         Cont: xml.first("Cont", false, ContinuationEvent_Parse),
         End: xml.first("End", false, EndEvent_Parse),
       },
-  };
+    };
   }
 
   async uploadPart(
@@ -2260,21 +2296,21 @@ export default class S3 {
       requestUri: cmnP.encodePath`/${params["Bucket"]}/${params["Key"].split("/")}`,
     });
     const xml = xmlP.readXmlResult(await resp.text());
-  return {
-    CopySourceVersionId: resp.headers.get("x-amz-copy-source-version-id"),
-    ServerSideEncryption: cmnP.readEnum<s.ServerSideEncryption>(resp.headers.get("x-amz-server-side-encryption")),
-    SSECustomerAlgorithm: resp.headers.get("x-amz-server-side-encryption-customer-algorithm"),
-    SSECustomerKeyMD5: resp.headers.get("x-amz-server-side-encryption-customer-key-MD5"),
-    SSEKMSKeyId: resp.headers.get("x-amz-server-side-encryption-aws-kms-key-id"),
-    BucketKeyEnabled: cmnP.readBool(resp.headers.get("x-amz-server-side-encryption-bucket-key-enabled")),
-    RequestCharged: cmnP.readEnum<s.RequestCharged>(resp.headers.get("x-amz-request-charged")),
-    CopyPartResult: {
+    return {
+      CopySourceVersionId: resp.headers.get("x-amz-copy-source-version-id"),
+      ServerSideEncryption: cmnP.readEnum<s.ServerSideEncryption>(resp.headers.get("x-amz-server-side-encryption")),
+      SSECustomerAlgorithm: resp.headers.get("x-amz-server-side-encryption-customer-algorithm"),
+      SSECustomerKeyMD5: resp.headers.get("x-amz-server-side-encryption-customer-key-MD5"),
+      SSEKMSKeyId: resp.headers.get("x-amz-server-side-encryption-aws-kms-key-id"),
+      BucketKeyEnabled: cmnP.readBool(resp.headers.get("x-amz-server-side-encryption-bucket-key-enabled")),
+      RequestCharged: cmnP.readEnum<s.RequestCharged>(resp.headers.get("x-amz-request-charged")),
+      CopyPartResult: {
         ...xml.strings({
           optional: {"ETag":true},
         }),
         LastModified: xml.first("LastModified", false, x => xmlP.parseTimestamp(x.content)),
       },
-  };
+    };
   }
 
   async writeGetObjectResponse(
@@ -2325,6 +2361,7 @@ export default class S3 {
       requestUri: "/WriteGetObjectResponse",
       hostPrefix: `${params.RequestRoute}.`,
     });
+    await resp.text();
   }
 
   // Resource State Waiters

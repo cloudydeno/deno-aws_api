@@ -240,36 +240,8 @@ export interface BatchGetQueryExecutionOutput {
 }
 
 // refs: 1 - tags: named, output
-export interface CreateDataCatalogOutput {
-}
-
-// refs: 1 - tags: named, output
 export interface CreateNamedQueryOutput {
   NamedQueryId?: string | null;
-}
-
-// refs: 1 - tags: named, output
-export interface CreatePreparedStatementOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface CreateWorkGroupOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteDataCatalogOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteNamedQueryOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface DeletePreparedStatementOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteWorkGroupOutput {
 }
 
 // refs: 1 - tags: named, output
@@ -371,30 +343,6 @@ export interface ListWorkGroupsOutput {
 // refs: 1 - tags: named, output
 export interface StartQueryExecutionOutput {
   QueryExecutionId?: string | null;
-}
-
-// refs: 1 - tags: named, output
-export interface StopQueryExecutionOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface TagResourceOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface UntagResourceOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateDataCatalogOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdatePreparedStatementOutput {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateWorkGroupOutput {
 }
 
 // refs: 4 - tags: input, named, enum, output

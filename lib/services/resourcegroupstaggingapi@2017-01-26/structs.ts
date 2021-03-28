@@ -3,10 +3,6 @@
 import * as cmnP from "../../encoding/common.ts";
 
 // refs: 1 - tags: named, input
-export interface DescribeReportCreationInput {
-}
-
-// refs: 1 - tags: named, input
 export interface GetComplianceSummaryInput {
   TargetIdFilters?: string[] | null;
   RegionFilters?: string[] | null;
@@ -86,10 +82,6 @@ export interface GetTagKeysOutput {
 export interface GetTagValuesOutput {
   PaginationToken?: string | null;
   TagValues?: string[] | null;
-}
-
-// refs: 1 - tags: named, output
-export interface StartReportCreationOutput {
 }
 
 // refs: 1 - tags: named, output

@@ -31,7 +31,7 @@ export default class ApplicationAutoScaling {
 
   async deleteScalingPolicy(
     {abortSignal, ...params}: RequestConfig & s.DeleteScalingPolicyRequest,
-  ): Promise<s.DeleteScalingPolicyResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       PolicyName: params["PolicyName"],
       ServiceNamespace: params["ServiceNamespace"],
@@ -42,15 +42,12 @@ export default class ApplicationAutoScaling {
       abortSignal, body,
       action: "DeleteScalingPolicy",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteScheduledAction(
     {abortSignal, ...params}: RequestConfig & s.DeleteScheduledActionRequest,
-  ): Promise<s.DeleteScheduledActionResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ServiceNamespace: params["ServiceNamespace"],
       ScheduledActionName: params["ScheduledActionName"],
@@ -61,15 +58,12 @@ export default class ApplicationAutoScaling {
       abortSignal, body,
       action: "DeleteScheduledAction",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deregisterScalableTarget(
     {abortSignal, ...params}: RequestConfig & s.DeregisterScalableTargetRequest,
-  ): Promise<s.DeregisterScalableTargetResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ServiceNamespace: params["ServiceNamespace"],
       ResourceId: params["ResourceId"],
@@ -79,10 +73,7 @@ export default class ApplicationAutoScaling {
       abortSignal, body,
       action: "DeregisterScalableTarget",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async describeScalableTargets(
@@ -207,7 +198,7 @@ export default class ApplicationAutoScaling {
 
   async putScheduledAction(
     {abortSignal, ...params}: RequestConfig & s.PutScheduledActionRequest,
-  ): Promise<s.PutScheduledActionResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ServiceNamespace: params["ServiceNamespace"],
       Schedule: params["Schedule"],
@@ -223,15 +214,12 @@ export default class ApplicationAutoScaling {
       abortSignal, body,
       action: "PutScheduledAction",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async registerScalableTarget(
     {abortSignal, ...params}: RequestConfig & s.RegisterScalableTargetRequest,
-  ): Promise<s.RegisterScalableTargetResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ServiceNamespace: params["ServiceNamespace"],
       ResourceId: params["ResourceId"],
@@ -245,10 +233,7 @@ export default class ApplicationAutoScaling {
       abortSignal, body,
       action: "RegisterScalableTarget",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
 }

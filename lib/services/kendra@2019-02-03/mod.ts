@@ -191,6 +191,7 @@ export default class Kendra {
       abortSignal, body,
       action: "DeleteDataSource",
     });
+    await resp.text();
   }
 
   async deleteFaq(
@@ -204,6 +205,7 @@ export default class Kendra {
       abortSignal, body,
       action: "DeleteFaq",
     });
+    await resp.text();
   }
 
   async deleteIndex(
@@ -216,6 +218,7 @@ export default class Kendra {
       abortSignal, body,
       action: "DeleteIndex",
     });
+    await resp.text();
   }
 
   async deleteThesaurus(
@@ -229,6 +232,7 @@ export default class Kendra {
       abortSignal, body,
       action: "DeleteThesaurus",
     });
+    await resp.text();
   }
 
   async describeDataSource(
@@ -539,6 +543,7 @@ export default class Kendra {
       abortSignal, body,
       action: "StopDataSourceSyncJob",
     });
+    await resp.text();
   }
 
   async submitFeedback(
@@ -554,11 +559,12 @@ export default class Kendra {
       abortSignal, body,
       action: "SubmitFeedback",
     });
+    await resp.text();
   }
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & s.TagResourceRequest,
-  ): Promise<s.TagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceARN: params["ResourceARN"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
@@ -567,15 +573,12 @@ export default class Kendra {
       abortSignal, body,
       action: "TagResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async untagResource(
     {abortSignal, ...params}: RequestConfig & s.UntagResourceRequest,
-  ): Promise<s.UntagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceARN: params["ResourceARN"],
       TagKeys: params["TagKeys"],
@@ -584,10 +587,7 @@ export default class Kendra {
       abortSignal, body,
       action: "UntagResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateDataSource(
@@ -606,6 +606,7 @@ export default class Kendra {
       abortSignal, body,
       action: "UpdateDataSource",
     });
+    await resp.text();
   }
 
   async updateIndex(
@@ -625,6 +626,7 @@ export default class Kendra {
       abortSignal, body,
       action: "UpdateIndex",
     });
+    await resp.text();
   }
 
   async updateThesaurus(
@@ -642,6 +644,7 @@ export default class Kendra {
       abortSignal, body,
       action: "UpdateThesaurus",
     });
+    await resp.text();
   }
 
 }

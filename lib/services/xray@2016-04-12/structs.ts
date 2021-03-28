@@ -35,10 +35,6 @@ export interface DeleteSamplingRuleRequest {
 }
 
 // refs: 1 - tags: named, input
-export interface GetEncryptionConfigRequest {
-}
-
-// refs: 1 - tags: named, input
 export interface GetGroupRequest {
   GroupName?: string | null;
   GroupARN?: string | null;
@@ -201,10 +197,6 @@ export interface CreateSamplingRuleResult {
 }
 
 // refs: 1 - tags: named, output
-export interface DeleteGroupResult {
-}
-
-// refs: 1 - tags: named, output
 export interface DeleteSamplingRuleResult {
   SamplingRuleRecord?: SamplingRuleRecord | null;
 }
@@ -314,20 +306,8 @@ export interface PutEncryptionConfigResult {
 }
 
 // refs: 1 - tags: named, output
-export interface PutTelemetryRecordsResult {
-}
-
-// refs: 1 - tags: named, output
 export interface PutTraceSegmentsResult {
   UnprocessedTraceSegments?: UnprocessedTraceSegment[] | null;
-}
-
-// refs: 1 - tags: named, output
-export interface TagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UntagResourceResponse {
 }
 
 // refs: 1 - tags: named, output

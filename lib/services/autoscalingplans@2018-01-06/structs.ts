@@ -58,10 +58,6 @@ export interface CreateScalingPlanResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface DeleteScalingPlanResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface DescribeScalingPlanResourcesResponse {
   ScalingPlanResources?: ScalingPlanResource[] | null;
   NextToken?: string | null;
@@ -76,10 +72,6 @@ export interface DescribeScalingPlansResponse {
 // refs: 1 - tags: named, output
 export interface GetScalingPlanResourceForecastDataResponse {
   Datapoints: Datapoint[];
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateScalingPlanResponse {
 }
 
 // refs: 4 - tags: input, named, interface, output

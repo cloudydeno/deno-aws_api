@@ -79,6 +79,7 @@ export default class ConfigService {
       abortSignal, body,
       action: "DeleteAggregationAuthorization",
     });
+    await resp.text();
   }
 
   async deleteConfigRule(
@@ -91,6 +92,7 @@ export default class ConfigService {
       abortSignal, body,
       action: "DeleteConfigRule",
     });
+    await resp.text();
   }
 
   async deleteConfigurationAggregator(
@@ -103,6 +105,7 @@ export default class ConfigService {
       abortSignal, body,
       action: "DeleteConfigurationAggregator",
     });
+    await resp.text();
   }
 
   async deleteConfigurationRecorder(
@@ -115,6 +118,7 @@ export default class ConfigService {
       abortSignal, body,
       action: "DeleteConfigurationRecorder",
     });
+    await resp.text();
   }
 
   async deleteConformancePack(
@@ -127,6 +131,7 @@ export default class ConfigService {
       abortSignal, body,
       action: "DeleteConformancePack",
     });
+    await resp.text();
   }
 
   async deleteDeliveryChannel(
@@ -139,11 +144,12 @@ export default class ConfigService {
       abortSignal, body,
       action: "DeleteDeliveryChannel",
     });
+    await resp.text();
   }
 
   async deleteEvaluationResults(
     {abortSignal, ...params}: RequestConfig & s.DeleteEvaluationResultsRequest,
-  ): Promise<s.DeleteEvaluationResultsResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ConfigRuleName: params["ConfigRuleName"],
     };
@@ -151,10 +157,7 @@ export default class ConfigService {
       abortSignal, body,
       action: "DeleteEvaluationResults",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteOrganizationConfigRule(
@@ -167,6 +170,7 @@ export default class ConfigService {
       abortSignal, body,
       action: "DeleteOrganizationConfigRule",
     });
+    await resp.text();
   }
 
   async deleteOrganizationConformancePack(
@@ -179,6 +183,7 @@ export default class ConfigService {
       abortSignal, body,
       action: "DeleteOrganizationConformancePack",
     });
+    await resp.text();
   }
 
   async deletePendingAggregationRequest(
@@ -192,11 +197,12 @@ export default class ConfigService {
       abortSignal, body,
       action: "DeletePendingAggregationRequest",
     });
+    await resp.text();
   }
 
   async deleteRemediationConfiguration(
     {abortSignal, ...params}: RequestConfig & s.DeleteRemediationConfigurationRequest,
-  ): Promise<s.DeleteRemediationConfigurationResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ConfigRuleName: params["ConfigRuleName"],
       ResourceType: params["ResourceType"],
@@ -205,10 +211,7 @@ export default class ConfigService {
       abortSignal, body,
       action: "DeleteRemediationConfiguration",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteRemediationExceptions(
@@ -241,6 +244,7 @@ export default class ConfigService {
       abortSignal, body,
       action: "DeleteResourceConfig",
     });
+    await resp.text();
   }
 
   async deleteRetentionConfiguration(
@@ -253,11 +257,12 @@ export default class ConfigService {
       abortSignal, body,
       action: "DeleteRetentionConfiguration",
     });
+    await resp.text();
   }
 
   async deleteStoredQuery(
     {abortSignal, ...params}: RequestConfig & s.DeleteStoredQueryRequest,
-  ): Promise<s.DeleteStoredQueryResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       QueryName: params["QueryName"],
     };
@@ -265,10 +270,7 @@ export default class ConfigService {
       abortSignal, body,
       action: "DeleteStoredQuery",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deliverConfigSnapshot(
@@ -922,7 +924,7 @@ export default class ConfigService {
   }
 
   async getComplianceSummaryByConfigRule(
-    {abortSignal, ...params}: RequestConfig = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.GetComplianceSummaryByConfigRuleResponse> {
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -1227,6 +1229,7 @@ export default class ConfigService {
       abortSignal, body,
       action: "PutConfigRule",
     });
+    await resp.text();
   }
 
   async putConfigurationAggregator(
@@ -1260,6 +1263,7 @@ export default class ConfigService {
       abortSignal, body,
       action: "PutConfigurationRecorder",
     });
+    await resp.text();
   }
 
   async putConformancePack(
@@ -1295,6 +1299,7 @@ export default class ConfigService {
       abortSignal, body,
       action: "PutDeliveryChannel",
     });
+    await resp.text();
   }
 
   async putEvaluations(
@@ -1319,7 +1324,7 @@ export default class ConfigService {
 
   async putExternalEvaluation(
     {abortSignal, ...params}: RequestConfig & s.PutExternalEvaluationRequest,
-  ): Promise<s.PutExternalEvaluationResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ConfigRuleName: params["ConfigRuleName"],
       ExternalEvaluation: fromExternalEvaluation(params["ExternalEvaluation"]),
@@ -1328,10 +1333,7 @@ export default class ConfigService {
       abortSignal, body,
       action: "PutExternalEvaluation",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async putOrganizationConfigRule(
@@ -1433,6 +1435,7 @@ export default class ConfigService {
       abortSignal, body,
       action: "PutResourceConfig",
     });
+    await resp.text();
   }
 
   async putRetentionConfiguration(
@@ -1520,7 +1523,7 @@ export default class ConfigService {
 
   async startConfigRulesEvaluation(
     {abortSignal, ...params}: RequestConfig & s.StartConfigRulesEvaluationRequest = {},
-  ): Promise<s.StartConfigRulesEvaluationResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ConfigRuleNames: params["ConfigRuleNames"],
     };
@@ -1528,10 +1531,7 @@ export default class ConfigService {
       abortSignal, body,
       action: "StartConfigRulesEvaluation",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async startConfigurationRecorder(
@@ -1544,6 +1544,7 @@ export default class ConfigService {
       abortSignal, body,
       action: "StartConfigurationRecorder",
     });
+    await resp.text();
   }
 
   async startRemediationExecution(
@@ -1576,6 +1577,7 @@ export default class ConfigService {
       abortSignal, body,
       action: "StopConfigurationRecorder",
     });
+    await resp.text();
   }
 
   async tagResource(
@@ -1589,6 +1591,7 @@ export default class ConfigService {
       abortSignal, body,
       action: "TagResource",
     });
+    await resp.text();
   }
 
   async untagResource(
@@ -1602,6 +1605,7 @@ export default class ConfigService {
       abortSignal, body,
       action: "UntagResource",
     });
+    await resp.text();
   }
 
 }

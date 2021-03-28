@@ -92,10 +92,6 @@ export interface CreateSuiteDefinitionResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface DeleteSuiteDefinitionResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface GetSuiteDefinitionResponse {
   suiteDefinitionId?: string | null;
   suiteDefinitionArn?: string | null;
@@ -157,14 +153,6 @@ export interface StartSuiteRunResponse {
   suiteRunId?: string | null;
   suiteRunArn?: string | null;
   createdAt?: Date | number | null;
-}
-
-// refs: 1 - tags: named, output
-export interface TagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UntagResourceResponse {
 }
 
 // refs: 1 - tags: named, output

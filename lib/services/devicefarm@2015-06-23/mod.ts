@@ -232,7 +232,7 @@ export default class DeviceFarm {
 
   async deleteDevicePool(
     {abortSignal, ...params}: RequestConfig & s.DeleteDevicePoolRequest,
-  ): Promise<s.DeleteDevicePoolResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       arn: params["arn"],
     };
@@ -240,15 +240,12 @@ export default class DeviceFarm {
       abortSignal, body,
       action: "DeleteDevicePool",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteInstanceProfile(
     {abortSignal, ...params}: RequestConfig & s.DeleteInstanceProfileRequest,
-  ): Promise<s.DeleteInstanceProfileResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       arn: params["arn"],
     };
@@ -256,15 +253,12 @@ export default class DeviceFarm {
       abortSignal, body,
       action: "DeleteInstanceProfile",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteNetworkProfile(
     {abortSignal, ...params}: RequestConfig & s.DeleteNetworkProfileRequest,
-  ): Promise<s.DeleteNetworkProfileResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       arn: params["arn"],
     };
@@ -272,15 +266,12 @@ export default class DeviceFarm {
       abortSignal, body,
       action: "DeleteNetworkProfile",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteProject(
     {abortSignal, ...params}: RequestConfig & s.DeleteProjectRequest,
-  ): Promise<s.DeleteProjectResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       arn: params["arn"],
     };
@@ -288,15 +279,12 @@ export default class DeviceFarm {
       abortSignal, body,
       action: "DeleteProject",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteRemoteAccessSession(
     {abortSignal, ...params}: RequestConfig & s.DeleteRemoteAccessSessionRequest,
-  ): Promise<s.DeleteRemoteAccessSessionResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       arn: params["arn"],
     };
@@ -304,15 +292,12 @@ export default class DeviceFarm {
       abortSignal, body,
       action: "DeleteRemoteAccessSession",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteRun(
     {abortSignal, ...params}: RequestConfig & s.DeleteRunRequest,
-  ): Promise<s.DeleteRunResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       arn: params["arn"],
     };
@@ -320,15 +305,12 @@ export default class DeviceFarm {
       abortSignal, body,
       action: "DeleteRun",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteTestGridProject(
     {abortSignal, ...params}: RequestConfig & s.DeleteTestGridProjectRequest,
-  ): Promise<s.DeleteTestGridProjectResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       projectArn: params["projectArn"],
     };
@@ -336,15 +318,12 @@ export default class DeviceFarm {
       abortSignal, body,
       action: "DeleteTestGridProject",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteUpload(
     {abortSignal, ...params}: RequestConfig & s.DeleteUploadRequest,
-  ): Promise<s.DeleteUploadResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       arn: params["arn"],
     };
@@ -352,15 +331,12 @@ export default class DeviceFarm {
       abortSignal, body,
       action: "DeleteUpload",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteVPCEConfiguration(
     {abortSignal, ...params}: RequestConfig & s.DeleteVPCEConfigurationRequest,
-  ): Promise<s.DeleteVPCEConfigurationResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       arn: params["arn"],
     };
@@ -368,17 +344,13 @@ export default class DeviceFarm {
       abortSignal, body,
       action: "DeleteVPCEConfiguration",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async getAccountSettings(
-    {abortSignal, ...params}: RequestConfig & s.GetAccountSettingsRequest = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.GetAccountSettingsResult> {
-    const body: jsonP.JSONObject = {
-    };
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "GetAccountSettings",
@@ -1334,7 +1306,7 @@ export default class DeviceFarm {
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & s.TagResourceRequest,
-  ): Promise<s.TagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceARN: params["ResourceARN"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
@@ -1343,15 +1315,12 @@ export default class DeviceFarm {
       abortSignal, body,
       action: "TagResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async untagResource(
     {abortSignal, ...params}: RequestConfig & s.UntagResourceRequest,
-  ): Promise<s.UntagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceARN: params["ResourceARN"],
       TagKeys: params["TagKeys"],
@@ -1360,10 +1329,7 @@ export default class DeviceFarm {
       abortSignal, body,
       action: "UntagResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateDeviceInstance(

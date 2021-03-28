@@ -112,11 +112,12 @@ export default class MQ {
       requestUri: cmnP.encodePath`/v1/tags/${params["ResourceArn"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async createUser(
     {abortSignal, ...params}: RequestConfig & s.CreateUserRequest,
-  ): Promise<s.CreateUserResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       consoleAccess: params["ConsoleAccess"],
       groups: params["Groups"],
@@ -128,10 +129,7 @@ export default class MQ {
       requestUri: cmnP.encodePath`/v1/brokers/${params["BrokerId"]}/users/${params["Username"]}`,
       responseCode: 200,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteBroker(
@@ -167,11 +165,12 @@ export default class MQ {
       requestUri: cmnP.encodePath`/v1/tags/${params["ResourceArn"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deleteUser(
     {abortSignal, ...params}: RequestConfig & s.DeleteUserRequest,
-  ): Promise<s.DeleteUserResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -180,10 +179,7 @@ export default class MQ {
       requestUri: cmnP.encodePath`/v1/brokers/${params["BrokerId"]}/users/${params["Username"]}`,
       responseCode: 200,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async describeBroker(
@@ -469,7 +465,7 @@ export default class MQ {
 
   async rebootBroker(
     {abortSignal, ...params}: RequestConfig & s.RebootBrokerRequest,
-  ): Promise<s.RebootBrokerResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -477,10 +473,7 @@ export default class MQ {
       requestUri: cmnP.encodePath`/v1/brokers/${params["BrokerId"]}/reboot`,
       responseCode: 200,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateBroker(
@@ -548,7 +541,7 @@ export default class MQ {
 
   async updateUser(
     {abortSignal, ...params}: RequestConfig & s.UpdateUserRequest,
-  ): Promise<s.UpdateUserResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       consoleAccess: params["ConsoleAccess"],
       groups: params["Groups"],
@@ -561,10 +554,7 @@ export default class MQ {
       requestUri: cmnP.encodePath`/v1/brokers/${params["BrokerId"]}/users/${params["Username"]}`,
       responseCode: 200,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
 }

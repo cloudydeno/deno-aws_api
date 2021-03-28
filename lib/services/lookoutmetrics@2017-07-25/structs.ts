@@ -179,14 +179,6 @@ export interface UpdateMetricSetRequest {
 }
 
 // refs: 1 - tags: named, output
-export interface ActivateAnomalyDetectorResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface BackTestAnomalyDetectorResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface CreateAlertResponse {
   AlertArn?: string | null;
 }
@@ -199,14 +191,6 @@ export interface CreateAnomalyDetectorResponse {
 // refs: 1 - tags: named, output
 export interface CreateMetricSetResponse {
   MetricSetArn?: string | null;
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteAlertResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteAnomalyDetectorResponse {
 }
 
 // refs: 1 - tags: named, output
@@ -304,18 +288,6 @@ export interface ListMetricSetsResponse {
 // refs: 1 - tags: named, output
 export interface ListTagsForResourceResponse {
   Tags?: { [key: string]: string | null | undefined } | null;
-}
-
-// refs: 1 - tags: named, output
-export interface PutFeedbackResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface TagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UntagResourceResponse {
 }
 
 // refs: 1 - tags: named, output

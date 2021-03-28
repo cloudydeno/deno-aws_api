@@ -202,6 +202,7 @@ export default class ForecastService {
       abortSignal, body,
       action: "DeleteDataset",
     });
+    await resp.text();
   }
 
   async deleteDatasetGroup(
@@ -214,6 +215,7 @@ export default class ForecastService {
       abortSignal, body,
       action: "DeleteDatasetGroup",
     });
+    await resp.text();
   }
 
   async deleteDatasetImportJob(
@@ -226,6 +228,7 @@ export default class ForecastService {
       abortSignal, body,
       action: "DeleteDatasetImportJob",
     });
+    await resp.text();
   }
 
   async deleteForecast(
@@ -238,6 +241,7 @@ export default class ForecastService {
       abortSignal, body,
       action: "DeleteForecast",
     });
+    await resp.text();
   }
 
   async deleteForecastExportJob(
@@ -250,6 +254,7 @@ export default class ForecastService {
       abortSignal, body,
       action: "DeleteForecastExportJob",
     });
+    await resp.text();
   }
 
   async deletePredictor(
@@ -262,6 +267,7 @@ export default class ForecastService {
       abortSignal, body,
       action: "DeletePredictor",
     });
+    await resp.text();
   }
 
   async deletePredictorBacktestExportJob(
@@ -274,6 +280,7 @@ export default class ForecastService {
       abortSignal, body,
       action: "DeletePredictorBacktestExportJob",
     });
+    await resp.text();
   }
 
   async describeDataset(
@@ -662,11 +669,12 @@ export default class ForecastService {
       abortSignal, body,
       action: "StopResource",
     });
+    await resp.text();
   }
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & s.TagResourceRequest,
-  ): Promise<s.TagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
@@ -675,15 +683,12 @@ export default class ForecastService {
       abortSignal, body,
       action: "TagResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async untagResource(
     {abortSignal, ...params}: RequestConfig & s.UntagResourceRequest,
-  ): Promise<s.UntagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
       TagKeys: params["TagKeys"],
@@ -692,15 +697,12 @@ export default class ForecastService {
       abortSignal, body,
       action: "UntagResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateDatasetGroup(
     {abortSignal, ...params}: RequestConfig & s.UpdateDatasetGroupRequest,
-  ): Promise<s.UpdateDatasetGroupResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       DatasetGroupArn: params["DatasetGroupArn"],
       DatasetArns: params["DatasetArns"],
@@ -709,10 +711,7 @@ export default class ForecastService {
       abortSignal, body,
       action: "UpdateDatasetGroup",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
 }

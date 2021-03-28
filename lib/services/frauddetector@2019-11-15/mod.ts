@@ -99,7 +99,7 @@ export default class FraudDetector {
 
   async createModel(
     {abortSignal, ...params}: RequestConfig & s.CreateModelRequest,
-  ): Promise<s.CreateModelResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       modelId: params["modelId"],
       modelType: params["modelType"],
@@ -111,10 +111,7 @@ export default class FraudDetector {
       abortSignal, body,
       action: "CreateModel",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async createModelVersion(
@@ -169,7 +166,7 @@ export default class FraudDetector {
 
   async createVariable(
     {abortSignal, ...params}: RequestConfig & s.CreateVariableRequest,
-  ): Promise<s.CreateVariableResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       name: params["name"],
       dataType: params["dataType"],
@@ -183,15 +180,12 @@ export default class FraudDetector {
       abortSignal, body,
       action: "CreateVariable",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteDetector(
     {abortSignal, ...params}: RequestConfig & s.DeleteDetectorRequest,
-  ): Promise<s.DeleteDetectorResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       detectorId: params["detectorId"],
     };
@@ -199,15 +193,12 @@ export default class FraudDetector {
       abortSignal, body,
       action: "DeleteDetector",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteDetectorVersion(
     {abortSignal, ...params}: RequestConfig & s.DeleteDetectorVersionRequest,
-  ): Promise<s.DeleteDetectorVersionResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       detectorId: params["detectorId"],
       detectorVersionId: params["detectorVersionId"],
@@ -216,15 +207,12 @@ export default class FraudDetector {
       abortSignal, body,
       action: "DeleteDetectorVersion",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteEntityType(
     {abortSignal, ...params}: RequestConfig & s.DeleteEntityTypeRequest,
-  ): Promise<s.DeleteEntityTypeResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       name: params["name"],
     };
@@ -232,15 +220,12 @@ export default class FraudDetector {
       abortSignal, body,
       action: "DeleteEntityType",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteEvent(
     {abortSignal, ...params}: RequestConfig & s.DeleteEventRequest,
-  ): Promise<s.DeleteEventResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       eventId: params["eventId"],
       eventTypeName: params["eventTypeName"],
@@ -249,15 +234,12 @@ export default class FraudDetector {
       abortSignal, body,
       action: "DeleteEvent",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteEventType(
     {abortSignal, ...params}: RequestConfig & s.DeleteEventTypeRequest,
-  ): Promise<s.DeleteEventTypeResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       name: params["name"],
     };
@@ -265,15 +247,12 @@ export default class FraudDetector {
       abortSignal, body,
       action: "DeleteEventType",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteExternalModel(
     {abortSignal, ...params}: RequestConfig & s.DeleteExternalModelRequest,
-  ): Promise<s.DeleteExternalModelResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       modelEndpoint: params["modelEndpoint"],
     };
@@ -281,15 +260,12 @@ export default class FraudDetector {
       abortSignal, body,
       action: "DeleteExternalModel",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteLabel(
     {abortSignal, ...params}: RequestConfig & s.DeleteLabelRequest,
-  ): Promise<s.DeleteLabelResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       name: params["name"],
     };
@@ -297,15 +273,12 @@ export default class FraudDetector {
       abortSignal, body,
       action: "DeleteLabel",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteModel(
     {abortSignal, ...params}: RequestConfig & s.DeleteModelRequest,
-  ): Promise<s.DeleteModelResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       modelId: params["modelId"],
       modelType: params["modelType"],
@@ -314,15 +287,12 @@ export default class FraudDetector {
       abortSignal, body,
       action: "DeleteModel",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteModelVersion(
     {abortSignal, ...params}: RequestConfig & s.DeleteModelVersionRequest,
-  ): Promise<s.DeleteModelVersionResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       modelId: params["modelId"],
       modelType: params["modelType"],
@@ -332,15 +302,12 @@ export default class FraudDetector {
       abortSignal, body,
       action: "DeleteModelVersion",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteOutcome(
     {abortSignal, ...params}: RequestConfig & s.DeleteOutcomeRequest,
-  ): Promise<s.DeleteOutcomeResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       name: params["name"],
     };
@@ -348,15 +315,12 @@ export default class FraudDetector {
       abortSignal, body,
       action: "DeleteOutcome",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteRule(
     {abortSignal, ...params}: RequestConfig & s.DeleteRuleRequest,
-  ): Promise<s.DeleteRuleResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       rule: fromRule(params["rule"]),
     };
@@ -364,15 +328,12 @@ export default class FraudDetector {
       abortSignal, body,
       action: "DeleteRule",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteVariable(
     {abortSignal, ...params}: RequestConfig & s.DeleteVariableRequest,
-  ): Promise<s.DeleteVariableResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       name: params["name"],
     };
@@ -380,10 +341,7 @@ export default class FraudDetector {
       abortSignal, body,
       action: "DeleteVariable",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async describeDetector(
@@ -572,7 +530,7 @@ export default class FraudDetector {
   }
 
   async getKMSEncryptionKey(
-    {abortSignal, ...params}: RequestConfig = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.GetKMSEncryptionKeyResult> {
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -744,7 +702,7 @@ export default class FraudDetector {
 
   async putDetector(
     {abortSignal, ...params}: RequestConfig & s.PutDetectorRequest,
-  ): Promise<s.PutDetectorResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       detectorId: params["detectorId"],
       description: params["description"],
@@ -755,15 +713,12 @@ export default class FraudDetector {
       abortSignal, body,
       action: "PutDetector",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async putEntityType(
     {abortSignal, ...params}: RequestConfig & s.PutEntityTypeRequest,
-  ): Promise<s.PutEntityTypeResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       name: params["name"],
       description: params["description"],
@@ -773,15 +728,12 @@ export default class FraudDetector {
       abortSignal, body,
       action: "PutEntityType",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async putEventType(
     {abortSignal, ...params}: RequestConfig & s.PutEventTypeRequest,
-  ): Promise<s.PutEventTypeResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       name: params["name"],
       description: params["description"],
@@ -794,15 +746,12 @@ export default class FraudDetector {
       abortSignal, body,
       action: "PutEventType",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async putExternalModel(
     {abortSignal, ...params}: RequestConfig & s.PutExternalModelRequest,
-  ): Promise<s.PutExternalModelResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       modelEndpoint: params["modelEndpoint"],
       modelSource: params["modelSource"],
@@ -816,15 +765,12 @@ export default class FraudDetector {
       abortSignal, body,
       action: "PutExternalModel",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async putKMSEncryptionKey(
     {abortSignal, ...params}: RequestConfig & s.PutKMSEncryptionKeyRequest,
-  ): Promise<s.PutKMSEncryptionKeyResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       kmsEncryptionKeyArn: params["kmsEncryptionKeyArn"],
     };
@@ -832,15 +778,12 @@ export default class FraudDetector {
       abortSignal, body,
       action: "PutKMSEncryptionKey",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async putLabel(
     {abortSignal, ...params}: RequestConfig & s.PutLabelRequest,
-  ): Promise<s.PutLabelResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       name: params["name"],
       description: params["description"],
@@ -850,15 +793,12 @@ export default class FraudDetector {
       abortSignal, body,
       action: "PutLabel",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async putOutcome(
     {abortSignal, ...params}: RequestConfig & s.PutOutcomeRequest,
-  ): Promise<s.PutOutcomeResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       name: params["name"],
       description: params["description"],
@@ -868,15 +808,12 @@ export default class FraudDetector {
       abortSignal, body,
       action: "PutOutcome",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & s.TagResourceRequest,
-  ): Promise<s.TagResourceResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       resourceARN: params["resourceARN"],
       tags: params["tags"]?.map(x => fromTag(x)),
@@ -885,15 +822,12 @@ export default class FraudDetector {
       abortSignal, body,
       action: "TagResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async untagResource(
     {abortSignal, ...params}: RequestConfig & s.UntagResourceRequest,
-  ): Promise<s.UntagResourceResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       resourceARN: params["resourceARN"],
       tagKeys: params["tagKeys"],
@@ -902,15 +836,12 @@ export default class FraudDetector {
       abortSignal, body,
       action: "UntagResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateDetectorVersion(
     {abortSignal, ...params}: RequestConfig & s.UpdateDetectorVersionRequest,
-  ): Promise<s.UpdateDetectorVersionResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       detectorId: params["detectorId"],
       detectorVersionId: params["detectorVersionId"],
@@ -924,15 +855,12 @@ export default class FraudDetector {
       abortSignal, body,
       action: "UpdateDetectorVersion",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateDetectorVersionMetadata(
     {abortSignal, ...params}: RequestConfig & s.UpdateDetectorVersionMetadataRequest,
-  ): Promise<s.UpdateDetectorVersionMetadataResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       detectorId: params["detectorId"],
       detectorVersionId: params["detectorVersionId"],
@@ -942,15 +870,12 @@ export default class FraudDetector {
       abortSignal, body,
       action: "UpdateDetectorVersionMetadata",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateDetectorVersionStatus(
     {abortSignal, ...params}: RequestConfig & s.UpdateDetectorVersionStatusRequest,
-  ): Promise<s.UpdateDetectorVersionStatusResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       detectorId: params["detectorId"],
       detectorVersionId: params["detectorVersionId"],
@@ -960,15 +885,12 @@ export default class FraudDetector {
       abortSignal, body,
       action: "UpdateDetectorVersionStatus",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateModel(
     {abortSignal, ...params}: RequestConfig & s.UpdateModelRequest,
-  ): Promise<s.UpdateModelResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       modelId: params["modelId"],
       modelType: params["modelType"],
@@ -978,10 +900,7 @@ export default class FraudDetector {
       abortSignal, body,
       action: "UpdateModel",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateModelVersion(
@@ -1011,7 +930,7 @@ export default class FraudDetector {
 
   async updateModelVersionStatus(
     {abortSignal, ...params}: RequestConfig & s.UpdateModelVersionStatusRequest,
-  ): Promise<s.UpdateModelVersionStatusResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       modelId: params["modelId"],
       modelType: params["modelType"],
@@ -1022,15 +941,12 @@ export default class FraudDetector {
       abortSignal, body,
       action: "UpdateModelVersionStatus",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateRuleMetadata(
     {abortSignal, ...params}: RequestConfig & s.UpdateRuleMetadataRequest,
-  ): Promise<s.UpdateRuleMetadataResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       rule: fromRule(params["rule"]),
       description: params["description"],
@@ -1039,10 +955,7 @@ export default class FraudDetector {
       abortSignal, body,
       action: "UpdateRuleMetadata",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateRuleVersion(
@@ -1070,7 +983,7 @@ export default class FraudDetector {
 
   async updateVariable(
     {abortSignal, ...params}: RequestConfig & s.UpdateVariableRequest,
-  ): Promise<s.UpdateVariableResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       name: params["name"],
       defaultValue: params["defaultValue"],
@@ -1081,10 +994,7 @@ export default class FraudDetector {
       abortSignal, body,
       action: "UpdateVariable",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
 }

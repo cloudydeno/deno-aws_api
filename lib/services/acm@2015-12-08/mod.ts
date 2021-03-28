@@ -45,6 +45,7 @@ export default class ACM {
       abortSignal, body,
       action: "AddTagsToCertificate",
     });
+    await resp.text();
   }
 
   async deleteCertificate(
@@ -57,6 +58,7 @@ export default class ACM {
       abortSignal, body,
       action: "DeleteCertificate",
     });
+    await resp.text();
   }
 
   async describeCertificate(
@@ -99,7 +101,7 @@ export default class ACM {
   }
 
   async getAccountConfiguration(
-    {abortSignal, ...params}: RequestConfig = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.GetAccountConfigurationResponse> {
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -205,6 +207,7 @@ export default class ACM {
       abortSignal, body,
       action: "PutAccountConfiguration",
     });
+    await resp.text();
   }
 
   async removeTagsFromCertificate(
@@ -218,6 +221,7 @@ export default class ACM {
       abortSignal, body,
       action: "RemoveTagsFromCertificate",
     });
+    await resp.text();
   }
 
   async renewCertificate(
@@ -230,6 +234,7 @@ export default class ACM {
       abortSignal, body,
       action: "RenewCertificate",
     });
+    await resp.text();
   }
 
   async requestCertificate(
@@ -269,6 +274,7 @@ export default class ACM {
       abortSignal, body,
       action: "ResendValidationEmail",
     });
+    await resp.text();
   }
 
   async updateCertificateOptions(
@@ -282,6 +288,7 @@ export default class ACM {
       abortSignal, body,
       action: "UpdateCertificateOptions",
     });
+    await resp.text();
   }
 
   // Resource State Waiters

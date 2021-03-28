@@ -36,7 +36,7 @@ export default class WAFV2 {
 
   async associateWebACL(
     {abortSignal, ...params}: RequestConfig & s.AssociateWebACLRequest,
-  ): Promise<s.AssociateWebACLResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       WebACLArn: params["WebACLArn"],
       ResourceArn: params["ResourceArn"],
@@ -45,10 +45,7 @@ export default class WAFV2 {
       abortSignal, body,
       action: "AssociateWebACL",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async checkCapacity(
@@ -184,7 +181,7 @@ export default class WAFV2 {
 
   async deleteIPSet(
     {abortSignal, ...params}: RequestConfig & s.DeleteIPSetRequest,
-  ): Promise<s.DeleteIPSetResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       Name: params["Name"],
       Scope: params["Scope"],
@@ -195,15 +192,12 @@ export default class WAFV2 {
       abortSignal, body,
       action: "DeleteIPSet",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteLoggingConfiguration(
     {abortSignal, ...params}: RequestConfig & s.DeleteLoggingConfigurationRequest,
-  ): Promise<s.DeleteLoggingConfigurationResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
     };
@@ -211,15 +205,12 @@ export default class WAFV2 {
       abortSignal, body,
       action: "DeleteLoggingConfiguration",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deletePermissionPolicy(
     {abortSignal, ...params}: RequestConfig & s.DeletePermissionPolicyRequest,
-  ): Promise<s.DeletePermissionPolicyResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
     };
@@ -227,15 +218,12 @@ export default class WAFV2 {
       abortSignal, body,
       action: "DeletePermissionPolicy",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteRegexPatternSet(
     {abortSignal, ...params}: RequestConfig & s.DeleteRegexPatternSetRequest,
-  ): Promise<s.DeleteRegexPatternSetResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       Name: params["Name"],
       Scope: params["Scope"],
@@ -246,15 +234,12 @@ export default class WAFV2 {
       abortSignal, body,
       action: "DeleteRegexPatternSet",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteRuleGroup(
     {abortSignal, ...params}: RequestConfig & s.DeleteRuleGroupRequest,
-  ): Promise<s.DeleteRuleGroupResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       Name: params["Name"],
       Scope: params["Scope"],
@@ -265,15 +250,12 @@ export default class WAFV2 {
       abortSignal, body,
       action: "DeleteRuleGroup",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteWebACL(
     {abortSignal, ...params}: RequestConfig & s.DeleteWebACLRequest,
-  ): Promise<s.DeleteWebACLResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       Name: params["Name"],
       Scope: params["Scope"],
@@ -284,10 +266,7 @@ export default class WAFV2 {
       abortSignal, body,
       action: "DeleteWebACL",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async describeManagedRuleGroup(
@@ -313,7 +292,7 @@ export default class WAFV2 {
 
   async disassociateWebACL(
     {abortSignal, ...params}: RequestConfig & s.DisassociateWebACLRequest,
-  ): Promise<s.DisassociateWebACLResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
     };
@@ -321,10 +300,7 @@ export default class WAFV2 {
       abortSignal, body,
       action: "DisassociateWebACL",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async getIPSet(
@@ -697,7 +673,7 @@ export default class WAFV2 {
 
   async putPermissionPolicy(
     {abortSignal, ...params}: RequestConfig & s.PutPermissionPolicyRequest,
-  ): Promise<s.PutPermissionPolicyResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
       Policy: params["Policy"],
@@ -706,15 +682,12 @@ export default class WAFV2 {
       abortSignal, body,
       action: "PutPermissionPolicy",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & s.TagResourceRequest,
-  ): Promise<s.TagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceARN: params["ResourceARN"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
@@ -723,15 +696,12 @@ export default class WAFV2 {
       abortSignal, body,
       action: "TagResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async untagResource(
     {abortSignal, ...params}: RequestConfig & s.UntagResourceRequest,
-  ): Promise<s.UntagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceARN: params["ResourceARN"],
       TagKeys: params["TagKeys"],
@@ -740,10 +710,7 @@ export default class WAFV2 {
       abortSignal, body,
       action: "UntagResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateIPSet(

@@ -212,10 +212,6 @@ export interface DisassociateRoleFromGroupRequest {
 }
 
 // refs: 1 - tags: named, input
-export interface DisassociateServiceRoleFromAccountRequest {
-}
-
-// refs: 1 - tags: named, input
 export interface GetAssociatedRoleRequest {
   GroupId: string;
 }
@@ -326,10 +322,6 @@ export interface GetResourceDefinitionRequest {
 export interface GetResourceDefinitionVersionRequest {
   ResourceDefinitionId: string;
   ResourceDefinitionVersionId: string;
-}
-
-// refs: 1 - tags: named, input
-export interface GetServiceRoleForAccountRequest {
 }
 
 // refs: 1 - tags: named, input
@@ -762,38 +754,6 @@ export interface CreateSubscriptionDefinitionVersionResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface DeleteConnectorDefinitionResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteCoreDefinitionResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteDeviceDefinitionResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteFunctionDefinitionResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteGroupResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteLoggerDefinitionResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteResourceDefinitionResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteSubscriptionDefinitionResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface DisassociateRoleFromGroupResponse {
   DisassociatedAt?: string | null;
 }
@@ -1169,33 +1129,9 @@ export interface StartBulkDeploymentResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface StopBulkDeploymentResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface UpdateConnectivityInfoResponse {
   Message?: string | null;
   Version?: string | null;
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateConnectorDefinitionResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateCoreDefinitionResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateDeviceDefinitionResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateFunctionDefinitionResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateGroupResponse {
 }
 
 // refs: 1 - tags: named, output
@@ -1203,22 +1139,6 @@ export interface UpdateGroupCertificateConfigurationResponse {
   CertificateAuthorityExpiryInMilliseconds?: string | null;
   CertificateExpiryInMilliseconds?: string | null;
   GroupId?: string | null;
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateLoggerDefinitionResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateResourceDefinitionResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateSubscriptionDefinitionResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateThingRuntimeConfigurationResponse {
 }
 
 // refs: 2 - tags: input, named, interface, output

@@ -90,7 +90,7 @@ export default class CostExplorer {
 
   async deleteAnomalyMonitor(
     {abortSignal, ...params}: RequestConfig & s.DeleteAnomalyMonitorRequest,
-  ): Promise<s.DeleteAnomalyMonitorResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       MonitorArn: params["MonitorArn"],
     };
@@ -98,15 +98,12 @@ export default class CostExplorer {
       abortSignal, body,
       action: "DeleteAnomalyMonitor",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteAnomalySubscription(
     {abortSignal, ...params}: RequestConfig & s.DeleteAnomalySubscriptionRequest,
-  ): Promise<s.DeleteAnomalySubscriptionResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       SubscriptionArn: params["SubscriptionArn"],
     };
@@ -114,10 +111,7 @@ export default class CostExplorer {
       abortSignal, body,
       action: "DeleteAnomalySubscription",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteCostCategoryDefinition(

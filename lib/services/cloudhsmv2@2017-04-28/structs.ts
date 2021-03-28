@@ -170,14 +170,6 @@ export interface RestoreBackupResponse {
   Backup?: Backup | null;
 }
 
-// refs: 1 - tags: named, output
-export interface TagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UntagResourceResponse {
-}
-
 // refs: 12 - tags: input, named, interface, output
 export interface Tag {
   Key: string;

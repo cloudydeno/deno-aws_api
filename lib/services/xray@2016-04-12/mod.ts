@@ -92,7 +92,7 @@ export default class XRay {
 
   async deleteGroup(
     {abortSignal, ...params}: RequestConfig & s.DeleteGroupRequest = {},
-  ): Promise<s.DeleteGroupResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       GroupName: params["GroupName"],
       GroupARN: params["GroupARN"],
@@ -102,10 +102,7 @@ export default class XRay {
       action: "DeleteGroup",
       requestUri: "/DeleteGroup",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteSamplingRule(
@@ -129,11 +126,11 @@ export default class XRay {
   }
 
   async getEncryptionConfig(
-    {abortSignal, ...params}: RequestConfig & s.GetEncryptionConfigRequest = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.GetEncryptionConfigResult> {
-
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
-      abortSignal,
+      abortSignal, body,
       action: "GetEncryptionConfig",
       requestUri: "/EncryptionConfig",
     });
@@ -488,7 +485,7 @@ export default class XRay {
 
   async putTelemetryRecords(
     {abortSignal, ...params}: RequestConfig & s.PutTelemetryRecordsRequest,
-  ): Promise<s.PutTelemetryRecordsResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       TelemetryRecords: params["TelemetryRecords"]?.map(x => fromTelemetryRecord(x)),
       EC2InstanceId: params["EC2InstanceId"],
@@ -500,10 +497,7 @@ export default class XRay {
       action: "PutTelemetryRecords",
       requestUri: "/TelemetryRecords",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async putTraceSegments(
@@ -527,7 +521,7 @@ export default class XRay {
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & s.TagResourceRequest,
-  ): Promise<s.TagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceARN: params["ResourceARN"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
@@ -537,15 +531,12 @@ export default class XRay {
       action: "TagResource",
       requestUri: "/TagResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async untagResource(
     {abortSignal, ...params}: RequestConfig & s.UntagResourceRequest,
-  ): Promise<s.UntagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceARN: params["ResourceARN"],
       TagKeys: params["TagKeys"],
@@ -555,10 +546,7 @@ export default class XRay {
       action: "UntagResource",
       requestUri: "/UntagResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateGroup(

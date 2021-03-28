@@ -46,10 +46,6 @@ export interface UntagResourceRequest {
 }
 
 // refs: 1 - tags: named, output
-export interface CloseTunnelResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface DescribeTunnelResponse {
   tunnel?: Tunnel | null;
 }
@@ -71,14 +67,6 @@ export interface OpenTunnelResponse {
   tunnelArn?: string | null;
   sourceAccessToken?: string | null;
   destinationAccessToken?: string | null;
-}
-
-// refs: 1 - tags: named, output
-export interface TagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UntagResourceResponse {
 }
 
 // refs: 4 - tags: input, named, interface, output

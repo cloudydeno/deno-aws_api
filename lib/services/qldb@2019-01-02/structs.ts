@@ -218,14 +218,6 @@ export interface StreamJournalToKinesisResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface TagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UntagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface UpdateLedgerResponse {
   Name?: string | null;
   Arn?: string | null;

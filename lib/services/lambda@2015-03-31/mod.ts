@@ -273,11 +273,12 @@ export default class Lambda {
       requestUri: cmnP.encodePath`/2015-03-31/functions/${params["FunctionName"]}/aliases/${params["Name"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deleteCodeSigningConfig(
     {abortSignal, ...params}: RequestConfig & s.DeleteCodeSigningConfigRequest,
-  ): Promise<s.DeleteCodeSigningConfigResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -286,10 +287,7 @@ export default class Lambda {
       requestUri: cmnP.encodePath`/2020-04-22/code-signing-configs/${params["CodeSigningConfigArn"]}`,
       responseCode: 204,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteEventSourceMapping(
@@ -344,6 +342,7 @@ export default class Lambda {
       requestUri: cmnP.encodePath`/2015-03-31/functions/${params["FunctionName"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deleteFunctionCodeSigningConfig(
@@ -357,6 +356,7 @@ export default class Lambda {
       requestUri: cmnP.encodePath`/2020-06-30/functions/${params["FunctionName"]}/code-signing-config`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deleteFunctionConcurrency(
@@ -370,6 +370,7 @@ export default class Lambda {
       requestUri: cmnP.encodePath`/2017-10-31/functions/${params["FunctionName"]}/concurrency`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deleteFunctionEventInvokeConfig(
@@ -384,6 +385,7 @@ export default class Lambda {
       requestUri: cmnP.encodePath`/2019-09-25/functions/${params["FunctionName"]}/event-invoke-config`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deleteLayerVersion(
@@ -397,6 +399,7 @@ export default class Lambda {
       requestUri: cmnP.encodePath`/2018-10-31/layers/${params["LayerName"]}/versions/${params["VersionNumber"].toString()}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deleteProvisionedConcurrencyConfig(
@@ -411,14 +414,15 @@ export default class Lambda {
       requestUri: cmnP.encodePath`/2019-09-30/functions/${params["FunctionName"]}/provisioned-concurrency`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async getAccountSettings(
-    {abortSignal, ...params}: RequestConfig & s.GetAccountSettingsRequest = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.GetAccountSettingsResponse> {
-
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
-      abortSignal,
+      abortSignal, body,
       action: "GetAccountSettings",
       method: "GET",
       requestUri: "/2016-08-19/account-settings/",
@@ -786,13 +790,13 @@ export default class Lambda {
       action: "Invoke",
       requestUri: cmnP.encodePath`/2015-03-31/functions/${params["FunctionName"]}/invocations`,
     });
-  return {
-    StatusCode: resp.status,
-    FunctionError: resp.headers.get("X-Amz-Function-Error"),
-    LogResult: resp.headers.get("X-Amz-Log-Result"),
-    ExecutedVersion: resp.headers.get("X-Amz-Executed-Version"),
-    Payload: await resp.text(), // TODO: maybe allow proper body streaming,
-  };
+    return {
+      StatusCode: resp.status,
+      FunctionError: resp.headers.get("X-Amz-Function-Error"),
+      LogResult: resp.headers.get("X-Amz-Log-Result"),
+      ExecutedVersion: resp.headers.get("X-Amz-Executed-Version"),
+      Payload: await resp.text(), // TODO: maybe allow proper body streaming,
+    };
   }
 
   async invokeAsync(
@@ -1253,6 +1257,7 @@ export default class Lambda {
       requestUri: cmnP.encodePath`/2018-10-31/layers/${params["LayerName"]}/versions/${params["VersionNumber"].toString()}/policy/${params["StatementId"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async removePermission(
@@ -1268,6 +1273,7 @@ export default class Lambda {
       requestUri: cmnP.encodePath`/2015-03-31/functions/${params["FunctionName"]}/policy/${params["StatementId"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async tagResource(
@@ -1282,6 +1288,7 @@ export default class Lambda {
       requestUri: cmnP.encodePath`/2017-03-31/tags/${params["Resource"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async untagResource(
@@ -1298,6 +1305,7 @@ export default class Lambda {
       requestUri: cmnP.encodePath`/2017-03-31/tags/${params["Resource"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async updateAlias(

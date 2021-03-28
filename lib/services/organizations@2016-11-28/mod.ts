@@ -58,6 +58,7 @@ export default class Organizations {
       abortSignal, body,
       action: "AttachPolicy",
     });
+    await resp.text();
   }
 
   async cancelHandshake(
@@ -201,12 +202,13 @@ export default class Organizations {
   }
 
   async deleteOrganization(
-    {abortSignal, ...params}: RequestConfig = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<void> {
     const resp = await this.#client.performRequest({
       abortSignal,
       action: "DeleteOrganization",
     });
+    await resp.text();
   }
 
   async deleteOrganizationalUnit(
@@ -219,6 +221,7 @@ export default class Organizations {
       abortSignal, body,
       action: "DeleteOrganizationalUnit",
     });
+    await resp.text();
   }
 
   async deletePolicy(
@@ -231,6 +234,7 @@ export default class Organizations {
       abortSignal, body,
       action: "DeletePolicy",
     });
+    await resp.text();
   }
 
   async deregisterDelegatedAdministrator(
@@ -244,6 +248,7 @@ export default class Organizations {
       abortSignal, body,
       action: "DeregisterDelegatedAdministrator",
     });
+    await resp.text();
   }
 
   async describeAccount(
@@ -320,7 +325,7 @@ export default class Organizations {
   }
 
   async describeOrganization(
-    {abortSignal, ...params}: RequestConfig = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.DescribeOrganizationResponse> {
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -381,6 +386,7 @@ export default class Organizations {
       abortSignal, body,
       action: "DetachPolicy",
     });
+    await resp.text();
   }
 
   async disableAWSServiceAccess(
@@ -393,6 +399,7 @@ export default class Organizations {
       abortSignal, body,
       action: "DisableAWSServiceAccess",
     });
+    await resp.text();
   }
 
   async disablePolicyType(
@@ -424,13 +431,13 @@ export default class Organizations {
       abortSignal, body,
       action: "EnableAWSServiceAccess",
     });
+    await resp.text();
   }
 
   async enableAllFeatures(
-    {abortSignal, ...params}: RequestConfig & s.EnableAllFeaturesRequest = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.EnableAllFeaturesResponse> {
-    const body: jsonP.JSONObject = {
-    };
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "EnableAllFeatures",
@@ -483,12 +490,13 @@ export default class Organizations {
   }
 
   async leaveOrganization(
-    {abortSignal, ...params}: RequestConfig = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<void> {
     const resp = await this.#client.performRequest({
       abortSignal,
       action: "LeaveOrganization",
     });
+    await resp.text();
   }
 
   async listAWSServiceAccessForOrganization(
@@ -837,6 +845,7 @@ export default class Organizations {
       abortSignal, body,
       action: "MoveAccount",
     });
+    await resp.text();
   }
 
   async registerDelegatedAdministrator(
@@ -850,6 +859,7 @@ export default class Organizations {
       abortSignal, body,
       action: "RegisterDelegatedAdministrator",
     });
+    await resp.text();
   }
 
   async removeAccountFromOrganization(
@@ -862,6 +872,7 @@ export default class Organizations {
       abortSignal, body,
       action: "RemoveAccountFromOrganization",
     });
+    await resp.text();
   }
 
   async tagResource(
@@ -875,6 +886,7 @@ export default class Organizations {
       abortSignal, body,
       action: "TagResource",
     });
+    await resp.text();
   }
 
   async untagResource(
@@ -888,6 +900,7 @@ export default class Organizations {
       abortSignal, body,
       action: "UntagResource",
     });
+    await resp.text();
   }
 
   async updateOrganizationalUnit(

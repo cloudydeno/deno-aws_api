@@ -48,10 +48,6 @@ export interface DeleteLifecyclePolicyRequest {
 }
 
 // refs: 1 - tags: named, input
-export interface DeleteRegistryPolicyRequest {
-}
-
-// refs: 1 - tags: named, input
 export interface DeleteRepositoryRequest {
   registryId?: string | null;
   repositoryName: string;
@@ -81,10 +77,6 @@ export interface DescribeImagesRequest {
   nextToken?: string | null;
   maxResults?: number | null;
   filter?: DescribeImagesFilter | null;
-}
-
-// refs: 1 - tags: named, input
-export interface DescribeRegistryRequest {
 }
 
 // refs: 1 - tags: named, input
@@ -121,10 +113,6 @@ export interface GetLifecyclePolicyPreviewRequest {
   nextToken?: string | null;
   maxResults?: number | null;
   filter?: LifecyclePolicyPreviewFilter | null;
-}
-
-// refs: 1 - tags: named, input
-export interface GetRegistryPolicyRequest {
 }
 
 // refs: 1 - tags: named, input
@@ -441,14 +429,6 @@ export interface StartLifecyclePolicyPreviewResponse {
   repositoryName?: string | null;
   lifecyclePolicyText?: string | null;
   status?: LifecyclePolicyPreviewStatus | null;
-}
-
-// refs: 1 - tags: named, output
-export interface TagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UntagResourceResponse {
 }
 
 // refs: 1 - tags: named, output

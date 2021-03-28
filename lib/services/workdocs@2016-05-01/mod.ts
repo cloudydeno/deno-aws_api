@@ -39,6 +39,7 @@ export default class WorkDocs {
       requestUri: cmnP.encodePath`/api/v1/documents/${params["DocumentId"]}/versions/${params["VersionId"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async activateUser(
@@ -111,7 +112,7 @@ export default class WorkDocs {
 
   async createCustomMetadata(
     {abortSignal, ...params}: RequestConfig & s.CreateCustomMetadataRequest,
-  ): Promise<s.CreateCustomMetadataResponse> {
+  ): Promise<void> {
     const headers = new Headers;
     const body: jsonP.JSONObject = {
       CustomMetadata: params["CustomMetadata"],
@@ -126,10 +127,7 @@ export default class WorkDocs {
       requestUri: cmnP.encodePath`/api/v1/resources/${params["ResourceId"]}/customMetadata`,
       responseCode: 200,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async createFolder(
@@ -157,7 +155,7 @@ export default class WorkDocs {
 
   async createLabels(
     {abortSignal, ...params}: RequestConfig & s.CreateLabelsRequest,
-  ): Promise<s.CreateLabelsResponse> {
+  ): Promise<void> {
     const headers = new Headers;
     const body: jsonP.JSONObject = {
       Labels: params["Labels"],
@@ -170,10 +168,7 @@ export default class WorkDocs {
       requestUri: cmnP.encodePath`/api/v1/resources/${params["ResourceId"]}/labels`,
       responseCode: 200,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async createNotificationSubscription(
@@ -239,6 +234,7 @@ export default class WorkDocs {
       requestUri: cmnP.encodePath`/api/v1/users/${params["UserId"]}/activation`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deleteComment(
@@ -253,11 +249,12 @@ export default class WorkDocs {
       requestUri: cmnP.encodePath`/api/v1/documents/${params["DocumentId"]}/versions/${params["VersionId"]}/comment/${params["CommentId"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deleteCustomMetadata(
     {abortSignal, ...params}: RequestConfig & s.DeleteCustomMetadataRequest,
-  ): Promise<s.DeleteCustomMetadataResponse> {
+  ): Promise<void> {
     const headers = new Headers;
     const query = new URLSearchParams;
     if (params["AuthenticationToken"] != null) headers.append("Authentication", params["AuthenticationToken"]);
@@ -273,10 +270,7 @@ export default class WorkDocs {
       requestUri: cmnP.encodePath`/api/v1/resources/${params["ResourceId"]}/customMetadata`,
       responseCode: 200,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteDocument(
@@ -291,6 +285,7 @@ export default class WorkDocs {
       requestUri: cmnP.encodePath`/api/v1/documents/${params["DocumentId"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deleteFolder(
@@ -305,6 +300,7 @@ export default class WorkDocs {
       requestUri: cmnP.encodePath`/api/v1/folders/${params["FolderId"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deleteFolderContents(
@@ -319,11 +315,12 @@ export default class WorkDocs {
       requestUri: cmnP.encodePath`/api/v1/folders/${params["FolderId"]}/contents`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async deleteLabels(
     {abortSignal, ...params}: RequestConfig & s.DeleteLabelsRequest,
-  ): Promise<s.DeleteLabelsResponse> {
+  ): Promise<void> {
     const headers = new Headers;
     const query = new URLSearchParams;
     if (params["AuthenticationToken"] != null) headers.append("Authentication", params["AuthenticationToken"]);
@@ -338,10 +335,7 @@ export default class WorkDocs {
       requestUri: cmnP.encodePath`/api/v1/resources/${params["ResourceId"]}/labels`,
       responseCode: 200,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteNotificationSubscription(
@@ -355,6 +349,7 @@ export default class WorkDocs {
       requestUri: cmnP.encodePath`/api/v1/organizations/${params["OrganizationId"]}/subscriptions/${params["SubscriptionId"]}`,
       responseCode: 200,
     });
+    await resp.text();
   }
 
   async deleteUser(
@@ -369,6 +364,7 @@ export default class WorkDocs {
       requestUri: cmnP.encodePath`/api/v1/users/${params["UserId"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async describeActivities(
@@ -816,6 +812,7 @@ export default class WorkDocs {
       requestUri: cmnP.encodePath`/api/v1/resources/${params["ResourceId"]}/permissions`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async removeResourcePermission(
@@ -832,6 +829,7 @@ export default class WorkDocs {
       requestUri: cmnP.encodePath`/api/v1/resources/${params["ResourceId"]}/permissions/${params["PrincipalId"]}`,
       responseCode: 204,
     });
+    await resp.text();
   }
 
   async updateDocument(
@@ -851,6 +849,7 @@ export default class WorkDocs {
       requestUri: cmnP.encodePath`/api/v1/documents/${params["DocumentId"]}`,
       responseCode: 200,
     });
+    await resp.text();
   }
 
   async updateDocumentVersion(
@@ -868,6 +867,7 @@ export default class WorkDocs {
       requestUri: cmnP.encodePath`/api/v1/documents/${params["DocumentId"]}/versions/${params["VersionId"]}`,
       responseCode: 200,
     });
+    await resp.text();
   }
 
   async updateFolder(
@@ -887,6 +887,7 @@ export default class WorkDocs {
       requestUri: cmnP.encodePath`/api/v1/folders/${params["FolderId"]}`,
       responseCode: 200,
     });
+    await resp.text();
   }
 
   async updateUser(

@@ -116,10 +116,6 @@ export interface DeleteVerifiedEmailAddressRequest {
 }
 
 // refs: 1 - tags: named, input
-export interface DescribeActiveReceiptRuleSetRequest {
-}
-
-// refs: 1 - tags: named, input
 export interface DescribeConfigurationSetRequest {
   ConfigurationSetName: string;
   ConfigurationSetAttributeNames?: ConfigurationSetAttribute[] | null;
@@ -194,10 +190,6 @@ export interface ListIdentitiesRequest {
 // refs: 1 - tags: named, input
 export interface ListIdentityPoliciesRequest {
   Identity: string;
-}
-
-// refs: 1 - tags: named, input
-export interface ListReceiptFiltersRequest {
 }
 
 // refs: 1 - tags: named, input
@@ -424,74 +416,6 @@ export interface VerifyEmailIdentityRequest {
 }
 
 // refs: 1 - tags: named, output
-export interface CloneReceiptRuleSetResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface CreateConfigurationSetResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface CreateConfigurationSetEventDestinationResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface CreateConfigurationSetTrackingOptionsResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface CreateReceiptFilterResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface CreateReceiptRuleResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface CreateReceiptRuleSetResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface CreateTemplateResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteConfigurationSetResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteConfigurationSetEventDestinationResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteConfigurationSetTrackingOptionsResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteIdentityResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteIdentityPolicyResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteReceiptFilterResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteReceiptRuleResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteReceiptRuleSetResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteTemplateResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface DescribeActiveReceiptRuleSetResponse {
   Metadata?: ReceiptRuleSetMetadata | null;
   Rules: ReceiptRule[];
@@ -620,18 +544,6 @@ export interface ListVerifiedEmailAddressesResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface PutConfigurationSetDeliveryOptionsResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface PutIdentityPolicyResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface ReorderReceiptRuleSetResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface SendBounceResponse {
   MessageId?: string | null;
 }
@@ -662,52 +574,8 @@ export interface SendTemplatedEmailResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface SetActiveReceiptRuleSetResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface SetIdentityDkimEnabledResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface SetIdentityFeedbackForwardingEnabledResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface SetIdentityHeadersInNotificationsEnabledResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface SetIdentityMailFromDomainResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface SetIdentityNotificationTopicResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface SetReceiptRulePositionResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface TestRenderTemplateResponse {
   RenderedTemplate?: string | null;
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateConfigurationSetEventDestinationResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateConfigurationSetTrackingOptionsResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateReceiptRuleResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateTemplateResponse {
 }
 
 // refs: 1 - tags: named, output
@@ -718,10 +586,6 @@ export interface VerifyDomainDkimResponse {
 // refs: 1 - tags: named, output
 export interface VerifyDomainIdentityResponse {
   VerificationToken: string;
-}
-
-// refs: 1 - tags: named, output
-export interface VerifyEmailIdentityResponse {
 }
 
 // refs: 3 - tags: input, named, interface, output

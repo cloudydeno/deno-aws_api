@@ -73,10 +73,6 @@ export interface SynthesizeSpeechInput {
 }
 
 // refs: 1 - tags: named, output
-export interface DeleteLexiconOutput {
-}
-
-// refs: 1 - tags: named, output
 export interface DescribeVoicesOutput {
   Voices?: Voice[] | null;
   NextToken?: string | null;
@@ -103,10 +99,6 @@ export interface ListLexiconsOutput {
 export interface ListSpeechSynthesisTasksOutput {
   NextToken?: string | null;
   SynthesisTasks?: SynthesisTask[] | null;
-}
-
-// refs: 1 - tags: named, output
-export interface PutLexiconOutput {
 }
 
 // refs: 1 - tags: named, output

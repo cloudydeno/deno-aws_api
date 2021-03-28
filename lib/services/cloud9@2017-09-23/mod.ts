@@ -76,7 +76,7 @@ export default class Cloud9 {
 
   async deleteEnvironment(
     {abortSignal, ...params}: RequestConfig & s.DeleteEnvironmentRequest,
-  ): Promise<s.DeleteEnvironmentResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       environmentId: params["environmentId"],
     };
@@ -84,15 +84,12 @@ export default class Cloud9 {
       abortSignal, body,
       action: "DeleteEnvironment",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteEnvironmentMembership(
     {abortSignal, ...params}: RequestConfig & s.DeleteEnvironmentMembershipRequest,
-  ): Promise<s.DeleteEnvironmentMembershipResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       environmentId: params["environmentId"],
       userArn: params["userArn"],
@@ -101,10 +98,7 @@ export default class Cloud9 {
       abortSignal, body,
       action: "DeleteEnvironmentMembership",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async describeEnvironmentMemberships(
@@ -207,7 +201,7 @@ export default class Cloud9 {
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & s.TagResourceRequest,
-  ): Promise<s.TagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceARN: params["ResourceARN"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
@@ -216,15 +210,12 @@ export default class Cloud9 {
       abortSignal, body,
       action: "TagResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async untagResource(
     {abortSignal, ...params}: RequestConfig & s.UntagResourceRequest,
-  ): Promise<s.UntagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceARN: params["ResourceARN"],
       TagKeys: params["TagKeys"],
@@ -233,15 +224,12 @@ export default class Cloud9 {
       abortSignal, body,
       action: "UntagResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateEnvironment(
     {abortSignal, ...params}: RequestConfig & s.UpdateEnvironmentRequest,
-  ): Promise<s.UpdateEnvironmentResult> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       environmentId: params["environmentId"],
       name: params["name"],
@@ -251,10 +239,7 @@ export default class Cloud9 {
       abortSignal, body,
       action: "UpdateEnvironment",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateEnvironmentMembership(

@@ -103,26 +103,6 @@ export interface UpdateProjectRequest {
 }
 
 // refs: 1 - tags: named, output
-export interface AssociateDeviceWithPlacementResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface CreatePlacementResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface CreateProjectResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeletePlacementResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteProjectResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface DescribePlacementResponse {
   placement: PlacementDescription;
 }
@@ -130,10 +110,6 @@ export interface DescribePlacementResponse {
 // refs: 1 - tags: named, output
 export interface DescribeProjectResponse {
   project: ProjectDescription;
-}
-
-// refs: 1 - tags: named, output
-export interface DisassociateDeviceFromPlacementResponse {
 }
 
 // refs: 1 - tags: named, output
@@ -156,22 +132,6 @@ export interface ListProjectsResponse {
 // refs: 1 - tags: named, output
 export interface ListTagsForResourceResponse {
   tags?: { [key: string]: string | null | undefined } | null;
-}
-
-// refs: 1 - tags: named, output
-export interface TagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UntagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdatePlacementResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateProjectResponse {
 }
 
 // refs: 3 - tags: input, named, interface, output

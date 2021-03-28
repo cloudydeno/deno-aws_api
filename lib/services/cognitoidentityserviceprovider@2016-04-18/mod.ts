@@ -35,7 +35,7 @@ export default class CognitoIdentityServiceProvider {
 
   async addCustomAttributes(
     {abortSignal, ...params}: RequestConfig & s.AddCustomAttributesRequest,
-  ): Promise<s.AddCustomAttributesResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       UserPoolId: params["UserPoolId"],
       CustomAttributes: params["CustomAttributes"]?.map(x => fromSchemaAttributeType(x)),
@@ -44,10 +44,7 @@ export default class CognitoIdentityServiceProvider {
       abortSignal, body,
       action: "AddCustomAttributes",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async adminAddUserToGroup(
@@ -62,11 +59,12 @@ export default class CognitoIdentityServiceProvider {
       abortSignal, body,
       action: "AdminAddUserToGroup",
     });
+    await resp.text();
   }
 
   async adminConfirmSignUp(
     {abortSignal, ...params}: RequestConfig & s.AdminConfirmSignUpRequest,
-  ): Promise<s.AdminConfirmSignUpResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       UserPoolId: params["UserPoolId"],
       Username: params["Username"],
@@ -76,10 +74,7 @@ export default class CognitoIdentityServiceProvider {
       abortSignal, body,
       action: "AdminConfirmSignUp",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async adminCreateUser(
@@ -119,11 +114,12 @@ export default class CognitoIdentityServiceProvider {
       abortSignal, body,
       action: "AdminDeleteUser",
     });
+    await resp.text();
   }
 
   async adminDeleteUserAttributes(
     {abortSignal, ...params}: RequestConfig & s.AdminDeleteUserAttributesRequest,
-  ): Promise<s.AdminDeleteUserAttributesResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       UserPoolId: params["UserPoolId"],
       Username: params["Username"],
@@ -133,15 +129,12 @@ export default class CognitoIdentityServiceProvider {
       abortSignal, body,
       action: "AdminDeleteUserAttributes",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async adminDisableProviderForUser(
     {abortSignal, ...params}: RequestConfig & s.AdminDisableProviderForUserRequest,
-  ): Promise<s.AdminDisableProviderForUserResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       UserPoolId: params["UserPoolId"],
       User: fromProviderUserIdentifierType(params["User"]),
@@ -150,15 +143,12 @@ export default class CognitoIdentityServiceProvider {
       abortSignal, body,
       action: "AdminDisableProviderForUser",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async adminDisableUser(
     {abortSignal, ...params}: RequestConfig & s.AdminDisableUserRequest,
-  ): Promise<s.AdminDisableUserResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       UserPoolId: params["UserPoolId"],
       Username: params["Username"],
@@ -167,15 +157,12 @@ export default class CognitoIdentityServiceProvider {
       abortSignal, body,
       action: "AdminDisableUser",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async adminEnableUser(
     {abortSignal, ...params}: RequestConfig & s.AdminEnableUserRequest,
-  ): Promise<s.AdminEnableUserResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       UserPoolId: params["UserPoolId"],
       Username: params["Username"],
@@ -184,10 +171,7 @@ export default class CognitoIdentityServiceProvider {
       abortSignal, body,
       action: "AdminEnableUser",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async adminForgetDevice(
@@ -202,6 +186,7 @@ export default class CognitoIdentityServiceProvider {
       abortSignal, body,
       action: "AdminForgetDevice",
     });
+    await resp.text();
   }
 
   async adminGetDevice(
@@ -281,7 +266,7 @@ export default class CognitoIdentityServiceProvider {
 
   async adminLinkProviderForUser(
     {abortSignal, ...params}: RequestConfig & s.AdminLinkProviderForUserRequest,
-  ): Promise<s.AdminLinkProviderForUserResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       UserPoolId: params["UserPoolId"],
       DestinationUser: fromProviderUserIdentifierType(params["DestinationUser"]),
@@ -291,10 +276,7 @@ export default class CognitoIdentityServiceProvider {
       abortSignal, body,
       action: "AdminLinkProviderForUser",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async adminListDevices(
@@ -375,11 +357,12 @@ export default class CognitoIdentityServiceProvider {
       abortSignal, body,
       action: "AdminRemoveUserFromGroup",
     });
+    await resp.text();
   }
 
   async adminResetUserPassword(
     {abortSignal, ...params}: RequestConfig & s.AdminResetUserPasswordRequest,
-  ): Promise<s.AdminResetUserPasswordResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       UserPoolId: params["UserPoolId"],
       Username: params["Username"],
@@ -389,10 +372,7 @@ export default class CognitoIdentityServiceProvider {
       abortSignal, body,
       action: "AdminResetUserPassword",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async adminRespondToAuthChallenge(
@@ -425,7 +405,7 @@ export default class CognitoIdentityServiceProvider {
 
   async adminSetUserMFAPreference(
     {abortSignal, ...params}: RequestConfig & s.AdminSetUserMFAPreferenceRequest,
-  ): Promise<s.AdminSetUserMFAPreferenceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       SMSMfaSettings: fromSMSMfaSettingsType(params["SMSMfaSettings"]),
       SoftwareTokenMfaSettings: fromSoftwareTokenMfaSettingsType(params["SoftwareTokenMfaSettings"]),
@@ -436,15 +416,12 @@ export default class CognitoIdentityServiceProvider {
       abortSignal, body,
       action: "AdminSetUserMFAPreference",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async adminSetUserPassword(
     {abortSignal, ...params}: RequestConfig & s.AdminSetUserPasswordRequest,
-  ): Promise<s.AdminSetUserPasswordResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       UserPoolId: params["UserPoolId"],
       Username: params["Username"],
@@ -455,15 +432,12 @@ export default class CognitoIdentityServiceProvider {
       abortSignal, body,
       action: "AdminSetUserPassword",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async adminSetUserSettings(
     {abortSignal, ...params}: RequestConfig & s.AdminSetUserSettingsRequest,
-  ): Promise<s.AdminSetUserSettingsResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       UserPoolId: params["UserPoolId"],
       Username: params["Username"],
@@ -473,15 +447,12 @@ export default class CognitoIdentityServiceProvider {
       abortSignal, body,
       action: "AdminSetUserSettings",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async adminUpdateAuthEventFeedback(
     {abortSignal, ...params}: RequestConfig & s.AdminUpdateAuthEventFeedbackRequest,
-  ): Promise<s.AdminUpdateAuthEventFeedbackResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       UserPoolId: params["UserPoolId"],
       Username: params["Username"],
@@ -492,15 +463,12 @@ export default class CognitoIdentityServiceProvider {
       abortSignal, body,
       action: "AdminUpdateAuthEventFeedback",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async adminUpdateDeviceStatus(
     {abortSignal, ...params}: RequestConfig & s.AdminUpdateDeviceStatusRequest,
-  ): Promise<s.AdminUpdateDeviceStatusResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       UserPoolId: params["UserPoolId"],
       Username: params["Username"],
@@ -511,15 +479,12 @@ export default class CognitoIdentityServiceProvider {
       abortSignal, body,
       action: "AdminUpdateDeviceStatus",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async adminUpdateUserAttributes(
     {abortSignal, ...params}: RequestConfig & s.AdminUpdateUserAttributesRequest,
-  ): Promise<s.AdminUpdateUserAttributesResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       UserPoolId: params["UserPoolId"],
       Username: params["Username"],
@@ -530,15 +495,12 @@ export default class CognitoIdentityServiceProvider {
       abortSignal, body,
       action: "AdminUpdateUserAttributes",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async adminUserGlobalSignOut(
     {abortSignal, ...params}: RequestConfig & s.AdminUserGlobalSignOutRequest,
-  ): Promise<s.AdminUserGlobalSignOutResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       UserPoolId: params["UserPoolId"],
       Username: params["Username"],
@@ -547,10 +509,7 @@ export default class CognitoIdentityServiceProvider {
       abortSignal, body,
       action: "AdminUserGlobalSignOut",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async associateSoftwareToken(
@@ -575,7 +534,7 @@ export default class CognitoIdentityServiceProvider {
 
   async changePassword(
     {abortSignal, ...params}: RequestConfig & s.ChangePasswordRequest,
-  ): Promise<s.ChangePasswordResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       PreviousPassword: params["PreviousPassword"],
       ProposedPassword: params["ProposedPassword"],
@@ -585,10 +544,7 @@ export default class CognitoIdentityServiceProvider {
       abortSignal, body,
       action: "ChangePassword",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async confirmDevice(
@@ -614,7 +570,7 @@ export default class CognitoIdentityServiceProvider {
 
   async confirmForgotPassword(
     {abortSignal, ...params}: RequestConfig & s.ConfirmForgotPasswordRequest,
-  ): Promise<s.ConfirmForgotPasswordResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ClientId: params["ClientId"],
       SecretHash: params["SecretHash"],
@@ -629,15 +585,12 @@ export default class CognitoIdentityServiceProvider {
       abortSignal, body,
       action: "ConfirmForgotPassword",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async confirmSignUp(
     {abortSignal, ...params}: RequestConfig & s.ConfirmSignUpRequest,
-  ): Promise<s.ConfirmSignUpResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ClientId: params["ClientId"],
       SecretHash: params["SecretHash"],
@@ -652,10 +605,7 @@ export default class CognitoIdentityServiceProvider {
       abortSignal, body,
       action: "ConfirmSignUp",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async createGroup(
@@ -849,6 +799,7 @@ export default class CognitoIdentityServiceProvider {
       abortSignal, body,
       action: "DeleteGroup",
     });
+    await resp.text();
   }
 
   async deleteIdentityProvider(
@@ -862,6 +813,7 @@ export default class CognitoIdentityServiceProvider {
       abortSignal, body,
       action: "DeleteIdentityProvider",
     });
+    await resp.text();
   }
 
   async deleteResourceServer(
@@ -875,6 +827,7 @@ export default class CognitoIdentityServiceProvider {
       abortSignal, body,
       action: "DeleteResourceServer",
     });
+    await resp.text();
   }
 
   async deleteUser(
@@ -887,11 +840,12 @@ export default class CognitoIdentityServiceProvider {
       abortSignal, body,
       action: "DeleteUser",
     });
+    await resp.text();
   }
 
   async deleteUserAttributes(
     {abortSignal, ...params}: RequestConfig & s.DeleteUserAttributesRequest,
-  ): Promise<s.DeleteUserAttributesResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       UserAttributeNames: params["UserAttributeNames"],
       AccessToken: params["AccessToken"],
@@ -900,10 +854,7 @@ export default class CognitoIdentityServiceProvider {
       abortSignal, body,
       action: "DeleteUserAttributes",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteUserPool(
@@ -916,6 +867,7 @@ export default class CognitoIdentityServiceProvider {
       abortSignal, body,
       action: "DeleteUserPool",
     });
+    await resp.text();
   }
 
   async deleteUserPoolClient(
@@ -929,11 +881,12 @@ export default class CognitoIdentityServiceProvider {
       abortSignal, body,
       action: "DeleteUserPoolClient",
     });
+    await resp.text();
   }
 
   async deleteUserPoolDomain(
     {abortSignal, ...params}: RequestConfig & s.DeleteUserPoolDomainRequest,
-  ): Promise<s.DeleteUserPoolDomainResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       Domain: params["Domain"],
       UserPoolId: params["UserPoolId"],
@@ -942,10 +895,7 @@ export default class CognitoIdentityServiceProvider {
       abortSignal, body,
       action: "DeleteUserPoolDomain",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async describeIdentityProvider(
@@ -1090,6 +1040,7 @@ export default class CognitoIdentityServiceProvider {
       abortSignal, body,
       action: "ForgetDevice",
     });
+    await resp.text();
   }
 
   async forgotPassword(
@@ -1293,7 +1244,7 @@ export default class CognitoIdentityServiceProvider {
 
   async globalSignOut(
     {abortSignal, ...params}: RequestConfig & s.GlobalSignOutRequest,
-  ): Promise<s.GlobalSignOutResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       AccessToken: params["AccessToken"],
     };
@@ -1301,10 +1252,7 @@ export default class CognitoIdentityServiceProvider {
       abortSignal, body,
       action: "GlobalSignOut",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async initiateAuth(
@@ -1639,7 +1587,7 @@ export default class CognitoIdentityServiceProvider {
 
   async setUserMFAPreference(
     {abortSignal, ...params}: RequestConfig & s.SetUserMFAPreferenceRequest,
-  ): Promise<s.SetUserMFAPreferenceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       SMSMfaSettings: fromSMSMfaSettingsType(params["SMSMfaSettings"]),
       SoftwareTokenMfaSettings: fromSoftwareTokenMfaSettingsType(params["SoftwareTokenMfaSettings"]),
@@ -1649,10 +1597,7 @@ export default class CognitoIdentityServiceProvider {
       abortSignal, body,
       action: "SetUserMFAPreference",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async setUserPoolMfaConfig(
@@ -1680,7 +1625,7 @@ export default class CognitoIdentityServiceProvider {
 
   async setUserSettings(
     {abortSignal, ...params}: RequestConfig & s.SetUserSettingsRequest,
-  ): Promise<s.SetUserSettingsResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       AccessToken: params["AccessToken"],
       MFAOptions: params["MFAOptions"]?.map(x => fromMFAOptionType(x)),
@@ -1689,10 +1634,7 @@ export default class CognitoIdentityServiceProvider {
       abortSignal, body,
       action: "SetUserSettings",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async signUp(
@@ -1764,7 +1706,7 @@ export default class CognitoIdentityServiceProvider {
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & s.TagResourceRequest,
-  ): Promise<s.TagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
       Tags: params["Tags"],
@@ -1773,15 +1715,12 @@ export default class CognitoIdentityServiceProvider {
       abortSignal, body,
       action: "TagResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async untagResource(
     {abortSignal, ...params}: RequestConfig & s.UntagResourceRequest,
-  ): Promise<s.UntagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
       TagKeys: params["TagKeys"],
@@ -1790,15 +1729,12 @@ export default class CognitoIdentityServiceProvider {
       abortSignal, body,
       action: "UntagResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateAuthEventFeedback(
     {abortSignal, ...params}: RequestConfig & s.UpdateAuthEventFeedbackRequest,
-  ): Promise<s.UpdateAuthEventFeedbackResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       UserPoolId: params["UserPoolId"],
       Username: params["Username"],
@@ -1810,15 +1746,12 @@ export default class CognitoIdentityServiceProvider {
       abortSignal, body,
       action: "UpdateAuthEventFeedback",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateDeviceStatus(
     {abortSignal, ...params}: RequestConfig & s.UpdateDeviceStatusRequest,
-  ): Promise<s.UpdateDeviceStatusResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       AccessToken: params["AccessToken"],
       DeviceKey: params["DeviceKey"],
@@ -1828,10 +1761,7 @@ export default class CognitoIdentityServiceProvider {
       abortSignal, body,
       action: "UpdateDeviceStatus",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateGroup(
@@ -1921,7 +1851,7 @@ export default class CognitoIdentityServiceProvider {
 
   async updateUserPool(
     {abortSignal, ...params}: RequestConfig & s.UpdateUserPoolRequest,
-  ): Promise<s.UpdateUserPoolResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       UserPoolId: params["UserPoolId"],
       Policies: fromUserPoolPolicyType(params["Policies"]),
@@ -1945,10 +1875,7 @@ export default class CognitoIdentityServiceProvider {
       abortSignal, body,
       action: "UpdateUserPool",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateUserPoolClient(
@@ -2031,7 +1958,7 @@ export default class CognitoIdentityServiceProvider {
 
   async verifyUserAttribute(
     {abortSignal, ...params}: RequestConfig & s.VerifyUserAttributeRequest,
-  ): Promise<s.VerifyUserAttributeResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       AccessToken: params["AccessToken"],
       AttributeName: params["AttributeName"],
@@ -2041,10 +1968,7 @@ export default class CognitoIdentityServiceProvider {
       abortSignal, body,
       action: "VerifyUserAttribute",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
 }

@@ -268,10 +268,6 @@ export interface ListTagsForResourceResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface StartJobResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface UpdateAssetResponse {
   Arn?: string | null;
   AssetDetails?: AssetDetails | null;

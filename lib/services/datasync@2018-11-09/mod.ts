@@ -32,7 +32,7 @@ export default class DataSync {
 
   async cancelTaskExecution(
     {abortSignal, ...params}: RequestConfig & s.CancelTaskExecutionRequest,
-  ): Promise<s.CancelTaskExecutionResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       TaskExecutionArn: params["TaskExecutionArn"],
     };
@@ -40,10 +40,7 @@ export default class DataSync {
       abortSignal, body,
       action: "CancelTaskExecution",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async createAgent(
@@ -237,7 +234,7 @@ export default class DataSync {
 
   async deleteAgent(
     {abortSignal, ...params}: RequestConfig & s.DeleteAgentRequest,
-  ): Promise<s.DeleteAgentResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       AgentArn: params["AgentArn"],
     };
@@ -245,15 +242,12 @@ export default class DataSync {
       abortSignal, body,
       action: "DeleteAgent",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteLocation(
     {abortSignal, ...params}: RequestConfig & s.DeleteLocationRequest,
-  ): Promise<s.DeleteLocationResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       LocationArn: params["LocationArn"],
     };
@@ -261,15 +255,12 @@ export default class DataSync {
       abortSignal, body,
       action: "DeleteLocation",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteTask(
     {abortSignal, ...params}: RequestConfig & s.DeleteTaskRequest,
-  ): Promise<s.DeleteTaskResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       TaskArn: params["TaskArn"],
     };
@@ -277,10 +268,7 @@ export default class DataSync {
       abortSignal, body,
       action: "DeleteTask",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async describeAgent(
@@ -631,7 +619,7 @@ export default class DataSync {
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & s.TagResourceRequest,
-  ): Promise<s.TagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
       Tags: params["Tags"]?.map(x => fromTagListEntry(x)),
@@ -640,15 +628,12 @@ export default class DataSync {
       abortSignal, body,
       action: "TagResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async untagResource(
     {abortSignal, ...params}: RequestConfig & s.UntagResourceRequest,
-  ): Promise<s.UntagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
       Keys: params["Keys"],
@@ -657,15 +642,12 @@ export default class DataSync {
       abortSignal, body,
       action: "UntagResource",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateAgent(
     {abortSignal, ...params}: RequestConfig & s.UpdateAgentRequest,
-  ): Promise<s.UpdateAgentResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       AgentArn: params["AgentArn"],
       Name: params["Name"],
@@ -674,15 +656,12 @@ export default class DataSync {
       abortSignal, body,
       action: "UpdateAgent",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateLocationNfs(
     {abortSignal, ...params}: RequestConfig & s.UpdateLocationNfsRequest,
-  ): Promise<s.UpdateLocationNfsResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       LocationArn: params["LocationArn"],
       Subdirectory: params["Subdirectory"],
@@ -693,15 +672,12 @@ export default class DataSync {
       abortSignal, body,
       action: "UpdateLocationNfs",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateLocationObjectStorage(
     {abortSignal, ...params}: RequestConfig & s.UpdateLocationObjectStorageRequest,
-  ): Promise<s.UpdateLocationObjectStorageResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       LocationArn: params["LocationArn"],
       ServerPort: params["ServerPort"],
@@ -715,15 +691,12 @@ export default class DataSync {
       abortSignal, body,
       action: "UpdateLocationObjectStorage",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateLocationSmb(
     {abortSignal, ...params}: RequestConfig & s.UpdateLocationSmbRequest,
-  ): Promise<s.UpdateLocationSmbResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       LocationArn: params["LocationArn"],
       Subdirectory: params["Subdirectory"],
@@ -737,15 +710,12 @@ export default class DataSync {
       abortSignal, body,
       action: "UpdateLocationSmb",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateTask(
     {abortSignal, ...params}: RequestConfig & s.UpdateTaskRequest,
-  ): Promise<s.UpdateTaskResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       TaskArn: params["TaskArn"],
       Options: fromOptions(params["Options"]),
@@ -758,15 +728,12 @@ export default class DataSync {
       abortSignal, body,
       action: "UpdateTask",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateTaskExecution(
     {abortSignal, ...params}: RequestConfig & s.UpdateTaskExecutionRequest,
-  ): Promise<s.UpdateTaskExecutionResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       TaskExecutionArn: params["TaskExecutionArn"],
       Options: fromOptions(params["Options"]),
@@ -775,10 +742,7 @@ export default class DataSync {
       abortSignal, body,
       action: "UpdateTaskExecution",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
 }

@@ -34,10 +34,6 @@ export interface DescribeDatabaseRequest {
 }
 
 // refs: 1 - tags: named, input
-export interface DescribeEndpointsRequest {
-}
-
-// refs: 1 - tags: named, input
 export interface DescribeTableRequest {
   DatabaseName: string;
   TableName: string;
@@ -134,14 +130,6 @@ export interface ListTablesResponse {
 // refs: 1 - tags: named, output
 export interface ListTagsForResourceResponse {
   Tags?: Tag[] | null;
-}
-
-// refs: 1 - tags: named, output
-export interface TagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UntagResourceResponse {
 }
 
 // refs: 1 - tags: named, output

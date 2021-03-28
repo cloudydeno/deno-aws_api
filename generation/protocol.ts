@@ -9,7 +9,7 @@ import ProtocolXmlCodegen from "./protocol-xml.ts";
 
 export interface ProtocolCodegen {
   generateOperationInputParsingTypescript(
-    inputShape: KnownShape,
+    inputShape: KnownShape | null,
     meta: Schema.LocationInfo,
   ): {
     inputParsingCode: string;

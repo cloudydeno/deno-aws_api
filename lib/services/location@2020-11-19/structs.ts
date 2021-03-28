@@ -224,10 +224,6 @@ export interface SearchPlaceIndexForTextRequest {
 }
 
 // refs: 1 - tags: named, output
-export interface AssociateTrackerConsumerResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface BatchDeleteGeofenceResponse {
   Errors: BatchDeleteGeofenceError[];
 }
@@ -283,22 +279,6 @@ export interface CreateTrackerResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface DeleteGeofenceCollectionResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteMapResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeletePlaceIndexResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteTrackerResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface DescribeGeofenceCollectionResponse {
   CollectionArn: string;
   CollectionName: string;
@@ -336,10 +316,6 @@ export interface DescribeTrackerResponse {
   TrackerArn: string;
   TrackerName: string;
   UpdateTime: Date | number;
-}
-
-// refs: 1 - tags: named, output
-export interface DisassociateTrackerConsumerResponse {
 }
 
 // refs: 1 - tags: named, output

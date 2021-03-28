@@ -45,6 +45,7 @@ export default class WellArchitected {
       method: "PATCH",
       requestUri: cmnP.encodePath`/workloads/${params["WorkloadId"]}/associateLenses`,
     });
+    await resp.text();
   }
 
   async createMilestone(
@@ -135,6 +136,7 @@ export default class WellArchitected {
       method: "DELETE",
       requestUri: cmnP.encodePath`/workloads/${params["WorkloadId"]}`,
     });
+    await resp.text();
   }
 
   async deleteWorkloadShare(
@@ -148,6 +150,7 @@ export default class WellArchitected {
       method: "DELETE",
       requestUri: cmnP.encodePath`/workloads/${params["WorkloadId"]}/shares/${params["ShareId"]}`,
     });
+    await resp.text();
   }
 
   async disassociateLenses(
@@ -162,6 +165,7 @@ export default class WellArchitected {
       method: "PATCH",
       requestUri: cmnP.encodePath`/workloads/${params["WorkloadId"]}/disassociateLenses`,
     });
+    await resp.text();
   }
 
   async getAnswer(
@@ -515,7 +519,7 @@ export default class WellArchitected {
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & s.TagResourceInput,
-  ): Promise<s.TagResourceOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       Tags: params["Tags"],
     };
@@ -524,15 +528,12 @@ export default class WellArchitected {
       action: "TagResource",
       requestUri: cmnP.encodePath`/tags/${params["WorkloadArn"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async untagResource(
     {abortSignal, ...params}: RequestConfig & s.UntagResourceInput,
-  ): Promise<s.UntagResourceOutput> {
+  ): Promise<void> {
     const query = new URLSearchParams;
     for (const item of params["TagKeys"]) {
       query.append("tagKeys", item?.toString() ?? "");
@@ -543,10 +544,7 @@ export default class WellArchitected {
       method: "DELETE",
       requestUri: cmnP.encodePath`/tags/${params["WorkloadArn"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateAnswer(
@@ -682,6 +680,7 @@ export default class WellArchitected {
       method: "PUT",
       requestUri: cmnP.encodePath`/workloads/${params["WorkloadId"]}/lensReviews/${params["LensAlias"]}/upgrade`,
     });
+    await resp.text();
   }
 
 }

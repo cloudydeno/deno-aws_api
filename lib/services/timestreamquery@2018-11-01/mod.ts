@@ -53,10 +53,9 @@ export default class TimestreamQuery {
   }
 
   async describeEndpoints(
-    {abortSignal, ...params}: RequestConfig & s.DescribeEndpointsRequest = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.DescribeEndpointsResponse> {
-    const body: jsonP.JSONObject = {
-    };
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "DescribeEndpoints",

@@ -1080,14 +1080,6 @@ export interface UpdateServiceSettingRequest {
 }
 
 // refs: 1 - tags: named, output
-export interface AddTagsToResourceResult {
-}
-
-// refs: 1 - tags: named, output
-export interface CancelCommandResult {
-}
-
-// refs: 1 - tags: named, output
 export interface CancelMaintenanceWindowExecutionResult {
   WindowExecutionId?: string | null;
 }
@@ -1135,22 +1127,6 @@ export interface CreatePatchBaselineResult {
 }
 
 // refs: 1 - tags: named, output
-export interface CreateResourceDataSyncResult {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteActivationResult {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteAssociationResult {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteDocumentResult {
-}
-
-// refs: 1 - tags: named, output
 export interface DeleteInventoryResult {
   DeletionId?: string | null;
   TypeName?: string | null;
@@ -1163,14 +1139,6 @@ export interface DeleteMaintenanceWindowResult {
 }
 
 // refs: 1 - tags: named, output
-export interface DeleteOpsMetadataResult {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteParameterResult {
-}
-
-// refs: 1 - tags: named, output
 export interface DeleteParametersResult {
   DeletedParameters?: string[] | null;
   InvalidParameters?: string[] | null;
@@ -1179,14 +1147,6 @@ export interface DeleteParametersResult {
 // refs: 1 - tags: named, output
 export interface DeletePatchBaselineResult {
   BaselineId?: string | null;
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteResourceDataSyncResult {
-}
-
-// refs: 1 - tags: named, output
-export interface DeregisterManagedInstanceResult {
 }
 
 // refs: 1 - tags: named, output
@@ -1740,14 +1700,6 @@ export interface ListTagsForResourceResult {
 }
 
 // refs: 1 - tags: named, output
-export interface ModifyDocumentPermissionResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface PutComplianceItemsResult {
-}
-
-// refs: 1 - tags: named, output
 export interface PutInventoryResult {
   Message?: string | null;
 }
@@ -1780,10 +1732,6 @@ export interface RegisterTaskWithMaintenanceWindowResult {
 }
 
 // refs: 1 - tags: named, output
-export interface RemoveTagsFromResourceResult {
-}
-
-// refs: 1 - tags: named, output
 export interface ResetServiceSettingResult {
   ServiceSetting?: ServiceSetting | null;
 }
@@ -1796,16 +1744,8 @@ export interface ResumeSessionResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface SendAutomationSignalResult {
-}
-
-// refs: 1 - tags: named, output
 export interface SendCommandResult {
   Command?: Command | null;
-}
-
-// refs: 1 - tags: named, output
-export interface StartAssociationsOnceResult {
 }
 
 // refs: 1 - tags: named, output
@@ -1823,10 +1763,6 @@ export interface StartSessionResponse {
   SessionId?: string | null;
   TokenValue?: string | null;
   StreamUrl?: string | null;
-}
-
-// refs: 1 - tags: named, output
-export interface StopAutomationExecutionResult {
 }
 
 // refs: 1 - tags: named, output
@@ -1852,10 +1788,6 @@ export interface UpdateDocumentResult {
 // refs: 1 - tags: named, output
 export interface UpdateDocumentDefaultVersionResult {
   Description?: DocumentDefaultVersionDescription | null;
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateDocumentMetadataResponse {
 }
 
 // refs: 1 - tags: named, output
@@ -1902,14 +1834,6 @@ export interface UpdateMaintenanceWindowTaskResult {
 }
 
 // refs: 1 - tags: named, output
-export interface UpdateManagedInstanceRoleResult {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateOpsItemResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface UpdateOpsMetadataResult {
   OpsMetadataArn?: string | null;
 }
@@ -1930,14 +1854,6 @@ export interface UpdatePatchBaselineResult {
   ModifiedDate?: Date | number | null;
   Description?: string | null;
   Sources?: PatchSource[] | null;
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateResourceDataSyncResult {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateServiceSettingResult {
 }
 
 // refs: 3 - tags: input, named, enum

@@ -244,7 +244,7 @@ export default class CodeBuild {
 
   async deleteProject(
     {abortSignal, ...params}: RequestConfig & s.DeleteProjectInput,
-  ): Promise<s.DeleteProjectOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       name: params["name"],
     };
@@ -252,15 +252,12 @@ export default class CodeBuild {
       abortSignal, body,
       action: "DeleteProject",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteReport(
     {abortSignal, ...params}: RequestConfig & s.DeleteReportInput,
-  ): Promise<s.DeleteReportOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       arn: params["arn"],
     };
@@ -268,15 +265,12 @@ export default class CodeBuild {
       abortSignal, body,
       action: "DeleteReport",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteReportGroup(
     {abortSignal, ...params}: RequestConfig & s.DeleteReportGroupInput,
-  ): Promise<s.DeleteReportGroupOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       arn: params["arn"],
       deleteReports: params["deleteReports"],
@@ -285,15 +279,12 @@ export default class CodeBuild {
       abortSignal, body,
       action: "DeleteReportGroup",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteResourcePolicy(
     {abortSignal, ...params}: RequestConfig & s.DeleteResourcePolicyInput,
-  ): Promise<s.DeleteResourcePolicyOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       resourceArn: params["resourceArn"],
     };
@@ -301,10 +292,7 @@ export default class CodeBuild {
       abortSignal, body,
       action: "DeleteResourcePolicy",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async deleteSourceCredentials(
@@ -327,7 +315,7 @@ export default class CodeBuild {
 
   async deleteWebhook(
     {abortSignal, ...params}: RequestConfig & s.DeleteWebhookInput,
-  ): Promise<s.DeleteWebhookOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       projectName: params["projectName"],
     };
@@ -335,10 +323,7 @@ export default class CodeBuild {
       abortSignal, body,
       action: "DeleteWebhook",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async describeCodeCoverages(
@@ -451,7 +436,7 @@ export default class CodeBuild {
 
   async invalidateProjectCache(
     {abortSignal, ...params}: RequestConfig & s.InvalidateProjectCacheInput,
-  ): Promise<s.InvalidateProjectCacheOutput> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       projectName: params["projectName"],
     };
@@ -459,10 +444,7 @@ export default class CodeBuild {
       abortSignal, body,
       action: "InvalidateProjectCache",
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async listBuildBatches(
@@ -552,10 +534,9 @@ export default class CodeBuild {
   }
 
   async listCuratedEnvironmentImages(
-    {abortSignal, ...params}: RequestConfig & s.ListCuratedEnvironmentImagesInput = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.ListCuratedEnvironmentImagesOutput> {
-    const body: jsonP.JSONObject = {
-    };
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListCuratedEnvironmentImages",
@@ -701,10 +682,9 @@ export default class CodeBuild {
   }
 
   async listSourceCredentials(
-    {abortSignal, ...params}: RequestConfig & s.ListSourceCredentialsInput = {},
+    {abortSignal}: RequestConfig = {},
   ): Promise<s.ListSourceCredentialsOutput> {
-    const body: jsonP.JSONObject = {
-    };
+    const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
       abortSignal, body,
       action: "ListSourceCredentials",

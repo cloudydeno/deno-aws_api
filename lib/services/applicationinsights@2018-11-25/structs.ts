@@ -196,25 +196,9 @@ export interface CreateApplicationResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface CreateComponentResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface CreateLogPatternResponse {
   LogPattern?: LogPattern | null;
   ResourceGroupName?: string | null;
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteApplicationResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteComponentResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteLogPatternResponse {
 }
 
 // refs: 1 - tags: named, output
@@ -305,24 +289,8 @@ export interface ListTagsForResourceResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface TagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UntagResourceResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface UpdateApplicationResponse {
   ApplicationInfo?: ApplicationInfo | null;
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateComponentResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface UpdateComponentConfigurationResponse {
 }
 
 // refs: 1 - tags: named, output

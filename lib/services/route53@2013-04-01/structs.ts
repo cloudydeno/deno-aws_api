@@ -171,10 +171,6 @@ export interface GetChangeRequest {
 }
 
 // refs: 1 - tags: named, input
-export interface GetCheckerIpRangesRequest {
-}
-
-// refs: 1 - tags: named, input
 export interface GetDNSSECRequest {
   HostedZoneId: string;
 }
@@ -192,10 +188,6 @@ export interface GetHealthCheckRequest {
 }
 
 // refs: 1 - tags: named, input
-export interface GetHealthCheckCountRequest {
-}
-
-// refs: 1 - tags: named, input
 export interface GetHealthCheckLastFailureReasonRequest {
   HealthCheckId: string;
 }
@@ -208,10 +200,6 @@ export interface GetHealthCheckStatusRequest {
 // refs: 1 - tags: named, input
 export interface GetHostedZoneRequest {
   Id: string;
-}
-
-// refs: 1 - tags: named, input
-export interface GetHostedZoneCountRequest {
 }
 
 // refs: 1 - tags: named, input
@@ -245,10 +233,6 @@ export interface GetTrafficPolicyRequest {
 // refs: 1 - tags: named, input
 export interface GetTrafficPolicyInstanceRequest {
   Id: string;
-}
-
-// refs: 1 - tags: named, input
-export interface GetTrafficPolicyInstanceCountRequest {
 }
 
 // refs: 1 - tags: named, input
@@ -435,10 +419,6 @@ export interface ChangeResourceRecordSetsResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface ChangeTagsForResourceResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface CreateHealthCheckResponse {
   HealthCheck: HealthCheck;
   Location: string;
@@ -502,10 +482,6 @@ export interface DeactivateKeySigningKeyResponse {
 }
 
 // refs: 1 - tags: named, output
-export interface DeleteHealthCheckResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface DeleteHostedZoneResponse {
   ChangeInfo: ChangeInfo;
 }
@@ -513,26 +489,6 @@ export interface DeleteHostedZoneResponse {
 // refs: 1 - tags: named, output
 export interface DeleteKeySigningKeyResponse {
   ChangeInfo: ChangeInfo;
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteQueryLoggingConfigResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteReusableDelegationSetResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteTrafficPolicyResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteTrafficPolicyInstanceResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteVPCAssociationAuthorizationResponse {
 }
 
 // refs: 1 - tags: named, output

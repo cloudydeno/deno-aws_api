@@ -99,18 +99,6 @@ export interface RegisterScalableTargetRequest {
 }
 
 // refs: 1 - tags: named, output
-export interface DeleteScalingPolicyResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeleteScheduledActionResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface DeregisterScalableTargetResponse {
-}
-
-// refs: 1 - tags: named, output
 export interface DescribeScalableTargetsResponse {
   ScalableTargets?: ScalableTarget[] | null;
   NextToken?: string | null;
@@ -138,14 +126,6 @@ export interface DescribeScheduledActionsResponse {
 export interface PutScalingPolicyResponse {
   PolicyARN: string;
   Alarms?: Alarm[] | null;
-}
-
-// refs: 1 - tags: named, output
-export interface PutScheduledActionResponse {
-}
-
-// refs: 1 - tags: named, output
-export interface RegisterScalableTargetResponse {
 }
 
 // refs: 14 - tags: input, named, enum, output

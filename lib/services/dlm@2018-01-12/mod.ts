@@ -54,7 +54,7 @@ export default class DLM {
 
   async deleteLifecyclePolicy(
     {abortSignal, ...params}: RequestConfig & s.DeleteLifecyclePolicyRequest,
-  ): Promise<s.DeleteLifecyclePolicyResponse> {
+  ): Promise<void> {
 
     const resp = await this.#client.performRequest({
       abortSignal,
@@ -62,10 +62,7 @@ export default class DLM {
       method: "DELETE",
       requestUri: cmnP.encodePath`/policies/${params["PolicyId"]}/`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async getLifecyclePolicies(
@@ -137,7 +134,7 @@ export default class DLM {
 
   async tagResource(
     {abortSignal, ...params}: RequestConfig & s.TagResourceRequest,
-  ): Promise<s.TagResourceResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       Tags: params["Tags"],
     };
@@ -146,15 +143,12 @@ export default class DLM {
       action: "TagResource",
       requestUri: cmnP.encodePath`/tags/${params["ResourceArn"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async untagResource(
     {abortSignal, ...params}: RequestConfig & s.UntagResourceRequest,
-  ): Promise<s.UntagResourceResponse> {
+  ): Promise<void> {
     const query = new URLSearchParams;
     for (const item of params["TagKeys"]) {
       query.append("tagKeys", item?.toString() ?? "");
@@ -165,15 +159,12 @@ export default class DLM {
       method: "DELETE",
       requestUri: cmnP.encodePath`/tags/${params["ResourceArn"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
   async updateLifecyclePolicy(
     {abortSignal, ...params}: RequestConfig & s.UpdateLifecyclePolicyRequest,
-  ): Promise<s.UpdateLifecyclePolicyResponse> {
+  ): Promise<void> {
     const body: jsonP.JSONObject = {
       ExecutionRoleArn: params["ExecutionRoleArn"],
       State: params["State"],
@@ -186,10 +177,7 @@ export default class DLM {
       method: "PATCH",
       requestUri: cmnP.encodePath`/policies/${params["PolicyId"]}`,
     });
-    return jsonP.readObj({
-      required: {},
-      optional: {},
-    }, await resp.json());
+    await resp.text();
   }
 
 }
