@@ -62,6 +62,8 @@ and working directly with a Kinesis stream.
   * Using definitions from `aws-sdk-js@2.814.0`
 * `v0.3.0` on `2021-02-14`: Clean up generation, rename modules to match AWS-SDK
   * Using definitions from `aws-sdk-js@2.839.0`
+* `v0.3.1` on `2021-03-28`: Fix ini-parsing edgecase. Remove zero-field API types.
+  * Using definitions from `aws-sdk-js@2.874.0`
 
 ## Disclaimer
 
