@@ -930,7 +930,7 @@ export default class IAM {
     });
     const xml = xmlP.readXmlResult(await resp.text(), "GetCredentialReportResult");
     return {
-      Content: xml.first("Content", false, x => parseBlob(x.content) ?? ''),
+      Content: xml.first("Content", false, x => parseBlob(x.content) ?? new Uint8Array(0)),
       ReportFormat: xml.first("ReportFormat", false, x => (x.content ?? '') as s.ReportFormatType),
       GeneratedTime: xml.first("GeneratedTime", false, x => xmlP.parseTimestamp(x.content)),
     };
@@ -2966,8 +2966,8 @@ function VirtualMFADevice_Parse(node: xmlP.XmlNode): s.VirtualMFADevice {
     ...node.strings({
       required: {"SerialNumber":true},
     }),
-    Base32StringSeed: node.first("Base32StringSeed", false, x => parseBlob(x.content) ?? ''),
-    QRCodePNG: node.first("QRCodePNG", false, x => parseBlob(x.content) ?? ''),
+    Base32StringSeed: node.first("Base32StringSeed", false, x => parseBlob(x.content) ?? new Uint8Array(0)),
+    QRCodePNG: node.first("QRCodePNG", false, x => parseBlob(x.content) ?? new Uint8Array(0)),
     User: node.first("User", false, User_Parse),
     EnableDate: node.first("EnableDate", false, x => xmlP.parseTimestamp(x.content)),
     Tags: node.getList("Tags", "member").map(Tag_Parse),

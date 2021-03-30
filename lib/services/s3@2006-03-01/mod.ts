@@ -4115,7 +4115,7 @@ function SelectObjectContentEventStream_Parse(node: xmlP.XmlNode): s.SelectObjec
 
 function RecordsEvent_Parse(node: xmlP.XmlNode): s.RecordsEvent {
   return {
-    Payload: node.first("Payload", false, x => parseBlob(x.content) ?? ''),
+    Payload: node.first("Payload", false, x => parseBlob(x.content) ?? new Uint8Array(0)),
   };
 }
 

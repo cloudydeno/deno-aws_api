@@ -1112,7 +1112,7 @@ export interface GetContextKeysForPolicyResponse {
 
 // refs: 1 - tags: named, output
 export interface GetCredentialReportResponse {
-  Content?: Uint8Array | string | null;
+  Content?: Uint8Array | null;
   ReportFormat?: ReportFormatType | null;
   GeneratedTime?: Date | number | null;
 }
@@ -1725,8 +1725,8 @@ export interface User {
 // refs: 2 - tags: output, named, interface
 export interface VirtualMFADevice {
   SerialNumber: string;
-  Base32StringSeed?: Uint8Array | string | null;
-  QRCodePNG?: Uint8Array | string | null;
+  Base32StringSeed?: Uint8Array | null;
+  QRCodePNG?: Uint8Array | null;
   User?: User | null;
   EnableDate?: Date | number | null;
   Tags: Tag[];

@@ -620,7 +620,7 @@ export interface InvocationResponse {
   StatusCode?: number | null;
   FunctionError?: string | null;
   LogResult?: string | null;
-  Payload?: Uint8Array | string | null;
+  Payload?: Uint8Array | null;
   ExecutedVersion?: string | null;
 }
 

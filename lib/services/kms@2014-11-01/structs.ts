@@ -351,7 +351,7 @@ export interface CreateKeyResponse {
 // refs: 1 - tags: named, output
 export interface DecryptResponse {
   KeyId?: string | null;
-  Plaintext?: Uint8Array | string | null;
+  Plaintext?: Uint8Array | null;
   EncryptionAlgorithm?: EncryptionAlgorithmSpec | null;
 }
 
@@ -369,44 +369,44 @@ export interface DescribeKeyResponse {
 
 // refs: 1 - tags: named, output
 export interface EncryptResponse {
-  CiphertextBlob?: Uint8Array | string | null;
+  CiphertextBlob?: Uint8Array | null;
   KeyId?: string | null;
   EncryptionAlgorithm?: EncryptionAlgorithmSpec | null;
 }
 
 // refs: 1 - tags: named, output
 export interface GenerateDataKeyResponse {
-  CiphertextBlob?: Uint8Array | string | null;
-  Plaintext?: Uint8Array | string | null;
+  CiphertextBlob?: Uint8Array | null;
+  Plaintext?: Uint8Array | null;
   KeyId?: string | null;
 }
 
 // refs: 1 - tags: named, output
 export interface GenerateDataKeyPairResponse {
-  PrivateKeyCiphertextBlob?: Uint8Array | string | null;
-  PrivateKeyPlaintext?: Uint8Array | string | null;
-  PublicKey?: Uint8Array | string | null;
+  PrivateKeyCiphertextBlob?: Uint8Array | null;
+  PrivateKeyPlaintext?: Uint8Array | null;
+  PublicKey?: Uint8Array | null;
   KeyId?: string | null;
   KeyPairSpec?: DataKeyPairSpec | null;
 }
 
 // refs: 1 - tags: named, output
 export interface GenerateDataKeyPairWithoutPlaintextResponse {
-  PrivateKeyCiphertextBlob?: Uint8Array | string | null;
-  PublicKey?: Uint8Array | string | null;
+  PrivateKeyCiphertextBlob?: Uint8Array | null;
+  PublicKey?: Uint8Array | null;
   KeyId?: string | null;
   KeyPairSpec?: DataKeyPairSpec | null;
 }
 
 // refs: 1 - tags: named, output
 export interface GenerateDataKeyWithoutPlaintextResponse {
-  CiphertextBlob?: Uint8Array | string | null;
+  CiphertextBlob?: Uint8Array | null;
   KeyId?: string | null;
 }
 
 // refs: 1 - tags: named, output
 export interface GenerateRandomResponse {
-  Plaintext?: Uint8Array | string | null;
+  Plaintext?: Uint8Array | null;
 }
 
 // refs: 1 - tags: named, output
@@ -422,15 +422,15 @@ export interface GetKeyRotationStatusResponse {
 // refs: 1 - tags: named, output
 export interface GetParametersForImportResponse {
   KeyId?: string | null;
-  ImportToken?: Uint8Array | string | null;
-  PublicKey?: Uint8Array | string | null;
+  ImportToken?: Uint8Array | null;
+  PublicKey?: Uint8Array | null;
   ParametersValidTo?: Date | number | null;
 }
 
 // refs: 1 - tags: named, output
 export interface GetPublicKeyResponse {
   KeyId?: string | null;
-  PublicKey?: Uint8Array | string | null;
+  PublicKey?: Uint8Array | null;
   CustomerMasterKeySpec?: CustomerMasterKeySpec | null;
   KeyUsage?: KeyUsageType | null;
   EncryptionAlgorithms?: EncryptionAlgorithmSpec[] | null;
@@ -474,7 +474,7 @@ export interface ListResourceTagsResponse {
 
 // refs: 1 - tags: named, output
 export interface ReEncryptResponse {
-  CiphertextBlob?: Uint8Array | string | null;
+  CiphertextBlob?: Uint8Array | null;
   SourceKeyId?: string | null;
   KeyId?: string | null;
   SourceEncryptionAlgorithm?: EncryptionAlgorithmSpec | null;
@@ -490,7 +490,7 @@ export interface ScheduleKeyDeletionResponse {
 // refs: 1 - tags: named, output
 export interface SignResponse {
   KeyId?: string | null;
-  Signature?: Uint8Array | string | null;
+  Signature?: Uint8Array | null;
   SigningAlgorithm?: SigningAlgorithmSpec | null;
 }
 

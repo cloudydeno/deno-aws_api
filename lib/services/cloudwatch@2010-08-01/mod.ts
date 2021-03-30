@@ -379,7 +379,7 @@ export default class CloudWatch {
     });
     const xml = xmlP.readXmlResult(await resp.text(), "GetMetricWidgetImageResult");
     return {
-      MetricWidgetImage: xml.first("MetricWidgetImage", false, x => parseBlob(x.content) ?? ''),
+      MetricWidgetImage: xml.first("MetricWidgetImage", false, x => parseBlob(x.content) ?? new Uint8Array(0)),
     };
   }
 

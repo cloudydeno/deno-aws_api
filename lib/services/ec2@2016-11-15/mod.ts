@@ -9395,7 +9395,7 @@ function S3Storage_Parse(node: xmlP.XmlNode): s.S3Storage {
     }),
     Bucket: node.first("bucket", false, x => x.content ?? ''),
     Prefix: node.first("prefix", false, x => x.content ?? ''),
-    UploadPolicy: node.first("uploadPolicy", false, x => parseBlob(x.content) ?? ''),
+    UploadPolicy: node.first("uploadPolicy", false, x => parseBlob(x.content) ?? new Uint8Array(0)),
     UploadPolicySignature: node.first("uploadPolicySignature", false, x => x.content ?? ''),
   };
 }

@@ -1118,7 +1118,7 @@ export interface GetBucketWebsiteOutput {
 
 // refs: 1 - tags: named, output
 export interface GetObjectOutput {
-  Body?: Uint8Array | string | null;
+  Body?: Uint8Array | null;
   DeleteMarker?: boolean | null;
   AcceptRanges?: string | null;
   Expiration?: string | null;
@@ -1182,7 +1182,7 @@ export interface GetObjectTaggingOutput {
 
 // refs: 1 - tags: named, output
 export interface GetObjectTorrentOutput {
-  Body?: Uint8Array | string | null;
+  Body?: Uint8Array | null;
   RequestCharged?: RequestCharged | null;
 }
 
@@ -2637,7 +2637,7 @@ export interface SelectObjectContentEventStream {
 
 // refs: 1 - tags: output, named, interface
 export interface RecordsEvent {
-  Payload?: Uint8Array | string | null;
+  Payload?: Uint8Array | null;
 }
 
 // refs: 1 - tags: output, named, interface

@@ -398,9 +398,9 @@ function MessageAttributeValue_Parse(node: xmlP.XmlNode): s.MessageAttributeValu
       required: {"DataType":true},
       optional: {"StringValue":true},
     }),
-    BinaryValue: node.first("BinaryValue", false, x => parseBlob(x.content) ?? ''),
+    BinaryValue: node.first("BinaryValue", false, x => parseBlob(x.content) ?? new Uint8Array(0)),
     StringListValues: node.getList("StringListValue").map(x => x.content ?? ''),
-    BinaryListValues: node.getList("BinaryListValue").map(x => parseBlob(x.content) ?? ''),
+    BinaryListValues: node.getList("BinaryListValue").map(x => parseBlob(x.content) ?? new Uint8Array(0)),
   };
 }
 

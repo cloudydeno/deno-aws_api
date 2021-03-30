@@ -326,7 +326,7 @@ export interface GetMetricStatisticsOutput {
 
 // refs: 1 - tags: named, output
 export interface GetMetricWidgetImageOutput {
-  MetricWidgetImage?: Uint8Array | string | null;
+  MetricWidgetImage?: Uint8Array | null;
 }
 
 // refs: 1 - tags: named, output

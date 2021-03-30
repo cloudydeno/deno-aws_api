@@ -147,10 +147,10 @@ export interface StreamRecord {
 export interface AttributeValue {
   S?: string | null;
   N?: string | null;
-  B?: Uint8Array | string | null;
+  B?: Uint8Array | null;
   SS?: string[] | null;
   NS?: string[] | null;
-  BS?: (Uint8Array | string)[] | null;
+  BS?: Uint8Array[] | null;
   M?: { [key: string]: AttributeValue | null | undefined } | null;
   L?: AttributeValue[] | null;
   NULL?: boolean | null;

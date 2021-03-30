@@ -1,5 +1,5 @@
 import type * as Schema from './sdk-schema.ts';
-import type { ShapeLibrary, KnownShape } from './shape-library.ts';
+import type { ShapeLibrary, KnownShape, ShapeTag } from './shape-library.ts';
 import type { HelperLibrary } from "./helper-library.ts";
 import type { ProtocolCodegen } from "./protocol.ts";
 
@@ -68,7 +68,7 @@ export class StructEmitter {
             const isRequired = required.has(key.toLowerCase())
               || (reqLists && (innerShape.spec.type === 'list' || innerShape.spec.type === 'map'))
               || spec.location === 'uri';
-            return `  ${key}${isRequired ? '' : '?'}: ${this.specifyShapeType(innerShape, {isJson: spec.jsonvalue})}${isRequired ? '' : ' | null'};`;
+            return `  ${key}${isRequired ? '' : '?'}: ${this.specifyShapeType(innerShape, {isJson: spec.jsonvalue, tags: shape.tags})}${isRequired ? '' : ' | null'};`;
           }),
         '}'].join('\n');
 
@@ -86,7 +86,7 @@ export class StructEmitter {
   }
 
   // TODO: enums as a map key type should become an object instead
-  specifyShapeType(shape: KnownShape, opts: {isDictKey?: true; isJson?: true}): string {
+  specifyShapeType(shape: KnownShape, opts: { isDictKey?: true; isJson?: true, tags?: Set<ShapeTag> }): string {
     if (shape.tags.has('named') && !opts.isDictKey) {
       return this.namePrefix+shape.censoredName;
     }
@@ -110,7 +110,7 @@ export class StructEmitter {
         return 'number';
       case 'list':
         const memberShape = this.shapes.get(shape.spec.member);
-        let memberType = this.specifyShapeType(memberShape, {isJson: shape.spec.member.jsonvalue});
+        let memberType = this.specifyShapeType(memberShape, {isJson: shape.spec.member.jsonvalue, tags: opts.tags ?? shape.tags});
         if (memberType.includes(' ')) memberType = `(${memberType})`;
         return `${memberType}[]`;
       case 'map':
@@ -118,13 +118,16 @@ export class StructEmitter {
         const valueShape = this.shapes.get(shape.spec.value);
         const keyType = (keyShape.spec.type === 'string' && keyShape.spec.enum)
           ? `key in ${this.namePrefix}${keyShape.censoredName}`
-          : `key: ${this.specifyShapeType(keyShape, {isDictKey: true})}`;
-        return `{ [${keyType}]: ${this.specifyShapeType(valueShape, {isJson: shape.spec.value.jsonvalue})} | null | undefined }`;
+          : `key: ${this.specifyShapeType(keyShape, {isDictKey: true, tags: opts.tags ?? shape.tags})}`;
+        return `{ [${keyType}]: ${this.specifyShapeType(valueShape, {isJson: shape.spec.value.jsonvalue, tags: opts.tags ?? shape.tags})} | null | undefined }`;
       case 'structure':
         return this.writeStructureType(shape).replace(/\n/g, '\n  ');
       case 'timestamp':
         return 'Date | number';
       case 'blob':
+        if (opts.tags?.has('output') && !opts.tags?.has('input')) {
+          return 'Uint8Array'; // TODO: better body-handling interface
+        }
         return 'Uint8Array | string'; // TODO
       default:
         console.log(shape);

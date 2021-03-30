@@ -416,7 +416,7 @@ export default class ProtocolXmlCodegen {
         return `x => parseFloat(x.content ?? '0')`;
       case 'blob':
         this.helpers.useHelper("parseBlob");
-        return `x => parseBlob(x.content) ?? ''`;
+        return `x => parseBlob(x.content) ?? new Uint8Array(0)`;
       case 'timestamp':
         this.helpers.useHelper("xmlP");
         return `x => xmlP.parseTimestamp(x.content)`;

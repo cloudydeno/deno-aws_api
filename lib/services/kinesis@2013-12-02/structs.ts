@@ -407,7 +407,7 @@ export interface StreamDescriptionSummary {
 export interface Record {
   SequenceNumber: string;
   ApproximateArrivalTimestamp?: Date | number | null;
-  Data: Uint8Array | string;
+  Data: Uint8Array;
   PartitionKey: string;
   EncryptionType?: EncryptionType | null;
 }
