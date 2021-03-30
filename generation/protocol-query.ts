@@ -26,7 +26,7 @@ export default class ProtocolQueryCodegen extends ProtocolXmlCodegen {
     chunks.push(`    const body = new URLSearchParams;`);
     chunks.push(`    const prefix = '';`);
 
-    chunks.push(this.generateQStructureInputTypescript(inputShape.spec, "params", ''));
+    chunks.push(this.generateQStructureInputTypescript(inputShape.spec, "params", '').replace(/^/gm, '  '));
 
     return {
       inputParsingCode: chunks.join('\n'),
@@ -69,7 +69,7 @@ export default class ProtocolQueryCodegen extends ProtocolXmlCodegen {
 
       switch (shape.spec.type) {
         // case 'boolean':
-        //   chunks.push(`    ${isRequired ? '' : `if (${paramRef} != null) `}body.append(${JSON.stringify(locationName)}, ${paramRef});`);
+        //   chunks.push(`  ${isRequired ? '' : `if (${paramRef} != null) `}body.append(${JSON.stringify(locationName)}, ${paramRef});`);
         case 'list': {
           const isFlattened = spec.flattened || shape.spec.flattened || this.ec2Mode;
           const listConfig: any = {};
@@ -83,7 +83,7 @@ export default class ProtocolQueryCodegen extends ProtocolXmlCodegen {
             : `.${shape.spec.locationName ?? shape.spec.member.locationName ?? 'member'}.`;
           const innerShape = this.shapes.get(shape.spec.member);
           this.helpers.useHelper("qsP");
-          chunks.push(`    if (${paramRef}) qsP.appendList(body, prefix+${JSON.stringify(prefix+listPrefix)}, ${paramRef}, ${this.configureInnerShapeEncoding(innerShape, listConfig)})`);
+          chunks.push(`  if (${paramRef}) qsP.appendList(body, prefix+${JSON.stringify(prefix+listPrefix)}, ${paramRef}, ${this.configureInnerShapeEncoding(innerShape, listConfig)})`);
           break;
         }
         case 'map': {
@@ -99,13 +99,13 @@ export default class ProtocolQueryCodegen extends ProtocolXmlCodegen {
             : `.${shape.spec.locationName ?? 'entry'}.`;
           const valueShape = this.shapes.get(shape.spec.value);
           this.helpers.useHelper("qsP");
-          chunks.push(`    if (${paramRef}) qsP.appendMap(body, prefix+${JSON.stringify(prefix+mapPrefix)}, ${paramRef}, ${this.configureInnerShapeEncoding(valueShape, mapConfig)})`);
+          chunks.push(`  if (${paramRef}) qsP.appendMap(body, prefix+${JSON.stringify(prefix+mapPrefix)}, ${paramRef}, ${this.configureInnerShapeEncoding(valueShape, mapConfig)})`);
           break;
         }
         case 'string':
           if (spec.idempotencyToken) {
             this.helpers.useHelper('generateIdemptToken');
-            chunks.push(`    body.append(prefix+${JSON.stringify(prefix+locationName)}, (${paramRef} ?? generateIdemptToken()).toString());`);
+            chunks.push(`  body.append(prefix+${JSON.stringify(prefix+locationName)}, (${paramRef} ?? generateIdemptToken()).toString());`);
             break;
           } // fallthrough
         case 'boolean':
@@ -113,29 +113,29 @@ export default class ProtocolQueryCodegen extends ProtocolXmlCodegen {
         case 'float':
         case 'double':
         case 'long':
-          chunks.push(`    ${isRequired ? '' : `if (${JSON.stringify(field)} in params) `}body.append(prefix+${JSON.stringify(prefix+locationName)}, (${paramRef} ?? '').toString());`);
+          chunks.push(`  ${isRequired ? '' : `if (${JSON.stringify(field)} in params) `}body.append(prefix+${JSON.stringify(prefix+locationName)}, (${paramRef} ?? '').toString());`);
           break;
         case 'blob':
           this.helpers.useHelper("serializeBlob");
-          chunks.push(`    ${isRequired ? '' : `if (${JSON.stringify(field)} in params) `}body.append(prefix+${JSON.stringify(prefix+locationName)}, serializeBlob(${paramRef}) ?? '');`);
+          chunks.push(`  ${isRequired ? '' : `if (${JSON.stringify(field)} in params) `}body.append(prefix+${JSON.stringify(prefix+locationName)}, serializeBlob(${paramRef}) ?? '');`);
           break;
         case 'timestamp':
           this.helpers.useHelper("qsP");
           const dateFmt = spec.timestampFormat ?? shape.spec.timestampFormat ?? 'iso8601';
-          chunks.push(`    ${isRequired ? '' : `if (${JSON.stringify(field)} in params) `}body.append(prefix+${JSON.stringify(prefix+locationName)}, qsP.encodeDate_${dateFmt}(${paramRef}));`);
+          chunks.push(`  ${isRequired ? '' : `if (${JSON.stringify(field)} in params) `}body.append(prefix+${JSON.stringify(prefix+locationName)}, qsP.encodeDate_${dateFmt}(${paramRef}));`);
           break;
         case 'structure':
           if (shape.tags.has('named')) {
-            chunks.push(`    ${isRequired ? '' : `if (${paramRef} != null) `}${shape.censoredName}_Serialize(body, prefix+${JSON.stringify(prefix+locationName)}, ${paramRef});`);
+            chunks.push(`  ${isRequired ? '' : `if (${paramRef} != null) `}${shape.censoredName}_Serialize(body, prefix+${JSON.stringify(prefix+locationName)}, ${paramRef});`);
           } else {
-            if (isRequired) chunks.push(`    if (${paramRef}) {`);
-            chunks.push(this.generateQStructureInputTypescript(shape.spec, paramRef, prefix+locationName+'.'));
-            if (isRequired) chunks.push(`    }`);
+            if (isRequired) chunks.push(`  if (${paramRef}) {`);
+            chunks.push(this.generateQStructureInputTypescript(shape.spec, paramRef, prefix+locationName+'.').replace(/^/gm, isRequired ? '    ' : '  '));
+            if (isRequired) chunks.push(`  }`);
           }
           break;
         default:
           throw new Error(`TODO: query input appending for ${(shape as KnownShape).spec.type}`);
-          // chunks.push(`    // TODO: appending for ${(shape as KnownShape).spec.type}`);
+          // chunks.push(`  // TODO: appending for ${(shape as KnownShape).spec.type}`);
       }
     }
 
