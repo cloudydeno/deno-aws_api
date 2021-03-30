@@ -1037,8 +1037,8 @@ export default class RDS {
 }
 
 function Tag_Serialize(body: URLSearchParams, prefix: string, params: s.Tag) {
-    if ("Key" in params) body.append(prefix+".Key", (params["Key"] ?? '').toString());
-    if ("Value" in params) body.append(prefix+".Value", (params["Value"] ?? '').toString());
+  if ("Key" in params) body.append(prefix+".Key", (params["Key"] ?? '').toString());
+  if ("Value" in params) body.append(prefix+".Value", (params["Value"] ?? '').toString());
 }
 function Tag_Parse(node: xmlP.XmlNode): s.Tag {
   return node.strings({
@@ -1047,16 +1047,16 @@ function Tag_Parse(node: xmlP.XmlNode): s.Tag {
 }
 
 function Parameter_Serialize(body: URLSearchParams, prefix: string, params: s.Parameter) {
-    if ("ParameterName" in params) body.append(prefix+".ParameterName", (params["ParameterName"] ?? '').toString());
-    if ("ParameterValue" in params) body.append(prefix+".ParameterValue", (params["ParameterValue"] ?? '').toString());
-    if ("Description" in params) body.append(prefix+".Description", (params["Description"] ?? '').toString());
-    if ("Source" in params) body.append(prefix+".Source", (params["Source"] ?? '').toString());
-    if ("ApplyType" in params) body.append(prefix+".ApplyType", (params["ApplyType"] ?? '').toString());
-    if ("DataType" in params) body.append(prefix+".DataType", (params["DataType"] ?? '').toString());
-    if ("AllowedValues" in params) body.append(prefix+".AllowedValues", (params["AllowedValues"] ?? '').toString());
-    if ("IsModifiable" in params) body.append(prefix+".IsModifiable", (params["IsModifiable"] ?? '').toString());
-    if ("MinimumEngineVersion" in params) body.append(prefix+".MinimumEngineVersion", (params["MinimumEngineVersion"] ?? '').toString());
-    if ("ApplyMethod" in params) body.append(prefix+".ApplyMethod", (params["ApplyMethod"] ?? '').toString());
+  if ("ParameterName" in params) body.append(prefix+".ParameterName", (params["ParameterName"] ?? '').toString());
+  if ("ParameterValue" in params) body.append(prefix+".ParameterValue", (params["ParameterValue"] ?? '').toString());
+  if ("Description" in params) body.append(prefix+".Description", (params["Description"] ?? '').toString());
+  if ("Source" in params) body.append(prefix+".Source", (params["Source"] ?? '').toString());
+  if ("ApplyType" in params) body.append(prefix+".ApplyType", (params["ApplyType"] ?? '').toString());
+  if ("DataType" in params) body.append(prefix+".DataType", (params["DataType"] ?? '').toString());
+  if ("AllowedValues" in params) body.append(prefix+".AllowedValues", (params["AllowedValues"] ?? '').toString());
+  if ("IsModifiable" in params) body.append(prefix+".IsModifiable", (params["IsModifiable"] ?? '').toString());
+  if ("MinimumEngineVersion" in params) body.append(prefix+".MinimumEngineVersion", (params["MinimumEngineVersion"] ?? '').toString());
+  if ("ApplyMethod" in params) body.append(prefix+".ApplyMethod", (params["ApplyMethod"] ?? '').toString());
 }
 function Parameter_Parse(node: xmlP.XmlNode): s.Parameter {
   return {
@@ -1069,10 +1069,10 @@ function Parameter_Parse(node: xmlP.XmlNode): s.Parameter {
 }
 
 function OptionConfiguration_Serialize(body: URLSearchParams, prefix: string, params: s.OptionConfiguration) {
-    body.append(prefix+".OptionName", (params["OptionName"] ?? '').toString());
-    if ("Port" in params) body.append(prefix+".Port", (params["Port"] ?? '').toString());
-    if (params["DBSecurityGroupMemberships"]) qsP.appendList(body, prefix+".DBSecurityGroupMemberships", params["DBSecurityGroupMemberships"], {"entryPrefix":".DBSecurityGroupName."})
-    if (params["VpcSecurityGroupMemberships"]) qsP.appendList(body, prefix+".VpcSecurityGroupMemberships", params["VpcSecurityGroupMemberships"], {"entryPrefix":".VpcSecurityGroupId."})
+  body.append(prefix+".OptionName", (params["OptionName"] ?? '').toString());
+  if ("Port" in params) body.append(prefix+".Port", (params["Port"] ?? '').toString());
+  if (params["DBSecurityGroupMemberships"]) qsP.appendList(body, prefix+".DBSecurityGroupMemberships", params["DBSecurityGroupMemberships"], {"entryPrefix":".DBSecurityGroupName."})
+  if (params["VpcSecurityGroupMemberships"]) qsP.appendList(body, prefix+".VpcSecurityGroupMemberships", params["VpcSecurityGroupMemberships"], {"entryPrefix":".VpcSecurityGroupId."})
 }
 
 function EventSubscription_Parse(node: xmlP.XmlNode): s.EventSubscription {

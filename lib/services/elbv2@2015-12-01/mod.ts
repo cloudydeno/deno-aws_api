@@ -744,8 +744,8 @@ export default class ELBv2 {
 }
 
 function Certificate_Serialize(body: URLSearchParams, prefix: string, params: s.Certificate) {
-    if ("CertificateArn" in params) body.append(prefix+".CertificateArn", (params["CertificateArn"] ?? '').toString());
-    if ("IsDefault" in params) body.append(prefix+".IsDefault", (params["IsDefault"] ?? '').toString());
+  if ("CertificateArn" in params) body.append(prefix+".CertificateArn", (params["CertificateArn"] ?? '').toString());
+  if ("IsDefault" in params) body.append(prefix+".IsDefault", (params["IsDefault"] ?? '').toString());
 }
 function Certificate_Parse(node: xmlP.XmlNode): s.Certificate {
   return {
@@ -757,8 +757,8 @@ function Certificate_Parse(node: xmlP.XmlNode): s.Certificate {
 }
 
 function Tag_Serialize(body: URLSearchParams, prefix: string, params: s.Tag) {
-    body.append(prefix+".Key", (params["Key"] ?? '').toString());
-    if ("Value" in params) body.append(prefix+".Value", (params["Value"] ?? '').toString());
+  body.append(prefix+".Key", (params["Key"] ?? '').toString());
+  if ("Value" in params) body.append(prefix+".Value", (params["Value"] ?? '').toString());
 }
 function Tag_Parse(node: xmlP.XmlNode): s.Tag {
   return node.strings({
@@ -768,14 +768,14 @@ function Tag_Parse(node: xmlP.XmlNode): s.Tag {
 }
 
 function Action_Serialize(body: URLSearchParams, prefix: string, params: s.Action) {
-    body.append(prefix+".Type", (params["Type"] ?? '').toString());
-    if ("TargetGroupArn" in params) body.append(prefix+".TargetGroupArn", (params["TargetGroupArn"] ?? '').toString());
-    if (params["AuthenticateOidcConfig"] != null) AuthenticateOidcActionConfig_Serialize(body, prefix+".AuthenticateOidcConfig", params["AuthenticateOidcConfig"]);
-    if (params["AuthenticateCognitoConfig"] != null) AuthenticateCognitoActionConfig_Serialize(body, prefix+".AuthenticateCognitoConfig", params["AuthenticateCognitoConfig"]);
-    if ("Order" in params) body.append(prefix+".Order", (params["Order"] ?? '').toString());
-    if (params["RedirectConfig"] != null) RedirectActionConfig_Serialize(body, prefix+".RedirectConfig", params["RedirectConfig"]);
-    if (params["FixedResponseConfig"] != null) FixedResponseActionConfig_Serialize(body, prefix+".FixedResponseConfig", params["FixedResponseConfig"]);
-    if (params["ForwardConfig"] != null) ForwardActionConfig_Serialize(body, prefix+".ForwardConfig", params["ForwardConfig"]);
+  body.append(prefix+".Type", (params["Type"] ?? '').toString());
+  if ("TargetGroupArn" in params) body.append(prefix+".TargetGroupArn", (params["TargetGroupArn"] ?? '').toString());
+  if (params["AuthenticateOidcConfig"] != null) AuthenticateOidcActionConfig_Serialize(body, prefix+".AuthenticateOidcConfig", params["AuthenticateOidcConfig"]);
+  if (params["AuthenticateCognitoConfig"] != null) AuthenticateCognitoActionConfig_Serialize(body, prefix+".AuthenticateCognitoConfig", params["AuthenticateCognitoConfig"]);
+  if ("Order" in params) body.append(prefix+".Order", (params["Order"] ?? '').toString());
+  if (params["RedirectConfig"] != null) RedirectActionConfig_Serialize(body, prefix+".RedirectConfig", params["RedirectConfig"]);
+  if (params["FixedResponseConfig"] != null) FixedResponseActionConfig_Serialize(body, prefix+".FixedResponseConfig", params["FixedResponseConfig"]);
+  if (params["ForwardConfig"] != null) ForwardActionConfig_Serialize(body, prefix+".ForwardConfig", params["ForwardConfig"]);
 }
 function Action_Parse(node: xmlP.XmlNode): s.Action {
   return {
@@ -793,18 +793,18 @@ function Action_Parse(node: xmlP.XmlNode): s.Action {
 }
 
 function AuthenticateOidcActionConfig_Serialize(body: URLSearchParams, prefix: string, params: s.AuthenticateOidcActionConfig) {
-    body.append(prefix+".Issuer", (params["Issuer"] ?? '').toString());
-    body.append(prefix+".AuthorizationEndpoint", (params["AuthorizationEndpoint"] ?? '').toString());
-    body.append(prefix+".TokenEndpoint", (params["TokenEndpoint"] ?? '').toString());
-    body.append(prefix+".UserInfoEndpoint", (params["UserInfoEndpoint"] ?? '').toString());
-    body.append(prefix+".ClientId", (params["ClientId"] ?? '').toString());
-    if ("ClientSecret" in params) body.append(prefix+".ClientSecret", (params["ClientSecret"] ?? '').toString());
-    if ("SessionCookieName" in params) body.append(prefix+".SessionCookieName", (params["SessionCookieName"] ?? '').toString());
-    if ("Scope" in params) body.append(prefix+".Scope", (params["Scope"] ?? '').toString());
-    if ("SessionTimeout" in params) body.append(prefix+".SessionTimeout", (params["SessionTimeout"] ?? '').toString());
-    if (params["AuthenticationRequestExtraParams"]) qsP.appendMap(body, prefix+".AuthenticationRequestExtraParams", params["AuthenticationRequestExtraParams"], {"entryPrefix":".entry."})
-    if ("OnUnauthenticatedRequest" in params) body.append(prefix+".OnUnauthenticatedRequest", (params["OnUnauthenticatedRequest"] ?? '').toString());
-    if ("UseExistingClientSecret" in params) body.append(prefix+".UseExistingClientSecret", (params["UseExistingClientSecret"] ?? '').toString());
+  body.append(prefix+".Issuer", (params["Issuer"] ?? '').toString());
+  body.append(prefix+".AuthorizationEndpoint", (params["AuthorizationEndpoint"] ?? '').toString());
+  body.append(prefix+".TokenEndpoint", (params["TokenEndpoint"] ?? '').toString());
+  body.append(prefix+".UserInfoEndpoint", (params["UserInfoEndpoint"] ?? '').toString());
+  body.append(prefix+".ClientId", (params["ClientId"] ?? '').toString());
+  if ("ClientSecret" in params) body.append(prefix+".ClientSecret", (params["ClientSecret"] ?? '').toString());
+  if ("SessionCookieName" in params) body.append(prefix+".SessionCookieName", (params["SessionCookieName"] ?? '').toString());
+  if ("Scope" in params) body.append(prefix+".Scope", (params["Scope"] ?? '').toString());
+  if ("SessionTimeout" in params) body.append(prefix+".SessionTimeout", (params["SessionTimeout"] ?? '').toString());
+  if (params["AuthenticationRequestExtraParams"]) qsP.appendMap(body, prefix+".AuthenticationRequestExtraParams", params["AuthenticationRequestExtraParams"], {"entryPrefix":".entry."})
+  if ("OnUnauthenticatedRequest" in params) body.append(prefix+".OnUnauthenticatedRequest", (params["OnUnauthenticatedRequest"] ?? '').toString());
+  if ("UseExistingClientSecret" in params) body.append(prefix+".UseExistingClientSecret", (params["UseExistingClientSecret"] ?? '').toString());
 }
 function AuthenticateOidcActionConfig_Parse(node: xmlP.XmlNode): s.AuthenticateOidcActionConfig {
   return {
@@ -820,14 +820,14 @@ function AuthenticateOidcActionConfig_Parse(node: xmlP.XmlNode): s.AuthenticateO
 }
 
 function AuthenticateCognitoActionConfig_Serialize(body: URLSearchParams, prefix: string, params: s.AuthenticateCognitoActionConfig) {
-    body.append(prefix+".UserPoolArn", (params["UserPoolArn"] ?? '').toString());
-    body.append(prefix+".UserPoolClientId", (params["UserPoolClientId"] ?? '').toString());
-    body.append(prefix+".UserPoolDomain", (params["UserPoolDomain"] ?? '').toString());
-    if ("SessionCookieName" in params) body.append(prefix+".SessionCookieName", (params["SessionCookieName"] ?? '').toString());
-    if ("Scope" in params) body.append(prefix+".Scope", (params["Scope"] ?? '').toString());
-    if ("SessionTimeout" in params) body.append(prefix+".SessionTimeout", (params["SessionTimeout"] ?? '').toString());
-    if (params["AuthenticationRequestExtraParams"]) qsP.appendMap(body, prefix+".AuthenticationRequestExtraParams", params["AuthenticationRequestExtraParams"], {"entryPrefix":".entry."})
-    if ("OnUnauthenticatedRequest" in params) body.append(prefix+".OnUnauthenticatedRequest", (params["OnUnauthenticatedRequest"] ?? '').toString());
+  body.append(prefix+".UserPoolArn", (params["UserPoolArn"] ?? '').toString());
+  body.append(prefix+".UserPoolClientId", (params["UserPoolClientId"] ?? '').toString());
+  body.append(prefix+".UserPoolDomain", (params["UserPoolDomain"] ?? '').toString());
+  if ("SessionCookieName" in params) body.append(prefix+".SessionCookieName", (params["SessionCookieName"] ?? '').toString());
+  if ("Scope" in params) body.append(prefix+".Scope", (params["Scope"] ?? '').toString());
+  if ("SessionTimeout" in params) body.append(prefix+".SessionTimeout", (params["SessionTimeout"] ?? '').toString());
+  if (params["AuthenticationRequestExtraParams"]) qsP.appendMap(body, prefix+".AuthenticationRequestExtraParams", params["AuthenticationRequestExtraParams"], {"entryPrefix":".entry."})
+  if ("OnUnauthenticatedRequest" in params) body.append(prefix+".OnUnauthenticatedRequest", (params["OnUnauthenticatedRequest"] ?? '').toString());
 }
 function AuthenticateCognitoActionConfig_Parse(node: xmlP.XmlNode): s.AuthenticateCognitoActionConfig {
   return {
@@ -842,12 +842,12 @@ function AuthenticateCognitoActionConfig_Parse(node: xmlP.XmlNode): s.Authentica
 }
 
 function RedirectActionConfig_Serialize(body: URLSearchParams, prefix: string, params: s.RedirectActionConfig) {
-    if ("Protocol" in params) body.append(prefix+".Protocol", (params["Protocol"] ?? '').toString());
-    if ("Port" in params) body.append(prefix+".Port", (params["Port"] ?? '').toString());
-    if ("Host" in params) body.append(prefix+".Host", (params["Host"] ?? '').toString());
-    if ("Path" in params) body.append(prefix+".Path", (params["Path"] ?? '').toString());
-    if ("Query" in params) body.append(prefix+".Query", (params["Query"] ?? '').toString());
-    body.append(prefix+".StatusCode", (params["StatusCode"] ?? '').toString());
+  if ("Protocol" in params) body.append(prefix+".Protocol", (params["Protocol"] ?? '').toString());
+  if ("Port" in params) body.append(prefix+".Port", (params["Port"] ?? '').toString());
+  if ("Host" in params) body.append(prefix+".Host", (params["Host"] ?? '').toString());
+  if ("Path" in params) body.append(prefix+".Path", (params["Path"] ?? '').toString());
+  if ("Query" in params) body.append(prefix+".Query", (params["Query"] ?? '').toString());
+  body.append(prefix+".StatusCode", (params["StatusCode"] ?? '').toString());
 }
 function RedirectActionConfig_Parse(node: xmlP.XmlNode): s.RedirectActionConfig {
   return {
@@ -859,9 +859,9 @@ function RedirectActionConfig_Parse(node: xmlP.XmlNode): s.RedirectActionConfig 
 }
 
 function FixedResponseActionConfig_Serialize(body: URLSearchParams, prefix: string, params: s.FixedResponseActionConfig) {
-    if ("MessageBody" in params) body.append(prefix+".MessageBody", (params["MessageBody"] ?? '').toString());
-    body.append(prefix+".StatusCode", (params["StatusCode"] ?? '').toString());
-    if ("ContentType" in params) body.append(prefix+".ContentType", (params["ContentType"] ?? '').toString());
+  if ("MessageBody" in params) body.append(prefix+".MessageBody", (params["MessageBody"] ?? '').toString());
+  body.append(prefix+".StatusCode", (params["StatusCode"] ?? '').toString());
+  if ("ContentType" in params) body.append(prefix+".ContentType", (params["ContentType"] ?? '').toString());
 }
 function FixedResponseActionConfig_Parse(node: xmlP.XmlNode): s.FixedResponseActionConfig {
   return node.strings({
@@ -871,8 +871,8 @@ function FixedResponseActionConfig_Parse(node: xmlP.XmlNode): s.FixedResponseAct
 }
 
 function ForwardActionConfig_Serialize(body: URLSearchParams, prefix: string, params: s.ForwardActionConfig) {
-    if (params["TargetGroups"]) qsP.appendList(body, prefix+".TargetGroups", params["TargetGroups"], {"appender":TargetGroupTuple_Serialize,"entryPrefix":".member."})
-    if (params["TargetGroupStickinessConfig"] != null) TargetGroupStickinessConfig_Serialize(body, prefix+".TargetGroupStickinessConfig", params["TargetGroupStickinessConfig"]);
+  if (params["TargetGroups"]) qsP.appendList(body, prefix+".TargetGroups", params["TargetGroups"], {"appender":TargetGroupTuple_Serialize,"entryPrefix":".member."})
+  if (params["TargetGroupStickinessConfig"] != null) TargetGroupStickinessConfig_Serialize(body, prefix+".TargetGroupStickinessConfig", params["TargetGroupStickinessConfig"]);
 }
 function ForwardActionConfig_Parse(node: xmlP.XmlNode): s.ForwardActionConfig {
   return {
@@ -882,8 +882,8 @@ function ForwardActionConfig_Parse(node: xmlP.XmlNode): s.ForwardActionConfig {
 }
 
 function TargetGroupTuple_Serialize(body: URLSearchParams, prefix: string, params: s.TargetGroupTuple) {
-    if ("TargetGroupArn" in params) body.append(prefix+".TargetGroupArn", (params["TargetGroupArn"] ?? '').toString());
-    if ("Weight" in params) body.append(prefix+".Weight", (params["Weight"] ?? '').toString());
+  if ("TargetGroupArn" in params) body.append(prefix+".TargetGroupArn", (params["TargetGroupArn"] ?? '').toString());
+  if ("Weight" in params) body.append(prefix+".Weight", (params["Weight"] ?? '').toString());
 }
 function TargetGroupTuple_Parse(node: xmlP.XmlNode): s.TargetGroupTuple {
   return {
@@ -895,8 +895,8 @@ function TargetGroupTuple_Parse(node: xmlP.XmlNode): s.TargetGroupTuple {
 }
 
 function TargetGroupStickinessConfig_Serialize(body: URLSearchParams, prefix: string, params: s.TargetGroupStickinessConfig) {
-    if ("Enabled" in params) body.append(prefix+".Enabled", (params["Enabled"] ?? '').toString());
-    if ("DurationSeconds" in params) body.append(prefix+".DurationSeconds", (params["DurationSeconds"] ?? '').toString());
+  if ("Enabled" in params) body.append(prefix+".Enabled", (params["Enabled"] ?? '').toString());
+  if ("DurationSeconds" in params) body.append(prefix+".DurationSeconds", (params["DurationSeconds"] ?? '').toString());
 }
 function TargetGroupStickinessConfig_Parse(node: xmlP.XmlNode): s.TargetGroupStickinessConfig {
   return {
@@ -906,21 +906,21 @@ function TargetGroupStickinessConfig_Parse(node: xmlP.XmlNode): s.TargetGroupSti
 }
 
 function SubnetMapping_Serialize(body: URLSearchParams, prefix: string, params: s.SubnetMapping) {
-    if ("SubnetId" in params) body.append(prefix+".SubnetId", (params["SubnetId"] ?? '').toString());
-    if ("AllocationId" in params) body.append(prefix+".AllocationId", (params["AllocationId"] ?? '').toString());
-    if ("PrivateIPv4Address" in params) body.append(prefix+".PrivateIPv4Address", (params["PrivateIPv4Address"] ?? '').toString());
-    if ("IPv6Address" in params) body.append(prefix+".IPv6Address", (params["IPv6Address"] ?? '').toString());
+  if ("SubnetId" in params) body.append(prefix+".SubnetId", (params["SubnetId"] ?? '').toString());
+  if ("AllocationId" in params) body.append(prefix+".AllocationId", (params["AllocationId"] ?? '').toString());
+  if ("PrivateIPv4Address" in params) body.append(prefix+".PrivateIPv4Address", (params["PrivateIPv4Address"] ?? '').toString());
+  if ("IPv6Address" in params) body.append(prefix+".IPv6Address", (params["IPv6Address"] ?? '').toString());
 }
 
 function RuleCondition_Serialize(body: URLSearchParams, prefix: string, params: s.RuleCondition) {
-    if ("Field" in params) body.append(prefix+".Field", (params["Field"] ?? '').toString());
-    if (params["Values"]) qsP.appendList(body, prefix+".Values", params["Values"], {"entryPrefix":".member."})
-    if (params["HostHeaderConfig"] != null) HostHeaderConditionConfig_Serialize(body, prefix+".HostHeaderConfig", params["HostHeaderConfig"]);
-    if (params["PathPatternConfig"] != null) PathPatternConditionConfig_Serialize(body, prefix+".PathPatternConfig", params["PathPatternConfig"]);
-    if (params["HttpHeaderConfig"] != null) HttpHeaderConditionConfig_Serialize(body, prefix+".HttpHeaderConfig", params["HttpHeaderConfig"]);
-    if (params["QueryStringConfig"] != null) QueryStringConditionConfig_Serialize(body, prefix+".QueryStringConfig", params["QueryStringConfig"]);
-    if (params["HttpRequestMethodConfig"] != null) HttpRequestMethodConditionConfig_Serialize(body, prefix+".HttpRequestMethodConfig", params["HttpRequestMethodConfig"]);
-    if (params["SourceIpConfig"] != null) SourceIpConditionConfig_Serialize(body, prefix+".SourceIpConfig", params["SourceIpConfig"]);
+  if ("Field" in params) body.append(prefix+".Field", (params["Field"] ?? '').toString());
+  if (params["Values"]) qsP.appendList(body, prefix+".Values", params["Values"], {"entryPrefix":".member."})
+  if (params["HostHeaderConfig"] != null) HostHeaderConditionConfig_Serialize(body, prefix+".HostHeaderConfig", params["HostHeaderConfig"]);
+  if (params["PathPatternConfig"] != null) PathPatternConditionConfig_Serialize(body, prefix+".PathPatternConfig", params["PathPatternConfig"]);
+  if (params["HttpHeaderConfig"] != null) HttpHeaderConditionConfig_Serialize(body, prefix+".HttpHeaderConfig", params["HttpHeaderConfig"]);
+  if (params["QueryStringConfig"] != null) QueryStringConditionConfig_Serialize(body, prefix+".QueryStringConfig", params["QueryStringConfig"]);
+  if (params["HttpRequestMethodConfig"] != null) HttpRequestMethodConditionConfig_Serialize(body, prefix+".HttpRequestMethodConfig", params["HttpRequestMethodConfig"]);
+  if (params["SourceIpConfig"] != null) SourceIpConditionConfig_Serialize(body, prefix+".SourceIpConfig", params["SourceIpConfig"]);
 }
 function RuleCondition_Parse(node: xmlP.XmlNode): s.RuleCondition {
   return {
@@ -938,7 +938,7 @@ function RuleCondition_Parse(node: xmlP.XmlNode): s.RuleCondition {
 }
 
 function HostHeaderConditionConfig_Serialize(body: URLSearchParams, prefix: string, params: s.HostHeaderConditionConfig) {
-    if (params["Values"]) qsP.appendList(body, prefix+".Values", params["Values"], {"entryPrefix":".member."})
+  if (params["Values"]) qsP.appendList(body, prefix+".Values", params["Values"], {"entryPrefix":".member."})
 }
 function HostHeaderConditionConfig_Parse(node: xmlP.XmlNode): s.HostHeaderConditionConfig {
   return {
@@ -947,7 +947,7 @@ function HostHeaderConditionConfig_Parse(node: xmlP.XmlNode): s.HostHeaderCondit
 }
 
 function PathPatternConditionConfig_Serialize(body: URLSearchParams, prefix: string, params: s.PathPatternConditionConfig) {
-    if (params["Values"]) qsP.appendList(body, prefix+".Values", params["Values"], {"entryPrefix":".member."})
+  if (params["Values"]) qsP.appendList(body, prefix+".Values", params["Values"], {"entryPrefix":".member."})
 }
 function PathPatternConditionConfig_Parse(node: xmlP.XmlNode): s.PathPatternConditionConfig {
   return {
@@ -956,8 +956,8 @@ function PathPatternConditionConfig_Parse(node: xmlP.XmlNode): s.PathPatternCond
 }
 
 function HttpHeaderConditionConfig_Serialize(body: URLSearchParams, prefix: string, params: s.HttpHeaderConditionConfig) {
-    if ("HttpHeaderName" in params) body.append(prefix+".HttpHeaderName", (params["HttpHeaderName"] ?? '').toString());
-    if (params["Values"]) qsP.appendList(body, prefix+".Values", params["Values"], {"entryPrefix":".member."})
+  if ("HttpHeaderName" in params) body.append(prefix+".HttpHeaderName", (params["HttpHeaderName"] ?? '').toString());
+  if (params["Values"]) qsP.appendList(body, prefix+".Values", params["Values"], {"entryPrefix":".member."})
 }
 function HttpHeaderConditionConfig_Parse(node: xmlP.XmlNode): s.HttpHeaderConditionConfig {
   return {
@@ -969,7 +969,7 @@ function HttpHeaderConditionConfig_Parse(node: xmlP.XmlNode): s.HttpHeaderCondit
 }
 
 function QueryStringConditionConfig_Serialize(body: URLSearchParams, prefix: string, params: s.QueryStringConditionConfig) {
-    if (params["Values"]) qsP.appendList(body, prefix+".Values", params["Values"], {"appender":QueryStringKeyValuePair_Serialize,"entryPrefix":".member."})
+  if (params["Values"]) qsP.appendList(body, prefix+".Values", params["Values"], {"appender":QueryStringKeyValuePair_Serialize,"entryPrefix":".member."})
 }
 function QueryStringConditionConfig_Parse(node: xmlP.XmlNode): s.QueryStringConditionConfig {
   return {
@@ -978,8 +978,8 @@ function QueryStringConditionConfig_Parse(node: xmlP.XmlNode): s.QueryStringCond
 }
 
 function QueryStringKeyValuePair_Serialize(body: URLSearchParams, prefix: string, params: s.QueryStringKeyValuePair) {
-    if ("Key" in params) body.append(prefix+".Key", (params["Key"] ?? '').toString());
-    if ("Value" in params) body.append(prefix+".Value", (params["Value"] ?? '').toString());
+  if ("Key" in params) body.append(prefix+".Key", (params["Key"] ?? '').toString());
+  if ("Value" in params) body.append(prefix+".Value", (params["Value"] ?? '').toString());
 }
 function QueryStringKeyValuePair_Parse(node: xmlP.XmlNode): s.QueryStringKeyValuePair {
   return node.strings({
@@ -988,7 +988,7 @@ function QueryStringKeyValuePair_Parse(node: xmlP.XmlNode): s.QueryStringKeyValu
 }
 
 function HttpRequestMethodConditionConfig_Serialize(body: URLSearchParams, prefix: string, params: s.HttpRequestMethodConditionConfig) {
-    if (params["Values"]) qsP.appendList(body, prefix+".Values", params["Values"], {"entryPrefix":".member."})
+  if (params["Values"]) qsP.appendList(body, prefix+".Values", params["Values"], {"entryPrefix":".member."})
 }
 function HttpRequestMethodConditionConfig_Parse(node: xmlP.XmlNode): s.HttpRequestMethodConditionConfig {
   return {
@@ -997,7 +997,7 @@ function HttpRequestMethodConditionConfig_Parse(node: xmlP.XmlNode): s.HttpReque
 }
 
 function SourceIpConditionConfig_Serialize(body: URLSearchParams, prefix: string, params: s.SourceIpConditionConfig) {
-    if (params["Values"]) qsP.appendList(body, prefix+".Values", params["Values"], {"entryPrefix":".member."})
+  if (params["Values"]) qsP.appendList(body, prefix+".Values", params["Values"], {"entryPrefix":".member."})
 }
 function SourceIpConditionConfig_Parse(node: xmlP.XmlNode): s.SourceIpConditionConfig {
   return {
@@ -1006,8 +1006,8 @@ function SourceIpConditionConfig_Parse(node: xmlP.XmlNode): s.SourceIpConditionC
 }
 
 function Matcher_Serialize(body: URLSearchParams, prefix: string, params: s.Matcher) {
-    if ("HttpCode" in params) body.append(prefix+".HttpCode", (params["HttpCode"] ?? '').toString());
-    if ("GrpcCode" in params) body.append(prefix+".GrpcCode", (params["GrpcCode"] ?? '').toString());
+  if ("HttpCode" in params) body.append(prefix+".HttpCode", (params["HttpCode"] ?? '').toString());
+  if ("GrpcCode" in params) body.append(prefix+".GrpcCode", (params["GrpcCode"] ?? '').toString());
 }
 function Matcher_Parse(node: xmlP.XmlNode): s.Matcher {
   return node.strings({
@@ -1016,9 +1016,9 @@ function Matcher_Parse(node: xmlP.XmlNode): s.Matcher {
 }
 
 function TargetDescription_Serialize(body: URLSearchParams, prefix: string, params: s.TargetDescription) {
-    body.append(prefix+".Id", (params["Id"] ?? '').toString());
-    if ("Port" in params) body.append(prefix+".Port", (params["Port"] ?? '').toString());
-    if ("AvailabilityZone" in params) body.append(prefix+".AvailabilityZone", (params["AvailabilityZone"] ?? '').toString());
+  body.append(prefix+".Id", (params["Id"] ?? '').toString());
+  if ("Port" in params) body.append(prefix+".Port", (params["Port"] ?? '').toString());
+  if ("AvailabilityZone" in params) body.append(prefix+".AvailabilityZone", (params["AvailabilityZone"] ?? '').toString());
 }
 function TargetDescription_Parse(node: xmlP.XmlNode): s.TargetDescription {
   return {
@@ -1031,8 +1031,8 @@ function TargetDescription_Parse(node: xmlP.XmlNode): s.TargetDescription {
 }
 
 function LoadBalancerAttribute_Serialize(body: URLSearchParams, prefix: string, params: s.LoadBalancerAttribute) {
-    if ("Key" in params) body.append(prefix+".Key", (params["Key"] ?? '').toString());
-    if ("Value" in params) body.append(prefix+".Value", (params["Value"] ?? '').toString());
+  if ("Key" in params) body.append(prefix+".Key", (params["Key"] ?? '').toString());
+  if ("Value" in params) body.append(prefix+".Value", (params["Value"] ?? '').toString());
 }
 function LoadBalancerAttribute_Parse(node: xmlP.XmlNode): s.LoadBalancerAttribute {
   return node.strings({
@@ -1041,8 +1041,8 @@ function LoadBalancerAttribute_Parse(node: xmlP.XmlNode): s.LoadBalancerAttribut
 }
 
 function TargetGroupAttribute_Serialize(body: URLSearchParams, prefix: string, params: s.TargetGroupAttribute) {
-    if ("Key" in params) body.append(prefix+".Key", (params["Key"] ?? '').toString());
-    if ("Value" in params) body.append(prefix+".Value", (params["Value"] ?? '').toString());
+  if ("Key" in params) body.append(prefix+".Key", (params["Key"] ?? '').toString());
+  if ("Value" in params) body.append(prefix+".Value", (params["Value"] ?? '').toString());
 }
 function TargetGroupAttribute_Parse(node: xmlP.XmlNode): s.TargetGroupAttribute {
   return node.strings({
@@ -1051,8 +1051,8 @@ function TargetGroupAttribute_Parse(node: xmlP.XmlNode): s.TargetGroupAttribute 
 }
 
 function RulePriorityPair_Serialize(body: URLSearchParams, prefix: string, params: s.RulePriorityPair) {
-    if ("RuleArn" in params) body.append(prefix+".RuleArn", (params["RuleArn"] ?? '').toString());
-    if ("Priority" in params) body.append(prefix+".Priority", (params["Priority"] ?? '').toString());
+  if ("RuleArn" in params) body.append(prefix+".RuleArn", (params["RuleArn"] ?? '').toString());
+  if ("Priority" in params) body.append(prefix+".Priority", (params["Priority"] ?? '').toString());
 }
 
 function Listener_Parse(node: xmlP.XmlNode): s.Listener {

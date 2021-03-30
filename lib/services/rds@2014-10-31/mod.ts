@@ -3155,8 +3155,8 @@ function InstallationMedia_Parse(node: xmlP.XmlNode): s.InstallationMedia {
 }
 
 function Tag_Serialize(body: URLSearchParams, prefix: string, params: s.Tag) {
-    if ("Key" in params) body.append(prefix+".Key", (params["Key"] ?? '').toString());
-    if ("Value" in params) body.append(prefix+".Value", (params["Value"] ?? '').toString());
+  if ("Key" in params) body.append(prefix+".Key", (params["Key"] ?? '').toString());
+  if ("Value" in params) body.append(prefix+".Value", (params["Value"] ?? '').toString());
 }
 function Tag_Parse(node: xmlP.XmlNode): s.Tag {
   return node.strings({
@@ -3165,16 +3165,16 @@ function Tag_Parse(node: xmlP.XmlNode): s.Tag {
 }
 
 function ScalingConfiguration_Serialize(body: URLSearchParams, prefix: string, params: s.ScalingConfiguration) {
-    if ("MinCapacity" in params) body.append(prefix+".MinCapacity", (params["MinCapacity"] ?? '').toString());
-    if ("MaxCapacity" in params) body.append(prefix+".MaxCapacity", (params["MaxCapacity"] ?? '').toString());
-    if ("AutoPause" in params) body.append(prefix+".AutoPause", (params["AutoPause"] ?? '').toString());
-    if ("SecondsUntilAutoPause" in params) body.append(prefix+".SecondsUntilAutoPause", (params["SecondsUntilAutoPause"] ?? '').toString());
-    if ("TimeoutAction" in params) body.append(prefix+".TimeoutAction", (params["TimeoutAction"] ?? '').toString());
+  if ("MinCapacity" in params) body.append(prefix+".MinCapacity", (params["MinCapacity"] ?? '').toString());
+  if ("MaxCapacity" in params) body.append(prefix+".MaxCapacity", (params["MaxCapacity"] ?? '').toString());
+  if ("AutoPause" in params) body.append(prefix+".AutoPause", (params["AutoPause"] ?? '').toString());
+  if ("SecondsUntilAutoPause" in params) body.append(prefix+".SecondsUntilAutoPause", (params["SecondsUntilAutoPause"] ?? '').toString());
+  if ("TimeoutAction" in params) body.append(prefix+".TimeoutAction", (params["TimeoutAction"] ?? '').toString());
 }
 
 function ProcessorFeature_Serialize(body: URLSearchParams, prefix: string, params: s.ProcessorFeature) {
-    if ("Name" in params) body.append(prefix+".Name", (params["Name"] ?? '').toString());
-    if ("Value" in params) body.append(prefix+".Value", (params["Value"] ?? '').toString());
+  if ("Name" in params) body.append(prefix+".Name", (params["Name"] ?? '').toString());
+  if ("Value" in params) body.append(prefix+".Value", (params["Value"] ?? '').toString());
 }
 function ProcessorFeature_Parse(node: xmlP.XmlNode): s.ProcessorFeature {
   return node.strings({
@@ -3183,35 +3183,35 @@ function ProcessorFeature_Parse(node: xmlP.XmlNode): s.ProcessorFeature {
 }
 
 function UserAuthConfig_Serialize(body: URLSearchParams, prefix: string, params: s.UserAuthConfig) {
-    if ("Description" in params) body.append(prefix+".Description", (params["Description"] ?? '').toString());
-    if ("UserName" in params) body.append(prefix+".UserName", (params["UserName"] ?? '').toString());
-    if ("AuthScheme" in params) body.append(prefix+".AuthScheme", (params["AuthScheme"] ?? '').toString());
-    if ("SecretArn" in params) body.append(prefix+".SecretArn", (params["SecretArn"] ?? '').toString());
-    if ("IAMAuth" in params) body.append(prefix+".IAMAuth", (params["IAMAuth"] ?? '').toString());
+  if ("Description" in params) body.append(prefix+".Description", (params["Description"] ?? '').toString());
+  if ("UserName" in params) body.append(prefix+".UserName", (params["UserName"] ?? '').toString());
+  if ("AuthScheme" in params) body.append(prefix+".AuthScheme", (params["AuthScheme"] ?? '').toString());
+  if ("SecretArn" in params) body.append(prefix+".SecretArn", (params["SecretArn"] ?? '').toString());
+  if ("IAMAuth" in params) body.append(prefix+".IAMAuth", (params["IAMAuth"] ?? '').toString());
 }
 
 function Filter_Serialize(body: URLSearchParams, prefix: string, params: s.Filter) {
-    body.append(prefix+".Name", (params["Name"] ?? '').toString());
-    if (params["Values"]) qsP.appendList(body, prefix+".Values", params["Values"], {"entryPrefix":".Value."})
+  body.append(prefix+".Name", (params["Name"] ?? '').toString());
+  if (params["Values"]) qsP.appendList(body, prefix+".Values", params["Values"], {"entryPrefix":".Value."})
 }
 
 function CloudwatchLogsExportConfiguration_Serialize(body: URLSearchParams, prefix: string, params: s.CloudwatchLogsExportConfiguration) {
-    if (params["EnableLogTypes"]) qsP.appendList(body, prefix+".EnableLogTypes", params["EnableLogTypes"], {"entryPrefix":".member."})
-    if (params["DisableLogTypes"]) qsP.appendList(body, prefix+".DisableLogTypes", params["DisableLogTypes"], {"entryPrefix":".member."})
+  if (params["EnableLogTypes"]) qsP.appendList(body, prefix+".EnableLogTypes", params["EnableLogTypes"], {"entryPrefix":".member."})
+  if (params["DisableLogTypes"]) qsP.appendList(body, prefix+".DisableLogTypes", params["DisableLogTypes"], {"entryPrefix":".member."})
 }
 
 function Parameter_Serialize(body: URLSearchParams, prefix: string, params: s.Parameter) {
-    if ("ParameterName" in params) body.append(prefix+".ParameterName", (params["ParameterName"] ?? '').toString());
-    if ("ParameterValue" in params) body.append(prefix+".ParameterValue", (params["ParameterValue"] ?? '').toString());
-    if ("Description" in params) body.append(prefix+".Description", (params["Description"] ?? '').toString());
-    if ("Source" in params) body.append(prefix+".Source", (params["Source"] ?? '').toString());
-    if ("ApplyType" in params) body.append(prefix+".ApplyType", (params["ApplyType"] ?? '').toString());
-    if ("DataType" in params) body.append(prefix+".DataType", (params["DataType"] ?? '').toString());
-    if ("AllowedValues" in params) body.append(prefix+".AllowedValues", (params["AllowedValues"] ?? '').toString());
-    if ("IsModifiable" in params) body.append(prefix+".IsModifiable", (params["IsModifiable"] ?? '').toString());
-    if ("MinimumEngineVersion" in params) body.append(prefix+".MinimumEngineVersion", (params["MinimumEngineVersion"] ?? '').toString());
-    if ("ApplyMethod" in params) body.append(prefix+".ApplyMethod", (params["ApplyMethod"] ?? '').toString());
-    if (params["SupportedEngineModes"]) qsP.appendList(body, prefix+".SupportedEngineModes", params["SupportedEngineModes"], {"entryPrefix":".member."})
+  if ("ParameterName" in params) body.append(prefix+".ParameterName", (params["ParameterName"] ?? '').toString());
+  if ("ParameterValue" in params) body.append(prefix+".ParameterValue", (params["ParameterValue"] ?? '').toString());
+  if ("Description" in params) body.append(prefix+".Description", (params["Description"] ?? '').toString());
+  if ("Source" in params) body.append(prefix+".Source", (params["Source"] ?? '').toString());
+  if ("ApplyType" in params) body.append(prefix+".ApplyType", (params["ApplyType"] ?? '').toString());
+  if ("DataType" in params) body.append(prefix+".DataType", (params["DataType"] ?? '').toString());
+  if ("AllowedValues" in params) body.append(prefix+".AllowedValues", (params["AllowedValues"] ?? '').toString());
+  if ("IsModifiable" in params) body.append(prefix+".IsModifiable", (params["IsModifiable"] ?? '').toString());
+  if ("MinimumEngineVersion" in params) body.append(prefix+".MinimumEngineVersion", (params["MinimumEngineVersion"] ?? '').toString());
+  if ("ApplyMethod" in params) body.append(prefix+".ApplyMethod", (params["ApplyMethod"] ?? '').toString());
+  if (params["SupportedEngineModes"]) qsP.appendList(body, prefix+".SupportedEngineModes", params["SupportedEngineModes"], {"entryPrefix":".member."})
 }
 function Parameter_Parse(node: xmlP.XmlNode): s.Parameter {
   return {
@@ -3225,32 +3225,32 @@ function Parameter_Parse(node: xmlP.XmlNode): s.Parameter {
 }
 
 function ConnectionPoolConfiguration_Serialize(body: URLSearchParams, prefix: string, params: s.ConnectionPoolConfiguration) {
-    if ("MaxConnectionsPercent" in params) body.append(prefix+".MaxConnectionsPercent", (params["MaxConnectionsPercent"] ?? '').toString());
-    if ("MaxIdleConnectionsPercent" in params) body.append(prefix+".MaxIdleConnectionsPercent", (params["MaxIdleConnectionsPercent"] ?? '').toString());
-    if ("ConnectionBorrowTimeout" in params) body.append(prefix+".ConnectionBorrowTimeout", (params["ConnectionBorrowTimeout"] ?? '').toString());
-    if (params["SessionPinningFilters"]) qsP.appendList(body, prefix+".SessionPinningFilters", params["SessionPinningFilters"], {"entryPrefix":".member."})
-    if ("InitQuery" in params) body.append(prefix+".InitQuery", (params["InitQuery"] ?? '').toString());
+  if ("MaxConnectionsPercent" in params) body.append(prefix+".MaxConnectionsPercent", (params["MaxConnectionsPercent"] ?? '').toString());
+  if ("MaxIdleConnectionsPercent" in params) body.append(prefix+".MaxIdleConnectionsPercent", (params["MaxIdleConnectionsPercent"] ?? '').toString());
+  if ("ConnectionBorrowTimeout" in params) body.append(prefix+".ConnectionBorrowTimeout", (params["ConnectionBorrowTimeout"] ?? '').toString());
+  if (params["SessionPinningFilters"]) qsP.appendList(body, prefix+".SessionPinningFilters", params["SessionPinningFilters"], {"entryPrefix":".member."})
+  if ("InitQuery" in params) body.append(prefix+".InitQuery", (params["InitQuery"] ?? '').toString());
 }
 
 function OptionConfiguration_Serialize(body: URLSearchParams, prefix: string, params: s.OptionConfiguration) {
-    body.append(prefix+".OptionName", (params["OptionName"] ?? '').toString());
-    if ("Port" in params) body.append(prefix+".Port", (params["Port"] ?? '').toString());
-    if ("OptionVersion" in params) body.append(prefix+".OptionVersion", (params["OptionVersion"] ?? '').toString());
-    if (params["DBSecurityGroupMemberships"]) qsP.appendList(body, prefix+".DBSecurityGroupMemberships", params["DBSecurityGroupMemberships"], {"entryPrefix":".DBSecurityGroupName."})
-    if (params["VpcSecurityGroupMemberships"]) qsP.appendList(body, prefix+".VpcSecurityGroupMemberships", params["VpcSecurityGroupMemberships"], {"entryPrefix":".VpcSecurityGroupId."})
-    if (params["OptionSettings"]) qsP.appendList(body, prefix+".OptionSettings", params["OptionSettings"], {"appender":OptionSetting_Serialize,"entryPrefix":".OptionSetting."})
+  body.append(prefix+".OptionName", (params["OptionName"] ?? '').toString());
+  if ("Port" in params) body.append(prefix+".Port", (params["Port"] ?? '').toString());
+  if ("OptionVersion" in params) body.append(prefix+".OptionVersion", (params["OptionVersion"] ?? '').toString());
+  if (params["DBSecurityGroupMemberships"]) qsP.appendList(body, prefix+".DBSecurityGroupMemberships", params["DBSecurityGroupMemberships"], {"entryPrefix":".DBSecurityGroupName."})
+  if (params["VpcSecurityGroupMemberships"]) qsP.appendList(body, prefix+".VpcSecurityGroupMemberships", params["VpcSecurityGroupMemberships"], {"entryPrefix":".VpcSecurityGroupId."})
+  if (params["OptionSettings"]) qsP.appendList(body, prefix+".OptionSettings", params["OptionSettings"], {"appender":OptionSetting_Serialize,"entryPrefix":".OptionSetting."})
 }
 
 function OptionSetting_Serialize(body: URLSearchParams, prefix: string, params: s.OptionSetting) {
-    if ("Name" in params) body.append(prefix+".Name", (params["Name"] ?? '').toString());
-    if ("Value" in params) body.append(prefix+".Value", (params["Value"] ?? '').toString());
-    if ("DefaultValue" in params) body.append(prefix+".DefaultValue", (params["DefaultValue"] ?? '').toString());
-    if ("Description" in params) body.append(prefix+".Description", (params["Description"] ?? '').toString());
-    if ("ApplyType" in params) body.append(prefix+".ApplyType", (params["ApplyType"] ?? '').toString());
-    if ("DataType" in params) body.append(prefix+".DataType", (params["DataType"] ?? '').toString());
-    if ("AllowedValues" in params) body.append(prefix+".AllowedValues", (params["AllowedValues"] ?? '').toString());
-    if ("IsModifiable" in params) body.append(prefix+".IsModifiable", (params["IsModifiable"] ?? '').toString());
-    if ("IsCollection" in params) body.append(prefix+".IsCollection", (params["IsCollection"] ?? '').toString());
+  if ("Name" in params) body.append(prefix+".Name", (params["Name"] ?? '').toString());
+  if ("Value" in params) body.append(prefix+".Value", (params["Value"] ?? '').toString());
+  if ("DefaultValue" in params) body.append(prefix+".DefaultValue", (params["DefaultValue"] ?? '').toString());
+  if ("Description" in params) body.append(prefix+".Description", (params["Description"] ?? '').toString());
+  if ("ApplyType" in params) body.append(prefix+".ApplyType", (params["ApplyType"] ?? '').toString());
+  if ("DataType" in params) body.append(prefix+".DataType", (params["DataType"] ?? '').toString());
+  if ("AllowedValues" in params) body.append(prefix+".AllowedValues", (params["AllowedValues"] ?? '').toString());
+  if ("IsModifiable" in params) body.append(prefix+".IsModifiable", (params["IsModifiable"] ?? '').toString());
+  if ("IsCollection" in params) body.append(prefix+".IsCollection", (params["IsCollection"] ?? '').toString());
 }
 function OptionSetting_Parse(node: xmlP.XmlNode): s.OptionSetting {
   return {

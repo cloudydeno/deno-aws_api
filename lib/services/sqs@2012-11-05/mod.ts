@@ -375,22 +375,22 @@ export default class SQS {
 }
 
 function ChangeMessageVisibilityBatchRequestEntry_Serialize(body: URLSearchParams, prefix: string, params: s.ChangeMessageVisibilityBatchRequestEntry) {
-    body.append(prefix+".Id", (params["Id"] ?? '').toString());
-    body.append(prefix+".ReceiptHandle", (params["ReceiptHandle"] ?? '').toString());
-    if ("VisibilityTimeout" in params) body.append(prefix+".VisibilityTimeout", (params["VisibilityTimeout"] ?? '').toString());
+  body.append(prefix+".Id", (params["Id"] ?? '').toString());
+  body.append(prefix+".ReceiptHandle", (params["ReceiptHandle"] ?? '').toString());
+  if ("VisibilityTimeout" in params) body.append(prefix+".VisibilityTimeout", (params["VisibilityTimeout"] ?? '').toString());
 }
 
 function DeleteMessageBatchRequestEntry_Serialize(body: URLSearchParams, prefix: string, params: s.DeleteMessageBatchRequestEntry) {
-    body.append(prefix+".Id", (params["Id"] ?? '').toString());
-    body.append(prefix+".ReceiptHandle", (params["ReceiptHandle"] ?? '').toString());
+  body.append(prefix+".Id", (params["Id"] ?? '').toString());
+  body.append(prefix+".ReceiptHandle", (params["ReceiptHandle"] ?? '').toString());
 }
 
 function MessageAttributeValue_Serialize(body: URLSearchParams, prefix: string, params: s.MessageAttributeValue) {
-    if ("StringValue" in params) body.append(prefix+".StringValue", (params["StringValue"] ?? '').toString());
-    if ("BinaryValue" in params) body.append(prefix+".BinaryValue", serializeBlob(params["BinaryValue"]) ?? '');
-    if (params["StringListValues"]) qsP.appendList(body, prefix+".StringListValue", params["StringListValues"], {"entryPrefix":"."})
-    if (params["BinaryListValues"]) qsP.appendList(body, prefix+".BinaryListValue", params["BinaryListValues"], {"encoder":(x)=>serializeBlob(x) ?? '',"entryPrefix":"."})
-    body.append(prefix+".DataType", (params["DataType"] ?? '').toString());
+  if ("StringValue" in params) body.append(prefix+".StringValue", (params["StringValue"] ?? '').toString());
+  if ("BinaryValue" in params) body.append(prefix+".BinaryValue", serializeBlob(params["BinaryValue"]) ?? '');
+  if (params["StringListValues"]) qsP.appendList(body, prefix+".StringListValue", params["StringListValues"], {"entryPrefix":"."})
+  if (params["BinaryListValues"]) qsP.appendList(body, prefix+".BinaryListValue", params["BinaryListValues"], {"encoder":(x)=>serializeBlob(x) ?? '',"entryPrefix":"."})
+  body.append(prefix+".DataType", (params["DataType"] ?? '').toString());
 }
 function MessageAttributeValue_Parse(node: xmlP.XmlNode): s.MessageAttributeValue {
   return {
@@ -405,21 +405,21 @@ function MessageAttributeValue_Parse(node: xmlP.XmlNode): s.MessageAttributeValu
 }
 
 function MessageSystemAttributeValue_Serialize(body: URLSearchParams, prefix: string, params: s.MessageSystemAttributeValue) {
-    if ("StringValue" in params) body.append(prefix+".StringValue", (params["StringValue"] ?? '').toString());
-    if ("BinaryValue" in params) body.append(prefix+".BinaryValue", serializeBlob(params["BinaryValue"]) ?? '');
-    if (params["StringListValues"]) qsP.appendList(body, prefix+".StringListValue", params["StringListValues"], {"entryPrefix":"."})
-    if (params["BinaryListValues"]) qsP.appendList(body, prefix+".BinaryListValue", params["BinaryListValues"], {"encoder":(x)=>serializeBlob(x) ?? '',"entryPrefix":"."})
-    body.append(prefix+".DataType", (params["DataType"] ?? '').toString());
+  if ("StringValue" in params) body.append(prefix+".StringValue", (params["StringValue"] ?? '').toString());
+  if ("BinaryValue" in params) body.append(prefix+".BinaryValue", serializeBlob(params["BinaryValue"]) ?? '');
+  if (params["StringListValues"]) qsP.appendList(body, prefix+".StringListValue", params["StringListValues"], {"entryPrefix":"."})
+  if (params["BinaryListValues"]) qsP.appendList(body, prefix+".BinaryListValue", params["BinaryListValues"], {"encoder":(x)=>serializeBlob(x) ?? '',"entryPrefix":"."})
+  body.append(prefix+".DataType", (params["DataType"] ?? '').toString());
 }
 
 function SendMessageBatchRequestEntry_Serialize(body: URLSearchParams, prefix: string, params: s.SendMessageBatchRequestEntry) {
-    body.append(prefix+".Id", (params["Id"] ?? '').toString());
-    body.append(prefix+".MessageBody", (params["MessageBody"] ?? '').toString());
-    if ("DelaySeconds" in params) body.append(prefix+".DelaySeconds", (params["DelaySeconds"] ?? '').toString());
-    if (params["MessageAttributes"]) qsP.appendMap(body, prefix+".MessageAttribute", params["MessageAttributes"], {"appender":MessageAttributeValue_Serialize,"keyName":".Name","valName":".Value","entryPrefix":"."})
-    if (params["MessageSystemAttributes"]) qsP.appendMap(body, prefix+".MessageSystemAttribute", params["MessageSystemAttributes"], {"appender":MessageSystemAttributeValue_Serialize,"keyName":".Name","valName":".Value","entryPrefix":"."})
-    if ("MessageDeduplicationId" in params) body.append(prefix+".MessageDeduplicationId", (params["MessageDeduplicationId"] ?? '').toString());
-    if ("MessageGroupId" in params) body.append(prefix+".MessageGroupId", (params["MessageGroupId"] ?? '').toString());
+  body.append(prefix+".Id", (params["Id"] ?? '').toString());
+  body.append(prefix+".MessageBody", (params["MessageBody"] ?? '').toString());
+  if ("DelaySeconds" in params) body.append(prefix+".DelaySeconds", (params["DelaySeconds"] ?? '').toString());
+  if (params["MessageAttributes"]) qsP.appendMap(body, prefix+".MessageAttribute", params["MessageAttributes"], {"appender":MessageAttributeValue_Serialize,"keyName":".Name","valName":".Value","entryPrefix":"."})
+  if (params["MessageSystemAttributes"]) qsP.appendMap(body, prefix+".MessageSystemAttribute", params["MessageSystemAttributes"], {"appender":MessageSystemAttributeValue_Serialize,"keyName":".Name","valName":".Value","entryPrefix":"."})
+  if ("MessageDeduplicationId" in params) body.append(prefix+".MessageDeduplicationId", (params["MessageDeduplicationId"] ?? '').toString());
+  if ("MessageGroupId" in params) body.append(prefix+".MessageGroupId", (params["MessageGroupId"] ?? '').toString());
 }
 
 function ChangeMessageVisibilityBatchResultEntry_Parse(node: xmlP.XmlNode): s.ChangeMessageVisibilityBatchResultEntry {

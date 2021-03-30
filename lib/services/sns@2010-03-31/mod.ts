@@ -575,8 +575,8 @@ export default class SNS {
 }
 
 function Tag_Serialize(body: URLSearchParams, prefix: string, params: s.Tag) {
-    body.append(prefix+".Key", (params["Key"] ?? '').toString());
-    body.append(prefix+".Value", (params["Value"] ?? '').toString());
+  body.append(prefix+".Key", (params["Key"] ?? '').toString());
+  body.append(prefix+".Value", (params["Value"] ?? '').toString());
 }
 function Tag_Parse(node: xmlP.XmlNode): s.Tag {
   return node.strings({
@@ -585,9 +585,9 @@ function Tag_Parse(node: xmlP.XmlNode): s.Tag {
 }
 
 function MessageAttributeValue_Serialize(body: URLSearchParams, prefix: string, params: s.MessageAttributeValue) {
-    body.append(prefix+".DataType", (params["DataType"] ?? '').toString());
-    if ("StringValue" in params) body.append(prefix+".StringValue", (params["StringValue"] ?? '').toString());
-    if ("BinaryValue" in params) body.append(prefix+".BinaryValue", serializeBlob(params["BinaryValue"]) ?? '');
+  body.append(prefix+".DataType", (params["DataType"] ?? '').toString());
+  if ("StringValue" in params) body.append(prefix+".StringValue", (params["StringValue"] ?? '').toString());
+  if ("BinaryValue" in params) body.append(prefix+".BinaryValue", serializeBlob(params["BinaryValue"]) ?? '');
 }
 
 function Endpoint_Parse(node: xmlP.XmlNode): s.Endpoint {

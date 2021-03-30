@@ -200,12 +200,12 @@ export default class STS {
 }
 
 function PolicyDescriptorType_Serialize(body: URLSearchParams, prefix: string, params: s.PolicyDescriptorType) {
-    if ("arn" in params) body.append(prefix+".arn", (params["arn"] ?? '').toString());
+  if ("arn" in params) body.append(prefix+".arn", (params["arn"] ?? '').toString());
 }
 
 function Tag_Serialize(body: URLSearchParams, prefix: string, params: s.Tag) {
-    body.append(prefix+".Key", (params["Key"] ?? '').toString());
-    body.append(prefix+".Value", (params["Value"] ?? '').toString());
+  body.append(prefix+".Key", (params["Key"] ?? '').toString());
+  body.append(prefix+".Value", (params["Value"] ?? '').toString());
 }
 
 function Credentials_Parse(node: xmlP.XmlNode): s.Credentials {

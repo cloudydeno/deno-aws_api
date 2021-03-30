@@ -1163,7 +1163,7 @@ export default class SES {
 }
 
 function ConfigurationSet_Serialize(body: URLSearchParams, prefix: string, params: s.ConfigurationSet) {
-    body.append(prefix+".Name", (params["Name"] ?? '').toString());
+  body.append(prefix+".Name", (params["Name"] ?? '').toString());
 }
 function ConfigurationSet_Parse(node: xmlP.XmlNode): s.ConfigurationSet {
   return node.strings({
@@ -1172,12 +1172,12 @@ function ConfigurationSet_Parse(node: xmlP.XmlNode): s.ConfigurationSet {
 }
 
 function EventDestination_Serialize(body: URLSearchParams, prefix: string, params: s.EventDestination) {
-    body.append(prefix+".Name", (params["Name"] ?? '').toString());
-    if ("Enabled" in params) body.append(prefix+".Enabled", (params["Enabled"] ?? '').toString());
-    if (params["MatchingEventTypes"]) qsP.appendList(body, prefix+".MatchingEventTypes", params["MatchingEventTypes"], {"entryPrefix":".member."})
-    if (params["KinesisFirehoseDestination"] != null) KinesisFirehoseDestination_Serialize(body, prefix+".KinesisFirehoseDestination", params["KinesisFirehoseDestination"]);
-    if (params["CloudWatchDestination"] != null) CloudWatchDestination_Serialize(body, prefix+".CloudWatchDestination", params["CloudWatchDestination"]);
-    if (params["SNSDestination"] != null) SNSDestination_Serialize(body, prefix+".SNSDestination", params["SNSDestination"]);
+  body.append(prefix+".Name", (params["Name"] ?? '').toString());
+  if ("Enabled" in params) body.append(prefix+".Enabled", (params["Enabled"] ?? '').toString());
+  if (params["MatchingEventTypes"]) qsP.appendList(body, prefix+".MatchingEventTypes", params["MatchingEventTypes"], {"entryPrefix":".member."})
+  if (params["KinesisFirehoseDestination"] != null) KinesisFirehoseDestination_Serialize(body, prefix+".KinesisFirehoseDestination", params["KinesisFirehoseDestination"]);
+  if (params["CloudWatchDestination"] != null) CloudWatchDestination_Serialize(body, prefix+".CloudWatchDestination", params["CloudWatchDestination"]);
+  if (params["SNSDestination"] != null) SNSDestination_Serialize(body, prefix+".SNSDestination", params["SNSDestination"]);
 }
 function EventDestination_Parse(node: xmlP.XmlNode): s.EventDestination {
   return {
@@ -1193,8 +1193,8 @@ function EventDestination_Parse(node: xmlP.XmlNode): s.EventDestination {
 }
 
 function KinesisFirehoseDestination_Serialize(body: URLSearchParams, prefix: string, params: s.KinesisFirehoseDestination) {
-    body.append(prefix+".IAMRoleARN", (params["IAMRoleARN"] ?? '').toString());
-    body.append(prefix+".DeliveryStreamARN", (params["DeliveryStreamARN"] ?? '').toString());
+  body.append(prefix+".IAMRoleARN", (params["IAMRoleARN"] ?? '').toString());
+  body.append(prefix+".DeliveryStreamARN", (params["DeliveryStreamARN"] ?? '').toString());
 }
 function KinesisFirehoseDestination_Parse(node: xmlP.XmlNode): s.KinesisFirehoseDestination {
   return node.strings({
@@ -1203,7 +1203,7 @@ function KinesisFirehoseDestination_Parse(node: xmlP.XmlNode): s.KinesisFirehose
 }
 
 function CloudWatchDestination_Serialize(body: URLSearchParams, prefix: string, params: s.CloudWatchDestination) {
-    if (params["DimensionConfigurations"]) qsP.appendList(body, prefix+".DimensionConfigurations", params["DimensionConfigurations"], {"appender":CloudWatchDimensionConfiguration_Serialize,"entryPrefix":".member."})
+  if (params["DimensionConfigurations"]) qsP.appendList(body, prefix+".DimensionConfigurations", params["DimensionConfigurations"], {"appender":CloudWatchDimensionConfiguration_Serialize,"entryPrefix":".member."})
 }
 function CloudWatchDestination_Parse(node: xmlP.XmlNode): s.CloudWatchDestination {
   return {
@@ -1212,9 +1212,9 @@ function CloudWatchDestination_Parse(node: xmlP.XmlNode): s.CloudWatchDestinatio
 }
 
 function CloudWatchDimensionConfiguration_Serialize(body: URLSearchParams, prefix: string, params: s.CloudWatchDimensionConfiguration) {
-    body.append(prefix+".DimensionName", (params["DimensionName"] ?? '').toString());
-    body.append(prefix+".DimensionValueSource", (params["DimensionValueSource"] ?? '').toString());
-    body.append(prefix+".DefaultDimensionValue", (params["DefaultDimensionValue"] ?? '').toString());
+  body.append(prefix+".DimensionName", (params["DimensionName"] ?? '').toString());
+  body.append(prefix+".DimensionValueSource", (params["DimensionValueSource"] ?? '').toString());
+  body.append(prefix+".DefaultDimensionValue", (params["DefaultDimensionValue"] ?? '').toString());
 }
 function CloudWatchDimensionConfiguration_Parse(node: xmlP.XmlNode): s.CloudWatchDimensionConfiguration {
   return {
@@ -1226,7 +1226,7 @@ function CloudWatchDimensionConfiguration_Parse(node: xmlP.XmlNode): s.CloudWatc
 }
 
 function SNSDestination_Serialize(body: URLSearchParams, prefix: string, params: s.SNSDestination) {
-    body.append(prefix+".TopicARN", (params["TopicARN"] ?? '').toString());
+  body.append(prefix+".TopicARN", (params["TopicARN"] ?? '').toString());
 }
 function SNSDestination_Parse(node: xmlP.XmlNode): s.SNSDestination {
   return node.strings({
@@ -1235,7 +1235,7 @@ function SNSDestination_Parse(node: xmlP.XmlNode): s.SNSDestination {
 }
 
 function TrackingOptions_Serialize(body: URLSearchParams, prefix: string, params: s.TrackingOptions) {
-    if ("CustomRedirectDomain" in params) body.append(prefix+".CustomRedirectDomain", (params["CustomRedirectDomain"] ?? '').toString());
+  if ("CustomRedirectDomain" in params) body.append(prefix+".CustomRedirectDomain", (params["CustomRedirectDomain"] ?? '').toString());
 }
 function TrackingOptions_Parse(node: xmlP.XmlNode): s.TrackingOptions {
   return node.strings({
@@ -1244,8 +1244,8 @@ function TrackingOptions_Parse(node: xmlP.XmlNode): s.TrackingOptions {
 }
 
 function ReceiptFilter_Serialize(body: URLSearchParams, prefix: string, params: s.ReceiptFilter) {
-    body.append(prefix+".Name", (params["Name"] ?? '').toString());
-    ReceiptIpFilter_Serialize(body, prefix+".IpFilter", params["IpFilter"]);
+  body.append(prefix+".Name", (params["Name"] ?? '').toString());
+  ReceiptIpFilter_Serialize(body, prefix+".IpFilter", params["IpFilter"]);
 }
 function ReceiptFilter_Parse(node: xmlP.XmlNode): s.ReceiptFilter {
   return {
@@ -1257,8 +1257,8 @@ function ReceiptFilter_Parse(node: xmlP.XmlNode): s.ReceiptFilter {
 }
 
 function ReceiptIpFilter_Serialize(body: URLSearchParams, prefix: string, params: s.ReceiptIpFilter) {
-    body.append(prefix+".Policy", (params["Policy"] ?? '').toString());
-    body.append(prefix+".Cidr", (params["Cidr"] ?? '').toString());
+  body.append(prefix+".Policy", (params["Policy"] ?? '').toString());
+  body.append(prefix+".Cidr", (params["Cidr"] ?? '').toString());
 }
 function ReceiptIpFilter_Parse(node: xmlP.XmlNode): s.ReceiptIpFilter {
   return {
@@ -1270,12 +1270,12 @@ function ReceiptIpFilter_Parse(node: xmlP.XmlNode): s.ReceiptIpFilter {
 }
 
 function ReceiptRule_Serialize(body: URLSearchParams, prefix: string, params: s.ReceiptRule) {
-    body.append(prefix+".Name", (params["Name"] ?? '').toString());
-    if ("Enabled" in params) body.append(prefix+".Enabled", (params["Enabled"] ?? '').toString());
-    if ("TlsPolicy" in params) body.append(prefix+".TlsPolicy", (params["TlsPolicy"] ?? '').toString());
-    if (params["Recipients"]) qsP.appendList(body, prefix+".Recipients", params["Recipients"], {"entryPrefix":".member."})
-    if (params["Actions"]) qsP.appendList(body, prefix+".Actions", params["Actions"], {"appender":ReceiptAction_Serialize,"entryPrefix":".member."})
-    if ("ScanEnabled" in params) body.append(prefix+".ScanEnabled", (params["ScanEnabled"] ?? '').toString());
+  body.append(prefix+".Name", (params["Name"] ?? '').toString());
+  if ("Enabled" in params) body.append(prefix+".Enabled", (params["Enabled"] ?? '').toString());
+  if ("TlsPolicy" in params) body.append(prefix+".TlsPolicy", (params["TlsPolicy"] ?? '').toString());
+  if (params["Recipients"]) qsP.appendList(body, prefix+".Recipients", params["Recipients"], {"entryPrefix":".member."})
+  if (params["Actions"]) qsP.appendList(body, prefix+".Actions", params["Actions"], {"appender":ReceiptAction_Serialize,"entryPrefix":".member."})
+  if ("ScanEnabled" in params) body.append(prefix+".ScanEnabled", (params["ScanEnabled"] ?? '').toString());
 }
 function ReceiptRule_Parse(node: xmlP.XmlNode): s.ReceiptRule {
   return {
@@ -1291,13 +1291,13 @@ function ReceiptRule_Parse(node: xmlP.XmlNode): s.ReceiptRule {
 }
 
 function ReceiptAction_Serialize(body: URLSearchParams, prefix: string, params: s.ReceiptAction) {
-    if (params["S3Action"] != null) S3Action_Serialize(body, prefix+".S3Action", params["S3Action"]);
-    if (params["BounceAction"] != null) BounceAction_Serialize(body, prefix+".BounceAction", params["BounceAction"]);
-    if (params["WorkmailAction"] != null) WorkmailAction_Serialize(body, prefix+".WorkmailAction", params["WorkmailAction"]);
-    if (params["LambdaAction"] != null) LambdaAction_Serialize(body, prefix+".LambdaAction", params["LambdaAction"]);
-    if (params["StopAction"] != null) StopAction_Serialize(body, prefix+".StopAction", params["StopAction"]);
-    if (params["AddHeaderAction"] != null) AddHeaderAction_Serialize(body, prefix+".AddHeaderAction", params["AddHeaderAction"]);
-    if (params["SNSAction"] != null) SNSAction_Serialize(body, prefix+".SNSAction", params["SNSAction"]);
+  if (params["S3Action"] != null) S3Action_Serialize(body, prefix+".S3Action", params["S3Action"]);
+  if (params["BounceAction"] != null) BounceAction_Serialize(body, prefix+".BounceAction", params["BounceAction"]);
+  if (params["WorkmailAction"] != null) WorkmailAction_Serialize(body, prefix+".WorkmailAction", params["WorkmailAction"]);
+  if (params["LambdaAction"] != null) LambdaAction_Serialize(body, prefix+".LambdaAction", params["LambdaAction"]);
+  if (params["StopAction"] != null) StopAction_Serialize(body, prefix+".StopAction", params["StopAction"]);
+  if (params["AddHeaderAction"] != null) AddHeaderAction_Serialize(body, prefix+".AddHeaderAction", params["AddHeaderAction"]);
+  if (params["SNSAction"] != null) SNSAction_Serialize(body, prefix+".SNSAction", params["SNSAction"]);
 }
 function ReceiptAction_Parse(node: xmlP.XmlNode): s.ReceiptAction {
   return {
@@ -1312,10 +1312,10 @@ function ReceiptAction_Parse(node: xmlP.XmlNode): s.ReceiptAction {
 }
 
 function S3Action_Serialize(body: URLSearchParams, prefix: string, params: s.S3Action) {
-    if ("TopicArn" in params) body.append(prefix+".TopicArn", (params["TopicArn"] ?? '').toString());
-    body.append(prefix+".BucketName", (params["BucketName"] ?? '').toString());
-    if ("ObjectKeyPrefix" in params) body.append(prefix+".ObjectKeyPrefix", (params["ObjectKeyPrefix"] ?? '').toString());
-    if ("KmsKeyArn" in params) body.append(prefix+".KmsKeyArn", (params["KmsKeyArn"] ?? '').toString());
+  if ("TopicArn" in params) body.append(prefix+".TopicArn", (params["TopicArn"] ?? '').toString());
+  body.append(prefix+".BucketName", (params["BucketName"] ?? '').toString());
+  if ("ObjectKeyPrefix" in params) body.append(prefix+".ObjectKeyPrefix", (params["ObjectKeyPrefix"] ?? '').toString());
+  if ("KmsKeyArn" in params) body.append(prefix+".KmsKeyArn", (params["KmsKeyArn"] ?? '').toString());
 }
 function S3Action_Parse(node: xmlP.XmlNode): s.S3Action {
   return node.strings({
@@ -1325,11 +1325,11 @@ function S3Action_Parse(node: xmlP.XmlNode): s.S3Action {
 }
 
 function BounceAction_Serialize(body: URLSearchParams, prefix: string, params: s.BounceAction) {
-    if ("TopicArn" in params) body.append(prefix+".TopicArn", (params["TopicArn"] ?? '').toString());
-    body.append(prefix+".SmtpReplyCode", (params["SmtpReplyCode"] ?? '').toString());
-    if ("StatusCode" in params) body.append(prefix+".StatusCode", (params["StatusCode"] ?? '').toString());
-    body.append(prefix+".Message", (params["Message"] ?? '').toString());
-    body.append(prefix+".Sender", (params["Sender"] ?? '').toString());
+  if ("TopicArn" in params) body.append(prefix+".TopicArn", (params["TopicArn"] ?? '').toString());
+  body.append(prefix+".SmtpReplyCode", (params["SmtpReplyCode"] ?? '').toString());
+  if ("StatusCode" in params) body.append(prefix+".StatusCode", (params["StatusCode"] ?? '').toString());
+  body.append(prefix+".Message", (params["Message"] ?? '').toString());
+  body.append(prefix+".Sender", (params["Sender"] ?? '').toString());
 }
 function BounceAction_Parse(node: xmlP.XmlNode): s.BounceAction {
   return node.strings({
@@ -1339,8 +1339,8 @@ function BounceAction_Parse(node: xmlP.XmlNode): s.BounceAction {
 }
 
 function WorkmailAction_Serialize(body: URLSearchParams, prefix: string, params: s.WorkmailAction) {
-    if ("TopicArn" in params) body.append(prefix+".TopicArn", (params["TopicArn"] ?? '').toString());
-    body.append(prefix+".OrganizationArn", (params["OrganizationArn"] ?? '').toString());
+  if ("TopicArn" in params) body.append(prefix+".TopicArn", (params["TopicArn"] ?? '').toString());
+  body.append(prefix+".OrganizationArn", (params["OrganizationArn"] ?? '').toString());
 }
 function WorkmailAction_Parse(node: xmlP.XmlNode): s.WorkmailAction {
   return node.strings({
@@ -1350,9 +1350,9 @@ function WorkmailAction_Parse(node: xmlP.XmlNode): s.WorkmailAction {
 }
 
 function LambdaAction_Serialize(body: URLSearchParams, prefix: string, params: s.LambdaAction) {
-    if ("TopicArn" in params) body.append(prefix+".TopicArn", (params["TopicArn"] ?? '').toString());
-    body.append(prefix+".FunctionArn", (params["FunctionArn"] ?? '').toString());
-    if ("InvocationType" in params) body.append(prefix+".InvocationType", (params["InvocationType"] ?? '').toString());
+  if ("TopicArn" in params) body.append(prefix+".TopicArn", (params["TopicArn"] ?? '').toString());
+  body.append(prefix+".FunctionArn", (params["FunctionArn"] ?? '').toString());
+  if ("InvocationType" in params) body.append(prefix+".InvocationType", (params["InvocationType"] ?? '').toString());
 }
 function LambdaAction_Parse(node: xmlP.XmlNode): s.LambdaAction {
   return {
@@ -1365,8 +1365,8 @@ function LambdaAction_Parse(node: xmlP.XmlNode): s.LambdaAction {
 }
 
 function StopAction_Serialize(body: URLSearchParams, prefix: string, params: s.StopAction) {
-    body.append(prefix+".Scope", (params["Scope"] ?? '').toString());
-    if ("TopicArn" in params) body.append(prefix+".TopicArn", (params["TopicArn"] ?? '').toString());
+  body.append(prefix+".Scope", (params["Scope"] ?? '').toString());
+  if ("TopicArn" in params) body.append(prefix+".TopicArn", (params["TopicArn"] ?? '').toString());
 }
 function StopAction_Parse(node: xmlP.XmlNode): s.StopAction {
   return {
@@ -1378,8 +1378,8 @@ function StopAction_Parse(node: xmlP.XmlNode): s.StopAction {
 }
 
 function AddHeaderAction_Serialize(body: URLSearchParams, prefix: string, params: s.AddHeaderAction) {
-    body.append(prefix+".HeaderName", (params["HeaderName"] ?? '').toString());
-    body.append(prefix+".HeaderValue", (params["HeaderValue"] ?? '').toString());
+  body.append(prefix+".HeaderName", (params["HeaderName"] ?? '').toString());
+  body.append(prefix+".HeaderValue", (params["HeaderValue"] ?? '').toString());
 }
 function AddHeaderAction_Parse(node: xmlP.XmlNode): s.AddHeaderAction {
   return node.strings({
@@ -1388,8 +1388,8 @@ function AddHeaderAction_Parse(node: xmlP.XmlNode): s.AddHeaderAction {
 }
 
 function SNSAction_Serialize(body: URLSearchParams, prefix: string, params: s.SNSAction) {
-    body.append(prefix+".TopicArn", (params["TopicArn"] ?? '').toString());
-    if ("Encoding" in params) body.append(prefix+".Encoding", (params["Encoding"] ?? '').toString());
+  body.append(prefix+".TopicArn", (params["TopicArn"] ?? '').toString());
+  if ("Encoding" in params) body.append(prefix+".Encoding", (params["Encoding"] ?? '').toString());
 }
 function SNSAction_Parse(node: xmlP.XmlNode): s.SNSAction {
   return {
@@ -1401,10 +1401,10 @@ function SNSAction_Parse(node: xmlP.XmlNode): s.SNSAction {
 }
 
 function Template_Serialize(body: URLSearchParams, prefix: string, params: s.Template) {
-    body.append(prefix+".TemplateName", (params["TemplateName"] ?? '').toString());
-    if ("SubjectPart" in params) body.append(prefix+".SubjectPart", (params["SubjectPart"] ?? '').toString());
-    if ("TextPart" in params) body.append(prefix+".TextPart", (params["TextPart"] ?? '').toString());
-    if ("HtmlPart" in params) body.append(prefix+".HtmlPart", (params["HtmlPart"] ?? '').toString());
+  body.append(prefix+".TemplateName", (params["TemplateName"] ?? '').toString());
+  if ("SubjectPart" in params) body.append(prefix+".SubjectPart", (params["SubjectPart"] ?? '').toString());
+  if ("TextPart" in params) body.append(prefix+".TextPart", (params["TextPart"] ?? '').toString());
+  if ("HtmlPart" in params) body.append(prefix+".HtmlPart", (params["HtmlPart"] ?? '').toString());
 }
 function Template_Parse(node: xmlP.XmlNode): s.Template {
   return node.strings({
@@ -1414,7 +1414,7 @@ function Template_Parse(node: xmlP.XmlNode): s.Template {
 }
 
 function DeliveryOptions_Serialize(body: URLSearchParams, prefix: string, params: s.DeliveryOptions) {
-    if ("TlsPolicy" in params) body.append(prefix+".TlsPolicy", (params["TlsPolicy"] ?? '').toString());
+  if ("TlsPolicy" in params) body.append(prefix+".TlsPolicy", (params["TlsPolicy"] ?? '').toString());
 }
 function DeliveryOptions_Parse(node: xmlP.XmlNode): s.DeliveryOptions {
   return {
@@ -1423,67 +1423,67 @@ function DeliveryOptions_Parse(node: xmlP.XmlNode): s.DeliveryOptions {
 }
 
 function MessageDsn_Serialize(body: URLSearchParams, prefix: string, params: s.MessageDsn) {
-    body.append(prefix+".ReportingMta", (params["ReportingMta"] ?? '').toString());
-    if ("ArrivalDate" in params) body.append(prefix+".ArrivalDate", qsP.encodeDate_iso8601(params["ArrivalDate"]));
-    if (params["ExtensionFields"]) qsP.appendList(body, prefix+".ExtensionFields", params["ExtensionFields"], {"appender":ExtensionField_Serialize,"entryPrefix":".member."})
+  body.append(prefix+".ReportingMta", (params["ReportingMta"] ?? '').toString());
+  if ("ArrivalDate" in params) body.append(prefix+".ArrivalDate", qsP.encodeDate_iso8601(params["ArrivalDate"]));
+  if (params["ExtensionFields"]) qsP.appendList(body, prefix+".ExtensionFields", params["ExtensionFields"], {"appender":ExtensionField_Serialize,"entryPrefix":".member."})
 }
 
 function ExtensionField_Serialize(body: URLSearchParams, prefix: string, params: s.ExtensionField) {
-    body.append(prefix+".Name", (params["Name"] ?? '').toString());
-    body.append(prefix+".Value", (params["Value"] ?? '').toString());
+  body.append(prefix+".Name", (params["Name"] ?? '').toString());
+  body.append(prefix+".Value", (params["Value"] ?? '').toString());
 }
 
 function BouncedRecipientInfo_Serialize(body: URLSearchParams, prefix: string, params: s.BouncedRecipientInfo) {
-    body.append(prefix+".Recipient", (params["Recipient"] ?? '').toString());
-    if ("RecipientArn" in params) body.append(prefix+".RecipientArn", (params["RecipientArn"] ?? '').toString());
-    if ("BounceType" in params) body.append(prefix+".BounceType", (params["BounceType"] ?? '').toString());
-    if (params["RecipientDsnFields"] != null) RecipientDsnFields_Serialize(body, prefix+".RecipientDsnFields", params["RecipientDsnFields"]);
+  body.append(prefix+".Recipient", (params["Recipient"] ?? '').toString());
+  if ("RecipientArn" in params) body.append(prefix+".RecipientArn", (params["RecipientArn"] ?? '').toString());
+  if ("BounceType" in params) body.append(prefix+".BounceType", (params["BounceType"] ?? '').toString());
+  if (params["RecipientDsnFields"] != null) RecipientDsnFields_Serialize(body, prefix+".RecipientDsnFields", params["RecipientDsnFields"]);
 }
 
 function RecipientDsnFields_Serialize(body: URLSearchParams, prefix: string, params: s.RecipientDsnFields) {
-    if ("FinalRecipient" in params) body.append(prefix+".FinalRecipient", (params["FinalRecipient"] ?? '').toString());
-    body.append(prefix+".Action", (params["Action"] ?? '').toString());
-    if ("RemoteMta" in params) body.append(prefix+".RemoteMta", (params["RemoteMta"] ?? '').toString());
-    body.append(prefix+".Status", (params["Status"] ?? '').toString());
-    if ("DiagnosticCode" in params) body.append(prefix+".DiagnosticCode", (params["DiagnosticCode"] ?? '').toString());
-    if ("LastAttemptDate" in params) body.append(prefix+".LastAttemptDate", qsP.encodeDate_iso8601(params["LastAttemptDate"]));
-    if (params["ExtensionFields"]) qsP.appendList(body, prefix+".ExtensionFields", params["ExtensionFields"], {"appender":ExtensionField_Serialize,"entryPrefix":".member."})
+  if ("FinalRecipient" in params) body.append(prefix+".FinalRecipient", (params["FinalRecipient"] ?? '').toString());
+  body.append(prefix+".Action", (params["Action"] ?? '').toString());
+  if ("RemoteMta" in params) body.append(prefix+".RemoteMta", (params["RemoteMta"] ?? '').toString());
+  body.append(prefix+".Status", (params["Status"] ?? '').toString());
+  if ("DiagnosticCode" in params) body.append(prefix+".DiagnosticCode", (params["DiagnosticCode"] ?? '').toString());
+  if ("LastAttemptDate" in params) body.append(prefix+".LastAttemptDate", qsP.encodeDate_iso8601(params["LastAttemptDate"]));
+  if (params["ExtensionFields"]) qsP.appendList(body, prefix+".ExtensionFields", params["ExtensionFields"], {"appender":ExtensionField_Serialize,"entryPrefix":".member."})
 }
 
 function MessageTag_Serialize(body: URLSearchParams, prefix: string, params: s.MessageTag) {
-    body.append(prefix+".Name", (params["Name"] ?? '').toString());
-    body.append(prefix+".Value", (params["Value"] ?? '').toString());
+  body.append(prefix+".Name", (params["Name"] ?? '').toString());
+  body.append(prefix+".Value", (params["Value"] ?? '').toString());
 }
 
 function BulkEmailDestination_Serialize(body: URLSearchParams, prefix: string, params: s.BulkEmailDestination) {
-    Destination_Serialize(body, prefix+".Destination", params["Destination"]);
-    if (params["ReplacementTags"]) qsP.appendList(body, prefix+".ReplacementTags", params["ReplacementTags"], {"appender":MessageTag_Serialize,"entryPrefix":".member."})
-    if ("ReplacementTemplateData" in params) body.append(prefix+".ReplacementTemplateData", (params["ReplacementTemplateData"] ?? '').toString());
+  Destination_Serialize(body, prefix+".Destination", params["Destination"]);
+  if (params["ReplacementTags"]) qsP.appendList(body, prefix+".ReplacementTags", params["ReplacementTags"], {"appender":MessageTag_Serialize,"entryPrefix":".member."})
+  if ("ReplacementTemplateData" in params) body.append(prefix+".ReplacementTemplateData", (params["ReplacementTemplateData"] ?? '').toString());
 }
 
 function Destination_Serialize(body: URLSearchParams, prefix: string, params: s.Destination) {
-    if (params["ToAddresses"]) qsP.appendList(body, prefix+".ToAddresses", params["ToAddresses"], {"entryPrefix":".member."})
-    if (params["CcAddresses"]) qsP.appendList(body, prefix+".CcAddresses", params["CcAddresses"], {"entryPrefix":".member."})
-    if (params["BccAddresses"]) qsP.appendList(body, prefix+".BccAddresses", params["BccAddresses"], {"entryPrefix":".member."})
+  if (params["ToAddresses"]) qsP.appendList(body, prefix+".ToAddresses", params["ToAddresses"], {"entryPrefix":".member."})
+  if (params["CcAddresses"]) qsP.appendList(body, prefix+".CcAddresses", params["CcAddresses"], {"entryPrefix":".member."})
+  if (params["BccAddresses"]) qsP.appendList(body, prefix+".BccAddresses", params["BccAddresses"], {"entryPrefix":".member."})
 }
 
 function Message_Serialize(body: URLSearchParams, prefix: string, params: s.Message) {
-    Content_Serialize(body, prefix+".Subject", params["Subject"]);
-    Body_Serialize(body, prefix+".Body", params["Body"]);
+  Content_Serialize(body, prefix+".Subject", params["Subject"]);
+  Body_Serialize(body, prefix+".Body", params["Body"]);
 }
 
 function Content_Serialize(body: URLSearchParams, prefix: string, params: s.Content) {
-    body.append(prefix+".Data", (params["Data"] ?? '').toString());
-    if ("Charset" in params) body.append(prefix+".Charset", (params["Charset"] ?? '').toString());
+  body.append(prefix+".Data", (params["Data"] ?? '').toString());
+  if ("Charset" in params) body.append(prefix+".Charset", (params["Charset"] ?? '').toString());
 }
 
 function Body_Serialize(body: URLSearchParams, prefix: string, params: s.Body) {
-    if (params["Text"] != null) Content_Serialize(body, prefix+".Text", params["Text"]);
-    if (params["Html"] != null) Content_Serialize(body, prefix+".Html", params["Html"]);
+  if (params["Text"] != null) Content_Serialize(body, prefix+".Text", params["Text"]);
+  if (params["Html"] != null) Content_Serialize(body, prefix+".Html", params["Html"]);
 }
 
 function RawMessage_Serialize(body: URLSearchParams, prefix: string, params: s.RawMessage) {
-    body.append(prefix+".Data", serializeBlob(params["Data"]) ?? '');
+  body.append(prefix+".Data", serializeBlob(params["Data"]) ?? '');
 }
 
 function ReceiptRuleSetMetadata_Parse(node: xmlP.XmlNode): s.ReceiptRuleSetMetadata {

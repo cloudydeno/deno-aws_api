@@ -9260,13 +9260,13 @@ function Reservation_Parse(node: xmlP.XmlNode): s.Reservation {
 }
 
 function TargetConfigurationRequest_Serialize(body: URLSearchParams, prefix: string, params: s.TargetConfigurationRequest) {
-    if ("InstanceCount" in params) body.append(prefix+".InstanceCount", (params["InstanceCount"] ?? '').toString());
-    body.append(prefix+".OfferingId", (params["OfferingId"] ?? '').toString());
+  if ("InstanceCount" in params) body.append(prefix+".InstanceCount", (params["InstanceCount"] ?? '').toString());
+  body.append(prefix+".OfferingId", (params["OfferingId"] ?? '').toString());
 }
 
 function TagSpecification_Serialize(body: URLSearchParams, prefix: string, params: s.TagSpecification) {
-    if ("ResourceType" in params) body.append(prefix+".ResourceType", (params["ResourceType"] ?? '').toString());
-    if (params["Tags"]) qsP.appendList(body, prefix+".Tag", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":"."})
+  if ("ResourceType" in params) body.append(prefix+".ResourceType", (params["ResourceType"] ?? '').toString());
+  if (params["Tags"]) qsP.appendList(body, prefix+".Tag", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":"."})
 }
 function TagSpecification_Parse(node: xmlP.XmlNode): s.TagSpecification {
   return {
@@ -9276,8 +9276,8 @@ function TagSpecification_Parse(node: xmlP.XmlNode): s.TagSpecification {
 }
 
 function Tag_Serialize(body: URLSearchParams, prefix: string, params: s.Tag) {
-    if ("Key" in params) body.append(prefix+".Key", (params["Key"] ?? '').toString());
-    if ("Value" in params) body.append(prefix+".Value", (params["Value"] ?? '').toString());
+  if ("Key" in params) body.append(prefix+".Key", (params["Key"] ?? '').toString());
+  if ("Value" in params) body.append(prefix+".Value", (params["Value"] ?? '').toString());
 }
 function Tag_Parse(node: xmlP.XmlNode): s.Tag {
   return {
@@ -9287,8 +9287,8 @@ function Tag_Parse(node: xmlP.XmlNode): s.Tag {
 }
 
 function IamInstanceProfileSpecification_Serialize(body: URLSearchParams, prefix: string, params: s.IamInstanceProfileSpecification) {
-    if ("Arn" in params) body.append(prefix+".Arn", (params["Arn"] ?? '').toString());
-    if ("Name" in params) body.append(prefix+".Name", (params["Name"] ?? '').toString());
+  if ("Arn" in params) body.append(prefix+".Arn", (params["Arn"] ?? '').toString());
+  if ("Name" in params) body.append(prefix+".Name", (params["Name"] ?? '').toString());
 }
 function IamInstanceProfileSpecification_Parse(node: xmlP.XmlNode): s.IamInstanceProfileSpecification {
   return {
@@ -9298,13 +9298,13 @@ function IamInstanceProfileSpecification_Parse(node: xmlP.XmlNode): s.IamInstanc
 }
 
 function IpPermission_Serialize(body: URLSearchParams, prefix: string, params: s.IpPermission) {
-    if ("FromPort" in params) body.append(prefix+".FromPort", (params["FromPort"] ?? '').toString());
-    if ("IpProtocol" in params) body.append(prefix+".IpProtocol", (params["IpProtocol"] ?? '').toString());
-    if (params["IpRanges"]) qsP.appendList(body, prefix+".ipRanges", params["IpRanges"], {"appender":IpRange_Serialize,"entryPrefix":"."})
-    if (params["Ipv6Ranges"]) qsP.appendList(body, prefix+".ipv6Ranges", params["Ipv6Ranges"], {"appender":Ipv6Range_Serialize,"entryPrefix":"."})
-    if (params["PrefixListIds"]) qsP.appendList(body, prefix+".prefixListIds", params["PrefixListIds"], {"appender":PrefixListId_Serialize,"entryPrefix":"."})
-    if ("ToPort" in params) body.append(prefix+".ToPort", (params["ToPort"] ?? '').toString());
-    if (params["UserIdGroupPairs"]) qsP.appendList(body, prefix+".groups", params["UserIdGroupPairs"], {"appender":UserIdGroupPair_Serialize,"entryPrefix":"."})
+  if ("FromPort" in params) body.append(prefix+".FromPort", (params["FromPort"] ?? '').toString());
+  if ("IpProtocol" in params) body.append(prefix+".IpProtocol", (params["IpProtocol"] ?? '').toString());
+  if (params["IpRanges"]) qsP.appendList(body, prefix+".ipRanges", params["IpRanges"], {"appender":IpRange_Serialize,"entryPrefix":"."})
+  if (params["Ipv6Ranges"]) qsP.appendList(body, prefix+".ipv6Ranges", params["Ipv6Ranges"], {"appender":Ipv6Range_Serialize,"entryPrefix":"."})
+  if (params["PrefixListIds"]) qsP.appendList(body, prefix+".prefixListIds", params["PrefixListIds"], {"appender":PrefixListId_Serialize,"entryPrefix":"."})
+  if ("ToPort" in params) body.append(prefix+".ToPort", (params["ToPort"] ?? '').toString());
+  if (params["UserIdGroupPairs"]) qsP.appendList(body, prefix+".groups", params["UserIdGroupPairs"], {"appender":UserIdGroupPair_Serialize,"entryPrefix":"."})
 }
 function IpPermission_Parse(node: xmlP.XmlNode): s.IpPermission {
   return {
@@ -9319,8 +9319,8 @@ function IpPermission_Parse(node: xmlP.XmlNode): s.IpPermission {
 }
 
 function IpRange_Serialize(body: URLSearchParams, prefix: string, params: s.IpRange) {
-    if ("CidrIp" in params) body.append(prefix+".CidrIp", (params["CidrIp"] ?? '').toString());
-    if ("Description" in params) body.append(prefix+".Description", (params["Description"] ?? '').toString());
+  if ("CidrIp" in params) body.append(prefix+".CidrIp", (params["CidrIp"] ?? '').toString());
+  if ("Description" in params) body.append(prefix+".Description", (params["Description"] ?? '').toString());
 }
 function IpRange_Parse(node: xmlP.XmlNode): s.IpRange {
   return {
@@ -9330,8 +9330,8 @@ function IpRange_Parse(node: xmlP.XmlNode): s.IpRange {
 }
 
 function Ipv6Range_Serialize(body: URLSearchParams, prefix: string, params: s.Ipv6Range) {
-    if ("CidrIpv6" in params) body.append(prefix+".CidrIpv6", (params["CidrIpv6"] ?? '').toString());
-    if ("Description" in params) body.append(prefix+".Description", (params["Description"] ?? '').toString());
+  if ("CidrIpv6" in params) body.append(prefix+".CidrIpv6", (params["CidrIpv6"] ?? '').toString());
+  if ("Description" in params) body.append(prefix+".Description", (params["Description"] ?? '').toString());
 }
 function Ipv6Range_Parse(node: xmlP.XmlNode): s.Ipv6Range {
   return {
@@ -9341,8 +9341,8 @@ function Ipv6Range_Parse(node: xmlP.XmlNode): s.Ipv6Range {
 }
 
 function PrefixListId_Serialize(body: URLSearchParams, prefix: string, params: s.PrefixListId) {
-    if ("Description" in params) body.append(prefix+".Description", (params["Description"] ?? '').toString());
-    if ("PrefixListId" in params) body.append(prefix+".PrefixListId", (params["PrefixListId"] ?? '').toString());
+  if ("Description" in params) body.append(prefix+".Description", (params["Description"] ?? '').toString());
+  if ("PrefixListId" in params) body.append(prefix+".PrefixListId", (params["PrefixListId"] ?? '').toString());
 }
 function PrefixListId_Parse(node: xmlP.XmlNode): s.PrefixListId {
   return {
@@ -9352,13 +9352,13 @@ function PrefixListId_Parse(node: xmlP.XmlNode): s.PrefixListId {
 }
 
 function UserIdGroupPair_Serialize(body: URLSearchParams, prefix: string, params: s.UserIdGroupPair) {
-    if ("Description" in params) body.append(prefix+".Description", (params["Description"] ?? '').toString());
-    if ("GroupId" in params) body.append(prefix+".GroupId", (params["GroupId"] ?? '').toString());
-    if ("GroupName" in params) body.append(prefix+".GroupName", (params["GroupName"] ?? '').toString());
-    if ("PeeringStatus" in params) body.append(prefix+".PeeringStatus", (params["PeeringStatus"] ?? '').toString());
-    if ("UserId" in params) body.append(prefix+".UserId", (params["UserId"] ?? '').toString());
-    if ("VpcId" in params) body.append(prefix+".VpcId", (params["VpcId"] ?? '').toString());
-    if ("VpcPeeringConnectionId" in params) body.append(prefix+".VpcPeeringConnectionId", (params["VpcPeeringConnectionId"] ?? '').toString());
+  if ("Description" in params) body.append(prefix+".Description", (params["Description"] ?? '').toString());
+  if ("GroupId" in params) body.append(prefix+".GroupId", (params["GroupId"] ?? '').toString());
+  if ("GroupName" in params) body.append(prefix+".GroupName", (params["GroupName"] ?? '').toString());
+  if ("PeeringStatus" in params) body.append(prefix+".PeeringStatus", (params["PeeringStatus"] ?? '').toString());
+  if ("UserId" in params) body.append(prefix+".UserId", (params["UserId"] ?? '').toString());
+  if ("VpcId" in params) body.append(prefix+".VpcId", (params["VpcId"] ?? '').toString());
+  if ("VpcPeeringConnectionId" in params) body.append(prefix+".VpcPeeringConnectionId", (params["VpcPeeringConnectionId"] ?? '').toString());
 }
 function UserIdGroupPair_Parse(node: xmlP.XmlNode): s.UserIdGroupPair {
   return {
@@ -9373,7 +9373,7 @@ function UserIdGroupPair_Parse(node: xmlP.XmlNode): s.UserIdGroupPair {
 }
 
 function Storage_Serialize(body: URLSearchParams, prefix: string, params: s.Storage) {
-    if (params["S3"] != null) S3Storage_Serialize(body, prefix+".S3", params["S3"]);
+  if (params["S3"] != null) S3Storage_Serialize(body, prefix+".S3", params["S3"]);
 }
 function Storage_Parse(node: xmlP.XmlNode): s.Storage {
   return {
@@ -9382,11 +9382,11 @@ function Storage_Parse(node: xmlP.XmlNode): s.Storage {
 }
 
 function S3Storage_Serialize(body: URLSearchParams, prefix: string, params: s.S3Storage) {
-    if ("AWSAccessKeyId" in params) body.append(prefix+".AWSAccessKeyId", (params["AWSAccessKeyId"] ?? '').toString());
-    if ("Bucket" in params) body.append(prefix+".Bucket", (params["Bucket"] ?? '').toString());
-    if ("Prefix" in params) body.append(prefix+".Prefix", (params["Prefix"] ?? '').toString());
-    if ("UploadPolicy" in params) body.append(prefix+".UploadPolicy", serializeBlob(params["UploadPolicy"]) ?? '');
-    if ("UploadPolicySignature" in params) body.append(prefix+".UploadPolicySignature", (params["UploadPolicySignature"] ?? '').toString());
+  if ("AWSAccessKeyId" in params) body.append(prefix+".AWSAccessKeyId", (params["AWSAccessKeyId"] ?? '').toString());
+  if ("Bucket" in params) body.append(prefix+".Bucket", (params["Bucket"] ?? '').toString());
+  if ("Prefix" in params) body.append(prefix+".Prefix", (params["Prefix"] ?? '').toString());
+  if ("UploadPolicy" in params) body.append(prefix+".UploadPolicy", serializeBlob(params["UploadPolicy"]) ?? '');
+  if ("UploadPolicySignature" in params) body.append(prefix+".UploadPolicySignature", (params["UploadPolicySignature"] ?? '').toString());
 }
 function S3Storage_Parse(node: xmlP.XmlNode): s.S3Storage {
   return {
@@ -9401,103 +9401,103 @@ function S3Storage_Parse(node: xmlP.XmlNode): s.S3Storage {
 }
 
 function ClientVpnAuthenticationRequest_Serialize(body: URLSearchParams, prefix: string, params: s.ClientVpnAuthenticationRequest) {
-    if ("Type" in params) body.append(prefix+".Type", (params["Type"] ?? '').toString());
-    if (params["ActiveDirectory"] != null) DirectoryServiceAuthenticationRequest_Serialize(body, prefix+".ActiveDirectory", params["ActiveDirectory"]);
-    if (params["MutualAuthentication"] != null) CertificateAuthenticationRequest_Serialize(body, prefix+".MutualAuthentication", params["MutualAuthentication"]);
-    if (params["FederatedAuthentication"] != null) FederatedAuthenticationRequest_Serialize(body, prefix+".FederatedAuthentication", params["FederatedAuthentication"]);
+  if ("Type" in params) body.append(prefix+".Type", (params["Type"] ?? '').toString());
+  if (params["ActiveDirectory"] != null) DirectoryServiceAuthenticationRequest_Serialize(body, prefix+".ActiveDirectory", params["ActiveDirectory"]);
+  if (params["MutualAuthentication"] != null) CertificateAuthenticationRequest_Serialize(body, prefix+".MutualAuthentication", params["MutualAuthentication"]);
+  if (params["FederatedAuthentication"] != null) FederatedAuthenticationRequest_Serialize(body, prefix+".FederatedAuthentication", params["FederatedAuthentication"]);
 }
 
 function DirectoryServiceAuthenticationRequest_Serialize(body: URLSearchParams, prefix: string, params: s.DirectoryServiceAuthenticationRequest) {
-    if ("DirectoryId" in params) body.append(prefix+".DirectoryId", (params["DirectoryId"] ?? '').toString());
+  if ("DirectoryId" in params) body.append(prefix+".DirectoryId", (params["DirectoryId"] ?? '').toString());
 }
 
 function CertificateAuthenticationRequest_Serialize(body: URLSearchParams, prefix: string, params: s.CertificateAuthenticationRequest) {
-    if ("ClientRootCertificateChainArn" in params) body.append(prefix+".ClientRootCertificateChainArn", (params["ClientRootCertificateChainArn"] ?? '').toString());
+  if ("ClientRootCertificateChainArn" in params) body.append(prefix+".ClientRootCertificateChainArn", (params["ClientRootCertificateChainArn"] ?? '').toString());
 }
 
 function FederatedAuthenticationRequest_Serialize(body: URLSearchParams, prefix: string, params: s.FederatedAuthenticationRequest) {
-    if ("SAMLProviderArn" in params) body.append(prefix+".SAMLProviderArn", (params["SAMLProviderArn"] ?? '').toString());
-    if ("SelfServiceSAMLProviderArn" in params) body.append(prefix+".SelfServiceSAMLProviderArn", (params["SelfServiceSAMLProviderArn"] ?? '').toString());
+  if ("SAMLProviderArn" in params) body.append(prefix+".SAMLProviderArn", (params["SAMLProviderArn"] ?? '').toString());
+  if ("SelfServiceSAMLProviderArn" in params) body.append(prefix+".SelfServiceSAMLProviderArn", (params["SelfServiceSAMLProviderArn"] ?? '').toString());
 }
 
 function ConnectionLogOptions_Serialize(body: URLSearchParams, prefix: string, params: s.ConnectionLogOptions) {
-    if ("Enabled" in params) body.append(prefix+".Enabled", (params["Enabled"] ?? '').toString());
-    if ("CloudwatchLogGroup" in params) body.append(prefix+".CloudwatchLogGroup", (params["CloudwatchLogGroup"] ?? '').toString());
-    if ("CloudwatchLogStream" in params) body.append(prefix+".CloudwatchLogStream", (params["CloudwatchLogStream"] ?? '').toString());
+  if ("Enabled" in params) body.append(prefix+".Enabled", (params["Enabled"] ?? '').toString());
+  if ("CloudwatchLogGroup" in params) body.append(prefix+".CloudwatchLogGroup", (params["CloudwatchLogGroup"] ?? '').toString());
+  if ("CloudwatchLogStream" in params) body.append(prefix+".CloudwatchLogStream", (params["CloudwatchLogStream"] ?? '').toString());
 }
 
 function ClientConnectOptions_Serialize(body: URLSearchParams, prefix: string, params: s.ClientConnectOptions) {
-    if ("Enabled" in params) body.append(prefix+".Enabled", (params["Enabled"] ?? '').toString());
-    if ("LambdaFunctionArn" in params) body.append(prefix+".LambdaFunctionArn", (params["LambdaFunctionArn"] ?? '').toString());
+  if ("Enabled" in params) body.append(prefix+".Enabled", (params["Enabled"] ?? '').toString());
+  if ("LambdaFunctionArn" in params) body.append(prefix+".LambdaFunctionArn", (params["LambdaFunctionArn"] ?? '').toString());
 }
 
 function NewDhcpConfiguration_Serialize(body: URLSearchParams, prefix: string, params: s.NewDhcpConfiguration) {
-    if ("Key" in params) body.append(prefix+".Key", (params["Key"] ?? '').toString());
-    if (params["Values"]) qsP.appendList(body, prefix+".Value", params["Values"], {"entryPrefix":"."})
+  if ("Key" in params) body.append(prefix+".Key", (params["Key"] ?? '').toString());
+  if (params["Values"]) qsP.appendList(body, prefix+".Value", params["Values"], {"entryPrefix":"."})
 }
 
 function SpotOptionsRequest_Serialize(body: URLSearchParams, prefix: string, params: s.SpotOptionsRequest) {
-    if ("AllocationStrategy" in params) body.append(prefix+".AllocationStrategy", (params["AllocationStrategy"] ?? '').toString());
-    if (params["MaintenanceStrategies"] != null) FleetSpotMaintenanceStrategiesRequest_Serialize(body, prefix+".MaintenanceStrategies", params["MaintenanceStrategies"]);
-    if ("InstanceInterruptionBehavior" in params) body.append(prefix+".InstanceInterruptionBehavior", (params["InstanceInterruptionBehavior"] ?? '').toString());
-    if ("InstancePoolsToUseCount" in params) body.append(prefix+".InstancePoolsToUseCount", (params["InstancePoolsToUseCount"] ?? '').toString());
-    if ("SingleInstanceType" in params) body.append(prefix+".SingleInstanceType", (params["SingleInstanceType"] ?? '').toString());
-    if ("SingleAvailabilityZone" in params) body.append(prefix+".SingleAvailabilityZone", (params["SingleAvailabilityZone"] ?? '').toString());
-    if ("MinTargetCapacity" in params) body.append(prefix+".MinTargetCapacity", (params["MinTargetCapacity"] ?? '').toString());
-    if ("MaxTotalPrice" in params) body.append(prefix+".MaxTotalPrice", (params["MaxTotalPrice"] ?? '').toString());
+  if ("AllocationStrategy" in params) body.append(prefix+".AllocationStrategy", (params["AllocationStrategy"] ?? '').toString());
+  if (params["MaintenanceStrategies"] != null) FleetSpotMaintenanceStrategiesRequest_Serialize(body, prefix+".MaintenanceStrategies", params["MaintenanceStrategies"]);
+  if ("InstanceInterruptionBehavior" in params) body.append(prefix+".InstanceInterruptionBehavior", (params["InstanceInterruptionBehavior"] ?? '').toString());
+  if ("InstancePoolsToUseCount" in params) body.append(prefix+".InstancePoolsToUseCount", (params["InstancePoolsToUseCount"] ?? '').toString());
+  if ("SingleInstanceType" in params) body.append(prefix+".SingleInstanceType", (params["SingleInstanceType"] ?? '').toString());
+  if ("SingleAvailabilityZone" in params) body.append(prefix+".SingleAvailabilityZone", (params["SingleAvailabilityZone"] ?? '').toString());
+  if ("MinTargetCapacity" in params) body.append(prefix+".MinTargetCapacity", (params["MinTargetCapacity"] ?? '').toString());
+  if ("MaxTotalPrice" in params) body.append(prefix+".MaxTotalPrice", (params["MaxTotalPrice"] ?? '').toString());
 }
 
 function FleetSpotMaintenanceStrategiesRequest_Serialize(body: URLSearchParams, prefix: string, params: s.FleetSpotMaintenanceStrategiesRequest) {
-    if (params["CapacityRebalance"] != null) FleetSpotCapacityRebalanceRequest_Serialize(body, prefix+".CapacityRebalance", params["CapacityRebalance"]);
+  if (params["CapacityRebalance"] != null) FleetSpotCapacityRebalanceRequest_Serialize(body, prefix+".CapacityRebalance", params["CapacityRebalance"]);
 }
 
 function FleetSpotCapacityRebalanceRequest_Serialize(body: URLSearchParams, prefix: string, params: s.FleetSpotCapacityRebalanceRequest) {
-    if ("ReplacementStrategy" in params) body.append(prefix+".ReplacementStrategy", (params["ReplacementStrategy"] ?? '').toString());
+  if ("ReplacementStrategy" in params) body.append(prefix+".ReplacementStrategy", (params["ReplacementStrategy"] ?? '').toString());
 }
 
 function OnDemandOptionsRequest_Serialize(body: URLSearchParams, prefix: string, params: s.OnDemandOptionsRequest) {
-    if ("AllocationStrategy" in params) body.append(prefix+".AllocationStrategy", (params["AllocationStrategy"] ?? '').toString());
-    if (params["CapacityReservationOptions"] != null) CapacityReservationOptionsRequest_Serialize(body, prefix+".CapacityReservationOptions", params["CapacityReservationOptions"]);
-    if ("SingleInstanceType" in params) body.append(prefix+".SingleInstanceType", (params["SingleInstanceType"] ?? '').toString());
-    if ("SingleAvailabilityZone" in params) body.append(prefix+".SingleAvailabilityZone", (params["SingleAvailabilityZone"] ?? '').toString());
-    if ("MinTargetCapacity" in params) body.append(prefix+".MinTargetCapacity", (params["MinTargetCapacity"] ?? '').toString());
-    if ("MaxTotalPrice" in params) body.append(prefix+".MaxTotalPrice", (params["MaxTotalPrice"] ?? '').toString());
+  if ("AllocationStrategy" in params) body.append(prefix+".AllocationStrategy", (params["AllocationStrategy"] ?? '').toString());
+  if (params["CapacityReservationOptions"] != null) CapacityReservationOptionsRequest_Serialize(body, prefix+".CapacityReservationOptions", params["CapacityReservationOptions"]);
+  if ("SingleInstanceType" in params) body.append(prefix+".SingleInstanceType", (params["SingleInstanceType"] ?? '').toString());
+  if ("SingleAvailabilityZone" in params) body.append(prefix+".SingleAvailabilityZone", (params["SingleAvailabilityZone"] ?? '').toString());
+  if ("MinTargetCapacity" in params) body.append(prefix+".MinTargetCapacity", (params["MinTargetCapacity"] ?? '').toString());
+  if ("MaxTotalPrice" in params) body.append(prefix+".MaxTotalPrice", (params["MaxTotalPrice"] ?? '').toString());
 }
 
 function CapacityReservationOptionsRequest_Serialize(body: URLSearchParams, prefix: string, params: s.CapacityReservationOptionsRequest) {
-    if ("UsageStrategy" in params) body.append(prefix+".UsageStrategy", (params["UsageStrategy"] ?? '').toString());
+  if ("UsageStrategy" in params) body.append(prefix+".UsageStrategy", (params["UsageStrategy"] ?? '').toString());
 }
 
 function FleetLaunchTemplateConfigRequest_Serialize(body: URLSearchParams, prefix: string, params: s.FleetLaunchTemplateConfigRequest) {
-    if (params["LaunchTemplateSpecification"] != null) FleetLaunchTemplateSpecificationRequest_Serialize(body, prefix+".LaunchTemplateSpecification", params["LaunchTemplateSpecification"]);
-    if (params["Overrides"]) qsP.appendList(body, prefix+".item", params["Overrides"], {"appender":FleetLaunchTemplateOverridesRequest_Serialize,"entryPrefix":"."})
+  if (params["LaunchTemplateSpecification"] != null) FleetLaunchTemplateSpecificationRequest_Serialize(body, prefix+".LaunchTemplateSpecification", params["LaunchTemplateSpecification"]);
+  if (params["Overrides"]) qsP.appendList(body, prefix+".item", params["Overrides"], {"appender":FleetLaunchTemplateOverridesRequest_Serialize,"entryPrefix":"."})
 }
 
 function FleetLaunchTemplateSpecificationRequest_Serialize(body: URLSearchParams, prefix: string, params: s.FleetLaunchTemplateSpecificationRequest) {
-    if ("LaunchTemplateId" in params) body.append(prefix+".LaunchTemplateId", (params["LaunchTemplateId"] ?? '').toString());
-    if ("LaunchTemplateName" in params) body.append(prefix+".LaunchTemplateName", (params["LaunchTemplateName"] ?? '').toString());
-    if ("Version" in params) body.append(prefix+".Version", (params["Version"] ?? '').toString());
+  if ("LaunchTemplateId" in params) body.append(prefix+".LaunchTemplateId", (params["LaunchTemplateId"] ?? '').toString());
+  if ("LaunchTemplateName" in params) body.append(prefix+".LaunchTemplateName", (params["LaunchTemplateName"] ?? '').toString());
+  if ("Version" in params) body.append(prefix+".Version", (params["Version"] ?? '').toString());
 }
 
 function FleetLaunchTemplateOverridesRequest_Serialize(body: URLSearchParams, prefix: string, params: s.FleetLaunchTemplateOverridesRequest) {
-    if ("InstanceType" in params) body.append(prefix+".InstanceType", (params["InstanceType"] ?? '').toString());
-    if ("MaxPrice" in params) body.append(prefix+".MaxPrice", (params["MaxPrice"] ?? '').toString());
-    if ("SubnetId" in params) body.append(prefix+".SubnetId", (params["SubnetId"] ?? '').toString());
-    if ("AvailabilityZone" in params) body.append(prefix+".AvailabilityZone", (params["AvailabilityZone"] ?? '').toString());
-    if ("WeightedCapacity" in params) body.append(prefix+".WeightedCapacity", (params["WeightedCapacity"] ?? '').toString());
-    if ("Priority" in params) body.append(prefix+".Priority", (params["Priority"] ?? '').toString());
-    if (params["Placement"] != null) Placement_Serialize(body, prefix+".Placement", params["Placement"]);
+  if ("InstanceType" in params) body.append(prefix+".InstanceType", (params["InstanceType"] ?? '').toString());
+  if ("MaxPrice" in params) body.append(prefix+".MaxPrice", (params["MaxPrice"] ?? '').toString());
+  if ("SubnetId" in params) body.append(prefix+".SubnetId", (params["SubnetId"] ?? '').toString());
+  if ("AvailabilityZone" in params) body.append(prefix+".AvailabilityZone", (params["AvailabilityZone"] ?? '').toString());
+  if ("WeightedCapacity" in params) body.append(prefix+".WeightedCapacity", (params["WeightedCapacity"] ?? '').toString());
+  if ("Priority" in params) body.append(prefix+".Priority", (params["Priority"] ?? '').toString());
+  if (params["Placement"] != null) Placement_Serialize(body, prefix+".Placement", params["Placement"]);
 }
 
 function Placement_Serialize(body: URLSearchParams, prefix: string, params: s.Placement) {
-    if ("AvailabilityZone" in params) body.append(prefix+".AvailabilityZone", (params["AvailabilityZone"] ?? '').toString());
-    if ("Affinity" in params) body.append(prefix+".Affinity", (params["Affinity"] ?? '').toString());
-    if ("GroupName" in params) body.append(prefix+".GroupName", (params["GroupName"] ?? '').toString());
-    if ("PartitionNumber" in params) body.append(prefix+".PartitionNumber", (params["PartitionNumber"] ?? '').toString());
-    if ("HostId" in params) body.append(prefix+".HostId", (params["HostId"] ?? '').toString());
-    if ("Tenancy" in params) body.append(prefix+".Tenancy", (params["Tenancy"] ?? '').toString());
-    if ("SpreadDomain" in params) body.append(prefix+".SpreadDomain", (params["SpreadDomain"] ?? '').toString());
-    if ("HostResourceGroupArn" in params) body.append(prefix+".HostResourceGroupArn", (params["HostResourceGroupArn"] ?? '').toString());
+  if ("AvailabilityZone" in params) body.append(prefix+".AvailabilityZone", (params["AvailabilityZone"] ?? '').toString());
+  if ("Affinity" in params) body.append(prefix+".Affinity", (params["Affinity"] ?? '').toString());
+  if ("GroupName" in params) body.append(prefix+".GroupName", (params["GroupName"] ?? '').toString());
+  if ("PartitionNumber" in params) body.append(prefix+".PartitionNumber", (params["PartitionNumber"] ?? '').toString());
+  if ("HostId" in params) body.append(prefix+".HostId", (params["HostId"] ?? '').toString());
+  if ("Tenancy" in params) body.append(prefix+".Tenancy", (params["Tenancy"] ?? '').toString());
+  if ("SpreadDomain" in params) body.append(prefix+".SpreadDomain", (params["SpreadDomain"] ?? '').toString());
+  if ("HostResourceGroupArn" in params) body.append(prefix+".HostResourceGroupArn", (params["HostResourceGroupArn"] ?? '').toString());
 }
 function Placement_Parse(node: xmlP.XmlNode): s.Placement {
   return {
@@ -9513,22 +9513,22 @@ function Placement_Parse(node: xmlP.XmlNode): s.Placement {
 }
 
 function TargetCapacitySpecificationRequest_Serialize(body: URLSearchParams, prefix: string, params: s.TargetCapacitySpecificationRequest) {
-    body.append(prefix+".TotalTargetCapacity", (params["TotalTargetCapacity"] ?? '').toString());
-    if ("OnDemandTargetCapacity" in params) body.append(prefix+".OnDemandTargetCapacity", (params["OnDemandTargetCapacity"] ?? '').toString());
-    if ("SpotTargetCapacity" in params) body.append(prefix+".SpotTargetCapacity", (params["SpotTargetCapacity"] ?? '').toString());
-    if ("DefaultTargetCapacityType" in params) body.append(prefix+".DefaultTargetCapacityType", (params["DefaultTargetCapacityType"] ?? '').toString());
+  body.append(prefix+".TotalTargetCapacity", (params["TotalTargetCapacity"] ?? '').toString());
+  if ("OnDemandTargetCapacity" in params) body.append(prefix+".OnDemandTargetCapacity", (params["OnDemandTargetCapacity"] ?? '').toString());
+  if ("SpotTargetCapacity" in params) body.append(prefix+".SpotTargetCapacity", (params["SpotTargetCapacity"] ?? '').toString());
+  if ("DefaultTargetCapacityType" in params) body.append(prefix+".DefaultTargetCapacityType", (params["DefaultTargetCapacityType"] ?? '').toString());
 }
 
 function StorageLocation_Serialize(body: URLSearchParams, prefix: string, params: s.StorageLocation) {
-    if ("Bucket" in params) body.append(prefix+".Bucket", (params["Bucket"] ?? '').toString());
-    if ("Key" in params) body.append(prefix+".Key", (params["Key"] ?? '').toString());
+  if ("Bucket" in params) body.append(prefix+".Bucket", (params["Bucket"] ?? '').toString());
+  if ("Key" in params) body.append(prefix+".Key", (params["Key"] ?? '').toString());
 }
 
 function BlockDeviceMapping_Serialize(body: URLSearchParams, prefix: string, params: s.BlockDeviceMapping) {
-    if ("DeviceName" in params) body.append(prefix+".DeviceName", (params["DeviceName"] ?? '').toString());
-    if ("VirtualName" in params) body.append(prefix+".VirtualName", (params["VirtualName"] ?? '').toString());
-    if (params["Ebs"] != null) EbsBlockDevice_Serialize(body, prefix+".Ebs", params["Ebs"]);
-    if ("NoDevice" in params) body.append(prefix+".NoDevice", (params["NoDevice"] ?? '').toString());
+  if ("DeviceName" in params) body.append(prefix+".DeviceName", (params["DeviceName"] ?? '').toString());
+  if ("VirtualName" in params) body.append(prefix+".VirtualName", (params["VirtualName"] ?? '').toString());
+  if (params["Ebs"] != null) EbsBlockDevice_Serialize(body, prefix+".Ebs", params["Ebs"]);
+  if ("NoDevice" in params) body.append(prefix+".NoDevice", (params["NoDevice"] ?? '').toString());
 }
 function BlockDeviceMapping_Parse(node: xmlP.XmlNode): s.BlockDeviceMapping {
   return {
@@ -9540,15 +9540,15 @@ function BlockDeviceMapping_Parse(node: xmlP.XmlNode): s.BlockDeviceMapping {
 }
 
 function EbsBlockDevice_Serialize(body: URLSearchParams, prefix: string, params: s.EbsBlockDevice) {
-    if ("DeleteOnTermination" in params) body.append(prefix+".DeleteOnTermination", (params["DeleteOnTermination"] ?? '').toString());
-    if ("Iops" in params) body.append(prefix+".Iops", (params["Iops"] ?? '').toString());
-    if ("SnapshotId" in params) body.append(prefix+".SnapshotId", (params["SnapshotId"] ?? '').toString());
-    if ("VolumeSize" in params) body.append(prefix+".VolumeSize", (params["VolumeSize"] ?? '').toString());
-    if ("VolumeType" in params) body.append(prefix+".VolumeType", (params["VolumeType"] ?? '').toString());
-    if ("KmsKeyId" in params) body.append(prefix+".KmsKeyId", (params["KmsKeyId"] ?? '').toString());
-    if ("Throughput" in params) body.append(prefix+".Throughput", (params["Throughput"] ?? '').toString());
-    if ("OutpostArn" in params) body.append(prefix+".OutpostArn", (params["OutpostArn"] ?? '').toString());
-    if ("Encrypted" in params) body.append(prefix+".Encrypted", (params["Encrypted"] ?? '').toString());
+  if ("DeleteOnTermination" in params) body.append(prefix+".DeleteOnTermination", (params["DeleteOnTermination"] ?? '').toString());
+  if ("Iops" in params) body.append(prefix+".Iops", (params["Iops"] ?? '').toString());
+  if ("SnapshotId" in params) body.append(prefix+".SnapshotId", (params["SnapshotId"] ?? '').toString());
+  if ("VolumeSize" in params) body.append(prefix+".VolumeSize", (params["VolumeSize"] ?? '').toString());
+  if ("VolumeType" in params) body.append(prefix+".VolumeType", (params["VolumeType"] ?? '').toString());
+  if ("KmsKeyId" in params) body.append(prefix+".KmsKeyId", (params["KmsKeyId"] ?? '').toString());
+  if ("Throughput" in params) body.append(prefix+".Throughput", (params["Throughput"] ?? '').toString());
+  if ("OutpostArn" in params) body.append(prefix+".OutpostArn", (params["OutpostArn"] ?? '').toString());
+  if ("Encrypted" in params) body.append(prefix+".Encrypted", (params["Encrypted"] ?? '').toString());
 }
 function EbsBlockDevice_Parse(node: xmlP.XmlNode): s.EbsBlockDevice {
   return {
@@ -9567,90 +9567,90 @@ function EbsBlockDevice_Parse(node: xmlP.XmlNode): s.EbsBlockDevice {
 }
 
 function ExportToS3TaskSpecification_Serialize(body: URLSearchParams, prefix: string, params: s.ExportToS3TaskSpecification) {
-    if ("ContainerFormat" in params) body.append(prefix+".ContainerFormat", (params["ContainerFormat"] ?? '').toString());
-    if ("DiskImageFormat" in params) body.append(prefix+".DiskImageFormat", (params["DiskImageFormat"] ?? '').toString());
-    if ("S3Bucket" in params) body.append(prefix+".S3Bucket", (params["S3Bucket"] ?? '').toString());
-    if ("S3Prefix" in params) body.append(prefix+".S3Prefix", (params["S3Prefix"] ?? '').toString());
+  if ("ContainerFormat" in params) body.append(prefix+".ContainerFormat", (params["ContainerFormat"] ?? '').toString());
+  if ("DiskImageFormat" in params) body.append(prefix+".DiskImageFormat", (params["DiskImageFormat"] ?? '').toString());
+  if ("S3Bucket" in params) body.append(prefix+".S3Bucket", (params["S3Bucket"] ?? '').toString());
+  if ("S3Prefix" in params) body.append(prefix+".S3Prefix", (params["S3Prefix"] ?? '').toString());
 }
 
 function RequestLaunchTemplateData_Serialize(body: URLSearchParams, prefix: string, params: s.RequestLaunchTemplateData) {
-    if ("KernelId" in params) body.append(prefix+".KernelId", (params["KernelId"] ?? '').toString());
-    if ("EbsOptimized" in params) body.append(prefix+".EbsOptimized", (params["EbsOptimized"] ?? '').toString());
-    if (params["IamInstanceProfile"] != null) LaunchTemplateIamInstanceProfileSpecificationRequest_Serialize(body, prefix+".IamInstanceProfile", params["IamInstanceProfile"]);
-    if (params["BlockDeviceMappings"]) qsP.appendList(body, prefix+".BlockDeviceMapping", params["BlockDeviceMappings"], {"appender":LaunchTemplateBlockDeviceMappingRequest_Serialize,"entryPrefix":"."})
-    if (params["NetworkInterfaces"]) qsP.appendList(body, prefix+".NetworkInterface", params["NetworkInterfaces"], {"appender":LaunchTemplateInstanceNetworkInterfaceSpecificationRequest_Serialize,"entryPrefix":"."})
-    if ("ImageId" in params) body.append(prefix+".ImageId", (params["ImageId"] ?? '').toString());
-    if ("InstanceType" in params) body.append(prefix+".InstanceType", (params["InstanceType"] ?? '').toString());
-    if ("KeyName" in params) body.append(prefix+".KeyName", (params["KeyName"] ?? '').toString());
-    if (params["Monitoring"] != null) LaunchTemplatesMonitoringRequest_Serialize(body, prefix+".Monitoring", params["Monitoring"]);
-    if (params["Placement"] != null) LaunchTemplatePlacementRequest_Serialize(body, prefix+".Placement", params["Placement"]);
-    if ("RamDiskId" in params) body.append(prefix+".RamDiskId", (params["RamDiskId"] ?? '').toString());
-    if ("DisableApiTermination" in params) body.append(prefix+".DisableApiTermination", (params["DisableApiTermination"] ?? '').toString());
-    if ("InstanceInitiatedShutdownBehavior" in params) body.append(prefix+".InstanceInitiatedShutdownBehavior", (params["InstanceInitiatedShutdownBehavior"] ?? '').toString());
-    if ("UserData" in params) body.append(prefix+".UserData", (params["UserData"] ?? '').toString());
-    if (params["TagSpecifications"]) qsP.appendList(body, prefix+".TagSpecification", params["TagSpecifications"], {"appender":LaunchTemplateTagSpecificationRequest_Serialize,"entryPrefix":"."})
-    if (params["ElasticGpuSpecifications"]) qsP.appendList(body, prefix+".ElasticGpuSpecification", params["ElasticGpuSpecifications"], {"appender":ElasticGpuSpecification_Serialize,"entryPrefix":"."})
-    if (params["ElasticInferenceAccelerators"]) qsP.appendList(body, prefix+".ElasticInferenceAccelerator", params["ElasticInferenceAccelerators"], {"appender":LaunchTemplateElasticInferenceAccelerator_Serialize,"entryPrefix":"."})
-    if (params["SecurityGroupIds"]) qsP.appendList(body, prefix+".SecurityGroupId", params["SecurityGroupIds"], {"entryPrefix":"."})
-    if (params["SecurityGroups"]) qsP.appendList(body, prefix+".SecurityGroup", params["SecurityGroups"], {"entryPrefix":"."})
-    if (params["InstanceMarketOptions"] != null) LaunchTemplateInstanceMarketOptionsRequest_Serialize(body, prefix+".InstanceMarketOptions", params["InstanceMarketOptions"]);
-    if (params["CreditSpecification"] != null) CreditSpecificationRequest_Serialize(body, prefix+".CreditSpecification", params["CreditSpecification"]);
-    if (params["CpuOptions"] != null) LaunchTemplateCpuOptionsRequest_Serialize(body, prefix+".CpuOptions", params["CpuOptions"]);
-    if (params["CapacityReservationSpecification"] != null) LaunchTemplateCapacityReservationSpecificationRequest_Serialize(body, prefix+".CapacityReservationSpecification", params["CapacityReservationSpecification"]);
-    if (params["LicenseSpecifications"]) qsP.appendList(body, prefix+".LicenseSpecification", params["LicenseSpecifications"], {"appender":LaunchTemplateLicenseConfigurationRequest_Serialize,"entryPrefix":"."})
-    if (params["HibernationOptions"] != null) LaunchTemplateHibernationOptionsRequest_Serialize(body, prefix+".HibernationOptions", params["HibernationOptions"]);
-    if (params["MetadataOptions"] != null) LaunchTemplateInstanceMetadataOptionsRequest_Serialize(body, prefix+".MetadataOptions", params["MetadataOptions"]);
-    if (params["EnclaveOptions"] != null) LaunchTemplateEnclaveOptionsRequest_Serialize(body, prefix+".EnclaveOptions", params["EnclaveOptions"]);
+  if ("KernelId" in params) body.append(prefix+".KernelId", (params["KernelId"] ?? '').toString());
+  if ("EbsOptimized" in params) body.append(prefix+".EbsOptimized", (params["EbsOptimized"] ?? '').toString());
+  if (params["IamInstanceProfile"] != null) LaunchTemplateIamInstanceProfileSpecificationRequest_Serialize(body, prefix+".IamInstanceProfile", params["IamInstanceProfile"]);
+  if (params["BlockDeviceMappings"]) qsP.appendList(body, prefix+".BlockDeviceMapping", params["BlockDeviceMappings"], {"appender":LaunchTemplateBlockDeviceMappingRequest_Serialize,"entryPrefix":"."})
+  if (params["NetworkInterfaces"]) qsP.appendList(body, prefix+".NetworkInterface", params["NetworkInterfaces"], {"appender":LaunchTemplateInstanceNetworkInterfaceSpecificationRequest_Serialize,"entryPrefix":"."})
+  if ("ImageId" in params) body.append(prefix+".ImageId", (params["ImageId"] ?? '').toString());
+  if ("InstanceType" in params) body.append(prefix+".InstanceType", (params["InstanceType"] ?? '').toString());
+  if ("KeyName" in params) body.append(prefix+".KeyName", (params["KeyName"] ?? '').toString());
+  if (params["Monitoring"] != null) LaunchTemplatesMonitoringRequest_Serialize(body, prefix+".Monitoring", params["Monitoring"]);
+  if (params["Placement"] != null) LaunchTemplatePlacementRequest_Serialize(body, prefix+".Placement", params["Placement"]);
+  if ("RamDiskId" in params) body.append(prefix+".RamDiskId", (params["RamDiskId"] ?? '').toString());
+  if ("DisableApiTermination" in params) body.append(prefix+".DisableApiTermination", (params["DisableApiTermination"] ?? '').toString());
+  if ("InstanceInitiatedShutdownBehavior" in params) body.append(prefix+".InstanceInitiatedShutdownBehavior", (params["InstanceInitiatedShutdownBehavior"] ?? '').toString());
+  if ("UserData" in params) body.append(prefix+".UserData", (params["UserData"] ?? '').toString());
+  if (params["TagSpecifications"]) qsP.appendList(body, prefix+".TagSpecification", params["TagSpecifications"], {"appender":LaunchTemplateTagSpecificationRequest_Serialize,"entryPrefix":"."})
+  if (params["ElasticGpuSpecifications"]) qsP.appendList(body, prefix+".ElasticGpuSpecification", params["ElasticGpuSpecifications"], {"appender":ElasticGpuSpecification_Serialize,"entryPrefix":"."})
+  if (params["ElasticInferenceAccelerators"]) qsP.appendList(body, prefix+".ElasticInferenceAccelerator", params["ElasticInferenceAccelerators"], {"appender":LaunchTemplateElasticInferenceAccelerator_Serialize,"entryPrefix":"."})
+  if (params["SecurityGroupIds"]) qsP.appendList(body, prefix+".SecurityGroupId", params["SecurityGroupIds"], {"entryPrefix":"."})
+  if (params["SecurityGroups"]) qsP.appendList(body, prefix+".SecurityGroup", params["SecurityGroups"], {"entryPrefix":"."})
+  if (params["InstanceMarketOptions"] != null) LaunchTemplateInstanceMarketOptionsRequest_Serialize(body, prefix+".InstanceMarketOptions", params["InstanceMarketOptions"]);
+  if (params["CreditSpecification"] != null) CreditSpecificationRequest_Serialize(body, prefix+".CreditSpecification", params["CreditSpecification"]);
+  if (params["CpuOptions"] != null) LaunchTemplateCpuOptionsRequest_Serialize(body, prefix+".CpuOptions", params["CpuOptions"]);
+  if (params["CapacityReservationSpecification"] != null) LaunchTemplateCapacityReservationSpecificationRequest_Serialize(body, prefix+".CapacityReservationSpecification", params["CapacityReservationSpecification"]);
+  if (params["LicenseSpecifications"]) qsP.appendList(body, prefix+".LicenseSpecification", params["LicenseSpecifications"], {"appender":LaunchTemplateLicenseConfigurationRequest_Serialize,"entryPrefix":"."})
+  if (params["HibernationOptions"] != null) LaunchTemplateHibernationOptionsRequest_Serialize(body, prefix+".HibernationOptions", params["HibernationOptions"]);
+  if (params["MetadataOptions"] != null) LaunchTemplateInstanceMetadataOptionsRequest_Serialize(body, prefix+".MetadataOptions", params["MetadataOptions"]);
+  if (params["EnclaveOptions"] != null) LaunchTemplateEnclaveOptionsRequest_Serialize(body, prefix+".EnclaveOptions", params["EnclaveOptions"]);
 }
 
 function LaunchTemplateIamInstanceProfileSpecificationRequest_Serialize(body: URLSearchParams, prefix: string, params: s.LaunchTemplateIamInstanceProfileSpecificationRequest) {
-    if ("Arn" in params) body.append(prefix+".Arn", (params["Arn"] ?? '').toString());
-    if ("Name" in params) body.append(prefix+".Name", (params["Name"] ?? '').toString());
+  if ("Arn" in params) body.append(prefix+".Arn", (params["Arn"] ?? '').toString());
+  if ("Name" in params) body.append(prefix+".Name", (params["Name"] ?? '').toString());
 }
 
 function LaunchTemplateBlockDeviceMappingRequest_Serialize(body: URLSearchParams, prefix: string, params: s.LaunchTemplateBlockDeviceMappingRequest) {
-    if ("DeviceName" in params) body.append(prefix+".DeviceName", (params["DeviceName"] ?? '').toString());
-    if ("VirtualName" in params) body.append(prefix+".VirtualName", (params["VirtualName"] ?? '').toString());
-    if (params["Ebs"] != null) LaunchTemplateEbsBlockDeviceRequest_Serialize(body, prefix+".Ebs", params["Ebs"]);
-    if ("NoDevice" in params) body.append(prefix+".NoDevice", (params["NoDevice"] ?? '').toString());
+  if ("DeviceName" in params) body.append(prefix+".DeviceName", (params["DeviceName"] ?? '').toString());
+  if ("VirtualName" in params) body.append(prefix+".VirtualName", (params["VirtualName"] ?? '').toString());
+  if (params["Ebs"] != null) LaunchTemplateEbsBlockDeviceRequest_Serialize(body, prefix+".Ebs", params["Ebs"]);
+  if ("NoDevice" in params) body.append(prefix+".NoDevice", (params["NoDevice"] ?? '').toString());
 }
 
 function LaunchTemplateEbsBlockDeviceRequest_Serialize(body: URLSearchParams, prefix: string, params: s.LaunchTemplateEbsBlockDeviceRequest) {
-    if ("Encrypted" in params) body.append(prefix+".Encrypted", (params["Encrypted"] ?? '').toString());
-    if ("DeleteOnTermination" in params) body.append(prefix+".DeleteOnTermination", (params["DeleteOnTermination"] ?? '').toString());
-    if ("Iops" in params) body.append(prefix+".Iops", (params["Iops"] ?? '').toString());
-    if ("KmsKeyId" in params) body.append(prefix+".KmsKeyId", (params["KmsKeyId"] ?? '').toString());
-    if ("SnapshotId" in params) body.append(prefix+".SnapshotId", (params["SnapshotId"] ?? '').toString());
-    if ("VolumeSize" in params) body.append(prefix+".VolumeSize", (params["VolumeSize"] ?? '').toString());
-    if ("VolumeType" in params) body.append(prefix+".VolumeType", (params["VolumeType"] ?? '').toString());
-    if ("Throughput" in params) body.append(prefix+".Throughput", (params["Throughput"] ?? '').toString());
+  if ("Encrypted" in params) body.append(prefix+".Encrypted", (params["Encrypted"] ?? '').toString());
+  if ("DeleteOnTermination" in params) body.append(prefix+".DeleteOnTermination", (params["DeleteOnTermination"] ?? '').toString());
+  if ("Iops" in params) body.append(prefix+".Iops", (params["Iops"] ?? '').toString());
+  if ("KmsKeyId" in params) body.append(prefix+".KmsKeyId", (params["KmsKeyId"] ?? '').toString());
+  if ("SnapshotId" in params) body.append(prefix+".SnapshotId", (params["SnapshotId"] ?? '').toString());
+  if ("VolumeSize" in params) body.append(prefix+".VolumeSize", (params["VolumeSize"] ?? '').toString());
+  if ("VolumeType" in params) body.append(prefix+".VolumeType", (params["VolumeType"] ?? '').toString());
+  if ("Throughput" in params) body.append(prefix+".Throughput", (params["Throughput"] ?? '').toString());
 }
 
 function LaunchTemplateInstanceNetworkInterfaceSpecificationRequest_Serialize(body: URLSearchParams, prefix: string, params: s.LaunchTemplateInstanceNetworkInterfaceSpecificationRequest) {
-    if ("AssociateCarrierIpAddress" in params) body.append(prefix+".AssociateCarrierIpAddress", (params["AssociateCarrierIpAddress"] ?? '').toString());
-    if ("AssociatePublicIpAddress" in params) body.append(prefix+".AssociatePublicIpAddress", (params["AssociatePublicIpAddress"] ?? '').toString());
-    if ("DeleteOnTermination" in params) body.append(prefix+".DeleteOnTermination", (params["DeleteOnTermination"] ?? '').toString());
-    if ("Description" in params) body.append(prefix+".Description", (params["Description"] ?? '').toString());
-    if ("DeviceIndex" in params) body.append(prefix+".DeviceIndex", (params["DeviceIndex"] ?? '').toString());
-    if (params["Groups"]) qsP.appendList(body, prefix+".SecurityGroupId", params["Groups"], {"entryPrefix":"."})
-    if ("InterfaceType" in params) body.append(prefix+".InterfaceType", (params["InterfaceType"] ?? '').toString());
-    if ("Ipv6AddressCount" in params) body.append(prefix+".Ipv6AddressCount", (params["Ipv6AddressCount"] ?? '').toString());
-    if (params["Ipv6Addresses"]) qsP.appendList(body, prefix+".InstanceIpv6Address", params["Ipv6Addresses"], {"appender":InstanceIpv6AddressRequest_Serialize,"entryPrefix":"."})
-    if ("NetworkInterfaceId" in params) body.append(prefix+".NetworkInterfaceId", (params["NetworkInterfaceId"] ?? '').toString());
-    if ("PrivateIpAddress" in params) body.append(prefix+".PrivateIpAddress", (params["PrivateIpAddress"] ?? '').toString());
-    if (params["PrivateIpAddresses"]) qsP.appendList(body, prefix+".item", params["PrivateIpAddresses"], {"appender":PrivateIpAddressSpecification_Serialize,"entryPrefix":"."})
-    if ("SecondaryPrivateIpAddressCount" in params) body.append(prefix+".SecondaryPrivateIpAddressCount", (params["SecondaryPrivateIpAddressCount"] ?? '').toString());
-    if ("SubnetId" in params) body.append(prefix+".SubnetId", (params["SubnetId"] ?? '').toString());
-    if ("NetworkCardIndex" in params) body.append(prefix+".NetworkCardIndex", (params["NetworkCardIndex"] ?? '').toString());
+  if ("AssociateCarrierIpAddress" in params) body.append(prefix+".AssociateCarrierIpAddress", (params["AssociateCarrierIpAddress"] ?? '').toString());
+  if ("AssociatePublicIpAddress" in params) body.append(prefix+".AssociatePublicIpAddress", (params["AssociatePublicIpAddress"] ?? '').toString());
+  if ("DeleteOnTermination" in params) body.append(prefix+".DeleteOnTermination", (params["DeleteOnTermination"] ?? '').toString());
+  if ("Description" in params) body.append(prefix+".Description", (params["Description"] ?? '').toString());
+  if ("DeviceIndex" in params) body.append(prefix+".DeviceIndex", (params["DeviceIndex"] ?? '').toString());
+  if (params["Groups"]) qsP.appendList(body, prefix+".SecurityGroupId", params["Groups"], {"entryPrefix":"."})
+  if ("InterfaceType" in params) body.append(prefix+".InterfaceType", (params["InterfaceType"] ?? '').toString());
+  if ("Ipv6AddressCount" in params) body.append(prefix+".Ipv6AddressCount", (params["Ipv6AddressCount"] ?? '').toString());
+  if (params["Ipv6Addresses"]) qsP.appendList(body, prefix+".InstanceIpv6Address", params["Ipv6Addresses"], {"appender":InstanceIpv6AddressRequest_Serialize,"entryPrefix":"."})
+  if ("NetworkInterfaceId" in params) body.append(prefix+".NetworkInterfaceId", (params["NetworkInterfaceId"] ?? '').toString());
+  if ("PrivateIpAddress" in params) body.append(prefix+".PrivateIpAddress", (params["PrivateIpAddress"] ?? '').toString());
+  if (params["PrivateIpAddresses"]) qsP.appendList(body, prefix+".item", params["PrivateIpAddresses"], {"appender":PrivateIpAddressSpecification_Serialize,"entryPrefix":"."})
+  if ("SecondaryPrivateIpAddressCount" in params) body.append(prefix+".SecondaryPrivateIpAddressCount", (params["SecondaryPrivateIpAddressCount"] ?? '').toString());
+  if ("SubnetId" in params) body.append(prefix+".SubnetId", (params["SubnetId"] ?? '').toString());
+  if ("NetworkCardIndex" in params) body.append(prefix+".NetworkCardIndex", (params["NetworkCardIndex"] ?? '').toString());
 }
 
 function InstanceIpv6AddressRequest_Serialize(body: URLSearchParams, prefix: string, params: s.InstanceIpv6AddressRequest) {
-    if ("Ipv6Address" in params) body.append(prefix+".Ipv6Address", (params["Ipv6Address"] ?? '').toString());
+  if ("Ipv6Address" in params) body.append(prefix+".Ipv6Address", (params["Ipv6Address"] ?? '').toString());
 }
 
 function PrivateIpAddressSpecification_Serialize(body: URLSearchParams, prefix: string, params: s.PrivateIpAddressSpecification) {
-    if ("Primary" in params) body.append(prefix+".Primary", (params["Primary"] ?? '').toString());
-    if ("PrivateIpAddress" in params) body.append(prefix+".PrivateIpAddress", (params["PrivateIpAddress"] ?? '').toString());
+  if ("Primary" in params) body.append(prefix+".Primary", (params["Primary"] ?? '').toString());
+  if ("PrivateIpAddress" in params) body.append(prefix+".PrivateIpAddress", (params["PrivateIpAddress"] ?? '').toString());
 }
 function PrivateIpAddressSpecification_Parse(node: xmlP.XmlNode): s.PrivateIpAddressSpecification {
   return {
@@ -9660,92 +9660,92 @@ function PrivateIpAddressSpecification_Parse(node: xmlP.XmlNode): s.PrivateIpAdd
 }
 
 function LaunchTemplatesMonitoringRequest_Serialize(body: URLSearchParams, prefix: string, params: s.LaunchTemplatesMonitoringRequest) {
-    if ("Enabled" in params) body.append(prefix+".Enabled", (params["Enabled"] ?? '').toString());
+  if ("Enabled" in params) body.append(prefix+".Enabled", (params["Enabled"] ?? '').toString());
 }
 
 function LaunchTemplatePlacementRequest_Serialize(body: URLSearchParams, prefix: string, params: s.LaunchTemplatePlacementRequest) {
-    if ("AvailabilityZone" in params) body.append(prefix+".AvailabilityZone", (params["AvailabilityZone"] ?? '').toString());
-    if ("Affinity" in params) body.append(prefix+".Affinity", (params["Affinity"] ?? '').toString());
-    if ("GroupName" in params) body.append(prefix+".GroupName", (params["GroupName"] ?? '').toString());
-    if ("HostId" in params) body.append(prefix+".HostId", (params["HostId"] ?? '').toString());
-    if ("Tenancy" in params) body.append(prefix+".Tenancy", (params["Tenancy"] ?? '').toString());
-    if ("SpreadDomain" in params) body.append(prefix+".SpreadDomain", (params["SpreadDomain"] ?? '').toString());
-    if ("HostResourceGroupArn" in params) body.append(prefix+".HostResourceGroupArn", (params["HostResourceGroupArn"] ?? '').toString());
-    if ("PartitionNumber" in params) body.append(prefix+".PartitionNumber", (params["PartitionNumber"] ?? '').toString());
+  if ("AvailabilityZone" in params) body.append(prefix+".AvailabilityZone", (params["AvailabilityZone"] ?? '').toString());
+  if ("Affinity" in params) body.append(prefix+".Affinity", (params["Affinity"] ?? '').toString());
+  if ("GroupName" in params) body.append(prefix+".GroupName", (params["GroupName"] ?? '').toString());
+  if ("HostId" in params) body.append(prefix+".HostId", (params["HostId"] ?? '').toString());
+  if ("Tenancy" in params) body.append(prefix+".Tenancy", (params["Tenancy"] ?? '').toString());
+  if ("SpreadDomain" in params) body.append(prefix+".SpreadDomain", (params["SpreadDomain"] ?? '').toString());
+  if ("HostResourceGroupArn" in params) body.append(prefix+".HostResourceGroupArn", (params["HostResourceGroupArn"] ?? '').toString());
+  if ("PartitionNumber" in params) body.append(prefix+".PartitionNumber", (params["PartitionNumber"] ?? '').toString());
 }
 
 function LaunchTemplateTagSpecificationRequest_Serialize(body: URLSearchParams, prefix: string, params: s.LaunchTemplateTagSpecificationRequest) {
-    if ("ResourceType" in params) body.append(prefix+".ResourceType", (params["ResourceType"] ?? '').toString());
-    if (params["Tags"]) qsP.appendList(body, prefix+".Tag", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":"."})
+  if ("ResourceType" in params) body.append(prefix+".ResourceType", (params["ResourceType"] ?? '').toString());
+  if (params["Tags"]) qsP.appendList(body, prefix+".Tag", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":"."})
 }
 
 function ElasticGpuSpecification_Serialize(body: URLSearchParams, prefix: string, params: s.ElasticGpuSpecification) {
-    body.append(prefix+".Type", (params["Type"] ?? '').toString());
+  body.append(prefix+".Type", (params["Type"] ?? '').toString());
 }
 
 function LaunchTemplateElasticInferenceAccelerator_Serialize(body: URLSearchParams, prefix: string, params: s.LaunchTemplateElasticInferenceAccelerator) {
-    body.append(prefix+".Type", (params["Type"] ?? '').toString());
-    if ("Count" in params) body.append(prefix+".Count", (params["Count"] ?? '').toString());
+  body.append(prefix+".Type", (params["Type"] ?? '').toString());
+  if ("Count" in params) body.append(prefix+".Count", (params["Count"] ?? '').toString());
 }
 
 function LaunchTemplateInstanceMarketOptionsRequest_Serialize(body: URLSearchParams, prefix: string, params: s.LaunchTemplateInstanceMarketOptionsRequest) {
-    if ("MarketType" in params) body.append(prefix+".MarketType", (params["MarketType"] ?? '').toString());
-    if (params["SpotOptions"] != null) LaunchTemplateSpotMarketOptionsRequest_Serialize(body, prefix+".SpotOptions", params["SpotOptions"]);
+  if ("MarketType" in params) body.append(prefix+".MarketType", (params["MarketType"] ?? '').toString());
+  if (params["SpotOptions"] != null) LaunchTemplateSpotMarketOptionsRequest_Serialize(body, prefix+".SpotOptions", params["SpotOptions"]);
 }
 
 function LaunchTemplateSpotMarketOptionsRequest_Serialize(body: URLSearchParams, prefix: string, params: s.LaunchTemplateSpotMarketOptionsRequest) {
-    if ("MaxPrice" in params) body.append(prefix+".MaxPrice", (params["MaxPrice"] ?? '').toString());
-    if ("SpotInstanceType" in params) body.append(prefix+".SpotInstanceType", (params["SpotInstanceType"] ?? '').toString());
-    if ("BlockDurationMinutes" in params) body.append(prefix+".BlockDurationMinutes", (params["BlockDurationMinutes"] ?? '').toString());
-    if ("ValidUntil" in params) body.append(prefix+".ValidUntil", qsP.encodeDate_iso8601(params["ValidUntil"]));
-    if ("InstanceInterruptionBehavior" in params) body.append(prefix+".InstanceInterruptionBehavior", (params["InstanceInterruptionBehavior"] ?? '').toString());
+  if ("MaxPrice" in params) body.append(prefix+".MaxPrice", (params["MaxPrice"] ?? '').toString());
+  if ("SpotInstanceType" in params) body.append(prefix+".SpotInstanceType", (params["SpotInstanceType"] ?? '').toString());
+  if ("BlockDurationMinutes" in params) body.append(prefix+".BlockDurationMinutes", (params["BlockDurationMinutes"] ?? '').toString());
+  if ("ValidUntil" in params) body.append(prefix+".ValidUntil", qsP.encodeDate_iso8601(params["ValidUntil"]));
+  if ("InstanceInterruptionBehavior" in params) body.append(prefix+".InstanceInterruptionBehavior", (params["InstanceInterruptionBehavior"] ?? '').toString());
 }
 
 function CreditSpecificationRequest_Serialize(body: URLSearchParams, prefix: string, params: s.CreditSpecificationRequest) {
-    body.append(prefix+".CpuCredits", (params["CpuCredits"] ?? '').toString());
+  body.append(prefix+".CpuCredits", (params["CpuCredits"] ?? '').toString());
 }
 
 function LaunchTemplateCpuOptionsRequest_Serialize(body: URLSearchParams, prefix: string, params: s.LaunchTemplateCpuOptionsRequest) {
-    if ("CoreCount" in params) body.append(prefix+".CoreCount", (params["CoreCount"] ?? '').toString());
-    if ("ThreadsPerCore" in params) body.append(prefix+".ThreadsPerCore", (params["ThreadsPerCore"] ?? '').toString());
+  if ("CoreCount" in params) body.append(prefix+".CoreCount", (params["CoreCount"] ?? '').toString());
+  if ("ThreadsPerCore" in params) body.append(prefix+".ThreadsPerCore", (params["ThreadsPerCore"] ?? '').toString());
 }
 
 function LaunchTemplateCapacityReservationSpecificationRequest_Serialize(body: URLSearchParams, prefix: string, params: s.LaunchTemplateCapacityReservationSpecificationRequest) {
-    if ("CapacityReservationPreference" in params) body.append(prefix+".CapacityReservationPreference", (params["CapacityReservationPreference"] ?? '').toString());
-    if (params["CapacityReservationTarget"] != null) CapacityReservationTarget_Serialize(body, prefix+".CapacityReservationTarget", params["CapacityReservationTarget"]);
+  if ("CapacityReservationPreference" in params) body.append(prefix+".CapacityReservationPreference", (params["CapacityReservationPreference"] ?? '').toString());
+  if (params["CapacityReservationTarget"] != null) CapacityReservationTarget_Serialize(body, prefix+".CapacityReservationTarget", params["CapacityReservationTarget"]);
 }
 
 function CapacityReservationTarget_Serialize(body: URLSearchParams, prefix: string, params: s.CapacityReservationTarget) {
-    if ("CapacityReservationId" in params) body.append(prefix+".CapacityReservationId", (params["CapacityReservationId"] ?? '').toString());
-    if ("CapacityReservationResourceGroupArn" in params) body.append(prefix+".CapacityReservationResourceGroupArn", (params["CapacityReservationResourceGroupArn"] ?? '').toString());
+  if ("CapacityReservationId" in params) body.append(prefix+".CapacityReservationId", (params["CapacityReservationId"] ?? '').toString());
+  if ("CapacityReservationResourceGroupArn" in params) body.append(prefix+".CapacityReservationResourceGroupArn", (params["CapacityReservationResourceGroupArn"] ?? '').toString());
 }
 
 function LaunchTemplateLicenseConfigurationRequest_Serialize(body: URLSearchParams, prefix: string, params: s.LaunchTemplateLicenseConfigurationRequest) {
-    if ("LicenseConfigurationArn" in params) body.append(prefix+".LicenseConfigurationArn", (params["LicenseConfigurationArn"] ?? '').toString());
+  if ("LicenseConfigurationArn" in params) body.append(prefix+".LicenseConfigurationArn", (params["LicenseConfigurationArn"] ?? '').toString());
 }
 
 function LaunchTemplateHibernationOptionsRequest_Serialize(body: URLSearchParams, prefix: string, params: s.LaunchTemplateHibernationOptionsRequest) {
-    if ("Configured" in params) body.append(prefix+".Configured", (params["Configured"] ?? '').toString());
+  if ("Configured" in params) body.append(prefix+".Configured", (params["Configured"] ?? '').toString());
 }
 
 function LaunchTemplateInstanceMetadataOptionsRequest_Serialize(body: URLSearchParams, prefix: string, params: s.LaunchTemplateInstanceMetadataOptionsRequest) {
-    if ("HttpTokens" in params) body.append(prefix+".HttpTokens", (params["HttpTokens"] ?? '').toString());
-    if ("HttpPutResponseHopLimit" in params) body.append(prefix+".HttpPutResponseHopLimit", (params["HttpPutResponseHopLimit"] ?? '').toString());
-    if ("HttpEndpoint" in params) body.append(prefix+".HttpEndpoint", (params["HttpEndpoint"] ?? '').toString());
+  if ("HttpTokens" in params) body.append(prefix+".HttpTokens", (params["HttpTokens"] ?? '').toString());
+  if ("HttpPutResponseHopLimit" in params) body.append(prefix+".HttpPutResponseHopLimit", (params["HttpPutResponseHopLimit"] ?? '').toString());
+  if ("HttpEndpoint" in params) body.append(prefix+".HttpEndpoint", (params["HttpEndpoint"] ?? '').toString());
 }
 
 function LaunchTemplateEnclaveOptionsRequest_Serialize(body: URLSearchParams, prefix: string, params: s.LaunchTemplateEnclaveOptionsRequest) {
-    if ("Enabled" in params) body.append(prefix+".Enabled", (params["Enabled"] ?? '').toString());
+  if ("Enabled" in params) body.append(prefix+".Enabled", (params["Enabled"] ?? '').toString());
 }
 
 function AddPrefixListEntry_Serialize(body: URLSearchParams, prefix: string, params: s.AddPrefixListEntry) {
-    body.append(prefix+".Cidr", (params["Cidr"] ?? '').toString());
-    if ("Description" in params) body.append(prefix+".Description", (params["Description"] ?? '').toString());
+  body.append(prefix+".Cidr", (params["Cidr"] ?? '').toString());
+  if ("Description" in params) body.append(prefix+".Description", (params["Description"] ?? '').toString());
 }
 
 function IcmpTypeCode_Serialize(body: URLSearchParams, prefix: string, params: s.IcmpTypeCode) {
-    if ("Code" in params) body.append(prefix+".Code", (params["Code"] ?? '').toString());
-    if ("Type" in params) body.append(prefix+".Type", (params["Type"] ?? '').toString());
+  if ("Code" in params) body.append(prefix+".Code", (params["Code"] ?? '').toString());
+  if ("Type" in params) body.append(prefix+".Type", (params["Type"] ?? '').toString());
 }
 function IcmpTypeCode_Parse(node: xmlP.XmlNode): s.IcmpTypeCode {
   return {
@@ -9755,8 +9755,8 @@ function IcmpTypeCode_Parse(node: xmlP.XmlNode): s.IcmpTypeCode {
 }
 
 function PortRange_Serialize(body: URLSearchParams, prefix: string, params: s.PortRange) {
-    if ("From" in params) body.append(prefix+".From", (params["From"] ?? '').toString());
-    if ("To" in params) body.append(prefix+".To", (params["To"] ?? '').toString());
+  if ("From" in params) body.append(prefix+".From", (params["From"] ?? '').toString());
+  if ("To" in params) body.append(prefix+".To", (params["To"] ?? '').toString());
 }
 function PortRange_Parse(node: xmlP.XmlNode): s.PortRange {
   return {
@@ -9766,7 +9766,7 @@ function PortRange_Parse(node: xmlP.XmlNode): s.PortRange {
 }
 
 function InstanceIpv6Address_Serialize(body: URLSearchParams, prefix: string, params: s.InstanceIpv6Address) {
-    if ("Ipv6Address" in params) body.append(prefix+".Ipv6Address", (params["Ipv6Address"] ?? '').toString());
+  if ("Ipv6Address" in params) body.append(prefix+".Ipv6Address", (params["Ipv6Address"] ?? '').toString());
 }
 function InstanceIpv6Address_Parse(node: xmlP.XmlNode): s.InstanceIpv6Address {
   return {
@@ -9775,228 +9775,228 @@ function InstanceIpv6Address_Parse(node: xmlP.XmlNode): s.InstanceIpv6Address {
 }
 
 function PriceScheduleSpecification_Serialize(body: URLSearchParams, prefix: string, params: s.PriceScheduleSpecification) {
-    if ("CurrencyCode" in params) body.append(prefix+".CurrencyCode", (params["CurrencyCode"] ?? '').toString());
-    if ("Price" in params) body.append(prefix+".Price", (params["Price"] ?? '').toString());
-    if ("Term" in params) body.append(prefix+".Term", (params["Term"] ?? '').toString());
+  if ("CurrencyCode" in params) body.append(prefix+".CurrencyCode", (params["CurrencyCode"] ?? '').toString());
+  if ("Price" in params) body.append(prefix+".Price", (params["Price"] ?? '').toString());
+  if ("Term" in params) body.append(prefix+".Term", (params["Term"] ?? '').toString());
 }
 
 function InstanceSpecification_Serialize(body: URLSearchParams, prefix: string, params: s.InstanceSpecification) {
-    if ("InstanceId" in params) body.append(prefix+".InstanceId", (params["InstanceId"] ?? '').toString());
-    if ("ExcludeBootVolume" in params) body.append(prefix+".ExcludeBootVolume", (params["ExcludeBootVolume"] ?? '').toString());
+  if ("InstanceId" in params) body.append(prefix+".InstanceId", (params["InstanceId"] ?? '').toString());
+  if ("ExcludeBootVolume" in params) body.append(prefix+".ExcludeBootVolume", (params["ExcludeBootVolume"] ?? '').toString());
 }
 
 function TrafficMirrorPortRangeRequest_Serialize(body: URLSearchParams, prefix: string, params: s.TrafficMirrorPortRangeRequest) {
-    if ("FromPort" in params) body.append(prefix+".FromPort", (params["FromPort"] ?? '').toString());
-    if ("ToPort" in params) body.append(prefix+".ToPort", (params["ToPort"] ?? '').toString());
+  if ("FromPort" in params) body.append(prefix+".FromPort", (params["FromPort"] ?? '').toString());
+  if ("ToPort" in params) body.append(prefix+".ToPort", (params["ToPort"] ?? '').toString());
 }
 
 function TransitGatewayRequestOptions_Serialize(body: URLSearchParams, prefix: string, params: s.TransitGatewayRequestOptions) {
-    if ("AmazonSideAsn" in params) body.append(prefix+".AmazonSideAsn", (params["AmazonSideAsn"] ?? '').toString());
-    if ("AutoAcceptSharedAttachments" in params) body.append(prefix+".AutoAcceptSharedAttachments", (params["AutoAcceptSharedAttachments"] ?? '').toString());
-    if ("DefaultRouteTableAssociation" in params) body.append(prefix+".DefaultRouteTableAssociation", (params["DefaultRouteTableAssociation"] ?? '').toString());
-    if ("DefaultRouteTablePropagation" in params) body.append(prefix+".DefaultRouteTablePropagation", (params["DefaultRouteTablePropagation"] ?? '').toString());
-    if ("VpnEcmpSupport" in params) body.append(prefix+".VpnEcmpSupport", (params["VpnEcmpSupport"] ?? '').toString());
-    if ("DnsSupport" in params) body.append(prefix+".DnsSupport", (params["DnsSupport"] ?? '').toString());
-    if ("MulticastSupport" in params) body.append(prefix+".MulticastSupport", (params["MulticastSupport"] ?? '').toString());
-    if (params["TransitGatewayCidrBlocks"]) qsP.appendList(body, prefix+".item", params["TransitGatewayCidrBlocks"], {"entryPrefix":"."})
+  if ("AmazonSideAsn" in params) body.append(prefix+".AmazonSideAsn", (params["AmazonSideAsn"] ?? '').toString());
+  if ("AutoAcceptSharedAttachments" in params) body.append(prefix+".AutoAcceptSharedAttachments", (params["AutoAcceptSharedAttachments"] ?? '').toString());
+  if ("DefaultRouteTableAssociation" in params) body.append(prefix+".DefaultRouteTableAssociation", (params["DefaultRouteTableAssociation"] ?? '').toString());
+  if ("DefaultRouteTablePropagation" in params) body.append(prefix+".DefaultRouteTablePropagation", (params["DefaultRouteTablePropagation"] ?? '').toString());
+  if ("VpnEcmpSupport" in params) body.append(prefix+".VpnEcmpSupport", (params["VpnEcmpSupport"] ?? '').toString());
+  if ("DnsSupport" in params) body.append(prefix+".DnsSupport", (params["DnsSupport"] ?? '').toString());
+  if ("MulticastSupport" in params) body.append(prefix+".MulticastSupport", (params["MulticastSupport"] ?? '').toString());
+  if (params["TransitGatewayCidrBlocks"]) qsP.appendList(body, prefix+".item", params["TransitGatewayCidrBlocks"], {"entryPrefix":"."})
 }
 
 function CreateTransitGatewayConnectRequestOptions_Serialize(body: URLSearchParams, prefix: string, params: s.CreateTransitGatewayConnectRequestOptions) {
-    body.append(prefix+".Protocol", (params["Protocol"] ?? '').toString());
+  body.append(prefix+".Protocol", (params["Protocol"] ?? '').toString());
 }
 
 function TransitGatewayConnectRequestBgpOptions_Serialize(body: URLSearchParams, prefix: string, params: s.TransitGatewayConnectRequestBgpOptions) {
-    if ("PeerAsn" in params) body.append(prefix+".PeerAsn", (params["PeerAsn"] ?? '').toString());
+  if ("PeerAsn" in params) body.append(prefix+".PeerAsn", (params["PeerAsn"] ?? '').toString());
 }
 
 function CreateTransitGatewayMulticastDomainRequestOptions_Serialize(body: URLSearchParams, prefix: string, params: s.CreateTransitGatewayMulticastDomainRequestOptions) {
-    if ("Igmpv2Support" in params) body.append(prefix+".Igmpv2Support", (params["Igmpv2Support"] ?? '').toString());
-    if ("StaticSourcesSupport" in params) body.append(prefix+".StaticSourcesSupport", (params["StaticSourcesSupport"] ?? '').toString());
-    if ("AutoAcceptSharedAssociations" in params) body.append(prefix+".AutoAcceptSharedAssociations", (params["AutoAcceptSharedAssociations"] ?? '').toString());
+  if ("Igmpv2Support" in params) body.append(prefix+".Igmpv2Support", (params["Igmpv2Support"] ?? '').toString());
+  if ("StaticSourcesSupport" in params) body.append(prefix+".StaticSourcesSupport", (params["StaticSourcesSupport"] ?? '').toString());
+  if ("AutoAcceptSharedAssociations" in params) body.append(prefix+".AutoAcceptSharedAssociations", (params["AutoAcceptSharedAssociations"] ?? '').toString());
 }
 
 function CreateTransitGatewayVpcAttachmentRequestOptions_Serialize(body: URLSearchParams, prefix: string, params: s.CreateTransitGatewayVpcAttachmentRequestOptions) {
-    if ("DnsSupport" in params) body.append(prefix+".DnsSupport", (params["DnsSupport"] ?? '').toString());
-    if ("Ipv6Support" in params) body.append(prefix+".Ipv6Support", (params["Ipv6Support"] ?? '').toString());
-    if ("ApplianceModeSupport" in params) body.append(prefix+".ApplianceModeSupport", (params["ApplianceModeSupport"] ?? '').toString());
+  if ("DnsSupport" in params) body.append(prefix+".DnsSupport", (params["DnsSupport"] ?? '').toString());
+  if ("Ipv6Support" in params) body.append(prefix+".Ipv6Support", (params["Ipv6Support"] ?? '').toString());
+  if ("ApplianceModeSupport" in params) body.append(prefix+".ApplianceModeSupport", (params["ApplianceModeSupport"] ?? '').toString());
 }
 
 function VpnConnectionOptionsSpecification_Serialize(body: URLSearchParams, prefix: string, params: s.VpnConnectionOptionsSpecification) {
-    if ("EnableAcceleration" in params) body.append(prefix+".EnableAcceleration", (params["EnableAcceleration"] ?? '').toString());
-    if ("StaticRoutesOnly" in params) body.append(prefix+".StaticRoutesOnly", (params["StaticRoutesOnly"] ?? '').toString());
-    if ("TunnelInsideIpVersion" in params) body.append(prefix+".TunnelInsideIpVersion", (params["TunnelInsideIpVersion"] ?? '').toString());
-    if (params["TunnelOptions"]) qsP.appendList(body, prefix+".TunnelOptions", params["TunnelOptions"], {"appender":VpnTunnelOptionsSpecification_Serialize,"entryPrefix":"."})
-    if ("LocalIpv4NetworkCidr" in params) body.append(prefix+".LocalIpv4NetworkCidr", (params["LocalIpv4NetworkCidr"] ?? '').toString());
-    if ("RemoteIpv4NetworkCidr" in params) body.append(prefix+".RemoteIpv4NetworkCidr", (params["RemoteIpv4NetworkCidr"] ?? '').toString());
-    if ("LocalIpv6NetworkCidr" in params) body.append(prefix+".LocalIpv6NetworkCidr", (params["LocalIpv6NetworkCidr"] ?? '').toString());
-    if ("RemoteIpv6NetworkCidr" in params) body.append(prefix+".RemoteIpv6NetworkCidr", (params["RemoteIpv6NetworkCidr"] ?? '').toString());
+  if ("EnableAcceleration" in params) body.append(prefix+".EnableAcceleration", (params["EnableAcceleration"] ?? '').toString());
+  if ("StaticRoutesOnly" in params) body.append(prefix+".StaticRoutesOnly", (params["StaticRoutesOnly"] ?? '').toString());
+  if ("TunnelInsideIpVersion" in params) body.append(prefix+".TunnelInsideIpVersion", (params["TunnelInsideIpVersion"] ?? '').toString());
+  if (params["TunnelOptions"]) qsP.appendList(body, prefix+".TunnelOptions", params["TunnelOptions"], {"appender":VpnTunnelOptionsSpecification_Serialize,"entryPrefix":"."})
+  if ("LocalIpv4NetworkCidr" in params) body.append(prefix+".LocalIpv4NetworkCidr", (params["LocalIpv4NetworkCidr"] ?? '').toString());
+  if ("RemoteIpv4NetworkCidr" in params) body.append(prefix+".RemoteIpv4NetworkCidr", (params["RemoteIpv4NetworkCidr"] ?? '').toString());
+  if ("LocalIpv6NetworkCidr" in params) body.append(prefix+".LocalIpv6NetworkCidr", (params["LocalIpv6NetworkCidr"] ?? '').toString());
+  if ("RemoteIpv6NetworkCidr" in params) body.append(prefix+".RemoteIpv6NetworkCidr", (params["RemoteIpv6NetworkCidr"] ?? '').toString());
 }
 
 function VpnTunnelOptionsSpecification_Serialize(body: URLSearchParams, prefix: string, params: s.VpnTunnelOptionsSpecification) {
-    if ("TunnelInsideCidr" in params) body.append(prefix+".TunnelInsideCidr", (params["TunnelInsideCidr"] ?? '').toString());
-    if ("TunnelInsideIpv6Cidr" in params) body.append(prefix+".TunnelInsideIpv6Cidr", (params["TunnelInsideIpv6Cidr"] ?? '').toString());
-    if ("PreSharedKey" in params) body.append(prefix+".PreSharedKey", (params["PreSharedKey"] ?? '').toString());
-    if ("Phase1LifetimeSeconds" in params) body.append(prefix+".Phase1LifetimeSeconds", (params["Phase1LifetimeSeconds"] ?? '').toString());
-    if ("Phase2LifetimeSeconds" in params) body.append(prefix+".Phase2LifetimeSeconds", (params["Phase2LifetimeSeconds"] ?? '').toString());
-    if ("RekeyMarginTimeSeconds" in params) body.append(prefix+".RekeyMarginTimeSeconds", (params["RekeyMarginTimeSeconds"] ?? '').toString());
-    if ("RekeyFuzzPercentage" in params) body.append(prefix+".RekeyFuzzPercentage", (params["RekeyFuzzPercentage"] ?? '').toString());
-    if ("ReplayWindowSize" in params) body.append(prefix+".ReplayWindowSize", (params["ReplayWindowSize"] ?? '').toString());
-    if ("DPDTimeoutSeconds" in params) body.append(prefix+".DPDTimeoutSeconds", (params["DPDTimeoutSeconds"] ?? '').toString());
-    if ("DPDTimeoutAction" in params) body.append(prefix+".DPDTimeoutAction", (params["DPDTimeoutAction"] ?? '').toString());
-    if (params["Phase1EncryptionAlgorithms"]) qsP.appendList(body, prefix+".Phase1EncryptionAlgorithm", params["Phase1EncryptionAlgorithms"], {"appender":Phase1EncryptionAlgorithmsRequestListValue_Serialize,"entryPrefix":"."})
-    if (params["Phase2EncryptionAlgorithms"]) qsP.appendList(body, prefix+".Phase2EncryptionAlgorithm", params["Phase2EncryptionAlgorithms"], {"appender":Phase2EncryptionAlgorithmsRequestListValue_Serialize,"entryPrefix":"."})
-    if (params["Phase1IntegrityAlgorithms"]) qsP.appendList(body, prefix+".Phase1IntegrityAlgorithm", params["Phase1IntegrityAlgorithms"], {"appender":Phase1IntegrityAlgorithmsRequestListValue_Serialize,"entryPrefix":"."})
-    if (params["Phase2IntegrityAlgorithms"]) qsP.appendList(body, prefix+".Phase2IntegrityAlgorithm", params["Phase2IntegrityAlgorithms"], {"appender":Phase2IntegrityAlgorithmsRequestListValue_Serialize,"entryPrefix":"."})
-    if (params["Phase1DHGroupNumbers"]) qsP.appendList(body, prefix+".Phase1DHGroupNumber", params["Phase1DHGroupNumbers"], {"appender":Phase1DHGroupNumbersRequestListValue_Serialize,"entryPrefix":"."})
-    if (params["Phase2DHGroupNumbers"]) qsP.appendList(body, prefix+".Phase2DHGroupNumber", params["Phase2DHGroupNumbers"], {"appender":Phase2DHGroupNumbersRequestListValue_Serialize,"entryPrefix":"."})
-    if (params["IKEVersions"]) qsP.appendList(body, prefix+".IKEVersion", params["IKEVersions"], {"appender":IKEVersionsRequestListValue_Serialize,"entryPrefix":"."})
-    if ("StartupAction" in params) body.append(prefix+".StartupAction", (params["StartupAction"] ?? '').toString());
+  if ("TunnelInsideCidr" in params) body.append(prefix+".TunnelInsideCidr", (params["TunnelInsideCidr"] ?? '').toString());
+  if ("TunnelInsideIpv6Cidr" in params) body.append(prefix+".TunnelInsideIpv6Cidr", (params["TunnelInsideIpv6Cidr"] ?? '').toString());
+  if ("PreSharedKey" in params) body.append(prefix+".PreSharedKey", (params["PreSharedKey"] ?? '').toString());
+  if ("Phase1LifetimeSeconds" in params) body.append(prefix+".Phase1LifetimeSeconds", (params["Phase1LifetimeSeconds"] ?? '').toString());
+  if ("Phase2LifetimeSeconds" in params) body.append(prefix+".Phase2LifetimeSeconds", (params["Phase2LifetimeSeconds"] ?? '').toString());
+  if ("RekeyMarginTimeSeconds" in params) body.append(prefix+".RekeyMarginTimeSeconds", (params["RekeyMarginTimeSeconds"] ?? '').toString());
+  if ("RekeyFuzzPercentage" in params) body.append(prefix+".RekeyFuzzPercentage", (params["RekeyFuzzPercentage"] ?? '').toString());
+  if ("ReplayWindowSize" in params) body.append(prefix+".ReplayWindowSize", (params["ReplayWindowSize"] ?? '').toString());
+  if ("DPDTimeoutSeconds" in params) body.append(prefix+".DPDTimeoutSeconds", (params["DPDTimeoutSeconds"] ?? '').toString());
+  if ("DPDTimeoutAction" in params) body.append(prefix+".DPDTimeoutAction", (params["DPDTimeoutAction"] ?? '').toString());
+  if (params["Phase1EncryptionAlgorithms"]) qsP.appendList(body, prefix+".Phase1EncryptionAlgorithm", params["Phase1EncryptionAlgorithms"], {"appender":Phase1EncryptionAlgorithmsRequestListValue_Serialize,"entryPrefix":"."})
+  if (params["Phase2EncryptionAlgorithms"]) qsP.appendList(body, prefix+".Phase2EncryptionAlgorithm", params["Phase2EncryptionAlgorithms"], {"appender":Phase2EncryptionAlgorithmsRequestListValue_Serialize,"entryPrefix":"."})
+  if (params["Phase1IntegrityAlgorithms"]) qsP.appendList(body, prefix+".Phase1IntegrityAlgorithm", params["Phase1IntegrityAlgorithms"], {"appender":Phase1IntegrityAlgorithmsRequestListValue_Serialize,"entryPrefix":"."})
+  if (params["Phase2IntegrityAlgorithms"]) qsP.appendList(body, prefix+".Phase2IntegrityAlgorithm", params["Phase2IntegrityAlgorithms"], {"appender":Phase2IntegrityAlgorithmsRequestListValue_Serialize,"entryPrefix":"."})
+  if (params["Phase1DHGroupNumbers"]) qsP.appendList(body, prefix+".Phase1DHGroupNumber", params["Phase1DHGroupNumbers"], {"appender":Phase1DHGroupNumbersRequestListValue_Serialize,"entryPrefix":"."})
+  if (params["Phase2DHGroupNumbers"]) qsP.appendList(body, prefix+".Phase2DHGroupNumber", params["Phase2DHGroupNumbers"], {"appender":Phase2DHGroupNumbersRequestListValue_Serialize,"entryPrefix":"."})
+  if (params["IKEVersions"]) qsP.appendList(body, prefix+".IKEVersion", params["IKEVersions"], {"appender":IKEVersionsRequestListValue_Serialize,"entryPrefix":"."})
+  if ("StartupAction" in params) body.append(prefix+".StartupAction", (params["StartupAction"] ?? '').toString());
 }
 
 function Phase1EncryptionAlgorithmsRequestListValue_Serialize(body: URLSearchParams, prefix: string, params: s.Phase1EncryptionAlgorithmsRequestListValue) {
-    if ("Value" in params) body.append(prefix+".Value", (params["Value"] ?? '').toString());
+  if ("Value" in params) body.append(prefix+".Value", (params["Value"] ?? '').toString());
 }
 
 function Phase2EncryptionAlgorithmsRequestListValue_Serialize(body: URLSearchParams, prefix: string, params: s.Phase2EncryptionAlgorithmsRequestListValue) {
-    if ("Value" in params) body.append(prefix+".Value", (params["Value"] ?? '').toString());
+  if ("Value" in params) body.append(prefix+".Value", (params["Value"] ?? '').toString());
 }
 
 function Phase1IntegrityAlgorithmsRequestListValue_Serialize(body: URLSearchParams, prefix: string, params: s.Phase1IntegrityAlgorithmsRequestListValue) {
-    if ("Value" in params) body.append(prefix+".Value", (params["Value"] ?? '').toString());
+  if ("Value" in params) body.append(prefix+".Value", (params["Value"] ?? '').toString());
 }
 
 function Phase2IntegrityAlgorithmsRequestListValue_Serialize(body: URLSearchParams, prefix: string, params: s.Phase2IntegrityAlgorithmsRequestListValue) {
-    if ("Value" in params) body.append(prefix+".Value", (params["Value"] ?? '').toString());
+  if ("Value" in params) body.append(prefix+".Value", (params["Value"] ?? '').toString());
 }
 
 function Phase1DHGroupNumbersRequestListValue_Serialize(body: URLSearchParams, prefix: string, params: s.Phase1DHGroupNumbersRequestListValue) {
-    if ("Value" in params) body.append(prefix+".Value", (params["Value"] ?? '').toString());
+  if ("Value" in params) body.append(prefix+".Value", (params["Value"] ?? '').toString());
 }
 
 function Phase2DHGroupNumbersRequestListValue_Serialize(body: URLSearchParams, prefix: string, params: s.Phase2DHGroupNumbersRequestListValue) {
-    if ("Value" in params) body.append(prefix+".Value", (params["Value"] ?? '').toString());
+  if ("Value" in params) body.append(prefix+".Value", (params["Value"] ?? '').toString());
 }
 
 function IKEVersionsRequestListValue_Serialize(body: URLSearchParams, prefix: string, params: s.IKEVersionsRequestListValue) {
-    if ("Value" in params) body.append(prefix+".Value", (params["Value"] ?? '').toString());
+  if ("Value" in params) body.append(prefix+".Value", (params["Value"] ?? '').toString());
 }
 
 function DeregisterInstanceTagAttributeRequest_Serialize(body: URLSearchParams, prefix: string, params: s.DeregisterInstanceTagAttributeRequest) {
-    if ("IncludeAllTagsOfInstance" in params) body.append(prefix+".IncludeAllTagsOfInstance", (params["IncludeAllTagsOfInstance"] ?? '').toString());
-    if (params["InstanceTagKeys"]) qsP.appendList(body, prefix+".InstanceTagKey", params["InstanceTagKeys"], {"entryPrefix":"."})
+  if ("IncludeAllTagsOfInstance" in params) body.append(prefix+".IncludeAllTagsOfInstance", (params["IncludeAllTagsOfInstance"] ?? '').toString());
+  if (params["InstanceTagKeys"]) qsP.appendList(body, prefix+".InstanceTagKey", params["InstanceTagKeys"], {"entryPrefix":"."})
 }
 
 function Filter_Serialize(body: URLSearchParams, prefix: string, params: s.Filter) {
-    if ("Name" in params) body.append(prefix+".Name", (params["Name"] ?? '').toString());
-    if (params["Values"]) qsP.appendList(body, prefix+".Value", params["Values"], {"entryPrefix":"."})
+  if ("Name" in params) body.append(prefix+".Name", (params["Name"] ?? '').toString());
+  if (params["Values"]) qsP.appendList(body, prefix+".Value", params["Values"], {"entryPrefix":"."})
 }
 
 function SlotDateTimeRangeRequest_Serialize(body: URLSearchParams, prefix: string, params: s.SlotDateTimeRangeRequest) {
-    body.append(prefix+".EarliestTime", qsP.encodeDate_iso8601(params["EarliestTime"]));
-    body.append(prefix+".LatestTime", qsP.encodeDate_iso8601(params["LatestTime"]));
+  body.append(prefix+".EarliestTime", qsP.encodeDate_iso8601(params["EarliestTime"]));
+  body.append(prefix+".LatestTime", qsP.encodeDate_iso8601(params["LatestTime"]));
 }
 
 function ScheduledInstanceRecurrenceRequest_Serialize(body: URLSearchParams, prefix: string, params: s.ScheduledInstanceRecurrenceRequest) {
-    if ("Frequency" in params) body.append(prefix+".Frequency", (params["Frequency"] ?? '').toString());
-    if ("Interval" in params) body.append(prefix+".Interval", (params["Interval"] ?? '').toString());
-    if (params["OccurrenceDays"]) qsP.appendList(body, prefix+".OccurrenceDay", params["OccurrenceDays"], {"entryPrefix":"."})
-    if ("OccurrenceRelativeToEnd" in params) body.append(prefix+".OccurrenceRelativeToEnd", (params["OccurrenceRelativeToEnd"] ?? '').toString());
-    if ("OccurrenceUnit" in params) body.append(prefix+".OccurrenceUnit", (params["OccurrenceUnit"] ?? '').toString());
+  if ("Frequency" in params) body.append(prefix+".Frequency", (params["Frequency"] ?? '').toString());
+  if ("Interval" in params) body.append(prefix+".Interval", (params["Interval"] ?? '').toString());
+  if (params["OccurrenceDays"]) qsP.appendList(body, prefix+".OccurrenceDay", params["OccurrenceDays"], {"entryPrefix":"."})
+  if ("OccurrenceRelativeToEnd" in params) body.append(prefix+".OccurrenceRelativeToEnd", (params["OccurrenceRelativeToEnd"] ?? '').toString());
+  if ("OccurrenceUnit" in params) body.append(prefix+".OccurrenceUnit", (params["OccurrenceUnit"] ?? '').toString());
 }
 
 function SlotStartTimeRangeRequest_Serialize(body: URLSearchParams, prefix: string, params: s.SlotStartTimeRangeRequest) {
-    if ("EarliestTime" in params) body.append(prefix+".EarliestTime", qsP.encodeDate_iso8601(params["EarliestTime"]));
-    if ("LatestTime" in params) body.append(prefix+".LatestTime", qsP.encodeDate_iso8601(params["LatestTime"]));
+  if ("EarliestTime" in params) body.append(prefix+".EarliestTime", qsP.encodeDate_iso8601(params["EarliestTime"]));
+  if ("LatestTime" in params) body.append(prefix+".LatestTime", qsP.encodeDate_iso8601(params["LatestTime"]));
 }
 
 function ExportTaskS3LocationRequest_Serialize(body: URLSearchParams, prefix: string, params: s.ExportTaskS3LocationRequest) {
-    body.append(prefix+".S3Bucket", (params["S3Bucket"] ?? '').toString());
-    if ("S3Prefix" in params) body.append(prefix+".S3Prefix", (params["S3Prefix"] ?? '').toString());
+  body.append(prefix+".S3Bucket", (params["S3Bucket"] ?? '').toString());
+  if ("S3Prefix" in params) body.append(prefix+".S3Prefix", (params["S3Prefix"] ?? '').toString());
 }
 
 function ClientData_Serialize(body: URLSearchParams, prefix: string, params: s.ClientData) {
-    if ("Comment" in params) body.append(prefix+".Comment", (params["Comment"] ?? '').toString());
-    if ("UploadEnd" in params) body.append(prefix+".UploadEnd", qsP.encodeDate_iso8601(params["UploadEnd"]));
-    if ("UploadSize" in params) body.append(prefix+".UploadSize", (params["UploadSize"] ?? '').toString());
-    if ("UploadStart" in params) body.append(prefix+".UploadStart", qsP.encodeDate_iso8601(params["UploadStart"]));
+  if ("Comment" in params) body.append(prefix+".Comment", (params["Comment"] ?? '').toString());
+  if ("UploadEnd" in params) body.append(prefix+".UploadEnd", qsP.encodeDate_iso8601(params["UploadEnd"]));
+  if ("UploadSize" in params) body.append(prefix+".UploadSize", (params["UploadSize"] ?? '').toString());
+  if ("UploadStart" in params) body.append(prefix+".UploadStart", qsP.encodeDate_iso8601(params["UploadStart"]));
 }
 
 function ImageDiskContainer_Serialize(body: URLSearchParams, prefix: string, params: s.ImageDiskContainer) {
-    if ("Description" in params) body.append(prefix+".Description", (params["Description"] ?? '').toString());
-    if ("DeviceName" in params) body.append(prefix+".DeviceName", (params["DeviceName"] ?? '').toString());
-    if ("Format" in params) body.append(prefix+".Format", (params["Format"] ?? '').toString());
-    if ("SnapshotId" in params) body.append(prefix+".SnapshotId", (params["SnapshotId"] ?? '').toString());
-    if ("Url" in params) body.append(prefix+".Url", (params["Url"] ?? '').toString());
-    if (params["UserBucket"] != null) UserBucket_Serialize(body, prefix+".UserBucket", params["UserBucket"]);
+  if ("Description" in params) body.append(prefix+".Description", (params["Description"] ?? '').toString());
+  if ("DeviceName" in params) body.append(prefix+".DeviceName", (params["DeviceName"] ?? '').toString());
+  if ("Format" in params) body.append(prefix+".Format", (params["Format"] ?? '').toString());
+  if ("SnapshotId" in params) body.append(prefix+".SnapshotId", (params["SnapshotId"] ?? '').toString());
+  if ("Url" in params) body.append(prefix+".Url", (params["Url"] ?? '').toString());
+  if (params["UserBucket"] != null) UserBucket_Serialize(body, prefix+".UserBucket", params["UserBucket"]);
 }
 
 function UserBucket_Serialize(body: URLSearchParams, prefix: string, params: s.UserBucket) {
-    if ("S3Bucket" in params) body.append(prefix+".S3Bucket", (params["S3Bucket"] ?? '').toString());
-    if ("S3Key" in params) body.append(prefix+".S3Key", (params["S3Key"] ?? '').toString());
+  if ("S3Bucket" in params) body.append(prefix+".S3Bucket", (params["S3Bucket"] ?? '').toString());
+  if ("S3Key" in params) body.append(prefix+".S3Key", (params["S3Key"] ?? '').toString());
 }
 
 function ImportImageLicenseConfigurationRequest_Serialize(body: URLSearchParams, prefix: string, params: s.ImportImageLicenseConfigurationRequest) {
-    if ("LicenseConfigurationArn" in params) body.append(prefix+".LicenseConfigurationArn", (params["LicenseConfigurationArn"] ?? '').toString());
+  if ("LicenseConfigurationArn" in params) body.append(prefix+".LicenseConfigurationArn", (params["LicenseConfigurationArn"] ?? '').toString());
 }
 
 function DiskImage_Serialize(body: URLSearchParams, prefix: string, params: s.DiskImage) {
-    if ("Description" in params) body.append(prefix+".Description", (params["Description"] ?? '').toString());
-    if (params["Image"] != null) DiskImageDetail_Serialize(body, prefix+".Image", params["Image"]);
-    if (params["Volume"] != null) VolumeDetail_Serialize(body, prefix+".Volume", params["Volume"]);
+  if ("Description" in params) body.append(prefix+".Description", (params["Description"] ?? '').toString());
+  if (params["Image"] != null) DiskImageDetail_Serialize(body, prefix+".Image", params["Image"]);
+  if (params["Volume"] != null) VolumeDetail_Serialize(body, prefix+".Volume", params["Volume"]);
 }
 
 function DiskImageDetail_Serialize(body: URLSearchParams, prefix: string, params: s.DiskImageDetail) {
-    body.append(prefix+".Bytes", (params["Bytes"] ?? '').toString());
-    body.append(prefix+".Format", (params["Format"] ?? '').toString());
-    body.append(prefix+".ImportManifestUrl", (params["ImportManifestUrl"] ?? '').toString());
+  body.append(prefix+".Bytes", (params["Bytes"] ?? '').toString());
+  body.append(prefix+".Format", (params["Format"] ?? '').toString());
+  body.append(prefix+".ImportManifestUrl", (params["ImportManifestUrl"] ?? '').toString());
 }
 
 function VolumeDetail_Serialize(body: URLSearchParams, prefix: string, params: s.VolumeDetail) {
-    body.append(prefix+".Size", (params["Size"] ?? '').toString());
+  body.append(prefix+".Size", (params["Size"] ?? '').toString());
 }
 
 function ImportInstanceLaunchSpecification_Serialize(body: URLSearchParams, prefix: string, params: s.ImportInstanceLaunchSpecification) {
-    if ("AdditionalInfo" in params) body.append(prefix+".AdditionalInfo", (params["AdditionalInfo"] ?? '').toString());
-    if ("Architecture" in params) body.append(prefix+".Architecture", (params["Architecture"] ?? '').toString());
-    if (params["GroupIds"]) qsP.appendList(body, prefix+".GroupId", params["GroupIds"], {"entryPrefix":"."})
-    if (params["GroupNames"]) qsP.appendList(body, prefix+".GroupName", params["GroupNames"], {"entryPrefix":"."})
-    if ("InstanceInitiatedShutdownBehavior" in params) body.append(prefix+".InstanceInitiatedShutdownBehavior", (params["InstanceInitiatedShutdownBehavior"] ?? '').toString());
-    if ("InstanceType" in params) body.append(prefix+".InstanceType", (params["InstanceType"] ?? '').toString());
-    if ("Monitoring" in params) body.append(prefix+".Monitoring", (params["Monitoring"] ?? '').toString());
-    if (params["Placement"] != null) Placement_Serialize(body, prefix+".Placement", params["Placement"]);
-    if ("PrivateIpAddress" in params) body.append(prefix+".PrivateIpAddress", (params["PrivateIpAddress"] ?? '').toString());
-    if ("SubnetId" in params) body.append(prefix+".SubnetId", (params["SubnetId"] ?? '').toString());
-    if (params["UserData"] != null) UserData_Serialize(body, prefix+".UserData", params["UserData"]);
+  if ("AdditionalInfo" in params) body.append(prefix+".AdditionalInfo", (params["AdditionalInfo"] ?? '').toString());
+  if ("Architecture" in params) body.append(prefix+".Architecture", (params["Architecture"] ?? '').toString());
+  if (params["GroupIds"]) qsP.appendList(body, prefix+".GroupId", params["GroupIds"], {"entryPrefix":"."})
+  if (params["GroupNames"]) qsP.appendList(body, prefix+".GroupName", params["GroupNames"], {"entryPrefix":"."})
+  if ("InstanceInitiatedShutdownBehavior" in params) body.append(prefix+".InstanceInitiatedShutdownBehavior", (params["InstanceInitiatedShutdownBehavior"] ?? '').toString());
+  if ("InstanceType" in params) body.append(prefix+".InstanceType", (params["InstanceType"] ?? '').toString());
+  if ("Monitoring" in params) body.append(prefix+".Monitoring", (params["Monitoring"] ?? '').toString());
+  if (params["Placement"] != null) Placement_Serialize(body, prefix+".Placement", params["Placement"]);
+  if ("PrivateIpAddress" in params) body.append(prefix+".PrivateIpAddress", (params["PrivateIpAddress"] ?? '').toString());
+  if ("SubnetId" in params) body.append(prefix+".SubnetId", (params["SubnetId"] ?? '').toString());
+  if (params["UserData"] != null) UserData_Serialize(body, prefix+".UserData", params["UserData"]);
 }
 
 function UserData_Serialize(body: URLSearchParams, prefix: string, params: s.UserData) {
-    if ("Data" in params) body.append(prefix+".Data", (params["Data"] ?? '').toString());
+  if ("Data" in params) body.append(prefix+".Data", (params["Data"] ?? '').toString());
 }
 
 function SnapshotDiskContainer_Serialize(body: URLSearchParams, prefix: string, params: s.SnapshotDiskContainer) {
-    if ("Description" in params) body.append(prefix+".Description", (params["Description"] ?? '').toString());
-    if ("Format" in params) body.append(prefix+".Format", (params["Format"] ?? '').toString());
-    if ("Url" in params) body.append(prefix+".Url", (params["Url"] ?? '').toString());
-    if (params["UserBucket"] != null) UserBucket_Serialize(body, prefix+".UserBucket", params["UserBucket"]);
+  if ("Description" in params) body.append(prefix+".Description", (params["Description"] ?? '').toString());
+  if ("Format" in params) body.append(prefix+".Format", (params["Format"] ?? '').toString());
+  if ("Url" in params) body.append(prefix+".Url", (params["Url"] ?? '').toString());
+  if (params["UserBucket"] != null) UserBucket_Serialize(body, prefix+".UserBucket", params["UserBucket"]);
 }
 
 function DnsServersOptionsModifyStructure_Serialize(body: URLSearchParams, prefix: string, params: s.DnsServersOptionsModifyStructure) {
-    if (params["CustomDnsServers"]) qsP.appendList(body, prefix+".item", params["CustomDnsServers"], {"entryPrefix":"."})
-    if ("Enabled" in params) body.append(prefix+".Enabled", (params["Enabled"] ?? '').toString());
+  if (params["CustomDnsServers"]) qsP.appendList(body, prefix+".item", params["CustomDnsServers"], {"entryPrefix":"."})
+  if ("Enabled" in params) body.append(prefix+".Enabled", (params["Enabled"] ?? '').toString());
 }
 
 function LoadPermissionModifications_Serialize(body: URLSearchParams, prefix: string, params: s.LoadPermissionModifications) {
-    if (params["Add"]) qsP.appendList(body, prefix+".item", params["Add"], {"appender":LoadPermissionRequest_Serialize,"entryPrefix":"."})
-    if (params["Remove"]) qsP.appendList(body, prefix+".item", params["Remove"], {"appender":LoadPermissionRequest_Serialize,"entryPrefix":"."})
+  if (params["Add"]) qsP.appendList(body, prefix+".item", params["Add"], {"appender":LoadPermissionRequest_Serialize,"entryPrefix":"."})
+  if (params["Remove"]) qsP.appendList(body, prefix+".item", params["Remove"], {"appender":LoadPermissionRequest_Serialize,"entryPrefix":"."})
 }
 
 function LoadPermissionRequest_Serialize(body: URLSearchParams, prefix: string, params: s.LoadPermissionRequest) {
-    if ("Group" in params) body.append(prefix+".Group", (params["Group"] ?? '').toString());
-    if ("UserId" in params) body.append(prefix+".UserId", (params["UserId"] ?? '').toString());
+  if ("Group" in params) body.append(prefix+".Group", (params["Group"] ?? '').toString());
+  if ("UserId" in params) body.append(prefix+".UserId", (params["UserId"] ?? '').toString());
 }
 
 function AttributeValue_Serialize(body: URLSearchParams, prefix: string, params: s.AttributeValue) {
-    if ("Value" in params) body.append(prefix+".Value", (params["Value"] ?? '').toString());
+  if ("Value" in params) body.append(prefix+".Value", (params["Value"] ?? '').toString());
 }
 function AttributeValue_Parse(node: xmlP.XmlNode): s.AttributeValue {
   return {
@@ -10005,13 +10005,13 @@ function AttributeValue_Parse(node: xmlP.XmlNode): s.AttributeValue {
 }
 
 function LaunchPermissionModifications_Serialize(body: URLSearchParams, prefix: string, params: s.LaunchPermissionModifications) {
-    if (params["Add"]) qsP.appendList(body, prefix+".item", params["Add"], {"appender":LaunchPermission_Serialize,"entryPrefix":"."})
-    if (params["Remove"]) qsP.appendList(body, prefix+".item", params["Remove"], {"appender":LaunchPermission_Serialize,"entryPrefix":"."})
+  if (params["Add"]) qsP.appendList(body, prefix+".item", params["Add"], {"appender":LaunchPermission_Serialize,"entryPrefix":"."})
+  if (params["Remove"]) qsP.appendList(body, prefix+".item", params["Remove"], {"appender":LaunchPermission_Serialize,"entryPrefix":"."})
 }
 
 function LaunchPermission_Serialize(body: URLSearchParams, prefix: string, params: s.LaunchPermission) {
-    if ("Group" in params) body.append(prefix+".Group", (params["Group"] ?? '').toString());
-    if ("UserId" in params) body.append(prefix+".UserId", (params["UserId"] ?? '').toString());
+  if ("Group" in params) body.append(prefix+".Group", (params["Group"] ?? '').toString());
+  if ("UserId" in params) body.append(prefix+".UserId", (params["UserId"] ?? '').toString());
 }
 function LaunchPermission_Parse(node: xmlP.XmlNode): s.LaunchPermission {
   return {
@@ -10021,7 +10021,7 @@ function LaunchPermission_Parse(node: xmlP.XmlNode): s.LaunchPermission {
 }
 
 function AttributeBooleanValue_Serialize(body: URLSearchParams, prefix: string, params: s.AttributeBooleanValue) {
-    if ("Value" in params) body.append(prefix+".Value", (params["Value"] ?? '').toString());
+  if ("Value" in params) body.append(prefix+".Value", (params["Value"] ?? '').toString());
 }
 function AttributeBooleanValue_Parse(node: xmlP.XmlNode): s.AttributeBooleanValue {
   return {
@@ -10030,46 +10030,46 @@ function AttributeBooleanValue_Parse(node: xmlP.XmlNode): s.AttributeBooleanValu
 }
 
 function InstanceBlockDeviceMappingSpecification_Serialize(body: URLSearchParams, prefix: string, params: s.InstanceBlockDeviceMappingSpecification) {
-    if ("DeviceName" in params) body.append(prefix+".DeviceName", (params["DeviceName"] ?? '').toString());
-    if (params["Ebs"] != null) EbsInstanceBlockDeviceSpecification_Serialize(body, prefix+".Ebs", params["Ebs"]);
-    if ("NoDevice" in params) body.append(prefix+".NoDevice", (params["NoDevice"] ?? '').toString());
-    if ("VirtualName" in params) body.append(prefix+".VirtualName", (params["VirtualName"] ?? '').toString());
+  if ("DeviceName" in params) body.append(prefix+".DeviceName", (params["DeviceName"] ?? '').toString());
+  if (params["Ebs"] != null) EbsInstanceBlockDeviceSpecification_Serialize(body, prefix+".Ebs", params["Ebs"]);
+  if ("NoDevice" in params) body.append(prefix+".NoDevice", (params["NoDevice"] ?? '').toString());
+  if ("VirtualName" in params) body.append(prefix+".VirtualName", (params["VirtualName"] ?? '').toString());
 }
 
 function EbsInstanceBlockDeviceSpecification_Serialize(body: URLSearchParams, prefix: string, params: s.EbsInstanceBlockDeviceSpecification) {
-    if ("DeleteOnTermination" in params) body.append(prefix+".DeleteOnTermination", (params["DeleteOnTermination"] ?? '').toString());
-    if ("VolumeId" in params) body.append(prefix+".VolumeId", (params["VolumeId"] ?? '').toString());
+  if ("DeleteOnTermination" in params) body.append(prefix+".DeleteOnTermination", (params["DeleteOnTermination"] ?? '').toString());
+  if ("VolumeId" in params) body.append(prefix+".VolumeId", (params["VolumeId"] ?? '').toString());
 }
 
 function BlobAttributeValue_Serialize(body: URLSearchParams, prefix: string, params: s.BlobAttributeValue) {
-    if ("Value" in params) body.append(prefix+".Value", serializeBlob(params["Value"]) ?? '');
+  if ("Value" in params) body.append(prefix+".Value", serializeBlob(params["Value"]) ?? '');
 }
 
 function CapacityReservationSpecification_Serialize(body: URLSearchParams, prefix: string, params: s.CapacityReservationSpecification) {
-    if ("CapacityReservationPreference" in params) body.append(prefix+".CapacityReservationPreference", (params["CapacityReservationPreference"] ?? '').toString());
-    if (params["CapacityReservationTarget"] != null) CapacityReservationTarget_Serialize(body, prefix+".CapacityReservationTarget", params["CapacityReservationTarget"]);
+  if ("CapacityReservationPreference" in params) body.append(prefix+".CapacityReservationPreference", (params["CapacityReservationPreference"] ?? '').toString());
+  if (params["CapacityReservationTarget"] != null) CapacityReservationTarget_Serialize(body, prefix+".CapacityReservationTarget", params["CapacityReservationTarget"]);
 }
 
 function InstanceCreditSpecificationRequest_Serialize(body: URLSearchParams, prefix: string, params: s.InstanceCreditSpecificationRequest) {
-    if ("InstanceId" in params) body.append(prefix+".InstanceId", (params["InstanceId"] ?? '').toString());
-    if ("CpuCredits" in params) body.append(prefix+".CpuCredits", (params["CpuCredits"] ?? '').toString());
+  if ("InstanceId" in params) body.append(prefix+".InstanceId", (params["InstanceId"] ?? '').toString());
+  if ("CpuCredits" in params) body.append(prefix+".CpuCredits", (params["CpuCredits"] ?? '').toString());
 }
 
 function RemovePrefixListEntry_Serialize(body: URLSearchParams, prefix: string, params: s.RemovePrefixListEntry) {
-    body.append(prefix+".Cidr", (params["Cidr"] ?? '').toString());
+  body.append(prefix+".Cidr", (params["Cidr"] ?? '').toString());
 }
 
 function NetworkInterfaceAttachmentChanges_Serialize(body: URLSearchParams, prefix: string, params: s.NetworkInterfaceAttachmentChanges) {
-    if ("AttachmentId" in params) body.append(prefix+".AttachmentId", (params["AttachmentId"] ?? '').toString());
-    if ("DeleteOnTermination" in params) body.append(prefix+".DeleteOnTermination", (params["DeleteOnTermination"] ?? '').toString());
+  if ("AttachmentId" in params) body.append(prefix+".AttachmentId", (params["AttachmentId"] ?? '').toString());
+  if ("DeleteOnTermination" in params) body.append(prefix+".DeleteOnTermination", (params["DeleteOnTermination"] ?? '').toString());
 }
 
 function ReservedInstancesConfiguration_Serialize(body: URLSearchParams, prefix: string, params: s.ReservedInstancesConfiguration) {
-    if ("AvailabilityZone" in params) body.append(prefix+".AvailabilityZone", (params["AvailabilityZone"] ?? '').toString());
-    if ("InstanceCount" in params) body.append(prefix+".InstanceCount", (params["InstanceCount"] ?? '').toString());
-    if ("InstanceType" in params) body.append(prefix+".InstanceType", (params["InstanceType"] ?? '').toString());
-    if ("Platform" in params) body.append(prefix+".Platform", (params["Platform"] ?? '').toString());
-    if ("Scope" in params) body.append(prefix+".Scope", (params["Scope"] ?? '').toString());
+  if ("AvailabilityZone" in params) body.append(prefix+".AvailabilityZone", (params["AvailabilityZone"] ?? '').toString());
+  if ("InstanceCount" in params) body.append(prefix+".InstanceCount", (params["InstanceCount"] ?? '').toString());
+  if ("InstanceType" in params) body.append(prefix+".InstanceType", (params["InstanceType"] ?? '').toString());
+  if ("Platform" in params) body.append(prefix+".Platform", (params["Platform"] ?? '').toString());
+  if ("Scope" in params) body.append(prefix+".Scope", (params["Scope"] ?? '').toString());
 }
 function ReservedInstancesConfiguration_Parse(node: xmlP.XmlNode): s.ReservedInstancesConfiguration {
   return {
@@ -10082,13 +10082,13 @@ function ReservedInstancesConfiguration_Parse(node: xmlP.XmlNode): s.ReservedIns
 }
 
 function CreateVolumePermissionModifications_Serialize(body: URLSearchParams, prefix: string, params: s.CreateVolumePermissionModifications) {
-    if (params["Add"]) qsP.appendList(body, prefix+".item", params["Add"], {"appender":CreateVolumePermission_Serialize,"entryPrefix":"."})
-    if (params["Remove"]) qsP.appendList(body, prefix+".item", params["Remove"], {"appender":CreateVolumePermission_Serialize,"entryPrefix":"."})
+  if (params["Add"]) qsP.appendList(body, prefix+".item", params["Add"], {"appender":CreateVolumePermission_Serialize,"entryPrefix":"."})
+  if (params["Remove"]) qsP.appendList(body, prefix+".item", params["Remove"], {"appender":CreateVolumePermission_Serialize,"entryPrefix":"."})
 }
 
 function CreateVolumePermission_Serialize(body: URLSearchParams, prefix: string, params: s.CreateVolumePermission) {
-    if ("Group" in params) body.append(prefix+".Group", (params["Group"] ?? '').toString());
-    if ("UserId" in params) body.append(prefix+".UserId", (params["UserId"] ?? '').toString());
+  if ("Group" in params) body.append(prefix+".Group", (params["Group"] ?? '').toString());
+  if ("UserId" in params) body.append(prefix+".UserId", (params["UserId"] ?? '').toString());
 }
 function CreateVolumePermission_Parse(node: xmlP.XmlNode): s.CreateVolumePermission {
   return {
@@ -10098,8 +10098,8 @@ function CreateVolumePermission_Parse(node: xmlP.XmlNode): s.CreateVolumePermiss
 }
 
 function LaunchTemplateConfig_Serialize(body: URLSearchParams, prefix: string, params: s.LaunchTemplateConfig) {
-    if (params["LaunchTemplateSpecification"] != null) FleetLaunchTemplateSpecification_Serialize(body, prefix+".LaunchTemplateSpecification", params["LaunchTemplateSpecification"]);
-    if (params["Overrides"]) qsP.appendList(body, prefix+".overrides", params["Overrides"], {"appender":LaunchTemplateOverrides_Serialize,"entryPrefix":"."})
+  if (params["LaunchTemplateSpecification"] != null) FleetLaunchTemplateSpecification_Serialize(body, prefix+".LaunchTemplateSpecification", params["LaunchTemplateSpecification"]);
+  if (params["Overrides"]) qsP.appendList(body, prefix+".overrides", params["Overrides"], {"appender":LaunchTemplateOverrides_Serialize,"entryPrefix":"."})
 }
 function LaunchTemplateConfig_Parse(node: xmlP.XmlNode): s.LaunchTemplateConfig {
   return {
@@ -10109,9 +10109,9 @@ function LaunchTemplateConfig_Parse(node: xmlP.XmlNode): s.LaunchTemplateConfig 
 }
 
 function FleetLaunchTemplateSpecification_Serialize(body: URLSearchParams, prefix: string, params: s.FleetLaunchTemplateSpecification) {
-    if ("LaunchTemplateId" in params) body.append(prefix+".LaunchTemplateId", (params["LaunchTemplateId"] ?? '').toString());
-    if ("LaunchTemplateName" in params) body.append(prefix+".LaunchTemplateName", (params["LaunchTemplateName"] ?? '').toString());
-    if ("Version" in params) body.append(prefix+".Version", (params["Version"] ?? '').toString());
+  if ("LaunchTemplateId" in params) body.append(prefix+".LaunchTemplateId", (params["LaunchTemplateId"] ?? '').toString());
+  if ("LaunchTemplateName" in params) body.append(prefix+".LaunchTemplateName", (params["LaunchTemplateName"] ?? '').toString());
+  if ("Version" in params) body.append(prefix+".Version", (params["Version"] ?? '').toString());
 }
 function FleetLaunchTemplateSpecification_Parse(node: xmlP.XmlNode): s.FleetLaunchTemplateSpecification {
   return {
@@ -10122,12 +10122,12 @@ function FleetLaunchTemplateSpecification_Parse(node: xmlP.XmlNode): s.FleetLaun
 }
 
 function LaunchTemplateOverrides_Serialize(body: URLSearchParams, prefix: string, params: s.LaunchTemplateOverrides) {
-    if ("InstanceType" in params) body.append(prefix+".InstanceType", (params["InstanceType"] ?? '').toString());
-    if ("SpotPrice" in params) body.append(prefix+".SpotPrice", (params["SpotPrice"] ?? '').toString());
-    if ("SubnetId" in params) body.append(prefix+".SubnetId", (params["SubnetId"] ?? '').toString());
-    if ("AvailabilityZone" in params) body.append(prefix+".AvailabilityZone", (params["AvailabilityZone"] ?? '').toString());
-    if ("WeightedCapacity" in params) body.append(prefix+".WeightedCapacity", (params["WeightedCapacity"] ?? '').toString());
-    if ("Priority" in params) body.append(prefix+".Priority", (params["Priority"] ?? '').toString());
+  if ("InstanceType" in params) body.append(prefix+".InstanceType", (params["InstanceType"] ?? '').toString());
+  if ("SpotPrice" in params) body.append(prefix+".SpotPrice", (params["SpotPrice"] ?? '').toString());
+  if ("SubnetId" in params) body.append(prefix+".SubnetId", (params["SubnetId"] ?? '').toString());
+  if ("AvailabilityZone" in params) body.append(prefix+".AvailabilityZone", (params["AvailabilityZone"] ?? '').toString());
+  if ("WeightedCapacity" in params) body.append(prefix+".WeightedCapacity", (params["WeightedCapacity"] ?? '').toString());
+  if ("Priority" in params) body.append(prefix+".Priority", (params["Priority"] ?? '').toString());
 }
 function LaunchTemplateOverrides_Parse(node: xmlP.XmlNode): s.LaunchTemplateOverrides {
   return {
@@ -10141,95 +10141,95 @@ function LaunchTemplateOverrides_Parse(node: xmlP.XmlNode): s.LaunchTemplateOver
 }
 
 function ModifyTransitGatewayOptions_Serialize(body: URLSearchParams, prefix: string, params: s.ModifyTransitGatewayOptions) {
-    if (params["AddTransitGatewayCidrBlocks"]) qsP.appendList(body, prefix+".item", params["AddTransitGatewayCidrBlocks"], {"entryPrefix":"."})
-    if (params["RemoveTransitGatewayCidrBlocks"]) qsP.appendList(body, prefix+".item", params["RemoveTransitGatewayCidrBlocks"], {"entryPrefix":"."})
-    if ("VpnEcmpSupport" in params) body.append(prefix+".VpnEcmpSupport", (params["VpnEcmpSupport"] ?? '').toString());
-    if ("DnsSupport" in params) body.append(prefix+".DnsSupport", (params["DnsSupport"] ?? '').toString());
-    if ("AutoAcceptSharedAttachments" in params) body.append(prefix+".AutoAcceptSharedAttachments", (params["AutoAcceptSharedAttachments"] ?? '').toString());
-    if ("DefaultRouteTableAssociation" in params) body.append(prefix+".DefaultRouteTableAssociation", (params["DefaultRouteTableAssociation"] ?? '').toString());
-    if ("AssociationDefaultRouteTableId" in params) body.append(prefix+".AssociationDefaultRouteTableId", (params["AssociationDefaultRouteTableId"] ?? '').toString());
-    if ("DefaultRouteTablePropagation" in params) body.append(prefix+".DefaultRouteTablePropagation", (params["DefaultRouteTablePropagation"] ?? '').toString());
-    if ("PropagationDefaultRouteTableId" in params) body.append(prefix+".PropagationDefaultRouteTableId", (params["PropagationDefaultRouteTableId"] ?? '').toString());
+  if (params["AddTransitGatewayCidrBlocks"]) qsP.appendList(body, prefix+".item", params["AddTransitGatewayCidrBlocks"], {"entryPrefix":"."})
+  if (params["RemoveTransitGatewayCidrBlocks"]) qsP.appendList(body, prefix+".item", params["RemoveTransitGatewayCidrBlocks"], {"entryPrefix":"."})
+  if ("VpnEcmpSupport" in params) body.append(prefix+".VpnEcmpSupport", (params["VpnEcmpSupport"] ?? '').toString());
+  if ("DnsSupport" in params) body.append(prefix+".DnsSupport", (params["DnsSupport"] ?? '').toString());
+  if ("AutoAcceptSharedAttachments" in params) body.append(prefix+".AutoAcceptSharedAttachments", (params["AutoAcceptSharedAttachments"] ?? '').toString());
+  if ("DefaultRouteTableAssociation" in params) body.append(prefix+".DefaultRouteTableAssociation", (params["DefaultRouteTableAssociation"] ?? '').toString());
+  if ("AssociationDefaultRouteTableId" in params) body.append(prefix+".AssociationDefaultRouteTableId", (params["AssociationDefaultRouteTableId"] ?? '').toString());
+  if ("DefaultRouteTablePropagation" in params) body.append(prefix+".DefaultRouteTablePropagation", (params["DefaultRouteTablePropagation"] ?? '').toString());
+  if ("PropagationDefaultRouteTableId" in params) body.append(prefix+".PropagationDefaultRouteTableId", (params["PropagationDefaultRouteTableId"] ?? '').toString());
 }
 
 function ModifyTransitGatewayVpcAttachmentRequestOptions_Serialize(body: URLSearchParams, prefix: string, params: s.ModifyTransitGatewayVpcAttachmentRequestOptions) {
-    if ("DnsSupport" in params) body.append(prefix+".DnsSupport", (params["DnsSupport"] ?? '').toString());
-    if ("Ipv6Support" in params) body.append(prefix+".Ipv6Support", (params["Ipv6Support"] ?? '').toString());
-    if ("ApplianceModeSupport" in params) body.append(prefix+".ApplianceModeSupport", (params["ApplianceModeSupport"] ?? '').toString());
+  if ("DnsSupport" in params) body.append(prefix+".DnsSupport", (params["DnsSupport"] ?? '').toString());
+  if ("Ipv6Support" in params) body.append(prefix+".Ipv6Support", (params["Ipv6Support"] ?? '').toString());
+  if ("ApplianceModeSupport" in params) body.append(prefix+".ApplianceModeSupport", (params["ApplianceModeSupport"] ?? '').toString());
 }
 
 function PeeringConnectionOptionsRequest_Serialize(body: URLSearchParams, prefix: string, params: s.PeeringConnectionOptionsRequest) {
-    if ("AllowDnsResolutionFromRemoteVpc" in params) body.append(prefix+".AllowDnsResolutionFromRemoteVpc", (params["AllowDnsResolutionFromRemoteVpc"] ?? '').toString());
-    if ("AllowEgressFromLocalClassicLinkToRemoteVpc" in params) body.append(prefix+".AllowEgressFromLocalClassicLinkToRemoteVpc", (params["AllowEgressFromLocalClassicLinkToRemoteVpc"] ?? '').toString());
-    if ("AllowEgressFromLocalVpcToRemoteClassicLink" in params) body.append(prefix+".AllowEgressFromLocalVpcToRemoteClassicLink", (params["AllowEgressFromLocalVpcToRemoteClassicLink"] ?? '').toString());
+  if ("AllowDnsResolutionFromRemoteVpc" in params) body.append(prefix+".AllowDnsResolutionFromRemoteVpc", (params["AllowDnsResolutionFromRemoteVpc"] ?? '').toString());
+  if ("AllowEgressFromLocalClassicLinkToRemoteVpc" in params) body.append(prefix+".AllowEgressFromLocalClassicLinkToRemoteVpc", (params["AllowEgressFromLocalClassicLinkToRemoteVpc"] ?? '').toString());
+  if ("AllowEgressFromLocalVpcToRemoteClassicLink" in params) body.append(prefix+".AllowEgressFromLocalVpcToRemoteClassicLink", (params["AllowEgressFromLocalVpcToRemoteClassicLink"] ?? '').toString());
 }
 
 function ModifyVpnTunnelOptionsSpecification_Serialize(body: URLSearchParams, prefix: string, params: s.ModifyVpnTunnelOptionsSpecification) {
-    if ("TunnelInsideCidr" in params) body.append(prefix+".TunnelInsideCidr", (params["TunnelInsideCidr"] ?? '').toString());
-    if ("TunnelInsideIpv6Cidr" in params) body.append(prefix+".TunnelInsideIpv6Cidr", (params["TunnelInsideIpv6Cidr"] ?? '').toString());
-    if ("PreSharedKey" in params) body.append(prefix+".PreSharedKey", (params["PreSharedKey"] ?? '').toString());
-    if ("Phase1LifetimeSeconds" in params) body.append(prefix+".Phase1LifetimeSeconds", (params["Phase1LifetimeSeconds"] ?? '').toString());
-    if ("Phase2LifetimeSeconds" in params) body.append(prefix+".Phase2LifetimeSeconds", (params["Phase2LifetimeSeconds"] ?? '').toString());
-    if ("RekeyMarginTimeSeconds" in params) body.append(prefix+".RekeyMarginTimeSeconds", (params["RekeyMarginTimeSeconds"] ?? '').toString());
-    if ("RekeyFuzzPercentage" in params) body.append(prefix+".RekeyFuzzPercentage", (params["RekeyFuzzPercentage"] ?? '').toString());
-    if ("ReplayWindowSize" in params) body.append(prefix+".ReplayWindowSize", (params["ReplayWindowSize"] ?? '').toString());
-    if ("DPDTimeoutSeconds" in params) body.append(prefix+".DPDTimeoutSeconds", (params["DPDTimeoutSeconds"] ?? '').toString());
-    if ("DPDTimeoutAction" in params) body.append(prefix+".DPDTimeoutAction", (params["DPDTimeoutAction"] ?? '').toString());
-    if (params["Phase1EncryptionAlgorithms"]) qsP.appendList(body, prefix+".Phase1EncryptionAlgorithm", params["Phase1EncryptionAlgorithms"], {"appender":Phase1EncryptionAlgorithmsRequestListValue_Serialize,"entryPrefix":"."})
-    if (params["Phase2EncryptionAlgorithms"]) qsP.appendList(body, prefix+".Phase2EncryptionAlgorithm", params["Phase2EncryptionAlgorithms"], {"appender":Phase2EncryptionAlgorithmsRequestListValue_Serialize,"entryPrefix":"."})
-    if (params["Phase1IntegrityAlgorithms"]) qsP.appendList(body, prefix+".Phase1IntegrityAlgorithm", params["Phase1IntegrityAlgorithms"], {"appender":Phase1IntegrityAlgorithmsRequestListValue_Serialize,"entryPrefix":"."})
-    if (params["Phase2IntegrityAlgorithms"]) qsP.appendList(body, prefix+".Phase2IntegrityAlgorithm", params["Phase2IntegrityAlgorithms"], {"appender":Phase2IntegrityAlgorithmsRequestListValue_Serialize,"entryPrefix":"."})
-    if (params["Phase1DHGroupNumbers"]) qsP.appendList(body, prefix+".Phase1DHGroupNumber", params["Phase1DHGroupNumbers"], {"appender":Phase1DHGroupNumbersRequestListValue_Serialize,"entryPrefix":"."})
-    if (params["Phase2DHGroupNumbers"]) qsP.appendList(body, prefix+".Phase2DHGroupNumber", params["Phase2DHGroupNumbers"], {"appender":Phase2DHGroupNumbersRequestListValue_Serialize,"entryPrefix":"."})
-    if (params["IKEVersions"]) qsP.appendList(body, prefix+".IKEVersion", params["IKEVersions"], {"appender":IKEVersionsRequestListValue_Serialize,"entryPrefix":"."})
-    if ("StartupAction" in params) body.append(prefix+".StartupAction", (params["StartupAction"] ?? '').toString());
+  if ("TunnelInsideCidr" in params) body.append(prefix+".TunnelInsideCidr", (params["TunnelInsideCidr"] ?? '').toString());
+  if ("TunnelInsideIpv6Cidr" in params) body.append(prefix+".TunnelInsideIpv6Cidr", (params["TunnelInsideIpv6Cidr"] ?? '').toString());
+  if ("PreSharedKey" in params) body.append(prefix+".PreSharedKey", (params["PreSharedKey"] ?? '').toString());
+  if ("Phase1LifetimeSeconds" in params) body.append(prefix+".Phase1LifetimeSeconds", (params["Phase1LifetimeSeconds"] ?? '').toString());
+  if ("Phase2LifetimeSeconds" in params) body.append(prefix+".Phase2LifetimeSeconds", (params["Phase2LifetimeSeconds"] ?? '').toString());
+  if ("RekeyMarginTimeSeconds" in params) body.append(prefix+".RekeyMarginTimeSeconds", (params["RekeyMarginTimeSeconds"] ?? '').toString());
+  if ("RekeyFuzzPercentage" in params) body.append(prefix+".RekeyFuzzPercentage", (params["RekeyFuzzPercentage"] ?? '').toString());
+  if ("ReplayWindowSize" in params) body.append(prefix+".ReplayWindowSize", (params["ReplayWindowSize"] ?? '').toString());
+  if ("DPDTimeoutSeconds" in params) body.append(prefix+".DPDTimeoutSeconds", (params["DPDTimeoutSeconds"] ?? '').toString());
+  if ("DPDTimeoutAction" in params) body.append(prefix+".DPDTimeoutAction", (params["DPDTimeoutAction"] ?? '').toString());
+  if (params["Phase1EncryptionAlgorithms"]) qsP.appendList(body, prefix+".Phase1EncryptionAlgorithm", params["Phase1EncryptionAlgorithms"], {"appender":Phase1EncryptionAlgorithmsRequestListValue_Serialize,"entryPrefix":"."})
+  if (params["Phase2EncryptionAlgorithms"]) qsP.appendList(body, prefix+".Phase2EncryptionAlgorithm", params["Phase2EncryptionAlgorithms"], {"appender":Phase2EncryptionAlgorithmsRequestListValue_Serialize,"entryPrefix":"."})
+  if (params["Phase1IntegrityAlgorithms"]) qsP.appendList(body, prefix+".Phase1IntegrityAlgorithm", params["Phase1IntegrityAlgorithms"], {"appender":Phase1IntegrityAlgorithmsRequestListValue_Serialize,"entryPrefix":"."})
+  if (params["Phase2IntegrityAlgorithms"]) qsP.appendList(body, prefix+".Phase2IntegrityAlgorithm", params["Phase2IntegrityAlgorithms"], {"appender":Phase2IntegrityAlgorithmsRequestListValue_Serialize,"entryPrefix":"."})
+  if (params["Phase1DHGroupNumbers"]) qsP.appendList(body, prefix+".Phase1DHGroupNumber", params["Phase1DHGroupNumbers"], {"appender":Phase1DHGroupNumbersRequestListValue_Serialize,"entryPrefix":"."})
+  if (params["Phase2DHGroupNumbers"]) qsP.appendList(body, prefix+".Phase2DHGroupNumber", params["Phase2DHGroupNumbers"], {"appender":Phase2DHGroupNumbersRequestListValue_Serialize,"entryPrefix":"."})
+  if (params["IKEVersions"]) qsP.appendList(body, prefix+".IKEVersion", params["IKEVersions"], {"appender":IKEVersionsRequestListValue_Serialize,"entryPrefix":"."})
+  if ("StartupAction" in params) body.append(prefix+".StartupAction", (params["StartupAction"] ?? '').toString());
 }
 
 function CidrAuthorizationContext_Serialize(body: URLSearchParams, prefix: string, params: s.CidrAuthorizationContext) {
-    body.append(prefix+".Message", (params["Message"] ?? '').toString());
-    body.append(prefix+".Signature", (params["Signature"] ?? '').toString());
+  body.append(prefix+".Message", (params["Message"] ?? '').toString());
+  body.append(prefix+".Signature", (params["Signature"] ?? '').toString());
 }
 
 function ReservedInstanceLimitPrice_Serialize(body: URLSearchParams, prefix: string, params: s.ReservedInstanceLimitPrice) {
-    if ("Amount" in params) body.append(prefix+".Amount", (params["Amount"] ?? '').toString());
-    if ("CurrencyCode" in params) body.append(prefix+".CurrencyCode", (params["CurrencyCode"] ?? '').toString());
+  if ("Amount" in params) body.append(prefix+".Amount", (params["Amount"] ?? '').toString());
+  if ("CurrencyCode" in params) body.append(prefix+".CurrencyCode", (params["CurrencyCode"] ?? '').toString());
 }
 
 function PurchaseRequest_Serialize(body: URLSearchParams, prefix: string, params: s.PurchaseRequest) {
-    body.append(prefix+".InstanceCount", (params["InstanceCount"] ?? '').toString());
-    body.append(prefix+".PurchaseToken", (params["PurchaseToken"] ?? '').toString());
+  body.append(prefix+".InstanceCount", (params["InstanceCount"] ?? '').toString());
+  body.append(prefix+".PurchaseToken", (params["PurchaseToken"] ?? '').toString());
 }
 
 function RegisterInstanceTagAttributeRequest_Serialize(body: URLSearchParams, prefix: string, params: s.RegisterInstanceTagAttributeRequest) {
-    if ("IncludeAllTagsOfInstance" in params) body.append(prefix+".IncludeAllTagsOfInstance", (params["IncludeAllTagsOfInstance"] ?? '').toString());
-    if (params["InstanceTagKeys"]) qsP.appendList(body, prefix+".InstanceTagKey", params["InstanceTagKeys"], {"entryPrefix":"."})
+  if ("IncludeAllTagsOfInstance" in params) body.append(prefix+".IncludeAllTagsOfInstance", (params["IncludeAllTagsOfInstance"] ?? '').toString());
+  if (params["InstanceTagKeys"]) qsP.appendList(body, prefix+".InstanceTagKey", params["InstanceTagKeys"], {"entryPrefix":"."})
 }
 
 function SpotFleetRequestConfigData_Serialize(body: URLSearchParams, prefix: string, params: s.SpotFleetRequestConfigData) {
-    if ("AllocationStrategy" in params) body.append(prefix+".AllocationStrategy", (params["AllocationStrategy"] ?? '').toString());
-    if ("OnDemandAllocationStrategy" in params) body.append(prefix+".OnDemandAllocationStrategy", (params["OnDemandAllocationStrategy"] ?? '').toString());
-    if (params["SpotMaintenanceStrategies"] != null) SpotMaintenanceStrategies_Serialize(body, prefix+".SpotMaintenanceStrategies", params["SpotMaintenanceStrategies"]);
-    if ("ClientToken" in params) body.append(prefix+".ClientToken", (params["ClientToken"] ?? '').toString());
-    if ("ExcessCapacityTerminationPolicy" in params) body.append(prefix+".ExcessCapacityTerminationPolicy", (params["ExcessCapacityTerminationPolicy"] ?? '').toString());
-    if ("FulfilledCapacity" in params) body.append(prefix+".FulfilledCapacity", (params["FulfilledCapacity"] ?? '').toString());
-    if ("OnDemandFulfilledCapacity" in params) body.append(prefix+".OnDemandFulfilledCapacity", (params["OnDemandFulfilledCapacity"] ?? '').toString());
-    body.append(prefix+".IamFleetRole", (params["IamFleetRole"] ?? '').toString());
-    if (params["LaunchSpecifications"]) qsP.appendList(body, prefix+".launchSpecifications", params["LaunchSpecifications"], {"appender":SpotFleetLaunchSpecification_Serialize,"entryPrefix":"."})
-    if (params["LaunchTemplateConfigs"]) qsP.appendList(body, prefix+".launchTemplateConfigs", params["LaunchTemplateConfigs"], {"appender":LaunchTemplateConfig_Serialize,"entryPrefix":"."})
-    if ("SpotPrice" in params) body.append(prefix+".SpotPrice", (params["SpotPrice"] ?? '').toString());
-    body.append(prefix+".TargetCapacity", (params["TargetCapacity"] ?? '').toString());
-    if ("OnDemandTargetCapacity" in params) body.append(prefix+".OnDemandTargetCapacity", (params["OnDemandTargetCapacity"] ?? '').toString());
-    if ("OnDemandMaxTotalPrice" in params) body.append(prefix+".OnDemandMaxTotalPrice", (params["OnDemandMaxTotalPrice"] ?? '').toString());
-    if ("SpotMaxTotalPrice" in params) body.append(prefix+".SpotMaxTotalPrice", (params["SpotMaxTotalPrice"] ?? '').toString());
-    if ("TerminateInstancesWithExpiration" in params) body.append(prefix+".TerminateInstancesWithExpiration", (params["TerminateInstancesWithExpiration"] ?? '').toString());
-    if ("Type" in params) body.append(prefix+".Type", (params["Type"] ?? '').toString());
-    if ("ValidFrom" in params) body.append(prefix+".ValidFrom", qsP.encodeDate_iso8601(params["ValidFrom"]));
-    if ("ValidUntil" in params) body.append(prefix+".ValidUntil", qsP.encodeDate_iso8601(params["ValidUntil"]));
-    if ("ReplaceUnhealthyInstances" in params) body.append(prefix+".ReplaceUnhealthyInstances", (params["ReplaceUnhealthyInstances"] ?? '').toString());
-    if ("InstanceInterruptionBehavior" in params) body.append(prefix+".InstanceInterruptionBehavior", (params["InstanceInterruptionBehavior"] ?? '').toString());
-    if (params["LoadBalancersConfig"] != null) LoadBalancersConfig_Serialize(body, prefix+".LoadBalancersConfig", params["LoadBalancersConfig"]);
-    if ("InstancePoolsToUseCount" in params) body.append(prefix+".InstancePoolsToUseCount", (params["InstancePoolsToUseCount"] ?? '').toString());
-    if (params["TagSpecifications"]) qsP.appendList(body, prefix+".TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
+  if ("AllocationStrategy" in params) body.append(prefix+".AllocationStrategy", (params["AllocationStrategy"] ?? '').toString());
+  if ("OnDemandAllocationStrategy" in params) body.append(prefix+".OnDemandAllocationStrategy", (params["OnDemandAllocationStrategy"] ?? '').toString());
+  if (params["SpotMaintenanceStrategies"] != null) SpotMaintenanceStrategies_Serialize(body, prefix+".SpotMaintenanceStrategies", params["SpotMaintenanceStrategies"]);
+  if ("ClientToken" in params) body.append(prefix+".ClientToken", (params["ClientToken"] ?? '').toString());
+  if ("ExcessCapacityTerminationPolicy" in params) body.append(prefix+".ExcessCapacityTerminationPolicy", (params["ExcessCapacityTerminationPolicy"] ?? '').toString());
+  if ("FulfilledCapacity" in params) body.append(prefix+".FulfilledCapacity", (params["FulfilledCapacity"] ?? '').toString());
+  if ("OnDemandFulfilledCapacity" in params) body.append(prefix+".OnDemandFulfilledCapacity", (params["OnDemandFulfilledCapacity"] ?? '').toString());
+  body.append(prefix+".IamFleetRole", (params["IamFleetRole"] ?? '').toString());
+  if (params["LaunchSpecifications"]) qsP.appendList(body, prefix+".launchSpecifications", params["LaunchSpecifications"], {"appender":SpotFleetLaunchSpecification_Serialize,"entryPrefix":"."})
+  if (params["LaunchTemplateConfigs"]) qsP.appendList(body, prefix+".launchTemplateConfigs", params["LaunchTemplateConfigs"], {"appender":LaunchTemplateConfig_Serialize,"entryPrefix":"."})
+  if ("SpotPrice" in params) body.append(prefix+".SpotPrice", (params["SpotPrice"] ?? '').toString());
+  body.append(prefix+".TargetCapacity", (params["TargetCapacity"] ?? '').toString());
+  if ("OnDemandTargetCapacity" in params) body.append(prefix+".OnDemandTargetCapacity", (params["OnDemandTargetCapacity"] ?? '').toString());
+  if ("OnDemandMaxTotalPrice" in params) body.append(prefix+".OnDemandMaxTotalPrice", (params["OnDemandMaxTotalPrice"] ?? '').toString());
+  if ("SpotMaxTotalPrice" in params) body.append(prefix+".SpotMaxTotalPrice", (params["SpotMaxTotalPrice"] ?? '').toString());
+  if ("TerminateInstancesWithExpiration" in params) body.append(prefix+".TerminateInstancesWithExpiration", (params["TerminateInstancesWithExpiration"] ?? '').toString());
+  if ("Type" in params) body.append(prefix+".Type", (params["Type"] ?? '').toString());
+  if ("ValidFrom" in params) body.append(prefix+".ValidFrom", qsP.encodeDate_iso8601(params["ValidFrom"]));
+  if ("ValidUntil" in params) body.append(prefix+".ValidUntil", qsP.encodeDate_iso8601(params["ValidUntil"]));
+  if ("ReplaceUnhealthyInstances" in params) body.append(prefix+".ReplaceUnhealthyInstances", (params["ReplaceUnhealthyInstances"] ?? '').toString());
+  if ("InstanceInterruptionBehavior" in params) body.append(prefix+".InstanceInterruptionBehavior", (params["InstanceInterruptionBehavior"] ?? '').toString());
+  if (params["LoadBalancersConfig"] != null) LoadBalancersConfig_Serialize(body, prefix+".LoadBalancersConfig", params["LoadBalancersConfig"]);
+  if ("InstancePoolsToUseCount" in params) body.append(prefix+".InstancePoolsToUseCount", (params["InstancePoolsToUseCount"] ?? '').toString());
+  if (params["TagSpecifications"]) qsP.appendList(body, prefix+".TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
 }
 function SpotFleetRequestConfigData_Parse(node: xmlP.XmlNode): s.SpotFleetRequestConfigData {
   return {
@@ -10261,7 +10261,7 @@ function SpotFleetRequestConfigData_Parse(node: xmlP.XmlNode): s.SpotFleetReques
 }
 
 function SpotMaintenanceStrategies_Serialize(body: URLSearchParams, prefix: string, params: s.SpotMaintenanceStrategies) {
-    if (params["CapacityRebalance"] != null) SpotCapacityRebalance_Serialize(body, prefix+".CapacityRebalance", params["CapacityRebalance"]);
+  if (params["CapacityRebalance"] != null) SpotCapacityRebalance_Serialize(body, prefix+".CapacityRebalance", params["CapacityRebalance"]);
 }
 function SpotMaintenanceStrategies_Parse(node: xmlP.XmlNode): s.SpotMaintenanceStrategies {
   return {
@@ -10270,7 +10270,7 @@ function SpotMaintenanceStrategies_Parse(node: xmlP.XmlNode): s.SpotMaintenanceS
 }
 
 function SpotCapacityRebalance_Serialize(body: URLSearchParams, prefix: string, params: s.SpotCapacityRebalance) {
-    if ("ReplacementStrategy" in params) body.append(prefix+".ReplacementStrategy", (params["ReplacementStrategy"] ?? '').toString());
+  if ("ReplacementStrategy" in params) body.append(prefix+".ReplacementStrategy", (params["ReplacementStrategy"] ?? '').toString());
 }
 function SpotCapacityRebalance_Parse(node: xmlP.XmlNode): s.SpotCapacityRebalance {
   return {
@@ -10279,24 +10279,24 @@ function SpotCapacityRebalance_Parse(node: xmlP.XmlNode): s.SpotCapacityRebalanc
 }
 
 function SpotFleetLaunchSpecification_Serialize(body: URLSearchParams, prefix: string, params: s.SpotFleetLaunchSpecification) {
-    if (params["SecurityGroups"]) qsP.appendList(body, prefix+".groupSet", params["SecurityGroups"], {"appender":GroupIdentifier_Serialize,"entryPrefix":"."})
-    if ("AddressingType" in params) body.append(prefix+".AddressingType", (params["AddressingType"] ?? '').toString());
-    if (params["BlockDeviceMappings"]) qsP.appendList(body, prefix+".blockDeviceMapping", params["BlockDeviceMappings"], {"appender":BlockDeviceMapping_Serialize,"entryPrefix":"."})
-    if ("EbsOptimized" in params) body.append(prefix+".EbsOptimized", (params["EbsOptimized"] ?? '').toString());
-    if (params["IamInstanceProfile"] != null) IamInstanceProfileSpecification_Serialize(body, prefix+".IamInstanceProfile", params["IamInstanceProfile"]);
-    if ("ImageId" in params) body.append(prefix+".ImageId", (params["ImageId"] ?? '').toString());
-    if ("InstanceType" in params) body.append(prefix+".InstanceType", (params["InstanceType"] ?? '').toString());
-    if ("KernelId" in params) body.append(prefix+".KernelId", (params["KernelId"] ?? '').toString());
-    if ("KeyName" in params) body.append(prefix+".KeyName", (params["KeyName"] ?? '').toString());
-    if (params["Monitoring"] != null) SpotFleetMonitoring_Serialize(body, prefix+".Monitoring", params["Monitoring"]);
-    if (params["NetworkInterfaces"]) qsP.appendList(body, prefix+".networkInterfaceSet", params["NetworkInterfaces"], {"appender":InstanceNetworkInterfaceSpecification_Serialize,"entryPrefix":"."})
-    if (params["Placement"] != null) SpotPlacement_Serialize(body, prefix+".Placement", params["Placement"]);
-    if ("RamdiskId" in params) body.append(prefix+".RamdiskId", (params["RamdiskId"] ?? '').toString());
-    if ("SpotPrice" in params) body.append(prefix+".SpotPrice", (params["SpotPrice"] ?? '').toString());
-    if ("SubnetId" in params) body.append(prefix+".SubnetId", (params["SubnetId"] ?? '').toString());
-    if ("UserData" in params) body.append(prefix+".UserData", (params["UserData"] ?? '').toString());
-    if ("WeightedCapacity" in params) body.append(prefix+".WeightedCapacity", (params["WeightedCapacity"] ?? '').toString());
-    if (params["TagSpecifications"]) qsP.appendList(body, prefix+".tagSpecificationSet", params["TagSpecifications"], {"appender":SpotFleetTagSpecification_Serialize,"entryPrefix":"."})
+  if (params["SecurityGroups"]) qsP.appendList(body, prefix+".groupSet", params["SecurityGroups"], {"appender":GroupIdentifier_Serialize,"entryPrefix":"."})
+  if ("AddressingType" in params) body.append(prefix+".AddressingType", (params["AddressingType"] ?? '').toString());
+  if (params["BlockDeviceMappings"]) qsP.appendList(body, prefix+".blockDeviceMapping", params["BlockDeviceMappings"], {"appender":BlockDeviceMapping_Serialize,"entryPrefix":"."})
+  if ("EbsOptimized" in params) body.append(prefix+".EbsOptimized", (params["EbsOptimized"] ?? '').toString());
+  if (params["IamInstanceProfile"] != null) IamInstanceProfileSpecification_Serialize(body, prefix+".IamInstanceProfile", params["IamInstanceProfile"]);
+  if ("ImageId" in params) body.append(prefix+".ImageId", (params["ImageId"] ?? '').toString());
+  if ("InstanceType" in params) body.append(prefix+".InstanceType", (params["InstanceType"] ?? '').toString());
+  if ("KernelId" in params) body.append(prefix+".KernelId", (params["KernelId"] ?? '').toString());
+  if ("KeyName" in params) body.append(prefix+".KeyName", (params["KeyName"] ?? '').toString());
+  if (params["Monitoring"] != null) SpotFleetMonitoring_Serialize(body, prefix+".Monitoring", params["Monitoring"]);
+  if (params["NetworkInterfaces"]) qsP.appendList(body, prefix+".networkInterfaceSet", params["NetworkInterfaces"], {"appender":InstanceNetworkInterfaceSpecification_Serialize,"entryPrefix":"."})
+  if (params["Placement"] != null) SpotPlacement_Serialize(body, prefix+".Placement", params["Placement"]);
+  if ("RamdiskId" in params) body.append(prefix+".RamdiskId", (params["RamdiskId"] ?? '').toString());
+  if ("SpotPrice" in params) body.append(prefix+".SpotPrice", (params["SpotPrice"] ?? '').toString());
+  if ("SubnetId" in params) body.append(prefix+".SubnetId", (params["SubnetId"] ?? '').toString());
+  if ("UserData" in params) body.append(prefix+".UserData", (params["UserData"] ?? '').toString());
+  if ("WeightedCapacity" in params) body.append(prefix+".WeightedCapacity", (params["WeightedCapacity"] ?? '').toString());
+  if (params["TagSpecifications"]) qsP.appendList(body, prefix+".tagSpecificationSet", params["TagSpecifications"], {"appender":SpotFleetTagSpecification_Serialize,"entryPrefix":"."})
 }
 function SpotFleetLaunchSpecification_Parse(node: xmlP.XmlNode): s.SpotFleetLaunchSpecification {
   return {
@@ -10322,8 +10322,8 @@ function SpotFleetLaunchSpecification_Parse(node: xmlP.XmlNode): s.SpotFleetLaun
 }
 
 function GroupIdentifier_Serialize(body: URLSearchParams, prefix: string, params: s.GroupIdentifier) {
-    if ("GroupName" in params) body.append(prefix+".GroupName", (params["GroupName"] ?? '').toString());
-    if ("GroupId" in params) body.append(prefix+".GroupId", (params["GroupId"] ?? '').toString());
+  if ("GroupName" in params) body.append(prefix+".GroupName", (params["GroupName"] ?? '').toString());
+  if ("GroupId" in params) body.append(prefix+".GroupId", (params["GroupId"] ?? '').toString());
 }
 function GroupIdentifier_Parse(node: xmlP.XmlNode): s.GroupIdentifier {
   return {
@@ -10333,7 +10333,7 @@ function GroupIdentifier_Parse(node: xmlP.XmlNode): s.GroupIdentifier {
 }
 
 function SpotFleetMonitoring_Serialize(body: URLSearchParams, prefix: string, params: s.SpotFleetMonitoring) {
-    if ("Enabled" in params) body.append(prefix+".Enabled", (params["Enabled"] ?? '').toString());
+  if ("Enabled" in params) body.append(prefix+".Enabled", (params["Enabled"] ?? '').toString());
 }
 function SpotFleetMonitoring_Parse(node: xmlP.XmlNode): s.SpotFleetMonitoring {
   return {
@@ -10342,21 +10342,21 @@ function SpotFleetMonitoring_Parse(node: xmlP.XmlNode): s.SpotFleetMonitoring {
 }
 
 function InstanceNetworkInterfaceSpecification_Serialize(body: URLSearchParams, prefix: string, params: s.InstanceNetworkInterfaceSpecification) {
-    if ("AssociatePublicIpAddress" in params) body.append(prefix+".AssociatePublicIpAddress", (params["AssociatePublicIpAddress"] ?? '').toString());
-    if ("DeleteOnTermination" in params) body.append(prefix+".DeleteOnTermination", (params["DeleteOnTermination"] ?? '').toString());
-    if ("Description" in params) body.append(prefix+".Description", (params["Description"] ?? '').toString());
-    if ("DeviceIndex" in params) body.append(prefix+".DeviceIndex", (params["DeviceIndex"] ?? '').toString());
-    if (params["Groups"]) qsP.appendList(body, prefix+".SecurityGroupId", params["Groups"], {"entryPrefix":"."})
-    if ("Ipv6AddressCount" in params) body.append(prefix+".Ipv6AddressCount", (params["Ipv6AddressCount"] ?? '').toString());
-    if (params["Ipv6Addresses"]) qsP.appendList(body, prefix+".Ipv6Addresses", params["Ipv6Addresses"], {"appender":InstanceIpv6Address_Serialize,"entryPrefix":"."})
-    if ("NetworkInterfaceId" in params) body.append(prefix+".NetworkInterfaceId", (params["NetworkInterfaceId"] ?? '').toString());
-    if ("PrivateIpAddress" in params) body.append(prefix+".PrivateIpAddress", (params["PrivateIpAddress"] ?? '').toString());
-    if (params["PrivateIpAddresses"]) qsP.appendList(body, prefix+".PrivateIpAddresses", params["PrivateIpAddresses"], {"appender":PrivateIpAddressSpecification_Serialize,"entryPrefix":"."})
-    if ("SecondaryPrivateIpAddressCount" in params) body.append(prefix+".SecondaryPrivateIpAddressCount", (params["SecondaryPrivateIpAddressCount"] ?? '').toString());
-    if ("SubnetId" in params) body.append(prefix+".SubnetId", (params["SubnetId"] ?? '').toString());
-    if ("AssociateCarrierIpAddress" in params) body.append(prefix+".AssociateCarrierIpAddress", (params["AssociateCarrierIpAddress"] ?? '').toString());
-    if ("InterfaceType" in params) body.append(prefix+".InterfaceType", (params["InterfaceType"] ?? '').toString());
-    if ("NetworkCardIndex" in params) body.append(prefix+".NetworkCardIndex", (params["NetworkCardIndex"] ?? '').toString());
+  if ("AssociatePublicIpAddress" in params) body.append(prefix+".AssociatePublicIpAddress", (params["AssociatePublicIpAddress"] ?? '').toString());
+  if ("DeleteOnTermination" in params) body.append(prefix+".DeleteOnTermination", (params["DeleteOnTermination"] ?? '').toString());
+  if ("Description" in params) body.append(prefix+".Description", (params["Description"] ?? '').toString());
+  if ("DeviceIndex" in params) body.append(prefix+".DeviceIndex", (params["DeviceIndex"] ?? '').toString());
+  if (params["Groups"]) qsP.appendList(body, prefix+".SecurityGroupId", params["Groups"], {"entryPrefix":"."})
+  if ("Ipv6AddressCount" in params) body.append(prefix+".Ipv6AddressCount", (params["Ipv6AddressCount"] ?? '').toString());
+  if (params["Ipv6Addresses"]) qsP.appendList(body, prefix+".Ipv6Addresses", params["Ipv6Addresses"], {"appender":InstanceIpv6Address_Serialize,"entryPrefix":"."})
+  if ("NetworkInterfaceId" in params) body.append(prefix+".NetworkInterfaceId", (params["NetworkInterfaceId"] ?? '').toString());
+  if ("PrivateIpAddress" in params) body.append(prefix+".PrivateIpAddress", (params["PrivateIpAddress"] ?? '').toString());
+  if (params["PrivateIpAddresses"]) qsP.appendList(body, prefix+".PrivateIpAddresses", params["PrivateIpAddresses"], {"appender":PrivateIpAddressSpecification_Serialize,"entryPrefix":"."})
+  if ("SecondaryPrivateIpAddressCount" in params) body.append(prefix+".SecondaryPrivateIpAddressCount", (params["SecondaryPrivateIpAddressCount"] ?? '').toString());
+  if ("SubnetId" in params) body.append(prefix+".SubnetId", (params["SubnetId"] ?? '').toString());
+  if ("AssociateCarrierIpAddress" in params) body.append(prefix+".AssociateCarrierIpAddress", (params["AssociateCarrierIpAddress"] ?? '').toString());
+  if ("InterfaceType" in params) body.append(prefix+".InterfaceType", (params["InterfaceType"] ?? '').toString());
+  if ("NetworkCardIndex" in params) body.append(prefix+".NetworkCardIndex", (params["NetworkCardIndex"] ?? '').toString());
 }
 function InstanceNetworkInterfaceSpecification_Parse(node: xmlP.XmlNode): s.InstanceNetworkInterfaceSpecification {
   return {
@@ -10381,9 +10381,9 @@ function InstanceNetworkInterfaceSpecification_Parse(node: xmlP.XmlNode): s.Inst
 }
 
 function SpotPlacement_Serialize(body: URLSearchParams, prefix: string, params: s.SpotPlacement) {
-    if ("AvailabilityZone" in params) body.append(prefix+".AvailabilityZone", (params["AvailabilityZone"] ?? '').toString());
-    if ("GroupName" in params) body.append(prefix+".GroupName", (params["GroupName"] ?? '').toString());
-    if ("Tenancy" in params) body.append(prefix+".Tenancy", (params["Tenancy"] ?? '').toString());
+  if ("AvailabilityZone" in params) body.append(prefix+".AvailabilityZone", (params["AvailabilityZone"] ?? '').toString());
+  if ("GroupName" in params) body.append(prefix+".GroupName", (params["GroupName"] ?? '').toString());
+  if ("Tenancy" in params) body.append(prefix+".Tenancy", (params["Tenancy"] ?? '').toString());
 }
 function SpotPlacement_Parse(node: xmlP.XmlNode): s.SpotPlacement {
   return {
@@ -10394,8 +10394,8 @@ function SpotPlacement_Parse(node: xmlP.XmlNode): s.SpotPlacement {
 }
 
 function SpotFleetTagSpecification_Serialize(body: URLSearchParams, prefix: string, params: s.SpotFleetTagSpecification) {
-    if ("ResourceType" in params) body.append(prefix+".ResourceType", (params["ResourceType"] ?? '').toString());
-    if (params["Tags"]) qsP.appendList(body, prefix+".tag", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":"."})
+  if ("ResourceType" in params) body.append(prefix+".ResourceType", (params["ResourceType"] ?? '').toString());
+  if (params["Tags"]) qsP.appendList(body, prefix+".tag", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":"."})
 }
 function SpotFleetTagSpecification_Parse(node: xmlP.XmlNode): s.SpotFleetTagSpecification {
   return {
@@ -10405,8 +10405,8 @@ function SpotFleetTagSpecification_Parse(node: xmlP.XmlNode): s.SpotFleetTagSpec
 }
 
 function LoadBalancersConfig_Serialize(body: URLSearchParams, prefix: string, params: s.LoadBalancersConfig) {
-    if (params["ClassicLoadBalancersConfig"] != null) ClassicLoadBalancersConfig_Serialize(body, prefix+".ClassicLoadBalancersConfig", params["ClassicLoadBalancersConfig"]);
-    if (params["TargetGroupsConfig"] != null) TargetGroupsConfig_Serialize(body, prefix+".TargetGroupsConfig", params["TargetGroupsConfig"]);
+  if (params["ClassicLoadBalancersConfig"] != null) ClassicLoadBalancersConfig_Serialize(body, prefix+".ClassicLoadBalancersConfig", params["ClassicLoadBalancersConfig"]);
+  if (params["TargetGroupsConfig"] != null) TargetGroupsConfig_Serialize(body, prefix+".TargetGroupsConfig", params["TargetGroupsConfig"]);
 }
 function LoadBalancersConfig_Parse(node: xmlP.XmlNode): s.LoadBalancersConfig {
   return {
@@ -10416,7 +10416,7 @@ function LoadBalancersConfig_Parse(node: xmlP.XmlNode): s.LoadBalancersConfig {
 }
 
 function ClassicLoadBalancersConfig_Serialize(body: URLSearchParams, prefix: string, params: s.ClassicLoadBalancersConfig) {
-    if (params["ClassicLoadBalancers"]) qsP.appendList(body, prefix+".classicLoadBalancers", params["ClassicLoadBalancers"], {"appender":ClassicLoadBalancer_Serialize,"entryPrefix":"."})
+  if (params["ClassicLoadBalancers"]) qsP.appendList(body, prefix+".classicLoadBalancers", params["ClassicLoadBalancers"], {"appender":ClassicLoadBalancer_Serialize,"entryPrefix":"."})
 }
 function ClassicLoadBalancersConfig_Parse(node: xmlP.XmlNode): s.ClassicLoadBalancersConfig {
   return {
@@ -10425,7 +10425,7 @@ function ClassicLoadBalancersConfig_Parse(node: xmlP.XmlNode): s.ClassicLoadBala
 }
 
 function ClassicLoadBalancer_Serialize(body: URLSearchParams, prefix: string, params: s.ClassicLoadBalancer) {
-    if ("Name" in params) body.append(prefix+".Name", (params["Name"] ?? '').toString());
+  if ("Name" in params) body.append(prefix+".Name", (params["Name"] ?? '').toString());
 }
 function ClassicLoadBalancer_Parse(node: xmlP.XmlNode): s.ClassicLoadBalancer {
   return {
@@ -10434,7 +10434,7 @@ function ClassicLoadBalancer_Parse(node: xmlP.XmlNode): s.ClassicLoadBalancer {
 }
 
 function TargetGroupsConfig_Serialize(body: URLSearchParams, prefix: string, params: s.TargetGroupsConfig) {
-    if (params["TargetGroups"]) qsP.appendList(body, prefix+".targetGroups", params["TargetGroups"], {"appender":TargetGroup_Serialize,"entryPrefix":"."})
+  if (params["TargetGroups"]) qsP.appendList(body, prefix+".targetGroups", params["TargetGroups"], {"appender":TargetGroup_Serialize,"entryPrefix":"."})
 }
 function TargetGroupsConfig_Parse(node: xmlP.XmlNode): s.TargetGroupsConfig {
   return {
@@ -10443,7 +10443,7 @@ function TargetGroupsConfig_Parse(node: xmlP.XmlNode): s.TargetGroupsConfig {
 }
 
 function TargetGroup_Serialize(body: URLSearchParams, prefix: string, params: s.TargetGroup) {
-    if ("Arn" in params) body.append(prefix+".Arn", (params["Arn"] ?? '').toString());
+  if ("Arn" in params) body.append(prefix+".Arn", (params["Arn"] ?? '').toString());
 }
 function TargetGroup_Parse(node: xmlP.XmlNode): s.TargetGroup {
   return {
@@ -10452,26 +10452,26 @@ function TargetGroup_Parse(node: xmlP.XmlNode): s.TargetGroup {
 }
 
 function RequestSpotLaunchSpecification_Serialize(body: URLSearchParams, prefix: string, params: s.RequestSpotLaunchSpecification) {
-    if (params["SecurityGroupIds"]) qsP.appendList(body, prefix+".SecurityGroupId", params["SecurityGroupIds"], {"entryPrefix":"."})
-    if (params["SecurityGroups"]) qsP.appendList(body, prefix+".SecurityGroup", params["SecurityGroups"], {"entryPrefix":"."})
-    if ("AddressingType" in params) body.append(prefix+".AddressingType", (params["AddressingType"] ?? '').toString());
-    if (params["BlockDeviceMappings"]) qsP.appendList(body, prefix+".blockDeviceMapping", params["BlockDeviceMappings"], {"appender":BlockDeviceMapping_Serialize,"entryPrefix":"."})
-    if ("EbsOptimized" in params) body.append(prefix+".EbsOptimized", (params["EbsOptimized"] ?? '').toString());
-    if (params["IamInstanceProfile"] != null) IamInstanceProfileSpecification_Serialize(body, prefix+".IamInstanceProfile", params["IamInstanceProfile"]);
-    if ("ImageId" in params) body.append(prefix+".ImageId", (params["ImageId"] ?? '').toString());
-    if ("InstanceType" in params) body.append(prefix+".InstanceType", (params["InstanceType"] ?? '').toString());
-    if ("KernelId" in params) body.append(prefix+".KernelId", (params["KernelId"] ?? '').toString());
-    if ("KeyName" in params) body.append(prefix+".KeyName", (params["KeyName"] ?? '').toString());
-    if (params["Monitoring"] != null) RunInstancesMonitoringEnabled_Serialize(body, prefix+".Monitoring", params["Monitoring"]);
-    if (params["NetworkInterfaces"]) qsP.appendList(body, prefix+".NetworkInterface", params["NetworkInterfaces"], {"appender":InstanceNetworkInterfaceSpecification_Serialize,"entryPrefix":"."})
-    if (params["Placement"] != null) SpotPlacement_Serialize(body, prefix+".Placement", params["Placement"]);
-    if ("RamdiskId" in params) body.append(prefix+".RamdiskId", (params["RamdiskId"] ?? '').toString());
-    if ("SubnetId" in params) body.append(prefix+".SubnetId", (params["SubnetId"] ?? '').toString());
-    if ("UserData" in params) body.append(prefix+".UserData", (params["UserData"] ?? '').toString());
+  if (params["SecurityGroupIds"]) qsP.appendList(body, prefix+".SecurityGroupId", params["SecurityGroupIds"], {"entryPrefix":"."})
+  if (params["SecurityGroups"]) qsP.appendList(body, prefix+".SecurityGroup", params["SecurityGroups"], {"entryPrefix":"."})
+  if ("AddressingType" in params) body.append(prefix+".AddressingType", (params["AddressingType"] ?? '').toString());
+  if (params["BlockDeviceMappings"]) qsP.appendList(body, prefix+".blockDeviceMapping", params["BlockDeviceMappings"], {"appender":BlockDeviceMapping_Serialize,"entryPrefix":"."})
+  if ("EbsOptimized" in params) body.append(prefix+".EbsOptimized", (params["EbsOptimized"] ?? '').toString());
+  if (params["IamInstanceProfile"] != null) IamInstanceProfileSpecification_Serialize(body, prefix+".IamInstanceProfile", params["IamInstanceProfile"]);
+  if ("ImageId" in params) body.append(prefix+".ImageId", (params["ImageId"] ?? '').toString());
+  if ("InstanceType" in params) body.append(prefix+".InstanceType", (params["InstanceType"] ?? '').toString());
+  if ("KernelId" in params) body.append(prefix+".KernelId", (params["KernelId"] ?? '').toString());
+  if ("KeyName" in params) body.append(prefix+".KeyName", (params["KeyName"] ?? '').toString());
+  if (params["Monitoring"] != null) RunInstancesMonitoringEnabled_Serialize(body, prefix+".Monitoring", params["Monitoring"]);
+  if (params["NetworkInterfaces"]) qsP.appendList(body, prefix+".NetworkInterface", params["NetworkInterfaces"], {"appender":InstanceNetworkInterfaceSpecification_Serialize,"entryPrefix":"."})
+  if (params["Placement"] != null) SpotPlacement_Serialize(body, prefix+".Placement", params["Placement"]);
+  if ("RamdiskId" in params) body.append(prefix+".RamdiskId", (params["RamdiskId"] ?? '').toString());
+  if ("SubnetId" in params) body.append(prefix+".SubnetId", (params["SubnetId"] ?? '').toString());
+  if ("UserData" in params) body.append(prefix+".UserData", (params["UserData"] ?? '').toString());
 }
 
 function RunInstancesMonitoringEnabled_Serialize(body: URLSearchParams, prefix: string, params: s.RunInstancesMonitoringEnabled) {
-    body.append(prefix+".Enabled", (params["Enabled"] ?? '').toString());
+  body.append(prefix+".Enabled", (params["Enabled"] ?? '').toString());
 }
 function RunInstancesMonitoringEnabled_Parse(node: xmlP.XmlNode): s.RunInstancesMonitoringEnabled {
   return {
@@ -10480,121 +10480,121 @@ function RunInstancesMonitoringEnabled_Parse(node: xmlP.XmlNode): s.RunInstances
 }
 
 function ElasticInferenceAccelerator_Serialize(body: URLSearchParams, prefix: string, params: s.ElasticInferenceAccelerator) {
-    body.append(prefix+".Type", (params["Type"] ?? '').toString());
-    if ("Count" in params) body.append(prefix+".Count", (params["Count"] ?? '').toString());
+  body.append(prefix+".Type", (params["Type"] ?? '').toString());
+  if ("Count" in params) body.append(prefix+".Count", (params["Count"] ?? '').toString());
 }
 
 function LaunchTemplateSpecification_Serialize(body: URLSearchParams, prefix: string, params: s.LaunchTemplateSpecification) {
-    if ("LaunchTemplateId" in params) body.append(prefix+".LaunchTemplateId", (params["LaunchTemplateId"] ?? '').toString());
-    if ("LaunchTemplateName" in params) body.append(prefix+".LaunchTemplateName", (params["LaunchTemplateName"] ?? '').toString());
-    if ("Version" in params) body.append(prefix+".Version", (params["Version"] ?? '').toString());
+  if ("LaunchTemplateId" in params) body.append(prefix+".LaunchTemplateId", (params["LaunchTemplateId"] ?? '').toString());
+  if ("LaunchTemplateName" in params) body.append(prefix+".LaunchTemplateName", (params["LaunchTemplateName"] ?? '').toString());
+  if ("Version" in params) body.append(prefix+".Version", (params["Version"] ?? '').toString());
 }
 
 function InstanceMarketOptionsRequest_Serialize(body: URLSearchParams, prefix: string, params: s.InstanceMarketOptionsRequest) {
-    if ("MarketType" in params) body.append(prefix+".MarketType", (params["MarketType"] ?? '').toString());
-    if (params["SpotOptions"] != null) SpotMarketOptions_Serialize(body, prefix+".SpotOptions", params["SpotOptions"]);
+  if ("MarketType" in params) body.append(prefix+".MarketType", (params["MarketType"] ?? '').toString());
+  if (params["SpotOptions"] != null) SpotMarketOptions_Serialize(body, prefix+".SpotOptions", params["SpotOptions"]);
 }
 
 function SpotMarketOptions_Serialize(body: URLSearchParams, prefix: string, params: s.SpotMarketOptions) {
-    if ("MaxPrice" in params) body.append(prefix+".MaxPrice", (params["MaxPrice"] ?? '').toString());
-    if ("SpotInstanceType" in params) body.append(prefix+".SpotInstanceType", (params["SpotInstanceType"] ?? '').toString());
-    if ("BlockDurationMinutes" in params) body.append(prefix+".BlockDurationMinutes", (params["BlockDurationMinutes"] ?? '').toString());
-    if ("ValidUntil" in params) body.append(prefix+".ValidUntil", qsP.encodeDate_iso8601(params["ValidUntil"]));
-    if ("InstanceInterruptionBehavior" in params) body.append(prefix+".InstanceInterruptionBehavior", (params["InstanceInterruptionBehavior"] ?? '').toString());
+  if ("MaxPrice" in params) body.append(prefix+".MaxPrice", (params["MaxPrice"] ?? '').toString());
+  if ("SpotInstanceType" in params) body.append(prefix+".SpotInstanceType", (params["SpotInstanceType"] ?? '').toString());
+  if ("BlockDurationMinutes" in params) body.append(prefix+".BlockDurationMinutes", (params["BlockDurationMinutes"] ?? '').toString());
+  if ("ValidUntil" in params) body.append(prefix+".ValidUntil", qsP.encodeDate_iso8601(params["ValidUntil"]));
+  if ("InstanceInterruptionBehavior" in params) body.append(prefix+".InstanceInterruptionBehavior", (params["InstanceInterruptionBehavior"] ?? '').toString());
 }
 
 function CpuOptionsRequest_Serialize(body: URLSearchParams, prefix: string, params: s.CpuOptionsRequest) {
-    if ("CoreCount" in params) body.append(prefix+".CoreCount", (params["CoreCount"] ?? '').toString());
-    if ("ThreadsPerCore" in params) body.append(prefix+".ThreadsPerCore", (params["ThreadsPerCore"] ?? '').toString());
+  if ("CoreCount" in params) body.append(prefix+".CoreCount", (params["CoreCount"] ?? '').toString());
+  if ("ThreadsPerCore" in params) body.append(prefix+".ThreadsPerCore", (params["ThreadsPerCore"] ?? '').toString());
 }
 
 function HibernationOptionsRequest_Serialize(body: URLSearchParams, prefix: string, params: s.HibernationOptionsRequest) {
-    if ("Configured" in params) body.append(prefix+".Configured", (params["Configured"] ?? '').toString());
+  if ("Configured" in params) body.append(prefix+".Configured", (params["Configured"] ?? '').toString());
 }
 
 function LicenseConfigurationRequest_Serialize(body: URLSearchParams, prefix: string, params: s.LicenseConfigurationRequest) {
-    if ("LicenseConfigurationArn" in params) body.append(prefix+".LicenseConfigurationArn", (params["LicenseConfigurationArn"] ?? '').toString());
+  if ("LicenseConfigurationArn" in params) body.append(prefix+".LicenseConfigurationArn", (params["LicenseConfigurationArn"] ?? '').toString());
 }
 
 function InstanceMetadataOptionsRequest_Serialize(body: URLSearchParams, prefix: string, params: s.InstanceMetadataOptionsRequest) {
-    if ("HttpTokens" in params) body.append(prefix+".HttpTokens", (params["HttpTokens"] ?? '').toString());
-    if ("HttpPutResponseHopLimit" in params) body.append(prefix+".HttpPutResponseHopLimit", (params["HttpPutResponseHopLimit"] ?? '').toString());
-    if ("HttpEndpoint" in params) body.append(prefix+".HttpEndpoint", (params["HttpEndpoint"] ?? '').toString());
+  if ("HttpTokens" in params) body.append(prefix+".HttpTokens", (params["HttpTokens"] ?? '').toString());
+  if ("HttpPutResponseHopLimit" in params) body.append(prefix+".HttpPutResponseHopLimit", (params["HttpPutResponseHopLimit"] ?? '').toString());
+  if ("HttpEndpoint" in params) body.append(prefix+".HttpEndpoint", (params["HttpEndpoint"] ?? '').toString());
 }
 
 function EnclaveOptionsRequest_Serialize(body: URLSearchParams, prefix: string, params: s.EnclaveOptionsRequest) {
-    if ("Enabled" in params) body.append(prefix+".Enabled", (params["Enabled"] ?? '').toString());
+  if ("Enabled" in params) body.append(prefix+".Enabled", (params["Enabled"] ?? '').toString());
 }
 
 function ScheduledInstancesLaunchSpecification_Serialize(body: URLSearchParams, prefix: string, params: s.ScheduledInstancesLaunchSpecification) {
-    if (params["BlockDeviceMappings"]) qsP.appendList(body, prefix+".BlockDeviceMapping", params["BlockDeviceMappings"], {"appender":ScheduledInstancesBlockDeviceMapping_Serialize,"entryPrefix":"."})
-    if ("EbsOptimized" in params) body.append(prefix+".EbsOptimized", (params["EbsOptimized"] ?? '').toString());
-    if (params["IamInstanceProfile"] != null) ScheduledInstancesIamInstanceProfile_Serialize(body, prefix+".IamInstanceProfile", params["IamInstanceProfile"]);
-    body.append(prefix+".ImageId", (params["ImageId"] ?? '').toString());
-    if ("InstanceType" in params) body.append(prefix+".InstanceType", (params["InstanceType"] ?? '').toString());
-    if ("KernelId" in params) body.append(prefix+".KernelId", (params["KernelId"] ?? '').toString());
-    if ("KeyName" in params) body.append(prefix+".KeyName", (params["KeyName"] ?? '').toString());
-    if (params["Monitoring"] != null) ScheduledInstancesMonitoring_Serialize(body, prefix+".Monitoring", params["Monitoring"]);
-    if (params["NetworkInterfaces"]) qsP.appendList(body, prefix+".NetworkInterface", params["NetworkInterfaces"], {"appender":ScheduledInstancesNetworkInterface_Serialize,"entryPrefix":"."})
-    if (params["Placement"] != null) ScheduledInstancesPlacement_Serialize(body, prefix+".Placement", params["Placement"]);
-    if ("RamdiskId" in params) body.append(prefix+".RamdiskId", (params["RamdiskId"] ?? '').toString());
-    if (params["SecurityGroupIds"]) qsP.appendList(body, prefix+".SecurityGroupId", params["SecurityGroupIds"], {"entryPrefix":"."})
-    if ("SubnetId" in params) body.append(prefix+".SubnetId", (params["SubnetId"] ?? '').toString());
-    if ("UserData" in params) body.append(prefix+".UserData", (params["UserData"] ?? '').toString());
+  if (params["BlockDeviceMappings"]) qsP.appendList(body, prefix+".BlockDeviceMapping", params["BlockDeviceMappings"], {"appender":ScheduledInstancesBlockDeviceMapping_Serialize,"entryPrefix":"."})
+  if ("EbsOptimized" in params) body.append(prefix+".EbsOptimized", (params["EbsOptimized"] ?? '').toString());
+  if (params["IamInstanceProfile"] != null) ScheduledInstancesIamInstanceProfile_Serialize(body, prefix+".IamInstanceProfile", params["IamInstanceProfile"]);
+  body.append(prefix+".ImageId", (params["ImageId"] ?? '').toString());
+  if ("InstanceType" in params) body.append(prefix+".InstanceType", (params["InstanceType"] ?? '').toString());
+  if ("KernelId" in params) body.append(prefix+".KernelId", (params["KernelId"] ?? '').toString());
+  if ("KeyName" in params) body.append(prefix+".KeyName", (params["KeyName"] ?? '').toString());
+  if (params["Monitoring"] != null) ScheduledInstancesMonitoring_Serialize(body, prefix+".Monitoring", params["Monitoring"]);
+  if (params["NetworkInterfaces"]) qsP.appendList(body, prefix+".NetworkInterface", params["NetworkInterfaces"], {"appender":ScheduledInstancesNetworkInterface_Serialize,"entryPrefix":"."})
+  if (params["Placement"] != null) ScheduledInstancesPlacement_Serialize(body, prefix+".Placement", params["Placement"]);
+  if ("RamdiskId" in params) body.append(prefix+".RamdiskId", (params["RamdiskId"] ?? '').toString());
+  if (params["SecurityGroupIds"]) qsP.appendList(body, prefix+".SecurityGroupId", params["SecurityGroupIds"], {"entryPrefix":"."})
+  if ("SubnetId" in params) body.append(prefix+".SubnetId", (params["SubnetId"] ?? '').toString());
+  if ("UserData" in params) body.append(prefix+".UserData", (params["UserData"] ?? '').toString());
 }
 
 function ScheduledInstancesBlockDeviceMapping_Serialize(body: URLSearchParams, prefix: string, params: s.ScheduledInstancesBlockDeviceMapping) {
-    if ("DeviceName" in params) body.append(prefix+".DeviceName", (params["DeviceName"] ?? '').toString());
-    if (params["Ebs"] != null) ScheduledInstancesEbs_Serialize(body, prefix+".Ebs", params["Ebs"]);
-    if ("NoDevice" in params) body.append(prefix+".NoDevice", (params["NoDevice"] ?? '').toString());
-    if ("VirtualName" in params) body.append(prefix+".VirtualName", (params["VirtualName"] ?? '').toString());
+  if ("DeviceName" in params) body.append(prefix+".DeviceName", (params["DeviceName"] ?? '').toString());
+  if (params["Ebs"] != null) ScheduledInstancesEbs_Serialize(body, prefix+".Ebs", params["Ebs"]);
+  if ("NoDevice" in params) body.append(prefix+".NoDevice", (params["NoDevice"] ?? '').toString());
+  if ("VirtualName" in params) body.append(prefix+".VirtualName", (params["VirtualName"] ?? '').toString());
 }
 
 function ScheduledInstancesEbs_Serialize(body: URLSearchParams, prefix: string, params: s.ScheduledInstancesEbs) {
-    if ("DeleteOnTermination" in params) body.append(prefix+".DeleteOnTermination", (params["DeleteOnTermination"] ?? '').toString());
-    if ("Encrypted" in params) body.append(prefix+".Encrypted", (params["Encrypted"] ?? '').toString());
-    if ("Iops" in params) body.append(prefix+".Iops", (params["Iops"] ?? '').toString());
-    if ("SnapshotId" in params) body.append(prefix+".SnapshotId", (params["SnapshotId"] ?? '').toString());
-    if ("VolumeSize" in params) body.append(prefix+".VolumeSize", (params["VolumeSize"] ?? '').toString());
-    if ("VolumeType" in params) body.append(prefix+".VolumeType", (params["VolumeType"] ?? '').toString());
+  if ("DeleteOnTermination" in params) body.append(prefix+".DeleteOnTermination", (params["DeleteOnTermination"] ?? '').toString());
+  if ("Encrypted" in params) body.append(prefix+".Encrypted", (params["Encrypted"] ?? '').toString());
+  if ("Iops" in params) body.append(prefix+".Iops", (params["Iops"] ?? '').toString());
+  if ("SnapshotId" in params) body.append(prefix+".SnapshotId", (params["SnapshotId"] ?? '').toString());
+  if ("VolumeSize" in params) body.append(prefix+".VolumeSize", (params["VolumeSize"] ?? '').toString());
+  if ("VolumeType" in params) body.append(prefix+".VolumeType", (params["VolumeType"] ?? '').toString());
 }
 
 function ScheduledInstancesIamInstanceProfile_Serialize(body: URLSearchParams, prefix: string, params: s.ScheduledInstancesIamInstanceProfile) {
-    if ("Arn" in params) body.append(prefix+".Arn", (params["Arn"] ?? '').toString());
-    if ("Name" in params) body.append(prefix+".Name", (params["Name"] ?? '').toString());
+  if ("Arn" in params) body.append(prefix+".Arn", (params["Arn"] ?? '').toString());
+  if ("Name" in params) body.append(prefix+".Name", (params["Name"] ?? '').toString());
 }
 
 function ScheduledInstancesMonitoring_Serialize(body: URLSearchParams, prefix: string, params: s.ScheduledInstancesMonitoring) {
-    if ("Enabled" in params) body.append(prefix+".Enabled", (params["Enabled"] ?? '').toString());
+  if ("Enabled" in params) body.append(prefix+".Enabled", (params["Enabled"] ?? '').toString());
 }
 
 function ScheduledInstancesNetworkInterface_Serialize(body: URLSearchParams, prefix: string, params: s.ScheduledInstancesNetworkInterface) {
-    if ("AssociatePublicIpAddress" in params) body.append(prefix+".AssociatePublicIpAddress", (params["AssociatePublicIpAddress"] ?? '').toString());
-    if ("DeleteOnTermination" in params) body.append(prefix+".DeleteOnTermination", (params["DeleteOnTermination"] ?? '').toString());
-    if ("Description" in params) body.append(prefix+".Description", (params["Description"] ?? '').toString());
-    if ("DeviceIndex" in params) body.append(prefix+".DeviceIndex", (params["DeviceIndex"] ?? '').toString());
-    if (params["Groups"]) qsP.appendList(body, prefix+".Group", params["Groups"], {"entryPrefix":"."})
-    if ("Ipv6AddressCount" in params) body.append(prefix+".Ipv6AddressCount", (params["Ipv6AddressCount"] ?? '').toString());
-    if (params["Ipv6Addresses"]) qsP.appendList(body, prefix+".Ipv6Address", params["Ipv6Addresses"], {"appender":ScheduledInstancesIpv6Address_Serialize,"entryPrefix":"."})
-    if ("NetworkInterfaceId" in params) body.append(prefix+".NetworkInterfaceId", (params["NetworkInterfaceId"] ?? '').toString());
-    if ("PrivateIpAddress" in params) body.append(prefix+".PrivateIpAddress", (params["PrivateIpAddress"] ?? '').toString());
-    if (params["PrivateIpAddressConfigs"]) qsP.appendList(body, prefix+".PrivateIpAddressConfig", params["PrivateIpAddressConfigs"], {"appender":ScheduledInstancesPrivateIpAddressConfig_Serialize,"entryPrefix":"."})
-    if ("SecondaryPrivateIpAddressCount" in params) body.append(prefix+".SecondaryPrivateIpAddressCount", (params["SecondaryPrivateIpAddressCount"] ?? '').toString());
-    if ("SubnetId" in params) body.append(prefix+".SubnetId", (params["SubnetId"] ?? '').toString());
+  if ("AssociatePublicIpAddress" in params) body.append(prefix+".AssociatePublicIpAddress", (params["AssociatePublicIpAddress"] ?? '').toString());
+  if ("DeleteOnTermination" in params) body.append(prefix+".DeleteOnTermination", (params["DeleteOnTermination"] ?? '').toString());
+  if ("Description" in params) body.append(prefix+".Description", (params["Description"] ?? '').toString());
+  if ("DeviceIndex" in params) body.append(prefix+".DeviceIndex", (params["DeviceIndex"] ?? '').toString());
+  if (params["Groups"]) qsP.appendList(body, prefix+".Group", params["Groups"], {"entryPrefix":"."})
+  if ("Ipv6AddressCount" in params) body.append(prefix+".Ipv6AddressCount", (params["Ipv6AddressCount"] ?? '').toString());
+  if (params["Ipv6Addresses"]) qsP.appendList(body, prefix+".Ipv6Address", params["Ipv6Addresses"], {"appender":ScheduledInstancesIpv6Address_Serialize,"entryPrefix":"."})
+  if ("NetworkInterfaceId" in params) body.append(prefix+".NetworkInterfaceId", (params["NetworkInterfaceId"] ?? '').toString());
+  if ("PrivateIpAddress" in params) body.append(prefix+".PrivateIpAddress", (params["PrivateIpAddress"] ?? '').toString());
+  if (params["PrivateIpAddressConfigs"]) qsP.appendList(body, prefix+".PrivateIpAddressConfig", params["PrivateIpAddressConfigs"], {"appender":ScheduledInstancesPrivateIpAddressConfig_Serialize,"entryPrefix":"."})
+  if ("SecondaryPrivateIpAddressCount" in params) body.append(prefix+".SecondaryPrivateIpAddressCount", (params["SecondaryPrivateIpAddressCount"] ?? '').toString());
+  if ("SubnetId" in params) body.append(prefix+".SubnetId", (params["SubnetId"] ?? '').toString());
 }
 
 function ScheduledInstancesIpv6Address_Serialize(body: URLSearchParams, prefix: string, params: s.ScheduledInstancesIpv6Address) {
-    if ("Ipv6Address" in params) body.append(prefix+".Ipv6Address", (params["Ipv6Address"] ?? '').toString());
+  if ("Ipv6Address" in params) body.append(prefix+".Ipv6Address", (params["Ipv6Address"] ?? '').toString());
 }
 
 function ScheduledInstancesPrivateIpAddressConfig_Serialize(body: URLSearchParams, prefix: string, params: s.ScheduledInstancesPrivateIpAddressConfig) {
-    if ("Primary" in params) body.append(prefix+".Primary", (params["Primary"] ?? '').toString());
-    if ("PrivateIpAddress" in params) body.append(prefix+".PrivateIpAddress", (params["PrivateIpAddress"] ?? '').toString());
+  if ("Primary" in params) body.append(prefix+".Primary", (params["Primary"] ?? '').toString());
+  if ("PrivateIpAddress" in params) body.append(prefix+".PrivateIpAddress", (params["PrivateIpAddress"] ?? '').toString());
 }
 
 function ScheduledInstancesPlacement_Serialize(body: URLSearchParams, prefix: string, params: s.ScheduledInstancesPlacement) {
-    if ("AvailabilityZone" in params) body.append(prefix+".AvailabilityZone", (params["AvailabilityZone"] ?? '').toString());
-    if ("GroupName" in params) body.append(prefix+".GroupName", (params["GroupName"] ?? '').toString());
+  if ("AvailabilityZone" in params) body.append(prefix+".AvailabilityZone", (params["AvailabilityZone"] ?? '').toString());
+  if ("GroupName" in params) body.append(prefix+".GroupName", (params["GroupName"] ?? '').toString());
 }
 
 function TransitGatewayMulticastDomainAssociations_Parse(node: xmlP.XmlNode): s.TransitGatewayMulticastDomainAssociations {

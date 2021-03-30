@@ -635,8 +635,8 @@ export default class CloudWatch {
 }
 
 function Dimension_Serialize(body: URLSearchParams, prefix: string, params: s.Dimension) {
-    body.append(prefix+".Name", (params["Name"] ?? '').toString());
-    body.append(prefix+".Value", (params["Value"] ?? '').toString());
+  body.append(prefix+".Name", (params["Name"] ?? '').toString());
+  body.append(prefix+".Value", (params["Value"] ?? '').toString());
 }
 function Dimension_Parse(node: xmlP.XmlNode): s.Dimension {
   return node.strings({
@@ -645,12 +645,12 @@ function Dimension_Parse(node: xmlP.XmlNode): s.Dimension {
 }
 
 function MetricDataQuery_Serialize(body: URLSearchParams, prefix: string, params: s.MetricDataQuery) {
-    body.append(prefix+".Id", (params["Id"] ?? '').toString());
-    if (params["MetricStat"] != null) MetricStat_Serialize(body, prefix+".MetricStat", params["MetricStat"]);
-    if ("Expression" in params) body.append(prefix+".Expression", (params["Expression"] ?? '').toString());
-    if ("Label" in params) body.append(prefix+".Label", (params["Label"] ?? '').toString());
-    if ("ReturnData" in params) body.append(prefix+".ReturnData", (params["ReturnData"] ?? '').toString());
-    if ("Period" in params) body.append(prefix+".Period", (params["Period"] ?? '').toString());
+  body.append(prefix+".Id", (params["Id"] ?? '').toString());
+  if (params["MetricStat"] != null) MetricStat_Serialize(body, prefix+".MetricStat", params["MetricStat"]);
+  if ("Expression" in params) body.append(prefix+".Expression", (params["Expression"] ?? '').toString());
+  if ("Label" in params) body.append(prefix+".Label", (params["Label"] ?? '').toString());
+  if ("ReturnData" in params) body.append(prefix+".ReturnData", (params["ReturnData"] ?? '').toString());
+  if ("Period" in params) body.append(prefix+".Period", (params["Period"] ?? '').toString());
 }
 function MetricDataQuery_Parse(node: xmlP.XmlNode): s.MetricDataQuery {
   return {
@@ -665,10 +665,10 @@ function MetricDataQuery_Parse(node: xmlP.XmlNode): s.MetricDataQuery {
 }
 
 function MetricStat_Serialize(body: URLSearchParams, prefix: string, params: s.MetricStat) {
-    Metric_Serialize(body, prefix+".Metric", params["Metric"]);
-    body.append(prefix+".Period", (params["Period"] ?? '').toString());
-    body.append(prefix+".Stat", (params["Stat"] ?? '').toString());
-    if ("Unit" in params) body.append(prefix+".Unit", (params["Unit"] ?? '').toString());
+  Metric_Serialize(body, prefix+".Metric", params["Metric"]);
+  body.append(prefix+".Period", (params["Period"] ?? '').toString());
+  body.append(prefix+".Stat", (params["Stat"] ?? '').toString());
+  if ("Unit" in params) body.append(prefix+".Unit", (params["Unit"] ?? '').toString());
 }
 function MetricStat_Parse(node: xmlP.XmlNode): s.MetricStat {
   return {
@@ -682,9 +682,9 @@ function MetricStat_Parse(node: xmlP.XmlNode): s.MetricStat {
 }
 
 function Metric_Serialize(body: URLSearchParams, prefix: string, params: s.Metric) {
-    if ("Namespace" in params) body.append(prefix+".Namespace", (params["Namespace"] ?? '').toString());
-    if ("MetricName" in params) body.append(prefix+".MetricName", (params["MetricName"] ?? '').toString());
-    if (params["Dimensions"]) qsP.appendList(body, prefix+".Dimensions", params["Dimensions"], {"appender":Dimension_Serialize,"entryPrefix":".member."})
+  if ("Namespace" in params) body.append(prefix+".Namespace", (params["Namespace"] ?? '').toString());
+  if ("MetricName" in params) body.append(prefix+".MetricName", (params["MetricName"] ?? '').toString());
+  if (params["Dimensions"]) qsP.appendList(body, prefix+".Dimensions", params["Dimensions"], {"appender":Dimension_Serialize,"entryPrefix":".member."})
 }
 function Metric_Parse(node: xmlP.XmlNode): s.Metric {
   return {
@@ -696,17 +696,17 @@ function Metric_Parse(node: xmlP.XmlNode): s.Metric {
 }
 
 function LabelOptions_Serialize(body: URLSearchParams, prefix: string, params: s.LabelOptions) {
-    if ("Timezone" in params) body.append(prefix+".Timezone", (params["Timezone"] ?? '').toString());
+  if ("Timezone" in params) body.append(prefix+".Timezone", (params["Timezone"] ?? '').toString());
 }
 
 function DimensionFilter_Serialize(body: URLSearchParams, prefix: string, params: s.DimensionFilter) {
-    body.append(prefix+".Name", (params["Name"] ?? '').toString());
-    if ("Value" in params) body.append(prefix+".Value", (params["Value"] ?? '').toString());
+  body.append(prefix+".Name", (params["Name"] ?? '').toString());
+  if ("Value" in params) body.append(prefix+".Value", (params["Value"] ?? '').toString());
 }
 
 function AnomalyDetectorConfiguration_Serialize(body: URLSearchParams, prefix: string, params: s.AnomalyDetectorConfiguration) {
-    if (params["ExcludedTimeRanges"]) qsP.appendList(body, prefix+".ExcludedTimeRanges", params["ExcludedTimeRanges"], {"appender":Range_Serialize,"entryPrefix":".member."})
-    if ("MetricTimezone" in params) body.append(prefix+".MetricTimezone", (params["MetricTimezone"] ?? '').toString());
+  if (params["ExcludedTimeRanges"]) qsP.appendList(body, prefix+".ExcludedTimeRanges", params["ExcludedTimeRanges"], {"appender":Range_Serialize,"entryPrefix":".member."})
+  if ("MetricTimezone" in params) body.append(prefix+".MetricTimezone", (params["MetricTimezone"] ?? '').toString());
 }
 function AnomalyDetectorConfiguration_Parse(node: xmlP.XmlNode): s.AnomalyDetectorConfiguration {
   return {
@@ -718,8 +718,8 @@ function AnomalyDetectorConfiguration_Parse(node: xmlP.XmlNode): s.AnomalyDetect
 }
 
 function Range_Serialize(body: URLSearchParams, prefix: string, params: s.Range) {
-    body.append(prefix+".StartTime", qsP.encodeDate_iso8601(params["StartTime"]));
-    body.append(prefix+".EndTime", qsP.encodeDate_iso8601(params["EndTime"]));
+  body.append(prefix+".StartTime", qsP.encodeDate_iso8601(params["StartTime"]));
+  body.append(prefix+".EndTime", qsP.encodeDate_iso8601(params["EndTime"]));
 }
 function Range_Parse(node: xmlP.XmlNode): s.Range {
   return {
@@ -729,8 +729,8 @@ function Range_Parse(node: xmlP.XmlNode): s.Range {
 }
 
 function Tag_Serialize(body: URLSearchParams, prefix: string, params: s.Tag) {
-    body.append(prefix+".Key", (params["Key"] ?? '').toString());
-    body.append(prefix+".Value", (params["Value"] ?? '').toString());
+  body.append(prefix+".Key", (params["Key"] ?? '').toString());
+  body.append(prefix+".Value", (params["Value"] ?? '').toString());
 }
 function Tag_Parse(node: xmlP.XmlNode): s.Tag {
   return node.strings({
@@ -739,22 +739,22 @@ function Tag_Parse(node: xmlP.XmlNode): s.Tag {
 }
 
 function MetricDatum_Serialize(body: URLSearchParams, prefix: string, params: s.MetricDatum) {
-    body.append(prefix+".MetricName", (params["MetricName"] ?? '').toString());
-    if (params["Dimensions"]) qsP.appendList(body, prefix+".Dimensions", params["Dimensions"], {"appender":Dimension_Serialize,"entryPrefix":".member."})
-    if ("Timestamp" in params) body.append(prefix+".Timestamp", qsP.encodeDate_iso8601(params["Timestamp"]));
-    if ("Value" in params) body.append(prefix+".Value", (params["Value"] ?? '').toString());
-    if (params["StatisticValues"] != null) StatisticSet_Serialize(body, prefix+".StatisticValues", params["StatisticValues"]);
-    if (params["Values"]) qsP.appendList(body, prefix+".Values", params["Values"], {"entryPrefix":".member."})
-    if (params["Counts"]) qsP.appendList(body, prefix+".Counts", params["Counts"], {"entryPrefix":".member."})
-    if ("Unit" in params) body.append(prefix+".Unit", (params["Unit"] ?? '').toString());
-    if ("StorageResolution" in params) body.append(prefix+".StorageResolution", (params["StorageResolution"] ?? '').toString());
+  body.append(prefix+".MetricName", (params["MetricName"] ?? '').toString());
+  if (params["Dimensions"]) qsP.appendList(body, prefix+".Dimensions", params["Dimensions"], {"appender":Dimension_Serialize,"entryPrefix":".member."})
+  if ("Timestamp" in params) body.append(prefix+".Timestamp", qsP.encodeDate_iso8601(params["Timestamp"]));
+  if ("Value" in params) body.append(prefix+".Value", (params["Value"] ?? '').toString());
+  if (params["StatisticValues"] != null) StatisticSet_Serialize(body, prefix+".StatisticValues", params["StatisticValues"]);
+  if (params["Values"]) qsP.appendList(body, prefix+".Values", params["Values"], {"entryPrefix":".member."})
+  if (params["Counts"]) qsP.appendList(body, prefix+".Counts", params["Counts"], {"entryPrefix":".member."})
+  if ("Unit" in params) body.append(prefix+".Unit", (params["Unit"] ?? '').toString());
+  if ("StorageResolution" in params) body.append(prefix+".StorageResolution", (params["StorageResolution"] ?? '').toString());
 }
 
 function StatisticSet_Serialize(body: URLSearchParams, prefix: string, params: s.StatisticSet) {
-    body.append(prefix+".SampleCount", (params["SampleCount"] ?? '').toString());
-    body.append(prefix+".Sum", (params["Sum"] ?? '').toString());
-    body.append(prefix+".Minimum", (params["Minimum"] ?? '').toString());
-    body.append(prefix+".Maximum", (params["Maximum"] ?? '').toString());
+  body.append(prefix+".SampleCount", (params["SampleCount"] ?? '').toString());
+  body.append(prefix+".Sum", (params["Sum"] ?? '').toString());
+  body.append(prefix+".Minimum", (params["Minimum"] ?? '').toString());
+  body.append(prefix+".Maximum", (params["Maximum"] ?? '').toString());
 }
 
 function PartialFailure_Parse(node: xmlP.XmlNode): s.PartialFailure {
