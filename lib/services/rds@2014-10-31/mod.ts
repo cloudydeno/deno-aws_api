@@ -40,7 +40,7 @@ export default class RDS {
       abortSignal, body,
       action: "AddRoleToDBCluster",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async addRoleToDBInstance(
@@ -55,7 +55,7 @@ export default class RDS {
       abortSignal, body,
       action: "AddRoleToDBInstance",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async addSourceIdentifierToSubscription(
@@ -86,7 +86,7 @@ export default class RDS {
       abortSignal, body,
       action: "AddTagsToResource",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async applyPendingMaintenanceAction(
@@ -738,7 +738,7 @@ export default class RDS {
       abortSignal, body,
       action: "DeleteDBClusterParameterGroup",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteDBClusterSnapshot(
@@ -803,7 +803,7 @@ export default class RDS {
       abortSignal, body,
       action: "DeleteDBParameterGroup",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteDBProxy(
@@ -848,7 +848,7 @@ export default class RDS {
       abortSignal, body,
       action: "DeleteDBSecurityGroup",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteDBSnapshot(
@@ -877,7 +877,7 @@ export default class RDS {
       abortSignal, body,
       action: "DeleteDBSubnetGroup",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteEventSubscription(
@@ -936,7 +936,7 @@ export default class RDS {
       abortSignal, body,
       action: "DeleteOptionGroup",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deregisterDBProxyTargets(
@@ -952,7 +952,7 @@ export default class RDS {
       abortSignal, body,
       action: "DeregisterDBProxyTargets",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async describeAccountAttributes(
@@ -2445,7 +2445,7 @@ export default class RDS {
       abortSignal, body,
       action: "RemoveRoleFromDBCluster",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async removeRoleFromDBInstance(
@@ -2460,7 +2460,7 @@ export default class RDS {
       abortSignal, body,
       action: "RemoveRoleFromDBInstance",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async removeSourceIdentifierFromSubscription(
@@ -2491,7 +2491,7 @@ export default class RDS {
       abortSignal, body,
       action: "RemoveTagsFromResource",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async resetDBClusterParameterGroup(

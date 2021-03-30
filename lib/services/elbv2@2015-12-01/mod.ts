@@ -56,7 +56,7 @@ export default class ELBv2 {
       abortSignal, body,
       action: "AddTags",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async createListener(
@@ -167,7 +167,7 @@ export default class ELBv2 {
       abortSignal, body,
       action: "DeleteListener",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteLoadBalancer(
@@ -180,7 +180,7 @@ export default class ELBv2 {
       abortSignal, body,
       action: "DeleteLoadBalancer",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteRule(
@@ -193,7 +193,7 @@ export default class ELBv2 {
       abortSignal, body,
       action: "DeleteRule",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteTargetGroup(
@@ -206,7 +206,7 @@ export default class ELBv2 {
       abortSignal, body,
       action: "DeleteTargetGroup",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deregisterTargets(
@@ -220,7 +220,7 @@ export default class ELBv2 {
       abortSignal, body,
       action: "DeregisterTargets",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async describeAccountLimits(
@@ -549,7 +549,7 @@ export default class ELBv2 {
       abortSignal, body,
       action: "RegisterTargets",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async removeListenerCertificates(
@@ -563,7 +563,7 @@ export default class ELBv2 {
       abortSignal, body,
       action: "RemoveListenerCertificates",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async removeTags(
@@ -577,7 +577,7 @@ export default class ELBv2 {
       abortSignal, body,
       action: "RemoveTags",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async setIpAddressType(

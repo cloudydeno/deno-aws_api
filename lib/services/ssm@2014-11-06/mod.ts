@@ -50,7 +50,7 @@ export default class SSM {
       abortSignal, body,
       action: "AddTagsToResource",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async cancelCommand(
@@ -64,7 +64,7 @@ export default class SSM {
       abortSignal, body,
       action: "CancelCommand",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async cancelMaintenanceWindowExecution(
@@ -310,7 +310,7 @@ export default class SSM {
       abortSignal, body,
       action: "CreateResourceDataSync",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteActivation(
@@ -323,7 +323,7 @@ export default class SSM {
       abortSignal, body,
       action: "DeleteActivation",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteAssociation(
@@ -338,7 +338,7 @@ export default class SSM {
       abortSignal, body,
       action: "DeleteAssociation",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteDocument(
@@ -354,7 +354,7 @@ export default class SSM {
       abortSignal, body,
       action: "DeleteDocument",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteInventory(
@@ -408,7 +408,7 @@ export default class SSM {
       abortSignal, body,
       action: "DeleteOpsMetadata",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteParameter(
@@ -421,7 +421,7 @@ export default class SSM {
       abortSignal, body,
       action: "DeleteParameter",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteParameters(
@@ -472,7 +472,7 @@ export default class SSM {
       abortSignal, body,
       action: "DeleteResourceDataSync",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deregisterManagedInstance(
@@ -485,7 +485,7 @@ export default class SSM {
       abortSignal, body,
       action: "DeregisterManagedInstance",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deregisterPatchBaselineForPatchGroup(
@@ -2198,7 +2198,7 @@ export default class SSM {
       abortSignal, body,
       action: "ModifyDocumentPermission",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async putComplianceItems(
@@ -2217,7 +2217,7 @@ export default class SSM {
       abortSignal, body,
       action: "PutComplianceItems",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async putInventory(
@@ -2373,7 +2373,7 @@ export default class SSM {
       abortSignal, body,
       action: "RemoveTagsFromResource",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async resetServiceSetting(
@@ -2426,7 +2426,7 @@ export default class SSM {
       abortSignal, body,
       action: "SendAutomationSignal",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async sendCommand(
@@ -2473,7 +2473,7 @@ export default class SSM {
       abortSignal, body,
       action: "StartAssociationsOnce",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async startAutomationExecution(
@@ -2563,7 +2563,7 @@ export default class SSM {
       abortSignal, body,
       action: "StopAutomationExecution",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async terminateSession(
@@ -2692,7 +2692,7 @@ export default class SSM {
       abortSignal, body,
       action: "UpdateDocumentMetadata",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async updateMaintenanceWindow(
@@ -2819,7 +2819,7 @@ export default class SSM {
       abortSignal, body,
       action: "UpdateManagedInstanceRole",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async updateOpsItem(
@@ -2846,7 +2846,7 @@ export default class SSM {
       abortSignal, body,
       action: "UpdateOpsItem",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async updateOpsMetadata(
@@ -2923,7 +2923,7 @@ export default class SSM {
       abortSignal, body,
       action: "UpdateResourceDataSync",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async updateServiceSetting(
@@ -2937,7 +2937,7 @@ export default class SSM {
       abortSignal, body,
       action: "UpdateServiceSetting",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   // Resource State Waiters

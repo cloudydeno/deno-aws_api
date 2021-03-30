@@ -50,7 +50,7 @@ export default class SQS {
       abortSignal, body,
       action: "AddPermission",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async changeMessageVisibility(
@@ -65,7 +65,7 @@ export default class SQS {
       abortSignal, body,
       action: "ChangeMessageVisibility",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async changeMessageVisibilityBatch(
@@ -115,7 +115,7 @@ export default class SQS {
       abortSignal, body,
       action: "DeleteMessage",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteMessageBatch(
@@ -146,7 +146,7 @@ export default class SQS {
       abortSignal, body,
       action: "DeleteQueue",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async getQueueAttributes(
@@ -251,7 +251,7 @@ export default class SQS {
       abortSignal, body,
       action: "PurgeQueue",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async receiveMessage(
@@ -287,7 +287,7 @@ export default class SQS {
       abortSignal, body,
       action: "RemovePermission",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async sendMessage(
@@ -341,7 +341,7 @@ export default class SQS {
       abortSignal, body,
       action: "SetQueueAttributes",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async tagQueue(
@@ -355,7 +355,7 @@ export default class SQS {
       abortSignal, body,
       action: "TagQueue",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async untagQueue(
@@ -369,7 +369,7 @@ export default class SQS {
       abortSignal, body,
       action: "UntagQueue",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
 }

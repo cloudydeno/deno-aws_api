@@ -48,7 +48,7 @@ export default class Kinesis {
       abortSignal, body,
       action: "AddTagsToStream",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async createStream(
@@ -62,7 +62,7 @@ export default class Kinesis {
       abortSignal, body,
       action: "CreateStream",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async decreaseStreamRetentionPeriod(
@@ -76,7 +76,7 @@ export default class Kinesis {
       abortSignal, body,
       action: "DecreaseStreamRetentionPeriod",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteStream(
@@ -90,7 +90,7 @@ export default class Kinesis {
       abortSignal, body,
       action: "DeleteStream",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deregisterStreamConsumer(
@@ -105,7 +105,7 @@ export default class Kinesis {
       abortSignal, body,
       action: "DeregisterStreamConsumer",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async describeLimits(
@@ -281,7 +281,7 @@ export default class Kinesis {
       abortSignal, body,
       action: "IncreaseStreamRetentionPeriod",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async listShards(
@@ -383,7 +383,7 @@ export default class Kinesis {
       abortSignal, body,
       action: "MergeShards",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async putRecord(
@@ -463,7 +463,7 @@ export default class Kinesis {
       abortSignal, body,
       action: "RemoveTagsFromStream",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async splitShard(
@@ -478,7 +478,7 @@ export default class Kinesis {
       abortSignal, body,
       action: "SplitShard",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async startStreamEncryption(
@@ -493,7 +493,7 @@ export default class Kinesis {
       abortSignal, body,
       action: "StartStreamEncryption",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async stopStreamEncryption(
@@ -508,7 +508,7 @@ export default class Kinesis {
       abortSignal, body,
       action: "StopStreamEncryption",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async updateShardCount(

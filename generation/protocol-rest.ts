@@ -254,7 +254,9 @@ export default class ProtocolRestCodegen {
         payloadHeader = bodyGenLines.slice(0, retLine);
         payloadChunk = `${shape.spec.payload}: `+bodyGenReturns.replace(/^ +return +/, '').replace(/;$/, '').replace(/\n/g, '\n  ');
       } else if (payloadShape.spec.type === 'blob') {
-        payloadChunk = `${shape.spec.payload}: await resp.text(), // TODO: maybe allow proper body streaming`;
+        payloadChunk = `${shape.spec.payload}: new Uint8Array(await resp.arrayBuffer()), // TODO: maybe allow proper body streaming`;
+      } else {
+        payloadHeader.push(`    await resp.arrayBuffer(); // consume body without use`);
       }
 
       const chunks = new Array<string>();
@@ -279,6 +281,7 @@ export default class ProtocolRestCodegen {
       const chunks = new Array<string>();
       chunks.push(`    return {`);
       let hasFraming = false;
+      let hasBody = false;
       for (const [field, spec] of Object.entries(shape.spec.members)) {
         const fieldShape = this.shapes.get(spec);
         if (spec.location ?? fieldShape.spec.location) {
@@ -287,6 +290,7 @@ export default class ProtocolRestCodegen {
           hasFraming = true;
         } else {
           frameSpec.members[field] = spec;
+          hasBody = true;
         }
       }
 
@@ -305,8 +309,13 @@ export default class ProtocolRestCodegen {
         chunks.pop();
         chunks.push(`    return ${payloadChunk};`);
       } else {
+        hasBody = true;
         chunks.push(`      ...${payloadChunk.replace(/\n/g, '\n  ')},`);
         chunks.push(`    };`);
+      }
+
+      if (hasFraming && !hasBody) {
+        chunks.splice(0, 0, `    await resp.arrayBuffer(); // consume body without use`);
       }
 
       return {

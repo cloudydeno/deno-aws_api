@@ -710,7 +710,7 @@ export default class ECR {
       abortSignal, body,
       action: "TagResource",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async untagResource(
@@ -724,7 +724,7 @@ export default class ECR {
       abortSignal, body,
       action: "UntagResource",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async uploadLayerPart(

@@ -43,7 +43,7 @@ export default class CloudWatch {
       abortSignal, body,
       action: "DeleteAlarms",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteAnomalyDetector(
@@ -59,7 +59,7 @@ export default class CloudWatch {
       abortSignal, body,
       action: "DeleteAnomalyDetector",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteDashboards(
@@ -72,7 +72,7 @@ export default class CloudWatch {
       abortSignal, body,
       action: "DeleteDashboards",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteInsightRules(
@@ -220,7 +220,7 @@ export default class CloudWatch {
       abortSignal, body,
       action: "DisableAlarmActions",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async disableInsightRules(
@@ -249,7 +249,7 @@ export default class CloudWatch {
       abortSignal, body,
       action: "EnableAlarmActions",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async enableInsightRules(
@@ -456,7 +456,7 @@ export default class CloudWatch {
       abortSignal, body,
       action: "PutAnomalyDetector",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async putCompositeAlarm(
@@ -476,7 +476,7 @@ export default class CloudWatch {
       abortSignal, body,
       action: "PutCompositeAlarm",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async putDashboard(
@@ -509,7 +509,7 @@ export default class CloudWatch {
       abortSignal, body,
       action: "PutInsightRule",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async putMetricAlarm(
@@ -543,7 +543,7 @@ export default class CloudWatch {
       abortSignal, body,
       action: "PutMetricAlarm",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async putMetricData(
@@ -557,7 +557,7 @@ export default class CloudWatch {
       abortSignal, body,
       action: "PutMetricData",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async setAlarmState(
@@ -573,7 +573,7 @@ export default class CloudWatch {
       abortSignal, body,
       action: "SetAlarmState",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async tagResource(
@@ -587,7 +587,7 @@ export default class CloudWatch {
       abortSignal, body,
       action: "TagResource",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async untagResource(
@@ -601,7 +601,7 @@ export default class CloudWatch {
       abortSignal, body,
       action: "UntagResource",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   // Resource State Waiters

@@ -56,7 +56,7 @@ export default class ES {
       action: "AddTags",
       requestUri: "/2015-01-01/tags",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async associatePackage(
@@ -203,7 +203,7 @@ export default class ES {
       method: "DELETE",
       requestUri: "/2015-01-01/es/role",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteInboundCrossClusterSearchConnection(
@@ -738,7 +738,7 @@ export default class ES {
       action: "RemoveTags",
       requestUri: "/2015-01-01/tags-removal",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async startElasticsearchServiceSoftwareUpdate(

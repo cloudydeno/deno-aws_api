@@ -566,7 +566,7 @@ export default class EKS {
       action: "TagResource",
       requestUri: cmnP.encodePath`/tags/${params["resourceArn"]}`,
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async untagResource(
@@ -582,7 +582,7 @@ export default class EKS {
       method: "DELETE",
       requestUri: cmnP.encodePath`/tags/${params["resourceArn"]}`,
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async updateAddon(

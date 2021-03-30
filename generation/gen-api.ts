@@ -110,8 +110,7 @@ export function generateApiTypescript(
         .generateOperationOutputParsingTypescript(outputShape, operation.output?.resultWrapper ?? outputShape?.spec.resultWrapper);
       chunks.push(outputParsingCode);
     } else {
-      // probably good to consume the response body
-      chunks.push(`    await resp.text();`);
+      chunks.push(`    await resp.arrayBuffer(); // consume body without use`);
     }
 
     // TODO: is this a sane way of doing pagination?

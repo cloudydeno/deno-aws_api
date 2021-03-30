@@ -38,7 +38,7 @@ export default class ELB {
       abortSignal, body,
       action: "AddTags",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async applySecurityGroupsToLoadBalancer(
@@ -104,7 +104,7 @@ export default class ELB {
       abortSignal, body,
       action: "CreateAppCookieStickinessPolicy",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async createLBCookieStickinessPolicy(
@@ -119,7 +119,7 @@ export default class ELB {
       abortSignal, body,
       action: "CreateLBCookieStickinessPolicy",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async createLoadBalancer(
@@ -155,7 +155,7 @@ export default class ELB {
       abortSignal, body,
       action: "CreateLoadBalancerListeners",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async createLoadBalancerPolicy(
@@ -171,7 +171,7 @@ export default class ELB {
       abortSignal, body,
       action: "CreateLoadBalancerPolicy",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteLoadBalancer(
@@ -184,7 +184,7 @@ export default class ELB {
       abortSignal, body,
       action: "DeleteLoadBalancer",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteLoadBalancerListeners(
@@ -198,7 +198,7 @@ export default class ELB {
       abortSignal, body,
       action: "DeleteLoadBalancerListeners",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteLoadBalancerPolicy(
@@ -212,7 +212,7 @@ export default class ELB {
       abortSignal, body,
       action: "DeleteLoadBalancerPolicy",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deregisterInstancesFromLoadBalancer(
@@ -454,7 +454,7 @@ export default class ELB {
       abortSignal, body,
       action: "RemoveTags",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async setLoadBalancerListenerSSLCertificate(
@@ -469,7 +469,7 @@ export default class ELB {
       abortSignal, body,
       action: "SetLoadBalancerListenerSSLCertificate",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async setLoadBalancerPoliciesForBackendServer(
@@ -484,7 +484,7 @@ export default class ELB {
       abortSignal, body,
       action: "SetLoadBalancerPoliciesForBackendServer",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async setLoadBalancerPoliciesOfListener(
@@ -499,7 +499,7 @@ export default class ELB {
       abortSignal, body,
       action: "SetLoadBalancerPoliciesOfListener",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   // Resource State Waiters

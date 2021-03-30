@@ -59,6 +59,7 @@ export default class S3 {
       requestUri: cmnP.encodePath`/${params["Bucket"]}/${params["Key"].split("/")}`,
       responseCode: 204,
     });
+    await resp.arrayBuffer(); // consume body without use
     return {
       RequestCharged: cmnP.readEnum<s.RequestCharged>(resp.headers.get("x-amz-request-charged")),
     };
@@ -193,6 +194,7 @@ export default class S3 {
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}`,
     });
+    await resp.arrayBuffer(); // consume body without use
     return {
       Location: resp.headers.get("Location"),
     };
@@ -265,7 +267,7 @@ export default class S3 {
       requestUri: cmnP.encodePath`/${params["Bucket"]}`,
       responseCode: 204,
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteBucketAnalyticsConfiguration(
@@ -282,7 +284,7 @@ export default class S3 {
       requestUri: cmnP.encodePath`/${params["Bucket"]}?analytics`,
       responseCode: 204,
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteBucketCors(
@@ -297,7 +299,7 @@ export default class S3 {
       requestUri: cmnP.encodePath`/${params["Bucket"]}?cors`,
       responseCode: 204,
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteBucketEncryption(
@@ -312,7 +314,7 @@ export default class S3 {
       requestUri: cmnP.encodePath`/${params["Bucket"]}?encryption`,
       responseCode: 204,
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteBucketIntelligentTieringConfiguration(
@@ -327,7 +329,7 @@ export default class S3 {
       requestUri: cmnP.encodePath`/${params["Bucket"]}?intelligent-tiering`,
       responseCode: 204,
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteBucketInventoryConfiguration(
@@ -344,7 +346,7 @@ export default class S3 {
       requestUri: cmnP.encodePath`/${params["Bucket"]}?inventory`,
       responseCode: 204,
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteBucketLifecycle(
@@ -359,7 +361,7 @@ export default class S3 {
       requestUri: cmnP.encodePath`/${params["Bucket"]}?lifecycle`,
       responseCode: 204,
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteBucketMetricsConfiguration(
@@ -376,7 +378,7 @@ export default class S3 {
       requestUri: cmnP.encodePath`/${params["Bucket"]}?metrics`,
       responseCode: 204,
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteBucketOwnershipControls(
@@ -391,7 +393,7 @@ export default class S3 {
       requestUri: cmnP.encodePath`/${params["Bucket"]}?ownershipControls`,
       responseCode: 204,
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteBucketPolicy(
@@ -406,7 +408,7 @@ export default class S3 {
       requestUri: cmnP.encodePath`/${params["Bucket"]}?policy`,
       responseCode: 204,
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteBucketReplication(
@@ -421,7 +423,7 @@ export default class S3 {
       requestUri: cmnP.encodePath`/${params["Bucket"]}?replication`,
       responseCode: 204,
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteBucketTagging(
@@ -436,7 +438,7 @@ export default class S3 {
       requestUri: cmnP.encodePath`/${params["Bucket"]}?tagging`,
       responseCode: 204,
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteBucketWebsite(
@@ -451,7 +453,7 @@ export default class S3 {
       requestUri: cmnP.encodePath`/${params["Bucket"]}?website`,
       responseCode: 204,
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteObject(
@@ -471,6 +473,7 @@ export default class S3 {
       requestUri: cmnP.encodePath`/${params["Bucket"]}/${params["Key"].split("/")}`,
       responseCode: 204,
     });
+    await resp.arrayBuffer(); // consume body without use
     return {
       DeleteMarker: cmnP.readBool(resp.headers.get("x-amz-delete-marker")),
       VersionId: resp.headers.get("x-amz-version-id"),
@@ -492,6 +495,7 @@ export default class S3 {
       requestUri: cmnP.encodePath`/${params["Bucket"]}/${params["Key"].split("/")}?tagging`,
       responseCode: 204,
     });
+    await resp.arrayBuffer(); // consume body without use
     return {
       VersionId: resp.headers.get("x-amz-version-id"),
     };
@@ -540,7 +544,7 @@ export default class S3 {
       requestUri: cmnP.encodePath`/${params["Bucket"]}?publicAccessBlock`,
       responseCode: 204,
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async getBucketAccelerateConfiguration(
@@ -820,6 +824,7 @@ export default class S3 {
       method: "GET",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?policy`,
     });
+    await resp.arrayBuffer(); // consume body without use
     return {
     };
   }
@@ -993,7 +998,7 @@ export default class S3 {
       ObjectLockMode: cmnP.readEnum<s.ObjectLockMode>(resp.headers.get("x-amz-object-lock-mode")),
       ObjectLockRetainUntilDate: cmnP.readTimestamp(resp.headers.get("x-amz-object-lock-retain-until-date")),
       ObjectLockLegalHoldStatus: cmnP.readEnum<s.ObjectLockLegalHoldStatus>(resp.headers.get("x-amz-object-lock-legal-hold")),
-      Body: await resp.text(), // TODO: maybe allow proper body streaming,
+      Body: new Uint8Array(await resp.arrayBuffer()), // TODO: maybe allow proper body streaming,
     };
   }
 
@@ -1115,7 +1120,7 @@ export default class S3 {
     });
     return {
       RequestCharged: cmnP.readEnum<s.RequestCharged>(resp.headers.get("x-amz-request-charged")),
-      Body: await resp.text(), // TODO: maybe allow proper body streaming,
+      Body: new Uint8Array(await resp.arrayBuffer()), // TODO: maybe allow proper body streaming,
     };
   }
 
@@ -1147,7 +1152,7 @@ export default class S3 {
       method: "HEAD",
       requestUri: cmnP.encodePath`/${params["Bucket"]}`,
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async headObject(
@@ -1173,6 +1178,7 @@ export default class S3 {
       method: "HEAD",
       requestUri: cmnP.encodePath`/${params["Bucket"]}/${params["Key"].split("/")}`,
     });
+    await resp.arrayBuffer(); // consume body without use
     return {
       DeleteMarker: cmnP.readBool(resp.headers.get("x-amz-delete-marker")),
       AcceptRanges: resp.headers.get("accept-ranges"),
@@ -1495,7 +1501,7 @@ export default class S3 {
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?accelerate`,
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async putBucketAcl(
@@ -1524,7 +1530,7 @@ export default class S3 {
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?acl`,
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async putBucketAnalyticsConfiguration(
@@ -1549,7 +1555,7 @@ export default class S3 {
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?analytics`,
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async putBucketCors(
@@ -1571,7 +1577,7 @@ export default class S3 {
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?cors`,
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async putBucketEncryption(
@@ -1593,7 +1599,7 @@ export default class S3 {
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?encryption`,
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async putBucketIntelligentTieringConfiguration(
@@ -1617,7 +1623,7 @@ export default class S3 {
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?intelligent-tiering`,
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async putBucketInventoryConfiguration(
@@ -1646,7 +1652,7 @@ export default class S3 {
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?inventory`,
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async putBucketLifecycle(
@@ -1668,7 +1674,7 @@ export default class S3 {
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?lifecycle`,
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async putBucketLifecycleConfiguration(
@@ -1689,7 +1695,7 @@ export default class S3 {
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?lifecycle`,
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async putBucketLogging(
@@ -1711,7 +1717,7 @@ export default class S3 {
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?logging`,
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async putBucketMetricsConfiguration(
@@ -1735,7 +1741,7 @@ export default class S3 {
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?metrics`,
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async putBucketNotification(
@@ -1759,7 +1765,7 @@ export default class S3 {
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?notification`,
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async putBucketNotificationConfiguration(
@@ -1782,7 +1788,7 @@ export default class S3 {
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?notification`,
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async putBucketOwnershipControls(
@@ -1804,7 +1810,7 @@ export default class S3 {
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?ownershipControls`,
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async putBucketPolicy(
@@ -1821,7 +1827,7 @@ export default class S3 {
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?policy`,
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async putBucketReplication(
@@ -1845,7 +1851,7 @@ export default class S3 {
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?replication`,
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async putBucketRequestPayment(
@@ -1867,7 +1873,7 @@ export default class S3 {
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?requestPayment`,
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async putBucketTagging(
@@ -1890,7 +1896,7 @@ export default class S3 {
       requestUri: cmnP.encodePath`/${params["Bucket"]}?tagging`,
       responseCode: 204,
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async putBucketVersioning(
@@ -1914,7 +1920,7 @@ export default class S3 {
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?versioning`,
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async putBucketWebsite(
@@ -1939,7 +1945,7 @@ export default class S3 {
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?website`,
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async putObject(
@@ -1984,6 +1990,7 @@ export default class S3 {
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}/${params["Key"].split("/")}`,
     });
+    await resp.arrayBuffer(); // consume body without use
     return {
       Expiration: resp.headers.get("x-amz-expiration"),
       ETag: resp.headers.get("ETag"),
@@ -2027,6 +2034,7 @@ export default class S3 {
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}/${params["Key"].split("/")}?acl`,
     });
+    await resp.arrayBuffer(); // consume body without use
     return {
       RequestCharged: cmnP.readEnum<s.RequestCharged>(resp.headers.get("x-amz-request-charged")),
     };
@@ -2054,6 +2062,7 @@ export default class S3 {
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}/${params["Key"].split("/")}?legal-hold`,
     });
+    await resp.arrayBuffer(); // consume body without use
     return {
       RequestCharged: cmnP.readEnum<s.RequestCharged>(resp.headers.get("x-amz-request-charged")),
     };
@@ -2081,6 +2090,7 @@ export default class S3 {
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?object-lock`,
     });
+    await resp.arrayBuffer(); // consume body without use
     return {
       RequestCharged: cmnP.readEnum<s.RequestCharged>(resp.headers.get("x-amz-request-charged")),
     };
@@ -2110,6 +2120,7 @@ export default class S3 {
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}/${params["Key"].split("/")}?retention`,
     });
+    await resp.arrayBuffer(); // consume body without use
     return {
       RequestCharged: cmnP.readEnum<s.RequestCharged>(resp.headers.get("x-amz-request-charged")),
     };
@@ -2137,6 +2148,7 @@ export default class S3 {
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}/${params["Key"].split("/")}?tagging`,
     });
+    await resp.arrayBuffer(); // consume body without use
     return {
       VersionId: resp.headers.get("x-amz-version-id"),
     };
@@ -2164,7 +2176,7 @@ export default class S3 {
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?publicAccessBlock`,
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async restoreObject(
@@ -2193,6 +2205,7 @@ export default class S3 {
       action: "RestoreObject",
       requestUri: cmnP.encodePath`/${params["Bucket"]}/${params["Key"].split("/")}?restore`,
     });
+    await resp.arrayBuffer(); // consume body without use
     return {
       RequestCharged: cmnP.readEnum<s.RequestCharged>(resp.headers.get("x-amz-request-charged")),
       RestoreOutputPath: resp.headers.get("x-amz-restore-output-path"),
@@ -2256,6 +2269,7 @@ export default class S3 {
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}/${params["Key"].split("/")}`,
     });
+    await resp.arrayBuffer(); // consume body without use
     return {
       ServerSideEncryption: cmnP.readEnum<s.ServerSideEncryption>(resp.headers.get("x-amz-server-side-encryption")),
       ETag: resp.headers.get("ETag"),
@@ -2361,7 +2375,7 @@ export default class S3 {
       requestUri: "/WriteGetObjectResponse",
       hostPrefix: `${params.RequestRoute}.`,
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   // Resource State Waiters

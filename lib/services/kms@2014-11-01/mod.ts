@@ -62,7 +62,7 @@ export default class KMS {
       abortSignal, body,
       action: "ConnectCustomKeyStore",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async createAlias(
@@ -76,7 +76,7 @@ export default class KMS {
       abortSignal, body,
       action: "CreateAlias",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async createCustomKeyStore(
@@ -184,7 +184,7 @@ export default class KMS {
       abortSignal, body,
       action: "DeleteAlias",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteCustomKeyStore(
@@ -197,7 +197,7 @@ export default class KMS {
       abortSignal, body,
       action: "DeleteCustomKeyStore",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteImportedKeyMaterial(
@@ -210,7 +210,7 @@ export default class KMS {
       abortSignal, body,
       action: "DeleteImportedKeyMaterial",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async describeCustomKeyStores(
@@ -265,7 +265,7 @@ export default class KMS {
       abortSignal, body,
       action: "DisableKey",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async disableKeyRotation(
@@ -278,7 +278,7 @@ export default class KMS {
       abortSignal, body,
       action: "DisableKeyRotation",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async disconnectCustomKeyStore(
@@ -291,7 +291,7 @@ export default class KMS {
       abortSignal, body,
       action: "DisconnectCustomKeyStore",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async enableKey(
@@ -304,7 +304,7 @@ export default class KMS {
       abortSignal, body,
       action: "EnableKey",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async enableKeyRotation(
@@ -317,7 +317,7 @@ export default class KMS {
       abortSignal, body,
       action: "EnableKeyRotation",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async encrypt(
@@ -557,7 +557,7 @@ export default class KMS {
       abortSignal, body,
       action: "ImportKeyMaterial",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async listAliases(
@@ -706,7 +706,7 @@ export default class KMS {
       abortSignal, body,
       action: "PutKeyPolicy",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async reEncrypt(
@@ -750,7 +750,7 @@ export default class KMS {
       abortSignal, body,
       action: "RetireGrant",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async revokeGrant(
@@ -764,7 +764,7 @@ export default class KMS {
       abortSignal, body,
       action: "RevokeGrant",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async scheduleKeyDeletion(
@@ -822,7 +822,7 @@ export default class KMS {
       abortSignal, body,
       action: "TagResource",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async untagResource(
@@ -836,7 +836,7 @@ export default class KMS {
       abortSignal, body,
       action: "UntagResource",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async updateAlias(
@@ -850,7 +850,7 @@ export default class KMS {
       abortSignal, body,
       action: "UpdateAlias",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async updateCustomKeyStore(
@@ -866,7 +866,7 @@ export default class KMS {
       abortSignal, body,
       action: "UpdateCustomKeyStore",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async updateKeyDescription(
@@ -880,7 +880,7 @@ export default class KMS {
       abortSignal, body,
       action: "UpdateKeyDescription",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async verify(

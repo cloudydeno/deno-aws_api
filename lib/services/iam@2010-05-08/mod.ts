@@ -45,7 +45,7 @@ export default class IAM {
       abortSignal, body,
       action: "AddClientIDToOpenIDConnectProvider",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async addRoleToInstanceProfile(
@@ -59,7 +59,7 @@ export default class IAM {
       abortSignal, body,
       action: "AddRoleToInstanceProfile",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async addUserToGroup(
@@ -73,7 +73,7 @@ export default class IAM {
       abortSignal, body,
       action: "AddUserToGroup",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async attachGroupPolicy(
@@ -87,7 +87,7 @@ export default class IAM {
       abortSignal, body,
       action: "AttachGroupPolicy",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async attachRolePolicy(
@@ -101,7 +101,7 @@ export default class IAM {
       abortSignal, body,
       action: "AttachRolePolicy",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async attachUserPolicy(
@@ -115,7 +115,7 @@ export default class IAM {
       abortSignal, body,
       action: "AttachUserPolicy",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async changePassword(
@@ -129,7 +129,7 @@ export default class IAM {
       abortSignal, body,
       action: "ChangePassword",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async createAccessKey(
@@ -158,7 +158,7 @@ export default class IAM {
       abortSignal, body,
       action: "CreateAccountAlias",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async createGroup(
@@ -400,7 +400,7 @@ export default class IAM {
       abortSignal, body,
       action: "DeactivateMFADevice",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteAccessKey(
@@ -414,7 +414,7 @@ export default class IAM {
       abortSignal, body,
       action: "DeleteAccessKey",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteAccountAlias(
@@ -427,7 +427,7 @@ export default class IAM {
       abortSignal, body,
       action: "DeleteAccountAlias",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteAccountPasswordPolicy(
@@ -437,7 +437,7 @@ export default class IAM {
       abortSignal,
       action: "DeleteAccountPasswordPolicy",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteGroup(
@@ -450,7 +450,7 @@ export default class IAM {
       abortSignal, body,
       action: "DeleteGroup",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteGroupPolicy(
@@ -464,7 +464,7 @@ export default class IAM {
       abortSignal, body,
       action: "DeleteGroupPolicy",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteInstanceProfile(
@@ -477,7 +477,7 @@ export default class IAM {
       abortSignal, body,
       action: "DeleteInstanceProfile",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteLoginProfile(
@@ -490,7 +490,7 @@ export default class IAM {
       abortSignal, body,
       action: "DeleteLoginProfile",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteOpenIDConnectProvider(
@@ -503,7 +503,7 @@ export default class IAM {
       abortSignal, body,
       action: "DeleteOpenIDConnectProvider",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deletePolicy(
@@ -516,7 +516,7 @@ export default class IAM {
       abortSignal, body,
       action: "DeletePolicy",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deletePolicyVersion(
@@ -530,7 +530,7 @@ export default class IAM {
       abortSignal, body,
       action: "DeletePolicyVersion",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteRole(
@@ -543,7 +543,7 @@ export default class IAM {
       abortSignal, body,
       action: "DeleteRole",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteRolePermissionsBoundary(
@@ -556,7 +556,7 @@ export default class IAM {
       abortSignal, body,
       action: "DeleteRolePermissionsBoundary",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteRolePolicy(
@@ -570,7 +570,7 @@ export default class IAM {
       abortSignal, body,
       action: "DeleteRolePolicy",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteSAMLProvider(
@@ -583,7 +583,7 @@ export default class IAM {
       abortSignal, body,
       action: "DeleteSAMLProvider",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteSSHPublicKey(
@@ -597,7 +597,7 @@ export default class IAM {
       abortSignal, body,
       action: "DeleteSSHPublicKey",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteServerCertificate(
@@ -610,7 +610,7 @@ export default class IAM {
       abortSignal, body,
       action: "DeleteServerCertificate",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteServiceLinkedRole(
@@ -640,7 +640,7 @@ export default class IAM {
       abortSignal, body,
       action: "DeleteServiceSpecificCredential",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteSigningCertificate(
@@ -654,7 +654,7 @@ export default class IAM {
       abortSignal, body,
       action: "DeleteSigningCertificate",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteUser(
@@ -667,7 +667,7 @@ export default class IAM {
       abortSignal, body,
       action: "DeleteUser",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteUserPermissionsBoundary(
@@ -680,7 +680,7 @@ export default class IAM {
       abortSignal, body,
       action: "DeleteUserPermissionsBoundary",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteUserPolicy(
@@ -694,7 +694,7 @@ export default class IAM {
       abortSignal, body,
       action: "DeleteUserPolicy",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteVirtualMFADevice(
@@ -707,7 +707,7 @@ export default class IAM {
       abortSignal, body,
       action: "DeleteVirtualMFADevice",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async detachGroupPolicy(
@@ -721,7 +721,7 @@ export default class IAM {
       abortSignal, body,
       action: "DetachGroupPolicy",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async detachRolePolicy(
@@ -735,7 +735,7 @@ export default class IAM {
       abortSignal, body,
       action: "DetachRolePolicy",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async detachUserPolicy(
@@ -749,7 +749,7 @@ export default class IAM {
       abortSignal, body,
       action: "DetachUserPolicy",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async enableMFADevice(
@@ -765,7 +765,7 @@ export default class IAM {
       abortSignal, body,
       action: "EnableMFADevice",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async generateCredentialReport(
@@ -2033,7 +2033,7 @@ export default class IAM {
       abortSignal, body,
       action: "PutGroupPolicy",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async putRolePermissionsBoundary(
@@ -2047,7 +2047,7 @@ export default class IAM {
       abortSignal, body,
       action: "PutRolePermissionsBoundary",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async putRolePolicy(
@@ -2062,7 +2062,7 @@ export default class IAM {
       abortSignal, body,
       action: "PutRolePolicy",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async putUserPermissionsBoundary(
@@ -2076,7 +2076,7 @@ export default class IAM {
       abortSignal, body,
       action: "PutUserPermissionsBoundary",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async putUserPolicy(
@@ -2091,7 +2091,7 @@ export default class IAM {
       abortSignal, body,
       action: "PutUserPolicy",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async removeClientIDFromOpenIDConnectProvider(
@@ -2105,7 +2105,7 @@ export default class IAM {
       abortSignal, body,
       action: "RemoveClientIDFromOpenIDConnectProvider",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async removeRoleFromInstanceProfile(
@@ -2119,7 +2119,7 @@ export default class IAM {
       abortSignal, body,
       action: "RemoveRoleFromInstanceProfile",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async removeUserFromGroup(
@@ -2133,7 +2133,7 @@ export default class IAM {
       abortSignal, body,
       action: "RemoveUserFromGroup",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async resetServiceSpecificCredential(
@@ -2166,7 +2166,7 @@ export default class IAM {
       abortSignal, body,
       action: "ResyncMFADevice",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async setDefaultPolicyVersion(
@@ -2180,7 +2180,7 @@ export default class IAM {
       abortSignal, body,
       action: "SetDefaultPolicyVersion",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async setSecurityTokenServicePreferences(
@@ -2193,7 +2193,7 @@ export default class IAM {
       abortSignal, body,
       action: "SetSecurityTokenServicePreferences",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async simulateCustomPolicy(
@@ -2268,7 +2268,7 @@ export default class IAM {
       abortSignal, body,
       action: "TagInstanceProfile",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async tagMFADevice(
@@ -2282,7 +2282,7 @@ export default class IAM {
       abortSignal, body,
       action: "TagMFADevice",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async tagOpenIDConnectProvider(
@@ -2296,7 +2296,7 @@ export default class IAM {
       abortSignal, body,
       action: "TagOpenIDConnectProvider",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async tagPolicy(
@@ -2310,7 +2310,7 @@ export default class IAM {
       abortSignal, body,
       action: "TagPolicy",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async tagRole(
@@ -2324,7 +2324,7 @@ export default class IAM {
       abortSignal, body,
       action: "TagRole",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async tagSAMLProvider(
@@ -2338,7 +2338,7 @@ export default class IAM {
       abortSignal, body,
       action: "TagSAMLProvider",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async tagServerCertificate(
@@ -2352,7 +2352,7 @@ export default class IAM {
       abortSignal, body,
       action: "TagServerCertificate",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async tagUser(
@@ -2366,7 +2366,7 @@ export default class IAM {
       abortSignal, body,
       action: "TagUser",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async untagInstanceProfile(
@@ -2380,7 +2380,7 @@ export default class IAM {
       abortSignal, body,
       action: "UntagInstanceProfile",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async untagMFADevice(
@@ -2394,7 +2394,7 @@ export default class IAM {
       abortSignal, body,
       action: "UntagMFADevice",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async untagOpenIDConnectProvider(
@@ -2408,7 +2408,7 @@ export default class IAM {
       abortSignal, body,
       action: "UntagOpenIDConnectProvider",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async untagPolicy(
@@ -2422,7 +2422,7 @@ export default class IAM {
       abortSignal, body,
       action: "UntagPolicy",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async untagRole(
@@ -2436,7 +2436,7 @@ export default class IAM {
       abortSignal, body,
       action: "UntagRole",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async untagSAMLProvider(
@@ -2450,7 +2450,7 @@ export default class IAM {
       abortSignal, body,
       action: "UntagSAMLProvider",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async untagServerCertificate(
@@ -2464,7 +2464,7 @@ export default class IAM {
       abortSignal, body,
       action: "UntagServerCertificate",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async untagUser(
@@ -2478,7 +2478,7 @@ export default class IAM {
       abortSignal, body,
       action: "UntagUser",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async updateAccessKey(
@@ -2493,7 +2493,7 @@ export default class IAM {
       abortSignal, body,
       action: "UpdateAccessKey",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async updateAccountPasswordPolicy(
@@ -2514,7 +2514,7 @@ export default class IAM {
       abortSignal, body,
       action: "UpdateAccountPasswordPolicy",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async updateAssumeRolePolicy(
@@ -2528,7 +2528,7 @@ export default class IAM {
       abortSignal, body,
       action: "UpdateAssumeRolePolicy",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async updateGroup(
@@ -2543,7 +2543,7 @@ export default class IAM {
       abortSignal, body,
       action: "UpdateGroup",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async updateLoginProfile(
@@ -2558,7 +2558,7 @@ export default class IAM {
       abortSignal, body,
       action: "UpdateLoginProfile",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async updateOpenIDConnectProviderThumbprint(
@@ -2572,7 +2572,7 @@ export default class IAM {
       abortSignal, body,
       action: "UpdateOpenIDConnectProviderThumbprint",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async updateRole(
@@ -2587,7 +2587,7 @@ export default class IAM {
       abortSignal, body,
       action: "UpdateRole",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async updateRoleDescription(
@@ -2636,7 +2636,7 @@ export default class IAM {
       abortSignal, body,
       action: "UpdateSSHPublicKey",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async updateServerCertificate(
@@ -2651,7 +2651,7 @@ export default class IAM {
       abortSignal, body,
       action: "UpdateServerCertificate",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async updateServiceSpecificCredential(
@@ -2666,7 +2666,7 @@ export default class IAM {
       abortSignal, body,
       action: "UpdateServiceSpecificCredential",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async updateSigningCertificate(
@@ -2681,7 +2681,7 @@ export default class IAM {
       abortSignal, body,
       action: "UpdateSigningCertificate",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async updateUser(
@@ -2696,7 +2696,7 @@ export default class IAM {
       abortSignal, body,
       action: "UpdateUser",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async uploadSSHPublicKey(

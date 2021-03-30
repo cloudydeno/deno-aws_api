@@ -45,7 +45,7 @@ export default class SES {
       abortSignal, body,
       action: "CloneReceiptRuleSet",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async createConfigurationSet(
@@ -58,7 +58,7 @@ export default class SES {
       abortSignal, body,
       action: "CreateConfigurationSet",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async createConfigurationSetEventDestination(
@@ -72,7 +72,7 @@ export default class SES {
       abortSignal, body,
       action: "CreateConfigurationSetEventDestination",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async createConfigurationSetTrackingOptions(
@@ -86,7 +86,7 @@ export default class SES {
       abortSignal, body,
       action: "CreateConfigurationSetTrackingOptions",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async createCustomVerificationEmailTemplate(
@@ -104,7 +104,7 @@ export default class SES {
       abortSignal, body,
       action: "CreateCustomVerificationEmailTemplate",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async createReceiptFilter(
@@ -117,7 +117,7 @@ export default class SES {
       abortSignal, body,
       action: "CreateReceiptFilter",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async createReceiptRule(
@@ -132,7 +132,7 @@ export default class SES {
       abortSignal, body,
       action: "CreateReceiptRule",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async createReceiptRuleSet(
@@ -145,7 +145,7 @@ export default class SES {
       abortSignal, body,
       action: "CreateReceiptRuleSet",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async createTemplate(
@@ -158,7 +158,7 @@ export default class SES {
       abortSignal, body,
       action: "CreateTemplate",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteConfigurationSet(
@@ -171,7 +171,7 @@ export default class SES {
       abortSignal, body,
       action: "DeleteConfigurationSet",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteConfigurationSetEventDestination(
@@ -185,7 +185,7 @@ export default class SES {
       abortSignal, body,
       action: "DeleteConfigurationSetEventDestination",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteConfigurationSetTrackingOptions(
@@ -198,7 +198,7 @@ export default class SES {
       abortSignal, body,
       action: "DeleteConfigurationSetTrackingOptions",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteCustomVerificationEmailTemplate(
@@ -211,7 +211,7 @@ export default class SES {
       abortSignal, body,
       action: "DeleteCustomVerificationEmailTemplate",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteIdentity(
@@ -224,7 +224,7 @@ export default class SES {
       abortSignal, body,
       action: "DeleteIdentity",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteIdentityPolicy(
@@ -238,7 +238,7 @@ export default class SES {
       abortSignal, body,
       action: "DeleteIdentityPolicy",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteReceiptFilter(
@@ -251,7 +251,7 @@ export default class SES {
       abortSignal, body,
       action: "DeleteReceiptFilter",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteReceiptRule(
@@ -265,7 +265,7 @@ export default class SES {
       abortSignal, body,
       action: "DeleteReceiptRule",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteReceiptRuleSet(
@@ -278,7 +278,7 @@ export default class SES {
       abortSignal, body,
       action: "DeleteReceiptRuleSet",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteTemplate(
@@ -291,7 +291,7 @@ export default class SES {
       abortSignal, body,
       action: "DeleteTemplate",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteVerifiedEmailAddress(
@@ -304,7 +304,7 @@ export default class SES {
       abortSignal, body,
       action: "DeleteVerifiedEmailAddress",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async describeActiveReceiptRuleSet(
@@ -685,7 +685,7 @@ export default class SES {
       abortSignal, body,
       action: "PutConfigurationSetDeliveryOptions",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async putIdentityPolicy(
@@ -700,7 +700,7 @@ export default class SES {
       abortSignal, body,
       action: "PutIdentityPolicy",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async reorderReceiptRuleSet(
@@ -714,7 +714,7 @@ export default class SES {
       abortSignal, body,
       action: "ReorderReceiptRuleSet",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async sendBounce(
@@ -865,7 +865,7 @@ export default class SES {
       abortSignal, body,
       action: "SetActiveReceiptRuleSet",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async setIdentityDkimEnabled(
@@ -879,7 +879,7 @@ export default class SES {
       abortSignal, body,
       action: "SetIdentityDkimEnabled",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async setIdentityFeedbackForwardingEnabled(
@@ -893,7 +893,7 @@ export default class SES {
       abortSignal, body,
       action: "SetIdentityFeedbackForwardingEnabled",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async setIdentityHeadersInNotificationsEnabled(
@@ -908,7 +908,7 @@ export default class SES {
       abortSignal, body,
       action: "SetIdentityHeadersInNotificationsEnabled",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async setIdentityMailFromDomain(
@@ -923,7 +923,7 @@ export default class SES {
       abortSignal, body,
       action: "SetIdentityMailFromDomain",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async setIdentityNotificationTopic(
@@ -938,7 +938,7 @@ export default class SES {
       abortSignal, body,
       action: "SetIdentityNotificationTopic",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async setReceiptRulePosition(
@@ -953,7 +953,7 @@ export default class SES {
       abortSignal, body,
       action: "SetReceiptRulePosition",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async testRenderTemplate(
@@ -983,7 +983,7 @@ export default class SES {
       abortSignal, body,
       action: "UpdateAccountSendingEnabled",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async updateConfigurationSetEventDestination(
@@ -997,7 +997,7 @@ export default class SES {
       abortSignal, body,
       action: "UpdateConfigurationSetEventDestination",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async updateConfigurationSetReputationMetricsEnabled(
@@ -1011,7 +1011,7 @@ export default class SES {
       abortSignal, body,
       action: "UpdateConfigurationSetReputationMetricsEnabled",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async updateConfigurationSetSendingEnabled(
@@ -1025,7 +1025,7 @@ export default class SES {
       abortSignal, body,
       action: "UpdateConfigurationSetSendingEnabled",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async updateConfigurationSetTrackingOptions(
@@ -1039,7 +1039,7 @@ export default class SES {
       abortSignal, body,
       action: "UpdateConfigurationSetTrackingOptions",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async updateCustomVerificationEmailTemplate(
@@ -1057,7 +1057,7 @@ export default class SES {
       abortSignal, body,
       action: "UpdateCustomVerificationEmailTemplate",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async updateReceiptRule(
@@ -1071,7 +1071,7 @@ export default class SES {
       abortSignal, body,
       action: "UpdateReceiptRule",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async updateTemplate(
@@ -1084,7 +1084,7 @@ export default class SES {
       abortSignal, body,
       action: "UpdateTemplate",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async verifyDomainDkim(
@@ -1129,7 +1129,7 @@ export default class SES {
       abortSignal, body,
       action: "VerifyEmailAddress",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async verifyEmailIdentity(
@@ -1142,7 +1142,7 @@ export default class SES {
       abortSignal, body,
       action: "VerifyEmailIdentity",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   // Resource State Waiters

@@ -273,7 +273,7 @@ export default class Lambda {
       requestUri: cmnP.encodePath`/2015-03-31/functions/${params["FunctionName"]}/aliases/${params["Name"]}`,
       responseCode: 204,
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteCodeSigningConfig(
@@ -287,7 +287,7 @@ export default class Lambda {
       requestUri: cmnP.encodePath`/2020-04-22/code-signing-configs/${params["CodeSigningConfigArn"]}`,
       responseCode: 204,
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteEventSourceMapping(
@@ -342,7 +342,7 @@ export default class Lambda {
       requestUri: cmnP.encodePath`/2015-03-31/functions/${params["FunctionName"]}`,
       responseCode: 204,
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteFunctionCodeSigningConfig(
@@ -356,7 +356,7 @@ export default class Lambda {
       requestUri: cmnP.encodePath`/2020-06-30/functions/${params["FunctionName"]}/code-signing-config`,
       responseCode: 204,
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteFunctionConcurrency(
@@ -370,7 +370,7 @@ export default class Lambda {
       requestUri: cmnP.encodePath`/2017-10-31/functions/${params["FunctionName"]}/concurrency`,
       responseCode: 204,
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteFunctionEventInvokeConfig(
@@ -385,7 +385,7 @@ export default class Lambda {
       requestUri: cmnP.encodePath`/2019-09-25/functions/${params["FunctionName"]}/event-invoke-config`,
       responseCode: 204,
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteLayerVersion(
@@ -399,7 +399,7 @@ export default class Lambda {
       requestUri: cmnP.encodePath`/2018-10-31/layers/${params["LayerName"]}/versions/${params["VersionNumber"].toString()}`,
       responseCode: 204,
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteProvisionedConcurrencyConfig(
@@ -414,7 +414,7 @@ export default class Lambda {
       requestUri: cmnP.encodePath`/2019-09-30/functions/${params["FunctionName"]}/provisioned-concurrency`,
       responseCode: 204,
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async getAccountSettings(
@@ -795,7 +795,7 @@ export default class Lambda {
       FunctionError: resp.headers.get("X-Amz-Function-Error"),
       LogResult: resp.headers.get("X-Amz-Log-Result"),
       ExecutedVersion: resp.headers.get("X-Amz-Executed-Version"),
-      Payload: await resp.text(), // TODO: maybe allow proper body streaming,
+      Payload: new Uint8Array(await resp.arrayBuffer()), // TODO: maybe allow proper body streaming,
     };
   }
 
@@ -1257,7 +1257,7 @@ export default class Lambda {
       requestUri: cmnP.encodePath`/2018-10-31/layers/${params["LayerName"]}/versions/${params["VersionNumber"].toString()}/policy/${params["StatementId"]}`,
       responseCode: 204,
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async removePermission(
@@ -1273,7 +1273,7 @@ export default class Lambda {
       requestUri: cmnP.encodePath`/2015-03-31/functions/${params["FunctionName"]}/policy/${params["StatementId"]}`,
       responseCode: 204,
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async tagResource(
@@ -1288,7 +1288,7 @@ export default class Lambda {
       requestUri: cmnP.encodePath`/2017-03-31/tags/${params["Resource"]}`,
       responseCode: 204,
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async untagResource(
@@ -1305,7 +1305,7 @@ export default class Lambda {
       requestUri: cmnP.encodePath`/2017-03-31/tags/${params["Resource"]}`,
       responseCode: 204,
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async updateAlias(

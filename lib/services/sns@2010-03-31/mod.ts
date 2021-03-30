@@ -46,7 +46,7 @@ export default class SNS {
       abortSignal, body,
       action: "AddPermission",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async checkIfPhoneNumberIsOptedOut(
@@ -148,7 +148,7 @@ export default class SNS {
       abortSignal, body,
       action: "DeleteEndpoint",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deletePlatformApplication(
@@ -161,7 +161,7 @@ export default class SNS {
       abortSignal, body,
       action: "DeletePlatformApplication",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteTopic(
@@ -174,7 +174,7 @@ export default class SNS {
       abortSignal, body,
       action: "DeleteTopic",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async getEndpointAttributes(
@@ -399,7 +399,7 @@ export default class SNS {
       abortSignal, body,
       action: "OptInPhoneNumber",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async publish(
@@ -437,7 +437,7 @@ export default class SNS {
       abortSignal, body,
       action: "RemovePermission",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async setEndpointAttributes(
@@ -451,7 +451,7 @@ export default class SNS {
       abortSignal, body,
       action: "SetEndpointAttributes",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async setPlatformApplicationAttributes(
@@ -465,7 +465,7 @@ export default class SNS {
       abortSignal, body,
       action: "SetPlatformApplicationAttributes",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async setSMSAttributes(
@@ -478,7 +478,7 @@ export default class SNS {
       abortSignal, body,
       action: "SetSMSAttributes",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async setSubscriptionAttributes(
@@ -493,7 +493,7 @@ export default class SNS {
       abortSignal, body,
       action: "SetSubscriptionAttributes",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async setTopicAttributes(
@@ -508,7 +508,7 @@ export default class SNS {
       abortSignal, body,
       action: "SetTopicAttributes",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async subscribe(
@@ -542,7 +542,7 @@ export default class SNS {
       abortSignal, body,
       action: "TagResource",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async unsubscribe(
@@ -555,7 +555,7 @@ export default class SNS {
       abortSignal, body,
       action: "Unsubscribe",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async untagResource(
@@ -569,7 +569,7 @@ export default class SNS {
       abortSignal, body,
       action: "UntagResource",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
 }

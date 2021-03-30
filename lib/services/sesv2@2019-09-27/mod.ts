@@ -51,7 +51,7 @@ export default class SESV2 {
       action: "CreateConfigurationSet",
       requestUri: "/v2/email/configuration-sets",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async createConfigurationSetEventDestination(
@@ -66,7 +66,7 @@ export default class SESV2 {
       action: "CreateConfigurationSetEventDestination",
       requestUri: cmnP.encodePath`/v2/email/configuration-sets/${params["ConfigurationSetName"]}/event-destinations`,
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async createContact(
@@ -83,7 +83,7 @@ export default class SESV2 {
       action: "CreateContact",
       requestUri: cmnP.encodePath`/v2/email/contact-lists/${params["ContactListName"]}/contacts`,
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async createContactList(
@@ -100,7 +100,7 @@ export default class SESV2 {
       action: "CreateContactList",
       requestUri: "/v2/email/contact-lists",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async createCustomVerificationEmailTemplate(
@@ -119,7 +119,7 @@ export default class SESV2 {
       action: "CreateCustomVerificationEmailTemplate",
       requestUri: "/v2/email/custom-verification-email-templates",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async createDedicatedIpPool(
@@ -134,7 +134,7 @@ export default class SESV2 {
       action: "CreateDedicatedIpPool",
       requestUri: "/v2/email/dedicated-ip-pools",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async createDeliverabilityTestReport(
@@ -195,7 +195,7 @@ export default class SESV2 {
       action: "CreateEmailIdentityPolicy",
       requestUri: cmnP.encodePath`/v2/email/identities/${params["EmailIdentity"]}/policies/${params["PolicyName"]}`,
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async createEmailTemplate(
@@ -210,7 +210,7 @@ export default class SESV2 {
       action: "CreateEmailTemplate",
       requestUri: "/v2/email/templates",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async createImportJob(
@@ -243,7 +243,7 @@ export default class SESV2 {
       method: "DELETE",
       requestUri: cmnP.encodePath`/v2/email/configuration-sets/${params["ConfigurationSetName"]}`,
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteConfigurationSetEventDestination(
@@ -256,7 +256,7 @@ export default class SESV2 {
       method: "DELETE",
       requestUri: cmnP.encodePath`/v2/email/configuration-sets/${params["ConfigurationSetName"]}/event-destinations/${params["EventDestinationName"]}`,
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteContact(
@@ -269,7 +269,7 @@ export default class SESV2 {
       method: "DELETE",
       requestUri: cmnP.encodePath`/v2/email/contact-lists/${params["ContactListName"]}/contacts/${params["EmailAddress"]}`,
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteContactList(
@@ -282,7 +282,7 @@ export default class SESV2 {
       method: "DELETE",
       requestUri: cmnP.encodePath`/v2/email/contact-lists/${params["ContactListName"]}`,
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteCustomVerificationEmailTemplate(
@@ -295,7 +295,7 @@ export default class SESV2 {
       method: "DELETE",
       requestUri: cmnP.encodePath`/v2/email/custom-verification-email-templates/${params["TemplateName"]}`,
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteDedicatedIpPool(
@@ -308,7 +308,7 @@ export default class SESV2 {
       method: "DELETE",
       requestUri: cmnP.encodePath`/v2/email/dedicated-ip-pools/${params["PoolName"]}`,
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteEmailIdentity(
@@ -321,7 +321,7 @@ export default class SESV2 {
       method: "DELETE",
       requestUri: cmnP.encodePath`/v2/email/identities/${params["EmailIdentity"]}`,
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteEmailIdentityPolicy(
@@ -334,7 +334,7 @@ export default class SESV2 {
       method: "DELETE",
       requestUri: cmnP.encodePath`/v2/email/identities/${params["EmailIdentity"]}/policies/${params["PolicyName"]}`,
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteEmailTemplate(
@@ -347,7 +347,7 @@ export default class SESV2 {
       method: "DELETE",
       requestUri: cmnP.encodePath`/v2/email/templates/${params["TemplateName"]}`,
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteSuppressedDestination(
@@ -360,7 +360,7 @@ export default class SESV2 {
       method: "DELETE",
       requestUri: cmnP.encodePath`/v2/email/suppression/addresses/${params["EmailAddress"]}`,
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async getAccount(
@@ -1029,7 +1029,7 @@ export default class SESV2 {
       method: "PUT",
       requestUri: "/v2/email/account/dedicated-ips/warmup",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async putAccountDetails(
@@ -1048,7 +1048,7 @@ export default class SESV2 {
       action: "PutAccountDetails",
       requestUri: "/v2/email/account/details",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async putAccountSendingAttributes(
@@ -1063,7 +1063,7 @@ export default class SESV2 {
       method: "PUT",
       requestUri: "/v2/email/account/sending",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async putAccountSuppressionAttributes(
@@ -1078,7 +1078,7 @@ export default class SESV2 {
       method: "PUT",
       requestUri: "/v2/email/account/suppression",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async putConfigurationSetDeliveryOptions(
@@ -1094,7 +1094,7 @@ export default class SESV2 {
       method: "PUT",
       requestUri: cmnP.encodePath`/v2/email/configuration-sets/${params["ConfigurationSetName"]}/delivery-options`,
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async putConfigurationSetReputationOptions(
@@ -1109,7 +1109,7 @@ export default class SESV2 {
       method: "PUT",
       requestUri: cmnP.encodePath`/v2/email/configuration-sets/${params["ConfigurationSetName"]}/reputation-options`,
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async putConfigurationSetSendingOptions(
@@ -1124,7 +1124,7 @@ export default class SESV2 {
       method: "PUT",
       requestUri: cmnP.encodePath`/v2/email/configuration-sets/${params["ConfigurationSetName"]}/sending`,
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async putConfigurationSetSuppressionOptions(
@@ -1139,7 +1139,7 @@ export default class SESV2 {
       method: "PUT",
       requestUri: cmnP.encodePath`/v2/email/configuration-sets/${params["ConfigurationSetName"]}/suppression-options`,
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async putConfigurationSetTrackingOptions(
@@ -1154,7 +1154,7 @@ export default class SESV2 {
       method: "PUT",
       requestUri: cmnP.encodePath`/v2/email/configuration-sets/${params["ConfigurationSetName"]}/tracking-options`,
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async putDedicatedIpInPool(
@@ -1169,7 +1169,7 @@ export default class SESV2 {
       method: "PUT",
       requestUri: cmnP.encodePath`/v2/email/dedicated-ips/${params["Ip"]}/pool`,
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async putDedicatedIpWarmupAttributes(
@@ -1184,7 +1184,7 @@ export default class SESV2 {
       method: "PUT",
       requestUri: cmnP.encodePath`/v2/email/dedicated-ips/${params["Ip"]}/warmup`,
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async putDeliverabilityDashboardOption(
@@ -1200,7 +1200,7 @@ export default class SESV2 {
       method: "PUT",
       requestUri: "/v2/email/deliverability-dashboard",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async putEmailIdentityConfigurationSetAttributes(
@@ -1215,7 +1215,7 @@ export default class SESV2 {
       method: "PUT",
       requestUri: cmnP.encodePath`/v2/email/identities/${params["EmailIdentity"]}/configuration-set`,
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async putEmailIdentityDkimAttributes(
@@ -1230,7 +1230,7 @@ export default class SESV2 {
       method: "PUT",
       requestUri: cmnP.encodePath`/v2/email/identities/${params["EmailIdentity"]}/dkim`,
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async putEmailIdentityDkimSigningAttributes(
@@ -1267,7 +1267,7 @@ export default class SESV2 {
       method: "PUT",
       requestUri: cmnP.encodePath`/v2/email/identities/${params["EmailIdentity"]}/feedback`,
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async putEmailIdentityMailFromAttributes(
@@ -1283,7 +1283,7 @@ export default class SESV2 {
       method: "PUT",
       requestUri: cmnP.encodePath`/v2/email/identities/${params["EmailIdentity"]}/mail-from`,
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async putSuppressedDestination(
@@ -1299,7 +1299,7 @@ export default class SESV2 {
       method: "PUT",
       requestUri: "/v2/email/suppression/addresses",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async sendBulkEmail(
@@ -1390,7 +1390,7 @@ export default class SESV2 {
       action: "TagResource",
       requestUri: "/v2/email/tags",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async testRenderEmailTemplate(
@@ -1426,7 +1426,7 @@ export default class SESV2 {
       method: "DELETE",
       requestUri: "/v2/email/tags",
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async updateConfigurationSetEventDestination(
@@ -1441,7 +1441,7 @@ export default class SESV2 {
       method: "PUT",
       requestUri: cmnP.encodePath`/v2/email/configuration-sets/${params["ConfigurationSetName"]}/event-destinations/${params["EventDestinationName"]}`,
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async updateContact(
@@ -1458,7 +1458,7 @@ export default class SESV2 {
       method: "PUT",
       requestUri: cmnP.encodePath`/v2/email/contact-lists/${params["ContactListName"]}/contacts/${params["EmailAddress"]}`,
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async updateContactList(
@@ -1474,7 +1474,7 @@ export default class SESV2 {
       method: "PUT",
       requestUri: cmnP.encodePath`/v2/email/contact-lists/${params["ContactListName"]}`,
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async updateCustomVerificationEmailTemplate(
@@ -1493,7 +1493,7 @@ export default class SESV2 {
       method: "PUT",
       requestUri: cmnP.encodePath`/v2/email/custom-verification-email-templates/${params["TemplateName"]}`,
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async updateEmailIdentityPolicy(
@@ -1508,7 +1508,7 @@ export default class SESV2 {
       method: "PUT",
       requestUri: cmnP.encodePath`/v2/email/identities/${params["EmailIdentity"]}/policies/${params["PolicyName"]}`,
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async updateEmailTemplate(
@@ -1523,7 +1523,7 @@ export default class SESV2 {
       method: "PUT",
       requestUri: cmnP.encodePath`/v2/email/templates/${params["TemplateName"]}`,
     });
-    await resp.text();
+    await resp.arrayBuffer(); // consume body without use
   }
 
 }
