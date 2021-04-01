@@ -24,6 +24,7 @@ export interface ApiRequestConfig {
   responseCode?: number;
   hostPrefix?: string;
   // dynamic per call
+  region?: string;
   headers?: Headers;
   query?: URLSearchParams;
   body?: URLSearchParams | JSONObject | Uint8Array | string | null;

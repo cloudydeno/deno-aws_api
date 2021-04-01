@@ -14,6 +14,7 @@ type FetchOpts = {
   signal?: AbortSignal,
   hostPrefix?: string,
   skipSigning?: true,
+  region?: string,
 };
 type SigningFetcher = (request: Request, opts: FetchOpts) => Promise<Response>;
 
@@ -71,9 +72,9 @@ export class ApiFactory {
 
       // Resolve credentials and AWS region
       const credentials = await this.#credentials.getCredentials();
-      const region = apiMetadata.globalEndpoint
-        ? 'us-east-1'
-        : (this.#region ?? credentials.region ?? throwMissingRegion());
+      const region = opts.region
+        ?? (apiMetadata.globalEndpoint ? 'us-east-1'
+        : (this.#region ?? credentials.region ?? throwMissingRegion()));
 
       const signer = new AWSSignerV4(region, credentials);
       const serviceUrl = 'https://' + (apiMetadata.globalEndpoint
@@ -152,6 +153,7 @@ export class BaseServiceClient implements ServiceClient {
     });
     const rawResp = await this.#signedFetcher(request, {
       urlPath: serviceUrl + query,
+      region: config.region,
       skipSigning: config.skipSigning,
       hostPrefix: config.hostPrefix,
       signal: config.abortSignal,
