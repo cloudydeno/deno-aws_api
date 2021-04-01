@@ -13,14 +13,23 @@ const s3Api = new S3.S3Bucket({
   region: Deno.env.get('HTTPCACHE_S3_REGION') || 'us-east-2',
 });
 const caches: Array<Cache> = [
-  inMemoryCache(10),
-  s3Cache(s3Api/*, "deno-httpcache"*/),
+  inMemoryCache(20),
+  s3Cache(s3Api),
 ];
 
 export async function immutableFetch(url: string) {
   for (const cache of caches) {
     const cached = await cache.match(url);
-    if (cached) return cached;
+    if (cached) {
+      // Copy colder bodies into warmer caches
+      const cacheIdx = caches.indexOf(cache);
+      if (cacheIdx > 0) {
+        await Promise.all(caches.slice(0, cacheIdx).map(cache => {
+          cache.put(url, cached);
+        }));
+      }
+      return cached;
+    }
   }
 
   console.log('fetch', url);
@@ -28,11 +37,16 @@ export async function immutableFetch(url: string) {
   if (resp.status === 200) {
     resp.headers.delete('expires');
     resp.headers.set('cache-control', 'public, immutable');
+  } else if (resp.status === 404) {
+    resp.headers.delete('expires');
+    resp.headers.set('cache-control', 'public, maxage=3600');
+  } else {
+    resp.headers.set('cache-control', 'public, maxage=300');
   }
 
   console.log('put', url, resp.status);
   await Promise.all(caches.map(cache => {
-    cache.put(url, resp.clone());
+    cache.put(url, resp);
   }));
 
   return resp;

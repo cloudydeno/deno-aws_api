@@ -15,7 +15,7 @@ export function s3Cache(
     async get(url) {
       console.log('s3 get', urlKey(url));
       const data = await s3.getObject(urlKey(url));
-      if (!data) return data;
+      if (!data) return undefined;
       return {
         policy: JSON.parse(data.meta['cache-policy'] || '{}'),
         body: new Uint8Array(await new Response(data.body).arrayBuffer()),
