@@ -35,10 +35,11 @@ export function s3Cache(
       }
     },
     async set(url, resp) {
+      const contentTypes = resp.policy.resh['content-type'] ?? [];
       await s3Client.putObject({
         ...s3Coords(url),
         Body: resp.body,
-        ContentType?: resp.policy.resh['content-type']?.[0],
+        ContentType: Array.isArray(contentTypes) ? contentTypes[0] : contentTypes,
         Metadata: {
           ['cache-policy']: JSON.stringify(resp.policy),
         },

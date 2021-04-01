@@ -27,10 +27,13 @@ export async function immutableFetch(url: string) {
   const resp = await fetch(url);
   if (resp.status === 200) {
     resp.headers.delete('expires');
+    resp.headers.set('cache-control', 'public, immutable');
   }
 
   console.log('put', url, resp.status);
-  await Promise.all(caches.map(cache => cache.put(url, resp)));
+  await Promise.all(caches.map(cache => {
+    cache.put(url, resp.clone());
+  }));
 
   return resp;
 }
