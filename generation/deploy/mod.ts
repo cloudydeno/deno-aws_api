@@ -1,3 +1,6 @@
+
+import { immutableFetch } from "./cache.ts";
+
 addEventListener("fetch", async (event) => {
   const request = event.request as Request;
   const { pathname, searchParams, origin } = new URL(request.url);
@@ -6,17 +9,29 @@ addEventListener("fetch", async (event) => {
 
   const match = pathname.match(/^\/(v[0-9.]+)\/sdk@(v2\.[0-9]+\.[0-9]+)\/([^/.@]+)@([0-9-]+).ts$/);
   if (match) {
-    let apiText = await serveApi(match[2], match[3], match[4], searchParams);
-    apiText = apiText.replaceAll('from "../..', `from "https://deno.land/x/aws_api@${match[1]}`);
-    event.respondWith(
-      new Response(apiText, {
-        status: 200,
-        headers: {
-          server: "aws_api-generation/v0.3.1",
-          "content-type": wantsHtml ? "text/plain; charset=utf-8" : "application/x-typescript",
-        },
-      }),
-    );
+    try {
+      let apiText = await serveApi(match[2], match[3], match[4], searchParams);
+      apiText = apiText.replaceAll('from "../..', `from "https://deno.land/x/aws_api@${match[1]}`);
+      event.respondWith(
+        new Response(apiText, {
+          status: 200,
+          headers: {
+            server: "aws_api-generation/v0.3.1",
+            "content-type": wantsHtml ? "text/plain; charset=utf-8" : "application/x-typescript",
+          },
+        }),
+      );
+    } catch (err) {
+      event.respondWith(
+        new Response(err.stack, {
+          status: 500,
+          headers: {
+            server: "aws_api-generation/v0.3.1",
+            "content-type": "text/plain; charset=utf-8",
+          },
+        }),
+      );
+    }
     return;
   }
 
@@ -47,7 +62,6 @@ import {SQS} from "${origin}/v0.3.1/sdk@v2.875.0/sqs@2012-11-05.ts?actions=Recei
 
 
 
-// import * as path from "https://deno.land/std@0.91.0/path/mod.ts";
 import ServiceCodeGen from '../code-gen.ts';
 import type * as Schema from '../sdk-schema.ts';
 
@@ -60,7 +74,7 @@ async function serveApi(sdkVersion: string, apiId: string, apiVersion: string, o
   headerChunks.push(`//   extra options: ${options}`);
   headerChunks.push(`//   current time: ${new Date().toISOString()}`);
 
-  const serviceList = await fetch(`https://raw.githubusercontent.com/aws/aws-sdk-js/${sdkVersion}/apis/metadata.json`).then(x => x.json()) as Record<string, Schema.ServiceMetadata & {modId: string}>;
+  const serviceList = await immutableFetch(`https://raw.githubusercontent.com/aws/aws-sdk-js/${sdkVersion}/apis/metadata.json`).then(x => x.json()) as Record<string, Schema.ServiceMetadata & {modId: string}>;
 
   const module = serviceList[apiId];
   if (!module) throw new Error(`Not Found`);
@@ -68,7 +82,7 @@ async function serveApi(sdkVersion: string, apiId: string, apiVersion: string, o
   const jsonPath = (suffix: string) =>
     `apis/${module.prefix || apiId}-${apiVersion}.${suffix}.json`;
   const getPath = (path: string) =>
-    fetch(`https://raw.githubusercontent.com/aws/aws-sdk-js/${sdkVersion}/${path}`)
+    immutableFetch(`https://raw.githubusercontent.com/aws/aws-sdk-js/${sdkVersion}/${path}`)
     .then(x => {
       if (x.status !== 200) throw new Error(`HTTP ${x.status} on ${path}`);
       return x.text();
