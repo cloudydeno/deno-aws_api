@@ -13,6 +13,7 @@ export function s3Cache(
 
   return new Cache({
     async get(url) {
+      console.log('s3 get', urlKey(url));
       const data = await s3.getObject(urlKey(url));
       if (!data) return data;
       return {
@@ -22,6 +23,7 @@ export function s3Cache(
     },
     async set(url, resp) {
       await s3.putObject(urlKey(url), resp.body, {
+        contentType: resp.policy.resh['content-type']?.[0],
         meta: {
           ['cache-policy']: JSON.stringify(resp.policy),
         },

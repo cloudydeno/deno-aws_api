@@ -1,4 +1,5 @@
-import S3 from "../../lib/services/s3@2006-03-01/mod.ts";
+// import S3 from "../../lib/services/s3@2006-03-01/mod.ts";
+import S3 from "./s3-api.ts";
 import { ApiMetadata } from '../../lib/client/common.ts';
 import { ApiFactory } from '../../lib/client/mod.ts';
 
@@ -22,6 +23,7 @@ export function s3Cache(
   return new Cache({
     async get(url) {
       try {
+        console.log('s3 get', s3Coords(url).Key);
         const { Metadata, Body } = await s3Client.getObject(s3Coords(url));
         return {
           policy: JSON.parse(Metadata['cache-policy'] || '{}'),
@@ -36,13 +38,14 @@ export function s3Cache(
       await s3Client.putObject({
         ...s3Coords(url),
         Body: resp.body,
+        ContentType?: resp.policy.resh['content-type']?.[0],
         Metadata: {
           ['cache-policy']: JSON.stringify(resp.policy),
         },
       });
     },
     async delete(url) {
-      // await s3Client.deleteObject(s3Coords(url));
+      await s3Client.deleteObject(s3Coords(url));
     },
     close() {},
   });
