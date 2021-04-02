@@ -32,6 +32,12 @@ export interface ApiRequestConfig {
   skipSigning?: true; // for unauthenticated APIs (STS, cognito)
 }
 
+export class ApiResponse extends Response {
+  get requestId(): string | null {
+    return this.headers.get('x-amzn-requestid') ?? this.headers.get('x-amz-request-id');
+  }
+}
+
 // Things that JSON can handle directly
 export type JSONPrimitive = string | number | boolean | null | undefined;
 export type JSONValue = JSONPrimitive | JSONObject | JSONArray;

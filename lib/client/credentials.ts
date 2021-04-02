@@ -1,5 +1,8 @@
-import type { ApiMetadata, Credentials, CredentialsProvider } from "./common.ts";
+import type { Credentials, CredentialsProvider } from "./common.ts";
 import { IMDSv2 } from "./instance-metadata.ts";
+import { BaseApiFactory } from './client.ts';
+
+export type { Credentials, CredentialsProvider } from "./common.ts";
 
 // If more than one credential source is available to the SDK, the default precedence of selection is as follows:
 //  1. Credentials that are explicitly set through the service-client constructor
@@ -201,7 +204,10 @@ export class TokenFileWebIdentityCredentials implements CredentialsProvider {
     if (!this.#tokenPath) throw new Error(`No WebIdentityToken file path is set`);
     if (!this.#roleArn) throw new Error(`No Role ARN is set`);
 
-    const client = new ApiFactory().buildServiceClient(StsApiMetadata);
+    const client = new BaseApiFactory({
+      credentialProvider: DefaultCredentialsProvider,
+    }).buildServiceClient(StsApiMetadata);
+
     const resp = await assumeRoleWithWebIdentity(client, {
       RoleArn: this.#roleArn,
       RoleSessionName: this.#sessionName,
@@ -308,8 +314,7 @@ export function getDefaultRegion(): string {
 // Embedded subset of STS for assuming roles
 // Is it even worth saving the one STS file? idk
 
-import { ApiFactory } from '../client/mod.ts';
-import { ServiceClient } from "../client/common.ts";
+import type { ServiceClient, ApiMetadata } from "./common.ts";
 import { readXmlResult, XmlNode } from "../encoding/xml.ts";
 
 const StsApiMetadata: ApiMetadata = {
