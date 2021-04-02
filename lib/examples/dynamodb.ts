@@ -1,3 +1,5 @@
+#!/usr/bin/env -S deno run --allow-env --allow-read=${HOME}/.aws --allow-net
+
 import { ApiFactory } from '../client/mod.ts';
 import DynamoDB from '../services/dynamodb@2012-08-10/mod.ts';
 

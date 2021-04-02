@@ -1,3 +1,5 @@
+#!/usr/bin/env -S deno run --allow-env --allow-read=${HOME}/.aws --allow-net --unstable
+
 import { ApiFactory } from '../client/mod.ts';
 import CloudWatch from '../services/cloudwatch@2010-08-01/mod.ts';
 

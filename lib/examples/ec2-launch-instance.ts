@@ -1,8 +1,10 @@
+#!/usr/bin/env -S deno run --allow-env --allow-read=${HOME}/.aws --allow-net
+
 // Running this script can cost money!
 // It also terminates EC2 instances from your region!!
 //     (Hopefully only instances that it launched :)
 // Please check that all instances are cleaned up after you're done
-const ThiScriptUrl = `https://deno.land/x/aws_api/examples/ec2-launch-instance.ts`;
+const ThisScriptUrl = `https://deno.land/x/aws_api/examples/ec2-launch-instance.ts`;
 
 import { ApiFactory } from '../client/mod.ts';
 import EC2, { Instance } from '../services/ec2@2016-11-15/mod.ts';
@@ -31,10 +33,11 @@ if (activeInstances.length > 5) throw new Error(
 
 // Pick an AZ from what's available
 const {AvailabilityZones} = await ec2.describeAvailabilityZones();
-const firstZone = AvailabilityZones[0]?.ZoneName;
+const firstZone = Deno.env.get('AWS_EC2_ZONE') ?? AvailabilityZones[0]?.ZoneName;
 if (!firstZone) throw new Error(
   `I couldn't find an availability zone in this account. Weird.`);
-console.log('Using AZ', firstZone);
+console.log('Using AZ', firstZone,
+  '- to use a different zone, export AWS_EC2_ZONE=[...]');
 
 // Find the default VPC
 // This will fail if you deleted yours, but most casual users won't
@@ -63,12 +66,12 @@ console.log('Using Subnet', defaultSubnet.SubnetId);
 
 // Look for an Amazon Linux 2 AMI for arm64
 const {Images} = await ec2.describeImages({
-  Owners: ['amazon'],
+  Owners: ['099720109477'],
   Filters: [
     { Name: 'architecture', Values: ['arm64'] },
     { Name: 'state', Values: ['available'] },
     { Name: 'virtualization-type', Values: ['hvm'] },
-    { Name: 'name', Values: ['amzn2-ami-minimal-*'] },
+    { Name: 'name', Values: ['ubuntu/images/hvm-ssd/ubuntu-groovy-20.10-*'] },
   ],
 });
 // sort newest -> oldest
@@ -84,15 +87,13 @@ const {Instances: [instance]} = await ec2.runInstances({
   InstanceType: "t4g.nano",
   ImageId: amznImage.ImageId,
   SubnetId: defaultSubnet.SubnetId,
-  TagSpecifications: [
-    {
-      ResourceType: "instance",
-      Tags: [
-        {Key: "Name", Value: "deno aws_api example"},
-        {Key: "DenoExample", Value: ThiScriptUrl},
-      ],
-    },
-  ],
+  TagSpecifications: [{
+    ResourceType: "instance",
+    Tags: [
+      { Key: "Name", Value: "deno aws_api example" },
+      { Key: "DenoExample", Value: ThisScriptUrl },
+    ],
+  }],
   MinCount: 1,
   MaxCount: 1,
   UserData: btoa(`#!/bin/bash -eux
@@ -121,13 +122,12 @@ console.log('Launched instance:', instance.InstanceId);
   });
   // Look for and print our specific part of cloud-init
   const outputLines = atob(Output ?? '').split('\n');
-  const firstRelevantLine = outputLines.findIndex(x => x.includes(`running 'modules:final'`));
+  const firstRelevantLine = outputLines.findIndex(x => x.includes(`running 'modules:config'`));
   console.log('Console output:');
   for (const line of outputLines.slice(firstRelevantLine)) {
     if (line.includes('cloud-init')) console.log('  |', line);
   }
 }
-
 
 { // Terminate the instance
   const {TerminatingInstances} = await ec2.terminateInstances({
@@ -151,7 +151,7 @@ console.log('All done! Bye');
 
 async function performCleanup(activeInstances: Instance[]) {
   const ourInstances = activeInstances.filter(x => x.Tags
-    .some(y => y.Key === 'DenoExample' && y.Value === ThiScriptUrl));
+    .some(y => y.Key === 'DenoExample' && y.Value === ThisScriptUrl));
   if (ourInstances.length == 0) {
     console.log(`I didn't find any instances to clean up.`);
     return;
