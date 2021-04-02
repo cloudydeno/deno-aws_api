@@ -12,7 +12,6 @@ import { readXmlResult, stringify } from "../encoding/xml.ts";
 
 type FetchOpts = {
   urlPath: string,
-  signal?: AbortSignal,
   hostPrefix?: string,
   skipSigning?: true,
   region?: string,
@@ -56,10 +55,17 @@ export class BaseApiFactory implements ApiFactory {
     }
 
     const signingFetcher: SigningFetcher = async (request: Request, opts: FetchOpts): Promise<Response> => {
-      const reqExtras: RequestInit = {
-        signal: opts.signal,
-        redirect: "manual",
-      };
+      // QUIRK: try using host routing for S3 buckets when helpful
+      // TODO: this isn't actually signing relevant!
+      // we just have better info here...
+      if (apiMetadata.serviceId === 'S3' && opts.urlPath && !opts.hostPrefix) {
+        const [bucketName] = opts.urlPath.slice(1).split(/[?/]/);
+        if (bucketName.length > 0 && !bucketName.includes('.')) {
+          opts.hostPrefix = `${bucketName}.`;
+          const path = opts.urlPath.slice(bucketName.length+1);
+          opts.urlPath = path.startsWith('/') ? path : `/${path}`;
+        }
+      }
 
       if (opts.skipSigning) {
         const endpoint =
@@ -74,7 +80,7 @@ export class BaseApiFactory implements ApiFactory {
           ].join('.');
 
         const fullUrl = `https://${opts.hostPrefix ?? ''}${endpoint}${opts.urlPath}`;
-        return fetch(new Request(fullUrl, request), reqExtras);
+        return fetch(fullUrl, request);
       }
 
       // Resolve credentials and AWS region
@@ -100,7 +106,8 @@ export class BaseApiFactory implements ApiFactory {
       const url = `${scheme}//${opts.hostPrefix ?? ''}${host}${opts.urlPath}`;
 
       const req = await signer.sign(signingName, url, request);
-      return fetch(req, reqExtras);
+      console.log(req.method, url);
+      return fetch(req);
     }
 
     return wrapServiceClient(apiMetadata, signingFetcher);
@@ -169,13 +176,15 @@ export class BaseServiceClient implements ServiceClient {
       method: method,
       headers: headers,
       body: config.body,
+      redirect: 'manual',
+      signal: config.abortSignal,
     });
     const rawResp = await this.#signedFetcher(request, {
       urlPath: serviceUrl + query,
       region: config.region,
       skipSigning: config.skipSigning,
       hostPrefix: config.hostPrefix,
-      signal: config.abortSignal,
+      // signal: config.abortSignal,
     });
     const response = new ApiResponse(rawResp.body, rawResp);
 
