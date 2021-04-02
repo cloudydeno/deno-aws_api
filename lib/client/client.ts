@@ -30,11 +30,11 @@ export class BaseApiFactory implements ApiFactory {
     credentialProvider?: CredentialsProvider,
     credentials?: Credentials,
     region?: string;
-  }={}) {
+  }) {
     if (opts.credentials != null) {
       const {credentials} = opts;
       this.#credentials = { getCredentials: () => Promise.resolve(credentials) };
-    } else if (opts.credentialProvider) {
+    } else if (opts.credentialProvider != null) {
       this.#credentials = opts.credentialProvider;
     } else throw new Error(
       `No credentials or credential source provided -- you must provide one to use this class directly`);
@@ -105,6 +105,12 @@ export class BaseApiFactory implements ApiFactory {
     const creds = await this.#credentials.getCredentials();
     if (creds.awsAccessKeyId) return;
     throw new Error(`Empty credentials were returned successfully (somehow?)`);
+  }
+
+  async determineCurrentRegion() {
+    if (this.#region != null) return this.#region;
+    const credentials = await this.#credentials.getCredentials();
+    return credentials.region ?? throwMissingRegion();
   }
 }
 
