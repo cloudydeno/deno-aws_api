@@ -92,7 +92,7 @@ All API definitions are current as of [aws-sdk-js `v2.874.0`](https://github.com
 | `dlm@2018-01-12` | rest-json | ✔️ | 22 KiB | ✔️ | 1.6 sec |
 | `dms@2016-01-01` | json | ✔️ | 125 KiB | ✔️ | 3.0 sec |
 | `docdb@2014-10-31` | query | ✔️ | 87 KiB | ✔️ | 2.5 sec |
-| `dynamodb@2011-12-05` | json | ✔️ | 25 KiB | ✔️ | 1.7 sec |
+| `dynamodb@2011-12-05` | json | ✔️ | 25 KiB | ✔️ | 1.3 sec |
 | `dynamodb@2012-08-10` | json | ✔️ | 123 KiB | ✔️ | 3.2 sec |
 | `streams.dynamodb@2012-08-10` | json | ✔️ | 10 KiB | ✔️ | 1.7 sec |
 | `ebs@2019-11-02` | rest-json | ✔️ | 11 KiB | ✔️ | 1.3 sec |
@@ -162,8 +162,8 @@ All API definitions are current as of [aws-sdk-js `v2.874.0`](https://github.com
 | `kinesis-video-signaling@2019-12-04` | rest-json | ✔️ | 3 KiB | ✔️ | 1.1 sec |
 | `kms@2014-11-01` | json | ✔️ | 48 KiB | ✔️ | 4.0 sec |
 | `lakeformation@2017-03-31` | json | ✔️ | 23 KiB | ✔️ | 1.4 sec |
-| `lambda@2014-11-11` | rest-json | ✔️ | 15 KiB | ✔️ | 1.6 sec |
-| `lambda@2015-03-31` | rest-json | ✔️ | 100 KiB | ✔️ | 3.5 sec |
+| `lambda@2014-11-11` | rest-json | ✔️ | 15 KiB | ✔️ | 1.4 sec |
+| `lambda@2015-03-31` | rest-json | ✔️ | 99 KiB | ✔️ | 2.4 sec |
 | `lex-models@2017-04-19` | rest-json | ✔️ | 69 KiB | ✔️ | 2.1 sec |
 | `models.lex.v2@2020-08-07` | rest-json | ✔️ | 100 KiB | ✔️ | 2.3 sec |
 | `runtime.lex@2016-11-28` | rest-json | ✔️ | 19 KiB | ✔️ | 1.5 sec |
@@ -231,7 +231,7 @@ All API definitions are current as of [aws-sdk-js `v2.874.0`](https://github.com
 | `route53@2013-04-01` | rest-xml | ✔️ | 98 KiB | ✔️ | 3.6 sec |
 | `route53domains@2014-05-15` | json | ✔️ | 35 KiB | ✔️ | 2.3 sec |
 | `route53resolver@2018-04-01` | json | ✔️ | 43 KiB | ✔️ | 1.8 sec |
-| `s3@2006-03-01` | rest-xml | ✔️ | 262 KiB | ✔️ | 10.2 sec |
+| `s3@2006-03-01` | rest-xml | ✔️ | 260 KiB | ✔️ | 7.1 sec |
 | `s3control@2018-08-20` | rest-xml | ✔️ | 107 KiB | ✔️ | 2.9 sec |
 | `s3outposts@2017-07-25` | rest-json | ✔️ | 5 KiB | ✔️ | 1.5 sec |
 | `sagemaker@2017-07-24` | json | ✔️ | 536 KiB | ✔️ | 7.5 sec |

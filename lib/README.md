@@ -229,7 +229,7 @@ All API definitions are current as of [aws-sdk-js `v2.874.0`](https://github.com
 | `dlm@2018-01-12` | 22 KiB | 1.6 sec |
 | `dms@2016-01-01` | 125 KiB | 3.0 sec |
 | `docdb@2014-10-31` | 87 KiB | 2.5 sec |
-| `dynamodb@2011-12-05` | 25 KiB | 1.7 sec |
+| `dynamodb@2011-12-05` | 25 KiB | 1.3 sec |
 | `dynamodb@2012-08-10` | 123 KiB | 3.2 sec |
 | `dynamodbstreams@2012-08-10` | 10 KiB | 1.7 sec |
 | `ebs@2019-11-02` | 11 KiB | 1.3 sec |
@@ -299,8 +299,8 @@ All API definitions are current as of [aws-sdk-js `v2.874.0`](https://github.com
 | `kinesisvideosignalingchannels@2019-12-04` | 3 KiB | 1.1 sec |
 | `kms@2014-11-01` | 48 KiB | 4.0 sec |
 | `lakeformation@2017-03-31` | 23 KiB | 1.4 sec |
-| `lambda@2014-11-11` | 15 KiB | 1.6 sec |
-| `lambda@2015-03-31` | 100 KiB | 3.5 sec |
+| `lambda@2014-11-11` | 15 KiB | 1.4 sec |
+| `lambda@2015-03-31` | 99 KiB | 2.4 sec |
 | `lexmodelbuildingservice@2017-04-19` | 69 KiB | 2.1 sec |
 | `lexmodelsv2@2020-08-07` | 100 KiB | 2.3 sec |
 | `lexruntime@2016-11-28` | 19 KiB | 1.5 sec |
@@ -368,7 +368,7 @@ All API definitions are current as of [aws-sdk-js `v2.874.0`](https://github.com
 | `route53@2013-04-01` | 98 KiB | 3.6 sec |
 | `route53domains@2014-05-15` | 35 KiB | 2.3 sec |
 | `route53resolver@2018-04-01` | 43 KiB | 1.8 sec |
-| `s3@2006-03-01` | 262 KiB | 10.2 sec |
+| `s3@2006-03-01` | 260 KiB | 7.1 sec |
 | `s3control@2018-08-20` | 107 KiB | 2.9 sec |
 | `s3outposts@2017-07-25` | 5 KiB | 1.5 sec |
 | `sagemaker@2017-07-24` | 536 KiB | 7.5 sec |

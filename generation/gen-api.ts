@@ -6,6 +6,8 @@ import { ProtocolCodegen } from "./protocol.ts";
 import { StructEmitter } from "./gen-structs.ts";
 import { unauthenticatedApis, cleanFuncName } from './quirks.ts';
 
+const NULL_BODY_STATUS = [101, 204, 205, 304];
+
 export function generateApiTypescript(
   apiSpec: Schema.Api,
   shapes: ShapeLibrary,
@@ -105,11 +107,13 @@ export function generateApiTypescript(
     }
     chunks.push(`    });`);
 
+    const isNullBody = NULL_BODY_STATUS.includes(operation.http?.responseCode ?? 200);
+
     if (outputShape?.spec.type === 'structure') {
       const {outputParsingCode, outputVariables} = protocol
-        .generateOperationOutputParsingTypescript(outputShape, operation.output?.resultWrapper ?? outputShape?.spec.resultWrapper);
+        .generateOperationOutputParsingTypescript(outputShape, operation.output?.resultWrapper ?? outputShape?.spec.resultWrapper, isNullBody);
       chunks.push(outputParsingCode);
-    } else {
+    } else if (!isNullBody) {
       chunks.push(`    await resp.arrayBuffer(); // consume body without use`);
     }
 

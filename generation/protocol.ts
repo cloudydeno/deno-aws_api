@@ -20,6 +20,7 @@ export interface ProtocolCodegen {
   generateOperationOutputParsingTypescript(
     shape: KnownShape,
     resultWrapper?: string,
+    isNullBody?: boolean,
   ): {
     outputParsingCode: string;
     outputVariables: string[];

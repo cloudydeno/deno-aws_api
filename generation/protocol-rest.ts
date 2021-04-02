@@ -236,7 +236,7 @@ export default class ProtocolRestCodegen {
       pathParts,
     };
   }
-  generateOperationOutputParsingTypescript(shape: KnownShape, resultWrapper?: string): { outputParsingCode: string; outputVariables: string[]; } {
+  generateOperationOutputParsingTypescript(shape: KnownShape, resultWrapper?: string, isNullBody?: boolean): { outputParsingCode: string; outputVariables: string[]; } {
     if (shape.spec.type !== 'structure') throw new Error(`todo agjijrs`);
 
     if (shape.spec.payload) {
@@ -255,7 +255,7 @@ export default class ProtocolRestCodegen {
         payloadChunk = `${shape.spec.payload}: `+bodyGenReturns.replace(/^ +return +/, '').replace(/;$/, '').replace(/\n/g, '\n  ');
       } else if (payloadShape.spec.type === 'blob') {
         payloadChunk = `${shape.spec.payload}: new Uint8Array(await resp.arrayBuffer()), // TODO: maybe allow proper body streaming`;
-      } else {
+      } else if (!isNullBody) {
         payloadHeader.push(`    await resp.arrayBuffer(); // consume body without use`);
       }
 
@@ -314,7 +314,7 @@ export default class ProtocolRestCodegen {
         chunks.push(`    };`);
       }
 
-      if (hasFraming && !hasBody) {
+      if (hasFraming && !hasBody && !isNullBody) {
         chunks.splice(0, 0, `    await resp.arrayBuffer(); // consume body without use`);
       }
 

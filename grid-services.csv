@@ -82,8 +82,8 @@ dlm,2018-01-12,Amazon Data Lifecycle Manager,dlm,DLM,rest-json,ok,ok,22797,1611
 dms,2016-01-01,AWS Database Migration Service,dms,DMS,json,ok,ok,128441,2953
 docdb,2014-10-31,Amazon DocumentDB with MongoDB compatibility,docdb,DocDB,query,ok,ok,88860,2537
 ds,2015-04-16,AWS Directory Service,directoryservice,DirectoryService,json,ok,ok,71666,2006
-dynamodb,2011-12-05,Amazon DynamoDB,dynamodb,DynamoDB,json,ok,ok,25600,1670
-dynamodb,2012-08-10,Amazon DynamoDB,dynamodb,DynamoDB,json,ok,ok,126018,3171
+dynamodb,2011-12-05,Amazon DynamoDB,dynamodb,DynamoDB,json,ok,ok,25600,1332
+dynamodb,2012-08-10,Amazon DynamoDB,dynamodb,DynamoDB,json,ok,ok,126018,3194
 ebs,2019-11-02,Amazon Elastic Block Store,ebs,EBS,rest-json,ok,ok,11702,1258
 ec2-instance-connect,2018-04-02,AWS EC2 Instance Connect,ec2instanceconnect,EC2InstanceConnect,json,ok,ok,1971,1243
 ec2,2016-11-15,Amazon Elastic Compute Cloud,ec2,EC2,ec2,ok,ok,1141144,11480
@@ -154,8 +154,8 @@ kinesisanalyticsv2,2018-05-23,Amazon Kinesis Analytics,kinesisanalyticsv2,Kinesi
 kinesisvideo,2017-09-30,Amazon Kinesis Video Streams,kinesisvideo,KinesisVideo,rest-json,ok,ok,21586,1582
 kms,2014-11-01,AWS Key Management Service,kms,KMS,json,ok,ok,49045,4025
 lakeformation,2017-03-31,AWS Lake Formation,lakeformation,LakeFormation,json,ok,ok,23362,1380
-lambda,2014-11-11,AWS Lambda,lambda,Lambda,rest-json,ok,ok,15080,1643
-lambda,2015-03-31,AWS Lambda,lambda,Lambda,rest-json,ok,ok,102541,3498
+lambda,2014-11-11,AWS Lambda,lambda,Lambda,rest-json,ok,ok,14964,1365
+lambda,2015-03-31,AWS Lambda,lambda,Lambda,rest-json,ok,ok,101845,2449
 lex-models,2017-04-19,Amazon Lex Model Building Service,lexmodelbuildingservice,LexModelBuildingService,rest-json,ok,ok,70861,2054
 license-manager,2018-08-01,AWS License Manager,licensemanager,LicenseManager,json,ok,ok,65186,2986
 lightsail,2016-11-28,Amazon Lightsail,lightsail,Lightsail,json,ok,ok,204114,3607
@@ -223,7 +223,7 @@ route53resolver,2018-04-01,Amazon Route 53 Resolver,route53resolver,Route53Resol
 runtime.lex.v2,2020-08-07,Amazon Lex Runtime V2,lexruntimev2,LexRuntimeV2,rest-json,ok,ok,18097,1232
 runtime.lex,2016-11-28,Amazon Lex Runtime Service,lexruntime,LexRuntime,rest-json,ok,ok,19098,1470
 runtime.sagemaker,2017-05-13,Amazon SageMaker Runtime,sagemakerruntime,SageMakerRuntime,rest-json,ok,ok,3101,1358
-s3,2006-03-01,Amazon Simple Storage Service,s3,S3,rest-xml,ok,ok,267776,10166
+s3,2006-03-01,Amazon Simple Storage Service,s3,S3,rest-xml,ok,ok,266690,7076
 s3control,2018-08-20,AWS S3 Control,s3control,S3Control,rest-xml,ok,ok,109810,2868
 s3outposts,2017-07-25,Amazon S3 on Outposts,s3outposts,S3Outposts,rest-json,ok,ok,4608,1505
 sagemaker-a2i-runtime,2019-11-07,Amazon Augmented AI Runtime,augmentedairuntime,AugmentedAIRuntime,rest-json,ok,ok,7865,1298
