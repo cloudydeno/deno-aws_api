@@ -56,6 +56,11 @@ export class BaseApiFactory implements ApiFactory {
     }
 
     const signingFetcher: SigningFetcher = async (request: Request, opts: FetchOpts): Promise<Response> => {
+      const reqExtras: RequestInit = {
+        signal: opts.signal,
+        redirect: "manual",
+      };
+
       if (opts.skipSigning) {
         const endpoint =
           apiMetadata.globalEndpoint
@@ -69,7 +74,7 @@ export class BaseApiFactory implements ApiFactory {
           ].join('.');
 
         const fullUrl = `https://${opts.hostPrefix ?? ''}${endpoint}${opts.urlPath}`;
-        return fetch(new Request(fullUrl, request), { signal: opts.signal });
+        return fetch(new Request(fullUrl, request), reqExtras);
       }
 
       // Resolve credentials and AWS region
@@ -95,7 +100,7 @@ export class BaseApiFactory implements ApiFactory {
       const url = `${scheme}//${opts.hostPrefix ?? ''}${host}${opts.urlPath}`;
 
       const req = await signer.sign(signingName, url, request);
-      return fetch(req, { signal: opts.signal });
+      return fetch(req, reqExtras);
     }
 
     return wrapServiceClient(apiMetadata, signingFetcher);
