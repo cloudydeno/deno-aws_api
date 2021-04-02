@@ -12,7 +12,7 @@ jobs:
     name: Deno ${{ matrix.deno-version }}
     strategy:
       matrix:
-        deno-version: ["v1.6", "v1.7", "nightly"]
+        deno-version: ["v1.7", "v1.8", "nightly"]
 
     steps:
     - name: Checkout source, incl aws-sdk-js
@@ -26,7 +26,10 @@ jobs:
         deno-version: ${{ matrix.deno-version }}
 
     - name: Validate aws-sdk fixtures
-      run: deno run -A generation/script/validate-fixtures.ts
+      run: time deno run -A generation/script/validate-fixtures.ts
+
+    - name: Check generation/deploy/mod.ts
+      run: time deno cache generation/deploy/mod.ts
 
     - name: Check client/mod.ts
       run: time deno cache lib/client/mod.ts
