@@ -1,8 +1,12 @@
-
 import { immutableFetch } from "./cache.ts";
 
 addEventListener("fetch", async (event) => {
-  const request = event.request as Request;
+  const request = (event as any).request as Request;
+  const response = await handleRequest(request);
+  (event as any).respondWith(response);
+});
+
+async function handleRequest(request: Request): Promise<Response> {
   const { pathname, searchParams, origin } = new URL(request.url);
   console.log(pathname);
   const wantsHtml = request.headers.get('accept')?.split(',').some(x => x.startsWith('text/html')) ?? false;
@@ -12,31 +16,25 @@ addEventListener("fetch", async (event) => {
     try {
       let apiText = await serveApi(match[2], match[3], match[4], searchParams);
       apiText = apiText.replaceAll('from "../..', `from "https://deno.land/x/aws_api@${match[1]}`);
-      event.respondWith(
-        new Response(apiText, {
-          status: 200,
-          headers: {
-            server: "aws_api-generation/v0.3.1",
-            "content-type": wantsHtml ? "text/plain; charset=utf-8" : "application/x-typescript",
-          },
-        }),
-      );
+
+      return new Response(apiText, {
+        status: 200,
+        headers: {
+          server: "aws_api-generation/v0.3.1",
+          "content-type": wantsHtml ? "text/plain; charset=utf-8" : "application/x-typescript",
+        }});
+
     } catch (err) {
-      event.respondWith(
-        new Response(err.stack, {
-          status: 500,
-          headers: {
-            server: "aws_api-generation/v0.3.1",
-            "content-type": "text/plain; charset=utf-8",
-          },
-        }),
-      );
+      return new Response(err.stack, {
+        status: 500,
+        headers: {
+          server: "aws_api-generation/v0.3.1",
+          "content-type": "text/plain; charset=utf-8",
+        }});
     }
-    return;
   }
 
-  event.respondWith(
-    new Response(`<!doctype html>
+  return new Response(`<!doctype html>
 <h1>AWS API Client Codegen</h1>
 <h2>Path parameters</h2>
 <p>Service modules: <code>/v{deno-aws_api version}/sdk@{aws-sdk-js version}/{service ID}@{service api version}.ts</code></p>
@@ -51,15 +49,12 @@ import {SQS} from "${origin}/v0.3.1/sdk@v2.875.0/sqs@2012-11-05.ts?actions=Recei
 </pre>
 <a href="https://github.com/cloudydeno/deno-aws_api/tree/main/generation">source code</a>
 `, {
-      status: 200,
-      headers: {
-        server: "aws_api-generation/v0.3.1",
-        "content-type": "text/html; charset=utf-8",
-      },
-    }),
-  );
-});
-
+    status: 200,
+    headers: {
+      server: "aws_api-generation/v0.3.1",
+      "content-type": "text/html; charset=utf-8",
+    }});
+}
 
 
 import ServiceCodeGen from '../code-gen.ts';
