@@ -22,6 +22,8 @@ export function fixupApiSpec(spec: Schema.Api) {
   switch (spec.metadata.serviceId) {
 
     case "S3": {
+      // Ignore the global endpoint - need to route to each region based on bucket
+      spec.metadata.globalEndpoint = undefined;
       // Seems to not specify a response code
       // Probably other S3 operations have the same issue
       const noRespOp = spec.operations["PutBucketTagging"];

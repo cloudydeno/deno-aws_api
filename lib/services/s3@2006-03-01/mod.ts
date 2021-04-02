@@ -35,7 +35,6 @@ export default class S3 {
     "apiVersion": "2006-03-01",
     "checksumFormat": "md5",
     "endpointPrefix": "s3",
-    "globalEndpoint": "s3.amazonaws.com",
     "protocol": "rest-xml",
     "serviceAbbreviation": "Amazon S3",
     "serviceFullName": "Amazon Simple Storage Service",
