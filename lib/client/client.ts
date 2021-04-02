@@ -49,6 +49,7 @@ export class BaseApiFactory implements ApiFactory {
     return new constr(this);
   }
 
+  // TODO: second argument for extra config (endpoint, logging, etc)
   buildServiceClient(apiMetadata: ApiMetadata): ServiceClient {
     if (apiMetadata.signatureVersion === 'v2') {
       throw new Error(`TODO: signature version ${apiMetadata.signatureVersion}`);
@@ -90,8 +91,7 @@ export class BaseApiFactory implements ApiFactory {
         : (this.#region ?? credentials.region ?? throwMissingRegion()));
 
       // TODO: service URL can vary for lots of reasons:
-      // - s3 is just wild
-      // - dualstack/IPv6 is on alt names
+      // - dualstack/IPv6 on alt hostnames for EC2 and S3
       // - govcloud, aws-cn, etc (detect from region?)
       // - localstack, minio etc - completely custom
 
@@ -106,7 +106,7 @@ export class BaseApiFactory implements ApiFactory {
       const url = `${scheme}//${opts.hostPrefix ?? ''}${host}${opts.urlPath}`;
 
       const req = await signer.sign(signingName, url, request);
-      console.log(req.method, url);
+      // console.log(req.method, url);
       return fetch(req);
     }
 
