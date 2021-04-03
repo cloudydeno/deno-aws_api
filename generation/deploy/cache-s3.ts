@@ -42,6 +42,7 @@ export function s3Cache(
     async set(url, resp) {
       const list = resp.policy.resh['content-type'] ?? [];
       const contentType = Array.isArray(list) ? list[0] : list;
+      console.log('s3 put', s3Coords(url).Key, contentType);
 
       const policy = JSON.stringify(resp.policy);
       if (policy.length > 1800) {

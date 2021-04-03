@@ -254,3 +254,21 @@ export interface WaiterStatusMatcher {
   "matcher": "status";
   "expected": number;
 }
+
+
+export interface Examples {
+  "version": "1.0";
+  "examples": { [name: string]: Array<ExampleSpec> };
+}
+
+export interface ExampleSpec {
+  "input"?: { [key: string]: any };
+  "output"?: { [key: string]: any };
+  "comments": {
+    "input"?: { [key: string]: string };
+    "output"?: { [key: string]: string };
+  };
+  "description": string;
+  "id": string;
+  "title": string;
+}

@@ -13,35 +13,39 @@ const caches: Array<Cache> = [
   s3Cache(s3Api, Deno.env.get('HTTPCACHE_S3_BUCKET') || 'deno-httpcache'),
 ];
 
-export async function immutableFetch(url: string) {
+export async function cachedFetch(mode: 'immutable' | 'mutable', url: string) {
   for (const cache of caches) {
     const cached = await cache.match(url);
     if (cached) {
       // Copy colder bodies into warmer caches
       const cacheIdx = caches.indexOf(cache);
       if (cacheIdx > 0) {
-        await Promise.all(caches.slice(0, cacheIdx).map(cache => {
-          cache.put(url, cached);
-        }));
+        await Promise.all(caches
+          .slice(0, cacheIdx)
+          .map(cache => cache.put(url, cached)));
       }
       return cached;
     }
   }
 
   const resp = await fetch(url);
-  if (resp.status === 200) {
-    resp.headers.delete('expires');
-    resp.headers.set('cache-control', 'immutable');
-  } else if (resp.status === 404) {
-    resp.headers.delete('expires');
-    resp.headers.set('cache-control', 'maxage=3600');
-  } else {
-    resp.headers.set('cache-control', 'maxage=300');
-  }
   console.log('fetched', resp.status, url);
 
-  await Promise.all(caches.map(cache => {
-    cache.put(url, resp);
-  }));
+  if (mode === 'immutable') {
+    if (resp.status === 200) {
+      resp.headers.delete('expires');
+      resp.headers.set('cache-control', 'immutable');
+    } else if (resp.status === 404) {
+      resp.headers.delete('expires');
+      resp.headers.set('cache-control', 'max-age=3600');
+    } else {
+      resp.headers.set('cache-control', 'max-age=300');
+    }
+  } else {
+    resp.headers.set('cache-control', 'max-age=300');
+  }
+
+  await Promise.all(caches
+    .map(cache => cache.put(url, resp)));
   return resp;
 }

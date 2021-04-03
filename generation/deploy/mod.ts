@@ -1,127 +1,195 @@
-import { immutableFetch } from "./cache.ts";
+// import { immutableFetch } from "./cache.ts";
+import { SDK } from "./sdk-datasource.ts";
 
 addEventListener("fetch", async (event) => {
   const request = (event as any).request as Request;
-  const response = await handleRequest(request);
+  const response = await handleRequest(request)
+    .catch(renderError);
   (event as any).respondWith(response);
 });
 
+function renderError(err: Error) {
+  const msg = err.stack || err.message || JSON.stringify(err);
+  console.error('!!!', msg);
+  return new Response(`Internal Error!
+
+Feel free to try a second attempt.
+File any issues here: https://github.com/cloudydeno/deno-aws_api/issues
+
+Internal stacktrace follows:
+${msg}`, {
+    status: 500,
+    headers: {
+      server: "aws_api-generation/v0.3.1",
+      "content-type": "text/plain; charset=utf-8",
+    }});
+}
+
 async function handleRequest(request: Request): Promise<Response> {
-  const { pathname, searchParams, origin } = new URL(request.url);
+  const { pathname, search, searchParams, origin } = new URL(request.url);
   console.log(pathname);
   const wantsHtml = request.headers.get('accept')?.split(',').some(x => x.startsWith('text/html')) ?? false;
 
-  const match = pathname.match(/^\/(v[0-9.]+)\/sdk@(v2\.[0-9]+\.[0-9]+)\/([^/.@]+)@([0-9-]+).ts$/);
+  {
+  const match = pathname.match(/^\/(v[0-9.]+)\/sdk(@v2\.[0-9]+\.[0-9]+)?\/([^/.@]+)(@[0-9-]+)?.ts$/);
   if (match) {
-    try {
-      let apiText = await serveApi(match[2], match[3], match[4], searchParams);
-      apiText = apiText.replaceAll('from "../..', `from "https://deno.land/x/aws_api@${match[1]}`);
+    if (match[1] == 'v0' || !match[2] || !match[4]) {
+      const modVer = match[1] === 'v0' ? 'v0.3.1' : match[1];
+      const sdkVer = match[2]?.slice(1) || await SDK.getLatestSdkVersion();
+      const apiVer = match[4]?.slice(1) || await new SDK(sdkVer).getLatestApiVersion(match[3]);
 
-      return new Response(apiText, {
-        status: 200,
-        headers: {
-          server: "aws_api-generation/v0.3.1",
-          "content-type": wantsHtml ? "text/plain; charset=utf-8" : "application/x-typescript",
-        }});
-
-    } catch (err) {
-      return new Response(err.stack, {
-        status: 500,
-        headers: {
-          server: "aws_api-generation/v0.3.1",
-          "content-type": "text/plain; charset=utf-8",
-        }});
+      const resp = Response.redirect(`/${modVer}/sdk@${sdkVer}/${match[3]}@${apiVer}.ts${search}`);
+      if (match[1] !== modVer) resp.headers.append('x-deno-warning',
+        `Using latest version (${modVer}) for /x/aws_api imports`);
+      if (!match[2]) resp.headers.append('x-deno-warning',
+        `Using latest version (${sdkVer}) for AWS-SDK-JS API definitions`);
+      if (!match[4]) resp.headers.append('x-deno-warning',
+        `Using latest version (${apiVer}) for ${match[3]}`);
+      return resp;
     }
+
+    if (match[1] !== 'v0.3.1') throw new Error(
+      `Library version ${match[1]} doesn't exist or isn't supported`);
+
+    let apiText = await serveApi({
+      clientModRoot: `https://deno.land/x/aws_api@${match[1]}`,
+      sdkVersion: match[2].slice(1),
+      apiId: match[3],
+      apiVersion: match[4].slice(1),
+      options: searchParams,
+      selfUrl: `${origin}${pathname}${search}`,
+    });
+
+    return new Response(apiText, {
+      status: 200,
+      headers: {
+        "server": "aws_api-generation/v0.3.1",
+        "content-type": wantsHtml ? "text/plain; charset=utf-8" : "application/x-typescript",
+      }});
+  }
   }
 
-  return new Response(`<!doctype html>
+  {
+  const match = pathname.match(/^\/(?:(v[0-9.]+)\/(?:sdk(@v2\.[0-9]+\.[0-9]+)?\/)?)?\/?$/);
+  if (match) {
+    if (!pathname.endsWith('/')) {
+      return Response.redirect(pathname + '/' + search);
+    }
+
+    const modVer = (match[1] === 'v0' ? 'v0.3.1' : match[1]) || 'v0.3.1';
+    const sdkVer = match[2]?.slice(1) || await SDK.getLatestSdkVersion();
+    const sdk = new SDK(sdkVer);
+
+    const serviceDict = await sdk.getServiceList();
+    const serviceList = Object.entries(serviceDict).sort((a, b) => {
+      return a[0].localeCompare(b[0]);
+    })
+
+    return new Response(`<!doctype html>
 <h1>AWS API Client Codegen</h1>
 <h2>Path parameters</h2>
 <p>Service modules: <code>/v{deno-aws_api version}/sdk@{aws-sdk-js version}/{service ID}@{service api version}.ts</code></p>
 <h2>Examples</h2>
 <pre>
 // import the complete API of one AWS service
-import {SQS} from "${origin}/v0.3.1/sdk@v2.875.0/sqs@2012-11-05.ts";
+import SQS from "${origin}/${modVer}/sdk@${sdkVer}/sqs.ts";
+// be specific about which "API Version" to use (most APIs only have one)
+import SQS from "${origin}/${modVer}/sdk@${sdkVer}/sqs@2012-11-05.ts";
 
 // select individual actions to create a smaller API file
 // in this case, excluding queue management actions and non-batched operations
-import {SQS} from "${origin}/v0.3.1/sdk@v2.875.0/sqs@2012-11-05.ts?actions=ReceiveMessage,*Batch";
+import SQS from "${origin}/${modVer}/sdk@${sdkVer}/sqs@2012-11-05.ts?actions=ReceiveMessage,*Batch";
 </pre>
 <a href="https://github.com/cloudydeno/deno-aws_api/tree/main/generation">source code</a>
+<h2>All Services</h2>
+<table>
+<thead><tr>
+<th>ID</th>
+<th>Name</th>
+<th>Module</th>
+</tr></thead>
+<tbody>
+${serviceList.map(([svcId, svc]) => `<tr>
+<td><a href="./${modVer}/sdk@${sdkVer}/${svcId}.ts">${svc.name}</a></td>
+<td><code>import ${svc.name} from "${origin}/v0.3.1/sdk@${sdkVer}/${svcId}.ts";</code></td>
+</tr>
+`).join('')}
+</tbody>
+</table>
 `, {
-    status: 200,
+      status: 200,
+      headers: {
+        server: "aws_api-generation/v0.3.1",
+        "content-type": "text/html; charset=utf-8",
+      }});
+  }
+  }
+
+  return new Response(`404 Not Found`, {
+    status: 404,
     headers: {
       server: "aws_api-generation/v0.3.1",
-      "content-type": "text/html; charset=utf-8",
+      "content-type": "text/plain; charset=utf-8",
     }});
 }
 
 
 import ServiceCodeGen from '../code-gen.ts';
-import type * as Schema from '../sdk-schema.ts';
 
-async function serveApi(sdkVersion: string, apiId: string, apiVersion: string, options: URLSearchParams) {
+async function serveApi(opts: {
+  clientModRoot: string,
+  sdkVersion: string,
+  apiId: string,
+  apiVersion: string,
+  options: URLSearchParams,
+  selfUrl: string,
+}) {
+  const sdk = new SDK(opts.sdkVersion);
 
   const headerChunks = new Array<string>();
   headerChunks.push(`// Generation parameters:`);
-  headerChunks.push(`//   aws-sdk-js definitions from ${sdkVersion}`);
-  headerChunks.push(`//   AWS service UID ${apiId}-${apiVersion}`);
-  headerChunks.push(`//   extra options: ${options}`);
+  headerChunks.push(`//   aws-sdk-js definitions from ${opts.sdkVersion}`);
+  headerChunks.push(`//   AWS service UID ${opts.apiId}-${opts.apiVersion}`);
+  headerChunks.push(`//   extra options: ${opts.options}`);
   headerChunks.push(`//   current time: ${new Date().toISOString()}`);
 
-  const serviceList = await immutableFetch(`https://raw.githubusercontent.com/aws/aws-sdk-js/${sdkVersion}/apis/metadata.json`).then(x => x.json()) as Record<string, Schema.ServiceMetadata & {modId: string}>;
-
-  const module = serviceList[apiId];
+  const serviceList = await sdk.getServiceList();
+  const module = serviceList[opts.apiId];
   if (!module) throw new Error(`Not Found`);
 
-  const jsonPath = (suffix: string) =>
-    `apis/${module.prefix || apiId}-${apiVersion}.${suffix}.json`;
-  const getPath = (path: string) =>
-    immutableFetch(`https://raw.githubusercontent.com/aws/aws-sdk-js/${sdkVersion}/${path}`)
-    .then(x => {
-      if (x.status !== 200) throw new Error(`HTTP ${x.status} on ${path}`);
-      return x.text();
-    });
-  const maybeReadFile = (path: string): Promise<any> =>
-    getPath(path)
-    .catch(err => {
-      if (err.message.startsWith('HTTP 404')) return null;
-      return Promise.reject(err);
+  const spec = await sdk
+    .getApiSpecs(module.prefix || opts.apiId, opts.apiVersion, {
+      normal: 'required',
+      paginators: 'optional',
+      waiters2: 'optional',
     });
 
-  const [
-    normalJson,
-    paginatorsJson,
-    waitersJson,
-  ] = await Promise.all([
-    getPath(jsonPath('normal')).then(x => JSON.parse(x) as Schema.Api),
-    maybeReadFile(jsonPath('paginators')).then(x => JSON.parse(x) as Schema.Pagination),
-    maybeReadFile(jsonPath('waiters2')).then(x => JSON.parse(x) as Schema.Waiters),
-  ]);
-
-  const actionList = options.get('actions')?.split(',') ?? [];
+  const actionList = opts.options.get('actions')?.split(',') ?? [];
   if (actionList.length) {
-    const allOps = Object.entries(normalJson.operations);
+    const allOps = Object.entries(spec.normal.operations);
     const patternList = actionList.map(buildMatchRule);
-    normalJson.operations = {};
+    spec.normal.operations = {};
     for (const [key, op] of allOps) {
       if (patternList.some(x => x.test(key))) {
-        normalJson.operations[key] = op;
+        spec.normal.operations[key] = op;
       }
     }
-    const afterCount = Object.keys(normalJson.operations).length;
+    const afterCount = Object.keys(spec.normal.operations).length;
     headerChunks.push(`//   filtered out ${allOps.length-afterCount} out of ${allOps.length} actions, leaving ${afterCount}`);
   }
 
   const codeGen = new ServiceCodeGen({
-    uid: '',
-    api: normalJson,
-    pagers: paginatorsJson,
-    waiters: waitersJson,
+    uid: `${opts.apiId}-${opts.apiVersion}`,
+    api: spec.normal,
+    pagers: opts.options.has('paginators') ? undefined : spec.paginators,
+    waiters: opts.options.has('waiters') ? undefined : spec.waiters2,
   });
+
   return [
     headerChunks.join('\n'),
-    codeGen.generateTypescript(module.name),
+    `// Originally served at ${opts.selfUrl}`,
+    codeGen.generateTypescript(module.name)
+      .replaceAll('from "../..', `from "${opts.clientModRoot}`),
   ].join('\n\n');
 }
 
