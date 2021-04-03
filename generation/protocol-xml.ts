@@ -215,13 +215,18 @@ export default class ProtocolXmlCodegen {
       `Can only generate top level output structures`);
 
     const chunks = new Array<string>();
-    this.helpers.useHelper("xmlP");
     chunks.push(`    const xml = xmlP.readXmlResult(await resp.text()${resultWrapper ? `, ${JSON.stringify(resultWrapper)}` : ''});`);
     if (shape.refCount > 1) {
       chunks.push(`    return ${shape.censoredName}_Parse(xml);`);
+      this.helpers.useHelper("xmlP");
     } else {
-      chunks.push('  '+this.generateStructureOutputTypescript(shape.spec, 'xml', shape.spec.payload)
-        .replace(/\n/g, '\n  '));
+      const innerCode = this.generateStructureOutputTypescript(shape.spec, 'xml', shape.spec.payload);
+      if (innerCode === '  return {};') {
+        chunks.pop();
+      } else {
+        this.helpers.useHelper("xmlP");
+      }
+      chunks.push('  '+innerCode.replace(/\n/g, '\n  '));
     }
 
     return {
