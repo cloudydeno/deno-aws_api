@@ -71,7 +71,7 @@ export class SDK {
 
     if (resp.status === 404 && policy === 'optional') {
       await resp.arrayBuffer();
-      return {};
+      return null;
     }
     if (resp.status !== 200) {
       await resp.arrayBuffer();
@@ -89,16 +89,20 @@ export class SDK {
     const loads = {
       normal: (suffixes['normal']
         ? this.getRawApiSpec(apiId, apiVersion, 'normal', suffixes['normal'])
-        : Promise.resolve({})) as Promise<Schema.Api>,
+        : Promise.resolve(null))
+        .then(x => x ?? {}) as Promise<Schema.Api>,
       paginators: (suffixes['paginators']
         ? this.getRawApiSpec(apiId, apiVersion, 'paginators', suffixes['paginators'])
-        : Promise.resolve({ pagination: {} })) as Promise<Schema.Pagination>,
+        : Promise.resolve(null))
+        .then(x => x ?? { pagination: {} }) as Promise<Schema.Pagination>,
       waiters2: (suffixes['waiters2']
         ? this.getRawApiSpec(apiId, apiVersion, 'waiters2', suffixes['waiters2'])
-        : Promise.resolve({ waiters: {} })) as Promise<Schema.Waiters>,
+        : Promise.resolve(null))
+        .then(x => x ?? { waiters: {} }) as Promise<Schema.Waiters>,
       examples: (suffixes['examples']
         ? this.getRawApiSpec(apiId, apiVersion, 'examples', suffixes['examples'])
-        : Promise.resolve({ examples: {} })) as Promise<Schema.Examples>,
+        : Promise.resolve(null))
+        .then(x => x ?? { examples: {} }) as Promise<Schema.Examples>,
     };
 
     return {
