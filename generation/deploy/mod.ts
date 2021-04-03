@@ -26,9 +26,13 @@ ${msg}`, {
 }
 
 async function handleRequest(request: Request): Promise<Response> {
-  const { pathname, search, searchParams, origin } = new URL(request.url);
-  console.log(pathname);
+  const { protocol, host, pathname, search, searchParams, origin } = new URL(request.url);
+  console.log(request.method, pathname);
   const wantsHtml = request.headers.get('accept')?.split(',').some(x => x.startsWith('text/html')) ?? false;
+
+  if (searchParams.get('actions') === '') {
+    searchParams.delete('actions');
+  }
 
   {
   const match = pathname.match(/^\/(v[0-9.]+)\/sdk(@v2\.[0-9]+\.[0-9]+)?\/([^/.@]+)(@[0-9-]+)?.ts$/);
@@ -59,6 +63,44 @@ async function handleRequest(request: Request): Promise<Response> {
       options: searchParams,
       selfUrl: `${origin}${pathname}${search}`,
     });
+
+    if (wantsHtml) {
+      const sdk = new SDK(match[2].slice(1));
+      const serviceList = await sdk.getServiceList();
+      const module = serviceList[match[3]];
+      if (!module) throw new Error(`Not Found: ${match[3]}`);
+
+      return new Response(`<!doctype html>
+<title>${module.name} - AWS API Codegen</title>
+<h1>${module.name} - AWS API Codegen</h1>
+<h2>Customize Generated Module</h2>
+<form method="GET">
+<table>
+<tr>
+  <th>Only include specific operations:</th>
+  <td><input type="input" name="actions" value="${searchParams.get('actions') || ''}" /></td>
+</tr>
+<tr>
+  <th>Include documentation text:</th>
+  <td><input type="checkbox" name="docs" /></td>
+</tr>
+</table>
+<input type="submit" />
+</form>
+<h2>Example Import</h2>
+<p><code>import ${module.name} from "${origin}${pathname}${search}";</code></p>
+<hr>
+<h2>Generated Source (the actual code)</h2>
+<pre>
+${apiText}
+</pre>
+`, {
+        status: 200,
+        headers: {
+          "server": "aws_api-generation/v0.3.1",
+          "content-type": "text/html; charset=utf-8",
+        }});
+    }
 
     return new Response(apiText, {
       status: 200,
@@ -104,14 +146,15 @@ import SQS from "${origin}/${modVer}/sdk@${sdkVer}/sqs@2012-11-05.ts?actions=Rec
 <h2>All Services</h2>
 <table>
 <thead><tr>
-<th>ID</th>
-<th>Name</th>
-<th>Module</th>
+<th>Service</th>
+<th>Usage</th>
+<th>Docs</th>
 </tr></thead>
 <tbody>
 ${serviceList.map(([svcId, svc]) => `<tr>
 <td><a href="./${modVer}/sdk@${sdkVer}/${svcId}.ts">${svc.name}</a></td>
-<td><code>import ${svc.name} from "${origin}/v0.3.1/sdk@${sdkVer}/${svcId}.ts";</code></td>
+<td><code>import ${svc.name} from "${origin}/v0/sdk/${svcId}.ts";</code></td>
+<td><a href="https://doc.deno.land/${protocol.replace(/:$/, '')}/${host}/v0/sdk/${svcId}.ts">API</a></td>
 </tr>
 `).join('')}
 </tbody>
