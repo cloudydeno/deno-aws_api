@@ -152,7 +152,7 @@ import SQS from "${origin}/${modVer}/sdk@${sdkVer}/sqs@2012-11-05.ts?actions=Rec
 </tr></thead>
 <tbody>
 ${serviceList.map(([svcId, svc]) => `<tr>
-<td><a href="./${modVer}/sdk@${sdkVer}/${svcId}.ts">${svc.name}</a></td>
+<td><a href="/${modVer}/sdk@${sdkVer}/${svcId}.ts">${svc.name}</a></td>
 <td><code>import ${svc.name} from "${origin}/v0/sdk/${svcId}.ts";</code></td>
 <td><a href="https://doc.deno.land/${protocol.replace(/:$/, '')}/${host}/v0/sdk/${svcId}.ts">API</a></td>
 </tr>
