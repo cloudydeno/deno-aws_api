@@ -3,6 +3,7 @@ import { ShapeLibrary } from './shape-library.ts';
 import { HelperLibrary } from "./helper-library.ts";
 import { ProtocolCodegen } from "./protocol.ts";
 
+import { genDocsComment } from "./gen-docs.ts";
 import { StructEmitter } from "./gen-structs.ts";
 import { unauthenticatedApis, cleanFuncName } from './quirks.ts';
 
@@ -64,6 +65,10 @@ export function generateApiTypescript(
       signature += 'void';
     }
     signature += '>';
+
+    if (operation.documentation) {
+      chunks.push(genDocsComment(operation.documentation));
+    }
 
     const lowerCamelName = operation.name[0].toLowerCase() + operation.name.slice(1);
     chunks.push(`  async ${cleanFuncName(lowerCamelName)}${signature} {`);
