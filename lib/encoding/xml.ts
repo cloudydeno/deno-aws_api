@@ -100,7 +100,7 @@ export class XmlNode implements Node {
  * @api public
  */
 
-export function parseXml(xml: string): Document {
+export function parseXml(xml: string, inline = false): Document {
   xml = xml.trim();
 
   // strip comments
@@ -148,24 +148,63 @@ export function parseXml(xml: string): Document {
       node.attributes[attr.name] = attr.value;
     }
 
-    // self closing tag
-    if (match(/^\s*\/>\s*/)) {
-      return node;
+    if (inline) {
+      // self closing tag
+      if (match(/^\s*\/>/)) {
+        return node;
+      }
+
+      match(/\??>/);
+
+      const first = content();
+      if (first) {
+        const textNode = new XmlNode('');
+        textNode.content = first;
+        node.children.push(textNode);
+      }
+
+      let any: boolean;
+      do {
+        any = false;
+
+        const text = content();
+        if (text) {
+          const textNode = new XmlNode('');
+          textNode.content = text;
+          node.children.push(textNode);
+          any = true;
+        }
+
+        var child;
+        while ((child = tag())) {
+          node.children.push(child);
+          any = true;
+        }
+      } while (any);
+
+      // closing
+      match(/^<\/[\w-:.]+>/);
+
+    } else {
+      // self closing tag
+      if (match(/^\s*\/>\s*/)) {
+        return node;
+      }
+
+      match(/\??>\s*/);
+
+      // content
+      node.content = content();
+
+      // children
+      var child;
+      while ((child = tag())) {
+        node.children.push(child);
+      }
+
+      // closing
+      match(/^<\/[\w-:.]+>\s*/);
     }
-
-    match(/\??>\s*/);
-
-    // content
-    node.content = content();
-
-    // children
-    var child;
-    while ((child = tag())) {
-      node.children.push(child);
-    }
-
-    // closing
-    match(/^<\/[\w-:.]+>\s*/);
 
     return node;
   }
