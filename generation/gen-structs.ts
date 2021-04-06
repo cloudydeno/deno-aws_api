@@ -2,6 +2,7 @@ import type * as Schema from './sdk-schema.ts';
 import type { ShapeLibrary, KnownShape, ShapeTag } from './shape-library.ts';
 import type { HelperLibrary } from "./helper-library.ts";
 import type { ProtocolCodegen } from "./protocol.ts";
+import { genDocsComment } from "./gen-docs.ts";
 
 export class StructEmitter {
   constructor(
@@ -24,6 +25,10 @@ export class StructEmitter {
 
         chunks.push(`// refs: ${shape.refCount
           } - tags: ${Array.from(shape.tags).join(', ')}`);
+
+        if (shape.spec.documentation) {
+          chunks.push(genDocsComment(shape.spec.documentation).replace(/^  /gm, ''));
+        }
 
         // if (this.#singleRefShapes.has(shape.name)) {
         //   chunks.push(`// TODO: can be inlined (only used once)`);
@@ -68,7 +73,8 @@ export class StructEmitter {
             const isRequired = required.has(key.toLowerCase())
               || (reqLists && (innerShape.spec.type === 'list' || innerShape.spec.type === 'map'))
               || spec.location === 'uri';
-            return `  ${key}${isRequired ? '' : '?'}: ${this.specifyShapeType(innerShape, {isJson: spec.jsonvalue, tags: shape.tags})}${isRequired ? '' : ' | null'};`;
+            const doc = spec.documentation ? `${genDocsComment(spec.documentation)}\n` : '';
+            return `${doc}  ${key}${isRequired ? '' : '?'}: ${this.specifyShapeType(innerShape, {isJson: spec.jsonvalue, tags: shape.tags})}${isRequired ? '' : ' | null'};`;
           }),
         '}'].join('\n');
 

@@ -1,8 +1,16 @@
 import { parseXml, XmlNode } from "../lib/encoding/xml.ts";
 
 export function genDocsComment(docsXml: string) {
-  const {root} = parseXml(`<top>${docsXml}</top>`, true);
-  return `  /**\n${genBlock(root!, true).replace(/^/gm, `   * `)}\n   */`;
+  try {
+    const {root} = parseXml(`<top>${docsXml}</top>`, true);
+    const body = genBlock(root!, true);
+    if (!body.includes('\n')) {
+      return `  /** ${body} */`;
+    }
+    return `  /**\n${body.replace(/^/gm, `   * `)}\n   */`;
+  } catch (err) {
+    return `  /** TODO: Failed to render documentation: ${err.message} */`;
+  }
 }
 
 export function genBlock(root: XmlNode, isRoot = false) {
@@ -53,6 +61,9 @@ l:for (const top of root.children) {
       case 'note':
         chunks.push(`  Note:`);
         chunks.push(genBlock(top).replace(/^/gm, `  `));
+        break;
+      case 'code':
+        chunks.push(genBlock(top).replace(/^/gm, `    `));
         break;
       default:
         throw new Error(`unhandled top level doc tag ${top.name}`);
