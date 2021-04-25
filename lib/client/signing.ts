@@ -128,8 +128,8 @@ export class AWSSignerV4 implements Signer {
     signedHeaders = signedHeaders.substring(0, signedHeaders.length - 1);
     const body = request.body
       ? new Uint8Array(await request.arrayBuffer())
-      : new Uint8Array();
-    const payloadHash = sha256(body).hex();
+      : null;
+    const payloadHash = sha256(body ?? new Uint8Array()).hex();
     if (service === 's3') {
       headers.set("x-amz-content-sha256", payloadHash);
     }
@@ -164,15 +164,9 @@ export class AWSSignerV4 implements Signer {
         headers,
         method: request.method,
         body,
-        cache: request.cache,
-        credentials: request.credentials,
-        integrity: request.integrity,
-        keepalive: request.keepalive,
-        mode: request.mode,
         redirect: request.redirect,
-        referrer: request.referrer,
-        referrerPolicy: request.referrerPolicy,
-        signal: request.signal,
+        // TODO: request cancellation
+        // signal: request.signal,
       },
     );
   }

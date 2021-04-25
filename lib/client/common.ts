@@ -32,10 +32,8 @@ export interface ApiRequestConfig {
   skipSigning?: true; // for unauthenticated APIs (STS, cognito)
 }
 
-export class ApiResponse extends Response {
-  get requestId(): string | null {
-    return this.headers.get('x-amzn-requestid') ?? this.headers.get('x-amz-request-id');
-  }
+export function getRequestId(headers: Headers) {
+  return headers.get('x-amzn-requestid') ?? headers.get('x-amz-request-id');
 }
 
 // Things that JSON can handle directly

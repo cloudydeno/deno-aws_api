@@ -5,7 +5,7 @@ import {
   ApiFactory,
   AwsServiceError, ServiceError,
   Credentials, CredentialsProvider,
-  ApiResponse,
+  getRequestId,
 } from './common.ts';
 
 import { readXmlResult, stringify } from "../encoding/xml.ts";
@@ -157,7 +157,7 @@ export class BaseServiceClient implements ServiceClient {
   async performRequest(config: ApiRequestConfig & {
     body?: Uint8Array;
     headers: Headers;
-  }): Promise<ApiResponse> {
+  }): Promise<Response> {
     const headers = config.headers;
     const serviceUrl = config.requestUri ?? '/';
     const method = config.method ?? 'POST';
@@ -179,14 +179,14 @@ export class BaseServiceClient implements ServiceClient {
       redirect: 'manual',
       signal: config.abortSignal,
     });
-    const rawResp = await this.#signedFetcher(request, {
+    const response = await this.#signedFetcher(request, {
       urlPath: serviceUrl + query,
       region: config.region,
       skipSigning: config.skipSigning,
       hostPrefix: config.hostPrefix,
+      // TODO: request handling once Deno can do it
       // signal: config.abortSignal,
     });
-    const response = new ApiResponse(rawResp.body, rawResp);
 
     if (response.status == (config.responseCode ?? 200)) {
       return response;
@@ -206,7 +206,7 @@ export class XmlServiceClient extends BaseServiceClient {
     super(signedFetcher);
   }
 
-  async performRequest(config: ApiRequestConfig): Promise<ApiResponse> {
+  async performRequest(config: ApiRequestConfig): Promise<Response> {
     const headers = config.headers ?? new Headers;
     headers.append('accept', 'text/xml');
 
@@ -239,7 +239,7 @@ export class JsonServiceClient extends BaseServiceClient {
     this.#jsonVersion = jsonVersion;
   }
 
-  async performRequest(config: ApiRequestConfig): Promise<ApiResponse> {
+  async performRequest(config: ApiRequestConfig): Promise<Response> {
     const headers = config.headers ?? new Headers;
     headers.append('x-amz-target', `${this.#serviceTarget}.${config.action}`);
     headers.append('accept', 'application/x-amz-json-'+this.#jsonVersion);
@@ -268,7 +268,7 @@ export class QueryServiceClient extends BaseServiceClient {
     this.#serviceVersion = serviceVersion;
   }
 
-  async performRequest(config: ApiRequestConfig): Promise<ApiResponse> {
+  async performRequest(config: ApiRequestConfig): Promise<Response> {
     const headers = config.headers ?? new Headers;
     headers.append('accept', 'text/xml');
 
@@ -298,14 +298,14 @@ export class QueryServiceClient extends BaseServiceClient {
   }
 }
 
-async function handleErrorResponse(response: ApiResponse, reqMethod: string): Promise<never> {
+async function handleErrorResponse(response: Response, reqMethod: string): Promise<never> {
   if (reqMethod === 'HEAD') {
     // console.log(response);
-    // console.log(response.status, response.statusText, response.requestId);
+    // console.log(response.status, response.statusText, getRequestId(response.headers));
     throw new AwsServiceError(response, {
       Code: `Http${response.status}`,
       Message: `HTTP error status: ${response.statusText}`,
-    }, response.requestId);
+    }, getRequestId(response.headers));
   }
 
   const contentType = response.headers.get('content-type');
@@ -360,7 +360,7 @@ async function handleErrorResponse(response: ApiResponse, reqMethod: string): Pr
           required: { Message: true },
           optional: { Type: true },
         }),
-      }, response.requestId);
+      }, getRequestId(response.headers));
     }
 
     console.log('Error DOM:', stringify(xml) );
@@ -378,12 +378,12 @@ async function handleErrorResponse(response: ApiResponse, reqMethod: string): Pr
       throw new AwsServiceError(response, {
         Code: data.__type,
         Message: data.message,
-      }, response.requestId);
+      }, getRequestId(response.headers));
     } else if (data.__type && data.Message) {
       throw new AwsServiceError(response, {
         Code: data.__type,
         Message: data.Message,
-      }, response.requestId);
+      }, getRequestId(response.headers));
     }
     console.log('Error from server:', response, data);
 
