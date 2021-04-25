@@ -1,15 +1,29 @@
 import { parseXml, XmlNode } from "../lib/encoding/xml.ts";
 
-export function genDocsComment(docsXml: string) {
+export function genDocsComment(docsXml: string, indentation: string, mode: 'short' | 'full') {
+  const s = indentation;
   try {
     const {root} = parseXml(`<top>${docsXml}</top>`, true);
     const body = genBlock(root!, true);
-    if (!body.includes('\n')) {
-      return `  /** ${body} */`;
+    if (mode === 'short') {
+      return `${s}/** ${body.split('\n')[0]} */`;
     }
-    return `  /**\n${body.replace(/^/gm, `   * `)}\n   */`;
+    if (!body.includes('\n')) {
+      return `${s}/** ${body} */`;
+    }
+    return `${s}/**\n${body.replace(/^/gm, `${s} * `).replace(/ +$/gm, '')}\n${s} */`;
   } catch (err) {
-    return `  /** TODO: Failed to render documentation: ${err.message} */`;
+    return `${s}/** TODO: Failed to render documentation: ${err.message} */`;
+  }
+}
+
+function genBlockOrPara(root: XmlNode) {
+  // dumb heuristic
+  const names = new Set(root.children.map(x => x.name));
+  if (names.has('p') || names.has('ul') || names.has('ol')) {
+    return genBlock(root);
+  } else {
+    return genParagraph(root);
   }
 }
 
@@ -28,18 +42,22 @@ l:for (const top of root.children) {
       case 'ul':
         for (const child of top.children) {
           if (child.name === '') continue;
-          if (child.name !== 'li') throw new Error(
-            `unhandled ul tag ${child.name}`);
-          chunks.push(`  - ${genBlock(child).split('\n').join('\n    ')}`);
+          if (child.name !== 'li') {
+            // throw new Error(`unhandled ul tag ${child.name}`);
+            continue;
+          }
+          chunks.push(`  - ${genBlockOrPara(child).split('\n').join('\n    ')}`);
         }
         break;
       case 'ol': {
         let idx = 1;
         for (const child of top.children) {
           if (child.name === '') continue;
-          if (child.name !== 'li') throw new Error(
-            `unhandled ol tag ${child.name}`);
-          chunks.push(` ${idx++}. ${genBlock(child).split('\n').join('\n    ')}`);
+          if (child.name !== 'li') {
+            // throw new Error(`unhandled ol tag ${child.name}`);
+            continue;
+          }
+          chunks.push(` ${idx++}. ${genBlockOrPara(child).split('\n').join('\n    ')}`);
         }
       } break;
       case 'dl':
@@ -70,6 +88,7 @@ l:for (const top of root.children) {
     }
     if (isRoot) chunks.push('');
   }
+
   return chunks.join('\n').trimEnd();
 }
 
@@ -80,10 +99,15 @@ function genParagraph(node: XmlNode) {
       case '':
         pieces.push(top.content ?? '');
         break;
+      case 'br':
+        pieces.push('\n');
+        break;
       case 'i':
+      case 'em':
         pieces.push(`_${genParagraph(top)}_`);
         break;
       case 'b':
+      case 'strong':
         pieces.push(`*${genParagraph(top)}*`);
         break;
       case 'a':
@@ -98,11 +122,16 @@ function genParagraph(node: XmlNode) {
         pieces.push(`\`${genParagraph(top)}\``);
         // pieces.push(genParagraph(top).split('\n').map(x => `    *    ${x}`).join('\n'));
         break;
-      // case 'p':
-      //   genParagraph(chunks, top);
-      //   break;
-      // case 'note':
-      //   break;
+
+      // Things that shouldn't even be in a paragraph... 'es' does this
+      case 'ul':
+      case 'ol':
+      case 'p':
+        const fakeNode = new XmlNode('fakeNode');
+        fakeNode.children.push(top);
+        pieces.push(`\n${genBlock(fakeNode, false)}\n`);
+        break;
+
       default:
         throw new Error(`unhandled paragraph inner tag ${top.name}`);
     }

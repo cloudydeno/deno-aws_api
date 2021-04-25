@@ -11,6 +11,7 @@ export class StructEmitter {
     private helpers: HelperLibrary,
     private protocol: ProtocolCodegen,
     private namePrefix: string = '',
+    private docMode: 'none' | 'short' | 'full',
   ) {}
 
   generateStructsTypescript(including: ('iface' | 'mapping')[]): string {
@@ -26,8 +27,8 @@ export class StructEmitter {
         chunks.push(`// refs: ${shape.refCount
           } - tags: ${Array.from(shape.tags).join(', ')}`);
 
-        if (shape.spec.documentation) {
-          chunks.push(genDocsComment(shape.spec.documentation).replace(/^  /gm, ''));
+        if (shape.spec.documentation && (this.docMode != 'none')) {
+          chunks.push(genDocsComment(shape.spec.documentation, '', this.docMode));
         }
 
         // if (this.#singleRefShapes.has(shape.name)) {
@@ -73,7 +74,7 @@ export class StructEmitter {
             const isRequired = required.has(key.toLowerCase())
               || (reqLists && (innerShape.spec.type === 'list' || innerShape.spec.type === 'map'))
               || spec.location === 'uri';
-            const doc = spec.documentation ? `${genDocsComment(spec.documentation)}\n` : '';
+            const doc = (this.docMode != 'none' && spec.documentation) ? `${genDocsComment(spec.documentation, '  ', this.docMode)}\n` : '';
             return `${doc}  ${key}${isRequired ? '' : '?'}: ${this.specifyShapeType(innerShape, {isJson: spec.jsonvalue, tags: shape.tags})}${isRequired ? '' : ' | null'};`;
           }),
         '}'].join('\n');

@@ -16,9 +16,10 @@ export function generateApiTypescript(
   protocol: ProtocolCodegen,
   namespace: string,
   namePrefix: string,
+  docMode: 'none' | 'short' | 'full',
 ): string {
 
-  const structEmitter = new StructEmitter(apiSpec, shapes, helpers, protocol, namePrefix);
+  const structEmitter = new StructEmitter(apiSpec, shapes, helpers, protocol, namePrefix, docMode);
   helpers.useHelper("client");
 
   const chunks = new Array<string>();
@@ -66,8 +67,8 @@ export function generateApiTypescript(
     }
     signature += '>';
 
-    if (operation.documentation) {
-      chunks.push(genDocsComment(operation.documentation));
+    if (operation.documentation && docMode !== 'none') {
+      chunks.push(genDocsComment(operation.documentation, '  ', docMode));
     }
 
     const lowerCamelName = operation.name[0].toLowerCase() + operation.name.slice(1);

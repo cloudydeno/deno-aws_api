@@ -14,6 +14,7 @@ export default class ServiceCodeGen {
   waitersSpec?: Schema.Waiters;
 
   isTest: boolean;
+  docMode: 'none' | 'short' | 'full';
   shapes: ShapeLibrary;
 
   constructor(specs: {
@@ -22,11 +23,19 @@ export default class ServiceCodeGen {
     waiters?: Schema.Waiters,
     uid: string,
     isTest?: true,
-  }) {
+  }, opts: URLSearchParams) {
+
     this.apiSpec = specs.api;
     this.pagersSpec = specs.pagers;
     this.waitersSpec = specs.waiters;
     this.isTest = specs.isTest ?? false;
+
+    const docMode = opts.get('docs');
+    if (docMode === 'short' || docMode === 'full') {
+      this.docMode = docMode;
+    } else {
+      this.docMode = 'none';
+    }
 
     // mutate the specs to fix inaccuracies
     fixupApiSpec(this.apiSpec);
@@ -47,8 +56,8 @@ export default class ServiceCodeGen {
     const chunks = new Array<string>();
     chunks.push(`export default class ${namespace} {`);
 
-    const structGen = new StructEmitter(this.apiSpec, this.shapes, helpers, protocol);
-    chunks.push(generateApiTypescript(this.apiSpec, this.shapes, helpers, protocol, namespace, ''));
+    const structGen = new StructEmitter(this.apiSpec, this.shapes, helpers, protocol, '', this.docMode);
+    chunks.push(generateApiTypescript(this.apiSpec, this.shapes, helpers, protocol, namespace, '', this.docMode));
 
     if (this.waitersSpec && Object.keys(this.waitersSpec.waiters).length > 0) {
       chunks.push(`  // Resource State Waiters\n`);
@@ -88,8 +97,8 @@ export default class ServiceCodeGen {
     const chunks = new Array<string>();
     chunks.push(`export default class ${namespace} {`);
 
-    const structGen = new StructEmitter(this.apiSpec, this.shapes, helpers, protocol, 's.');
-    chunks.push(generateApiTypescript(this.apiSpec, this.shapes, helpers, protocol, namespace, 's.'));
+    const structGen = new StructEmitter(this.apiSpec, this.shapes, helpers, protocol, 's.', this.docMode);
+    chunks.push(generateApiTypescript(this.apiSpec, this.shapes, helpers, protocol, namespace, 's.', this.docMode));
 
     if (this.waitersSpec && Object.keys(this.waitersSpec.waiters).length > 0) {
       chunks.push(`  // Resource State Waiters\n`);
@@ -120,7 +129,7 @@ export default class ServiceCodeGen {
     const helpers = makeHelperLibrary({ isTest: this.isTest });
     const protocol = makeProtocolCodegenFor(this.apiSpec.metadata, this.shapes, helpers);
 
-    const structGen = new StructEmitter(this.apiSpec, this.shapes, helpers, protocol);
+    const structGen = new StructEmitter(this.apiSpec, this.shapes, helpers, protocol, '', this.docMode);
     const structCode = structGen.generateStructsTypescript(['iface']);
 
     return [

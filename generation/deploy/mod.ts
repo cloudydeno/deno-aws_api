@@ -226,7 +226,7 @@ async function serveApi(opts: {
     api: spec.normal,
     pagers: opts.options.has('paginators') ? undefined : spec.paginators,
     waiters: opts.options.has('waiters') ? undefined : spec.waiters2,
-  });
+  }, opts.options);
 
   return [
     headerChunks.join('\n'),

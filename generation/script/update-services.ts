@@ -38,6 +38,9 @@ for (const svc of Object.values(serviceList)) {
   }
 }
 
+const opts = new URLSearchParams();
+// opts.set('docs', 'short');
+
 const specSuffix = `.normal.json`;
 const specificServices = Deno.args[0]?.split(',');
 for await (const entry of Deno.readDir(`./aws-sdk-js/apis`)) {
@@ -49,16 +52,6 @@ for await (const entry of Deno.readDir(`./aws-sdk-js/apis`)) {
   if (specificServices && !specificServices.includes(service)) {
     continue;
   }
-
-  // "cloudwatch": {
-  //   "prefix": "monitoring",
-  //   "name": "CloudWatch",
-  //   "cors": true
-  // },
-  // "lexmodelsv2": {
-  //   "prefix": "models.lex.v2",
-  //   "name": "LexModelsV2"
-  // },
 
   if (!(`${service}@${version}` in services)) {
     const apiSpec = JSON.parse(await Deno.readTextFile('./aws-sdk-js/apis/'+entry.name)) as Schema.Api;
@@ -145,7 +138,7 @@ async function generateApi(apisPath: string, apiUid: string, namespace: string, 
     api: JSON.parse(await Deno.readTextFile(jsonPath('normal'))) as Schema.Api,
     pagers: JSON.parse(await maybeReadFile(jsonPath('paginators'))) as Schema.Pagination,
     waiters: JSON.parse(await maybeReadFile(jsonPath('waiters2'))) as Schema.Waiters,
-  });
+  }, opts);
   const modCode = codeGen.generateModTypescript(namespace);
   const structsCode = codeGen.generateStructsTypescript();
 

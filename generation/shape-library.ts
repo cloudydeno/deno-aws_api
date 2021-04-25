@@ -140,8 +140,10 @@ export class KnownShape {
   constructor(
     public name: string,
     public spec: Schema.ApiShape,
-  ) {}
-  payloadField = this.spec.payload;
+  ) {
+    this.payloadField = this.spec.payload;
+  }
+  payloadField?: string;
   tags = new Set<ShapeTag>();
   refCount = 0;
 
