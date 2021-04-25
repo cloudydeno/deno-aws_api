@@ -42,7 +42,7 @@ async function handleRequest(request: Request): Promise<Response> {
       const sdkVer = match[2]?.slice(1) || await SDK.getLatestSdkVersion();
       const apiVer = match[4]?.slice(1) || await new SDK(sdkVer).getLatestApiVersion(match[3]);
 
-      const resp = Response.redirect(`/${modVer}/sdk@${sdkVer}/${match[3]}@${apiVer}.ts${search}`);
+      const resp = ResponseRedirect(`/${modVer}/sdk@${sdkVer}/${match[3]}@${apiVer}.ts${search}`);
       if (match[1] !== modVer) resp.headers.append('x-deno-warning',
         `Using latest version (${modVer}) for /x/aws_api imports`);
       if (!match[2]) resp.headers.append('x-deno-warning',
@@ -115,7 +115,7 @@ ${apiText}
   const match = pathname.match(/^\/(?:(v[0-9.]+)\/(?:sdk(@v2\.[0-9]+\.[0-9]+)?\/)?)?\/?$/);
   if (match) {
     if (!pathname.endsWith('/')) {
-      return Response.redirect(pathname + '/' + search);
+      return ResponseRedirect(pathname + '/' + search);
     }
 
     const modVer = (match[1] === 'v0' ? 'v0.3.1' : match[1]) || 'v0.3.1';
@@ -240,4 +240,12 @@ async function serveApi(opts: {
 function buildMatchRule(rule: string) {
   var escapeRegex = (str: string) => str.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
   return new RegExp("^" + rule.split("*").map(escapeRegex).join(".*") + "$");
+}
+
+// TODO: Response.redirect() throws in Deno 1.9 unless url is absolute
+function ResponseRedirect(location: string) {
+  return new Response(null, {
+    status: 302,
+    headers: { location },
+  });
 }
