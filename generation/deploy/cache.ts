@@ -28,8 +28,15 @@ export async function cachedFetch(mode: 'immutable' | 'mutable', url: string) {
     }
   }
 
-  const resp = await fetch(url);
-  console.log('fetched', resp.status, url);
+  const realResp = await fetch(url);
+  console.log('fetched', realResp.status, url);
+
+  const resp = new Response(realResp.body, realResp);
+  // TODO: hack around https://github.com/denoland/deno/issues/10367
+  for (const header of realResp.headers) {
+    resp.headers.set(header[0], header[1]);
+  }
+  Object.defineProperty(resp, 'status', {value: realResp.status});
 
   if (mode === 'immutable') {
     if (resp.status === 200) {

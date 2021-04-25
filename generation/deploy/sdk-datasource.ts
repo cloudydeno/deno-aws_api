@@ -78,7 +78,12 @@ export class SDK {
       throw new Error(`HTTP ${resp.status} on ${jsonPath}`);
     }
 
-    return await resp.json();
+    // TODO: hack around https://github.com/denoland/deno/issues/10367
+    const text = await resp.text();
+    if (text.startsWith('404') && policy === 'optional') {
+      return null;
+    }
+    return JSON.parse(text);
   }
 
   async getApiSpecs(

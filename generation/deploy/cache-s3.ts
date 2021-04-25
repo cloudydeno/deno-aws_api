@@ -19,10 +19,13 @@ export function s3Cache(
   }
 
   return new Cache({
+
     async get(url) {
       try {
         console.log('s3 get', s3Coords(url).Key);
         const { Metadata, Body } = await s3Client.getObject(s3Coords(url));
+        if (!Metadata['cache-policy']) return undefined;
+
         if (Body && Metadata['cache-policy'] === 'inline') {
           const idx = Body.indexOf(10);
           return {
@@ -30,15 +33,18 @@ export function s3Cache(
             body: Body.slice(idx+1),
           };
         }
+
         return {
           policy: JSON.parse(Metadata['cache-policy'] || '{}'),
           body: Body == null ? new Uint8Array(0) : Body,
         };
+
       } catch (err) {
         if (err.code === 'NoSuchKey') return undefined;
         throw err;
       }
     },
+
     async set(url, resp) {
       const list = resp.policy.resh['content-type'] ?? [];
       const contentType = Array.isArray(list) ? list[0] : list;
@@ -74,9 +80,11 @@ export function s3Cache(
         },
       });
     },
+
     async delete(url) {
       await s3Client.deleteObject(s3Coords(url));
     },
+
     close() {},
   });
 }
