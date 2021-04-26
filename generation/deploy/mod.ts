@@ -81,8 +81,12 @@ async function handleRequest(request: Request): Promise<Response> {
   <td><input type="input" name="actions" value="${searchParams.get('actions') || ''}" /></td>
 </tr>
 <tr>
-  <th>Include documentation text:</th>
-  <td><input type="checkbox" name="docs" /></td>
+  <th>Include documentation comments:</th>
+  <td><select name="docs">
+    <option value="none">None</option>
+    <option value="short"${searchParams.get('docs') == 'short' ? ' selected' : ''}>First lines only</option>
+    <option value="full"${searchParams.get('docs') == 'full' ? ' selected' : ''}>Full documentation</option>
+  </select></td>
 </tr>
 </table>
 <input type="submit" />
@@ -129,6 +133,10 @@ ${apiText}
 
     return new Response(`<!doctype html>
 <h1>AWS API Client Codegen</h1>
+<p><strong>NOTICE</strong>:
+  This codegen server / API is extremely likely to change over time!
+  Currently for experimentation only!
+</p>
 <h2>Path parameters</h2>
 <p>Service modules: <code>/v{deno-aws_api version}/sdk@{aws-sdk-js version}/{service ID}@{service api version}.ts</code></p>
 <h2>Examples</h2>
@@ -218,7 +226,7 @@ async function serveApi(opts: {
       }
     }
     const afterCount = Object.keys(spec.normal.operations).length;
-    headerChunks.push(`//   filtered out ${allOps.length-afterCount} out of ${allOps.length} actions, leaving ${afterCount}`);
+    headerChunks.push(`//   skipped ${allOps.length-afterCount} out of ${allOps.length} actions, leaving ${afterCount}`);
   }
 
   const codeGen = new ServiceCodeGen({
