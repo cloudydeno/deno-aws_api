@@ -1,10 +1,12 @@
-// import { immutableFetch } from "./cache.ts";
 import { SDK } from "./sdk-datasource.ts";
+
+import * as CompletionApi from './completion-api.ts';
 
 addEventListener("fetch", async (event) => {
   const request = (event as any).request as Request;
   const response = await handleRequest(request)
     .catch(renderError);
+  response.headers.set("server", "aws_api-generation/v0.3.1");
   (event as any).respondWith(response);
 });
 
@@ -20,7 +22,6 @@ Internal stacktrace follows:
 ${msg}`, {
     status: 500,
     headers: {
-      server: "aws_api-generation/v0.3.1",
       "content-type": "text/plain; charset=utf-8",
     }});
 }
@@ -29,6 +30,10 @@ async function handleRequest(request: Request): Promise<Response> {
   const { protocol, host, pathname, search, searchParams, origin } = new URL(request.url);
   console.log(request.method, pathname);
   const wantsHtml = request.headers.get('accept')?.split(',').some(x => x.startsWith('text/html')) ?? false;
+
+  if (pathname.startsWith('/.well-known/') || pathname.startsWith('/.completions/')) {
+    return await CompletionApi.handleRequest(request);
+  }
 
   if (searchParams.get('actions') === '') {
     searchParams.delete('actions');
@@ -162,7 +167,7 @@ import SQS from "${origin}/${modVer}/sdk@${sdkVer}/sqs@2012-11-05.ts?actions=Rec
 ${serviceList.map(([svcId, svc]) => `<tr>
 <td><a href="/${modVer}/sdk@${sdkVer}/${svcId}.ts">${svc.name}</a></td>
 <td><code>import ${svc.name} from "${origin}/v0/sdk/${svcId}.ts";</code></td>
-<td><a href="https://doc.deno.land/${protocol.replace(/:$/, '')}/${host}/v0/sdk/${svcId}.ts">API</a></td>
+<td><a href="https://doc.deno.land/${protocol.replace(/:$/, '')}/${host}/v0/sdk/${svcId}.ts%3Fdocs=full">Docs</a></td>
 </tr>
 `).join('')}
 </tbody>
@@ -179,7 +184,6 @@ ${serviceList.map(([svcId, svc]) => `<tr>
   return new Response(`404 Not Found`, {
     status: 404,
     headers: {
-      server: "aws_api-generation/v0.3.1",
       "content-type": "text/plain; charset=utf-8",
     }});
 }
