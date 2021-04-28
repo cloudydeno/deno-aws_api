@@ -68,7 +68,7 @@ export default class GenWaiter {
       }
     }
     const handlesAnyErr = this.spec.acceptors.some(x =>
-      x.matcher === 'error'
+      (x.matcher === 'error' && x.state !== 'failure')
       || (x.matcher === 'status' && x.expected >= 400));
     const collapsePathEval = allPaths.length > 1 && allPaths.every(x => x === allPaths[0]);
 

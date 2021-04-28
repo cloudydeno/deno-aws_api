@@ -8934,13 +8934,8 @@ export default class EC2 {
   ): Promise<s.DescribeNetworkInterfacesResult> {
     const errMessage = 'ResourceNotReady: Resource is not in the state NetworkInterfaceAvailable';
     for (let i = 0; i < 10; i++) {
-      try {
-        const resp = await this.describeNetworkInterfaces(params);
-        if (resp?.NetworkInterfaces?.flatMap(x => x?.Status)?.every(x => x === "available")) return resp;
-      } catch (err) {
-        if (["InvalidNetworkInterfaceID.NotFound"].includes(err.shortCode)) throw err;
-        throw err;
-      }
+      const resp = await this.describeNetworkInterfaces(params);
+      if (resp?.NetworkInterfaces?.flatMap(x => x?.Status)?.every(x => x === "available")) return resp;
       await new Promise(r => setTimeout(r, 20000));
     }
     throw new Error(errMessage);
