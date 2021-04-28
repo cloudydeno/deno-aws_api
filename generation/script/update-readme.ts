@@ -36,7 +36,7 @@ services.sort((a, b) =>
 const workingSvc = services.filter(x => x.typechecked === 'ok');
 
 await updateReadme(header);
-await updateServices(header);
+// await updateServices(header);
 
 async function updateFile(path: string, contents: string) {
   const original = await Deno.readTextFile(path);
@@ -48,12 +48,13 @@ async function updateFile(path: string, contents: string) {
 
 async function updateReadme(header: string) {
   const chunks = new Array<string>();
-  chunks.push(`| Module | File size | Approx check time |`);
-  chunks.push(`| --- | ---: | ---: |`);
+  chunks.push(`| Module | Protocol | File size | Approx check time |`);
+  chunks.push(`| --- | --- | ---: | ---: |`);
 
   for (const svc of workingSvc) {
     chunks.push(`| `+[
-      `\`${svc.id}@${svc.version}\``,
+      `\`${svc.id}/mod.ts\``,
+      svc.protocol,
       formatFileSize(parseInt(svc.bytecount)),
       formatDuration(parseInt(svc.cachetime)),
     ].join(' | ')+` |`);
@@ -62,30 +63,30 @@ async function updateReadme(header: string) {
   return updateFile('lib/README.md', chunks.join('\n'));
 }
 
-async function updateServices(header: string) {
-  const chunks = new Array<string>();
+// async function updateServices(header: string) {
+//   const chunks = new Array<string>();
 
-  const icons: Record<string, string> = {
-    '': '',
-    'ok': '✔️',
-    'fail': '🚫',
-  };
+//   const icons: Record<string, string> = {
+//     '': '',
+//     'ok': '✔️',
+//     'fail': '🚫',
+//   };
 
-  chunks.push(`| Module | Protocol | Generates | File size | Typechecks | Approx check time |`);
-  chunks.push(`| --- | --- | :---: | ---: | :---: | ---: |`);
-  for (const svc of services) {
-    chunks.push(`| `+[
-      `\`${svc.service}@${svc.version}\``,
-      svc.protocol,
-      icons[svc.generated],
-      svc.generated === 'ok' ? formatFileSize(parseInt(svc.bytecount)) : '',
-      icons[svc.typechecked],
-      svc.typechecked === 'ok' ? formatDuration(parseInt(svc.cachetime)) : '',
-    ].join(' | ')+` |`);
-  }
+//   chunks.push(`| Module | Protocol | Generates | File size | Typechecks | Approx check time |`);
+//   chunks.push(`| --- | --- | :---: | ---: | :---: | ---: |`);
+//   for (const svc of services) {
+//     chunks.push(`| `+[
+//       `\`${svc.service}@${svc.version}\``,
+//       svc.protocol,
+//       icons[svc.generated],
+//       svc.generated === 'ok' ? formatFileSize(parseInt(svc.bytecount)) : '',
+//       icons[svc.typechecked],
+//       svc.typechecked === 'ok' ? formatDuration(parseInt(svc.cachetime)) : '',
+//     ].join(' | ')+` |`);
+//   }
 
-  return updateFile('lib/SERVICES.md', chunks.join('\n'));
-}
+//   return updateFile('lib/SERVICES.md', chunks.join('\n'));
+// }
 
 function formatFileSize(bytes: number): string {
   return `${Math.round(bytes / 1024)} KiB`;

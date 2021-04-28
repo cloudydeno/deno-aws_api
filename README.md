@@ -10,5 +10,6 @@ There's two main parts to this repo:
 
 * `lib/` is the signing client, helpers, and generated API bindings that get uploaded to the `/x/` registry.
 * `generation/` is a big mash of Typescript that uses `aws-sdk-js@2` API definitions to write out all the files in `lib/services/`.
+    * `generation/deploy/` contains a Deno Deploy application to dynamically serve generated API bindings.
 
 I'm not affiliated to Amazon at all, but I do intend to support reasonable usecases. Don't be afraid to submit issues on this repository or reach out to me on the Deno Discord about this effort.

@@ -43,6 +43,7 @@ const opts = new URLSearchParams();
 
 const specSuffix = `.normal.json`;
 const specificServices = Deno.args[0]?.split(',');
+const relevantServices = new Map<string,ServiceEntry>();
 for await (const entry of Deno.readDir(`./aws-sdk-js/apis`)) {
   if (!entry.name.endsWith(specSuffix)) continue;
   const uid = entry.name.slice(0, -specSuffix.length);
@@ -70,18 +71,26 @@ for await (const entry of Deno.readDir(`./aws-sdk-js/apis`)) {
     };
   }
 
-  const svc = services[`${service}@${version}`];
-  svc.id = serviceList[service].modId;
-  svc.namespace = serviceList[service].name;
+  const existing = relevantServices.get(service);
+  if (existing) {
+    if (existing.version > version) continue;
+  }
+  relevantServices.set(service, services[`${service}@${version}`]);
+}
+
+for (const svc of relevantServices.values()) {
+  const uid = `${svc.service}-${svc.version}`;
+  svc.id = serviceList[svc.service].modId;
+  svc.namespace = serviceList[svc.service].name;
 
   let modPath: string;
   let byteCount: number;
   try {
-    [modPath, byteCount] = await generateApi('aws-sdk-js/apis', uid, svc.namespace, serviceList[service].modId);
+    [modPath, byteCount] = await generateApi('aws-sdk-js/apis', uid, svc.namespace, svc.id);
     svc.bytecount = byteCount.toString();
     svc.generated = 'ok';
   } catch (err) {
-    console.log(`${service}@${version}`, 'build fail:', err.message);
+    console.log(`${svc.service}@${svc.version}`, 'build fail:', err.message);
     svc.generated = 'fail';
     continue;
   }
@@ -96,7 +105,7 @@ for await (const entry of Deno.readDir(`./aws-sdk-js/apis`)) {
   const cacheEnd = new Date;
 
   if (code !== 0) {
-    console.log(`${service}@${version}`, 'cache fail code', code);
+    console.log(`${svc.service}@${svc.version}`, 'cache fail code', code);
     svc.typechecked = 'fail';
     continue;
   }
@@ -143,10 +152,10 @@ async function generateApi(apisPath: string, apiUid: string, namespace: string, 
   const structsCode = codeGen.generateStructsTypescript();
 
   const version = apiUid.slice(-10);
-  const modName = `${serviceId}@${version}`;
-  console.log('Writing', modName);
+  // const modName = `${serviceId}@${version}`;
+  console.log('Writing', serviceId);
 
-  const modPath = path.join('lib', 'services', modName);
+  const modPath = path.join('lib', 'services', serviceId);
   await Deno.run({cmd: ['mkdir', '-p', modPath]}).status();
   await Deno.writeTextFile(modPath+'/mod.ts', modCode);
   await Deno.writeTextFile(modPath+'/structs.ts', structsCode);

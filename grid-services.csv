@@ -1,277 +1,30 @@
 service,version,fullname,id,namespace,protocol,generated,typechecked,bytecount,cachetime
-accessanalyzer,2019-11-01,Access Analyzer,accessanalyzer,AccessAnalyzer,rest-json,ok,ok,49466,1749
-acm-pca,2017-08-22,AWS Certificate Manager Private Certificate Authority,acmpca,ACMPCA,json,ok,ok,39558,2075
-acm,2015-12-08,AWS Certificate Manager,acm,ACM,json,ok,ok,23902,1520
-alexaforbusiness,2017-11-09,Alexa For Business,alexaforbusiness,AlexaForBusiness,json,ok,ok,110217,2584
-amp,2020-08-01,Amazon Prometheus Service,amp,Amp,rest-json,ok,ok,6847,1417
-amplify,2017-07-25,AWS Amplify,amplify,Amplify,rest-json,ok,ok,51494,1983
-amplifybackend,2020-08-11,AmplifyBackend,amplifybackend,AmplifyBackend,rest-json,ok,ok,50053,3132
-apigateway,2015-07-09,Amazon API Gateway,apigateway,APIGateway,rest-json,ok,ok,153378,3739
-apigatewaymanagementapi,2018-11-29,AmazonApiGatewayManagementApi,apigatewaymanagementapi,ApiGatewayManagementApi,rest-json,ok,ok,3266,1292
-apigatewayv2,2018-11-29,AmazonApiGatewayV2,apigatewayv2,ApiGatewayV2,rest-json,ok,ok,123089,2716
-appconfig,2019-10-09,Amazon AppConfig,appconfig,AppConfig,rest-json,ok,ok,43396,1768
-appflow,2020-08-23,Amazon Appflow,appflow,Appflow,rest-json,ok,ok,97230,2097
-appintegrations,2020-07-29,Amazon AppIntegrations Service,appintegrations,AppIntegrations,rest-json,ok,ok,10646,1137
-application-autoscaling,2016-02-06,Application Auto Scaling,applicationautoscaling,ApplicationAutoScaling,json,ok,ok,25809,2774
-application-insights,2018-11-25,Amazon CloudWatch Application Insights,applicationinsights,ApplicationInsights,json,ok,ok,33325,1551
-appmesh,2018-10-01,AWS App Mesh,appmesh,AppMesh,rest-json,ok,ok,30747,1811
-appmesh,2019-01-25,AWS App Mesh,appmesh,AppMesh,rest-json,ok,ok,124641,3207
-appstream,2016-12-01,Amazon AppStream,appstream,AppStream,json,ok,ok,68022,2335
-appsync,2017-07-25,AWS AppSync,appsync,AppSync,rest-json,ok,ok,60098,2117
-athena,2017-05-18,Amazon Athena,athena,Athena,json,ok,ok,44384,1692
-auditmanager,2017-07-25,AWS Audit Manager,auditmanager,AuditManager,rest-json,ok,ok,80393,2301
-autoscaling-plans,2018-01-06,AWS Auto Scaling Plans,autoscalingplans,AutoScalingPlans,json,ok,ok,22514,1893
-autoscaling,2011-01-01,Auto Scaling,autoscaling,AutoScaling,query,ok,ok,105153,2397
-AWSMigrationHub,2017-05-31,AWS Migration Hub,migrationhub,MigrationHub,json,ok,ok,20189,1321
-backup,2018-11-15,AWS Backup,backup,Backup,rest-json,ok,ok,71868,2051
-batch,2016-08-10,AWS Batch,batch,Batch,rest-json,ok,ok,53494,1871
-braket,2019-09-01,Braket,braket,Braket,rest-json,ok,ok,12814,1302
-budgets,2016-10-20,AWS Budgets,budgets,Budgets,json,ok,ok,37052,1612
-ce,2017-10-25,AWS Cost Explorer Service,costexplorer,CostExplorer,json,ok,ok,89878,2275
-chime,2018-05-01,Amazon Chime,chime,Chime,rest-json,ok,ok,222013,3815
-cloud9,2017-09-23,AWS Cloud9,cloud9,Cloud9,json,ok,ok,14188,1604
-clouddirectory,2016-05-10,Amazon CloudDirectory,clouddirectory,CloudDirectory,rest-json,ok,ok,121059,3540
-clouddirectory,2017-01-11,Amazon CloudDirectory,clouddirectory,CloudDirectory,rest-json,ok,ok,124219,4233
-cloudformation,2010-05-15,AWS CloudFormation,cloudformation,CloudFormation,query,ok,ok,134008,2766
-cloudfront,2016-11-25,Amazon CloudFront,cloudfront,CloudFront,rest-xml,ok,ok,84783,2616
-cloudfront,2017-03-25,Amazon CloudFront,cloudfront,CloudFront,rest-xml,ok,ok,85823,2507
-cloudfront,2017-10-30,Amazon CloudFront,cloudfront,CloudFront,rest-xml,ok,ok,121973,2802
-cloudfront,2018-06-18,Amazon CloudFront,cloudfront,CloudFront,rest-xml,ok,ok,122152,3253
-cloudfront,2018-11-05,Amazon CloudFront,cloudfront,CloudFront,rest-xml,ok,ok,126631,2471
-cloudfront,2019-03-26,Amazon CloudFront,cloudfront,CloudFront,rest-xml,ok,ok,127935,3378
-cloudfront,2020-05-31,Amazon CloudFront,cloudfront,CloudFront,rest-xml,ok,ok,187329,3392
-cloudhsm,2014-05-30,Amazon CloudHSM,cloudhsm,CloudHSM,json,ok,ok,19125,1526
-cloudhsmv2,2017-04-28,AWS CloudHSM V2,cloudhsmv2,CloudHSMV2,json,ok,ok,18671,4408
-cloudsearch,2011-02-01,Amazon CloudSearch,cloudsearch,CloudSearch,query,ok,ok,35477,2794
-cloudsearch,2013-01-01,Amazon CloudSearch,cloudsearch,CloudSearch,query,ok,ok,59383,2119
-cloudsearchdomain,2013-01-01,Amazon CloudSearch Domain,cloudsearchdomain,CloudSearchDomain,rest-json,ok,ok,9850,2114
-cloudtrail,2013-11-01,AWS CloudTrail,cloudtrail,CloudTrail,json,ok,ok,27759,1621
-codeartifact,2018-09-22,CodeArtifact,codeartifact,CodeArtifact,rest-json,ok,ok,56489,1986
-codebuild,2016-10-06,AWS CodeBuild,codebuild,CodeBuild,json,ok,ok,90909,2134
-codecommit,2015-04-13,AWS CodeCommit,codecommit,CodeCommit,json,ok,ok,112076,3994
-codedeploy,2014-10-06,AWS CodeDeploy,codedeploy,CodeDeploy,json,ok,ok,87929,2292
-codeguru-reviewer,2019-09-19,Amazon CodeGuru Reviewer,codegurureviewer,CodeGuruReviewer,rest-json,ok,ok,26317,5708
-codeguruprofiler,2019-07-18,Amazon CodeGuru Profiler,codeguruprofiler,CodeGuruProfiler,rest-json,ok,ok,36550,1689
-codepipeline,2015-07-09,AWS CodePipeline,codepipeline,CodePipeline,json,ok,ok,75804,2299
-codestar-connections,2019-12-01,AWS CodeStar connections,codestarconnections,CodeStarconnections,json,ok,ok,12423,1539
-codestar-notifications,2019-10-15,AWS CodeStar Notifications,codestarnotifications,CodeStarNotifications,rest-json,ok,ok,16371,1487
-codestar,2017-04-19,AWS CodeStar,codestar,CodeStar,json,ok,ok,21714,1708
-cognito-identity,2014-06-30,Amazon Cognito Identity,cognitoidentity,CognitoIdentity,json,ok,ok,28143,1618
-cognito-idp,2016-04-18,Amazon Cognito Identity Provider,cognitoidentityserviceprovider,CognitoIdentityServiceProvider,json,ok,ok,148172,3270
-cognito-sync,2014-06-30,Amazon Cognito Sync,cognitosync,CognitoSync,rest-json,ok,ok,22185,1574
-comprehend,2017-11-27,Amazon Comprehend,comprehend,Comprehend,json,ok,ok,100383,2125
-comprehendmedical,2018-10-30,AWS Comprehend Medical,comprehendmedical,ComprehendMedical,json,ok,ok,34141,1835
-compute-optimizer,2019-11-01,AWS Compute Optimizer,computeoptimizer,ComputeOptimizer,json,ok,ok,36668,1628
-config,2014-11-12,AWS Config,configservice,ConfigService,json,ok,ok,143111,2850
-connect-contact-lens,2020-08-21,Amazon Connect Contact Lens,connectcontactlens,ConnectContactLens,rest-json,ok,ok,5303,1122
-connect,2017-08-08,Amazon Connect Service,connect,Connect,rest-json,ok,ok,130105,2504
-connectparticipant,2018-09-07,Amazon Connect Participant Service,connectparticipant,ConnectParticipant,rest-json,ok,ok,13167,1259
-cur,2017-01-06,AWS Cost and Usage Report Service,cur,CUR,json,ok,ok,7088,1274
-customer-profiles,2020-08-15,Amazon Connect Customer Profiles,customerprofiles,CustomerProfiles,rest-json,ok,ok,53668,2218
-databrew,2017-07-25,AWS Glue DataBrew,databrew,DataBrew,rest-json,ok,ok,60823,1854
-dataexchange,2017-07-25,AWS Data Exchange,dataexchange,DataExchange,rest-json,ok,ok,40050,1712
-datapipeline,2012-10-29,AWS Data Pipeline,datapipeline,DataPipeline,json,ok,ok,22767,1941
-datasync,2018-11-09,AWS DataSync,datasync,DataSync,json,ok,ok,47174,1715
-dax,2017-04-19,Amazon DynamoDB Accelerator (DAX),dax,DAX,json,ok,ok,29080,1714
-detective,2018-10-26,Amazon Detective,detective,Detective,rest-json,ok,ok,11825,1548
-devicefarm,2015-06-23,AWS Device Farm,devicefarm,DeviceFarm,json,ok,ok,101817,2490
-devops-guru,2020-12-01,Amazon DevOps Guru,devopsguru,DevOpsGuru,rest-json,ok,ok,44604,1941
-directconnect,2012-10-25,AWS Direct Connect,directconnect,DirectConnect,json,ok,ok,72188,4739
-discovery,2015-11-01,AWS Application Discovery Service,discovery,Discovery,json,ok,ok,33176,1733
-dlm,2018-01-12,Amazon Data Lifecycle Manager,dlm,DLM,rest-json,ok,ok,22797,1611
-dms,2016-01-01,AWS Database Migration Service,dms,DMS,json,ok,ok,128441,2953
-docdb,2014-10-31,Amazon DocumentDB with MongoDB compatibility,docdb,DocDB,query,ok,ok,88860,2537
-ds,2015-04-16,AWS Directory Service,directoryservice,DirectoryService,json,ok,ok,71666,2006
-dynamodb,2011-12-05,Amazon DynamoDB,dynamodb,DynamoDB,json,ok,ok,25600,1332
-dynamodb,2012-08-10,Amazon DynamoDB,dynamodb,DynamoDB,json,ok,ok,126018,3194
-ebs,2019-11-02,Amazon Elastic Block Store,ebs,EBS,rest-json,ok,ok,11702,1258
-ec2-instance-connect,2018-04-02,AWS EC2 Instance Connect,ec2instanceconnect,EC2InstanceConnect,json,ok,ok,1971,1243
-ec2,2016-11-15,Amazon Elastic Compute Cloud,ec2,EC2,ec2,ok,ok,1141144,11480
-ecr-public,2020-10-30,Amazon Elastic Container Registry Public,ecrpublic,ECRPUBLIC,json,ok,ok,30613,1573
-ecr,2015-09-21,Amazon EC2 Container Registry,ecr,ECR,json,ok,ok,50339,2243
-ecs,2014-11-13,Amazon EC2 Container Service,ecs,ECS,json,ok,ok,132500,4072
-eks,2017-11-01,Amazon Elastic Kubernetes Service,eks,EKS,rest-json,ok,ok,62953,3095
-elastic-inference,2017-07-25,Amazon Elastic  Inference,elasticinference,ElasticInference,rest-json,ok,ok,8756,1263
-elasticache,2015-02-02,Amazon ElastiCache,elasticache,ElastiCache,query,ok,ok,151207,3340
-elasticbeanstalk,2010-12-01,AWS Elastic Beanstalk,elasticbeanstalk,ElasticBeanstalk,query,ok,ok,103392,2819
-elasticfilesystem,2015-02-01,Amazon Elastic File System,efs,EFS,rest-json,ok,ok,32463,1751
-elasticloadbalancing,2012-06-01,Elastic Load Balancing,elb,ELB,query,ok,ok,47728,2277
-elasticloadbalancingv2,2015-12-01,Elastic Load Balancing,elbv2,ELBv2,query,ok,ok,78826,2680
-elasticmapreduce,2009-03-31,Amazon Elastic MapReduce,emr,EMR,json,ok,ok,112803,4519
-elastictranscoder,2012-09-25,Amazon Elastic Transcoder,elastictranscoder,ElasticTranscoder,rest-json,ok,ok,42838,2270
-email,2010-12-01,Amazon Simple Email Service,ses,SES,query,ok,ok,95877,2902
-emr-containers,2020-10-01,Amazon EMR Containers,emrcontainers,EMRcontainers,rest-json,ok,ok,28001,1485
-entitlement.marketplace,2017-01-11,AWS Marketplace Entitlement Service,marketplaceentitlementservice,MarketplaceEntitlementService,json,ok,ok,3286,1084
-es,2015-01-01,Amazon Elasticsearch Service,es,ES,rest-json,ok,ok,92215,3142
-eventbridge,2015-10-07,Amazon EventBridge,eventbridge,EventBridge,json,ok,ok,84857,2687
-events,2015-10-07,Amazon CloudWatch Events,cloudwatchevents,CloudWatchEvents,json,ok,ok,84886,2788
-firehose,2015-08-04,Amazon Kinesis Firehose,firehose,Firehose,json,ok,ok,66827,3104
-fis,2020-12-01,AWS Fault Injection Simulator,fis,Fis,rest-json,ok,ok,28849,1772
-fms,2018-01-01,Firewall Management Service,fms,FMS,json,ok,ok,41098,1746
-forecast,2018-06-26,Amazon Forecast Service,forecastservice,ForecastService,json,ok,ok,54990,2266
-forecastquery,2018-06-26,Amazon Forecast Query Service,forecastqueryservice,ForecastQueryService,json,ok,ok,2647,1718
-frauddetector,2019-11-15,Amazon Fraud Detector,frauddetector,FraudDetector,json,ok,ok,63056,2104
-fsx,2018-03-01,Amazon FSx,fsx,FSx,json,ok,ok,42860,2046
-gamelift,2015-10-01,Amazon GameLift,gamelift,GameLift,json,ok,ok,138910,5229
-glacier,2012-06-01,Amazon Glacier,glacier,Glacier,rest-json,ok,ok,49225,2292
-globalaccelerator,2018-08-08,AWS Global Accelerator,globalaccelerator,GlobalAccelerator,json,ok,ok,57162,1838
-glue,2017-03-31,AWS Glue,glue,Glue,json,ok,ok,250744,3975
-greengrass,2017-06-07,AWS Greengrass,greengrass,Greengrass,rest-json,ok,ok,131560,4304
-greengrassv2,2020-11-30,AWS IoT Greengrass V2,greengrassv2,GreengrassV2,rest-json,ok,ok,46182,1530
-groundstation,2019-05-23,AWS Ground Station,groundstation,GroundStation,rest-json,ok,ok,46567,2601
-guardduty,2017-11-28,Amazon GuardDuty,guardduty,GuardDuty,rest-json,ok,ok,86226,2066
-health,2016-08-04,AWS Health APIs and Notifications,health,Health,json,ok,ok,24535,1654
-healthlake,2017-07-01,Amazon HealthLake,healthlake,HealthLake,json,ok,ok,14214,2002
-honeycode,2020-03-01,Amazon Honeycode,honeycode,Honeycode,rest-json,ok,ok,26318,1710
-iam,2010-05-08,AWS Identity and Access Management,iam,IAM,query,ok,ok,192644,6108
-identitystore,2020-06-15,AWS SSO Identity Store,identitystore,IdentityStore,json,ok,ok,5304,1792
-imagebuilder,2019-12-02,EC2 Image Builder,imagebuilder,Imagebuilder,rest-json,ok,ok,85609,2235
-importexport,2010-06-01,AWS Import/Export,importexport,ImportExport,query,ok,ok,11334,1669
-inspector,2016-02-16,Amazon Inspector,inspector,Inspector,json,ok,ok,52732,2066
-iot-data,2015-05-28,AWS IoT Data Plane,iotdata,IotData,rest-json,ok,ok,5449,1188
-iot-jobs-data,2017-09-29,AWS IoT Jobs Data Plane,iotjobsdataplane,IoTJobsDataPlane,rest-json,ok,ok,7937,1912
-iot,2015-05-28,AWS IoT,iot,Iot,rest-json,ok,ok,353076,4811
-iot1click-devices,2018-05-14,AWS IoT 1-Click Devices Service,iot1clickdevicesservice,IoT1ClickDevicesService,rest-json,ok,ok,13828,1508
-iot1click-projects,2018-05-14,AWS IoT 1-Click Projects Service,iot1clickprojects,IoT1ClickProjects,rest-json,ok,ok,16327,1289
-iotanalytics,2017-11-27,AWS IoT Analytics,iotanalytics,IoTAnalytics,rest-json,ok,ok,75642,2372
-iotdeviceadvisor,2020-09-18,AWS IoT Core Device Advisor,iotdeviceadvisor,IotDeviceAdvisor,rest-json,ok,ok,22157,1471
-iotevents-data,2018-10-23,AWS IoT Events Data,ioteventsdata,IoTEventsData,rest-json,ok,ok,10769,1512
-iotevents,2018-07-27,AWS IoT Events,iotevents,IoTEvents,rest-json,ok,ok,44172,3053
-iotfleethub,2020-11-03,AWS IoT Fleet Hub,iotfleethub,IoTFleetHub,rest-json,ok,ok,9200,1284
-iotsecuretunneling,2018-10-05,AWS IoT Secure Tunneling,iotsecuretunneling,IoTSecureTunneling,json,ok,ok,9813,1372
-iotsitewise,2019-12-02,AWS IoT SiteWise,iotsitewise,IoTSiteWise,rest-json,ok,ok,103211,3788
-iotthingsgraph,2018-09-06,AWS IoT Things Graph,iotthingsgraph,IoTThingsGraph,json,ok,ok,41286,1678
-iotwireless,2020-11-22,AWS IoT Wireless,iotwireless,IoTWireless,rest-json,ok,ok,68616,2004
-ivs,2020-07-14,Amazon Interactive Video Service,ivs,IVS,rest-json,ok,ok,22769,1531
-kafka,2018-11-14,Managed Streaming for Kafka,kafka,Kafka,rest-json,ok,ok,55383,2133
-kendra,2019-02-03,AWSKendraFrontendService,kendra,Kendra,json,ok,ok,96407,2480
-kinesis-video-archived-media,2017-09-30,Amazon Kinesis Video Streams Archived Media,kinesisvideoarchivedmedia,KinesisVideoArchivedMedia,rest-json,ok,ok,12903,1073
-kinesis-video-media,2017-09-30,Amazon Kinesis Video Streams Media,kinesisvideomedia,KinesisVideoMedia,rest-json,ok,ok,2708,1049
-kinesis-video-signaling,2019-12-04,Amazon Kinesis Video Signaling Channels,kinesisvideosignalingchannels,KinesisVideoSignalingChannels,rest-json,ok,ok,3451,1146
-kinesis,2013-12-02,Amazon Kinesis,kinesis,Kinesis,json,ok,ok,32515,1896
-kinesisanalytics,2015-08-14,Amazon Kinesis Analytics,kinesisanalytics,KinesisAnalytics,json,ok,ok,45625,1826
-kinesisanalyticsv2,2018-05-23,Amazon Kinesis Analytics,kinesisanalyticsv2,KinesisAnalyticsV2,json,ok,ok,83164,2233
-kinesisvideo,2017-09-30,Amazon Kinesis Video Streams,kinesisvideo,KinesisVideo,rest-json,ok,ok,21586,1582
-kms,2014-11-01,AWS Key Management Service,kms,KMS,json,ok,ok,49045,4025
-lakeformation,2017-03-31,AWS Lake Formation,lakeformation,LakeFormation,json,ok,ok,23362,1380
-lambda,2014-11-11,AWS Lambda,lambda,Lambda,rest-json,ok,ok,14964,1365
-lambda,2015-03-31,AWS Lambda,lambda,Lambda,rest-json,ok,ok,101845,2449
-lex-models,2017-04-19,Amazon Lex Model Building Service,lexmodelbuildingservice,LexModelBuildingService,rest-json,ok,ok,70861,2054
-license-manager,2018-08-01,AWS License Manager,licensemanager,LicenseManager,json,ok,ok,65186,2986
-lightsail,2016-11-28,Amazon Lightsail,lightsail,Lightsail,json,ok,ok,204114,3607
-location,2020-11-19,Amazon Location Service,location,Location,rest-json,ok,ok,45334,1737
-logs,2014-03-28,Amazon CloudWatch Logs,cloudwatchlogs,CloudWatchLogs,json,ok,ok,44790,1835
-lookoutmetrics,2017-07-25,Amazon Lookout for Metrics,lookoutmetrics,LookoutMetrics,rest-json,ok,ok,49392,1767
-lookoutvision,2020-11-20,Amazon Lookout for Vision,lookoutvision,LookoutVision,rest-json,ok,ok,28585,1624
-machinelearning,2014-12-12,Amazon Machine Learning,machinelearning,MachineLearning,json,ok,ok,48896,2068
-macie,2017-12-19,Amazon Macie,macie,Macie,json,ok,ok,10343,1400
-macie2,2020-01-01,Amazon Macie 2,macie2,Macie2,rest-json,ok,ok,107202,3005
-managedblockchain,2018-09-24,Amazon Managed Blockchain,managedblockchain,ManagedBlockchain,rest-json,ok,ok,43875,1710
-marketplace-catalog,2018-09-17,AWS Marketplace Catalog Service,marketplacecatalog,MarketplaceCatalog,rest-json,ok,ok,11888,1612
-marketplacecommerceanalytics,2015-07-01,AWS Marketplace Commerce Analytics,marketplacecommerceanalytics,MarketplaceCommerceAnalytics,json,ok,ok,5071,1465
-mediaconnect,2018-11-14,AWS MediaConnect,mediaconnect,MediaConnect,rest-json,ok,ok,43481,1857
-mediaconvert,2017-08-29,AWS Elemental MediaConvert,mediaconvert,MediaConvert,rest-json,ok,ok,257186,3774
-medialive,2017-10-14,AWS Elemental MediaLive,medialive,MediaLive,rest-json,ok,ok,318627,4230
-mediapackage-vod,2018-11-07,AWS Elemental MediaPackage VOD,mediapackagevod,MediaPackageVod,rest-json,ok,ok,33941,1636
-mediapackage,2017-10-12,AWS Elemental MediaPackage,mediapackage,MediaPackage,rest-json,ok,ok,46922,1994
-mediastore-data,2017-09-01,AWS Elemental MediaStore Data Plane,mediastoredata,MediaStoreData,rest-json,ok,ok,7445,1364
-mediastore,2017-09-01,AWS Elemental MediaStore,mediastore,MediaStore,json,ok,ok,16877,1448
-mediatailor,2018-04-23,AWS MediaTailor,mediatailor,MediaTailor,rest-json,ok,ok,55748,1839
-meteringmarketplace,2016-01-14,AWSMarketplace Metering,marketplacemetering,MarketplaceMetering,json,ok,ok,7404,1213
-migrationhub-config,2019-06-30,AWS Migration Hub Config,migrationhubconfig,MigrationHubConfig,json,ok,ok,4688,1102
-mobile,2017-07-01,AWS Mobile,mobile,Mobile,rest-json,ok,ok,11586,1581
-mobileanalytics,2014-06-05,Amazon Mobile Analytics,mobileanalytics,MobileAnalytics,rest-json,ok,ok,2734,1141
-models.lex.v2,2020-08-07,Amazon Lex Model Building V2,lexmodelsv2,LexModelsV2,rest-json,ok,ok,102829,2310
-monitoring,2010-08-01,Amazon CloudWatch,cloudwatch,CloudWatch,query,ok,ok,61325,2625
-mq,2017-11-27,AmazonMQ,mq,MQ,rest-json,ok,ok,41129,1808
-mturk-requester,2017-01-17,Amazon Mechanical Turk,mturk,MTurk,json,ok,ok,49707,1969
-mwaa,2020-07-01,AmazonMWAA,mwaa,MWAA,rest-json,ok,ok,21379,1317
-neptune,2014-10-31,Amazon Neptune,neptune,Neptune,query,ok,ok,142250,3260
-network-firewall,2020-11-12,AWS Network Firewall,networkfirewall,NetworkFirewall,json,ok,ok,54806,1819
-networkmanager,2019-07-05,AWS Network Manager,networkmanager,NetworkManager,rest-json,ok,ok,48159,1847
-opsworks,2013-02-18,AWS OpsWorks,opsworks,OpsWorks,json,ok,ok,107967,2729
-opsworkscm,2016-11-01,AWS OpsWorks CM,opsworkscm,OpsWorksCM,json,ok,ok,24649,1550
-organizations,2016-11-28,AWS Organizations,organizations,Organizations,json,ok,ok,52244,1951
-outposts,2019-12-03,AWS Outposts,outposts,Outposts,rest-json,ok,ok,10238,1260
-personalize-events,2018-03-22,Amazon Personalize Events,personalizeevents,PersonalizeEvents,rest-json,ok,ok,4090,1136
-personalize-runtime,2018-05-22,Amazon Personalize Runtime,personalizeruntime,PersonalizeRuntime,rest-json,ok,ok,3835,1181
-personalize,2018-05-22,Amazon Personalize,personalize,Personalize,json,ok,ok,66937,2580
-pi,2018-02-27,AWS Performance Insights,pi,PI,json,ok,ok,7338,1381
-pinpoint-email,2018-07-26,Amazon Pinpoint Email Service,pinpointemail,PinpointEmail,rest-json,ok,ok,58807,2248
-pinpoint,2016-12-01,Amazon Pinpoint,pinpoint,Pinpoint,rest-json,ok,ok,249235,3672
-polly,2016-06-10,Amazon Polly,polly,Polly,rest-json,ok,ok,15567,1327
-pricing,2017-10-15,AWS Price List Service,pricing,Pricing,json,ok,ok,5262,1407
-qldb-session,2019-07-11,Amazon QLDB Session,qldbsession,QLDBSession,json,ok,ok,9954,1692
-qldb,2019-01-02,Amazon QLDB,qldb,QLDB,rest-json,ok,ok,24417,1415
-quicksight,2018-04-01,Amazon QuickSight,quicksight,QuickSight,rest-json,ok,ok,206053,7062
-ram,2018-01-04,AWS Resource Access Manager,ram,RAM,rest-json,ok,ok,34099,1812
-rds-data,2018-08-01,AWS RDS DataService,rdsdataservice,RDSDataService,rest-json,ok,ok,14642,1746
-rds,2013-01-10,Amazon Relational Database Service,rds,RDS,query,ok,ok,96478,2943
-rds,2013-02-12,Amazon Relational Database Service,rds,RDS,query,ok,ok,103372,3032
-rds,2013-09-09,Amazon Relational Database Service,rds,RDS,query,ok,ok,111942,3539
-rds,2014-09-01,Amazon Relational Database Service,rds,RDS,query,ok,ok,114779,3247
-rds,2014-10-31,Amazon Relational Database Service,rds,RDS,query,ok,ok,328901,6053
-redshift-data,2019-12-20,Redshift Data API Service,redshiftdata,RedshiftData,json,ok,ok,14252,1692
-redshift,2012-12-01,Amazon Redshift,redshift,Redshift,query,ok,ok,184920,3349
-rekognition,2016-06-27,Amazon Rekognition,rekognition,Rekognition,json,ok,ok,94308,2412
-resource-groups,2017-11-27,AWS Resource Groups,resourcegroups,ResourceGroups,rest-json,ok,ok,22606,1492
-resourcegroupstaggingapi,2017-01-26,AWS Resource Groups Tagging API,resourcegroupstaggingapi,ResourceGroupsTaggingAPI,json,ok,ok,11156,1157
-robomaker,2018-06-29,AWS RoboMaker,robomaker,RoboMaker,rest-json,ok,ok,106170,2568
-route53,2013-04-01,Amazon Route 53,route53,Route53,rest-xml,ok,ok,100512,3550
-route53domains,2014-05-15,Amazon Route 53 Domains,route53domains,Route53Domains,json,ok,ok,35953,2309
-route53resolver,2018-04-01,Amazon Route 53 Resolver,route53resolver,Route53Resolver,json,ok,ok,43692,1784
-runtime.lex.v2,2020-08-07,Amazon Lex Runtime V2,lexruntimev2,LexRuntimeV2,rest-json,ok,ok,18097,1232
-runtime.lex,2016-11-28,Amazon Lex Runtime Service,lexruntime,LexRuntime,rest-json,ok,ok,19098,1470
-runtime.sagemaker,2017-05-13,Amazon SageMaker Runtime,sagemakerruntime,SageMakerRuntime,rest-json,ok,ok,3101,1358
-s3,2006-03-01,Amazon Simple Storage Service,s3,S3,rest-xml,ok,ok,266690,7076
-s3control,2018-08-20,AWS S3 Control,s3control,S3Control,rest-xml,ok,ok,109810,2868
-s3outposts,2017-07-25,Amazon S3 on Outposts,s3outposts,S3Outposts,rest-json,ok,ok,4608,1505
-sagemaker-a2i-runtime,2019-11-07,Amazon Augmented AI Runtime,augmentedairuntime,AugmentedAIRuntime,rest-json,ok,ok,7865,1298
-sagemaker-edge,2020-09-23,Amazon Sagemaker Edge Manager,sagemakeredge,SagemakerEdge,rest-json,ok,ok,3808,2231
-sagemaker-featurestore-runtime,2020-07-01,Amazon SageMaker Feature Store Runtime,sagemakerfeaturestoreruntime,SageMakerFeatureStoreRuntime,rest-json,ok,ok,3965,2118
-sagemaker,2017-07-24,Amazon SageMaker Service,sagemaker,SageMaker,json,ok,ok,548531,7478
-savingsplans,2019-06-28,AWS Savings Plans,savingsplans,SavingsPlans,rest-json,ok,ok,21785,1377
-schemas,2019-12-02,Schemas,schemas,Schemas,rest-json,ok,ok,37580,1643
-sdb,2009-04-15,Amazon SimpleDB,simpledb,SimpleDB,query,ok,ok,13225,1781
-secretsmanager,2017-10-17,AWS Secrets Manager,secretsmanager,SecretsManager,json,ok,ok,28314,1712
-securityhub,2018-10-26,AWS SecurityHub,securityhub,SecurityHub,rest-json,ok,ok,312118,5068
-serverlessrepo,2017-09-08,AWSServerlessApplicationRepository,serverlessapplicationrepository,ServerlessApplicationRepository,rest-json,ok,ok,25810,1808
-service-quotas,2019-06-24,Service Quotas,servicequotas,ServiceQuotas,json,ok,ok,22183,1505
-servicecatalog-appregistry,2020-06-24,AWS Service Catalog App Registry,servicecatalogappregistry,ServiceCatalogAppRegistry,rest-json,ok,ok,22872,1508
-servicecatalog,2015-12-10,AWS Service Catalog,servicecatalog,ServiceCatalog,json,ok,ok,127113,2539
-servicediscovery,2017-03-14,AWS Cloud Map,servicediscovery,ServiceDiscovery,json,ok,ok,34351,1710
-sesv2,2019-09-27,Amazon Simple Email Service,sesv2,SESV2,rest-json,ok,ok,113919,3304
-shield,2016-06-02,AWS Shield,shield,Shield,json,ok,ok,34198,1795
-signer,2017-08-25,AWS Signer,signer,Signer,rest-json,ok,ok,34198,1775
-sms-voice,2018-09-05,Amazon Pinpoint SMS and Voice Service,pinpointsmsvoice,PinpointSMSVoice,rest-json,ok,ok,13165,1684
-sms,2016-10-24,AWS Server Migration Service,sms,SMS,json,ok,ok,54175,1964
-snowball,2016-06-30,Amazon Import/Export Snowball,snowball,Snowball,json,ok,ok,35480,1658
-sns,2010-03-31,Amazon Simple Notification Service,sns,SNS,query,ok,ok,33350,1885
-sqs,2012-11-05,Amazon Simple Queue Service,sqs,SQS,query,ok,ok,30032,2632
-ssm,2014-11-06,Amazon Simple Systems Manager (SSM),ssm,SSM,json,ok,ok,270337,7233
-sso-admin,2020-07-20,AWS Single Sign-On Admin,ssoadmin,SSOAdmin,json,ok,ok,37980,1572
-sso-oidc,2019-06-10,AWS SSO OIDC,ssooidc,SSOOIDC,rest-json,ok,ok,4631,1106
-sso,2019-06-10,AWS Single Sign-On,sso,SSO,rest-json,ok,ok,5940,1487
-states,2016-11-23,AWS Step Functions,stepfunctions,StepFunctions,json,ok,ok,46004,4485
-storagegateway,2013-06-30,AWS Storage Gateway,storagegateway,StorageGateway,json,ok,ok,102287,2864
-streams.dynamodb,2012-08-10,Amazon DynamoDB Streams,dynamodbstreams,DynamoDBStreams,json,ok,ok,10504,1659
-sts,2011-06-15,AWS Security Token Service,sts,STS,query,ok,ok,14316,1493
-support,2013-04-15,AWS Support,support,Support,json,ok,ok,21868,1439
-swf,2012-01-25,Amazon Simple Workflow Service,swf,SWF,json,ok,ok,104591,2903
-synthetics,2017-10-11,Synthetics,synthetics,Synthetics,rest-json,ok,ok,20099,3578
-textract,2018-06-27,Amazon Textract,textract,Textract,json,ok,ok,15793,1444
-timestream-query,2018-11-01,Amazon Timestream Query,timestreamquery,TimestreamQuery,json,ok,ok,6558,1210
-timestream-write,2018-11-01,Amazon Timestream Write,timestreamwrite,TimestreamWrite,json,ok,ok,15759,1406
-transcribe,2017-10-26,Amazon Transcribe Service,transcribeservice,TranscribeService,json,ok,ok,45261,1759
-transfer,2018-11-05,AWS Transfer Family,transfer,Transfer,json,ok,ok,26429,1540
-translate,2017-07-01,Amazon Translate,translate,Translate,json,ok,ok,24848,1586
-waf-regional,2016-11-28,AWS WAF Regional,wafregional,WAFRegional,json,ok,ok,95399,2508
-waf,2015-08-24,AWS WAF,waf,WAF,json,ok,ok,92651,2350
-wafv2,2019-07-29,AWS WAFV2,wafv2,WAFV2,json,ok,ok,73117,2085
-wellarchitected,2020-03-31,AWS Well-Architected Tool,wellarchitected,WellArchitected,rest-json,ok,ok,48493,2496
-workdocs,2016-05-01,Amazon WorkDocs,workdocs,WorkDocs,rest-json,ok,ok,66019,3419
-worklink,2018-09-25,Amazon WorkLink,worklink,WorkLink,rest-json,ok,ok,31993,1907
-workmail,2017-10-01,Amazon WorkMail,workmail,WorkMail,json,ok,ok,49121,1804
-workmailmessageflow,2019-05-01,Amazon WorkMail Message Flow,workmailmessageflow,WorkMailMessageFlow,rest-json,ok,ok,2911,1079
-workspaces,2015-04-08,Amazon WorkSpaces,workspaces,WorkSpaces,json,ok,ok,66978,2172
-xray,2016-04-12,AWS X-Ray,xray,XRay,rest-json,ok,ok,56735,1983
+dynamodb,2011-12-05,Amazon DynamoDB,,,json,,,,
+dynamodb,2012-08-10,Amazon DynamoDB,dynamodb,DynamoDB,json,ok,ok,126018,2903
+ec2,2016-11-15,Amazon Elastic Compute Cloud,ec2,EC2,ec2,ok,ok,1140992,9389
+ecr,2015-09-21,Amazon EC2 Container Registry,ecr,ECR,json,ok,ok,50339,2607
+eks,2017-11-01,Amazon Elastic Kubernetes Service,eks,EKS,rest-json,ok,ok,62953,2748
+elasticloadbalancing,2012-06-01,Elastic Load Balancing,elb,ELB,query,ok,ok,47728,2537
+elasticloadbalancingv2,2015-12-01,Elastic Load Balancing,elbv2,ELBv2,query,ok,ok,78826,2652
+email,2010-12-01,Amazon Simple Email Service,ses,SES,query,ok,ok,95877,7546
+es,2015-01-01,Amazon Elasticsearch Service,es,ES,rest-json,ok,ok,92215,2885
+iam,2010-05-08,AWS Identity and Access Management,iam,IAM,query,ok,ok,192644,3892
+kinesis,2013-12-02,Amazon Kinesis,kinesis,Kinesis,json,ok,ok,32515,6388
+kms,2014-11-01,AWS Key Management Service,kms,KMS,json,ok,ok,49045,2247
+lambda,2014-11-11,AWS Lambda,,,rest-json,,,,
+lambda,2015-03-31,AWS Lambda,lambda,Lambda,rest-json,ok,ok,101845,3554
+monitoring,2010-08-01,Amazon CloudWatch,cloudwatch,CloudWatch,query,ok,ok,61325,3217
+pricing,2017-10-15,AWS Price List Service,pricing,Pricing,json,ok,ok,5262,1771
+rds,2013-01-10,Amazon Relational Database Service,,,query,,,,
+rds,2013-02-12,Amazon Relational Database Service,,,query,,,,
+rds,2013-09-09,Amazon Relational Database Service,,,query,,,,
+rds,2014-09-01,Amazon Relational Database Service,,,query,,,,
+rds,2014-10-31,Amazon Relational Database Service,rds,RDS,query,ok,ok,328901,6144
+route53,2013-04-01,Amazon Route 53,route53,Route53,rest-xml,ok,ok,100512,3088
+s3,2006-03-01,Amazon Simple Storage Service,s3,S3,rest-xml,ok,ok,266690,4578
+sesv2,2019-09-27,Amazon Simple Email Service,sesv2,SESV2,rest-json,ok,ok,113919,2751
+sns,2010-03-31,Amazon Simple Notification Service,sns,SNS,query,ok,ok,33350,2132
+sqs,2012-11-05,Amazon Simple Queue Service,sqs,SQS,query,ok,ok,30032,1897
+ssm,2014-11-06,Amazon Simple Systems Manager (SSM),ssm,SSM,json,ok,ok,270337,4488
+streams.dynamodb,2012-08-10,Amazon DynamoDB Streams,dynamodbstreams,DynamoDBStreams,json,ok,ok,10504,1926
+sts,2011-06-15,AWS Security Token Service,sts,STS,query,ok,ok,14316,2164
