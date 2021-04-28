@@ -1,9 +1,9 @@
-#!/usr/bin/env -S deno run --allow-run --allow-env --allow-write --allow-read
+#!/usr/bin/env -S deno run --allow-run=deno --allow-write --allow-read
 
 import type * as Schema from '../sdk-schema.ts';
 import ServiceCodeGen from '../code-gen.ts';
 
-await Deno.run({cmd: ['mkdir', '-p', 'lib/testgen/fixtures']}).status();
+await Deno.mkdir('lib/testgen/fixtures', { recursive: true });
 
 type ProtocolFixture = Schema.Api & {
   "description": string;
@@ -122,6 +122,8 @@ async function* readAllTestFixtures() {
 }
 const allTestRuns = readAllTestFixtures();
 
+const opts = new URLSearchParams();
+
 async function generateRun(run: TestRun): Promise<void> {
 
   // QUIRK
@@ -136,7 +138,7 @@ async function generateRun(run: TestRun): Promise<void> {
     api: run.apiSpec,
     isTest: true,
     uid: 'test-fixture',
-  });
+  }, opts);
   const apiSource = codeGen.generateTypescript('Fixture');
 
   const chunks = new Array<string>();
@@ -166,7 +168,7 @@ async function generateRun(run: TestRun): Promise<void> {
 
   } else {
     const { given, result, response } = run.testCase;
-    chunks.push(`  return new Response(${JSON.stringify(response.body)}, {`);
+    chunks.push(`  return new Response(new TextEncoder().encode(${JSON.stringify(response.body)}), {`);
     chunks.push(`    headers: ${JSON.stringify(response.headers)},`);
     chunks.push(`    status: ${JSON.stringify(response.status_code)},`);
     chunks.push(`  });`);
@@ -222,7 +224,8 @@ function fixExpectedJson(json: string): string {
     return `{"TimeArgInHeader":1398796238,"TimeCustomInHeader":1398796238,"TimeFormatInHeader":1398796238,"TimeArg":1398796238,"TimeCustom":1398796238,"TimeFormat":1398796238,"StructMember":{"foo":1398796238,"bar":1398796238}}`;
   }
   if (json === `{"AllHeaders":{"Content-Length":"10","X-Foo":"bar","X-Bam":"boo"},"PrefixedHeaders":{"Foo":"bar","Bam":"boo"}}`) {
-    return `{"AllHeaders":{"content-length":"10","x-foo":"bar","x-bam":"boo"},"PrefixedHeaders":{"foo":"bar","bam":"boo"}}`;
+    // headers are sorted as of deno 1.9
+    return `{"AllHeaders":{"content-length":"10","x-bam":"boo","x-foo":"bar"},"PrefixedHeaders":{"bam":"boo","foo":"bar"}}`;
   }
   return json;
 }
