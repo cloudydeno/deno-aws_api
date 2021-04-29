@@ -137,7 +137,6 @@ async function generateRun(run: TestRun): Promise<void> {
   const codeGen = new ServiceCodeGen({
     api: run.apiSpec,
     isTest: true,
-    uid: 'test-fixture',
   }, opts);
   const apiSource = codeGen.generateTypescript('Fixture');
 

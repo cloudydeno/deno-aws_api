@@ -66,7 +66,7 @@ export interface ApiMetadata {
   "signatureVersion": "v2" | "v4" | "s3" | "s3v4";
   "signingName"?: string;
   "targetPrefix"?: string;
-  "uid": string;
+  "uid"?: string;
   "xmlNamespace"?: string;
 };
 

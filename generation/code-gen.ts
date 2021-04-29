@@ -21,7 +21,6 @@ export default class ServiceCodeGen {
     api: Schema.Api,
     pagers?: Schema.Pagination,
     waiters?: Schema.Waiters,
-    uid: string,
     isTest?: true,
   }, opts: URLSearchParams) {
 
@@ -42,9 +41,6 @@ export default class ServiceCodeGen {
     if (this.waitersSpec) {
       fixupWaitersSpec(this.waitersSpec, this.apiSpec);
     }
-    if (!this.apiSpec.metadata.uid) {
-      this.apiSpec.metadata.uid = specs.uid;
-    }
 
     this.shapes = ShapeLibrary.fromApiSpec(specs.api);
   }
@@ -54,7 +50,7 @@ export default class ServiceCodeGen {
     const protocol = makeProtocolCodegenFor(this.apiSpec.metadata, this.shapes, helpers);
 
     const chunks = new Array<string>();
-    chunks.push(`export default class ${namespace} {`);
+    chunks.push(`export class ${namespace} {`);
 
     const structGen = new StructEmitter(this.apiSpec, this.shapes, helpers, protocol, '', this.docMode);
     chunks.push(generateApiTypescript(this.apiSpec, this.shapes, helpers, protocol, namespace, '', this.docMode));
