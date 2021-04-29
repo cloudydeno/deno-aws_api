@@ -73,7 +73,7 @@ export default class GenWaiter {
     const collapsePathEval = allPaths.length > 1 && allPaths.every(x => x === allPaths[0]);
 
     const inputSignature = [
-      `RequestConfig`,
+      // `RequestConfig`,
       inputShape?.censoredName ? `${namePrefix}${inputShape?.censoredName}` : false,
     ].filter(x => x).join(' & ');
     const outputSignature = [

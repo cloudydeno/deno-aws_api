@@ -91,7 +91,7 @@ export default class ServiceCodeGen {
     helpers.addDep("s", "./structs.ts");
 
     const chunks = new Array<string>();
-    chunks.push(`export default class ${namespace} {`);
+    chunks.push(`export class ${namespace} {`);
 
     const structGen = new StructEmitter(this.apiSpec, this.shapes, helpers, protocol, 's.', this.docMode);
     chunks.push(generateApiTypescript(this.apiSpec, this.shapes, helpers, protocol, namespace, 's.', this.docMode));
