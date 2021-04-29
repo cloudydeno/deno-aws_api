@@ -154,29 +154,29 @@ All API definitions are current as of [aws-sdk-js `v2.874.0`](https://github.com
 
 | Module | Protocol | File size | Approx check time |
 | --- | --- | ---: | ---: |
-| `cloudwatch/mod.ts` | query | 60 KiB | 3.2 sec |
-| `dynamodb/mod.ts` | json | 123 KiB | 2.9 sec |
-| `dynamodbstreams/mod.ts` | json | 10 KiB | 1.9 sec |
-| `ec2/mod.ts` | ec2 | 1114 KiB | 9.4 sec |
-| `ecr/mod.ts` | json | 49 KiB | 2.6 sec |
-| `eks/mod.ts` | rest-json | 61 KiB | 2.7 sec |
-| `elb/mod.ts` | query | 47 KiB | 2.5 sec |
-| `elbv2/mod.ts` | query | 77 KiB | 2.7 sec |
-| `es/mod.ts` | rest-json | 90 KiB | 2.9 sec |
-| `iam/mod.ts` | query | 188 KiB | 3.9 sec |
-| `kinesis/mod.ts` | json | 32 KiB | 6.4 sec |
-| `kms/mod.ts` | json | 48 KiB | 2.2 sec |
-| `lambda/mod.ts` | rest-json | 99 KiB | 3.6 sec |
-| `pricing/mod.ts` | json | 5 KiB | 1.8 sec |
-| `rds/mod.ts` | query | 321 KiB | 6.1 sec |
-| `route53/mod.ts` | rest-xml | 98 KiB | 3.1 sec |
-| `s3/mod.ts` | rest-xml | 260 KiB | 4.6 sec |
-| `ses/mod.ts` | query | 94 KiB | 7.5 sec |
-| `sesv2/mod.ts` | rest-json | 111 KiB | 2.8 sec |
-| `sns/mod.ts` | query | 33 KiB | 2.1 sec |
-| `sqs/mod.ts` | query | 29 KiB | 1.9 sec |
-| `ssm/mod.ts` | json | 264 KiB | 4.5 sec |
-| `sts/mod.ts` | query | 14 KiB | 2.2 sec |
+| `cloudwatch/mod.ts` | query | 58 KiB | 3.0 sec |
+| `dynamodb/mod.ts` | json | 121 KiB | 4.6 sec |
+| `dynamodbstreams/mod.ts` | json | 10 KiB | 2.1 sec |
+| `ec2/mod.ts` | ec2 | 1093 KiB | 18.9 sec |
+| `ecr/mod.ts` | json | 47 KiB | 2.7 sec |
+| `eks/mod.ts` | rest-json | 60 KiB | 4.3 sec |
+| `elb/mod.ts` | query | 45 KiB | 4.7 sec |
+| `elbv2/mod.ts` | query | 75 KiB | 5.7 sec |
+| `es/mod.ts` | rest-json | 88 KiB | 5.9 sec |
+| `iam/mod.ts` | query | 181 KiB | 9.5 sec |
+| `kinesis/mod.ts` | json | 30 KiB | 3.3 sec |
+| `kms/mod.ts` | json | 46 KiB | 2.8 sec |
+| `lambda/mod.ts` | rest-json | 97 KiB | 4.5 sec |
+| `pricing/mod.ts` | json | 5 KiB | 2.8 sec |
+| `rds/mod.ts` | query | 315 KiB | 10.3 sec |
+| `route53/mod.ts` | rest-xml | 95 KiB | 3.8 sec |
+| `s3/mod.ts` | rest-xml | 256 KiB | 8.6 sec |
+| `ses/mod.ts` | query | 90 KiB | 3.7 sec |
+| `sesv2/mod.ts` | rest-json | 107 KiB | 4.3 sec |
+| `sns/mod.ts` | query | 31 KiB | 3.6 sec |
+| `sqs/mod.ts` | query | 28 KiB | 3.2 sec |
+| `ssm/mod.ts` | json | 258 KiB | 8.4 sec |
+| `sts/mod.ts` | query | 14 KiB | 2.1 sec |
 
 [//]: # (Generated Content Barrier)
 

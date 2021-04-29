@@ -1,7 +1,7 @@
 #!/usr/bin/env -S deno run --allow-env --allow-read=${HOME}/.aws --allow-net
 
 import { ApiFactory } from '../client/mod.ts';
-import SQS from '../services/sqs/mod.ts';
+import { SQS } from '../services/sqs/mod.ts';
 
 const factory = new ApiFactory();
 const sqs = new SQS(factory);

@@ -34,7 +34,7 @@ export class IMDSv2 {
 
     const httpFetch = fetch(new URL('api/token', this.baseUrl), {
       method: 'PUT',
-      signal: this.makeTimeoutSignal(),
+      // signal: this.makeTimeoutSignal(),
       headers: {
         "x-aws-ec2-metadata-token-ttl-seconds": ttlSeconds.toFixed(0),
       }});

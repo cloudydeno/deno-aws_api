@@ -1,7 +1,7 @@
 #!/usr/bin/env -S deno run --allow-env --allow-read=${HOME}/.aws --allow-net
 
 import { ApiFactory } from '../client/mod.ts';
-import S3, {BucketLocationConstraint} from '../services/s3/mod.ts';
+import { S3, BucketLocationConstraint } from '../services/s3/mod.ts';
 
 const factory = new ApiFactory();
 const s3 = new S3(factory);

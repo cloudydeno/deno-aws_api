@@ -1,7 +1,7 @@
 #!/usr/bin/env -S deno run --allow-env --allow-read=${HOME}/.aws --allow-net
 
 import { ApiFactory } from '../client/mod.ts';
-import Kinesis from '../services/kinesis/mod.ts';
+import { Kinesis } from '../services/kinesis/mod.ts';
 
 const factory = new ApiFactory();
 const kinesis = new Kinesis(factory);
