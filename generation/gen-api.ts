@@ -42,22 +42,25 @@ export function generateApiTypescript(
       outputShape = null;
     }
 
-    let signature = `(\n    {abortSignal${inputShape ? ', ...params' : ''}}: RequestConfig`;
+    let signature = `(`;
+    // let signature = `(\n    {abortSignal${inputShape ? ', ...params' : ''}}: RequestConfig`;
     if (inputShape?.spec.type === 'structure') {
-      signature += ' & ' + structEmitter.specifyShapeType(inputShape, {isJson: operation.input?.jsonvalue});
+      signature += '\n    params: ' + structEmitter.specifyShapeType(inputShape, {isJson: operation.input?.jsonvalue});
       if (operation.input?.payload) {
         inputShape.payloadField = operation.input.payload;
       }
       if (!inputShape.spec.required?.length && Object.values(inputShape.spec.members).every(x => x.location !== 'uri')) {
         signature += ' = {}';
       }
+      signature += ',\n  ';
     } else if (inputShape) {
       throw new Error(`TODO: ${inputShape.spec.type} input`);
-    } else {
-      signature += ' = {}';
+    // } else {
+    //   signature += ' = {}';
     }
 
-    signature += `,\n  ): Promise<`;
+    signature += `): Promise<`;
+    // signature += `,\n  ): Promise<`;
     if (outputShape?.spec.type === 'structure') {
       signature += structEmitter.specifyShapeType(outputShape, {isJson: operation.output?.jsonvalue});
     } else if (outputShape) {
@@ -74,7 +77,7 @@ export function generateApiTypescript(
     const lowerCamelName = operation.name[0].toLowerCase() + operation.name.slice(1);
     chunks.push(`  async ${cleanFuncName(lowerCamelName)}${signature} {`);
     let protoPathParts: Map<string,string> | undefined;
-    const referencedInputs = new Set(['abortSignal']);
+    const referencedInputs = new Set<string>([/*'abortSignal'*/]);
     if (operation.input) {// && inputShape?.spec.type === 'structure') {
       const {inputParsingCode, inputVariables, pathParts} = protocol
         .generateOperationInputParsingTypescript(inputShape, operation.input);
@@ -87,7 +90,9 @@ export function generateApiTypescript(
     if (unauthenticatedApis.has(namespace+'.'+operation.name)) {
       chunks.push(`      skipSigning: true,`);
     }
-    chunks.push(`      ${Array.from(referencedInputs).join(', ')},`);
+    if (referencedInputs.size > 0) {
+      chunks.push(`      ${Array.from(referencedInputs).join(', ')},`);
+    }
     chunks.push(`      action: ${JSON.stringify(operation.name)},`);
     if (operation.http?.method && operation.http.method !== 'POST') {
       chunks.push(`      method: ${JSON.stringify(operation.http.method)},`);
