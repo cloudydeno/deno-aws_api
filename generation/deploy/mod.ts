@@ -1,3 +1,4 @@
+import { escape } from "https://deno.land/x/html_escape@v1.1.5/escape.ts";
 import { SDK } from "./sdk-datasource.ts";
 import * as CompletionApi from './completion-api.ts';
 import { Generations, LatestGeneration, ModuleGenerator } from "./generations.ts";
@@ -65,7 +66,7 @@ async function handleRequest(request: Request): Promise<Response> {
       const sdk = new SDK(sdkVersion);
       const serviceList = await sdk.getServiceList();
       const module = serviceList[service];
-      if (!module) throw new Error(`Not Found: ${service}`);
+      if (!module) return ResponseText(404, `Service Not Found: ${service}`);
 
       return new Response(`<!doctype html>
 <title>${module.name} - AWS API Codegen</title>
@@ -90,11 +91,11 @@ async function handleRequest(request: Request): Promise<Response> {
 <input type="submit" />
 </form>
 <h2>Example Import</h2>
-<p><code>import ${module.name} from "${origin}${pathname}${search}";</code></p>
+<p><code>import { ${module.name} } from "${origin}${pathname}${search}";</code></p>
 <hr>
 <h2>Generated Source (the actual code)</h2>
 <pre>
-${apiText}
+${escape(apiText)}
 </pre>
 `, {
         status: 200,
@@ -150,13 +151,13 @@ ${apiText}
 <h2>Examples</h2>
 <pre>
 // import the complete API of one AWS service
-import SQS from "${origin}${modRoot}/sqs.ts";
+import { SQS } from "${origin}${modRoot}/sqs.ts";
 // be specific about which "API Version" to use (most APIs only have one)
-import SQS from "${origin}${modRoot}/sqs@2012-11-05.ts";
+import { SQS } from "${origin}${modRoot}/sqs@2012-11-05.ts";
 
 // select individual actions to create a smaller API file
 // in this case, excluding queue management actions and non-batched operations
-import SQS from "${origin}${modRoot}/sqs@2012-11-05.ts?actions=ReceiveMessage,*Batch";
+import { SQS } from "${origin}${modRoot}/sqs@2012-11-05.ts?actions=ReceiveMessage,*Batch";
 </pre>
 <a href="https://github.com/cloudydeno/deno-aws_api/tree/main/generation">source code</a>
 <h2>All Services</h2>
