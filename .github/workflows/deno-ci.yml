@@ -1,4 +1,4 @@
-name: Deno CI
+name: CI
 
 on:
   push:
@@ -9,7 +9,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    name: Deno ${{ matrix.deno-version }}
+    name: Check w/ ${{ matrix.deno-version }}
     strategy:
       fail-fast: false
       matrix:
@@ -36,7 +36,7 @@ jobs:
   generate:
     runs-on: ubuntu-latest
 
-    name: Deno ${{ matrix.deno-version }}
+    name: Codegen w/ ${{ matrix.deno-version }}
     strategy:
       fail-fast: false
       matrix:
