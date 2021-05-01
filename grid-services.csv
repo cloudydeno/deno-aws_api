@@ -1,30 +1,16 @@
 service,version,fullname,id,namespace,protocol,generated,typechecked,bytecount,cachetime
 dynamodb,2011-12-05,Amazon DynamoDB,,,json,,,,
-dynamodb,2012-08-10,Amazon DynamoDB,dynamodb,DynamoDB,json,ok,ok,123554,4625
-ec2,2016-11-15,Amazon Elastic Compute Cloud,ec2,EC2,ec2,ok,ok,1119734,18947
-ecr,2015-09-21,Amazon EC2 Container Registry,ecr,ECR,json,ok,ok,48619,2670
-eks,2017-11-01,Amazon Elastic Kubernetes Service,eks,EKS,rest-json,ok,ok,61233,4326
-elasticloadbalancing,2012-06-01,Elastic Load Balancing,elb,ELB,query,ok,ok,46251,4654
-elasticloadbalancingv2,2015-12-01,Elastic Load Balancing,elbv2,ELBv2,query,ok,ok,77082,5743
-email,2010-12-01,Amazon Simple Email Service,ses,SES,query,ok,ok,92386,3658
-es,2015-01-01,Amazon Elasticsearch Service,es,ES,rest-json,ok,ok,90175,5927
-iam,2010-05-08,AWS Identity and Access Management,iam,IAM,query,ok,ok,185002,9459
-kinesis,2013-12-02,Amazon Kinesis,kinesis,Kinesis,json,ok,ok,31140,3281
-kms,2014-11-01,AWS Key Management Service,kms,KMS,json,ok,ok,46817,2819
+dynamodb,2012-08-10,Amazon DynamoDB,dynamodb,DynamoDB,json,ok,ok,123554,5106
+ec2,2016-11-15,Amazon Elastic Compute Cloud,ec2,EC2,ec2,ok,ok,1119734,13634
+ecr,2015-09-21,Amazon EC2 Container Registry,ecr,ECR,json,ok,ok,48619,3286
+kinesis,2013-12-02,Amazon Kinesis,kinesis,Kinesis,json,ok,ok,31140,2721
+kms,2014-11-01,AWS Key Management Service,kms,KMS,json,ok,ok,46817,2949
 lambda,2014-11-11,AWS Lambda,,,rest-json,,,,
-lambda,2015-03-31,AWS Lambda,lambda,Lambda,rest-json,ok,ok,98913,4510
-monitoring,2010-08-01,Amazon CloudWatch,cloudwatch,CloudWatch,query,ok,ok,59817,3009
-pricing,2017-10-15,AWS Price List Service,pricing,Pricing,json,ok,ok,5055,2817
-rds,2013-01-10,Amazon Relational Database Service,,,query,,,,
-rds,2013-02-12,Amazon Relational Database Service,,,query,,,,
-rds,2013-09-09,Amazon Relational Database Service,,,query,,,,
-rds,2014-09-01,Amazon Relational Database Service,,,query,,,,
-rds,2014-10-31,Amazon Relational Database Service,rds,RDS,query,ok,ok,322292,10266
-route53,2013-04-01,Amazon Route 53,route53,Route53,rest-xml,ok,ok,97240,3756
-s3,2006-03-01,Amazon Simple Storage Service,s3,S3,rest-xml,ok,ok,262034,8624
-sesv2,2019-09-27,Amazon Simple Email Service,sesv2,SESV2,rest-json,ok,ok,109892,4289
-sns,2010-03-31,Amazon Simple Notification Service,sns,SNS,query,ok,ok,31733,3556
-sqs,2012-11-05,Amazon Simple Queue Service,sqs,SQS,query,ok,ok,29026,3150
-ssm,2014-11-06,Amazon Simple Systems Manager (SSM),ssm,SSM,json,ok,ok,264098,8372
-streams.dynamodb,2012-08-10,Amazon DynamoDB Streams,dynamodbstreams,DynamoDBStreams,json,ok,ok,10250,2052
-sts,2011-06-15,AWS Security Token Service,sts,STS,query,ok,ok,13866,2139
+lambda,2015-03-31,AWS Lambda,lambda,Lambda,rest-json,ok,ok,98913,4452
+monitoring,2010-08-01,Amazon CloudWatch,cloudwatch,CloudWatch,query,ok,ok,59817,3267
+route53,2013-04-01,Amazon Route 53,route53,Route53,rest-xml,ok,ok,97240,4033
+s3,2006-03-01,Amazon Simple Storage Service,s3,S3,rest-xml,ok,ok,262034,7071
+sesv2,2019-09-27,Amazon Simple Email Service,sesv2,SESV2,rest-json,ok,ok,109892,4215
+sns,2010-03-31,Amazon Simple Notification Service,sns,SNS,query,ok,ok,31733,3505
+sqs,2012-11-05,Amazon Simple Queue Service,sqs,SQS,query,ok,ok,29026,3627
+sts,2011-06-15,AWS Security Token Service,sts,STS,query,ok,ok,13866,2070

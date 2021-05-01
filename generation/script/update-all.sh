@@ -5,7 +5,7 @@ deno run \
   --allow-write=. \
   --allow-run \
   generation/script/update-services.ts \
-  monitoring,dynamodb,streams.dynamodb,ec2,ecr,eks,elasticloadbalancing,elasticloadbalancingv2,es,iam,kinesis,kms,lambda,pricing,rds,route53,s3,email,sesv2,sns,sqs,ssm,sts
+  monitoring,dynamodb,ec2,ecr,kinesis,kms,lambda,route53,s3,sesv2,sns,sqs,sts
 
 deno run \
   --allow-read=. \

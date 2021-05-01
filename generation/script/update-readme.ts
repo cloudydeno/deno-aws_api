@@ -48,11 +48,12 @@ async function updateFile(path: string, contents: string) {
 
 async function updateReadme(header: string) {
   const chunks = new Array<string>();
-  chunks.push(`| Module | Protocol | File size | Approx check time |`);
-  chunks.push(`| --- | --- | ---: | ---: |`);
+  chunks.push(`| Class | Module | Protocol | File size | Approx check time |`);
+  chunks.push(`| --- | --- | --- | ---: | ---: |`);
 
   for (const svc of workingSvc) {
     chunks.push(`| `+[
+      `\`${svc.namespace}\``,
       `\`${svc.id}/mod.ts\``,
       svc.protocol,
       formatFileSize(parseInt(svc.bytecount)),

@@ -51,6 +51,7 @@ for await (const entry of Deno.readDir(`./aws-sdk-js/apis`)) {
   const version = uid.slice(-10);
 
   if (specificServices && !specificServices.includes(service)) {
+    delete services[`${service}@${version}`];
     continue;
   }
 
