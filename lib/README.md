@@ -1,6 +1,6 @@
 # `aws_api` for Deno
 
-![Test CI](https://github.com/danopia/deno-aws_api/workflows/Deno%20CI/badge.svg?branch=main)
+![CI Status](https://github.com/danopia/deno-aws_api/workflows/CI/badge.svg?branch=main)
 [![Latest /x/ version](https://img.shields.io/endpoint?url=https%3A%2F%2Fdeno-visualizer.danopia.net%2Fshields%2Flatest-version%2Fx%2Faws_api%2Fdemo.ts)][x-pkg]
 [![external dependency count](https://img.shields.io/endpoint?url=https%3A%2F%2Fdeno-visualizer.danopia.net%2Fshields%2Fdep-count%2Fx%2Faws_api%2Fdemo.ts)][dep-vis]
 [![dependency outdatedness](https://img.shields.io/endpoint?url=https%3A%2F%2Fdeno-visualizer.danopia.net%2Fshields%2Fupdates%2Fx%2Faws_api%2Fdemo.ts)][dep-vis]
@@ -17,15 +17,6 @@ Each service has its own isolated `mod.ts`;
 you'll need to make an `ApiFactory` from `client/mod.ts`
 and then pass it to the service you want to use.
 
-**Version 0.4.0** of this library stopped
-including every service's API in the published module.
-Instead, the code-generation process is running on Deno Deploy
-and allows importing extremely precise modules,
-generated on the fly based on multiple configuration options.
-*This is a bit experimental!*
-While any issues are worked out, feel free to import APIs
-from [v0.3.1](https://deno.land/x/aws_api@v0.3.1) for now.
-
 Package layout:
 
 * `client/`: A handwritten generic AWS API client (credentials, signing, etc)
@@ -33,7 +24,10 @@ Package layout:
 * `services/`: Generated Typescript classes and interfaces for the most popular AWS services
 * `demo.ts`: A trivial example of using this library
 * `examples/`: Several full examples of using individual services
-* `SERVICES.md`: A complete list of all AWS APIs and their build status
+
+A full listing of all AWS services and their import URLs can be found
+on the [/x/aws_api Web Service][webservice].
+More information on [the accompanying Wiki page][webservice-docs].
 
 Please reach out on Github Issues about missing features, weird exceptions, or API issues,
 or ping `dantheman#8546` in the Deno Discord if you just wanna chat about this effort.
@@ -43,10 +37,10 @@ or ping `dantheman#8546` in the Deno Discord if you just wanna chat about this e
 Basic example: (a subset of `demo.ts`)
 
 ```typescript
-import {ApiFactory} from 'https://deno.land/x/aws_api/client/mod.ts';
+import { ApiFactory } from 'https://deno.land/x/aws_api/client/mod.ts';
 const factory = new ApiFactory();
 
-import STS from 'https://deno.land/x/aws_api/services/sts/mod.ts';
+import { STS } from 'https://deno.land/x/aws_api/services/sts/mod.ts';
 const sts = new STS(factory);
 
 const identity = await sts.getCallerIdentity();
@@ -58,23 +52,49 @@ A couple more-detailed examples are in `examples/` and show concepts such as
 managing an EC2 instance's lifecycle, redriving SQS messages,
 and working directly with a Kinesis stream.
 
+## ⚠️ BREAKING CHANGES ⚠️ v0.4.0 ⚠️
+
+1. **Version 0.4.0** of this library stopped
+  including every service's API in the published module.
+  Instead, the code-generation process is running on Deno Deploy
+  and allows importing extremely precise modules,
+  generated on the fly based on multiple configuration options.
+  Check out [this Web Service wiki page][webservice-docs]
+  for more details on this new URL endpoint.
+  *This is a bit experimental!*
+  Please report any issues or concerns with this new approach.
+
+1. For services that are still bundled (SQS, S3, SNS, etc),
+  the import URL no longer includes an API version
+  (the `@year-month-date` part). Only the most recent API version gets bundled.
+
+1. The primary class export on each service module is no longer 'default'.
+  So instead of `import SQS from ...`,
+  you'll do `import { SQS } from ....`.
+
+1. Removed `AbortSignal` inputs which were allowed everywhere previously.
+  These never did anything, and I'll add them back
+  once Deno itself supports request cancellation.
+
 ## Changelog
 
-* `v0.1.0` on `2020-10-15`: Initial publication with about half of the services bound.
-  * Using definitions from `aws-sdk-js@2.768.0`
-* `v0.1.1` on `2020-11-02`: Generation improvements, most services have been generated.
-  * Using definitions from `aws-sdk-js@2.780.0`
-* `v0.2.0` on `2020-11-07`: Completed bindings for all API services.
-  * Using definitions from `aws-sdk-js@2.784.0`
+* `v0.4.0` on `2021-05-01`: Deno 1.9 compatibility. Remove most less-common AWS services.
+  * To use a service that is no longer bundled, use the [Web Service][webservice].
+  * API Version has been removed from module filenames.
+  * The primary export of each service module is no longer `export default`.
+* `v0.3.1` on `2021-03-28`: Fix ini-parsing edgecase. Remove zero-field API types.
+  * Using definitions from `aws-sdk-js@2.874.0`
+* `v0.3.0` on `2021-02-14`: Clean up generation, rename modules to match AWS-SDK
+  * Using definitions from `aws-sdk-js@2.839.0`
 * `v0.2.1` on `2020-12-21`: Add EC2 instance metadata integration (IMDSv2)
   * Now supports using EC2 Instance IAM Roles automatically.
   * Using definitions from `aws-sdk-js@2.814.0`
-* `v0.3.0` on `2021-02-14`: Clean up generation, rename modules to match AWS-SDK
-  * Using definitions from `aws-sdk-js@2.839.0`
-* `v0.3.1` on `2021-03-28`: Fix ini-parsing edgecase. Remove zero-field API types.
-  * Using definitions from `aws-sdk-js@2.874.0`
-* `v0.4.0`: Deno 1.9 compatibility. Remove most less-common AWS services.
-  * To use a service that is no longer bundled, see https://aws-api.deno.dev/
+* `v0.2.0` on `2020-11-07`: Completed bindings for all API services.
+  * Using definitions from `aws-sdk-js@2.784.0`
+* `v0.1.1` on `2020-11-02`: Generation improvements, most services have been generated.
+  * Using definitions from `aws-sdk-js@2.780.0`
+* `v0.1.0` on `2020-10-15`: Initial publication with about half of the services bound.
+  * Using definitions from `aws-sdk-js@2.768.0`
 
 ## Disclaimer
 
@@ -109,7 +129,7 @@ The code to generate clients isn't uploaded to `/x/`,
 so if you want to read through it, make sure you're in the source Git repo.
 
 "Most" of the heavy lifting (such as compiling waiter JMESPaths)
-runs in the generation step so that the modules on /x/ are ready to run.
+runs in the generation step so that the downloaded code is ready to run.
 
 ## Completeness
 
@@ -180,10 +200,13 @@ All API definitions are current as of [aws-sdk-js `v2.874.0`](https://github.com
 
 [//]: # (Generated Content Barrier)
 
-For any other services, please check out https://aws-api.deno.dev/
+For any other services, please check out [the code generation web service][webservice]
 which performs on-the-fly code generation.
 You can import the generated URL directly in your application,
 or download a copy of the file and save it in your source code for safe keeping.
 
-The generation service also allows skipping methods that doesn't match a passlist,
-allowing for much smaller byte-counts on the imported modules.
+The last version of this library to include every then-current API client
+on `/x/` is [v0.3.1](https://deno.land/x/aws_api@v0.3.1).
+
+[webservice-docs]: https://github.com/cloudydeno/deno-aws_api/wiki/Web-Service
+[webservice]: https://aws-api.deno.dev/latest/

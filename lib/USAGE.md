@@ -10,11 +10,11 @@ If you try accessing AWS without **any** permissions granted, you'll get a break
 
 ```
 Error: Failed to load any possible AWS credentials:
-    - EnvironmentCredentials('AWS') PermissionDenied: access to environment variables, run again with the --allow-env flag
-    - EnvironmentCredentials('AMAZON') PermissionDenied: access to environment variables, run again with the --allow-env flag
-    - SharedIniFileCredentials() PermissionDenied: access to environment variables, run again with the --allow-env flag
-    - TokenFileWebIdentityCredentials() PermissionDenied: access to environment variables, run again with the --allow-env flag
-    - EC2MetadataCredentials() PermissionDenied: network access to "http://169.254.169.254/latest/api/token", run again with the --allow-net flag
+    - EnvironmentCredentials('AWS') PermissionDenied: Requires env access to "AWS_ACCESS_KEY_ID", run again with the --allow-env flag
+    - EnvironmentCredentials('AMAZON') PermissionDenied: Requires env access to "AMAZON_ACCESS_KEY_ID", run again with the --allow-env flag
+    - SharedIniFileCredentials() PermissionDenied: Requires env access to "AWS_SHARED_CREDENTIALS_FILE", run again with the --allow-env flag
+    - TokenFileWebIdentityCredentials() PermissionDenied: Requires env access to "AWS_ROLE_ARN", run again with the --allow-env flag
+    - EC2MetadataCredentials() PermissionDenied: Requires net access to "169.254.169.254", run again with the --allow-net flag
 ```
 
 So, in almost every case you'll want to add at least `--allow-env` to allow basics like `env AWS_ACCESS_KEY_ID=... your-script` to work.
