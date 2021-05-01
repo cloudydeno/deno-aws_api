@@ -176,7 +176,7 @@ import { SQS } from "${origin}${modRoot}/sqs@2012-11-05.ts?actions=ReceiveMessag
 <tbody>
 ${serviceList.map(([svcId, svc]) => `<tr>
 <td><a href="${modRoot}/${svcId}.ts">${svc.name}</a></td>
-<td><code>import ${svc.name} from "${origin}${modRoot}/${svcId}.ts";</code></td>
+<td><code>import { ${svc.name} } from "${origin}${modRoot}/${svcId}.ts";</code></td>
 <td><a href="https://doc.deno.land/${protocol.replace(/:$/, '')}/${host}${modRoot}/${svcId}.ts%3Fdocs=full">Docs</a></td>
 </tr>
 `).join('')}
