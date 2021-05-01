@@ -13,7 +13,7 @@ From-scratch Typescript AWS API client built for Deno.
 
 A leading focus of this library is to be as lean as possible
 on the number of files downloaded to use a specific service.
-Each service has its own isolated `mod.ts`;
+Each service has its own isolated Typescript module;
 you'll need to make an `ApiFactory` from `client/mod.ts`
 and then pass it to the service you want to use.
 
@@ -21,12 +21,12 @@ Package layout:
 
 * `client/`: A handwritten generic AWS API client (credentials, signing, etc)
 * `encoding/`: Shared modules for dealing with XML, JSON, & querystrings
-* `services/`: Generated Typescript classes and interfaces for the most popular AWS services
+* `services/`: Generated Typescript classes and interfaces for a few most useful AWS services
 * `demo.ts`: A trivial example of using this library
 * `examples/`: Several full examples of using individual services
 
 A full listing of all AWS services and their import URLs can be found
-on the [/x/aws_api Web Service][webservice].
+on the [/x/aws_api Web Service][web service].
 More information on [the accompanying Wiki page][webservice-docs].
 
 Please reach out on Github Issues about missing features, weird exceptions, or API issues,
@@ -51,6 +51,20 @@ console.log('Identity ARN:', identity.Arn);
 A couple more-detailed examples are in `examples/` and show concepts such as
 managing an EC2 instance's lifecycle, redriving SQS messages,
 and working directly with a Kinesis stream.
+
+To use a customized build, or a less-common service, you can import from the web service:
+
+```typescript
+import { ApiFactory } from 'https://deno.land/x/aws_api/client/mod.ts';
+const factory = new ApiFactory();
+
+import { Pricing } from 'https://deno.land/x/aws_api/services/pricing.ts';
+const pricing = new Pricing(factory);
+
+const identity = await pricing.describeServices('AmazonEC2');
+console.log('You are', identity.UserId, 'in account', identity.Account);
+console.log('Identity ARN:', identity.Arn);
+```
 
 ## ⚠️ BREAKING CHANGES ⚠️ v0.4.0 ⚠️
 
