@@ -142,7 +142,11 @@ ${escape(apiText)}
 <h1>AWS API Client Codegen</h1>
 <p><strong>NOTICE</strong>:
   This codegen server / API is extremely likely to change over time!
-  Currently for experimentation only!
+  Currently recommended for prototyping and experimentation only!
+</p>
+<p>
+  For documentation about this web service, please see
+  <a href="https://github.com/cloudydeno/deno-aws_api/wiki/Web-Service">this Github Wiki page</a>.
 </p>
 <h2>Path parameters</h2>
 <p>Minimal: <code>/v{module version}/services/{service ID}.ts</code></p>
@@ -152,6 +156,7 @@ ${escape(apiText)}
 <pre>
 // import the complete API of one AWS service
 import { SQS } from "${origin}${modRoot}/sqs.ts";
+
 // be specific about which "API Version" to use (most APIs only have one)
 import { SQS } from "${origin}${modRoot}/sqs@2012-11-05.ts";
 

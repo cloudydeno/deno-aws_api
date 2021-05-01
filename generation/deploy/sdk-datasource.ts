@@ -6,6 +6,8 @@ export class SDK {
     name: string;
     commit: { sha: string; url: string; };
   }>> {
+    // this returns only the most recent page of tags
+    // the full list, if we want it, is at /git/refs/tags
     const resp = await cachedFetch('mutable', `https://api.github.com/repos/aws/aws-sdk-js/tags`);
     // TODO: accept: application/vnd.github.v3+json
     if (resp.status !== 200) throw new Error(
