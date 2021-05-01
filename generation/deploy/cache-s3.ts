@@ -1,6 +1,6 @@
 import { Cache } from "https://deno.land/x/httpcache@0.1.2/mod.ts";
 
-import S3 from "./s3-api.ts";
+import { S3 } from "./s3-api.ts";
 import { Credentials } from '../../lib/client/common.ts';
 import { BaseApiFactory } from '../../lib/client/client.ts';
 
