@@ -15,7 +15,10 @@ const caches: Array<Cache> = [
 
 export async function cachedFetch(mode: 'immutable' | 'mutable', url: string) {
   for (const cache of caches) {
-    const cached = await cache.match(url);
+    const cached = await cache.match(url).catch(err => {
+      console.error(`WARN: cache lookup err:`, err.message);
+      return null;
+    });
     if (cached) {
       // Copy colder bodies into warmer caches
       const cacheIdx = caches.indexOf(cache);
@@ -31,12 +34,12 @@ export async function cachedFetch(mode: 'immutable' | 'mutable', url: string) {
   const realResp = await fetch(url);
   console.log('fetched', realResp.status, url);
 
-  const resp = new Response(realResp.body, realResp);
-  // TODO: hack around https://github.com/denoland/deno/issues/10367
-  for (const header of realResp.headers) {
-    resp.headers.set(header[0], header[1]);
-  }
-  Object.defineProperty(resp, 'status', {value: realResp.status});
+  // works around https://github.com/denoland/deno/issues/10367
+  const resp = new Response(realResp.body, {
+    status: realResp.status,
+    statusText: realResp.statusText,
+    headers: realResp.headers,
+  });
 
   if (mode === 'immutable') {
     if (resp.status === 200) {
@@ -52,7 +55,12 @@ export async function cachedFetch(mode: 'immutable' | 'mutable', url: string) {
     resp.headers.set('cache-control', 'max-age=300');
   }
 
+  // TODO: should this be awaited or not?
   await Promise.all(caches
-    .map(cache => cache.put(url, resp)));
+    .map(cache => cache.put(url, resp).catch(err => {
+      console.error(`WARN: cache store err:`, err.message);
+      return null;
+    })));
+
   return resp;
 }
