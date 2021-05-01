@@ -26,7 +26,7 @@ Package layout:
 * `examples/`: Several full examples of using individual services
 
 A full listing of all AWS services and their import URLs can be found
-on the [/x/aws_api Web Service][web service].
+on the [/x/aws_api Web Service][webservice].
 More information on [the accompanying Wiki page][webservice-docs].
 
 Please reach out on Github Issues about missing features, weird exceptions, or API issues,
