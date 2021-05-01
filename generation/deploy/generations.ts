@@ -34,7 +34,7 @@ export class ModuleGenerator {
 
 export const Generations = new Map<string, ModuleGenerator>([
   ['v0.1', new ModuleGenerator(
-    'https://deno.land/x/aws_api@v0.3.1',
+    'https://deno.land/x/aws_api@v0.4.0',
     'v2.895.0',
     (config, opts) => new LatestCodeGen(config, opts),
   )],

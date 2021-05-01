@@ -6,7 +6,7 @@ import { Generations, LatestGeneration, ModuleGenerator } from "./generations.ts
 addEventListener("fetch", async (event) => {
   const request = (event as any).request as Request;
   const response = await handleRequest(request).catch(renderError);
-  response.headers.set("server", "aws_api-generation/v0.3.1");
+  response.headers.set("server", "aws_api-generation/v0.4.0");
   (event as any).respondWith(response);
 });
 
@@ -100,7 +100,6 @@ ${escape(apiText)}
 `, {
         status: 200,
         headers: {
-          "server": "aws_api-generation/v0.3.1",
           "content-type": "text/html; charset=utf-8",
         }});
     }
@@ -108,7 +107,6 @@ ${escape(apiText)}
     return new Response(apiText, {
       status: 200,
       headers: {
-        "server": "aws_api-generation/v0.3.1",
         "content-type": wantsHtml ? "text/plain; charset=utf-8" : "application/x-typescript",
       }});
   }
