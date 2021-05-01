@@ -17,6 +17,7 @@ interface CodeGen {
 export class ModuleGenerator {
   constructor(
     public readonly clientModRoot: string,
+    public readonly stdModRoot: string,
     public readonly sdkVersion: string,
     public readonly codegenConstr: (config: ApiSpecsBundle, opts: URLSearchParams) => CodeGen,
   ) {}
@@ -28,13 +29,16 @@ export class ModuleGenerator {
   }) {
     const codeGen = this.codegenConstr(opts.apiSpecs, opts.options);
     return codeGen.generateTypescript(opts.className)
-      .replaceAll('from "../..', `from "${this.clientModRoot}`);
+      .replaceAll(/from "https:\/\/deno.land\/std@[0-9.]+\//g, `from "${this.stdModRoot}/`)
+      .replaceAll('from "../../', `from "${this.clientModRoot}/`);
   }
 }
 
+// Newest versions come first
 export const Generations = new Map<string, ModuleGenerator>([
   ['v0.1', new ModuleGenerator(
     'https://deno.land/x/aws_api@v0.4.0',
+    'https://deno.land/std@0.95.0',
     'v2.895.0',
     (config, opts) => new LatestCodeGen(config, opts),
   )],
