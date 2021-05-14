@@ -13,7 +13,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        deno-version: ["v1.9", "canary"]
+        deno-version: ["v1.9", "v1.10", "canary"]
 
     steps:
     - name: Checkout source
@@ -38,9 +38,9 @@ jobs:
 
     name: Codegen w/ ${{ matrix.deno-version }}
     strategy:
-      fail-fast: false
       matrix:
-        deno-version: ["v1.9", "canary"]
+        deno-version: ["v1.9", "v1.10", "canary"]
+      fail-fast: false # run each branch to completion
 
     steps:
     - name: Checkout source, incl aws-sdk-js
