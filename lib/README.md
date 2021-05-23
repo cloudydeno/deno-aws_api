@@ -92,6 +92,8 @@ console.log('Identity ARN:', identity.Arn);
 
 ## Changelog
 
+* `v0.4.1` on `2021-05-23`: Also fix Deno 1.9 regression for unsigned requests.
+  * Addresses startup issue when using EKS Pod Identity.
 * `v0.4.0` on `2021-05-01`: Deno 1.9 compatibility. Remove most less-common AWS services.
   * To use a service that is no longer bundled, use the [Web Service][webservice].
   * API Version has been removed from module filenames.
