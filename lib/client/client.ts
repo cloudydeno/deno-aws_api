@@ -81,7 +81,16 @@ export class BaseApiFactory implements ApiFactory {
           ].join('.');
 
         const fullUrl = `https://${opts.hostPrefix ?? ''}${endpoint}${opts.urlPath}`;
-        return fetch(fullUrl, request);
+
+        // work around deno 1.9 request cloning regression :(
+        return fetch(fullUrl, {
+          headers: request.headers,
+          method: request.method,
+          body: request.body,
+          redirect: request.redirect,
+          // TODO: request cancellation
+          // signal: request.signal,
+        });
       }
 
       // Resolve credentials and AWS region
