@@ -5,11 +5,14 @@
 
 export function readXmlResult(text: string, resultWrapper?: string): XmlNode {
   const doc = parseXml(text);
-  if (!doc.root) throw new Error(`Response lacking XML root`);
+  if (!doc.root) {
+    console.log('Non-XML text:', text);
+    throw new Error(`Response lacking XML root`);
+  }
 
   if (resultWrapper) {
     const result = doc.root.first(resultWrapper);
-    if (!result) throw new Error(`Result Wrapper ${JSON.stringify(resultWrapper)} is missing`);
+    if (!result) throw new Error(`Result Wrapper ${JSON.stringify(resultWrapper)} is missing. Present keys: ${doc.root.children.map(x => x.name).join(', ')}`);
     return result;
   }
   return doc.root;
