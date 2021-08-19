@@ -35,17 +35,18 @@ export class IMDSv2 {
 
     const httpFetch = fetch(new URL('api/token', this.baseUrl), {
       method: 'PUT',
-      // signal: this.makeTimeoutSignal(),
+      signal: this.makeTimeoutSignal(),
       headers: {
         "x-aws-ec2-metadata-token-ttl-seconds": ttlSeconds.toFixed(0),
       }});
 
-    // Kludge in a brute rejection because Deno lacks AbortSignal
-    // https://github.com/denoland/deno/issues/7019
-    const resp = await Promise.race([
-      httpFetch,
-      this.makeTimeoutPromise(),
-    ]);
+    const resp = await httpFetch.catch(err => {
+      if (err instanceof DOMException && err.message.includes('aborted')) {
+        return Promise.reject(new Error(
+          `Instance Metadata Timeout: ${this.timeoutMs}ms`));
+      }
+      return Promise.reject(err);
+    });
 
     if (resp.status > 299) throw new Error(
       `Metadata server gave HTTP ${resp.status} to V2 token request`);
@@ -79,13 +80,6 @@ export class IMDSv2 {
     const aborter = new AbortController();
     setTimeout(() => aborter.abort(), this.timeoutMs);
     return aborter.signal;
-  }
-  makeTimeoutPromise() {
-    return new Promise<never>((ok, err) => {
-      setTimeout(() => {
-        err(new Error(`Instance Metadata Timeout: ${this.timeoutMs}ms`));
-      }, this.timeoutMs + 25);
-    });
   }
 
 }
