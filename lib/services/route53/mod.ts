@@ -1436,12 +1436,13 @@ function HealthCheckConfig_Serialize(data: s.HealthCheckConfig | undefined | nul
     {name: "Regions", children: data["Regions"]?.map(x => ({name: "Region", content: x}))},
     {name: "AlarmIdentifier", ...AlarmIdentifier_Serialize(data["AlarmIdentifier"])},
     {name: "InsufficientDataHealthStatus", content: data["InsufficientDataHealthStatus"]?.toString()},
+    {name: "RoutingControlArn", content: data["RoutingControlArn"]?.toString()},
   ]};
 }
 function HealthCheckConfig_Parse(node: xmlP.XmlNode): s.HealthCheckConfig {
   return {
     ...node.strings({
-      optional: {"IPAddress":true,"ResourcePath":true,"FullyQualifiedDomainName":true,"SearchString":true},
+      optional: {"IPAddress":true,"ResourcePath":true,"FullyQualifiedDomainName":true,"SearchString":true,"RoutingControlArn":true},
     }),
     Port: node.first("Port", false, x => parseInt(x.content ?? '0')),
     Type: node.first("Type", true, x => (x.content ?? '') as s.HealthCheckType),

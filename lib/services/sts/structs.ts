@@ -12,6 +12,7 @@ export interface AssumeRoleRequest {
   ExternalId?: string | null;
   SerialNumber?: string | null;
   TokenCode?: string | null;
+  SourceIdentity?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -66,6 +67,7 @@ export interface AssumeRoleResponse {
   Credentials?: Credentials | null;
   AssumedRoleUser?: AssumedRoleUser | null;
   PackedPolicySize?: number | null;
+  SourceIdentity?: string | null;
 }
 
 // refs: 1 - tags: named, output
@@ -78,6 +80,7 @@ export interface AssumeRoleWithSAMLResponse {
   Issuer?: string | null;
   Audience?: string | null;
   NameQualifier?: string | null;
+  SourceIdentity?: string | null;
 }
 
 // refs: 1 - tags: named, output
@@ -88,6 +91,7 @@ export interface AssumeRoleWithWebIdentityResponse {
   PackedPolicySize?: number | null;
   Provider?: string | null;
   Audience?: string | null;
+  SourceIdentity?: string | null;
 }
 
 // refs: 1 - tags: named, output

@@ -238,6 +238,8 @@ export class EC2 {
     const prefix = '';
     if ("Ipv6AddressCount" in params) body.append(prefix+"Ipv6AddressCount", (params["Ipv6AddressCount"] ?? '').toString());
     if (params["Ipv6Addresses"]) qsP.appendList(body, prefix+"ipv6Addresses", params["Ipv6Addresses"], {"entryPrefix":"."})
+    if ("Ipv6PrefixCount" in params) body.append(prefix+"Ipv6PrefixCount", (params["Ipv6PrefixCount"] ?? '').toString());
+    if (params["Ipv6Prefixes"]) qsP.appendList(body, prefix+"Ipv6Prefix", params["Ipv6Prefixes"], {"entryPrefix":"."})
     body.append(prefix+"NetworkInterfaceId", (params["NetworkInterfaceId"] ?? '').toString());
     const resp = await this.#client.performRequest({
       body,
@@ -246,6 +248,7 @@ export class EC2 {
     const xml = xmlP.readXmlResult(await resp.text());
     return {
       AssignedIpv6Addresses: xml.getList("assignedIpv6Addresses", "item").map(x => x.content ?? ''),
+      AssignedIpv6Prefixes: xml.getList("assignedIpv6PrefixSet", "item").map(x => x.content ?? ''),
       NetworkInterfaceId: xml.first("networkInterfaceId", false, x => x.content ?? ''),
     };
   }
@@ -259,6 +262,8 @@ export class EC2 {
     body.append(prefix+"NetworkInterfaceId", (params["NetworkInterfaceId"] ?? '').toString());
     if (params["PrivateIpAddresses"]) qsP.appendList(body, prefix+"privateIpAddress", params["PrivateIpAddresses"], {"entryPrefix":"."})
     if ("SecondaryPrivateIpAddressCount" in params) body.append(prefix+"SecondaryPrivateIpAddressCount", (params["SecondaryPrivateIpAddressCount"] ?? '').toString());
+    if (params["Ipv4Prefixes"]) qsP.appendList(body, prefix+"Ipv4Prefix", params["Ipv4Prefixes"], {"entryPrefix":"."})
+    if ("Ipv4PrefixCount" in params) body.append(prefix+"Ipv4PrefixCount", (params["Ipv4PrefixCount"] ?? '').toString());
     const resp = await this.#client.performRequest({
       body,
       action: "AssignPrivateIpAddresses",
@@ -267,6 +272,7 @@ export class EC2 {
     return {
       NetworkInterfaceId: xml.first("networkInterfaceId", false, x => x.content ?? ''),
       AssignedPrivateIpAddresses: xml.getList("assignedPrivateIpAddressesSet", "item").map(AssignedPrivateIpAddress_Parse),
+      AssignedIpv4Prefixes: xml.getList("assignedIpv4PrefixSet", "item").map(Ipv4PrefixSpecification_Parse),
     };
   }
 
@@ -364,6 +370,24 @@ export class EC2 {
     };
   }
 
+  async associateInstanceEventWindow(
+    params: s.AssociateInstanceEventWindowRequest,
+  ): Promise<s.AssociateInstanceEventWindowResult> {
+    const body = new URLSearchParams;
+    const prefix = '';
+    if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
+    body.append(prefix+"InstanceEventWindowId", (params["InstanceEventWindowId"] ?? '').toString());
+    InstanceEventWindowAssociationRequest_Serialize(body, prefix+"AssociationTarget", params["AssociationTarget"]);
+    const resp = await this.#client.performRequest({
+      body,
+      action: "AssociateInstanceEventWindow",
+    });
+    const xml = xmlP.readXmlResult(await resp.text());
+    return {
+      InstanceEventWindow: xml.first("instanceEventWindow", false, InstanceEventWindow_Parse),
+    };
+  }
+
   async associateRouteTable(
     params: s.AssociateRouteTableRequest,
   ): Promise<s.AssociateRouteTableResult> {
@@ -389,8 +413,8 @@ export class EC2 {
   ): Promise<s.AssociateSubnetCidrBlockResult> {
     const body = new URLSearchParams;
     const prefix = '';
-    body.append(prefix+"SubnetId", (params["SubnetId"] ?? '').toString());
     body.append(prefix+"Ipv6CidrBlock", (params["Ipv6CidrBlock"] ?? '').toString());
+    body.append(prefix+"SubnetId", (params["SubnetId"] ?? '').toString());
     const resp = await this.#client.performRequest({
       body,
       action: "AssociateSubnetCidrBlock",
@@ -436,6 +460,28 @@ export class EC2 {
     const xml = xmlP.readXmlResult(await resp.text());
     return {
       Association: xml.first("association", false, TransitGatewayAssociation_Parse),
+    };
+  }
+
+  async associateTrunkInterface(
+    params: s.AssociateTrunkInterfaceRequest,
+  ): Promise<s.AssociateTrunkInterfaceResult> {
+    const body = new URLSearchParams;
+    const prefix = '';
+    body.append(prefix+"BranchInterfaceId", (params["BranchInterfaceId"] ?? '').toString());
+    body.append(prefix+"TrunkInterfaceId", (params["TrunkInterfaceId"] ?? '').toString());
+    if ("VlanId" in params) body.append(prefix+"VlanId", (params["VlanId"] ?? '').toString());
+    if ("GreKey" in params) body.append(prefix+"GreKey", (params["GreKey"] ?? '').toString());
+    body.append(prefix+"ClientToken", (params["ClientToken"] ?? generateIdemptToken()).toString());
+    if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
+    const resp = await this.#client.performRequest({
+      body,
+      action: "AssociateTrunkInterface",
+    });
+    const xml = xmlP.readXmlResult(await resp.text());
+    return {
+      InterfaceAssociation: xml.first("interfaceAssociation", false, TrunkInterfaceAssociation_Parse),
+      ClientToken: xml.first("clientToken", false, x => x.content ?? ''),
     };
   }
 
@@ -576,12 +622,13 @@ export class EC2 {
 
   async authorizeSecurityGroupEgress(
     params: s.AuthorizeSecurityGroupEgressRequest,
-  ): Promise<void> {
+  ): Promise<s.AuthorizeSecurityGroupEgressResult> {
     const body = new URLSearchParams;
     const prefix = '';
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     body.append(prefix+"GroupId", (params["GroupId"] ?? '').toString());
     if (params["IpPermissions"]) qsP.appendList(body, prefix+"ipPermissions", params["IpPermissions"], {"appender":IpPermission_Serialize,"entryPrefix":"."})
+    if (params["TagSpecifications"]) qsP.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
     if ("CidrIp" in params) body.append(prefix+"CidrIp", (params["CidrIp"] ?? '').toString());
     if ("FromPort" in params) body.append(prefix+"FromPort", (params["FromPort"] ?? '').toString());
     if ("IpProtocol" in params) body.append(prefix+"IpProtocol", (params["IpProtocol"] ?? '').toString());
@@ -592,12 +639,16 @@ export class EC2 {
       body,
       action: "AuthorizeSecurityGroupEgress",
     });
-    await resp.arrayBuffer(); // consume body without use
+    const xml = xmlP.readXmlResult(await resp.text());
+    return {
+      Return: xml.first("return", false, x => x.content === 'true'),
+      SecurityGroupRules: xml.getList("securityGroupRuleSet", "item").map(SecurityGroupRule_Parse),
+    };
   }
 
   async authorizeSecurityGroupIngress(
     params: s.AuthorizeSecurityGroupIngressRequest = {},
-  ): Promise<void> {
+  ): Promise<s.AuthorizeSecurityGroupIngressResult> {
     const body = new URLSearchParams;
     const prefix = '';
     if ("CidrIp" in params) body.append(prefix+"CidrIp", (params["CidrIp"] ?? '').toString());
@@ -610,11 +661,16 @@ export class EC2 {
     if ("SourceSecurityGroupOwnerId" in params) body.append(prefix+"SourceSecurityGroupOwnerId", (params["SourceSecurityGroupOwnerId"] ?? '').toString());
     if ("ToPort" in params) body.append(prefix+"ToPort", (params["ToPort"] ?? '').toString());
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
+    if (params["TagSpecifications"]) qsP.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
     const resp = await this.#client.performRequest({
       body,
       action: "AuthorizeSecurityGroupIngress",
     });
-    await resp.arrayBuffer(); // consume body without use
+    const xml = xmlP.readXmlResult(await resp.text());
+    return {
+      Return: xml.first("return", false, x => x.content === 'true'),
+      SecurityGroupRules: xml.getList("securityGroupRuleSet", "item").map(SecurityGroupRule_Parse),
+    };
   }
 
   async bundleInstance(
@@ -878,6 +934,7 @@ export class EC2 {
     if ("InstanceMatchCriteria" in params) body.append(prefix+"InstanceMatchCriteria", (params["InstanceMatchCriteria"] ?? '').toString());
     if (params["TagSpecifications"]) qsP.appendList(body, prefix+"item", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
+    if ("OutpostArn" in params) body.append(prefix+"OutpostArn", (params["OutpostArn"] ?? '').toString());
     const resp = await this.#client.performRequest({
       body,
       action: "CreateCapacityReservation",
@@ -1072,6 +1129,7 @@ export class EC2 {
     if ("ValidUntil" in params) body.append(prefix+"ValidUntil", qsP.encodeDate_iso8601(params["ValidUntil"]));
     if ("ReplaceUnhealthyInstances" in params) body.append(prefix+"ReplaceUnhealthyInstances", (params["ReplaceUnhealthyInstances"] ?? '').toString());
     if (params["TagSpecifications"]) qsP.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
+    if ("Context" in params) body.append(prefix+"Context", (params["Context"] ?? '').toString());
     const resp = await this.#client.performRequest({
       body,
       action: "CreateFleet",
@@ -1158,6 +1216,26 @@ export class EC2 {
     };
   }
 
+  async createInstanceEventWindow(
+    params: s.CreateInstanceEventWindowRequest = {},
+  ): Promise<s.CreateInstanceEventWindowResult> {
+    const body = new URLSearchParams;
+    const prefix = '';
+    if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
+    if ("Name" in params) body.append(prefix+"Name", (params["Name"] ?? '').toString());
+    if (params["TimeRanges"]) qsP.appendList(body, prefix+"TimeRange", params["TimeRanges"], {"appender":InstanceEventWindowTimeRangeRequest_Serialize,"entryPrefix":"."})
+    if ("CronExpression" in params) body.append(prefix+"CronExpression", (params["CronExpression"] ?? '').toString());
+    if (params["TagSpecifications"]) qsP.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
+    const resp = await this.#client.performRequest({
+      body,
+      action: "CreateInstanceEventWindow",
+    });
+    const xml = xmlP.readXmlResult(await resp.text());
+    return {
+      InstanceEventWindow: xml.first("instanceEventWindow", false, InstanceEventWindow_Parse),
+    };
+  }
+
   async createInstanceExportTask(
     params: s.CreateInstanceExportTaskRequest,
   ): Promise<s.CreateInstanceExportTaskResult> {
@@ -1202,6 +1280,7 @@ export class EC2 {
     const prefix = '';
     body.append(prefix+"KeyName", (params["KeyName"] ?? '').toString());
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
+    if ("KeyType" in params) body.append(prefix+"KeyType", (params["KeyType"] ?? '').toString());
     if (params["TagSpecifications"]) qsP.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
     const resp = await this.#client.performRequest({
       body,
@@ -1327,11 +1406,12 @@ export class EC2 {
   ): Promise<s.CreateNatGatewayResult> {
     const body = new URLSearchParams;
     const prefix = '';
+    if ("AllocationId" in params) body.append(prefix+"AllocationId", (params["AllocationId"] ?? '').toString());
     body.append(prefix+"ClientToken", (params["ClientToken"] ?? generateIdemptToken()).toString());
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     body.append(prefix+"SubnetId", (params["SubnetId"] ?? '').toString());
     if (params["TagSpecifications"]) qsP.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
-    body.append(prefix+"AllocationId", (params["AllocationId"] ?? '').toString());
+    if ("ConnectivityType" in params) body.append(prefix+"ConnectivityType", (params["ConnectivityType"] ?? '').toString());
     const resp = await this.#client.performRequest({
       body,
       action: "CreateNatGateway",
@@ -1420,9 +1500,14 @@ export class EC2 {
     if ("PrivateIpAddress" in params) body.append(prefix+"PrivateIpAddress", (params["PrivateIpAddress"] ?? '').toString());
     if (params["PrivateIpAddresses"]) qsP.appendList(body, prefix+"privateIpAddresses", params["PrivateIpAddresses"], {"appender":PrivateIpAddressSpecification_Serialize,"entryPrefix":"."})
     if ("SecondaryPrivateIpAddressCount" in params) body.append(prefix+"SecondaryPrivateIpAddressCount", (params["SecondaryPrivateIpAddressCount"] ?? '').toString());
+    if (params["Ipv4Prefixes"]) qsP.appendList(body, prefix+"Ipv4Prefix", params["Ipv4Prefixes"], {"appender":Ipv4PrefixSpecificationRequest_Serialize,"entryPrefix":"."})
+    if ("Ipv4PrefixCount" in params) body.append(prefix+"Ipv4PrefixCount", (params["Ipv4PrefixCount"] ?? '').toString());
+    if (params["Ipv6Prefixes"]) qsP.appendList(body, prefix+"Ipv6Prefix", params["Ipv6Prefixes"], {"appender":Ipv6PrefixSpecificationRequest_Serialize,"entryPrefix":"."})
+    if ("Ipv6PrefixCount" in params) body.append(prefix+"Ipv6PrefixCount", (params["Ipv6PrefixCount"] ?? '').toString());
     if ("InterfaceType" in params) body.append(prefix+"InterfaceType", (params["InterfaceType"] ?? '').toString());
     body.append(prefix+"SubnetId", (params["SubnetId"] ?? '').toString());
     if (params["TagSpecifications"]) qsP.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
+    body.append(prefix+"ClientToken", (params["ClientToken"] ?? generateIdemptToken()).toString());
     const resp = await this.#client.performRequest({
       body,
       action: "CreateNetworkInterface",
@@ -1430,6 +1515,7 @@ export class EC2 {
     const xml = xmlP.readXmlResult(await resp.text());
     return {
       NetworkInterface: xml.first("networkInterface", false, NetworkInterface_Parse),
+      ClientToken: xml.first("clientToken", false, x => x.content ?? ''),
     };
   }
 
@@ -1473,6 +1559,26 @@ export class EC2 {
     };
   }
 
+  async createReplaceRootVolumeTask(
+    params: s.CreateReplaceRootVolumeTaskRequest,
+  ): Promise<s.CreateReplaceRootVolumeTaskResult> {
+    const body = new URLSearchParams;
+    const prefix = '';
+    body.append(prefix+"InstanceId", (params["InstanceId"] ?? '').toString());
+    if ("SnapshotId" in params) body.append(prefix+"SnapshotId", (params["SnapshotId"] ?? '').toString());
+    body.append(prefix+"ClientToken", (params["ClientToken"] ?? generateIdemptToken()).toString());
+    if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
+    if (params["TagSpecifications"]) qsP.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
+    const resp = await this.#client.performRequest({
+      body,
+      action: "CreateReplaceRootVolumeTask",
+    });
+    const xml = xmlP.readXmlResult(await resp.text());
+    return {
+      ReplaceRootVolumeTask: xml.first("replaceRootVolumeTask", false, ReplaceRootVolumeTask_Parse),
+    };
+  }
+
   async createReservedInstancesListing(
     params: s.CreateReservedInstancesListingRequest,
   ): Promise<s.CreateReservedInstancesListingResult> {
@@ -1489,6 +1595,26 @@ export class EC2 {
     const xml = xmlP.readXmlResult(await resp.text());
     return {
       ReservedInstancesListings: xml.getList("reservedInstancesListingsSet", "item").map(ReservedInstancesListing_Parse),
+    };
+  }
+
+  async createRestoreImageTask(
+    params: s.CreateRestoreImageTaskRequest,
+  ): Promise<s.CreateRestoreImageTaskResult> {
+    const body = new URLSearchParams;
+    const prefix = '';
+    body.append(prefix+"Bucket", (params["Bucket"] ?? '').toString());
+    body.append(prefix+"ObjectKey", (params["ObjectKey"] ?? '').toString());
+    if ("Name" in params) body.append(prefix+"Name", (params["Name"] ?? '').toString());
+    if (params["TagSpecifications"]) qsP.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
+    if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
+    const resp = await this.#client.performRequest({
+      body,
+      action: "CreateRestoreImageTask",
+    });
+    const xml = xmlP.readXmlResult(await resp.text());
+    return {
+      ImageId: xml.first("imageId", false, x => x.content ?? ''),
     };
   }
 
@@ -1618,6 +1744,25 @@ export class EC2 {
     };
   }
 
+  async createStoreImageTask(
+    params: s.CreateStoreImageTaskRequest,
+  ): Promise<s.CreateStoreImageTaskResult> {
+    const body = new URLSearchParams;
+    const prefix = '';
+    body.append(prefix+"ImageId", (params["ImageId"] ?? '').toString());
+    body.append(prefix+"Bucket", (params["Bucket"] ?? '').toString());
+    if (params["S3ObjectTags"]) qsP.appendList(body, prefix+"S3ObjectTag", params["S3ObjectTags"], {"appender":S3ObjectTag_Serialize,"entryPrefix":"."})
+    if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
+    const resp = await this.#client.performRequest({
+      body,
+      action: "CreateStoreImageTask",
+    });
+    const xml = xmlP.readXmlResult(await resp.text());
+    return {
+      ObjectKey: xml.first("objectKey", false, x => x.content ?? ''),
+    };
+  }
+
   async createSubnet(
     params: s.CreateSubnetRequest,
   ): Promise<s.CreateSubnetResult> {
@@ -1638,6 +1783,27 @@ export class EC2 {
     const xml = xmlP.readXmlResult(await resp.text());
     return {
       Subnet: xml.first("subnet", false, Subnet_Parse),
+    };
+  }
+
+  async createSubnetCidrReservation(
+    params: s.CreateSubnetCidrReservationRequest,
+  ): Promise<s.CreateSubnetCidrReservationResult> {
+    const body = new URLSearchParams;
+    const prefix = '';
+    if (params["TagSpecifications"]) qsP.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
+    body.append(prefix+"SubnetId", (params["SubnetId"] ?? '').toString());
+    body.append(prefix+"Cidr", (params["Cidr"] ?? '').toString());
+    body.append(prefix+"ReservationType", (params["ReservationType"] ?? '').toString());
+    if ("Description" in params) body.append(prefix+"Description", (params["Description"] ?? '').toString());
+    if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
+    const resp = await this.#client.performRequest({
+      body,
+      action: "CreateSubnetCidrReservation",
+    });
+    const xml = xmlP.readXmlResult(await resp.text());
+    return {
+      SubnetCidrReservation: xml.first("subnetCidrReservation", false, SubnetCidrReservation_Parse),
     };
   }
 
@@ -1948,6 +2114,7 @@ export class EC2 {
     if (params["TagSpecifications"]) qsP.appendList(body, prefix+"TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
     if ("MultiAttachEnabled" in params) body.append(prefix+"MultiAttachEnabled", (params["MultiAttachEnabled"] ?? '').toString());
     if ("Throughput" in params) body.append(prefix+"Throughput", (params["Throughput"] ?? '').toString());
+    body.append(prefix+"ClientToken", (params["ClientToken"] ?? generateIdemptToken()).toString());
     const resp = await this.#client.performRequest({
       body,
       action: "CreateVolume",
@@ -2276,6 +2443,24 @@ export class EC2 {
     const xml = xmlP.readXmlResult(await resp.text());
     return {
       Return: xml.first("return", false, x => x.content === 'true'),
+    };
+  }
+
+  async deleteInstanceEventWindow(
+    params: s.DeleteInstanceEventWindowRequest,
+  ): Promise<s.DeleteInstanceEventWindowResult> {
+    const body = new URLSearchParams;
+    const prefix = '';
+    if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
+    if ("ForceDelete" in params) body.append(prefix+"ForceDelete", (params["ForceDelete"] ?? '').toString());
+    body.append(prefix+"InstanceEventWindowId", (params["InstanceEventWindowId"] ?? '').toString());
+    const resp = await this.#client.performRequest({
+      body,
+      action: "DeleteInstanceEventWindow",
+    });
+    const xml = xmlP.readXmlResult(await resp.text());
+    return {
+      InstanceEventWindowState: xml.first("instanceEventWindowState", false, InstanceEventWindowStateChange_Parse),
     };
   }
 
@@ -2628,6 +2813,23 @@ export class EC2 {
       action: "DeleteSubnet",
     });
     await resp.arrayBuffer(); // consume body without use
+  }
+
+  async deleteSubnetCidrReservation(
+    params: s.DeleteSubnetCidrReservationRequest,
+  ): Promise<s.DeleteSubnetCidrReservationResult> {
+    const body = new URLSearchParams;
+    const prefix = '';
+    body.append(prefix+"SubnetCidrReservationId", (params["SubnetCidrReservationId"] ?? '').toString());
+    if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
+    const resp = await this.#client.performRequest({
+      body,
+      action: "DeleteSubnetCidrReservation",
+    });
+    const xml = xmlP.readXmlResult(await resp.text());
+    return {
+      DeletedSubnetCidrReservation: xml.first("deletedSubnetCidrReservation", false, SubnetCidrReservation_Parse),
+    };
   }
 
   async deleteTags(
@@ -3849,6 +4051,7 @@ export class EC2 {
     if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
     if (params["ImageIds"]) qsP.appendList(body, prefix+"ImageId", params["ImageIds"], {"entryPrefix":"."})
     if (params["Owners"]) qsP.appendList(body, prefix+"Owner", params["Owners"], {"entryPrefix":"."})
+    if ("IncludeDeprecated" in params) body.append(prefix+"IncludeDeprecated", (params["IncludeDeprecated"] ?? '').toString());
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     const resp = await this.#client.performRequest({
       body,
@@ -3969,6 +4172,27 @@ export class EC2 {
     const xml = xmlP.readXmlResult(await resp.text());
     return {
       InstanceTagAttribute: xml.first("instanceTagAttribute", false, InstanceTagNotificationAttribute_Parse),
+    };
+  }
+
+  async describeInstanceEventWindows(
+    params: s.DescribeInstanceEventWindowsRequest = {},
+  ): Promise<s.DescribeInstanceEventWindowsResult> {
+    const body = new URLSearchParams;
+    const prefix = '';
+    if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
+    if (params["InstanceEventWindowIds"]) qsP.appendList(body, prefix+"InstanceEventWindowId", params["InstanceEventWindowIds"], {"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
+    if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
+    const resp = await this.#client.performRequest({
+      body,
+      action: "DescribeInstanceEventWindows",
+    });
+    const xml = xmlP.readXmlResult(await resp.text());
+    return {
+      InstanceEventWindows: xml.getList("instanceEventWindowSet", "item").map(InstanceEventWindow_Parse),
+      NextToken: xml.first("nextToken", false, x => x.content ?? ''),
     };
   }
 
@@ -4582,6 +4806,27 @@ export class EC2 {
     };
   }
 
+  async describeReplaceRootVolumeTasks(
+    params: s.DescribeReplaceRootVolumeTasksRequest = {},
+  ): Promise<s.DescribeReplaceRootVolumeTasksResult> {
+    const body = new URLSearchParams;
+    const prefix = '';
+    if (params["ReplaceRootVolumeTaskIds"]) qsP.appendList(body, prefix+"ReplaceRootVolumeTaskId", params["ReplaceRootVolumeTaskIds"], {"entryPrefix":"."})
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
+    if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
+    if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
+    const resp = await this.#client.performRequest({
+      body,
+      action: "DescribeReplaceRootVolumeTasks",
+    });
+    const xml = xmlP.readXmlResult(await resp.text());
+    return {
+      ReplaceRootVolumeTasks: xml.getList("replaceRootVolumeTaskSet", "item").map(ReplaceRootVolumeTask_Parse),
+      NextToken: xml.first("nextToken", false, x => x.content ?? ''),
+    };
+  }
+
   async describeReservedInstances(
     params: s.DescribeReservedInstancesRequest = {},
   ): Promise<s.DescribeReservedInstancesResult> {
@@ -4751,6 +4996,27 @@ export class EC2 {
     const xml = xmlP.readXmlResult(await resp.text());
     return {
       SecurityGroupReferenceSet: xml.getList("securityGroupReferenceSet", "item").map(SecurityGroupReference_Parse),
+    };
+  }
+
+  async describeSecurityGroupRules(
+    params: s.DescribeSecurityGroupRulesRequest = {},
+  ): Promise<s.DescribeSecurityGroupRulesResult> {
+    const body = new URLSearchParams;
+    const prefix = '';
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if (params["SecurityGroupRuleIds"]) qsP.appendList(body, prefix+"SecurityGroupRuleId", params["SecurityGroupRuleIds"], {"entryPrefix":"."})
+    if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
+    if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
+    if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
+    const resp = await this.#client.performRequest({
+      body,
+      action: "DescribeSecurityGroupRules",
+    });
+    const xml = xmlP.readXmlResult(await resp.text());
+    return {
+      SecurityGroupRules: xml.getList("securityGroupRuleSet", "item").map(SecurityGroupRule_Parse),
+      NextToken: xml.first("nextToken", false, x => x.content ?? ''),
     };
   }
 
@@ -4964,6 +5230,27 @@ export class EC2 {
     return {
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
       StaleSecurityGroupSet: xml.getList("staleSecurityGroupSet", "item").map(StaleSecurityGroup_Parse),
+    };
+  }
+
+  async describeStoreImageTasks(
+    params: s.DescribeStoreImageTasksRequest = {},
+  ): Promise<s.DescribeStoreImageTasksResult> {
+    const body = new URLSearchParams;
+    const prefix = '';
+    if (params["ImageIds"]) qsP.appendList(body, prefix+"ImageId", params["ImageIds"], {"entryPrefix":"."})
+    if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
+    if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
+    const resp = await this.#client.performRequest({
+      body,
+      action: "DescribeStoreImageTasks",
+    });
+    const xml = xmlP.readXmlResult(await resp.text());
+    return {
+      StoreImageTaskResults: xml.getList("storeImageTaskResultSet", "item").map(StoreImageTaskResult_Parse),
+      NextToken: xml.first("nextToken", false, x => x.content ?? ''),
     };
   }
 
@@ -5235,6 +5522,27 @@ export class EC2 {
     const xml = xmlP.readXmlResult(await resp.text());
     return {
       TransitGateways: xml.getList("transitGatewaySet", "item").map(TransitGateway_Parse),
+      NextToken: xml.first("nextToken", false, x => x.content ?? ''),
+    };
+  }
+
+  async describeTrunkInterfaceAssociations(
+    params: s.DescribeTrunkInterfaceAssociationsRequest = {},
+  ): Promise<s.DescribeTrunkInterfaceAssociationsResult> {
+    const body = new URLSearchParams;
+    const prefix = '';
+    if (params["AssociationIds"]) qsP.appendList(body, prefix+"AssociationId", params["AssociationIds"], {"entryPrefix":"."})
+    if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
+    if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
+    const resp = await this.#client.performRequest({
+      body,
+      action: "DescribeTrunkInterfaceAssociations",
+    });
+    const xml = xmlP.readXmlResult(await resp.text());
+    return {
+      InterfaceAssociations: xml.getList("interfaceAssociationSet", "item").map(TrunkInterfaceAssociation_Parse),
       NextToken: xml.first("nextToken", false, x => x.content ?? ''),
     };
   }
@@ -5699,6 +6007,39 @@ export class EC2 {
     };
   }
 
+  async disableImageDeprecation(
+    params: s.DisableImageDeprecationRequest,
+  ): Promise<s.DisableImageDeprecationResult> {
+    const body = new URLSearchParams;
+    const prefix = '';
+    body.append(prefix+"ImageId", (params["ImageId"] ?? '').toString());
+    if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
+    const resp = await this.#client.performRequest({
+      body,
+      action: "DisableImageDeprecation",
+    });
+    const xml = xmlP.readXmlResult(await resp.text());
+    return {
+      Return: xml.first("return", false, x => x.content === 'true'),
+    };
+  }
+
+  async disableSerialConsoleAccess(
+    params: s.DisableSerialConsoleAccessRequest = {},
+  ): Promise<s.DisableSerialConsoleAccessResult> {
+    const body = new URLSearchParams;
+    const prefix = '';
+    if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
+    const resp = await this.#client.performRequest({
+      body,
+      action: "DisableSerialConsoleAccess",
+    });
+    const xml = xmlP.readXmlResult(await resp.text());
+    return {
+      SerialConsoleAccessEnabled: xml.first("serialConsoleAccessEnabled", false, x => x.content === 'true'),
+    };
+  }
+
   async disableTransitGatewayRouteTablePropagation(
     params: s.DisableTransitGatewayRouteTablePropagationRequest,
   ): Promise<s.DisableTransitGatewayRouteTablePropagationResult> {
@@ -5833,6 +6174,24 @@ export class EC2 {
     };
   }
 
+  async disassociateInstanceEventWindow(
+    params: s.DisassociateInstanceEventWindowRequest,
+  ): Promise<s.DisassociateInstanceEventWindowResult> {
+    const body = new URLSearchParams;
+    const prefix = '';
+    if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
+    body.append(prefix+"InstanceEventWindowId", (params["InstanceEventWindowId"] ?? '').toString());
+    InstanceEventWindowDisassociationRequest_Serialize(body, prefix+"AssociationTarget", params["AssociationTarget"]);
+    const resp = await this.#client.performRequest({
+      body,
+      action: "DisassociateInstanceEventWindow",
+    });
+    const xml = xmlP.readXmlResult(await resp.text());
+    return {
+      InstanceEventWindow: xml.first("instanceEventWindow", false, InstanceEventWindow_Parse),
+    };
+  }
+
   async disassociateRouteTable(
     params: s.DisassociateRouteTableRequest,
   ): Promise<void> {
@@ -5901,6 +6260,25 @@ export class EC2 {
     };
   }
 
+  async disassociateTrunkInterface(
+    params: s.DisassociateTrunkInterfaceRequest,
+  ): Promise<s.DisassociateTrunkInterfaceResult> {
+    const body = new URLSearchParams;
+    const prefix = '';
+    body.append(prefix+"AssociationId", (params["AssociationId"] ?? '').toString());
+    body.append(prefix+"ClientToken", (params["ClientToken"] ?? generateIdemptToken()).toString());
+    if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
+    const resp = await this.#client.performRequest({
+      body,
+      action: "DisassociateTrunkInterface",
+    });
+    const xml = xmlP.readXmlResult(await resp.text());
+    return {
+      Return: xml.first("return", false, x => x.content === 'true'),
+      ClientToken: xml.first("clientToken", false, x => x.content ?? ''),
+    };
+  }
+
   async disassociateVpcCidrBlock(
     params: s.DisassociateVpcCidrBlockRequest,
   ): Promise<s.DisassociateVpcCidrBlockResult> {
@@ -5951,6 +6329,40 @@ export class EC2 {
     return {
       Successful: xml.getList("successful", "item").map(EnableFastSnapshotRestoreSuccessItem_Parse),
       Unsuccessful: xml.getList("unsuccessful", "item").map(EnableFastSnapshotRestoreErrorItem_Parse),
+    };
+  }
+
+  async enableImageDeprecation(
+    params: s.EnableImageDeprecationRequest,
+  ): Promise<s.EnableImageDeprecationResult> {
+    const body = new URLSearchParams;
+    const prefix = '';
+    body.append(prefix+"ImageId", (params["ImageId"] ?? '').toString());
+    body.append(prefix+"DeprecateAt", qsP.encodeDate_iso8601(params["DeprecateAt"]));
+    if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
+    const resp = await this.#client.performRequest({
+      body,
+      action: "EnableImageDeprecation",
+    });
+    const xml = xmlP.readXmlResult(await resp.text());
+    return {
+      Return: xml.first("return", false, x => x.content === 'true'),
+    };
+  }
+
+  async enableSerialConsoleAccess(
+    params: s.EnableSerialConsoleAccessRequest = {},
+  ): Promise<s.EnableSerialConsoleAccessResult> {
+    const body = new URLSearchParams;
+    const prefix = '';
+    if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
+    const resp = await this.#client.performRequest({
+      body,
+      action: "EnableSerialConsoleAccess",
+    });
+    const xml = xmlP.readXmlResult(await resp.text());
+    return {
+      SerialConsoleAccessEnabled: xml.first("serialConsoleAccessEnabled", false, x => x.content === 'true'),
     };
   }
 
@@ -6292,6 +6704,25 @@ export class EC2 {
     };
   }
 
+  async getFlowLogsIntegrationTemplate(
+    params: s.GetFlowLogsIntegrationTemplateRequest,
+  ): Promise<s.GetFlowLogsIntegrationTemplateResult> {
+    const body = new URLSearchParams;
+    const prefix = '';
+    if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
+    body.append(prefix+"FlowLogId", (params["FlowLogId"] ?? '').toString());
+    body.append(prefix+"ConfigDeliveryS3DestinationArn", (params["ConfigDeliveryS3DestinationArn"] ?? '').toString());
+    IntegrateServices_Serialize(body, prefix+"IntegrateService", params["IntegrateServices"]);
+    const resp = await this.#client.performRequest({
+      body,
+      action: "GetFlowLogsIntegrationTemplate",
+    });
+    const xml = xmlP.readXmlResult(await resp.text());
+    return {
+      Result: xml.first("result", false, x => x.content ?? ''),
+    };
+  }
+
   async getGroupsForCapacityReservation(
     params: s.GetGroupsForCapacityReservationRequest,
   ): Promise<s.GetGroupsForCapacityReservationResult> {
@@ -6432,6 +6863,44 @@ export class EC2 {
       TargetConfigurationValueRollup: xml.first("targetConfigurationValueRollup", false, ReservationValue_Parse),
       TargetConfigurationValueSet: xml.getList("targetConfigurationValueSet", "item").map(TargetReservationValue_Parse),
       ValidationFailureReason: xml.first("validationFailureReason", false, x => x.content ?? ''),
+    };
+  }
+
+  async getSerialConsoleAccessStatus(
+    params: s.GetSerialConsoleAccessStatusRequest = {},
+  ): Promise<s.GetSerialConsoleAccessStatusResult> {
+    const body = new URLSearchParams;
+    const prefix = '';
+    if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
+    const resp = await this.#client.performRequest({
+      body,
+      action: "GetSerialConsoleAccessStatus",
+    });
+    const xml = xmlP.readXmlResult(await resp.text());
+    return {
+      SerialConsoleAccessEnabled: xml.first("serialConsoleAccessEnabled", false, x => x.content === 'true'),
+    };
+  }
+
+  async getSubnetCidrReservations(
+    params: s.GetSubnetCidrReservationsRequest,
+  ): Promise<s.GetSubnetCidrReservationsResult> {
+    const body = new URLSearchParams;
+    const prefix = '';
+    if (params["Filters"]) qsP.appendList(body, prefix+"Filter", params["Filters"], {"appender":Filter_Serialize,"entryPrefix":"."})
+    body.append(prefix+"SubnetId", (params["SubnetId"] ?? '').toString());
+    if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
+    if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
+    if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
+    const resp = await this.#client.performRequest({
+      body,
+      action: "GetSubnetCidrReservations",
+    });
+    const xml = xmlP.readXmlResult(await resp.text());
+    return {
+      SubnetIpv4CidrReservations: xml.getList("subnetIpv4CidrReservationSet", "item").map(SubnetCidrReservation_Parse),
+      SubnetIpv6CidrReservations: xml.getList("subnetIpv6CidrReservationSet", "item").map(SubnetCidrReservation_Parse),
+      NextToken: xml.first("nextToken", false, x => x.content ?? ''),
     };
   }
 
@@ -6819,6 +7288,7 @@ export class EC2 {
     if (params["LaunchTemplateConfigs"]) qsP.appendList(body, prefix+"LaunchTemplateConfig", params["LaunchTemplateConfigs"], {"appender":FleetLaunchTemplateConfigRequest_Serialize,"entryPrefix":"."})
     body.append(prefix+"FleetId", (params["FleetId"] ?? '').toString());
     if (params["TargetCapacitySpecification"] != null) TargetCapacitySpecificationRequest_Serialize(body, prefix+"TargetCapacitySpecification", params["TargetCapacitySpecification"]);
+    if ("Context" in params) body.append(prefix+"Context", (params["Context"] ?? '').toString());
     const resp = await this.#client.performRequest({
       body,
       action: "ModifyFleet",
@@ -7010,6 +7480,26 @@ export class EC2 {
     };
   }
 
+  async modifyInstanceEventWindow(
+    params: s.ModifyInstanceEventWindowRequest,
+  ): Promise<s.ModifyInstanceEventWindowResult> {
+    const body = new URLSearchParams;
+    const prefix = '';
+    if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
+    if ("Name" in params) body.append(prefix+"Name", (params["Name"] ?? '').toString());
+    body.append(prefix+"InstanceEventWindowId", (params["InstanceEventWindowId"] ?? '').toString());
+    if (params["TimeRanges"]) qsP.appendList(body, prefix+"TimeRange", params["TimeRanges"], {"appender":InstanceEventWindowTimeRangeRequest_Serialize,"entryPrefix":"."})
+    if ("CronExpression" in params) body.append(prefix+"CronExpression", (params["CronExpression"] ?? '').toString());
+    const resp = await this.#client.performRequest({
+      body,
+      action: "ModifyInstanceEventWindow",
+    });
+    const xml = xmlP.readXmlResult(await resp.text());
+    return {
+      InstanceEventWindow: xml.first("instanceEventWindow", false, InstanceEventWindow_Parse),
+    };
+  }
+
   async modifyInstanceMetadataOptions(
     params: s.ModifyInstanceMetadataOptionsRequest,
   ): Promise<s.ModifyInstanceMetadataOptionsResult> {
@@ -7130,6 +7620,24 @@ export class EC2 {
     };
   }
 
+  async modifySecurityGroupRules(
+    params: s.ModifySecurityGroupRulesRequest,
+  ): Promise<s.ModifySecurityGroupRulesResult> {
+    const body = new URLSearchParams;
+    const prefix = '';
+    body.append(prefix+"GroupId", (params["GroupId"] ?? '').toString());
+    if (params["SecurityGroupRules"]) qsP.appendList(body, prefix+"SecurityGroupRule", params["SecurityGroupRules"], {"appender":SecurityGroupRuleUpdate_Serialize,"entryPrefix":"."})
+    if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
+    const resp = await this.#client.performRequest({
+      body,
+      action: "ModifySecurityGroupRules",
+    });
+    const xml = xmlP.readXmlResult(await resp.text());
+    return {
+      Return: xml.first("return", false, x => x.content === 'true'),
+    };
+  }
+
   async modifySnapshotAttribute(
     params: s.ModifySnapshotAttributeRequest,
   ): Promise<void> {
@@ -7159,6 +7667,7 @@ export class EC2 {
     body.append(prefix+"SpotFleetRequestId", (params["SpotFleetRequestId"] ?? '').toString());
     if ("TargetCapacity" in params) body.append(prefix+"TargetCapacity", (params["TargetCapacity"] ?? '').toString());
     if ("OnDemandTargetCapacity" in params) body.append(prefix+"OnDemandTargetCapacity", (params["OnDemandTargetCapacity"] ?? '').toString());
+    if ("Context" in params) body.append(prefix+"Context", (params["Context"] ?? '').toString());
     const resp = await this.#client.performRequest({
       body,
       action: "ModifySpotFleetRequest",
@@ -7617,6 +8126,7 @@ export class EC2 {
     if ("Description" in params) body.append(prefix+"Description", (params["Description"] ?? '').toString());
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     if (params["PoolTagSpecifications"]) qsP.appendList(body, prefix+"PoolTagSpecification", params["PoolTagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
+    if ("MultiRegion" in params) body.append(prefix+"MultiRegion", (params["MultiRegion"] ?? '').toString());
     const resp = await this.#client.performRequest({
       body,
       action: "ProvisionByoipCidr",
@@ -8274,6 +8784,7 @@ export class EC2 {
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
     body.append(prefix+"GroupId", (params["GroupId"] ?? '').toString());
     if (params["IpPermissions"]) qsP.appendList(body, prefix+"ipPermissions", params["IpPermissions"], {"appender":IpPermission_Serialize,"entryPrefix":"."})
+    if (params["SecurityGroupRuleIds"]) qsP.appendList(body, prefix+"SecurityGroupRuleId", params["SecurityGroupRuleIds"], {"entryPrefix":"."})
     if ("CidrIp" in params) body.append(prefix+"CidrIp", (params["CidrIp"] ?? '').toString());
     if ("FromPort" in params) body.append(prefix+"FromPort", (params["FromPort"] ?? '').toString());
     if ("IpProtocol" in params) body.append(prefix+"IpProtocol", (params["IpProtocol"] ?? '').toString());
@@ -8306,6 +8817,7 @@ export class EC2 {
     if ("SourceSecurityGroupOwnerId" in params) body.append(prefix+"SourceSecurityGroupOwnerId", (params["SourceSecurityGroupOwnerId"] ?? '').toString());
     if ("ToPort" in params) body.append(prefix+"ToPort", (params["ToPort"] ?? '').toString());
     if ("DryRun" in params) body.append(prefix+"DryRun", (params["DryRun"] ?? '').toString());
+    if (params["SecurityGroupRuleIds"]) qsP.appendList(body, prefix+"SecurityGroupRuleId", params["SecurityGroupRuleIds"], {"entryPrefix":"."})
     const resp = await this.#client.performRequest({
       body,
       action: "RevokeSecurityGroupIngress",
@@ -8581,6 +9093,7 @@ export class EC2 {
     const body = new URLSearchParams;
     const prefix = '';
     if (params["Ipv6Addresses"]) qsP.appendList(body, prefix+"ipv6Addresses", params["Ipv6Addresses"], {"entryPrefix":"."})
+    if (params["Ipv6Prefixes"]) qsP.appendList(body, prefix+"Ipv6Prefix", params["Ipv6Prefixes"], {"entryPrefix":"."})
     body.append(prefix+"NetworkInterfaceId", (params["NetworkInterfaceId"] ?? '').toString());
     const resp = await this.#client.performRequest({
       body,
@@ -8590,6 +9103,7 @@ export class EC2 {
     return {
       NetworkInterfaceId: xml.first("networkInterfaceId", false, x => x.content ?? ''),
       UnassignedIpv6Addresses: xml.getList("unassignedIpv6Addresses", "item").map(x => x.content ?? ''),
+      UnassignedIpv6Prefixes: xml.getList("unassignedIpv6PrefixSet", "item").map(x => x.content ?? ''),
     };
   }
 
@@ -8600,6 +9114,7 @@ export class EC2 {
     const prefix = '';
     body.append(prefix+"NetworkInterfaceId", (params["NetworkInterfaceId"] ?? '').toString());
     if (params["PrivateIpAddresses"]) qsP.appendList(body, prefix+"privateIpAddress", params["PrivateIpAddresses"], {"entryPrefix":"."})
+    if (params["Ipv4Prefixes"]) qsP.appendList(body, prefix+"Ipv4Prefix", params["Ipv4Prefixes"], {"entryPrefix":"."})
     const resp = await this.#client.performRequest({
       body,
       action: "UnassignPrivateIpAddresses",
@@ -8625,7 +9140,7 @@ export class EC2 {
   }
 
   async updateSecurityGroupRuleDescriptionsEgress(
-    params: s.UpdateSecurityGroupRuleDescriptionsEgressRequest,
+    params: s.UpdateSecurityGroupRuleDescriptionsEgressRequest = {},
   ): Promise<s.UpdateSecurityGroupRuleDescriptionsEgressResult> {
     const body = new URLSearchParams;
     const prefix = '';
@@ -8633,6 +9148,7 @@ export class EC2 {
     if ("GroupId" in params) body.append(prefix+"GroupId", (params["GroupId"] ?? '').toString());
     if ("GroupName" in params) body.append(prefix+"GroupName", (params["GroupName"] ?? '').toString());
     if (params["IpPermissions"]) qsP.appendList(body, prefix+"item", params["IpPermissions"], {"appender":IpPermission_Serialize,"entryPrefix":"."})
+    if (params["SecurityGroupRuleDescriptions"]) qsP.appendList(body, prefix+"SecurityGroupRuleDescription", params["SecurityGroupRuleDescriptions"], {"appender":SecurityGroupRuleDescription_Serialize,"entryPrefix":"."})
     const resp = await this.#client.performRequest({
       body,
       action: "UpdateSecurityGroupRuleDescriptionsEgress",
@@ -8644,7 +9160,7 @@ export class EC2 {
   }
 
   async updateSecurityGroupRuleDescriptionsIngress(
-    params: s.UpdateSecurityGroupRuleDescriptionsIngressRequest,
+    params: s.UpdateSecurityGroupRuleDescriptionsIngressRequest = {},
   ): Promise<s.UpdateSecurityGroupRuleDescriptionsIngressResult> {
     const body = new URLSearchParams;
     const prefix = '';
@@ -8652,6 +9168,7 @@ export class EC2 {
     if ("GroupId" in params) body.append(prefix+"GroupId", (params["GroupId"] ?? '').toString());
     if ("GroupName" in params) body.append(prefix+"GroupName", (params["GroupName"] ?? '').toString());
     if (params["IpPermissions"]) qsP.appendList(body, prefix+"item", params["IpPermissions"], {"appender":IpPermission_Serialize,"entryPrefix":"."})
+    if (params["SecurityGroupRuleDescriptions"]) qsP.appendList(body, prefix+"SecurityGroupRuleDescription", params["SecurityGroupRuleDescriptions"], {"appender":SecurityGroupRuleDescription_Serialize,"entryPrefix":"."})
     const resp = await this.#client.performRequest({
       body,
       action: "UpdateSecurityGroupRuleDescriptionsIngress",
@@ -8973,7 +9490,7 @@ export class EC2 {
         const resp = await this.describeSecurityGroups(params);
         if ((resp?.SecurityGroups?.flatMap(x => x?.GroupId) || '').length > 0) return resp;
       } catch (err) {
-        if (!["InvalidGroupNotFound"].includes(err.shortCode)) throw err;
+        if (!["InvalidGroup.NotFound"].includes(err.shortCode)) throw err;
       }
       await new Promise(r => setTimeout(r, 5000));
     }
@@ -9288,6 +9805,12 @@ function IamInstanceProfileSpecification_Parse(node: xmlP.XmlNode): s.IamInstanc
   };
 }
 
+function InstanceEventWindowAssociationRequest_Serialize(body: URLSearchParams, prefix: string, params: s.InstanceEventWindowAssociationRequest) {
+  if (params["InstanceIds"]) qsP.appendList(body, prefix+".InstanceId", params["InstanceIds"], {"entryPrefix":"."})
+  if (params["InstanceTags"]) qsP.appendList(body, prefix+".InstanceTag", params["InstanceTags"], {"appender":Tag_Serialize,"entryPrefix":"."})
+  if (params["DedicatedHostIds"]) qsP.appendList(body, prefix+".DedicatedHostId", params["DedicatedHostIds"], {"entryPrefix":"."})
+}
+
 function IpPermission_Serialize(body: URLSearchParams, prefix: string, params: s.IpPermission) {
   if ("FromPort" in params) body.append(prefix+".FromPort", (params["FromPort"] ?? '').toString());
   if ("IpProtocol" in params) body.append(prefix+".IpProtocol", (params["IpProtocol"] ?? '').toString());
@@ -9557,6 +10080,13 @@ function EbsBlockDevice_Parse(node: xmlP.XmlNode): s.EbsBlockDevice {
   };
 }
 
+function InstanceEventWindowTimeRangeRequest_Serialize(body: URLSearchParams, prefix: string, params: s.InstanceEventWindowTimeRangeRequest) {
+  if ("StartWeekDay" in params) body.append(prefix+".StartWeekDay", (params["StartWeekDay"] ?? '').toString());
+  if ("StartHour" in params) body.append(prefix+".StartHour", (params["StartHour"] ?? '').toString());
+  if ("EndWeekDay" in params) body.append(prefix+".EndWeekDay", (params["EndWeekDay"] ?? '').toString());
+  if ("EndHour" in params) body.append(prefix+".EndHour", (params["EndHour"] ?? '').toString());
+}
+
 function ExportToS3TaskSpecification_Serialize(body: URLSearchParams, prefix: string, params: s.ExportToS3TaskSpecification) {
   if ("ContainerFormat" in params) body.append(prefix+".ContainerFormat", (params["ContainerFormat"] ?? '').toString());
   if ("DiskImageFormat" in params) body.append(prefix+".DiskImageFormat", (params["DiskImageFormat"] ?? '').toString());
@@ -9633,6 +10163,10 @@ function LaunchTemplateInstanceNetworkInterfaceSpecificationRequest_Serialize(bo
   if ("SecondaryPrivateIpAddressCount" in params) body.append(prefix+".SecondaryPrivateIpAddressCount", (params["SecondaryPrivateIpAddressCount"] ?? '').toString());
   if ("SubnetId" in params) body.append(prefix+".SubnetId", (params["SubnetId"] ?? '').toString());
   if ("NetworkCardIndex" in params) body.append(prefix+".NetworkCardIndex", (params["NetworkCardIndex"] ?? '').toString());
+  if (params["Ipv4Prefixes"]) qsP.appendList(body, prefix+".Ipv4Prefix", params["Ipv4Prefixes"], {"appender":Ipv4PrefixSpecificationRequest_Serialize,"entryPrefix":"."})
+  if ("Ipv4PrefixCount" in params) body.append(prefix+".Ipv4PrefixCount", (params["Ipv4PrefixCount"] ?? '').toString());
+  if (params["Ipv6Prefixes"]) qsP.appendList(body, prefix+".Ipv6Prefix", params["Ipv6Prefixes"], {"appender":Ipv6PrefixSpecificationRequest_Serialize,"entryPrefix":"."})
+  if ("Ipv6PrefixCount" in params) body.append(prefix+".Ipv6PrefixCount", (params["Ipv6PrefixCount"] ?? '').toString());
 }
 
 function InstanceIpv6AddressRequest_Serialize(body: URLSearchParams, prefix: string, params: s.InstanceIpv6AddressRequest) {
@@ -9648,6 +10182,24 @@ function PrivateIpAddressSpecification_Parse(node: xmlP.XmlNode): s.PrivateIpAdd
     Primary: node.first("primary", false, x => x.content === 'true'),
     PrivateIpAddress: node.first("privateIpAddress", false, x => x.content ?? ''),
   };
+}
+
+function Ipv4PrefixSpecificationRequest_Serialize(body: URLSearchParams, prefix: string, params: s.Ipv4PrefixSpecificationRequest) {
+  if ("Ipv4Prefix" in params) body.append(prefix+".Ipv4Prefix", (params["Ipv4Prefix"] ?? '').toString());
+}
+function Ipv4PrefixSpecificationRequest_Parse(node: xmlP.XmlNode): s.Ipv4PrefixSpecificationRequest {
+  return node.strings({
+    optional: {"Ipv4Prefix":true},
+  });
+}
+
+function Ipv6PrefixSpecificationRequest_Serialize(body: URLSearchParams, prefix: string, params: s.Ipv6PrefixSpecificationRequest) {
+  if ("Ipv6Prefix" in params) body.append(prefix+".Ipv6Prefix", (params["Ipv6Prefix"] ?? '').toString());
+}
+function Ipv6PrefixSpecificationRequest_Parse(node: xmlP.XmlNode): s.Ipv6PrefixSpecificationRequest {
+  return node.strings({
+    optional: {"Ipv6Prefix":true},
+  });
 }
 
 function LaunchTemplatesMonitoringRequest_Serialize(body: URLSearchParams, prefix: string, params: s.LaunchTemplatesMonitoringRequest) {
@@ -9776,6 +10328,11 @@ function InstanceSpecification_Serialize(body: URLSearchParams, prefix: string, 
   if ("ExcludeBootVolume" in params) body.append(prefix+".ExcludeBootVolume", (params["ExcludeBootVolume"] ?? '').toString());
 }
 
+function S3ObjectTag_Serialize(body: URLSearchParams, prefix: string, params: s.S3ObjectTag) {
+  if ("Key" in params) body.append(prefix+".Key", (params["Key"] ?? '').toString());
+  if ("Value" in params) body.append(prefix+".Value", (params["Value"] ?? '').toString());
+}
+
 function TrafficMirrorPortRangeRequest_Serialize(body: URLSearchParams, prefix: string, params: s.TrafficMirrorPortRangeRequest) {
   if ("FromPort" in params) body.append(prefix+".FromPort", (params["FromPort"] ?? '').toString());
   if ("ToPort" in params) body.append(prefix+".ToPort", (params["ToPort"] ?? '').toString());
@@ -9900,9 +10457,26 @@ function SlotStartTimeRangeRequest_Serialize(body: URLSearchParams, prefix: stri
   if ("LatestTime" in params) body.append(prefix+".LatestTime", qsP.encodeDate_iso8601(params["LatestTime"]));
 }
 
+function InstanceEventWindowDisassociationRequest_Serialize(body: URLSearchParams, prefix: string, params: s.InstanceEventWindowDisassociationRequest) {
+  if (params["InstanceIds"]) qsP.appendList(body, prefix+".InstanceId", params["InstanceIds"], {"entryPrefix":"."})
+  if (params["InstanceTags"]) qsP.appendList(body, prefix+".InstanceTag", params["InstanceTags"], {"appender":Tag_Serialize,"entryPrefix":"."})
+  if (params["DedicatedHostIds"]) qsP.appendList(body, prefix+".DedicatedHostId", params["DedicatedHostIds"], {"entryPrefix":"."})
+}
+
 function ExportTaskS3LocationRequest_Serialize(body: URLSearchParams, prefix: string, params: s.ExportTaskS3LocationRequest) {
   body.append(prefix+".S3Bucket", (params["S3Bucket"] ?? '').toString());
   if ("S3Prefix" in params) body.append(prefix+".S3Prefix", (params["S3Prefix"] ?? '').toString());
+}
+
+function IntegrateServices_Serialize(body: URLSearchParams, prefix: string, params: s.IntegrateServices) {
+  if (params["AthenaIntegrations"]) qsP.appendList(body, prefix+".AthenaIntegration", params["AthenaIntegrations"], {"appender":AthenaIntegration_Serialize,"entryPrefix":"."})
+}
+
+function AthenaIntegration_Serialize(body: URLSearchParams, prefix: string, params: s.AthenaIntegration) {
+  body.append(prefix+".IntegrationResultS3DestinationArn", (params["IntegrationResultS3DestinationArn"] ?? '').toString());
+  body.append(prefix+".PartitionLoadFrequency", (params["PartitionLoadFrequency"] ?? '').toString());
+  if ("PartitionStartDate" in params) body.append(prefix+".PartitionStartDate", qsP.encodeDate_iso8601(params["PartitionStartDate"]));
+  if ("PartitionEndDate" in params) body.append(prefix+".PartitionEndDate", qsP.encodeDate_iso8601(params["PartitionEndDate"]));
 }
 
 function ClientData_Serialize(body: URLSearchParams, prefix: string, params: s.ClientData) {
@@ -10072,6 +10646,22 @@ function ReservedInstancesConfiguration_Parse(node: xmlP.XmlNode): s.ReservedIns
   };
 }
 
+function SecurityGroupRuleUpdate_Serialize(body: URLSearchParams, prefix: string, params: s.SecurityGroupRuleUpdate) {
+  if ("SecurityGroupRuleId" in params) body.append(prefix+".SecurityGroupRuleId", (params["SecurityGroupRuleId"] ?? '').toString());
+  if (params["SecurityGroupRule"] != null) SecurityGroupRuleRequest_Serialize(body, prefix+".SecurityGroupRule", params["SecurityGroupRule"]);
+}
+
+function SecurityGroupRuleRequest_Serialize(body: URLSearchParams, prefix: string, params: s.SecurityGroupRuleRequest) {
+  if ("IpProtocol" in params) body.append(prefix+".IpProtocol", (params["IpProtocol"] ?? '').toString());
+  if ("FromPort" in params) body.append(prefix+".FromPort", (params["FromPort"] ?? '').toString());
+  if ("ToPort" in params) body.append(prefix+".ToPort", (params["ToPort"] ?? '').toString());
+  if ("CidrIpv4" in params) body.append(prefix+".CidrIpv4", (params["CidrIpv4"] ?? '').toString());
+  if ("CidrIpv6" in params) body.append(prefix+".CidrIpv6", (params["CidrIpv6"] ?? '').toString());
+  if ("PrefixListId" in params) body.append(prefix+".PrefixListId", (params["PrefixListId"] ?? '').toString());
+  if ("ReferencedGroupId" in params) body.append(prefix+".ReferencedGroupId", (params["ReferencedGroupId"] ?? '').toString());
+  if ("Description" in params) body.append(prefix+".Description", (params["Description"] ?? '').toString());
+}
+
 function CreateVolumePermissionModifications_Serialize(body: URLSearchParams, prefix: string, params: s.CreateVolumePermissionModifications) {
   if (params["Add"]) qsP.appendList(body, prefix+".item", params["Add"], {"appender":CreateVolumePermission_Serialize,"entryPrefix":"."})
   if (params["Remove"]) qsP.appendList(body, prefix+".item", params["Remove"], {"appender":CreateVolumePermission_Serialize,"entryPrefix":"."})
@@ -10220,6 +10810,7 @@ function SpotFleetRequestConfigData_Serialize(body: URLSearchParams, prefix: str
   if ("InstanceInterruptionBehavior" in params) body.append(prefix+".InstanceInterruptionBehavior", (params["InstanceInterruptionBehavior"] ?? '').toString());
   if (params["LoadBalancersConfig"] != null) LoadBalancersConfig_Serialize(body, prefix+".LoadBalancersConfig", params["LoadBalancersConfig"]);
   if ("InstancePoolsToUseCount" in params) body.append(prefix+".InstancePoolsToUseCount", (params["InstancePoolsToUseCount"] ?? '').toString());
+  if ("Context" in params) body.append(prefix+".Context", (params["Context"] ?? '').toString());
   if (params["TagSpecifications"]) qsP.appendList(body, prefix+".TagSpecification", params["TagSpecifications"], {"appender":TagSpecification_Serialize,"entryPrefix":"."})
 }
 function SpotFleetRequestConfigData_Parse(node: xmlP.XmlNode): s.SpotFleetRequestConfigData {
@@ -10247,6 +10838,7 @@ function SpotFleetRequestConfigData_Parse(node: xmlP.XmlNode): s.SpotFleetReques
     InstanceInterruptionBehavior: node.first("instanceInterruptionBehavior", false, x => (x.content ?? '') as s.InstanceInterruptionBehavior),
     LoadBalancersConfig: node.first("loadBalancersConfig", false, LoadBalancersConfig_Parse),
     InstancePoolsToUseCount: node.first("instancePoolsToUseCount", false, x => parseInt(x.content ?? '0')),
+    Context: node.first("context", false, x => x.content ?? ''),
     TagSpecifications: node.getList("TagSpecification", "item").map(TagSpecification_Parse),
   };
 }
@@ -10348,6 +10940,10 @@ function InstanceNetworkInterfaceSpecification_Serialize(body: URLSearchParams, 
   if ("AssociateCarrierIpAddress" in params) body.append(prefix+".AssociateCarrierIpAddress", (params["AssociateCarrierIpAddress"] ?? '').toString());
   if ("InterfaceType" in params) body.append(prefix+".InterfaceType", (params["InterfaceType"] ?? '').toString());
   if ("NetworkCardIndex" in params) body.append(prefix+".NetworkCardIndex", (params["NetworkCardIndex"] ?? '').toString());
+  if (params["Ipv4Prefixes"]) qsP.appendList(body, prefix+".Ipv4Prefix", params["Ipv4Prefixes"], {"appender":Ipv4PrefixSpecificationRequest_Serialize,"entryPrefix":"."})
+  if ("Ipv4PrefixCount" in params) body.append(prefix+".Ipv4PrefixCount", (params["Ipv4PrefixCount"] ?? '').toString());
+  if (params["Ipv6Prefixes"]) qsP.appendList(body, prefix+".Ipv6Prefix", params["Ipv6Prefixes"], {"appender":Ipv6PrefixSpecificationRequest_Serialize,"entryPrefix":"."})
+  if ("Ipv6PrefixCount" in params) body.append(prefix+".Ipv6PrefixCount", (params["Ipv6PrefixCount"] ?? '').toString());
 }
 function InstanceNetworkInterfaceSpecification_Parse(node: xmlP.XmlNode): s.InstanceNetworkInterfaceSpecification {
   return {
@@ -10368,6 +10964,10 @@ function InstanceNetworkInterfaceSpecification_Parse(node: xmlP.XmlNode): s.Inst
     SubnetId: node.first("subnetId", false, x => x.content ?? ''),
     AssociateCarrierIpAddress: node.first("AssociateCarrierIpAddress", false, x => x.content === 'true'),
     NetworkCardIndex: node.first("NetworkCardIndex", false, x => parseInt(x.content ?? '0')),
+    Ipv4Prefixes: node.getList("Ipv4Prefix", "item").map(Ipv4PrefixSpecificationRequest_Parse),
+    Ipv4PrefixCount: node.first("Ipv4PrefixCount", false, x => parseInt(x.content ?? '0')),
+    Ipv6Prefixes: node.getList("Ipv6Prefix", "item").map(Ipv6PrefixSpecificationRequest_Parse),
+    Ipv6PrefixCount: node.first("Ipv6PrefixCount", false, x => parseInt(x.content ?? '0')),
   };
 }
 
@@ -10588,6 +11188,11 @@ function ScheduledInstancesPlacement_Serialize(body: URLSearchParams, prefix: st
   if ("GroupName" in params) body.append(prefix+".GroupName", (params["GroupName"] ?? '').toString());
 }
 
+function SecurityGroupRuleDescription_Serialize(body: URLSearchParams, prefix: string, params: s.SecurityGroupRuleDescription) {
+  if ("SecurityGroupRuleId" in params) body.append(prefix+".SecurityGroupRuleId", (params["SecurityGroupRuleId"] ?? '').toString());
+  if ("Description" in params) body.append(prefix+".Description", (params["Description"] ?? '').toString());
+}
+
 function TransitGatewayMulticastDomainAssociations_Parse(node: xmlP.XmlNode): s.TransitGatewayMulticastDomainAssociations {
   return {
     TransitGatewayMulticastDomainId: node.first("transitGatewayMulticastDomainId", false, x => x.content ?? ''),
@@ -10734,6 +11339,12 @@ function AssignedPrivateIpAddress_Parse(node: xmlP.XmlNode): s.AssignedPrivateIp
   };
 }
 
+function Ipv4PrefixSpecification_Parse(node: xmlP.XmlNode): s.Ipv4PrefixSpecification {
+  return {
+    Ipv4Prefix: node.first("ipv4Prefix", false, x => x.content ?? ''),
+  };
+}
+
 function AssociationStatus_Parse(node: xmlP.XmlNode): s.AssociationStatus {
   return {
     Code: node.first("code", false, x => (x.content ?? '') as s.AssociationStatusCode),
@@ -10755,6 +11366,35 @@ function IamInstanceProfile_Parse(node: xmlP.XmlNode): s.IamInstanceProfile {
   return {
     Arn: node.first("arn", false, x => x.content ?? ''),
     Id: node.first("id", false, x => x.content ?? ''),
+  };
+}
+
+function InstanceEventWindow_Parse(node: xmlP.XmlNode): s.InstanceEventWindow {
+  return {
+    InstanceEventWindowId: node.first("instanceEventWindowId", false, x => x.content ?? ''),
+    TimeRanges: node.getList("timeRangeSet", "item").map(InstanceEventWindowTimeRange_Parse),
+    Name: node.first("name", false, x => x.content ?? ''),
+    CronExpression: node.first("cronExpression", false, x => x.content ?? ''),
+    AssociationTarget: node.first("associationTarget", false, InstanceEventWindowAssociationTarget_Parse),
+    State: node.first("state", false, x => (x.content ?? '') as s.InstanceEventWindowState),
+    Tags: node.getList("tagSet", "item").map(Tag_Parse),
+  };
+}
+
+function InstanceEventWindowTimeRange_Parse(node: xmlP.XmlNode): s.InstanceEventWindowTimeRange {
+  return {
+    StartWeekDay: node.first("startWeekDay", false, x => (x.content ?? '') as s.WeekDay),
+    StartHour: node.first("startHour", false, x => parseInt(x.content ?? '0')),
+    EndWeekDay: node.first("endWeekDay", false, x => (x.content ?? '') as s.WeekDay),
+    EndHour: node.first("endHour", false, x => parseInt(x.content ?? '0')),
+  };
+}
+
+function InstanceEventWindowAssociationTarget_Parse(node: xmlP.XmlNode): s.InstanceEventWindowAssociationTarget {
+  return {
+    InstanceIds: node.getList("instanceIdSet", "item").map(x => x.content ?? ''),
+    Tags: node.getList("tagSet", "item").map(Tag_Parse),
+    DedicatedHostIds: node.getList("dedicatedHostIdSet", "item").map(x => x.content ?? ''),
   };
 }
 
@@ -10787,6 +11427,18 @@ function TransitGatewayAssociation_Parse(node: xmlP.XmlNode): s.TransitGatewayAs
     ResourceId: node.first("resourceId", false, x => x.content ?? ''),
     ResourceType: node.first("resourceType", false, x => (x.content ?? '') as s.TransitGatewayAttachmentResourceType),
     State: node.first("state", false, x => (x.content ?? '') as s.TransitGatewayAssociationState),
+  };
+}
+
+function TrunkInterfaceAssociation_Parse(node: xmlP.XmlNode): s.TrunkInterfaceAssociation {
+  return {
+    AssociationId: node.first("associationId", false, x => x.content ?? ''),
+    BranchInterfaceId: node.first("branchInterfaceId", false, x => x.content ?? ''),
+    TrunkInterfaceId: node.first("trunkInterfaceId", false, x => x.content ?? ''),
+    InterfaceProtocol: node.first("interfaceProtocol", false, x => (x.content ?? '') as s.InterfaceProtocolType),
+    VlanId: node.first("vlanId", false, x => parseInt(x.content ?? '0')),
+    GreKey: node.first("greKey", false, x => parseInt(x.content ?? '0')),
+    Tags: node.getList("tagSet", "item").map(Tag_Parse),
   };
 }
 
@@ -10826,6 +11478,34 @@ function ClientVpnAuthorizationRuleStatus_Parse(node: xmlP.XmlNode): s.ClientVpn
   return {
     Code: node.first("code", false, x => (x.content ?? '') as s.ClientVpnAuthorizationRuleStatusCode),
     Message: node.first("message", false, x => x.content ?? ''),
+  };
+}
+
+function SecurityGroupRule_Parse(node: xmlP.XmlNode): s.SecurityGroupRule {
+  return {
+    SecurityGroupRuleId: node.first("securityGroupRuleId", false, x => x.content ?? ''),
+    GroupId: node.first("groupId", false, x => x.content ?? ''),
+    GroupOwnerId: node.first("groupOwnerId", false, x => x.content ?? ''),
+    IsEgress: node.first("isEgress", false, x => x.content === 'true'),
+    IpProtocol: node.first("ipProtocol", false, x => x.content ?? ''),
+    FromPort: node.first("fromPort", false, x => parseInt(x.content ?? '0')),
+    ToPort: node.first("toPort", false, x => parseInt(x.content ?? '0')),
+    CidrIpv4: node.first("cidrIpv4", false, x => x.content ?? ''),
+    CidrIpv6: node.first("cidrIpv6", false, x => x.content ?? ''),
+    PrefixListId: node.first("prefixListId", false, x => x.content ?? ''),
+    ReferencedGroupInfo: node.first("referencedGroupInfo", false, ReferencedSecurityGroup_Parse),
+    Description: node.first("description", false, x => x.content ?? ''),
+    Tags: node.getList("tagSet", "item").map(Tag_Parse),
+  };
+}
+
+function ReferencedSecurityGroup_Parse(node: xmlP.XmlNode): s.ReferencedSecurityGroup {
+  return {
+    GroupId: node.first("groupId", false, x => x.content ?? ''),
+    PeeringStatus: node.first("peeringStatus", false, x => x.content ?? ''),
+    UserId: node.first("userId", false, x => x.content ?? ''),
+    VpcId: node.first("vpcId", false, x => x.content ?? ''),
+    VpcPeeringConnectionId: node.first("vpcPeeringConnectionId", false, x => x.content ?? ''),
   };
 }
 
@@ -10930,6 +11610,7 @@ function CapacityReservation_Parse(node: xmlP.XmlNode): s.CapacityReservation {
     InstanceMatchCriteria: node.first("instanceMatchCriteria", false, x => (x.content ?? '') as s.InstanceMatchCriteria),
     CreateDate: node.first("createDate", false, x => xmlP.parseTimestamp(x.content)),
     Tags: node.getList("tagSet", "item").map(Tag_Parse),
+    OutpostArn: node.first("outpostArn", false, x => x.content ?? ''),
   };
 }
 
@@ -11235,6 +11916,22 @@ function LaunchTemplateInstanceNetworkInterfaceSpecification_Parse(node: xmlP.Xm
     SecondaryPrivateIpAddressCount: node.first("secondaryPrivateIpAddressCount", false, x => parseInt(x.content ?? '0')),
     SubnetId: node.first("subnetId", false, x => x.content ?? ''),
     NetworkCardIndex: node.first("networkCardIndex", false, x => parseInt(x.content ?? '0')),
+    Ipv4Prefixes: node.getList("ipv4PrefixSet", "item").map(Ipv4PrefixSpecificationResponse_Parse),
+    Ipv4PrefixCount: node.first("ipv4PrefixCount", false, x => parseInt(x.content ?? '0')),
+    Ipv6Prefixes: node.getList("ipv6PrefixSet", "item").map(Ipv6PrefixSpecificationResponse_Parse),
+    Ipv6PrefixCount: node.first("ipv6PrefixCount", false, x => parseInt(x.content ?? '0')),
+  };
+}
+
+function Ipv4PrefixSpecificationResponse_Parse(node: xmlP.XmlNode): s.Ipv4PrefixSpecificationResponse {
+  return {
+    Ipv4Prefix: node.first("ipv4Prefix", false, x => x.content ?? ''),
+  };
+}
+
+function Ipv6PrefixSpecificationResponse_Parse(node: xmlP.XmlNode): s.Ipv6PrefixSpecificationResponse {
+  return {
+    Ipv6Prefix: node.first("ipv6Prefix", false, x => x.content ?? ''),
   };
 }
 
@@ -11401,6 +12098,7 @@ function NatGateway_Parse(node: xmlP.XmlNode): s.NatGateway {
     SubnetId: node.first("subnetId", false, x => x.content ?? ''),
     VpcId: node.first("vpcId", false, x => x.content ?? ''),
     Tags: node.getList("tagSet", "item").map(Tag_Parse),
+    ConnectivityType: node.first("connectivityType", false, x => (x.content ?? '') as s.ConnectivityType),
   };
 }
 
@@ -11487,6 +12185,8 @@ function NetworkInterface_Parse(node: xmlP.XmlNode): s.NetworkInterface {
     PrivateDnsName: node.first("privateDnsName", false, x => x.content ?? ''),
     PrivateIpAddress: node.first("privateIpAddress", false, x => x.content ?? ''),
     PrivateIpAddresses: node.getList("privateIpAddressesSet", "item").map(NetworkInterfacePrivateIpAddress_Parse),
+    Ipv4Prefixes: node.getList("ipv4PrefixSet", "item").map(Ipv4PrefixSpecification_Parse),
+    Ipv6Prefixes: node.getList("ipv6PrefixSet", "item").map(Ipv6PrefixSpecification_Parse),
     RequesterId: node.first("requesterId", false, x => x.content ?? ''),
     RequesterManaged: node.first("requesterManaged", false, x => x.content === 'true'),
     SourceDestCheck: node.first("sourceDestCheck", false, x => x.content === 'true'),
@@ -11537,6 +12237,12 @@ function NetworkInterfacePrivateIpAddress_Parse(node: xmlP.XmlNode): s.NetworkIn
   };
 }
 
+function Ipv6PrefixSpecification_Parse(node: xmlP.XmlNode): s.Ipv6PrefixSpecification {
+  return {
+    Ipv6Prefix: node.first("ipv6Prefix", false, x => x.content ?? ''),
+  };
+}
+
 function NetworkInterfacePermission_Parse(node: xmlP.XmlNode): s.NetworkInterfacePermission {
   return {
     NetworkInterfacePermissionId: node.first("networkInterfacePermissionId", false, x => x.content ?? ''),
@@ -11562,6 +12268,17 @@ function PlacementGroup_Parse(node: xmlP.XmlNode): s.PlacementGroup {
     Strategy: node.first("strategy", false, x => (x.content ?? '') as s.PlacementStrategy),
     PartitionCount: node.first("partitionCount", false, x => parseInt(x.content ?? '0')),
     GroupId: node.first("groupId", false, x => x.content ?? ''),
+    Tags: node.getList("tagSet", "item").map(Tag_Parse),
+  };
+}
+
+function ReplaceRootVolumeTask_Parse(node: xmlP.XmlNode): s.ReplaceRootVolumeTask {
+  return {
+    ReplaceRootVolumeTaskId: node.first("replaceRootVolumeTaskId", false, x => x.content ?? ''),
+    InstanceId: node.first("instanceId", false, x => x.content ?? ''),
+    TaskState: node.first("taskState", false, x => (x.content ?? '') as s.ReplaceRootVolumeTaskState),
+    StartTime: node.first("startTime", false, x => x.content ?? ''),
+    CompleteTime: node.first("completeTime", false, x => x.content ?? ''),
     Tags: node.getList("tagSet", "item").map(Tag_Parse),
   };
 }
@@ -11645,6 +12362,18 @@ function SpotInstanceStateFault_Parse(node: xmlP.XmlNode): s.SpotInstanceStateFa
   return {
     Code: node.first("code", false, x => x.content ?? ''),
     Message: node.first("message", false, x => x.content ?? ''),
+  };
+}
+
+function SubnetCidrReservation_Parse(node: xmlP.XmlNode): s.SubnetCidrReservation {
+  return {
+    SubnetCidrReservationId: node.first("subnetCidrReservationId", false, x => x.content ?? ''),
+    SubnetId: node.first("subnetId", false, x => x.content ?? ''),
+    Cidr: node.first("cidr", false, x => x.content ?? ''),
+    ReservationType: node.first("reservationType", false, x => (x.content ?? '') as s.SubnetCidrReservationType),
+    OwnerId: node.first("ownerId", false, x => x.content ?? ''),
+    Description: node.first("description", false, x => x.content ?? ''),
+    Tags: node.getList("tagSet", "item").map(Tag_Parse),
   };
 }
 
@@ -12090,6 +12819,13 @@ function DeleteFleetError_Parse(node: xmlP.XmlNode): s.DeleteFleetError {
   return {
     Code: node.first("code", false, x => (x.content ?? '') as s.DeleteFleetErrorCode),
     Message: node.first("message", false, x => x.content ?? ''),
+  };
+}
+
+function InstanceEventWindowStateChange_Parse(node: xmlP.XmlNode): s.InstanceEventWindowStateChange {
+  return {
+    InstanceEventWindowId: node.first("instanceEventWindowId", false, x => x.content ?? ''),
+    State: node.first("state", false, x => (x.content ?? '') as s.InstanceEventWindowState),
   };
 }
 
@@ -12563,6 +13299,7 @@ function FleetData_Parse(node: xmlP.XmlNode): s.FleetData {
     Tags: node.getList("tagSet", "item").map(Tag_Parse),
     Errors: node.getList("errorSet", "item").map(DescribeFleetError_Parse),
     Instances: node.getList("fleetInstanceSet", "item").map(DescribeFleetsInstances_Parse),
+    Context: node.first("context", false, x => x.content ?? ''),
   };
 }
 
@@ -12834,6 +13571,7 @@ function Image_Parse(node: xmlP.XmlNode): s.Image {
     Tags: node.getList("tagSet", "item").map(Tag_Parse),
     VirtualizationType: node.first("virtualizationType", false, x => (x.content ?? '') as s.VirtualizationType),
     BootMode: node.first("bootMode", false, x => (x.content ?? '') as s.BootModeValues),
+    DeprecationTime: node.first("deprecationTime", false, x => x.content ?? ''),
   };
 }
 
@@ -13277,6 +14015,8 @@ function InstanceNetworkInterface_Parse(node: xmlP.XmlNode): s.InstanceNetworkIn
     SubnetId: node.first("subnetId", false, x => x.content ?? ''),
     VpcId: node.first("vpcId", false, x => x.content ?? ''),
     InterfaceType: node.first("interfaceType", false, x => x.content ?? ''),
+    Ipv4Prefixes: node.getList("ipv4PrefixSet", "item").map(InstanceIpv4Prefix_Parse),
+    Ipv6Prefixes: node.getList("ipv6PrefixSet", "item").map(InstanceIpv6Prefix_Parse),
   };
 }
 
@@ -13306,6 +14046,18 @@ function InstancePrivateIpAddress_Parse(node: xmlP.XmlNode): s.InstancePrivateIp
     Primary: node.first("primary", false, x => x.content === 'true'),
     PrivateDnsName: node.first("privateDnsName", false, x => x.content ?? ''),
     PrivateIpAddress: node.first("privateIpAddress", false, x => x.content ?? ''),
+  };
+}
+
+function InstanceIpv4Prefix_Parse(node: xmlP.XmlNode): s.InstanceIpv4Prefix {
+  return {
+    Ipv4Prefix: node.first("ipv4Prefix", false, x => x.content ?? ''),
+  };
+}
+
+function InstanceIpv6Prefix_Parse(node: xmlP.XmlNode): s.InstanceIpv6Prefix {
+  return {
+    Ipv6Prefix: node.first("ipv6Prefix", false, x => x.content ?? ''),
   };
 }
 
@@ -13364,6 +14116,7 @@ function KeyPairInfo_Parse(node: xmlP.XmlNode): s.KeyPairInfo {
     KeyPairId: node.first("keyPairId", false, x => x.content ?? ''),
     KeyFingerprint: node.first("keyFingerprint", false, x => x.content ?? ''),
     KeyName: node.first("keyName", false, x => x.content ?? ''),
+    KeyType: node.first("keyType", false, x => (x.content ?? '') as s.KeyType),
     Tags: node.getList("tagSet", "item").map(Tag_Parse),
   };
 }
@@ -13892,6 +14645,18 @@ function StaleIpPermission_Parse(node: xmlP.XmlNode): s.StaleIpPermission {
     PrefixListIds: node.getList("prefixListIds", "item").map(x => x.content ?? ''),
     ToPort: node.first("toPort", false, x => parseInt(x.content ?? '0')),
     UserIdGroupPairs: node.getList("groups", "item").map(UserIdGroupPair_Parse),
+  };
+}
+
+function StoreImageTaskResult_Parse(node: xmlP.XmlNode): s.StoreImageTaskResult {
+  return {
+    AmiId: node.first("amiId", false, x => x.content ?? ''),
+    TaskStartTime: node.first("taskStartTime", false, x => xmlP.parseTimestamp(x.content)),
+    Bucket: node.first("bucket", false, x => x.content ?? ''),
+    S3objectKey: node.first("s3objectKey", false, x => x.content ?? ''),
+    ProgressPercentage: node.first("progressPercentage", false, x => parseInt(x.content ?? '0')),
+    StoreTaskState: node.first("storeTaskState", false, x => x.content ?? ''),
+    StoreTaskFailureReason: node.first("storeTaskFailureReason", false, x => x.content ?? ''),
   };
 }
 

@@ -83,6 +83,8 @@ export interface ApplySecurityGroupsToClientVpnTargetNetworkRequest {
 export interface AssignIpv6AddressesRequest {
   Ipv6AddressCount?: number | null;
   Ipv6Addresses?: string[] | null;
+  Ipv6PrefixCount?: number | null;
+  Ipv6Prefixes?: string[] | null;
   NetworkInterfaceId: string;
 }
 
@@ -92,6 +94,8 @@ export interface AssignPrivateIpAddressesRequest {
   NetworkInterfaceId: string;
   PrivateIpAddresses?: string[] | null;
   SecondaryPrivateIpAddressCount?: number | null;
+  Ipv4Prefixes?: string[] | null;
+  Ipv4PrefixCount?: number | null;
 }
 
 // refs: 1 - tags: named, input
@@ -134,6 +138,13 @@ export interface AssociateIamInstanceProfileRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface AssociateInstanceEventWindowRequest {
+  DryRun?: boolean | null;
+  InstanceEventWindowId: string;
+  AssociationTarget: InstanceEventWindowAssociationRequest;
+}
+
+// refs: 1 - tags: named, input
 export interface AssociateRouteTableRequest {
   DryRun?: boolean | null;
   RouteTableId: string;
@@ -143,8 +154,8 @@ export interface AssociateRouteTableRequest {
 
 // refs: 1 - tags: named, input
 export interface AssociateSubnetCidrBlockRequest {
-  SubnetId: string;
   Ipv6CidrBlock: string;
+  SubnetId: string;
 }
 
 // refs: 1 - tags: named, input
@@ -159,6 +170,16 @@ export interface AssociateTransitGatewayMulticastDomainRequest {
 export interface AssociateTransitGatewayRouteTableRequest {
   TransitGatewayRouteTableId: string;
   TransitGatewayAttachmentId: string;
+  DryRun?: boolean | null;
+}
+
+// refs: 1 - tags: named, input
+export interface AssociateTrunkInterfaceRequest {
+  BranchInterfaceId: string;
+  TrunkInterfaceId: string;
+  VlanId?: number | null;
+  GreKey?: number | null;
+  ClientToken?: string | null;
   DryRun?: boolean | null;
 }
 
@@ -227,6 +248,7 @@ export interface AuthorizeSecurityGroupEgressRequest {
   DryRun?: boolean | null;
   GroupId: string;
   IpPermissions?: IpPermission[] | null;
+  TagSpecifications?: TagSpecification[] | null;
   CidrIp?: string | null;
   FromPort?: number | null;
   IpProtocol?: string | null;
@@ -247,6 +269,7 @@ export interface AuthorizeSecurityGroupIngressRequest {
   SourceSecurityGroupOwnerId?: string | null;
   ToPort?: number | null;
   DryRun?: boolean | null;
+  TagSpecifications?: TagSpecification[] | null;
 }
 
 // refs: 1 - tags: named, input
@@ -365,6 +388,7 @@ export interface CreateCapacityReservationRequest {
   InstanceMatchCriteria?: InstanceMatchCriteria | null;
   TagSpecifications?: TagSpecification[] | null;
   DryRun?: boolean | null;
+  OutpostArn?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -457,6 +481,7 @@ export interface CreateFleetRequest {
   ValidUntil?: Date | number | null;
   ReplaceUnhealthyInstances?: boolean | null;
   TagSpecifications?: TagSpecification[] | null;
+  Context?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -498,6 +523,15 @@ export interface CreateImageRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface CreateInstanceEventWindowRequest {
+  DryRun?: boolean | null;
+  Name?: string | null;
+  TimeRanges?: InstanceEventWindowTimeRangeRequest[] | null;
+  CronExpression?: string | null;
+  TagSpecifications?: TagSpecification[] | null;
+}
+
+// refs: 1 - tags: named, input
 export interface CreateInstanceExportTaskRequest {
   Description?: string | null;
   ExportToS3Task: ExportToS3TaskSpecification;
@@ -516,6 +550,7 @@ export interface CreateInternetGatewayRequest {
 export interface CreateKeyPairRequest {
   KeyName: string;
   DryRun?: boolean | null;
+  KeyType?: KeyType | null;
   TagSpecifications?: TagSpecification[] | null;
 }
 
@@ -569,11 +604,12 @@ export interface CreateManagedPrefixListRequest {
 
 // refs: 1 - tags: named, input
 export interface CreateNatGatewayRequest {
+  AllocationId?: string | null;
   ClientToken?: string | null;
   DryRun?: boolean | null;
   SubnetId: string;
   TagSpecifications?: TagSpecification[] | null;
-  AllocationId: string;
+  ConnectivityType?: ConnectivityType | null;
 }
 
 // refs: 1 - tags: named, input
@@ -620,9 +656,14 @@ export interface CreateNetworkInterfaceRequest {
   PrivateIpAddress?: string | null;
   PrivateIpAddresses?: PrivateIpAddressSpecification[] | null;
   SecondaryPrivateIpAddressCount?: number | null;
+  Ipv4Prefixes?: Ipv4PrefixSpecificationRequest[] | null;
+  Ipv4PrefixCount?: number | null;
+  Ipv6Prefixes?: Ipv6PrefixSpecificationRequest[] | null;
+  Ipv6PrefixCount?: number | null;
   InterfaceType?: NetworkInterfaceCreationType | null;
   SubnetId: string;
   TagSpecifications?: TagSpecification[] | null;
+  ClientToken?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -644,11 +685,29 @@ export interface CreatePlacementGroupRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface CreateReplaceRootVolumeTaskRequest {
+  InstanceId: string;
+  SnapshotId?: string | null;
+  ClientToken?: string | null;
+  DryRun?: boolean | null;
+  TagSpecifications?: TagSpecification[] | null;
+}
+
+// refs: 1 - tags: named, input
 export interface CreateReservedInstancesListingRequest {
   ClientToken: string;
   InstanceCount: number;
   PriceSchedules: PriceScheduleSpecification[];
   ReservedInstancesId: string;
+}
+
+// refs: 1 - tags: named, input
+export interface CreateRestoreImageTaskRequest {
+  Bucket: string;
+  ObjectKey: string;
+  Name?: string | null;
+  TagSpecifications?: TagSpecification[] | null;
+  DryRun?: boolean | null;
 }
 
 // refs: 1 - tags: named, input
@@ -713,6 +772,14 @@ export interface CreateSpotDatafeedSubscriptionRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface CreateStoreImageTaskRequest {
+  ImageId: string;
+  Bucket: string;
+  S3ObjectTags?: S3ObjectTag[] | null;
+  DryRun?: boolean | null;
+}
+
+// refs: 1 - tags: named, input
 export interface CreateSubnetRequest {
   TagSpecifications?: TagSpecification[] | null;
   AvailabilityZone?: string | null;
@@ -722,6 +789,16 @@ export interface CreateSubnetRequest {
   VpcId: string;
   DryRun?: boolean | null;
   CidrBlock: string;
+}
+
+// refs: 1 - tags: named, input
+export interface CreateSubnetCidrReservationRequest {
+  TagSpecifications?: TagSpecification[] | null;
+  SubnetId: string;
+  Cidr: string;
+  ReservationType: SubnetCidrReservationType;
+  Description?: string | null;
+  DryRun?: boolean | null;
 }
 
 // refs: 1 - tags: named, input
@@ -873,6 +950,7 @@ export interface CreateVolumeRequest {
   TagSpecifications?: TagSpecification[] | null;
   MultiAttachEnabled?: boolean | null;
   Throughput?: number | null;
+  ClientToken?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -1017,6 +1095,13 @@ export interface DeleteFpgaImageRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface DeleteInstanceEventWindowRequest {
+  DryRun?: boolean | null;
+  ForceDelete?: boolean | null;
+  InstanceEventWindowId: string;
+}
+
+// refs: 1 - tags: named, input
 export interface DeleteInternetGatewayRequest {
   DryRun?: boolean | null;
   InternetGatewayId: string;
@@ -1156,6 +1241,12 @@ export interface DeleteSpotDatafeedSubscriptionRequest {
 // refs: 1 - tags: named, input
 export interface DeleteSubnetRequest {
   SubnetId: string;
+  DryRun?: boolean | null;
+}
+
+// refs: 1 - tags: named, input
+export interface DeleteSubnetCidrReservationRequest {
+  SubnetCidrReservationId: string;
   DryRun?: boolean | null;
 }
 
@@ -1642,6 +1733,7 @@ export interface DescribeImagesRequest {
   Filters?: Filter[] | null;
   ImageIds?: string[] | null;
   Owners?: string[] | null;
+  IncludeDeprecated?: boolean | null;
   DryRun?: boolean | null;
 }
 
@@ -1682,6 +1774,15 @@ export interface DescribeInstanceCreditSpecificationsRequest {
 // refs: 1 - tags: named, input
 export interface DescribeInstanceEventNotificationAttributesRequest {
   DryRun?: boolean | null;
+}
+
+// refs: 1 - tags: named, input
+export interface DescribeInstanceEventWindowsRequest {
+  DryRun?: boolean | null;
+  InstanceEventWindowIds?: string[] | null;
+  Filters?: Filter[] | null;
+  MaxResults?: number | null;
+  NextToken?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -1947,6 +2048,15 @@ export interface DescribeRegionsRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface DescribeReplaceRootVolumeTasksRequest {
+  ReplaceRootVolumeTaskIds?: string[] | null;
+  Filters?: Filter[] | null;
+  MaxResults?: number | null;
+  NextToken?: string | null;
+  DryRun?: boolean | null;
+}
+
+// refs: 1 - tags: named, input
 export interface DescribeReservedInstancesRequest {
   Filters?: Filter[] | null;
   OfferingClass?: OfferingClassType | null;
@@ -2023,6 +2133,15 @@ export interface DescribeScheduledInstancesRequest {
 export interface DescribeSecurityGroupReferencesRequest {
   DryRun?: boolean | null;
   GroupId: string[];
+}
+
+// refs: 1 - tags: named, input
+export interface DescribeSecurityGroupRulesRequest {
+  Filters?: Filter[] | null;
+  SecurityGroupRuleIds?: string[] | null;
+  DryRun?: boolean | null;
+  NextToken?: string | null;
+  MaxResults?: number | null;
 }
 
 // refs: 1 - tags: named, input
@@ -2112,6 +2231,15 @@ export interface DescribeStaleSecurityGroupsRequest {
   MaxResults?: number | null;
   NextToken?: string | null;
   VpcId: string;
+}
+
+// refs: 1 - tags: named, input
+export interface DescribeStoreImageTasksRequest {
+  ImageIds?: string[] | null;
+  DryRun?: boolean | null;
+  Filters?: Filter[] | null;
+  NextToken?: string | null;
+  MaxResults?: number | null;
 }
 
 // refs: 1 - tags: named, input
@@ -2228,6 +2356,15 @@ export interface DescribeTransitGatewaysRequest {
   MaxResults?: number | null;
   NextToken?: string | null;
   DryRun?: boolean | null;
+}
+
+// refs: 1 - tags: named, input
+export interface DescribeTrunkInterfaceAssociationsRequest {
+  AssociationIds?: string[] | null;
+  DryRun?: boolean | null;
+  Filters?: Filter[] | null;
+  NextToken?: string | null;
+  MaxResults?: number | null;
 }
 
 // refs: 1 - tags: named, input
@@ -2420,6 +2557,17 @@ export interface DisableFastSnapshotRestoresRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface DisableImageDeprecationRequest {
+  ImageId: string;
+  DryRun?: boolean | null;
+}
+
+// refs: 1 - tags: named, input
+export interface DisableSerialConsoleAccessRequest {
+  DryRun?: boolean | null;
+}
+
+// refs: 1 - tags: named, input
 export interface DisableTransitGatewayRouteTablePropagationRequest {
   TransitGatewayRouteTableId: string;
   TransitGatewayAttachmentId: string;
@@ -2471,6 +2619,13 @@ export interface DisassociateIamInstanceProfileRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface DisassociateInstanceEventWindowRequest {
+  DryRun?: boolean | null;
+  InstanceEventWindowId: string;
+  AssociationTarget: InstanceEventWindowDisassociationRequest;
+}
+
+// refs: 1 - tags: named, input
 export interface DisassociateRouteTableRequest {
   AssociationId: string;
   DryRun?: boolean | null;
@@ -2497,6 +2652,13 @@ export interface DisassociateTransitGatewayRouteTableRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface DisassociateTrunkInterfaceRequest {
+  AssociationId: string;
+  ClientToken?: string | null;
+  DryRun?: boolean | null;
+}
+
+// refs: 1 - tags: named, input
 export interface DisassociateVpcCidrBlockRequest {
   AssociationId: string;
 }
@@ -2510,6 +2672,18 @@ export interface EnableEbsEncryptionByDefaultRequest {
 export interface EnableFastSnapshotRestoresRequest {
   AvailabilityZones: string[];
   SourceSnapshotIds: string[];
+  DryRun?: boolean | null;
+}
+
+// refs: 1 - tags: named, input
+export interface EnableImageDeprecationRequest {
+  ImageId: string;
+  DeprecateAt: Date | number;
+  DryRun?: boolean | null;
+}
+
+// refs: 1 - tags: named, input
+export interface EnableSerialConsoleAccessRequest {
   DryRun?: boolean | null;
 }
 
@@ -2638,6 +2812,14 @@ export interface GetEbsEncryptionByDefaultRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface GetFlowLogsIntegrationTemplateRequest {
+  DryRun?: boolean | null;
+  FlowLogId: string;
+  ConfigDeliveryS3DestinationArn: string;
+  IntegrateServices: IntegrateServices;
+}
+
+// refs: 1 - tags: named, input
 export interface GetGroupsForCapacityReservationRequest {
   CapacityReservationId: string;
   NextToken?: string | null;
@@ -2685,6 +2867,20 @@ export interface GetReservedInstancesExchangeQuoteRequest {
   DryRun?: boolean | null;
   ReservedInstanceIds: string[];
   TargetConfigurations?: TargetConfigurationRequest[] | null;
+}
+
+// refs: 1 - tags: named, input
+export interface GetSerialConsoleAccessStatusRequest {
+  DryRun?: boolean | null;
+}
+
+// refs: 1 - tags: named, input
+export interface GetSubnetCidrReservationsRequest {
+  Filters?: Filter[] | null;
+  SubnetId: string;
+  DryRun?: boolean | null;
+  NextToken?: string | null;
+  MaxResults?: number | null;
 }
 
 // refs: 1 - tags: named, input
@@ -2856,6 +3052,7 @@ export interface ModifyFleetRequest {
   LaunchTemplateConfigs?: FleetLaunchTemplateConfigRequest[] | null;
   FleetId: string;
   TargetCapacitySpecification?: TargetCapacitySpecificationRequest | null;
+  Context?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -2951,6 +3148,15 @@ export interface ModifyInstanceEventStartTimeRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface ModifyInstanceEventWindowRequest {
+  DryRun?: boolean | null;
+  Name?: string | null;
+  InstanceEventWindowId: string;
+  TimeRanges?: InstanceEventWindowTimeRangeRequest[] | null;
+  CronExpression?: string | null;
+}
+
+// refs: 1 - tags: named, input
 export interface ModifyInstanceMetadataOptionsRequest {
   InstanceId: string;
   HttpTokens?: HttpTokensState | null;
@@ -3007,6 +3213,13 @@ export interface ModifyReservedInstancesRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface ModifySecurityGroupRulesRequest {
+  GroupId: string;
+  SecurityGroupRules: SecurityGroupRuleUpdate[];
+  DryRun?: boolean | null;
+}
+
+// refs: 1 - tags: named, input
 export interface ModifySnapshotAttributeRequest {
   Attribute?: SnapshotAttributeName | null;
   CreateVolumePermission?: CreateVolumePermissionModifications | null;
@@ -3024,6 +3237,7 @@ export interface ModifySpotFleetRequestRequest {
   SpotFleetRequestId: string;
   TargetCapacity?: number | null;
   OnDemandTargetCapacity?: number | null;
+  Context?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -3236,6 +3450,7 @@ export interface ProvisionByoipCidrRequest {
   Description?: string | null;
   DryRun?: boolean | null;
   PoolTagSpecifications?: TagSpecification[] | null;
+  MultiRegion?: boolean | null;
 }
 
 // refs: 1 - tags: named, input
@@ -3528,6 +3743,7 @@ export interface RevokeSecurityGroupEgressRequest {
   DryRun?: boolean | null;
   GroupId: string;
   IpPermissions?: IpPermission[] | null;
+  SecurityGroupRuleIds?: string[] | null;
   CidrIp?: string | null;
   FromPort?: number | null;
   IpProtocol?: string | null;
@@ -3548,6 +3764,7 @@ export interface RevokeSecurityGroupIngressRequest {
   SourceSecurityGroupOwnerId?: string | null;
   ToPort?: number | null;
   DryRun?: boolean | null;
+  SecurityGroupRuleIds?: string[] | null;
 }
 
 // refs: 1 - tags: named, input
@@ -3678,14 +3895,16 @@ export interface TerminateInstancesRequest {
 
 // refs: 1 - tags: named, input
 export interface UnassignIpv6AddressesRequest {
-  Ipv6Addresses: string[];
+  Ipv6Addresses?: string[] | null;
+  Ipv6Prefixes?: string[] | null;
   NetworkInterfaceId: string;
 }
 
 // refs: 1 - tags: named, input
 export interface UnassignPrivateIpAddressesRequest {
   NetworkInterfaceId: string;
-  PrivateIpAddresses: string[];
+  PrivateIpAddresses?: string[] | null;
+  Ipv4Prefixes?: string[] | null;
 }
 
 // refs: 1 - tags: named, input
@@ -3699,7 +3918,8 @@ export interface UpdateSecurityGroupRuleDescriptionsEgressRequest {
   DryRun?: boolean | null;
   GroupId?: string | null;
   GroupName?: string | null;
-  IpPermissions: IpPermission[];
+  IpPermissions?: IpPermission[] | null;
+  SecurityGroupRuleDescriptions?: SecurityGroupRuleDescription[] | null;
 }
 
 // refs: 1 - tags: named, input
@@ -3707,7 +3927,8 @@ export interface UpdateSecurityGroupRuleDescriptionsIngressRequest {
   DryRun?: boolean | null;
   GroupId?: string | null;
   GroupName?: string | null;
-  IpPermissions: IpPermission[];
+  IpPermissions?: IpPermission[] | null;
+  SecurityGroupRuleDescriptions?: SecurityGroupRuleDescription[] | null;
 }
 
 // refs: 1 - tags: named, input
@@ -3776,6 +3997,7 @@ export interface ApplySecurityGroupsToClientVpnTargetNetworkResult {
 // refs: 1 - tags: named, output
 export interface AssignIpv6AddressesResult {
   AssignedIpv6Addresses: string[];
+  AssignedIpv6Prefixes: string[];
   NetworkInterfaceId?: string | null;
 }
 
@@ -3783,6 +4005,7 @@ export interface AssignIpv6AddressesResult {
 export interface AssignPrivateIpAddressesResult {
   NetworkInterfaceId?: string | null;
   AssignedPrivateIpAddresses: AssignedPrivateIpAddress[];
+  AssignedIpv4Prefixes: Ipv4PrefixSpecification[];
 }
 
 // refs: 1 - tags: named, output
@@ -3809,6 +4032,11 @@ export interface AssociateIamInstanceProfileResult {
 }
 
 // refs: 1 - tags: named, output
+export interface AssociateInstanceEventWindowResult {
+  InstanceEventWindow?: InstanceEventWindow | null;
+}
+
+// refs: 1 - tags: named, output
 export interface AssociateRouteTableResult {
   AssociationId?: string | null;
   AssociationState?: RouteTableAssociationState | null;
@@ -3828,6 +4056,12 @@ export interface AssociateTransitGatewayMulticastDomainResult {
 // refs: 1 - tags: named, output
 export interface AssociateTransitGatewayRouteTableResult {
   Association?: TransitGatewayAssociation | null;
+}
+
+// refs: 1 - tags: named, output
+export interface AssociateTrunkInterfaceResult {
+  InterfaceAssociation?: TrunkInterfaceAssociation | null;
+  ClientToken?: string | null;
 }
 
 // refs: 1 - tags: named, output
@@ -3866,6 +4100,18 @@ export interface AttachVpnGatewayResult {
 // refs: 1 - tags: named, output
 export interface AuthorizeClientVpnIngressResult {
   Status?: ClientVpnAuthorizationRuleStatus | null;
+}
+
+// refs: 1 - tags: named, output
+export interface AuthorizeSecurityGroupEgressResult {
+  Return?: boolean | null;
+  SecurityGroupRules: SecurityGroupRule[];
+}
+
+// refs: 1 - tags: named, output
+export interface AuthorizeSecurityGroupIngressResult {
+  Return?: boolean | null;
+  SecurityGroupRules: SecurityGroupRule[];
 }
 
 // refs: 1 - tags: named, output
@@ -4002,6 +4248,11 @@ export interface CreateImageResult {
 }
 
 // refs: 1 - tags: named, output
+export interface CreateInstanceEventWindowResult {
+  InstanceEventWindow?: InstanceEventWindow | null;
+}
+
+// refs: 1 - tags: named, output
 export interface CreateInstanceExportTaskResult {
   ExportTask?: ExportTask | null;
 }
@@ -4066,6 +4317,7 @@ export interface CreateNetworkInsightsPathResult {
 // refs: 1 - tags: named, output
 export interface CreateNetworkInterfaceResult {
   NetworkInterface?: NetworkInterface | null;
+  ClientToken?: string | null;
 }
 
 // refs: 1 - tags: named, output
@@ -4079,8 +4331,18 @@ export interface CreatePlacementGroupResult {
 }
 
 // refs: 1 - tags: named, output
+export interface CreateReplaceRootVolumeTaskResult {
+  ReplaceRootVolumeTask?: ReplaceRootVolumeTask | null;
+}
+
+// refs: 1 - tags: named, output
 export interface CreateReservedInstancesListingResult {
   ReservedInstancesListings: ReservedInstancesListing[];
+}
+
+// refs: 1 - tags: named, output
+export interface CreateRestoreImageTaskResult {
+  ImageId?: string | null;
 }
 
 // refs: 1 - tags: named, output
@@ -4129,8 +4391,18 @@ export interface CreateSpotDatafeedSubscriptionResult {
 }
 
 // refs: 1 - tags: named, output
+export interface CreateStoreImageTaskResult {
+  ObjectKey?: string | null;
+}
+
+// refs: 1 - tags: named, output
 export interface CreateSubnetResult {
   Subnet?: Subnet | null;
+}
+
+// refs: 1 - tags: named, output
+export interface CreateSubnetCidrReservationResult {
+  SubnetCidrReservation?: SubnetCidrReservation | null;
 }
 
 // refs: 1 - tags: named, output
@@ -4297,6 +4569,11 @@ export interface DeleteFpgaImageResult {
 }
 
 // refs: 1 - tags: named, output
+export interface DeleteInstanceEventWindowResult {
+  InstanceEventWindowState?: InstanceEventWindowStateChange | null;
+}
+
+// refs: 1 - tags: named, output
 export interface DeleteLaunchTemplateResult {
   LaunchTemplate?: LaunchTemplate | null;
 }
@@ -4346,6 +4623,11 @@ export interface DeleteNetworkInterfacePermissionResult {
 export interface DeleteQueuedReservedInstancesResult {
   SuccessfulQueuedPurchaseDeletions: SuccessfulQueuedPurchaseDeletion[];
   FailedQueuedPurchaseDeletions: FailedQueuedPurchaseDeletion[];
+}
+
+// refs: 1 - tags: named, output
+export interface DeleteSubnetCidrReservationResult {
+  DeletedSubnetCidrReservation?: SubnetCidrReservation | null;
 }
 
 // refs: 1 - tags: named, output
@@ -4726,6 +5008,12 @@ export interface DescribeInstanceEventNotificationAttributesResult {
 }
 
 // refs: 1 - tags: named, output
+export interface DescribeInstanceEventWindowsResult {
+  InstanceEventWindows: InstanceEventWindow[];
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
 export interface DescribeInstanceStatusResult {
   InstanceStatuses: InstanceStatus[];
   NextToken?: string | null;
@@ -4900,6 +5188,12 @@ export interface DescribeRegionsResult {
 }
 
 // refs: 1 - tags: named, output
+export interface DescribeReplaceRootVolumeTasksResult {
+  ReplaceRootVolumeTasks: ReplaceRootVolumeTask[];
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
 export interface DescribeReservedInstancesResult {
   ReservedInstances: ReservedInstances[];
 }
@@ -4942,6 +5236,12 @@ export interface DescribeScheduledInstancesResult {
 // refs: 1 - tags: named, output
 export interface DescribeSecurityGroupReferencesResult {
   SecurityGroupReferenceSet: SecurityGroupReference[];
+}
+
+// refs: 1 - tags: named, output
+export interface DescribeSecurityGroupRulesResult {
+  SecurityGroupRules: SecurityGroupRule[];
+  NextToken?: string | null;
 }
 
 // refs: 1 - tags: named, output
@@ -5006,6 +5306,12 @@ export interface DescribeSpotPriceHistoryResult {
 export interface DescribeStaleSecurityGroupsResult {
   NextToken?: string | null;
   StaleSecurityGroupSet: StaleSecurityGroup[];
+}
+
+// refs: 1 - tags: named, output
+export interface DescribeStoreImageTasksResult {
+  StoreImageTaskResults: StoreImageTaskResult[];
+  NextToken?: string | null;
 }
 
 // refs: 1 - tags: named, output
@@ -5083,6 +5389,12 @@ export interface DescribeTransitGatewayVpcAttachmentsResult {
 // refs: 1 - tags: named, output
 export interface DescribeTransitGatewaysResult {
   TransitGateways: TransitGateway[];
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface DescribeTrunkInterfaceAssociationsResult {
+  InterfaceAssociations: TrunkInterfaceAssociation[];
   NextToken?: string | null;
 }
 
@@ -5205,6 +5517,16 @@ export interface DisableFastSnapshotRestoresResult {
 }
 
 // refs: 1 - tags: named, output
+export interface DisableImageDeprecationResult {
+  Return?: boolean | null;
+}
+
+// refs: 1 - tags: named, output
+export interface DisableSerialConsoleAccessResult {
+  SerialConsoleAccessEnabled?: boolean | null;
+}
+
+// refs: 1 - tags: named, output
 export interface DisableTransitGatewayRouteTablePropagationResult {
   Propagation?: TransitGatewayPropagation | null;
 }
@@ -5236,6 +5558,11 @@ export interface DisassociateIamInstanceProfileResult {
 }
 
 // refs: 1 - tags: named, output
+export interface DisassociateInstanceEventWindowResult {
+  InstanceEventWindow?: InstanceEventWindow | null;
+}
+
+// refs: 1 - tags: named, output
 export interface DisassociateSubnetCidrBlockResult {
   Ipv6CidrBlockAssociation?: SubnetIpv6CidrBlockAssociation | null;
   SubnetId?: string | null;
@@ -5249,6 +5576,12 @@ export interface DisassociateTransitGatewayMulticastDomainResult {
 // refs: 1 - tags: named, output
 export interface DisassociateTransitGatewayRouteTableResult {
   Association?: TransitGatewayAssociation | null;
+}
+
+// refs: 1 - tags: named, output
+export interface DisassociateTrunkInterfaceResult {
+  Return?: boolean | null;
+  ClientToken?: string | null;
 }
 
 // refs: 1 - tags: named, output
@@ -5267,6 +5600,16 @@ export interface EnableEbsEncryptionByDefaultResult {
 export interface EnableFastSnapshotRestoresResult {
   Successful: EnableFastSnapshotRestoreSuccessItem[];
   Unsuccessful: EnableFastSnapshotRestoreErrorItem[];
+}
+
+// refs: 1 - tags: named, output
+export interface EnableImageDeprecationResult {
+  Return?: boolean | null;
+}
+
+// refs: 1 - tags: named, output
+export interface EnableSerialConsoleAccessResult {
+  SerialConsoleAccessEnabled?: boolean | null;
 }
 
 // refs: 1 - tags: named, output
@@ -5372,6 +5715,11 @@ export interface GetEbsEncryptionByDefaultResult {
 }
 
 // refs: 1 - tags: named, output
+export interface GetFlowLogsIntegrationTemplateResult {
+  Result?: string | null;
+}
+
+// refs: 1 - tags: named, output
 export interface GetGroupsForCapacityReservationResult {
   NextToken?: string | null;
   CapacityReservationGroups: CapacityReservationGroup[];
@@ -5420,6 +5768,18 @@ export interface GetReservedInstancesExchangeQuoteResult {
   TargetConfigurationValueRollup?: ReservationValue | null;
   TargetConfigurationValueSet: TargetReservationValue[];
   ValidationFailureReason?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface GetSerialConsoleAccessStatusResult {
+  SerialConsoleAccessEnabled?: boolean | null;
+}
+
+// refs: 1 - tags: named, output
+export interface GetSubnetCidrReservationsResult {
+  SubnetIpv4CidrReservations: SubnetCidrReservation[];
+  SubnetIpv6CidrReservations: SubnetCidrReservation[];
+  NextToken?: string | null;
 }
 
 // refs: 1 - tags: named, output
@@ -5565,6 +5925,11 @@ export interface ModifyInstanceEventStartTimeResult {
 }
 
 // refs: 1 - tags: named, output
+export interface ModifyInstanceEventWindowResult {
+  InstanceEventWindow?: InstanceEventWindow | null;
+}
+
+// refs: 1 - tags: named, output
 export interface ModifyInstanceMetadataOptionsResult {
   InstanceId?: string | null;
   InstanceMetadataOptions?: InstanceMetadataOptionsResponse | null;
@@ -5588,6 +5953,11 @@ export interface ModifyManagedPrefixListResult {
 // refs: 1 - tags: named, output
 export interface ModifyReservedInstancesResult {
   ReservedInstancesModificationId?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface ModifySecurityGroupRulesResult {
+  Return?: boolean | null;
 }
 
 // refs: 1 - tags: named, output
@@ -5909,6 +6279,7 @@ export interface TerminateInstancesResult {
 export interface UnassignIpv6AddressesResult {
   NetworkInterfaceId?: string | null;
   UnassignedIpv6Addresses: string[];
+  UnassignedIpv6Prefixes: string[];
 }
 
 // refs: 1 - tags: named, output
@@ -5943,13 +6314,13 @@ export type DomainType =
 | "standard"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 57 - tags: input, named, interface, output
+// refs: 63 - tags: input, named, interface, output
 export interface TagSpecification {
   ResourceType?: ResourceType | null;
   Tags: Tag[];
 }
 
-// refs: 65 - tags: input, named, enum, output
+// refs: 71 - tags: input, named, enum, output
 export type ResourceType =
 | "client-vpn-endpoint"
 | "customer-gateway"
@@ -5967,6 +6338,7 @@ export type ResourceType =
 | "import-image-task"
 | "import-snapshot-task"
 | "instance"
+| "instance-event-window"
 | "internet-gateway"
 | "key-pair"
 | "launch-template"
@@ -5980,6 +6352,7 @@ export type ResourceType =
 | "reserved-instances"
 | "route-table"
 | "security-group"
+| "security-group-rule"
 | "snapshot"
 | "spot-fleet-request"
 | "spot-instances-request"
@@ -6000,7 +6373,7 @@ export type ResourceType =
 | "vpc-flow-log"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 213 - tags: input, named, interface, output
+// refs: 242 - tags: input, named, interface, output
 export interface Tag {
   Key?: string | null;
   Value?: string | null;
@@ -6022,6 +6395,13 @@ export type HostRecovery =
 export interface IamInstanceProfileSpecification {
   Arn?: string | null;
   Name?: string | null;
+}
+
+// refs: 1 - tags: input, named, interface
+export interface InstanceEventWindowAssociationRequest {
+  InstanceIds?: string[] | null;
+  InstanceTags?: Tag[] | null;
+  DedicatedHostIds?: string[] | null;
 }
 
 // refs: 10 - tags: input, named, interface, output
@@ -6513,6 +6893,8 @@ export type InstanceType =
 | "g3.8xlarge"
 | "g3.16xlarge"
 | "g3s.xlarge"
+| "g4ad.xlarge"
+| "g4ad.2xlarge"
 | "g4ad.4xlarge"
 | "g4ad.8xlarge"
 | "g4ad.16xlarge"
@@ -6601,6 +6983,10 @@ export type InstanceType =
 | "z1d.6xlarge"
 | "z1d.12xlarge"
 | "z1d.metal"
+| "u-6tb1.56xlarge"
+| "u-6tb1.112xlarge"
+| "u-9tb1.112xlarge"
+| "u-12tb1.112xlarge"
 | "u-6tb1.metal"
 | "u-9tb1.metal"
 | "u-12tb1.metal"
@@ -6620,6 +7006,7 @@ export type InstanceType =
 | "m5dn.12xlarge"
 | "m5dn.16xlarge"
 | "m5dn.24xlarge"
+| "m5dn.metal"
 | "m5n.large"
 | "m5n.xlarge"
 | "m5n.2xlarge"
@@ -6628,6 +7015,7 @@ export type InstanceType =
 | "m5n.12xlarge"
 | "m5n.16xlarge"
 | "m5n.24xlarge"
+| "m5n.metal"
 | "r5dn.large"
 | "r5dn.xlarge"
 | "r5dn.2xlarge"
@@ -6636,6 +7024,7 @@ export type InstanceType =
 | "r5dn.12xlarge"
 | "r5dn.16xlarge"
 | "r5dn.24xlarge"
+| "r5dn.metal"
 | "r5n.large"
 | "r5n.xlarge"
 | "r5n.2xlarge"
@@ -6644,6 +7033,7 @@ export type InstanceType =
 | "r5n.12xlarge"
 | "r5n.16xlarge"
 | "r5n.24xlarge"
+| "r5n.metal"
 | "inf1.xlarge"
 | "inf1.2xlarge"
 | "inf1.6xlarge"
@@ -6776,6 +7166,25 @@ export type VolumeType =
 | "gp3"
 | cmnP.UnexpectedEnumValue;
 
+// refs: 2 - tags: input, named, interface
+export interface InstanceEventWindowTimeRangeRequest {
+  StartWeekDay?: WeekDay | null;
+  StartHour?: number | null;
+  EndWeekDay?: WeekDay | null;
+  EndHour?: number | null;
+}
+
+// refs: 14 - tags: input, named, enum, output
+export type WeekDay =
+| "sunday"
+| "monday"
+| "tuesday"
+| "wednesday"
+| "thursday"
+| "friday"
+| "saturday"
+| cmnP.UnexpectedEnumValue;
+
 // refs: 1 - tags: input, named, interface
 export interface ExportToS3TaskSpecification {
   ContainerFormat?: ContainerFormat | null;
@@ -6801,6 +7210,12 @@ export type ExportEnvironment =
 | "citrix"
 | "vmware"
 | "microsoft"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 2 - tags: input, named, enum, output
+export type KeyType =
+| "rsa"
+| "ed25519"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface
@@ -6877,6 +7292,10 @@ export interface LaunchTemplateInstanceNetworkInterfaceSpecificationRequest {
   SecondaryPrivateIpAddressCount?: number | null;
   SubnetId?: string | null;
   NetworkCardIndex?: number | null;
+  Ipv4Prefixes?: Ipv4PrefixSpecificationRequest[] | null;
+  Ipv4PrefixCount?: number | null;
+  Ipv6Prefixes?: Ipv6PrefixSpecificationRequest[] | null;
+  Ipv6PrefixCount?: number | null;
 }
 
 // refs: 2 - tags: input, named, interface
@@ -6888,6 +7307,16 @@ export interface InstanceIpv6AddressRequest {
 export interface PrivateIpAddressSpecification {
   Primary?: boolean | null;
   PrivateIpAddress?: string | null;
+}
+
+// refs: 9 - tags: input, named, interface, output
+export interface Ipv4PrefixSpecificationRequest {
+  Ipv4Prefix?: string | null;
+}
+
+// refs: 9 - tags: input, named, interface, output
+export interface Ipv6PrefixSpecificationRequest {
+  Ipv6Prefix?: string | null;
 }
 
 // refs: 2 - tags: input, named, interface
@@ -7032,6 +7461,12 @@ export interface AddPrefixListEntry {
   Description?: string | null;
 }
 
+// refs: 3 - tags: input, named, enum, output
+export type ConnectivityType =
+| "private"
+| "public"
+| cmnP.UnexpectedEnumValue;
+
 // refs: 4 - tags: input, named, interface, output
 export interface IcmpTypeCode {
   Code?: number | null;
@@ -7064,6 +7499,8 @@ export interface InstanceIpv6Address {
 // refs: 1 - tags: input, named, enum
 export type NetworkInterfaceCreationType =
 | "efa"
+| "branch"
+| "trunk"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, enum, output
@@ -7100,6 +7537,18 @@ export interface InstanceSpecification {
 // refs: 1 - tags: input, named, enum
 export type CopyTagsFromSource =
 | "volume"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 1 - tags: input, named, interface
+export interface S3ObjectTag {
+  Key?: string | null;
+  Value?: string | null;
+}
+
+// refs: 5 - tags: input, named, enum, output
+export type SubnetCidrReservationType =
+| "prefix"
+| "explicit"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 10 - tags: input, named, enum, output
@@ -7321,7 +7770,7 @@ export type AccountAttributeName =
 | "default-vpc"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 106 - tags: input, named, interface
+// refs: 112 - tags: input, named, interface
 export interface Filter {
   Name?: string | null;
   Values?: string[] | null;
@@ -7465,6 +7914,13 @@ export type VpcAttributeName =
 | cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
+export interface InstanceEventWindowDisassociationRequest {
+  InstanceIds?: string[] | null;
+  InstanceTags?: Tag[] | null;
+  DedicatedHostIds?: string[] | null;
+}
+
+// refs: 1 - tags: input, named, interface
 export interface ExportTaskS3LocationRequest {
   S3Bucket: string;
   S3Prefix?: string | null;
@@ -7476,6 +7932,27 @@ export type UnlimitedSupportedInstanceFamily =
 | "t3"
 | "t3a"
 | "t4g"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 1 - tags: input, named, interface
+export interface IntegrateServices {
+  AthenaIntegrations?: AthenaIntegration[] | null;
+}
+
+// refs: 1 - tags: input, named, interface
+export interface AthenaIntegration {
+  IntegrationResultS3DestinationArn: string;
+  PartitionLoadFrequency: PartitionLoadFrequency;
+  PartitionStartDate?: Date | number | null;
+  PartitionEndDate?: Date | number | null;
+}
+
+// refs: 1 - tags: input, named, enum
+export type PartitionLoadFrequency =
+| "none"
+| "daily"
+| "weekly"
+| "monthly"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface
@@ -7705,6 +8182,24 @@ export type scope =
 | cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
+export interface SecurityGroupRuleUpdate {
+  SecurityGroupRuleId?: string | null;
+  SecurityGroupRule?: SecurityGroupRuleRequest | null;
+}
+
+// refs: 1 - tags: input, named, interface
+export interface SecurityGroupRuleRequest {
+  IpProtocol?: string | null;
+  FromPort?: number | null;
+  ToPort?: number | null;
+  CidrIpv4?: string | null;
+  CidrIpv6?: string | null;
+  PrefixListId?: string | null;
+  ReferencedGroupId?: string | null;
+  Description?: string | null;
+}
+
+// refs: 1 - tags: input, named, interface
 export interface CreateVolumePermissionModifications {
   Add?: CreateVolumePermission[] | null;
   Remove?: CreateVolumePermission[] | null;
@@ -7893,6 +8388,7 @@ export interface SpotFleetRequestConfigData {
   InstanceInterruptionBehavior?: InstanceInterruptionBehavior | null;
   LoadBalancersConfig?: LoadBalancersConfig | null;
   InstancePoolsToUseCount?: number | null;
+  Context?: string | null;
   TagSpecifications: TagSpecification[];
 }
 
@@ -7975,6 +8471,10 @@ export interface InstanceNetworkInterfaceSpecification {
   AssociateCarrierIpAddress?: boolean | null;
   InterfaceType?: string | null;
   NetworkCardIndex?: number | null;
+  Ipv4Prefixes: Ipv4PrefixSpecificationRequest[];
+  Ipv4PrefixCount?: number | null;
+  Ipv6Prefixes: Ipv6PrefixSpecificationRequest[];
+  Ipv6PrefixCount?: number | null;
 }
 
 // refs: 5 - tags: input, named, interface, output
@@ -8187,6 +8687,12 @@ export interface ScheduledInstancesPlacement {
   GroupName?: string | null;
 }
 
+// refs: 2 - tags: input, named, interface
+export interface SecurityGroupRuleDescription {
+  SecurityGroupRuleId?: string | null;
+  Description?: string | null;
+}
+
 // refs: 4 - tags: output, named, interface
 export interface TransitGatewayMulticastDomainAssociations {
   TransitGatewayMulticastDomainId?: string | null;
@@ -8380,6 +8886,11 @@ export interface AssignedPrivateIpAddress {
 }
 
 // refs: 3 - tags: output, named, interface
+export interface Ipv4PrefixSpecification {
+  Ipv4Prefix?: string | null;
+}
+
+// refs: 3 - tags: output, named, interface
 export interface AssociationStatus {
   Code?: AssociationStatusCode | null;
   Message?: string | null;
@@ -8415,6 +8926,40 @@ export type IamInstanceProfileAssociationState =
 | "associated"
 | "disassociating"
 | "disassociated"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 5 - tags: output, named, interface
+export interface InstanceEventWindow {
+  InstanceEventWindowId?: string | null;
+  TimeRanges: InstanceEventWindowTimeRange[];
+  Name?: string | null;
+  CronExpression?: string | null;
+  AssociationTarget?: InstanceEventWindowAssociationTarget | null;
+  State?: InstanceEventWindowState | null;
+  Tags: Tag[];
+}
+
+// refs: 5 - tags: output, named, interface
+export interface InstanceEventWindowTimeRange {
+  StartWeekDay?: WeekDay | null;
+  StartHour?: number | null;
+  EndWeekDay?: WeekDay | null;
+  EndHour?: number | null;
+}
+
+// refs: 5 - tags: output, named, interface
+export interface InstanceEventWindowAssociationTarget {
+  InstanceIds: string[];
+  Tags: Tag[];
+  DedicatedHostIds: string[];
+}
+
+// refs: 6 - tags: output, named, enum
+export type InstanceEventWindowState =
+| "creating"
+| "deleting"
+| "active"
+| "deleted"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: output, named, interface
@@ -8470,6 +9015,23 @@ export type TransitGatewayAssociationState =
 | "associated"
 | "disassociating"
 | "disassociated"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 2 - tags: output, named, interface
+export interface TrunkInterfaceAssociation {
+  AssociationId?: string | null;
+  BranchInterfaceId?: string | null;
+  TrunkInterfaceId?: string | null;
+  InterfaceProtocol?: InterfaceProtocolType | null;
+  VlanId?: number | null;
+  GreKey?: number | null;
+  Tags: Tag[];
+}
+
+// refs: 2 - tags: output, named, enum
+export type InterfaceProtocolType =
+| "VLAN"
+| "GRE"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 5 - tags: output, named, interface
@@ -8540,6 +9102,32 @@ export type ClientVpnAuthorizationRuleStatusCode =
 | "failed"
 | "revoking"
 | cmnP.UnexpectedEnumValue;
+
+// refs: 3 - tags: output, named, interface
+export interface SecurityGroupRule {
+  SecurityGroupRuleId?: string | null;
+  GroupId?: string | null;
+  GroupOwnerId?: string | null;
+  IsEgress?: boolean | null;
+  IpProtocol?: string | null;
+  FromPort?: number | null;
+  ToPort?: number | null;
+  CidrIpv4?: string | null;
+  CidrIpv6?: string | null;
+  PrefixListId?: string | null;
+  ReferencedGroupInfo?: ReferencedSecurityGroup | null;
+  Description?: string | null;
+  Tags: Tag[];
+}
+
+// refs: 3 - tags: output, named, interface
+export interface ReferencedSecurityGroup {
+  GroupId?: string | null;
+  PeeringStatus?: string | null;
+  UserId?: string | null;
+  VpcId?: string | null;
+  VpcPeeringConnectionId?: string | null;
+}
 
 // refs: 3 - tags: output, named, interface
 export interface BundleTask {
@@ -8688,6 +9276,7 @@ export interface CapacityReservation {
   InstanceMatchCriteria?: InstanceMatchCriteria | null;
   CreateDate?: Date | number | null;
   Tags: Tag[];
+  OutpostArn?: string | null;
 }
 
 // refs: 3 - tags: output, named, enum
@@ -9024,6 +9613,20 @@ export interface LaunchTemplateInstanceNetworkInterfaceSpecification {
   SecondaryPrivateIpAddressCount?: number | null;
   SubnetId?: string | null;
   NetworkCardIndex?: number | null;
+  Ipv4Prefixes: Ipv4PrefixSpecificationResponse[];
+  Ipv4PrefixCount?: number | null;
+  Ipv6Prefixes: Ipv6PrefixSpecificationResponse[];
+  Ipv6PrefixCount?: number | null;
+}
+
+// refs: 3 - tags: output, named, interface
+export interface Ipv4PrefixSpecificationResponse {
+  Ipv4Prefix?: string | null;
+}
+
+// refs: 3 - tags: output, named, interface
+export interface Ipv6PrefixSpecificationResponse {
+  Ipv6Prefix?: string | null;
 }
 
 // refs: 3 - tags: output, named, interface
@@ -9208,6 +9811,7 @@ export interface NatGateway {
   SubnetId?: string | null;
   VpcId?: string | null;
   Tags: Tag[];
+  ConnectivityType?: ConnectivityType | null;
 }
 
 // refs: 2 - tags: output, named, interface
@@ -9296,6 +9900,8 @@ export interface NetworkInterface {
   PrivateDnsName?: string | null;
   PrivateIpAddress?: string | null;
   PrivateIpAddresses: NetworkInterfacePrivateIpAddress[];
+  Ipv4Prefixes: Ipv4PrefixSpecification[];
+  Ipv6Prefixes: Ipv6PrefixSpecification[];
   RequesterId?: string | null;
   RequesterManaged?: boolean | null;
   SourceDestCheck?: boolean | null;
@@ -9333,6 +9939,7 @@ export type NetworkInterfaceType =
 | "interface"
 | "natGateway"
 | "efa"
+| "trunk"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
@@ -9346,6 +9953,11 @@ export interface NetworkInterfacePrivateIpAddress {
   Primary?: boolean | null;
   PrivateDnsName?: string | null;
   PrivateIpAddress?: string | null;
+}
+
+// refs: 2 - tags: output, named, interface
+export interface Ipv6PrefixSpecification {
+  Ipv6Prefix?: string | null;
 }
 
 // refs: 4 - tags: output, named, enum
@@ -9397,6 +10009,26 @@ export type PlacementGroupState =
 | "available"
 | "deleting"
 | "deleted"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 2 - tags: output, named, interface
+export interface ReplaceRootVolumeTask {
+  ReplaceRootVolumeTaskId?: string | null;
+  InstanceId?: string | null;
+  TaskState?: ReplaceRootVolumeTaskState | null;
+  StartTime?: string | null;
+  CompleteTime?: string | null;
+  Tags: Tag[];
+}
+
+// refs: 2 - tags: output, named, enum
+export type ReplaceRootVolumeTaskState =
+| "pending"
+| "in-progress"
+| "failing"
+| "succeeded"
+| "failed"
+| "failed-detached"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
@@ -9499,6 +10131,17 @@ export type DatafeedSubscriptionState =
 | "Active"
 | "Inactive"
 | cmnP.UnexpectedEnumValue;
+
+// refs: 4 - tags: output, named, interface
+export interface SubnetCidrReservation {
+  SubnetCidrReservationId?: string | null;
+  SubnetId?: string | null;
+  Cidr?: string | null;
+  ReservationType?: SubnetCidrReservationType | null;
+  OwnerId?: string | null;
+  Description?: string | null;
+  Tags: Tag[];
+}
 
 // refs: 3 - tags: output, named, interface
 export interface TrafficMirrorFilter {
@@ -10065,6 +10708,12 @@ export type DeleteFleetErrorCode =
 | cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
+export interface InstanceEventWindowStateChange {
+  InstanceEventWindowId?: string | null;
+  State?: InstanceEventWindowState | null;
+}
+
+// refs: 1 - tags: output, named, interface
 export interface DeleteLaunchTemplateVersionsResponseSuccessItem {
   LaunchTemplateId?: string | null;
   LaunchTemplateName?: string | null;
@@ -10576,6 +11225,7 @@ export interface FleetData {
   Tags: Tag[];
   Errors: DescribeFleetError[];
   Instances: DescribeFleetsInstances[];
+  Context?: string | null;
 }
 
 // refs: 1 - tags: output, named, enum
@@ -10879,6 +11529,7 @@ export interface Image {
   Tags: Tag[];
   VirtualizationType?: VirtualizationType | null;
   BootMode?: BootModeValues | null;
+  DeprecationTime?: string | null;
 }
 
 // refs: 1 - tags: output, named, enum
@@ -11449,6 +12100,8 @@ export interface InstanceNetworkInterface {
   SubnetId?: string | null;
   VpcId?: string | null;
   InterfaceType?: string | null;
+  Ipv4Prefixes: InstanceIpv4Prefix[];
+  Ipv6Prefixes: InstanceIpv6Prefix[];
 }
 
 // refs: 4 - tags: output, named, interface
@@ -11475,6 +12128,16 @@ export interface InstancePrivateIpAddress {
   Primary?: boolean | null;
   PrivateDnsName?: string | null;
   PrivateIpAddress?: string | null;
+}
+
+// refs: 2 - tags: output, named, interface
+export interface InstanceIpv4Prefix {
+  Ipv4Prefix?: string | null;
+}
+
+// refs: 2 - tags: output, named, interface
+export interface InstanceIpv6Prefix {
+  Ipv6Prefix?: string | null;
 }
 
 // refs: 2 - tags: output, named, interface
@@ -11531,6 +12194,7 @@ export interface KeyPairInfo {
   KeyPairId?: string | null;
   KeyFingerprint?: string | null;
   KeyName?: string | null;
+  KeyType?: KeyType | null;
   Tags: Tag[];
 }
 
@@ -12062,6 +12726,17 @@ export interface StaleIpPermission {
   PrefixListIds: string[];
   ToPort?: number | null;
   UserIdGroupPairs: UserIdGroupPair[];
+}
+
+// refs: 1 - tags: output, named, interface
+export interface StoreImageTaskResult {
+  AmiId?: string | null;
+  TaskStartTime?: Date | number | null;
+  Bucket?: string | null;
+  S3objectKey?: string | null;
+  ProgressPercentage?: number | null;
+  StoreTaskState?: string | null;
+  StoreTaskFailureReason?: string | null;
 }
 
 // refs: 1 - tags: output, named, interface

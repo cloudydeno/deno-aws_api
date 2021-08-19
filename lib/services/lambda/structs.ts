@@ -789,6 +789,7 @@ export type SourceAccessType =
 | "VPC_SECURITY_GROUP"
 | "SASL_SCRAM_512_AUTH"
 | "SASL_SCRAM_256_AUTH"
+| "VIRTUAL_HOST"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface, output
@@ -822,6 +823,7 @@ export type Runtime =
 | "python3.6"
 | "python3.7"
 | "python3.8"
+| "python3.9"
 | "dotnetcore1.0"
 | "dotnetcore2.0"
 | "dotnetcore2.1"

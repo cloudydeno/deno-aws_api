@@ -26,6 +26,11 @@ export interface DeleteInsightRulesInput {
 }
 
 // refs: 1 - tags: named, input
+export interface DeleteMetricStreamInput {
+  Name: string;
+}
+
+// refs: 1 - tags: named, input
 export interface DescribeAlarmHistoryInput {
   AlarmName?: string | null;
   AlarmTypes?: AlarmType[] | null;
@@ -137,6 +142,11 @@ export interface GetMetricStatisticsInput {
 }
 
 // refs: 1 - tags: named, input
+export interface GetMetricStreamInput {
+  Name: string;
+}
+
+// refs: 1 - tags: named, input
 export interface GetMetricWidgetImageInput {
   MetricWidget: string;
   OutputFormat?: string | null;
@@ -146,6 +156,12 @@ export interface GetMetricWidgetImageInput {
 export interface ListDashboardsInput {
   DashboardNamePrefix?: string | null;
   NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface ListMetricStreamsInput {
+  NextToken?: string | null;
+  MaxResults?: number | null;
 }
 
 // refs: 1 - tags: named, input
@@ -230,11 +246,32 @@ export interface PutMetricDataInput {
 }
 
 // refs: 1 - tags: named, input
+export interface PutMetricStreamInput {
+  Name: string;
+  IncludeFilters?: MetricStreamFilter[] | null;
+  ExcludeFilters?: MetricStreamFilter[] | null;
+  FirehoseArn: string;
+  RoleArn: string;
+  OutputFormat: MetricStreamOutputFormat;
+  Tags?: Tag[] | null;
+}
+
+// refs: 1 - tags: named, input
 export interface SetAlarmStateInput {
   AlarmName: string;
   StateValue: StateValue;
   StateReason: string;
   StateReasonData?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface StartMetricStreamsInput {
+  Names: string[];
+}
+
+// refs: 1 - tags: named, input
+export interface StopMetricStreamsInput {
+  Names: string[];
 }
 
 // refs: 1 - tags: named, input
@@ -325,6 +362,20 @@ export interface GetMetricStatisticsOutput {
 }
 
 // refs: 1 - tags: named, output
+export interface GetMetricStreamOutput {
+  Arn?: string | null;
+  Name?: string | null;
+  IncludeFilters: MetricStreamFilter[];
+  ExcludeFilters: MetricStreamFilter[];
+  FirehoseArn?: string | null;
+  RoleArn?: string | null;
+  State?: string | null;
+  CreationDate?: Date | number | null;
+  LastUpdateDate?: Date | number | null;
+  OutputFormat?: MetricStreamOutputFormat | null;
+}
+
+// refs: 1 - tags: named, output
 export interface GetMetricWidgetImageOutput {
   MetricWidgetImage?: Uint8Array | null;
 }
@@ -333,6 +384,12 @@ export interface GetMetricWidgetImageOutput {
 export interface ListDashboardsOutput {
   DashboardEntries: DashboardEntry[];
   NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface ListMetricStreamsOutput {
+  NextToken?: string | null;
+  Entries: MetricStreamEntry[];
 }
 
 // refs: 1 - tags: named, output
@@ -349,6 +406,11 @@ export interface ListTagsForResourceOutput {
 // refs: 1 - tags: named, output
 export interface PutDashboardOutput {
   DashboardValidationMessages: DashboardValidationMessage[];
+}
+
+// refs: 1 - tags: named, output
+export interface PutMetricStreamOutput {
+  Arn?: string | null;
 }
 
 // refs: 15 - tags: input, named, interface, output
@@ -431,6 +493,7 @@ export interface MetricDataQuery {
   Label?: string | null;
   ReturnData?: boolean | null;
   Period?: number | null;
+  AccountId?: string | null;
 }
 
 // refs: 4 - tags: input, named, interface, output
@@ -476,7 +539,7 @@ export interface Range {
   EndTime: Date | number;
 }
 
-// refs: 5 - tags: input, named, interface, output
+// refs: 6 - tags: input, named, interface, output
 export interface Tag {
   Key: string;
   Value: string;
@@ -513,6 +576,17 @@ export interface StatisticSet {
   Minimum: number;
   Maximum: number;
 }
+
+// refs: 4 - tags: input, named, interface, output
+export interface MetricStreamFilter {
+  Namespace?: string | null;
+}
+
+// refs: 3 - tags: input, named, enum, output
+export type MetricStreamOutputFormat =
+| "json"
+| "opentelemetry0.7"
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: output, named, interface
 export interface PartialFailure {
@@ -671,6 +745,17 @@ export interface DashboardEntry {
   DashboardArn?: string | null;
   LastModified?: Date | number | null;
   Size?: number | null;
+}
+
+// refs: 1 - tags: output, named, interface
+export interface MetricStreamEntry {
+  Arn?: string | null;
+  CreationDate?: Date | number | null;
+  LastUpdateDate?: Date | number | null;
+  Name?: string | null;
+  FirehoseArn?: string | null;
+  State?: string | null;
+  OutputFormat?: MetricStreamOutputFormat | null;
 }
 
 // refs: 1 - tags: output, named, interface

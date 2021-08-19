@@ -40,12 +40,16 @@ export class STS {
     if ("ExternalId" in params) body.append(prefix+"ExternalId", (params["ExternalId"] ?? '').toString());
     if ("SerialNumber" in params) body.append(prefix+"SerialNumber", (params["SerialNumber"] ?? '').toString());
     if ("TokenCode" in params) body.append(prefix+"TokenCode", (params["TokenCode"] ?? '').toString());
+    if ("SourceIdentity" in params) body.append(prefix+"SourceIdentity", (params["SourceIdentity"] ?? '').toString());
     const resp = await this.#client.performRequest({
       body,
       action: "AssumeRole",
     });
     const xml = xmlP.readXmlResult(await resp.text(), "AssumeRoleResult");
     return {
+      ...xml.strings({
+        optional: {"SourceIdentity":true},
+      }),
       Credentials: xml.first("Credentials", false, Credentials_Parse),
       AssumedRoleUser: xml.first("AssumedRoleUser", false, AssumedRoleUser_Parse),
       PackedPolicySize: xml.first("PackedPolicySize", false, x => parseInt(x.content ?? '0')),
@@ -71,7 +75,7 @@ export class STS {
     const xml = xmlP.readXmlResult(await resp.text(), "AssumeRoleWithSAMLResult");
     return {
       ...xml.strings({
-        optional: {"Subject":true,"SubjectType":true,"Issuer":true,"Audience":true,"NameQualifier":true},
+        optional: {"Subject":true,"SubjectType":true,"Issuer":true,"Audience":true,"NameQualifier":true,"SourceIdentity":true},
       }),
       Credentials: xml.first("Credentials", false, Credentials_Parse),
       AssumedRoleUser: xml.first("AssumedRoleUser", false, AssumedRoleUser_Parse),
@@ -99,7 +103,7 @@ export class STS {
     const xml = xmlP.readXmlResult(await resp.text(), "AssumeRoleWithWebIdentityResult");
     return {
       ...xml.strings({
-        optional: {"SubjectFromWebIdentityToken":true,"Provider":true,"Audience":true},
+        optional: {"SubjectFromWebIdentityToken":true,"Provider":true,"Audience":true,"SourceIdentity":true},
       }),
       Credentials: xml.first("Credentials", false, Credentials_Parse),
       AssumedRoleUser: xml.first("AssumedRoleUser", false, AssumedRoleUser_Parse),

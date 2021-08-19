@@ -1801,6 +1801,7 @@ export type InventoryOptionalField =
 | "ObjectLockMode"
 | "ObjectLockLegalHoldStatus"
 | "IntelligentTieringAccessTier"
+| "BucketKeyStatus"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface, output
