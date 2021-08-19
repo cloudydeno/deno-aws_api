@@ -2,14 +2,17 @@ export class IMDSv2 {
   constructor({
     baseUrl = 'http://169.254.169.254/latest/',
     timeoutMs = 1000,
+    apiTimeoutMs = 5000,
     tokenTtlSeconds = 21600,
   } = {}) {
     this.baseUrl = new URL(baseUrl);
     this.timeoutMs = Math.floor(timeoutMs);
+    this.apiTimeoutMs = Math.floor(apiTimeoutMs);
     this.tokenTtlSeconds = Math.floor(tokenTtlSeconds);
   }
   baseUrl: URL;
-  timeoutMs: number;
+  timeoutMs: number; // How long we wait for the initial discovery request
+  apiTimeoutMs: number; // How long we'll wait after IMDS is discovered
   tokenTtlSeconds: number;
 
   cachedToken: string | null = null;
@@ -30,56 +33,66 @@ export class IMDSv2 {
     return newToken;
   }
 
-  async fetchNewToken() {
+  async fetchNewToken(): Promise<[string, number]> {
     const ttlSeconds = this.tokenTtlSeconds;
 
-    const httpFetch = fetch(new URL('api/token', this.baseUrl), {
+    const respText = await this.#performRawRequest({
       method: 'PUT',
-      signal: this.makeTimeoutSignal(),
+      path: 'api/token',
+      timeoutMs: this.cachedToken ? this.apiTimeoutMs : this.timeoutMs,
       headers: {
         "x-aws-ec2-metadata-token-ttl-seconds": ttlSeconds.toFixed(0),
       }});
 
-    const resp = await httpFetch.catch(err => {
-      if (err instanceof DOMException && err.message.includes('aborted')) {
-        return Promise.reject(new Error(
-          `Instance Metadata Timeout: ${this.timeoutMs}ms`));
-      }
-      return Promise.reject(err);
-    });
-
-    if (resp.status > 299) throw new Error(
-      `Metadata server gave HTTP ${resp.status} to V2 token request`);
-
     return [
-      await resp.text(),
+      respText,
       Math.floor(ttlSeconds * 0.95 * 1000),
-    ] as const;
+    ];
   }
 
   async performRequest(
     method: 'GET' | 'HEAD' | 'PUT' = 'GET',
     path = 'meta-data/',
   ) {
-    const resp = await fetch(new URL(path, this.baseUrl), {
-      method: method,
-      signal: this.makeTimeoutSignal(),
+    return await this.#performRawRequest({
+      method, path,
+      timeoutMs: this.apiTimeoutMs,
       headers: {
         "x-aws-ec2-metadata-token": await this.getToken(),
       }});
+  }
+
+  async #performRawRequest(opts: {
+    method: 'GET' | 'HEAD' | 'PUT',
+    path: string,
+    timeoutMs: number,
+    headers: HeadersInit,
+  }) {
+    const aborter = new AbortController();
+    const stopTimeout = setTimeout(() => aborter.abort(), opts.timeoutMs);
+
+    const resp = await fetch(new URL(opts.path, this.baseUrl), {
+      method: opts.method,
+      headers: opts.headers,
+      signal: aborter.signal,
+    }).catch(err => {
+      // Rethrow aborted fetches as nicer timeouts
+      if (err instanceof DOMException && err.message.includes('aborted')) {
+        return Promise.reject(new Error(
+          `Instance Metadata Timeout: ${opts.timeoutMs}ms`));
+      }
+      return Promise.reject(err);
+    });
+    clearTimeout(stopTimeout);
+
     if (resp.status > 299) {
-      const err: any = new Error(`Metadata server gave HTTP ${resp.status} to ${method} ${path}`);
+      const err: any = new Error(
+        `Metadata server gave HTTP ${resp.status} to ${opts.method} ${opts.path}`);
       err.status = resp.status;
       throw err;
     }
 
     return await resp.text();
-  }
-
-  makeTimeoutSignal(): AbortSignal {
-    const aborter = new AbortController();
-    setTimeout(() => aborter.abort(), this.timeoutMs);
-    return aborter.signal;
   }
 
 }
