@@ -1,4 +1,4 @@
-import { readCSVObjects, writeCSVObjects } from "https://deno.land/x/csv@v0.5.1/mod.ts";
+import { readCSVObjects, writeCSVObjects } from "https://raw.githubusercontent.com/vslinko/deno-csv/b982ff4cb8c1df04ee3b44e60f3a585010502818/mod.ts";
 import * as path from "https://deno.land/std@0.105.0/path/mod.ts";
 import ServiceCodeGen from '../code-gen.ts';
 import type * as Schema from '../sdk-schema.ts';
