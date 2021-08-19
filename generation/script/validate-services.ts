@@ -2,7 +2,7 @@
 
 import type * as Schema from '../sdk-schema.ts';
 import ServiceCodeGen from '../code-gen.ts';
-import * as path from "https://deno.land/std@0.91.0/path/mod.ts";
+import * as path from "https://deno.land/std@0.105.0/path/mod.ts";
 
 const testDir = path.join('lib','testgen','services');
 await Deno.mkdir(testDir, { recursive: true });

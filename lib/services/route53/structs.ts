@@ -937,6 +937,7 @@ export interface HealthCheckConfig {
   Regions: HealthCheckRegion[];
   AlarmIdentifier?: AlarmIdentifier | null;
   InsufficientDataHealthStatus?: InsufficientDataHealthStatus | null;
+  RoutingControlArn?: string | null;
 }
 
 // refs: 5 - tags: input, named, enum, output
@@ -948,6 +949,7 @@ export type HealthCheckType =
 | "TCP"
 | "CALCULATED"
 | "CLOUDWATCH_METRIC"
+| "RECOVERY_CONTROL"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 8 - tags: input, named, enum, output

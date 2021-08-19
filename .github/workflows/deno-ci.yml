@@ -13,14 +13,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        deno-version: ["v1.9", "v1.10", "canary"]
+        deno-version: ["v1.11", "v1.12", "v1.13", "canary"]
 
     steps:
     - name: Checkout source
       uses: actions/checkout@v2
 
     - name: Use Deno ${{ matrix.deno-version }}
-      uses: denoland/setup-deno@main
+      uses: denoland/setup-deno@v1
       with:
         deno-version: ${{ matrix.deno-version }}
 
@@ -39,7 +39,7 @@ jobs:
     name: Codegen w/ ${{ matrix.deno-version }}
     strategy:
       matrix:
-        deno-version: ["v1.9", "v1.10", "canary"]
+        deno-version: ["v1.11", "v1.13", "canary"]
       fail-fast: false # run each branch to completion
 
     steps:
@@ -49,7 +49,7 @@ jobs:
         submodules: true
 
     - name: Use Deno ${{ matrix.deno-version }}
-      uses: denoland/setup-deno@main
+      uses: denoland/setup-deno@v1
       with:
         deno-version: ${{ matrix.deno-version }}
 

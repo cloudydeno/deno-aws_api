@@ -47,6 +47,7 @@ export interface CreateKeyRequest {
   CustomKeyStoreId?: string | null;
   BypassPolicyLockoutSafetyCheck?: boolean | null;
   Tags?: Tag[] | null;
+  MultiRegion?: boolean | null;
 }
 
 // refs: 1 - tags: named, input
@@ -258,6 +259,16 @@ export interface ReEncryptRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface ReplicateKeyRequest {
+  KeyId: string;
+  ReplicaRegion: string;
+  Policy?: string | null;
+  BypassPolicyLockoutSafetyCheck?: boolean | null;
+  Description?: string | null;
+  Tags?: Tag[] | null;
+}
+
+// refs: 1 - tags: named, input
 export interface RetireGrantRequest {
   GrantToken?: string | null;
   KeyId?: string | null;
@@ -315,6 +326,12 @@ export interface UpdateCustomKeyStoreRequest {
 export interface UpdateKeyDescriptionRequest {
   KeyId: string;
   Description: string;
+}
+
+// refs: 1 - tags: named, input
+export interface UpdatePrimaryRegionRequest {
+  KeyId: string;
+  PrimaryRegion: string;
 }
 
 // refs: 1 - tags: named, input
@@ -482,9 +499,18 @@ export interface ReEncryptResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface ReplicateKeyResponse {
+  ReplicaKeyMetadata?: KeyMetadata | null;
+  ReplicaPolicy?: string | null;
+  ReplicaTags?: Tag[] | null;
+}
+
+// refs: 1 - tags: named, output
 export interface ScheduleKeyDeletionResponse {
   KeyId?: string | null;
   DeletionDate?: Date | number | null;
+  KeyState?: KeyState | null;
+  PendingWindowInDays?: number | null;
 }
 
 // refs: 1 - tags: named, output
@@ -525,13 +551,13 @@ export interface GrantConstraints {
   EncryptionContextEquals?: { [key: string]: string | null | undefined } | null;
 }
 
-// refs: 4 - tags: input, named, enum, output
+// refs: 5 - tags: input, named, enum, output
 export type KeyUsageType =
 | "SIGN_VERIFY"
 | "ENCRYPT_DECRYPT"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 4 - tags: input, named, enum, output
+// refs: 5 - tags: input, named, enum, output
 export type CustomerMasterKeySpec =
 | "RSA_2048"
 | "RSA_3072"
@@ -543,20 +569,20 @@ export type CustomerMasterKeySpec =
 | "SYMMETRIC_DEFAULT"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 3 - tags: input, named, enum, output
+// refs: 4 - tags: input, named, enum, output
 export type OriginType =
 | "AWS_KMS"
 | "EXTERNAL"
 | "AWS_CLOUDHSM"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 3 - tags: input, named, interface, output
+// refs: 5 - tags: input, named, interface, output
 export interface Tag {
   TagKey: string;
   TagValue: string;
 }
 
-// refs: 11 - tags: input, named, enum, output
+// refs: 12 - tags: input, named, enum, output
 export type EncryptionAlgorithmSpec =
 | "SYMMETRIC_DEFAULT"
 | "RSAES_OAEP_SHA_1"
@@ -592,7 +618,7 @@ export type WrappingKeySpec =
 | "RSA_2048"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 3 - tags: input, named, enum, output
+// refs: 4 - tags: input, named, enum, output
 export type ExpirationModelType =
 | "KEY_MATERIAL_EXPIRES"
 | "KEY_MATERIAL_DOES_NOT_EXPIRE"
@@ -604,7 +630,7 @@ export type MessageType =
 | "DIGEST"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 7 - tags: input, named, enum, output
+// refs: 8 - tags: input, named, enum, output
 export type SigningAlgorithmSpec =
 | "RSASSA_PSS_SHA_256"
 | "RSASSA_PSS_SHA_384"
@@ -617,7 +643,7 @@ export type SigningAlgorithmSpec =
 | "ECDSA_SHA_512"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 2 - tags: output, named, interface
+// refs: 3 - tags: output, named, interface
 export interface KeyMetadata {
   AWSAccountId?: string | null;
   KeyId: string;
@@ -637,22 +663,47 @@ export interface KeyMetadata {
   CustomerMasterKeySpec?: CustomerMasterKeySpec | null;
   EncryptionAlgorithms?: EncryptionAlgorithmSpec[] | null;
   SigningAlgorithms?: SigningAlgorithmSpec[] | null;
+  MultiRegion?: boolean | null;
+  MultiRegionConfiguration?: MultiRegionConfiguration | null;
+  PendingDeletionWindowInDays?: number | null;
 }
 
-// refs: 2 - tags: output, named, enum
+// refs: 4 - tags: output, named, enum
 export type KeyState =
+| "Creating"
 | "Enabled"
 | "Disabled"
 | "PendingDeletion"
 | "PendingImport"
+| "PendingReplicaDeletion"
 | "Unavailable"
+| "Updating"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 2 - tags: output, named, enum
+// refs: 3 - tags: output, named, enum
 export type KeyManagerType =
 | "AWS"
 | "CUSTOMER"
 | cmnP.UnexpectedEnumValue;
+
+// refs: 3 - tags: output, named, interface
+export interface MultiRegionConfiguration {
+  MultiRegionKeyType?: MultiRegionKeyType | null;
+  PrimaryKey?: MultiRegionKey | null;
+  ReplicaKeys?: MultiRegionKey[] | null;
+}
+
+// refs: 3 - tags: output, named, enum
+export type MultiRegionKeyType =
+| "PRIMARY"
+| "REPLICA"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 6 - tags: output, named, interface
+export interface MultiRegionKey {
+  Arn?: string | null;
+  Region?: string | null;
+}
 
 // refs: 1 - tags: output, named, interface
 export interface CustomKeyStoresListEntry {
