@@ -137,7 +137,7 @@ async function generateRun(run: TestRun): Promise<void> {
 
   const chunks = new Array<string>();
   chunks.push('\n/////////\n');
-  chunks.push(`import { assertEquals } from "https://deno.land/std@0.91.0/testing/asserts.ts";`);
+  chunks.push(`import { assertEquals } from "https://deno.land/std@0.105.0/testing/asserts.ts";`);
   chunks.push(`import { wrapServiceClient } from '../../client/client.ts';\n`);
 
   const mockFuncName = run.category === 'input' ? 'checkRequest' : 'mockResponse';

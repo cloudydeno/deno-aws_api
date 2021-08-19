@@ -7,7 +7,7 @@ const factory = new ApiFactory();
 const sqs = new SQS(factory);
 
 // we'll be taking input
-import { parse as parseFlags } from "https://deno.land/std@0.91.0/flags/mod.ts";
+import { parse as parseFlags } from "https://deno.land/std@0.105.0/flags/mod.ts";
 import Ask from 'https://deno.land/x/ask@1.0.6/mod.ts';
 
 let { dlq, target, automatic } = parseFlags(Deno.args, {
