@@ -94,6 +94,7 @@ console.log('Identity ARN:', identity.Arn);
 
 * `v0.5.0` on `2021-08-TBD`: Requires Deno 1.11 or later, for `crypto.randomUUID`.
   * Using definitions from `aws-sdk-js@2.971.0`
+  * Adds `fixedEndpoint` option to `ApiFactory` for localstack, minio, etc.
 * `v0.4.1` on `2021-05-23`: Also fix Deno 1.9 regression for unsigned requests.
   * Addresses startup issue when using EKS Pod Identity.
 * `v0.4.0` on `2021-05-01`: Deno 1.9 compatibility. Remove most less-common AWS services.
