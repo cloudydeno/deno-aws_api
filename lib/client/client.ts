@@ -25,10 +25,12 @@ interface ClientClass<T> {
 export class BaseApiFactory implements ApiFactory {
   #credentials: CredentialsProvider;
   #region?: string;
+  #fixedEndpoint?: string;
   constructor(opts: {
     credentialProvider?: CredentialsProvider,
     credentials?: Credentials,
     region?: string;
+    fixedEndpoint?: string;
   }) {
     if (opts.credentials != null) {
       const {credentials} = opts;
@@ -42,6 +44,12 @@ export class BaseApiFactory implements ApiFactory {
       this.#region = opts.region ?? Deno.env.get("AWS_REGION");
     } catch (err) {
       if (err.name !== 'PermissionDenied') throw err;
+    }
+
+    if (typeof opts.fixedEndpoint == 'string') {
+      if (!opts.fixedEndpoint.includes('://')) throw new Error(
+        `If provided, fixedEndpoint must be a full URL including https:// or http://`);
+      this.#fixedEndpoint = opts.fixedEndpoint;
     }
   }
 
@@ -59,7 +67,7 @@ export class BaseApiFactory implements ApiFactory {
       // QUIRK: try using host routing for S3 buckets when helpful
       // TODO: this isn't actually signing relevant!
       // we just have better info here...
-      if (apiMetadata.serviceId === 'S3' && opts.urlPath && !opts.hostPrefix) {
+      if (apiMetadata.serviceId === 'S3' && opts.urlPath && !opts.hostPrefix && !this.#fixedEndpoint) {
         const [bucketName] = opts.urlPath.slice(1).split(/[?/]/);
         if (bucketName.length > 0 && !bucketName.includes('.')) {
           opts.hostPrefix = `${bucketName}.`;
@@ -69,7 +77,8 @@ export class BaseApiFactory implements ApiFactory {
       }
 
       if (opts.skipSigning) {
-        const endpoint =
+        const endpoint = this.#fixedEndpoint ||
+        `https://${opts.hostPrefix ?? ''}${
           apiMetadata.globalEndpoint
           // Try try to find the region if the service doesn't have a global endpoint
           ?? [
@@ -78,12 +87,11 @@ export class BaseApiFactory implements ApiFactory {
               ?? (await this.#credentials.getCredentials().then(x => x.region, x => null))
               ?? throwMissingRegion(),
             'amazonaws.com',
-          ].join('.');
-
-        const fullUrl = `https://${opts.hostPrefix ?? ''}${endpoint}${opts.urlPath}`;
+          ].join('.')
+        }`;
 
         // work around deno 1.9 request cloning regression :(
-        return fetch(fullUrl, {
+        return fetch(new URL(opts.urlPath, endpoint).toString(), {
           headers: request.headers,
           method: request.method,
           body: request.body,
@@ -103,18 +111,24 @@ export class BaseApiFactory implements ApiFactory {
       // - dualstack/IPv6 on alt hostnames for EC2 and S3
       // - govcloud, aws-cn, etc (detect from region?)
       // - localstack, minio etc - completely custom
+      //   ^ this should be supported now via `fixedEndpoint`
 
       const signer = new AWSSignerV4(region, credentials);
-      const serviceUrl = 'https://' + (apiMetadata.globalEndpoint
-        ?? `${apiMetadata.endpointPrefix}.${region}.amazonaws.com`);
-
       const signingName = apiMetadata.signingName ?? apiMetadata.endpointPrefix;
 
       // Assemble full URL
-      const [scheme, host] = serviceUrl.split('//');
-      const url = `${scheme}//${opts.hostPrefix ?? ''}${host}${opts.urlPath}`;
+      const endpoint = this.#fixedEndpoint ||
+      `https://${opts.hostPrefix ?? ''}${
+        apiMetadata.globalEndpoint
+        ?? [
+          apiMetadata.endpointPrefix,
+          region,
+          'amazonaws.com',
+        ].join('.')
+      }`;
+      const fullUrl = new URL(opts.urlPath, endpoint).toString();
 
-      const req = await signer.sign(signingName, url, request);
+      const req = await signer.sign(signingName, fullUrl, request);
       // console.log(req.method, url);
       return fetch(req);
     }
