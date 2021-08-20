@@ -1,4 +1,4 @@
-import { readCSVObjects } from "https://raw.githubusercontent.com/vslinko/deno-csv/b982ff4cb8c1df04ee3b44e60f3a585010502818/mod.ts";
+import { readCSVObjects } from "https://deno.land/x/csv@v0.6.0/mod.ts";
 
 const sdk = JSON.parse(await Deno.readTextFile('aws-sdk-js/package.json'));
 const header = `All API definitions are current as of [aws-sdk-js \`v${sdk.version}\`](https://github.com/aws/aws-sdk-js/releases/tag/v${sdk.version}).`;
