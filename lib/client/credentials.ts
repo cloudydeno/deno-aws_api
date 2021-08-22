@@ -227,12 +227,14 @@ export class TokenFileWebIdentityCredentials implements CredentialsProvider {
 }
 
 export class EC2MetadataCredentials implements CredentialsProvider {
-  #service = new IMDSv2;
+  #service: IMDSv2;
   #promise: Promise<Credentials> | null = null;
   #expireAfter: Date | null = null;
 
   constructor(opts: {
+    client?: IMDSv2;
   }={}) {
+    this.#service = opts.client ?? new IMDSv2;
   }
 
   // We can't expire using setTimeout because that hangs Deno
