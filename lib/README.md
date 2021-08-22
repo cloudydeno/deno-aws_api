@@ -38,7 +38,7 @@ Basic example: (a subset of `demo.ts`)
 
 ```typescript
 import { ApiFactory } from 'https://deno.land/x/aws_api/client/mod.ts';
-import { STS } from 'https://deno.land/x/aws_api/services/sts/mod.ts';
+import { STS } from 'https://deno.land/x/aws_api/services/sts.ts';
 
 const sts = new ApiFactory().makeNew(STS);
 const identity = await sts.getCallerIdentity();
@@ -54,7 +54,7 @@ To use a customized build, or a less-common service, you can import from the web
 
 ```typescript
 import { ApiFactory } from 'https://deno.land/x/aws_api/client/mod.ts';
-import { Pricing } from 'https://deno.land/x/aws_api/services/pricing.ts';
+import { Pricing } from 'https://aws-api.deno.dev/v0.1/services/pricing.ts';
 
 const pricing = new ApiFactory().makeNew(Pricing);
 const { Services } = await pricing.describeServices('AmazonEC2');
@@ -108,6 +108,7 @@ const ec2_europe = new ApiFactory({
   * Using definitions from `aws-sdk-js@2.971.0`
   * Formalize `.makeNew(constructor)` method on `ApiFactory`
   * Add `fixedEndpoint` option to `ApiFactory` for localstack, minio, etc.
+  * Automatically select GovCloud, AWS China, and the S3/EC2 dualstack endpoints.
 * `v0.4.1` on `2021-05-23`: Also fix Deno 1.9 regression for unsigned requests.
   * Addresses startup issue when using EKS Pod Identity.
 * `v0.4.0` on `2021-05-01`: Deno 1.9 compatibility. Remove most less-common AWS services.
@@ -188,6 +189,8 @@ Some individual features that are implemented:
 * Automatic credential detection / loading
 * EC2 instance metadata server v2
 * Custom alternative endpoints
+* AWS endpoints other than `**.amazonaws.com` (#3)
+    * govcloud, China AWS, IPv6, etc.
 
 Multiple bits are *missing*:
 
@@ -196,8 +199,6 @@ Multiple bits are *missing*:
 * Debug logging/tracing of API calls
 * Automatic retries
 * Getting EKS credentials from regional STS endpoints (#2)
-* AWS endpoints other than `**.amazonaws.com` (#3)
-    * govcloud, China AWS, IPv6, etc.
 
 ## List of Pre-Generated API Clients
 
