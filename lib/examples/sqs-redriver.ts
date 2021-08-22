@@ -3,8 +3,7 @@
 import { ApiFactory } from '../client/mod.ts';
 import { SQS } from '../services/sqs/mod.ts';
 
-const factory = new ApiFactory();
-const sqs = new SQS(factory);
+const sqs = new ApiFactory().makeNew(SQS);
 
 // we'll be taking input
 import { parse as parseFlags } from "https://deno.land/std@0.105.0/flags/mod.ts";

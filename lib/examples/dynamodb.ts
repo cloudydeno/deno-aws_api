@@ -3,8 +3,7 @@
 import { ApiFactory } from '../client/mod.ts';
 import { DynamoDB } from '../services/dynamodb/mod.ts';
 
-const factory = new ApiFactory();
-const ddb = new DynamoDB(factory);
+const ddb = new ApiFactory().makeNew(DynamoDB);
 
 const TableName = `asdfajghwragds`;
 

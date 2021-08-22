@@ -19,6 +19,7 @@ export class IMDSv2 {
     const [newToken, expireAfterMillis] = await this.fetchNewToken();
 
     // Cache for a limited time. Don't auto renew, will happen next request
+    // TODO: abandon setTimeout as it keeps Deno's loop alive
     this.cachedToken = newToken;
     setTimeout(() => {
       if (this.cachedToken === newToken) {

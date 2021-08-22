@@ -3,8 +3,7 @@
 import { ApiFactory } from '../client/mod.ts';
 import { CloudWatch } from '../services/cloudwatch/mod.ts';
 
-const factory = new ApiFactory();
-const cw = new CloudWatch(factory);
+const cw = new ApiFactory().makeNew(CloudWatch);
 
 while (true) {
   console.log(new Date);
