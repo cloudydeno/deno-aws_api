@@ -21,6 +21,7 @@ export class ApiFactory extends BaseApiFactory {
     credentialProvider?: CredentialsProvider,
     credentials?: Credentials,
     region?: string;
+    fixedEndpoint?: string;
   }={}) {
     super({
       credentialProvider: DefaultCredentialsProvider,

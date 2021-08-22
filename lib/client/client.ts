@@ -22,10 +22,14 @@ type SigningFetcher = (request: Request, opts: FetchOpts) => Promise<Response>;
 export class BaseApiFactory implements ApiFactory {
   #credentials: CredentialsProvider;
   #region?: string;
+  #fixedEndpoint?: string;
+  #baseDomain?: string;
   constructor(opts: {
     credentialProvider?: CredentialsProvider,
     credentials?: Credentials,
     region?: string;
+    fixedEndpoint?: string;
+    baseDomain?: string;
   }) {
     if (opts.credentials != null) {
       const {credentials} = opts;
@@ -40,6 +44,14 @@ export class BaseApiFactory implements ApiFactory {
     } catch (err) {
       if (err.name !== 'PermissionDenied') throw err;
     }
+
+    if (typeof opts.fixedEndpoint == 'string') {
+      if (!opts.fixedEndpoint.includes('://')) throw new Error(
+        `If provided, fixedEndpoint must be a full URL including https:// or http://`);
+      this.#fixedEndpoint = opts.fixedEndpoint;
+    } else if (typeof opts.baseDomain == 'string') {
+      this.#baseDomain = opts.baseDomain;
+    }
   }
 
   makeNew<T>(apiConstructor: ServiceApiClass<T>): T {
@@ -52,11 +64,19 @@ export class BaseApiFactory implements ApiFactory {
       throw new Error(`TODO: signature version ${apiMetadata.signatureVersion}`);
     }
 
+    const globalEndpointPrefix = apiMetadata
+      .globalEndpoint?.replace(/\.amazonaws\.com$/, '');
+
+    // Try dual-stacking sometimes
+    const endpointPrefix =
+      apiMetadata.serviceId === 'S3' ? 's3.dualstack' :
+      apiMetadata.endpointPrefix;
+
     const signingFetcher: SigningFetcher = async (request: Request, opts: FetchOpts): Promise<Response> => {
       // QUIRK: try using host routing for S3 buckets when helpful
       // TODO: this isn't actually signing relevant!
       // we just have better info here...
-      if (apiMetadata.serviceId === 'S3' && opts.urlPath && !opts.hostPrefix) {
+      if (apiMetadata.serviceId === 'S3' && opts.urlPath && !opts.hostPrefix && !this.#fixedEndpoint) {
         const [bucketName] = opts.urlPath.slice(1).split(/[?/]/);
         if (bucketName.length > 0 && !bucketName.includes('.')) {
           opts.hostPrefix = `${bucketName}.`;
@@ -66,21 +86,18 @@ export class BaseApiFactory implements ApiFactory {
       }
 
       if (opts.skipSigning) {
-        const endpoint =
-          apiMetadata.globalEndpoint
-          // Try try to find the region if the service doesn't have a global endpoint
-          ?? [
-            apiMetadata.endpointPrefix,
-            this.#region
-              ?? (await this.#credentials.getCredentials().then(x => x.region, x => null))
-              ?? throwMissingRegion(),
-            'amazonaws.com',
-          ].join('.');
+        // Try to find the region without trying too hard (defaulting is ok in case of global endpoints)
+        const region = opts.region ?? this.#region
+          ?? (await this.#credentials.getCredentials().then(x => x.region, () => undefined));
+        const baseDomain = this.#baseDomain ?? getRootDomain(apiMetadata.serviceId, region);
 
-        const fullUrl = `https://${opts.hostPrefix ?? ''}${endpoint}${opts.urlPath}`;
+        const endpoint = this.#fixedEndpoint ??
+          `https://${opts.hostPrefix ?? ''}${baseDomain === 'aws' ? 'api.' : ''}${
+            globalEndpointPrefix || `${endpointPrefix}.${region ?? throwMissingRegion()}`
+          }.${baseDomain}`;
 
         // work around deno 1.9 request cloning regression :(
-        return fetch(fullUrl, {
+        return fetch(new URL(opts.urlPath, endpoint).toString(), {
           headers: request.headers,
           method: request.method,
           body: request.body,
@@ -96,22 +113,26 @@ export class BaseApiFactory implements ApiFactory {
         ?? (apiMetadata.globalEndpoint ? 'us-east-1'
         : (this.#region ?? credentials.region ?? throwMissingRegion()));
 
+      const baseDomain = this.#baseDomain ?? getRootDomain(apiMetadata.serviceId, region);
+
       // TODO: service URL can vary for lots of reasons:
-      // - dualstack/IPv6 on alt hostnames for EC2 and S3
-      // - govcloud, aws-cn, etc (detect from region?)
+      // - dualstack/IPv6 on alt hostnames for EC2 (some regions) and S3 (all regions?)
+      // - govcloud, aws-cn, etc
+      //   ^ this should be auto detected from region now
       // - localstack, minio etc - completely custom
+      //   ^ this should be supported now via `fixedEndpoint`
 
       const signer = new AWSSignerV4(region, credentials);
-      const serviceUrl = 'https://' + (apiMetadata.globalEndpoint
-        ?? `${apiMetadata.endpointPrefix}.${region}.amazonaws.com`);
-
       const signingName = apiMetadata.signingName ?? apiMetadata.endpointPrefix;
 
       // Assemble full URL
-      const [scheme, host] = serviceUrl.split('//');
-      const url = `${scheme}//${opts.hostPrefix ?? ''}${host}${opts.urlPath}`;
+      const endpoint = this.#fixedEndpoint ||
+        `https://${opts.hostPrefix ?? ''}${baseDomain === 'aws' ? 'api.' : ''}${
+          globalEndpointPrefix || `${endpointPrefix}.${region}`
+        }.${baseDomain}`;
+      const fullUrl = new URL(opts.urlPath, endpoint).toString();
 
-      const req = await signer.sign(signingName, url, request);
+      const req = await signer.sign(signingName, fullUrl, request);
       // console.log(req.method, url);
       return fetch(req);
     }
@@ -397,4 +418,25 @@ async function handleErrorResponse(response: Response, reqMethod: string): Promi
     console.log('Error body:', await response.text());
   }
   throw new Error(`Unrecognizable error response of type ${contentType}`);
+}
+
+// https://docs.aws.amazon.com/AWSEC2/latest/APIReference/Using_Endpoints.html
+const dualStackEc2Regions = new Set([
+  'us-east-1',
+  'us-east-2',
+  'us-west-2',
+  'eu-west-1',
+  'ap-south-1',
+  'sa-east-1',
+]);
+
+function getRootDomain(serviceId: string, region = 'us-east-1') {
+  // partially dual-stacked APIs on new TLD
+  if (serviceId === 'EC2' && dualStackEc2Regions.has(region)) return 'aws';
+  // non-default partitions
+  if (region.startsWith('cn-')) return 'amazonaws.com.cn';
+  if (region.startsWith('us-iso-')) return 'c2s.ic.gov';
+  if (region.startsWith('us-isob-')) return 'sc2s.sgov.gov';
+  // old faithful
+  return 'amazonaws.com';
 }

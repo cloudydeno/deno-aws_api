@@ -3,17 +3,19 @@
 import { ApiFactory } from '../client/mod.ts';
 import { S3, BucketLocationConstraint } from '../services/s3/mod.ts';
 
-const s3 = new ApiFactory().makeNew(S3);
+const factory = new ApiFactory();
+const s3 = factory.makeNew(S3);
 const Bucket = 'ahshyawyjiajhshdh';
 
 // make our bucket
 try {
   // S3 regions are weird.. need to clarify which we want here
   // us-east-2 can _create_ a us-west-1 bucket, but not _access_ it
-  // const region = await factory.determineCurrentRegion();
+  // also us-east-1 refuses a region config entirely
+  const region = await factory.determineCurrentRegion();
   await s3.createBucket({ Bucket,
-    CreateBucketConfiguration: {
-      // LocationConstraint: region as BucketLocationConstraint,
+    CreateBucketConfiguration: region == 'us-east-1' ? null : {
+      LocationConstraint: region as BucketLocationConstraint,
     }});
 
   await s3.waitForBucketExists({ Bucket });
