@@ -139,6 +139,7 @@ async function generateRun(run: TestRun): Promise<void> {
   chunks.push('\n/////////\n');
   chunks.push(`import { assertEquals } from "https://deno.land/std@0.105.0/testing/asserts.ts";`);
   chunks.push(`import { wrapServiceClient } from '../../client/client.ts';\n`);
+  chunks.push(`import type { ServiceApiClass } from '../../client/common.ts';\n`);
 
   const mockFuncName = run.category === 'input' ? 'checkRequest' : 'mockResponse';
   chunks.push(`async function ${mockFuncName}(request: Request, opts: {hostPrefix?: string, urlPath: string}): Promise<Response> {`);
@@ -175,6 +176,9 @@ async function generateRun(run: TestRun): Promise<void> {
   chunks.push(`  buildServiceClient(metadata: any) {`);
   chunks.push(`    return wrapServiceClient(metadata, ${mockFuncName});`);
   chunks.push(`  },`);
+  chunks.push(`  makeNew<T>(apiConstructor: ServiceApiClass<T>): T {`);
+  chunks.push(`    return new apiConstructor(this);`);
+  chunks.push(`  }`);
   chunks.push(`});\n`);
 
   if (run.category === 'input') {
