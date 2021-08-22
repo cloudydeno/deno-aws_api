@@ -9,8 +9,7 @@ const ThisScriptUrl = `https://deno.land/x/aws_api/examples/ec2-launch-instance.
 import { ApiFactory } from '../client/mod.ts';
 import { EC2, Instance } from '../services/ec2/mod.ts';
 
-const factory = new ApiFactory();
-const ec2 = new EC2(factory);
+const ec2 = new ApiFactory().makeNew(EC2);
 
 // List at most 25 running EC2 instances in the region
 // This uses a .then() pattern to process the results before assigning any variable

@@ -1,6 +1,7 @@
 import { AWSSignerV4 } from "./signing.ts";
 import {
   ServiceClient, ApiRequestConfig,
+  ServiceApiClass,
   ApiMetadata,
   ApiFactory,
   AwsServiceError, ServiceError,
@@ -17,10 +18,6 @@ type FetchOpts = {
   region?: string,
 };
 type SigningFetcher = (request: Request, opts: FetchOpts) => Promise<Response>;
-
-interface ClientClass<T> {
-  new (apiFactory: ApiFactory): T;
-}
 
 export class BaseApiFactory implements ApiFactory {
   #credentials: CredentialsProvider;
@@ -45,8 +42,8 @@ export class BaseApiFactory implements ApiFactory {
     }
   }
 
-  makeNew<T>(constr: ClientClass<T>) {
-    return new constr(this);
+  makeNew<T>(apiConstructor: ServiceApiClass<T>): T {
+    return new apiConstructor(this);
   }
 
   // TODO: second argument for extra config (endpoint, logging, etc)

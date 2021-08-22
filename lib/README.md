@@ -38,11 +38,9 @@ Basic example: (a subset of `demo.ts`)
 
 ```typescript
 import { ApiFactory } from 'https://deno.land/x/aws_api/client/mod.ts';
-const factory = new ApiFactory();
-
 import { STS } from 'https://deno.land/x/aws_api/services/sts/mod.ts';
-const sts = new STS(factory);
 
+const sts = new ApiFactory().makeNew(STS);
 const identity = await sts.getCallerIdentity();
 console.log('You are', identity.UserId, 'in account', identity.Account);
 console.log('Identity ARN:', identity.Arn);
@@ -56,14 +54,14 @@ To use a customized build, or a less-common service, you can import from the web
 
 ```typescript
 import { ApiFactory } from 'https://deno.land/x/aws_api/client/mod.ts';
-const factory = new ApiFactory();
-
 import { Pricing } from 'https://deno.land/x/aws_api/services/pricing.ts';
-const pricing = new Pricing(factory);
 
-const identity = await pricing.describeServices('AmazonEC2');
-console.log('You are', identity.UserId, 'in account', identity.Account);
-console.log('Identity ARN:', identity.Arn);
+const pricing = new ApiFactory().makeNew(Pricing);
+const { Services } = await pricing.describeServices('AmazonEC2');
+console.log('Found', Services.length, 'services:');
+for (const serviceItem of Services) {
+  console.log('  -', serviceItem.ServiceCode);
+}
 ```
 
 ## ⚠️ BREAKING CHANGES ⚠️ v0.4.0 ⚠️
@@ -94,6 +92,7 @@ console.log('Identity ARN:', identity.Arn);
 
 * `v0.5.0` on `2021-08-TBD`: Requires Deno 1.11 or later, for `crypto.randomUUID`.
   * Using definitions from `aws-sdk-js@2.971.0`
+  * Formalize `.makeNew(constructor)` method on `ApiFactory`
 * `v0.4.1` on `2021-05-23`: Also fix Deno 1.9 regression for unsigned requests.
   * Addresses startup issue when using EKS Pod Identity.
 * `v0.4.0` on `2021-05-01`: Deno 1.9 compatibility. Remove most less-common AWS services.
