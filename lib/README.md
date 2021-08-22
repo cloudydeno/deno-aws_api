@@ -70,7 +70,13 @@ The `opts` bag can contain a few settings if necesary:
 * `credentialProvider?: CredentialsProvider` to use a specific credential source. `CredentialsProvider` can refresh tokens and implementing one could be useful for dynamic configuration. The default provider is `DefaultCredentialsProvider`, a singleton `CredentialsProviderChain` instance.
 * `credentials?: Credentials` to force a particular credential. No refresh support.
 * `region?: string` to configure a specific AWS region, ignoring the default region. Useful for apps working in multiple regions.
-* `fixedEndpoint?: string;` to force a particular base URL to send all requests to. Useful for MinIO or localstack. Specify a full URL including protocol://. Also disables subdomain-style S3 access.
+* `fixedEndpoint?: string` to force a particular base URL to send all requests to. Useful for MinIO or localstack. Specify a full URL including protocol://. Also disables subdomain-style S3 access.
+
+```typescript
+const ec2_europe = new ApiFactory({
+  region: 'eu-west-1',
+}).makeNew(EC2);
+```
 
 ## ⚠️ BREAKING CHANGES ⚠️ v0.4.0 ⚠️
 
