@@ -64,6 +64,14 @@ for (const serviceItem of Services) {
 }
 ```
 
+## `ApiFactory` Configuration
+The `opts` bag can contain a few settings if necesary:
+
+* `credentialProvider?: CredentialsProvider` to use a specific credential source. `CredentialsProvider` can refresh tokens and implementing one could be useful for dynamic configuration. The default provider is `DefaultCredentialsProvider`, a singleton `CredentialsProviderChain` instance.
+* `credentials?: Credentials` to force a particular credential. No refresh support.
+* `region?: string` to configure a specific AWS region, ignoring the default region. Useful for apps working in multiple regions.
+* `fixedEndpoint?: string;` to force a particular base URL to send all requests to. Useful for MinIO or localstack. Specify a full URL including protocol://. Also disables subdomain-style S3 access.
+
 ## ⚠️ BREAKING CHANGES ⚠️ v0.4.0 ⚠️
 
 1. **Version 0.4.0** of this library stopped
@@ -173,6 +181,7 @@ Some individual features that are implemented:
 * Waiters (as `.waitForXYZ({...})`)
 * Automatic credential detection / loading
 * EC2 instance metadata server v2
+* Custom alternative endpoints
 
 Multiple bits are *missing*:
 
