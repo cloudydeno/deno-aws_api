@@ -44,9 +44,13 @@ export type JSONArray = JSONValue[];
 
 export interface ApiFactory {
   buildServiceClient(apiMetadata: Object): ServiceClient;
+  makeNew<T>(apiConstructor: ServiceApiClass<T>): T;
 }
 export interface ServiceClient {
   performRequest(request: ApiRequestConfig): Promise<Response>;
+}
+export interface ServiceApiClass<T> {
+  new (apiFactory: ApiFactory): T;
 }
 
 // our understanding of how APIs can describe themselves
