@@ -5,10 +5,9 @@
  */
 
 import { ApiFactory } from '../client/mod.ts';
-const factory = new ApiFactory();
-
 import { Pricing } from 'https://aws-api.deno.dev/v0.1/services/pricing.ts';
-const pricing = new Pricing(factory);
+
+const pricing = new ApiFactory().makeNew(Pricing);
 
 const ec2Pricing = await pricing.getAttributeValues({
   ServiceCode: 'AmazonEC2',

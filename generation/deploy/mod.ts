@@ -152,8 +152,12 @@ ${escape(apiText)}
 <p>Fully specified: <code>/v{module version}/sdk@{aws-sdk-js version}/{service ID}@{service api version}.ts</code></p>
 <h2>Examples</h2>
 <pre>
+// import the base client library
+import { ApiFactory } from "${generation.clientModRoot}/client/mod.ts";
+
 // import the complete API of one AWS service
 import { SQS } from "${origin}${modRoot}/sqs.ts";
+const sqs = new ApiFactory().makeNew(SQS);
 
 // be specific about which "API Version" to use (most APIs only have one)
 import { SQS } from "${origin}${modRoot}/sqs@2012-11-05.ts";
@@ -185,7 +189,7 @@ ${serviceList.map(([svcId, svc]) => `<tr>
       headers: {
         "content-type": "text/html; charset=utf-8",
       }});
-  }
+    }
   }
 
   return ResponseText(404, `404 Not Found`);

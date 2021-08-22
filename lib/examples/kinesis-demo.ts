@@ -3,8 +3,7 @@
 import { ApiFactory } from '../client/mod.ts';
 import { Kinesis } from '../services/kinesis/mod.ts';
 
-const factory = new ApiFactory();
-const kinesis = new Kinesis(factory);
+const kinesis = new ApiFactory().makeNew(Kinesis);
 const StreamName = 'deno-aws-test';
 
 // Provision a single-shard stream
