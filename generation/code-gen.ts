@@ -63,7 +63,7 @@ export default class ServiceCodeGen {
       for (const [name, spec] of Object.entries(this.waitersSpec.waiters)) {
         const operation = this.apiSpec.operations[spec.operation];
         if (operation) {
-          const waiter = new GenWaiter(name, spec, operation, this.shapes);
+          const waiter = new GenWaiter(name, spec, operation, this.shapes, this.includeOpts);
           chunks.push(waiter.generateTypescript(''));
         } else {
           chunks.push(`  // waitFor${name}() skipped - depends on ${spec.operation}`);
@@ -98,7 +98,7 @@ export default class ServiceCodeGen {
       chunks.push(`  // Resource State Waiters\n`);
       for (const [name, spec] of Object.entries(this.waitersSpec.waiters)) {
         const operation = this.apiSpec.operations[spec.operation];
-        const waiter = new GenWaiter(name, spec, operation, this.shapes);
+        const waiter = new GenWaiter(name, spec, operation, this.shapes, this.includeOpts);
         chunks.push(waiter.generateTypescript('s.'));
       }
     }

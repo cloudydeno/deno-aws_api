@@ -9,6 +9,7 @@ export default class GenWaiter {
     public spec: Schema.WaiterSpec,
     public operation: Schema.ApiOperation,
     public shapes: ShapeLibrary,
+    public includeOpts: boolean,
   ) {}
 
   compilePathWaiter(spec: Schema.WaiterPathMatcher): [string, string] {
@@ -82,9 +83,14 @@ export default class GenWaiter {
       outputShape?.censoredName ? `${namePrefix}${outputShape?.censoredName}` : 'void',
     ].filter(x => x).join(' | ');
 
+    const funcParams = ['params'];
+    if (this.includeOpts) {
+      funcParams.push('opts')
+    }
+
     const innerChunks: string[] = [];
     const lowerCamelName = this.operation.name[0].toLowerCase() + this.operation.name.slice(1);
-    innerChunks.push(`      ${outputShape ? 'const resp = ' : ''}await this.${cleanFuncName(lowerCamelName)}(params);`);
+    innerChunks.push(`      ${outputShape ? 'const resp = ' : ''}await this.${cleanFuncName(lowerCamelName)}(${funcParams.join(', ')});`);
 
     if (collapsePathEval) {
       const code = fixupJmesCode(compileJMESPath(allPaths[0], 'resp'));
@@ -152,6 +158,9 @@ export default class GenWaiter {
 
     chunks.push(`  async waitFor${this.name}(`);
     chunks.push(`    params: ${inputSignature},`);
+    if (this.includeOpts) {
+      chunks.push(`    opts: client.RequestOptions = {},`);
+    }
     chunks.push(`  ): Promise<${outputSignature}> {`);
     chunks.push(`    const errMessage = 'ResourceNotReady: Resource is not in the state ${this.name}';`);
     chunks.push(`    for (let i = 0; i < ${this.spec.maxAttempts}; i++) {`);
