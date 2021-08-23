@@ -74,9 +74,8 @@ export class BaseApiFactory implements ApiFactory {
 
       // Resolve credentials and AWS region
       const credentials = await this.#credentials.getCredentials();
-      const region = opts.region
-        ?? (apiMetadata.globalEndpoint ? 'us-east-1'
-        : (this.#region ?? credentials.region ?? throwMissingRegion()));
+      const region = opts.region ?? this.#region
+        ?? credentials.region ?? throwMissingRegion();
 
       const {url, signingRegion} = this.#endpointResolver.resolveUrl({
         apiMetadata: apiMetadata,
@@ -89,7 +88,7 @@ export class BaseApiFactory implements ApiFactory {
       const signingName = apiMetadata.signingName ?? apiMetadata.endpointPrefix;
 
       const req = await signer.sign(signingName, url, request);
-      // console.log(req.method, url);
+      // console.log(req.method, url.toString());
       return fetch(req);
     }
 
