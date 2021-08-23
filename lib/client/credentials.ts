@@ -207,6 +207,7 @@ export class TokenFileWebIdentityCredentials implements CredentialsProvider {
     const client = new BaseApiFactory({
       // TODO: give a region here when AWS_STS_REGIONAL_ENDPOINTS=regional
       // https://github.com/cloudydeno/deno-aws_api/issues/2
+      region: 'us-east-1',
       endpointResolver: new AwsEndpointResolver({
         forceRegional: false, // TODO as above
       }),

@@ -23,7 +23,7 @@ export interface EndpointParameters {
 }
 export interface ResolvedEndpoint {
   url: URL;
-  signingRegion?: string;
+  signingRegion: string;
 }
 export interface EndpointResolver {
   resolveUrl: (parameters: EndpointParameters) => ResolvedEndpoint;

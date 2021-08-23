@@ -23,7 +23,7 @@ type SigningFetcher = (request: Request, opts: FetchOpts) => Promise<Response>;
 export class BaseApiFactory implements ApiFactory {
   #credentials: CredentialsProvider;
   #endpointResolver: EndpointResolver;
-  #region?: string;
+  #region?: string | null;
   constructor(opts: {
     credentialProvider?: CredentialsProvider,
     credentials?: Credentials,
@@ -54,42 +54,36 @@ export class BaseApiFactory implements ApiFactory {
 
   // TODO: second argument for extra config (endpoint, logging, etc)
   buildServiceClient(apiMetadata: ApiMetadata): ServiceClient {
+    // TODO: seems like importexport and sdb still reference v2
     if (apiMetadata.signatureVersion === 'v2') throw new Error(
       `TODO: signature version ${apiMetadata.signatureVersion}`);
 
     const signingFetcher: SigningFetcher = async (request: Request, opts: FetchOpts): Promise<Response> => {
 
-      if (opts.skipSigning) {
-        // Try to find the region without trying too hard (defaulting is ok in case of global endpoints)
-        const region = opts.region ?? this.#region
-          ?? (await this.#credentials.getCredentials().then(x => x.region, () => undefined));
-
-        return fetch(this.#endpointResolver.resolveUrl({
-          apiMetadata: apiMetadata,
-          region: region ?? 'us-east-1',
-          requestPath: opts.urlPath,
-          hostPrefix: opts.hostPrefix,
-        }).url, request);
+      // Only happens at most once, because undefined !== null
+      if (this.#region === undefined && !opts.region) {
+        this.#region = await this.#credentials.getCredentials().then(x => x.region, () => null);
       }
 
-      // Resolve credentials and AWS region
-      const credentials = await this.#credentials.getCredentials();
-      const region = opts.region ?? this.#region
-        ?? credentials.region ?? throwMissingRegion();
+      const { url, signingRegion } = this.#endpointResolver
+        .resolveUrl({
+          apiMetadata: apiMetadata,
+          region: opts.region ?? this.#region ?? throwMissingRegion(),
+          requestPath: opts.urlPath,
+          hostPrefix: opts.hostPrefix,
+        });
 
-      const {url, signingRegion} = this.#endpointResolver.resolveUrl({
-        apiMetadata: apiMetadata,
-        region: region,
-        requestPath: opts.urlPath,
-        hostPrefix: opts.hostPrefix,
-      });
+      // console.log(request.method, url.toString());
+      if (opts.skipSigning) {
+        return fetch(url, request);
+      } else {
+        const credentials = await this.#credentials.getCredentials();
+        const signer = new AWSSignerV4(signingRegion, credentials);
+        const signingName = apiMetadata.signingName
+          ?? apiMetadata.endpointPrefix;
 
-      const signer = new AWSSignerV4(signingRegion ?? region, credentials);
-      const signingName = apiMetadata.signingName ?? apiMetadata.endpointPrefix;
-
-      const req = await signer.sign(signingName, url, request);
-      // console.log(req.method, url.toString());
-      return fetch(req);
+        return fetch(await signer.sign(signingName, url, request));
+      }
     }
 
     return wrapServiceClient(apiMetadata, signingFetcher);

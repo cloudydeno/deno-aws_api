@@ -83,6 +83,7 @@ const dualStackEc2Regions = new Set([
 
 // Intended for regional providers of just S3 APIs
 // Example: [example-bucket.]us-east-1.linodeobjects.com
+// Usage:   new S3CompatibleEndpointResolver('linodeobjects.com')
 export class S3CompatibleEndpointResolver implements EndpointResolver {
   constructor(
     public readonly baseDomain: string,
@@ -97,11 +98,12 @@ export class S3CompatibleEndpointResolver implements EndpointResolver {
     perhapsUpgradeEndpointParametersToHostStyleRouting(parameters);
 
     const endpoint = `https://${parameters.hostPrefix ?? ''}${parameters.region}.${this.baseDomain}`;
-    return { url: new URL(parameters.requestPath, endpoint) };
+    return {
+      url: new URL(parameters.requestPath, endpoint),
+      signingRegion: parameters.region,
+    };
   }
 }
-// export const LinodeObjectsEndpointResolver
-//   = new S3CompatibleEndpointResolver('linodeobjects.com');
 
 
 export class FixedBaseEndpointResolver implements EndpointResolver {
@@ -112,7 +114,10 @@ export class FixedBaseEndpointResolver implements EndpointResolver {
       `Fixed endpoint must be a full URL including https:// or http://`);
   }
   resolveUrl(parameters: EndpointParameters): ResolvedEndpoint {
-    return { url: new URL(parameters.requestPath, this.baseUrl) };
+    return {
+      url: new URL(parameters.requestPath, this.baseUrl),
+      signingRegion: parameters.region,
+    };
   }
 }
 
