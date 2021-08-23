@@ -29,6 +29,10 @@ export interface EndpointResolver {
   resolveUrl: (parameters: EndpointParameters) => ResolvedEndpoint;
 }
 
+export interface RequestOptions {
+  abortSignal?: AbortSignal;
+}
+
 // The HTTP contract expected by all service API implementations
 export interface ApiRequestConfig {
   // fixed per operation

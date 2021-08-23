@@ -17,6 +17,7 @@ export function generateApiTypescript(
   namespace: string,
   namePrefix: string,
   docMode: 'none' | 'short' | 'full',
+  extraOpts: string[],
 ): string {
 
   const structEmitter = new StructEmitter(apiSpec, shapes, helpers, protocol, namePrefix, docMode);
@@ -43,24 +44,30 @@ export function generateApiTypescript(
     }
 
     let signature = `(`;
-    // let signature = `(\n    {abortSignal${inputShape ? ', ...params' : ''}}: RequestConfig`;
+    if (extraOpts.length > 0) {
+      signature += `\n    { ${extraOpts.join(', ')}${inputShape ? ', ...params' : ''} }: client.RequestOptions`;
+    }
     if (inputShape?.spec.type === 'structure') {
-      signature += '\n    params: ' + structEmitter.specifyShapeType(inputShape, {isJson: operation.input?.jsonvalue});
+      if (extraOpts.length > 0) {
+        signature += ' & '
+      } else {
+        signature += '\n    params: '
+      }
+      signature += structEmitter.specifyShapeType(inputShape, {isJson: operation.input?.jsonvalue});
       if (operation.input?.payload) {
         inputShape.payloadField = operation.input.payload;
       }
       if (!inputShape.spec.required?.length && Object.values(inputShape.spec.members).every(x => x.location !== 'uri')) {
         signature += ' = {}';
       }
-      signature += ',\n  ';
     } else if (inputShape) {
       throw new Error(`TODO: ${inputShape.spec.type} input`);
-    // } else {
-    //   signature += ' = {}';
+    } else if (extraOpts.length > 0) {
+      signature += ' = {}';
     }
+    signature += ',\n  ';
 
     signature += `): Promise<`;
-    // signature += `,\n  ): Promise<`;
     if (outputShape?.spec.type === 'structure') {
       signature += structEmitter.specifyShapeType(outputShape, {isJson: operation.output?.jsonvalue});
     } else if (outputShape) {
@@ -77,7 +84,7 @@ export function generateApiTypescript(
     const lowerCamelName = operation.name[0].toLowerCase() + operation.name.slice(1);
     chunks.push(`  async ${cleanFuncName(lowerCamelName)}${signature} {`);
     let protoPathParts: Map<string,string> | undefined;
-    const referencedInputs = new Set<string>([/*'abortSignal'*/]);
+    const referencedInputs = new Set<string>(extraOpts);
     if (operation.input) {// && inputShape?.spec.type === 'structure') {
       const {inputParsingCode, inputVariables, pathParts} = protocol
         .generateOperationInputParsingTypescript(inputShape, operation.input);

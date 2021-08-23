@@ -17,6 +17,7 @@ type FetchOpts = {
   hostPrefix?: string,
   skipSigning?: true,
   region?: string,
+  signal?: AbortSignal,
 };
 type SigningFetcher = (request: Request, opts: FetchOpts) => Promise<Response>;
 
@@ -161,7 +162,7 @@ export class BaseServiceClient implements ServiceClient {
       skipSigning: config.skipSigning,
       hostPrefix: config.hostPrefix,
       // TODO: request handling once Deno can do it
-      // signal: config.abortSignal,
+      signal: config.abortSignal,
     });
 
     if (response.status == (config.responseCode ?? 200)) {

@@ -1,4 +1,8 @@
+// import v0_1_CodeGen from 'https://raw.githubusercontent.com/cloudydeno/deno-aws_api/v0.4.1/generation/code-gen.ts';
+// // differences:
+// // - add abortSignal parameter to every API
 import LatestCodeGen from '../code-gen.ts';
+
 import * as Schema from '../sdk-schema.ts';
 
 interface ApiSpecsBundle {
@@ -46,7 +50,10 @@ export const Generations = new Map<string, ModuleGenerator>([
     'https://deno.land/x/aws_api@v0.5.0',
     'https://deno.land/std@0.105.0',
     'v2.971.0',
-    (config, opts) => new LatestCodeGen(config, opts),
+    (config, opts) => {
+      opts.set('extraOpts', 'abortSignal');
+      return new LatestCodeGen(config, opts);
+    },
   )],
 ]);
 export const LatestGeneration = 'v0.1';

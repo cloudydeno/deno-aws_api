@@ -40,6 +40,7 @@ for (const svc of Object.values(serviceList)) {
 
 const opts = new URLSearchParams();
 // opts.set('docs', 'short');
+opts.set('extraOpts', 'abortSignal');
 
 const specSuffix = `.normal.json`;
 const specificServices = Deno.args[0]?.split(',');
