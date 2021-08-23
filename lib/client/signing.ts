@@ -99,15 +99,14 @@ export class AWSSignerV4 implements Signer {
    */
   public async sign(
     service: string,
-    url: string,
+    url: URL,
     request: Request,
   ): Promise<Request> {
     const date = new Date();
     const amzdate = toAmz(date);
     const datestamp = toDateStamp(date);
 
-    const urlObj = new URL(url);
-    const { host, pathname, searchParams } = urlObj;
+    const { host, pathname, searchParams } = url;
     searchParams.sort();
     const canonicalQuerystring = searchParams.toString();
 
@@ -159,7 +158,7 @@ export class AWSSignerV4 implements Signer {
     headers.set("Authorization", authHeader);
 
     return new Request(
-      url,
+      url.toString(),
       {
         headers,
         method: request.method,

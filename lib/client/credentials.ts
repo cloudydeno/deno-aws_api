@@ -205,8 +205,11 @@ export class TokenFileWebIdentityCredentials implements CredentialsProvider {
     if (!this.#roleArn) throw new Error(`No Role ARN is set`);
 
     const client = new BaseApiFactory({
-      // TODO: give a region here when AWS_STS_REGIONAL_ENDPOINTS is present
+      // TODO: give a region here when AWS_STS_REGIONAL_ENDPOINTS=regional
       // https://github.com/cloudydeno/deno-aws_api/issues/2
+      endpointResolver: new AwsEndpointResolver({
+        forceRegional: false, // TODO as above
+      }),
       credentialProvider: { getCredentials: () => Promise.reject(new Error(
         `No credentials necesary to AssumeRoleWithWebIdentity`)) },
     }).buildServiceClient(StsApiMetadata);
@@ -321,6 +324,7 @@ export function getDefaultRegion(): string {
 
 import type { ServiceClient, ApiMetadata } from "./common.ts";
 import { readXmlResult, XmlNode } from "../encoding/xml.ts";
+import { AwsEndpointResolver } from "./endpoints.ts";
 
 const StsApiMetadata: ApiMetadata = {
   apiVersion: "2011-06-15",
