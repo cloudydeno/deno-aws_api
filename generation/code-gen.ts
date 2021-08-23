@@ -15,7 +15,7 @@ export default class ServiceCodeGen {
 
   isTest: boolean;
   docMode: 'none' | 'short' | 'full';
-  extraOpts: string[];
+  includeOpts: boolean;
   shapes: ShapeLibrary;
 
   constructor(specs: {
@@ -37,7 +37,7 @@ export default class ServiceCodeGen {
       this.docMode = 'none';
     }
 
-    this.extraOpts = opts.get('extraOpts')?.split(',') ?? [];
+    this.includeOpts = opts.get('includeOpts') == 'yes';
 
     // mutate the specs to fix inaccuracies
     fixupApiSpec(this.apiSpec);
@@ -56,7 +56,7 @@ export default class ServiceCodeGen {
     chunks.push(`export class ${namespace} {`);
 
     const structGen = new StructEmitter(this.apiSpec, this.shapes, helpers, protocol, '', this.docMode);
-    chunks.push(generateApiTypescript(this.apiSpec, this.shapes, helpers, protocol, namespace, '', this.docMode, this.extraOpts));
+    chunks.push(generateApiTypescript(this.apiSpec, this.shapes, helpers, protocol, namespace, '', this.docMode, this.includeOpts));
 
     if (this.waitersSpec && Object.keys(this.waitersSpec.waiters).length > 0) {
       chunks.push(`  // Resource State Waiters\n`);
@@ -92,7 +92,7 @@ export default class ServiceCodeGen {
     chunks.push(`export class ${namespace} {`);
 
     const structGen = new StructEmitter(this.apiSpec, this.shapes, helpers, protocol, 's.', this.docMode);
-    chunks.push(generateApiTypescript(this.apiSpec, this.shapes, helpers, protocol, namespace, 's.', this.docMode, this.extraOpts));
+    chunks.push(generateApiTypescript(this.apiSpec, this.shapes, helpers, protocol, namespace, 's.', this.docMode, this.includeOpts));
 
     if (this.waitersSpec && Object.keys(this.waitersSpec.waiters).length > 0) {
       chunks.push(`  // Resource State Waiters\n`);

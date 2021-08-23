@@ -51,7 +51,7 @@ export const Generations = new Map<string, ModuleGenerator>([
     'https://deno.land/std@0.105.0',
     'v2.971.0',
     (config, opts) => {
-      opts.set('extraOpts', 'abortSignal');
+      opts.set('includeOpts', 'yes');
       return new LatestCodeGen(config, opts);
     },
   )],

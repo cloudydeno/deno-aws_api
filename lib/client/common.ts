@@ -29,12 +29,14 @@ export interface EndpointResolver {
   resolveUrl: (parameters: EndpointParameters) => ResolvedEndpoint;
 }
 
+/** Request options that are provided by the original caller */
 export interface RequestOptions {
-  abortSignal?: AbortSignal;
+  /** An `AbortSignal` object instance; allows you to communicate with an AWS request and abort it if desired via an `AbortController`. */
+  signal?: AbortSignal;
 }
 
-// The HTTP contract expected by all service API implementations
-export interface ApiRequestConfig {
+/** The HTTP contract expected by all service API implementations */
+export type ApiRequestConfig = RequestOptions & {
   // fixed per operation
   action: string;
   method?: "POST" | "GET" | "HEAD" | "DELETE" | "PUT" | "PATCH";
@@ -46,7 +48,6 @@ export interface ApiRequestConfig {
   headers?: Headers;
   query?: URLSearchParams;
   body?: URLSearchParams | JSONObject | Uint8Array | string | null;
-  abortSignal?: AbortSignal;
   skipSigning?: true; // for unauthenticated APIs (STS, cognito)
 }
 
