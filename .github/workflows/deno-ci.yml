@@ -24,6 +24,13 @@ jobs:
       with:
         deno-version: ${{ matrix.deno-version }}
 
+    - name: Cache https:// deps
+      uses: actions/cache@v2
+      with:
+        path: ~/.cache/deno/deps/https
+        key: deno/${{ matrix.deno-version }}-https/v1-${{ github.sha }}
+        restore-keys: deno/${{ matrix.deno-version }}-https/v1-
+
     - name: Check generation/deploy/mod.ts
       run: time deno cache generation/deploy/mod.ts
 
@@ -52,6 +59,13 @@ jobs:
       uses: denoland/setup-deno@v1
       with:
         deno-version: ${{ matrix.deno-version }}
+
+    - name: Cache https:// deps
+      uses: actions/cache@v2
+      with:
+        path: ~/.cache/deno/deps/https
+        key: deno/${{ matrix.deno-version }}-https/v1-${{ github.sha }}
+        restore-keys: deno/${{ matrix.deno-version }}-https/v1-
 
     - name: Validate aws-sdk fixtures
       run: time deno run -A generation/script/validate-fixtures.ts
