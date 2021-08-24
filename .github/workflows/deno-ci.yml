@@ -28,8 +28,8 @@ jobs:
       uses: actions/cache@v2
       with:
         path: ~/.cache/deno/deps/https
-        key: deno-https/v1-${{ github.sha }}
-        restore-keys: deno-https/v1-
+        key: deno/${{ matrix.deno-version }}-https/v1-${{ github.sha }}
+        restore-keys: deno/${{ matrix.deno-version }}-https/v1-
 
     - name: Check generation/deploy/mod.ts
       run: time deno cache generation/deploy/mod.ts
@@ -64,8 +64,8 @@ jobs:
       uses: actions/cache@v2
       with:
         path: ~/.cache/deno/deps/https
-        key: deno-https/v1-${{ github.sha }}
-        restore-keys: deno-https/v1-
+        key: deno/${{ matrix.deno-version }}-https/v1-${{ github.sha }}
+        restore-keys: deno/${{ matrix.deno-version }}-https/v1-
 
     - name: Validate aws-sdk fixtures
       run: time deno run -A generation/script/validate-fixtures.ts
