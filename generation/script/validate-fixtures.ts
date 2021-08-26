@@ -185,7 +185,7 @@ async function generateRun(run: TestRun): Promise<void> {
     const { given, params } = run.testCase;
     chunks.push(`Deno.test(${JSON.stringify(run.description)}, async () => {`);
     let paramText = JSON.stringify(params);
-    if (['{}', undefined].includes(paramText)) paramText = ''; // TODO: remove when abortSignal
+    // if (['{}', undefined].includes(paramText)) paramText = ''; // TODO: remove when abortSignal
     chunks.push(`  await testService.${lowerCamel(given.name)}(${paramText});\n`);
     chunks.push(`});`);
   } else {

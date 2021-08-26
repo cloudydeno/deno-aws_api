@@ -1,6 +1,5 @@
+// fixing some generations to an older codegen would work like this:
 // import v0_1_CodeGen from 'https://raw.githubusercontent.com/cloudydeno/deno-aws_api/v0.4.1/generation/code-gen.ts';
-// // differences:
-// // - add abortSignal parameter to every API
 import LatestCodeGen from '../code-gen.ts';
 
 import * as Schema from '../sdk-schema.ts';

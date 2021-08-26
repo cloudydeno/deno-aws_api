@@ -154,7 +154,7 @@ export class BaseServiceClient implements ServiceClient {
       headers: headers,
       body: config.body,
       redirect: 'manual',
-      signal: config.abortSignal,
+      signal: config.signal,
     });
     const response = await this.#signedFetcher(request, {
       urlPath: serviceUrl + query,
@@ -162,7 +162,7 @@ export class BaseServiceClient implements ServiceClient {
       skipSigning: config.skipSigning,
       hostPrefix: config.hostPrefix,
       // TODO: request handling once Deno can do it
-      signal: config.abortSignal,
+      signal: config.signal,
     });
 
     if (response.status == (config.responseCode ?? 200)) {
