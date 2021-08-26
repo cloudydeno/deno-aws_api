@@ -12,7 +12,21 @@ export interface CredentialsProvider {
 
 /** Generic AWS Signer interface */
 export interface Signer {
-  sign: (service: string, url: string, request: Request) => Promise<Request>;
+  sign: (service: string, url: URL, request: Request) => Promise<Request>;
+}
+
+export interface EndpointParameters {
+  apiMetadata: ApiMetadata;
+  region: string;
+  hostPrefix?: string;
+  requestPath: string;
+}
+export interface ResolvedEndpoint {
+  url: URL;
+  signingRegion: string;
+}
+export interface EndpointResolver {
+  resolveUrl: (parameters: EndpointParameters) => ResolvedEndpoint;
 }
 
 // The HTTP contract expected by all service API implementations

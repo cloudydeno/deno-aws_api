@@ -3,6 +3,7 @@ import { Cache } from "https://deno.land/x/httpcache@0.1.2/mod.ts";
 import { S3 } from "./s3-api.ts";
 import { Credentials } from '../../lib/client/common.ts';
 import { BaseApiFactory } from '../../lib/client/client.ts';
+import { AwsEndpointResolver } from "../../lib/client/endpoints.ts";
 
 export function s3Cache(
   s3Client: S3,
@@ -90,6 +91,7 @@ export function s3Cache(
 }
 
 export function makeS3Client(credentials: Credentials) {
-  const factory = new BaseApiFactory({credentials});
-  return new S3(factory);
+  return new BaseApiFactory({ credentials,
+    endpointResolver: new AwsEndpointResolver,
+  }).makeNew(S3);
 }

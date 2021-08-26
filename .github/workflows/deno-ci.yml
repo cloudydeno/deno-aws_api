@@ -40,6 +40,9 @@ jobs:
     - name: Check demo.ts
       run: time deno cache lib/demo.ts
 
+    - name: Run tests
+      run: time deno test --allow-net=169.254.169.254 lib/encoding/ lib/client/
+
   generate:
     runs-on: ubuntu-latest
 
