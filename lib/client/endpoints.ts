@@ -8,6 +8,14 @@ export type {
   EndpointResolver,
 } from "./common.ts";
 
+/**
+ * The default resolver, designed specifically for Amazon AWS.
+ * A couple options provide for:
+ *   - disabling IPv4/IPv6 dualstack (which is only available for S3 & EC2)
+ *   - forcing regional endpoints (disabling the global endpoint logic)
+ * Otherwise, the URL used is determined fully automatically.
+ * The provided `region` is used to select the AWS partition endpoint.
+ */
 export class AwsEndpointResolver implements EndpointResolver {
   constructor({
     useDualstack = true,
@@ -44,7 +52,7 @@ export class AwsEndpointResolver implements EndpointResolver {
       serviceLabel = `${serviceLabel}.${parameters.region}`;
     }
 
-    // EC2: Dualstack is on a totally different TLD and only some regions
+    // EC2: Dualstack is on a totally different TLD/format and only some regions
     if (serviceId === 'EC2' && this.useDualstack &&
         dualStackEc2Regions.has(parameters.region)) {
       parameters.hostPrefix = `${parameters.hostPrefix ?? ''}api.`;
@@ -61,6 +69,7 @@ export class AwsEndpointResolver implements EndpointResolver {
   }
 }
 
+// https://cdn.jsdelivr.net/npm/@aws-sdk/client-sts/endpoints.ts
 function getRootDomain(region: string) {
   // non-default partitions
   if (region.startsWith('cn-')) return '.amazonaws.com.cn';
@@ -81,9 +90,20 @@ const dualStackEc2Regions = new Set([
 ]);
 
 
-// Intended for regional providers of just S3 APIs
-// Example: [example-bucket.]us-east-1.linodeobjects.com
-// Usage:   new S3CompatibleEndpointResolver('linodeobjects.com')
+/**
+ * Resolves S3 requests using a simplified regional scheme.
+ * This is tested with Vultr Objects and should be compatible with
+ * other similar offerings, such as Linode Objects.
+ * The service is expected to have regional subdomains,
+ * and support virtualhost-style bucket URLs.
+ * Requests for any other APIs such as EC2 will be rejected.
+ *
+ * Example: [example-bucket.]ewr1.vultrobjects.com
+ * Code:    new S3CompatibleEndpointResolver('vultrobjects.com')
+ *
+ * For services without those URL features
+ * please consider setting a fixed endpoint instead.
+ */
 export class S3CompatibleEndpointResolver implements EndpointResolver {
   constructor(
     public readonly baseDomain: string,
@@ -106,16 +126,24 @@ export class S3CompatibleEndpointResolver implements EndpointResolver {
 }
 
 
+/**
+ * A simple EndpointResolver which always uses the given base URL,
+ * unconditionally appending the given request path.
+ * Intended for 'localhost' and other small-scale API mocks.
+ */
 export class FixedBaseEndpointResolver implements EndpointResolver {
   constructor(
-    public readonly baseUrl: string,
+    baseUrl: string,
   ) {
-    if (!this.baseUrl.includes('://')) throw new Error(
+    if (!baseUrl.includes('://')) throw new Error(
       `Fixed endpoint must be a full URL including https:// or http://`);
+    this.baseUrl = new URL(baseUrl);
   }
+  public readonly baseUrl: URL;
+
   resolveUrl(parameters: EndpointParameters): ResolvedEndpoint {
     return {
-      url: new URL(parameters.requestPath, this.baseUrl),
+      url: new URL(parameters.requestPath.slice(1), this.baseUrl),
       signingRegion: parameters.region,
     };
   }
@@ -125,7 +153,7 @@ export class FixedBaseEndpointResolver implements EndpointResolver {
 /**
  * Possibly mutates an EndpointParameters to S3's host-based routing.
  * Effectively, if at least one path element is found,
- * it can beshifted out of the path and into the "hostPrefix" field.
+ * it can be shifted out of the path and into the "hostPrefix" field.
  * Values containing a dot are currently skipped because of TLS complications.
  */
 function perhapsUpgradeEndpointParametersToHostStyleRouting(parameters: EndpointParameters) {
