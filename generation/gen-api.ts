@@ -78,7 +78,7 @@ export function generateApiTypescript(
     const lowerCamelName = operation.name[0].toLowerCase() + operation.name.slice(1);
     chunks.push(`  async ${cleanFuncName(lowerCamelName)}${signature} {`);
     let protoPathParts: Map<string,string> | undefined;
-    const referencedInputs = new Set<string>(['...opts']);
+    const referencedInputs = new Set(includeOpts ? ['...opts'] : []);
     if (operation.input) {// && inputShape?.spec.type === 'structure') {
       const {inputParsingCode, inputVariables, pathParts} = protocol
         .generateOperationInputParsingTypescript(inputShape, operation.input);
