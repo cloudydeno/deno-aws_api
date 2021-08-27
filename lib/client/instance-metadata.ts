@@ -82,17 +82,18 @@ export class IMDSv2 {
           `Instance Metadata Timeout: ${opts.timeoutMs}ms`));
       }
       return Promise.reject(err);
+    }).finally(() => {
+      clearTimeout(stopTimeout);
     });
-    clearTimeout(stopTimeout);
 
     if (resp.status === 411) {
       resp.body?.cancel();
       throw new Error(
-        `Metadata server gave HTTP 411 to ${opts.method}; is this not AWS?`);
+        `Metadata server gave HTTP 411 for /${opts.path}; is this not AWS?`);
     } else if (resp.status > 299) {
       resp.body?.cancel();
       const err: any = new Error(
-        `Metadata server gave HTTP ${resp.status} to ${opts.method} ${opts.path}`);
+        `Metadata server gave HTTP ${resp.status} to ${opts.method} /${opts.path}`);
       err.status = resp.status;
       throw err;
     }
