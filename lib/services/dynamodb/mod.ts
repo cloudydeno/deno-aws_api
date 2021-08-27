@@ -5,10 +5,9 @@ import * as Base64 from "https://deno.land/std@0.105.0/encoding/base64.ts";
 import * as client from "../../client/common.ts";
 import * as cmnP from "../../encoding/common.ts";
 import * as jsonP from "../../encoding/json.ts";
-import * as uuidv4 from "https://deno.land/std@0.105.0/uuid/v4.ts";
 import type * as s from "./structs.ts";
 function generateIdemptToken() {
-  return uuidv4.generate();
+  return crypto.randomUUID();
 }
 function serializeBlob(input: string | Uint8Array | null | undefined) {
   if (input == null) return input;
