@@ -1,4 +1,5 @@
 import LatestCodeGen from '../code-gen.ts';
+
 import * as Schema from '../sdk-schema.ts';
 
 interface ApiSpecsBundle {
@@ -40,13 +41,18 @@ export const Generations = new Map<string, ModuleGenerator>([
     'https://deno.land/x/aws_api@v0.4.0',
     'https://deno.land/std@0.95.0',
     'v2.895.0',
-    (config, opts) => new LatestCodeGen(config, opts),
+    (config, opts) => {
+      opts.set('includeOpts', 'no');
+      return new LatestCodeGen(config, opts);
+    },
   )],
   ['v0.2', new ModuleGenerator(
     'https://deno.land/x/aws_api@v0.5.0',
     'https://deno.land/std@0.105.0',
     'v2.971.0',
-    (config, opts) => new LatestCodeGen(config, opts),
+    (config, opts) => {
+      return new LatestCodeGen(config, opts);
+    },
   )],
 ]);
 export const LatestGeneration = 'v0.1';

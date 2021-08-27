@@ -18,6 +18,7 @@ for (const [modId, svc] of Object.entries(serviceList)) {
 }
 
 const opts = new URLSearchParams();
+
 const generatedFiles = new Array<string>();
 
 const specSuffix = `.normal.json`;
