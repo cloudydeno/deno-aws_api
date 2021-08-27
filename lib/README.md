@@ -209,8 +209,8 @@ All API definitions are current as of [aws-sdk-js `v2.971.0`](https://github.com
 | Class | Module | Protocol | File size | Approx check time |
 | --- | --- | --- | ---: | ---: |
 | `CloudWatch` | `cloudwatch/mod.ts` | query | 66 KiB | 3.2 sec |
-| `DynamoDB` | `dynamodb/mod.ts` | json | 121 KiB | 2.8 sec |
-| `ECR` | `ecr/mod.ts` | json | 47 KiB | 2.8 sec |
+| `DynamoDB` | `dynamodb/mod.ts` | json | 121 KiB | 3.2 sec |
+| `ECR` | `ecr/mod.ts` | json | 47 KiB | 1.9 sec |
 | `Kinesis` | `kinesis/mod.ts` | json | 30 KiB | 2.1 sec |
 | `KMS` | `kms/mod.ts` | json | 49 KiB | 4.3 sec |
 | `Lambda` | `lambda/mod.ts` | rest-json | 97 KiB | 3.7 sec |

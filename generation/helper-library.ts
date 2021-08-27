@@ -106,12 +106,9 @@ export const ParseBlob: Helper = {
 };
 
 export const IdemptToken: Helper = {
-  deps: {
-    uuidv4: `https://deno.land/std@0.105.0/uuid/v4.ts`,
-  },
   chunks: [
     `function generateIdemptToken() {`,
-    `  return uuidv4.generate();`,
+    `  return crypto.randomUUID();`,
     `}`,
   ],
 };
