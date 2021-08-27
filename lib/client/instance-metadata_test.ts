@@ -10,6 +10,8 @@ Deno.test('getting a cached metadata token', async () => {
   } catch (err) {
     const {message} = err as Error;
     if (!(typeof message === 'string')) throw err;
-    if (!message.includes('Instance Metadata Timeout')) throw err;
+    if (message.includes('Instance Metadata Timeout')) return;
+    if (message.includes('is this not AWS?')) return;
+    throw err;
   }
 });
