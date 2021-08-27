@@ -36,7 +36,7 @@ export interface RequestOptions {
 }
 
 /** The HTTP contract expected by all service API implementations */
-export type ApiRequestConfig = RequestOptions & {
+export interface ApiRequestConfig {
   // fixed per operation
   action: string;
   method?: "POST" | "GET" | "HEAD" | "DELETE" | "PUT" | "PATCH";
@@ -49,6 +49,8 @@ export type ApiRequestConfig = RequestOptions & {
   query?: URLSearchParams;
   body?: URLSearchParams | JSONObject | Uint8Array | string | null;
   skipSigning?: true; // for unauthenticated APIs (STS, cognito)
+  // extra stuff from the user
+  opts?: RequestOptions;
 }
 
 export function getRequestId(headers: Headers) {
