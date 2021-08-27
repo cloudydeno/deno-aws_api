@@ -54,7 +54,7 @@ To use a customized build, or a less-common service, you can import from the web
 
 ```typescript
 import { ApiFactory } from 'https://deno.land/x/aws_api/client/mod.ts';
-import { Pricing } from 'https://aws-api.deno.dev/v0.1/services/pricing.ts';
+import { Pricing } from 'https://aws-api.deno.dev/latest/services/pricing.ts';
 
 const pricing = new ApiFactory().makeNew(Pricing);
 const { Services } = await pricing.describeServices('AmazonEC2');
@@ -71,6 +71,9 @@ The `opts` bag can contain a few settings if necesary:
 * `credentials?: Credentials` to force a particular credential. No refresh support.
 * `region?: string` to configure a specific AWS region, ignoring the default region. Useful for apps working in multiple regions.
 * `fixedEndpoint?: string` to force a particular base URL to send all requests to. Useful for MinIO or localstack. Specify a full URL including protocol://. Also disables subdomain-style S3 access.
+* `endpointResolver?: EndpointResolver` to swap out the API endpoint detection logic. There are three different implementations exported by `/client/mod.ts`.
+  * If you want to disregard global endpoints and always used regional endpoints, configure an `AwsEndpointResolver` instance and pass it in here.
+  * If you are using a vendor which has their own "S3-compatible" endpoints, check out [some example configurations in the Github Wiki](https://github.com/cloudydeno/deno-aws_api/wiki/S3-Compatible-Vendors).
 
 ```typescript
 const ec2_europe = new ApiFactory({
@@ -98,17 +101,19 @@ const ec2_europe = new ApiFactory({
   So instead of `import SQS from ...`,
   you'll do `import { SQS } from ....`.
 
-1. Removed `AbortSignal` inputs which were allowed everywhere previously.
-  These never did anything, and I'll add them back
-  once Deno itself supports request cancellation.
-
 ## Changelog
 
-* `v0.5.0` on `2021-08-TBD`: Requires Deno 1.11 or later, for `crypto.randomUUID`.
-  * Using definitions from `aws-sdk-js@2.971.0`
+* `v0.5.0` on `2021-08-27`: codegen `v0.2`
+  * Support Deno 1.11 or later
+  * Use definitions from `aws-sdk-js@2.971.0`
   * Formalize `.makeNew(constructor)` method on `ApiFactory`
+  * Complete rewrite of the endpoint selection logic
+    * Automatically selects GovCloud or AWS China domains
+    * Uses the S3 and EC2 dualstack endpoints when offered.
   * Add `fixedEndpoint` option to `ApiFactory` for localstack, minio, etc.
-  * Automatically select GovCloud, AWS China, and the S3/EC2 dualstack endpoints.
+  * Remove pre-generated EC2 API because of how large it is on disk.
+  * Implement request cancellation via `AbortSignal` pass-thru
+  * Remove `/std/uuid` import in favor of `crypto.randomUUID()`
 * `v0.4.1` on `2021-05-23`: Also fix Deno 1.9 regression for unsigned requests.
   * Addresses startup issue when using EKS Pod Identity.
 * `v0.4.0` on `2021-05-01`: Deno 1.9 compatibility. Remove most less-common AWS services.
