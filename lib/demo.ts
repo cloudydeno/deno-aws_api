@@ -14,9 +14,9 @@ await sts.getCallerIdentity().then(identity => {
 }).catch(console.log);
 
 
-import { EC2 } from './services/ec2/mod.ts';
-const ec2 = new EC2(factory);
-console.log(await ec2.describeInstances().then(x => x.Reservations).catch(err => err));
+import { DynamoDB } from './services/dynamodb/mod.ts';
+const dynamoDB = new DynamoDB(factory);
+console.log(await dynamoDB.listTables().catch(err => err));
 
 
 import { SQS } from './services/sqs/mod.ts';

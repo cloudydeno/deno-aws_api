@@ -1,7 +1,6 @@
 service,version,fullname,id,namespace,protocol,generated,typechecked,bytecount,cachetime
 dynamodb,2011-12-05,Amazon DynamoDB,,,json,,,,
-dynamodb,2012-08-10,Amazon DynamoDB,dynamodb,DynamoDB,json,ok,ok,123556,4119
-ec2,2016-11-15,Amazon Elastic Compute Cloud,ec2,EC2,ec2,ok,ok,1180658,17213
+dynamodb,2012-08-10,Amazon DynamoDB,dynamodb,DynamoDB,json,ok,ok,123556,2782
 ecr,2015-09-21,Amazon EC2 Container Registry,ecr,ECR,json,ok,ok,48620,2773
 kinesis,2013-12-02,Amazon Kinesis,kinesis,Kinesis,json,ok,ok,31141,2089
 kms,2014-11-01,AWS Key Management Service,kms,KMS,json,ok,ok,50073,4290
