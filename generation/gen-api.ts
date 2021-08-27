@@ -45,8 +45,7 @@ export function generateApiTypescript(
 
     let signature = `(`;
     if (inputShape?.spec.type === 'structure') {
-      signature += '\n    params: '
-      signature += structEmitter.specifyShapeType(inputShape, {isJson: operation.input?.jsonvalue});
+      signature += '\n    params: ' + structEmitter.specifyShapeType(inputShape, {isJson: operation.input?.jsonvalue});
       if (operation.input?.payload) {
         inputShape.payloadField = operation.input.payload;
       }
@@ -57,11 +56,17 @@ export function generateApiTypescript(
     } else if (inputShape) {
       throw new Error(`TODO: ${inputShape.spec.type} input`);
     }
+
     if (includeOpts) {
       signature += `\n    opts: client.RequestOptions = {},`;
     }
 
-    signature += `\n  ): Promise<`;
+    if (signature.length > 1) {
+      signature += `\n  `;
+    }
+    signature += `): `;
+
+    signature += `Promise<`;
     if (outputShape?.spec.type === 'structure') {
       signature += structEmitter.specifyShapeType(outputShape, {isJson: operation.output?.jsonvalue});
     } else if (outputShape) {
@@ -78,7 +83,7 @@ export function generateApiTypescript(
     const lowerCamelName = operation.name[0].toLowerCase() + operation.name.slice(1);
     chunks.push(`  async ${cleanFuncName(lowerCamelName)}${signature} {`);
     let protoPathParts: Map<string,string> | undefined;
-    const referencedInputs = new Set(includeOpts ? ['...opts'] : []);
+    const referencedInputs = new Set(includeOpts ? ['opts'] : []);
     if (operation.input) {// && inputShape?.spec.type === 'structure') {
       const {inputParsingCode, inputVariables, pathParts} = protocol
         .generateOperationInputParsingTypescript(inputShape, operation.input);
