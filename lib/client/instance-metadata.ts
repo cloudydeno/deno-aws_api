@@ -86,9 +86,11 @@ export class IMDSv2 {
     clearTimeout(stopTimeout);
 
     if (resp.status === 411) {
+      resp.body?.cancel();
       throw new Error(
         `Metadata server gave HTTP 411 to ${opts.method}; is this not AWS?`);
     } else if (resp.status > 299) {
+      resp.body?.cancel();
       const err: any = new Error(
         `Metadata server gave HTTP ${resp.status} to ${opts.method} ${opts.path}`);
       err.status = resp.status;
