@@ -33,6 +33,7 @@ export class ECR {
 
   async batchCheckLayerAvailability(
     params: s.BatchCheckLayerAvailabilityRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.BatchCheckLayerAvailabilityResponse> {
     const body: jsonP.JSONObject = {
       registryId: params["registryId"],
@@ -40,7 +41,7 @@ export class ECR {
       layerDigests: params["layerDigests"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "BatchCheckLayerAvailability",
     });
     return jsonP.readObj({
@@ -54,6 +55,7 @@ export class ECR {
 
   async batchDeleteImage(
     params: s.BatchDeleteImageRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.BatchDeleteImageResponse> {
     const body: jsonP.JSONObject = {
       registryId: params["registryId"],
@@ -61,7 +63,7 @@ export class ECR {
       imageIds: params["imageIds"]?.map(x => fromImageIdentifier(x)),
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "BatchDeleteImage",
     });
     return jsonP.readObj({
@@ -75,6 +77,7 @@ export class ECR {
 
   async batchGetImage(
     params: s.BatchGetImageRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.BatchGetImageResponse> {
     const body: jsonP.JSONObject = {
       registryId: params["registryId"],
@@ -83,7 +86,7 @@ export class ECR {
       acceptedMediaTypes: params["acceptedMediaTypes"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "BatchGetImage",
     });
     return jsonP.readObj({
@@ -97,6 +100,7 @@ export class ECR {
 
   async completeLayerUpload(
     params: s.CompleteLayerUploadRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.CompleteLayerUploadResponse> {
     const body: jsonP.JSONObject = {
       registryId: params["registryId"],
@@ -105,7 +109,7 @@ export class ECR {
       layerDigests: params["layerDigests"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "CompleteLayerUpload",
     });
     return jsonP.readObj({
@@ -121,6 +125,7 @@ export class ECR {
 
   async createRepository(
     params: s.CreateRepositoryRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.CreateRepositoryResponse> {
     const body: jsonP.JSONObject = {
       repositoryName: params["repositoryName"],
@@ -130,7 +135,7 @@ export class ECR {
       encryptionConfiguration: fromEncryptionConfiguration(params["encryptionConfiguration"]),
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "CreateRepository",
     });
     return jsonP.readObj({
@@ -143,13 +148,14 @@ export class ECR {
 
   async deleteLifecyclePolicy(
     params: s.DeleteLifecyclePolicyRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.DeleteLifecyclePolicyResponse> {
     const body: jsonP.JSONObject = {
       registryId: params["registryId"],
       repositoryName: params["repositoryName"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "DeleteLifecyclePolicy",
     });
     return jsonP.readObj({
@@ -163,10 +169,12 @@ export class ECR {
     }, await resp.json());
   }
 
-  async deleteRegistryPolicy(): Promise<s.DeleteRegistryPolicyResponse> {
+  async deleteRegistryPolicy(
+    opts: client.RequestOptions = {},
+  ): Promise<s.DeleteRegistryPolicyResponse> {
     const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "DeleteRegistryPolicy",
     });
     return jsonP.readObj({
@@ -180,6 +188,7 @@ export class ECR {
 
   async deleteRepository(
     params: s.DeleteRepositoryRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.DeleteRepositoryResponse> {
     const body: jsonP.JSONObject = {
       registryId: params["registryId"],
@@ -187,7 +196,7 @@ export class ECR {
       force: params["force"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "DeleteRepository",
     });
     return jsonP.readObj({
@@ -200,13 +209,14 @@ export class ECR {
 
   async deleteRepositoryPolicy(
     params: s.DeleteRepositoryPolicyRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.DeleteRepositoryPolicyResponse> {
     const body: jsonP.JSONObject = {
       registryId: params["registryId"],
       repositoryName: params["repositoryName"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "DeleteRepositoryPolicy",
     });
     return jsonP.readObj({
@@ -221,6 +231,7 @@ export class ECR {
 
   async describeImageScanFindings(
     params: s.DescribeImageScanFindingsRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.DescribeImageScanFindingsResponse> {
     const body: jsonP.JSONObject = {
       registryId: params["registryId"],
@@ -230,7 +241,7 @@ export class ECR {
       maxResults: params["maxResults"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "DescribeImageScanFindings",
     });
     return jsonP.readObj({
@@ -248,6 +259,7 @@ export class ECR {
 
   async describeImages(
     params: s.DescribeImagesRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.DescribeImagesResponse> {
     const body: jsonP.JSONObject = {
       registryId: params["registryId"],
@@ -258,7 +270,7 @@ export class ECR {
       filter: fromDescribeImagesFilter(params["filter"]),
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "DescribeImages",
     });
     return jsonP.readObj({
@@ -270,10 +282,12 @@ export class ECR {
     }, await resp.json());
   }
 
-  async describeRegistry(): Promise<s.DescribeRegistryResponse> {
+  async describeRegistry(
+    opts: client.RequestOptions = {},
+  ): Promise<s.DescribeRegistryResponse> {
     const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "DescribeRegistry",
     });
     return jsonP.readObj({
@@ -287,6 +301,7 @@ export class ECR {
 
   async describeRepositories(
     params: s.DescribeRepositoriesRequest = {},
+    opts: client.RequestOptions = {},
   ): Promise<s.DescribeRepositoriesResponse> {
     const body: jsonP.JSONObject = {
       registryId: params["registryId"],
@@ -295,7 +310,7 @@ export class ECR {
       maxResults: params["maxResults"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "DescribeRepositories",
     });
     return jsonP.readObj({
@@ -309,12 +324,13 @@ export class ECR {
 
   async getAuthorizationToken(
     params: s.GetAuthorizationTokenRequest = {},
+    opts: client.RequestOptions = {},
   ): Promise<s.GetAuthorizationTokenResponse> {
     const body: jsonP.JSONObject = {
       registryIds: params["registryIds"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "GetAuthorizationToken",
     });
     return jsonP.readObj({
@@ -327,6 +343,7 @@ export class ECR {
 
   async getDownloadUrlForLayer(
     params: s.GetDownloadUrlForLayerRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.GetDownloadUrlForLayerResponse> {
     const body: jsonP.JSONObject = {
       registryId: params["registryId"],
@@ -334,7 +351,7 @@ export class ECR {
       layerDigest: params["layerDigest"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "GetDownloadUrlForLayer",
     });
     return jsonP.readObj({
@@ -348,13 +365,14 @@ export class ECR {
 
   async getLifecyclePolicy(
     params: s.GetLifecyclePolicyRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.GetLifecyclePolicyResponse> {
     const body: jsonP.JSONObject = {
       registryId: params["registryId"],
       repositoryName: params["repositoryName"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "GetLifecyclePolicy",
     });
     return jsonP.readObj({
@@ -370,6 +388,7 @@ export class ECR {
 
   async getLifecyclePolicyPreview(
     params: s.GetLifecyclePolicyPreviewRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.GetLifecyclePolicyPreviewResponse> {
     const body: jsonP.JSONObject = {
       registryId: params["registryId"],
@@ -380,7 +399,7 @@ export class ECR {
       filter: fromLifecyclePolicyPreviewFilter(params["filter"]),
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "GetLifecyclePolicyPreview",
     });
     return jsonP.readObj({
@@ -397,10 +416,12 @@ export class ECR {
     }, await resp.json());
   }
 
-  async getRegistryPolicy(): Promise<s.GetRegistryPolicyResponse> {
+  async getRegistryPolicy(
+    opts: client.RequestOptions = {},
+  ): Promise<s.GetRegistryPolicyResponse> {
     const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "GetRegistryPolicy",
     });
     return jsonP.readObj({
@@ -414,13 +435,14 @@ export class ECR {
 
   async getRepositoryPolicy(
     params: s.GetRepositoryPolicyRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.GetRepositoryPolicyResponse> {
     const body: jsonP.JSONObject = {
       registryId: params["registryId"],
       repositoryName: params["repositoryName"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "GetRepositoryPolicy",
     });
     return jsonP.readObj({
@@ -435,13 +457,14 @@ export class ECR {
 
   async initiateLayerUpload(
     params: s.InitiateLayerUploadRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.InitiateLayerUploadResponse> {
     const body: jsonP.JSONObject = {
       registryId: params["registryId"],
       repositoryName: params["repositoryName"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "InitiateLayerUpload",
     });
     return jsonP.readObj({
@@ -455,6 +478,7 @@ export class ECR {
 
   async listImages(
     params: s.ListImagesRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.ListImagesResponse> {
     const body: jsonP.JSONObject = {
       registryId: params["registryId"],
@@ -464,7 +488,7 @@ export class ECR {
       filter: fromListImagesFilter(params["filter"]),
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "ListImages",
     });
     return jsonP.readObj({
@@ -478,12 +502,13 @@ export class ECR {
 
   async listTagsForResource(
     params: s.ListTagsForResourceRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.ListTagsForResourceResponse> {
     const body: jsonP.JSONObject = {
       resourceArn: params["resourceArn"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "ListTagsForResource",
     });
     return jsonP.readObj({
@@ -496,6 +521,7 @@ export class ECR {
 
   async putImage(
     params: s.PutImageRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.PutImageResponse> {
     const body: jsonP.JSONObject = {
       registryId: params["registryId"],
@@ -506,7 +532,7 @@ export class ECR {
       imageDigest: params["imageDigest"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "PutImage",
     });
     return jsonP.readObj({
@@ -519,6 +545,7 @@ export class ECR {
 
   async putImageScanningConfiguration(
     params: s.PutImageScanningConfigurationRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.PutImageScanningConfigurationResponse> {
     const body: jsonP.JSONObject = {
       registryId: params["registryId"],
@@ -526,7 +553,7 @@ export class ECR {
       imageScanningConfiguration: fromImageScanningConfiguration(params["imageScanningConfiguration"]),
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "PutImageScanningConfiguration",
     });
     return jsonP.readObj({
@@ -541,6 +568,7 @@ export class ECR {
 
   async putImageTagMutability(
     params: s.PutImageTagMutabilityRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.PutImageTagMutabilityResponse> {
     const body: jsonP.JSONObject = {
       registryId: params["registryId"],
@@ -548,7 +576,7 @@ export class ECR {
       imageTagMutability: params["imageTagMutability"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "PutImageTagMutability",
     });
     return jsonP.readObj({
@@ -563,6 +591,7 @@ export class ECR {
 
   async putLifecyclePolicy(
     params: s.PutLifecyclePolicyRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.PutLifecyclePolicyResponse> {
     const body: jsonP.JSONObject = {
       registryId: params["registryId"],
@@ -570,7 +599,7 @@ export class ECR {
       lifecyclePolicyText: params["lifecyclePolicyText"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "PutLifecyclePolicy",
     });
     return jsonP.readObj({
@@ -585,12 +614,13 @@ export class ECR {
 
   async putRegistryPolicy(
     params: s.PutRegistryPolicyRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.PutRegistryPolicyResponse> {
     const body: jsonP.JSONObject = {
       policyText: params["policyText"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "PutRegistryPolicy",
     });
     return jsonP.readObj({
@@ -604,12 +634,13 @@ export class ECR {
 
   async putReplicationConfiguration(
     params: s.PutReplicationConfigurationRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.PutReplicationConfigurationResponse> {
     const body: jsonP.JSONObject = {
       replicationConfiguration: fromReplicationConfiguration(params["replicationConfiguration"]),
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "PutReplicationConfiguration",
     });
     return jsonP.readObj({
@@ -622,6 +653,7 @@ export class ECR {
 
   async setRepositoryPolicy(
     params: s.SetRepositoryPolicyRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.SetRepositoryPolicyResponse> {
     const body: jsonP.JSONObject = {
       registryId: params["registryId"],
@@ -630,7 +662,7 @@ export class ECR {
       force: params["force"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "SetRepositoryPolicy",
     });
     return jsonP.readObj({
@@ -645,6 +677,7 @@ export class ECR {
 
   async startImageScan(
     params: s.StartImageScanRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.StartImageScanResponse> {
     const body: jsonP.JSONObject = {
       registryId: params["registryId"],
@@ -652,7 +685,7 @@ export class ECR {
       imageId: fromImageIdentifier(params["imageId"]),
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "StartImageScan",
     });
     return jsonP.readObj({
@@ -668,6 +701,7 @@ export class ECR {
 
   async startLifecyclePolicyPreview(
     params: s.StartLifecyclePolicyPreviewRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.StartLifecyclePolicyPreviewResponse> {
     const body: jsonP.JSONObject = {
       registryId: params["registryId"],
@@ -675,7 +709,7 @@ export class ECR {
       lifecyclePolicyText: params["lifecyclePolicyText"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "StartLifecyclePolicyPreview",
     });
     return jsonP.readObj({
@@ -691,13 +725,14 @@ export class ECR {
 
   async tagResource(
     params: s.TagResourceRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body: jsonP.JSONObject = {
       resourceArn: params["resourceArn"],
       tags: params["tags"]?.map(x => fromTag(x)),
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "TagResource",
     });
     await resp.arrayBuffer(); // consume body without use
@@ -705,13 +740,14 @@ export class ECR {
 
   async untagResource(
     params: s.UntagResourceRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body: jsonP.JSONObject = {
       resourceArn: params["resourceArn"],
       tagKeys: params["tagKeys"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "UntagResource",
     });
     await resp.arrayBuffer(); // consume body without use
@@ -719,6 +755,7 @@ export class ECR {
 
   async uploadLayerPart(
     params: s.UploadLayerPartRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.UploadLayerPartResponse> {
     const body: jsonP.JSONObject = {
       registryId: params["registryId"],
@@ -729,7 +766,7 @@ export class ECR {
       layerPartBlob: serializeBlob(params["layerPartBlob"]),
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "UploadLayerPart",
     });
     return jsonP.readObj({
@@ -751,10 +788,11 @@ export class ECR {
    */
   async waitForImageScanComplete(
     params: s.DescribeImageScanFindingsRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.DescribeImageScanFindingsResponse> {
     const errMessage = 'ResourceNotReady: Resource is not in the state ImageScanComplete';
     for (let i = 0; i < 60; i++) {
-      const resp = await this.describeImageScanFindings(params);
+      const resp = await this.describeImageScanFindings(params, opts);
       const field = resp?.imageScanStatus?.status;
       if (field === "COMPLETE") return resp;
       if (field === "FAILED") throw new Error(errMessage);
@@ -769,10 +807,11 @@ export class ECR {
    */
   async waitForLifecyclePolicyPreviewComplete(
     params: s.GetLifecyclePolicyPreviewRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.GetLifecyclePolicyPreviewResponse> {
     const errMessage = 'ResourceNotReady: Resource is not in the state LifecyclePolicyPreviewComplete';
     for (let i = 0; i < 20; i++) {
-      const resp = await this.getLifecyclePolicyPreview(params);
+      const resp = await this.getLifecyclePolicyPreview(params, opts);
       const field = resp?.status;
       if (field === "COMPLETE") return resp;
       if (field === "FAILED") throw new Error(errMessage);

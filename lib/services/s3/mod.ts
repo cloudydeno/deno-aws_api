@@ -41,6 +41,7 @@ export class S3 {
 
   async abortMultipartUpload(
     params: s.AbortMultipartUploadRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.AbortMultipartUploadOutput> {
     const headers = new Headers;
     const query = new URLSearchParams;
@@ -48,7 +49,7 @@ export class S3 {
     if (params["RequestPayer"] != null) headers.append("x-amz-request-payer", params["RequestPayer"]);
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
-      headers, query,
+      opts, headers, query,
       action: "AbortMultipartUpload",
       method: "DELETE",
       requestUri: cmnP.encodePath`/${params["Bucket"]}/${params["Key"].split("/")}`,
@@ -61,6 +62,7 @@ export class S3 {
 
   async completeMultipartUpload(
     params: s.CompleteMultipartUploadRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.CompleteMultipartUploadOutput> {
     const inner = params["MultipartUpload"];
     const body = inner ? xmlP.stringify({
@@ -75,7 +77,7 @@ export class S3 {
     if (params["RequestPayer"] != null) headers.append("x-amz-request-payer", params["RequestPayer"]);
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
-      headers, query, body,
+      opts, headers, query, body,
       action: "CompleteMultipartUpload",
       requestUri: cmnP.encodePath`/${params["Bucket"]}/${params["Key"].split("/")}`,
     });
@@ -95,6 +97,7 @@ export class S3 {
 
   async copyObject(
     params: s.CopyObjectRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.CopyObjectOutput> {
     const headers = new Headers;
     if (params["ACL"] != null) headers.append("x-amz-acl", params["ACL"]);
@@ -138,7 +141,7 @@ export class S3 {
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     if (params["ExpectedSourceBucketOwner"] != null) headers.append("x-amz-source-expected-bucket-owner", params["ExpectedSourceBucketOwner"]);
     const resp = await this.#client.performRequest({
-      headers,
+      opts, headers,
       action: "CopyObject",
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}/${params["Key"].split("/")}`,
@@ -166,6 +169,7 @@ export class S3 {
 
   async createBucket(
     params: s.CreateBucketRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.CreateBucketOutput> {
     const inner = params["CreateBucketConfiguration"];
     const body = inner ? xmlP.stringify({
@@ -183,7 +187,7 @@ export class S3 {
     if (params["GrantWriteACP"] != null) headers.append("x-amz-grant-write-acp", params["GrantWriteACP"]);
     if (params["ObjectLockEnabledForBucket"] != null) headers.append("x-amz-bucket-object-lock-enabled", params["ObjectLockEnabledForBucket"]?.toString() ?? '');
     const resp = await this.#client.performRequest({
-      headers, body,
+      opts, headers, body,
       action: "CreateBucket",
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}`,
@@ -196,6 +200,7 @@ export class S3 {
 
   async createMultipartUpload(
     params: s.CreateMultipartUploadRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.CreateMultipartUploadOutput> {
     const headers = new Headers;
     if (params["ACL"] != null) headers.append("x-amz-acl", params["ACL"]);
@@ -228,7 +233,7 @@ export class S3 {
     if (params["ObjectLockLegalHoldStatus"] != null) headers.append("x-amz-object-lock-legal-hold", params["ObjectLockLegalHoldStatus"]);
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
-      headers,
+      opts, headers,
       action: "CreateMultipartUpload",
       requestUri: cmnP.encodePath`/${params["Bucket"]}/${params["Key"].split("/")}?uploads`,
     });
@@ -251,11 +256,12 @@ export class S3 {
 
   async deleteBucket(
     params: s.DeleteBucketRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const headers = new Headers;
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
-      headers,
+      opts, headers,
       action: "DeleteBucket",
       method: "DELETE",
       requestUri: cmnP.encodePath`/${params["Bucket"]}`,
@@ -265,13 +271,14 @@ export class S3 {
 
   async deleteBucketAnalyticsConfiguration(
     params: s.DeleteBucketAnalyticsConfigurationRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const headers = new Headers;
     const query = new URLSearchParams;
     query.set("id", params["Id"]?.toString() ?? "");
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
-      headers, query,
+      opts, headers, query,
       action: "DeleteBucketAnalyticsConfiguration",
       method: "DELETE",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?analytics`,
@@ -281,11 +288,12 @@ export class S3 {
 
   async deleteBucketCors(
     params: s.DeleteBucketCorsRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const headers = new Headers;
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
-      headers,
+      opts, headers,
       action: "DeleteBucketCors",
       method: "DELETE",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?cors`,
@@ -295,11 +303,12 @@ export class S3 {
 
   async deleteBucketEncryption(
     params: s.DeleteBucketEncryptionRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const headers = new Headers;
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
-      headers,
+      opts, headers,
       action: "DeleteBucketEncryption",
       method: "DELETE",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?encryption`,
@@ -309,11 +318,12 @@ export class S3 {
 
   async deleteBucketIntelligentTieringConfiguration(
     params: s.DeleteBucketIntelligentTieringConfigurationRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const query = new URLSearchParams;
     query.set("id", params["Id"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
-      query,
+      opts, query,
       action: "DeleteBucketIntelligentTieringConfiguration",
       method: "DELETE",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?intelligent-tiering`,
@@ -323,13 +333,14 @@ export class S3 {
 
   async deleteBucketInventoryConfiguration(
     params: s.DeleteBucketInventoryConfigurationRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const headers = new Headers;
     const query = new URLSearchParams;
     query.set("id", params["Id"]?.toString() ?? "");
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
-      headers, query,
+      opts, headers, query,
       action: "DeleteBucketInventoryConfiguration",
       method: "DELETE",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?inventory`,
@@ -339,11 +350,12 @@ export class S3 {
 
   async deleteBucketLifecycle(
     params: s.DeleteBucketLifecycleRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const headers = new Headers;
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
-      headers,
+      opts, headers,
       action: "DeleteBucketLifecycle",
       method: "DELETE",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?lifecycle`,
@@ -353,13 +365,14 @@ export class S3 {
 
   async deleteBucketMetricsConfiguration(
     params: s.DeleteBucketMetricsConfigurationRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const headers = new Headers;
     const query = new URLSearchParams;
     query.set("id", params["Id"]?.toString() ?? "");
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
-      headers, query,
+      opts, headers, query,
       action: "DeleteBucketMetricsConfiguration",
       method: "DELETE",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?metrics`,
@@ -369,11 +382,12 @@ export class S3 {
 
   async deleteBucketOwnershipControls(
     params: s.DeleteBucketOwnershipControlsRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const headers = new Headers;
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
-      headers,
+      opts, headers,
       action: "DeleteBucketOwnershipControls",
       method: "DELETE",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?ownershipControls`,
@@ -383,11 +397,12 @@ export class S3 {
 
   async deleteBucketPolicy(
     params: s.DeleteBucketPolicyRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const headers = new Headers;
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
-      headers,
+      opts, headers,
       action: "DeleteBucketPolicy",
       method: "DELETE",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?policy`,
@@ -397,11 +412,12 @@ export class S3 {
 
   async deleteBucketReplication(
     params: s.DeleteBucketReplicationRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const headers = new Headers;
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
-      headers,
+      opts, headers,
       action: "DeleteBucketReplication",
       method: "DELETE",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?replication`,
@@ -411,11 +427,12 @@ export class S3 {
 
   async deleteBucketTagging(
     params: s.DeleteBucketTaggingRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const headers = new Headers;
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
-      headers,
+      opts, headers,
       action: "DeleteBucketTagging",
       method: "DELETE",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?tagging`,
@@ -425,11 +442,12 @@ export class S3 {
 
   async deleteBucketWebsite(
     params: s.DeleteBucketWebsiteRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const headers = new Headers;
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
-      headers,
+      opts, headers,
       action: "DeleteBucketWebsite",
       method: "DELETE",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?website`,
@@ -439,6 +457,7 @@ export class S3 {
 
   async deleteObject(
     params: s.DeleteObjectRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.DeleteObjectOutput> {
     const headers = new Headers;
     const query = new URLSearchParams;
@@ -448,7 +467,7 @@ export class S3 {
     if (params["BypassGovernanceRetention"] != null) headers.append("x-amz-bypass-governance-retention", params["BypassGovernanceRetention"]?.toString() ?? '');
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
-      headers, query,
+      opts, headers, query,
       action: "DeleteObject",
       method: "DELETE",
       requestUri: cmnP.encodePath`/${params["Bucket"]}/${params["Key"].split("/")}`,
@@ -463,13 +482,14 @@ export class S3 {
 
   async deleteObjectTagging(
     params: s.DeleteObjectTaggingRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.DeleteObjectTaggingOutput> {
     const headers = new Headers;
     const query = new URLSearchParams;
     if (params["VersionId"] != null) query.set("versionId", params["VersionId"]?.toString() ?? "");
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
-      headers, query,
+      opts, headers, query,
       action: "DeleteObjectTagging",
       method: "DELETE",
       requestUri: cmnP.encodePath`/${params["Bucket"]}/${params["Key"].split("/")}?tagging`,
@@ -482,6 +502,7 @@ export class S3 {
 
   async deleteObjects(
     params: s.DeleteObjectsRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.DeleteObjectsOutput> {
     const inner = params["Delete"];
     const body = inner ? xmlP.stringify({
@@ -497,7 +518,7 @@ export class S3 {
     if (params["BypassGovernanceRetention"] != null) headers.append("x-amz-bypass-governance-retention", params["BypassGovernanceRetention"]?.toString() ?? '');
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
-      headers, body,
+      opts, headers, body,
       action: "DeleteObjects",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?delete`,
     });
@@ -513,11 +534,12 @@ export class S3 {
 
   async deletePublicAccessBlock(
     params: s.DeletePublicAccessBlockRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const headers = new Headers;
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
-      headers,
+      opts, headers,
       action: "DeletePublicAccessBlock",
       method: "DELETE",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?publicAccessBlock`,
@@ -527,11 +549,12 @@ export class S3 {
 
   async getBucketAccelerateConfiguration(
     params: s.GetBucketAccelerateConfigurationRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.GetBucketAccelerateConfigurationOutput> {
     const headers = new Headers;
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
-      headers,
+      opts, headers,
       action: "GetBucketAccelerateConfiguration",
       method: "GET",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?accelerate`,
@@ -544,11 +567,12 @@ export class S3 {
 
   async getBucketAcl(
     params: s.GetBucketAclRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.GetBucketAclOutput> {
     const headers = new Headers;
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
-      headers,
+      opts, headers,
       action: "GetBucketAcl",
       method: "GET",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?acl`,
@@ -562,13 +586,14 @@ export class S3 {
 
   async getBucketAnalyticsConfiguration(
     params: s.GetBucketAnalyticsConfigurationRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.GetBucketAnalyticsConfigurationOutput> {
     const headers = new Headers;
     const query = new URLSearchParams;
     query.set("id", params["Id"]?.toString() ?? "");
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
-      headers, query,
+      opts, headers, query,
       action: "GetBucketAnalyticsConfiguration",
       method: "GET",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?analytics`,
@@ -581,11 +606,12 @@ export class S3 {
 
   async getBucketCors(
     params: s.GetBucketCorsRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.GetBucketCorsOutput> {
     const headers = new Headers;
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
-      headers,
+      opts, headers,
       action: "GetBucketCors",
       method: "GET",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?cors`,
@@ -598,11 +624,12 @@ export class S3 {
 
   async getBucketEncryption(
     params: s.GetBucketEncryptionRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.GetBucketEncryptionOutput> {
     const headers = new Headers;
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
-      headers,
+      opts, headers,
       action: "GetBucketEncryption",
       method: "GET",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?encryption`,
@@ -615,11 +642,12 @@ export class S3 {
 
   async getBucketIntelligentTieringConfiguration(
     params: s.GetBucketIntelligentTieringConfigurationRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.GetBucketIntelligentTieringConfigurationOutput> {
     const query = new URLSearchParams;
     query.set("id", params["Id"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
-      query,
+      opts, query,
       action: "GetBucketIntelligentTieringConfiguration",
       method: "GET",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?intelligent-tiering`,
@@ -632,13 +660,14 @@ export class S3 {
 
   async getBucketInventoryConfiguration(
     params: s.GetBucketInventoryConfigurationRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.GetBucketInventoryConfigurationOutput> {
     const headers = new Headers;
     const query = new URLSearchParams;
     query.set("id", params["Id"]?.toString() ?? "");
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
-      headers, query,
+      opts, headers, query,
       action: "GetBucketInventoryConfiguration",
       method: "GET",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?inventory`,
@@ -651,11 +680,12 @@ export class S3 {
 
   async getBucketLifecycle(
     params: s.GetBucketLifecycleRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.GetBucketLifecycleOutput> {
     const headers = new Headers;
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
-      headers,
+      opts, headers,
       action: "GetBucketLifecycle",
       method: "GET",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?lifecycle`,
@@ -668,11 +698,12 @@ export class S3 {
 
   async getBucketLifecycleConfiguration(
     params: s.GetBucketLifecycleConfigurationRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.GetBucketLifecycleConfigurationOutput> {
     const headers = new Headers;
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
-      headers,
+      opts, headers,
       action: "GetBucketLifecycleConfiguration",
       method: "GET",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?lifecycle`,
@@ -685,11 +716,12 @@ export class S3 {
 
   async getBucketLocation(
     params: s.GetBucketLocationRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.GetBucketLocationOutput> {
     const headers = new Headers;
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
-      headers,
+      opts, headers,
       action: "GetBucketLocation",
       method: "GET",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?location`,
@@ -702,11 +734,12 @@ export class S3 {
 
   async getBucketLogging(
     params: s.GetBucketLoggingRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.GetBucketLoggingOutput> {
     const headers = new Headers;
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
-      headers,
+      opts, headers,
       action: "GetBucketLogging",
       method: "GET",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?logging`,
@@ -719,13 +752,14 @@ export class S3 {
 
   async getBucketMetricsConfiguration(
     params: s.GetBucketMetricsConfigurationRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.GetBucketMetricsConfigurationOutput> {
     const headers = new Headers;
     const query = new URLSearchParams;
     query.set("id", params["Id"]?.toString() ?? "");
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
-      headers, query,
+      opts, headers, query,
       action: "GetBucketMetricsConfiguration",
       method: "GET",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?metrics`,
@@ -738,11 +772,12 @@ export class S3 {
 
   async getBucketNotification(
     params: s.GetBucketNotificationConfigurationRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.NotificationConfigurationDeprecated> {
     const headers = new Headers;
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
-      headers,
+      opts, headers,
       action: "GetBucketNotification",
       method: "GET",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?notification`,
@@ -757,11 +792,12 @@ export class S3 {
 
   async getBucketNotificationConfiguration(
     params: s.GetBucketNotificationConfigurationRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.NotificationConfiguration> {
     const headers = new Headers;
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
-      headers,
+      opts, headers,
       action: "GetBucketNotificationConfiguration",
       method: "GET",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?notification`,
@@ -776,11 +812,12 @@ export class S3 {
 
   async getBucketOwnershipControls(
     params: s.GetBucketOwnershipControlsRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.GetBucketOwnershipControlsOutput> {
     const headers = new Headers;
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
-      headers,
+      opts, headers,
       action: "GetBucketOwnershipControls",
       method: "GET",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?ownershipControls`,
@@ -793,11 +830,12 @@ export class S3 {
 
   async getBucketPolicy(
     params: s.GetBucketPolicyRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.GetBucketPolicyOutput> {
     const headers = new Headers;
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
-      headers,
+      opts, headers,
       action: "GetBucketPolicy",
       method: "GET",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?policy`,
@@ -809,11 +847,12 @@ export class S3 {
 
   async getBucketPolicyStatus(
     params: s.GetBucketPolicyStatusRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.GetBucketPolicyStatusOutput> {
     const headers = new Headers;
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
-      headers,
+      opts, headers,
       action: "GetBucketPolicyStatus",
       method: "GET",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?policyStatus`,
@@ -828,11 +867,12 @@ export class S3 {
 
   async getBucketReplication(
     params: s.GetBucketReplicationRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.GetBucketReplicationOutput> {
     const headers = new Headers;
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
-      headers,
+      opts, headers,
       action: "GetBucketReplication",
       method: "GET",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?replication`,
@@ -845,11 +885,12 @@ export class S3 {
 
   async getBucketRequestPayment(
     params: s.GetBucketRequestPaymentRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.GetBucketRequestPaymentOutput> {
     const headers = new Headers;
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
-      headers,
+      opts, headers,
       action: "GetBucketRequestPayment",
       method: "GET",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?requestPayment`,
@@ -862,11 +903,12 @@ export class S3 {
 
   async getBucketTagging(
     params: s.GetBucketTaggingRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.GetBucketTaggingOutput> {
     const headers = new Headers;
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
-      headers,
+      opts, headers,
       action: "GetBucketTagging",
       method: "GET",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?tagging`,
@@ -879,11 +921,12 @@ export class S3 {
 
   async getBucketVersioning(
     params: s.GetBucketVersioningRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.GetBucketVersioningOutput> {
     const headers = new Headers;
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
-      headers,
+      opts, headers,
       action: "GetBucketVersioning",
       method: "GET",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?versioning`,
@@ -897,11 +940,12 @@ export class S3 {
 
   async getBucketWebsite(
     params: s.GetBucketWebsiteRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.GetBucketWebsiteOutput> {
     const headers = new Headers;
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
-      headers,
+      opts, headers,
       action: "GetBucketWebsite",
       method: "GET",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?website`,
@@ -917,6 +961,7 @@ export class S3 {
 
   async getObject(
     params: s.GetObjectRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.GetObjectOutput> {
     const headers = new Headers;
     const query = new URLSearchParams;
@@ -939,7 +984,7 @@ export class S3 {
     if (params["PartNumber"] != null) query.set("partNumber", params["PartNumber"]?.toString() ?? "");
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
-      headers, query,
+      opts, headers, query,
       action: "GetObject",
       method: "GET",
       requestUri: cmnP.encodePath`/${params["Bucket"]}/${params["Key"].split("/")}`,
@@ -982,6 +1027,7 @@ export class S3 {
 
   async getObjectAcl(
     params: s.GetObjectAclRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.GetObjectAclOutput> {
     const headers = new Headers;
     const query = new URLSearchParams;
@@ -989,7 +1035,7 @@ export class S3 {
     if (params["RequestPayer"] != null) headers.append("x-amz-request-payer", params["RequestPayer"]);
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
-      headers, query,
+      opts, headers, query,
       action: "GetObjectAcl",
       method: "GET",
       requestUri: cmnP.encodePath`/${params["Bucket"]}/${params["Key"].split("/")}?acl`,
@@ -1006,6 +1052,7 @@ export class S3 {
 
   async getObjectLegalHold(
     params: s.GetObjectLegalHoldRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.GetObjectLegalHoldOutput> {
     const headers = new Headers;
     const query = new URLSearchParams;
@@ -1013,7 +1060,7 @@ export class S3 {
     if (params["RequestPayer"] != null) headers.append("x-amz-request-payer", params["RequestPayer"]);
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
-      headers, query,
+      opts, headers, query,
       action: "GetObjectLegalHold",
       method: "GET",
       requestUri: cmnP.encodePath`/${params["Bucket"]}/${params["Key"].split("/")}?legal-hold`,
@@ -1026,11 +1073,12 @@ export class S3 {
 
   async getObjectLockConfiguration(
     params: s.GetObjectLockConfigurationRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.GetObjectLockConfigurationOutput> {
     const headers = new Headers;
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
-      headers,
+      opts, headers,
       action: "GetObjectLockConfiguration",
       method: "GET",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?object-lock`,
@@ -1043,6 +1091,7 @@ export class S3 {
 
   async getObjectRetention(
     params: s.GetObjectRetentionRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.GetObjectRetentionOutput> {
     const headers = new Headers;
     const query = new URLSearchParams;
@@ -1050,7 +1099,7 @@ export class S3 {
     if (params["RequestPayer"] != null) headers.append("x-amz-request-payer", params["RequestPayer"]);
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
-      headers, query,
+      opts, headers, query,
       action: "GetObjectRetention",
       method: "GET",
       requestUri: cmnP.encodePath`/${params["Bucket"]}/${params["Key"].split("/")}?retention`,
@@ -1063,6 +1112,7 @@ export class S3 {
 
   async getObjectTagging(
     params: s.GetObjectTaggingRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.GetObjectTaggingOutput> {
     const headers = new Headers;
     const query = new URLSearchParams;
@@ -1070,7 +1120,7 @@ export class S3 {
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     if (params["RequestPayer"] != null) headers.append("x-amz-request-payer", params["RequestPayer"]);
     const resp = await this.#client.performRequest({
-      headers, query,
+      opts, headers, query,
       action: "GetObjectTagging",
       method: "GET",
       requestUri: cmnP.encodePath`/${params["Bucket"]}/${params["Key"].split("/")}?tagging`,
@@ -1086,12 +1136,13 @@ export class S3 {
 
   async getObjectTorrent(
     params: s.GetObjectTorrentRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.GetObjectTorrentOutput> {
     const headers = new Headers;
     if (params["RequestPayer"] != null) headers.append("x-amz-request-payer", params["RequestPayer"]);
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
-      headers,
+      opts, headers,
       action: "GetObjectTorrent",
       method: "GET",
       requestUri: cmnP.encodePath`/${params["Bucket"]}/${params["Key"].split("/")}?torrent`,
@@ -1104,11 +1155,12 @@ export class S3 {
 
   async getPublicAccessBlock(
     params: s.GetPublicAccessBlockRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.GetPublicAccessBlockOutput> {
     const headers = new Headers;
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
-      headers,
+      opts, headers,
       action: "GetPublicAccessBlock",
       method: "GET",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?publicAccessBlock`,
@@ -1121,11 +1173,12 @@ export class S3 {
 
   async headBucket(
     params: s.HeadBucketRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const headers = new Headers;
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
-      headers,
+      opts, headers,
       action: "HeadBucket",
       method: "HEAD",
       requestUri: cmnP.encodePath`/${params["Bucket"]}`,
@@ -1135,6 +1188,7 @@ export class S3 {
 
   async headObject(
     params: s.HeadObjectRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.HeadObjectOutput> {
     const headers = new Headers;
     const query = new URLSearchParams;
@@ -1151,7 +1205,7 @@ export class S3 {
     if (params["PartNumber"] != null) query.set("partNumber", params["PartNumber"]?.toString() ?? "");
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
-      headers, query,
+      opts, headers, query,
       action: "HeadObject",
       method: "HEAD",
       requestUri: cmnP.encodePath`/${params["Bucket"]}/${params["Key"].split("/")}`,
@@ -1193,13 +1247,14 @@ export class S3 {
 
   async listBucketAnalyticsConfigurations(
     params: s.ListBucketAnalyticsConfigurationsRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.ListBucketAnalyticsConfigurationsOutput> {
     const headers = new Headers;
     const query = new URLSearchParams;
     if (params["ContinuationToken"] != null) query.set("continuation-token", params["ContinuationToken"]?.toString() ?? "");
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
-      headers, query,
+      opts, headers, query,
       action: "ListBucketAnalyticsConfigurations",
       method: "GET",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?analytics`,
@@ -1216,11 +1271,12 @@ export class S3 {
 
   async listBucketIntelligentTieringConfigurations(
     params: s.ListBucketIntelligentTieringConfigurationsRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.ListBucketIntelligentTieringConfigurationsOutput> {
     const query = new URLSearchParams;
     if (params["ContinuationToken"] != null) query.set("continuation-token", params["ContinuationToken"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
-      query,
+      opts, query,
       action: "ListBucketIntelligentTieringConfigurations",
       method: "GET",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?intelligent-tiering`,
@@ -1237,13 +1293,14 @@ export class S3 {
 
   async listBucketInventoryConfigurations(
     params: s.ListBucketInventoryConfigurationsRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.ListBucketInventoryConfigurationsOutput> {
     const headers = new Headers;
     const query = new URLSearchParams;
     if (params["ContinuationToken"] != null) query.set("continuation-token", params["ContinuationToken"]?.toString() ?? "");
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
-      headers, query,
+      opts, headers, query,
       action: "ListBucketInventoryConfigurations",
       method: "GET",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?inventory`,
@@ -1260,13 +1317,14 @@ export class S3 {
 
   async listBucketMetricsConfigurations(
     params: s.ListBucketMetricsConfigurationsRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.ListBucketMetricsConfigurationsOutput> {
     const headers = new Headers;
     const query = new URLSearchParams;
     if (params["ContinuationToken"] != null) query.set("continuation-token", params["ContinuationToken"]?.toString() ?? "");
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
-      headers, query,
+      opts, headers, query,
       action: "ListBucketMetricsConfigurations",
       method: "GET",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?metrics`,
@@ -1281,8 +1339,11 @@ export class S3 {
     };
   }
 
-  async listBuckets(): Promise<s.ListBucketsOutput> {
+  async listBuckets(
+    opts: client.RequestOptions = {},
+  ): Promise<s.ListBucketsOutput> {
     const resp = await this.#client.performRequest({
+      opts,
       action: "ListBuckets",
       method: "GET",
     });
@@ -1295,6 +1356,7 @@ export class S3 {
 
   async listMultipartUploads(
     params: s.ListMultipartUploadsRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.ListMultipartUploadsOutput> {
     const headers = new Headers;
     const query = new URLSearchParams;
@@ -1306,7 +1368,7 @@ export class S3 {
     if (params["UploadIdMarker"] != null) query.set("upload-id-marker", params["UploadIdMarker"]?.toString() ?? "");
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
-      headers, query,
+      opts, headers, query,
       action: "ListMultipartUploads",
       method: "GET",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?uploads`,
@@ -1326,6 +1388,7 @@ export class S3 {
 
   async listObjectVersions(
     params: s.ListObjectVersionsRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.ListObjectVersionsOutput> {
     const headers = new Headers;
     const query = new URLSearchParams;
@@ -1337,7 +1400,7 @@ export class S3 {
     if (params["VersionIdMarker"] != null) query.set("version-id-marker", params["VersionIdMarker"]?.toString() ?? "");
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
-      headers, query,
+      opts, headers, query,
       action: "ListObjectVersions",
       method: "GET",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?versions`,
@@ -1358,6 +1421,7 @@ export class S3 {
 
   async listObjects(
     params: s.ListObjectsRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.ListObjectsOutput> {
     const headers = new Headers;
     const query = new URLSearchParams;
@@ -1369,7 +1433,7 @@ export class S3 {
     if (params["RequestPayer"] != null) headers.append("x-amz-request-payer", params["RequestPayer"]);
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
-      headers, query,
+      opts, headers, query,
       action: "ListObjects",
       method: "GET",
       requestUri: cmnP.encodePath`/${params["Bucket"]}`,
@@ -1389,6 +1453,7 @@ export class S3 {
 
   async listObjectsV2(
     params: s.ListObjectsV2Request,
+    opts: client.RequestOptions = {},
   ): Promise<s.ListObjectsV2Output> {
     const headers = new Headers;
     const query = new URLSearchParams;
@@ -1402,7 +1467,7 @@ export class S3 {
     if (params["RequestPayer"] != null) headers.append("x-amz-request-payer", params["RequestPayer"]);
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
-      headers, query,
+      opts, headers, query,
       action: "ListObjectsV2",
       method: "GET",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?list-type=2`,
@@ -1423,6 +1488,7 @@ export class S3 {
 
   async listParts(
     params: s.ListPartsRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.ListPartsOutput> {
     const headers = new Headers;
     const query = new URLSearchParams;
@@ -1432,7 +1498,7 @@ export class S3 {
     if (params["RequestPayer"] != null) headers.append("x-amz-request-payer", params["RequestPayer"]);
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
-      headers, query,
+      opts, headers, query,
       action: "ListParts",
       method: "GET",
       requestUri: cmnP.encodePath`/${params["Bucket"]}/${params["Key"].split("/")}`,
@@ -1460,6 +1526,7 @@ export class S3 {
 
   async putBucketAccelerateConfiguration(
     params: s.PutBucketAccelerateConfigurationRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const inner = params["AccelerateConfiguration"];
     const body = inner ? xmlP.stringify({
@@ -1471,7 +1538,7 @@ export class S3 {
     const headers = new Headers;
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
-      headers, body,
+      opts, headers, body,
       action: "PutBucketAccelerateConfiguration",
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?accelerate`,
@@ -1481,6 +1548,7 @@ export class S3 {
 
   async putBucketAcl(
     params: s.PutBucketAclRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const inner = params["AccessControlPolicy"];
     const body = inner ? xmlP.stringify({
@@ -1500,7 +1568,7 @@ export class S3 {
     if (params["GrantWriteACP"] != null) headers.append("x-amz-grant-write-acp", params["GrantWriteACP"]);
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
-      headers, body,
+      opts, headers, body,
       action: "PutBucketAcl",
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?acl`,
@@ -1510,6 +1578,7 @@ export class S3 {
 
   async putBucketAnalyticsConfiguration(
     params: s.PutBucketAnalyticsConfigurationRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const inner = params["AnalyticsConfiguration"];
     const body = inner ? xmlP.stringify({
@@ -1525,7 +1594,7 @@ export class S3 {
     query.set("id", params["Id"]?.toString() ?? "");
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
-      headers, query, body,
+      opts, headers, query, body,
       action: "PutBucketAnalyticsConfiguration",
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?analytics`,
@@ -1535,6 +1604,7 @@ export class S3 {
 
   async putBucketCors(
     params: s.PutBucketCorsRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const inner = params["CORSConfiguration"];
     const body = inner ? xmlP.stringify({
@@ -1547,7 +1617,7 @@ export class S3 {
     headers.append("Content-MD5", params["ContentMD5"] ?? hashMD5(body ?? ''));
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
-      headers, body,
+      opts, headers, body,
       action: "PutBucketCors",
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?cors`,
@@ -1557,6 +1627,7 @@ export class S3 {
 
   async putBucketEncryption(
     params: s.PutBucketEncryptionRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const inner = params["ServerSideEncryptionConfiguration"];
     const body = inner ? xmlP.stringify({
@@ -1569,7 +1640,7 @@ export class S3 {
     headers.append("Content-MD5", params["ContentMD5"] ?? hashMD5(body ?? ''));
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
-      headers, body,
+      opts, headers, body,
       action: "PutBucketEncryption",
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?encryption`,
@@ -1579,6 +1650,7 @@ export class S3 {
 
   async putBucketIntelligentTieringConfiguration(
     params: s.PutBucketIntelligentTieringConfigurationRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const inner = params["IntelligentTieringConfiguration"];
     const body = inner ? xmlP.stringify({
@@ -1593,7 +1665,7 @@ export class S3 {
     const query = new URLSearchParams;
     query.set("id", params["Id"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
-      query, body,
+      opts, query, body,
       action: "PutBucketIntelligentTieringConfiguration",
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?intelligent-tiering`,
@@ -1603,6 +1675,7 @@ export class S3 {
 
   async putBucketInventoryConfiguration(
     params: s.PutBucketInventoryConfigurationRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const inner = params["InventoryConfiguration"];
     const body = inner ? xmlP.stringify({
@@ -1622,7 +1695,7 @@ export class S3 {
     query.set("id", params["Id"]?.toString() ?? "");
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
-      headers, query, body,
+      opts, headers, query, body,
       action: "PutBucketInventoryConfiguration",
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?inventory`,
@@ -1632,6 +1705,7 @@ export class S3 {
 
   async putBucketLifecycle(
     params: s.PutBucketLifecycleRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const inner = params["LifecycleConfiguration"];
     const body = inner ? xmlP.stringify({
@@ -1644,7 +1718,7 @@ export class S3 {
     headers.append("Content-MD5", params["ContentMD5"] ?? hashMD5(body ?? ''));
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
-      headers, body,
+      opts, headers, body,
       action: "PutBucketLifecycle",
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?lifecycle`,
@@ -1654,6 +1728,7 @@ export class S3 {
 
   async putBucketLifecycleConfiguration(
     params: s.PutBucketLifecycleConfigurationRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const inner = params["LifecycleConfiguration"];
     const body = inner ? xmlP.stringify({
@@ -1665,7 +1740,7 @@ export class S3 {
     const headers = new Headers;
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
-      headers, body,
+      opts, headers, body,
       action: "PutBucketLifecycleConfiguration",
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?lifecycle`,
@@ -1675,6 +1750,7 @@ export class S3 {
 
   async putBucketLogging(
     params: s.PutBucketLoggingRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const inner = params["BucketLoggingStatus"];
     const body = inner ? xmlP.stringify({
@@ -1687,7 +1763,7 @@ export class S3 {
     headers.append("Content-MD5", params["ContentMD5"] ?? hashMD5(body ?? ''));
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
-      headers, body,
+      opts, headers, body,
       action: "PutBucketLogging",
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?logging`,
@@ -1697,6 +1773,7 @@ export class S3 {
 
   async putBucketMetricsConfiguration(
     params: s.PutBucketMetricsConfigurationRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const inner = params["MetricsConfiguration"];
     const body = inner ? xmlP.stringify({
@@ -1711,7 +1788,7 @@ export class S3 {
     query.set("id", params["Id"]?.toString() ?? "");
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
-      headers, query, body,
+      opts, headers, query, body,
       action: "PutBucketMetricsConfiguration",
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?metrics`,
@@ -1721,6 +1798,7 @@ export class S3 {
 
   async putBucketNotification(
     params: s.PutBucketNotificationRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const inner = params["NotificationConfiguration"];
     const body = inner ? xmlP.stringify({
@@ -1735,7 +1813,7 @@ export class S3 {
     headers.append("Content-MD5", params["ContentMD5"] ?? hashMD5(body ?? ''));
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
-      headers, body,
+      opts, headers, body,
       action: "PutBucketNotification",
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?notification`,
@@ -1745,6 +1823,7 @@ export class S3 {
 
   async putBucketNotificationConfiguration(
     params: s.PutBucketNotificationConfigurationRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const inner = params["NotificationConfiguration"];
     const body = inner ? xmlP.stringify({
@@ -1758,7 +1837,7 @@ export class S3 {
     const headers = new Headers;
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
-      headers, body,
+      opts, headers, body,
       action: "PutBucketNotificationConfiguration",
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?notification`,
@@ -1768,6 +1847,7 @@ export class S3 {
 
   async putBucketOwnershipControls(
     params: s.PutBucketOwnershipControlsRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const inner = params["OwnershipControls"];
     const body = inner ? xmlP.stringify({
@@ -1780,7 +1860,7 @@ export class S3 {
     headers.append("Content-MD5", params["ContentMD5"] ?? hashMD5(body ?? ''));
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
-      headers, body,
+      opts, headers, body,
       action: "PutBucketOwnershipControls",
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?ownershipControls`,
@@ -1790,6 +1870,7 @@ export class S3 {
 
   async putBucketPolicy(
     params: s.PutBucketPolicyRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body = typeof params["Policy"] === 'string' ? new TextEncoder().encode(params["Policy"]) : params["Policy"];
     const headers = new Headers;
@@ -1797,7 +1878,7 @@ export class S3 {
     if (params["ConfirmRemoveSelfBucketAccess"] != null) headers.append("x-amz-confirm-remove-self-bucket-access", params["ConfirmRemoveSelfBucketAccess"]?.toString() ?? '');
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
-      headers, body,
+      opts, headers, body,
       action: "PutBucketPolicy",
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?policy`,
@@ -1807,6 +1888,7 @@ export class S3 {
 
   async putBucketReplication(
     params: s.PutBucketReplicationRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const inner = params["ReplicationConfiguration"];
     const body = inner ? xmlP.stringify({
@@ -1821,7 +1903,7 @@ export class S3 {
     if (params["Token"] != null) headers.append("x-amz-bucket-object-lock-token", params["Token"]);
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
-      headers, body,
+      opts, headers, body,
       action: "PutBucketReplication",
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?replication`,
@@ -1831,6 +1913,7 @@ export class S3 {
 
   async putBucketRequestPayment(
     params: s.PutBucketRequestPaymentRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const inner = params["RequestPaymentConfiguration"];
     const body = inner ? xmlP.stringify({
@@ -1843,7 +1926,7 @@ export class S3 {
     headers.append("Content-MD5", params["ContentMD5"] ?? hashMD5(body ?? ''));
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
-      headers, body,
+      opts, headers, body,
       action: "PutBucketRequestPayment",
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?requestPayment`,
@@ -1853,6 +1936,7 @@ export class S3 {
 
   async putBucketTagging(
     params: s.PutBucketTaggingRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const inner = params["Tagging"];
     const body = inner ? xmlP.stringify({
@@ -1865,7 +1949,7 @@ export class S3 {
     headers.append("Content-MD5", params["ContentMD5"] ?? hashMD5(body ?? ''));
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
-      headers, body,
+      opts, headers, body,
       action: "PutBucketTagging",
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?tagging`,
@@ -1875,6 +1959,7 @@ export class S3 {
 
   async putBucketVersioning(
     params: s.PutBucketVersioningRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const inner = params["VersioningConfiguration"];
     const body = inner ? xmlP.stringify({
@@ -1889,7 +1974,7 @@ export class S3 {
     if (params["MFA"] != null) headers.append("x-amz-mfa", params["MFA"]);
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
-      headers, body,
+      opts, headers, body,
       action: "PutBucketVersioning",
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?versioning`,
@@ -1899,6 +1984,7 @@ export class S3 {
 
   async putBucketWebsite(
     params: s.PutBucketWebsiteRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const inner = params["WebsiteConfiguration"];
     const body = inner ? xmlP.stringify({
@@ -1914,7 +2000,7 @@ export class S3 {
     headers.append("Content-MD5", params["ContentMD5"] ?? hashMD5(body ?? ''));
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
-      headers, body,
+      opts, headers, body,
       action: "PutBucketWebsite",
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?website`,
@@ -1924,6 +2010,7 @@ export class S3 {
 
   async putObject(
     params: s.PutObjectRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.PutObjectOutput> {
     const body = typeof params["Body"] === 'string' ? new TextEncoder().encode(params["Body"]) : params["Body"];
     const headers = new Headers;
@@ -1959,7 +2046,7 @@ export class S3 {
     if (params["ObjectLockLegalHoldStatus"] != null) headers.append("x-amz-object-lock-legal-hold", params["ObjectLockLegalHoldStatus"]);
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
-      headers, body,
+      opts, headers, body,
       action: "PutObject",
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}/${params["Key"].split("/")}`,
@@ -1981,6 +2068,7 @@ export class S3 {
 
   async putObjectAcl(
     params: s.PutObjectAclRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.PutObjectAclOutput> {
     const inner = params["AccessControlPolicy"];
     const body = inner ? xmlP.stringify({
@@ -2003,7 +2091,7 @@ export class S3 {
     if (params["VersionId"] != null) query.set("versionId", params["VersionId"]?.toString() ?? "");
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
-      headers, query, body,
+      opts, headers, query, body,
       action: "PutObjectAcl",
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}/${params["Key"].split("/")}?acl`,
@@ -2016,6 +2104,7 @@ export class S3 {
 
   async putObjectLegalHold(
     params: s.PutObjectLegalHoldRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.PutObjectLegalHoldOutput> {
     const inner = params["LegalHold"];
     const body = inner ? xmlP.stringify({
@@ -2031,7 +2120,7 @@ export class S3 {
     headers.append("Content-MD5", params["ContentMD5"] ?? hashMD5(body ?? ''));
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
-      headers, query, body,
+      opts, headers, query, body,
       action: "PutObjectLegalHold",
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}/${params["Key"].split("/")}?legal-hold`,
@@ -2044,6 +2133,7 @@ export class S3 {
 
   async putObjectLockConfiguration(
     params: s.PutObjectLockConfigurationRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.PutObjectLockConfigurationOutput> {
     const inner = params["ObjectLockConfiguration"];
     const body = inner ? xmlP.stringify({
@@ -2059,7 +2149,7 @@ export class S3 {
     headers.append("Content-MD5", params["ContentMD5"] ?? hashMD5(body ?? ''));
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
-      headers, body,
+      opts, headers, body,
       action: "PutObjectLockConfiguration",
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?object-lock`,
@@ -2072,6 +2162,7 @@ export class S3 {
 
   async putObjectRetention(
     params: s.PutObjectRetentionRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.PutObjectRetentionOutput> {
     const inner = params["Retention"];
     const body = inner ? xmlP.stringify({
@@ -2089,7 +2180,7 @@ export class S3 {
     headers.append("Content-MD5", params["ContentMD5"] ?? hashMD5(body ?? ''));
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
-      headers, query, body,
+      opts, headers, query, body,
       action: "PutObjectRetention",
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}/${params["Key"].split("/")}?retention`,
@@ -2102,6 +2193,7 @@ export class S3 {
 
   async putObjectTagging(
     params: s.PutObjectTaggingRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.PutObjectTaggingOutput> {
     const inner = params["Tagging"];
     const body = inner ? xmlP.stringify({
@@ -2117,7 +2209,7 @@ export class S3 {
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     if (params["RequestPayer"] != null) headers.append("x-amz-request-payer", params["RequestPayer"]);
     const resp = await this.#client.performRequest({
-      headers, query, body,
+      opts, headers, query, body,
       action: "PutObjectTagging",
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}/${params["Key"].split("/")}?tagging`,
@@ -2130,6 +2222,7 @@ export class S3 {
 
   async putPublicAccessBlock(
     params: s.PutPublicAccessBlockRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const inner = params["PublicAccessBlockConfiguration"];
     const body = inner ? xmlP.stringify({
@@ -2145,7 +2238,7 @@ export class S3 {
     headers.append("Content-MD5", params["ContentMD5"] ?? hashMD5(body ?? ''));
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
-      headers, body,
+      opts, headers, body,
       action: "PutPublicAccessBlock",
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?publicAccessBlock`,
@@ -2155,6 +2248,7 @@ export class S3 {
 
   async restoreObject(
     params: s.RestoreObjectRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.RestoreObjectOutput> {
     const inner = params["RestoreRequest"];
     const body = inner ? xmlP.stringify({
@@ -2175,7 +2269,7 @@ export class S3 {
     if (params["RequestPayer"] != null) headers.append("x-amz-request-payer", params["RequestPayer"]);
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
-      headers, query, body,
+      opts, headers, query, body,
       action: "RestoreObject",
       requestUri: cmnP.encodePath`/${params["Bucket"]}/${params["Key"].split("/")}?restore`,
     });
@@ -2188,6 +2282,7 @@ export class S3 {
 
   async selectObjectContent(
     params: s.SelectObjectContentRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.SelectObjectContentOutput> {
     const headers = new Headers;
     const body = xmlP.stringify({
@@ -2206,7 +2301,7 @@ export class S3 {
     if (params["SSECustomerKeyMD5"] != null) headers.append("x-amz-server-side-encryption-customer-key-MD5", params["SSECustomerKeyMD5"]);
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
-      headers, body,
+      opts, headers, body,
       action: "SelectObjectContent",
       requestUri: cmnP.encodePath`/${params["Bucket"]}/${params["Key"].split("/")}?select&select-type=2`,
     });
@@ -2224,6 +2319,7 @@ export class S3 {
 
   async uploadPart(
     params: s.UploadPartRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.UploadPartOutput> {
     const body = typeof params["Body"] === 'string' ? new TextEncoder().encode(params["Body"]) : params["Body"];
     const headers = new Headers;
@@ -2238,7 +2334,7 @@ export class S3 {
     if (params["RequestPayer"] != null) headers.append("x-amz-request-payer", params["RequestPayer"]);
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
-      headers, query, body,
+      opts, headers, query, body,
       action: "UploadPart",
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}/${params["Key"].split("/")}`,
@@ -2257,6 +2353,7 @@ export class S3 {
 
   async uploadPartCopy(
     params: s.UploadPartCopyRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.UploadPartCopyOutput> {
     const headers = new Headers;
     const query = new URLSearchParams;
@@ -2278,7 +2375,7 @@ export class S3 {
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     if (params["ExpectedSourceBucketOwner"] != null) headers.append("x-amz-source-expected-bucket-owner", params["ExpectedSourceBucketOwner"]);
     const resp = await this.#client.performRequest({
-      headers, query,
+      opts, headers, query,
       action: "UploadPartCopy",
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}/${params["Key"].split("/")}`,
@@ -2303,6 +2400,7 @@ export class S3 {
 
   async writeGetObjectResponse(
     params: s.WriteGetObjectResponseRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body = typeof params["Body"] === 'string' ? new TextEncoder().encode(params["Body"]) : params["Body"];
     const headers = new Headers;
@@ -2344,7 +2442,7 @@ export class S3 {
     if (params["VersionId"] != null) headers.append("x-amz-fwd-header-x-amz-version-id", params["VersionId"]);
     if (params["BucketKeyEnabled"] != null) headers.append("x-amz-fwd-header-x-amz-server-side-encryption-bucket-key-enabled", params["BucketKeyEnabled"]?.toString() ?? '');
     const resp = await this.#client.performRequest({
-      headers, body,
+      opts, headers, body,
       action: "WriteGetObjectResponse",
       requestUri: "/WriteGetObjectResponse",
       hostPrefix: `${params.RequestRoute}.`,
@@ -2357,11 +2455,12 @@ export class S3 {
   /** Checks state up to 20 times, 5 seconds apart (about 2 minutes max wait time). */
   async waitForBucketExists(
     params: s.HeadBucketRequest,
+    opts: client.RequestOptions = {},
   ): Promise<Error | void> {
     const errMessage = 'ResourceNotReady: Resource is not in the state BucketExists';
     for (let i = 0; i < 20; i++) {
       try {
-        await this.headBucket(params);
+        await this.headBucket(params, opts);
         return; // for status 200
         return; // for status 301
       } catch (err) {
@@ -2376,11 +2475,12 @@ export class S3 {
   /** Checks state up to 20 times, 5 seconds apart (about 2 minutes max wait time). */
   async waitForBucketNotExists(
     params: s.HeadBucketRequest,
+    opts: client.RequestOptions = {},
   ): Promise<Error | void> {
     const errMessage = 'ResourceNotReady: Resource is not in the state BucketNotExists';
     for (let i = 0; i < 20; i++) {
       try {
-        await this.headBucket(params);
+        await this.headBucket(params, opts);
       } catch (err) {
         if (["Http404"].includes(err.shortCode)) return err;
         throw err;
@@ -2393,11 +2493,12 @@ export class S3 {
   /** Checks state up to 20 times, 5 seconds apart (about 2 minutes max wait time). */
   async waitForObjectExists(
     params: s.HeadObjectRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.HeadObjectOutput> {
     const errMessage = 'ResourceNotReady: Resource is not in the state ObjectExists';
     for (let i = 0; i < 20; i++) {
       try {
-        const resp = await this.headObject(params);
+        const resp = await this.headObject(params, opts);
         return resp; // for status 200
       } catch (err) {
         if (!["Http404"].includes(err.shortCode)) throw err;
@@ -2410,11 +2511,12 @@ export class S3 {
   /** Checks state up to 20 times, 5 seconds apart (about 2 minutes max wait time). */
   async waitForObjectNotExists(
     params: s.HeadObjectRequest,
+    opts: client.RequestOptions = {},
   ): Promise<Error | s.HeadObjectOutput> {
     const errMessage = 'ResourceNotReady: Resource is not in the state ObjectNotExists';
     for (let i = 0; i < 20; i++) {
       try {
-        const resp = await this.headObject(params);
+        const resp = await this.headObject(params, opts);
       } catch (err) {
         if (["Http404"].includes(err.shortCode)) return err;
         throw err;

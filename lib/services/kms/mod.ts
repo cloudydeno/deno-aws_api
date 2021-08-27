@@ -32,12 +32,13 @@ export class KMS {
 
   async cancelKeyDeletion(
     params: s.CancelKeyDeletionRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.CancelKeyDeletionResponse> {
     const body: jsonP.JSONObject = {
       KeyId: params["KeyId"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "CancelKeyDeletion",
     });
     return jsonP.readObj({
@@ -50,12 +51,13 @@ export class KMS {
 
   async connectCustomKeyStore(
     params: s.ConnectCustomKeyStoreRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body: jsonP.JSONObject = {
       CustomKeyStoreId: params["CustomKeyStoreId"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "ConnectCustomKeyStore",
     });
     await resp.arrayBuffer(); // consume body without use
@@ -63,13 +65,14 @@ export class KMS {
 
   async createAlias(
     params: s.CreateAliasRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body: jsonP.JSONObject = {
       AliasName: params["AliasName"],
       TargetKeyId: params["TargetKeyId"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "CreateAlias",
     });
     await resp.arrayBuffer(); // consume body without use
@@ -77,6 +80,7 @@ export class KMS {
 
   async createCustomKeyStore(
     params: s.CreateCustomKeyStoreRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.CreateCustomKeyStoreResponse> {
     const body: jsonP.JSONObject = {
       CustomKeyStoreName: params["CustomKeyStoreName"],
@@ -85,7 +89,7 @@ export class KMS {
       KeyStorePassword: params["KeyStorePassword"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "CreateCustomKeyStore",
     });
     return jsonP.readObj({
@@ -98,6 +102,7 @@ export class KMS {
 
   async createGrant(
     params: s.CreateGrantRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.CreateGrantResponse> {
     const body: jsonP.JSONObject = {
       KeyId: params["KeyId"],
@@ -109,7 +114,7 @@ export class KMS {
       Name: params["Name"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "CreateGrant",
     });
     return jsonP.readObj({
@@ -123,6 +128,7 @@ export class KMS {
 
   async createKey(
     params: s.CreateKeyRequest = {},
+    opts: client.RequestOptions = {},
   ): Promise<s.CreateKeyResponse> {
     const body: jsonP.JSONObject = {
       Policy: params["Policy"],
@@ -136,7 +142,7 @@ export class KMS {
       MultiRegion: params["MultiRegion"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "CreateKey",
     });
     return jsonP.readObj({
@@ -149,6 +155,7 @@ export class KMS {
 
   async decrypt(
     params: s.DecryptRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.DecryptResponse> {
     const body: jsonP.JSONObject = {
       CiphertextBlob: serializeBlob(params["CiphertextBlob"]),
@@ -158,7 +165,7 @@ export class KMS {
       EncryptionAlgorithm: params["EncryptionAlgorithm"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "Decrypt",
     });
     return jsonP.readObj({
@@ -173,12 +180,13 @@ export class KMS {
 
   async deleteAlias(
     params: s.DeleteAliasRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body: jsonP.JSONObject = {
       AliasName: params["AliasName"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "DeleteAlias",
     });
     await resp.arrayBuffer(); // consume body without use
@@ -186,12 +194,13 @@ export class KMS {
 
   async deleteCustomKeyStore(
     params: s.DeleteCustomKeyStoreRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body: jsonP.JSONObject = {
       CustomKeyStoreId: params["CustomKeyStoreId"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "DeleteCustomKeyStore",
     });
     await resp.arrayBuffer(); // consume body without use
@@ -199,12 +208,13 @@ export class KMS {
 
   async deleteImportedKeyMaterial(
     params: s.DeleteImportedKeyMaterialRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body: jsonP.JSONObject = {
       KeyId: params["KeyId"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "DeleteImportedKeyMaterial",
     });
     await resp.arrayBuffer(); // consume body without use
@@ -212,6 +222,7 @@ export class KMS {
 
   async describeCustomKeyStores(
     params: s.DescribeCustomKeyStoresRequest = {},
+    opts: client.RequestOptions = {},
   ): Promise<s.DescribeCustomKeyStoresResponse> {
     const body: jsonP.JSONObject = {
       CustomKeyStoreId: params["CustomKeyStoreId"],
@@ -220,7 +231,7 @@ export class KMS {
       Marker: params["Marker"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "DescribeCustomKeyStores",
     });
     return jsonP.readObj({
@@ -235,13 +246,14 @@ export class KMS {
 
   async describeKey(
     params: s.DescribeKeyRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.DescribeKeyResponse> {
     const body: jsonP.JSONObject = {
       KeyId: params["KeyId"],
       GrantTokens: params["GrantTokens"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "DescribeKey",
     });
     return jsonP.readObj({
@@ -254,12 +266,13 @@ export class KMS {
 
   async disableKey(
     params: s.DisableKeyRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body: jsonP.JSONObject = {
       KeyId: params["KeyId"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "DisableKey",
     });
     await resp.arrayBuffer(); // consume body without use
@@ -267,12 +280,13 @@ export class KMS {
 
   async disableKeyRotation(
     params: s.DisableKeyRotationRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body: jsonP.JSONObject = {
       KeyId: params["KeyId"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "DisableKeyRotation",
     });
     await resp.arrayBuffer(); // consume body without use
@@ -280,12 +294,13 @@ export class KMS {
 
   async disconnectCustomKeyStore(
     params: s.DisconnectCustomKeyStoreRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body: jsonP.JSONObject = {
       CustomKeyStoreId: params["CustomKeyStoreId"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "DisconnectCustomKeyStore",
     });
     await resp.arrayBuffer(); // consume body without use
@@ -293,12 +308,13 @@ export class KMS {
 
   async enableKey(
     params: s.EnableKeyRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body: jsonP.JSONObject = {
       KeyId: params["KeyId"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "EnableKey",
     });
     await resp.arrayBuffer(); // consume body without use
@@ -306,12 +322,13 @@ export class KMS {
 
   async enableKeyRotation(
     params: s.EnableKeyRotationRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body: jsonP.JSONObject = {
       KeyId: params["KeyId"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "EnableKeyRotation",
     });
     await resp.arrayBuffer(); // consume body without use
@@ -319,6 +336,7 @@ export class KMS {
 
   async encrypt(
     params: s.EncryptRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.EncryptResponse> {
     const body: jsonP.JSONObject = {
       KeyId: params["KeyId"],
@@ -328,7 +346,7 @@ export class KMS {
       EncryptionAlgorithm: params["EncryptionAlgorithm"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "Encrypt",
     });
     return jsonP.readObj({
@@ -343,6 +361,7 @@ export class KMS {
 
   async generateDataKey(
     params: s.GenerateDataKeyRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.GenerateDataKeyResponse> {
     const body: jsonP.JSONObject = {
       KeyId: params["KeyId"],
@@ -352,7 +371,7 @@ export class KMS {
       GrantTokens: params["GrantTokens"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "GenerateDataKey",
     });
     return jsonP.readObj({
@@ -367,6 +386,7 @@ export class KMS {
 
   async generateDataKeyPair(
     params: s.GenerateDataKeyPairRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.GenerateDataKeyPairResponse> {
     const body: jsonP.JSONObject = {
       EncryptionContext: params["EncryptionContext"],
@@ -375,7 +395,7 @@ export class KMS {
       GrantTokens: params["GrantTokens"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "GenerateDataKeyPair",
     });
     return jsonP.readObj({
@@ -392,6 +412,7 @@ export class KMS {
 
   async generateDataKeyPairWithoutPlaintext(
     params: s.GenerateDataKeyPairWithoutPlaintextRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.GenerateDataKeyPairWithoutPlaintextResponse> {
     const body: jsonP.JSONObject = {
       EncryptionContext: params["EncryptionContext"],
@@ -400,7 +421,7 @@ export class KMS {
       GrantTokens: params["GrantTokens"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "GenerateDataKeyPairWithoutPlaintext",
     });
     return jsonP.readObj({
@@ -416,6 +437,7 @@ export class KMS {
 
   async generateDataKeyWithoutPlaintext(
     params: s.GenerateDataKeyWithoutPlaintextRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.GenerateDataKeyWithoutPlaintextResponse> {
     const body: jsonP.JSONObject = {
       KeyId: params["KeyId"],
@@ -425,7 +447,7 @@ export class KMS {
       GrantTokens: params["GrantTokens"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "GenerateDataKeyWithoutPlaintext",
     });
     return jsonP.readObj({
@@ -439,13 +461,14 @@ export class KMS {
 
   async generateRandom(
     params: s.GenerateRandomRequest = {},
+    opts: client.RequestOptions = {},
   ): Promise<s.GenerateRandomResponse> {
     const body: jsonP.JSONObject = {
       NumberOfBytes: params["NumberOfBytes"],
       CustomKeyStoreId: params["CustomKeyStoreId"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "GenerateRandom",
     });
     return jsonP.readObj({
@@ -458,13 +481,14 @@ export class KMS {
 
   async getKeyPolicy(
     params: s.GetKeyPolicyRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.GetKeyPolicyResponse> {
     const body: jsonP.JSONObject = {
       KeyId: params["KeyId"],
       PolicyName: params["PolicyName"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "GetKeyPolicy",
     });
     return jsonP.readObj({
@@ -477,12 +501,13 @@ export class KMS {
 
   async getKeyRotationStatus(
     params: s.GetKeyRotationStatusRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.GetKeyRotationStatusResponse> {
     const body: jsonP.JSONObject = {
       KeyId: params["KeyId"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "GetKeyRotationStatus",
     });
     return jsonP.readObj({
@@ -495,6 +520,7 @@ export class KMS {
 
   async getParametersForImport(
     params: s.GetParametersForImportRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.GetParametersForImportResponse> {
     const body: jsonP.JSONObject = {
       KeyId: params["KeyId"],
@@ -502,7 +528,7 @@ export class KMS {
       WrappingKeySpec: params["WrappingKeySpec"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "GetParametersForImport",
     });
     return jsonP.readObj({
@@ -518,13 +544,14 @@ export class KMS {
 
   async getPublicKey(
     params: s.GetPublicKeyRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.GetPublicKeyResponse> {
     const body: jsonP.JSONObject = {
       KeyId: params["KeyId"],
       GrantTokens: params["GrantTokens"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "GetPublicKey",
     });
     return jsonP.readObj({
@@ -542,6 +569,7 @@ export class KMS {
 
   async importKeyMaterial(
     params: s.ImportKeyMaterialRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body: jsonP.JSONObject = {
       KeyId: params["KeyId"],
@@ -551,7 +579,7 @@ export class KMS {
       ExpirationModel: params["ExpirationModel"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "ImportKeyMaterial",
     });
     await resp.arrayBuffer(); // consume body without use
@@ -559,6 +587,7 @@ export class KMS {
 
   async listAliases(
     params: s.ListAliasesRequest = {},
+    opts: client.RequestOptions = {},
   ): Promise<s.ListAliasesResponse> {
     const body: jsonP.JSONObject = {
       KeyId: params["KeyId"],
@@ -566,7 +595,7 @@ export class KMS {
       Marker: params["Marker"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "ListAliases",
     });
     return jsonP.readObj({
@@ -581,6 +610,7 @@ export class KMS {
 
   async listGrants(
     params: s.ListGrantsRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.ListGrantsResponse> {
     const body: jsonP.JSONObject = {
       Limit: params["Limit"],
@@ -590,7 +620,7 @@ export class KMS {
       GranteePrincipal: params["GranteePrincipal"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "ListGrants",
     });
     return jsonP.readObj({
@@ -605,6 +635,7 @@ export class KMS {
 
   async listKeyPolicies(
     params: s.ListKeyPoliciesRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.ListKeyPoliciesResponse> {
     const body: jsonP.JSONObject = {
       KeyId: params["KeyId"],
@@ -612,7 +643,7 @@ export class KMS {
       Marker: params["Marker"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "ListKeyPolicies",
     });
     return jsonP.readObj({
@@ -627,13 +658,14 @@ export class KMS {
 
   async listKeys(
     params: s.ListKeysRequest = {},
+    opts: client.RequestOptions = {},
   ): Promise<s.ListKeysResponse> {
     const body: jsonP.JSONObject = {
       Limit: params["Limit"],
       Marker: params["Marker"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "ListKeys",
     });
     return jsonP.readObj({
@@ -648,6 +680,7 @@ export class KMS {
 
   async listResourceTags(
     params: s.ListResourceTagsRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.ListResourceTagsResponse> {
     const body: jsonP.JSONObject = {
       KeyId: params["KeyId"],
@@ -655,7 +688,7 @@ export class KMS {
       Marker: params["Marker"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "ListResourceTags",
     });
     return jsonP.readObj({
@@ -670,6 +703,7 @@ export class KMS {
 
   async listRetirableGrants(
     params: s.ListRetirableGrantsRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.ListGrantsResponse> {
     const body: jsonP.JSONObject = {
       Limit: params["Limit"],
@@ -677,7 +711,7 @@ export class KMS {
       RetiringPrincipal: params["RetiringPrincipal"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "ListRetirableGrants",
     });
     return jsonP.readObj({
@@ -692,6 +726,7 @@ export class KMS {
 
   async putKeyPolicy(
     params: s.PutKeyPolicyRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body: jsonP.JSONObject = {
       KeyId: params["KeyId"],
@@ -700,7 +735,7 @@ export class KMS {
       BypassPolicyLockoutSafetyCheck: params["BypassPolicyLockoutSafetyCheck"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "PutKeyPolicy",
     });
     await resp.arrayBuffer(); // consume body without use
@@ -708,6 +743,7 @@ export class KMS {
 
   async reEncrypt(
     params: s.ReEncryptRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.ReEncryptResponse> {
     const body: jsonP.JSONObject = {
       CiphertextBlob: serializeBlob(params["CiphertextBlob"]),
@@ -720,7 +756,7 @@ export class KMS {
       GrantTokens: params["GrantTokens"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "ReEncrypt",
     });
     return jsonP.readObj({
@@ -737,6 +773,7 @@ export class KMS {
 
   async replicateKey(
     params: s.ReplicateKeyRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.ReplicateKeyResponse> {
     const body: jsonP.JSONObject = {
       KeyId: params["KeyId"],
@@ -747,7 +784,7 @@ export class KMS {
       Tags: params["Tags"]?.map(x => fromTag(x)),
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "ReplicateKey",
     });
     return jsonP.readObj({
@@ -762,6 +799,7 @@ export class KMS {
 
   async retireGrant(
     params: s.RetireGrantRequest = {},
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body: jsonP.JSONObject = {
       GrantToken: params["GrantToken"],
@@ -769,7 +807,7 @@ export class KMS {
       GrantId: params["GrantId"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "RetireGrant",
     });
     await resp.arrayBuffer(); // consume body without use
@@ -777,13 +815,14 @@ export class KMS {
 
   async revokeGrant(
     params: s.RevokeGrantRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body: jsonP.JSONObject = {
       KeyId: params["KeyId"],
       GrantId: params["GrantId"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "RevokeGrant",
     });
     await resp.arrayBuffer(); // consume body without use
@@ -791,13 +830,14 @@ export class KMS {
 
   async scheduleKeyDeletion(
     params: s.ScheduleKeyDeletionRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.ScheduleKeyDeletionResponse> {
     const body: jsonP.JSONObject = {
       KeyId: params["KeyId"],
       PendingWindowInDays: params["PendingWindowInDays"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "ScheduleKeyDeletion",
     });
     return jsonP.readObj({
@@ -813,6 +853,7 @@ export class KMS {
 
   async sign(
     params: s.SignRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.SignResponse> {
     const body: jsonP.JSONObject = {
       KeyId: params["KeyId"],
@@ -822,7 +863,7 @@ export class KMS {
       SigningAlgorithm: params["SigningAlgorithm"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "Sign",
     });
     return jsonP.readObj({
@@ -837,13 +878,14 @@ export class KMS {
 
   async tagResource(
     params: s.TagResourceRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body: jsonP.JSONObject = {
       KeyId: params["KeyId"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "TagResource",
     });
     await resp.arrayBuffer(); // consume body without use
@@ -851,13 +893,14 @@ export class KMS {
 
   async untagResource(
     params: s.UntagResourceRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body: jsonP.JSONObject = {
       KeyId: params["KeyId"],
       TagKeys: params["TagKeys"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "UntagResource",
     });
     await resp.arrayBuffer(); // consume body without use
@@ -865,13 +908,14 @@ export class KMS {
 
   async updateAlias(
     params: s.UpdateAliasRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body: jsonP.JSONObject = {
       AliasName: params["AliasName"],
       TargetKeyId: params["TargetKeyId"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "UpdateAlias",
     });
     await resp.arrayBuffer(); // consume body without use
@@ -879,6 +923,7 @@ export class KMS {
 
   async updateCustomKeyStore(
     params: s.UpdateCustomKeyStoreRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body: jsonP.JSONObject = {
       CustomKeyStoreId: params["CustomKeyStoreId"],
@@ -887,7 +932,7 @@ export class KMS {
       CloudHsmClusterId: params["CloudHsmClusterId"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "UpdateCustomKeyStore",
     });
     await resp.arrayBuffer(); // consume body without use
@@ -895,13 +940,14 @@ export class KMS {
 
   async updateKeyDescription(
     params: s.UpdateKeyDescriptionRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body: jsonP.JSONObject = {
       KeyId: params["KeyId"],
       Description: params["Description"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "UpdateKeyDescription",
     });
     await resp.arrayBuffer(); // consume body without use
@@ -909,13 +955,14 @@ export class KMS {
 
   async updatePrimaryRegion(
     params: s.UpdatePrimaryRegionRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body: jsonP.JSONObject = {
       KeyId: params["KeyId"],
       PrimaryRegion: params["PrimaryRegion"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "UpdatePrimaryRegion",
     });
     await resp.arrayBuffer(); // consume body without use
@@ -923,6 +970,7 @@ export class KMS {
 
   async verify(
     params: s.VerifyRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.VerifyResponse> {
     const body: jsonP.JSONObject = {
       KeyId: params["KeyId"],
@@ -933,7 +981,7 @@ export class KMS {
       GrantTokens: params["GrantTokens"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "Verify",
     });
     return jsonP.readObj({

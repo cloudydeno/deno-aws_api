@@ -35,12 +35,13 @@ export class DynamoDB {
 
   async batchExecuteStatement(
     params: s.BatchExecuteStatementInput,
+    opts: client.RequestOptions = {},
   ): Promise<s.BatchExecuteStatementOutput> {
     const body: jsonP.JSONObject = {
       Statements: params["Statements"]?.map(x => fromBatchStatementRequest(x)),
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "BatchExecuteStatement",
     });
     return jsonP.readObj({
@@ -53,13 +54,14 @@ export class DynamoDB {
 
   async batchGetItem(
     params: s.BatchGetItemInput,
+    opts: client.RequestOptions = {},
   ): Promise<s.BatchGetItemOutput> {
     const body: jsonP.JSONObject = {
       RequestItems: jsonP.serializeMap(params["RequestItems"], x => fromKeysAndAttributes(x)),
       ReturnConsumedCapacity: params["ReturnConsumedCapacity"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "BatchGetItem",
     });
     return jsonP.readObj({
@@ -74,6 +76,7 @@ export class DynamoDB {
 
   async batchWriteItem(
     params: s.BatchWriteItemInput,
+    opts: client.RequestOptions = {},
   ): Promise<s.BatchWriteItemOutput> {
     const body: jsonP.JSONObject = {
       RequestItems: jsonP.serializeMap(params["RequestItems"], x => x?.map(fromWriteRequest)),
@@ -81,7 +84,7 @@ export class DynamoDB {
       ReturnItemCollectionMetrics: params["ReturnItemCollectionMetrics"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "BatchWriteItem",
     });
     return jsonP.readObj({
@@ -96,13 +99,14 @@ export class DynamoDB {
 
   async createBackup(
     params: s.CreateBackupInput,
+    opts: client.RequestOptions = {},
   ): Promise<s.CreateBackupOutput> {
     const body: jsonP.JSONObject = {
       TableName: params["TableName"],
       BackupName: params["BackupName"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "CreateBackup",
     });
     return jsonP.readObj({
@@ -115,13 +119,14 @@ export class DynamoDB {
 
   async createGlobalTable(
     params: s.CreateGlobalTableInput,
+    opts: client.RequestOptions = {},
   ): Promise<s.CreateGlobalTableOutput> {
     const body: jsonP.JSONObject = {
       GlobalTableName: params["GlobalTableName"],
       ReplicationGroup: params["ReplicationGroup"]?.map(x => fromReplica(x)),
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "CreateGlobalTable",
     });
     return jsonP.readObj({
@@ -134,6 +139,7 @@ export class DynamoDB {
 
   async createTable(
     params: s.CreateTableInput,
+    opts: client.RequestOptions = {},
   ): Promise<s.CreateTableOutput> {
     const body: jsonP.JSONObject = {
       AttributeDefinitions: params["AttributeDefinitions"]?.map(x => fromAttributeDefinition(x)),
@@ -148,7 +154,7 @@ export class DynamoDB {
       Tags: params["Tags"]?.map(x => fromTag(x)),
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "CreateTable",
     });
     return jsonP.readObj({
@@ -161,12 +167,13 @@ export class DynamoDB {
 
   async deleteBackup(
     params: s.DeleteBackupInput,
+    opts: client.RequestOptions = {},
   ): Promise<s.DeleteBackupOutput> {
     const body: jsonP.JSONObject = {
       BackupArn: params["BackupArn"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "DeleteBackup",
     });
     return jsonP.readObj({
@@ -179,6 +186,7 @@ export class DynamoDB {
 
   async deleteItem(
     params: s.DeleteItemInput,
+    opts: client.RequestOptions = {},
   ): Promise<s.DeleteItemOutput> {
     const body: jsonP.JSONObject = {
       TableName: params["TableName"],
@@ -193,7 +201,7 @@ export class DynamoDB {
       ExpressionAttributeValues: jsonP.serializeMap(params["ExpressionAttributeValues"], x => fromAttributeValue(x)),
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "DeleteItem",
     });
     return jsonP.readObj({
@@ -208,12 +216,13 @@ export class DynamoDB {
 
   async deleteTable(
     params: s.DeleteTableInput,
+    opts: client.RequestOptions = {},
   ): Promise<s.DeleteTableOutput> {
     const body: jsonP.JSONObject = {
       TableName: params["TableName"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "DeleteTable",
     });
     return jsonP.readObj({
@@ -226,12 +235,13 @@ export class DynamoDB {
 
   async describeBackup(
     params: s.DescribeBackupInput,
+    opts: client.RequestOptions = {},
   ): Promise<s.DescribeBackupOutput> {
     const body: jsonP.JSONObject = {
       BackupArn: params["BackupArn"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "DescribeBackup",
     });
     return jsonP.readObj({
@@ -244,12 +254,13 @@ export class DynamoDB {
 
   async describeContinuousBackups(
     params: s.DescribeContinuousBackupsInput,
+    opts: client.RequestOptions = {},
   ): Promise<s.DescribeContinuousBackupsOutput> {
     const body: jsonP.JSONObject = {
       TableName: params["TableName"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "DescribeContinuousBackups",
     });
     return jsonP.readObj({
@@ -262,13 +273,14 @@ export class DynamoDB {
 
   async describeContributorInsights(
     params: s.DescribeContributorInsightsInput,
+    opts: client.RequestOptions = {},
   ): Promise<s.DescribeContributorInsightsOutput> {
     const body: jsonP.JSONObject = {
       TableName: params["TableName"],
       IndexName: params["IndexName"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "DescribeContributorInsights",
     });
     return jsonP.readObj({
@@ -284,10 +296,12 @@ export class DynamoDB {
     }, await resp.json());
   }
 
-  async describeEndpoints(): Promise<s.DescribeEndpointsResponse> {
+  async describeEndpoints(
+    opts: client.RequestOptions = {},
+  ): Promise<s.DescribeEndpointsResponse> {
     const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "DescribeEndpoints",
     });
     return jsonP.readObj({
@@ -300,12 +314,13 @@ export class DynamoDB {
 
   async describeExport(
     params: s.DescribeExportInput,
+    opts: client.RequestOptions = {},
   ): Promise<s.DescribeExportOutput> {
     const body: jsonP.JSONObject = {
       ExportArn: params["ExportArn"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "DescribeExport",
     });
     return jsonP.readObj({
@@ -318,12 +333,13 @@ export class DynamoDB {
 
   async describeGlobalTable(
     params: s.DescribeGlobalTableInput,
+    opts: client.RequestOptions = {},
   ): Promise<s.DescribeGlobalTableOutput> {
     const body: jsonP.JSONObject = {
       GlobalTableName: params["GlobalTableName"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "DescribeGlobalTable",
     });
     return jsonP.readObj({
@@ -336,12 +352,13 @@ export class DynamoDB {
 
   async describeGlobalTableSettings(
     params: s.DescribeGlobalTableSettingsInput,
+    opts: client.RequestOptions = {},
   ): Promise<s.DescribeGlobalTableSettingsOutput> {
     const body: jsonP.JSONObject = {
       GlobalTableName: params["GlobalTableName"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "DescribeGlobalTableSettings",
     });
     return jsonP.readObj({
@@ -355,12 +372,13 @@ export class DynamoDB {
 
   async describeKinesisStreamingDestination(
     params: s.DescribeKinesisStreamingDestinationInput,
+    opts: client.RequestOptions = {},
   ): Promise<s.DescribeKinesisStreamingDestinationOutput> {
     const body: jsonP.JSONObject = {
       TableName: params["TableName"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "DescribeKinesisStreamingDestination",
     });
     return jsonP.readObj({
@@ -372,10 +390,12 @@ export class DynamoDB {
     }, await resp.json());
   }
 
-  async describeLimits(): Promise<s.DescribeLimitsOutput> {
+  async describeLimits(
+    opts: client.RequestOptions = {},
+  ): Promise<s.DescribeLimitsOutput> {
     const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "DescribeLimits",
     });
     return jsonP.readObj({
@@ -391,12 +411,13 @@ export class DynamoDB {
 
   async describeTable(
     params: s.DescribeTableInput,
+    opts: client.RequestOptions = {},
   ): Promise<s.DescribeTableOutput> {
     const body: jsonP.JSONObject = {
       TableName: params["TableName"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "DescribeTable",
     });
     return jsonP.readObj({
@@ -409,12 +430,13 @@ export class DynamoDB {
 
   async describeTableReplicaAutoScaling(
     params: s.DescribeTableReplicaAutoScalingInput,
+    opts: client.RequestOptions = {},
   ): Promise<s.DescribeTableReplicaAutoScalingOutput> {
     const body: jsonP.JSONObject = {
       TableName: params["TableName"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "DescribeTableReplicaAutoScaling",
     });
     return jsonP.readObj({
@@ -427,12 +449,13 @@ export class DynamoDB {
 
   async describeTimeToLive(
     params: s.DescribeTimeToLiveInput,
+    opts: client.RequestOptions = {},
   ): Promise<s.DescribeTimeToLiveOutput> {
     const body: jsonP.JSONObject = {
       TableName: params["TableName"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "DescribeTimeToLive",
     });
     return jsonP.readObj({
@@ -445,13 +468,14 @@ export class DynamoDB {
 
   async disableKinesisStreamingDestination(
     params: s.KinesisStreamingDestinationInput,
+    opts: client.RequestOptions = {},
   ): Promise<s.KinesisStreamingDestinationOutput> {
     const body: jsonP.JSONObject = {
       TableName: params["TableName"],
       StreamArn: params["StreamArn"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "DisableKinesisStreamingDestination",
     });
     return jsonP.readObj({
@@ -466,13 +490,14 @@ export class DynamoDB {
 
   async enableKinesisStreamingDestination(
     params: s.KinesisStreamingDestinationInput,
+    opts: client.RequestOptions = {},
   ): Promise<s.KinesisStreamingDestinationOutput> {
     const body: jsonP.JSONObject = {
       TableName: params["TableName"],
       StreamArn: params["StreamArn"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "EnableKinesisStreamingDestination",
     });
     return jsonP.readObj({
@@ -487,6 +512,7 @@ export class DynamoDB {
 
   async executeStatement(
     params: s.ExecuteStatementInput,
+    opts: client.RequestOptions = {},
   ): Promise<s.ExecuteStatementOutput> {
     const body: jsonP.JSONObject = {
       Statement: params["Statement"],
@@ -495,7 +521,7 @@ export class DynamoDB {
       NextToken: params["NextToken"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "ExecuteStatement",
     });
     return jsonP.readObj({
@@ -509,13 +535,14 @@ export class DynamoDB {
 
   async executeTransaction(
     params: s.ExecuteTransactionInput,
+    opts: client.RequestOptions = {},
   ): Promise<s.ExecuteTransactionOutput> {
     const body: jsonP.JSONObject = {
       TransactStatements: params["TransactStatements"]?.map(x => fromParameterizedStatement(x)),
       ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "ExecuteTransaction",
     });
     return jsonP.readObj({
@@ -528,6 +555,7 @@ export class DynamoDB {
 
   async exportTableToPointInTime(
     params: s.ExportTableToPointInTimeInput,
+    opts: client.RequestOptions = {},
   ): Promise<s.ExportTableToPointInTimeOutput> {
     const body: jsonP.JSONObject = {
       TableArn: params["TableArn"],
@@ -541,7 +569,7 @@ export class DynamoDB {
       ExportFormat: params["ExportFormat"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "ExportTableToPointInTime",
     });
     return jsonP.readObj({
@@ -554,6 +582,7 @@ export class DynamoDB {
 
   async getItem(
     params: s.GetItemInput,
+    opts: client.RequestOptions = {},
   ): Promise<s.GetItemOutput> {
     const body: jsonP.JSONObject = {
       TableName: params["TableName"],
@@ -565,7 +594,7 @@ export class DynamoDB {
       ExpressionAttributeNames: params["ExpressionAttributeNames"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "GetItem",
     });
     return jsonP.readObj({
@@ -579,6 +608,7 @@ export class DynamoDB {
 
   async listBackups(
     params: s.ListBackupsInput = {},
+    opts: client.RequestOptions = {},
   ): Promise<s.ListBackupsOutput> {
     const body: jsonP.JSONObject = {
       TableName: params["TableName"],
@@ -589,7 +619,7 @@ export class DynamoDB {
       BackupType: params["BackupType"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "ListBackups",
     });
     return jsonP.readObj({
@@ -603,6 +633,7 @@ export class DynamoDB {
 
   async listContributorInsights(
     params: s.ListContributorInsightsInput = {},
+    opts: client.RequestOptions = {},
   ): Promise<s.ListContributorInsightsOutput> {
     const body: jsonP.JSONObject = {
       TableName: params["TableName"],
@@ -610,7 +641,7 @@ export class DynamoDB {
       MaxResults: params["MaxResults"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "ListContributorInsights",
     });
     return jsonP.readObj({
@@ -624,6 +655,7 @@ export class DynamoDB {
 
   async listExports(
     params: s.ListExportsInput = {},
+    opts: client.RequestOptions = {},
   ): Promise<s.ListExportsOutput> {
     const body: jsonP.JSONObject = {
       TableArn: params["TableArn"],
@@ -631,7 +663,7 @@ export class DynamoDB {
       NextToken: params["NextToken"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "ListExports",
     });
     return jsonP.readObj({
@@ -645,6 +677,7 @@ export class DynamoDB {
 
   async listGlobalTables(
     params: s.ListGlobalTablesInput = {},
+    opts: client.RequestOptions = {},
   ): Promise<s.ListGlobalTablesOutput> {
     const body: jsonP.JSONObject = {
       ExclusiveStartGlobalTableName: params["ExclusiveStartGlobalTableName"],
@@ -652,7 +685,7 @@ export class DynamoDB {
       RegionName: params["RegionName"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "ListGlobalTables",
     });
     return jsonP.readObj({
@@ -666,13 +699,14 @@ export class DynamoDB {
 
   async listTables(
     params: s.ListTablesInput = {},
+    opts: client.RequestOptions = {},
   ): Promise<s.ListTablesOutput> {
     const body: jsonP.JSONObject = {
       ExclusiveStartTableName: params["ExclusiveStartTableName"],
       Limit: params["Limit"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "ListTables",
     });
     return jsonP.readObj({
@@ -686,13 +720,14 @@ export class DynamoDB {
 
   async listTagsOfResource(
     params: s.ListTagsOfResourceInput,
+    opts: client.RequestOptions = {},
   ): Promise<s.ListTagsOfResourceOutput> {
     const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
       NextToken: params["NextToken"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "ListTagsOfResource",
     });
     return jsonP.readObj({
@@ -706,6 +741,7 @@ export class DynamoDB {
 
   async putItem(
     params: s.PutItemInput,
+    opts: client.RequestOptions = {},
   ): Promise<s.PutItemOutput> {
     const body: jsonP.JSONObject = {
       TableName: params["TableName"],
@@ -720,7 +756,7 @@ export class DynamoDB {
       ExpressionAttributeValues: jsonP.serializeMap(params["ExpressionAttributeValues"], x => fromAttributeValue(x)),
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "PutItem",
     });
     return jsonP.readObj({
@@ -735,6 +771,7 @@ export class DynamoDB {
 
   async query(
     params: s.QueryInput,
+    opts: client.RequestOptions = {},
   ): Promise<s.QueryOutput> {
     const body: jsonP.JSONObject = {
       TableName: params["TableName"],
@@ -756,7 +793,7 @@ export class DynamoDB {
       ExpressionAttributeValues: jsonP.serializeMap(params["ExpressionAttributeValues"], x => fromAttributeValue(x)),
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "Query",
     });
     return jsonP.readObj({
@@ -773,6 +810,7 @@ export class DynamoDB {
 
   async restoreTableFromBackup(
     params: s.RestoreTableFromBackupInput,
+    opts: client.RequestOptions = {},
   ): Promise<s.RestoreTableFromBackupOutput> {
     const body: jsonP.JSONObject = {
       TargetTableName: params["TargetTableName"],
@@ -784,7 +822,7 @@ export class DynamoDB {
       SSESpecificationOverride: fromSSESpecification(params["SSESpecificationOverride"]),
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "RestoreTableFromBackup",
     });
     return jsonP.readObj({
@@ -797,6 +835,7 @@ export class DynamoDB {
 
   async restoreTableToPointInTime(
     params: s.RestoreTableToPointInTimeInput,
+    opts: client.RequestOptions = {},
   ): Promise<s.RestoreTableToPointInTimeOutput> {
     const body: jsonP.JSONObject = {
       SourceTableArn: params["SourceTableArn"],
@@ -811,7 +850,7 @@ export class DynamoDB {
       SSESpecificationOverride: fromSSESpecification(params["SSESpecificationOverride"]),
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "RestoreTableToPointInTime",
     });
     return jsonP.readObj({
@@ -824,6 +863,7 @@ export class DynamoDB {
 
   async scan(
     params: s.ScanInput,
+    opts: client.RequestOptions = {},
   ): Promise<s.ScanOutput> {
     const body: jsonP.JSONObject = {
       TableName: params["TableName"],
@@ -844,7 +884,7 @@ export class DynamoDB {
       ConsistentRead: params["ConsistentRead"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "Scan",
     });
     return jsonP.readObj({
@@ -861,13 +901,14 @@ export class DynamoDB {
 
   async tagResource(
     params: s.TagResourceInput,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "TagResource",
     });
     await resp.arrayBuffer(); // consume body without use
@@ -875,13 +916,14 @@ export class DynamoDB {
 
   async transactGetItems(
     params: s.TransactGetItemsInput,
+    opts: client.RequestOptions = {},
   ): Promise<s.TransactGetItemsOutput> {
     const body: jsonP.JSONObject = {
       TransactItems: params["TransactItems"]?.map(x => fromTransactGetItem(x)),
       ReturnConsumedCapacity: params["ReturnConsumedCapacity"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "TransactGetItems",
     });
     return jsonP.readObj({
@@ -895,6 +937,7 @@ export class DynamoDB {
 
   async transactWriteItems(
     params: s.TransactWriteItemsInput,
+    opts: client.RequestOptions = {},
   ): Promise<s.TransactWriteItemsOutput> {
     const body: jsonP.JSONObject = {
       TransactItems: params["TransactItems"]?.map(x => fromTransactWriteItem(x)),
@@ -903,7 +946,7 @@ export class DynamoDB {
       ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "TransactWriteItems",
     });
     return jsonP.readObj({
@@ -917,13 +960,14 @@ export class DynamoDB {
 
   async untagResource(
     params: s.UntagResourceInput,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
       TagKeys: params["TagKeys"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "UntagResource",
     });
     await resp.arrayBuffer(); // consume body without use
@@ -931,13 +975,14 @@ export class DynamoDB {
 
   async updateContinuousBackups(
     params: s.UpdateContinuousBackupsInput,
+    opts: client.RequestOptions = {},
   ): Promise<s.UpdateContinuousBackupsOutput> {
     const body: jsonP.JSONObject = {
       TableName: params["TableName"],
       PointInTimeRecoverySpecification: fromPointInTimeRecoverySpecification(params["PointInTimeRecoverySpecification"]),
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "UpdateContinuousBackups",
     });
     return jsonP.readObj({
@@ -950,6 +995,7 @@ export class DynamoDB {
 
   async updateContributorInsights(
     params: s.UpdateContributorInsightsInput,
+    opts: client.RequestOptions = {},
   ): Promise<s.UpdateContributorInsightsOutput> {
     const body: jsonP.JSONObject = {
       TableName: params["TableName"],
@@ -957,7 +1003,7 @@ export class DynamoDB {
       ContributorInsightsAction: params["ContributorInsightsAction"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "UpdateContributorInsights",
     });
     return jsonP.readObj({
@@ -972,13 +1018,14 @@ export class DynamoDB {
 
   async updateGlobalTable(
     params: s.UpdateGlobalTableInput,
+    opts: client.RequestOptions = {},
   ): Promise<s.UpdateGlobalTableOutput> {
     const body: jsonP.JSONObject = {
       GlobalTableName: params["GlobalTableName"],
       ReplicaUpdates: params["ReplicaUpdates"]?.map(x => fromReplicaUpdate(x)),
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "UpdateGlobalTable",
     });
     return jsonP.readObj({
@@ -991,6 +1038,7 @@ export class DynamoDB {
 
   async updateGlobalTableSettings(
     params: s.UpdateGlobalTableSettingsInput,
+    opts: client.RequestOptions = {},
   ): Promise<s.UpdateGlobalTableSettingsOutput> {
     const body: jsonP.JSONObject = {
       GlobalTableName: params["GlobalTableName"],
@@ -1001,7 +1049,7 @@ export class DynamoDB {
       ReplicaSettingsUpdate: params["ReplicaSettingsUpdate"]?.map(x => fromReplicaSettingsUpdate(x)),
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "UpdateGlobalTableSettings",
     });
     return jsonP.readObj({
@@ -1015,6 +1063,7 @@ export class DynamoDB {
 
   async updateItem(
     params: s.UpdateItemInput,
+    opts: client.RequestOptions = {},
   ): Promise<s.UpdateItemOutput> {
     const body: jsonP.JSONObject = {
       TableName: params["TableName"],
@@ -1031,7 +1080,7 @@ export class DynamoDB {
       ExpressionAttributeValues: jsonP.serializeMap(params["ExpressionAttributeValues"], x => fromAttributeValue(x)),
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "UpdateItem",
     });
     return jsonP.readObj({
@@ -1046,6 +1095,7 @@ export class DynamoDB {
 
   async updateTable(
     params: s.UpdateTableInput,
+    opts: client.RequestOptions = {},
   ): Promise<s.UpdateTableOutput> {
     const body: jsonP.JSONObject = {
       AttributeDefinitions: params["AttributeDefinitions"]?.map(x => fromAttributeDefinition(x)),
@@ -1058,7 +1108,7 @@ export class DynamoDB {
       ReplicaUpdates: params["ReplicaUpdates"]?.map(x => fromReplicationGroupUpdate(x)),
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "UpdateTable",
     });
     return jsonP.readObj({
@@ -1071,6 +1121,7 @@ export class DynamoDB {
 
   async updateTableReplicaAutoScaling(
     params: s.UpdateTableReplicaAutoScalingInput,
+    opts: client.RequestOptions = {},
   ): Promise<s.UpdateTableReplicaAutoScalingOutput> {
     const body: jsonP.JSONObject = {
       GlobalSecondaryIndexUpdates: params["GlobalSecondaryIndexUpdates"]?.map(x => fromGlobalSecondaryIndexAutoScalingUpdate(x)),
@@ -1079,7 +1130,7 @@ export class DynamoDB {
       ReplicaUpdates: params["ReplicaUpdates"]?.map(x => fromReplicaAutoScalingUpdate(x)),
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "UpdateTableReplicaAutoScaling",
     });
     return jsonP.readObj({
@@ -1092,13 +1143,14 @@ export class DynamoDB {
 
   async updateTimeToLive(
     params: s.UpdateTimeToLiveInput,
+    opts: client.RequestOptions = {},
   ): Promise<s.UpdateTimeToLiveOutput> {
     const body: jsonP.JSONObject = {
       TableName: params["TableName"],
       TimeToLiveSpecification: fromTimeToLiveSpecification(params["TimeToLiveSpecification"]),
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "UpdateTimeToLive",
     });
     return jsonP.readObj({
@@ -1114,11 +1166,12 @@ export class DynamoDB {
   /** Checks state up to 25 times, 20 seconds apart (about 9 minutes max wait time). */
   async waitForTableExists(
     params: s.DescribeTableInput,
+    opts: client.RequestOptions = {},
   ): Promise<s.DescribeTableOutput> {
     const errMessage = 'ResourceNotReady: Resource is not in the state TableExists';
     for (let i = 0; i < 25; i++) {
       try {
-        const resp = await this.describeTable(params);
+        const resp = await this.describeTable(params, opts);
         if (resp?.Table?.TableStatus === "ACTIVE") return resp;
       } catch (err) {
         if (!["ResourceNotFoundException"].includes(err.shortCode)) throw err;
@@ -1131,11 +1184,12 @@ export class DynamoDB {
   /** Checks state up to 25 times, 20 seconds apart (about 9 minutes max wait time). */
   async waitForTableNotExists(
     params: s.DescribeTableInput,
+    opts: client.RequestOptions = {},
   ): Promise<Error | s.DescribeTableOutput> {
     const errMessage = 'ResourceNotReady: Resource is not in the state TableNotExists';
     for (let i = 0; i < 25; i++) {
       try {
-        const resp = await this.describeTable(params);
+        const resp = await this.describeTable(params, opts);
       } catch (err) {
         if (["ResourceNotFoundException"].includes(err.shortCode)) return err;
         throw err;

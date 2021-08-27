@@ -26,9 +26,11 @@ export class Route53 {
 
   async activateKeySigningKey(
     params: s.ActivateKeySigningKeyRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.ActivateKeySigningKeyResponse> {
 
     const resp = await this.#client.performRequest({
+      opts,
       action: "ActivateKeySigningKey",
       requestUri: cmnP.encodePath`/2013-04-01/keysigningkey/${params["HostedZoneId"]}/${params["Name"]}/activate`,
     });
@@ -40,6 +42,7 @@ export class Route53 {
 
   async associateVPCWithHostedZone(
     params: s.AssociateVPCWithHostedZoneRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.AssociateVPCWithHostedZoneResponse> {
     const body = xmlP.stringify({
       name: "AssociateVPCWithHostedZoneRequest",
@@ -49,7 +52,7 @@ export class Route53 {
         {name: "Comment", content: params["Comment"]?.toString()},
       ]});
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "AssociateVPCWithHostedZone",
       requestUri: cmnP.encodePath`/2013-04-01/hostedzone/${params["HostedZoneId"]}/associatevpc`,
     });
@@ -61,6 +64,7 @@ export class Route53 {
 
   async changeResourceRecordSets(
     params: s.ChangeResourceRecordSetsRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.ChangeResourceRecordSetsResponse> {
     const body = xmlP.stringify({
       name: "ChangeResourceRecordSetsRequest",
@@ -69,7 +73,7 @@ export class Route53 {
         {name: "ChangeBatch", ...ChangeBatch_Serialize(params["ChangeBatch"])},
       ]});
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "ChangeResourceRecordSets",
       requestUri: cmnP.encodePath`/2013-04-01/hostedzone/${params["HostedZoneId"]}/rrset/`,
     });
@@ -81,6 +85,7 @@ export class Route53 {
 
   async changeTagsForResource(
     params: s.ChangeTagsForResourceRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body = xmlP.stringify({
       name: "ChangeTagsForResourceRequest",
@@ -90,7 +95,7 @@ export class Route53 {
         {name: "RemoveTagKeys", children: params["RemoveTagKeys"]?.map(x => ({name: "Key", content: x}))},
       ]});
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "ChangeTagsForResource",
       requestUri: cmnP.encodePath`/2013-04-01/tags/${params["ResourceType"]}/${params["ResourceId"]}`,
     });
@@ -99,6 +104,7 @@ export class Route53 {
 
   async createHealthCheck(
     params: s.CreateHealthCheckRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.CreateHealthCheckResponse> {
     const body = xmlP.stringify({
       name: "CreateHealthCheckRequest",
@@ -108,7 +114,7 @@ export class Route53 {
         {name: "HealthCheckConfig", ...HealthCheckConfig_Serialize(params["HealthCheckConfig"])},
       ]});
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "CreateHealthCheck",
       requestUri: "/2013-04-01/healthcheck",
       responseCode: 201,
@@ -124,6 +130,7 @@ export class Route53 {
 
   async createHostedZone(
     params: s.CreateHostedZoneRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.CreateHostedZoneResponse> {
     const body = xmlP.stringify({
       name: "CreateHostedZoneRequest",
@@ -136,7 +143,7 @@ export class Route53 {
         {name: "DelegationSetId", content: params["DelegationSetId"]?.toString()},
       ]});
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "CreateHostedZone",
       requestUri: "/2013-04-01/hostedzone",
       responseCode: 201,
@@ -155,6 +162,7 @@ export class Route53 {
 
   async createKeySigningKey(
     params: s.CreateKeySigningKeyRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.CreateKeySigningKeyResponse> {
     const body = xmlP.stringify({
       name: "CreateKeySigningKeyRequest",
@@ -167,7 +175,7 @@ export class Route53 {
         {name: "Status", content: params["Status"]?.toString()},
       ]});
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "CreateKeySigningKey",
       requestUri: "/2013-04-01/keysigningkey",
       responseCode: 201,
@@ -184,6 +192,7 @@ export class Route53 {
 
   async createQueryLoggingConfig(
     params: s.CreateQueryLoggingConfigRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.CreateQueryLoggingConfigResponse> {
     const body = xmlP.stringify({
       name: "CreateQueryLoggingConfigRequest",
@@ -193,7 +202,7 @@ export class Route53 {
         {name: "CloudWatchLogsLogGroupArn", content: params["CloudWatchLogsLogGroupArn"]?.toString()},
       ]});
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "CreateQueryLoggingConfig",
       requestUri: "/2013-04-01/queryloggingconfig",
       responseCode: 201,
@@ -209,6 +218,7 @@ export class Route53 {
 
   async createReusableDelegationSet(
     params: s.CreateReusableDelegationSetRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.CreateReusableDelegationSetResponse> {
     const body = xmlP.stringify({
       name: "CreateReusableDelegationSetRequest",
@@ -218,7 +228,7 @@ export class Route53 {
         {name: "HostedZoneId", content: params["HostedZoneId"]?.toString()},
       ]});
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "CreateReusableDelegationSet",
       requestUri: "/2013-04-01/delegationset",
       responseCode: 201,
@@ -234,6 +244,7 @@ export class Route53 {
 
   async createTrafficPolicy(
     params: s.CreateTrafficPolicyRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.CreateTrafficPolicyResponse> {
     const body = xmlP.stringify({
       name: "CreateTrafficPolicyRequest",
@@ -244,7 +255,7 @@ export class Route53 {
         {name: "Comment", content: params["Comment"]?.toString()},
       ]});
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "CreateTrafficPolicy",
       requestUri: "/2013-04-01/trafficpolicy",
       responseCode: 201,
@@ -260,6 +271,7 @@ export class Route53 {
 
   async createTrafficPolicyInstance(
     params: s.CreateTrafficPolicyInstanceRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.CreateTrafficPolicyInstanceResponse> {
     const body = xmlP.stringify({
       name: "CreateTrafficPolicyInstanceRequest",
@@ -272,7 +284,7 @@ export class Route53 {
         {name: "TrafficPolicyVersion", content: params["TrafficPolicyVersion"]?.toString()},
       ]});
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "CreateTrafficPolicyInstance",
       requestUri: "/2013-04-01/trafficpolicyinstance",
       responseCode: 201,
@@ -288,6 +300,7 @@ export class Route53 {
 
   async createTrafficPolicyVersion(
     params: s.CreateTrafficPolicyVersionRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.CreateTrafficPolicyVersionResponse> {
     const body = xmlP.stringify({
       name: "CreateTrafficPolicyVersionRequest",
@@ -297,7 +310,7 @@ export class Route53 {
         {name: "Comment", content: params["Comment"]?.toString()},
       ]});
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "CreateTrafficPolicyVersion",
       requestUri: cmnP.encodePath`/2013-04-01/trafficpolicy/${params["Id"]}`,
       responseCode: 201,
@@ -313,6 +326,7 @@ export class Route53 {
 
   async createVPCAssociationAuthorization(
     params: s.CreateVPCAssociationAuthorizationRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.CreateVPCAssociationAuthorizationResponse> {
     const body = xmlP.stringify({
       name: "CreateVPCAssociationAuthorizationRequest",
@@ -321,7 +335,7 @@ export class Route53 {
         {name: "VPC", ...VPC_Serialize(params["VPC"])},
       ]});
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "CreateVPCAssociationAuthorization",
       requestUri: cmnP.encodePath`/2013-04-01/hostedzone/${params["HostedZoneId"]}/authorizevpcassociation`,
     });
@@ -336,9 +350,11 @@ export class Route53 {
 
   async deactivateKeySigningKey(
     params: s.DeactivateKeySigningKeyRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.DeactivateKeySigningKeyResponse> {
 
     const resp = await this.#client.performRequest({
+      opts,
       action: "DeactivateKeySigningKey",
       requestUri: cmnP.encodePath`/2013-04-01/keysigningkey/${params["HostedZoneId"]}/${params["Name"]}/deactivate`,
     });
@@ -350,9 +366,11 @@ export class Route53 {
 
   async deleteHealthCheck(
     params: s.DeleteHealthCheckRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
 
     const resp = await this.#client.performRequest({
+      opts,
       action: "DeleteHealthCheck",
       method: "DELETE",
       requestUri: cmnP.encodePath`/2013-04-01/healthcheck/${params["HealthCheckId"]}`,
@@ -362,9 +380,11 @@ export class Route53 {
 
   async deleteHostedZone(
     params: s.DeleteHostedZoneRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.DeleteHostedZoneResponse> {
 
     const resp = await this.#client.performRequest({
+      opts,
       action: "DeleteHostedZone",
       method: "DELETE",
       requestUri: cmnP.encodePath`/2013-04-01/hostedzone/${params["Id"]}`,
@@ -377,9 +397,11 @@ export class Route53 {
 
   async deleteKeySigningKey(
     params: s.DeleteKeySigningKeyRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.DeleteKeySigningKeyResponse> {
 
     const resp = await this.#client.performRequest({
+      opts,
       action: "DeleteKeySigningKey",
       method: "DELETE",
       requestUri: cmnP.encodePath`/2013-04-01/keysigningkey/${params["HostedZoneId"]}/${params["Name"]}`,
@@ -392,9 +414,11 @@ export class Route53 {
 
   async deleteQueryLoggingConfig(
     params: s.DeleteQueryLoggingConfigRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
 
     const resp = await this.#client.performRequest({
+      opts,
       action: "DeleteQueryLoggingConfig",
       method: "DELETE",
       requestUri: cmnP.encodePath`/2013-04-01/queryloggingconfig/${params["Id"]}`,
@@ -404,9 +428,11 @@ export class Route53 {
 
   async deleteReusableDelegationSet(
     params: s.DeleteReusableDelegationSetRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
 
     const resp = await this.#client.performRequest({
+      opts,
       action: "DeleteReusableDelegationSet",
       method: "DELETE",
       requestUri: cmnP.encodePath`/2013-04-01/delegationset/${params["Id"]}`,
@@ -416,9 +442,11 @@ export class Route53 {
 
   async deleteTrafficPolicy(
     params: s.DeleteTrafficPolicyRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
 
     const resp = await this.#client.performRequest({
+      opts,
       action: "DeleteTrafficPolicy",
       method: "DELETE",
       requestUri: cmnP.encodePath`/2013-04-01/trafficpolicy/${params["Id"]}/${params["Version"].toString()}`,
@@ -428,9 +456,11 @@ export class Route53 {
 
   async deleteTrafficPolicyInstance(
     params: s.DeleteTrafficPolicyInstanceRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
 
     const resp = await this.#client.performRequest({
+      opts,
       action: "DeleteTrafficPolicyInstance",
       method: "DELETE",
       requestUri: cmnP.encodePath`/2013-04-01/trafficpolicyinstance/${params["Id"]}`,
@@ -440,6 +470,7 @@ export class Route53 {
 
   async deleteVPCAssociationAuthorization(
     params: s.DeleteVPCAssociationAuthorizationRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body = xmlP.stringify({
       name: "DeleteVPCAssociationAuthorizationRequest",
@@ -448,7 +479,7 @@ export class Route53 {
         {name: "VPC", ...VPC_Serialize(params["VPC"])},
       ]});
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "DeleteVPCAssociationAuthorization",
       requestUri: cmnP.encodePath`/2013-04-01/hostedzone/${params["HostedZoneId"]}/deauthorizevpcassociation`,
     });
@@ -457,9 +488,11 @@ export class Route53 {
 
   async disableHostedZoneDNSSEC(
     params: s.DisableHostedZoneDNSSECRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.DisableHostedZoneDNSSECResponse> {
 
     const resp = await this.#client.performRequest({
+      opts,
       action: "DisableHostedZoneDNSSEC",
       requestUri: cmnP.encodePath`/2013-04-01/hostedzone/${params["HostedZoneId"]}/disable-dnssec`,
     });
@@ -471,6 +504,7 @@ export class Route53 {
 
   async disassociateVPCFromHostedZone(
     params: s.DisassociateVPCFromHostedZoneRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.DisassociateVPCFromHostedZoneResponse> {
     const body = xmlP.stringify({
       name: "DisassociateVPCFromHostedZoneRequest",
@@ -480,7 +514,7 @@ export class Route53 {
         {name: "Comment", content: params["Comment"]?.toString()},
       ]});
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "DisassociateVPCFromHostedZone",
       requestUri: cmnP.encodePath`/2013-04-01/hostedzone/${params["HostedZoneId"]}/disassociatevpc`,
     });
@@ -492,9 +526,11 @@ export class Route53 {
 
   async enableHostedZoneDNSSEC(
     params: s.EnableHostedZoneDNSSECRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.EnableHostedZoneDNSSECResponse> {
 
     const resp = await this.#client.performRequest({
+      opts,
       action: "EnableHostedZoneDNSSEC",
       requestUri: cmnP.encodePath`/2013-04-01/hostedzone/${params["HostedZoneId"]}/enable-dnssec`,
     });
@@ -506,9 +542,11 @@ export class Route53 {
 
   async getAccountLimit(
     params: s.GetAccountLimitRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.GetAccountLimitResponse> {
 
     const resp = await this.#client.performRequest({
+      opts,
       action: "GetAccountLimit",
       method: "GET",
       requestUri: cmnP.encodePath`/2013-04-01/accountlimit/${params["Type"]}`,
@@ -522,9 +560,11 @@ export class Route53 {
 
   async getChange(
     params: s.GetChangeRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.GetChangeResponse> {
 
     const resp = await this.#client.performRequest({
+      opts,
       action: "GetChange",
       method: "GET",
       requestUri: cmnP.encodePath`/2013-04-01/change/${params["Id"]}`,
@@ -535,10 +575,12 @@ export class Route53 {
     };
   }
 
-  async getCheckerIpRanges(): Promise<s.GetCheckerIpRangesResponse> {
+  async getCheckerIpRanges(
+    opts: client.RequestOptions = {},
+  ): Promise<s.GetCheckerIpRangesResponse> {
     const body = ''; // TODO: anything more appropriate when no input?
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "GetCheckerIpRanges",
       method: "GET",
       requestUri: "/2013-04-01/checkeripranges",
@@ -551,9 +593,11 @@ export class Route53 {
 
   async getDNSSEC(
     params: s.GetDNSSECRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.GetDNSSECResponse> {
 
     const resp = await this.#client.performRequest({
+      opts,
       action: "GetDNSSEC",
       method: "GET",
       requestUri: cmnP.encodePath`/2013-04-01/hostedzone/${params["HostedZoneId"]}/dnssec`,
@@ -567,13 +611,14 @@ export class Route53 {
 
   async getGeoLocation(
     params: s.GetGeoLocationRequest = {},
+    opts: client.RequestOptions = {},
   ): Promise<s.GetGeoLocationResponse> {
     const query = new URLSearchParams;
     if (params["ContinentCode"] != null) query.set("continentcode", params["ContinentCode"]?.toString() ?? "");
     if (params["CountryCode"] != null) query.set("countrycode", params["CountryCode"]?.toString() ?? "");
     if (params["SubdivisionCode"] != null) query.set("subdivisioncode", params["SubdivisionCode"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
-      query,
+      opts, query,
       action: "GetGeoLocation",
       method: "GET",
       requestUri: "/2013-04-01/geolocation",
@@ -586,9 +631,11 @@ export class Route53 {
 
   async getHealthCheck(
     params: s.GetHealthCheckRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.GetHealthCheckResponse> {
 
     const resp = await this.#client.performRequest({
+      opts,
       action: "GetHealthCheck",
       method: "GET",
       requestUri: cmnP.encodePath`/2013-04-01/healthcheck/${params["HealthCheckId"]}`,
@@ -599,10 +646,12 @@ export class Route53 {
     };
   }
 
-  async getHealthCheckCount(): Promise<s.GetHealthCheckCountResponse> {
+  async getHealthCheckCount(
+    opts: client.RequestOptions = {},
+  ): Promise<s.GetHealthCheckCountResponse> {
     const body = ''; // TODO: anything more appropriate when no input?
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "GetHealthCheckCount",
       method: "GET",
       requestUri: "/2013-04-01/healthcheckcount",
@@ -615,9 +664,11 @@ export class Route53 {
 
   async getHealthCheckLastFailureReason(
     params: s.GetHealthCheckLastFailureReasonRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.GetHealthCheckLastFailureReasonResponse> {
 
     const resp = await this.#client.performRequest({
+      opts,
       action: "GetHealthCheckLastFailureReason",
       method: "GET",
       requestUri: cmnP.encodePath`/2013-04-01/healthcheck/${params["HealthCheckId"]}/lastfailurereason`,
@@ -630,9 +681,11 @@ export class Route53 {
 
   async getHealthCheckStatus(
     params: s.GetHealthCheckStatusRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.GetHealthCheckStatusResponse> {
 
     const resp = await this.#client.performRequest({
+      opts,
       action: "GetHealthCheckStatus",
       method: "GET",
       requestUri: cmnP.encodePath`/2013-04-01/healthcheck/${params["HealthCheckId"]}/status`,
@@ -645,9 +698,11 @@ export class Route53 {
 
   async getHostedZone(
     params: s.GetHostedZoneRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.GetHostedZoneResponse> {
 
     const resp = await this.#client.performRequest({
+      opts,
       action: "GetHostedZone",
       method: "GET",
       requestUri: cmnP.encodePath`/2013-04-01/hostedzone/${params["Id"]}`,
@@ -660,10 +715,12 @@ export class Route53 {
     };
   }
 
-  async getHostedZoneCount(): Promise<s.GetHostedZoneCountResponse> {
+  async getHostedZoneCount(
+    opts: client.RequestOptions = {},
+  ): Promise<s.GetHostedZoneCountResponse> {
     const body = ''; // TODO: anything more appropriate when no input?
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "GetHostedZoneCount",
       method: "GET",
       requestUri: "/2013-04-01/hostedzonecount",
@@ -676,9 +733,11 @@ export class Route53 {
 
   async getHostedZoneLimit(
     params: s.GetHostedZoneLimitRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.GetHostedZoneLimitResponse> {
 
     const resp = await this.#client.performRequest({
+      opts,
       action: "GetHostedZoneLimit",
       method: "GET",
       requestUri: cmnP.encodePath`/2013-04-01/hostedzonelimit/${params["HostedZoneId"]}/${params["Type"]}`,
@@ -692,9 +751,11 @@ export class Route53 {
 
   async getQueryLoggingConfig(
     params: s.GetQueryLoggingConfigRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.GetQueryLoggingConfigResponse> {
 
     const resp = await this.#client.performRequest({
+      opts,
       action: "GetQueryLoggingConfig",
       method: "GET",
       requestUri: cmnP.encodePath`/2013-04-01/queryloggingconfig/${params["Id"]}`,
@@ -707,9 +768,11 @@ export class Route53 {
 
   async getReusableDelegationSet(
     params: s.GetReusableDelegationSetRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.GetReusableDelegationSetResponse> {
 
     const resp = await this.#client.performRequest({
+      opts,
       action: "GetReusableDelegationSet",
       method: "GET",
       requestUri: cmnP.encodePath`/2013-04-01/delegationset/${params["Id"]}`,
@@ -722,9 +785,11 @@ export class Route53 {
 
   async getReusableDelegationSetLimit(
     params: s.GetReusableDelegationSetLimitRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.GetReusableDelegationSetLimitResponse> {
 
     const resp = await this.#client.performRequest({
+      opts,
       action: "GetReusableDelegationSetLimit",
       method: "GET",
       requestUri: cmnP.encodePath`/2013-04-01/reusabledelegationsetlimit/${params["DelegationSetId"]}/${params["Type"]}`,
@@ -738,9 +803,11 @@ export class Route53 {
 
   async getTrafficPolicy(
     params: s.GetTrafficPolicyRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.GetTrafficPolicyResponse> {
 
     const resp = await this.#client.performRequest({
+      opts,
       action: "GetTrafficPolicy",
       method: "GET",
       requestUri: cmnP.encodePath`/2013-04-01/trafficpolicy/${params["Id"]}/${params["Version"].toString()}`,
@@ -753,9 +820,11 @@ export class Route53 {
 
   async getTrafficPolicyInstance(
     params: s.GetTrafficPolicyInstanceRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.GetTrafficPolicyInstanceResponse> {
 
     const resp = await this.#client.performRequest({
+      opts,
       action: "GetTrafficPolicyInstance",
       method: "GET",
       requestUri: cmnP.encodePath`/2013-04-01/trafficpolicyinstance/${params["Id"]}`,
@@ -766,10 +835,12 @@ export class Route53 {
     };
   }
 
-  async getTrafficPolicyInstanceCount(): Promise<s.GetTrafficPolicyInstanceCountResponse> {
+  async getTrafficPolicyInstanceCount(
+    opts: client.RequestOptions = {},
+  ): Promise<s.GetTrafficPolicyInstanceCountResponse> {
     const body = ''; // TODO: anything more appropriate when no input?
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "GetTrafficPolicyInstanceCount",
       method: "GET",
       requestUri: "/2013-04-01/trafficpolicyinstancecount",
@@ -782,6 +853,7 @@ export class Route53 {
 
   async listGeoLocations(
     params: s.ListGeoLocationsRequest = {},
+    opts: client.RequestOptions = {},
   ): Promise<s.ListGeoLocationsResponse> {
     const query = new URLSearchParams;
     if (params["StartContinentCode"] != null) query.set("startcontinentcode", params["StartContinentCode"]?.toString() ?? "");
@@ -789,7 +861,7 @@ export class Route53 {
     if (params["StartSubdivisionCode"] != null) query.set("startsubdivisioncode", params["StartSubdivisionCode"]?.toString() ?? "");
     if (params["MaxItems"] != null) query.set("maxitems", params["MaxItems"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
-      query,
+      opts, query,
       action: "ListGeoLocations",
       method: "GET",
       requestUri: "/2013-04-01/geolocations",
@@ -807,12 +879,13 @@ export class Route53 {
 
   async listHealthChecks(
     params: s.ListHealthChecksRequest = {},
+    opts: client.RequestOptions = {},
   ): Promise<s.ListHealthChecksResponse> {
     const query = new URLSearchParams;
     if (params["Marker"] != null) query.set("marker", params["Marker"]?.toString() ?? "");
     if (params["MaxItems"] != null) query.set("maxitems", params["MaxItems"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
-      query,
+      opts, query,
       action: "ListHealthChecks",
       method: "GET",
       requestUri: "/2013-04-01/healthcheck",
@@ -830,13 +903,14 @@ export class Route53 {
 
   async listHostedZones(
     params: s.ListHostedZonesRequest = {},
+    opts: client.RequestOptions = {},
   ): Promise<s.ListHostedZonesResponse> {
     const query = new URLSearchParams;
     if (params["Marker"] != null) query.set("marker", params["Marker"]?.toString() ?? "");
     if (params["MaxItems"] != null) query.set("maxitems", params["MaxItems"]?.toString() ?? "");
     if (params["DelegationSetId"] != null) query.set("delegationsetid", params["DelegationSetId"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
-      query,
+      opts, query,
       action: "ListHostedZones",
       method: "GET",
       requestUri: "/2013-04-01/hostedzone",
@@ -854,13 +928,14 @@ export class Route53 {
 
   async listHostedZonesByName(
     params: s.ListHostedZonesByNameRequest = {},
+    opts: client.RequestOptions = {},
   ): Promise<s.ListHostedZonesByNameResponse> {
     const query = new URLSearchParams;
     if (params["DNSName"] != null) query.set("dnsname", params["DNSName"]?.toString() ?? "");
     if (params["HostedZoneId"] != null) query.set("hostedzoneid", params["HostedZoneId"]?.toString() ?? "");
     if (params["MaxItems"] != null) query.set("maxitems", params["MaxItems"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
-      query,
+      opts, query,
       action: "ListHostedZonesByName",
       method: "GET",
       requestUri: "/2013-04-01/hostedzonesbyname",
@@ -878,6 +953,7 @@ export class Route53 {
 
   async listHostedZonesByVPC(
     params: s.ListHostedZonesByVPCRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.ListHostedZonesByVPCResponse> {
     const query = new URLSearchParams;
     query.set("vpcid", params["VPCId"]?.toString() ?? "");
@@ -885,7 +961,7 @@ export class Route53 {
     if (params["MaxItems"] != null) query.set("maxitems", params["MaxItems"]?.toString() ?? "");
     if (params["NextToken"] != null) query.set("nexttoken", params["NextToken"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
-      query,
+      opts, query,
       action: "ListHostedZonesByVPC",
       method: "GET",
       requestUri: "/2013-04-01/hostedzonesbyvpc",
@@ -902,13 +978,14 @@ export class Route53 {
 
   async listQueryLoggingConfigs(
     params: s.ListQueryLoggingConfigsRequest = {},
+    opts: client.RequestOptions = {},
   ): Promise<s.ListQueryLoggingConfigsResponse> {
     const query = new URLSearchParams;
     if (params["HostedZoneId"] != null) query.set("hostedzoneid", params["HostedZoneId"]?.toString() ?? "");
     if (params["NextToken"] != null) query.set("nexttoken", params["NextToken"]?.toString() ?? "");
     if (params["MaxResults"] != null) query.set("maxresults", params["MaxResults"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
-      query,
+      opts, query,
       action: "ListQueryLoggingConfigs",
       method: "GET",
       requestUri: "/2013-04-01/queryloggingconfig",
@@ -924,6 +1001,7 @@ export class Route53 {
 
   async listResourceRecordSets(
     params: s.ListResourceRecordSetsRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.ListResourceRecordSetsResponse> {
     const query = new URLSearchParams;
     if (params["StartRecordName"] != null) query.set("name", params["StartRecordName"]?.toString() ?? "");
@@ -931,7 +1009,7 @@ export class Route53 {
     if (params["StartRecordIdentifier"] != null) query.set("identifier", params["StartRecordIdentifier"]?.toString() ?? "");
     if (params["MaxItems"] != null) query.set("maxitems", params["MaxItems"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
-      query,
+      opts, query,
       action: "ListResourceRecordSets",
       method: "GET",
       requestUri: cmnP.encodePath`/2013-04-01/hostedzone/${params["HostedZoneId"]}/rrset`,
@@ -950,12 +1028,13 @@ export class Route53 {
 
   async listReusableDelegationSets(
     params: s.ListReusableDelegationSetsRequest = {},
+    opts: client.RequestOptions = {},
   ): Promise<s.ListReusableDelegationSetsResponse> {
     const query = new URLSearchParams;
     if (params["Marker"] != null) query.set("marker", params["Marker"]?.toString() ?? "");
     if (params["MaxItems"] != null) query.set("maxitems", params["MaxItems"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
-      query,
+      opts, query,
       action: "ListReusableDelegationSets",
       method: "GET",
       requestUri: "/2013-04-01/delegationset",
@@ -973,9 +1052,11 @@ export class Route53 {
 
   async listTagsForResource(
     params: s.ListTagsForResourceRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.ListTagsForResourceResponse> {
 
     const resp = await this.#client.performRequest({
+      opts,
       action: "ListTagsForResource",
       method: "GET",
       requestUri: cmnP.encodePath`/2013-04-01/tags/${params["ResourceType"]}/${params["ResourceId"]}`,
@@ -988,6 +1069,7 @@ export class Route53 {
 
   async listTagsForResources(
     params: s.ListTagsForResourcesRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.ListTagsForResourcesResponse> {
     const body = xmlP.stringify({
       name: "ListTagsForResourcesRequest",
@@ -996,7 +1078,7 @@ export class Route53 {
         {name: "ResourceIds", children: params["ResourceIds"]?.map(x => ({name: "ResourceId", content: x}))},
       ]});
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "ListTagsForResources",
       requestUri: cmnP.encodePath`/2013-04-01/tags/${params["ResourceType"]}`,
     });
@@ -1008,12 +1090,13 @@ export class Route53 {
 
   async listTrafficPolicies(
     params: s.ListTrafficPoliciesRequest = {},
+    opts: client.RequestOptions = {},
   ): Promise<s.ListTrafficPoliciesResponse> {
     const query = new URLSearchParams;
     if (params["TrafficPolicyIdMarker"] != null) query.set("trafficpolicyid", params["TrafficPolicyIdMarker"]?.toString() ?? "");
     if (params["MaxItems"] != null) query.set("maxitems", params["MaxItems"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
-      query,
+      opts, query,
       action: "ListTrafficPolicies",
       method: "GET",
       requestUri: "/2013-04-01/trafficpolicies",
@@ -1030,6 +1113,7 @@ export class Route53 {
 
   async listTrafficPolicyInstances(
     params: s.ListTrafficPolicyInstancesRequest = {},
+    opts: client.RequestOptions = {},
   ): Promise<s.ListTrafficPolicyInstancesResponse> {
     const query = new URLSearchParams;
     if (params["HostedZoneIdMarker"] != null) query.set("hostedzoneid", params["HostedZoneIdMarker"]?.toString() ?? "");
@@ -1037,7 +1121,7 @@ export class Route53 {
     if (params["TrafficPolicyInstanceTypeMarker"] != null) query.set("trafficpolicyinstancetype", params["TrafficPolicyInstanceTypeMarker"]?.toString() ?? "");
     if (params["MaxItems"] != null) query.set("maxitems", params["MaxItems"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
-      query,
+      opts, query,
       action: "ListTrafficPolicyInstances",
       method: "GET",
       requestUri: "/2013-04-01/trafficpolicyinstances",
@@ -1056,6 +1140,7 @@ export class Route53 {
 
   async listTrafficPolicyInstancesByHostedZone(
     params: s.ListTrafficPolicyInstancesByHostedZoneRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.ListTrafficPolicyInstancesByHostedZoneResponse> {
     const query = new URLSearchParams;
     query.set("id", params["HostedZoneId"]?.toString() ?? "");
@@ -1063,7 +1148,7 @@ export class Route53 {
     if (params["TrafficPolicyInstanceTypeMarker"] != null) query.set("trafficpolicyinstancetype", params["TrafficPolicyInstanceTypeMarker"]?.toString() ?? "");
     if (params["MaxItems"] != null) query.set("maxitems", params["MaxItems"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
-      query,
+      opts, query,
       action: "ListTrafficPolicyInstancesByHostedZone",
       method: "GET",
       requestUri: "/2013-04-01/trafficpolicyinstances/hostedzone",
@@ -1082,6 +1167,7 @@ export class Route53 {
 
   async listTrafficPolicyInstancesByPolicy(
     params: s.ListTrafficPolicyInstancesByPolicyRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.ListTrafficPolicyInstancesByPolicyResponse> {
     const query = new URLSearchParams;
     query.set("id", params["TrafficPolicyId"]?.toString() ?? "");
@@ -1091,7 +1177,7 @@ export class Route53 {
     if (params["TrafficPolicyInstanceTypeMarker"] != null) query.set("trafficpolicyinstancetype", params["TrafficPolicyInstanceTypeMarker"]?.toString() ?? "");
     if (params["MaxItems"] != null) query.set("maxitems", params["MaxItems"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
-      query,
+      opts, query,
       action: "ListTrafficPolicyInstancesByPolicy",
       method: "GET",
       requestUri: "/2013-04-01/trafficpolicyinstances/trafficpolicy",
@@ -1110,12 +1196,13 @@ export class Route53 {
 
   async listTrafficPolicyVersions(
     params: s.ListTrafficPolicyVersionsRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.ListTrafficPolicyVersionsResponse> {
     const query = new URLSearchParams;
     if (params["TrafficPolicyVersionMarker"] != null) query.set("trafficpolicyversion", params["TrafficPolicyVersionMarker"]?.toString() ?? "");
     if (params["MaxItems"] != null) query.set("maxitems", params["MaxItems"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
-      query,
+      opts, query,
       action: "ListTrafficPolicyVersions",
       method: "GET",
       requestUri: cmnP.encodePath`/2013-04-01/trafficpolicies/${params["Id"]}/versions`,
@@ -1132,12 +1219,13 @@ export class Route53 {
 
   async listVPCAssociationAuthorizations(
     params: s.ListVPCAssociationAuthorizationsRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.ListVPCAssociationAuthorizationsResponse> {
     const query = new URLSearchParams;
     if (params["NextToken"] != null) query.set("nexttoken", params["NextToken"]?.toString() ?? "");
     if (params["MaxResults"] != null) query.set("maxresults", params["MaxResults"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
-      query,
+      opts, query,
       action: "ListVPCAssociationAuthorizations",
       method: "GET",
       requestUri: cmnP.encodePath`/2013-04-01/hostedzone/${params["HostedZoneId"]}/authorizevpcassociation`,
@@ -1154,6 +1242,7 @@ export class Route53 {
 
   async testDNSAnswer(
     params: s.TestDNSAnswerRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.TestDNSAnswerResponse> {
     const query = new URLSearchParams;
     query.set("hostedzoneid", params["HostedZoneId"]?.toString() ?? "");
@@ -1163,7 +1252,7 @@ export class Route53 {
     if (params["EDNS0ClientSubnetIP"] != null) query.set("edns0clientsubnetip", params["EDNS0ClientSubnetIP"]?.toString() ?? "");
     if (params["EDNS0ClientSubnetMask"] != null) query.set("edns0clientsubnetmask", params["EDNS0ClientSubnetMask"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
-      query,
+      opts, query,
       action: "TestDNSAnswer",
       method: "GET",
       requestUri: "/2013-04-01/testdnsanswer",
@@ -1180,6 +1269,7 @@ export class Route53 {
 
   async updateHealthCheck(
     params: s.UpdateHealthCheckRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.UpdateHealthCheckResponse> {
     const body = xmlP.stringify({
       name: "UpdateHealthCheckRequest",
@@ -1203,7 +1293,7 @@ export class Route53 {
         {name: "ResetElements", children: params["ResetElements"]?.map(x => ({name: "ResettableElementName", content: x}))},
       ]});
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "UpdateHealthCheck",
       requestUri: cmnP.encodePath`/2013-04-01/healthcheck/${params["HealthCheckId"]}`,
     });
@@ -1215,6 +1305,7 @@ export class Route53 {
 
   async updateHostedZoneComment(
     params: s.UpdateHostedZoneCommentRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.UpdateHostedZoneCommentResponse> {
     const body = xmlP.stringify({
       name: "UpdateHostedZoneCommentRequest",
@@ -1223,7 +1314,7 @@ export class Route53 {
         {name: "Comment", content: params["Comment"]?.toString()},
       ]});
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "UpdateHostedZoneComment",
       requestUri: cmnP.encodePath`/2013-04-01/hostedzone/${params["Id"]}`,
     });
@@ -1235,6 +1326,7 @@ export class Route53 {
 
   async updateTrafficPolicyComment(
     params: s.UpdateTrafficPolicyCommentRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.UpdateTrafficPolicyCommentResponse> {
     const body = xmlP.stringify({
       name: "UpdateTrafficPolicyCommentRequest",
@@ -1243,7 +1335,7 @@ export class Route53 {
         {name: "Comment", content: params["Comment"]?.toString()},
       ]});
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "UpdateTrafficPolicyComment",
       requestUri: cmnP.encodePath`/2013-04-01/trafficpolicy/${params["Id"]}/${params["Version"].toString()}`,
     });
@@ -1255,6 +1347,7 @@ export class Route53 {
 
   async updateTrafficPolicyInstance(
     params: s.UpdateTrafficPolicyInstanceRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.UpdateTrafficPolicyInstanceResponse> {
     const body = xmlP.stringify({
       name: "UpdateTrafficPolicyInstanceRequest",
@@ -1265,7 +1358,7 @@ export class Route53 {
         {name: "TrafficPolicyVersion", content: params["TrafficPolicyVersion"]?.toString()},
       ]});
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "UpdateTrafficPolicyInstance",
       requestUri: cmnP.encodePath`/2013-04-01/trafficpolicyinstance/${params["Id"]}`,
     });
@@ -1280,10 +1373,11 @@ export class Route53 {
   /** Checks state up to 60 times, 30 seconds apart (about 30 minutes max wait time). */
   async waitForResourceRecordSetsChanged(
     params: s.GetChangeRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.GetChangeResponse> {
     const errMessage = 'ResourceNotReady: Resource is not in the state ResourceRecordSetsChanged';
     for (let i = 0; i < 60; i++) {
-      const resp = await this.getChange(params);
+      const resp = await this.getChange(params, opts);
       if (resp?.ChangeInfo?.Status === "INSYNC") return resp;
       await new Promise(r => setTimeout(r, 30000));
     }

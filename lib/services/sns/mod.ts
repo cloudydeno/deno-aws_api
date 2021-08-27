@@ -31,6 +31,7 @@ export class SNS {
 
   async addPermission(
     params: s.AddPermissionInput,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
@@ -39,7 +40,7 @@ export class SNS {
     if (params["AWSAccountId"]) qsP.appendList(body, prefix+"AWSAccountId", params["AWSAccountId"], {"entryPrefix":".member."})
     if (params["ActionName"]) qsP.appendList(body, prefix+"ActionName", params["ActionName"], {"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "AddPermission",
     });
     await resp.arrayBuffer(); // consume body without use
@@ -47,12 +48,13 @@ export class SNS {
 
   async checkIfPhoneNumberIsOptedOut(
     params: s.CheckIfPhoneNumberIsOptedOutInput,
+    opts: client.RequestOptions = {},
   ): Promise<s.CheckIfPhoneNumberIsOptedOutResponse> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"phoneNumber", (params["phoneNumber"] ?? '').toString());
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "CheckIfPhoneNumberIsOptedOut",
     });
     const xml = xmlP.readXmlResult(await resp.text(), "CheckIfPhoneNumberIsOptedOutResult");
@@ -63,6 +65,7 @@ export class SNS {
 
   async confirmSubscription(
     params: s.ConfirmSubscriptionInput,
+    opts: client.RequestOptions = {},
   ): Promise<s.ConfirmSubscriptionResponse> {
     const body = new URLSearchParams;
     const prefix = '';
@@ -70,7 +73,7 @@ export class SNS {
     body.append(prefix+"Token", (params["Token"] ?? '').toString());
     if ("AuthenticateOnUnsubscribe" in params) body.append(prefix+"AuthenticateOnUnsubscribe", (params["AuthenticateOnUnsubscribe"] ?? '').toString());
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "ConfirmSubscription",
     });
     const xml = xmlP.readXmlResult(await resp.text(), "ConfirmSubscriptionResult");
@@ -81,6 +84,7 @@ export class SNS {
 
   async createPlatformApplication(
     params: s.CreatePlatformApplicationInput,
+    opts: client.RequestOptions = {},
   ): Promise<s.CreatePlatformApplicationResponse> {
     const body = new URLSearchParams;
     const prefix = '';
@@ -88,7 +92,7 @@ export class SNS {
     body.append(prefix+"Platform", (params["Platform"] ?? '').toString());
     if (params["Attributes"]) qsP.appendMap(body, prefix+"Attributes", params["Attributes"], {"entryPrefix":".entry."})
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "CreatePlatformApplication",
     });
     const xml = xmlP.readXmlResult(await resp.text(), "CreatePlatformApplicationResult");
@@ -99,6 +103,7 @@ export class SNS {
 
   async createPlatformEndpoint(
     params: s.CreatePlatformEndpointInput,
+    opts: client.RequestOptions = {},
   ): Promise<s.CreateEndpointResponse> {
     const body = new URLSearchParams;
     const prefix = '';
@@ -107,7 +112,7 @@ export class SNS {
     if ("CustomUserData" in params) body.append(prefix+"CustomUserData", (params["CustomUserData"] ?? '').toString());
     if (params["Attributes"]) qsP.appendMap(body, prefix+"Attributes", params["Attributes"], {"entryPrefix":".entry."})
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "CreatePlatformEndpoint",
     });
     const xml = xmlP.readXmlResult(await resp.text(), "CreatePlatformEndpointResult");
@@ -118,13 +123,14 @@ export class SNS {
 
   async createSMSSandboxPhoneNumber(
     params: s.CreateSMSSandboxPhoneNumberInput,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"PhoneNumber", (params["PhoneNumber"] ?? '').toString());
     if ("LanguageCode" in params) body.append(prefix+"LanguageCode", (params["LanguageCode"] ?? '').toString());
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "CreateSMSSandboxPhoneNumber",
     });
     await resp.arrayBuffer(); // consume body without use
@@ -132,6 +138,7 @@ export class SNS {
 
   async createTopic(
     params: s.CreateTopicInput,
+    opts: client.RequestOptions = {},
   ): Promise<s.CreateTopicResponse> {
     const body = new URLSearchParams;
     const prefix = '';
@@ -139,7 +146,7 @@ export class SNS {
     if (params["Attributes"]) qsP.appendMap(body, prefix+"Attributes", params["Attributes"], {"entryPrefix":".entry."})
     if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "CreateTopic",
     });
     const xml = xmlP.readXmlResult(await resp.text(), "CreateTopicResult");
@@ -150,12 +157,13 @@ export class SNS {
 
   async deleteEndpoint(
     params: s.DeleteEndpointInput,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"EndpointArn", (params["EndpointArn"] ?? '').toString());
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "DeleteEndpoint",
     });
     await resp.arrayBuffer(); // consume body without use
@@ -163,12 +171,13 @@ export class SNS {
 
   async deletePlatformApplication(
     params: s.DeletePlatformApplicationInput,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"PlatformApplicationArn", (params["PlatformApplicationArn"] ?? '').toString());
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "DeletePlatformApplication",
     });
     await resp.arrayBuffer(); // consume body without use
@@ -176,12 +185,13 @@ export class SNS {
 
   async deleteSMSSandboxPhoneNumber(
     params: s.DeleteSMSSandboxPhoneNumberInput,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"PhoneNumber", (params["PhoneNumber"] ?? '').toString());
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "DeleteSMSSandboxPhoneNumber",
     });
     await resp.arrayBuffer(); // consume body without use
@@ -189,12 +199,13 @@ export class SNS {
 
   async deleteTopic(
     params: s.DeleteTopicInput,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"TopicArn", (params["TopicArn"] ?? '').toString());
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "DeleteTopic",
     });
     await resp.arrayBuffer(); // consume body without use
@@ -202,12 +213,13 @@ export class SNS {
 
   async getEndpointAttributes(
     params: s.GetEndpointAttributesInput,
+    opts: client.RequestOptions = {},
   ): Promise<s.GetEndpointAttributesResponse> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"EndpointArn", (params["EndpointArn"] ?? '').toString());
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "GetEndpointAttributes",
     });
     const xml = xmlP.readXmlResult(await resp.text(), "GetEndpointAttributesResult");
@@ -218,12 +230,13 @@ export class SNS {
 
   async getPlatformApplicationAttributes(
     params: s.GetPlatformApplicationAttributesInput,
+    opts: client.RequestOptions = {},
   ): Promise<s.GetPlatformApplicationAttributesResponse> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"PlatformApplicationArn", (params["PlatformApplicationArn"] ?? '').toString());
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "GetPlatformApplicationAttributes",
     });
     const xml = xmlP.readXmlResult(await resp.text(), "GetPlatformApplicationAttributesResult");
@@ -234,12 +247,13 @@ export class SNS {
 
   async getSMSAttributes(
     params: s.GetSMSAttributesInput = {},
+    opts: client.RequestOptions = {},
   ): Promise<s.GetSMSAttributesResponse> {
     const body = new URLSearchParams;
     const prefix = '';
     if (params["attributes"]) qsP.appendList(body, prefix+"attributes", params["attributes"], {"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "GetSMSAttributes",
     });
     const xml = xmlP.readXmlResult(await resp.text(), "GetSMSAttributesResult");
@@ -248,10 +262,12 @@ export class SNS {
     };
   }
 
-  async getSMSSandboxAccountStatus(): Promise<s.GetSMSSandboxAccountStatusResult> {
+  async getSMSSandboxAccountStatus(
+    opts: client.RequestOptions = {},
+  ): Promise<s.GetSMSSandboxAccountStatusResult> {
     const body = new URLSearchParams;
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "GetSMSSandboxAccountStatus",
     });
     const xml = xmlP.readXmlResult(await resp.text(), "GetSMSSandboxAccountStatusResult");
@@ -262,12 +278,13 @@ export class SNS {
 
   async getSubscriptionAttributes(
     params: s.GetSubscriptionAttributesInput,
+    opts: client.RequestOptions = {},
   ): Promise<s.GetSubscriptionAttributesResponse> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"SubscriptionArn", (params["SubscriptionArn"] ?? '').toString());
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "GetSubscriptionAttributes",
     });
     const xml = xmlP.readXmlResult(await resp.text(), "GetSubscriptionAttributesResult");
@@ -278,12 +295,13 @@ export class SNS {
 
   async getTopicAttributes(
     params: s.GetTopicAttributesInput,
+    opts: client.RequestOptions = {},
   ): Promise<s.GetTopicAttributesResponse> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"TopicArn", (params["TopicArn"] ?? '').toString());
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "GetTopicAttributes",
     });
     const xml = xmlP.readXmlResult(await resp.text(), "GetTopicAttributesResult");
@@ -294,13 +312,14 @@ export class SNS {
 
   async listEndpointsByPlatformApplication(
     params: s.ListEndpointsByPlatformApplicationInput,
+    opts: client.RequestOptions = {},
   ): Promise<s.ListEndpointsByPlatformApplicationResponse> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"PlatformApplicationArn", (params["PlatformApplicationArn"] ?? '').toString());
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "ListEndpointsByPlatformApplication",
     });
     const xml = xmlP.readXmlResult(await resp.text(), "ListEndpointsByPlatformApplicationResult");
@@ -314,13 +333,14 @@ export class SNS {
 
   async listOriginationNumbers(
     params: s.ListOriginationNumbersRequest = {},
+    opts: client.RequestOptions = {},
   ): Promise<s.ListOriginationNumbersResult> {
     const body = new URLSearchParams;
     const prefix = '';
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "ListOriginationNumbers",
     });
     const xml = xmlP.readXmlResult(await resp.text(), "ListOriginationNumbersResult");
@@ -334,12 +354,13 @@ export class SNS {
 
   async listPhoneNumbersOptedOut(
     params: s.ListPhoneNumbersOptedOutInput = {},
+    opts: client.RequestOptions = {},
   ): Promise<s.ListPhoneNumbersOptedOutResponse> {
     const body = new URLSearchParams;
     const prefix = '';
     if ("nextToken" in params) body.append(prefix+"nextToken", (params["nextToken"] ?? '').toString());
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "ListPhoneNumbersOptedOut",
     });
     const xml = xmlP.readXmlResult(await resp.text(), "ListPhoneNumbersOptedOutResult");
@@ -353,12 +374,13 @@ export class SNS {
 
   async listPlatformApplications(
     params: s.ListPlatformApplicationsInput = {},
+    opts: client.RequestOptions = {},
   ): Promise<s.ListPlatformApplicationsResponse> {
     const body = new URLSearchParams;
     const prefix = '';
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "ListPlatformApplications",
     });
     const xml = xmlP.readXmlResult(await resp.text(), "ListPlatformApplicationsResult");
@@ -372,13 +394,14 @@ export class SNS {
 
   async listSMSSandboxPhoneNumbers(
     params: s.ListSMSSandboxPhoneNumbersInput = {},
+    opts: client.RequestOptions = {},
   ): Promise<s.ListSMSSandboxPhoneNumbersResult> {
     const body = new URLSearchParams;
     const prefix = '';
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "ListSMSSandboxPhoneNumbers",
     });
     const xml = xmlP.readXmlResult(await resp.text(), "ListSMSSandboxPhoneNumbersResult");
@@ -392,12 +415,13 @@ export class SNS {
 
   async listSubscriptions(
     params: s.ListSubscriptionsInput = {},
+    opts: client.RequestOptions = {},
   ): Promise<s.ListSubscriptionsResponse> {
     const body = new URLSearchParams;
     const prefix = '';
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "ListSubscriptions",
     });
     const xml = xmlP.readXmlResult(await resp.text(), "ListSubscriptionsResult");
@@ -411,13 +435,14 @@ export class SNS {
 
   async listSubscriptionsByTopic(
     params: s.ListSubscriptionsByTopicInput,
+    opts: client.RequestOptions = {},
   ): Promise<s.ListSubscriptionsByTopicResponse> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"TopicArn", (params["TopicArn"] ?? '').toString());
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "ListSubscriptionsByTopic",
     });
     const xml = xmlP.readXmlResult(await resp.text(), "ListSubscriptionsByTopicResult");
@@ -431,12 +456,13 @@ export class SNS {
 
   async listTagsForResource(
     params: s.ListTagsForResourceRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.ListTagsForResourceResponse> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"ResourceArn", (params["ResourceArn"] ?? '').toString());
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "ListTagsForResource",
     });
     const xml = xmlP.readXmlResult(await resp.text(), "ListTagsForResourceResult");
@@ -447,12 +473,13 @@ export class SNS {
 
   async listTopics(
     params: s.ListTopicsInput = {},
+    opts: client.RequestOptions = {},
   ): Promise<s.ListTopicsResponse> {
     const body = new URLSearchParams;
     const prefix = '';
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "ListTopics",
     });
     const xml = xmlP.readXmlResult(await resp.text(), "ListTopicsResult");
@@ -466,12 +493,13 @@ export class SNS {
 
   async optInPhoneNumber(
     params: s.OptInPhoneNumberInput,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"phoneNumber", (params["phoneNumber"] ?? '').toString());
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "OptInPhoneNumber",
     });
     await resp.arrayBuffer(); // consume body without use
@@ -479,6 +507,7 @@ export class SNS {
 
   async publish(
     params: s.PublishInput,
+    opts: client.RequestOptions = {},
   ): Promise<s.PublishResponse> {
     const body = new URLSearchParams;
     const prefix = '';
@@ -492,7 +521,7 @@ export class SNS {
     if ("MessageDeduplicationId" in params) body.append(prefix+"MessageDeduplicationId", (params["MessageDeduplicationId"] ?? '').toString());
     if ("MessageGroupId" in params) body.append(prefix+"MessageGroupId", (params["MessageGroupId"] ?? '').toString());
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "Publish",
     });
     const xml = xmlP.readXmlResult(await resp.text(), "PublishResult");
@@ -503,13 +532,14 @@ export class SNS {
 
   async removePermission(
     params: s.RemovePermissionInput,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"TopicArn", (params["TopicArn"] ?? '').toString());
     body.append(prefix+"Label", (params["Label"] ?? '').toString());
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "RemovePermission",
     });
     await resp.arrayBuffer(); // consume body without use
@@ -517,13 +547,14 @@ export class SNS {
 
   async setEndpointAttributes(
     params: s.SetEndpointAttributesInput,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"EndpointArn", (params["EndpointArn"] ?? '').toString());
     if (params["Attributes"]) qsP.appendMap(body, prefix+"Attributes", params["Attributes"], {"entryPrefix":".entry."})
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "SetEndpointAttributes",
     });
     await resp.arrayBuffer(); // consume body without use
@@ -531,13 +562,14 @@ export class SNS {
 
   async setPlatformApplicationAttributes(
     params: s.SetPlatformApplicationAttributesInput,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"PlatformApplicationArn", (params["PlatformApplicationArn"] ?? '').toString());
     if (params["Attributes"]) qsP.appendMap(body, prefix+"Attributes", params["Attributes"], {"entryPrefix":".entry."})
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "SetPlatformApplicationAttributes",
     });
     await resp.arrayBuffer(); // consume body without use
@@ -545,12 +577,13 @@ export class SNS {
 
   async setSMSAttributes(
     params: s.SetSMSAttributesInput,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     if (params["attributes"]) qsP.appendMap(body, prefix+"attributes", params["attributes"], {"entryPrefix":".entry."})
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "SetSMSAttributes",
     });
     await resp.arrayBuffer(); // consume body without use
@@ -558,6 +591,7 @@ export class SNS {
 
   async setSubscriptionAttributes(
     params: s.SetSubscriptionAttributesInput,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
@@ -565,7 +599,7 @@ export class SNS {
     body.append(prefix+"AttributeName", (params["AttributeName"] ?? '').toString());
     if ("AttributeValue" in params) body.append(prefix+"AttributeValue", (params["AttributeValue"] ?? '').toString());
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "SetSubscriptionAttributes",
     });
     await resp.arrayBuffer(); // consume body without use
@@ -573,6 +607,7 @@ export class SNS {
 
   async setTopicAttributes(
     params: s.SetTopicAttributesInput,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
@@ -580,7 +615,7 @@ export class SNS {
     body.append(prefix+"AttributeName", (params["AttributeName"] ?? '').toString());
     if ("AttributeValue" in params) body.append(prefix+"AttributeValue", (params["AttributeValue"] ?? '').toString());
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "SetTopicAttributes",
     });
     await resp.arrayBuffer(); // consume body without use
@@ -588,6 +623,7 @@ export class SNS {
 
   async subscribe(
     params: s.SubscribeInput,
+    opts: client.RequestOptions = {},
   ): Promise<s.SubscribeResponse> {
     const body = new URLSearchParams;
     const prefix = '';
@@ -597,7 +633,7 @@ export class SNS {
     if (params["Attributes"]) qsP.appendMap(body, prefix+"Attributes", params["Attributes"], {"entryPrefix":".entry."})
     if ("ReturnSubscriptionArn" in params) body.append(prefix+"ReturnSubscriptionArn", (params["ReturnSubscriptionArn"] ?? '').toString());
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "Subscribe",
     });
     const xml = xmlP.readXmlResult(await resp.text(), "SubscribeResult");
@@ -608,13 +644,14 @@ export class SNS {
 
   async tagResource(
     params: s.TagResourceRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"ResourceArn", (params["ResourceArn"] ?? '').toString());
     if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "TagResource",
     });
     await resp.arrayBuffer(); // consume body without use
@@ -622,12 +659,13 @@ export class SNS {
 
   async unsubscribe(
     params: s.UnsubscribeInput,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"SubscriptionArn", (params["SubscriptionArn"] ?? '').toString());
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "Unsubscribe",
     });
     await resp.arrayBuffer(); // consume body without use
@@ -635,13 +673,14 @@ export class SNS {
 
   async untagResource(
     params: s.UntagResourceRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"ResourceArn", (params["ResourceArn"] ?? '').toString());
     if (params["TagKeys"]) qsP.appendList(body, prefix+"TagKeys", params["TagKeys"], {"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "UntagResource",
     });
     await resp.arrayBuffer(); // consume body without use
@@ -649,13 +688,14 @@ export class SNS {
 
   async verifySMSSandboxPhoneNumber(
     params: s.VerifySMSSandboxPhoneNumberInput,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"PhoneNumber", (params["PhoneNumber"] ?? '').toString());
     body.append(prefix+"OneTimePassword", (params["OneTimePassword"] ?? '').toString());
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "VerifySMSSandboxPhoneNumber",
     });
     await resp.arrayBuffer(); // consume body without use

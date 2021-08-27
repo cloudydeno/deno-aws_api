@@ -27,6 +27,7 @@ export class STS {
 
   async assumeRole(
     params: s.AssumeRoleRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.AssumeRoleResponse> {
     const body = new URLSearchParams;
     const prefix = '';
@@ -42,7 +43,7 @@ export class STS {
     if ("TokenCode" in params) body.append(prefix+"TokenCode", (params["TokenCode"] ?? '').toString());
     if ("SourceIdentity" in params) body.append(prefix+"SourceIdentity", (params["SourceIdentity"] ?? '').toString());
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "AssumeRole",
     });
     const xml = xmlP.readXmlResult(await resp.text(), "AssumeRoleResult");
@@ -58,6 +59,7 @@ export class STS {
 
   async assumeRoleWithSAML(
     params: s.AssumeRoleWithSAMLRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.AssumeRoleWithSAMLResponse> {
     const body = new URLSearchParams;
     const prefix = '';
@@ -69,7 +71,7 @@ export class STS {
     if ("DurationSeconds" in params) body.append(prefix+"DurationSeconds", (params["DurationSeconds"] ?? '').toString());
     const resp = await this.#client.performRequest({
       skipSigning: true,
-      body,
+      opts, body,
       action: "AssumeRoleWithSAML",
     });
     const xml = xmlP.readXmlResult(await resp.text(), "AssumeRoleWithSAMLResult");
@@ -85,6 +87,7 @@ export class STS {
 
   async assumeRoleWithWebIdentity(
     params: s.AssumeRoleWithWebIdentityRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.AssumeRoleWithWebIdentityResponse> {
     const body = new URLSearchParams;
     const prefix = '';
@@ -97,7 +100,7 @@ export class STS {
     if ("DurationSeconds" in params) body.append(prefix+"DurationSeconds", (params["DurationSeconds"] ?? '').toString());
     const resp = await this.#client.performRequest({
       skipSigning: true,
-      body,
+      opts, body,
       action: "AssumeRoleWithWebIdentity",
     });
     const xml = xmlP.readXmlResult(await resp.text(), "AssumeRoleWithWebIdentityResult");
@@ -113,12 +116,13 @@ export class STS {
 
   async decodeAuthorizationMessage(
     params: s.DecodeAuthorizationMessageRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.DecodeAuthorizationMessageResponse> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"EncodedMessage", (params["EncodedMessage"] ?? '').toString());
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "DecodeAuthorizationMessage",
     });
     const xml = xmlP.readXmlResult(await resp.text(), "DecodeAuthorizationMessageResult");
@@ -129,12 +133,13 @@ export class STS {
 
   async getAccessKeyInfo(
     params: s.GetAccessKeyInfoRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.GetAccessKeyInfoResponse> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"AccessKeyId", (params["AccessKeyId"] ?? '').toString());
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "GetAccessKeyInfo",
     });
     const xml = xmlP.readXmlResult(await resp.text(), "GetAccessKeyInfoResult");
@@ -143,10 +148,12 @@ export class STS {
     });
   }
 
-  async getCallerIdentity(): Promise<s.GetCallerIdentityResponse> {
+  async getCallerIdentity(
+    opts: client.RequestOptions = {},
+  ): Promise<s.GetCallerIdentityResponse> {
     const body = new URLSearchParams;
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "GetCallerIdentity",
     });
     const xml = xmlP.readXmlResult(await resp.text(), "GetCallerIdentityResult");
@@ -157,6 +164,7 @@ export class STS {
 
   async getFederationToken(
     params: s.GetFederationTokenRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.GetFederationTokenResponse> {
     const body = new URLSearchParams;
     const prefix = '';
@@ -166,7 +174,7 @@ export class STS {
     if ("DurationSeconds" in params) body.append(prefix+"DurationSeconds", (params["DurationSeconds"] ?? '').toString());
     if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "GetFederationToken",
     });
     const xml = xmlP.readXmlResult(await resp.text(), "GetFederationTokenResult");
@@ -179,6 +187,7 @@ export class STS {
 
   async getSessionToken(
     params: s.GetSessionTokenRequest = {},
+    opts: client.RequestOptions = {},
   ): Promise<s.GetSessionTokenResponse> {
     const body = new URLSearchParams;
     const prefix = '';
@@ -186,7 +195,7 @@ export class STS {
     if ("SerialNumber" in params) body.append(prefix+"SerialNumber", (params["SerialNumber"] ?? '').toString());
     if ("TokenCode" in params) body.append(prefix+"TokenCode", (params["TokenCode"] ?? '').toString());
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "GetSessionToken",
     });
     const xml = xmlP.readXmlResult(await resp.text(), "GetSessionTokenResult");

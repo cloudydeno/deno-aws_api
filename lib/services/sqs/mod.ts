@@ -35,6 +35,7 @@ export class SQS {
 
   async addPermission(
     params: s.AddPermissionRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
@@ -43,7 +44,7 @@ export class SQS {
     if (params["AWSAccountIds"]) qsP.appendList(body, prefix+"AWSAccountId", params["AWSAccountIds"], {"entryPrefix":"."})
     if (params["Actions"]) qsP.appendList(body, prefix+"ActionName", params["Actions"], {"entryPrefix":"."})
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "AddPermission",
     });
     await resp.arrayBuffer(); // consume body without use
@@ -51,6 +52,7 @@ export class SQS {
 
   async changeMessageVisibility(
     params: s.ChangeMessageVisibilityRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
@@ -58,7 +60,7 @@ export class SQS {
     body.append(prefix+"ReceiptHandle", (params["ReceiptHandle"] ?? '').toString());
     body.append(prefix+"VisibilityTimeout", (params["VisibilityTimeout"] ?? '').toString());
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "ChangeMessageVisibility",
     });
     await resp.arrayBuffer(); // consume body without use
@@ -66,13 +68,14 @@ export class SQS {
 
   async changeMessageVisibilityBatch(
     params: s.ChangeMessageVisibilityBatchRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.ChangeMessageVisibilityBatchResult> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"QueueUrl", (params["QueueUrl"] ?? '').toString());
     if (params["Entries"]) qsP.appendList(body, prefix+"ChangeMessageVisibilityBatchRequestEntry", params["Entries"], {"appender":ChangeMessageVisibilityBatchRequestEntry_Serialize,"entryPrefix":"."})
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "ChangeMessageVisibilityBatch",
     });
     const xml = xmlP.readXmlResult(await resp.text(), "ChangeMessageVisibilityBatchResult");
@@ -84,6 +87,7 @@ export class SQS {
 
   async createQueue(
     params: s.CreateQueueRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.CreateQueueResult> {
     const body = new URLSearchParams;
     const prefix = '';
@@ -91,7 +95,7 @@ export class SQS {
     if (params["Attributes"]) qsP.appendMap(body, prefix+"Attribute", params["Attributes"], {"keyName":".Name","valName":".Value","entryPrefix":"."})
     if (params["tags"]) qsP.appendMap(body, prefix+"Tag", params["tags"], {"keyName":".Key","valName":".Value","entryPrefix":"."})
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "CreateQueue",
     });
     const xml = xmlP.readXmlResult(await resp.text(), "CreateQueueResult");
@@ -102,13 +106,14 @@ export class SQS {
 
   async deleteMessage(
     params: s.DeleteMessageRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"QueueUrl", (params["QueueUrl"] ?? '').toString());
     body.append(prefix+"ReceiptHandle", (params["ReceiptHandle"] ?? '').toString());
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "DeleteMessage",
     });
     await resp.arrayBuffer(); // consume body without use
@@ -116,13 +121,14 @@ export class SQS {
 
   async deleteMessageBatch(
     params: s.DeleteMessageBatchRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.DeleteMessageBatchResult> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"QueueUrl", (params["QueueUrl"] ?? '').toString());
     if (params["Entries"]) qsP.appendList(body, prefix+"DeleteMessageBatchRequestEntry", params["Entries"], {"appender":DeleteMessageBatchRequestEntry_Serialize,"entryPrefix":"."})
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "DeleteMessageBatch",
     });
     const xml = xmlP.readXmlResult(await resp.text(), "DeleteMessageBatchResult");
@@ -134,12 +140,13 @@ export class SQS {
 
   async deleteQueue(
     params: s.DeleteQueueRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"QueueUrl", (params["QueueUrl"] ?? '').toString());
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "DeleteQueue",
     });
     await resp.arrayBuffer(); // consume body without use
@@ -147,13 +154,14 @@ export class SQS {
 
   async getQueueAttributes(
     params: s.GetQueueAttributesRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.GetQueueAttributesResult> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"QueueUrl", (params["QueueUrl"] ?? '').toString());
     if (params["AttributeNames"]) qsP.appendList(body, prefix+"AttributeName", params["AttributeNames"], {"entryPrefix":"."})
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "GetQueueAttributes",
     });
     const xml = xmlP.readXmlResult(await resp.text(), "GetQueueAttributesResult");
@@ -164,13 +172,14 @@ export class SQS {
 
   async getQueueUrl(
     params: s.GetQueueUrlRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.GetQueueUrlResult> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"QueueName", (params["QueueName"] ?? '').toString());
     if ("QueueOwnerAWSAccountId" in params) body.append(prefix+"QueueOwnerAWSAccountId", (params["QueueOwnerAWSAccountId"] ?? '').toString());
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "GetQueueUrl",
     });
     const xml = xmlP.readXmlResult(await resp.text(), "GetQueueUrlResult");
@@ -181,6 +190,7 @@ export class SQS {
 
   async listDeadLetterSourceQueues(
     params: s.ListDeadLetterSourceQueuesRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.ListDeadLetterSourceQueuesResult> {
     const body = new URLSearchParams;
     const prefix = '';
@@ -188,7 +198,7 @@ export class SQS {
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "ListDeadLetterSourceQueues",
     });
     const xml = xmlP.readXmlResult(await resp.text(), "ListDeadLetterSourceQueuesResult");
@@ -202,12 +212,13 @@ export class SQS {
 
   async listQueueTags(
     params: s.ListQueueTagsRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.ListQueueTagsResult> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"QueueUrl", (params["QueueUrl"] ?? '').toString());
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "ListQueueTags",
     });
     const xml = xmlP.readXmlResult(await resp.text(), "ListQueueTagsResult");
@@ -218,6 +229,7 @@ export class SQS {
 
   async listQueues(
     params: s.ListQueuesRequest = {},
+    opts: client.RequestOptions = {},
   ): Promise<s.ListQueuesResult> {
     const body = new URLSearchParams;
     const prefix = '';
@@ -225,7 +237,7 @@ export class SQS {
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "ListQueues",
     });
     const xml = xmlP.readXmlResult(await resp.text(), "ListQueuesResult");
@@ -239,12 +251,13 @@ export class SQS {
 
   async purgeQueue(
     params: s.PurgeQueueRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"QueueUrl", (params["QueueUrl"] ?? '').toString());
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "PurgeQueue",
     });
     await resp.arrayBuffer(); // consume body without use
@@ -252,6 +265,7 @@ export class SQS {
 
   async receiveMessage(
     params: s.ReceiveMessageRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.ReceiveMessageResult> {
     const body = new URLSearchParams;
     const prefix = '';
@@ -263,7 +277,7 @@ export class SQS {
     if ("WaitTimeSeconds" in params) body.append(prefix+"WaitTimeSeconds", (params["WaitTimeSeconds"] ?? '').toString());
     if ("ReceiveRequestAttemptId" in params) body.append(prefix+"ReceiveRequestAttemptId", (params["ReceiveRequestAttemptId"] ?? '').toString());
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "ReceiveMessage",
     });
     const xml = xmlP.readXmlResult(await resp.text(), "ReceiveMessageResult");
@@ -274,13 +288,14 @@ export class SQS {
 
   async removePermission(
     params: s.RemovePermissionRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"QueueUrl", (params["QueueUrl"] ?? '').toString());
     body.append(prefix+"Label", (params["Label"] ?? '').toString());
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "RemovePermission",
     });
     await resp.arrayBuffer(); // consume body without use
@@ -288,6 +303,7 @@ export class SQS {
 
   async sendMessage(
     params: s.SendMessageRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.SendMessageResult> {
     const body = new URLSearchParams;
     const prefix = '';
@@ -299,7 +315,7 @@ export class SQS {
     if ("MessageDeduplicationId" in params) body.append(prefix+"MessageDeduplicationId", (params["MessageDeduplicationId"] ?? '').toString());
     if ("MessageGroupId" in params) body.append(prefix+"MessageGroupId", (params["MessageGroupId"] ?? '').toString());
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "SendMessage",
     });
     const xml = xmlP.readXmlResult(await resp.text(), "SendMessageResult");
@@ -310,13 +326,14 @@ export class SQS {
 
   async sendMessageBatch(
     params: s.SendMessageBatchRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.SendMessageBatchResult> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"QueueUrl", (params["QueueUrl"] ?? '').toString());
     if (params["Entries"]) qsP.appendList(body, prefix+"SendMessageBatchRequestEntry", params["Entries"], {"appender":SendMessageBatchRequestEntry_Serialize,"entryPrefix":"."})
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "SendMessageBatch",
     });
     const xml = xmlP.readXmlResult(await resp.text(), "SendMessageBatchResult");
@@ -328,13 +345,14 @@ export class SQS {
 
   async setQueueAttributes(
     params: s.SetQueueAttributesRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"QueueUrl", (params["QueueUrl"] ?? '').toString());
     if (params["Attributes"]) qsP.appendMap(body, prefix+"Attribute", params["Attributes"], {"keyName":".Name","valName":".Value","entryPrefix":"."})
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "SetQueueAttributes",
     });
     await resp.arrayBuffer(); // consume body without use
@@ -342,13 +360,14 @@ export class SQS {
 
   async tagQueue(
     params: s.TagQueueRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"QueueUrl", (params["QueueUrl"] ?? '').toString());
     if (params["Tags"]) qsP.appendMap(body, prefix+"Tag", params["Tags"], {"keyName":".Key","valName":".Value","entryPrefix":"."})
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "TagQueue",
     });
     await resp.arrayBuffer(); // consume body without use
@@ -356,13 +375,14 @@ export class SQS {
 
   async untagQueue(
     params: s.UntagQueueRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"QueueUrl", (params["QueueUrl"] ?? '').toString());
     if (params["TagKeys"]) qsP.appendList(body, prefix+"TagKey", params["TagKeys"], {"entryPrefix":"."})
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "UntagQueue",
     });
     await resp.arrayBuffer(); // consume body without use

@@ -29,6 +29,7 @@ export class Lambda {
 
   async addLayerVersionPermission(
     params: s.AddLayerVersionPermissionRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.AddLayerVersionPermissionResponse> {
     const query = new URLSearchParams;
     const body: jsonP.JSONObject = {
@@ -39,7 +40,7 @@ export class Lambda {
     };
     if (params["RevisionId"] != null) query.set("RevisionId", params["RevisionId"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
-      query, body,
+      opts, query, body,
       action: "AddLayerVersionPermission",
       requestUri: cmnP.encodePath`/2018-10-31/layers/${params["LayerName"]}/versions/${params["VersionNumber"].toString()}/policy`,
       responseCode: 201,
@@ -55,6 +56,7 @@ export class Lambda {
 
   async addPermission(
     params: s.AddPermissionRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.AddPermissionResponse> {
     const query = new URLSearchParams;
     const body: jsonP.JSONObject = {
@@ -68,7 +70,7 @@ export class Lambda {
     };
     if (params["Qualifier"] != null) query.set("Qualifier", params["Qualifier"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
-      query, body,
+      opts, query, body,
       action: "AddPermission",
       requestUri: cmnP.encodePath`/2015-03-31/functions/${params["FunctionName"]}/policy`,
       responseCode: 201,
@@ -83,6 +85,7 @@ export class Lambda {
 
   async createAlias(
     params: s.CreateAliasRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.AliasConfiguration> {
     const body: jsonP.JSONObject = {
       Name: params["Name"],
@@ -91,7 +94,7 @@ export class Lambda {
       RoutingConfig: fromAliasRoutingConfiguration(params["RoutingConfig"]),
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "CreateAlias",
       requestUri: cmnP.encodePath`/2015-03-31/functions/${params["FunctionName"]}/aliases`,
       responseCode: 201,
@@ -111,6 +114,7 @@ export class Lambda {
 
   async createCodeSigningConfig(
     params: s.CreateCodeSigningConfigRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.CreateCodeSigningConfigResponse> {
     const body: jsonP.JSONObject = {
       Description: params["Description"],
@@ -118,7 +122,7 @@ export class Lambda {
       CodeSigningPolicies: fromCodeSigningPolicies(params["CodeSigningPolicies"]),
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "CreateCodeSigningConfig",
       requestUri: "/2020-04-22/code-signing-configs/",
       responseCode: 201,
@@ -133,6 +137,7 @@ export class Lambda {
 
   async createEventSourceMapping(
     params: s.CreateEventSourceMappingRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.EventSourceMappingConfiguration> {
     const body: jsonP.JSONObject = {
       EventSourceArn: params["EventSourceArn"],
@@ -155,7 +160,7 @@ export class Lambda {
       FunctionResponseTypes: params["FunctionResponseTypes"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "CreateEventSourceMapping",
       requestUri: "/2015-03-31/event-source-mappings/",
       responseCode: 202,
@@ -191,6 +196,7 @@ export class Lambda {
 
   async createFunction(
     params: s.CreateFunctionRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.FunctionConfiguration> {
     const body: jsonP.JSONObject = {
       FunctionName: params["FunctionName"],
@@ -215,7 +221,7 @@ export class Lambda {
       CodeSigningConfigArn: params["CodeSigningConfigArn"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "CreateFunction",
       requestUri: "/2015-03-31/functions",
       responseCode: 201,
@@ -260,9 +266,11 @@ export class Lambda {
 
   async deleteAlias(
     params: s.DeleteAliasRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
 
     const resp = await this.#client.performRequest({
+      opts,
       action: "DeleteAlias",
       method: "DELETE",
       requestUri: cmnP.encodePath`/2015-03-31/functions/${params["FunctionName"]}/aliases/${params["Name"]}`,
@@ -272,9 +280,11 @@ export class Lambda {
 
   async deleteCodeSigningConfig(
     params: s.DeleteCodeSigningConfigRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
 
     const resp = await this.#client.performRequest({
+      opts,
       action: "DeleteCodeSigningConfig",
       method: "DELETE",
       requestUri: cmnP.encodePath`/2020-04-22/code-signing-configs/${params["CodeSigningConfigArn"]}`,
@@ -284,9 +294,11 @@ export class Lambda {
 
   async deleteEventSourceMapping(
     params: s.DeleteEventSourceMappingRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.EventSourceMappingConfiguration> {
 
     const resp = await this.#client.performRequest({
+      opts,
       action: "DeleteEventSourceMapping",
       method: "DELETE",
       requestUri: cmnP.encodePath`/2015-03-31/event-source-mappings/${params["UUID"]}`,
@@ -323,11 +335,12 @@ export class Lambda {
 
   async deleteFunction(
     params: s.DeleteFunctionRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const query = new URLSearchParams;
     if (params["Qualifier"] != null) query.set("Qualifier", params["Qualifier"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
-      query,
+      opts, query,
       action: "DeleteFunction",
       method: "DELETE",
       requestUri: cmnP.encodePath`/2015-03-31/functions/${params["FunctionName"]}`,
@@ -337,9 +350,11 @@ export class Lambda {
 
   async deleteFunctionCodeSigningConfig(
     params: s.DeleteFunctionCodeSigningConfigRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
 
     const resp = await this.#client.performRequest({
+      opts,
       action: "DeleteFunctionCodeSigningConfig",
       method: "DELETE",
       requestUri: cmnP.encodePath`/2020-06-30/functions/${params["FunctionName"]}/code-signing-config`,
@@ -349,9 +364,11 @@ export class Lambda {
 
   async deleteFunctionConcurrency(
     params: s.DeleteFunctionConcurrencyRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
 
     const resp = await this.#client.performRequest({
+      opts,
       action: "DeleteFunctionConcurrency",
       method: "DELETE",
       requestUri: cmnP.encodePath`/2017-10-31/functions/${params["FunctionName"]}/concurrency`,
@@ -361,11 +378,12 @@ export class Lambda {
 
   async deleteFunctionEventInvokeConfig(
     params: s.DeleteFunctionEventInvokeConfigRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const query = new URLSearchParams;
     if (params["Qualifier"] != null) query.set("Qualifier", params["Qualifier"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
-      query,
+      opts, query,
       action: "DeleteFunctionEventInvokeConfig",
       method: "DELETE",
       requestUri: cmnP.encodePath`/2019-09-25/functions/${params["FunctionName"]}/event-invoke-config`,
@@ -375,9 +393,11 @@ export class Lambda {
 
   async deleteLayerVersion(
     params: s.DeleteLayerVersionRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
 
     const resp = await this.#client.performRequest({
+      opts,
       action: "DeleteLayerVersion",
       method: "DELETE",
       requestUri: cmnP.encodePath`/2018-10-31/layers/${params["LayerName"]}/versions/${params["VersionNumber"].toString()}`,
@@ -387,11 +407,12 @@ export class Lambda {
 
   async deleteProvisionedConcurrencyConfig(
     params: s.DeleteProvisionedConcurrencyConfigRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const query = new URLSearchParams;
     query.set("Qualifier", params["Qualifier"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
-      query,
+      opts, query,
       action: "DeleteProvisionedConcurrencyConfig",
       method: "DELETE",
       requestUri: cmnP.encodePath`/2019-09-30/functions/${params["FunctionName"]}/provisioned-concurrency`,
@@ -399,10 +420,12 @@ export class Lambda {
     });
   }
 
-  async getAccountSettings(): Promise<s.GetAccountSettingsResponse> {
+  async getAccountSettings(
+    opts: client.RequestOptions = {},
+  ): Promise<s.GetAccountSettingsResponse> {
     const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "GetAccountSettings",
       method: "GET",
       requestUri: "/2016-08-19/account-settings/",
@@ -419,9 +442,11 @@ export class Lambda {
 
   async getAlias(
     params: s.GetAliasRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.AliasConfiguration> {
 
     const resp = await this.#client.performRequest({
+      opts,
       action: "GetAlias",
       method: "GET",
       requestUri: cmnP.encodePath`/2015-03-31/functions/${params["FunctionName"]}/aliases/${params["Name"]}`,
@@ -442,9 +467,11 @@ export class Lambda {
 
   async getCodeSigningConfig(
     params: s.GetCodeSigningConfigRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.GetCodeSigningConfigResponse> {
 
     const resp = await this.#client.performRequest({
+      opts,
       action: "GetCodeSigningConfig",
       method: "GET",
       requestUri: cmnP.encodePath`/2020-04-22/code-signing-configs/${params["CodeSigningConfigArn"]}`,
@@ -460,9 +487,11 @@ export class Lambda {
 
   async getEventSourceMapping(
     params: s.GetEventSourceMappingRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.EventSourceMappingConfiguration> {
 
     const resp = await this.#client.performRequest({
+      opts,
       action: "GetEventSourceMapping",
       method: "GET",
       requestUri: cmnP.encodePath`/2015-03-31/event-source-mappings/${params["UUID"]}`,
@@ -499,11 +528,12 @@ export class Lambda {
 
   async getFunction(
     params: s.GetFunctionRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.GetFunctionResponse> {
     const query = new URLSearchParams;
     if (params["Qualifier"] != null) query.set("Qualifier", params["Qualifier"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
-      query,
+      opts, query,
       action: "GetFunction",
       method: "GET",
       requestUri: cmnP.encodePath`/2015-03-31/functions/${params["FunctionName"]}`,
@@ -522,9 +552,11 @@ export class Lambda {
 
   async getFunctionCodeSigningConfig(
     params: s.GetFunctionCodeSigningConfigRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.GetFunctionCodeSigningConfigResponse> {
 
     const resp = await this.#client.performRequest({
+      opts,
       action: "GetFunctionCodeSigningConfig",
       method: "GET",
       requestUri: cmnP.encodePath`/2020-06-30/functions/${params["FunctionName"]}/code-signing-config`,
@@ -541,9 +573,11 @@ export class Lambda {
 
   async getFunctionConcurrency(
     params: s.GetFunctionConcurrencyRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.GetFunctionConcurrencyResponse> {
 
     const resp = await this.#client.performRequest({
+      opts,
       action: "GetFunctionConcurrency",
       method: "GET",
       requestUri: cmnP.encodePath`/2019-09-30/functions/${params["FunctionName"]}/concurrency`,
@@ -559,11 +593,12 @@ export class Lambda {
 
   async getFunctionConfiguration(
     params: s.GetFunctionConfigurationRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.FunctionConfiguration> {
     const query = new URLSearchParams;
     if (params["Qualifier"] != null) query.set("Qualifier", params["Qualifier"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
-      query,
+      opts, query,
       action: "GetFunctionConfiguration",
       method: "GET",
       requestUri: cmnP.encodePath`/2015-03-31/functions/${params["FunctionName"]}/configuration`,
@@ -609,11 +644,12 @@ export class Lambda {
 
   async getFunctionEventInvokeConfig(
     params: s.GetFunctionEventInvokeConfigRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.FunctionEventInvokeConfig> {
     const query = new URLSearchParams;
     if (params["Qualifier"] != null) query.set("Qualifier", params["Qualifier"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
-      query,
+      opts, query,
       action: "GetFunctionEventInvokeConfig",
       method: "GET",
       requestUri: cmnP.encodePath`/2019-09-25/functions/${params["FunctionName"]}/event-invoke-config`,
@@ -633,9 +669,11 @@ export class Lambda {
 
   async getLayerVersion(
     params: s.GetLayerVersionRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.GetLayerVersionResponse> {
 
     const resp = await this.#client.performRequest({
+      opts,
       action: "GetLayerVersion",
       method: "GET",
       requestUri: cmnP.encodePath`/2018-10-31/layers/${params["LayerName"]}/versions/${params["VersionNumber"].toString()}`,
@@ -658,11 +696,12 @@ export class Lambda {
 
   async getLayerVersionByArn(
     params: s.GetLayerVersionByArnRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.GetLayerVersionResponse> {
     const query = new URLSearchParams;
     query.set("Arn", params["Arn"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
-      query,
+      opts, query,
       action: "GetLayerVersionByArn",
       method: "GET",
       requestUri: "/2018-10-31/layers?find=LayerVersion",
@@ -685,9 +724,11 @@ export class Lambda {
 
   async getLayerVersionPolicy(
     params: s.GetLayerVersionPolicyRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.GetLayerVersionPolicyResponse> {
 
     const resp = await this.#client.performRequest({
+      opts,
       action: "GetLayerVersionPolicy",
       method: "GET",
       requestUri: cmnP.encodePath`/2018-10-31/layers/${params["LayerName"]}/versions/${params["VersionNumber"].toString()}/policy`,
@@ -704,11 +745,12 @@ export class Lambda {
 
   async getPolicy(
     params: s.GetPolicyRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.GetPolicyResponse> {
     const query = new URLSearchParams;
     if (params["Qualifier"] != null) query.set("Qualifier", params["Qualifier"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
-      query,
+      opts, query,
       action: "GetPolicy",
       method: "GET",
       requestUri: cmnP.encodePath`/2015-03-31/functions/${params["FunctionName"]}/policy`,
@@ -725,11 +767,12 @@ export class Lambda {
 
   async getProvisionedConcurrencyConfig(
     params: s.GetProvisionedConcurrencyConfigRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.GetProvisionedConcurrencyConfigResponse> {
     const query = new URLSearchParams;
     query.set("Qualifier", params["Qualifier"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
-      query,
+      opts, query,
       action: "GetProvisionedConcurrencyConfig",
       method: "GET",
       requestUri: cmnP.encodePath`/2019-09-30/functions/${params["FunctionName"]}/provisioned-concurrency`,
@@ -750,6 +793,7 @@ export class Lambda {
 
   async invoke(
     params: s.InvocationRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.InvocationResponse> {
     const body = typeof params["Payload"] === 'string' ? new TextEncoder().encode(params["Payload"]) : params["Payload"];
     const headers = new Headers;
@@ -759,7 +803,7 @@ export class Lambda {
     if (params["ClientContext"] != null) headers.append("X-Amz-Client-Context", params["ClientContext"]);
     if (params["Qualifier"] != null) query.set("Qualifier", params["Qualifier"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
-      headers, query, body,
+      opts, headers, query, body,
       action: "Invoke",
       requestUri: cmnP.encodePath`/2015-03-31/functions/${params["FunctionName"]}/invocations`,
     });
@@ -774,10 +818,11 @@ export class Lambda {
 
   async invokeAsync(
     params: s.InvokeAsyncRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.InvokeAsyncResponse> {
     const body = typeof params["InvokeArgs"] === 'string' ? new TextEncoder().encode(params["InvokeArgs"]) : params["InvokeArgs"];
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "InvokeAsync",
       requestUri: cmnP.encodePath`/2014-11-13/functions/${params["FunctionName"]}/invoke-async/`,
       responseCode: 202,
@@ -793,13 +838,14 @@ export class Lambda {
 
   async listAliases(
     params: s.ListAliasesRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.ListAliasesResponse> {
     const query = new URLSearchParams;
     if (params["FunctionVersion"] != null) query.set("FunctionVersion", params["FunctionVersion"]?.toString() ?? "");
     if (params["Marker"] != null) query.set("Marker", params["Marker"]?.toString() ?? "");
     if (params["MaxItems"] != null) query.set("MaxItems", params["MaxItems"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
-      query,
+      opts, query,
       action: "ListAliases",
       method: "GET",
       requestUri: cmnP.encodePath`/2015-03-31/functions/${params["FunctionName"]}/aliases`,
@@ -816,12 +862,13 @@ export class Lambda {
 
   async listCodeSigningConfigs(
     params: s.ListCodeSigningConfigsRequest = {},
+    opts: client.RequestOptions = {},
   ): Promise<s.ListCodeSigningConfigsResponse> {
     const query = new URLSearchParams;
     if (params["Marker"] != null) query.set("Marker", params["Marker"]?.toString() ?? "");
     if (params["MaxItems"] != null) query.set("MaxItems", params["MaxItems"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
-      query,
+      opts, query,
       action: "ListCodeSigningConfigs",
       method: "GET",
       requestUri: "/2020-04-22/code-signing-configs/",
@@ -838,6 +885,7 @@ export class Lambda {
 
   async listEventSourceMappings(
     params: s.ListEventSourceMappingsRequest = {},
+    opts: client.RequestOptions = {},
   ): Promise<s.ListEventSourceMappingsResponse> {
     const query = new URLSearchParams;
     if (params["EventSourceArn"] != null) query.set("EventSourceArn", params["EventSourceArn"]?.toString() ?? "");
@@ -845,7 +893,7 @@ export class Lambda {
     if (params["Marker"] != null) query.set("Marker", params["Marker"]?.toString() ?? "");
     if (params["MaxItems"] != null) query.set("MaxItems", params["MaxItems"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
-      query,
+      opts, query,
       action: "ListEventSourceMappings",
       method: "GET",
       requestUri: "/2015-03-31/event-source-mappings/",
@@ -862,12 +910,13 @@ export class Lambda {
 
   async listFunctionEventInvokeConfigs(
     params: s.ListFunctionEventInvokeConfigsRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.ListFunctionEventInvokeConfigsResponse> {
     const query = new URLSearchParams;
     if (params["Marker"] != null) query.set("Marker", params["Marker"]?.toString() ?? "");
     if (params["MaxItems"] != null) query.set("MaxItems", params["MaxItems"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
-      query,
+      opts, query,
       action: "ListFunctionEventInvokeConfigs",
       method: "GET",
       requestUri: cmnP.encodePath`/2019-09-25/functions/${params["FunctionName"]}/event-invoke-config/list`,
@@ -884,6 +933,7 @@ export class Lambda {
 
   async listFunctions(
     params: s.ListFunctionsRequest = {},
+    opts: client.RequestOptions = {},
   ): Promise<s.ListFunctionsResponse> {
     const query = new URLSearchParams;
     if (params["MasterRegion"] != null) query.set("MasterRegion", params["MasterRegion"]?.toString() ?? "");
@@ -891,7 +941,7 @@ export class Lambda {
     if (params["Marker"] != null) query.set("Marker", params["Marker"]?.toString() ?? "");
     if (params["MaxItems"] != null) query.set("MaxItems", params["MaxItems"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
-      query,
+      opts, query,
       action: "ListFunctions",
       method: "GET",
       requestUri: "/2015-03-31/functions/",
@@ -908,12 +958,13 @@ export class Lambda {
 
   async listFunctionsByCodeSigningConfig(
     params: s.ListFunctionsByCodeSigningConfigRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.ListFunctionsByCodeSigningConfigResponse> {
     const query = new URLSearchParams;
     if (params["Marker"] != null) query.set("Marker", params["Marker"]?.toString() ?? "");
     if (params["MaxItems"] != null) query.set("MaxItems", params["MaxItems"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
-      query,
+      opts, query,
       action: "ListFunctionsByCodeSigningConfig",
       method: "GET",
       requestUri: cmnP.encodePath`/2020-04-22/code-signing-configs/${params["CodeSigningConfigArn"]}/functions`,
@@ -930,13 +981,14 @@ export class Lambda {
 
   async listLayerVersions(
     params: s.ListLayerVersionsRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.ListLayerVersionsResponse> {
     const query = new URLSearchParams;
     if (params["CompatibleRuntime"] != null) query.set("CompatibleRuntime", params["CompatibleRuntime"]?.toString() ?? "");
     if (params["Marker"] != null) query.set("Marker", params["Marker"]?.toString() ?? "");
     if (params["MaxItems"] != null) query.set("MaxItems", params["MaxItems"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
-      query,
+      opts, query,
       action: "ListLayerVersions",
       method: "GET",
       requestUri: cmnP.encodePath`/2018-10-31/layers/${params["LayerName"]}/versions`,
@@ -953,13 +1005,14 @@ export class Lambda {
 
   async listLayers(
     params: s.ListLayersRequest = {},
+    opts: client.RequestOptions = {},
   ): Promise<s.ListLayersResponse> {
     const query = new URLSearchParams;
     if (params["CompatibleRuntime"] != null) query.set("CompatibleRuntime", params["CompatibleRuntime"]?.toString() ?? "");
     if (params["Marker"] != null) query.set("Marker", params["Marker"]?.toString() ?? "");
     if (params["MaxItems"] != null) query.set("MaxItems", params["MaxItems"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
-      query,
+      opts, query,
       action: "ListLayers",
       method: "GET",
       requestUri: "/2018-10-31/layers",
@@ -976,12 +1029,13 @@ export class Lambda {
 
   async listProvisionedConcurrencyConfigs(
     params: s.ListProvisionedConcurrencyConfigsRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.ListProvisionedConcurrencyConfigsResponse> {
     const query = new URLSearchParams;
     if (params["Marker"] != null) query.set("Marker", params["Marker"]?.toString() ?? "");
     if (params["MaxItems"] != null) query.set("MaxItems", params["MaxItems"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
-      query,
+      opts, query,
       action: "ListProvisionedConcurrencyConfigs",
       method: "GET",
       requestUri: cmnP.encodePath`/2019-09-30/functions/${params["FunctionName"]}/provisioned-concurrency?List=ALL`,
@@ -998,9 +1052,11 @@ export class Lambda {
 
   async listTags(
     params: s.ListTagsRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.ListTagsResponse> {
 
     const resp = await this.#client.performRequest({
+      opts,
       action: "ListTags",
       method: "GET",
       requestUri: cmnP.encodePath`/2017-03-31/tags/${params["Resource"]}`,
@@ -1015,12 +1071,13 @@ export class Lambda {
 
   async listVersionsByFunction(
     params: s.ListVersionsByFunctionRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.ListVersionsByFunctionResponse> {
     const query = new URLSearchParams;
     if (params["Marker"] != null) query.set("Marker", params["Marker"]?.toString() ?? "");
     if (params["MaxItems"] != null) query.set("MaxItems", params["MaxItems"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
-      query,
+      opts, query,
       action: "ListVersionsByFunction",
       method: "GET",
       requestUri: cmnP.encodePath`/2015-03-31/functions/${params["FunctionName"]}/versions`,
@@ -1037,6 +1094,7 @@ export class Lambda {
 
   async publishLayerVersion(
     params: s.PublishLayerVersionRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.PublishLayerVersionResponse> {
     const body: jsonP.JSONObject = {
       Description: params["Description"],
@@ -1045,7 +1103,7 @@ export class Lambda {
       LicenseInfo: params["LicenseInfo"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "PublishLayerVersion",
       requestUri: cmnP.encodePath`/2018-10-31/layers/${params["LayerName"]}/versions`,
       responseCode: 201,
@@ -1067,6 +1125,7 @@ export class Lambda {
 
   async publishVersion(
     params: s.PublishVersionRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.FunctionConfiguration> {
     const body: jsonP.JSONObject = {
       CodeSha256: params["CodeSha256"],
@@ -1074,7 +1133,7 @@ export class Lambda {
       RevisionId: params["RevisionId"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "PublishVersion",
       requestUri: cmnP.encodePath`/2015-03-31/functions/${params["FunctionName"]}/versions`,
       responseCode: 201,
@@ -1119,12 +1178,13 @@ export class Lambda {
 
   async putFunctionCodeSigningConfig(
     params: s.PutFunctionCodeSigningConfigRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.PutFunctionCodeSigningConfigResponse> {
     const body: jsonP.JSONObject = {
       CodeSigningConfigArn: params["CodeSigningConfigArn"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "PutFunctionCodeSigningConfig",
       method: "PUT",
       requestUri: cmnP.encodePath`/2020-06-30/functions/${params["FunctionName"]}/code-signing-config`,
@@ -1141,12 +1201,13 @@ export class Lambda {
 
   async putFunctionConcurrency(
     params: s.PutFunctionConcurrencyRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.Concurrency> {
     const body: jsonP.JSONObject = {
       ReservedConcurrentExecutions: params["ReservedConcurrentExecutions"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "PutFunctionConcurrency",
       method: "PUT",
       requestUri: cmnP.encodePath`/2017-10-31/functions/${params["FunctionName"]}/concurrency`,
@@ -1162,6 +1223,7 @@ export class Lambda {
 
   async putFunctionEventInvokeConfig(
     params: s.PutFunctionEventInvokeConfigRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.FunctionEventInvokeConfig> {
     const query = new URLSearchParams;
     const body: jsonP.JSONObject = {
@@ -1171,7 +1233,7 @@ export class Lambda {
     };
     if (params["Qualifier"] != null) query.set("Qualifier", params["Qualifier"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
-      query, body,
+      opts, query, body,
       action: "PutFunctionEventInvokeConfig",
       method: "PUT",
       requestUri: cmnP.encodePath`/2019-09-25/functions/${params["FunctionName"]}/event-invoke-config`,
@@ -1191,6 +1253,7 @@ export class Lambda {
 
   async putProvisionedConcurrencyConfig(
     params: s.PutProvisionedConcurrencyConfigRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.PutProvisionedConcurrencyConfigResponse> {
     const query = new URLSearchParams;
     const body: jsonP.JSONObject = {
@@ -1198,7 +1261,7 @@ export class Lambda {
     };
     query.set("Qualifier", params["Qualifier"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
-      query, body,
+      opts, query, body,
       action: "PutProvisionedConcurrencyConfig",
       method: "PUT",
       requestUri: cmnP.encodePath`/2019-09-30/functions/${params["FunctionName"]}/provisioned-concurrency`,
@@ -1219,11 +1282,12 @@ export class Lambda {
 
   async removeLayerVersionPermission(
     params: s.RemoveLayerVersionPermissionRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const query = new URLSearchParams;
     if (params["RevisionId"] != null) query.set("RevisionId", params["RevisionId"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
-      query,
+      opts, query,
       action: "RemoveLayerVersionPermission",
       method: "DELETE",
       requestUri: cmnP.encodePath`/2018-10-31/layers/${params["LayerName"]}/versions/${params["VersionNumber"].toString()}/policy/${params["StatementId"]}`,
@@ -1233,12 +1297,13 @@ export class Lambda {
 
   async removePermission(
     params: s.RemovePermissionRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const query = new URLSearchParams;
     if (params["Qualifier"] != null) query.set("Qualifier", params["Qualifier"]?.toString() ?? "");
     if (params["RevisionId"] != null) query.set("RevisionId", params["RevisionId"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
-      query,
+      opts, query,
       action: "RemovePermission",
       method: "DELETE",
       requestUri: cmnP.encodePath`/2015-03-31/functions/${params["FunctionName"]}/policy/${params["StatementId"]}`,
@@ -1248,12 +1313,13 @@ export class Lambda {
 
   async tagResource(
     params: s.TagResourceRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body: jsonP.JSONObject = {
       Tags: params["Tags"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "TagResource",
       requestUri: cmnP.encodePath`/2017-03-31/tags/${params["Resource"]}`,
       responseCode: 204,
@@ -1262,13 +1328,14 @@ export class Lambda {
 
   async untagResource(
     params: s.UntagResourceRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const query = new URLSearchParams;
     for (const item of params["TagKeys"]) {
       query.append("tagKeys", item?.toString() ?? "");
     }
     const resp = await this.#client.performRequest({
-      query,
+      opts, query,
       action: "UntagResource",
       method: "DELETE",
       requestUri: cmnP.encodePath`/2017-03-31/tags/${params["Resource"]}`,
@@ -1278,6 +1345,7 @@ export class Lambda {
 
   async updateAlias(
     params: s.UpdateAliasRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.AliasConfiguration> {
     const body: jsonP.JSONObject = {
       FunctionVersion: params["FunctionVersion"],
@@ -1286,7 +1354,7 @@ export class Lambda {
       RevisionId: params["RevisionId"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "UpdateAlias",
       method: "PUT",
       requestUri: cmnP.encodePath`/2015-03-31/functions/${params["FunctionName"]}/aliases/${params["Name"]}`,
@@ -1307,6 +1375,7 @@ export class Lambda {
 
   async updateCodeSigningConfig(
     params: s.UpdateCodeSigningConfigRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.UpdateCodeSigningConfigResponse> {
     const body: jsonP.JSONObject = {
       Description: params["Description"],
@@ -1314,7 +1383,7 @@ export class Lambda {
       CodeSigningPolicies: fromCodeSigningPolicies(params["CodeSigningPolicies"]),
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "UpdateCodeSigningConfig",
       method: "PUT",
       requestUri: cmnP.encodePath`/2020-04-22/code-signing-configs/${params["CodeSigningConfigArn"]}`,
@@ -1330,6 +1399,7 @@ export class Lambda {
 
   async updateEventSourceMapping(
     params: s.UpdateEventSourceMappingRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.EventSourceMappingConfiguration> {
     const body: jsonP.JSONObject = {
       FunctionName: params["FunctionName"],
@@ -1346,7 +1416,7 @@ export class Lambda {
       FunctionResponseTypes: params["FunctionResponseTypes"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "UpdateEventSourceMapping",
       method: "PUT",
       requestUri: cmnP.encodePath`/2015-03-31/event-source-mappings/${params["UUID"]}`,
@@ -1383,6 +1453,7 @@ export class Lambda {
 
   async updateFunctionCode(
     params: s.UpdateFunctionCodeRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.FunctionConfiguration> {
     const body: jsonP.JSONObject = {
       ZipFile: serializeBlob(params["ZipFile"]),
@@ -1395,7 +1466,7 @@ export class Lambda {
       RevisionId: params["RevisionId"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "UpdateFunctionCode",
       method: "PUT",
       requestUri: cmnP.encodePath`/2015-03-31/functions/${params["FunctionName"]}/code`,
@@ -1441,6 +1512,7 @@ export class Lambda {
 
   async updateFunctionConfiguration(
     params: s.UpdateFunctionConfigurationRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.FunctionConfiguration> {
     const body: jsonP.JSONObject = {
       Role: params["Role"],
@@ -1460,7 +1532,7 @@ export class Lambda {
       ImageConfig: fromImageConfig(params["ImageConfig"]),
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "UpdateFunctionConfiguration",
       method: "PUT",
       requestUri: cmnP.encodePath`/2015-03-31/functions/${params["FunctionName"]}/configuration`,
@@ -1506,6 +1578,7 @@ export class Lambda {
 
   async updateFunctionEventInvokeConfig(
     params: s.UpdateFunctionEventInvokeConfigRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.FunctionEventInvokeConfig> {
     const query = new URLSearchParams;
     const body: jsonP.JSONObject = {
@@ -1515,7 +1588,7 @@ export class Lambda {
     };
     if (params["Qualifier"] != null) query.set("Qualifier", params["Qualifier"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
-      query, body,
+      opts, query, body,
       action: "UpdateFunctionEventInvokeConfig",
       requestUri: cmnP.encodePath`/2019-09-25/functions/${params["FunctionName"]}/event-invoke-config`,
       responseCode: 200,
@@ -1537,11 +1610,12 @@ export class Lambda {
   /** Checks state up to 20 times, 1 seconds apart (about 1 minutes max wait time). */
   async waitForFunctionExists(
     params: s.GetFunctionRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.GetFunctionResponse> {
     const errMessage = 'ResourceNotReady: Resource is not in the state FunctionExists';
     for (let i = 0; i < 20; i++) {
       try {
-        const resp = await this.getFunction(params);
+        const resp = await this.getFunction(params, opts);
         return resp; // for status 200
       } catch (err) {
         if (!["ResourceNotFoundException"].includes(err.shortCode)) throw err;
@@ -1557,10 +1631,11 @@ export class Lambda {
    */
   async waitForFunctionActive(
     params: s.GetFunctionConfigurationRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.FunctionConfiguration> {
     const errMessage = 'ResourceNotReady: Resource is not in the state FunctionActive';
     for (let i = 0; i < 60; i++) {
-      const resp = await this.getFunctionConfiguration(params);
+      const resp = await this.getFunctionConfiguration(params, opts);
       const field = resp?.State;
       if (field === "Active") return resp;
       if (field === "Failed") throw new Error(errMessage);
@@ -1576,10 +1651,11 @@ export class Lambda {
    */
   async waitForFunctionUpdated(
     params: s.GetFunctionConfigurationRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.FunctionConfiguration> {
     const errMessage = 'ResourceNotReady: Resource is not in the state FunctionUpdated';
     for (let i = 0; i < 60; i++) {
-      const resp = await this.getFunctionConfiguration(params);
+      const resp = await this.getFunctionConfiguration(params, opts);
       const field = resp?.LastUpdateStatus;
       if (field === "Successful") return resp;
       if (field === "Failed") throw new Error(errMessage);

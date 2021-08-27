@@ -31,12 +31,13 @@ export class CloudWatch {
 
   async deleteAlarms(
     params: s.DeleteAlarmsInput,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     if (params["AlarmNames"]) qsP.appendList(body, prefix+"AlarmNames", params["AlarmNames"], {"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "DeleteAlarms",
     });
     await resp.arrayBuffer(); // consume body without use
@@ -44,6 +45,7 @@ export class CloudWatch {
 
   async deleteAnomalyDetector(
     params: s.DeleteAnomalyDetectorInput,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
@@ -52,7 +54,7 @@ export class CloudWatch {
     if (params["Dimensions"]) qsP.appendList(body, prefix+"Dimensions", params["Dimensions"], {"appender":Dimension_Serialize,"entryPrefix":".member."})
     body.append(prefix+"Stat", (params["Stat"] ?? '').toString());
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "DeleteAnomalyDetector",
     });
     await resp.arrayBuffer(); // consume body without use
@@ -60,12 +62,13 @@ export class CloudWatch {
 
   async deleteDashboards(
     params: s.DeleteDashboardsInput,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     if (params["DashboardNames"]) qsP.appendList(body, prefix+"DashboardNames", params["DashboardNames"], {"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "DeleteDashboards",
     });
     await resp.arrayBuffer(); // consume body without use
@@ -73,12 +76,13 @@ export class CloudWatch {
 
   async deleteInsightRules(
     params: s.DeleteInsightRulesInput,
+    opts: client.RequestOptions = {},
   ): Promise<s.DeleteInsightRulesOutput> {
     const body = new URLSearchParams;
     const prefix = '';
     if (params["RuleNames"]) qsP.appendList(body, prefix+"RuleNames", params["RuleNames"], {"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "DeleteInsightRules",
     });
     const xml = xmlP.readXmlResult(await resp.text(), "DeleteInsightRulesResult");
@@ -89,12 +93,13 @@ export class CloudWatch {
 
   async deleteMetricStream(
     params: s.DeleteMetricStreamInput,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"Name", (params["Name"] ?? '').toString());
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "DeleteMetricStream",
     });
     await resp.arrayBuffer(); // consume body without use
@@ -102,6 +107,7 @@ export class CloudWatch {
 
   async describeAlarmHistory(
     params: s.DescribeAlarmHistoryInput = {},
+    opts: client.RequestOptions = {},
   ): Promise<s.DescribeAlarmHistoryOutput> {
     const body = new URLSearchParams;
     const prefix = '';
@@ -114,7 +120,7 @@ export class CloudWatch {
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     if ("ScanBy" in params) body.append(prefix+"ScanBy", (params["ScanBy"] ?? '').toString());
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "DescribeAlarmHistory",
     });
     const xml = xmlP.readXmlResult(await resp.text(), "DescribeAlarmHistoryResult");
@@ -128,6 +134,7 @@ export class CloudWatch {
 
   async describeAlarms(
     params: s.DescribeAlarmsInput = {},
+    opts: client.RequestOptions = {},
   ): Promise<s.DescribeAlarmsOutput> {
     const body = new URLSearchParams;
     const prefix = '';
@@ -141,7 +148,7 @@ export class CloudWatch {
     if ("MaxRecords" in params) body.append(prefix+"MaxRecords", (params["MaxRecords"] ?? '').toString());
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "DescribeAlarms",
     });
     const xml = xmlP.readXmlResult(await resp.text(), "DescribeAlarmsResult");
@@ -156,6 +163,7 @@ export class CloudWatch {
 
   async describeAlarmsForMetric(
     params: s.DescribeAlarmsForMetricInput,
+    opts: client.RequestOptions = {},
   ): Promise<s.DescribeAlarmsForMetricOutput> {
     const body = new URLSearchParams;
     const prefix = '';
@@ -167,7 +175,7 @@ export class CloudWatch {
     if ("Period" in params) body.append(prefix+"Period", (params["Period"] ?? '').toString());
     if ("Unit" in params) body.append(prefix+"Unit", (params["Unit"] ?? '').toString());
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "DescribeAlarmsForMetric",
     });
     const xml = xmlP.readXmlResult(await resp.text(), "DescribeAlarmsForMetricResult");
@@ -178,6 +186,7 @@ export class CloudWatch {
 
   async describeAnomalyDetectors(
     params: s.DescribeAnomalyDetectorsInput = {},
+    opts: client.RequestOptions = {},
   ): Promise<s.DescribeAnomalyDetectorsOutput> {
     const body = new URLSearchParams;
     const prefix = '';
@@ -187,7 +196,7 @@ export class CloudWatch {
     if ("MetricName" in params) body.append(prefix+"MetricName", (params["MetricName"] ?? '').toString());
     if (params["Dimensions"]) qsP.appendList(body, prefix+"Dimensions", params["Dimensions"], {"appender":Dimension_Serialize,"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "DescribeAnomalyDetectors",
     });
     const xml = xmlP.readXmlResult(await resp.text(), "DescribeAnomalyDetectorsResult");
@@ -201,13 +210,14 @@ export class CloudWatch {
 
   async describeInsightRules(
     params: s.DescribeInsightRulesInput = {},
+    opts: client.RequestOptions = {},
   ): Promise<s.DescribeInsightRulesOutput> {
     const body = new URLSearchParams;
     const prefix = '';
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "DescribeInsightRules",
     });
     const xml = xmlP.readXmlResult(await resp.text(), "DescribeInsightRulesResult");
@@ -221,12 +231,13 @@ export class CloudWatch {
 
   async disableAlarmActions(
     params: s.DisableAlarmActionsInput,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     if (params["AlarmNames"]) qsP.appendList(body, prefix+"AlarmNames", params["AlarmNames"], {"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "DisableAlarmActions",
     });
     await resp.arrayBuffer(); // consume body without use
@@ -234,12 +245,13 @@ export class CloudWatch {
 
   async disableInsightRules(
     params: s.DisableInsightRulesInput,
+    opts: client.RequestOptions = {},
   ): Promise<s.DisableInsightRulesOutput> {
     const body = new URLSearchParams;
     const prefix = '';
     if (params["RuleNames"]) qsP.appendList(body, prefix+"RuleNames", params["RuleNames"], {"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "DisableInsightRules",
     });
     const xml = xmlP.readXmlResult(await resp.text(), "DisableInsightRulesResult");
@@ -250,12 +262,13 @@ export class CloudWatch {
 
   async enableAlarmActions(
     params: s.EnableAlarmActionsInput,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     if (params["AlarmNames"]) qsP.appendList(body, prefix+"AlarmNames", params["AlarmNames"], {"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "EnableAlarmActions",
     });
     await resp.arrayBuffer(); // consume body without use
@@ -263,12 +276,13 @@ export class CloudWatch {
 
   async enableInsightRules(
     params: s.EnableInsightRulesInput,
+    opts: client.RequestOptions = {},
   ): Promise<s.EnableInsightRulesOutput> {
     const body = new URLSearchParams;
     const prefix = '';
     if (params["RuleNames"]) qsP.appendList(body, prefix+"RuleNames", params["RuleNames"], {"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "EnableInsightRules",
     });
     const xml = xmlP.readXmlResult(await resp.text(), "EnableInsightRulesResult");
@@ -279,12 +293,13 @@ export class CloudWatch {
 
   async getDashboard(
     params: s.GetDashboardInput,
+    opts: client.RequestOptions = {},
   ): Promise<s.GetDashboardOutput> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"DashboardName", (params["DashboardName"] ?? '').toString());
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "GetDashboard",
     });
     const xml = xmlP.readXmlResult(await resp.text(), "GetDashboardResult");
@@ -295,6 +310,7 @@ export class CloudWatch {
 
   async getInsightRuleReport(
     params: s.GetInsightRuleReportInput,
+    opts: client.RequestOptions = {},
   ): Promise<s.GetInsightRuleReportOutput> {
     const body = new URLSearchParams;
     const prefix = '';
@@ -306,7 +322,7 @@ export class CloudWatch {
     if (params["Metrics"]) qsP.appendList(body, prefix+"Metrics", params["Metrics"], {"entryPrefix":".member."})
     if ("OrderBy" in params) body.append(prefix+"OrderBy", (params["OrderBy"] ?? '').toString());
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "GetInsightRuleReport",
     });
     const xml = xmlP.readXmlResult(await resp.text(), "GetInsightRuleReportResult");
@@ -324,6 +340,7 @@ export class CloudWatch {
 
   async getMetricData(
     params: s.GetMetricDataInput,
+    opts: client.RequestOptions = {},
   ): Promise<s.GetMetricDataOutput> {
     const body = new URLSearchParams;
     const prefix = '';
@@ -335,7 +352,7 @@ export class CloudWatch {
     if ("MaxDatapoints" in params) body.append(prefix+"MaxDatapoints", (params["MaxDatapoints"] ?? '').toString());
     if (params["LabelOptions"] != null) LabelOptions_Serialize(body, prefix+"LabelOptions", params["LabelOptions"]);
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "GetMetricData",
     });
     const xml = xmlP.readXmlResult(await resp.text(), "GetMetricDataResult");
@@ -350,6 +367,7 @@ export class CloudWatch {
 
   async getMetricStatistics(
     params: s.GetMetricStatisticsInput,
+    opts: client.RequestOptions = {},
   ): Promise<s.GetMetricStatisticsOutput> {
     const body = new URLSearchParams;
     const prefix = '';
@@ -363,7 +381,7 @@ export class CloudWatch {
     if (params["ExtendedStatistics"]) qsP.appendList(body, prefix+"ExtendedStatistics", params["ExtendedStatistics"], {"entryPrefix":".member."})
     if ("Unit" in params) body.append(prefix+"Unit", (params["Unit"] ?? '').toString());
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "GetMetricStatistics",
     });
     const xml = xmlP.readXmlResult(await resp.text(), "GetMetricStatisticsResult");
@@ -377,12 +395,13 @@ export class CloudWatch {
 
   async getMetricStream(
     params: s.GetMetricStreamInput,
+    opts: client.RequestOptions = {},
   ): Promise<s.GetMetricStreamOutput> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"Name", (params["Name"] ?? '').toString());
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "GetMetricStream",
     });
     const xml = xmlP.readXmlResult(await resp.text(), "GetMetricStreamResult");
@@ -400,13 +419,14 @@ export class CloudWatch {
 
   async getMetricWidgetImage(
     params: s.GetMetricWidgetImageInput,
+    opts: client.RequestOptions = {},
   ): Promise<s.GetMetricWidgetImageOutput> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"MetricWidget", (params["MetricWidget"] ?? '').toString());
     if ("OutputFormat" in params) body.append(prefix+"OutputFormat", (params["OutputFormat"] ?? '').toString());
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "GetMetricWidgetImage",
     });
     const xml = xmlP.readXmlResult(await resp.text(), "GetMetricWidgetImageResult");
@@ -417,13 +437,14 @@ export class CloudWatch {
 
   async listDashboards(
     params: s.ListDashboardsInput = {},
+    opts: client.RequestOptions = {},
   ): Promise<s.ListDashboardsOutput> {
     const body = new URLSearchParams;
     const prefix = '';
     if ("DashboardNamePrefix" in params) body.append(prefix+"DashboardNamePrefix", (params["DashboardNamePrefix"] ?? '').toString());
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "ListDashboards",
     });
     const xml = xmlP.readXmlResult(await resp.text(), "ListDashboardsResult");
@@ -437,13 +458,14 @@ export class CloudWatch {
 
   async listMetricStreams(
     params: s.ListMetricStreamsInput = {},
+    opts: client.RequestOptions = {},
   ): Promise<s.ListMetricStreamsOutput> {
     const body = new URLSearchParams;
     const prefix = '';
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "ListMetricStreams",
     });
     const xml = xmlP.readXmlResult(await resp.text(), "ListMetricStreamsResult");
@@ -457,6 +479,7 @@ export class CloudWatch {
 
   async listMetrics(
     params: s.ListMetricsInput = {},
+    opts: client.RequestOptions = {},
   ): Promise<s.ListMetricsOutput> {
     const body = new URLSearchParams;
     const prefix = '';
@@ -466,7 +489,7 @@ export class CloudWatch {
     if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
     if ("RecentlyActive" in params) body.append(prefix+"RecentlyActive", (params["RecentlyActive"] ?? '').toString());
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "ListMetrics",
     });
     const xml = xmlP.readXmlResult(await resp.text(), "ListMetricsResult");
@@ -480,12 +503,13 @@ export class CloudWatch {
 
   async listTagsForResource(
     params: s.ListTagsForResourceInput,
+    opts: client.RequestOptions = {},
   ): Promise<s.ListTagsForResourceOutput> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"ResourceARN", (params["ResourceARN"] ?? '').toString());
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "ListTagsForResource",
     });
     const xml = xmlP.readXmlResult(await resp.text(), "ListTagsForResourceResult");
@@ -496,6 +520,7 @@ export class CloudWatch {
 
   async putAnomalyDetector(
     params: s.PutAnomalyDetectorInput,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
@@ -505,7 +530,7 @@ export class CloudWatch {
     body.append(prefix+"Stat", (params["Stat"] ?? '').toString());
     if (params["Configuration"] != null) AnomalyDetectorConfiguration_Serialize(body, prefix+"Configuration", params["Configuration"]);
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "PutAnomalyDetector",
     });
     await resp.arrayBuffer(); // consume body without use
@@ -513,6 +538,7 @@ export class CloudWatch {
 
   async putCompositeAlarm(
     params: s.PutCompositeAlarmInput,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
@@ -525,7 +551,7 @@ export class CloudWatch {
     if (params["OKActions"]) qsP.appendList(body, prefix+"OKActions", params["OKActions"], {"entryPrefix":".member."})
     if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "PutCompositeAlarm",
     });
     await resp.arrayBuffer(); // consume body without use
@@ -533,13 +559,14 @@ export class CloudWatch {
 
   async putDashboard(
     params: s.PutDashboardInput,
+    opts: client.RequestOptions = {},
   ): Promise<s.PutDashboardOutput> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"DashboardName", (params["DashboardName"] ?? '').toString());
     body.append(prefix+"DashboardBody", (params["DashboardBody"] ?? '').toString());
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "PutDashboard",
     });
     const xml = xmlP.readXmlResult(await resp.text(), "PutDashboardResult");
@@ -550,6 +577,7 @@ export class CloudWatch {
 
   async putInsightRule(
     params: s.PutInsightRuleInput,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
@@ -558,7 +586,7 @@ export class CloudWatch {
     body.append(prefix+"RuleDefinition", (params["RuleDefinition"] ?? '').toString());
     if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "PutInsightRule",
     });
     await resp.arrayBuffer(); // consume body without use
@@ -566,6 +594,7 @@ export class CloudWatch {
 
   async putMetricAlarm(
     params: s.PutMetricAlarmInput,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
@@ -592,7 +621,7 @@ export class CloudWatch {
     if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".member."})
     if ("ThresholdMetricId" in params) body.append(prefix+"ThresholdMetricId", (params["ThresholdMetricId"] ?? '').toString());
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "PutMetricAlarm",
     });
     await resp.arrayBuffer(); // consume body without use
@@ -600,13 +629,14 @@ export class CloudWatch {
 
   async putMetricData(
     params: s.PutMetricDataInput,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"Namespace", (params["Namespace"] ?? '').toString());
     if (params["MetricData"]) qsP.appendList(body, prefix+"MetricData", params["MetricData"], {"appender":MetricDatum_Serialize,"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "PutMetricData",
     });
     await resp.arrayBuffer(); // consume body without use
@@ -614,6 +644,7 @@ export class CloudWatch {
 
   async putMetricStream(
     params: s.PutMetricStreamInput,
+    opts: client.RequestOptions = {},
   ): Promise<s.PutMetricStreamOutput> {
     const body = new URLSearchParams;
     const prefix = '';
@@ -625,7 +656,7 @@ export class CloudWatch {
     body.append(prefix+"OutputFormat", (params["OutputFormat"] ?? '').toString());
     if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "PutMetricStream",
     });
     const xml = xmlP.readXmlResult(await resp.text(), "PutMetricStreamResult");
@@ -636,6 +667,7 @@ export class CloudWatch {
 
   async setAlarmState(
     params: s.SetAlarmStateInput,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
@@ -644,7 +676,7 @@ export class CloudWatch {
     body.append(prefix+"StateReason", (params["StateReason"] ?? '').toString());
     if ("StateReasonData" in params) body.append(prefix+"StateReasonData", (params["StateReasonData"] ?? '').toString());
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "SetAlarmState",
     });
     await resp.arrayBuffer(); // consume body without use
@@ -652,12 +684,13 @@ export class CloudWatch {
 
   async startMetricStreams(
     params: s.StartMetricStreamsInput,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     if (params["Names"]) qsP.appendList(body, prefix+"Names", params["Names"], {"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "StartMetricStreams",
     });
     await resp.arrayBuffer(); // consume body without use
@@ -665,12 +698,13 @@ export class CloudWatch {
 
   async stopMetricStreams(
     params: s.StopMetricStreamsInput,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     if (params["Names"]) qsP.appendList(body, prefix+"Names", params["Names"], {"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "StopMetricStreams",
     });
     await resp.arrayBuffer(); // consume body without use
@@ -678,13 +712,14 @@ export class CloudWatch {
 
   async tagResource(
     params: s.TagResourceInput,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"ResourceARN", (params["ResourceARN"] ?? '').toString());
     if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "TagResource",
     });
     await resp.arrayBuffer(); // consume body without use
@@ -692,13 +727,14 @@ export class CloudWatch {
 
   async untagResource(
     params: s.UntagResourceInput,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
     body.append(prefix+"ResourceARN", (params["ResourceARN"] ?? '').toString());
     if (params["TagKeys"]) qsP.appendList(body, prefix+"TagKeys", params["TagKeys"], {"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "UntagResource",
     });
     await resp.arrayBuffer(); // consume body without use
@@ -709,10 +745,11 @@ export class CloudWatch {
   /** Checks state up to 40 times, 5 seconds apart (about 4 minutes max wait time). */
   async waitForAlarmExists(
     params: s.DescribeAlarmsInput,
+    opts: client.RequestOptions = {},
   ): Promise<s.DescribeAlarmsOutput> {
     const errMessage = 'ResourceNotReady: Resource is not in the state AlarmExists';
     for (let i = 0; i < 40; i++) {
-      const resp = await this.describeAlarms(params);
+      const resp = await this.describeAlarms(params, opts);
       if ((resp?.MetricAlarms || '').length > 0) return resp;
       await new Promise(r => setTimeout(r, 5000));
     }
@@ -722,10 +759,11 @@ export class CloudWatch {
   /** Checks state up to 40 times, 5 seconds apart (about 4 minutes max wait time). */
   async waitForCompositeAlarmExists(
     params: s.DescribeAlarmsInput,
+    opts: client.RequestOptions = {},
   ): Promise<s.DescribeAlarmsOutput> {
     const errMessage = 'ResourceNotReady: Resource is not in the state CompositeAlarmExists';
     for (let i = 0; i < 40; i++) {
-      const resp = await this.describeAlarms(params);
+      const resp = await this.describeAlarms(params, opts);
       if ((resp?.CompositeAlarms || '').length > 0) return resp;
       await new Promise(r => setTimeout(r, 5000));
     }

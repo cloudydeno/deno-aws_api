@@ -32,6 +32,7 @@ export class SESV2 {
 
   async createConfigurationSet(
     params: s.CreateConfigurationSetRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body: jsonP.JSONObject = {
       ConfigurationSetName: params["ConfigurationSetName"],
@@ -43,7 +44,7 @@ export class SESV2 {
       SuppressionOptions: fromSuppressionOptions(params["SuppressionOptions"]),
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "CreateConfigurationSet",
       requestUri: "/v2/email/configuration-sets",
     });
@@ -52,13 +53,14 @@ export class SESV2 {
 
   async createConfigurationSetEventDestination(
     params: s.CreateConfigurationSetEventDestinationRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body: jsonP.JSONObject = {
       EventDestinationName: params["EventDestinationName"],
       EventDestination: fromEventDestinationDefinition(params["EventDestination"]),
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "CreateConfigurationSetEventDestination",
       requestUri: cmnP.encodePath`/v2/email/configuration-sets/${params["ConfigurationSetName"]}/event-destinations`,
     });
@@ -67,6 +69,7 @@ export class SESV2 {
 
   async createContact(
     params: s.CreateContactRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body: jsonP.JSONObject = {
       EmailAddress: params["EmailAddress"],
@@ -75,7 +78,7 @@ export class SESV2 {
       AttributesData: params["AttributesData"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "CreateContact",
       requestUri: cmnP.encodePath`/v2/email/contact-lists/${params["ContactListName"]}/contacts`,
     });
@@ -84,6 +87,7 @@ export class SESV2 {
 
   async createContactList(
     params: s.CreateContactListRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body: jsonP.JSONObject = {
       ContactListName: params["ContactListName"],
@@ -92,7 +96,7 @@ export class SESV2 {
       Tags: params["Tags"]?.map(x => fromTag(x)),
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "CreateContactList",
       requestUri: "/v2/email/contact-lists",
     });
@@ -101,6 +105,7 @@ export class SESV2 {
 
   async createCustomVerificationEmailTemplate(
     params: s.CreateCustomVerificationEmailTemplateRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body: jsonP.JSONObject = {
       TemplateName: params["TemplateName"],
@@ -111,7 +116,7 @@ export class SESV2 {
       FailureRedirectionURL: params["FailureRedirectionURL"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "CreateCustomVerificationEmailTemplate",
       requestUri: "/v2/email/custom-verification-email-templates",
     });
@@ -120,13 +125,14 @@ export class SESV2 {
 
   async createDedicatedIpPool(
     params: s.CreateDedicatedIpPoolRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body: jsonP.JSONObject = {
       PoolName: params["PoolName"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "CreateDedicatedIpPool",
       requestUri: "/v2/email/dedicated-ip-pools",
     });
@@ -135,6 +141,7 @@ export class SESV2 {
 
   async createDeliverabilityTestReport(
     params: s.CreateDeliverabilityTestReportRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.CreateDeliverabilityTestReportResponse> {
     const body: jsonP.JSONObject = {
       ReportName: params["ReportName"],
@@ -143,7 +150,7 @@ export class SESV2 {
       Tags: params["Tags"]?.map(x => fromTag(x)),
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "CreateDeliverabilityTestReport",
       requestUri: "/v2/email/deliverability-dashboard/test",
     });
@@ -158,6 +165,7 @@ export class SESV2 {
 
   async createEmailIdentity(
     params: s.CreateEmailIdentityRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.CreateEmailIdentityResponse> {
     const body: jsonP.JSONObject = {
       EmailIdentity: params["EmailIdentity"],
@@ -166,7 +174,7 @@ export class SESV2 {
       ConfigurationSetName: params["ConfigurationSetName"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "CreateEmailIdentity",
       requestUri: "/v2/email/identities",
     });
@@ -182,12 +190,13 @@ export class SESV2 {
 
   async createEmailIdentityPolicy(
     params: s.CreateEmailIdentityPolicyRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body: jsonP.JSONObject = {
       Policy: params["Policy"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "CreateEmailIdentityPolicy",
       requestUri: cmnP.encodePath`/v2/email/identities/${params["EmailIdentity"]}/policies/${params["PolicyName"]}`,
     });
@@ -196,13 +205,14 @@ export class SESV2 {
 
   async createEmailTemplate(
     params: s.CreateEmailTemplateRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body: jsonP.JSONObject = {
       TemplateName: params["TemplateName"],
       TemplateContent: fromEmailTemplateContent(params["TemplateContent"]),
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "CreateEmailTemplate",
       requestUri: "/v2/email/templates",
     });
@@ -211,13 +221,14 @@ export class SESV2 {
 
   async createImportJob(
     params: s.CreateImportJobRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.CreateImportJobResponse> {
     const body: jsonP.JSONObject = {
       ImportDestination: fromImportDestination(params["ImportDestination"]),
       ImportDataSource: fromImportDataSource(params["ImportDataSource"]),
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "CreateImportJob",
       requestUri: "/v2/email/import-jobs",
     });
@@ -231,9 +242,11 @@ export class SESV2 {
 
   async deleteConfigurationSet(
     params: s.DeleteConfigurationSetRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
 
     const resp = await this.#client.performRequest({
+      opts,
       action: "DeleteConfigurationSet",
       method: "DELETE",
       requestUri: cmnP.encodePath`/v2/email/configuration-sets/${params["ConfigurationSetName"]}`,
@@ -243,9 +256,11 @@ export class SESV2 {
 
   async deleteConfigurationSetEventDestination(
     params: s.DeleteConfigurationSetEventDestinationRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
 
     const resp = await this.#client.performRequest({
+      opts,
       action: "DeleteConfigurationSetEventDestination",
       method: "DELETE",
       requestUri: cmnP.encodePath`/v2/email/configuration-sets/${params["ConfigurationSetName"]}/event-destinations/${params["EventDestinationName"]}`,
@@ -255,9 +270,11 @@ export class SESV2 {
 
   async deleteContact(
     params: s.DeleteContactRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
 
     const resp = await this.#client.performRequest({
+      opts,
       action: "DeleteContact",
       method: "DELETE",
       requestUri: cmnP.encodePath`/v2/email/contact-lists/${params["ContactListName"]}/contacts/${params["EmailAddress"]}`,
@@ -267,9 +284,11 @@ export class SESV2 {
 
   async deleteContactList(
     params: s.DeleteContactListRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
 
     const resp = await this.#client.performRequest({
+      opts,
       action: "DeleteContactList",
       method: "DELETE",
       requestUri: cmnP.encodePath`/v2/email/contact-lists/${params["ContactListName"]}`,
@@ -279,9 +298,11 @@ export class SESV2 {
 
   async deleteCustomVerificationEmailTemplate(
     params: s.DeleteCustomVerificationEmailTemplateRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
 
     const resp = await this.#client.performRequest({
+      opts,
       action: "DeleteCustomVerificationEmailTemplate",
       method: "DELETE",
       requestUri: cmnP.encodePath`/v2/email/custom-verification-email-templates/${params["TemplateName"]}`,
@@ -291,9 +312,11 @@ export class SESV2 {
 
   async deleteDedicatedIpPool(
     params: s.DeleteDedicatedIpPoolRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
 
     const resp = await this.#client.performRequest({
+      opts,
       action: "DeleteDedicatedIpPool",
       method: "DELETE",
       requestUri: cmnP.encodePath`/v2/email/dedicated-ip-pools/${params["PoolName"]}`,
@@ -303,9 +326,11 @@ export class SESV2 {
 
   async deleteEmailIdentity(
     params: s.DeleteEmailIdentityRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
 
     const resp = await this.#client.performRequest({
+      opts,
       action: "DeleteEmailIdentity",
       method: "DELETE",
       requestUri: cmnP.encodePath`/v2/email/identities/${params["EmailIdentity"]}`,
@@ -315,9 +340,11 @@ export class SESV2 {
 
   async deleteEmailIdentityPolicy(
     params: s.DeleteEmailIdentityPolicyRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
 
     const resp = await this.#client.performRequest({
+      opts,
       action: "DeleteEmailIdentityPolicy",
       method: "DELETE",
       requestUri: cmnP.encodePath`/v2/email/identities/${params["EmailIdentity"]}/policies/${params["PolicyName"]}`,
@@ -327,9 +354,11 @@ export class SESV2 {
 
   async deleteEmailTemplate(
     params: s.DeleteEmailTemplateRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
 
     const resp = await this.#client.performRequest({
+      opts,
       action: "DeleteEmailTemplate",
       method: "DELETE",
       requestUri: cmnP.encodePath`/v2/email/templates/${params["TemplateName"]}`,
@@ -339,9 +368,11 @@ export class SESV2 {
 
   async deleteSuppressedDestination(
     params: s.DeleteSuppressedDestinationRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
 
     const resp = await this.#client.performRequest({
+      opts,
       action: "DeleteSuppressedDestination",
       method: "DELETE",
       requestUri: cmnP.encodePath`/v2/email/suppression/addresses/${params["EmailAddress"]}`,
@@ -349,10 +380,12 @@ export class SESV2 {
     await resp.arrayBuffer(); // consume body without use
   }
 
-  async getAccount(): Promise<s.GetAccountResponse> {
+  async getAccount(
+    opts: client.RequestOptions = {},
+  ): Promise<s.GetAccountResponse> {
     const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "GetAccount",
       method: "GET",
       requestUri: "/v2/email/account",
@@ -373,13 +406,14 @@ export class SESV2 {
 
   async getBlacklistReports(
     params: s.GetBlacklistReportsRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.GetBlacklistReportsResponse> {
     const query = new URLSearchParams;
     for (const item of params["BlacklistItemNames"]) {
       query.append("BlacklistItemNames", item?.toString() ?? "");
     }
     const resp = await this.#client.performRequest({
-      query,
+      opts, query,
       action: "GetBlacklistReports",
       method: "GET",
       requestUri: "/v2/email/deliverability-dashboard/blacklist-report",
@@ -394,9 +428,11 @@ export class SESV2 {
 
   async getConfigurationSet(
     params: s.GetConfigurationSetRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.GetConfigurationSetResponse> {
 
     const resp = await this.#client.performRequest({
+      opts,
       action: "GetConfigurationSet",
       method: "GET",
       requestUri: cmnP.encodePath`/v2/email/configuration-sets/${params["ConfigurationSetName"]}`,
@@ -417,9 +453,11 @@ export class SESV2 {
 
   async getConfigurationSetEventDestinations(
     params: s.GetConfigurationSetEventDestinationsRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.GetConfigurationSetEventDestinationsResponse> {
 
     const resp = await this.#client.performRequest({
+      opts,
       action: "GetConfigurationSetEventDestinations",
       method: "GET",
       requestUri: cmnP.encodePath`/v2/email/configuration-sets/${params["ConfigurationSetName"]}/event-destinations`,
@@ -434,9 +472,11 @@ export class SESV2 {
 
   async getContact(
     params: s.GetContactRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.GetContactResponse> {
 
     const resp = await this.#client.performRequest({
+      opts,
       action: "GetContact",
       method: "GET",
       requestUri: cmnP.encodePath`/v2/email/contact-lists/${params["ContactListName"]}/contacts/${params["EmailAddress"]}`,
@@ -458,9 +498,11 @@ export class SESV2 {
 
   async getContactList(
     params: s.GetContactListRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.GetContactListResponse> {
 
     const resp = await this.#client.performRequest({
+      opts,
       action: "GetContactList",
       method: "GET",
       requestUri: cmnP.encodePath`/v2/email/contact-lists/${params["ContactListName"]}`,
@@ -480,9 +522,11 @@ export class SESV2 {
 
   async getCustomVerificationEmailTemplate(
     params: s.GetCustomVerificationEmailTemplateRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.GetCustomVerificationEmailTemplateResponse> {
 
     const resp = await this.#client.performRequest({
+      opts,
       action: "GetCustomVerificationEmailTemplate",
       method: "GET",
       requestUri: cmnP.encodePath`/v2/email/custom-verification-email-templates/${params["TemplateName"]}`,
@@ -502,9 +546,11 @@ export class SESV2 {
 
   async getDedicatedIp(
     params: s.GetDedicatedIpRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.GetDedicatedIpResponse> {
 
     const resp = await this.#client.performRequest({
+      opts,
       action: "GetDedicatedIp",
       method: "GET",
       requestUri: cmnP.encodePath`/v2/email/dedicated-ips/${params["Ip"]}`,
@@ -519,13 +565,14 @@ export class SESV2 {
 
   async getDedicatedIps(
     params: s.GetDedicatedIpsRequest = {},
+    opts: client.RequestOptions = {},
   ): Promise<s.GetDedicatedIpsResponse> {
     const query = new URLSearchParams;
     if (params["PoolName"] != null) query.set("PoolName", params["PoolName"]?.toString() ?? "");
     if (params["NextToken"] != null) query.set("NextToken", params["NextToken"]?.toString() ?? "");
     if (params["PageSize"] != null) query.set("PageSize", params["PageSize"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
-      query,
+      opts, query,
       action: "GetDedicatedIps",
       method: "GET",
       requestUri: "/v2/email/dedicated-ips",
@@ -539,10 +586,12 @@ export class SESV2 {
     }, await resp.json());
   }
 
-  async getDeliverabilityDashboardOptions(): Promise<s.GetDeliverabilityDashboardOptionsResponse> {
+  async getDeliverabilityDashboardOptions(
+    opts: client.RequestOptions = {},
+  ): Promise<s.GetDeliverabilityDashboardOptionsResponse> {
     const body: jsonP.JSONObject = {};
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "GetDeliverabilityDashboardOptions",
       method: "GET",
       requestUri: "/v2/email/deliverability-dashboard",
@@ -562,9 +611,11 @@ export class SESV2 {
 
   async getDeliverabilityTestReport(
     params: s.GetDeliverabilityTestReportRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.GetDeliverabilityTestReportResponse> {
 
     const resp = await this.#client.performRequest({
+      opts,
       action: "GetDeliverabilityTestReport",
       method: "GET",
       requestUri: cmnP.encodePath`/v2/email/deliverability-dashboard/test-reports/${params["ReportId"]}`,
@@ -584,9 +635,11 @@ export class SESV2 {
 
   async getDomainDeliverabilityCampaign(
     params: s.GetDomainDeliverabilityCampaignRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.GetDomainDeliverabilityCampaignResponse> {
 
     const resp = await this.#client.performRequest({
+      opts,
       action: "GetDomainDeliverabilityCampaign",
       method: "GET",
       requestUri: cmnP.encodePath`/v2/email/deliverability-dashboard/campaigns/${params["CampaignId"]}`,
@@ -601,12 +654,13 @@ export class SESV2 {
 
   async getDomainStatisticsReport(
     params: s.GetDomainStatisticsReportRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.GetDomainStatisticsReportResponse> {
     const query = new URLSearchParams;
     query.set("StartDate", cmnP.serializeDate_iso8601(params["StartDate"]) ?? "");
     query.set("EndDate", cmnP.serializeDate_iso8601(params["EndDate"]) ?? "");
     const resp = await this.#client.performRequest({
-      query,
+      opts, query,
       action: "GetDomainStatisticsReport",
       method: "GET",
       requestUri: cmnP.encodePath`/v2/email/deliverability-dashboard/statistics-report/${params["Domain"]}`,
@@ -622,9 +676,11 @@ export class SESV2 {
 
   async getEmailIdentity(
     params: s.GetEmailIdentityRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.GetEmailIdentityResponse> {
 
     const resp = await this.#client.performRequest({
+      opts,
       action: "GetEmailIdentity",
       method: "GET",
       requestUri: cmnP.encodePath`/v2/email/identities/${params["EmailIdentity"]}`,
@@ -646,9 +702,11 @@ export class SESV2 {
 
   async getEmailIdentityPolicies(
     params: s.GetEmailIdentityPoliciesRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.GetEmailIdentityPoliciesResponse> {
 
     const resp = await this.#client.performRequest({
+      opts,
       action: "GetEmailIdentityPolicies",
       method: "GET",
       requestUri: cmnP.encodePath`/v2/email/identities/${params["EmailIdentity"]}/policies`,
@@ -663,9 +721,11 @@ export class SESV2 {
 
   async getEmailTemplate(
     params: s.GetEmailTemplateRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.GetEmailTemplateResponse> {
 
     const resp = await this.#client.performRequest({
+      opts,
       action: "GetEmailTemplate",
       method: "GET",
       requestUri: cmnP.encodePath`/v2/email/templates/${params["TemplateName"]}`,
@@ -681,9 +741,11 @@ export class SESV2 {
 
   async getImportJob(
     params: s.GetImportJobRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.GetImportJobResponse> {
 
     const resp = await this.#client.performRequest({
+      opts,
       action: "GetImportJob",
       method: "GET",
       requestUri: cmnP.encodePath`/v2/email/import-jobs/${params["JobId"]}`,
@@ -706,9 +768,11 @@ export class SESV2 {
 
   async getSuppressedDestination(
     params: s.GetSuppressedDestinationRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.GetSuppressedDestinationResponse> {
 
     const resp = await this.#client.performRequest({
+      opts,
       action: "GetSuppressedDestination",
       method: "GET",
       requestUri: cmnP.encodePath`/v2/email/suppression/addresses/${params["EmailAddress"]}`,
@@ -723,12 +787,13 @@ export class SESV2 {
 
   async listConfigurationSets(
     params: s.ListConfigurationSetsRequest = {},
+    opts: client.RequestOptions = {},
   ): Promise<s.ListConfigurationSetsResponse> {
     const query = new URLSearchParams;
     if (params["NextToken"] != null) query.set("NextToken", params["NextToken"]?.toString() ?? "");
     if (params["PageSize"] != null) query.set("PageSize", params["PageSize"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
-      query,
+      opts, query,
       action: "ListConfigurationSets",
       method: "GET",
       requestUri: "/v2/email/configuration-sets",
@@ -744,12 +809,13 @@ export class SESV2 {
 
   async listContactLists(
     params: s.ListContactListsRequest = {},
+    opts: client.RequestOptions = {},
   ): Promise<s.ListContactListsResponse> {
     const query = new URLSearchParams;
     if (params["PageSize"] != null) query.set("PageSize", params["PageSize"]?.toString() ?? "");
     if (params["NextToken"] != null) query.set("NextToken", params["NextToken"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
-      query,
+      opts, query,
       action: "ListContactLists",
       method: "GET",
       requestUri: "/v2/email/contact-lists",
@@ -765,6 +831,7 @@ export class SESV2 {
 
   async listContacts(
     params: s.ListContactsRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.ListContactsResponse> {
     const query = new URLSearchParams;
     const body: jsonP.JSONObject = {
@@ -773,7 +840,7 @@ export class SESV2 {
     if (params["PageSize"] != null) query.set("PageSize", params["PageSize"]?.toString() ?? "");
     if (params["NextToken"] != null) query.set("NextToken", params["NextToken"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
-      query, body,
+      opts, query, body,
       action: "ListContacts",
       method: "GET",
       requestUri: cmnP.encodePath`/v2/email/contact-lists/${params["ContactListName"]}/contacts`,
@@ -789,12 +856,13 @@ export class SESV2 {
 
   async listCustomVerificationEmailTemplates(
     params: s.ListCustomVerificationEmailTemplatesRequest = {},
+    opts: client.RequestOptions = {},
   ): Promise<s.ListCustomVerificationEmailTemplatesResponse> {
     const query = new URLSearchParams;
     if (params["NextToken"] != null) query.set("NextToken", params["NextToken"]?.toString() ?? "");
     if (params["PageSize"] != null) query.set("PageSize", params["PageSize"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
-      query,
+      opts, query,
       action: "ListCustomVerificationEmailTemplates",
       method: "GET",
       requestUri: "/v2/email/custom-verification-email-templates",
@@ -810,12 +878,13 @@ export class SESV2 {
 
   async listDedicatedIpPools(
     params: s.ListDedicatedIpPoolsRequest = {},
+    opts: client.RequestOptions = {},
   ): Promise<s.ListDedicatedIpPoolsResponse> {
     const query = new URLSearchParams;
     if (params["NextToken"] != null) query.set("NextToken", params["NextToken"]?.toString() ?? "");
     if (params["PageSize"] != null) query.set("PageSize", params["PageSize"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
-      query,
+      opts, query,
       action: "ListDedicatedIpPools",
       method: "GET",
       requestUri: "/v2/email/dedicated-ip-pools",
@@ -831,12 +900,13 @@ export class SESV2 {
 
   async listDeliverabilityTestReports(
     params: s.ListDeliverabilityTestReportsRequest = {},
+    opts: client.RequestOptions = {},
   ): Promise<s.ListDeliverabilityTestReportsResponse> {
     const query = new URLSearchParams;
     if (params["NextToken"] != null) query.set("NextToken", params["NextToken"]?.toString() ?? "");
     if (params["PageSize"] != null) query.set("PageSize", params["PageSize"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
-      query,
+      opts, query,
       action: "ListDeliverabilityTestReports",
       method: "GET",
       requestUri: "/v2/email/deliverability-dashboard/test-reports",
@@ -853,6 +923,7 @@ export class SESV2 {
 
   async listDomainDeliverabilityCampaigns(
     params: s.ListDomainDeliverabilityCampaignsRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.ListDomainDeliverabilityCampaignsResponse> {
     const query = new URLSearchParams;
     query.set("StartDate", cmnP.serializeDate_iso8601(params["StartDate"]) ?? "");
@@ -860,7 +931,7 @@ export class SESV2 {
     if (params["NextToken"] != null) query.set("NextToken", params["NextToken"]?.toString() ?? "");
     if (params["PageSize"] != null) query.set("PageSize", params["PageSize"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
-      query,
+      opts, query,
       action: "ListDomainDeliverabilityCampaigns",
       method: "GET",
       requestUri: cmnP.encodePath`/v2/email/deliverability-dashboard/domains/${params["SubscribedDomain"]}/campaigns`,
@@ -877,12 +948,13 @@ export class SESV2 {
 
   async listEmailIdentities(
     params: s.ListEmailIdentitiesRequest = {},
+    opts: client.RequestOptions = {},
   ): Promise<s.ListEmailIdentitiesResponse> {
     const query = new URLSearchParams;
     if (params["NextToken"] != null) query.set("NextToken", params["NextToken"]?.toString() ?? "");
     if (params["PageSize"] != null) query.set("PageSize", params["PageSize"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
-      query,
+      opts, query,
       action: "ListEmailIdentities",
       method: "GET",
       requestUri: "/v2/email/identities",
@@ -898,12 +970,13 @@ export class SESV2 {
 
   async listEmailTemplates(
     params: s.ListEmailTemplatesRequest = {},
+    opts: client.RequestOptions = {},
   ): Promise<s.ListEmailTemplatesResponse> {
     const query = new URLSearchParams;
     if (params["NextToken"] != null) query.set("NextToken", params["NextToken"]?.toString() ?? "");
     if (params["PageSize"] != null) query.set("PageSize", params["PageSize"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
-      query,
+      opts, query,
       action: "ListEmailTemplates",
       method: "GET",
       requestUri: "/v2/email/templates",
@@ -919,6 +992,7 @@ export class SESV2 {
 
   async listImportJobs(
     params: s.ListImportJobsRequest = {},
+    opts: client.RequestOptions = {},
   ): Promise<s.ListImportJobsResponse> {
     const query = new URLSearchParams;
     const body: jsonP.JSONObject = {
@@ -927,7 +1001,7 @@ export class SESV2 {
     if (params["NextToken"] != null) query.set("NextToken", params["NextToken"]?.toString() ?? "");
     if (params["PageSize"] != null) query.set("PageSize", params["PageSize"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
-      query, body,
+      opts, query, body,
       action: "ListImportJobs",
       method: "GET",
       requestUri: "/v2/email/import-jobs",
@@ -943,6 +1017,7 @@ export class SESV2 {
 
   async listSuppressedDestinations(
     params: s.ListSuppressedDestinationsRequest = {},
+    opts: client.RequestOptions = {},
   ): Promise<s.ListSuppressedDestinationsResponse> {
     const query = new URLSearchParams;
     for (const item of params["Reasons"] ?? []) {
@@ -953,7 +1028,7 @@ export class SESV2 {
     if (params["NextToken"] != null) query.set("NextToken", params["NextToken"]?.toString() ?? "");
     if (params["PageSize"] != null) query.set("PageSize", params["PageSize"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
-      query,
+      opts, query,
       action: "ListSuppressedDestinations",
       method: "GET",
       requestUri: "/v2/email/suppression/addresses",
@@ -969,11 +1044,12 @@ export class SESV2 {
 
   async listTagsForResource(
     params: s.ListTagsForResourceRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.ListTagsForResourceResponse> {
     const query = new URLSearchParams;
     query.set("ResourceArn", params["ResourceArn"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
-      query,
+      opts, query,
       action: "ListTagsForResource",
       method: "GET",
       requestUri: "/v2/email/tags",
@@ -988,12 +1064,13 @@ export class SESV2 {
 
   async putAccountDedicatedIpWarmupAttributes(
     params: s.PutAccountDedicatedIpWarmupAttributesRequest = {},
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body: jsonP.JSONObject = {
       AutoWarmupEnabled: params["AutoWarmupEnabled"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "PutAccountDedicatedIpWarmupAttributes",
       method: "PUT",
       requestUri: "/v2/email/account/dedicated-ips/warmup",
@@ -1003,6 +1080,7 @@ export class SESV2 {
 
   async putAccountDetails(
     params: s.PutAccountDetailsRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body: jsonP.JSONObject = {
       MailType: params["MailType"],
@@ -1013,7 +1091,7 @@ export class SESV2 {
       ProductionAccessEnabled: params["ProductionAccessEnabled"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "PutAccountDetails",
       requestUri: "/v2/email/account/details",
     });
@@ -1022,12 +1100,13 @@ export class SESV2 {
 
   async putAccountSendingAttributes(
     params: s.PutAccountSendingAttributesRequest = {},
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body: jsonP.JSONObject = {
       SendingEnabled: params["SendingEnabled"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "PutAccountSendingAttributes",
       method: "PUT",
       requestUri: "/v2/email/account/sending",
@@ -1037,12 +1116,13 @@ export class SESV2 {
 
   async putAccountSuppressionAttributes(
     params: s.PutAccountSuppressionAttributesRequest = {},
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body: jsonP.JSONObject = {
       SuppressedReasons: params["SuppressedReasons"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "PutAccountSuppressionAttributes",
       method: "PUT",
       requestUri: "/v2/email/account/suppression",
@@ -1052,13 +1132,14 @@ export class SESV2 {
 
   async putConfigurationSetDeliveryOptions(
     params: s.PutConfigurationSetDeliveryOptionsRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body: jsonP.JSONObject = {
       TlsPolicy: params["TlsPolicy"],
       SendingPoolName: params["SendingPoolName"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "PutConfigurationSetDeliveryOptions",
       method: "PUT",
       requestUri: cmnP.encodePath`/v2/email/configuration-sets/${params["ConfigurationSetName"]}/delivery-options`,
@@ -1068,12 +1149,13 @@ export class SESV2 {
 
   async putConfigurationSetReputationOptions(
     params: s.PutConfigurationSetReputationOptionsRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body: jsonP.JSONObject = {
       ReputationMetricsEnabled: params["ReputationMetricsEnabled"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "PutConfigurationSetReputationOptions",
       method: "PUT",
       requestUri: cmnP.encodePath`/v2/email/configuration-sets/${params["ConfigurationSetName"]}/reputation-options`,
@@ -1083,12 +1165,13 @@ export class SESV2 {
 
   async putConfigurationSetSendingOptions(
     params: s.PutConfigurationSetSendingOptionsRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body: jsonP.JSONObject = {
       SendingEnabled: params["SendingEnabled"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "PutConfigurationSetSendingOptions",
       method: "PUT",
       requestUri: cmnP.encodePath`/v2/email/configuration-sets/${params["ConfigurationSetName"]}/sending`,
@@ -1098,12 +1181,13 @@ export class SESV2 {
 
   async putConfigurationSetSuppressionOptions(
     params: s.PutConfigurationSetSuppressionOptionsRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body: jsonP.JSONObject = {
       SuppressedReasons: params["SuppressedReasons"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "PutConfigurationSetSuppressionOptions",
       method: "PUT",
       requestUri: cmnP.encodePath`/v2/email/configuration-sets/${params["ConfigurationSetName"]}/suppression-options`,
@@ -1113,12 +1197,13 @@ export class SESV2 {
 
   async putConfigurationSetTrackingOptions(
     params: s.PutConfigurationSetTrackingOptionsRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body: jsonP.JSONObject = {
       CustomRedirectDomain: params["CustomRedirectDomain"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "PutConfigurationSetTrackingOptions",
       method: "PUT",
       requestUri: cmnP.encodePath`/v2/email/configuration-sets/${params["ConfigurationSetName"]}/tracking-options`,
@@ -1128,12 +1213,13 @@ export class SESV2 {
 
   async putDedicatedIpInPool(
     params: s.PutDedicatedIpInPoolRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body: jsonP.JSONObject = {
       DestinationPoolName: params["DestinationPoolName"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "PutDedicatedIpInPool",
       method: "PUT",
       requestUri: cmnP.encodePath`/v2/email/dedicated-ips/${params["Ip"]}/pool`,
@@ -1143,12 +1229,13 @@ export class SESV2 {
 
   async putDedicatedIpWarmupAttributes(
     params: s.PutDedicatedIpWarmupAttributesRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body: jsonP.JSONObject = {
       WarmupPercentage: params["WarmupPercentage"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "PutDedicatedIpWarmupAttributes",
       method: "PUT",
       requestUri: cmnP.encodePath`/v2/email/dedicated-ips/${params["Ip"]}/warmup`,
@@ -1158,13 +1245,14 @@ export class SESV2 {
 
   async putDeliverabilityDashboardOption(
     params: s.PutDeliverabilityDashboardOptionRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body: jsonP.JSONObject = {
       DashboardEnabled: params["DashboardEnabled"],
       SubscribedDomains: params["SubscribedDomains"]?.map(x => fromDomainDeliverabilityTrackingOption(x)),
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "PutDeliverabilityDashboardOption",
       method: "PUT",
       requestUri: "/v2/email/deliverability-dashboard",
@@ -1174,12 +1262,13 @@ export class SESV2 {
 
   async putEmailIdentityConfigurationSetAttributes(
     params: s.PutEmailIdentityConfigurationSetAttributesRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body: jsonP.JSONObject = {
       ConfigurationSetName: params["ConfigurationSetName"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "PutEmailIdentityConfigurationSetAttributes",
       method: "PUT",
       requestUri: cmnP.encodePath`/v2/email/identities/${params["EmailIdentity"]}/configuration-set`,
@@ -1189,12 +1278,13 @@ export class SESV2 {
 
   async putEmailIdentityDkimAttributes(
     params: s.PutEmailIdentityDkimAttributesRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body: jsonP.JSONObject = {
       SigningEnabled: params["SigningEnabled"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "PutEmailIdentityDkimAttributes",
       method: "PUT",
       requestUri: cmnP.encodePath`/v2/email/identities/${params["EmailIdentity"]}/dkim`,
@@ -1204,13 +1294,14 @@ export class SESV2 {
 
   async putEmailIdentityDkimSigningAttributes(
     params: s.PutEmailIdentityDkimSigningAttributesRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.PutEmailIdentityDkimSigningAttributesResponse> {
     const body: jsonP.JSONObject = {
       SigningAttributesOrigin: params["SigningAttributesOrigin"],
       SigningAttributes: fromDkimSigningAttributes(params["SigningAttributes"]),
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "PutEmailIdentityDkimSigningAttributes",
       method: "PUT",
       requestUri: cmnP.encodePath`/v1/email/identities/${params["EmailIdentity"]}/dkim/signing`,
@@ -1226,12 +1317,13 @@ export class SESV2 {
 
   async putEmailIdentityFeedbackAttributes(
     params: s.PutEmailIdentityFeedbackAttributesRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body: jsonP.JSONObject = {
       EmailForwardingEnabled: params["EmailForwardingEnabled"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "PutEmailIdentityFeedbackAttributes",
       method: "PUT",
       requestUri: cmnP.encodePath`/v2/email/identities/${params["EmailIdentity"]}/feedback`,
@@ -1241,13 +1333,14 @@ export class SESV2 {
 
   async putEmailIdentityMailFromAttributes(
     params: s.PutEmailIdentityMailFromAttributesRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body: jsonP.JSONObject = {
       MailFromDomain: params["MailFromDomain"],
       BehaviorOnMxFailure: params["BehaviorOnMxFailure"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "PutEmailIdentityMailFromAttributes",
       method: "PUT",
       requestUri: cmnP.encodePath`/v2/email/identities/${params["EmailIdentity"]}/mail-from`,
@@ -1257,13 +1350,14 @@ export class SESV2 {
 
   async putSuppressedDestination(
     params: s.PutSuppressedDestinationRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body: jsonP.JSONObject = {
       EmailAddress: params["EmailAddress"],
       Reason: params["Reason"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "PutSuppressedDestination",
       method: "PUT",
       requestUri: "/v2/email/suppression/addresses",
@@ -1273,6 +1367,7 @@ export class SESV2 {
 
   async sendBulkEmail(
     params: s.SendBulkEmailRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.SendBulkEmailResponse> {
     const body: jsonP.JSONObject = {
       FromEmailAddress: params["FromEmailAddress"],
@@ -1286,7 +1381,7 @@ export class SESV2 {
       ConfigurationSetName: params["ConfigurationSetName"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "SendBulkEmail",
       requestUri: "/v2/email/outbound-bulk-emails",
     });
@@ -1300,6 +1395,7 @@ export class SESV2 {
 
   async sendCustomVerificationEmail(
     params: s.SendCustomVerificationEmailRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.SendCustomVerificationEmailResponse> {
     const body: jsonP.JSONObject = {
       EmailAddress: params["EmailAddress"],
@@ -1307,7 +1403,7 @@ export class SESV2 {
       ConfigurationSetName: params["ConfigurationSetName"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "SendCustomVerificationEmail",
       requestUri: "/v2/email/outbound-custom-verification-emails",
     });
@@ -1321,6 +1417,7 @@ export class SESV2 {
 
   async sendEmail(
     params: s.SendEmailRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.SendEmailResponse> {
     const body: jsonP.JSONObject = {
       FromEmailAddress: params["FromEmailAddress"],
@@ -1335,7 +1432,7 @@ export class SESV2 {
       ListManagementOptions: fromListManagementOptions(params["ListManagementOptions"]),
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "SendEmail",
       requestUri: "/v2/email/outbound-emails",
     });
@@ -1349,13 +1446,14 @@ export class SESV2 {
 
   async tagResource(
     params: s.TagResourceRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body: jsonP.JSONObject = {
       ResourceArn: params["ResourceArn"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "TagResource",
       requestUri: "/v2/email/tags",
     });
@@ -1364,12 +1462,13 @@ export class SESV2 {
 
   async testRenderEmailTemplate(
     params: s.TestRenderEmailTemplateRequest,
+    opts: client.RequestOptions = {},
   ): Promise<s.TestRenderEmailTemplateResponse> {
     const body: jsonP.JSONObject = {
       TemplateData: params["TemplateData"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "TestRenderEmailTemplate",
       requestUri: cmnP.encodePath`/v2/email/templates/${params["TemplateName"]}/render`,
     });
@@ -1383,6 +1482,7 @@ export class SESV2 {
 
   async untagResource(
     params: s.UntagResourceRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const query = new URLSearchParams;
     query.set("ResourceArn", params["ResourceArn"]?.toString() ?? "");
@@ -1390,7 +1490,7 @@ export class SESV2 {
       query.append("TagKeys", item?.toString() ?? "");
     }
     const resp = await this.#client.performRequest({
-      query,
+      opts, query,
       action: "UntagResource",
       method: "DELETE",
       requestUri: "/v2/email/tags",
@@ -1400,12 +1500,13 @@ export class SESV2 {
 
   async updateConfigurationSetEventDestination(
     params: s.UpdateConfigurationSetEventDestinationRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body: jsonP.JSONObject = {
       EventDestination: fromEventDestinationDefinition(params["EventDestination"]),
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "UpdateConfigurationSetEventDestination",
       method: "PUT",
       requestUri: cmnP.encodePath`/v2/email/configuration-sets/${params["ConfigurationSetName"]}/event-destinations/${params["EventDestinationName"]}`,
@@ -1415,6 +1516,7 @@ export class SESV2 {
 
   async updateContact(
     params: s.UpdateContactRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body: jsonP.JSONObject = {
       TopicPreferences: params["TopicPreferences"]?.map(x => fromTopicPreference(x)),
@@ -1422,7 +1524,7 @@ export class SESV2 {
       AttributesData: params["AttributesData"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "UpdateContact",
       method: "PUT",
       requestUri: cmnP.encodePath`/v2/email/contact-lists/${params["ContactListName"]}/contacts/${params["EmailAddress"]}`,
@@ -1432,13 +1534,14 @@ export class SESV2 {
 
   async updateContactList(
     params: s.UpdateContactListRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body: jsonP.JSONObject = {
       Topics: params["Topics"]?.map(x => fromTopic(x)),
       Description: params["Description"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "UpdateContactList",
       method: "PUT",
       requestUri: cmnP.encodePath`/v2/email/contact-lists/${params["ContactListName"]}`,
@@ -1448,6 +1551,7 @@ export class SESV2 {
 
   async updateCustomVerificationEmailTemplate(
     params: s.UpdateCustomVerificationEmailTemplateRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body: jsonP.JSONObject = {
       FromEmailAddress: params["FromEmailAddress"],
@@ -1457,7 +1561,7 @@ export class SESV2 {
       FailureRedirectionURL: params["FailureRedirectionURL"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "UpdateCustomVerificationEmailTemplate",
       method: "PUT",
       requestUri: cmnP.encodePath`/v2/email/custom-verification-email-templates/${params["TemplateName"]}`,
@@ -1467,12 +1571,13 @@ export class SESV2 {
 
   async updateEmailIdentityPolicy(
     params: s.UpdateEmailIdentityPolicyRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body: jsonP.JSONObject = {
       Policy: params["Policy"],
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "UpdateEmailIdentityPolicy",
       method: "PUT",
       requestUri: cmnP.encodePath`/v2/email/identities/${params["EmailIdentity"]}/policies/${params["PolicyName"]}`,
@@ -1482,12 +1587,13 @@ export class SESV2 {
 
   async updateEmailTemplate(
     params: s.UpdateEmailTemplateRequest,
+    opts: client.RequestOptions = {},
   ): Promise<void> {
     const body: jsonP.JSONObject = {
       TemplateContent: fromEmailTemplateContent(params["TemplateContent"]),
     };
     const resp = await this.#client.performRequest({
-      body,
+      opts, body,
       action: "UpdateEmailTemplate",
       method: "PUT",
       requestUri: cmnP.encodePath`/v2/email/templates/${params["TemplateName"]}`,
