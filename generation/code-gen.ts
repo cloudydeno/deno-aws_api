@@ -37,7 +37,7 @@ export default class ServiceCodeGen {
       this.docMode = 'none';
     }
 
-    this.includeOpts = opts.get('includeOpts') == 'yes';
+    this.includeOpts = (opts.get('includeOpts') || 'yes') !== 'no';
 
     // mutate the specs to fix inaccuracies
     fixupApiSpec(this.apiSpec);

@@ -1,5 +1,3 @@
-// fixing some generations to an older codegen would work like this:
-// import v0_1_CodeGen from 'https://raw.githubusercontent.com/cloudydeno/deno-aws_api/v0.4.1/generation/code-gen.ts';
 import LatestCodeGen from '../code-gen.ts';
 
 import * as Schema from '../sdk-schema.ts';
@@ -43,14 +41,16 @@ export const Generations = new Map<string, ModuleGenerator>([
     'https://deno.land/x/aws_api@v0.4.0',
     'https://deno.land/std@0.95.0',
     'v2.895.0',
-    (config, opts) => new LatestCodeGen(config, opts),
+    (config, opts) => {
+      opts.set('includeOpts', 'no');
+      return new LatestCodeGen(config, opts);
+    },
   )],
   ['v0.2', new ModuleGenerator(
     'https://deno.land/x/aws_api@v0.5.0',
     'https://deno.land/std@0.105.0',
     'v2.971.0',
     (config, opts) => {
-      opts.set('includeOpts', 'yes');
       return new LatestCodeGen(config, opts);
     },
   )],

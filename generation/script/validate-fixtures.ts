@@ -118,7 +118,6 @@ async function* readAllTestFixtures() {
 const allTestRuns = readAllTestFixtures();
 
 const opts = new URLSearchParams();
-opts.set('includeOpts', 'yes');
 
 async function generateRun(run: TestRun): Promise<void> {
 

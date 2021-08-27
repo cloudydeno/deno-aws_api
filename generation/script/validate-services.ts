@@ -18,7 +18,6 @@ for (const [modId, svc] of Object.entries(serviceList)) {
 }
 
 const opts = new URLSearchParams();
-opts.set('includeOpts', 'yes');
 
 const generatedFiles = new Array<string>();
 
