@@ -55,4 +55,4 @@ export const Generations = new Map<string, ModuleGenerator>([
     },
   )],
 ]);
-export const LatestGeneration = 'v0.1';
+export const LatestGeneration = 'v0.2';
