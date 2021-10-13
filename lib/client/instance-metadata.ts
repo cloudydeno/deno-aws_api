@@ -36,7 +36,7 @@ export class IMDSv2 {
   async fetchNewToken(): Promise<[string, number]> {
     const ttlSeconds = this.tokenTtlSeconds;
 
-    const respText = await this.#performRawRequest({
+    const respText = await this.performRawRequest({
       method: 'PUT',
       path: 'api/token',
       timeoutMs: this.cachedToken ? this.apiTimeoutMs : this.timeoutMs,
@@ -54,7 +54,7 @@ export class IMDSv2 {
     method: 'GET' | 'HEAD' | 'PUT' = 'GET',
     path = 'meta-data/',
   ) {
-    return await this.#performRawRequest({
+    return await this.performRawRequest({
       method, path,
       timeoutMs: this.apiTimeoutMs,
       headers: {
@@ -62,7 +62,7 @@ export class IMDSv2 {
       }});
   }
 
-  async #performRawRequest(opts: {
+  private async performRawRequest(opts: {
     method: 'GET' | 'HEAD' | 'PUT',
     path: string,
     timeoutMs: number,
