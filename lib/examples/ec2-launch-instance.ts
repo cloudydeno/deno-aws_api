@@ -7,7 +7,7 @@
 const ThisScriptUrl = `https://deno.land/x/aws_api/examples/ec2-launch-instance.ts`;
 
 import { ApiFactory } from '../client/mod.ts';
-import { EC2, Instance } from 'https://aws-api.deno.dev/v0.1/services/ec2.ts';
+import { EC2, Instance } from 'https://aws-api.deno.dev/v0.2/services/ec2.ts?actions=RunInstances,TerminateInstances,GetConsoleOutput,Describe*';
 
 const ec2 = new ApiFactory().makeNew(EC2);
 
