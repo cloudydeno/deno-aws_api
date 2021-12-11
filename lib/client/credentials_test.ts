@@ -1,5 +1,5 @@
 import { SharedIniFileCredentials } from './credentials.ts';
-import { assertEquals } from "https://deno.land/std@0.105.0/testing/asserts.ts";
+import { assertEquals } from "https://deno.land/std@0.115.0/testing/asserts.ts";
 
 Deno.test('basic ini file', async () => {
   const credential = new SharedIniFileCredentials({

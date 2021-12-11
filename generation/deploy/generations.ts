@@ -56,7 +56,7 @@ export const Generations = new Map<string, ModuleGenerator>([
   )],
   ['v0.3', new ModuleGenerator(
     'https://deno.land/x/aws_api@v0.5.0', // TODO: new version
-    'https://deno.land/std@0.105.0',
+    'https://deno.land/std@0.115.0',
     'v2.971.0', // https://github.com/aws/aws-sdk-js/releases
     (config, opts) => {
       return new LatestCodeGen(config, opts);

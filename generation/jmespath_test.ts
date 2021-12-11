@@ -1,5 +1,5 @@
 import { compileJMESPath } from './jmespath.ts';
-import { assertEquals } from "https://deno.land/std@0.105.0/testing/asserts.ts";
+import { assertEquals } from "https://deno.land/std@0.115.0/testing/asserts.ts";
 
 const cases: Record<string,string> = {
   "EndpointStatus": "resp?.EndpointStatus",
