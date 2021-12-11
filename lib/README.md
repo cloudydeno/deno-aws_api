@@ -103,6 +103,8 @@ const ec2_europe = new ApiFactory({
 
 ## Changelog
 
+* `v0.5.1` on `2021-12-TBD`: codgen `v0.3`
+  * Tested on Deno 1.11 up to 1.16 (current latest)
 * `v0.5.0` on `2021-08-27`: codegen `v0.2`
   * Support Deno 1.11 or later
   * Use definitions from `aws-sdk-js@2.971.0`

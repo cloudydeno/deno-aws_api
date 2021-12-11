@@ -9,6 +9,7 @@ await factory.ensureCredentialsAvailable();
 
 // This import includes full documentation text for each API call
 import { STS } from 'https://aws-api.deno.dev/latest/services/sts.ts?docs=full';
+
 const sts = new STS(factory);
 await sts.getCallerIdentity().then(identity => {
   console.log('You are', identity.UserId, 'in account', identity.Account);

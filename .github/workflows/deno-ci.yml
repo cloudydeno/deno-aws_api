@@ -19,6 +19,7 @@ jobs:
         - v1.13
         - v1.14
         - v1.15
+        - v1.16
         - canary
 
     steps:
@@ -55,7 +56,11 @@ jobs:
     name: Codegen w/ ${{ matrix.deno-version }}
     strategy:
       matrix:
-        deno-version: ["v1.11", "v1.13", "canary"]
+        deno-version:
+        - v1.11
+        - v1.13
+        - v1.16
+        - canary
       fail-fast: false # run each branch to completion
 
     steps:

@@ -86,10 +86,10 @@ export class IMDSv2 {
       clearTimeout(stopTimeout);
     });
 
-    if (resp.status === 411) {
+    if (resp.status >= 400 && resp.status < 500 && opts.path == 'api/token') {
       resp.body?.cancel();
-      throw new Error(
-        `Metadata server gave HTTP 411 for /${opts.path}; is this not AWS?`);
+      throw new Error(`Metadata server gave HTTP ${resp.status
+        } when asked for an IMDSv2 token; is this not AWS?`);
     } else if (resp.status > 299) {
       resp.body?.cancel();
       const err: any = new Error(
@@ -107,7 +107,6 @@ export class IMDSv2 {
 // dynamic/instance-identity/document - JSON
 // user-data - arbitrary binary data from the user
 // meta-data - https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instancedata-data-categories.html
-
 // Theses paths have some interesting data for talking to AWS services:
 // meta-data/services/domain and meta-data/services/partition
 // TODO: autoconfigure AWS hostnames and signing partitions from IMDSv2 ^^
