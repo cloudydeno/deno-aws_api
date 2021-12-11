@@ -9,10 +9,12 @@ export interface DeleteAlarmsInput {
 
 // refs: 1 - tags: named, input
 export interface DeleteAnomalyDetectorInput {
-  Namespace: string;
-  MetricName: string;
+  Namespace?: string | null;
+  MetricName?: string | null;
   Dimensions?: Dimension[] | null;
-  Stat: string;
+  Stat?: string | null;
+  SingleMetricAnomalyDetector?: SingleMetricAnomalyDetector | null;
+  MetricMathAnomalyDetector?: MetricMathAnomalyDetector | null;
 }
 
 // refs: 1 - tags: named, input
@@ -73,6 +75,7 @@ export interface DescribeAnomalyDetectorsInput {
   Namespace?: string | null;
   MetricName?: string | null;
   Dimensions?: Dimension[] | null;
+  AnomalyDetectorTypes?: AnomalyDetectorType[] | null;
 }
 
 // refs: 1 - tags: named, input
@@ -180,11 +183,13 @@ export interface ListTagsForResourceInput {
 
 // refs: 1 - tags: named, input
 export interface PutAnomalyDetectorInput {
-  Namespace: string;
-  MetricName: string;
+  Namespace?: string | null;
+  MetricName?: string | null;
   Dimensions?: Dimension[] | null;
-  Stat: string;
+  Stat?: string | null;
   Configuration?: AnomalyDetectorConfiguration | null;
+  SingleMetricAnomalyDetector?: SingleMetricAnomalyDetector | null;
+  MetricMathAnomalyDetector?: MetricMathAnomalyDetector | null;
 }
 
 // refs: 1 - tags: named, input
@@ -413,11 +418,81 @@ export interface PutMetricStreamOutput {
   Arn?: string | null;
 }
 
-// refs: 15 - tags: input, named, interface, output
+// refs: 21 - tags: input, named, interface, output
 export interface Dimension {
   Name: string;
   Value: string;
 }
+
+// refs: 3 - tags: input, named, interface, output
+export interface SingleMetricAnomalyDetector {
+  Namespace?: string | null;
+  MetricName?: string | null;
+  Dimensions: Dimension[];
+  Stat?: string | null;
+}
+
+// refs: 3 - tags: input, named, interface, output
+export interface MetricMathAnomalyDetector {
+  MetricDataQueries: MetricDataQuery[];
+}
+
+// refs: 7 - tags: input, named, interface, output
+export interface MetricDataQuery {
+  Id: string;
+  MetricStat?: MetricStat | null;
+  Expression?: string | null;
+  Label?: string | null;
+  ReturnData?: boolean | null;
+  Period?: number | null;
+  AccountId?: string | null;
+}
+
+// refs: 7 - tags: input, named, interface, output
+export interface MetricStat {
+  Metric: Metric;
+  Period: number;
+  Stat: string;
+  Unit?: StandardUnit | null;
+}
+
+// refs: 8 - tags: input, named, interface, output
+export interface Metric {
+  Namespace?: string | null;
+  MetricName?: string | null;
+  Dimensions: Dimension[];
+}
+
+// refs: 14 - tags: input, named, enum, output
+export type StandardUnit =
+| "Seconds"
+| "Microseconds"
+| "Milliseconds"
+| "Bytes"
+| "Kilobytes"
+| "Megabytes"
+| "Gigabytes"
+| "Terabytes"
+| "Bits"
+| "Kilobits"
+| "Megabits"
+| "Gigabits"
+| "Terabits"
+| "Percent"
+| "Count"
+| "Bytes/Second"
+| "Kilobytes/Second"
+| "Megabytes/Second"
+| "Gigabytes/Second"
+| "Terabytes/Second"
+| "Bits/Second"
+| "Kilobits/Second"
+| "Megabits/Second"
+| "Gigabits/Second"
+| "Terabits/Second"
+| "Count/Second"
+| "None"
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, enum, output
 export type AlarmType =
@@ -454,62 +529,11 @@ export type Statistic =
 | "Maximum"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 11 - tags: input, named, enum, output
-export type StandardUnit =
-| "Seconds"
-| "Microseconds"
-| "Milliseconds"
-| "Bytes"
-| "Kilobytes"
-| "Megabytes"
-| "Gigabytes"
-| "Terabytes"
-| "Bits"
-| "Kilobits"
-| "Megabits"
-| "Gigabits"
-| "Terabits"
-| "Percent"
-| "Count"
-| "Bytes/Second"
-| "Kilobytes/Second"
-| "Megabytes/Second"
-| "Gigabytes/Second"
-| "Terabytes/Second"
-| "Bits/Second"
-| "Kilobits/Second"
-| "Megabits/Second"
-| "Gigabits/Second"
-| "Terabits/Second"
-| "Count/Second"
-| "None"
+// refs: 1 - tags: input, named, enum
+export type AnomalyDetectorType =
+| "SINGLE_METRIC"
+| "METRIC_MATH"
 | cmnP.UnexpectedEnumValue;
-
-// refs: 4 - tags: input, named, interface, output
-export interface MetricDataQuery {
-  Id: string;
-  MetricStat?: MetricStat | null;
-  Expression?: string | null;
-  Label?: string | null;
-  ReturnData?: boolean | null;
-  Period?: number | null;
-  AccountId?: string | null;
-}
-
-// refs: 4 - tags: input, named, interface, output
-export interface MetricStat {
-  Metric: Metric;
-  Period: number;
-  Stat: string;
-  Unit?: StandardUnit | null;
-}
-
-// refs: 5 - tags: input, named, interface, output
-export interface Metric {
-  Namespace?: string | null;
-  MetricName?: string | null;
-  Dimensions: Dimension[];
-}
 
 // refs: 1 - tags: input, named, interface
 export interface LabelOptions {
@@ -662,6 +686,8 @@ export interface AnomalyDetector {
   Stat?: string | null;
   Configuration?: AnomalyDetectorConfiguration | null;
   StateValue?: AnomalyDetectorStateValue | null;
+  SingleMetricAnomalyDetector?: SingleMetricAnomalyDetector | null;
+  MetricMathAnomalyDetector?: MetricMathAnomalyDetector | null;
 }
 
 // refs: 1 - tags: output, named, enum

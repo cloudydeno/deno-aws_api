@@ -76,6 +76,7 @@ export interface CreateBucketRequest {
   GrantWrite?: string | null;
   GrantWriteACP?: string | null;
   ObjectLockEnabledForBucket?: boolean | null;
+  ObjectOwnership?: ObjectOwnership | null;
 }
 
 // refs: 1 - tags: named, input
@@ -652,6 +653,7 @@ export interface PutBucketNotificationConfigurationRequest {
   Bucket: string;
   NotificationConfiguration: NotificationConfiguration;
   ExpectedBucketOwner?: string | null;
+  SkipDestinationValidation?: boolean | null;
 }
 
 // refs: 1 - tags: named, input
@@ -1070,6 +1072,7 @@ export interface NotificationConfiguration {
   TopicConfigurations: TopicConfiguration[];
   QueueConfigurations: QueueConfiguration[];
   LambdaFunctionConfigurations: LambdaFunctionConfiguration[];
+  EventBridgeConfiguration?: EventBridgeConfiguration | null;
 }
 
 // refs: 1 - tags: named, output
@@ -1472,6 +1475,7 @@ export type StorageClass =
 | "GLACIER"
 | "DEEP_ARCHIVE"
 | "OUTPOSTS"
+| "GLACIER_IR"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 6 - tags: input, named, enum, output
@@ -1526,6 +1530,13 @@ export type BucketLocationConstraint =
 | "us-gov-west-1"
 | "us-west-1"
 | "us-west-2"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 3 - tags: input, named, enum, output
+export type ObjectOwnership =
+| "BucketOwnerPreferred"
+| "ObjectWriter"
+| "BucketOwnerEnforced"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
@@ -1859,17 +1870,20 @@ export type TransitionStorageClass =
 | "ONEZONE_IA"
 | "INTELLIGENT_TIERING"
 | "DEEP_ARCHIVE"
+| "GLACIER_IR"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, interface, output
 export interface NoncurrentVersionTransition {
   NoncurrentDays?: number | null;
   StorageClass?: TransitionStorageClass | null;
+  NewerNoncurrentVersions?: number | null;
 }
 
 // refs: 4 - tags: input, named, interface, output
 export interface NoncurrentVersionExpiration {
   NoncurrentDays?: number | null;
+  NewerNoncurrentVersions?: number | null;
 }
 
 // refs: 4 - tags: input, named, interface, output
@@ -1899,6 +1913,8 @@ export interface LifecycleRule {
 export interface LifecycleRuleFilter {
   Prefix?: string | null;
   Tag?: Tag | null;
+  ObjectSizeGreaterThan?: number | null;
+  ObjectSizeLessThan?: number | null;
   And?: LifecycleRuleAndOperator | null;
 }
 
@@ -1906,6 +1922,8 @@ export interface LifecycleRuleFilter {
 export interface LifecycleRuleAndOperator {
   Prefix?: string | null;
   Tags: Tag[];
+  ObjectSizeGreaterThan?: number | null;
+  ObjectSizeLessThan?: number | null;
 }
 
 // refs: 1 - tags: input, named, interface
@@ -1943,6 +1961,7 @@ export interface MetricsConfiguration {
 export interface MetricsFilter {
   Prefix?: string | null;
   Tag?: Tag | null;
+  AccessPointArn?: string | null;
   And?: MetricsAndOperator | null;
 }
 
@@ -1950,6 +1969,7 @@ export interface MetricsFilter {
 export interface MetricsAndOperator {
   Prefix?: string | null;
   Tags: Tag[];
+  AccessPointArn?: string | null;
 }
 
 // refs: 2 - tags: input, named, interface, output
@@ -1979,6 +1999,16 @@ export type Event =
 | "s3:Replication:OperationNotTracked"
 | "s3:Replication:OperationMissedThreshold"
 | "s3:Replication:OperationReplicatedAfterThreshold"
+| "s3:ObjectRestore:Delete"
+| "s3:LifecycleTransition"
+| "s3:IntelligentTiering"
+| "s3:ObjectAcl:Put"
+| "s3:LifecycleExpiration:*"
+| "s3:LifecycleExpiration:Delete"
+| "s3:LifecycleExpiration:DeleteMarkerCreated"
+| "s3:ObjectTagging:*"
+| "s3:ObjectTagging:Put"
+| "s3:ObjectTagging:Delete"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface, output
@@ -2045,6 +2075,10 @@ export interface LambdaFunctionConfiguration {
 }
 
 // refs: 2 - tags: input, named, interface, output
+export interface EventBridgeConfiguration {
+}
+
+// refs: 2 - tags: input, named, interface, output
 export interface OwnershipControls {
   Rules: OwnershipControlsRule[];
 }
@@ -2053,12 +2087,6 @@ export interface OwnershipControls {
 export interface OwnershipControlsRule {
   ObjectOwnership: ObjectOwnership;
 }
-
-// refs: 2 - tags: input, named, enum, output
-export type ObjectOwnership =
-| "BucketOwnerPreferred"
-| "ObjectWriter"
-| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface, output
 export interface ReplicationConfiguration {
@@ -2617,6 +2645,7 @@ export type ObjectStorageClass =
 | "INTELLIGENT_TIERING"
 | "DEEP_ARCHIVE"
 | "OUTPOSTS"
+| "GLACIER_IR"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface

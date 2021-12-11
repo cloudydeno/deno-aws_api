@@ -1,15 +1,15 @@
 service,version,fullname,id,namespace,protocol,generated,typechecked,bytecount,cachetime
 dynamodb,2011-12-05,Amazon DynamoDB,,,json,,,,
-dynamodb,2012-08-10,Amazon DynamoDB,dynamodb,DynamoDB,json,ok,ok,125784,2892
-ecr,2015-09-21,Amazon EC2 Container Registry,ecr,ECR,json,ok,ok,50213,2041
-kinesis,2013-12-02,Amazon Kinesis,kinesis,Kinesis,json,ok,ok,32420,1654
-kms,2014-11-01,AWS Key Management Service,kms,KMS,json,ok,ok,52185,2088
+dynamodb,2012-08-10,Amazon DynamoDB,dynamodb,DynamoDB,json,ok,ok,127760,3152
+ecr,2015-09-21,Amazon EC2 Container Registry,ecr,ECR,json,ok,ok,70064,2859
+kinesis,2013-12-02,Amazon Kinesis,kinesis,Kinesis,json,ok,ok,34130,2226
+kms,2014-11-01,AWS Key Management Service,kms,KMS,json,ok,ok,52677,3297
 lambda,2014-11-11,AWS Lambda,,,rest-json,,,,
-lambda,2015-03-31,AWS Lambda,lambda,Lambda,rest-json,ok,ok,101716,2586
-monitoring,2010-08-01,Amazon CloudWatch,cloudwatch,CloudWatch,query,ok,ok,68765,2307
-route53,2013-04-01,Amazon Route 53,route53,Route53,rest-xml,ok,ok,100426,2454
-s3,2006-03-01,Amazon Simple Storage Service,s3,S3,rest-xml,ok,ok,266465,4154
-sesv2,2019-09-27,Amazon Simple Email Service,sesv2,SESV2,rest-json,ok,ok,113601,2449
-sns,2010-03-31,Amazon Simple Notification Service,sns,SNS,query,ok,ok,40028,1807
-sqs,2012-11-05,Amazon Simple Queue Service,sqs,SQS,query,ok,ok,29907,1599
+lambda,2015-03-31,AWS Lambda,lambda,Lambda,rest-json,ok,ok,105008,2680
+monitoring,2010-08-01,Amazon CloudWatch,cloudwatch,CloudWatch,query,ok,ok,72361,2724
+route53,2013-04-01,Amazon Route 53,route53,Route53,rest-xml,ok,ok,100519,3140
+s3,2006-03-01,Amazon Simple Storage Service,s3,S3,rest-xml,ok,ok,269731,5664
+sesv2,2019-09-27,Amazon Simple Email Service,sesv2,SESV2,rest-json,ok,ok,114272,2624
+sns,2010-03-31,Amazon Simple Notification Service,sns,SNS,query,ok,ok,43322,2671
+sqs,2012-11-05,Amazon Simple Queue Service,sqs,SQS,query,ok,ok,29955,2252
 sts,2011-06-15,AWS Security Token Service,sts,STS,query,ok,ok,14596,1492

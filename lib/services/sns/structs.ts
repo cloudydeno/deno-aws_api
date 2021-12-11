@@ -163,6 +163,12 @@ export interface PublishInput {
 }
 
 // refs: 1 - tags: named, input
+export interface PublishBatchInput {
+  TopicArn: string;
+  PublishBatchRequestEntries: PublishBatchRequestEntry[];
+}
+
+// refs: 1 - tags: named, input
 export interface RemovePermissionInput {
   TopicArn: string;
   Label: string;
@@ -346,6 +352,12 @@ export interface PublishResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface PublishBatchResponse {
+  Successful: PublishBatchResultEntry[];
+  Failed: BatchResultErrorEntry[];
+}
+
+// refs: 1 - tags: named, output
 export interface SubscribeResponse {
   SubscriptionArn?: string | null;
 }
@@ -373,11 +385,22 @@ export interface Tag {
   Value: string;
 }
 
-// refs: 1 - tags: input, named, interface
+// refs: 2 - tags: input, named, interface
 export interface MessageAttributeValue {
   DataType: string;
   StringValue?: string | null;
   BinaryValue?: Uint8Array | string | null;
+}
+
+// refs: 1 - tags: input, named, interface
+export interface PublishBatchRequestEntry {
+  Id: string;
+  Message: string;
+  Subject?: string | null;
+  MessageStructure?: string | null;
+  MessageAttributes?: { [key: string]: MessageAttributeValue | null | undefined } | null;
+  MessageDeduplicationId?: string | null;
+  MessageGroupId?: string | null;
 }
 
 // refs: 1 - tags: output, named, interface
@@ -440,4 +463,19 @@ export interface Subscription {
 // refs: 1 - tags: output, named, interface
 export interface Topic {
   TopicArn?: string | null;
+}
+
+// refs: 1 - tags: output, named, interface
+export interface PublishBatchResultEntry {
+  Id?: string | null;
+  MessageId?: string | null;
+  SequenceNumber?: string | null;
+}
+
+// refs: 1 - tags: output, named, interface
+export interface BatchResultErrorEntry {
+  Id: string;
+  Code: string;
+  Message?: string | null;
+  SenderFault: boolean;
 }
