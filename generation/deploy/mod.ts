@@ -1,4 +1,4 @@
-#!/usr/bin/env -S deno run --allow-env --allow-net=:8000,raw.githubusercontent.com,deno-httpcache.s3.dualstack.us-east-2.amazonaws.com generation/deploy/mod.ts
+#!/usr/bin/env -S deno run --allow-env --allow-net=:8000,api.github.com,raw.githubusercontent.com,deno-httpcache.s3.dualstack.us-east-2.amazonaws.com generation/deploy/mod.ts
 import { serve } from "https://deno.land/std@0.115.0/http/server.ts";
 import { escape } from "https://deno.land/x/html_escape@v1.1.5/escape.ts";
 
@@ -55,9 +55,11 @@ async function handleRequest(request: Request): Promise<Response> {
 
     const sdkVersion = sdkVer || generation.sdkVersion;
     const apiVersion = svcVer || await new SDK(sdkVersion).getLatestApiVersion(service);
+    const fullOptions = generation.setDefaults(searchParams);
 
     let apiText = await serveApi({
       generation,
+      generationId: genVer,
       sdkVersion: sdkVersion,
       apiId: service,
       apiVersion: apiVersion,
@@ -71,23 +73,32 @@ async function handleRequest(request: Request): Promise<Response> {
       const module = serviceList[service];
       if (!module) return ResponseText(404, `Service Not Found: ${service}`);
 
+      const fullDocsSearch = new URLSearchParams(searchParams);
+      fullDocsSearch.set('docs', 'full');
+      const fullDocsPath = `${pathname}${fullDocsSearch.toString() ? `?${fullDocsSearch}` : ''}`;
+
       return new Response(`<!doctype html>
 <title>${module.name} - AWS API Codegen</title>
 <h1>${module.name} - AWS API Codegen</h1>
+<p>
+  <strong>API Documentation</strong>
+  | <a href="https://doc.deno.land/${origin.replace('://', '/')}${fullDocsPath}/~/${module.name}">Deno Module Docs</a>
+  | <a href="https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/${module.name}.html">Original docs from AWS-JS-SDK</a>
+</p>
 <h2>Customize Generated Module</h2>
 <form method="GET">
 <table>
 <tr>
   <th>Only include specific operations:</th>
-  <td><input type="input" name="actions" value="${searchParams.get('actions') || ''}"
+  <td><input type="input" name="actions" value="${fullOptions.get('actions') || ''}"
       placeholder="comma seperated Action names" /></td>
 </tr>
 <tr>
   <th>Include documentation comments:</th>
   <td><select name="docs">
-    <option value="none">None</option>
-    <option value="short"${searchParams.get('docs') == 'short' ? ' selected' : ''}>First lines only</option>
-    <option value="full"${searchParams.get('docs') == 'full' ? ' selected' : ''}>Full documentation</option>
+    <option value="none"${fullOptions.get('docs') == 'none' ? ' selected' : ''}>None</option>
+    <option value="short"${fullOptions.get('docs') == 'short' ? ' selected' : ''}>First lines only</option>
+    <option value="full"${fullOptions.get('docs') == 'full' ? ' selected' : ''}>Full documentation</option>
   </select></td>
 </tr>
 </table>
@@ -141,13 +152,15 @@ ${escape(apiText)}
 
     return new Response(`<!doctype html>
 <h1>AWS API Client Codegen</h1>
-<p><strong>NOTICE</strong>:
-  This codegen server / API is extremely likely to change over time!
-  Currently recommended for prototyping and experimentation only!
-</p>
 <p>
   For documentation about this web service, please see
   <a href="https://github.com/cloudydeno/deno-aws_api/wiki/Web-Service">this Github Wiki page</a>.
+</p>
+<p>
+  I recommend using the action filter when possible,
+  as it reduces module size and typecheck time.
+  This achieves a similar modularity as the AWS-JS-SDK v3.
+  The UI at the top of the module webpage can help customize your generated module.
 </p>
 <h2>Path parameters</h2>
 <p>Minimal: <code>/v{module version}/services/{service ID}.ts</code></p>
@@ -182,7 +195,7 @@ import { SQS } from "${origin}${modRoot}/sqs@2012-11-05.ts?actions=ReceiveMessag
 ${serviceList.map(([svcId, svc]) => `<tr>
 <td><a href="${modRoot}/${svcId}.ts">${svc.name}</a></td>
 <td><code>import { ${svc.name} } from "${origin}${modRoot}/${svcId}.ts";</code></td>
-<td><a href="https://doc.deno.land/${protocol.replace(/:$/, '')}/${host}${modRoot}/${svcId}.ts%3Fdocs=full">Docs</a></td>
+<td><a href="https://doc.deno.land/${protocol.replace(/:$/, '')}/${host}${modRoot}/${svcId}.ts%3Fdocs=full/~/${svc.name}">Docs</a></td>
 </tr>
 `).join('')}
 </tbody>
@@ -201,6 +214,7 @@ ${serviceList.map(([svcId, svc]) => `<tr>
 
 async function serveApi(opts: {
   generation: ModuleGenerator,
+  generationId: string;
   sdkVersion: string,
   apiId: string,
   apiVersion: string,
@@ -212,8 +226,11 @@ async function serveApi(opts: {
   const headerChunks = new Array<string>();
   headerChunks.push(`// Generation parameters:`);
   headerChunks.push(`//   aws-sdk-js definitions from ${opts.sdkVersion}`);
-  headerChunks.push(`//   AWS service UID ${opts.apiId}-${opts.apiVersion}`);
-  headerChunks.push(`//   extra options: ${opts.options}`);
+  headerChunks.push(`//   AWS service UID: ${opts.apiId}-${opts.apiVersion}`);
+  headerChunks.push(`//   code generation: ${opts.generationId}`);
+  if (opts.options.toString()) {
+    headerChunks.push(`//   extra options: ${opts.options}`);
+  }
   headerChunks.push(`//   current time: ${new Date().toISOString()}`);
 
   const serviceList = await sdk.getServiceList();
