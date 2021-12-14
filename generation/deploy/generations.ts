@@ -25,7 +25,7 @@ export class ModuleGenerator {
   ) {}
 
   setDefaults(options: URLSearchParams) {
-    const newOpts = new URLSearchParams([...options]);
+    const newOpts = new URLSearchParams(options);
     for (const [option, value] of this.defaults) {
       if (!options.has(option)) {
         newOpts.append(option, value);
