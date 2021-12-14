@@ -115,8 +115,9 @@ export function wrapServiceClient(
     case 'ec2':
       return new QueryServiceClient(apiMetadata.apiVersion, signingFetcher);
     case 'json':
-    case 'rest-json':
       return new JsonServiceClient(apiMetadata.targetPrefix ?? 'TODO', apiMetadata.jsonVersion ?? '1.0', signingFetcher);
+    case 'rest-json':
+      return new RestJsonServiceClient(signingFetcher);
     case 'rest-xml':
       return new XmlServiceClient(signingFetcher);
     default: throw new Error(`TODO: protocol ${apiMetadata.protocol}`);
@@ -205,18 +206,18 @@ export class XmlServiceClient extends BaseServiceClient {
 }
 
 export class JsonServiceClient extends BaseServiceClient {
-  #serviceTarget: string;
-  #jsonVersion: string;
-  constructor(serviceTarget: string, jsonVersion: string, signedFetcher: SigningFetcher) {
+  constructor(
+    public readonly serviceTarget: string,
+    public readonly jsonVersion: string,
+    signedFetcher: SigningFetcher
+  ) {
     super(signedFetcher);
-    this.#serviceTarget = serviceTarget;
-    this.#jsonVersion = jsonVersion;
   }
 
   async performRequest(config: ApiRequestConfig): Promise<Response> {
     const headers = config.headers ?? new Headers;
-    headers.append('x-amz-target', `${this.#serviceTarget}.${config.action}`);
-    headers.append('accept', 'application/x-amz-json-'+this.#jsonVersion);
+    headers.append('x-amz-target', `${this.serviceTarget}.${config.action}`);
+    headers.append('accept', 'application/x-amz-json-'+this.jsonVersion);
 
     let reqBody: Uint8Array | undefined;
     if (config.body instanceof Uint8Array) {
@@ -224,7 +225,29 @@ export class JsonServiceClient extends BaseServiceClient {
 
     } else if (config.body) {
       reqBody = new TextEncoder().encode(JSON.stringify(config.body));
-      headers.append('content-type', 'application/x-amz-json-'+this.#jsonVersion);
+      headers.append('content-type', 'application/x-amz-json-'+this.jsonVersion);
+    }
+
+    return super.performRequest({
+      ...config,
+      headers,
+      body: reqBody,
+    });
+  }
+}
+
+export class RestJsonServiceClient extends BaseServiceClient {
+  async performRequest(config: ApiRequestConfig): Promise<Response> {
+    const headers = config.headers ?? new Headers;
+    headers.append('accept', 'application/json');
+
+    let reqBody: Uint8Array | undefined;
+    if (config.body instanceof Uint8Array) {
+      reqBody = config.body;
+
+    } else if (config.body) {
+      reqBody = new TextEncoder().encode(JSON.stringify(config.body));
+      headers.append('content-type', 'application/json');
     }
 
     return super.performRequest({

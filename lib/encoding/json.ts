@@ -155,12 +155,12 @@ export function serializeJsonValue(input: JSONValue): string | undefined {
   return JSON.stringify(input);
 }
 export function readJsonValue(input: JSONValue): JSONValue {
-  if (input == null) return undefined;
+  if (input == null || input == '') return undefined;
   if (typeof input !== 'string') throw new Error(`Server's JSON Value was ${typeof input} instead of string`);
   return JSON.parse(input);
 }
 export function readJsonValueBase64(input: JSONValue): JSONValue {
-  if (input == null) return undefined;
+  if (input == null || input == '') return undefined;
   if (typeof input !== 'string') throw new Error(`Server's JSON Value was ${typeof input} instead of string`);
   return JSON.parse(atob(input));
 }
