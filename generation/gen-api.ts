@@ -31,6 +31,8 @@ export function generateApiTypescript(
   chunks.push(`  static ApiMetadata: client.ApiMetadata = ${JSON.stringify(apiSpec.metadata, null, 2).replace(/\n/g, `\n  `)};\n`);
 
   for (const operation of Object.values(apiSpec.operations)) {
+    const lowerCamelName = operation.name[0].toLowerCase() + operation.name.slice(1);
+
     let inputShape =  operation.input ? shapes.get(operation.input) : null;
     if (inputShape?.spec.type === 'structure' && Object.values(inputShape.spec.members).length === 0) {
       inputShape.refCount--;
@@ -41,6 +43,14 @@ export function generateApiTypescript(
     if (outputShape?.spec.type === 'structure' && Object.values(outputShape.spec.members).length === 0) {
       outputShape.refCount--;
       outputShape = null;
+    }
+
+    if (outputShape?.tags.has('eventstream')) {
+      chunks.push(`  ${cleanFuncName(lowerCamelName)}() {`);
+      chunks.push(`    // https://docs.aws.amazon.com/AmazonS3/latest/API/RESTSelectObjectAppendix.html`);
+      chunks.push(`    throw new Error("TODO: The response streaming format for this API call is not implemented in /x/aws_api.");`);
+      chunks.push(`  }`);
+      continue;
     }
 
     let signature = `(`;
@@ -80,7 +90,6 @@ export function generateApiTypescript(
       chunks.push(genDocsComment(operation.documentation, '  ', docMode));
     }
 
-    const lowerCamelName = operation.name[0].toLowerCase() + operation.name.slice(1);
     chunks.push(`  async ${cleanFuncName(lowerCamelName)}${signature} {`);
     let protoPathParts: Map<string,string> | undefined;
     const referencedInputs = new Set(includeOpts ? ['opts'] : []);

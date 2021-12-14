@@ -82,6 +82,11 @@ export class ShapeLibrary {
       shape.tags.add('named');
       shape.tags.add('output');
       this.visitAllShapesDeep(shape, ref => visitShape(ref, 'output'));
+
+      if (shape.payloadField && shape.spec.type == 'structure') {
+        const payloadSpec = this.get(shape.spec.members[shape.payloadField]);
+        if (payloadSpec.spec.eventstream) shape.tags.add('eventstream');
+      }
     }
     for (const shape of this.outputInnerShapes) {
       shape.tags.add('output');
@@ -134,6 +139,7 @@ export type ShapeTag =
 | 'interface' | 'enum'
 | 'input' | 'output'
 | 'recursed' | 'recursive'
+| 'eventstream'
 ;
 
 export class KnownShape {

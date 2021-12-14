@@ -24,8 +24,8 @@ export interface ApiMetadata {
   "jsonVersion"?: "1.0" | "1.1",
   "globalEndpoint"?: string;
   "protocol": "rest-xml" | "query" | "ec2" | "json" | "rest-json";
-  "protocolSettings"?: {
-    "h2": "eventstream"; // only for kinesis
+  "protocolSettings"?: { // not referenced by aws sdk
+    "h2"?: "eventstream"; // rare (kinesis, runtime.lex)
   };
   "serviceAbbreviation"?: string;
   "serviceFullName": string;
@@ -75,6 +75,7 @@ export interface ApiShapeMetadata {
   "documentation"?: string;
   "payload"?: string; // xml-rest body field name
   "resultWrapper"?: string; // only used for test fixturesI guess
+  "eventstream"?: boolean; // indicates proprietary stream framing
 };
 export type ApiShapes =
   | ShapeBoolean
