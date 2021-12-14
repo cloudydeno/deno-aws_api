@@ -39,6 +39,7 @@ jobs:
         restore-keys: deno/${{ matrix.deno-version }}-https/v1-
 
     - name: Check generation/deploy/mod.ts
+      if: ${{ matrix.deno-version != 'v1.11' && matrix.deno-version != 'v1.12' }}
       run: time deno cache generation/deploy/mod.ts
 
     - name: Check client/mod.ts
