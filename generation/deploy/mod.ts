@@ -55,9 +55,11 @@ async function handleRequest(request: Request): Promise<Response> {
 
     const sdkVersion = sdkVer || generation.sdkVersion;
     const apiVersion = svcVer || await new SDK(sdkVersion).getLatestApiVersion(service);
+    const fullOptions = generation.setDefaults(searchParams);
 
     let apiText = await serveApi({
       generation,
+      generationId: genVer,
       sdkVersion: sdkVersion,
       apiId: service,
       apiVersion: apiVersion,
@@ -79,15 +81,15 @@ async function handleRequest(request: Request): Promise<Response> {
 <table>
 <tr>
   <th>Only include specific operations:</th>
-  <td><input type="input" name="actions" value="${searchParams.get('actions') || ''}"
+  <td><input type="input" name="actions" value="${fullOptions.get('actions') || ''}"
       placeholder="comma seperated Action names" /></td>
 </tr>
 <tr>
   <th>Include documentation comments:</th>
   <td><select name="docs">
-    <option value="none">None</option>
-    <option value="short"${searchParams.get('docs') == 'short' ? ' selected' : ''}>First lines only</option>
-    <option value="full"${searchParams.get('docs') == 'full' ? ' selected' : ''}>Full documentation</option>
+    <option value="none"${fullOptions.get('docs') == 'none' ? ' selected' : ''}>None</option>
+    <option value="short"${fullOptions.get('docs') == 'short' ? ' selected' : ''}>First lines only</option>
+    <option value="full"${fullOptions.get('docs') == 'full' ? ' selected' : ''}>Full documentation</option>
   </select></td>
 </tr>
 </table>
@@ -201,6 +203,7 @@ ${serviceList.map(([svcId, svc]) => `<tr>
 
 async function serveApi(opts: {
   generation: ModuleGenerator,
+  generationId: string;
   sdkVersion: string,
   apiId: string,
   apiVersion: string,
@@ -212,8 +215,11 @@ async function serveApi(opts: {
   const headerChunks = new Array<string>();
   headerChunks.push(`// Generation parameters:`);
   headerChunks.push(`//   aws-sdk-js definitions from ${opts.sdkVersion}`);
-  headerChunks.push(`//   AWS service UID ${opts.apiId}-${opts.apiVersion}`);
-  headerChunks.push(`//   extra options: ${opts.options}`);
+  headerChunks.push(`//   AWS service UID: ${opts.apiId}-${opts.apiVersion}`);
+  headerChunks.push(`//   code generation: ${opts.generationId}`);
+  if (opts.options.toString()) {
+    headerChunks.push(`//   extra options: ${opts.options}`);
+  }
   headerChunks.push(`//   current time: ${new Date().toISOString()}`);
 
   const serviceList = await sdk.getServiceList();
