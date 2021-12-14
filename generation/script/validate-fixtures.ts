@@ -24,12 +24,15 @@ interface ProtocolInputTestCase {
 }
 interface ProtocolOutputTestCase {
   "given": Schema.ApiOperation;
-  "result": { [key: string]: any };
+  "result"?: { [key: string]: any };
   "response": {
     "status_code": number;
     "headers": { [key: string]: string };
     "body": string;
   };
+  "error"?: { [key: string]: any };
+  "errorCode"?: string;
+  "errorMessage"?: string;
 }
 
 function lowerCamel(str: string): string {
@@ -83,7 +86,7 @@ async function *readTestFixtures(filePath: string): AsyncGenerator<TestRun> {
     for (const testCase of cases) {
       let inners: TestRunCase;
       let descr = filePath.split('/fixtures/')[1] + ': ' + (description ?? "Test case");
-      if ('result' in testCase) {
+      if ('response' in testCase) {
         inners = { category: 'output', testCase: testCase as ProtocolOutputTestCase };
         descr += ` with result ${JSON.stringify(inners.testCase.result)}`;
       } else {
@@ -137,7 +140,7 @@ async function generateRun(run: TestRun): Promise<void> {
 
   const chunks = new Array<string>();
   chunks.push('\n/////////\n');
-  chunks.push(`import { assertEquals } from "https://deno.land/std@0.115.0/testing/asserts.ts";`);
+  chunks.push(`import { assertEquals, assertRejects } from "https://deno.land/std@0.115.0/testing/asserts.ts";`);
   chunks.push(`import { wrapServiceClient } from '../../client/client.ts';\n`);
   chunks.push(`import type { ServiceApiClass } from '../../client/common.ts';\n`);
 
@@ -145,6 +148,8 @@ async function generateRun(run: TestRun): Promise<void> {
   chunks.push(`async function ${mockFuncName}(request: Request, opts: {hostPrefix?: string, urlPath: string}): Promise<Response> {`);
   if (run.category === 'input') {
     const { serialized } = run.testCase;
+
+    if (!serialized) console.log(run);
 
     const expectedBody = serialized.body?.[0] === '{'
       ? JSON.stringify(JSON.parse(serialized.body))
@@ -164,7 +169,11 @@ async function generateRun(run: TestRun): Promise<void> {
 
   } else {
     const { response } = run.testCase;
-    chunks.push(`  return new Response(new TextEncoder().encode(${JSON.stringify(response.body)}), {`);
+    // if (response.body == null) {
+    //   console.log(run);
+    //   Deno.exit(4);
+    // }
+    chunks.push(`  return new Response(new TextEncoder().encode(${JSON.stringify(response.body ?? '{}')}), {`);
     chunks.push(`    headers: ${JSON.stringify(response.headers)},`);
     chunks.push(`    status: ${JSON.stringify(response.status_code)},`);
     chunks.push(`  });`);
@@ -191,11 +200,15 @@ async function generateRun(run: TestRun): Promise<void> {
     chunks.push(`  await testService.${lowerCamel(given.name)}(${paramText});\n`);
     chunks.push(`});`);
   } else {
-    const { given, result } = run.testCase;
+    const { given, result, error } = run.testCase;
     chunks.push(`import { testTransformJsObj } from '../../encoding/common.ts';`);
     chunks.push(`Deno.test(${JSON.stringify(run.description)}, async () => {`);
     if (run.description.includes('Ignores undefined output') || run.description.includes('Enum with result {}')) {
       chunks.push(`  const result: void = await testService.${lowerCamel(given.name)}();\n`);
+    } else if (error) {
+      chunks.push(`  await assertRejects(async () => {\n`);
+      chunks.push(`    const result: void = await testService.${lowerCamel(given.name)}();\n`);
+      chunks.push(`  });`);
     } else {
       chunks.push(`  const result = await testService.${lowerCamel(given.name)}();\n`);
       chunks.push(`  const resultJson = JSON.stringify(testTransformJsObj(result));`);
