@@ -1,5 +1,5 @@
 import { readCSVObjects, writeCSVObjects } from "https://deno.land/x/csv@v0.6.0/mod.ts";
-import * as path from "https://deno.land/std@0.105.0/path/mod.ts";
+import * as path from "https://deno.land/std@0.115.0/path/mod.ts";
 import ServiceCodeGen from '../code-gen.ts';
 import type * as Schema from '../sdk-schema.ts';
 
