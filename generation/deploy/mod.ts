@@ -1,13 +1,16 @@
+#!/usr/bin/env -S deno run --allow-env --allow-net=:8000,raw.githubusercontent.com,deno-httpcache.s3.dualstack.us-east-2.amazonaws.com generation/deploy/mod.ts
+import { serve } from "https://deno.land/std@0.115.0/http/server.ts";
 import { escape } from "https://deno.land/x/html_escape@v1.1.5/escape.ts";
+
 import { SDK } from "./sdk-datasource.ts";
 import * as CompletionApi from './completion-api.ts';
 import { Generations, LatestGeneration, ModuleGenerator } from "./generations.ts";
 
-addEventListener("fetch", async (event) => {
-  const request = (event as any).request as Request;
+console.log("Listening on http://localhost:8000");
+serve(async request => {
   const response = await handleRequest(request).catch(renderError);
   response.headers.set("server", "aws_api-generation/v0.4.0");
-  (event as any).respondWith(response);
+  return response;
 });
 
 function renderError(err: Error) {
