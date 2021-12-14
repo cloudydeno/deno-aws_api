@@ -82,7 +82,7 @@ async function handleRequest(request: Request): Promise<Response> {
 <h1>${module.name} - AWS API Codegen</h1>
 <p>
   <strong>API Documentation</strong>
-  | <a href="https://doc.deno.land/${origin.replace('://', '/')}${fullDocsPath}/~/${module.name}">Deno Module Docs</a>
+  | <a href="https://doc.deno.land/${origin}${fullDocsPath}/~/${module.name}">Deno Module Docs</a>
   | <a href="https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/${module.name}.html">Original docs from AWS-JS-SDK</a>
 </p>
 <h2>Customize Generated Module</h2>
@@ -195,7 +195,7 @@ import { SQS } from "${origin}${modRoot}/sqs@2012-11-05.ts?actions=ReceiveMessag
 ${serviceList.map(([svcId, svc]) => `<tr>
 <td><a href="${modRoot}/${svcId}.ts">${svc.name}</a></td>
 <td><code>import { ${svc.name} } from "${origin}${modRoot}/${svcId}.ts";</code></td>
-<td><a href="https://doc.deno.land/${protocol.replace(/:$/, '')}/${host}${modRoot}/${svcId}.ts%3Fdocs=full/~/${svc.name}">Docs</a></td>
+<td><a href="https://doc.deno.land/${protocol}//${host}${modRoot}/${svcId}.ts%3Fdocs=full/~/${svc.name}">Docs</a></td>
 </tr>
 `).join('')}
 </tbody>
