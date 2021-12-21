@@ -15,7 +15,8 @@ export default class ServiceCodeGen {
 
   isTest: boolean;
   docMode: 'none' | 'short' | 'full';
-  includeOpts: boolean;
+  includeOpts: boolean; // for codegen v0.2
+  includeJsonRemap: boolean; // for codegen v0.3
   shapes: ShapeLibrary;
 
   constructor(specs: {
@@ -38,6 +39,7 @@ export default class ServiceCodeGen {
     }
 
     this.includeOpts = (opts.get('includeOpts') || 'yes') !== 'no';
+    this.includeJsonRemap = (opts.get('includeJsonRemap') || 'yes') !== 'no';
 
     // mutate the specs to fix inaccuracies
     fixupApiSpec(this.apiSpec);
@@ -50,7 +52,9 @@ export default class ServiceCodeGen {
 
   generateTypescript(namespace: string): string {
     const helpers = makeHelperLibrary({ isTest: this.isTest });
-    const protocol = makeProtocolCodegenFor(this.apiSpec.metadata, this.shapes, helpers);
+    const protocol = makeProtocolCodegenFor(this.apiSpec.metadata, this.shapes, helpers, {
+      includeJsonRemap: this.includeJsonRemap,
+    });
 
     const chunks = new Array<string>();
     chunks.push(`export class ${namespace} {`);
@@ -84,7 +88,9 @@ export default class ServiceCodeGen {
 
   generateModTypescript(namespace: string): string {
     const helpers = makeHelperLibrary({ isTest: this.isTest });
-    const protocol = makeProtocolCodegenFor(this.apiSpec.metadata, this.shapes, helpers);
+    const protocol = makeProtocolCodegenFor(this.apiSpec.metadata, this.shapes, helpers, {
+      includeJsonRemap: this.includeJsonRemap,
+    });
 
     helpers.addDep("s", "./structs.ts");
 
@@ -116,7 +122,9 @@ export default class ServiceCodeGen {
 
   generateStructsTypescript(): string {
     const helpers = makeHelperLibrary({ isTest: this.isTest });
-    const protocol = makeProtocolCodegenFor(this.apiSpec.metadata, this.shapes, helpers);
+    const protocol = makeProtocolCodegenFor(this.apiSpec.metadata, this.shapes, helpers, {
+      includeJsonRemap: this.includeJsonRemap,
+    });
 
     const structGen = new StructEmitter(this.apiSpec, this.shapes, helpers, protocol, '', this.docMode);
     const structCode = structGen.generateStructsTypescript(['iface']);

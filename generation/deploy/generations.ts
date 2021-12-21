@@ -57,6 +57,7 @@ export const Generations = new Map<string, ModuleGenerator>([
     'v2.895.0',
     new URLSearchParams([
       ['includeOpts', 'no'],
+      ['includeJsonRemap', 'no'],
       ['docs', 'none'],
     ]),
     (config, opts) => new LatestCodeGen(config, opts),
@@ -66,6 +67,7 @@ export const Generations = new Map<string, ModuleGenerator>([
     'https://deno.land/std@0.105.0',
     'v2.971.0',
     new URLSearchParams([
+      ['includeJsonRemap', 'no'],
       ['docs', 'none'],
     ]),
     (config, opts) => new LatestCodeGen(config, opts),

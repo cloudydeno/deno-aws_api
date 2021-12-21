@@ -6,6 +6,9 @@ export default class ProtocolJsonCodegen {
   constructor(
     public shapes: ShapeLibrary,
     public helpers: HelperLibrary,
+    public flags: {
+      includeJsonRemap: boolean;
+    },
   ) {}
 
   generateOperationInputParsingTypescript(inputShape: KnownShape | null, meta: Schema.LocationInfo & {paramRef?: string}): { inputParsingCode: string; inputVariables: string[]; } {
@@ -183,7 +186,6 @@ export default class ProtocolJsonCodegen {
     const optional: {[key: string]: string | Symbol} = {};
     let hasOptional = false;
     const remap: {[key: string]: string} = {};
-    let hasRemap = false;
     const arrays = new Set<string>();
 
     this.helpers.useHelper("jsonP");
@@ -194,8 +196,7 @@ export default class ProtocolJsonCodegen {
       let typeSpec: string | Symbol | undefined;
 
       const fieldShape = this.shapes.get(spec);
-      const defaultName = this.ucfirst(field) ?? field;
-      const locationName = this.ucfirst(spec.queryName) ?? spec.locationName ?? fieldShape.spec.locationName ?? defaultName;
+      const locationName = spec.locationName ?? fieldShape.spec.locationName ?? field;
 
       if (fieldShape.spec.type === 'list') {
         arrays.add(field);
@@ -289,7 +290,8 @@ export default class ProtocolJsonCodegen {
       chunks.push(`    optional: {},`);
     }
 
-    if (hasRemap) {
+    // feature flagged to not change v0.2 and lower
+    if (this.flags.includeJsonRemap && Object.keys(remap).length > 0) {
       chunks.push(`    remap: ${JSON.stringify(remap)},`);
     }
 
