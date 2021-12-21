@@ -4,7 +4,7 @@ export function genDocsComment(docsXml: string, indentation: string, mode: 'shor
   const s = indentation;
   try {
     const {root} = parseXml(`<top>${docsXml}</top>`, true);
-    const body = genBlock(root!, true);
+    const body = genBlock(root!, true).replace(/\*\//g, '*\\/');
     if (mode === 'short') {
       return `${s}/** ${body.split('\n')[0]} */`;
     }
