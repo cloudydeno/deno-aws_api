@@ -37,6 +37,10 @@ l:for (const top of root.children) {
         break;
       case 'p':
       case 'div':
+        if (top.attributes['class'] == 'seeAlso') {
+          chunks.push('See also: '+genParagraph(top));
+          break;
+        }
         chunks.push(genParagraph(top));
         break;
       case 'ul':
@@ -113,7 +117,7 @@ function genParagraph(node: XmlNode) {
       case 'a':
         const { href } = top.attributes;
         if (href) {
-          pieces.push(`"${genParagraph(top).trim()}" (${href})\n`);
+          pieces.push(`[${genParagraph(top).trim()}](${href})`);
         } else {
           pieces.push(`"${genParagraph(top).trim()}"`);
         }
