@@ -1389,7 +1389,7 @@ export interface RestoreObjectOutput {
   RestoreOutputPath?: string | null;
 }
 
-// refs: 1 - tags: named, output
+// refs: 1 - tags: named, output, eventstream
 export interface SelectObjectContentOutput {
   Payload?: SelectObjectContentEventStream | null;
 }
