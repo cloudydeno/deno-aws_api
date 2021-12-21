@@ -8,6 +8,7 @@ import {
   Credentials, CredentialsProvider,
   getRequestId,
   EndpointResolver,
+  ServiceClientExtras,
 } from './common.ts';
 
 import { readXmlResult, stringify } from "../encoding/xml.ts";
@@ -24,12 +25,14 @@ export class BaseApiFactory implements ApiFactory {
   #credentials: CredentialsProvider;
   #endpointResolver: EndpointResolver;
   #region?: string | null;
+  #extras: ServiceClientExtras;
   constructor(opts: {
-    credentialProvider?: CredentialsProvider,
-    credentials?: Credentials,
-    endpointResolver: EndpointResolver,
+    credentialProvider?: CredentialsProvider;
+    credentials?: Credentials;
+    endpointResolver: EndpointResolver;
     region?: string;
     fixedEndpoint?: string;
+    extras?: ServiceClientExtras;
   }) {
     if (opts.credentials != null) {
       const {credentials} = opts;
@@ -46,14 +49,14 @@ export class BaseApiFactory implements ApiFactory {
     }
 
     this.#endpointResolver = opts.endpointResolver;
+    this.#extras = opts.extras ?? {};
   }
 
   makeNew<T>(apiConstructor: ServiceApiClass<T>): T {
     return new apiConstructor(this);
   }
 
-  // TODO: second argument for extra config (endpoint, logging, etc)
-  buildServiceClient(apiMetadata: ApiMetadata): ServiceClient {
+  buildServiceClient(apiMetadata: ApiMetadata, extras?: ServiceClientExtras): ServiceClient {
     // TODO: seems like importexport and sdb still reference v2
     if (apiMetadata.signatureVersion === 'v2') throw new Error(
       `TODO: signature version ${apiMetadata.signatureVersion}`);
@@ -75,6 +78,13 @@ export class BaseApiFactory implements ApiFactory {
 
       let request = new Request(url.toString(), baseRequest);
 
+      if (extras?.mutateRequest) {
+        request = await extras.mutateRequest(request);
+      }
+      if (this.#extras.mutateRequest) {
+        request = await this.#extras.mutateRequest(request);
+      }
+
       if (!opts.skipSigning) {
         const credentials = await this.#credentials.getCredentials();
         const signer = new AWSSignerV4(signingRegion, credentials);
@@ -84,7 +94,16 @@ export class BaseApiFactory implements ApiFactory {
         request = await signer.sign(signingName, request);
       }
 
-      return await fetch(request);
+      const response = await fetch(request);
+
+      if (extras?.afterFetch) {
+        await extras.afterFetch(response, request);
+      }
+      if (this.#extras.afterFetch) {
+        await this.#extras.afterFetch(response, request);
+      }
+
+      return response;
     }
 
     return wrapServiceClient(apiMetadata, signingFetcher);
