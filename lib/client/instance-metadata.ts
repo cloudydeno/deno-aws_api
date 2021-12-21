@@ -69,7 +69,8 @@ export class IMDSv2 {
     headers: HeadersInit,
   }) {
     const aborter = new AbortController();
-    const stopTimeout = setTimeout(() => aborter.abort(), opts.timeoutMs);
+    const timeoutText = `Instance Metadata Timeout: ${opts.timeoutMs}ms`;
+    const stopTimeout = setTimeout(() => aborter.abort(timeoutText), opts.timeoutMs);
 
     const resp = await fetch(new URL(opts.path, this.baseUrl), {
       method: opts.method,
@@ -78,8 +79,7 @@ export class IMDSv2 {
     }).catch(err => {
       // Rethrow aborted fetches as nicer timeouts
       if (err instanceof DOMException && err.message.includes('aborted')) {
-        return Promise.reject(new Error(
-          `Instance Metadata Timeout: ${opts.timeoutMs}ms`));
+        return Promise.reject(new Error(timeoutText));
       }
       return Promise.reject(err);
     }).finally(() => {
