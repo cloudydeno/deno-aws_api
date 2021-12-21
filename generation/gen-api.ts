@@ -5,7 +5,7 @@ import { ProtocolCodegen } from "./protocol.ts";
 
 import { genDocsComment } from "./gen-docs.ts";
 import { StructEmitter } from "./gen-structs.ts";
-import { unauthenticatedApis, cleanFuncName } from './quirks.ts';
+import { unauthenticatedApis, cleanFuncName, ServiceApiClientExtras } from './quirks.ts';
 
 const NULL_BODY_STATUS = [101, 204, 205, 304];
 
@@ -18,15 +18,20 @@ export function generateApiTypescript(
   namePrefix: string,
   docMode: 'none' | 'short' | 'full',
   includeOpts: boolean,
+  includeClientExtras: boolean,
 ): string {
 
   const structEmitter = new StructEmitter(apiSpec, shapes, helpers, protocol, namePrefix, docMode);
   helpers.useHelper("client");
 
+  const apiClientExtras = ServiceApiClientExtras.get(apiSpec.metadata.serviceId);
+  let serviceClientSecondParam = (apiClientExtras && includeClientExtras)
+    ? `, ${apiClientExtras}` : '';
+
   const chunks = new Array<string>();
   chunks.push(`  #client: client.ServiceClient;`);
   chunks.push(`  constructor(apiFactory: client.ApiFactory) {`);
-  chunks.push(`    this.#client = apiFactory.buildServiceClient(${namespace}.ApiMetadata);`);
+  chunks.push(`    this.#client = apiFactory.buildServiceClient(${namespace}.ApiMetadata${serviceClientSecondParam});`);
   chunks.push(`  }\n`);
   chunks.push(`  static ApiMetadata: client.ApiMetadata = ${JSON.stringify(apiSpec.metadata, null, 2).replace(/\n/g, `\n  `)};\n`);
 

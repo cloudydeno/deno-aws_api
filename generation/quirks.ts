@@ -14,6 +14,23 @@ export const unauthenticatedApis = new Set<string>([
   'STS.AssumeRoleWithWebIdentity',
 ]);
 
+/**
+ * Dictionary of extra code that some APIs need to add to their ApiClient.
+ * Related to https://github.com/aws/aws-sdk-js/tree/master/lib/services
+ * See also https://github.com/cloudydeno/deno-aws_api/issues/20
+ */
+export const ServiceApiClientExtras = new Map<string, string>([
+
+  ["Glacier", `{
+      mutateRequest(request: Request) {
+        const headers = new Headers(request.headers);
+        headers.set('x-amz-glacier-version', Glacier.ApiMetadata.apiVersion);
+        return new Request(request, { headers });
+      },
+    }`],
+
+]);
+
 ////////////////////////////////
 // Operation/Shape problems
 

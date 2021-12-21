@@ -17,6 +17,7 @@ export default class ServiceCodeGen {
   docMode: 'none' | 'short' | 'full';
   includeOpts: boolean; // for codegen v0.2
   includeJsonRemap: boolean; // for codegen v0.3
+  includeClientExtras: boolean; // for aws-api v0.6.0
   shapes: ShapeLibrary;
 
   constructor(specs: {
@@ -40,6 +41,7 @@ export default class ServiceCodeGen {
 
     this.includeOpts = (opts.get('includeOpts') || 'yes') !== 'no';
     this.includeJsonRemap = (opts.get('includeJsonRemap') || 'yes') !== 'no';
+    this.includeClientExtras = (opts.get('includeClientExtras') || 'yes') !== 'no';
 
     // mutate the specs to fix inaccuracies
     fixupApiSpec(this.apiSpec);
@@ -60,7 +62,7 @@ export default class ServiceCodeGen {
     chunks.push(`export class ${namespace} {`);
 
     const structGen = new StructEmitter(this.apiSpec, this.shapes, helpers, protocol, '', this.docMode);
-    chunks.push(generateApiTypescript(this.apiSpec, this.shapes, helpers, protocol, namespace, '', this.docMode, this.includeOpts));
+    chunks.push(generateApiTypescript(this.apiSpec, this.shapes, helpers, protocol, namespace, '', this.docMode, this.includeOpts, this.includeClientExtras));
 
     if (this.waitersSpec && Object.keys(this.waitersSpec.waiters).length > 0) {
       chunks.push(`  // Resource State Waiters\n`);
@@ -98,7 +100,7 @@ export default class ServiceCodeGen {
     chunks.push(`export class ${namespace} {`);
 
     const structGen = new StructEmitter(this.apiSpec, this.shapes, helpers, protocol, 's.', this.docMode);
-    chunks.push(generateApiTypescript(this.apiSpec, this.shapes, helpers, protocol, namespace, 's.', this.docMode, this.includeOpts));
+    chunks.push(generateApiTypescript(this.apiSpec, this.shapes, helpers, protocol, namespace, 's.', this.docMode, this.includeOpts, this.includeClientExtras));
 
     if (this.waitersSpec && Object.keys(this.waitersSpec.waiters).length > 0) {
       chunks.push(`  // Resource State Waiters\n`);

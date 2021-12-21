@@ -58,6 +58,7 @@ export const Generations = new Map<string, ModuleGenerator>([
     new URLSearchParams([
       ['includeOpts', 'no'],
       ['includeJsonRemap', 'no'],
+      ['includeClientExtras', 'no'],
       ['docs', 'none'],
     ]),
     (config, opts) => new LatestCodeGen(config, opts),
@@ -68,6 +69,7 @@ export const Generations = new Map<string, ModuleGenerator>([
     'v2.971.0',
     new URLSearchParams([
       ['includeJsonRemap', 'no'],
+      ['includeClientExtras', 'no'],
       ['docs', 'none'],
     ]),
     (config, opts) => new LatestCodeGen(config, opts),
