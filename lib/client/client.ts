@@ -58,7 +58,7 @@ export class BaseApiFactory implements ApiFactory {
     if (apiMetadata.signatureVersion === 'v2') throw new Error(
       `TODO: signature version ${apiMetadata.signatureVersion}`);
 
-    const signingFetcher: SigningFetcher = async (request: Request, opts: FetchOpts): Promise<Response> => {
+    const signingFetcher: SigningFetcher = async (baseRequest: Request, opts: FetchOpts): Promise<Response> => {
 
       // Only happens at most once, because undefined !== null
       if (this.#region === undefined && !opts.region) {
@@ -73,17 +73,18 @@ export class BaseApiFactory implements ApiFactory {
           hostPrefix: opts.hostPrefix,
         });
 
-      // console.log(request.method, url.toString());
-      if (opts.skipSigning) {
-        return fetch(url, request);
-      } else {
+      let request = new Request(url.toString(), baseRequest);
+
+      if (!opts.skipSigning) {
         const credentials = await this.#credentials.getCredentials();
         const signer = new AWSSignerV4(signingRegion, credentials);
         const signingName = apiMetadata.signingName
           ?? apiMetadata.endpointPrefix;
 
-        return fetch(await signer.sign(signingName, url, request));
+        request = await signer.sign(signingName, request);
       }
+
+      return await fetch(request);
     }
 
     return wrapServiceClient(apiMetadata, signingFetcher);

@@ -12,7 +12,7 @@ export interface CredentialsProvider {
 
 /** Generic AWS Signer interface */
 export interface Signer {
-  sign: (service: string, url: URL, request: Request) => Promise<Request>;
+  sign: (service: string, request: Request) => Promise<Request>;
 }
 
 export interface EndpointParameters {

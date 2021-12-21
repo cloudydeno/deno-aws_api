@@ -91,22 +91,18 @@ export class AWSSignerV4 implements Signer {
    * make a call to an AWS API.
    *
    * @param service This is the AWS service, e.g. `s3` for s3, `dynamodb` for DynamoDB
-   * @param url The URL for the request to sign.
-   * @param request The request method of the request to sign.
-   * @param headers Other headers to include while signing.
-   * @param body The body for PUT/POST methods.
+   * @param request The Request instance to sign.
    * @returns {RequestHeaders} - the signed request headers
    */
   public async sign(
     service: string,
-    url: URL,
     request: Request,
   ): Promise<Request> {
     const date = new Date();
     const amzdate = toAmz(date);
     const datestamp = toDateStamp(date);
 
-    const { host, pathname, searchParams } = url;
+    const { host, pathname, searchParams } = new URL(request.url);
     searchParams.sort();
     const canonicalQuerystring = searchParams.toString();
 
@@ -158,14 +154,13 @@ export class AWSSignerV4 implements Signer {
     headers.set("Authorization", authHeader);
 
     return new Request(
-      url.toString(),
+      request.url,
       {
         headers,
         method: request.method,
         body,
         redirect: request.redirect,
-        // TODO: request cancellation
-        // signal: request.signal,
+        signal: request.signal,
       },
     );
   }
