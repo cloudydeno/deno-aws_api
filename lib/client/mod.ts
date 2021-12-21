@@ -37,6 +37,9 @@ import {
 import {
   BaseApiFactory,
 } from "./client.ts";
+import type {
+  ServiceClientExtras,
+} from "./common.ts";
 
 export class ApiFactory extends BaseApiFactory {
   constructor(opts: {
@@ -45,6 +48,7 @@ export class ApiFactory extends BaseApiFactory {
     region?: string;
     fixedEndpoint?: string;
     endpointResolver?: EndpointResolver,
+    extras?: ServiceClientExtras;
   }={}) {
     super({
       credentialProvider: DefaultCredentialsProvider,
