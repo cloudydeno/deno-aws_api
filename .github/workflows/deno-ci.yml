@@ -20,6 +20,7 @@ jobs:
         - v1.14
         - v1.15
         - v1.16
+        - v1.17
         - canary
 
     steps:
@@ -61,6 +62,7 @@ jobs:
         - v1.11
         - v1.13
         - v1.16
+        - v1.17
         - canary
       fail-fast: false # run each branch to completion
 

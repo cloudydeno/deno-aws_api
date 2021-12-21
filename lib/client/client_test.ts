@@ -37,6 +37,6 @@ Deno.test("Request cancellation", async () => {
       opts: {
         signal: aborter.signal
       },
-    }), DOMException, 'fetch was aborted');
+    }), DOMException, 'aborted');
 
 });
