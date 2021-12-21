@@ -70,7 +70,8 @@ export class IMDSv2 {
   }) {
     const aborter = new AbortController();
     const timeoutText = `Instance Metadata Timeout: ${opts.timeoutMs}ms`;
-    const stopTimeout = setTimeout(() => aborter.abort(new Error(timeoutText)), opts.timeoutMs);
+    // TODO: this API changed in Deno v1.17, remove hack after some time
+    const stopTimeout = setTimeout(() => (aborter.abort as Function)(new Error(timeoutText)), opts.timeoutMs);
 
     const resp = await fetch(new URL(opts.path, this.baseUrl), {
       method: opts.method,
