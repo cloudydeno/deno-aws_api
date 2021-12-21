@@ -7,7 +7,7 @@
 const ThisScriptUrl = `https://deno.land/x/aws_api/examples/ec2-launch-instance.ts`;
 
 import { ApiFactory } from '../client/mod.ts';
-import { EC2, Instance } from 'https://aws-api.deno.dev/v0.2/services/ec2.ts?actions=RunInstances,TerminateInstances,GetConsoleOutput,Describe*';
+import { EC2, Instance } from 'https://aws-api.deno.dev/v0.2/services/ec2.ts?actions=RunInstances,DescribeInstances,DescribeAvailabilityZones,DescribeVpcs,DescribeSubnets,DescribeImages,TerminateInstances,GetConsoleOutput';
 
 const ec2 = new ApiFactory().makeNew(EC2);
 
@@ -85,7 +85,11 @@ console.log('Using AMI', amznImage.ImageId, '-', amznImage.Name);
 const {Instances: [instance]} = await ec2.runInstances({
   InstanceType: "t4g.nano",
   ImageId: amznImage.ImageId,
-  SubnetId: defaultSubnet.SubnetId,
+  NetworkInterfaces: [{
+    DeviceIndex: 0,
+    AssociatePublicIpAddress: true,
+    SubnetId: defaultSubnet.SubnetId,
+  }],
   TagSpecifications: [{
     ResourceType: "instance",
     Tags: [
