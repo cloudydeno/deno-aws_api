@@ -70,7 +70,7 @@ export class IMDSv2 {
   }) {
     const aborter = new AbortController();
     const timeoutText = `Instance Metadata Timeout: ${opts.timeoutMs}ms`;
-    const stopTimeout = setTimeout(() => aborter.abort(timeoutText), opts.timeoutMs);
+    const stopTimeout = setTimeout(() => aborter.abort(new Error(timeoutText)), opts.timeoutMs);
 
     const resp = await fetch(new URL(opts.path, this.baseUrl), {
       method: opts.method,
