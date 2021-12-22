@@ -50,6 +50,30 @@ Deno.test('aws ec2 / allow disabling dualstack', async () => {
   }).url.toString(), 'https://ec2.us-east-2.amazonaws.com/path');
 });
 
+Deno.test('aws lambda / opportunistic dualstack', async () => {
+  assertEquals(new AwsEndpointResolver().resolveUrl({
+    requestPath: '/path',
+    region: 'us-east-2',
+    apiMetadata: apiMetadata.lambda,
+  }).url.toString(), 'https://lambda.us-east-2.api.aws/path');
+});
+
+Deno.test('aws lambda / no dualstack in govcloud', async () => {
+    assertEquals(new AwsEndpointResolver().resolveUrl({
+    requestPath: '/path',
+    region: 'us-gov-east-1',
+    apiMetadata: apiMetadata.lambda,
+  }).url.toString(), 'https://lambda.us-gov-east-1.amazonaws.com/path');
+});
+
+Deno.test('aws lambda / china endpoint', async () => {
+  assertEquals(new AwsEndpointResolver().resolveUrl({
+    requestPath: '/path',
+    region: 'cn-north-1',
+    apiMetadata: apiMetadata.lambda,
+  }).url.toString(), 'https://lambda.cn-north-1.amazonaws.com.cn/path');
+});
+
 Deno.test('aws s3 / upgrades to host style routing', async () => {
   const resolver = new AwsEndpointResolver();
 
@@ -131,6 +155,14 @@ const apiMetadata: Record<string, ApiMetadata> = {
     "serviceAbbreviation": "Amazon EC2",
     "serviceFullName": "Amazon Elastic Compute Cloud",
     "serviceId": "EC2",
+    "signatureVersion": "v4",
+  },
+  lambda: {
+    "apiVersion": "2015-03-31",
+    "endpointPrefix": "lambda",
+    "protocol": "rest-json",
+    "serviceFullName": "AWS Lambda",
+    "serviceId": "Lambda",
     "signatureVersion": "v4",
   },
   s3: {

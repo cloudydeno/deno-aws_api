@@ -59,6 +59,14 @@ export class AwsEndpointResolver implements EndpointResolver {
       rootDomain = '.aws';
     }
 
+    // Lambda: Dualstack in all commercial regions
+    // https://aws.amazon.com/about-aws/whats-new/2021/12/aws-lambda-ipv6-endpoints-inbound-connections/
+    if (serviceId === 'Lambda' && this.useDualstack) {
+      if (rootDomain == '.amazonaws.com' && !parameters.region.includes('-gov-')) {
+        rootDomain = '.api.aws';
+      }
+    }
+
     // Build final URL
     const urlPrefix = `https://${parameters.hostPrefix ?? ''}`;
     const fullUrl = `${urlPrefix}${serviceLabel}${rootDomain}`;
@@ -88,7 +96,6 @@ const dualStackEc2Regions = new Set([
   'ap-south-1',
   'sa-east-1',
 ]);
-
 
 /**
  * Resolves S3 requests using a simplified regional scheme.
