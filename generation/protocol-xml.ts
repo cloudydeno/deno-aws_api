@@ -219,6 +219,13 @@ export default class ProtocolXmlCodegen {
     if (shape.refCount > 1) {
       chunks.push(`    return ${shape.censoredName}_Parse(xml);`);
       this.helpers.useHelper("xmlP");
+    } else if (shape.name == 'GetBucketLocationOutput') {
+      // This is apparently the single special-case Output quirk in S3
+      const namePrefix = (this.helpers.hasDep('s')) ? 's.' : '';
+      chunks.push(`    return {`);
+      chunks.push(`      LocationConstraint: xml.content as ${namePrefix}BucketLocationConstraint,`);
+      chunks.push(`    };`);
+      this.helpers.useHelper("xmlP");
     } else {
       const innerCode = this.generateStructureOutputTypescript(shape.spec, 'xml', shape.spec.payload);
       if (innerCode === '  return {};') {

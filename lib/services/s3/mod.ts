@@ -728,7 +728,7 @@ export class S3 {
     });
     const xml = xmlP.readXmlResult(await resp.text());
     return {
-      LocationConstraint: xml.first("LocationConstraint", false, x => (x.content ?? '') as s.BucketLocationConstraint),
+      LocationConstraint: xml.content as s.BucketLocationConstraint,
     };
   }
 
