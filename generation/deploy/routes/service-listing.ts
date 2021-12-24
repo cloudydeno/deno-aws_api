@@ -1,22 +1,36 @@
 import { SDK } from "../sdk-datasource.ts";
-import { Generations, LatestGeneration } from "../generations.ts";
-import { escapeTemplate, ResponseText } from "../helpers.ts";
+import { Generations } from "../generations.ts";
+import { escapeTemplate, getModuleIdentity, Pattern, ResponseRedirect, ResponseText, RouteHandler } from "../helpers.ts";
+
+const handleRequest: RouteHandler = ctx => {
+  if (!ctx.requestUrl.pathname.endsWith('/')) {
+    return ResponseRedirect(`${ctx.requestUrl.pathname}/${ctx.requestUrl.search}`);
+  }
+  const {selfUrl} = getModuleIdentity(ctx.requestUrl);
+  return renderServiceListing({
+    genVer: ctx.params.genVer,
+    sdkVer: ctx.params.sdkVer,
+    selfUrl,
+  });
+};
+export const routeMap = new Map<string | URLPattern, RouteHandler>([
+  [Pattern('/:genVer(v[0-9.]+)/sdk@:sdkVer(v2\\.[0-9.]+){/}?'), handleRequest],
+  [Pattern('/:genVer(v[0-9.]+)/services{/}?'), handleRequest],
+]);
 
 export async function renderServiceListing(props: {
   genVer: string;
-  sdkVer: string;
+  sdkVer?: string;
   selfUrl: string;
 }) {
-  const genVersion = props.genVer || LatestGeneration;
-
-  const generation = Generations.get(genVersion);
+  const generation = Generations.get(props.genVer);
   if (!generation) return ResponseText(404,
-    `Codegen version '${genVersion}' not found.\nKnown versions: ${Array.from(Generations.keys()).join(', ')}`);
+    `Codegen version '${props.genVer}' not found.\nKnown versions: ${Array.from(Generations.keys()).join(', ')}`);
 
   const sdkVersion = props.sdkVer || generation.sdkVersion;
   const sdk = new SDK(sdkVersion);
 
-  const modRoot = `/${genVersion}/${props.sdkVer ? `sdk@${sdkVersion}` : 'services'}`;
+  const modRoot = `/${props.genVer}/${props.sdkVer ? `sdk@${sdkVersion}` : 'services'}`;
   const baseUrl = new URL(modRoot, props.selfUrl).toString();
 
   const serviceDict = await sdk.getServiceList();

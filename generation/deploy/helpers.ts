@@ -1,11 +1,23 @@
+export const Pattern = (pathname: string) => new URLPattern({ pathname });
+export type RouteHandler = (context: {
+  params: Record<string, string>;
+  requestUrl: URL;
+  headers: Headers,
+}) => Response | Promise<Response>;
+
 import { escape } from "https://deno.land/x/html_escape@v1.1.5/escape.ts";
 export { escape };
-
 export function escapeTemplate(strings: TemplateStringsArray, ...inputs: string[]) {
   return String.raw(strings, ...inputs.map(escape));
 }
+
 export function jsonTemplate(strings: TemplateStringsArray, ...inputs: unknown[]) {
   return String.raw(strings, ...inputs.map(x => JSON.stringify(x)));
+}
+
+export function acceptsHtml(requestHeaders: Headers) {
+  const acceptTokens = requestHeaders.get('accept')?.split(',').map(x => x.trim());
+  return acceptTokens?.some(x => x.startsWith('text/html')) ?? false;
 }
 
 // Response.redirect() throws in Deno 1.9 unless url is absolute
@@ -26,12 +38,22 @@ export function ResponseText(status: number, body: string) {
   });
 }
 
-export function ResponseError(err: Error) {
+export function ResponseJson(data: unknown) {
+  const text = JSON.stringify(data, null, 1);
+  return new Response(text, {
+    status: 200,
+    headers: {
+      'content-type': 'application/json',
+    },
+  });
+}
+
+export function ResponseError(err: unknown) {
   if (err instanceof ClientError) {
     console.log(`Returning ${err.message}`);
     return ResponseText(err.statusCode, err.message);
   }
-  const msg = err.stack || err.message || JSON.stringify(err);
+  const msg = (err instanceof Error) ? (err.stack || err.message) : JSON.stringify(err);
   console.error('!!!', msg);
   return ResponseText(500, `Internal Error!
 
@@ -52,4 +74,19 @@ export class ClientError extends Error {
     Error.captureStackTrace(this, new.target);
     this.name = new.target.name;
   }
+}
+
+export function getModuleIdentity(requestUrl: URL) {
+  const params = requestUrl.searchParams;
+  if (params.get('actions') === '') {
+    params.delete('actions');
+  }
+  if (params.get('docs') === '') {
+    params.delete('docs');
+  }
+  const search = `${params.toString() ? '?' : ''}${params}`;
+  const selfUrl = `${requestUrl.origin}${requestUrl.pathname}${search}`;
+  params.sort();
+
+  return {params, selfUrl};
 }

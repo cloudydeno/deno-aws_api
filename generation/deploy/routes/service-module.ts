@@ -1,6 +1,21 @@
 import { SDK } from "../sdk-datasource.ts";
 import { Generations, ModuleGenerator } from "../generations.ts";
-import { ClientError, escapeTemplate, jsonTemplate, ResponseText } from "../helpers.ts";
+import { ClientError, escapeTemplate, getModuleIdentity, jsonTemplate, Pattern, ResponseRedirect, ResponseText, RouteHandler, acceptsHtml } from "../helpers.ts";
+
+const serviceFilePattern = `:service([^/.@]+){@:svcVer(20[0-9-]+)}?.ts`;
+const handleRequest: RouteHandler = ctx => {
+  const {genVer, sdkVer, service, svcVer} = ctx.params;
+  const {selfUrl, params} = getModuleIdentity(ctx.requestUrl);
+  return renderServiceModule({
+    genVer, sdkVer, service, svcVer,
+    selfUrl, params,
+    wantsHtml: acceptsHtml(ctx.headers),
+  });
+};
+export const routeMap = new Map<string | URLPattern, RouteHandler>([
+  [Pattern(`/:genVer(v[0-9.]+)/sdk@:sdkVer(v2\\.[0-9.]+)/${serviceFilePattern}`), handleRequest],
+  [Pattern(`/:genVer(v[0-9.]+)/services/${serviceFilePattern}`), handleRequest],
+]);
 
 export async function renderServiceModule(props: {
   genVer: string;
@@ -106,7 +121,7 @@ async function generateApiModule(opts: {
   if (opts.options.toString()) {
     headerChunks.push(`//   extra options:`);
     for (const [k, v] of opts.options) {
-      headerChunks.push(jsonTemplate`//     ${k}: ${v}`);
+      headerChunks.push(jsonTemplate`//     ${k} = ${v}`);
     }
   }
   headerChunks.push(`//   generated at: ${new Date().toISOString()}`);
