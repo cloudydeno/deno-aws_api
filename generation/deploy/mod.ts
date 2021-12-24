@@ -1,5 +1,5 @@
 #!/usr/bin/env -S deno run --allow-env --allow-net=:8000,api.github.com,raw.githubusercontent.com,deno-httpcache.s3.dualstack.us-east-2.amazonaws.com generation/deploy/mod.ts
-import { serve } from "https://deno.land/std@0.115.0/http/server.ts";
+import { serve } from "https://deno.land/std@0.119.0/http/server.ts";
 
 import { SDK } from "./sdk-datasource.ts";
 import * as CompletionApi from './completion-api.ts';
