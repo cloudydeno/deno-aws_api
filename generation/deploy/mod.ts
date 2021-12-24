@@ -1,32 +1,19 @@
-#!/usr/bin/env -S deno run --allow-env --allow-net=:8000,api.github.com,raw.githubusercontent.com,deno-httpcache.s3.dualstack.us-east-2.amazonaws.com generation/deploy/mod.ts
+#!/usr/bin/env -S deno run --allow-env --allow-net=[::]:8000,api.github.com,raw.githubusercontent.com,deno-httpcache.s3.dualstack.us-east-2.amazonaws.com generation/deploy/mod.ts
 import { serve } from "https://deno.land/std@0.119.0/http/server.ts";
 
-import { SDK } from "./sdk-datasource.ts";
 import * as CompletionApi from './completion-api.ts';
-import { Generations, LatestGeneration, ModuleGenerator } from "./generations.ts";
-import { ResponseRedirect, ResponseText } from "./helpers.ts";
+import { LatestGeneration } from "./generations.ts";
+import { ResponseError, ResponseRedirect, ResponseText } from "./helpers.ts";
 
 import { renderServiceModule } from "./routes/service-module.ts";
 import { renderServiceListing } from "./routes/service-listing.ts";
 
-console.log("Listening on http://localhost:8000");
 serve(async request => {
-  const response = await handleRequest(request).catch(renderError);
+  const response = await handleRequest(request).catch(ResponseError);
   response.headers.set("server", "aws_api-generation/v0.4.0");
   return response;
-});
-
-function renderError(err: Error) {
-  const msg = err.stack || err.message || JSON.stringify(err);
-  console.error('!!!', msg);
-  return ResponseText(500, `Internal Error!
-
-Feel free to try a second attempt.
-File any issues here: https://github.com/cloudydeno/deno-aws_api/issues
-
-Internal stacktrace follows:
-${msg}`);
-}
+}, { hostname: '[::]' });
+console.log("Listening on http://localhost:8000");
 
 async function handleRequest(request: Request): Promise<Response> {
   const requestUrl = new URL(request.url);
@@ -48,6 +35,7 @@ async function handleRequest(request: Request): Promise<Response> {
   }
   const search = `${params.toString() ? '?' : ''}${params}`;
   const selfUrl = `${requestUrl.origin}${pathname}${search}`;
+  params.sort();
 
   if (pathname.match(/^\/latest(\/|$)/)) {
     return ResponseRedirect(`/${LatestGeneration}/${pathname.slice('/latest/'.length)}${search}`, {

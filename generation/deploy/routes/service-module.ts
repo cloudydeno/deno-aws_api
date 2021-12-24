@@ -1,6 +1,6 @@
 import { SDK } from "../sdk-datasource.ts";
 import { Generations, ModuleGenerator } from "../generations.ts";
-import { escapeTemplate, ResponseText } from "../helpers.ts";
+import { ClientError, escapeTemplate, jsonTemplate, ResponseText } from "../helpers.ts";
 
 export async function renderServiceModule(props: {
   genVer: string;
@@ -17,7 +17,7 @@ export async function renderServiceModule(props: {
 
   const sdkVersion = props.sdkVer || generation.sdkVersion;
   const apiVersion = props.svcVer || await new SDK(sdkVersion).getLatestApiVersion(props.service);
-  const fullOptions = generation.setDefaults(props.params);
+  const fullOptions = generation.withDefaults(props.params);
 
   let apiText = await generateApiModule({
     generation,
@@ -104,13 +104,17 @@ async function generateApiModule(opts: {
   headerChunks.push(`//   AWS service UID: ${opts.apiId}-${opts.apiVersion}`);
   headerChunks.push(`//   code generation: ${opts.generationId}`);
   if (opts.options.toString()) {
-    headerChunks.push(`//   extra options: ${opts.options}`);
+    headerChunks.push(`//   extra options:`);
+    for (const [k, v] of opts.options) {
+      headerChunks.push(jsonTemplate`//     ${k}: ${v}`);
+    }
   }
-  headerChunks.push(`//   current time: ${new Date().toISOString()}`);
+  headerChunks.push(`//   generated at: ${new Date().toISOString()}`);
 
   const serviceList = await sdk.getServiceList();
   const module = serviceList[opts.apiId];
-  if (!module) throw new Error(`Not Found`);
+  if (!module) throw new ClientError(404, jsonTemplate
+    `API ${opts.apiId} not found. Check the API listing for exact spelling.`);
 
   const spec = await sdk
     .getApiSpecs(module.prefix || opts.apiId, opts.apiVersion, {
@@ -131,6 +135,8 @@ async function generateApiModule(opts: {
     }
     const afterCount = Object.keys(spec.normal.operations).length;
     headerChunks.push(`//   skipped ${allOps.length-afterCount} out of ${allOps.length} actions, leaving ${afterCount}`);
+    if (afterCount == 0) throw new ClientError(400, jsonTemplate
+      `No ${opts.apiId} actions matched the given filter ${opts.options.get('actions')}`);
   }
 
   return [

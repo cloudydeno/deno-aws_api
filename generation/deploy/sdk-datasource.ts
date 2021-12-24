@@ -1,5 +1,6 @@
 import type * as Schema from '../sdk-schema.ts';
 import { cachedFetch } from "./cache.ts";
+import { ClientError, jsonTemplate } from "./helpers.ts";
 
 export class SDK {
   static async getSdkVersions(): Promise<Array<{
@@ -47,14 +48,14 @@ export class SDK {
     ]);
 
     const svcInfo = svcList[modId];
-    if (!svcInfo) throw new Error(
+    if (!svcInfo) throw new ClientError(404, jsonTemplate
       `Service ${modId} not found`);
     const svcId = svcInfo.prefix || modId;
 
     const matches = specList
       .filter(x => x.slice(0, -11) === svcId)
       .map(x => x.slice(-10));
-    if (matches.length === 0) throw new Error(
+    if (matches.length === 0) throw new ClientError(404, jsonTemplate
       `No versions found for Service ${modId}`);
 
     return matches.sort().slice(-1)[0];

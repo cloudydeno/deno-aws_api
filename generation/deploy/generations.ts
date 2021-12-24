@@ -24,7 +24,7 @@ export class ModuleGenerator {
     public readonly codegenConstr: (config: ApiSpecsBundle, opts: URLSearchParams) => CodeGen,
   ) {}
 
-  setDefaults(options: URLSearchParams) {
+  withDefaults(options: URLSearchParams) {
     const newOpts = new URLSearchParams(options);
     for (const [option, value] of this.defaults) {
       if (!options.has(option)) {
@@ -40,7 +40,7 @@ export class ModuleGenerator {
     className: string,
   }) {
     const clientModRoot = opts.options.get('aws_api_root') || this.clientModRoot;
-    const fullOptions = this.setDefaults(opts.options);
+    const fullOptions = this.withDefaults(opts.options);
 
     const codeGen = this.codegenConstr(opts.apiSpecs, fullOptions);
     return codeGen.generateTypescript(opts.className)
