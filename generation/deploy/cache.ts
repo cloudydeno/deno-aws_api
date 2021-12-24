@@ -9,7 +9,7 @@ const s3Api = makeS3Client({
   region: Deno.env.get('AWS_REGION') || 'us-east-2',
 });
 const caches: Array<Cache> = [
-  inMemoryCache(20),
+  inMemoryCache(40),
   s3Cache(s3Api, Deno.env.get('HTTPCACHE_S3_BUCKET') || 'deno-httpcache'),
 ];
 
