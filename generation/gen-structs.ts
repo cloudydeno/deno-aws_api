@@ -82,6 +82,17 @@ export class StructEmitter {
       case 'string':
         if (shape.spec.enum) {
           this.helpers.useHelper("cmnP");
+          if (shape.name == 'InstanceType') {
+            const byFam = shape.spec.enum.reduce((map, val) => {
+              const fam = val.slice(0, val.indexOf('.'));
+              if (!map.has(fam)) map.set(fam, []);
+              map.get(fam)!.push(val);
+              return map;
+            }, new Map<string, string[]>())
+            return [`export type ${shape.censoredName} =`,
+              ...Array.from(byFam).map(value => value[1].map(x => `| ${JSON.stringify(x)}`).join(' ')),
+            '| cmnP.UnexpectedEnumValue;'].join('\n');
+          }
           return [`export type ${shape.censoredName} =`,
             ...shape.spec.enum.map(value => `| ${JSON.stringify(value)}`),
           '| cmnP.UnexpectedEnumValue;'].join('\n');
