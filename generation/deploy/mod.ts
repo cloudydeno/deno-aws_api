@@ -3,6 +3,7 @@ import { serve } from "https://deno.land/std@0.119.0/http/server.ts";
 
 import { ResponseError, ResponseText } from "./helpers.ts";
 
+import { routeMap as unifiedModuleRoutes } from "./routes/unified-module.ts";
 import { routeMap as serviceModuleRoutes } from "./routes/service-module.ts";
 import { routeMap as serviceListingRoutes } from "./routes/service-listing.ts";
 import { routeMap as redirectRoutes } from './routes/redirects.ts';
@@ -20,6 +21,7 @@ console.log("Listening on http://localhost:8000");
 
 const routeMap = new Map([
   // Might as well put module rendering first in the list because it needs the most CPU time
+  ...unifiedModuleRoutes,
   ...serviceModuleRoutes,
   ...serviceListingRoutes,
   ...redirectRoutes,

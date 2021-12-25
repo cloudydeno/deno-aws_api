@@ -6,11 +6,11 @@ const handleRequest: RouteHandler = ctx => {
   if (!ctx.requestUrl.pathname.endsWith('/')) {
     return ResponseRedirect(`${ctx.requestUrl.pathname}/${ctx.requestUrl.search}`);
   }
-  const {selfUrl} = getModuleIdentity(ctx.requestUrl);
+  const {selfUrl, params} = getModuleIdentity(ctx.requestUrl);
   return renderServiceListing({
     genVer: ctx.params.genVer,
     sdkVer: ctx.params.sdkVer,
-    selfUrl,
+    selfUrl, params,
   });
 };
 export const routeMap = new Map<string | URLPattern, RouteHandler>([
@@ -22,6 +22,7 @@ export async function renderServiceListing(props: {
   genVer: string;
   sdkVer?: string;
   selfUrl: string;
+  params: URLSearchParams,
 }) {
   const generation = Generations.get(props.genVer);
   if (!generation) return ResponseText(404,
@@ -37,6 +38,8 @@ export async function renderServiceListing(props: {
   const serviceList = Object.entries(serviceDict).sort((a, b) => {
     return a[0].localeCompare(b[0]);
   })
+
+  const fullOptions = generation.withDefaults(props.params);
 
   const pageHead = escapeTemplate`
 <h1>AWS API Client Codegen</h1>
@@ -57,7 +60,7 @@ The UI at the top of the module webpage can help customize your generated module
 <h2>Examples</h2>
 <pre>
 // import the base client library
-import { ApiFactory } from "${generation.clientModRoot}/client/mod.ts";
+import { ApiFactory } from "${fullOptions.get('aws_api_root') ?? '.'}/client/mod.ts";
 
 // import the complete API of one AWS service
 import { SQS } from "${baseUrl}/sqs.ts";
