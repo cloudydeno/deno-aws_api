@@ -69,13 +69,9 @@ export default class ProtocolQueryCodegen extends ProtocolXmlCodegen {
       const paramRef = `${paramsRef}[${JSON.stringify(field)}]`;
 
       switch (shape.spec.type) {
-        // case 'boolean':
-        //   chunks.push(`  ${isRequired ? '' : `if (${paramRef} != null) `}body.append(${JSON.stringify(locationName)}, ${paramRef});`);
         case 'list': {
           const isFlattened = spec.flattened || shape.spec.flattened;
           const listConfig: any = {};
-          // if (shape.spec.member.locationName) listConfig.entName = '.'+shape.spec.member.locationName;
-          // console.log(shape.name, [spec.queryName, spec.locationName, shape.spec.locationName, defaultName])
           const listPrefix = isFlattened
             ? baseNamePlaces ?? shape.spec.locationName ?? shape.spec.member.locationName ?? defaultName
             : baseNamePlaces ?? defaultName;
@@ -136,15 +132,11 @@ export default class ProtocolQueryCodegen extends ProtocolXmlCodegen {
           break;
         default:
           throw new Error(`TODO: query input appending for ${(shape as KnownShape).spec.type}`);
-          // chunks.push(`  // TODO: appending for ${(shape as KnownShape).spec.type}`);
       }
     }
 
     return chunks.join('\n');
   }
-
-
-
 
   ucfirst(name: string | undefined, isQueryName = false): string | undefined {
     if (!name) return name;

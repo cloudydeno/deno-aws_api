@@ -38,7 +38,6 @@ export default class ProtocolRestCodegen {
       chunks.push(`    const query = new URLSearchParams;`);
       referencedInputs.add('query');
     }
-    // chunks.push(`    const body = new URLSearchParams;`);
 
     const framings = Object.entries(inputShape.spec.members).filter(x => x[1].location ?? this.shapes.get(x[1]).spec.location);
     for (const [field, spec] of framings) {
@@ -181,10 +180,6 @@ export default class ProtocolRestCodegen {
       }
     }
 
-    // console.log(inputShape.documentation?.slice(0, 100), locationTypes);
-    // console.log(hasBody, hasFraming, Object.values(inputShape.members).filter(x => !x.location).length, meta.locationName);
-    // console.log(inputShape.locationName)
-
     if (hasBody) {
       let isFrame = true;
       let frame = inputShape;
@@ -226,8 +221,6 @@ export default class ProtocolRestCodegen {
           referencedInputs.add(varr);
         }
       }
-
-      // console.log(frameRef, locInfo.xmlNamespace, locInfo.locationName, Object.keys(frame.members));
     }
 
     return {
@@ -336,7 +329,6 @@ export default class ProtocolRestCodegen {
   describeOutputField(field: string, spec: Schema.ShapeRef & Schema.StructureFieldDetails, isRequired: boolean): string {
     const namePrefix = (this.helpers.hasDep('s')) ? 's.' : '';
     const fieldShape = this.shapes.get(spec);
-    // const locationName = spec.locationName ?? fieldShape.spec.locationName ?? (field[0].toUpperCase()+field.slice(1));
     switch (spec.location ?? fieldShape.spec.location) {
       case 'statusCode':
         return `    ${field}: resp.status,`;
@@ -369,7 +361,6 @@ export default class ProtocolRestCodegen {
           default:
             throw new Error(`TODO: rest output header ${fieldShape.spec.type} "${field}"`);
         }
-        // return `    ${field}: resp.headers.get(${JSON.stringify(spec.locationName || field)}),`;
       case 'headers':
         if (fieldShape.spec.type !== 'map') throw new Error(`rest headers field needs to be a Map`);
         const keyShape = this.shapes.get(fieldShape.spec.key);
@@ -381,9 +372,6 @@ export default class ProtocolRestCodegen {
           default:
             throw new Error(`TODO: rest output headerS ${valShape.spec.type} "${field}"`);
         }
-      // case undefined:
-      //   frameSpec.members[field] = spec;
-      //   break;
       default:
         throw new Error(`TODO: rest output location ${spec.location}`);
     }

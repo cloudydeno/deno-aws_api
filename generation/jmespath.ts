@@ -29,9 +29,6 @@ function compilePath(root: ASTNode, rootRef: string): string {
       for (const child of root.children) {
         if (!child || typeof child !== 'object') throw new Error(
           `BUG: Subexpression child wasn't an ASTNode`);
-        // if (child !== root.children[0]) {
-        //   expr += '?.';
-        // }
         expr = compilePath(child, expr);
       }
       return expr;

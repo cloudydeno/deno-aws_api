@@ -23,7 +23,6 @@ export class StructEmitter {
       let anythingHappened = false;
 
       if (including.includes('iface')) {
-
         chunks.push(`// refs: ${shape.refCount
           } - tags: ${Array.from(shape.tags).join(', ')}`);
 
@@ -31,9 +30,6 @@ export class StructEmitter {
           chunks.push(genDocsComment(shape.spec.documentation, '', this.docMode));
         }
 
-        // if (this.#singleRefShapes.has(shape.name)) {
-        //   chunks.push(`// TODO: can be inlined (only used once)`);
-        // }
         chunks.push(`${this.writeStructureType(shape)}`);
 
         anythingHappened = true;
