@@ -239,5 +239,9 @@ function fixExpectedJson(json: string): string {
     // headers are sorted as of deno 1.9
     return `{"AllHeaders":{"content-length":"10","x-bam":"boo","x-foo":"bar"},"PrefixedHeaders":{"bam":"boo","foo":"bar"}}`;
   }
+  if (json === `{"HeaderField":{"Foo":{}}}`) {
+    // https://github.com/aws/aws-sdk-js/pull/3997
+    return `{"HeaderField":{}}`;
+  }
   return json;
 }
