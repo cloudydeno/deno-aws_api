@@ -21,11 +21,11 @@ Package layout:
 
 * `client/`: A handwritten generic AWS API client (credentials, signing, etc)
 * `encoding/`: Shared modules for dealing with XML, JSON, & querystrings
-* `services/`: Generated Typescript classes and interfaces for a few most useful AWS services
+* `services/`: Generated Typescript classes and interfaces for a few most-useful AWS services
 * `demo.ts`: A trivial example of using this library
 * `examples/`: Several full examples of using individual services
 
-A full listing of all AWS services and their import URLs can be found
+A full listing of **all** AWS services and their import URLs can be found
 on the [/x/aws_api Web Service][webservice].
 More information on [the accompanying Wiki page][webservice-docs].
 
@@ -81,31 +81,23 @@ const ec2_europe = new ApiFactory({
 }).makeNew(EC2);
 ```
 
-## ⚠️ BREAKING CHANGES ⚠️ v0.4.0 ⚠️
-
-1. **Version 0.4.0** of this library stopped
-  including every service's API in the published module.
-  Instead, the code-generation process is running on Deno Deploy
-  and allows importing extremely precise modules,
-  generated on the fly based on multiple configuration options.
-  Check out [this Web Service wiki page][webservice-docs]
-  for more details on this new URL endpoint.
-  *This is a bit experimental!*
-  Please report any issues or concerns with this new approach.
-
-1. For services that are still bundled (SQS, S3, SNS, etc),
-  the import URL no longer includes an API version
-  (the `@year-month-date` part). Only the most recent API version gets bundled.
-
-1. The primary class export on each service module is no longer 'default'.
-  So instead of `import SQS from ...`,
-  you'll do `import { SQS } from ....`.
-
 ## Changelog
 
-* `v0.5.1` on `2021-12-TBD`: codgen `v0.3`
-  * Tested on Deno 1.11 up to 1.16 (current latest)
+* `v0.6.0` on `2021-12-TBD`: codegen `v0.3`
+  * **Breaking change:** Some response types now have nullable lists and maps. Workarounds:
+    * Add a nullcheck around any broken fields if you just want to get going again.
+    * If you aren't already,
+        [add an `?actions=...` filter](https://github.com/cloudydeno/deno-aws_api/wiki/Web-Service#parameters)
+        to your import to produce more-concise types.
+  * Test on Deno 1.11 up to 1.17 (the current latest)
   * Use Deno's `/std@0.115.0`
+  * Fix specific issues with `Glacier`, `ApiGateway`, `S3`,
+      and [`EC2`](https://github.com/cloudydeno/deno-aws_api/issues/16)
+  * Block APIs needing AWS's "eventstream" protocol (so, `S3.SelectObjectContent`)
+  * Set `docs=short` as the default. For the least bytes, please specify `docs=none`.
+  * Add experimental request hooks to `ApiFactory`, helps with debugging
+  * Use Lambda's new IPv6-enabled API endpoints
+  * Fix incorrect logic reuse between `rest-json` and `json` clients
 * `v0.5.0` on `2021-08-27`: codegen `v0.2`
   * Support Deno 1.11 or later
   * Use definitions from `aws-sdk-js@2.971.0`
@@ -241,3 +233,24 @@ on `/x/` is [v0.3.1](https://deno.land/x/aws_api@v0.3.1).
 
 [webservice-docs]: https://github.com/cloudydeno/deno-aws_api/wiki/Web-Service
 [webservice]: https://aws-api.deno.dev/latest/
+
+
+## Breaking Changes Archive: v0.4.0
+
+1. **Version 0.4.0** of this library stopped
+  including every service's API in the published module.
+  Instead, the code-generation process is running on Deno Deploy
+  and allows importing extremely precise modules,
+  generated on the fly based on multiple configuration options.
+
+  Check out [this Web Service wiki page][webservice-docs]
+  for more details on this new URL endpoint.
+  Please report any issues or concerns with this new approach.
+
+1. For services that are still bundled (SQS, S3, SNS, etc),
+  the import URL no longer includes an API version
+  (the `@year-month-date` part). Only the most recent API version gets bundled.
+
+1. The primary class export on each service module is no longer 'default'.
+  So instead of `import SQS from ...`,
+  you'll do `import { SQS } from ....`.
