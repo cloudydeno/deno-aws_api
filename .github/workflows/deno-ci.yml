@@ -44,12 +44,15 @@ jobs:
       run: time deno cache generation/deploy/mod.ts
 
     - name: Check client/mod.ts
+      if: always()
       run: time deno cache lib/client/mod.ts
 
     - name: Check demo.ts
+      if: always()
       run: time deno cache lib/demo.ts
 
     - name: Run tests
+      if: always()
       run: time deno test --allow-net=169.254.169.254,example.com lib/client/
 
   generate:
@@ -85,7 +88,9 @@ jobs:
         restore-keys: deno/${{ matrix.deno-version }}-https/v1-
 
     - name: Validate aws-sdk fixtures
+      if: always()
       run: time deno run -A generation/script/validate-fixtures.ts
 
     - name: Validate all aws-sdk services
+      if: always()
       run: time deno run -A generation/script/validate-services.ts
