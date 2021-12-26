@@ -129,4 +129,5 @@ jobs:
       with:
         branch: regen-bundled-services
         delete-branch: true
+        commit-message: "chore(services): Rebuild using latest codegen"
         title: "chore(services): Rebuild using latest codegen"
