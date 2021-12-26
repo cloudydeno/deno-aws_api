@@ -12,6 +12,7 @@ export class StructEmitter {
     private protocol: ProtocolCodegen,
     private namePrefix: string = '',
     private docMode: 'none' | 'short' | 'full',
+    private alwaysReqLists: boolean,
   ) {}
 
   generateStructsTypescript(including: ('iface' | 'mapping')[]): string {
@@ -63,7 +64,11 @@ export class StructEmitter {
 
       case 'structure':
         const required = new Set(shape.spec.required?.map(x => x.toLowerCase()) || []);
-        const reqLists = shape.tags.has('output') && !this.apiSpec.metadata.protocol.includes('json');
+        // When possible, signal that our XML parser always fills in Array/Map properties
+        const reqLists = shape.tags.has('output')
+            && (this.alwaysReqLists || !shape.tags.has('input'))
+            && !this.apiSpec.metadata.protocol.includes('json');
+
         return [`export interface ${shape.censoredName} {`,
           ...Object.entries(shape.spec.members).map(([key, spec]) => {
             const innerShape = this.shapes.get(spec);

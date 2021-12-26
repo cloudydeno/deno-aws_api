@@ -19,9 +19,10 @@ export function generateApiTypescript(
   docMode: 'none' | 'short' | 'full',
   includeOpts: boolean,
   includeClientExtras: boolean,
+  alwaysReqLists: boolean,
 ): string {
 
-  const structEmitter = new StructEmitter(apiSpec, shapes, helpers, protocol, namePrefix, docMode);
+  const structEmitter = new StructEmitter(apiSpec, shapes, helpers, protocol, namePrefix, docMode, alwaysReqLists);
   helpers.useHelper("client");
 
   const apiClientExtras = ServiceApiClientExtras.get(apiSpec.metadata.serviceId);
