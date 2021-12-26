@@ -228,8 +228,6 @@ export type QueueAttributeName =
 | "KmsDataKeyReusePeriodSeconds"
 | "DeduplicationScope"
 | "FifoThroughputLimit"
-| "RedriveAllowPolicy"
-| "SqsManagedSseEnabled"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface

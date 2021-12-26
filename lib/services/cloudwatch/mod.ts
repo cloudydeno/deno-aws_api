@@ -44,17 +44,15 @@ export class CloudWatch {
   }
 
   async deleteAnomalyDetector(
-    params: s.DeleteAnomalyDetectorInput = {},
+    params: s.DeleteAnomalyDetectorInput,
     opts: client.RequestOptions = {},
   ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
-    if ("Namespace" in params) body.append(prefix+"Namespace", (params["Namespace"] ?? '').toString());
-    if ("MetricName" in params) body.append(prefix+"MetricName", (params["MetricName"] ?? '').toString());
+    body.append(prefix+"Namespace", (params["Namespace"] ?? '').toString());
+    body.append(prefix+"MetricName", (params["MetricName"] ?? '').toString());
     if (params["Dimensions"]) qsP.appendList(body, prefix+"Dimensions", params["Dimensions"], {"appender":Dimension_Serialize,"entryPrefix":".member."})
-    if ("Stat" in params) body.append(prefix+"Stat", (params["Stat"] ?? '').toString());
-    if (params["SingleMetricAnomalyDetector"] != null) SingleMetricAnomalyDetector_Serialize(body, prefix+"SingleMetricAnomalyDetector", params["SingleMetricAnomalyDetector"]);
-    if (params["MetricMathAnomalyDetector"] != null) MetricMathAnomalyDetector_Serialize(body, prefix+"MetricMathAnomalyDetector", params["MetricMathAnomalyDetector"]);
+    body.append(prefix+"Stat", (params["Stat"] ?? '').toString());
     const resp = await this.#client.performRequest({
       opts, body,
       action: "DeleteAnomalyDetector",
@@ -197,7 +195,6 @@ export class CloudWatch {
     if ("Namespace" in params) body.append(prefix+"Namespace", (params["Namespace"] ?? '').toString());
     if ("MetricName" in params) body.append(prefix+"MetricName", (params["MetricName"] ?? '').toString());
     if (params["Dimensions"]) qsP.appendList(body, prefix+"Dimensions", params["Dimensions"], {"appender":Dimension_Serialize,"entryPrefix":".member."})
-    if (params["AnomalyDetectorTypes"]) qsP.appendList(body, prefix+"AnomalyDetectorTypes", params["AnomalyDetectorTypes"], {"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       opts, body,
       action: "DescribeAnomalyDetectors",
@@ -522,18 +519,16 @@ export class CloudWatch {
   }
 
   async putAnomalyDetector(
-    params: s.PutAnomalyDetectorInput = {},
+    params: s.PutAnomalyDetectorInput,
     opts: client.RequestOptions = {},
   ): Promise<void> {
     const body = new URLSearchParams;
     const prefix = '';
-    if ("Namespace" in params) body.append(prefix+"Namespace", (params["Namespace"] ?? '').toString());
-    if ("MetricName" in params) body.append(prefix+"MetricName", (params["MetricName"] ?? '').toString());
+    body.append(prefix+"Namespace", (params["Namespace"] ?? '').toString());
+    body.append(prefix+"MetricName", (params["MetricName"] ?? '').toString());
     if (params["Dimensions"]) qsP.appendList(body, prefix+"Dimensions", params["Dimensions"], {"appender":Dimension_Serialize,"entryPrefix":".member."})
-    if ("Stat" in params) body.append(prefix+"Stat", (params["Stat"] ?? '').toString());
+    body.append(prefix+"Stat", (params["Stat"] ?? '').toString());
     if (params["Configuration"] != null) AnomalyDetectorConfiguration_Serialize(body, prefix+"Configuration", params["Configuration"]);
-    if (params["SingleMetricAnomalyDetector"] != null) SingleMetricAnomalyDetector_Serialize(body, prefix+"SingleMetricAnomalyDetector", params["SingleMetricAnomalyDetector"]);
-    if (params["MetricMathAnomalyDetector"] != null) MetricMathAnomalyDetector_Serialize(body, prefix+"MetricMathAnomalyDetector", params["MetricMathAnomalyDetector"]);
     const resp = await this.#client.performRequest({
       opts, body,
       action: "PutAnomalyDetector",
@@ -787,30 +782,6 @@ function Dimension_Parse(node: xmlP.XmlNode): s.Dimension {
   });
 }
 
-function SingleMetricAnomalyDetector_Serialize(body: URLSearchParams, prefix: string, params: s.SingleMetricAnomalyDetector) {
-  if ("Namespace" in params) body.append(prefix+".Namespace", (params["Namespace"] ?? '').toString());
-  if ("MetricName" in params) body.append(prefix+".MetricName", (params["MetricName"] ?? '').toString());
-  if (params["Dimensions"]) qsP.appendList(body, prefix+".Dimensions", params["Dimensions"], {"appender":Dimension_Serialize,"entryPrefix":".member."})
-  if ("Stat" in params) body.append(prefix+".Stat", (params["Stat"] ?? '').toString());
-}
-function SingleMetricAnomalyDetector_Parse(node: xmlP.XmlNode): s.SingleMetricAnomalyDetector {
-  return {
-    ...node.strings({
-      optional: {"Namespace":true,"MetricName":true,"Stat":true},
-    }),
-    Dimensions: node.getList("Dimensions", "member").map(Dimension_Parse),
-  };
-}
-
-function MetricMathAnomalyDetector_Serialize(body: URLSearchParams, prefix: string, params: s.MetricMathAnomalyDetector) {
-  if (params["MetricDataQueries"]) qsP.appendList(body, prefix+".MetricDataQueries", params["MetricDataQueries"], {"appender":MetricDataQuery_Serialize,"entryPrefix":".member."})
-}
-function MetricMathAnomalyDetector_Parse(node: xmlP.XmlNode): s.MetricMathAnomalyDetector {
-  return {
-    MetricDataQueries: node.getList("MetricDataQueries", "member").map(MetricDataQuery_Parse),
-  };
-}
-
 function MetricDataQuery_Serialize(body: URLSearchParams, prefix: string, params: s.MetricDataQuery) {
   body.append(prefix+".Id", (params["Id"] ?? '').toString());
   if (params["MetricStat"] != null) MetricStat_Serialize(body, prefix+".MetricStat", params["MetricStat"]);
@@ -998,8 +969,6 @@ function AnomalyDetector_Parse(node: xmlP.XmlNode): s.AnomalyDetector {
     Dimensions: node.getList("Dimensions", "member").map(Dimension_Parse),
     Configuration: node.first("Configuration", false, AnomalyDetectorConfiguration_Parse),
     StateValue: node.first("StateValue", false, x => (x.content ?? '') as s.AnomalyDetectorStateValue),
-    SingleMetricAnomalyDetector: node.first("SingleMetricAnomalyDetector", false, SingleMetricAnomalyDetector_Parse),
-    MetricMathAnomalyDetector: node.first("MetricMathAnomalyDetector", false, MetricMathAnomalyDetector_Parse),
   };
 }
 

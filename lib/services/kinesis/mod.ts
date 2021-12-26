@@ -55,7 +55,6 @@ export class Kinesis {
     const body: jsonP.JSONObject = {
       StreamName: params["StreamName"],
       ShardCount: params["ShardCount"],
-      StreamModeDetails: fromStreamModeDetails(params["StreamModeDetails"]),
     };
     const resp = await this.#client.performRequest({
       opts, body,
@@ -122,8 +121,6 @@ export class Kinesis {
       required: {
         "ShardLimit": "n",
         "OpenShardCount": "n",
-        "OnDemandStreamCount": "n",
-        "OnDemandStreamCountLimit": "n",
       },
       optional: {},
     }, await resp.json());
@@ -558,21 +555,6 @@ export class Kinesis {
     }, await resp.json());
   }
 
-  async updateStreamMode(
-    params: s.UpdateStreamModeInput,
-    opts: client.RequestOptions = {},
-  ): Promise<void> {
-    const body: jsonP.JSONObject = {
-      StreamARN: params["StreamARN"],
-      StreamModeDetails: fromStreamModeDetails(params["StreamModeDetails"]),
-    };
-    const resp = await this.#client.performRequest({
-      opts, body,
-      action: "UpdateStreamMode",
-    });
-    await resp.arrayBuffer(); // consume body without use
-  }
-
   // Resource State Waiters
 
   /** Checks state up to 18 times, 10 seconds apart (about 3 minutes max wait time). */
@@ -609,21 +591,6 @@ export class Kinesis {
 
 }
 
-function fromStreamModeDetails(input?: s.StreamModeDetails | null): jsonP.JSONValue {
-  if (!input) return input;
-  return {
-    StreamMode: input["StreamMode"],
-  }
-}
-function toStreamModeDetails(root: jsonP.JSONValue): s.StreamModeDetails {
-  return jsonP.readObj({
-    required: {
-      "StreamMode": (x: jsonP.JSONValue) => cmnP.readEnum<s.StreamMode>(x),
-    },
-    optional: {},
-  }, root);
-}
-
 function fromShardFilter(input?: s.ShardFilter | null): jsonP.JSONValue {
   if (!input) return input;
   return {
@@ -655,7 +622,6 @@ function toStreamDescription(root: jsonP.JSONValue): s.StreamDescription {
       "EnhancedMonitoring": [toEnhancedMetrics],
     },
     optional: {
-      "StreamModeDetails": toStreamModeDetails,
       "EncryptionType": (x: jsonP.JSONValue) => cmnP.readEnum<s.EncryptionType>(x),
       "KeyId": "s",
     },
@@ -731,7 +697,6 @@ function toStreamDescriptionSummary(root: jsonP.JSONValue): s.StreamDescriptionS
       "OpenShardCount": "n",
     },
     optional: {
-      "StreamModeDetails": toStreamModeDetails,
       "EncryptionType": (x: jsonP.JSONValue) => cmnP.readEnum<s.EncryptionType>(x),
       "KeyId": "s",
       "ConsumerCount": "n",

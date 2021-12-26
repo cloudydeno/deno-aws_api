@@ -98,26 +98,6 @@ export class ECR {
     }, await resp.json());
   }
 
-  async batchGetRepositoryScanningConfiguration(
-    params: s.BatchGetRepositoryScanningConfigurationRequest,
-    opts: client.RequestOptions = {},
-  ): Promise<s.BatchGetRepositoryScanningConfigurationResponse> {
-    const body: jsonP.JSONObject = {
-      repositoryNames: params["repositoryNames"],
-    };
-    const resp = await this.#client.performRequest({
-      opts, body,
-      action: "BatchGetRepositoryScanningConfiguration",
-    });
-    return jsonP.readObj({
-      required: {},
-      optional: {
-        "scanningConfigurations": [toRepositoryScanningConfiguration],
-        "failures": [toRepositoryScanningConfigurationFailure],
-      },
-    }, await resp.json());
-  }
-
   async completeLayerUpload(
     params: s.CompleteLayerUploadRequest,
     opts: client.RequestOptions = {},
@@ -143,36 +123,11 @@ export class ECR {
     }, await resp.json());
   }
 
-  async createPullThroughCacheRule(
-    params: s.CreatePullThroughCacheRuleRequest,
-    opts: client.RequestOptions = {},
-  ): Promise<s.CreatePullThroughCacheRuleResponse> {
-    const body: jsonP.JSONObject = {
-      ecrRepositoryPrefix: params["ecrRepositoryPrefix"],
-      upstreamRegistryUrl: params["upstreamRegistryUrl"],
-      registryId: params["registryId"],
-    };
-    const resp = await this.#client.performRequest({
-      opts, body,
-      action: "CreatePullThroughCacheRule",
-    });
-    return jsonP.readObj({
-      required: {},
-      optional: {
-        "ecrRepositoryPrefix": "s",
-        "upstreamRegistryUrl": "s",
-        "createdAt": "d",
-        "registryId": "s",
-      },
-    }, await resp.json());
-  }
-
   async createRepository(
     params: s.CreateRepositoryRequest,
     opts: client.RequestOptions = {},
   ): Promise<s.CreateRepositoryResponse> {
     const body: jsonP.JSONObject = {
-      registryId: params["registryId"],
       repositoryName: params["repositoryName"],
       tags: params["tags"]?.map(x => fromTag(x)),
       imageTagMutability: params["imageTagMutability"],
@@ -210,29 +165,6 @@ export class ECR {
         "repositoryName": "s",
         "lifecyclePolicyText": "s",
         "lastEvaluatedAt": "d",
-      },
-    }, await resp.json());
-  }
-
-  async deletePullThroughCacheRule(
-    params: s.DeletePullThroughCacheRuleRequest,
-    opts: client.RequestOptions = {},
-  ): Promise<s.DeletePullThroughCacheRuleResponse> {
-    const body: jsonP.JSONObject = {
-      ecrRepositoryPrefix: params["ecrRepositoryPrefix"],
-      registryId: params["registryId"],
-    };
-    const resp = await this.#client.performRequest({
-      opts, body,
-      action: "DeletePullThroughCacheRule",
-    });
-    return jsonP.readObj({
-      required: {},
-      optional: {
-        "ecrRepositoryPrefix": "s",
-        "upstreamRegistryUrl": "s",
-        "createdAt": "d",
-        "registryId": "s",
       },
     }, await resp.json());
   }
@@ -297,29 +229,6 @@ export class ECR {
     }, await resp.json());
   }
 
-  async describeImageReplicationStatus(
-    params: s.DescribeImageReplicationStatusRequest,
-    opts: client.RequestOptions = {},
-  ): Promise<s.DescribeImageReplicationStatusResponse> {
-    const body: jsonP.JSONObject = {
-      repositoryName: params["repositoryName"],
-      imageId: fromImageIdentifier(params["imageId"]),
-      registryId: params["registryId"],
-    };
-    const resp = await this.#client.performRequest({
-      opts, body,
-      action: "DescribeImageReplicationStatus",
-    });
-    return jsonP.readObj({
-      required: {},
-      optional: {
-        "repositoryName": "s",
-        "imageId": toImageIdentifier,
-        "replicationStatuses": [toImageReplicationStatus],
-      },
-    }, await resp.json());
-  }
-
   async describeImageScanFindings(
     params: s.DescribeImageScanFindingsRequest,
     opts: client.RequestOptions = {},
@@ -368,29 +277,6 @@ export class ECR {
       required: {},
       optional: {
         "imageDetails": [toImageDetail],
-        "nextToken": "s",
-      },
-    }, await resp.json());
-  }
-
-  async describePullThroughCacheRules(
-    params: s.DescribePullThroughCacheRulesRequest = {},
-    opts: client.RequestOptions = {},
-  ): Promise<s.DescribePullThroughCacheRulesResponse> {
-    const body: jsonP.JSONObject = {
-      registryId: params["registryId"],
-      ecrRepositoryPrefixes: params["ecrRepositoryPrefixes"],
-      nextToken: params["nextToken"],
-      maxResults: params["maxResults"],
-    };
-    const resp = await this.#client.performRequest({
-      opts, body,
-      action: "DescribePullThroughCacheRules",
-    });
-    return jsonP.readObj({
-      required: {},
-      optional: {
-        "pullThroughCacheRules": [toPullThroughCacheRule],
         "nextToken": "s",
       },
     }, await resp.json());
@@ -543,23 +429,6 @@ export class ECR {
       optional: {
         "registryId": "s",
         "policyText": "s",
-      },
-    }, await resp.json());
-  }
-
-  async getRegistryScanningConfiguration(
-    opts: client.RequestOptions = {},
-  ): Promise<s.GetRegistryScanningConfigurationResponse> {
-    const body: jsonP.JSONObject = {};
-    const resp = await this.#client.performRequest({
-      opts, body,
-      action: "GetRegistryScanningConfiguration",
-    });
-    return jsonP.readObj({
-      required: {},
-      optional: {
-        "registryId": "s",
-        "scanningConfiguration": toRegistryScanningConfiguration,
       },
     }, await resp.json());
   }
@@ -759,26 +628,6 @@ export class ECR {
       optional: {
         "registryId": "s",
         "policyText": "s",
-      },
-    }, await resp.json());
-  }
-
-  async putRegistryScanningConfiguration(
-    params: s.PutRegistryScanningConfigurationRequest = {},
-    opts: client.RequestOptions = {},
-  ): Promise<s.PutRegistryScanningConfigurationResponse> {
-    const body: jsonP.JSONObject = {
-      scanType: params["scanType"],
-      rules: params["rules"]?.map(x => fromRegistryScanningRule(x)),
-    };
-    const resp = await this.#client.performRequest({
-      opts, body,
-      action: "PutRegistryScanningConfiguration",
-    });
-    return jsonP.readObj({
-      required: {},
-      optional: {
-        "registryScanningConfiguration": toRegistryScanningConfiguration,
       },
     }, await resp.json());
   }
@@ -1061,40 +910,6 @@ function fromListImagesFilter(input?: s.ListImagesFilter | null): jsonP.JSONValu
   }
 }
 
-function fromRegistryScanningRule(input?: s.RegistryScanningRule | null): jsonP.JSONValue {
-  if (!input) return input;
-  return {
-    scanFrequency: input["scanFrequency"],
-    repositoryFilters: input["repositoryFilters"]?.map(x => fromScanningRepositoryFilter(x)),
-  }
-}
-function toRegistryScanningRule(root: jsonP.JSONValue): s.RegistryScanningRule {
-  return jsonP.readObj({
-    required: {
-      "scanFrequency": (x: jsonP.JSONValue) => cmnP.readEnum<s.ScanFrequency>(x),
-      "repositoryFilters": [toScanningRepositoryFilter],
-    },
-    optional: {},
-  }, root);
-}
-
-function fromScanningRepositoryFilter(input?: s.ScanningRepositoryFilter | null): jsonP.JSONValue {
-  if (!input) return input;
-  return {
-    filter: input["filter"],
-    filterType: input["filterType"],
-  }
-}
-function toScanningRepositoryFilter(root: jsonP.JSONValue): s.ScanningRepositoryFilter {
-  return jsonP.readObj({
-    required: {
-      "filter": "s",
-      "filterType": (x: jsonP.JSONValue) => cmnP.readEnum<s.ScanningRepositoryFilterType>(x),
-    },
-    optional: {},
-  }, root);
-}
-
 function fromReplicationConfiguration(input?: s.ReplicationConfiguration | null): jsonP.JSONValue {
   if (!input) return input;
   return {
@@ -1114,7 +929,6 @@ function fromReplicationRule(input?: s.ReplicationRule | null): jsonP.JSONValue 
   if (!input) return input;
   return {
     destinations: input["destinations"]?.map(x => fromReplicationDestination(x)),
-    repositoryFilters: input["repositoryFilters"]?.map(x => fromRepositoryFilter(x)),
   }
 }
 function toReplicationRule(root: jsonP.JSONValue): s.ReplicationRule {
@@ -1122,9 +936,7 @@ function toReplicationRule(root: jsonP.JSONValue): s.ReplicationRule {
     required: {
       "destinations": [toReplicationDestination],
     },
-    optional: {
-      "repositoryFilters": [toRepositoryFilter],
-    },
+    optional: {},
   }, root);
 }
 
@@ -1140,23 +952,6 @@ function toReplicationDestination(root: jsonP.JSONValue): s.ReplicationDestinati
     required: {
       "region": "s",
       "registryId": "s",
-    },
-    optional: {},
-  }, root);
-}
-
-function fromRepositoryFilter(input?: s.RepositoryFilter | null): jsonP.JSONValue {
-  if (!input) return input;
-  return {
-    filter: input["filter"],
-    filterType: input["filterType"],
-  }
-}
-function toRepositoryFilter(root: jsonP.JSONValue): s.RepositoryFilter {
-  return jsonP.readObj({
-    required: {
-      "filter": "s",
-      "filterType": (x: jsonP.JSONValue) => cmnP.readEnum<s.RepositoryFilterType>(x),
     },
     optional: {},
   }, root);
@@ -1209,30 +1004,6 @@ function toImage(root: jsonP.JSONValue): s.Image {
   }, root);
 }
 
-function toRepositoryScanningConfiguration(root: jsonP.JSONValue): s.RepositoryScanningConfiguration {
-  return jsonP.readObj({
-    required: {},
-    optional: {
-      "repositoryArn": "s",
-      "repositoryName": "s",
-      "scanOnPush": "b",
-      "scanFrequency": (x: jsonP.JSONValue) => cmnP.readEnum<s.ScanFrequency>(x),
-      "appliedScanFilters": [toScanningRepositoryFilter],
-    },
-  }, root);
-}
-
-function toRepositoryScanningConfigurationFailure(root: jsonP.JSONValue): s.RepositoryScanningConfigurationFailure {
-  return jsonP.readObj({
-    required: {},
-    optional: {
-      "repositoryName": "s",
-      "failureCode": (x: jsonP.JSONValue) => cmnP.readEnum<s.ScanningConfigurationFailureCode>(x),
-      "failureReason": "s",
-    },
-  }, root);
-}
-
 function toRepository(root: jsonP.JSONValue): s.Repository {
   return jsonP.readObj({
     required: {},
@@ -1245,18 +1016,6 @@ function toRepository(root: jsonP.JSONValue): s.Repository {
       "imageTagMutability": (x: jsonP.JSONValue) => cmnP.readEnum<s.ImageTagMutability>(x),
       "imageScanningConfiguration": toImageScanningConfiguration,
       "encryptionConfiguration": toEncryptionConfiguration,
-    },
-  }, root);
-}
-
-function toImageReplicationStatus(root: jsonP.JSONValue): s.ImageReplicationStatus {
-  return jsonP.readObj({
-    required: {},
-    optional: {
-      "region": "s",
-      "registryId": "s",
-      "status": (x: jsonP.JSONValue) => cmnP.readEnum<s.ReplicationStatus>(x),
-      "failureCode": "s",
     },
   }, root);
 }
@@ -1277,9 +1036,8 @@ function toImageScanFindings(root: jsonP.JSONValue): s.ImageScanFindings {
     optional: {
       "imageScanCompletedAt": "d",
       "vulnerabilitySourceUpdatedAt": "d",
-      "findingSeverityCounts": x => jsonP.readMap(x => cmnP.readEnumReq<s.FindingSeverity>(x), Number, x),
       "findings": [toImageScanFinding],
-      "enhancedFindings": [toEnhancedImageScanFinding],
+      "findingSeverityCounts": x => jsonP.readMap(x => cmnP.readEnumReq<s.FindingSeverity>(x), Number, x),
     },
   }, root);
 }
@@ -1304,163 +1062,6 @@ function toAttribute(root: jsonP.JSONValue): s.Attribute {
     },
     optional: {
       "value": "s",
-    },
-  }, root);
-}
-
-function toEnhancedImageScanFinding(root: jsonP.JSONValue): s.EnhancedImageScanFinding {
-  return jsonP.readObj({
-    required: {},
-    optional: {
-      "awsAccountId": "s",
-      "description": "s",
-      "findingArn": "s",
-      "firstObservedAt": "d",
-      "lastObservedAt": "d",
-      "packageVulnerabilityDetails": toPackageVulnerabilityDetails,
-      "remediation": toRemediation,
-      "resources": [toResource],
-      "score": "n",
-      "scoreDetails": toScoreDetails,
-      "severity": "s",
-      "status": "s",
-      "title": "s",
-      "type": "s",
-      "updatedAt": "d",
-    },
-  }, root);
-}
-
-function toPackageVulnerabilityDetails(root: jsonP.JSONValue): s.PackageVulnerabilityDetails {
-  return jsonP.readObj({
-    required: {},
-    optional: {
-      "cvss": [toCvssScore],
-      "referenceUrls": ["s"],
-      "relatedVulnerabilities": ["s"],
-      "source": "s",
-      "sourceUrl": "s",
-      "vendorCreatedAt": "d",
-      "vendorSeverity": "s",
-      "vendorUpdatedAt": "d",
-      "vulnerabilityId": "s",
-      "vulnerablePackages": [toVulnerablePackage],
-    },
-  }, root);
-}
-
-function toCvssScore(root: jsonP.JSONValue): s.CvssScore {
-  return jsonP.readObj({
-    required: {},
-    optional: {
-      "baseScore": "n",
-      "scoringVector": "s",
-      "source": "s",
-      "version": "s",
-    },
-  }, root);
-}
-
-function toVulnerablePackage(root: jsonP.JSONValue): s.VulnerablePackage {
-  return jsonP.readObj({
-    required: {},
-    optional: {
-      "arch": "s",
-      "epoch": "n",
-      "filePath": "s",
-      "name": "s",
-      "packageManager": "s",
-      "release": "s",
-      "sourceLayerHash": "s",
-      "version": "s",
-    },
-  }, root);
-}
-
-function toRemediation(root: jsonP.JSONValue): s.Remediation {
-  return jsonP.readObj({
-    required: {},
-    optional: {
-      "recommendation": toRecommendation,
-    },
-  }, root);
-}
-
-function toRecommendation(root: jsonP.JSONValue): s.Recommendation {
-  return jsonP.readObj({
-    required: {},
-    optional: {
-      "url": "s",
-      "text": "s",
-    },
-  }, root);
-}
-
-function toResource(root: jsonP.JSONValue): s.Resource {
-  return jsonP.readObj({
-    required: {},
-    optional: {
-      "details": toResourceDetails,
-      "id": "s",
-      "tags": x => jsonP.readMap(String, String, x),
-      "type": "s",
-    },
-  }, root);
-}
-
-function toResourceDetails(root: jsonP.JSONValue): s.ResourceDetails {
-  return jsonP.readObj({
-    required: {},
-    optional: {
-      "awsEcrContainerImage": toAwsEcrContainerImageDetails,
-    },
-  }, root);
-}
-
-function toAwsEcrContainerImageDetails(root: jsonP.JSONValue): s.AwsEcrContainerImageDetails {
-  return jsonP.readObj({
-    required: {},
-    optional: {
-      "architecture": "s",
-      "author": "s",
-      "imageHash": "s",
-      "imageTags": ["s"],
-      "platform": "s",
-      "pushedAt": "d",
-      "registry": "s",
-      "repositoryName": "s",
-    },
-  }, root);
-}
-
-function toScoreDetails(root: jsonP.JSONValue): s.ScoreDetails {
-  return jsonP.readObj({
-    required: {},
-    optional: {
-      "cvss": toCvssScoreDetails,
-    },
-  }, root);
-}
-
-function toCvssScoreDetails(root: jsonP.JSONValue): s.CvssScoreDetails {
-  return jsonP.readObj({
-    required: {},
-    optional: {
-      "adjustments": [toCvssScoreAdjustment],
-      "score": "n",
-      "scoreSource": "s",
-      "scoringVector": "s",
-      "version": "s",
-    },
-  }, root);
-}
-
-function toCvssScoreAdjustment(root: jsonP.JSONValue): s.CvssScoreAdjustment {
-  return jsonP.readObj({
-    required: {},
-    optional: {
-      "metric": "s",
-      "reason": "s",
     },
   }, root);
 }
@@ -1490,18 +1091,6 @@ function toImageScanFindingsSummary(root: jsonP.JSONValue): s.ImageScanFindingsS
       "imageScanCompletedAt": "d",
       "vulnerabilitySourceUpdatedAt": "d",
       "findingSeverityCounts": x => jsonP.readMap(x => cmnP.readEnumReq<s.FindingSeverity>(x), Number, x),
-    },
-  }, root);
-}
-
-function toPullThroughCacheRule(root: jsonP.JSONValue): s.PullThroughCacheRule {
-  return jsonP.readObj({
-    required: {},
-    optional: {
-      "ecrRepositoryPrefix": "s",
-      "upstreamRegistryUrl": "s",
-      "createdAt": "d",
-      "registryId": "s",
     },
   }, root);
 }
@@ -1544,16 +1133,6 @@ function toLifecyclePolicyPreviewSummary(root: jsonP.JSONValue): s.LifecyclePoli
     required: {},
     optional: {
       "expiringImageTotalCount": "n",
-    },
-  }, root);
-}
-
-function toRegistryScanningConfiguration(root: jsonP.JSONValue): s.RegistryScanningConfiguration {
-  return jsonP.readObj({
-    required: {},
-    optional: {
-      "scanType": (x: jsonP.JSONValue) => cmnP.readEnum<s.ScanType>(x),
-      "rules": [toRegistryScanningRule],
     },
   }, root);
 }

@@ -43,7 +43,6 @@ export interface CreateKeyRequest {
   Description?: string | null;
   KeyUsage?: KeyUsageType | null;
   CustomerMasterKeySpec?: CustomerMasterKeySpec | null;
-  KeySpec?: KeySpec | null;
   Origin?: OriginType | null;
   CustomKeyStoreId?: string | null;
   BypassPolicyLockoutSafetyCheck?: boolean | null;
@@ -450,7 +449,6 @@ export interface GetPublicKeyResponse {
   KeyId?: string | null;
   PublicKey?: Uint8Array | null;
   CustomerMasterKeySpec?: CustomerMasterKeySpec | null;
-  KeySpec?: KeySpec | null;
   KeyUsage?: KeyUsageType | null;
   EncryptionAlgorithms?: EncryptionAlgorithmSpec[] | null;
   SigningAlgorithms?: SigningAlgorithmSpec[] | null;
@@ -571,18 +569,6 @@ export type CustomerMasterKeySpec =
 | "SYMMETRIC_DEFAULT"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 5 - tags: input, named, enum, output
-export type KeySpec =
-| "RSA_2048"
-| "RSA_3072"
-| "RSA_4096"
-| "ECC_NIST_P256"
-| "ECC_NIST_P384"
-| "ECC_NIST_P521"
-| "ECC_SECG_P256K1"
-| "SYMMETRIC_DEFAULT"
-| cmnP.UnexpectedEnumValue;
-
 // refs: 4 - tags: input, named, enum, output
 export type OriginType =
 | "AWS_KMS"
@@ -675,7 +661,6 @@ export interface KeyMetadata {
   ExpirationModel?: ExpirationModelType | null;
   KeyManager?: KeyManagerType | null;
   CustomerMasterKeySpec?: CustomerMasterKeySpec | null;
-  KeySpec?: KeySpec | null;
   EncryptionAlgorithms?: EncryptionAlgorithmSpec[] | null;
   SigningAlgorithms?: SigningAlgorithmSpec[] | null;
   MultiRegion?: boolean | null;

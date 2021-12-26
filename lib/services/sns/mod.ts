@@ -530,25 +530,6 @@ export class SNS {
     });
   }
 
-  async publishBatch(
-    params: s.PublishBatchInput,
-    opts: client.RequestOptions = {},
-  ): Promise<s.PublishBatchResponse> {
-    const body = new URLSearchParams;
-    const prefix = '';
-    body.append(prefix+"TopicArn", (params["TopicArn"] ?? '').toString());
-    if (params["PublishBatchRequestEntries"]) qsP.appendList(body, prefix+"PublishBatchRequestEntries", params["PublishBatchRequestEntries"], {"appender":PublishBatchRequestEntry_Serialize,"entryPrefix":".member."})
-    const resp = await this.#client.performRequest({
-      opts, body,
-      action: "PublishBatch",
-    });
-    const xml = xmlP.readXmlResult(await resp.text(), "PublishBatchResult");
-    return {
-      Successful: xml.getList("Successful", "member").map(PublishBatchResultEntry_Parse),
-      Failed: xml.getList("Failed", "member").map(BatchResultErrorEntry_Parse),
-    };
-  }
-
   async removePermission(
     params: s.RemovePermissionInput,
     opts: client.RequestOptions = {},
@@ -738,16 +719,6 @@ function MessageAttributeValue_Serialize(body: URLSearchParams, prefix: string, 
   if ("BinaryValue" in params) body.append(prefix+".BinaryValue", serializeBlob(params["BinaryValue"]) ?? '');
 }
 
-function PublishBatchRequestEntry_Serialize(body: URLSearchParams, prefix: string, params: s.PublishBatchRequestEntry) {
-  body.append(prefix+".Id", (params["Id"] ?? '').toString());
-  body.append(prefix+".Message", (params["Message"] ?? '').toString());
-  if ("Subject" in params) body.append(prefix+".Subject", (params["Subject"] ?? '').toString());
-  if ("MessageStructure" in params) body.append(prefix+".MessageStructure", (params["MessageStructure"] ?? '').toString());
-  if (params["MessageAttributes"]) qsP.appendMap(body, prefix+".MessageAttributes", params["MessageAttributes"], {"appender":MessageAttributeValue_Serialize,"keyName":".Name","valName":".Value","entryPrefix":".entry."})
-  if ("MessageDeduplicationId" in params) body.append(prefix+".MessageDeduplicationId", (params["MessageDeduplicationId"] ?? '').toString());
-  if ("MessageGroupId" in params) body.append(prefix+".MessageGroupId", (params["MessageGroupId"] ?? '').toString());
-}
-
 function Endpoint_Parse(node: xmlP.XmlNode): s.Endpoint {
   return {
     ...node.strings({
@@ -796,20 +767,4 @@ function Topic_Parse(node: xmlP.XmlNode): s.Topic {
   return node.strings({
     optional: {"TopicArn":true},
   });
-}
-
-function PublishBatchResultEntry_Parse(node: xmlP.XmlNode): s.PublishBatchResultEntry {
-  return node.strings({
-    optional: {"Id":true,"MessageId":true,"SequenceNumber":true},
-  });
-}
-
-function BatchResultErrorEntry_Parse(node: xmlP.XmlNode): s.BatchResultErrorEntry {
-  return {
-    ...node.strings({
-      required: {"Id":true,"Code":true},
-      optional: {"Message":true},
-    }),
-    SenderFault: node.first("SenderFault", true, x => x.content === 'true'),
-  };
 }

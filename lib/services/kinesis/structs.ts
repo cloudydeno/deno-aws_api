@@ -11,8 +11,7 @@ export interface AddTagsToStreamInput {
 // refs: 1 - tags: named, input
 export interface CreateStreamInput {
   StreamName: string;
-  ShardCount?: number | null;
-  StreamModeDetails?: StreamModeDetails | null;
+  ShardCount: number;
 }
 
 // refs: 1 - tags: named, input
@@ -179,18 +178,10 @@ export interface UpdateShardCountInput {
   ScalingType: ScalingType;
 }
 
-// refs: 1 - tags: named, input
-export interface UpdateStreamModeInput {
-  StreamARN: string;
-  StreamModeDetails: StreamModeDetails;
-}
-
 // refs: 1 - tags: named, output
 export interface DescribeLimitsOutput {
   ShardLimit: number;
   OpenShardCount: number;
-  OnDemandStreamCount: number;
-  OnDemandStreamCountLimit: number;
 }
 
 // refs: 1 - tags: named, output
@@ -278,17 +269,6 @@ export interface UpdateShardCountOutput {
   TargetShardCount?: number | null;
 }
 
-// refs: 4 - tags: input, named, interface, output
-export interface StreamModeDetails {
-  StreamMode: StreamMode;
-}
-
-// refs: 4 - tags: input, named, enum, output
-export type StreamMode =
-| "PROVISIONED"
-| "ON_DEMAND"
-| cmnP.UnexpectedEnumValue;
-
 // refs: 6 - tags: input, named, enum, output
 export type MetricsName =
 | "IncomingBytes"
@@ -350,7 +330,6 @@ export interface StreamDescription {
   StreamName: string;
   StreamARN: string;
   StreamStatus: StreamStatus;
-  StreamModeDetails?: StreamModeDetails | null;
   Shards: Shard[];
   HasMoreShards: boolean;
   RetentionPeriodHours: number;
@@ -415,7 +394,6 @@ export interface StreamDescriptionSummary {
   StreamName: string;
   StreamARN: string;
   StreamStatus: StreamStatus;
-  StreamModeDetails?: StreamModeDetails | null;
   RetentionPeriodHours: number;
   StreamCreationTimestamp: Date | number;
   EnhancedMonitoring: EnhancedMetrics[];

@@ -144,7 +144,6 @@ export class Lambda {
       FunctionName: params["FunctionName"],
       Enabled: params["Enabled"],
       BatchSize: params["BatchSize"],
-      FilterCriteria: fromFilterCriteria(params["FilterCriteria"]),
       MaximumBatchingWindowInSeconds: params["MaximumBatchingWindowInSeconds"],
       ParallelizationFactor: params["ParallelizationFactor"],
       StartingPosition: params["StartingPosition"],
@@ -176,7 +175,6 @@ export class Lambda {
         "MaximumBatchingWindowInSeconds": "n",
         "ParallelizationFactor": "n",
         "EventSourceArn": "s",
-        "FilterCriteria": toFilterCriteria,
         "FunctionArn": "s",
         "LastModified": "d",
         "LastProcessingResult": "s",
@@ -221,7 +219,6 @@ export class Lambda {
       FileSystemConfigs: params["FileSystemConfigs"]?.map(x => fromFileSystemConfig(x)),
       ImageConfig: fromImageConfig(params["ImageConfig"]),
       CodeSigningConfigArn: params["CodeSigningConfigArn"],
-      Architectures: params["Architectures"],
     };
     const resp = await this.#client.performRequest({
       opts, body,
@@ -263,7 +260,6 @@ export class Lambda {
         "ImageConfigResponse": toImageConfigResponse,
         "SigningProfileVersionArn": "s",
         "SigningJobArn": "s",
-        "Architectures": [(x: jsonP.JSONValue) => cmnP.readEnum<s.Architecture>(x)],
       },
     }, await resp.json());
   }
@@ -318,7 +314,6 @@ export class Lambda {
         "MaximumBatchingWindowInSeconds": "n",
         "ParallelizationFactor": "n",
         "EventSourceArn": "s",
-        "FilterCriteria": toFilterCriteria,
         "FunctionArn": "s",
         "LastModified": "d",
         "LastProcessingResult": "s",
@@ -512,7 +507,6 @@ export class Lambda {
         "MaximumBatchingWindowInSeconds": "n",
         "ParallelizationFactor": "n",
         "EventSourceArn": "s",
-        "FilterCriteria": toFilterCriteria,
         "FunctionArn": "s",
         "LastModified": "d",
         "LastProcessingResult": "s",
@@ -644,7 +638,6 @@ export class Lambda {
         "ImageConfigResponse": toImageConfigResponse,
         "SigningProfileVersionArn": "s",
         "SigningJobArn": "s",
-        "Architectures": [(x: jsonP.JSONValue) => cmnP.readEnum<s.Architecture>(x)],
       },
     }, await resp.json());
   }
@@ -697,7 +690,6 @@ export class Lambda {
         "Version": "n",
         "CompatibleRuntimes": [(x: jsonP.JSONValue) => cmnP.readEnum<s.Runtime>(x)],
         "LicenseInfo": "s",
-        "CompatibleArchitectures": [(x: jsonP.JSONValue) => cmnP.readEnum<s.Architecture>(x)],
       },
     }, await resp.json());
   }
@@ -726,7 +718,6 @@ export class Lambda {
         "Version": "n",
         "CompatibleRuntimes": [(x: jsonP.JSONValue) => cmnP.readEnum<s.Runtime>(x)],
         "LicenseInfo": "s",
-        "CompatibleArchitectures": [(x: jsonP.JSONValue) => cmnP.readEnum<s.Architecture>(x)],
       },
     }, await resp.json());
   }
@@ -996,7 +987,6 @@ export class Lambda {
     if (params["CompatibleRuntime"] != null) query.set("CompatibleRuntime", params["CompatibleRuntime"]?.toString() ?? "");
     if (params["Marker"] != null) query.set("Marker", params["Marker"]?.toString() ?? "");
     if (params["MaxItems"] != null) query.set("MaxItems", params["MaxItems"]?.toString() ?? "");
-    if (params["CompatibleArchitecture"] != null) query.set("CompatibleArchitecture", params["CompatibleArchitecture"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
       opts, query,
       action: "ListLayerVersions",
@@ -1021,7 +1011,6 @@ export class Lambda {
     if (params["CompatibleRuntime"] != null) query.set("CompatibleRuntime", params["CompatibleRuntime"]?.toString() ?? "");
     if (params["Marker"] != null) query.set("Marker", params["Marker"]?.toString() ?? "");
     if (params["MaxItems"] != null) query.set("MaxItems", params["MaxItems"]?.toString() ?? "");
-    if (params["CompatibleArchitecture"] != null) query.set("CompatibleArchitecture", params["CompatibleArchitecture"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
       opts, query,
       action: "ListLayers",
@@ -1112,7 +1101,6 @@ export class Lambda {
       Content: fromLayerVersionContentInput(params["Content"]),
       CompatibleRuntimes: params["CompatibleRuntimes"],
       LicenseInfo: params["LicenseInfo"],
-      CompatibleArchitectures: params["CompatibleArchitectures"],
     };
     const resp = await this.#client.performRequest({
       opts, body,
@@ -1131,7 +1119,6 @@ export class Lambda {
         "Version": "n",
         "CompatibleRuntimes": [(x: jsonP.JSONValue) => cmnP.readEnum<s.Runtime>(x)],
         "LicenseInfo": "s",
-        "CompatibleArchitectures": [(x: jsonP.JSONValue) => cmnP.readEnum<s.Architecture>(x)],
       },
     }, await resp.json());
   }
@@ -1185,7 +1172,6 @@ export class Lambda {
         "ImageConfigResponse": toImageConfigResponse,
         "SigningProfileVersionArn": "s",
         "SigningJobArn": "s",
-        "Architectures": [(x: jsonP.JSONValue) => cmnP.readEnum<s.Architecture>(x)],
       },
     }, await resp.json());
   }
@@ -1419,7 +1405,6 @@ export class Lambda {
       FunctionName: params["FunctionName"],
       Enabled: params["Enabled"],
       BatchSize: params["BatchSize"],
-      FilterCriteria: fromFilterCriteria(params["FilterCriteria"]),
       MaximumBatchingWindowInSeconds: params["MaximumBatchingWindowInSeconds"],
       DestinationConfig: fromDestinationConfig(params["DestinationConfig"]),
       MaximumRecordAgeInSeconds: params["MaximumRecordAgeInSeconds"],
@@ -1447,7 +1432,6 @@ export class Lambda {
         "MaximumBatchingWindowInSeconds": "n",
         "ParallelizationFactor": "n",
         "EventSourceArn": "s",
-        "FilterCriteria": toFilterCriteria,
         "FunctionArn": "s",
         "LastModified": "d",
         "LastProcessingResult": "s",
@@ -1480,7 +1464,6 @@ export class Lambda {
       Publish: params["Publish"],
       DryRun: params["DryRun"],
       RevisionId: params["RevisionId"],
-      Architectures: params["Architectures"],
     };
     const resp = await this.#client.performRequest({
       opts, body,
@@ -1523,7 +1506,6 @@ export class Lambda {
         "ImageConfigResponse": toImageConfigResponse,
         "SigningProfileVersionArn": "s",
         "SigningJobArn": "s",
-        "Architectures": [(x: jsonP.JSONValue) => cmnP.readEnum<s.Architecture>(x)],
       },
     }, await resp.json());
   }
@@ -1590,7 +1572,6 @@ export class Lambda {
         "ImageConfigResponse": toImageConfigResponse,
         "SigningProfileVersionArn": "s",
         "SigningJobArn": "s",
-        "Architectures": [(x: jsonP.JSONValue) => cmnP.readEnum<s.Architecture>(x)],
       },
     }, await resp.json());
   }
@@ -1711,7 +1692,6 @@ function toEventSourceMappingConfiguration(root: jsonP.JSONValue): s.EventSource
       "MaximumBatchingWindowInSeconds": "n",
       "ParallelizationFactor": "n",
       "EventSourceArn": "s",
-      "FilterCriteria": toFilterCriteria,
       "FunctionArn": "s",
       "LastModified": "d",
       "LastProcessingResult": "s",
@@ -1766,7 +1746,6 @@ function toFunctionConfiguration(root: jsonP.JSONValue): s.FunctionConfiguration
       "ImageConfigResponse": toImageConfigResponse,
       "SigningProfileVersionArn": "s",
       "SigningJobArn": "s",
-      "Architectures": [(x: jsonP.JSONValue) => cmnP.readEnum<s.Architecture>(x)],
     },
   }, root);
 }
@@ -1834,36 +1813,6 @@ function toCodeSigningPolicies(root: jsonP.JSONValue): s.CodeSigningPolicies {
     required: {},
     optional: {
       "UntrustedArtifactOnDeployment": (x: jsonP.JSONValue) => cmnP.readEnum<s.CodeSigningPolicy>(x),
-    },
-  }, root);
-}
-
-function fromFilterCriteria(input?: s.FilterCriteria | null): jsonP.JSONValue {
-  if (!input) return input;
-  return {
-    Filters: input["Filters"]?.map(x => fromFilter(x)),
-  }
-}
-function toFilterCriteria(root: jsonP.JSONValue): s.FilterCriteria {
-  return jsonP.readObj({
-    required: {},
-    optional: {
-      "Filters": [toFilter],
-    },
-  }, root);
-}
-
-function fromFilter(input?: s.Filter | null): jsonP.JSONValue {
-  if (!input) return input;
-  return {
-    Pattern: input["Pattern"],
-  }
-}
-function toFilter(root: jsonP.JSONValue): s.Filter {
-  return jsonP.readObj({
-    required: {},
-    optional: {
-      "Pattern": "s",
     },
   }, root);
 }
@@ -2186,7 +2135,6 @@ function toLayerVersionsListItem(root: jsonP.JSONValue): s.LayerVersionsListItem
       "CreatedDate": "s",
       "CompatibleRuntimes": [(x: jsonP.JSONValue) => cmnP.readEnum<s.Runtime>(x)],
       "LicenseInfo": "s",
-      "CompatibleArchitectures": [(x: jsonP.JSONValue) => cmnP.readEnum<s.Architecture>(x)],
     },
   }, root);
 }

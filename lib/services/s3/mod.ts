@@ -186,7 +186,6 @@ export class S3 {
     if (params["GrantWrite"] != null) headers.append("x-amz-grant-write", params["GrantWrite"]);
     if (params["GrantWriteACP"] != null) headers.append("x-amz-grant-write-acp", params["GrantWriteACP"]);
     if (params["ObjectLockEnabledForBucket"] != null) headers.append("x-amz-bucket-object-lock-enabled", params["ObjectLockEnabledForBucket"]?.toString() ?? '');
-    if (params["ObjectOwnership"] != null) headers.append("x-amz-object-ownership", params["ObjectOwnership"]);
     const resp = await this.#client.performRequest({
       opts, headers, body,
       action: "CreateBucket",
@@ -808,7 +807,6 @@ export class S3 {
       TopicConfigurations: xml.getList("TopicConfiguration").map(TopicConfiguration_Parse),
       QueueConfigurations: xml.getList("QueueConfiguration").map(QueueConfiguration_Parse),
       LambdaFunctionConfigurations: xml.getList("CloudFunctionConfiguration").map(LambdaFunctionConfiguration_Parse),
-      EventBridgeConfiguration: xml.first("EventBridgeConfiguration", false, EventBridgeConfiguration_Parse),
     };
   }
 
@@ -1835,11 +1833,9 @@ export class S3 {
         ...(inner["TopicConfigurations"]?.map(x => ({name: "TopicConfiguration", ...TopicConfiguration_Serialize(x)})) ?? []),
         ...(inner["QueueConfigurations"]?.map(x => ({name: "QueueConfiguration", ...QueueConfiguration_Serialize(x)})) ?? []),
         ...(inner["LambdaFunctionConfigurations"]?.map(x => ({name: "CloudFunctionConfiguration", ...LambdaFunctionConfiguration_Serialize(x)})) ?? []),
-        {name: "EventBridgeConfiguration", ...EventBridgeConfiguration_Serialize(inner["EventBridgeConfiguration"])},
       ]}) : "";
     const headers = new Headers;
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
-    if (params["SkipDestinationValidation"] != null) headers.append("x-amz-skip-destination-validation", params["SkipDestinationValidation"]?.toString() ?? '');
     const resp = await this.#client.performRequest({
       opts, headers, body,
       action: "PutBucketNotificationConfiguration",
@@ -2521,7 +2517,6 @@ function NotificationConfiguration_Serialize(data: s.NotificationConfiguration |
     ...(data["TopicConfigurations"]?.map(x => ({name: "TopicConfiguration", ...TopicConfiguration_Serialize(x)})) ?? []),
     ...(data["QueueConfigurations"]?.map(x => ({name: "QueueConfiguration", ...QueueConfiguration_Serialize(x)})) ?? []),
     ...(data["LambdaFunctionConfigurations"]?.map(x => ({name: "CloudFunctionConfiguration", ...LambdaFunctionConfiguration_Serialize(x)})) ?? []),
-    {name: "EventBridgeConfiguration", ...EventBridgeConfiguration_Serialize(data["EventBridgeConfiguration"])},
   ]};
 }
 function NotificationConfiguration_Parse(node: xmlP.XmlNode): s.NotificationConfiguration {
@@ -2529,7 +2524,6 @@ function NotificationConfiguration_Parse(node: xmlP.XmlNode): s.NotificationConf
     TopicConfigurations: node.getList("TopicConfiguration").map(TopicConfiguration_Parse),
     QueueConfigurations: node.getList("QueueConfiguration").map(QueueConfiguration_Parse),
     LambdaFunctionConfigurations: node.getList("CloudFunctionConfiguration").map(LambdaFunctionConfiguration_Parse),
-    EventBridgeConfiguration: node.first("EventBridgeConfiguration", false, EventBridgeConfiguration_Parse),
   };
 }
 
@@ -3088,14 +3082,12 @@ function NoncurrentVersionTransition_Serialize(data: s.NoncurrentVersionTransiti
   return {children: [
     {name: "NoncurrentDays", content: data["NoncurrentDays"]?.toString()},
     {name: "StorageClass", content: data["StorageClass"]?.toString()},
-    {name: "NewerNoncurrentVersions", content: data["NewerNoncurrentVersions"]?.toString()},
   ]};
 }
 function NoncurrentVersionTransition_Parse(node: xmlP.XmlNode): s.NoncurrentVersionTransition {
   return {
     NoncurrentDays: node.first("NoncurrentDays", false, x => parseInt(x.content ?? '0')),
     StorageClass: node.first("StorageClass", false, x => (x.content ?? '') as s.TransitionStorageClass),
-    NewerNoncurrentVersions: node.first("NewerNoncurrentVersions", false, x => parseInt(x.content ?? '0')),
   };
 }
 
@@ -3103,13 +3095,11 @@ function NoncurrentVersionExpiration_Serialize(data: s.NoncurrentVersionExpirati
   if (!data) return {};
   return {children: [
     {name: "NoncurrentDays", content: data["NoncurrentDays"]?.toString()},
-    {name: "NewerNoncurrentVersions", content: data["NewerNoncurrentVersions"]?.toString()},
   ]};
 }
 function NoncurrentVersionExpiration_Parse(node: xmlP.XmlNode): s.NoncurrentVersionExpiration {
   return {
     NoncurrentDays: node.first("NoncurrentDays", false, x => parseInt(x.content ?? '0')),
-    NewerNoncurrentVersions: node.first("NewerNoncurrentVersions", false, x => parseInt(x.content ?? '0')),
   };
 }
 
@@ -3166,8 +3156,6 @@ function LifecycleRuleFilter_Serialize(data: s.LifecycleRuleFilter | undefined |
   return {children: [
     {name: "Prefix", content: data["Prefix"]?.toString()},
     {name: "Tag", ...Tag_Serialize(data["Tag"])},
-    {name: "ObjectSizeGreaterThan", content: data["ObjectSizeGreaterThan"]?.toString()},
-    {name: "ObjectSizeLessThan", content: data["ObjectSizeLessThan"]?.toString()},
     {name: "And", ...LifecycleRuleAndOperator_Serialize(data["And"])},
   ]};
 }
@@ -3177,8 +3165,6 @@ function LifecycleRuleFilter_Parse(node: xmlP.XmlNode): s.LifecycleRuleFilter {
       optional: {"Prefix":true},
     }),
     Tag: node.first("Tag", false, Tag_Parse),
-    ObjectSizeGreaterThan: node.first("ObjectSizeGreaterThan", false, x => parseInt(x.content ?? '0')),
-    ObjectSizeLessThan: node.first("ObjectSizeLessThan", false, x => parseInt(x.content ?? '0')),
     And: node.first("And", false, LifecycleRuleAndOperator_Parse),
   };
 }
@@ -3188,8 +3174,6 @@ function LifecycleRuleAndOperator_Serialize(data: s.LifecycleRuleAndOperator | u
   return {children: [
     {name: "Prefix", content: data["Prefix"]?.toString()},
     ...(data["Tags"]?.map(x => ({name: "Tag", ...Tag_Serialize(x)})) ?? []),
-    {name: "ObjectSizeGreaterThan", content: data["ObjectSizeGreaterThan"]?.toString()},
-    {name: "ObjectSizeLessThan", content: data["ObjectSizeLessThan"]?.toString()},
   ]};
 }
 function LifecycleRuleAndOperator_Parse(node: xmlP.XmlNode): s.LifecycleRuleAndOperator {
@@ -3198,8 +3182,6 @@ function LifecycleRuleAndOperator_Parse(node: xmlP.XmlNode): s.LifecycleRuleAndO
       optional: {"Prefix":true},
     }),
     Tags: node.getList("Tag").map(Tag_Parse),
-    ObjectSizeGreaterThan: node.first("ObjectSizeGreaterThan", false, x => parseInt(x.content ?? '0')),
-    ObjectSizeLessThan: node.first("ObjectSizeLessThan", false, x => parseInt(x.content ?? '0')),
   };
 }
 
@@ -3262,14 +3244,13 @@ function MetricsFilter_Serialize(data: s.MetricsFilter | undefined | null): Part
   return {children: [
     {name: "Prefix", content: data["Prefix"]?.toString()},
     {name: "Tag", ...Tag_Serialize(data["Tag"])},
-    {name: "AccessPointArn", content: data["AccessPointArn"]?.toString()},
     {name: "And", ...MetricsAndOperator_Serialize(data["And"])},
   ]};
 }
 function MetricsFilter_Parse(node: xmlP.XmlNode): s.MetricsFilter {
   return {
     ...node.strings({
-      optional: {"Prefix":true,"AccessPointArn":true},
+      optional: {"Prefix":true},
     }),
     Tag: node.first("Tag", false, Tag_Parse),
     And: node.first("And", false, MetricsAndOperator_Parse),
@@ -3281,13 +3262,12 @@ function MetricsAndOperator_Serialize(data: s.MetricsAndOperator | undefined | n
   return {children: [
     {name: "Prefix", content: data["Prefix"]?.toString()},
     ...(data["Tags"]?.map(x => ({name: "Tag", ...Tag_Serialize(x)})) ?? []),
-    {name: "AccessPointArn", content: data["AccessPointArn"]?.toString()},
   ]};
 }
 function MetricsAndOperator_Parse(node: xmlP.XmlNode): s.MetricsAndOperator {
   return {
     ...node.strings({
-      optional: {"Prefix":true,"AccessPointArn":true},
+      optional: {"Prefix":true},
     }),
     Tags: node.getList("Tag").map(Tag_Parse),
   };
@@ -3449,16 +3429,6 @@ function LambdaFunctionConfiguration_Parse(node: xmlP.XmlNode): s.LambdaFunction
     Events: node.getList("Event").map(x => (x.content ?? '') as s.Event),
     Filter: node.first("Filter", false, NotificationConfigurationFilter_Parse),
   };
-}
-
-function EventBridgeConfiguration_Serialize(data: s.EventBridgeConfiguration | undefined | null): Partial<xmlP.Node> {
-  if (!data) return {};
-  return {children: [
-
-  ]};
-}
-function EventBridgeConfiguration_Parse(node: xmlP.XmlNode): s.EventBridgeConfiguration {
-  return {};
 }
 
 function OwnershipControls_Serialize(data: s.OwnershipControls | undefined | null): Partial<xmlP.Node> {

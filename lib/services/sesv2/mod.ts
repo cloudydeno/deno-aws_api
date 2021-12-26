@@ -1885,7 +1885,6 @@ function fromDkimSigningAttributes(input?: s.DkimSigningAttributes | null): json
   return {
     DomainSigningSelector: input["DomainSigningSelector"],
     DomainSigningPrivateKey: input["DomainSigningPrivateKey"],
-    NextSigningKeyLength: input["NextSigningKeyLength"],
   }
 }
 
@@ -2089,9 +2088,6 @@ function toDkimAttributes(root: jsonP.JSONValue): s.DkimAttributes {
       "Status": (x: jsonP.JSONValue) => cmnP.readEnum<s.DkimStatus>(x),
       "Tokens": ["s"],
       "SigningAttributesOrigin": (x: jsonP.JSONValue) => cmnP.readEnum<s.DkimSigningAttributesOrigin>(x),
-      "NextSigningKeyLength": (x: jsonP.JSONValue) => cmnP.readEnum<s.DkimSigningKeyLength>(x),
-      "CurrentSigningKeyLength": (x: jsonP.JSONValue) => cmnP.readEnum<s.DkimSigningKeyLength>(x),
-      "LastKeyGenerationTimestamp": "d",
     },
   }, root);
 }

@@ -939,16 +939,9 @@ export interface Template {
 
 // refs: 2 - tags: input, named, interface
 export interface DkimSigningAttributes {
-  DomainSigningSelector?: string | null;
-  DomainSigningPrivateKey?: string | null;
-  NextSigningKeyLength?: DkimSigningKeyLength | null;
+  DomainSigningSelector: string;
+  DomainSigningPrivateKey: string;
 }
-
-// refs: 6 - tags: input, named, enum, output
-export type DkimSigningKeyLength =
-| "RSA_1024_BIT"
-| "RSA_2048_BIT"
-| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface, output
 export interface EmailTemplateContent {
@@ -1113,9 +1106,6 @@ export interface DkimAttributes {
   Status?: DkimStatus | null;
   Tokens?: string[] | null;
   SigningAttributesOrigin?: DkimSigningAttributesOrigin | null;
-  NextSigningKeyLength?: DkimSigningKeyLength | null;
-  CurrentSigningKeyLength?: DkimSigningKeyLength | null;
-  LastKeyGenerationTimestamp?: Date | number | null;
 }
 
 // refs: 3 - tags: output, named, enum
