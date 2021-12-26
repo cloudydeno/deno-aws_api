@@ -5,7 +5,7 @@ import type * as Schema from '../sdk-schema.ts';
 
 const header = [
   "service", "version", "fullname", "id", "namespace", "protocol",
-  "generated", "typechecked", "bytecount", "cachetime",
+  "generated", "typechecked",
 ];
 interface ServiceEntry {
   service: string;
@@ -17,8 +17,6 @@ interface ServiceEntry {
 
   generated: string;
   typechecked: string;
-  bytecount: string;
-  cachetime: string;
 }
 const services: Record<string, ServiceEntry> = {};
 
@@ -67,8 +65,6 @@ for await (const entry of Deno.readDir(`./aws-sdk-js/apis`)) {
 
       generated: '',
       typechecked: '',
-      bytecount: '',
-      cachetime: '',
     };
   }
 
@@ -85,10 +81,8 @@ for (const svc of relevantServices.values()) {
   svc.namespace = serviceList[svc.service].name;
 
   let modPath: string;
-  let byteCount: number;
   try {
-    [modPath, byteCount] = await generateApi('aws-sdk-js/apis', uid, svc.namespace, svc.id);
-    svc.bytecount = byteCount.toString();
+    modPath = await generateApi('aws-sdk-js/apis', uid, svc.namespace, svc.id);
     svc.generated = 'ok';
   } catch (err) {
     console.log(`${svc.service}@${svc.version}`, 'build fail:', err.message);
@@ -96,14 +90,12 @@ for (const svc of relevantServices.values()) {
     continue;
   }
 
-  const cacheStart = new Date;
   const cache = Deno.run({
     cmd: ["deno", "cache", modPath],
     stderr: 'piped'
   });
   const checkOutput = new TextDecoder().decode(await cache.stderrOutput())
   const { code } = await cache.status();
-  const cacheEnd = new Date;
 
   if (code !== 0) {
     console.log(`${svc.service}@${svc.version}`, 'cache fail code', code);
@@ -114,12 +106,6 @@ for (const svc of relevantServices.values()) {
   console.log(checkOutput.trimEnd());
 
   svc.typechecked = 'ok';
-  svc.cachetime = (cacheEnd.valueOf() - cacheStart.valueOf()).toString();
-
-  await Deno.run({cmd: ['git', 'add',
-    modPath,
-    modPath.replace(/mod.ts$/, 'structs.ts'),
-  ]}).status();
 }
 
 
@@ -134,7 +120,7 @@ fOut.close();
 
 
 
-async function generateApi(apisPath: string, apiUid: string, namespace: string, serviceId: string): Promise<[string, number]> {
+async function generateApi(apisPath: string, apiUid: string, namespace: string, serviceId: string): Promise<string> {
   const jsonPath = (suffix: string) =>
     path.join(apisPath, `${apiUid}.${suffix}.json`);
   const maybeReadFile = (path: string): Promise<any> =>
@@ -159,5 +145,5 @@ async function generateApi(apisPath: string, apiUid: string, namespace: string, 
   await Deno.run({cmd: ['mkdir', '-p', modPath]}).status();
   await Deno.writeTextFile(modPath+'/mod.ts', modCode);
   await Deno.writeTextFile(modPath+'/structs.ts', structsCode);
-  return [modPath+'/mod.ts', modCode.length + structsCode.length];
+  return modPath+'/mod.ts';
 }
