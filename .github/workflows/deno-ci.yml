@@ -9,7 +9,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    name: Check w/ ${{ matrix.deno-version }}
+    name: Basic checks w/ ${{ matrix.deno-version }}
     strategy:
       fail-fast: false
       matrix:
@@ -55,10 +55,10 @@ jobs:
       if: always()
       run: time deno test --allow-net=169.254.169.254,example.com lib/client/
 
-  generate:
+  validate-codegen:
     runs-on: ubuntu-latest
 
-    name: Codegen w/ ${{ matrix.deno-version }}
+    name: Test codegen w/ ${{ matrix.deno-version }}
     strategy:
       matrix:
         deno-version:
@@ -94,3 +94,40 @@ jobs:
     - name: Validate all aws-sdk services
       if: always()
       run: time deno run -A generation/script/validate-services.ts
+
+  regenerate-bundled:
+    runs-on: ubuntu-latest
+
+    name: Regen bundled services
+    if: github.event_name == 'push'
+    needs:
+    - validate-codegen
+
+    steps:
+    - name: Checkout source
+      uses: actions/checkout@v2
+      with:
+        submodules: true
+
+    - name: Use Deno v1.17
+      uses: denoland/setup-deno@v1
+      with:
+        deno-version: v1.17
+
+    - name: Cache https:// deps
+      uses: actions/cache@v2
+      with:
+        path: ~/.cache/deno/deps/https
+        key: deno/v1.17-https/v1-${{ github.sha }}
+        restore-keys: deno/v1.17}-https/v1-
+
+    - name: Regenerate API files
+      run: time ./generation/script/update-all.sh
+
+    - name: Perhaps create PR
+      uses: peter-evans/create-pull-request@v3
+      with:
+        branch: regen-bundled-services
+        delete-branch: true
+        commit-message: "chore(services): Rebuild using latest codegen"
+        title: "chore(services): Rebuild using latest codegen"

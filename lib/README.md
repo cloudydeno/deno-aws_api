@@ -204,22 +204,22 @@ Multiple bits are *missing*:
 
 [//]: # (Generated Content Barrier)
 
-All API definitions are current as of [aws-sdk-js `v2.1046.0`](https://github.com/aws/aws-sdk-js/releases/tag/v2.1046.0).
+All API definitions are current as of [aws-sdk-js `v2.971.0`](https://github.com/aws/aws-sdk-js/releases/tag/v2.971.0).
 
-| Class | Module | Protocol | File size | Approx check time |
-| --- | --- | --- | ---: | ---: |
-| `CloudWatch` | `cloudwatch/mod.ts` | query | 71 KiB | 2.9 sec |
-| `DynamoDB` | `dynamodb/mod.ts` | json | 125 KiB | 3.3 sec |
-| `ECR` | `ecr/mod.ts` | json | 68 KiB | 4.6 sec |
-| `Kinesis` | `kinesis/mod.ts` | json | 33 KiB | 2.1 sec |
-| `KMS` | `kms/mod.ts` | json | 51 KiB | 2.3 sec |
-| `Lambda` | `lambda/mod.ts` | rest-json | 103 KiB | 3.0 sec |
-| `Route53` | `route53/mod.ts` | rest-xml | 98 KiB | 3.2 sec |
-| `S3` | `s3/mod.ts` | rest-xml | 262 KiB | 4.6 sec |
-| `SESV2` | `sesv2/mod.ts` | rest-json | 112 KiB | 3.4 sec |
-| `SNS` | `sns/mod.ts` | query | 42 KiB | 3.1 sec |
-| `SQS` | `sqs/mod.ts` | query | 29 KiB | 2.2 sec |
-| `STS` | `sts/mod.ts` | query | 14 KiB | 1.9 sec |
+| Class | Module | Protocol |
+| --- | --- | --- |
+| `CloudWatch` | `cloudwatch/mod.ts` | query |
+| `DynamoDB` | `dynamodb/mod.ts` | json |
+| `ECR` | `ecr/mod.ts` | json |
+| `Kinesis` | `kinesis/mod.ts` | json |
+| `KMS` | `kms/mod.ts` | json |
+| `Lambda` | `lambda/mod.ts` | rest-json |
+| `Route53` | `route53/mod.ts` | rest-xml |
+| `S3` | `s3/mod.ts` | rest-xml |
+| `SESV2` | `sesv2/mod.ts` | rest-json |
+| `SNS` | `sns/mod.ts` | query |
+| `SQS` | `sqs/mod.ts` | query |
+| `STS` | `sts/mod.ts` | query |
 
 [//]: # (Generated Content Barrier)
 
