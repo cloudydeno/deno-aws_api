@@ -253,8 +253,8 @@ export type MessageSystemAttributeName =
 export interface MessageAttributeValue {
   StringValue?: string | null;
   BinaryValue?: Uint8Array | string | null;
-  StringListValues: string[];
-  BinaryListValues: (Uint8Array | string)[];
+  StringListValues?: string[] | null;
+  BinaryListValues?: (Uint8Array | string)[] | null;
   DataType: string;
 }
 
