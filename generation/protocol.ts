@@ -43,6 +43,7 @@ export function makeProtocolCodegenFor(
   metadata: Schema.ApiMetadata,
   shapes: ShapeLibrary,
   helpers: HelperLibrary,
+  flags: {includeJsonRemap?: boolean}
 ) {
   switch (metadata.protocol) {
 
@@ -52,7 +53,9 @@ export function makeProtocolCodegenFor(
       return new ProtocolQueryCodegen(shapes, helpers);
 
     case 'json':
-      return new ProtocolJsonCodegen(shapes, helpers);
+      return new ProtocolJsonCodegen(shapes, helpers, {
+        includeJsonRemap: flags.includeJsonRemap ?? true,
+      });
 
     case 'rest-xml': {
       const inner = new ProtocolXmlCodegen(shapes, helpers);
@@ -60,7 +63,9 @@ export function makeProtocolCodegenFor(
     }
 
     case 'rest-json': {
-      const inner = new ProtocolJsonCodegen(shapes, helpers);
+      const inner = new ProtocolJsonCodegen(shapes, helpers, {
+        includeJsonRemap: flags.includeJsonRemap ?? true,
+      });
       return new ProtocolRestCodegen(inner);
     }
 

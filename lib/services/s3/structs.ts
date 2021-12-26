@@ -1069,9 +1069,9 @@ export interface NotificationConfigurationDeprecated {
 
 // refs: 2 - tags: input, named, interface, output
 export interface NotificationConfiguration {
-  TopicConfigurations: TopicConfiguration[];
-  QueueConfigurations: QueueConfiguration[];
-  LambdaFunctionConfigurations: LambdaFunctionConfiguration[];
+  TopicConfigurations?: TopicConfiguration[] | null;
+  QueueConfigurations?: QueueConfiguration[] | null;
+  LambdaFunctionConfigurations?: LambdaFunctionConfiguration[] | null;
   EventBridgeConfiguration?: EventBridgeConfiguration | null;
 }
 
@@ -1392,7 +1392,7 @@ export interface RestoreObjectOutput {
   RestoreOutputPath?: string | null;
 }
 
-// refs: 1 - tags: named, output
+// refs: 1 - tags: named, output, eventstream
 export interface SelectObjectContentOutput {
   Payload?: SelectObjectContentEventStream | null;
 }
@@ -1633,7 +1633,7 @@ export interface Tag {
 // refs: 3 - tags: input, named, interface, output
 export interface AnalyticsAndOperator {
   Prefix?: string | null;
-  Tags: Tag[];
+  Tags?: Tag[] | null;
 }
 
 // refs: 3 - tags: input, named, interface, output
@@ -1678,10 +1678,10 @@ export interface CORSConfiguration {
 // refs: 2 - tags: input, named, interface, output
 export interface CORSRule {
   ID?: string | null;
-  AllowedHeaders: string[];
+  AllowedHeaders?: string[] | null;
   AllowedMethods: string[];
   AllowedOrigins: string[];
-  ExposeHeaders: string[];
+  ExposeHeaders?: string[] | null;
   MaxAgeSeconds?: number | null;
 }
 
@@ -1720,7 +1720,7 @@ export interface IntelligentTieringFilter {
 // refs: 3 - tags: input, named, interface, output
 export interface IntelligentTieringAndOperator {
   Prefix?: string | null;
-  Tags: Tag[];
+  Tags?: Tag[] | null;
 }
 
 // refs: 3 - tags: input, named, enum, output
@@ -1748,7 +1748,7 @@ export interface InventoryConfiguration {
   Filter?: InventoryFilter | null;
   Id: string;
   IncludedObjectVersions: InventoryIncludedObjectVersions;
-  OptionalFields: InventoryOptionalField[];
+  OptionalFields?: InventoryOptionalField[] | null;
   Schedule: InventorySchedule;
 }
 
@@ -1903,8 +1903,8 @@ export interface LifecycleRule {
   Prefix?: string | null;
   Filter?: LifecycleRuleFilter | null;
   Status: ExpirationStatus;
-  Transitions: Transition[];
-  NoncurrentVersionTransitions: NoncurrentVersionTransition[];
+  Transitions?: Transition[] | null;
+  NoncurrentVersionTransitions?: NoncurrentVersionTransition[] | null;
   NoncurrentVersionExpiration?: NoncurrentVersionExpiration | null;
   AbortIncompleteMultipartUpload?: AbortIncompleteMultipartUpload | null;
 }
@@ -1921,7 +1921,7 @@ export interface LifecycleRuleFilter {
 // refs: 2 - tags: input, named, interface, output
 export interface LifecycleRuleAndOperator {
   Prefix?: string | null;
-  Tags: Tag[];
+  Tags?: Tag[] | null;
   ObjectSizeGreaterThan?: number | null;
   ObjectSizeLessThan?: number | null;
 }
@@ -1934,7 +1934,7 @@ export interface BucketLoggingStatus {
 // refs: 2 - tags: input, named, interface, output
 export interface LoggingEnabled {
   TargetBucket: string;
-  TargetGrants: TargetGrant[];
+  TargetGrants?: TargetGrant[] | null;
   TargetPrefix: string;
 }
 
@@ -1968,14 +1968,14 @@ export interface MetricsFilter {
 // refs: 3 - tags: input, named, interface, output
 export interface MetricsAndOperator {
   Prefix?: string | null;
-  Tags: Tag[];
+  Tags?: Tag[] | null;
   AccessPointArn?: string | null;
 }
 
 // refs: 2 - tags: input, named, interface, output
 export interface TopicConfigurationDeprecated {
   Id?: string | null;
-  Events: Event[];
+  Events?: Event[] | null;
   Event?: Event | null;
   Topic?: string | null;
 }
@@ -2015,7 +2015,7 @@ export type Event =
 export interface QueueConfigurationDeprecated {
   Id?: string | null;
   Event?: Event | null;
-  Events: Event[];
+  Events?: Event[] | null;
   Queue?: string | null;
 }
 
@@ -2023,7 +2023,7 @@ export interface QueueConfigurationDeprecated {
 export interface CloudFunctionConfiguration {
   Id?: string | null;
   Event?: Event | null;
-  Events: Event[];
+  Events?: Event[] | null;
   CloudFunction?: string | null;
   InvocationRole?: string | null;
 }
@@ -2043,7 +2043,7 @@ export interface NotificationConfigurationFilter {
 
 // refs: 6 - tags: input, named, interface, output
 export interface S3KeyFilter {
-  FilterRules: FilterRule[];
+  FilterRules?: FilterRule[] | null;
 }
 
 // refs: 6 - tags: input, named, interface, output
@@ -2117,7 +2117,7 @@ export interface ReplicationRuleFilter {
 // refs: 2 - tags: input, named, interface, output
 export interface ReplicationRuleAndOperator {
   Prefix?: string | null;
-  Tags: Tag[];
+  Tags?: Tag[] | null;
 }
 
 // refs: 2 - tags: input, named, enum, output

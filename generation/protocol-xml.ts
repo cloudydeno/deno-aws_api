@@ -164,14 +164,12 @@ export default class ProtocolXmlCodegen {
           const isFlattened = spec.flattened || shape.spec.flattened;
           const keyShape = this.shapes.get(shape.spec.key);
           const valShape = this.shapes.get(shape.spec.value);
-          // console.log('map', keyShape.spec.type, valShape.spec.type, shape.spec.value.locationName);
 
           let valEncoder = '';
           switch (valShape.spec.type) {
 
             case 'structure':
               valEncoder = `x => ({name: ${JSON.stringify(shape.spec.key.locationName ?? 'value')}, ...${valShape.censoredName}_Serialize(x)})`;
-              // chunks.push(`    {name: ${JSON.stringify(locationName)}, children: ${paramRef}?.flatMap(${innerShape.censoredName}_Serialize)},`);
               break;
 
             case 'string':
@@ -182,22 +180,16 @@ export default class ProtocolXmlCodegen {
               throw new Error(`TODO: protocol-xml.ts lacks input shape map value generator for ${valShape.spec.type}`);
           }
 
-          if (isFlattened) {
-            throw new Error(`TODO: xml output map flattened`);
-            // chunks.push(`    ...(${paramRef}?.map(x => ({name: ${JSON.stringify(locationName)}, ${childField}${childExpr}})) ?? []),`);
-          } else {
-            this.helpers.useHelper("xmlP");
-            chunks.push(`    {name: ${JSON.stringify(locationName)}, ...xmlP.emitMap(${paramRef}, ${JSON.stringify(shape.spec.locationName ?? 'entry')}, ${JSON.stringify(shape.spec.key.locationName ?? 'key')}, ${valEncoder})},`);
-          }
+          if (isFlattened) throw new Error(`TODO: xml output map flattened`);
 
+          this.helpers.useHelper("xmlP");
+          chunks.push(`    {name: ${JSON.stringify(locationName)}, ...xmlP.emitMap(${paramRef}, ${JSON.stringify(shape.spec.locationName ?? 'entry')}, ${JSON.stringify(shape.spec.key.locationName ?? 'key')}, ${valEncoder})},`);
           break;
         }
 
         case 'structure':
           chunks.push(`    {name: ${JSON.stringify(locationName)}, ...${shape.censoredName}_Serialize(${paramRef})},`);
           break;
-
-      // {name: "ResourceRecordSet", children: ResourceRecordSet_Serialize(data["ResourceRecordSet"])},
 
         default:
           throw new Error(`TODO: protocol-xml.ts lacks input shape generator for ${shape.spec.type}`);
@@ -218,6 +210,13 @@ export default class ProtocolXmlCodegen {
     chunks.push(`    const xml = xmlP.readXmlResult(await resp.text()${resultWrapper ? `, ${JSON.stringify(resultWrapper)}` : ''});`);
     if (shape.refCount > 1) {
       chunks.push(`    return ${shape.censoredName}_Parse(xml);`);
+      this.helpers.useHelper("xmlP");
+    } else if (shape.name == 'GetBucketLocationOutput') {
+      // This is apparently the single special-case Output quirk in S3
+      const namePrefix = (this.helpers.hasDep('s')) ? 's.' : '';
+      chunks.push(`    return {`);
+      chunks.push(`      LocationConstraint: xml.content as ${namePrefix}BucketLocationConstraint,`);
+      chunks.push(`    };`);
       this.helpers.useHelper("xmlP");
     } else {
       const innerCode = this.generateStructureOutputTypescript(shape.spec, 'xml', shape.spec.payload);
@@ -318,13 +317,11 @@ export default class ProtocolXmlCodegen {
       const defaultName = field;
       const locationName = this.ucfirst(spec.queryName, true) ?? spec.locationName ?? shape.spec.locationName ?? defaultName;
       const isRequired = payload === field || (outputStruct.required ?? []).map(x => x.toLowerCase()).includes(field.toLowerCase());
-      // const paramRef = `${paramsRef}[${JSON.stringify(field)}]`;
 
       switch (shape.spec.type) {
 
         case 'list': {
           const isFlattened = spec.flattened || shape.spec.flattened;
-          // console.log(shape.name, [spec.queryName, spec.locationName, shape.spec.locationName, defaultName])
           const listPrefix = isFlattened
             ? spec.queryName ?? spec.locationName ?? shape.spec.locationName ?? shape.spec.member.locationName ?? defaultName
             : spec.queryName ?? spec.locationName ?? defaultName;
@@ -333,7 +330,6 @@ export default class ProtocolXmlCodegen {
             memberPath.push(shape.spec.locationName ?? shape.spec.member.locationName ?? 'member');
 
           const innerShape = this.shapes.get(shape.spec.member);
-          // console.log([listPrefix, memberPrefix, innerShape.spec.type, innerShape.spec.locationName]);
 
           chunks.push(`    ${field}: ${nodeRef}.getList(${memberPath.map(x => JSON.stringify(x)).join(', ')}).map(${this.configureInnerShapeReading(innerShape)}),`);
           break;
@@ -345,7 +341,6 @@ export default class ProtocolXmlCodegen {
           if (shape.spec.key.locationName) mapConfig.keyName = shape.spec.key.locationName;
           if (shape.spec.value.locationName) mapConfig.valName = shape.spec.value.locationName;
 
-          // console.log(shape.name, [spec.queryName, spec.locationName, shape.spec.locationName, defaultName])
           const mapPrefix = isFlattened
             ? spec.queryName ?? spec.locationName ?? shape.spec.locationName ?? defaultName
             : spec.queryName ?? spec.locationName ?? defaultName;
@@ -355,7 +350,6 @@ export default class ProtocolXmlCodegen {
 
           const keyShape = this.shapes.get(shape.spec.key);
           const valueShape = this.shapes.get(shape.spec.value);
-          // console.log([mapPrefix, entryPrefix, innerShape.spec.type, innerShape.spec.locationName]);
           this.helpers.useHelper("xmlP");
           chunks.push(`    ${field}: xmlP.readXmlMap(${nodeRef}.getList(${entryPath.map(x => JSON.stringify(x)).join(', ')}), ${this.configureInnerShapeReading(valueShape)}, ${JSON.stringify(mapConfig)}),`);
           break;
@@ -375,7 +369,6 @@ export default class ProtocolXmlCodegen {
 
         default:
           chunks.push(`    ${field}: ${nodeRef}.first(${JSON.stringify(locationName)}, ${isRequired}, ${this.configureInnerShapeReading(shape)}),`);
-          // chunks.push(`    // TODO: reading for ${(shape as KnownShape).spec.type}`);
 
       }
     }
@@ -383,9 +376,6 @@ export default class ProtocolXmlCodegen {
     chunks.push('  };');
     return chunks.join('\n');
   }
-
-
-
 
   ucfirst(name: string | undefined, isQueryName = false): string | undefined {
     if (!name) return name;
@@ -427,7 +417,6 @@ export default class ProtocolXmlCodegen {
         return `x => xmlP.parseTimestamp(x.content)`;
       case 'map':
         throw new Error(`TODO: xml output map ${innerShape.spec.value.shape}`);
-        // return `() => ({}) /* TODO: map output */`; // TODO
       case 'structure':
         if (innerShape.tags.has('named')) {
           return `${innerShape.censoredName}_Parse`;

@@ -6,6 +6,9 @@ export default class ProtocolJsonCodegen {
   constructor(
     public shapes: ShapeLibrary,
     public helpers: HelperLibrary,
+    public flags: {
+      includeJsonRemap: boolean;
+    },
   ) {}
 
   generateOperationInputParsingTypescript(inputShape: KnownShape | null, meta: Schema.LocationInfo & {paramRef?: string}): { inputParsingCode: string; inputVariables: string[]; } {
@@ -54,7 +57,6 @@ export default class ProtocolJsonCodegen {
   generateStructureInputTypescript(inputStruct: Schema.ShapeStructure, rootRef: string): string {
     const chunks = new Array<string>();
     chunks.push(`{`);
-    // chunks.push(`{...${rootRef},`);
     for (const [field, spec] of Object.entries(inputStruct.members)) {
       const shape = this.shapes.get(spec);
 
@@ -119,13 +121,11 @@ export default class ProtocolJsonCodegen {
   }
 
 
-
   generateOperationOutputParsingTypescript(shape: KnownShape, resultWrapper?: string): { outputParsingCode: string; outputVariables: string[]; } {
     if (shape.spec.type !== 'structure') throw new Error(
       `Can only generate top level output structures, not ${shape.spec.type}`);
 
     const chunks = new Array<string>();
-    // chunks.push(`    const xml = await resp.xml(${resultWrapper ? JSON.stringify(resultWrapper) : ''});`);
     if (shape.refCount > 1) {
       chunks.push(`    return to${shape.censoredName}(await resp.json());`);
     } else {
@@ -151,9 +151,6 @@ export default class ProtocolJsonCodegen {
       case 'structure':
         chunks.push(this.generateStructureOutputTypescript(shape.spec, 'root'));
         break;
-      // case 'string':
-      //   chunks.push(this.generateEnumOutputTypescript(shape.spec, 'root'));
-      //   break;
       default:
         throw new Error(`TODO: protocol-json.ts lacks shape output generator for ${shape.spec.type}`);
     }
@@ -164,16 +161,6 @@ export default class ProtocolJsonCodegen {
     };
   }
 
-  // generateEnumOutputTypescript(spec: Schema.ShapeString, rootRef: string): string {
-  //   const chunks = new Array<string>();
-  //   chunks.push(`  return ( false`);
-  //   for (const ent of spec.enum ?? []) {
-  //     chunks.push(`    || root == ${JSON.stringify(ent)}`);
-  //   }
-  //   chunks.push(`  ) ? root : null;`);
-  //   return chunks.join('\n');
-  // }
-
   generateStructureOutputTypescript(outputStruct: Schema.ShapeStructure, rootRef: string): string {
     // Organize fields into basic strings and 'special' others
     // Basic strings can be passed directly from the xml module
@@ -183,7 +170,6 @@ export default class ProtocolJsonCodegen {
     const optional: {[key: string]: string | Symbol} = {};
     let hasOptional = false;
     const remap: {[key: string]: string} = {};
-    let hasRemap = false;
     const arrays = new Set<string>();
 
     this.helpers.useHelper("jsonP");
@@ -194,8 +180,7 @@ export default class ProtocolJsonCodegen {
       let typeSpec: string | Symbol | undefined;
 
       const fieldShape = this.shapes.get(spec);
-      const defaultName = this.ucfirst(field) ?? field;
-      const locationName = this.ucfirst(spec.queryName) ?? spec.locationName ?? fieldShape.spec.locationName ?? defaultName;
+      const locationName = spec.locationName ?? fieldShape.spec.locationName ?? field;
 
       if (fieldShape.spec.type === 'list') {
         arrays.add(field);
@@ -243,8 +228,6 @@ export default class ProtocolJsonCodegen {
         }
       } else {
         throw new Error(`TODO: json output unknown field ${innerShape.spec.type}`);
-        typeSpec = 'TODO_'+innerShape.spec.type;
-        // specials.push([field, spec, fieldShape]);
       }
 
       if (!typeSpec) {
@@ -289,7 +272,8 @@ export default class ProtocolJsonCodegen {
       chunks.push(`    optional: {},`);
     }
 
-    if (hasRemap) {
+    // feature flagged to not change v0.2 and lower
+    if (this.flags.includeJsonRemap && Object.keys(remap).length > 0) {
       chunks.push(`    remap: ${JSON.stringify(remap)},`);
     }
 
@@ -345,8 +329,6 @@ export default class ProtocolJsonCodegen {
       return expr;
     }
   }
-
-
 
   ucfirst(name: string | undefined): string | undefined {
     if (!name) return name;

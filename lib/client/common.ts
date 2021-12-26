@@ -12,7 +12,7 @@ export interface CredentialsProvider {
 
 /** Generic AWS Signer interface */
 export interface Signer {
-  sign: (service: string, url: URL, request: Request) => Promise<Request>;
+  sign: (service: string, request: Request) => Promise<Request>;
 }
 
 export interface EndpointParameters {
@@ -64,7 +64,7 @@ export type JSONObject = { [member: string]: JSONValue };
 export type JSONArray = JSONValue[];
 
 export interface ApiFactory {
-  buildServiceClient(apiMetadata: Object): ServiceClient;
+  buildServiceClient(apiMetadata: ApiMetadata, extras?: ServiceClientExtras): ServiceClient;
   makeNew<T>(apiConstructor: ServiceApiClass<T>): T;
 }
 export interface ServiceClient {
@@ -72,6 +72,20 @@ export interface ServiceClient {
 }
 export interface ServiceApiClass<T> {
   new (apiFactory: ApiFactory): T;
+}
+
+/** Internal configuration to control a service's ApiClient behavior.*/
+export interface ServiceClientExtras {
+  /** Pre-signing hook for basic tasks like tweaking request headers. */
+  mutateRequest?: (request: Request) => Request | Promise<Request>;
+  // /** Called after a response is returned. */
+  // mutateResponse?: (response: Response, request: Request) => Response | Promise<Response>;
+  /** Called just before a request is sent. Useful for logging. */
+  // beforeFetch?: (request: Request) => void | Promise<void>;
+  /** Called after a response is returned. Useful for logging. */
+  afterFetch?: (response: Response, request: Request) => void | Promise<void>;
+  // /** Provides a Response without hitting network. Useful for mocking. */
+  // injectResponse?: (request: Request) => Response | Promise<Response>;
 }
 
 // our understanding of how APIs can describe themselves

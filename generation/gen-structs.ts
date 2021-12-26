@@ -12,6 +12,7 @@ export class StructEmitter {
     private protocol: ProtocolCodegen,
     private namePrefix: string = '',
     private docMode: 'none' | 'short' | 'full',
+    private alwaysReqLists: boolean,
   ) {}
 
   generateStructsTypescript(including: ('iface' | 'mapping')[]): string {
@@ -23,7 +24,6 @@ export class StructEmitter {
       let anythingHappened = false;
 
       if (including.includes('iface')) {
-
         chunks.push(`// refs: ${shape.refCount
           } - tags: ${Array.from(shape.tags).join(', ')}`);
 
@@ -31,9 +31,6 @@ export class StructEmitter {
           chunks.push(genDocsComment(shape.spec.documentation, '', this.docMode));
         }
 
-        // if (this.#singleRefShapes.has(shape.name)) {
-        //   chunks.push(`// TODO: can be inlined (only used once)`);
-        // }
         chunks.push(`${this.writeStructureType(shape)}`);
 
         anythingHappened = true;
@@ -67,7 +64,11 @@ export class StructEmitter {
 
       case 'structure':
         const required = new Set(shape.spec.required?.map(x => x.toLowerCase()) || []);
-        const reqLists = shape.tags.has('output') && !this.apiSpec.metadata.protocol.includes('json');
+        // When possible, signal that our XML parser always fills in Array/Map properties
+        const reqLists = shape.tags.has('output')
+            && (this.alwaysReqLists || !shape.tags.has('input'))
+            && !this.apiSpec.metadata.protocol.includes('json');
+
         return [`export interface ${shape.censoredName} {`,
           ...Object.entries(shape.spec.members).map(([key, spec]) => {
             const innerShape = this.shapes.get(spec);
@@ -82,6 +83,17 @@ export class StructEmitter {
       case 'string':
         if (shape.spec.enum) {
           this.helpers.useHelper("cmnP");
+          if (shape.name == 'InstanceType') {
+            const byFam = shape.spec.enum.reduce((map, val) => {
+              const fam = val.slice(0, val.indexOf('.'));
+              if (!map.has(fam)) map.set(fam, []);
+              map.get(fam)!.push(val);
+              return map;
+            }, new Map<string, string[]>())
+            return [`export type ${shape.censoredName} =`,
+              ...Array.from(byFam).map(value => value[1].map(x => `| ${JSON.stringify(x)}`).join(' ')),
+            '| cmnP.UnexpectedEnumValue;'].join('\n');
+          }
           return [`export type ${shape.censoredName} =`,
             ...shape.spec.enum.map(value => `| ${JSON.stringify(value)}`),
           '| cmnP.UnexpectedEnumValue;'].join('\n');

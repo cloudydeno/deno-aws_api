@@ -20,6 +20,7 @@ jobs:
         - v1.14
         - v1.15
         - v1.16
+        - v1.17
         - canary
 
     steps:
@@ -39,7 +40,7 @@ jobs:
         restore-keys: deno/${{ matrix.deno-version }}-https/v1-
 
     - name: Check generation/deploy/mod.ts
-      if: ${{ matrix.deno-version != 'v1.11' && matrix.deno-version != 'v1.12' }}
+      if: ${{ matrix.deno-version != 'v1.11' && matrix.deno-version != 'v1.12' && matrix.deno-version != 'v1.13' }}
       run: time deno cache generation/deploy/mod.ts
 
     - name: Check client/mod.ts
@@ -61,6 +62,7 @@ jobs:
         - v1.11
         - v1.13
         - v1.16
+        - v1.17
         - canary
       fail-fast: false # run each branch to completion
 

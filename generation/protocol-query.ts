@@ -63,22 +63,19 @@ export default class ProtocolQueryCodegen extends ProtocolXmlCodegen {
     for (const [field, spec] of Object.entries(inputStruct.members)) {
       const shape = this.shapes.get(spec);
       const defaultName = this.ucfirst(field, false);
-      const locationName = this.ucfirst(spec.queryName, true) ?? this.ucfirst(spec.locationName, false) ?? shape.spec.locationName ?? defaultName;
+      const baseNamePlaces = this.ucfirst(spec.queryName, true) ?? this.ucfirst(spec.locationName, false);
+      const locationName = baseNamePlaces ?? this.ucfirst(shape.spec.locationName, false) ?? defaultName;
       const isRequired = (inputStruct.required ?? []).map(x => x.toLowerCase()).includes(field.toLowerCase());
       const paramRef = `${paramsRef}[${JSON.stringify(field)}]`;
 
       switch (shape.spec.type) {
-        // case 'boolean':
-        //   chunks.push(`  ${isRequired ? '' : `if (${paramRef} != null) `}body.append(${JSON.stringify(locationName)}, ${paramRef});`);
         case 'list': {
-          const isFlattened = spec.flattened || shape.spec.flattened || this.ec2Mode;
+          const isFlattened = spec.flattened || shape.spec.flattened;
           const listConfig: any = {};
-          // if (shape.spec.member.locationName) listConfig.entName = '.'+shape.spec.member.locationName;
-          // console.log(shape.name, [spec.queryName, spec.locationName, shape.spec.locationName, defaultName])
           const listPrefix = isFlattened
-            ? spec.queryName ?? spec.locationName ?? shape.spec.locationName ?? shape.spec.member.locationName ?? defaultName
-            : spec.queryName ?? spec.locationName ?? defaultName;
-          listConfig.entryPrefix = isFlattened
+            ? baseNamePlaces ?? shape.spec.locationName ?? shape.spec.member.locationName ?? defaultName
+            : baseNamePlaces ?? defaultName;
+          listConfig.entryPrefix = (isFlattened || this.ec2Mode)
             ? '.'
             : `.${shape.spec.locationName ?? shape.spec.member.locationName ?? 'member'}.`;
           const innerShape = this.shapes.get(shape.spec.member);
@@ -92,8 +89,8 @@ export default class ProtocolQueryCodegen extends ProtocolXmlCodegen {
           if (shape.spec.key.locationName) mapConfig.keyName = '.'+shape.spec.key.locationName;
           if (shape.spec.value.locationName) mapConfig.valName = '.'+shape.spec.value.locationName;
           const mapPrefix = isFlattened
-            ? spec.queryName ?? spec.locationName ?? shape.spec.locationName ?? defaultName
-            : spec.queryName ?? spec.locationName ?? defaultName;
+            ? locationName
+            : baseNamePlaces ?? defaultName;
           mapConfig.entryPrefix = isFlattened
             ? '.'
             : `.${shape.spec.locationName ?? 'entry'}.`;
@@ -135,15 +132,11 @@ export default class ProtocolQueryCodegen extends ProtocolXmlCodegen {
           break;
         default:
           throw new Error(`TODO: query input appending for ${(shape as KnownShape).spec.type}`);
-          // chunks.push(`  // TODO: appending for ${(shape as KnownShape).spec.type}`);
       }
     }
 
     return chunks.join('\n');
   }
-
-
-
 
   ucfirst(name: string | undefined, isQueryName = false): string | undefined {
     if (!name) return name;

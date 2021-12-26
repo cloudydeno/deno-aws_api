@@ -729,7 +729,7 @@ export class S3 {
     });
     const xml = xmlP.readXmlResult(await resp.text());
     return {
-      LocationConstraint: xml.first("LocationConstraint", false, x => (x.content ?? '') as s.BucketLocationConstraint),
+      LocationConstraint: xml.content as s.BucketLocationConstraint,
     };
   }
 
@@ -2284,43 +2284,10 @@ export class S3 {
     };
   }
 
-  async selectObjectContent(
-    params: s.SelectObjectContentRequest,
-    opts: client.RequestOptions = {},
-  ): Promise<s.SelectObjectContentOutput> {
-    const headers = new Headers;
-    const body = xmlP.stringify({
-      name: "SelectObjectContentRequest",
-      attributes: {"xmlns":"http://s3.amazonaws.com/doc/2006-03-01/"},
-      children: [
-        {name: "Expression", content: params["Expression"]?.toString()},
-        {name: "ExpressionType", content: params["ExpressionType"]?.toString()},
-        {name: "RequestProgress", ...RequestProgress_Serialize(params["RequestProgress"])},
-        {name: "InputSerialization", ...InputSerialization_Serialize(params["InputSerialization"])},
-        {name: "OutputSerialization", ...OutputSerialization_Serialize(params["OutputSerialization"])},
-        {name: "ScanRange", ...ScanRange_Serialize(params["ScanRange"])},
-      ]});
-    if (params["SSECustomerAlgorithm"] != null) headers.append("x-amz-server-side-encryption-customer-algorithm", params["SSECustomerAlgorithm"]);
-    if (params["SSECustomerKey"] != null) headers.append("x-amz-server-side-encryption-customer-key", serializeBlob(params["SSECustomerKey"]) ?? '');
-    if (params["SSECustomerKeyMD5"] != null) headers.append("x-amz-server-side-encryption-customer-key-MD5", params["SSECustomerKeyMD5"]);
-    if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
-    const resp = await this.#client.performRequest({
-      opts, headers, body,
-      action: "SelectObjectContent",
-      requestUri: cmnP.encodePath`/${params["Bucket"]}/${params["Key"].split("/")}?select&select-type=2`,
-    });
-    const xml = xmlP.readXmlResult(await resp.text());
-    return {
-      Payload: {
-        Records: xml.first("Records", false, RecordsEvent_Parse),
-        Stats: xml.first("Stats", false, StatsEvent_Parse),
-        Progress: xml.first("Progress", false, ProgressEvent_Parse),
-        Cont: xml.first("Cont", false, ContinuationEvent_Parse),
-        End: xml.first("End", false, EndEvent_Parse),
-      },
-    };
+  selectObjectContent() {
+    // https://docs.aws.amazon.com/AmazonS3/latest/API/RESTSelectObjectAppendix.html
+    throw new Error("TODO: The response streaming format for this API call is not implemented in /x/aws_api.");
   }
-
   async uploadPart(
     params: s.UploadPartRequest,
     opts: client.RequestOptions = {},

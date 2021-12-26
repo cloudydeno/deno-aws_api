@@ -17,14 +17,13 @@ interface CodeGen {
 
 export class ModuleGenerator {
   constructor(
-    public readonly clientModRoot: string,
     public readonly stdModRoot: string,
     public readonly sdkVersion: string,
     public readonly defaults: URLSearchParams,
     public readonly codegenConstr: (config: ApiSpecsBundle, opts: URLSearchParams) => CodeGen,
   ) {}
 
-  setDefaults(options: URLSearchParams) {
+  withDefaults(options: URLSearchParams) {
     const newOpts = new URLSearchParams(options);
     for (const [option, value] of this.defaults) {
       if (!options.has(option)) {
@@ -39,42 +38,47 @@ export class ModuleGenerator {
     options: URLSearchParams,
     className: string,
   }) {
-    const clientModRoot = opts.options.get('aws_api_root') || this.clientModRoot;
-    const fullOptions = this.setDefaults(opts.options);
+    const fullOptions = this.withDefaults(opts.options);
 
     const codeGen = this.codegenConstr(opts.apiSpecs, fullOptions);
     return codeGen.generateTypescript(opts.className)
       .replaceAll(/from "https:\/\/deno.land\/std@[0-9.]+\//g, `from "${this.stdModRoot}/`)
-      .replaceAll('from "../../', `from "${clientModRoot}/`);
+      .replaceAll('from "../../', `from "${fullOptions.get('aws_api_root')}/`);
   }
 }
 
 // Newest versions come first
 export const Generations = new Map<string, ModuleGenerator>([
   ['v0.1', new ModuleGenerator(
-    'https://deno.land/x/aws_api@v0.4.0',
     'https://deno.land/std@0.95.0',
     'v2.895.0',
     new URLSearchParams([
+      ['aws_api_root', 'https://deno.land/x/aws_api@v0.4.0'],
       ['includeOpts', 'no'],
+      ['includeJsonRemap', 'no'],
+      ['includeClientExtras', 'no'],
+      ['alwaysReqLists', 'yes'],
       ['docs', 'none'],
     ]),
     (config, opts) => new LatestCodeGen(config, opts),
   )],
   ['v0.2', new ModuleGenerator(
-    'https://deno.land/x/aws_api@v0.5.0',
     'https://deno.land/std@0.105.0',
     'v2.971.0',
     new URLSearchParams([
+      ['aws_api_root', 'https://deno.land/x/aws_api@v0.5.0'],
+      ['includeJsonRemap', 'no'],
+      ['includeClientExtras', 'no'],
+      ['alwaysReqLists', 'yes'],
       ['docs', 'none'],
     ]),
     (config, opts) => new LatestCodeGen(config, opts),
   )],
   ['v0.3', new ModuleGenerator(
-    'https://deno.land/x/aws_api@v0.5.0', // TODO: new version
     'https://deno.land/std@0.115.0',
     'v2.1046.0', // https://github.com/aws/aws-sdk-js/releases
     new URLSearchParams([
+      ['aws_api_root', 'https://deno.land/x/aws_api@v0.5.0'], // TODO: new version
       ['docs', 'short'],
     ]),
     (config, opts) => new LatestCodeGen(config, opts),

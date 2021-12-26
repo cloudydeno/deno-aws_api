@@ -25,6 +25,30 @@ try {
 }
 console.log('Bucket created:', Bucket);
 
+console.log('Bucket location:', await s3.getBucketLocation({ Bucket }));
+
+console.log('Bucket ACL:', await s3.getBucketAcl({ Bucket }));
+
+await s3.putBucketCors({Bucket, CORSConfiguration: {
+  CORSRules: [{
+    AllowedOrigins: ['asdf.com'],
+    AllowedHeaders: ['content-type'],
+    AllowedMethods: ['GET'],
+    ExposeHeaders: [],
+  }],
+} })
+console.log('Bucket CORS:', await s3.getBucketCors({ Bucket }));
+
+await s3.putBucketEncryption({ Bucket, ServerSideEncryptionConfiguration: {
+  Rules: [{
+    ApplyServerSideEncryptionByDefault: {
+      SSEAlgorithm: 'AES256',
+    },
+    BucketKeyEnabled: false,
+  }],
+} })
+console.log('Bucket encryption:', await s3.getBucketEncryption({ Bucket }));
+
 { // enable "Block Public Access" feature
   await s3.putPublicAccessBlock({ Bucket,
     PublicAccessBlockConfiguration: {
@@ -35,12 +59,16 @@ console.log('Bucket created:', Bucket);
     }});
 }
 
+console.log('Bucket PublicAccessBlock:', await s3.getPublicAccessBlock({ Bucket }));
+
 { // attach an arbitrary tag to the bucket
   await s3.putBucketTagging({ Bucket,
     Tagging: {
       TagSet: [{Key: 'Purpose', Value: 'Deno Test'}],
     }});
 }
+
+console.log('Bucket tagging:', await s3.getBucketTagging({ Bucket }));
 
 { // enable versioning
   await s3.putBucketVersioning({ Bucket,
@@ -49,6 +77,8 @@ console.log('Bucket created:', Bucket);
     }});
   console.log('Object versioning enabled');
 }
+
+console.log('Bucket versioning:', await s3.getBucketVersioning({ Bucket }));
 
 { // write some versions in
   console.log(await s3.putObject({ Bucket,

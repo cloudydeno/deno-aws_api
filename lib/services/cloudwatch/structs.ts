@@ -428,13 +428,13 @@ export interface Dimension {
 export interface SingleMetricAnomalyDetector {
   Namespace?: string | null;
   MetricName?: string | null;
-  Dimensions: Dimension[];
+  Dimensions?: Dimension[] | null;
   Stat?: string | null;
 }
 
 // refs: 3 - tags: input, named, interface, output
 export interface MetricMathAnomalyDetector {
-  MetricDataQueries: MetricDataQuery[];
+  MetricDataQueries?: MetricDataQuery[] | null;
 }
 
 // refs: 7 - tags: input, named, interface, output
@@ -460,7 +460,7 @@ export interface MetricStat {
 export interface Metric {
   Namespace?: string | null;
   MetricName?: string | null;
-  Dimensions: Dimension[];
+  Dimensions?: Dimension[] | null;
 }
 
 // refs: 14 - tags: input, named, enum, output
@@ -553,7 +553,7 @@ export type RecentlyActive =
 
 // refs: 2 - tags: input, named, interface, output
 export interface AnomalyDetectorConfiguration {
-  ExcludedTimeRanges: Range[];
+  ExcludedTimeRanges?: Range[] | null;
   MetricTimezone?: string | null;
 }
 
