@@ -1,11 +1,46 @@
 export class IMDSv2 {
   constructor({
-    baseUrl = 'http://169.254.169.254/latest/',
+    serviceEndpoint, // ec2_metadata_service_endpoint
+    endpointMode, // ec2_metadata_service_endpoint_mode
+    endpointPath = 'latest/',
     timeoutMs = 1000,
     apiTimeoutMs = 5000,
     tokenTtlSeconds = 21600,
+  }: {
+    serviceEndpoint?: string;
+    endpointMode?: 'IPv4' | 'IPv6';
+    endpointPath?: string;
+    timeoutMs?: number;
+    apiTimeoutMs?: number;
+    tokenTtlSeconds?: number;
   } = {}) {
-    this.baseUrl = new URL(baseUrl);
+
+    let disabled = false;
+    try {
+      disabled = Deno.env.get('AWS_EC2_METADATA_DISABLED') == 'true';
+    } catch (err) {}
+    if (disabled) throw new Error(
+      `IMDSv2 client is disabled via environment: AWS_EC2_METADATA_DISABLED=true`);
+
+    if (!serviceEndpoint) {
+      try {
+        serviceEndpoint = Deno.env.get('AWS_EC2_METADATA_SERVICE_ENDPOINT');
+      } catch (err) {}
+    }
+    if (!serviceEndpoint) {
+      try {
+        if (!endpointMode && Deno.env.get('AWS_EC2_METADATA_SERVICE_ENDPOINT_MODE') == 'IPv6') {
+          endpointMode = 'IPv6';
+        }
+      } catch (err) {}
+      if (endpointMode == 'IPv6') {
+        serviceEndpoint = 'http://[fd00:ec2::254]';
+      } else {
+        serviceEndpoint = 'http://169.254.169.254';
+      }
+    }
+
+    this.baseUrl = new URL(endpointPath, serviceEndpoint);
     this.timeoutMs = Math.floor(timeoutMs);
     this.apiTimeoutMs = Math.floor(apiTimeoutMs);
     this.tokenTtlSeconds = Math.floor(tokenTtlSeconds);
