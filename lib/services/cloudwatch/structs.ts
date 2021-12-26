@@ -508,7 +508,7 @@ export interface MetricStat {
 export interface Metric {
   Namespace?: string | null;
   MetricName?: string | null;
-  Dimensions: Dimension[];
+  Dimensions?: Dimension[] | null;
 }
 
 // refs: 1 - tags: input, named, interface
@@ -529,7 +529,7 @@ export type RecentlyActive =
 
 // refs: 2 - tags: input, named, interface, output
 export interface AnomalyDetectorConfiguration {
-  ExcludedTimeRanges: Range[];
+  ExcludedTimeRanges?: Range[] | null;
   MetricTimezone?: string | null;
 }
 

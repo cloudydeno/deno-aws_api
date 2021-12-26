@@ -831,7 +831,7 @@ export interface ResourceRecordSet {
   Failover?: ResourceRecordSetFailover | null;
   MultiValueAnswer?: boolean | null;
   TTL?: number | null;
-  ResourceRecords: ResourceRecord[];
+  ResourceRecords?: ResourceRecord[] | null;
   AliasTarget?: AliasTarget | null;
   HealthCheckId?: string | null;
   TrafficPolicyInstanceId?: string | null;
@@ -932,9 +932,9 @@ export interface HealthCheckConfig {
   Inverted?: boolean | null;
   Disabled?: boolean | null;
   HealthThreshold?: number | null;
-  ChildHealthChecks: string[];
+  ChildHealthChecks?: string[] | null;
   EnableSNI?: boolean | null;
-  Regions: HealthCheckRegion[];
+  Regions?: HealthCheckRegion[] | null;
   AlarmIdentifier?: AlarmIdentifier | null;
   InsufficientDataHealthStatus?: InsufficientDataHealthStatus | null;
   RoutingControlArn?: string | null;
