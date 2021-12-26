@@ -2,6 +2,8 @@ import type * as Schema from '../sdk-schema.ts';
 import { cachedFetch } from "./cache.ts";
 import { ClientError, jsonTemplate } from "./helpers.ts";
 
+const specSuffix = `.normal.json`;
+
 export class SDK {
   static async getSdkVersions(): Promise<Array<{
     name: string;
@@ -39,7 +41,7 @@ export class SDK {
       `No apis/ folder found in SDK root`);
 
     const apis = await cachedFetch('immutable', `https://api.github.com/repos/aws/aws-sdk-js/git/trees/${apisTree.sha}`).then(x => x.json()) as GitTree;
-    return apis.tree.filter(x => x.path.endsWith('.normal.json')).map(x => x.path.split('.')[0]);
+    return apis.tree.filter(x => x.path.endsWith(specSuffix)).map(x => x.path.slice(0, -specSuffix.length));
   }
   async getLatestApiVersion(modId: string) {
     const [svcList, specList] = await Promise.all([
