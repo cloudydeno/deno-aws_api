@@ -39,6 +39,7 @@ export class DynamoDB {
   ): Promise<s.BatchExecuteStatementOutput> {
     const body: jsonP.JSONObject = {
       Statements: params["Statements"]?.map(x => fromBatchStatementRequest(x)),
+      ReturnConsumedCapacity: params["ReturnConsumedCapacity"],
     };
     const resp = await this.#client.performRequest({
       opts, body,
@@ -48,6 +49,7 @@ export class DynamoDB {
       required: {},
       optional: {
         "Responses": [toBatchStatementResponse],
+        "ConsumedCapacity": [toConsumedCapacity],
       },
     }, await resp.json());
   }
@@ -152,6 +154,7 @@ export class DynamoDB {
       StreamSpecification: fromStreamSpecification(params["StreamSpecification"]),
       SSESpecification: fromSSESpecification(params["SSESpecification"]),
       Tags: params["Tags"]?.map(x => fromTag(x)),
+      TableClass: params["TableClass"],
     };
     const resp = await this.#client.performRequest({
       opts, body,
@@ -519,6 +522,7 @@ export class DynamoDB {
       Parameters: params["Parameters"]?.map(x => fromAttributeValue(x)),
       ConsistentRead: params["ConsistentRead"],
       NextToken: params["NextToken"],
+      ReturnConsumedCapacity: params["ReturnConsumedCapacity"],
     };
     const resp = await this.#client.performRequest({
       opts, body,
@@ -529,6 +533,7 @@ export class DynamoDB {
       optional: {
         "Items": [x => jsonP.readMap(String, toAttributeValue, x)],
         "NextToken": "s",
+        "ConsumedCapacity": toConsumedCapacity,
       },
     }, await resp.json());
   }
@@ -540,6 +545,7 @@ export class DynamoDB {
     const body: jsonP.JSONObject = {
       TransactStatements: params["TransactStatements"]?.map(x => fromParameterizedStatement(x)),
       ClientRequestToken: params["ClientRequestToken"] ?? generateIdemptToken(),
+      ReturnConsumedCapacity: params["ReturnConsumedCapacity"],
     };
     const resp = await this.#client.performRequest({
       opts, body,
@@ -549,6 +555,7 @@ export class DynamoDB {
       required: {},
       optional: {
         "Responses": [toItemResponse],
+        "ConsumedCapacity": [toConsumedCapacity],
       },
     }, await resp.json());
   }
@@ -1106,6 +1113,7 @@ export class DynamoDB {
       StreamSpecification: fromStreamSpecification(params["StreamSpecification"]),
       SSESpecification: fromSSESpecification(params["SSESpecification"]),
       ReplicaUpdates: params["ReplicaUpdates"]?.map(x => fromReplicationGroupUpdate(x)),
+      TableClass: params["TableClass"],
     };
     const resp = await this.#client.performRequest({
       opts, body,
@@ -1636,6 +1644,7 @@ function fromReplicaSettingsUpdate(input?: s.ReplicaSettingsUpdate | null): json
     ReplicaProvisionedReadCapacityUnits: input["ReplicaProvisionedReadCapacityUnits"],
     ReplicaProvisionedReadCapacityAutoScalingSettingsUpdate: fromAutoScalingSettingsUpdate(input["ReplicaProvisionedReadCapacityAutoScalingSettingsUpdate"]),
     ReplicaGlobalSecondaryIndexSettingsUpdate: input["ReplicaGlobalSecondaryIndexSettingsUpdate"]?.map(x => fromReplicaGlobalSecondaryIndexSettingsUpdate(x)),
+    ReplicaTableClass: input["ReplicaTableClass"],
   }
 }
 
@@ -1706,6 +1715,7 @@ function fromCreateReplicationGroupMemberAction(input?: s.CreateReplicationGroup
     KMSMasterKeyId: input["KMSMasterKeyId"],
     ProvisionedThroughputOverride: fromProvisionedThroughputOverride(input["ProvisionedThroughputOverride"]),
     GlobalSecondaryIndexes: input["GlobalSecondaryIndexes"]?.map(x => fromReplicaGlobalSecondaryIndex(x)),
+    TableClassOverride: input["TableClassOverride"],
   }
 }
 
@@ -1739,6 +1749,7 @@ function fromUpdateReplicationGroupMemberAction(input?: s.UpdateReplicationGroup
     KMSMasterKeyId: input["KMSMasterKeyId"],
     ProvisionedThroughputOverride: fromProvisionedThroughputOverride(input["ProvisionedThroughputOverride"]),
     GlobalSecondaryIndexes: input["GlobalSecondaryIndexes"]?.map(x => fromReplicaGlobalSecondaryIndex(x)),
+    TableClassOverride: input["TableClassOverride"],
   }
 }
 
@@ -1889,6 +1900,7 @@ function toReplicaDescription(root: jsonP.JSONValue): s.ReplicaDescription {
       "ProvisionedThroughputOverride": toProvisionedThroughputOverride,
       "GlobalSecondaryIndexes": [toReplicaGlobalSecondaryIndexDescription],
       "ReplicaInaccessibleDateTime": "d",
+      "ReplicaTableClassSummary": toTableClassSummary,
     },
   }, root);
 }
@@ -1899,6 +1911,16 @@ function toReplicaGlobalSecondaryIndexDescription(root: jsonP.JSONValue): s.Repl
     optional: {
       "IndexName": "s",
       "ProvisionedThroughputOverride": toProvisionedThroughputOverride,
+    },
+  }, root);
+}
+
+function toTableClassSummary(root: jsonP.JSONValue): s.TableClassSummary {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "TableClass": (x: jsonP.JSONValue) => cmnP.readEnum<s.TableClass>(x),
+      "LastUpdateDateTime": "d",
     },
   }, root);
 }
@@ -1928,6 +1950,7 @@ function toTableDescription(root: jsonP.JSONValue): s.TableDescription {
       "RestoreSummary": toRestoreSummary,
       "SSEDescription": toSSEDescription,
       "ArchivalSummary": toArchivalSummary,
+      "TableClassSummary": toTableClassSummary,
     },
   }, root);
 }
@@ -2179,6 +2202,7 @@ function toReplicaSettingsDescription(root: jsonP.JSONValue): s.ReplicaSettingsD
       "ReplicaProvisionedWriteCapacityUnits": "n",
       "ReplicaProvisionedWriteCapacityAutoScalingSettings": toAutoScalingSettingsDescription,
       "ReplicaGlobalSecondaryIndexSettings": [toReplicaGlobalSecondaryIndexSettingsDescription],
+      "ReplicaTableClassSummary": toTableClassSummary,
     },
   }, root);
 }

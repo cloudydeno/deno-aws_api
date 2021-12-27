@@ -5,6 +5,7 @@ import * as cmnP from "../../encoding/common.ts";
 // refs: 1 - tags: named, input
 export interface BatchExecuteStatementInput {
   Statements: BatchStatementRequest[];
+  ReturnConsumedCapacity?: ReturnConsumedCapacity | null;
 }
 
 // refs: 1 - tags: named, input
@@ -44,6 +45,7 @@ export interface CreateTableInput {
   StreamSpecification?: StreamSpecification | null;
   SSESpecification?: SSESpecification | null;
   Tags?: Tag[] | null;
+  TableClass?: TableClass | null;
 }
 
 // refs: 1 - tags: named, input
@@ -133,12 +135,14 @@ export interface ExecuteStatementInput {
   Parameters?: AttributeValue[] | null;
   ConsistentRead?: boolean | null;
   NextToken?: string | null;
+  ReturnConsumedCapacity?: ReturnConsumedCapacity | null;
 }
 
 // refs: 1 - tags: named, input
 export interface ExecuteTransactionInput {
   TransactStatements: ParameterizedStatement[];
   ClientRequestToken?: string | null;
+  ReturnConsumedCapacity?: ReturnConsumedCapacity | null;
 }
 
 // refs: 1 - tags: named, input
@@ -369,6 +373,7 @@ export interface UpdateTableInput {
   StreamSpecification?: StreamSpecification | null;
   SSESpecification?: SSESpecification | null;
   ReplicaUpdates?: ReplicationGroupUpdate[] | null;
+  TableClass?: TableClass | null;
 }
 
 // refs: 1 - tags: named, input
@@ -388,6 +393,7 @@ export interface UpdateTimeToLiveInput {
 // refs: 1 - tags: named, output
 export interface BatchExecuteStatementOutput {
   Responses?: BatchStatementResponse[] | null;
+  ConsumedCapacity?: ConsumedCapacity[] | null;
 }
 
 // refs: 1 - tags: named, output
@@ -517,11 +523,13 @@ export interface KinesisStreamingDestinationOutput {
 export interface ExecuteStatementOutput {
   Items?: ({ [key: string]: AttributeValue | null | undefined })[] | null;
   NextToken?: string | null;
+  ConsumedCapacity?: ConsumedCapacity | null;
 }
 
 // refs: 1 - tags: named, output
 export interface ExecuteTransactionOutput {
   Responses?: ItemResponse[] | null;
+  ConsumedCapacity?: ConsumedCapacity[] | null;
 }
 
 // refs: 1 - tags: named, output
@@ -684,6 +692,13 @@ export interface AttributeValue {
   BOOL?: boolean | null;
 }
 
+// refs: 13 - tags: input, named, enum
+export type ReturnConsumedCapacity =
+| "INDEXES"
+| "TOTAL"
+| "NONE"
+| cmnP.UnexpectedEnumValue;
+
 // refs: 2 - tags: input, named, interface, output
 export interface KeysAndAttributes {
   Keys: ({ [key: string]: AttributeValue | null | undefined })[];
@@ -692,13 +707,6 @@ export interface KeysAndAttributes {
   ProjectionExpression?: string | null;
   ExpressionAttributeNames?: { [key: string]: string | null | undefined } | null;
 }
-
-// refs: 10 - tags: input, named, enum
-export type ReturnConsumedCapacity =
-| "INDEXES"
-| "TOTAL"
-| "NONE"
-| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface, output
 export interface WriteRequest {
@@ -824,6 +832,12 @@ export interface Tag {
   Key: string;
   Value: string;
 }
+
+// refs: 22 - tags: input, named, enum, output
+export type TableClass =
+| "STANDARD"
+| "STANDARD_INFREQUENT_ACCESS"
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface
 export interface ExpectedAttributeValue {
@@ -1036,6 +1050,7 @@ export interface ReplicaSettingsUpdate {
   ReplicaProvisionedReadCapacityUnits?: number | null;
   ReplicaProvisionedReadCapacityAutoScalingSettingsUpdate?: AutoScalingSettingsUpdate | null;
   ReplicaGlobalSecondaryIndexSettingsUpdate?: ReplicaGlobalSecondaryIndexSettingsUpdate[] | null;
+  ReplicaTableClass?: TableClass | null;
 }
 
 // refs: 1 - tags: input, named, interface
@@ -1097,6 +1112,7 @@ export interface CreateReplicationGroupMemberAction {
   KMSMasterKeyId?: string | null;
   ProvisionedThroughputOverride?: ProvisionedThroughputOverride | null;
   GlobalSecondaryIndexes?: ReplicaGlobalSecondaryIndex[] | null;
+  TableClassOverride?: TableClass | null;
 }
 
 // refs: 22 - tags: input, named, interface, output
@@ -1116,6 +1132,7 @@ export interface UpdateReplicationGroupMemberAction {
   KMSMasterKeyId?: string | null;
   ProvisionedThroughputOverride?: ProvisionedThroughputOverride | null;
   GlobalSecondaryIndexes?: ReplicaGlobalSecondaryIndex[] | null;
+  TableClassOverride?: TableClass | null;
 }
 
 // refs: 1 - tags: input, named, interface
@@ -1176,7 +1193,7 @@ export type BatchStatementErrorCodeEnum =
 | "DuplicateItem"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 10 - tags: output, named, interface
+// refs: 13 - tags: output, named, interface
 export interface ConsumedCapacity {
   TableName?: string | null;
   CapacityUnits?: number | null;
@@ -1187,7 +1204,7 @@ export interface ConsumedCapacity {
   GlobalSecondaryIndexes?: { [key: string]: Capacity | null | undefined } | null;
 }
 
-// refs: 30 - tags: output, named, interface
+// refs: 39 - tags: output, named, interface
 export interface Capacity {
   ReadCapacityUnits?: number | null;
   WriteCapacityUnits?: number | null;
@@ -1244,6 +1261,7 @@ export interface ReplicaDescription {
   ProvisionedThroughputOverride?: ProvisionedThroughputOverride | null;
   GlobalSecondaryIndexes?: ReplicaGlobalSecondaryIndexDescription[] | null;
   ReplicaInaccessibleDateTime?: Date | number | null;
+  ReplicaTableClassSummary?: TableClassSummary | null;
 }
 
 // refs: 13 - tags: output, named, enum
@@ -1261,6 +1279,12 @@ export type ReplicaStatus =
 export interface ReplicaGlobalSecondaryIndexDescription {
   IndexName?: string | null;
   ProvisionedThroughputOverride?: ProvisionedThroughputOverride | null;
+}
+
+// refs: 17 - tags: output, named, interface
+export interface TableClassSummary {
+  TableClass?: TableClass | null;
+  LastUpdateDateTime?: Date | number | null;
 }
 
 // refs: 3 - tags: output, named, enum
@@ -1294,6 +1318,7 @@ export interface TableDescription {
   RestoreSummary?: RestoreSummary | null;
   SSEDescription?: SSEDescription | null;
   ArchivalSummary?: ArchivalSummary | null;
+  TableClassSummary?: TableClassSummary | null;
 }
 
 // refs: 8 - tags: output, named, enum
@@ -1529,6 +1554,7 @@ export interface ReplicaSettingsDescription {
   ReplicaProvisionedWriteCapacityUnits?: number | null;
   ReplicaProvisionedWriteCapacityAutoScalingSettings?: AutoScalingSettingsDescription | null;
   ReplicaGlobalSecondaryIndexSettings?: ReplicaGlobalSecondaryIndexSettingsDescription[] | null;
+  ReplicaTableClassSummary?: TableClassSummary | null;
 }
 
 // refs: 16 - tags: output, named, interface

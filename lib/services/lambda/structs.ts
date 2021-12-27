@@ -48,6 +48,7 @@ export interface CreateEventSourceMappingRequest {
   FunctionName: string;
   Enabled?: boolean | null;
   BatchSize?: number | null;
+  FilterCriteria?: FilterCriteria | null;
   MaximumBatchingWindowInSeconds?: number | null;
   ParallelizationFactor?: number | null;
   StartingPosition?: EventSourcePosition | null;
@@ -86,6 +87,7 @@ export interface CreateFunctionRequest {
   FileSystemConfigs?: FileSystemConfig[] | null;
   ImageConfig?: ImageConfig | null;
   CodeSigningConfigArn?: string | null;
+  Architectures?: Architecture[] | null;
 }
 
 // refs: 1 - tags: named, input
@@ -277,6 +279,7 @@ export interface ListLayerVersionsRequest {
   LayerName: string;
   Marker?: string | null;
   MaxItems?: number | null;
+  CompatibleArchitecture?: Architecture | null;
 }
 
 // refs: 1 - tags: named, input
@@ -284,6 +287,7 @@ export interface ListLayersRequest {
   CompatibleRuntime?: Runtime | null;
   Marker?: string | null;
   MaxItems?: number | null;
+  CompatibleArchitecture?: Architecture | null;
 }
 
 // refs: 1 - tags: named, input
@@ -312,6 +316,7 @@ export interface PublishLayerVersionRequest {
   Content: LayerVersionContentInput;
   CompatibleRuntimes?: Runtime[] | null;
   LicenseInfo?: string | null;
+  CompatibleArchitectures?: Architecture[] | null;
 }
 
 // refs: 1 - tags: named, input
@@ -402,6 +407,7 @@ export interface UpdateEventSourceMappingRequest {
   FunctionName?: string | null;
   Enabled?: boolean | null;
   BatchSize?: number | null;
+  FilterCriteria?: FilterCriteria | null;
   MaximumBatchingWindowInSeconds?: number | null;
   DestinationConfig?: DestinationConfig | null;
   MaximumRecordAgeInSeconds?: number | null;
@@ -424,6 +430,7 @@ export interface UpdateFunctionCodeRequest {
   Publish?: boolean | null;
   DryRun?: boolean | null;
   RevisionId?: string | null;
+  Architectures?: Architecture[] | null;
 }
 
 // refs: 1 - tags: named, input
@@ -490,6 +497,7 @@ export interface EventSourceMappingConfiguration {
   MaximumBatchingWindowInSeconds?: number | null;
   ParallelizationFactor?: number | null;
   EventSourceArn?: string | null;
+  FilterCriteria?: FilterCriteria | null;
   FunctionArn?: string | null;
   LastModified?: Date | number | null;
   LastProcessingResult?: string | null;
@@ -540,6 +548,7 @@ export interface FunctionConfiguration {
   ImageConfigResponse?: ImageConfigResponse | null;
   SigningProfileVersionArn?: string | null;
   SigningJobArn?: string | null;
+  Architectures?: Architecture[] | null;
 }
 
 // refs: 1 - tags: named, output
@@ -591,6 +600,7 @@ export interface GetLayerVersionResponse {
   Version?: number | null;
   CompatibleRuntimes?: Runtime[] | null;
   LicenseInfo?: string | null;
+  CompatibleArchitectures?: Architecture[] | null;
 }
 
 // refs: 1 - tags: named, output
@@ -704,6 +714,7 @@ export interface PublishLayerVersionResponse {
   Version?: number | null;
   CompatibleRuntimes?: Runtime[] | null;
   LicenseInfo?: string | null;
+  CompatibleArchitectures?: Architecture[] | null;
 }
 
 // refs: 1 - tags: named, output
@@ -753,6 +764,16 @@ export type CodeSigningPolicy =
 | "Enforce"
 | cmnP.UnexpectedEnumValue;
 
+// refs: 4 - tags: input, named, interface, output
+export interface FilterCriteria {
+  Filters?: Filter[] | null;
+}
+
+// refs: 4 - tags: input, named, interface, output
+export interface Filter {
+  Pattern?: string | null;
+}
+
 // refs: 3 - tags: input, named, enum, output
 export type EventSourcePosition =
 | "TRIM_HORIZON"
@@ -790,6 +811,8 @@ export type SourceAccessType =
 | "SASL_SCRAM_512_AUTH"
 | "SASL_SCRAM_256_AUTH"
 | "VIRTUAL_HOST"
+| "CLIENT_CERTIFICATE_TLS_AUTH"
+| "SERVER_ROOT_CA_CERTIFICATE"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface, output
@@ -890,6 +913,12 @@ export interface ImageConfig {
   Command?: string[] | null;
   WorkingDirectory?: string | null;
 }
+
+// refs: 13 - tags: input, named, enum, output
+export type Architecture =
+| "x86_64"
+| "arm64"
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type InvocationType =
@@ -1064,6 +1093,7 @@ export interface LayerVersionsListItem {
   CreatedDate?: string | null;
   CompatibleRuntimes?: Runtime[] | null;
   LicenseInfo?: string | null;
+  CompatibleArchitectures?: Architecture[] | null;
 }
 
 // refs: 1 - tags: output, named, interface
