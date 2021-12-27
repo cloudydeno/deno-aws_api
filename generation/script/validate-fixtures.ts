@@ -24,12 +24,15 @@ interface ProtocolInputTestCase {
 }
 interface ProtocolOutputTestCase {
   "given": Schema.ApiOperation;
-  "result": { [key: string]: any };
+  "result"?: { [key: string]: any };
   "response": {
     "status_code": number;
     "headers": { [key: string]: string };
     "body": string;
   };
+  "error"?: { [key: string]: any };
+  "errorCode"?: string;
+  "errorMessage"?: string;
 }
 
 function lowerCamel(str: string): string {
@@ -83,7 +86,7 @@ async function *readTestFixtures(filePath: string): AsyncGenerator<TestRun> {
     for (const testCase of cases) {
       let inners: TestRunCase;
       let descr = filePath.split('/fixtures/')[1] + ': ' + (description ?? "Test case");
-      if ('result' in testCase) {
+      if ('response' in testCase) {
         inners = { category: 'output', testCase: testCase as ProtocolOutputTestCase };
         descr += ` with result ${JSON.stringify(inners.testCase.result)}`;
       } else {
@@ -137,9 +140,9 @@ async function generateRun(run: TestRun): Promise<void> {
 
   const chunks = new Array<string>();
   chunks.push('\n/////////\n');
-  chunks.push(`import { assertEquals } from "https://deno.land/std@0.115.0/testing/asserts.ts";`);
+  chunks.push(`import { assertEquals, assertRejects, assertObjectMatch } from "https://deno.land/std@0.115.0/testing/asserts.ts";`);
   chunks.push(`import { wrapServiceClient } from '../../client/client.ts';\n`);
-  chunks.push(`import type { ServiceApiClass } from '../../client/common.ts';\n`);
+  chunks.push(`import { ServiceApiClass, AwsServiceError } from '../../client/common.ts';\n`);
 
   const mockFuncName = run.category === 'input' ? 'checkRequest' : 'mockResponse';
   chunks.push(`async function ${mockFuncName}(request: Request, opts: {hostPrefix?: string, urlPath: string}): Promise<Response> {`);
@@ -164,7 +167,7 @@ async function generateRun(run: TestRun): Promise<void> {
 
   } else {
     const { response } = run.testCase;
-    chunks.push(`  return new Response(new TextEncoder().encode(${JSON.stringify(response.body)}), {`);
+    chunks.push(`  return new Response(new TextEncoder().encode(${JSON.stringify(response.body ?? '{}')}), {`);
     chunks.push(`    headers: ${JSON.stringify(response.headers)},`);
     chunks.push(`    status: ${JSON.stringify(response.status_code)},`);
     chunks.push(`  });`);
@@ -191,11 +194,27 @@ async function generateRun(run: TestRun): Promise<void> {
     chunks.push(`  await testService.${lowerCamel(given.name)}(${paramText});\n`);
     chunks.push(`});`);
   } else {
-    const { given, result } = run.testCase;
+    const { given, result, error, errorCode, errorMessage } = run.testCase;
     chunks.push(`import { testTransformJsObj } from '../../encoding/common.ts';`);
     chunks.push(`Deno.test(${JSON.stringify(run.description)}, async () => {`);
     if (run.description.includes('Ignores undefined output') || run.description.includes('Enum with result {}')) {
       chunks.push(`  const result: void = await testService.${lowerCamel(given.name)}();\n`);
+    } else if (error) {
+      // TODO?: Grab defined header fields for structured errors??
+      delete error['ImaHeader'];
+      delete error['ImaHeaderLocation'];
+      chunks.push(`  await assertRejects(async () => {\n`);
+      chunks.push(`    const result: void = await testService.${lowerCamel(given.name)}();\n`);
+      chunks.push(`  }, (err: unknown) => {`);
+      chunks.push(`    if (!(err instanceof AwsServiceError)) throw err;`);
+      if (errorCode) {
+        chunks.push(`    assertEquals(err.shortCode, ${JSON.stringify(errorCode)});`);
+      }
+      if (errorMessage) {
+        chunks.push(`    assertEquals(err.originalMessage, ${JSON.stringify(errorMessage)});`);
+      }
+      chunks.push(`    assertObjectMatch(err.internal, ${JSON.stringify(error)});`);
+      chunks.push(`  });`);
     } else {
       chunks.push(`  const result = await testService.${lowerCamel(given.name)}();\n`);
       chunks.push(`  const resultJson = JSON.stringify(testTransformJsObj(result));`);
@@ -225,6 +244,10 @@ function fixExpectedJson(json: string): string {
   if (json === `{"AllHeaders":{"Content-Length":"10","X-Foo":"bar","X-Bam":"boo"},"PrefixedHeaders":{"Foo":"bar","Bam":"boo"}}`) {
     // headers are sorted as of deno 1.9
     return `{"AllHeaders":{"content-length":"10","x-bam":"boo","x-foo":"bar"},"PrefixedHeaders":{"bam":"boo","foo":"bar"}}`;
+  }
+  if (json === `{"HeaderField":{"Foo":{}}}`) {
+    // https://github.com/aws/aws-sdk-js/pull/3997
+    return `{"HeaderField":{}}`;
   }
   return json;
 }
