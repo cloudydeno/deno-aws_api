@@ -25,6 +25,11 @@ export interface BatchGetImageRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface BatchGetRepositoryScanningConfigurationRequest {
+  repositoryNames: string[];
+}
+
+// refs: 1 - tags: named, input
 export interface CompleteLayerUploadRequest {
   registryId?: string | null;
   repositoryName: string;
@@ -33,7 +38,15 @@ export interface CompleteLayerUploadRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface CreatePullThroughCacheRuleRequest {
+  ecrRepositoryPrefix: string;
+  upstreamRegistryUrl: string;
+  registryId?: string | null;
+}
+
+// refs: 1 - tags: named, input
 export interface CreateRepositoryRequest {
+  registryId?: string | null;
   repositoryName: string;
   tags?: Tag[] | null;
   imageTagMutability?: ImageTagMutability | null;
@@ -48,6 +61,12 @@ export interface DeleteLifecyclePolicyRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface DeletePullThroughCacheRuleRequest {
+  ecrRepositoryPrefix: string;
+  registryId?: string | null;
+}
+
+// refs: 1 - tags: named, input
 export interface DeleteRepositoryRequest {
   registryId?: string | null;
   repositoryName: string;
@@ -58,6 +77,13 @@ export interface DeleteRepositoryRequest {
 export interface DeleteRepositoryPolicyRequest {
   registryId?: string | null;
   repositoryName: string;
+}
+
+// refs: 1 - tags: named, input
+export interface DescribeImageReplicationStatusRequest {
+  repositoryName: string;
+  imageId: ImageIdentifier;
+  registryId?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -77,6 +103,14 @@ export interface DescribeImagesRequest {
   nextToken?: string | null;
   maxResults?: number | null;
   filter?: DescribeImagesFilter | null;
+}
+
+// refs: 1 - tags: named, input
+export interface DescribePullThroughCacheRulesRequest {
+  registryId?: string | null;
+  ecrRepositoryPrefixes?: string[] | null;
+  nextToken?: string | null;
+  maxResults?: number | null;
 }
 
 // refs: 1 - tags: named, input
@@ -178,6 +212,12 @@ export interface PutRegistryPolicyRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface PutRegistryScanningConfigurationRequest {
+  scanType?: ScanType | null;
+  rules?: RegistryScanningRule[] | null;
+}
+
+// refs: 1 - tags: named, input
 export interface PutReplicationConfigurationRequest {
   replicationConfiguration: ReplicationConfiguration;
 }
@@ -245,11 +285,25 @@ export interface BatchGetImageResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface BatchGetRepositoryScanningConfigurationResponse {
+  scanningConfigurations?: RepositoryScanningConfiguration[] | null;
+  failures?: RepositoryScanningConfigurationFailure[] | null;
+}
+
+// refs: 1 - tags: named, output
 export interface CompleteLayerUploadResponse {
   registryId?: string | null;
   repositoryName?: string | null;
   uploadId?: string | null;
   layerDigest?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface CreatePullThroughCacheRuleResponse {
+  ecrRepositoryPrefix?: string | null;
+  upstreamRegistryUrl?: string | null;
+  createdAt?: Date | number | null;
+  registryId?: string | null;
 }
 
 // refs: 1 - tags: named, output
@@ -263,6 +317,14 @@ export interface DeleteLifecyclePolicyResponse {
   repositoryName?: string | null;
   lifecyclePolicyText?: string | null;
   lastEvaluatedAt?: Date | number | null;
+}
+
+// refs: 1 - tags: named, output
+export interface DeletePullThroughCacheRuleResponse {
+  ecrRepositoryPrefix?: string | null;
+  upstreamRegistryUrl?: string | null;
+  createdAt?: Date | number | null;
+  registryId?: string | null;
 }
 
 // refs: 1 - tags: named, output
@@ -284,6 +346,13 @@ export interface DeleteRepositoryPolicyResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface DescribeImageReplicationStatusResponse {
+  repositoryName?: string | null;
+  imageId?: ImageIdentifier | null;
+  replicationStatuses?: ImageReplicationStatus[] | null;
+}
+
+// refs: 1 - tags: named, output
 export interface DescribeImageScanFindingsResponse {
   registryId?: string | null;
   repositoryName?: string | null;
@@ -296,6 +365,12 @@ export interface DescribeImageScanFindingsResponse {
 // refs: 1 - tags: named, output
 export interface DescribeImagesResponse {
   imageDetails?: ImageDetail[] | null;
+  nextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface DescribePullThroughCacheRulesResponse {
+  pullThroughCacheRules?: PullThroughCacheRule[] | null;
   nextToken?: string | null;
 }
 
@@ -345,6 +420,12 @@ export interface GetLifecyclePolicyPreviewResponse {
 export interface GetRegistryPolicyResponse {
   registryId?: string | null;
   policyText?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface GetRegistryScanningConfigurationResponse {
+  registryId?: string | null;
+  scanningConfiguration?: RegistryScanningConfiguration | null;
 }
 
 // refs: 1 - tags: named, output
@@ -404,6 +485,11 @@ export interface PutRegistryPolicyResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface PutRegistryScanningConfigurationResponse {
+  registryScanningConfiguration?: RegistryScanningConfiguration | null;
+}
+
+// refs: 1 - tags: named, output
 export interface PutReplicationConfigurationResponse {
   replicationConfiguration?: ReplicationConfiguration | null;
 }
@@ -439,7 +525,7 @@ export interface UploadLayerPartResponse {
   lastByteReceived?: number | null;
 }
 
-// refs: 14 - tags: input, named, interface, output
+// refs: 16 - tags: input, named, interface, output
 export interface ImageIdentifier {
   imageDigest?: string | null;
   imageTag?: string | null;
@@ -496,6 +582,36 @@ export interface ListImagesFilter {
   tagStatus?: TagStatus | null;
 }
 
+// refs: 3 - tags: input, named, enum, output
+export type ScanType =
+| "BASIC"
+| "ENHANCED"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 3 - tags: input, named, interface, output
+export interface RegistryScanningRule {
+  scanFrequency: ScanFrequency;
+  repositoryFilters: ScanningRepositoryFilter[];
+}
+
+// refs: 4 - tags: input, named, enum, output
+export type ScanFrequency =
+| "SCAN_ON_PUSH"
+| "CONTINUOUS_SCAN"
+| "MANUAL"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 4 - tags: input, named, interface, output
+export interface ScanningRepositoryFilter {
+  filter: string;
+  filterType: ScanningRepositoryFilterType;
+}
+
+// refs: 4 - tags: input, named, enum, output
+export type ScanningRepositoryFilterType =
+| "WILDCARD"
+| cmnP.UnexpectedEnumValue;
+
 // refs: 3 - tags: input, named, interface, output
 export interface ReplicationConfiguration {
   rules: ReplicationRule[];
@@ -504,6 +620,7 @@ export interface ReplicationConfiguration {
 // refs: 3 - tags: input, named, interface, output
 export interface ReplicationRule {
   destinations: ReplicationDestination[];
+  repositoryFilters?: RepositoryFilter[] | null;
 }
 
 // refs: 3 - tags: input, named, interface, output
@@ -511,6 +628,17 @@ export interface ReplicationDestination {
   region: string;
   registryId: string;
 }
+
+// refs: 3 - tags: input, named, interface, output
+export interface RepositoryFilter {
+  filter: string;
+  filterType: RepositoryFilterType;
+}
+
+// refs: 3 - tags: input, named, enum, output
+export type RepositoryFilterType =
+| "PREFIX_MATCH"
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface Layer {
@@ -566,6 +694,27 @@ export interface Image {
   imageManifestMediaType?: string | null;
 }
 
+// refs: 1 - tags: output, named, interface
+export interface RepositoryScanningConfiguration {
+  repositoryArn?: string | null;
+  repositoryName?: string | null;
+  scanOnPush?: boolean | null;
+  scanFrequency?: ScanFrequency | null;
+  appliedScanFilters?: ScanningRepositoryFilter[] | null;
+}
+
+// refs: 1 - tags: output, named, interface
+export interface RepositoryScanningConfigurationFailure {
+  repositoryName?: string | null;
+  failureCode?: ScanningConfigurationFailureCode | null;
+  failureReason?: string | null;
+}
+
+// refs: 1 - tags: output, named, enum
+export type ScanningConfigurationFailureCode =
+| "REPOSITORY_NOT_FOUND"
+| cmnP.UnexpectedEnumValue;
+
 // refs: 3 - tags: output, named, interface
 export interface Repository {
   repositoryArn?: string | null;
@@ -578,6 +727,21 @@ export interface Repository {
   encryptionConfiguration?: EncryptionConfiguration | null;
 }
 
+// refs: 1 - tags: output, named, interface
+export interface ImageReplicationStatus {
+  region?: string | null;
+  registryId?: string | null;
+  status?: ReplicationStatus | null;
+  failureCode?: string | null;
+}
+
+// refs: 1 - tags: output, named, enum
+export type ReplicationStatus =
+| "IN_PROGRESS"
+| "COMPLETE"
+| "FAILED"
+| cmnP.UnexpectedEnumValue;
+
 // refs: 3 - tags: output, named, interface
 export interface ImageScanStatus {
   status?: ScanStatus | null;
@@ -589,23 +753,20 @@ export type ScanStatus =
 | "IN_PROGRESS"
 | "COMPLETE"
 | "FAILED"
+| "UNSUPPORTED_IMAGE"
+| "ACTIVE"
+| "PENDING"
+| "SCAN_ELIGIBILITY_EXPIRED"
+| "FINDINGS_UNAVAILABLE"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface ImageScanFindings {
   imageScanCompletedAt?: Date | number | null;
   vulnerabilitySourceUpdatedAt?: Date | number | null;
-  findings?: ImageScanFinding[] | null;
   findingSeverityCounts?: { [key in FindingSeverity]: number | null | undefined } | null;
-}
-
-// refs: 1 - tags: output, named, interface
-export interface ImageScanFinding {
-  name?: string | null;
-  description?: string | null;
-  uri?: string | null;
-  severity?: FindingSeverity | null;
-  attributes?: Attribute[] | null;
+  findings?: ImageScanFinding[] | null;
+  enhancedFindings?: EnhancedImageScanFinding[] | null;
 }
 
 // refs: 3 - tags: output, named, enum
@@ -619,9 +780,127 @@ export type FindingSeverity =
 | cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
+export interface ImageScanFinding {
+  name?: string | null;
+  description?: string | null;
+  uri?: string | null;
+  severity?: FindingSeverity | null;
+  attributes?: Attribute[] | null;
+}
+
+// refs: 1 - tags: output, named, interface
 export interface Attribute {
   key: string;
   value?: string | null;
+}
+
+// refs: 1 - tags: output, named, interface
+export interface EnhancedImageScanFinding {
+  awsAccountId?: string | null;
+  description?: string | null;
+  findingArn?: string | null;
+  firstObservedAt?: Date | number | null;
+  lastObservedAt?: Date | number | null;
+  packageVulnerabilityDetails?: PackageVulnerabilityDetails | null;
+  remediation?: Remediation | null;
+  resources?: Resource[] | null;
+  score?: number | null;
+  scoreDetails?: ScoreDetails | null;
+  severity?: string | null;
+  status?: string | null;
+  title?: string | null;
+  type?: string | null;
+  updatedAt?: Date | number | null;
+}
+
+// refs: 1 - tags: output, named, interface
+export interface PackageVulnerabilityDetails {
+  cvss?: CvssScore[] | null;
+  referenceUrls?: string[] | null;
+  relatedVulnerabilities?: string[] | null;
+  source?: string | null;
+  sourceUrl?: string | null;
+  vendorCreatedAt?: Date | number | null;
+  vendorSeverity?: string | null;
+  vendorUpdatedAt?: Date | number | null;
+  vulnerabilityId?: string | null;
+  vulnerablePackages?: VulnerablePackage[] | null;
+}
+
+// refs: 1 - tags: output, named, interface
+export interface CvssScore {
+  baseScore?: number | null;
+  scoringVector?: string | null;
+  source?: string | null;
+  version?: string | null;
+}
+
+// refs: 1 - tags: output, named, interface
+export interface VulnerablePackage {
+  arch?: string | null;
+  epoch?: number | null;
+  filePath?: string | null;
+  name?: string | null;
+  packageManager?: string | null;
+  release?: string | null;
+  sourceLayerHash?: string | null;
+  version?: string | null;
+}
+
+// refs: 1 - tags: output, named, interface
+export interface Remediation {
+  recommendation?: Recommendation | null;
+}
+
+// refs: 1 - tags: output, named, interface
+export interface Recommendation {
+  url?: string | null;
+  text?: string | null;
+}
+
+// refs: 1 - tags: output, named, interface
+export interface Resource {
+  details?: ResourceDetails | null;
+  id?: string | null;
+  tags?: { [key: string]: string | null | undefined } | null;
+  type?: string | null;
+}
+
+// refs: 1 - tags: output, named, interface
+export interface ResourceDetails {
+  awsEcrContainerImage?: AwsEcrContainerImageDetails | null;
+}
+
+// refs: 1 - tags: output, named, interface
+export interface AwsEcrContainerImageDetails {
+  architecture?: string | null;
+  author?: string | null;
+  imageHash?: string | null;
+  imageTags?: string[] | null;
+  platform?: string | null;
+  pushedAt?: Date | number | null;
+  registry?: string | null;
+  repositoryName?: string | null;
+}
+
+// refs: 1 - tags: output, named, interface
+export interface ScoreDetails {
+  cvss?: CvssScoreDetails | null;
+}
+
+// refs: 1 - tags: output, named, interface
+export interface CvssScoreDetails {
+  adjustments?: CvssScoreAdjustment[] | null;
+  score?: number | null;
+  scoreSource?: string | null;
+  scoringVector?: string | null;
+  version?: string | null;
+}
+
+// refs: 1 - tags: output, named, interface
+export interface CvssScoreAdjustment {
+  metric?: string | null;
+  reason?: string | null;
 }
 
 // refs: 1 - tags: output, named, interface
@@ -643,6 +922,14 @@ export interface ImageScanFindingsSummary {
   imageScanCompletedAt?: Date | number | null;
   vulnerabilitySourceUpdatedAt?: Date | number | null;
   findingSeverityCounts?: { [key in FindingSeverity]: number | null | undefined } | null;
+}
+
+// refs: 1 - tags: output, named, interface
+export interface PullThroughCacheRule {
+  ecrRepositoryPrefix?: string | null;
+  upstreamRegistryUrl?: string | null;
+  createdAt?: Date | number | null;
+  registryId?: string | null;
 }
 
 // refs: 1 - tags: output, named, interface
@@ -682,4 +969,10 @@ export type ImageActionType =
 // refs: 1 - tags: output, named, interface
 export interface LifecyclePolicyPreviewSummary {
   expiringImageTotalCount?: number | null;
+}
+
+// refs: 2 - tags: output, named, interface
+export interface RegistryScanningConfiguration {
+  scanType?: ScanType | null;
+  rules?: RegistryScanningRule[] | null;
 }
