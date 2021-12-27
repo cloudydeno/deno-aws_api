@@ -111,34 +111,41 @@ export interface ApiMetadata {
 
 
 // how universal is this structure?
-export interface ServiceError {
+export type ServiceError = {
   "Code": string;
-  "Message": string;
-  "Type"?: "Sender" | string; // TODO
+  "Message"?: string | null;
+  "Type"?: "Sender" | string;
+  [key: string]: string | number | null | undefined;
 }
 
 export class AwsServiceError extends Error {
   origResponse: Response;
   code: string;
   shortCode: string;
-  originalMessage: string;
   errorType: string;
   requestId: string;
-  constructor(resp: Response, error: ServiceError, requestId?: string | null) {
+  internal: ServiceError;
+
+  constructor(resp: Response, code: string, error: ServiceError, requestId?: string | null) {
     requestId = requestId ?? "MISSING REQUEST ID";
+    const shortCode = code.split(':')[0].split('#').slice(-1)[0];
     const typePart = error.Type ? `Type: ${error.Type}, ` : '';
-    super(`${error.Code}: ${error.Message} [${typePart}Request ID: ${requestId}]`);
+    super(`${shortCode}: ${error.Message || new.target.name} [${typePart}Request ID: ${requestId}]`);
 
     this.origResponse = resp;
-    this.name = new.target.name;
-    this.code = error.Code;
-    this.shortCode = error.Code.split(':')[0].split('#').slice(-1)[0];
-    this.originalMessage = error.Message;
+    this.code = code;
+    this.shortCode = shortCode;
     this.errorType = error.Type ?? 'Unknown';
     this.requestId = requestId;
+    this.internal = error;
 
+    this.name = new.target.name;
     if (Error.captureStackTrace) {
       Error.captureStackTrace(this, new.target);
     }
+  }
+
+  get originalMessage() {
+    return this.internal.Message;
   }
 }

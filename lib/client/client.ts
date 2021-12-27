@@ -11,7 +11,7 @@ import {
   ServiceClientExtras,
 } from './common.ts';
 
-import { readXmlResult, stringify } from "../encoding/xml.ts";
+import { readXmlResult, stringify, XmlNode } from "../encoding/xml.ts";
 
 type FetchOpts = {
   urlPath: string,
@@ -146,10 +146,10 @@ export function wrapServiceClient(
 
 
 export class BaseServiceClient implements ServiceClient {
-  #signedFetcher: SigningFetcher;
-  constructor(signedFetcher: SigningFetcher) {
-    this.#signedFetcher = signedFetcher;
-  }
+  constructor(
+    private readonly signedFetcher: SigningFetcher,
+    public readonly protocol: string,
+  ) {}
 
   async performRequest(config: ApiRequestConfig & {
     body?: Uint8Array;
@@ -176,7 +176,7 @@ export class BaseServiceClient implements ServiceClient {
       redirect: 'manual',
       signal: config.opts?.signal,
     });
-    const response = await this.#signedFetcher(request, {
+    const response = await this.signedFetcher(request, {
       urlPath: serviceUrl + query,
       region: config.region,
       skipSigning: config.skipSigning,
@@ -186,7 +186,7 @@ export class BaseServiceClient implements ServiceClient {
     if (response.status == (config.responseCode ?? 200)) {
       return response;
     } else if (response.status >= 400) {
-      await handleErrorResponse(response, request.method);
+      await handleErrorResponse(response, request.method, this.protocol);
     } else if (response.status >= 200 && response.status < 300) {
       console.log(`WARN: ${config.action} response was unexpected success ${response.status}`);
       return response;
@@ -198,7 +198,7 @@ export class BaseServiceClient implements ServiceClient {
 
 export class XmlServiceClient extends BaseServiceClient {
   constructor(signedFetcher: SigningFetcher) {
-    super(signedFetcher);
+    super(signedFetcher, 'xml');
   }
 
   async performRequest(config: ApiRequestConfig): Promise<Response> {
@@ -231,7 +231,7 @@ export class JsonServiceClient extends BaseServiceClient {
     public readonly jsonVersion: string,
     signedFetcher: SigningFetcher
   ) {
-    super(signedFetcher);
+    super(signedFetcher, 'json');
   }
 
   async performRequest(config: ApiRequestConfig): Promise<Response> {
@@ -257,6 +257,10 @@ export class JsonServiceClient extends BaseServiceClient {
 }
 
 export class RestJsonServiceClient extends BaseServiceClient {
+  constructor(signedFetcher: SigningFetcher) {
+    super(signedFetcher, 'rest-json');
+  }
+
   async performRequest(config: ApiRequestConfig): Promise<Response> {
     const headers = config.headers ?? new Headers;
     headers.append('accept', 'application/json');
@@ -281,7 +285,7 @@ export class RestJsonServiceClient extends BaseServiceClient {
 export class QueryServiceClient extends BaseServiceClient {
   #serviceVersion: string;
   constructor(serviceVersion: string, signedFetcher: SigningFetcher) {
-    super(signedFetcher);
+    super(signedFetcher, 'query');
     this.#serviceVersion = serviceVersion;
   }
 
@@ -315,97 +319,91 @@ export class QueryServiceClient extends BaseServiceClient {
   }
 }
 
-async function handleErrorResponse(response: Response, reqMethod: string): Promise<never> {
+/** Not for external use - exposed for internal testing only */
+export async function handleErrorResponse(response: Response, reqMethod: string, protocol: string): Promise<never> {
   if (reqMethod === 'HEAD') {
-    // console.log(response);
-    // console.log(response.status, response.statusText, getRequestId(response.headers));
-    throw new AwsServiceError(response, {
+    throw new AwsServiceError(response, `Http${response.status}`, {
       Code: `Http${response.status}`,
       Message: `HTTP error status: ${response.statusText}`,
     }, getRequestId(response.headers));
   }
 
   const contentType = response.headers.get('content-type');
-  if (contentType?.startsWith('text/xml')
+
+  if (contentType?.includes('json') || protocol == 'rest-json' || protocol == 'json') {
+    const data = await response.json();
+
+    if (data.Error?.Code) {
+      throw new AwsServiceError(response, data.Error.Code, data.Error, data.RequestId);
+    }
+
+    const Code = response.headers.get('x-amzn-errortype')
+      || data.__type || data.code || data.Code
+      || 'UnknownError';
+    const Message = (Code === 'RequestEntityTooLarge')
+      ? 'Request body must be less than 1 MB'
+      : data.message || data.Message || null;
+
+    throw new AwsServiceError(response, Code, {
+      Status: response.status,
+      Code, Message,
+      ...data,
+    }, getRequestId(response.headers));
+
+  } else if (contentType?.startsWith('text/xml')
       || contentType?.startsWith('application/xml')
       || !contentType) {
+
     const xml = readXmlResult(await response.text());
+    const requestId = xml.first('RequestId', false, x => x.content)
+        || xml.first('RequestID', false, x => x.content)
+        || getRequestId(response.headers);
+
     switch (xml.name) {
 
       case 'ErrorResponse': // e.g. sts
-        // <ErrorResponse xmlns="https://sts.amazonaws.com/doc/2011-06-15/">
-        //   <Error>
-        //     <Type>Sender</Type>
-        //     <Code>ExpiredToken</Code>
-        //     <Message>The security token included in the request is expired</Message>
-        //   </Error>
-        //   <RequestId>90caa9d3-e248-4a7f-8fcf-c2a5d54c12b9</RequestId>
-        // </ErrorResponse>
         const errNode = xml.first('Error');
-        if (errNode) {
-          throw new AwsServiceError(response, errNode.strings({
-            required: { Code: true, Message: true, Type: true },
-          }), xml.first('RequestId', false, x => x.content));
-        }
+        if (errNode) throw readXmlError(response, errNode, requestId);
         break;
 
       case 'Response': // e.g. ec2
-        // <?xml version="1.0" encoding="UTF-8"?>
-        // <Response><Errors><Error><Code>RequestExpired</Code><Message>Request has expired.</Message></Error></Errors><RequestID>433741ec-94c9-49bc-a9c8-ba59ab8972c2</RequestID></Response>
-        const errors: ServiceError[] = xml.getList('Errors', 'Error')
-          .map(errNode => errNode.strings({
-            required: { Code: true, Message: true },
-            optional: { Type: true },
-          }));
-        if (errors.length > 0) {
-          throw new AwsServiceError(response, errors[0], xml.first('RequestID', false, x => x.content));
+        const errors: AwsServiceError[] = xml.getList('Errors', 'Error')
+          .map(errNode => readXmlError(response, errNode, requestId));
+        if (errors.length > 0) { // TODO: more than one?? zero???
+          throw errors[0];
         }
         break;
 
       case 'Error': // e.g. s3
-        throw new AwsServiceError(response, xml.strings({
-          required: { Code: true, Message: true },
-          optional: { 'Token-0': true, HostId: true },
-        }), xml.first('RequestId', false, x => x.content));
+        throw readXmlError(response, xml, requestId);
     }
 
     // eg <AccessDeniedException><Message>...
+    // TODO: what service returns this?
     if (xml.name.endsWith('Exception')) {
-      throw new AwsServiceError(response, {
-        Code: xml.name,
-        ...xml.strings({
-          required: { Message: true },
-          optional: { Type: true },
-        }),
-      }, getRequestId(response.headers));
+      throw readXmlError(response, xml, requestId, xml.name);
     }
 
     console.log('Error DOM:', stringify(xml) );
-
-  } else if (contentType?.startsWith('application/json')) {
-    const data = await response.json();
-    if (data.Error?.Code) {
-      throw new AwsServiceError(response, data.Error as ServiceError, data.RequestId);
-    }
-    console.log('Error from server:', response, data);
-
-  } else if (contentType?.startsWith('application/x-amz-json-1.')) {
-    const data = await response.json();
-    if (data.__type && data.message) {
-      throw new AwsServiceError(response, {
-        Code: data.__type,
-        Message: data.message,
-      }, getRequestId(response.headers));
-    } else if (data.__type && data.Message) {
-      throw new AwsServiceError(response, {
-        Code: data.__type,
-        Message: data.Message,
-      }, getRequestId(response.headers));
-    }
-    console.log('Error from server:', response, data);
+    throw new Error(`Unrecognizable XML error response of type ${contentType} / ${protocol}`);
 
   } else {
     console.log('Error body:', await response.text());
+    throw new Error(`Not sure about error response for ${contentType} / ${protocol}`);
   }
-  throw new Error(`Unrecognizable error response of type ${contentType}`);
+}
+
+function readXmlError(response: Response, errNode: XmlNode, requestId: string | null, defaultCode = 'UnknownError') {
+  const data: ServiceError = {
+    Status: response.status,
+    Code: defaultCode,
+  };
+
+  for (const child of errNode.children) {
+    if (child.content) {
+      data[child.name] = child.content;
+    }
+  }
+
+  return new AwsServiceError(response, data.Code, data, requestId);
 }
