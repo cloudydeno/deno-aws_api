@@ -117,10 +117,13 @@ export class AWSSignerV4 implements Signer {
     let canonicalHeaders = "";
     let signedHeaders = "";
     for (const key of [...headers.keys()].sort()) {
+      if (unsignableHeaders.has(key.toLowerCase())) continue;
       canonicalHeaders += `${key.toLowerCase()}:${headers.get(key)}\n`;
       signedHeaders += `${key.toLowerCase()};`;
     }
     signedHeaders = signedHeaders.substring(0, signedHeaders.length - 1);
+
+    // TODO: support for unsigned bodies (for streaming)
     const body = request.body
       ? new Uint8Array(await request.arrayBuffer())
       : null;
@@ -165,3 +168,13 @@ export class AWSSignerV4 implements Signer {
     );
   }
 }
+
+const unsignableHeaders = new Set([
+  'authorization',
+  'content-type',
+  'content-length',
+  'user-agent',
+  'presigned-expires',
+  'expect',
+  'x-amzn-trace-id',
+]);
