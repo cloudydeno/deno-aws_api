@@ -45,13 +45,14 @@ Deno.test("Request cancellation", async () => {
 
 async function assertErrorFrom(opts: {
   body: string;
+  statusCode?: number;
   headers: Record<string, string>;
   protocol: string;
   matches: Record<string, string>;
 }) {
   await assertRejects(() => handleErrorResponse(
     new Response(opts.body, {
-      status: 400,
+      status: opts.statusCode ?? 400,
       headers: opts.headers,
     }), 'POST', opts.protocol)
   , (err: unknown) => {
@@ -213,6 +214,38 @@ Deno.test("Error parsing: emr / access denied", () => assertErrorFrom({
     message: 'AccessDeniedException: User: arn:aws:iam::xxx:user/xxx is not authorized to perform: elasticmapreduce:TerminateJobFlows on resource: arn:aws:elasticmapreduce:us-east-2:xxx:cluster/xxx because no identity-based policy allows the elasticmapreduce:TerminateJobFlows action [Request ID: c3a76888-730f-479c-a367-cc32d4326561]',
     requestId: 'c3a76888-730f-479c-a367-cc32d4326561',
     shortCode: 'AccessDeniedException',
+    errorType: 'Unknown',
+  },
+}));
+
+Deno.test("Error parsing: SQS / no action", () => assertErrorFrom({
+  body: `<UnknownOperationException/>`,
+  statusCode: 404,
+  headers: {
+    'content-type': 'null', // yes SQS actually does this
+    'x-amzn-RequestId': '170aee66-ebba-5984-9f07-b423a5cb4c42',
+  },
+  protocol: 'query',
+  matches: {
+    message: 'UnknownOperationException: AwsServiceError [Request ID: 170aee66-ebba-5984-9f07-b423a5cb4c42]',
+    requestId: '170aee66-ebba-5984-9f07-b423a5cb4c42',
+    code: 'UnknownOperationException',
+    errorType: 'Unknown',
+  },
+}));
+
+Deno.test("Error parsing: elastic transcoder / example from docs", () => assertErrorFrom({
+  body: `{"message":"1 validation error detected: Value null at 'inputBucket' failed to satisfy constraint: Member must not be null"}`,
+  headers: {
+    'x-amzn-RequestId': 'b0e91dc8-3807-11e2-83c6-5912bf8ad066',
+    'x-amzn-ErrorType': 'ValidationException',
+    'Content-Type': 'application/json',
+  },
+  protocol: 'rest-json',
+  matches: {
+    message: `ValidationException: 1 validation error detected: Value null at 'inputBucket' failed to satisfy constraint: Member must not be null [Request ID: b0e91dc8-3807-11e2-83c6-5912bf8ad066]`,
+    requestId: 'b0e91dc8-3807-11e2-83c6-5912bf8ad066',
+    shortCode: 'ValidationException',
     errorType: 'Unknown',
   },
 }));

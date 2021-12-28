@@ -352,6 +352,8 @@ export async function handleErrorResponse(response: Response, reqMethod: string,
 
   } else if (contentType?.startsWith('text/xml')
       || contentType?.startsWith('application/xml')
+      || protocol == 'query'
+      || protocol == 'rest-xml'
       || !contentType) {
 
     const xml = readXmlResult(await response.text());
