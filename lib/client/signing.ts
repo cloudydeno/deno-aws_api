@@ -114,23 +114,37 @@ export class AWSSignerV4 implements Signer {
     }
     headers.set("host", host);
 
+    // If this header is here we won't bother rehashing the body
+    // This also allows for streaming bodies (via setting UNSIGNED-PAYLOAD)
+    let payloadHash = headers.get('x-amz-content-sha256');
+    let body: BodyInit | null = null;
+    if (payloadHash) {
+      body = request.body;
+    } else {
+      // In most cases, we'll intercept and hash the body ourselves
+      console.log('Reading body...')
+      const bodyBuffer = request.body
+        ? new Uint8Array(await request.arrayBuffer())
+        : null;
+      body = bodyBuffer;
+      if (!['GET', 'HEAD', 'OPTIONS'].includes(request.method)) {
+        headers.append('content-length', (bodyBuffer?.length ?? 0).toString());
+      }
+      payloadHash = sha256(bodyBuffer ?? new Uint8Array()).hex();
+      if (service === 's3') {
+        headers.set("x-amz-content-sha256", payloadHash);
+      }
+    }
+
     let canonicalHeaders = "";
     let signedHeaders = "";
     for (const key of [...headers.keys()].sort()) {
       if (unsignableHeaders.has(key.toLowerCase())) continue;
+      if (key.toLocaleLowerCase().startsWith('transfer-')) continue;
       canonicalHeaders += `${key.toLowerCase()}:${headers.get(key)}\n`;
       signedHeaders += `${key.toLowerCase()};`;
     }
     signedHeaders = signedHeaders.substring(0, signedHeaders.length - 1);
-
-    // TODO: support for unsigned bodies (for streaming)
-    const body = request.body
-      ? new Uint8Array(await request.arrayBuffer())
-      : null;
-    const payloadHash = sha256(body ?? new Uint8Array()).hex();
-    if (service === 's3') {
-      headers.set("x-amz-content-sha256", payloadHash);
-    }
 
     const canonicalRequest =
       `${request.method}\n${pathname}\n${canonicalQuerystring}\n${canonicalHeaders}\n${signedHeaders}\n${payloadHash}`;
@@ -155,17 +169,17 @@ export class AWSSignerV4 implements Signer {
       `${algorithm} Credential=${this.credentials.awsAccessKeyId}/${credentialScope}, SignedHeaders=${signedHeaders}, Signature=${signature}`;
 
     headers.set("Authorization", authHeader);
+    console.log(canonicalRequest)
+    console.log('   ', authHeader);
+    console.log(headers)
+    console.log('\n\n');
 
-    return new Request(
-      request.url,
-      {
-        headers,
-        method: request.method,
-        body,
-        redirect: request.redirect,
-        signal: request.signal,
-      },
-    );
+    return new Request(request.url, {
+      headers, body,
+      method: request.method,
+      redirect: request.redirect,
+      signal: request.signal,
+    });
   }
 }
 

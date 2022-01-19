@@ -152,15 +152,19 @@ export class BaseServiceClient implements ServiceClient {
   ) {}
 
   async performRequest(config: ApiRequestConfig & {
-    body?: Uint8Array;
+    body?: Uint8Array | ReadableStream<Uint8Array>;
     headers: Headers;
   }): Promise<Response> {
     const headers = config.headers;
     const serviceUrl = config.requestUri ?? '/';
     const method = config.method ?? 'POST';
 
-    if (config.body) {
-      headers.append('content-length', config.body.length.toString());
+    if (config.body instanceof ReadableStream &&
+        config.authType === 'unsigned-payload' &&
+        !headers.has('x-amz-content-sha256') &&
+        headers.has('content-length')) {
+      // Indicate to the signer that it is safe to stream the request
+      headers.append('x-amz-content-sha256', 'UNSIGNED-PAYLOAD');
     }
 
     let query = "";
@@ -205,8 +209,8 @@ export class XmlServiceClient extends BaseServiceClient {
     const headers = config.headers ?? new Headers;
     headers.append('accept', 'text/xml');
 
-    let reqBody: Uint8Array | undefined;
-    if (config.body instanceof Uint8Array) {
+    let reqBody: Uint8Array | ReadableStream<Uint8Array> | undefined;
+    if (config.body instanceof Uint8Array || config.body instanceof ReadableStream) {
       reqBody = config.body;
 
     } else if (typeof config.body === 'string') {
@@ -239,8 +243,8 @@ export class JsonServiceClient extends BaseServiceClient {
     headers.append('x-amz-target', `${this.serviceTarget}.${config.action}`);
     headers.append('accept', 'application/x-amz-json-'+this.jsonVersion);
 
-    let reqBody: Uint8Array | undefined;
-    if (config.body instanceof Uint8Array) {
+    let reqBody: Uint8Array | ReadableStream<Uint8Array> | undefined;
+    if (config.body instanceof Uint8Array || config.body instanceof ReadableStream) {
       reqBody = config.body;
 
     } else if (config.body) {
@@ -265,8 +269,8 @@ export class RestJsonServiceClient extends BaseServiceClient {
     const headers = config.headers ?? new Headers;
     headers.append('accept', 'application/json');
 
-    let reqBody: Uint8Array | undefined;
-    if (config.body instanceof Uint8Array) {
+    let reqBody: Uint8Array | ReadableStream<Uint8Array> | undefined;
+    if (config.body instanceof Uint8Array || config.body instanceof ReadableStream) {
       reqBody = config.body;
 
     } else if (config.body) {
@@ -295,6 +299,7 @@ export class QueryServiceClient extends BaseServiceClient {
 
     const method = config.method ?? 'POST';
 
+    // No ReadableStream because bodies are _always_ urlencoded as currently written
     let reqBody: Uint8Array | undefined;
 
     if (config.body instanceof URLSearchParams) {

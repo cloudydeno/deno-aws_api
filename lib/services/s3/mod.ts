@@ -2024,7 +2024,8 @@ export class S3 {
     if (params["ContentEncoding"] != null) headers.append("Content-Encoding", params["ContentEncoding"]);
     if (params["ContentLanguage"] != null) headers.append("Content-Language", params["ContentLanguage"]);
     if (params["ContentLength"] != null) headers.append("Content-Length", params["ContentLength"]?.toString() ?? '');
-    headers.append("Content-MD5", params["ContentMD5"] ?? hashMD5(body ?? ''));
+    if (params["ContentMD5"] != null) headers.append("Content-MD5", params["ContentMD5"])
+    else if (!(body instanceof ReadableStream)) headers.append("Content-MD5", hashMD5(body ?? ''));
     if (params["ContentType"] != null) headers.append("Content-Type", params["ContentType"]);
     if (params["Expires"] != null) headers.append("Expires", cmnP.serializeDate_rfc822(params["Expires"]) ?? "");
     if (params["GrantFullControl"] != null) headers.append("x-amz-grant-full-control", params["GrantFullControl"]);

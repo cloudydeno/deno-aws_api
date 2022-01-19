@@ -718,7 +718,7 @@ export interface PutBucketWebsiteRequest {
 // refs: 1 - tags: named, input
 export interface PutObjectRequest {
   ACL?: ObjectCannedACL | null;
-  Body?: Uint8Array | string | null;
+  Body?: Uint8Array | string | ReadableStream<Uint8Array> | null;
   Bucket: string;
   CacheControl?: string | null;
   ContentDisposition?: string | null;

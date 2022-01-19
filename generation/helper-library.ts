@@ -74,7 +74,8 @@ export const HashMD5: Helper = {
     HashMd5: "https://deno.land/std@0.115.0/hash/md5.ts",
   },
   chunks: [
-    `function hashMD5(data: HashMd5.Message): string {`,
+    `function hashMD5(data: HashMd5.Message | ReadableStream<Uint8Array>): string {`,
+    `  if (data instanceof ReadableStream) return '';`,
     `  const hasher = new HashMd5.Md5();`,
     `  hasher.update(data);`,
     `  return hasher.toString('base64');`,
