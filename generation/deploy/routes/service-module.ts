@@ -58,7 +58,7 @@ export async function renderServiceModule(props: {
 <h1>${module.name} - AWS API Codegen</h1>
 <p>
 <strong>API Documentation</strong>
-| <a href="https://doc.deno.land/${fullDocsUrl.toString().replace('?', '%3F')}/~/${module.name}">Deno Module Docs</a>
+| <a rel="nofollow" href="https://doc.deno.land/${fullDocsUrl.toString().replace('?', '%3F')}/~/${module.name}">Deno Module Docs</a>
 | <a href="https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/${module.name}.html">Original docs from AWS-JS-SDK</a>
 </p>
 <h2>Customize Generated Module</h2>

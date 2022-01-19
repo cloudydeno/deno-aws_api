@@ -88,7 +88,7 @@ const serviceTable = `<table>
 ${serviceList.map(([svcId, svc]) => escapeTemplate`<tr>
 <td><a href="${modRoot}/${svcId}.ts">${svc.name}</a></td>
 <td><code>import { ${svc.name} } from "${baseUrl}/${svcId}.ts";</code></td>
-<td><a href="https://doc.deno.land/${baseUrl}/${svcId}.ts%3Fdocs=full/~/${svc.name}">Docs</a></td>
+<td><a rel="nofollow" href="https://doc.deno.land/${baseUrl}/${svcId}.ts%3Fdocs=full/~/${svc.name}">Docs</a></td>
 </tr>
 `).join('')}
 </tbody>

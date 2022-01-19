@@ -8,6 +8,7 @@ import { routeMap as serviceModuleRoutes } from "./routes/service-module.ts";
 import { routeMap as serviceListingRoutes } from "./routes/service-listing.ts";
 import { routeMap as redirectRoutes } from './routes/redirects.ts';
 import { routeMap as completionRoutes } from './routes/completion-api.ts';
+import { routeMap as robotsRoutes } from './routes/robots.ts';
 
 serve(async request => {
   const response = await handleRequest(request);
@@ -26,6 +27,7 @@ const routeMap = new Map([
   ...serviceListingRoutes,
   ...redirectRoutes,
   ...completionRoutes,
+  ...robotsRoutes,
 ]);
 
 async function handleRequest(request: Request): Promise<Response> {
