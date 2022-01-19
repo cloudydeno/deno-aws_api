@@ -83,21 +83,25 @@ const ec2_europe = new ApiFactory({
 
 ## Changelog
 
-* `v0.6.0` on `2021-12-TBD`: codegen `v0.3`
+* `v0.6.0` on `2022-01-19`: codegen `v0.3`
   * **Breaking change:** Some response types now have nullable lists and maps. Workarounds:
     * Add a nullcheck around any broken fields if you just want to get going again.
     * If you aren't already,
         [add an `?actions=...` filter](https://github.com/cloudydeno/deno-aws_api/wiki/Web-Service#parameters)
         to your import to produce more-concise types.
   * Test on Deno 1.11 up to 1.17 (the current latest)
-  * Use Deno's `/std@0.115.0`
+  * Use Deno's `/std@0.120.0`
   * Fix specific issues with `Glacier`, `ApiGateway`, `S3`,
       and [`EC2`](https://github.com/cloudydeno/deno-aws_api/issues/16)
+  * Fix 404 when requesting several APIs incluiding Lex and DynamoDBStreams
   * Block APIs needing AWS's "eventstream" protocol (so, `S3.SelectObjectContent`)
   * Set `docs=short` as the default. For the least bytes, please specify `docs=none`.
   * Add experimental request hooks to `ApiFactory`, helps with debugging
   * Use Lambda's new IPv6-enabled API endpoints
+  * Allow selecting IPv6 endpoints for IMDSv2
   * Fix incorrect logic reuse between `rest-json` and `json` clients
+  * Adjust which headers are used for request signatures
+  * Rewrite of response error parsing
 * `v0.5.0` on `2021-08-27`: codegen `v0.2`
   * Support Deno 1.11 or later
   * Use definitions from `aws-sdk-js@2.971.0`
@@ -204,7 +208,7 @@ Multiple bits are *missing*:
 
 [//]: # (Generated Content Barrier)
 
-All API definitions are current as of [aws-sdk-js `v2.1048.0`](https://github.com/aws/aws-sdk-js/releases/tag/v2.1048.0).
+All API definitions are current as of [aws-sdk-js `v2.1060.0`](https://github.com/aws/aws-sdk-js/releases/tag/v2.1060.0).
 
 | Class | Module | Protocol |
 | --- | --- | --- |
