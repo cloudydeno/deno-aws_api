@@ -352,7 +352,7 @@ async function assumeRoleWithWebIdentity(sts: ServiceClient, params: {
   ]);
   const resp = await sts.performRequest({
     action: "AssumeRoleWithWebIdentity",
-    skipSigning: true,
+    authType: "anonymous",
     body,
   });
   const xml = readXmlResult(await resp.text(), "AssumeRoleWithWebIdentityResult");

@@ -19,6 +19,7 @@ export function generateApiTypescript(
   docMode: 'none' | 'short' | 'full',
   includeOpts: boolean,
   includeClientExtras: boolean,
+  useAuthType: boolean,
   alwaysReqLists: boolean,
 ): string {
 
@@ -109,7 +110,11 @@ export function generateApiTypescript(
 
     chunks.push(`    const resp = await this.#client.performRequest({`);
     if (unauthenticatedApis.has(namespace+'.'+operation.name)) {
-      chunks.push(`      skipSigning: true,`);
+      if (useAuthType) {
+        chunks.push(`      authType: "anonymous",`);
+      } else {
+        chunks.push(`      skipSigning: true,`);
+      }
     }
     if (referencedInputs.size > 0) {
       chunks.push(`      ${Array.from(referencedInputs).join(', ')},`);

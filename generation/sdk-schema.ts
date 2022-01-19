@@ -51,6 +51,7 @@ export interface ApiOperation {
   "errors": ShapeRef[];
   "deprecated"?: true;
   "authtype"?: "none" | "v4-unsigned-body";
+  "httpChecksumRequired"?: true;
   "endpoint"?: {
     "hostPrefix": string;
   };

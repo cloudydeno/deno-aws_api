@@ -2054,6 +2054,7 @@ export class S3 {
       action: "PutObject",
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}/${params["Key"].split("/")}`,
+      authType: 'unsigned-payload',
     });
     await resp.arrayBuffer(); // consume body without use
     return {

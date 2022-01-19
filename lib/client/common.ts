@@ -48,7 +48,9 @@ export interface ApiRequestConfig {
   headers?: Headers;
   query?: URLSearchParams;
   body?: URLSearchParams | JSONObject | Uint8Array | string | null;
+  /** @deprecated Instead use authType: 'anonymous' */
   skipSigning?: true; // for unauthenticated APIs (STS, cognito)
+  authType?: 'anonymous' | 'unsigned-payload';
   // extra stuff from the user
   opts?: RequestOptions;
 }
