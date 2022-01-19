@@ -179,7 +179,7 @@ export class BaseServiceClient implements ServiceClient {
     const response = await this.signedFetcher(request, {
       urlPath: serviceUrl + query,
       region: config.region,
-      skipSigning: config.skipSigning,
+      skipSigning: config.authType == 'anonymous' || config.skipSigning,
       hostPrefix: config.hostPrefix,
     });
 

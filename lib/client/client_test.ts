@@ -34,7 +34,7 @@ Deno.test("Request cancellation", async () => {
   await assertRejects(() => client
     .performRequest({
       action: "",
-      skipSigning: true,
+      authType: "anonymous",
       opts: {
         signal: aborter.signal
       },

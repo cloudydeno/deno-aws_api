@@ -2413,6 +2413,7 @@ export class S3 {
     if (params["VersionId"] != null) headers.append("x-amz-fwd-header-x-amz-version-id", params["VersionId"]);
     if (params["BucketKeyEnabled"] != null) headers.append("x-amz-fwd-header-x-amz-server-side-encryption-bucket-key-enabled", params["BucketKeyEnabled"]?.toString() ?? '');
     const resp = await this.#client.performRequest({
+      authType: "unsigned-payload",
       opts, headers, body,
       action: "WriteGetObjectResponse",
       requestUri: "/WriteGetObjectResponse",

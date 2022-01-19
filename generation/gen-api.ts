@@ -5,7 +5,7 @@ import { ProtocolCodegen } from "./protocol.ts";
 
 import { genDocsComment } from "./gen-docs.ts";
 import { StructEmitter } from "./gen-structs.ts";
-import { unauthenticatedApis, cleanFuncName, ServiceApiClientExtras } from './quirks.ts';
+import { cleanFuncName, ServiceApiClientExtras } from './quirks.ts';
 
 const NULL_BODY_STATUS = [101, 204, 205, 304];
 
@@ -19,6 +19,7 @@ export function generateApiTypescript(
   docMode: 'none' | 'short' | 'full',
   includeOpts: boolean,
   includeClientExtras: boolean,
+  useAuthType: boolean,
   alwaysReqLists: boolean,
 ): string {
 
@@ -108,8 +109,16 @@ export function generateApiTypescript(
     }
 
     chunks.push(`    const resp = await this.#client.performRequest({`);
-    if (unauthenticatedApis.has(namespace+'.'+operation.name)) {
-      chunks.push(`      skipSigning: true,`);
+    if (typeof operation.authtype == 'string') {
+      const authType = {
+        'v4-unsigned-body': 'unsigned-payload',
+        'none': 'anonymous',
+      }[operation.authtype];
+      if (useAuthType && authType) {
+        chunks.push(`      authType: ${JSON.stringify(authType)},`);
+      } else if (operation.authtype == 'none') {
+        chunks.push(`      skipSigning: true,`);
+      }
     }
     if (referencedInputs.size > 0) {
       chunks.push(`      ${Array.from(referencedInputs).join(', ')},`);

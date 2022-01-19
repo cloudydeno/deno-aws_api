@@ -6,14 +6,6 @@
 
 import type * as Schema from './sdk-schema.ts';
 
-export const unauthenticatedApis = new Set<string>([
-  'CognitoIdentity.GetCredentialsForIdentity',
-  'CognitoIdentity.GetId',
-  'CognitoIdentity.GetOpenIdToken',
-  'STS.AssumeRoleWithSAML',
-  'STS.AssumeRoleWithWebIdentity',
-]);
-
 /**
  * Dictionary of extra code that some APIs need to add to their ApiClient.
  * Related to https://github.com/aws/aws-sdk-js/tree/master/lib/services
@@ -46,6 +38,16 @@ export function fixupApiSpec(spec: Schema.Api) {
       const noRespOp = spec.operations["PutBucketTagging"];
       if (noRespOp?.http) {
         noRespOp.http.responseCode = 204;
+      }
+      break;
+    }
+
+    case "STS": {
+      for (const op of [
+        spec.operations["AssumeRoleWithSAML"],
+        spec.operations["AssumeRoleWithWebIdentity"],
+      ]) {
+        if (op) op.authtype = "none";
       }
       break;
     }

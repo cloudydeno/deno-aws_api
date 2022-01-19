@@ -70,7 +70,7 @@ export class STS {
     if ("Policy" in params) body.append(prefix+"Policy", (params["Policy"] ?? '').toString());
     if ("DurationSeconds" in params) body.append(prefix+"DurationSeconds", (params["DurationSeconds"] ?? '').toString());
     const resp = await this.#client.performRequest({
-      skipSigning: true,
+      authType: "anonymous",
       opts, body,
       action: "AssumeRoleWithSAML",
     });
@@ -99,7 +99,7 @@ export class STS {
     if ("Policy" in params) body.append(prefix+"Policy", (params["Policy"] ?? '').toString());
     if ("DurationSeconds" in params) body.append(prefix+"DurationSeconds", (params["DurationSeconds"] ?? '').toString());
     const resp = await this.#client.performRequest({
-      skipSigning: true,
+      authType: "anonymous",
       opts, body,
       action: "AssumeRoleWithWebIdentity",
     });
