@@ -514,6 +514,7 @@ export class S3 {
         {name: "Quiet", content: inner["Quiet"]?.toString()},
       ]}) : "";
     const headers = new Headers;
+    headers.append("Content-MD5", params["ContentMD5"] ?? hashMD5(body ?? ''));
     if (params["MFA"] != null) headers.append("x-amz-mfa", params["MFA"]);
     if (params["RequestPayer"] != null) headers.append("x-amz-request-payer", params["RequestPayer"]);
     if (params["BypassGovernanceRetention"] != null) headers.append("x-amz-bypass-governance-retention", params["BypassGovernanceRetention"]?.toString() ?? '');
