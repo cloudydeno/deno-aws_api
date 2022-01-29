@@ -220,6 +220,7 @@ export interface DeleteObjectsRequest {
   RequestPayer?: RequestPayer | null;
   BypassGovernanceRetention?: boolean | null;
   ExpectedBucketOwner?: string | null;
+  ContentMD5?: string | null;
 }
 
 // refs: 1 - tags: named, input
