@@ -96,6 +96,7 @@ export function fixupApiSpec(spec: Schema.Api) {
   for (const op of Object.values(spec.operations)) {
     if (!op.httpChecksumRequired) continue;
     if (!op.input?.shape) continue;
+    if (op.http?.method == 'GET' || op.http?.method == 'HEAD') continue;
     const inputShape = spec.shapes[op.input.shape];
     if (inputShape.type != 'structure') continue;
     if (inputShape.members['ContentMD5']) continue;
