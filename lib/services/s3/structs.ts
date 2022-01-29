@@ -623,6 +623,7 @@ export interface PutBucketLifecycleConfigurationRequest {
   Bucket: string;
   LifecycleConfiguration?: BucketLifecycleConfiguration | null;
   ExpectedBucketOwner?: string | null;
+  ContentMD5?: string | null;
 }
 
 // refs: 1 - tags: named, input
