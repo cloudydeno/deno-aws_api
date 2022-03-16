@@ -1,5 +1,6 @@
 #!/usr/bin/env -S deno run --allow-env --allow-net=[::]:8000,api.github.com,raw.githubusercontent.com,deno-httpcache.s3.dualstack.us-east-2.amazonaws.com generation/deploy/mod.ts
 import { serve } from "https://deno.land/std@0.119.0/http/server.ts";
+import { createReporter } from "https://deno.land/x/g_a@0.1.2/mod.ts";
 
 import { ResponseError, ResponseText } from "./helpers.ts";
 
@@ -10,9 +11,20 @@ import { routeMap as redirectRoutes } from './routes/redirects.ts';
 import { routeMap as completionRoutes } from './routes/completion-api.ts';
 import { routeMap as robotsRoutes } from './routes/robots.ts';
 
-serve(async request => {
-  const response = await handleRequest(request);
-  response.headers.set("server", "aws_api-generation/v0.4.0");
+const ga = createReporter();
+
+serve(async (request, connInfo) => {
+  let err: unknown;
+  let response: Response;
+  const start = performance.now();
+  try {
+    response = await handleRequest(request);
+    response.headers.set("server", "aws_api-generation/v0.4.0");
+  } catch (e) {
+    err = e;
+    response = ResponseError(e);
+  }
+  ga(request, connInfo, response, start, err);
   return response;
 }, {
   hostname: '[::]',
