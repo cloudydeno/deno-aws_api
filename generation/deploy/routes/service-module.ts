@@ -124,7 +124,7 @@ async function generateApiModule(opts: {
       headerChunks.push(jsonTemplate`//     ${k} = ${v}`);
     }
   }
-  headerChunks.push(`//   generated at: ${new Date().toISOString()}`);
+  headerChunks.push(`//   generated at: ${new Date().toISOString().split('T')[0]}`);
 
   const serviceList = await sdk.getServiceList();
   const module = serviceList[opts.apiId];
