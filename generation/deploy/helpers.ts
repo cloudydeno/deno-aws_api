@@ -68,7 +68,7 @@ export class ClientError extends Error {
   constructor(
     public readonly statusCode: number,
     public readonly statusText: string,
-    init?: ErrorInit,
+    init?: { cause?: any; },
   ) {
     super(`HTTP ${statusCode}: ${statusText}`, init);
     Error.captureStackTrace(this, new.target);
