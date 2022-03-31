@@ -1,9 +1,12 @@
+import { pooledMap } from "https://deno.land/std@0.130.0/async/pool.ts";
+
 import {
   PutObjectRequest, PutObjectOutput,
   CreateMultipartUploadRequest, CreateMultipartUploadOutput,
   UploadPartRequest, UploadPartOutput,
   CompleteMultipartUploadRequest, CompleteMultipartUploadOutput,
   AbortMultipartUploadRequest, AbortMultipartUploadOutput,
+  CompletedPart,
 } from "../services/s3/structs.ts";
 
 export async function multiPartUpload(
@@ -12,43 +15,59 @@ export async function multiPartUpload(
     Body: ReadableStream<Uint8Array>;
   },
   config?: {
+    queueSize?: number;
     partSize?: number;
     leavePartsOnError?: boolean;
   },
 ) {
   let uploadId: string | null = null;
   try {
+    const queueSize = config?.queueSize ?? 4;
     const partSize = config?.partSize ?? (5*1024*1024);
-    const partEtags = new Array<string>();
-    for await (const part of params.Body.pipeThrough(newPartSegmenter(partSize))) {
+    const partEtags = new Array<CompletedPart>();
+
+    let nextPartNum = 1;
+    let startUploadCall: Promise<string> | null = null;
+    let putObjectCall: Promise<PutObjectOutput> | null = null;
+    for await (const part of pooledMap(queueSize, params.Body
+      .pipeThrough(newPartSegmenter(partSize))
+    , async part => {
+      const partNum = nextPartNum++;
+      if (partNum == 1 && part.byteLength < partSize) {
+        // fast path: if smaller than one part, simply upload in one go
+        putObjectCall = s3.putObject({...params, Body: part});
+        return null;
+      }
       if (!uploadId) {
-        if (part.byteLength < partSize) {
-          // fast path: if smaller than one part, simply upload in one go
-          return await s3.putObject({...params, Body: part});
+        if (!startUploadCall) {
+          startUploadCall = s3.createMultipartUpload(params).then(x => x.UploadId ?? '');
         }
-        uploadId = await s3.createMultipartUpload(params).then(x => x.UploadId) ?? null;
+        uploadId = await startUploadCall;
       }
       if (!uploadId) throw new Error(`No S3 multipart UploadId received`);
 
       const partResp = await s3.uploadPart({
         ...params,
         UploadId: uploadId,
-        PartNumber: partEtags.length + 1,
+        PartNumber: partNum,
         Body: part,
       });
       if (!partResp.ETag) throw new Error(`No S3 multipart segment ETag received`);
-      partEtags.push(partResp.ETag);
+      return {
+        ETag: partResp.ETag,
+        PartNumber: partNum,
+      };
+    })) {
+      if (part) partEtags.push(part);
     }
+    if (putObjectCall) return await putObjectCall;
     if (!uploadId) throw new Error(`No S3 multipart started. Was the input stream empty?`);
 
     return await s3.completeMultipartUpload({
       ...params,
       UploadId: uploadId,
       MultipartUpload: {
-        Parts: partEtags.map((etag, idx) => ({
-          ETag: etag,
-          PartNumber: idx + 1,
-        })),
+        Parts: partEtags.sort((a,b) => a.PartNumber! - b.PartNumber!),
       },
     });
   } catch (err) {
@@ -56,7 +75,7 @@ export async function multiPartUpload(
       await s3.abortMultipartUpload({
         ...params,
         UploadId: uploadId,
-      });
+      }).catch(() => {});
     }
     throw err;
   }
