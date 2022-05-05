@@ -83,6 +83,9 @@ const ec2_europe = new ApiFactory({
 
 ## Changelog
 
+* unreleased
+  * Support fetching task-specific IAM credentials from ECS.
+    See also [IAM roles for tasks](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-iam-roles.html).
 * `v0.6.0` on `2022-01-19`: codegen `v0.3`
   * **Breaking change:** Some response types now have nullable lists and maps. Workarounds:
     * Add a nullcheck around any broken fields if you just want to get going again.
