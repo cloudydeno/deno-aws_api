@@ -71,7 +71,7 @@ Deno.test('aws lambda / china endpoint', async () => {
     requestPath: '/path',
     region: 'cn-north-1',
     apiMetadata: apiMetadata.lambda,
-  }).url.toString(), 'https://lambda.cn-north-1.amazonaws.com.cn/path');
+  }).url.toString(), 'https://lambda.cn-north-1.api.amazonwebservices.com.cn/path');
 });
 
 Deno.test('aws s3 / upgrades to host style routing', async () => {
