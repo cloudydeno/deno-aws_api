@@ -221,6 +221,7 @@ export class EcsTaskCredentials implements CredentialsProvider {
 
     const resp = await fetch(this.#credUrl, {
       headers: this.#headers,
+      signal: (AbortSignal as any).timeout?.(5000), // starting Deno 1.20
     });
     if (resp.status >= 300) throw new Error(
       `ECS service endpoint returned HTTP ${resp.status}`);
