@@ -146,6 +146,18 @@ Deno.test('aws sts / can use regional endpoint by request', async () => {
   assertEquals(endpoint.signingRegion, 'eu-west-1');
 });
 
+Deno.test('aws chime / non-standard global endpoint', async () => {
+  const resolver = new AwsEndpointResolver();
+
+  const endpoint = resolver.resolveUrl({
+    requestPath: '/path',
+    region: 'eu-west-1',
+    apiMetadata: apiMetadata.chime,
+  });
+
+  assertEquals(endpoint.url.toString(), 'https://service.chime.aws.amazon.com/path');
+  assertEquals(endpoint.signingRegion, 'us-east-1');
+});
 
 const apiMetadata: Record<string, ApiMetadata> = {
   ec2: {
@@ -183,6 +195,15 @@ const apiMetadata: Record<string, ApiMetadata> = {
     "serviceFullName": "AWS Security Token Service",
     "serviceId": "STS",
     "signatureVersion": "v4",
+  },
+  chime: {
+    "apiVersion": "2018-05-01",
+    "endpointPrefix": "chime",
+    "protocol": "rest-json",
+    "serviceFullName": "Amazon Chime",
+    "serviceId": "Chime",
+    "signatureVersion": "v4",
+    "globalEndpoint": "service.chime.aws.amazon.com",
   },
 };
 

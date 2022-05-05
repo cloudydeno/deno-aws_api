@@ -53,7 +53,11 @@ export class AwsEndpointResolver implements EndpointResolver {
       // Global endpoints always sign as us-east-1
       signingRegion = 'us-east-1';
       // Still need to follow AWS partition
-      serviceLabel = globalEndpoint.replace(/\.amazonaws\.com$/, '');
+      serviceLabel = globalEndpoint.slice(0, globalEndpoint.indexOf('.'));
+      // Maybe the default partition has a weird URL though
+      if (rootDomain == '.amazonaws.com') {
+        rootDomain = globalEndpoint.slice(globalEndpoint.indexOf('.'));
+      }
     } else {
       // Add region after the service token
       serviceLabel = `${serviceLabel}.${parameters.region}`;
