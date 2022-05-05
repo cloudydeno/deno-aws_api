@@ -162,7 +162,7 @@ export class EnvironmentCredentials implements CredentialsProvider {
  */
 export class EcsTaskCredentials implements CredentialsProvider {
   #credUrl?: string;
-  #authHeader?: string;
+  #headers: Headers;
   #promise: Promise<Credentials> | null = null;
   #expireAfter: Date | null = null;
 
@@ -179,12 +179,18 @@ export class EcsTaskCredentials implements CredentialsProvider {
     const serviceEndpoint = opts.serviceEndpoint
       || Deno.env.get('AWS_CONTAINER_SERVICE_ENDPOINT')
       || 'http://169.254.170.2';
-    this.#authHeader = opts.authHeader
+    const authHeader = opts.authHeader
       || Deno.env.get('AWS_CONTAINER_AUTHORIZATION_TOKEN');
 
     this.#credUrl = relativeUri
       ? new URL(relativeUri, serviceEndpoint).toString()
       : fullUri;
+    this.#headers = new Headers({
+      'accept': 'application/json',
+    });
+    if (authHeader) {
+      this.#headers.set('authorization', authHeader);
+    }
   }
 
   getCredentials(): Promise<Credentials> {
@@ -214,9 +220,7 @@ export class EcsTaskCredentials implements CredentialsProvider {
       `AWS_CONTAINER_CREDENTIALS_RELATIVE_URI not set`);
 
     const resp = await fetch(this.#credUrl, {
-      headers: this.#authHeader ? {
-        authorization: this.#authHeader,
-      } : {},
+      headers: this.#headers,
     });
     if (resp.status >= 300) throw new Error(
       `ECS service endpoint returned HTTP ${resp.status}`);
