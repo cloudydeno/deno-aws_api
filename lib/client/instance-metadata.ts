@@ -108,7 +108,7 @@ export class IMDSv2 {
     // TODO: this API changed in Deno v1.17, remove hack after some time
     const stopTimeout = setTimeout(() => (aborter.abort as Function)(new Error(timeoutText)), opts.timeoutMs);
 
-    const resp = await fetch(new URL(opts.path, this.baseUrl), {
+    const resp = await fetch(new URL(opts.path, this.baseUrl).toString(), {
       method: opts.method,
       headers: opts.headers,
       signal: aborter.signal,
