@@ -52,7 +52,7 @@ export const DefaultCredentialsProvider
     () => new EnvironmentCredentials('AWS'),
     () => new EnvironmentCredentials('AMAZON'),
     () => new SharedIniFileCredentials(),
-    // () => new ECSCredentials(),
+    () => new EcsTaskCredentials(),
     // () => new ProcessCredentials(),
     () => new TokenFileWebIdentityCredentials(),
     () => new EC2MetadataCredentials(),
@@ -151,6 +151,98 @@ export class EnvironmentCredentials implements CredentialsProvider {
       awsAccessKeyId: AWS_ACCESS_KEY_ID,
       awsSecretKey: AWS_SECRET_ACCESS_KEY,
       sessionToken: AWS_SESSION_TOKEN,
+    });
+  }
+}
+
+// https://docs.aws.amazon.com/sdkref/latest/guide/feature-container-credentials.html
+/**
+ * Implements the "IAM roles for tasks" feature of Amazon ECS.
+ * Dynamically fetches credentials from the ECS runtime via HTTP.
+ */
+export class EcsTaskCredentials implements CredentialsProvider {
+  #credUrl?: string;
+  #headers: Headers;
+  #promise: Promise<Credentials> | null = null;
+  #expireAfter: Date | null = null;
+
+  constructor(opts: {
+    relativeUri?: string;
+    fullUri?: string;
+    serviceEndpoint?: string;
+    authHeader?: string;
+  }={}) {
+    const relativeUri = opts.relativeUri
+      || Deno.env.get('AWS_CONTAINER_CREDENTIALS_RELATIVE_URI');
+    const fullUri = opts.fullUri
+      || Deno.env.get('AWS_CONTAINER_CREDENTIALS_FULL_URI');
+    const serviceEndpoint = opts.serviceEndpoint
+      || Deno.env.get('AWS_CONTAINER_SERVICE_ENDPOINT')
+      || 'http://169.254.170.2';
+    const authHeader = opts.authHeader
+      || Deno.env.get('AWS_CONTAINER_AUTHORIZATION_TOKEN');
+
+    this.#credUrl = relativeUri
+      ? new URL(relativeUri, serviceEndpoint).toString()
+      : fullUri;
+    this.#headers = new Headers({
+      'accept': 'application/json',
+    });
+    if (authHeader) {
+      this.#headers.set('authorization', authHeader);
+    }
+  }
+
+  getCredentials(): Promise<Credentials> {
+    if (this.#expireAfter && this.#expireAfter < new Date()) {
+      this.#expireAfter = null;
+      this.#promise = null;
+    }
+
+    if (!this.#promise) {
+      const promise = this.load();
+      this.#promise = promise.then(x => {
+        if (x.expiresAt && x.expiresAt > new Date()) {
+          this.#expireAfter = new Date(x.expiresAt.valueOf() - 60*1000);
+        }
+        return x;
+      }, err => {
+        this.#expireAfter = new Date(Date.now() + 30*1000);
+        return Promise.reject(err);
+      });
+    }
+
+    return this.#promise;
+  }
+
+  async load(): Promise<Credentials> {
+    if (!this.#credUrl) throw new Error(
+      `AWS_CONTAINER_CREDENTIALS_RELATIVE_URI not set`);
+
+    const resp = await fetch(this.#credUrl, {
+      headers: this.#headers,
+      signal: (AbortSignal as any).timeout?.(5000), // starting Deno 1.20
+    });
+    if (resp.status >= 300) throw new Error(
+      `ECS service endpoint returned HTTP ${resp.status}`);
+
+    const data: {
+      AccessKeyId: string;
+      SecretAccessKey: string;
+      Token: string;
+      Expiration: string; // RFC 3339
+      RoleArn: string;
+    } = await resp.json();
+
+    const expiration = new Date(data.Expiration);
+    if (expiration.toString() === 'Invalid Date') throw new Error(
+      `Failed to parse ECS expiration date: ${JSON.stringify(data.Expiration)}`);
+
+    return Promise.resolve({
+      awsAccessKeyId: data.AccessKeyId,
+      awsSecretKey: data.SecretAccessKey,
+      sessionToken: data.Token,
+      expiresAt: new Date(data.Expiration),
     });
   }
 }
