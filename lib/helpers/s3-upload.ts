@@ -81,7 +81,7 @@ export async function multiPartUpload(
       }
     }
     if (putObjectResp) return putObjectResp;
-    if (!uploadId) throw new Error(`BUG: No S3 multipart operatinon was started.`);
+    if (!uploadId) throw new Error(`BUG: No S3 multipart operation was started.`);
 
     // Finish up
     return await s3.completeMultipartUpload({
