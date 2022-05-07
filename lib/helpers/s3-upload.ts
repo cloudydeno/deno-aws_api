@@ -9,6 +9,19 @@ import {
   CompletedPart,
 } from "../services/s3/structs.ts";
 
+/**
+ * Uploads a Uint8Array stream of unknown size to an Amazon S3 endpoint.
+ *
+ * The stream is buffered into chunks of fixed size (`partSize`, 5MB by default).
+ * The chunks are uploaded as a new S3 Multi-part Upload and then finalized.
+ * Multiple chunks can upload at the same time (`queueSize`, 4 by default).
+ * This can result in faster uploads for larger files, compared to a single request.
+ *
+ * Objects smaller than 5MB skip the multi-part logic entirely and use `putObject` instead.
+ *
+ * Note that multi-part uploads require different IAM permissions than simple uploads.
+ * Consider testing your application with files both above and below 5MB.
+ */
 export async function multiPartUpload(
   s3: S3Subset,
   params: CreateMultipartUploadRequest & {
@@ -24,45 +37,49 @@ export async function multiPartUpload(
   try {
     const queueSize = config?.queueSize ?? 4;
     const partSize = config?.partSize ?? (5*1024*1024);
-    const partEtags = new Array<CompletedPart>();
 
-    let nextPartNum = 1;
     let startUploadCall: Promise<string> | null = null;
-    let putObjectCall: Promise<PutObjectOutput> | null = null;
-    for await (const part of pooledMap(queueSize, params.Body
-      .pipeThrough(newPartSegmenter(partSize))
-    , async part => {
-      const partNum = nextPartNum++;
-      if (partNum == 1 && part.byteLength < partSize) {
-        // fast path: if smaller than one part, simply upload in one go
-        putObjectCall = s3.putObject({...params, Body: part});
-        return null;
+    async function uploadSegment(part: UploadPart) {
+      if (part.seqNumber == 1 && part.isFinal) {
+        // fast path: if object is smaller than partSize, simply upload in one go
+        const response = await s3.putObject({...params, Body: part.payload});
+        return { putObject: response };
       }
       if (!uploadId) {
+        // Only want to call createMultipartUpload once
         if (!startUploadCall) {
           startUploadCall = s3.createMultipartUpload(params).then(x => x.UploadId ?? '');
         }
         uploadId = await startUploadCall;
       }
-      if (!uploadId) throw new Error(`No S3 multipart UploadId received`);
+      if (!uploadId) throw new Error(`No S3 multipart UploadId received from server`);
 
       const partResp = await s3.uploadPart({
         ...params,
         UploadId: uploadId,
-        PartNumber: partNum,
-        Body: part,
+        PartNumber: part.seqNumber,
+        Body: part.payload,
       });
-      if (!partResp.ETag) throw new Error(`No S3 multipart segment ETag received`);
-      return {
+      if (!partResp.ETag) throw new Error(`No S3 multipart segment ETag received from server`);
+      return { uploadPart: {
         ETag: partResp.ETag,
-        PartNumber: partNum,
-      };
-    })) {
-      if (part) partEtags.push(part);
+        PartNumber: part.seqNumber,
+      }};
     }
-    if (putObjectCall) return await putObjectCall;
-    if (!uploadId) throw new Error(`No S3 multipart started. Was the input stream empty?`);
 
+    // Actually process the stream and do the transfers
+    const segments = params.Body.pipeThrough(newPartSegmenter(partSize));
+    const partEtags = new Array<CompletedPart>();
+    for await (const part of pooledMap(queueSize, segments, uploadSegment)) {
+      if (part.putObject) {
+        // If putObject was used, we return the response immediately
+        return part.putObject;
+      }
+      partEtags.push(part.uploadPart);
+    }
+    if (!uploadId) throw new Error(`BUG: No S3 multipart operatinon was started.`);
+
+    // Finish up
     return await s3.completeMultipartUpload({
       ...params,
       UploadId: uploadId,
@@ -70,7 +87,10 @@ export async function multiPartUpload(
         Parts: partEtags.sort((a,b) => a.PartNumber! - b.PartNumber!),
       },
     });
+
   } catch (err) {
+    // Before bubbling any errors up, we'll quietly try to clean up after ourselves
+    // Half-completed multipart uploads stick around by default (and consume storage) otherwise
     if (uploadId && !config?.leavePartsOnError) {
       await s3.abortMultipartUpload({
         ...params,
@@ -81,17 +101,27 @@ export async function multiPartUpload(
   }
 }
 
+interface UploadPart {
+  seqNumber: number;
+  payload: Uint8Array;
+  isFinal: boolean;
+}
 export function newPartSegmenter(partSize: number) {
   let currentPart = new Uint8Array(partSize);
   let byteOffset = 0;
-  return new TransformStream<Uint8Array, Uint8Array>({
+  let nextPartNum = 1;
+  return new TransformStream<Uint8Array, UploadPart>({
     transform(chunk, ctlr) {
       let remaining = chunk;
-      while (remaining.byteLength >= (currentPart.byteLength - byteOffset)) {
+      while (remaining.byteLength > (currentPart.byteLength - byteOffset)) {
         const left = remaining.subarray(0, currentPart.byteLength - byteOffset);
         remaining = remaining.subarray(left.byteLength);
         currentPart.set(left, byteOffset);
-        ctlr.enqueue(currentPart);
+        ctlr.enqueue({
+          seqNumber: nextPartNum++,
+          payload: currentPart,
+          isFinal: false,
+        });
         currentPart = new Uint8Array(partSize);
         byteOffset = 0;
       }
@@ -102,7 +132,18 @@ export function newPartSegmenter(partSize: number) {
     },
     flush(ctlr) {
       if (byteOffset > 0) {
-        ctlr.enqueue(currentPart.subarray(0, byteOffset));
+        ctlr.enqueue({
+          seqNumber: nextPartNum++,
+          payload: currentPart.subarray(0, byteOffset),
+          isFinal: true,
+        });
+      } else if (nextPartNum == 1) {
+        // Always emit at least one part
+        ctlr.enqueue({
+          seqNumber: nextPartNum++,
+          payload: new Uint8Array(0),
+          isFinal: true,
+        });
       }
     },
   });
