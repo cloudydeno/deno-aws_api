@@ -70,13 +70,17 @@ export async function multiPartUpload(
     // Actually process the stream and do the transfers
     const segments = params.Body.pipeThrough(newPartSegmenter(partSize));
     const partEtags = new Array<CompletedPart>();
+    let putObjectResp: PutObjectOutput | null = null;
     for await (const part of pooledMap(queueSize, segments, uploadSegment)) {
       if (part.putObject) {
-        // If putObject was used, we return the response immediately
-        return part.putObject;
+        // It would be cleaner to return here, but pooledMap doesn't like being canceled:
+        // https://github.com/denoland/deno_std/issues/2197
+        putObjectResp = part.putObject;
+      } else {
+        partEtags.push(part.uploadPart);
       }
-      partEtags.push(part.uploadPart);
     }
+    if (putObjectResp) return putObjectResp;
     if (!uploadId) throw new Error(`BUG: No S3 multipart operatinon was started.`);
 
     // Finish up
