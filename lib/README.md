@@ -72,8 +72,10 @@ The `opts` bag can contain a few settings if necesary:
 * `region?: string` to configure a specific AWS region, ignoring the default region. Useful for apps working in multiple regions.
 * `fixedEndpoint?: string` to force a particular base URL to send all requests to. Useful for MinIO or localstack. Specify a full URL including protocol://. Also disables subdomain-style S3 access.
 * `endpointResolver?: EndpointResolver` to swap out the API endpoint detection logic. There are three different implementations exported by `/client/mod.ts`.
-  * If you want to disregard global endpoints and always used regional endpoints, configure an `AwsEndpointResolver` instance and pass it in here.
+  * If you want to disregard global endpoints and always use regional endpoints, configure an `AwsEndpointResolver` instance and pass it in here.
   * If you are using a vendor which has their own "S3-compatible" endpoints, check out [some example configurations in the Github Wiki](https://github.com/cloudydeno/deno-aws_api/wiki/S3-Compatible-Vendors).
+
+For example, to access the EC2 API of a particular region:
 
 ```typescript
 const ec2_europe = new ApiFactory({
@@ -84,8 +86,15 @@ const ec2_europe = new ApiFactory({
 ## Changelog
 
 * unreleased
-  * Support fetching task-specific IAM credentials from ECS.
+  * Add by-default support for task-specific IAM credentials inside Amazon ECS.
     See also [IAM roles for tasks](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-iam-roles.html).
+    Fixes [#33](https://github.com/cloudydeno/deno-aws_api/issues/33) -
+    thanks for the report!
+  * Properly sign S3 request headers,
+    fixing [compatibility with Backblaze B2 (#32)](https://github.com/cloudydeno/deno-aws_api/issues/32) -
+    thanks for the report!
+  * Add dual-stack (IPv6-ready) endpoints for RDS and App Mesh.
+  * Fix API endpoint for Amazon Chime.
 * `v0.6.0` on `2022-01-19`: codegen `v0.3`
   * **Breaking change:** Some response types now have nullable lists and maps. Workarounds:
     * Add a nullcheck around any broken fields if you just want to get going again.
