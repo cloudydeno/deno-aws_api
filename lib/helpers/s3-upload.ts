@@ -1,4 +1,4 @@
-import { pooledMap } from "https://deno.land/std@0.130.0/async/pool.ts";
+import { pooledMap } from "https://deno.land/std@0.120.0/async/pool.ts";
 
 import {
   PutObjectRequest, PutObjectOutput,
