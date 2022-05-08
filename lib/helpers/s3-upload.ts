@@ -22,7 +22,7 @@ import {
  * Note that multi-part uploads require different IAM permissions than simple uploads.
  * Consider testing your application with files both above and below 5MB.
  */
-export async function multiPartUpload(
+export async function managedUpload(
   s3: S3Subset,
   params: CreateMultipartUploadRequest & {
     Body: ReadableStream<Uint8Array>;
