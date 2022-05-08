@@ -88,6 +88,13 @@ export function fixupApiSpec(spec: Schema.Api) {
       break;
     }
 
+    case "Chime": {
+      // https://docs.aws.amazon.com/general/latest/gr/chime.html
+      // Not sure how other SDKs account know about this
+      spec.metadata.globalEndpoint = 'service.chime.aws.amazon.com';
+      break;
+    }
+
   }
 
   // When 'HTTP checksum' is required, make sure Content-MD5 field is present

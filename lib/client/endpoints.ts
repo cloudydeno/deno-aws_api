@@ -11,10 +11,14 @@ export type {
 /**
  * The default resolver, designed specifically for Amazon AWS.
  * A couple options provide for:
- *   - disabling IPv4/IPv6 dualstack (which is only available for S3 & EC2)
+ *   - disabling ambitious IPv4/IPv6 dualstack (in case you have broken IPv6)
  *   - forcing regional endpoints (disabling the global endpoint logic)
  * Otherwise, the URL used is determined fully automatically.
  * The provided `region` is used to select the AWS partition endpoint.
+ *
+ * Several services have separate dual-stack (IPv6-ready) hostnames available.
+ * This library will use the dual-stack hostnames whenever they are known.
+ * More info on AWS API IPv6: https://danopia.net/posts/2021/aws-endpoints-with-ipv6.html
  */
 export class AwsEndpointResolver implements EndpointResolver {
   constructor({
@@ -37,6 +41,9 @@ export class AwsEndpointResolver implements EndpointResolver {
       if (this.useDualstack) serviceLabel += '.dualstack';
       perhapsUpgradeEndpointParametersToHostStyleRouting(parameters);
     }
+    if (serviceId === 'S3 Control') {
+      if (this.useDualstack) serviceLabel += '.dualstack';
+    }
 
     // Select AWS partition (GovCloud, etc)
     let rootDomain = getRootDomain(parameters.region);
@@ -46,24 +53,52 @@ export class AwsEndpointResolver implements EndpointResolver {
       // Global endpoints always sign as us-east-1
       signingRegion = 'us-east-1';
       // Still need to follow AWS partition
-      serviceLabel = globalEndpoint.replace(/\.amazonaws\.com$/, '');
+      serviceLabel = globalEndpoint.slice(0, globalEndpoint.indexOf('.'));
+      // Maybe the default partition has a weird URL though
+      if (rootDomain == '.amazonaws.com') {
+        rootDomain = globalEndpoint.slice(globalEndpoint.indexOf('.'));
+      }
     } else {
       // Add region after the service token
       serviceLabel = `${serviceLabel}.${parameters.region}`;
     }
 
-    // EC2: Dualstack is on a totally different TLD/format and only some regions
-    if (serviceId === 'EC2' && this.useDualstack &&
-        dualStackEc2Regions.has(parameters.region)) {
-      parameters.hostPrefix = `${parameters.hostPrefix ?? ''}api.`;
-      rootDomain = '.aws';
-    }
+    // Several services use the .aws TLS for dual-stack
+    if (this.useDualstack) {
+      if (rootDomain == '.amazonaws.com') {
 
-    // Lambda: Dualstack in all commercial regions
-    // https://aws.amazon.com/about-aws/whats-new/2021/12/aws-lambda-ipv6-endpoints-inbound-connections/
-    if (serviceId === 'Lambda' && this.useDualstack) {
-      if (rootDomain == '.amazonaws.com' && !parameters.region.includes('-gov-')) {
-        rootDomain = '.api.aws';
+        // EC2: Dualstack is on a totally different TLD/format and only some regions
+        if (serviceId === 'EC2' && dualStackEc2Regions.has(parameters.region)) {
+          parameters.hostPrefix = `${parameters.hostPrefix ?? ''}api.`;
+          rootDomain = '.aws';
+        }
+
+        // Lambda: Dualstack in all commercial regions
+        // https://aws.amazon.com/about-aws/whats-new/2021/12/aws-lambda-ipv6-endpoints-inbound-connections/
+        if (serviceId === 'Lambda') {
+          if (!parameters.region.includes('-gov-')) {
+            rootDomain = '.api.aws';
+          }
+        }
+
+        // RDS: Dualstack in all commercial regions except 'Jakarta'
+        // https://aws.amazon.com/about-aws/whats-new/2022/03/amazon-rds-internet-protocol-version-6-ipv6-rds-service-apis/
+        if (serviceId === 'RDS') {
+          if (!parameters.region.includes('-gov-') && parameters.region !== 'ap-southeast-3') {
+            rootDomain = '.api.aws';
+          }
+        }
+
+        // AppMesh: Dualstack in all commercial regions
+        // No known announcement / blog post
+        if (serviceId === 'App Mesh') {
+          rootDomain = '.api.aws';
+        }
+      }
+
+      // Several services have the same dualstacking for the CN regions
+      if (rootDomain == '.amazonaws.com.cn' && dualStackChinaServices.has(serviceId)) {
+        rootDomain = '.api.amazonwebservices.com.cn';
       }
     }
 
@@ -95,6 +130,13 @@ const dualStackEc2Regions = new Set([
   'eu-west-1',
   'ap-south-1',
   'sa-east-1',
+]);
+
+// https://docs.amazonaws.cn/en_us/aws/latest/userguide/endpoints-Beijing.html
+const dualStackChinaServices = new Set([
+  'App Mesh',
+  'Lambda',
+  'RDS',
 ]);
 
 /**
