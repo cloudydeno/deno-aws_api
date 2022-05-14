@@ -114,6 +114,16 @@ export class AWSSignerV4 implements Signer {
     }
     headers.set("host", host);
 
+    // TODO: support for unsigned bodies (for streaming)
+    const body = request.body
+      ? new Uint8Array(await request.arrayBuffer())
+      : null;
+    const payloadHash = sha256(body ?? new Uint8Array()).hex();
+    if (service === 's3') {
+      // Backblaze B2 requires this header to be in the canonicalHeaders
+      headers.set("x-amz-content-sha256", payloadHash);
+    }
+
     let canonicalHeaders = "";
     let signedHeaders = "";
     for (const key of [...headers.keys()].sort()) {
@@ -122,15 +132,6 @@ export class AWSSignerV4 implements Signer {
       signedHeaders += `${key.toLowerCase()};`;
     }
     signedHeaders = signedHeaders.substring(0, signedHeaders.length - 1);
-
-    // TODO: support for unsigned bodies (for streaming)
-    const body = request.body
-      ? new Uint8Array(await request.arrayBuffer())
-      : null;
-    const payloadHash = sha256(body ?? new Uint8Array()).hex();
-    if (service === 's3') {
-      headers.set("x-amz-content-sha256", payloadHash);
-    }
 
     const canonicalRequest =
       `${request.method}\n${pathname}\n${canonicalQuerystring}\n${canonicalHeaders}\n${signedHeaders}\n${payloadHash}`;
