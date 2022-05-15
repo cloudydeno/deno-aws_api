@@ -85,7 +85,7 @@ const ec2_europe = new ApiFactory({
 
 ## Changelog
 
-* unreleased
+* `v0.7.0` on `2022-05-15`: Client-only changes
   * Add by-default support for task-specific IAM credentials inside Amazon ECS.
     See also [IAM roles for tasks](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-iam-roles.html).
     Fixes [#33](https://github.com/cloudydeno/deno-aws_api/issues/33) -
