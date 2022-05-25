@@ -151,6 +151,7 @@ export class EnvironmentCredentials implements CredentialsProvider {
       awsAccessKeyId: AWS_ACCESS_KEY_ID,
       awsSecretKey: AWS_SECRET_ACCESS_KEY,
       sessionToken: AWS_SESSION_TOKEN,
+      region: Deno.env.get(this.#prefix+"_REGION"),
     });
   }
 }

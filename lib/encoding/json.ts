@@ -165,7 +165,7 @@ export function readJsonValueBase64(input: JSONValue): JSONValue {
   return JSON.parse(atob(input));
 }
 
-// from https://deno.land/std@0.120.0/encoding/base64.ts
+// from https://deno.land/std@0.140.0/encoding/base64.ts
 function decodeBase64(b64: string): Uint8Array {
   const binString = atob(b64);
   const size = binString.length;
