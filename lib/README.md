@@ -85,7 +85,7 @@ const ec2_europe = new ApiFactory({
 
 ## Changelog
 
-* `v0.8.0` on `TBD`: codegen `v0.4`
+* `v0.8.0` on `TBD`: codegen `TBD`
   * Use Deno's `/std@0.140.0`
   * Minimum supported Deno is now `v1.17`
 * `v0.7.0` on `2022-05-15`: Client-only changes
