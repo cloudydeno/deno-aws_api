@@ -38,7 +38,7 @@ Basic example: (a subset of `demo.ts`)
 
 ```typescript
 import { ApiFactory } from 'https://deno.land/x/aws_api/client/mod.ts';
-import { STS } from 'https://deno.land/x/aws_api/services/sts.ts';
+import { STS } from 'https://deno.land/x/aws_api/services/sts/mod.ts';
 
 const sts = new ApiFactory().makeNew(STS);
 const identity = await sts.getCallerIdentity();
