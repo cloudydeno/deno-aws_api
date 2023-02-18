@@ -30,7 +30,7 @@ export class CredentialsProviderChain implements CredentialsProvider {
         this.#supplier = provider;
         return creds;
       } catch (err) {
-        const providerLabel = providerFunc.toString().replace(/^\(\) => new /, '');
+        const providerLabel = providerFunc.toString().replace(/^\(\)=>new /, '');
         const srcName = `    - ${providerLabel} `;
         if (err instanceof Error) {
           // if (err.message !== 'No credentials found') {
