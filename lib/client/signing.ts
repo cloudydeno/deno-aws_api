@@ -1,58 +1,38 @@
 // port of https://github.com/lucacasonato/deno_aws_sign_v4
-// because that repo (as of press time) unnecesarily brings in 25 source files
 
-import { Message, Sha256, HmacSha256 } from "https://deno.land/std@0.160.0/hash/sha256.ts";
-import type { Signer, Credentials } from "./common.ts";
+import {
+  Signer, Credentials,
+  hmacSha256, hashSha256, bytesAsHex,
+} from "./common.ts";
 
-function sha256(data: Message): Sha256 {
-  const hasher = new Sha256();
-  hasher.update(data);
-  return hasher;
-}
-function hmacSha256(key: Message, message: Message): HmacSha256 {
-  const hasher = new HmacSha256(key);
-  hasher.update(message);
-  return hasher;
-}
-
-const ANY_BUT_DIGITS = /[^\d]/g;
 const ANY_BUT_DIGITS_T = /[^\dT]/g;
-export const toAmz = (date: Date): string => {
+function toAmzDate(date: Date) {
   return `${date.toISOString().slice(0, 19).replace(ANY_BUT_DIGITS_T, "")}Z`;
 };
 
-export const toDateStamp = (date: Date): string => {
+const ANY_BUT_DIGITS = /[^\d]/g;
+function toDateStamp(date: Date) {
   return date.toISOString().slice(0, 10).replace(ANY_BUT_DIGITS, "");
 };
 
 const encoder = new TextEncoder();
-const AWS4: Uint8Array = encoder.encode("AWS4");
+const AWS4 = encoder.encode("AWS4");
 
-/**
- * @param  {string|Uint8Array} key - the key to generate signature key
- * @param  {string} dateStamp - dateStamp in ISO format
- * @param  {string} region - aws region
- * @param  {string} service - aws service
- * @returns {string|Uint8Array} - generated key
- */
-export const getSignatureKey = (
-  key: string | Uint8Array,
+export async function getSignatureKey(
+  key: string,
   dateStamp: string,
   region: string,
   service: string,
-): Message => {
-  if (typeof key === "string") {
-    key = encoder.encode(key);
-  }
-
-  const paddedKey = new Uint8Array(4 + key.byteLength);
+) {
+  const keyBytes = encoder.encode(key);
+  const paddedKey = new Uint8Array(4 + keyBytes.byteLength);
   paddedKey.set(AWS4, 0);
-  paddedKey.set(key, 4);
+  paddedKey.set(keyBytes, 4);
 
-  let mac = hmacSha256(paddedKey, dateStamp).array();
-  mac = hmacSha256(mac, region).array();
-  mac = hmacSha256(mac, service).array();
-  mac = hmacSha256(mac, "aws4_request").array();
+  let mac = await hmacSha256(paddedKey, dateStamp);
+  mac = await hmacSha256(mac, region);
+  mac = await hmacSha256(mac, service);
+  mac = await hmacSha256(mac, "aws4_request");
   return mac;
 };
 
@@ -99,7 +79,7 @@ export class AWSSignerV4 implements Signer {
     request: Request,
   ): Promise<Request> {
     const date = new Date();
-    const amzdate = toAmz(date);
+    const amzdate = toAmzDate(date);
     const datestamp = toDateStamp(date);
 
     const { host, pathname, searchParams } = new URL(request.url);
@@ -114,11 +94,12 @@ export class AWSSignerV4 implements Signer {
     }
     headers.set("host", host);
 
-    // TODO: support for unsigned bodies (for streaming)
+    // TODO: if headers.has("x-amz-content-sha256") then use only that & passthru body as-is
+    // this is important for S3's "UNSIGNED-PAYLOAD" feature
     const body = request.body
       ? new Uint8Array(await request.arrayBuffer())
       : null;
-    const payloadHash = sha256(body ?? new Uint8Array()).hex();
+    const payloadHash = bytesAsHex(await hashSha256(body ?? new Uint8Array()));
     if (service === 's3') {
       // Backblaze B2 requires this header to be in the canonicalHeaders
       headers.set("x-amz-content-sha256", payloadHash);
@@ -135,7 +116,7 @@ export class AWSSignerV4 implements Signer {
 
     const canonicalRequest =
       `${request.method}\n${pathname}\n${canonicalQuerystring}\n${canonicalHeaders}\n${signedHeaders}\n${payloadHash}`;
-    const canonicalRequestDigest = sha256(canonicalRequest).hex();
+    const canonicalRequestDigest = bytesAsHex(await hashSha256(encoder.encode(canonicalRequest)));
 
     const algorithm = "AWS4-HMAC-SHA256";
     const credentialScope =
@@ -143,14 +124,15 @@ export class AWSSignerV4 implements Signer {
     const stringToSign =
       `${algorithm}\n${amzdate}\n${credentialScope}\n${canonicalRequestDigest}`;
 
-    const signingKey = getSignatureKey(
+    // TODO: this can be cached
+    const signingKey = await getSignatureKey(
       this.credentials.awsSecretKey,
       datestamp,
       this.region,
       service,
     );
 
-    const signature = hmacSha256(signingKey, stringToSign).hex();
+    const signature = bytesAsHex(await hmacSha256(new Uint8Array(signingKey), stringToSign));
 
     const authHeader =
       `${algorithm} Credential=${this.credentials.awsAccessKeyId}/${credentialScope}, SignedHeaders=${signedHeaders}, Signature=${signature}`;
@@ -178,4 +160,6 @@ const unsignableHeaders = new Set([
   'presigned-expires',
   'expect',
   'x-amzn-trace-id',
+  'range',
+  'connection',
 ]);

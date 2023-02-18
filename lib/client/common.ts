@@ -151,3 +151,27 @@ export class AwsServiceError extends Error {
     return this.internal.Message;
   }
 }
+
+///////////////////////////////////////////////
+// SHA-256 routines powered by Subtle Crypto
+
+const hmacSha256Alg = { name: 'HMAC', hash: { name: 'SHA-256' } };
+const encoder = new TextEncoder();
+
+/** Generate SHA-256 hash of a string with an HMAC byte-buffer key */
+export async function hmacSha256(key: Uint8Array, body: string) {
+  const cryptoKey = await crypto.subtle.importKey('raw', key, hmacSha256Alg, false, ['sign']);
+  const buffer = await crypto.subtle.sign('HMAC', cryptoKey, encoder.encode(body));
+  return new Uint8Array(buffer);
+}
+
+/** Generate SHA-256 hash of a byte-buffer */
+export async function hashSha256(content: Uint8Array) {
+  const buffer = await crypto.subtle.digest('SHA-256', content);
+  return new Uint8Array(buffer);
+}
+
+/** Return a hex representation of a byte-buffer */
+export function bytesAsHex(buffer: Uint8Array) {
+  return [...buffer].map(x => x.toString(16).padStart(2, '0')).join('');
+}
