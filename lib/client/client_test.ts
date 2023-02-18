@@ -1,4 +1,4 @@
-import { assertRejects, assertObjectMatch } from "https://deno.land/std@0.140.0/testing/asserts.ts";
+import { assertRejects, assertObjectMatch } from "https://deno.land/std@0.160.0/testing/asserts.ts";
 import { BaseApiFactory, handleErrorResponse } from "./client.ts";
 import { AwsServiceError } from "./mod.ts";
 
@@ -50,15 +50,13 @@ async function assertErrorFrom(opts: {
   protocol: string;
   matches: Record<string, string>;
 }) {
-  await assertRejects(() => handleErrorResponse(
+  const err = await assertRejects(() => handleErrorResponse(
     new Response(opts.body, {
       status: opts.statusCode ?? 400,
       headers: opts.headers,
     }), 'POST', opts.protocol)
-  , (err: unknown) => {
-    if (!(err instanceof AwsServiceError)) throw err;
-    assertObjectMatch(err, opts.matches);
-  });
+  , AwsServiceError);
+  assertObjectMatch(err, opts.matches);
 }
 
 Deno.test("Error parsing: STS / expired creds", () => assertErrorFrom({

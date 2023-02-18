@@ -140,7 +140,7 @@ async function generateRun(run: TestRun): Promise<void> {
 
   const chunks = new Array<string>();
   chunks.push('\n/////////\n');
-  chunks.push(`import { assertEquals, assertRejects, assertObjectMatch } from "https://deno.land/std@0.140.0/testing/asserts.ts";`);
+  chunks.push(`import { assertEquals, assertRejects, assertObjectMatch } from "https://deno.land/std@0.160.0/testing/asserts.ts";`);
   chunks.push(`import { wrapServiceClient } from '../../client/client.ts';\n`);
   chunks.push(`import { ServiceApiClass, AwsServiceError } from '../../client/common.ts';\n`);
 
@@ -203,18 +203,16 @@ async function generateRun(run: TestRun): Promise<void> {
       // TODO?: Grab defined header fields for structured errors??
       delete error['ImaHeader'];
       delete error['ImaHeaderLocation'];
-      chunks.push(`  await assertRejects(async () => {\n`);
+      chunks.push(`  const err = await assertRejects(async () => {\n`);
       chunks.push(`    const result: void = await testService.${lowerCamel(given.name)}();\n`);
-      chunks.push(`  }, (err: unknown) => {`);
-      chunks.push(`    if (!(err instanceof AwsServiceError)) throw err;`);
+      chunks.push(`  }, AwsServiceError);`);
       if (errorCode) {
-        chunks.push(`    assertEquals(err.shortCode, ${JSON.stringify(errorCode)});`);
+        chunks.push(`  assertEquals(err.shortCode, ${JSON.stringify(errorCode)});`);
       }
       if (errorMessage) {
-        chunks.push(`    assertEquals(err.originalMessage, ${JSON.stringify(errorMessage)});`);
+        chunks.push(`  assertEquals(err.originalMessage, ${JSON.stringify(errorMessage)});`);
       }
-      chunks.push(`    assertObjectMatch(err.internal, ${JSON.stringify(error)});`);
-      chunks.push(`  });`);
+      chunks.push(`  assertObjectMatch(err.internal, ${JSON.stringify(error)});`);
     } else {
       chunks.push(`  const result = await testService.${lowerCamel(given.name)}();\n`);
       chunks.push(`  const resultJson = JSON.stringify(testTransformJsObj(result));`);
