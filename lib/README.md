@@ -9,32 +9,19 @@
 [dep-vis]: https://deno-visualizer.danopia.net/dependencies-of/https/deno.land/x/aws_api/demo.ts
 
 
-From-scratch Typescript AWS API client built for Deno.
+From-scratch Typescript AWS API client+codegen built for Deno.
 
-A leading focus of this library is to be as lean as possible
+A leading focus of this library is to provide safe service clients
+while importing a relatively small amount of dependency files.
 on the number of files downloaded to use a specific service.
-Each service has its own isolated Typescript module;
-you'll need to make an `ApiFactory` from `client/mod.ts`
-and then pass it to the service you want to use.
 
-Package layout:
+Each service is generated as its own module file.
+You can create an `ApiFactory` from `client/mod.ts`
+and then pass it to the constructor for the AWS service API you want to use.
 
-* `client/`: A handwritten generic AWS API client (credentials, signing, etc)
-* `encoding/`: Shared modules for dealing with XML, JSON, & querystrings
-* `services/`: Generated Typescript classes and interfaces for a few most-useful AWS services
-* `demo.ts`: A trivial example of using this library
-* `examples/`: Several full examples of using individual services
+## Example Usage
 
-A full listing of **all** AWS services and their import URLs can be found
-on the [/x/aws_api Web Service][webservice].
-More information on [the accompanying Wiki page][webservice-docs].
-
-Please reach out on Github Issues about missing features, weird exceptions, or API issues,
-or ping `dantheman#8546` in the Deno Discord if you just wanna chat about this effort.
-
-## Usage
-
-Basic example: (a subset of `demo.ts`)
+A bare-bones example from `demo.ts`:
 
 ```typescript
 import { ApiFactory } from 'https://deno.land/x/aws_api/client/mod.ts';
@@ -46,11 +33,33 @@ console.log('You are', identity.UserId, 'in account', identity.Account);
 console.log('Identity ARN:', identity.Arn);
 ```
 
-A couple more-detailed examples are in `examples/` and show concepts such as
-managing an EC2 instance's lifecycle, redriving SQS messages,
-and working directly with a Kinesis stream.
+Several larger examples in `examples/` show concepts such as
+launching & managing an EC2 instance, redriving SQS messages from a dead-letter queue,
+and writing & reading records within a Kinesis stream.
 
-To use a customized build, or a less-common service, you can import from the web service:
+## Who Should Use This Library?
+
+This `aws_api` Deno module is good for:
+
+* Safely making API calls to one or more of the AWS services with client-side request/response types and  validation, response error handling, and resource 'waiters'
+* Loading AWS credentials within Deno scripts from common sources (e.g. environment variables, config files, and IAM roles) and refreshing them automatically
+* Connecting to alternative endpoints such as Localstack, S3-compatible services, etc, as configured in your program
+
+This module *alone* is *not good* for:
+
+* Generating presigned URLs for S3 requests (as presigning is not an AWS API and hasn't been replicated here yet, try `/x/aws_s3_presign`)
+* Streaming body transfers (as request & response payloads are currently buffered)
+* DynamoDB document logic (as the DynamoDB 'DocumentClient' class is extra client logic on top of the APIs - but you can import it from elsewhere)
+* Connecting directly to data-tier servers like OpenSearch, RDS, Elasticache, MQTT, etc (as these don't generally work like normal AWS APIs)
+
+## Importing Service Clients
+
+The `services/` folder contains complete API clients for several key services.
+These include S3, DynamoDB, Lambda, S3, and SQS/SNS.
+There's also CloudWatch, ECR, Kinesis, KMS, Route53, SES, and STS.
+
+For other services, or to cut down on dependency size by selecting the available actions,
+you can import from [the /x/aws_api Web Service][webservice]:
 
 ```typescript
 import { ApiFactory } from 'https://deno.land/x/aws_api/client/mod.ts';
@@ -64,14 +73,17 @@ for (const serviceItem of Services) {
 }
 ```
 
-## `ApiFactory` Configuration
-The `opts` bag can contain a few settings if necesary:
+More information can be found on [the accompanying Wiki page][webservice-docs].
 
-* `credentialProvider?: CredentialsProvider` to use a specific credential source. `CredentialsProvider` can refresh tokens and implementing one could be useful for dynamic configuration. The default provider is `DefaultCredentialsProvider`, a singleton `CredentialsProviderChain` instance.
-* `credentials?: Credentials` to force a particular credential. No refresh support.
-* `region?: string` to configure a specific AWS region, ignoring the default region. Useful for apps working in multiple regions.
-* `fixedEndpoint?: string` to force a particular base URL to send all requests to. Useful for MinIO or localstack. Specify a full URL including protocol://. Also disables subdomain-style S3 access.
-* `endpointResolver?: EndpointResolver` to swap out the API endpoint detection logic. There are three different implementations exported by `/client/mod.ts`.
+## Client Configuration
+The `ApiFactory` constructor accepts optional configuration as an options object.
+If you need to change something, pass one of these properties:
+
+* `credentialProvider` can be a `CredentialsProvider` implementation, responsible for loading and refreshing AWS credentials. The default provider is a `CredentialsProviderChain` which tries multiple sources. You can pass a customized chain, or even implement a custom provider for your own dynamic-config infrastructure.
+* `credentials` can be a particular `Credential` implementation. This option disables credential refreshing.
+* `region` configures a specific AWS region, disregarding the ambient region from the environment. Useful for being explicit or when working in multiple regions.
+* `fixedEndpoint` forces a particular base URL to send all requests to. Useful for MinIO or localstack. Specify a full URL including `https://`. This option disables subdomain-style S3 access.
+* `endpointResolver` can be an `EndpointResolver` which is responsible for selecting endpoint URLs for specific API/region combinations. An `AwsEndpointResolver` instance is used by default, which prefers the new `.aws` TLD when available. There are also several other resolvers exported by `/client/mod.ts`.
   * If you want to disregard global endpoints and always use regional endpoints, configure an `AwsEndpointResolver` instance and pass it in here.
   * If you are using a vendor which has their own "S3-compatible" endpoints, check out [some example configurations in the Github Wiki](https://github.com/cloudydeno/deno-aws_api/wiki/S3-Compatible-Vendors).
 
