@@ -63,9 +63,9 @@ here's a reasonable way to package it up.
 Notice the default permissions that allow using virtually any type of environmental credential without customizing the command line.
 
 ```Dockerfile
-FROM hayd/alpine-deno
+FROM denoland/deno
 WORKDIR /src
 ADD *.ts ./
-RUN deno cache mod.ts
+RUN deno check mod.ts
 CMD ["deno", "run", "--allow-net", "--allow-env", "--allow-read", "--cached-only", "mod.ts"]
 ```

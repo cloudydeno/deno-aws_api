@@ -1,4 +1,4 @@
-import { assertEquals, assertThrows } from "https://deno.land/std@0.160.0/testing/asserts.ts";
+import { assertEquals, assertThrows } from "https://deno.land/std@0.177.0/testing/asserts.ts";
 import type { ApiMetadata } from "./common.ts";
 import { AwsEndpointResolver, FixedBaseEndpointResolver, S3CompatibleEndpointResolver } from "./endpoints.ts";
 

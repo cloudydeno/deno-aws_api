@@ -140,7 +140,7 @@ async function generateRun(run: TestRun): Promise<void> {
 
   const chunks = new Array<string>();
   chunks.push('\n/////////\n');
-  chunks.push(`import { assertEquals, assertRejects, assertObjectMatch } from "https://deno.land/std@0.160.0/testing/asserts.ts";`);
+  chunks.push(`import { assertEquals, assertRejects, assertObjectMatch } from "https://deno.land/std@0.177.0/testing/asserts.ts";`);
   chunks.push(`import { wrapServiceClient } from '../../client/client.ts';\n`);
   chunks.push(`import { ServiceApiClass, AwsServiceError } from '../../client/common.ts';\n`);
 

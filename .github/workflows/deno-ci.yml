@@ -14,17 +14,16 @@ jobs:
       fail-fast: false
       matrix:
         deno-version:
-        - v1.17
-        - v1.18
-        - v1.19
-        - v1.20
-        - v1.21
         - v1.22
+        - v1.24
+        - v1.26
+        - v1.28
+        - v1.30
         - canary
 
     steps:
     - name: Checkout source
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Use Deno ${{ matrix.deno-version }}
       uses: denoland/setup-deno@v1
@@ -32,23 +31,23 @@ jobs:
         deno-version: ${{ matrix.deno-version }}
 
     - name: Cache https:// deps
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: ~/.cache/deno/deps/https
         key: deno/${{ matrix.deno-version }}-https/v1-${{ github.sha }}
         restore-keys: deno/${{ matrix.deno-version }}-https/v1-
 
     - name: Check generation/deploy/mod.ts
-      if: ${{ matrix.deno-version != 'v1.11' && matrix.deno-version != 'v1.12' && matrix.deno-version != 'v1.13' }}
-      run: time deno cache generation/deploy/mod.ts
+      if: always()
+      run: time deno check generation/deploy/mod.ts
 
     - name: Check client/mod.ts
       if: always()
-      run: time deno cache lib/client/mod.ts
+      run: time deno check lib/client/mod.ts
 
     - name: Check demo.ts
       if: always()
-      run: time deno cache lib/demo.ts
+      run: time deno check lib/demo.ts
 
     - name: Run tests
       if: always()
@@ -61,15 +60,14 @@ jobs:
     strategy:
       matrix:
         deno-version:
-        - v1.18
-        - v1.20
-        - v1.22
+        - v1.26
+        - v1.30
         - canary
       fail-fast: false # run each branch to completion
 
     steps:
     - name: Checkout source, incl aws-sdk-js
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         submodules: true
 
@@ -79,7 +77,7 @@ jobs:
         deno-version: ${{ matrix.deno-version }}
 
     - name: Cache https:// deps
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: ~/.cache/deno/deps/https
         key: deno/${{ matrix.deno-version }}-https/v1-${{ github.sha }}
@@ -100,24 +98,28 @@ jobs:
     if: github.event_name == 'push'
     needs:
     - validate-codegen
+    strategy:
+      matrix:
+        deno-version:
+        - v1.30
 
     steps:
     - name: Checkout source
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         submodules: true
 
-    - name: Use Deno v1.17
+    - name: Use Deno ${{ matrix.deno-version }}
       uses: denoland/setup-deno@v1
       with:
-        deno-version: v1.21
+        deno-version: ${{ matrix.deno-version }}
 
     - name: Cache https:// deps
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: ~/.cache/deno/deps/https
-        key: deno/v1.17-https/v1-${{ github.sha }}
-        restore-keys: deno/v1.17}-https/v1-
+        key: deno/${{ matrix.deno-version }}-https/v1-${{ github.sha }}
+        restore-keys: deno/${{ matrix.deno-version }}-https/v1-
 
     - name: Regenerate API files
       run: time ./generation/script/update-all.sh
