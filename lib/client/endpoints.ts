@@ -116,6 +116,7 @@ export class AwsEndpointResolver implements EndpointResolver {
 function getRootDomain(region: string) {
   // non-default partitions
   if (region.startsWith('cn-')) return '.amazonaws.com.cn';
+  // TODO: check with https://github.com/hashicorp/terraform-provider-aws/issues/19014#issue-862973676
   if (region.startsWith('us-iso-')) return '.c2s.ic.gov';
   if (region.startsWith('us-isob-')) return '.sc2s.sgov.gov';
   // old faithful
