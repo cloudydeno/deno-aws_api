@@ -247,7 +247,7 @@ export default class ProtocolRestCodegen {
         payloadHeader = bodyGenLines.slice(0, retLine);
         payloadChunk = `${shape.spec.payload}: `+bodyGenReturns.replace(/^ +return +/, '').replace(/;$/, '').replace(/\n/g, '\n  ');
       } else if (payloadShape.spec.type === 'blob') {
-        if (payloadShape.spec.streaming) {
+        if (payloadSpec.streaming || payloadShape.spec.streaming) {
           payloadChunk = `${shape.spec.payload}: resp.body`;
         } else {
           payloadChunk = `${shape.spec.payload}: new Uint8Array(await resp.arrayBuffer())`;

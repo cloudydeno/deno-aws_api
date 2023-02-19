@@ -1024,7 +1024,7 @@ export class S3 {
       ObjectLockMode: cmnP.readEnum<s.ObjectLockMode>(resp.headers.get("x-amz-object-lock-mode")),
       ObjectLockRetainUntilDate: cmnP.readTimestamp(resp.headers.get("x-amz-object-lock-retain-until-date")),
       ObjectLockLegalHoldStatus: cmnP.readEnum<s.ObjectLockLegalHoldStatus>(resp.headers.get("x-amz-object-lock-legal-hold")),
-      Body: new Uint8Array(await resp.arrayBuffer()),
+      Body: resp.body,
     };
   }
 
@@ -1152,7 +1152,7 @@ export class S3 {
     });
     return {
       RequestCharged: cmnP.readEnum<s.RequestCharged>(resp.headers.get("x-amz-request-charged")),
-      Body: new Uint8Array(await resp.arrayBuffer()),
+      Body: resp.body,
     };
   }
 
