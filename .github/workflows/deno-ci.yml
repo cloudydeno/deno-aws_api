@@ -51,7 +51,12 @@ jobs:
 
     - name: Run tests
       if: always()
-      run: time deno test --allow-net=169.254.169.254,example.com lib/client/
+      run: >
+        time deno test
+        --allow-net=169.254.169.254,example.com
+        lib/client/
+        lib/encoding/
+        lib/extras/
 
   validate-codegen:
     runs-on: ubuntu-latest
