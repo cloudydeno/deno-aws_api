@@ -119,7 +119,8 @@ const ec2_europe = new ApiFactory({
 ## Changelog
 
 * `v0.8.0` on `TBD`: codegen `TBD`
-  * Use Deno's `/std@0.177.0` (except for SHA-256 and MD5)
+  * Use Deno's `/std@0.177.0` (except for MD5)
+  * Refactor signing logic to use SubtleCrypto for SHA-256
   * Minimum tested Deno is now `v1.22`
   * New S3 managed upload module available in `/extras/s3-upload.ts`.
   * Fix reading user credential files on Windows.
