@@ -1123,7 +1123,8 @@ export interface GetBucketWebsiteOutput {
 
 // refs: 1 - tags: named, output
 export interface GetObjectOutput {
-  Body?: Uint8Array | null;
+  /** To get this stream as a buffer, use `new Response(...).arrayBuffer()` or related functions. */
+  Body?: ReadableStream<Uint8Array> | null;
   DeleteMarker?: boolean | null;
   AcceptRanges?: string | null;
   Expiration?: string | null;
@@ -1187,7 +1188,8 @@ export interface GetObjectTaggingOutput {
 
 // refs: 1 - tags: named, output
 export interface GetObjectTorrentOutput {
-  Body?: Uint8Array | null;
+  /** To get this stream as a buffer, use `new Response(...).arrayBuffer()` or related functions. */
+  Body?: ReadableStream<Uint8Array> | null;
   RequestCharged?: RequestCharged | null;
 }
 
