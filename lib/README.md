@@ -9,15 +9,14 @@
 [dep-vis]: https://deno-visualizer.danopia.net/dependencies-of/https/deno.land/x/aws_api/demo.ts
 
 
-From-scratch Typescript AWS API client+codegen built for Deno.
+From-scratch Typescript AWS API client built for Deno.
 
-A leading focus of this library is to provide safe service clients
-while importing a relatively small amount of dependency files.
-on the number of files downloaded to use a specific service.
+This library's goal is to codegen type-safe AWS service clients
+while importing a relatively small number of dependency modules.
 
-Each service is generated as its own module file.
-You can create an `ApiFactory` from `client/mod.ts`
-and then pass it to the constructor for the AWS service API you want to use.
+Each AWS service has its own module that you can import from several URLs.
+To use, you can create a `new ApiFactory()` (which manages credentials and such),
+and then use it to construct a client for the AWS service API you want to use.
 
 ## Example Usage
 
@@ -27,7 +26,10 @@ A bare-bones example from `demo.ts`:
 import { ApiFactory } from 'https://deno.land/x/aws_api/client/mod.ts';
 import { STS } from 'https://deno.land/x/aws_api/services/sts/mod.ts';
 
+// Create a service client for AWS Security Token Service
 const sts = new ApiFactory().makeNew(STS);
+
+// Call the STS "GetCallerIdentity" API
 const identity = await sts.getCallerIdentity();
 console.log('You are', identity.UserId, 'in account', identity.Account);
 console.log('Identity ARN:', identity.Arn);
@@ -119,7 +121,8 @@ const ec2_europe = new ApiFactory({
 ## Changelog
 
 * `v0.8.0` on `TBD`: codegen `TBD`
-  * Use Deno's `/std@0.177.0` (except for SHA-256 and MD5)
+  * Use Deno's `/std@0.177.0` (except for MD5)
+  * Refactor signing logic to use SubtleCrypto for SHA-256
   * Minimum tested Deno is now `v1.22`
   * New S3 managed upload module available in `/extras/s3-upload.ts`.
   * Fix reading user credential files on Windows.
