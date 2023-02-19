@@ -11,15 +11,17 @@ if (Deno.args.length != 2) {
   console.error(`Usage: s3-upload-stream.ts [BUCKET] [KEY] < FILE`);
   console.error(`The file or stream that you pipe in will be uploaded to the given location on S3.`);
   console.error(``);
-
-} else {
-  const factory = new ApiFactory();
-  const s3 = factory.makeNew(S3);
-
-  console.error(`Uploading standard input to s3://${Deno.args.join('/')} ...`);
-  console.error(`Upload complete:`, await managedUpload(s3, {
-    Bucket: Deno.args[0],
-    Key: Deno.args[1],
-    Body: Deno.stdin.readable,
-  }));
+  Deno.exit(2);
 }
+
+const s3 = new ApiFactory().makeNew(S3);
+
+console.error(`Uploading standard input to s3://${Deno.args.join('/')} ...`);
+
+const result = await managedUpload(s3, {
+  Bucket: Deno.args[0],
+  Key: Deno.args[1],
+  Body: Deno.stdin.readable,
+});
+
+console.error(`Upload complete:`, result);

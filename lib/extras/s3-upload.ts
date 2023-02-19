@@ -154,24 +154,14 @@ export function newPartSegmenter(partSize: number) {
 }
 
 interface S3Subset {
-  /** Adds an object to a bucket. */
-  putObject(
-    params: PutObjectRequest,
-  ): Promise<PutObjectOutput>;
-  /** This action initiates a multipart upload and returns an upload ID. */
-  createMultipartUpload(
-    params: CreateMultipartUploadRequest,
-  ): Promise<CreateMultipartUploadOutput>;
-  /** Uploads a part in a multipart upload. */
-  uploadPart(
-    params: UploadPartRequest,
-  ): Promise<UploadPartOutput>;
+  /** Uploads an object to a bucket in one go. */
+  putObject(params: PutObjectRequest): Promise<PutObjectOutput>;
+  /** Initiates a multipart upload and returns an upload ID. */
+  createMultipartUpload(params: CreateMultipartUploadRequest): Promise<CreateMultipartUploadOutput>;
+  /** Adds a part in a multipart upload. */
+  uploadPart(params: UploadPartRequest): Promise<UploadPartOutput>;
   /** Completes a multipart upload by assembling previously uploaded parts. */
-  completeMultipartUpload(
-    params: CompleteMultipartUploadRequest,
-  ): Promise<CompleteMultipartUploadOutput>;
-  /** This action aborts a multipart upload. */
-  abortMultipartUpload(
-    params: AbortMultipartUploadRequest,
-  ): Promise<AbortMultipartUploadOutput>;
+  completeMultipartUpload(params: CompleteMultipartUploadRequest): Promise<CompleteMultipartUploadOutput>;
+  /** Aborts a multipart upload. */
+  abortMultipartUpload(params: AbortMultipartUploadRequest): Promise<AbortMultipartUploadOutput>;
 }
