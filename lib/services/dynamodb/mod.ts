@@ -918,7 +918,7 @@ export class DynamoDB {
       opts, body,
       action: "TagResource",
     });
-    await resp.arrayBuffer(); // consume body without use
+    await resp.body?.cancel();
   }
 
   async transactGetItems(
@@ -977,7 +977,7 @@ export class DynamoDB {
       opts, body,
       action: "UntagResource",
     });
-    await resp.arrayBuffer(); // consume body without use
+    await resp.body?.cancel();
   }
 
   async updateContinuousBackups(

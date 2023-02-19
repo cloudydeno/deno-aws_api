@@ -156,7 +156,7 @@ export function generateApiTypescript(
         .generateOperationOutputParsingTypescript(outputShape, operation.output?.resultWrapper ?? outputShape?.spec.resultWrapper, isNullBody, streamingResponses);
       chunks.push(outputParsingCode);
     } else if (!isNullBody) {
-      chunks.push(`    await resp.arrayBuffer(); // consume body without use`);
+      chunks.push(`    await resp.body?.cancel();`);
     }
 
     // TODO: is this a sane way of doing pagination?

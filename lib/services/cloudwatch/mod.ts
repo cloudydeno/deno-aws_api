@@ -40,7 +40,7 @@ export class CloudWatch {
       opts, body,
       action: "DeleteAlarms",
     });
-    await resp.arrayBuffer(); // consume body without use
+    await resp.body?.cancel();
   }
 
   async deleteAnomalyDetector(
@@ -59,7 +59,7 @@ export class CloudWatch {
       opts, body,
       action: "DeleteAnomalyDetector",
     });
-    await resp.arrayBuffer(); // consume body without use
+    await resp.body?.cancel();
   }
 
   async deleteDashboards(
@@ -73,7 +73,7 @@ export class CloudWatch {
       opts, body,
       action: "DeleteDashboards",
     });
-    await resp.arrayBuffer(); // consume body without use
+    await resp.body?.cancel();
   }
 
   async deleteInsightRules(
@@ -104,7 +104,7 @@ export class CloudWatch {
       opts, body,
       action: "DeleteMetricStream",
     });
-    await resp.arrayBuffer(); // consume body without use
+    await resp.body?.cancel();
   }
 
   async describeAlarmHistory(
@@ -243,7 +243,7 @@ export class CloudWatch {
       opts, body,
       action: "DisableAlarmActions",
     });
-    await resp.arrayBuffer(); // consume body without use
+    await resp.body?.cancel();
   }
 
   async disableInsightRules(
@@ -274,7 +274,7 @@ export class CloudWatch {
       opts, body,
       action: "EnableAlarmActions",
     });
-    await resp.arrayBuffer(); // consume body without use
+    await resp.body?.cancel();
   }
 
   async enableInsightRules(
@@ -538,7 +538,7 @@ export class CloudWatch {
       opts, body,
       action: "PutAnomalyDetector",
     });
-    await resp.arrayBuffer(); // consume body without use
+    await resp.body?.cancel();
   }
 
   async putCompositeAlarm(
@@ -559,7 +559,7 @@ export class CloudWatch {
       opts, body,
       action: "PutCompositeAlarm",
     });
-    await resp.arrayBuffer(); // consume body without use
+    await resp.body?.cancel();
   }
 
   async putDashboard(
@@ -594,7 +594,7 @@ export class CloudWatch {
       opts, body,
       action: "PutInsightRule",
     });
-    await resp.arrayBuffer(); // consume body without use
+    await resp.body?.cancel();
   }
 
   async putMetricAlarm(
@@ -629,7 +629,7 @@ export class CloudWatch {
       opts, body,
       action: "PutMetricAlarm",
     });
-    await resp.arrayBuffer(); // consume body without use
+    await resp.body?.cancel();
   }
 
   async putMetricData(
@@ -644,7 +644,7 @@ export class CloudWatch {
       opts, body,
       action: "PutMetricData",
     });
-    await resp.arrayBuffer(); // consume body without use
+    await resp.body?.cancel();
   }
 
   async putMetricStream(
@@ -684,7 +684,7 @@ export class CloudWatch {
       opts, body,
       action: "SetAlarmState",
     });
-    await resp.arrayBuffer(); // consume body without use
+    await resp.body?.cancel();
   }
 
   async startMetricStreams(
@@ -698,7 +698,7 @@ export class CloudWatch {
       opts, body,
       action: "StartMetricStreams",
     });
-    await resp.arrayBuffer(); // consume body without use
+    await resp.body?.cancel();
   }
 
   async stopMetricStreams(
@@ -712,7 +712,7 @@ export class CloudWatch {
       opts, body,
       action: "StopMetricStreams",
     });
-    await resp.arrayBuffer(); // consume body without use
+    await resp.body?.cancel();
   }
 
   async tagResource(
@@ -727,7 +727,7 @@ export class CloudWatch {
       opts, body,
       action: "TagResource",
     });
-    await resp.arrayBuffer(); // consume body without use
+    await resp.body?.cancel();
   }
 
   async untagResource(
@@ -742,7 +742,7 @@ export class CloudWatch {
       opts, body,
       action: "UntagResource",
     });
-    await resp.arrayBuffer(); // consume body without use
+    await resp.body?.cancel();
   }
 
   // Resource State Waiters
