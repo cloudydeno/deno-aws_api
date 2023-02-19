@@ -52,6 +52,27 @@ This module *alone* is *not good* for:
 * DynamoDB document logic (as the DynamoDB 'DocumentClient' class is extra client logic on top of the APIs - but you can import it from elsewhere)
 * Connecting directly to data-tier servers like OpenSearch, RDS, Elasticache, MQTT, etc (as these don't generally work like normal AWS APIs)
 
+### Disclaimer
+
+**This is NOT a port of the official AWS SDK JS.**
+Though this project can generate a client for every AWS service,
+I have only personally tested it with a couple dozen services
+and the bindings might make incorrect assumptions about individual API contracts.
+
+Do not use this module in mission critical stuff.
+It's intended for automation scripts,
+quick & dirty pieces of infrastructure,
+prototype microservices and so on.
+
+If you just want the real, full-fat AWS SDK,
+check out [this aws-sdk-js-v3 issue](https://github.com/aws/aws-sdk-js-v3/issues/1289).
+A port of the AWS SDK has also been uploaded at
+[/x/aws_sdk](https://deno.land/x/aws_sdk).
+
+The exported logic within `client/` and `encoding/` are liable to change from refactor.
+For best upgradability, stick to constructing an `ApiFactory` object
+and passing it to the services.
+
 ## Importing Service Clients
 
 The `services/` folder contains complete API clients for several key services.
@@ -163,33 +184,21 @@ const ec2_europe = new ApiFactory({
 * `v0.1.0` on `2020-10-15`: Initial publication with about half of the services bound.
   * Using definitions from `aws-sdk-js@2.768.0`
 
-## Disclaimer
+## About this library
 
-**This is NOT a port of the official AWS SDK JS.**
-Though every AWS service has an API module here,
-most have not actually been used yet
-and the bindings might make bad assumptions about the API contracts.
+### Package layout
 
-Do not use this module in mission critical stuff.
-It's supposed to be for automation scripts,
-quick & dirty pieces of infrastructure,
-and prototype microservices and so on.
+* `client/`: A handwritten generic AWS API client (credentials, signing, etc)
+* `encoding/`: Shared logic for dealing with XML, JSON, & querystrings
+* `services/`: Pre-generated service clients for a handful of important AWS services
+  * CloudWatch, DynamoDB, ECR, Kinesis, KMS, Lambda, Route53, S3, SESv2, SNS, SQS, STS
+* `demo.ts`: A trivial example of using this library for several services
+* `examples/`: Additional detailed examples of using individual services
 
-If you just want the real, full-fat AWS SDK,
-a port of it has been uploaded at
-[/x/aws_sdk](https://deno.land/x/aws_sdk).
+Please reach out on Github Issues about missing features, weird exceptions, or API issues,
+or ping `dantheman#8546` in the Deno Discord if you just wanna chat about this effort.
 
-The generated source code is still pretty messy.
-I used this project to learn more about the practicallity of API codegen.
-I'll be going through and neatening up the services/ source
-which shouldn't affect the published APIs.
-
-Finally, the APIs within `client/` and `encoding/` are liable to change.
-For best upgradability, stick to making an `ApiFactory` object
-and passing it to the services.
-At some point (before 1.0.0) the APIs should be ready to lock in.
-
-## Methodology
+### Methodology
 
 All of the clients are compiled from `aws-sdk-js`'s JSON data files.
 The code to generate clients isn't uploaded to `/x/`,
@@ -198,7 +207,7 @@ so if you want to read through it, make sure you're in the source Git repo.
 "Most" of the heavy lifting (such as compiling waiter JMESPaths)
 runs in the generation step so that the downloaded code is ready to run.
 
-## Completeness
+### Completeness
 
 The following clients have been used in actual scripts
 and should work quite well:
@@ -215,6 +224,7 @@ The following credential sources are supported:
 * Environment variables
 * Static credentials in `~/.aws/credentials`
 * EKS Pod Identity (web identity token files)
+* ECS Task IAM roles
 * EC2 instance credentials
 
 Some individual features that are implemented:
@@ -224,7 +234,8 @@ Some individual features that are implemented:
 * EC2 instance metadata server v2
 * Custom alternative endpoints
 * AWS endpoints other than `**.amazonaws.com` (#3)
-    * govcloud, China AWS, IPv6, etc.
+    * Opportunistic IPv6 dualstack via `*.api.aws`
+    * Untested approximations for other AWS partitions such as govcloud & China AWS
 
 Multiple bits are *missing*:
 
@@ -234,7 +245,7 @@ Multiple bits are *missing*:
 * Automatic retries
 * Getting EKS credentials from regional STS endpoints (#2)
 
-## List of Pre-Generated API Clients
+### List of Pre-Generated API Clients
 
 [//]: # (Generated Content Barrier)
 
@@ -269,7 +280,9 @@ on `/x/` is [v0.3.1](https://deno.land/x/aws_api@v0.3.1).
 [webservice]: https://aws-api.deno.dev/latest/
 
 
-## Breaking Changes Archive: v0.4.0
+## Breaking Changes Archive
+
+### v0.4.0
 
 1. **Version 0.4.0** of this library stopped
   including every service's API in the published module.
