@@ -21,9 +21,10 @@ export function generateApiTypescript(
   includeClientExtras: boolean,
   useAuthType: boolean,
   alwaysReqLists: boolean,
+  streamingResponses: boolean,
 ): string {
 
-  const structEmitter = new StructEmitter(apiSpec, shapes, helpers, protocol, namePrefix, docMode, alwaysReqLists);
+  const structEmitter = new StructEmitter(apiSpec, shapes, helpers, protocol, namePrefix, docMode, alwaysReqLists, streamingResponses);
   helpers.useHelper("client");
 
   const apiClientExtras = ServiceApiClientExtras.get(apiSpec.metadata.serviceId);
@@ -152,10 +153,10 @@ export function generateApiTypescript(
 
     if (outputShape?.spec.type === 'structure') {
       const {outputParsingCode, outputVariables} = protocol
-        .generateOperationOutputParsingTypescript(outputShape, operation.output?.resultWrapper ?? outputShape?.spec.resultWrapper, isNullBody);
+        .generateOperationOutputParsingTypescript(outputShape, operation.output?.resultWrapper ?? outputShape?.spec.resultWrapper, isNullBody, streamingResponses);
       chunks.push(outputParsingCode);
     } else if (!isNullBody) {
-      chunks.push(`    await resp.arrayBuffer(); // consume body without use`);
+      chunks.push(`    await resp.body?.cancel();`);
     }
 
     // TODO: is this a sane way of doing pagination?
