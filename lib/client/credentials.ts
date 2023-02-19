@@ -30,7 +30,7 @@ export class CredentialsProviderChain implements CredentialsProvider {
         this.#supplier = provider;
         return creds;
       } catch (err) {
-        const providerLabel = providerFunc.toString().replace(/^\(\) => new /, '');
+        const providerLabel = providerFunc.toString().replace(/^\(\)=>new /, '');
         const srcName = `    - ${providerLabel} `;
         if (err instanceof Error) {
           // if (err.message !== 'No credentials found') {
@@ -83,8 +83,7 @@ export class SharedIniFileCredentials implements CredentialsProvider {
       filename = Deno.env.get('AWS_SHARED_CREDENTIALS_FILE');
     }
     if (!filename) {
-      // TODO: this will probably go wrong on windows
-      const HOME = Deno.env.get('HOME');
+      const HOME = Deno.env.get('HOME') || Deno.env.get('USERPROFILE');
       filename = HOME+'/.aws/credentials';
     }
     this.#filename = filename;
