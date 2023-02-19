@@ -3,7 +3,7 @@
 import { ApiFactory } from '../client/mod.ts';
 import { S3 } from '../services/s3/mod.ts';
 
-// This helper will manage storing the stream to S3, possibly using a 'multi-part' upload
+// This helper will manage uploading the stream to S3, using a 'multi-part' upload when possible
 import { managedUpload } from "../extras/s3-upload.ts";
 
 if (Deno.args.length != 2) {
@@ -14,7 +14,9 @@ if (Deno.args.length != 2) {
   Deno.exit(2);
 }
 
-const s3 = new ApiFactory().makeNew(S3);
+const s3 = new ApiFactory({
+  fixedEndpoint: Deno.env.get('AWS_S3_ENDPOINT'),
+}).makeNew(S3);
 
 console.error(`Uploading standard input to s3://${Deno.args.join('/')} ...`);
 
