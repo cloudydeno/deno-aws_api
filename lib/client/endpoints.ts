@@ -11,24 +11,24 @@ export type {
 /**
  * The default resolver, designed specifically for Amazon AWS.
  * A couple options provide for:
- *   - disabling ambitious IPv4/IPv6 dualstack (in case you have broken IPv6)
+ *   - disabling upgrades to newer endpoints (on .aws TLS and/or IPv6-enabled)
  *   - forcing regional endpoints (disabling the global endpoint logic)
  * Otherwise, the URL used is determined fully automatically.
  * The provided `region` is used to select the AWS partition endpoint.
  *
  * Several services have separate dual-stack (IPv6-ready) hostnames available.
- * This library will use the dual-stack hostnames whenever they are known.
+ * This library will upgrade to the dual-stack hostnames by default, whenever they are known.
  * More info on AWS API IPv6: https://danopia.net/posts/2021/aws-endpoints-with-ipv6.html
  */
 export class AwsEndpointResolver implements EndpointResolver {
   constructor({
-    useDualstack = true,
+    upgradeEndpoints = true,
     forceRegional = false,
   } = {}) {
-    this.useDualstack = useDualstack;
+    this.upgradeEndpoints = upgradeEndpoints;
     this.forceRegional = forceRegional;
   }
-  useDualstack: boolean;
+  upgradeEndpoints: boolean;
   forceRegional: boolean;
 
   resolveUrl(parameters: EndpointParameters): ResolvedEndpoint {
@@ -38,11 +38,11 @@ export class AwsEndpointResolver implements EndpointResolver {
 
     // S3: Dualstack, and/or Host-Style Routing
     if (serviceId === 'S3') {
-      if (this.useDualstack) serviceLabel += '.dualstack';
+      if (this.upgradeEndpoints) serviceLabel += '.dualstack';
       perhapsUpgradeEndpointParametersToHostStyleRouting(parameters);
     }
     if (serviceId === 'S3 Control') {
-      if (this.useDualstack) serviceLabel += '.dualstack';
+      if (this.upgradeEndpoints) serviceLabel += '.dualstack';
     }
 
     // Select AWS partition (GovCloud, etc)
@@ -63,40 +63,17 @@ export class AwsEndpointResolver implements EndpointResolver {
       serviceLabel = `${serviceLabel}.${parameters.region}`;
     }
 
-    // Several services use the .aws TLS for dual-stack
-    if (this.useDualstack) {
-      if (rootDomain == '.amazonaws.com') {
-
-        // EC2: Dualstack is on a totally different TLD/format and only some regions
-        if (serviceId === 'EC2' && dualStackEc2Regions.has(parameters.region)) {
-          parameters.hostPrefix = `${parameters.hostPrefix ?? ''}api.`;
-          rootDomain = '.aws';
-        }
-
-        // Lambda: Dualstack in all commercial regions
-        // https://aws.amazon.com/about-aws/whats-new/2021/12/aws-lambda-ipv6-endpoints-inbound-connections/
-        if (serviceId === 'Lambda') {
-          if (!parameters.region.includes('-gov-')) {
-            rootDomain = '.api.aws';
-          }
-        }
-
-        // RDS: Dualstack in all commercial regions except 'Jakarta'
-        // https://aws.amazon.com/about-aws/whats-new/2022/03/amazon-rds-internet-protocol-version-6-ipv6-rds-service-apis/
-        if (serviceId === 'RDS') {
-          if (!parameters.region.includes('-gov-') && parameters.region !== 'ap-southeast-3') {
-            rootDomain = '.api.aws';
-          }
-        }
-
-        // AppMesh: Dualstack in all commercial regions
-        // No known announcement / blog post
-        if (serviceId === 'App Mesh') {
-          rootDomain = '.api.aws';
-        }
+    if (this.upgradeEndpoints) {
+      // Several services use the .aws TLS for dual-stack
+      if (rootDomain == '.amazonaws.com' && (
+            servicesWithNewEndpoints.has(serviceId)
+            || (serviceId === 'EC2' && dualStackEc2Regions.has(parameters.region))
+            || (serviceId === 'RDS' && dualStackRdsRegions.has(parameters.region))
+          )) {
+        rootDomain = '.api.aws';
       }
 
-      // Several services have the same dualstacking for the CN regions
+      // A few services have similar dualstacking for the CN regions
       if (rootDomain == '.amazonaws.com.cn' && dualStackChinaServices.has(serviceId)) {
         rootDomain = '.api.amazonwebservices.com.cn';
       }
@@ -113,29 +90,57 @@ export class AwsEndpointResolver implements EndpointResolver {
 }
 
 // https://cdn.jsdelivr.net/npm/@aws-sdk/client-sts/endpoints.ts
-function getRootDomain(region: string) {
+function getRootDomain(region: string, newStyle: boolean) {
   // non-default partitions
-  if (region.startsWith('cn-')) return '.amazonaws.com.cn';
-  // TODO: check with https://github.com/hashicorp/terraform-provider-aws/issues/19014#issue-862973676
+  // AWS China is pretty predictable:
+  if (region.startsWith('cn-')) {
+    if (newStyle) return '.api.amazonwebservices.com.cn';
+    return '.amazonaws.com.cn';
+  }
+  // TODO: check https://github.com/hashicorp/terraform-provider-aws/issues/19014#issue-862973676
   if (region.startsWith('us-iso-')) return '.c2s.ic.gov';
   if (region.startsWith('us-isob-')) return '.sc2s.sgov.gov';
-  // old faithful
+  // old faithful commercial partition
+  if (newStyle) return '.api.aws';
   return '.amazonaws.com';
 }
 
-// https://docs.aws.amazon.com/AWSEC2/latest/APIReference/Using_Endpoints.html
-const dualStackEc2Regions = new Set([
-  'us-east-1',
-  'us-east-2',
-  'us-west-2',
-  'eu-west-1',
-  'ap-south-1',
-  'sa-east-1',
+// Services in this list should have dual-stack names in every region
+// https://docs.aws.amazon.com/general/latest/gr/aws-ipv6-support.html
+const servicesWithNewEndpoints = new Set([
+  'App Mesh',
+  'Athena',
+  'EBS',
+  'Lambda',
 ]);
 
+// https://docs.aws.amazon.com/AWSEC2/latest/APIReference/Using_Endpoints.html
+const dualStackEc2Regions = new Set([
+  'ap-south-1',
+  'eu-west-1',
+  'sa-east-1',
+  'us-east-1', 'us-east-2', 'us-west-2',
+  'us-gov-east-1', 'us-gov-west-1',
+]);
+
+// https://docs.aws.amazon.com/general/latest/gr/rds-service.html
+const dualStackRdsRegions = new Set([
+  'af-south-1',
+  'ap-east-1', 'ap-south-1', 'ap-northeast-3', 'ap-northeast-2', 'ap-southeast-1', 'ap-southeast-2', 'ap-northeast-1',
+  'ca-central-1',
+  'eu-central-1', 'eu-west-1', 'eu-west-2', 'eu-south-1', 'eu-west-3', 'eu-north-1',
+  'me-south-1',
+  'sa-east-1',
+  'us-east-2', 'us-east-1', 'us-west-1', 'us-west-2',
+])
+
 // https://docs.amazonaws.cn/en_us/aws/latest/userguide/endpoints-Beijing.html
+// https://docs.amazonaws.cn/en_us/aws/latest/userguide/endpoints-Ningxia.html
 const dualStackChinaServices = new Set([
   'App Mesh',
+  'Athena',
+  'EBS',
+  'Firehose',
   'Lambda',
   'RDS',
 ]);
