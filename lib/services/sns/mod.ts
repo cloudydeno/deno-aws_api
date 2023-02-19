@@ -43,7 +43,7 @@ export class SNS {
       opts, body,
       action: "AddPermission",
     });
-    await resp.body?.cancel();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async checkIfPhoneNumberIsOptedOut(
@@ -133,7 +133,7 @@ export class SNS {
       opts, body,
       action: "CreateSMSSandboxPhoneNumber",
     });
-    await resp.body?.cancel();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async createTopic(
@@ -166,7 +166,7 @@ export class SNS {
       opts, body,
       action: "DeleteEndpoint",
     });
-    await resp.body?.cancel();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deletePlatformApplication(
@@ -180,7 +180,7 @@ export class SNS {
       opts, body,
       action: "DeletePlatformApplication",
     });
-    await resp.body?.cancel();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteSMSSandboxPhoneNumber(
@@ -194,7 +194,7 @@ export class SNS {
       opts, body,
       action: "DeleteSMSSandboxPhoneNumber",
     });
-    await resp.body?.cancel();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteTopic(
@@ -208,7 +208,7 @@ export class SNS {
       opts, body,
       action: "DeleteTopic",
     });
-    await resp.body?.cancel();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async getEndpointAttributes(
@@ -502,7 +502,7 @@ export class SNS {
       opts, body,
       action: "OptInPhoneNumber",
     });
-    await resp.body?.cancel();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async publish(
@@ -561,7 +561,7 @@ export class SNS {
       opts, body,
       action: "RemovePermission",
     });
-    await resp.body?.cancel();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async setEndpointAttributes(
@@ -576,7 +576,7 @@ export class SNS {
       opts, body,
       action: "SetEndpointAttributes",
     });
-    await resp.body?.cancel();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async setPlatformApplicationAttributes(
@@ -591,7 +591,7 @@ export class SNS {
       opts, body,
       action: "SetPlatformApplicationAttributes",
     });
-    await resp.body?.cancel();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async setSMSAttributes(
@@ -605,7 +605,7 @@ export class SNS {
       opts, body,
       action: "SetSMSAttributes",
     });
-    await resp.body?.cancel();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async setSubscriptionAttributes(
@@ -621,7 +621,7 @@ export class SNS {
       opts, body,
       action: "SetSubscriptionAttributes",
     });
-    await resp.body?.cancel();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async setTopicAttributes(
@@ -637,7 +637,7 @@ export class SNS {
       opts, body,
       action: "SetTopicAttributes",
     });
-    await resp.body?.cancel();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async subscribe(
@@ -673,7 +673,7 @@ export class SNS {
       opts, body,
       action: "TagResource",
     });
-    await resp.body?.cancel();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async unsubscribe(
@@ -687,7 +687,7 @@ export class SNS {
       opts, body,
       action: "Unsubscribe",
     });
-    await resp.body?.cancel();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async untagResource(
@@ -702,7 +702,7 @@ export class SNS {
       opts, body,
       action: "UntagResource",
     });
-    await resp.body?.cancel();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async verifySMSSandboxPhoneNumber(
@@ -717,7 +717,7 @@ export class SNS {
       opts, body,
       action: "VerifySMSSandboxPhoneNumber",
     });
-    await resp.body?.cancel();
+    await resp.arrayBuffer(); // consume body without use
   }
 
 }

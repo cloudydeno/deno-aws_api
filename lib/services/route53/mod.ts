@@ -99,7 +99,7 @@ export class Route53 {
       action: "ChangeTagsForResource",
       requestUri: cmnP.encodePath`/2013-04-01/tags/${params["ResourceType"]}/${params["ResourceId"]}`,
     });
-    await resp.body?.cancel();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async createHealthCheck(
@@ -375,7 +375,7 @@ export class Route53 {
       method: "DELETE",
       requestUri: cmnP.encodePath`/2013-04-01/healthcheck/${params["HealthCheckId"]}`,
     });
-    await resp.body?.cancel();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteHostedZone(
@@ -423,7 +423,7 @@ export class Route53 {
       method: "DELETE",
       requestUri: cmnP.encodePath`/2013-04-01/queryloggingconfig/${params["Id"]}`,
     });
-    await resp.body?.cancel();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteReusableDelegationSet(
@@ -437,7 +437,7 @@ export class Route53 {
       method: "DELETE",
       requestUri: cmnP.encodePath`/2013-04-01/delegationset/${params["Id"]}`,
     });
-    await resp.body?.cancel();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteTrafficPolicy(
@@ -451,7 +451,7 @@ export class Route53 {
       method: "DELETE",
       requestUri: cmnP.encodePath`/2013-04-01/trafficpolicy/${params["Id"]}/${params["Version"].toString()}`,
     });
-    await resp.body?.cancel();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteTrafficPolicyInstance(
@@ -465,7 +465,7 @@ export class Route53 {
       method: "DELETE",
       requestUri: cmnP.encodePath`/2013-04-01/trafficpolicyinstance/${params["Id"]}`,
     });
-    await resp.body?.cancel();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteVPCAssociationAuthorization(
@@ -483,7 +483,7 @@ export class Route53 {
       action: "DeleteVPCAssociationAuthorization",
       requestUri: cmnP.encodePath`/2013-04-01/hostedzone/${params["HostedZoneId"]}/deauthorizevpcassociation`,
     });
-    await resp.body?.cancel();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async disableHostedZoneDNSSEC(

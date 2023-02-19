@@ -47,7 +47,7 @@ export class SQS {
       opts, body,
       action: "AddPermission",
     });
-    await resp.body?.cancel();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async changeMessageVisibility(
@@ -63,7 +63,7 @@ export class SQS {
       opts, body,
       action: "ChangeMessageVisibility",
     });
-    await resp.body?.cancel();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async changeMessageVisibilityBatch(
@@ -116,7 +116,7 @@ export class SQS {
       opts, body,
       action: "DeleteMessage",
     });
-    await resp.body?.cancel();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteMessageBatch(
@@ -149,7 +149,7 @@ export class SQS {
       opts, body,
       action: "DeleteQueue",
     });
-    await resp.body?.cancel();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async getQueueAttributes(
@@ -260,7 +260,7 @@ export class SQS {
       opts, body,
       action: "PurgeQueue",
     });
-    await resp.body?.cancel();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async receiveMessage(
@@ -298,7 +298,7 @@ export class SQS {
       opts, body,
       action: "RemovePermission",
     });
-    await resp.body?.cancel();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async sendMessage(
@@ -355,7 +355,7 @@ export class SQS {
       opts, body,
       action: "SetQueueAttributes",
     });
-    await resp.body?.cancel();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async tagQueue(
@@ -370,7 +370,7 @@ export class SQS {
       opts, body,
       action: "TagQueue",
     });
-    await resp.body?.cancel();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async untagQueue(
@@ -385,7 +385,7 @@ export class SQS {
       opts, body,
       action: "UntagQueue",
     });
-    await resp.body?.cancel();
+    await resp.arrayBuffer(); // consume body without use
   }
 
 }

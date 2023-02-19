@@ -45,7 +45,7 @@ export class Kinesis {
       opts, body,
       action: "AddTagsToStream",
     });
-    await resp.body?.cancel();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async createStream(
@@ -61,7 +61,7 @@ export class Kinesis {
       opts, body,
       action: "CreateStream",
     });
-    await resp.body?.cancel();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async decreaseStreamRetentionPeriod(
@@ -76,7 +76,7 @@ export class Kinesis {
       opts, body,
       action: "DecreaseStreamRetentionPeriod",
     });
-    await resp.body?.cancel();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteStream(
@@ -91,7 +91,7 @@ export class Kinesis {
       opts, body,
       action: "DeleteStream",
     });
-    await resp.body?.cancel();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deregisterStreamConsumer(
@@ -107,7 +107,7 @@ export class Kinesis {
       opts, body,
       action: "DeregisterStreamConsumer",
     });
-    await resp.body?.cancel();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async describeLimits(
@@ -293,7 +293,7 @@ export class Kinesis {
       opts, body,
       action: "IncreaseStreamRetentionPeriod",
     });
-    await resp.body?.cancel();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async listShards(
@@ -400,7 +400,7 @@ export class Kinesis {
       opts, body,
       action: "MergeShards",
     });
-    await resp.body?.cancel();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async putRecord(
@@ -484,7 +484,7 @@ export class Kinesis {
       opts, body,
       action: "RemoveTagsFromStream",
     });
-    await resp.body?.cancel();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async splitShard(
@@ -500,7 +500,7 @@ export class Kinesis {
       opts, body,
       action: "SplitShard",
     });
-    await resp.body?.cancel();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async startStreamEncryption(
@@ -516,7 +516,7 @@ export class Kinesis {
       opts, body,
       action: "StartStreamEncryption",
     });
-    await resp.body?.cancel();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async stopStreamEncryption(
@@ -532,7 +532,7 @@ export class Kinesis {
       opts, body,
       action: "StopStreamEncryption",
     });
-    await resp.body?.cancel();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async updateShardCount(
@@ -570,7 +570,7 @@ export class Kinesis {
       opts, body,
       action: "UpdateStreamMode",
     });
-    await resp.body?.cancel();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   // Resource State Waiters

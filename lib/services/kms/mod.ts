@@ -60,7 +60,7 @@ export class KMS {
       opts, body,
       action: "ConnectCustomKeyStore",
     });
-    await resp.body?.cancel();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async createAlias(
@@ -75,7 +75,7 @@ export class KMS {
       opts, body,
       action: "CreateAlias",
     });
-    await resp.body?.cancel();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async createCustomKeyStore(
@@ -190,7 +190,7 @@ export class KMS {
       opts, body,
       action: "DeleteAlias",
     });
-    await resp.body?.cancel();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteCustomKeyStore(
@@ -204,7 +204,7 @@ export class KMS {
       opts, body,
       action: "DeleteCustomKeyStore",
     });
-    await resp.body?.cancel();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async deleteImportedKeyMaterial(
@@ -218,7 +218,7 @@ export class KMS {
       opts, body,
       action: "DeleteImportedKeyMaterial",
     });
-    await resp.body?.cancel();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async describeCustomKeyStores(
@@ -276,7 +276,7 @@ export class KMS {
       opts, body,
       action: "DisableKey",
     });
-    await resp.body?.cancel();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async disableKeyRotation(
@@ -290,7 +290,7 @@ export class KMS {
       opts, body,
       action: "DisableKeyRotation",
     });
-    await resp.body?.cancel();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async disconnectCustomKeyStore(
@@ -304,7 +304,7 @@ export class KMS {
       opts, body,
       action: "DisconnectCustomKeyStore",
     });
-    await resp.body?.cancel();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async enableKey(
@@ -318,7 +318,7 @@ export class KMS {
       opts, body,
       action: "EnableKey",
     });
-    await resp.body?.cancel();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async enableKeyRotation(
@@ -332,7 +332,7 @@ export class KMS {
       opts, body,
       action: "EnableKeyRotation",
     });
-    await resp.body?.cancel();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async encrypt(
@@ -584,7 +584,7 @@ export class KMS {
       opts, body,
       action: "ImportKeyMaterial",
     });
-    await resp.body?.cancel();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async listAliases(
@@ -740,7 +740,7 @@ export class KMS {
       opts, body,
       action: "PutKeyPolicy",
     });
-    await resp.body?.cancel();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async reEncrypt(
@@ -812,7 +812,7 @@ export class KMS {
       opts, body,
       action: "RetireGrant",
     });
-    await resp.body?.cancel();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async revokeGrant(
@@ -827,7 +827,7 @@ export class KMS {
       opts, body,
       action: "RevokeGrant",
     });
-    await resp.body?.cancel();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async scheduleKeyDeletion(
@@ -890,7 +890,7 @@ export class KMS {
       opts, body,
       action: "TagResource",
     });
-    await resp.body?.cancel();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async untagResource(
@@ -905,7 +905,7 @@ export class KMS {
       opts, body,
       action: "UntagResource",
     });
-    await resp.body?.cancel();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async updateAlias(
@@ -920,7 +920,7 @@ export class KMS {
       opts, body,
       action: "UpdateAlias",
     });
-    await resp.body?.cancel();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async updateCustomKeyStore(
@@ -937,7 +937,7 @@ export class KMS {
       opts, body,
       action: "UpdateCustomKeyStore",
     });
-    await resp.body?.cancel();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async updateKeyDescription(
@@ -952,7 +952,7 @@ export class KMS {
       opts, body,
       action: "UpdateKeyDescription",
     });
-    await resp.body?.cancel();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async updatePrimaryRegion(
@@ -967,7 +967,7 @@ export class KMS {
       opts, body,
       action: "UpdatePrimaryRegion",
     });
-    await resp.body?.cancel();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async verify(

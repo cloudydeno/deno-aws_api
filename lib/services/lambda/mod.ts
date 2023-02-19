@@ -821,7 +821,7 @@ export class Lambda {
       FunctionError: resp.headers.get("X-Amz-Function-Error"),
       LogResult: resp.headers.get("X-Amz-Log-Result"),
       ExecutedVersion: resp.headers.get("X-Amz-Executed-Version"),
-      Payload: new Uint8Array(await resp.arrayBuffer()),
+      Payload: new Uint8Array(await resp.arrayBuffer()), // TODO: maybe allow proper body streaming,
     };
   }
 

@@ -843,7 +843,7 @@ export class S3 {
       method: "GET",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?policy`,
     });
-    await resp.body?.cancel();
+    await resp.arrayBuffer(); // consume body without use
     return {
     };
   }
@@ -1024,7 +1024,7 @@ export class S3 {
       ObjectLockMode: cmnP.readEnum<s.ObjectLockMode>(resp.headers.get("x-amz-object-lock-mode")),
       ObjectLockRetainUntilDate: cmnP.readTimestamp(resp.headers.get("x-amz-object-lock-retain-until-date")),
       ObjectLockLegalHoldStatus: cmnP.readEnum<s.ObjectLockLegalHoldStatus>(resp.headers.get("x-amz-object-lock-legal-hold")),
-      Body: resp.body,
+      Body: new Uint8Array(await resp.arrayBuffer()), // TODO: maybe allow proper body streaming,
     };
   }
 
@@ -1152,7 +1152,7 @@ export class S3 {
     });
     return {
       RequestCharged: cmnP.readEnum<s.RequestCharged>(resp.headers.get("x-amz-request-charged")),
-      Body: resp.body,
+      Body: new Uint8Array(await resp.arrayBuffer()), // TODO: maybe allow proper body streaming,
     };
   }
 
@@ -1186,7 +1186,7 @@ export class S3 {
       method: "HEAD",
       requestUri: cmnP.encodePath`/${params["Bucket"]}`,
     });
-    await resp.body?.cancel();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async headObject(
@@ -1546,7 +1546,7 @@ export class S3 {
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?accelerate`,
     });
-    await resp.body?.cancel();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async putBucketAcl(
@@ -1576,7 +1576,7 @@ export class S3 {
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?acl`,
     });
-    await resp.body?.cancel();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async putBucketAnalyticsConfiguration(
@@ -1602,7 +1602,7 @@ export class S3 {
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?analytics`,
     });
-    await resp.body?.cancel();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async putBucketCors(
@@ -1625,7 +1625,7 @@ export class S3 {
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?cors`,
     });
-    await resp.body?.cancel();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async putBucketEncryption(
@@ -1648,7 +1648,7 @@ export class S3 {
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?encryption`,
     });
-    await resp.body?.cancel();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async putBucketIntelligentTieringConfiguration(
@@ -1673,7 +1673,7 @@ export class S3 {
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?intelligent-tiering`,
     });
-    await resp.body?.cancel();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async putBucketInventoryConfiguration(
@@ -1703,7 +1703,7 @@ export class S3 {
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?inventory`,
     });
-    await resp.body?.cancel();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async putBucketLifecycle(
@@ -1726,7 +1726,7 @@ export class S3 {
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?lifecycle`,
     });
-    await resp.body?.cancel();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async putBucketLifecycleConfiguration(
@@ -1749,7 +1749,7 @@ export class S3 {
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?lifecycle`,
     });
-    await resp.body?.cancel();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async putBucketLogging(
@@ -1772,7 +1772,7 @@ export class S3 {
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?logging`,
     });
-    await resp.body?.cancel();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async putBucketMetricsConfiguration(
@@ -1797,7 +1797,7 @@ export class S3 {
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?metrics`,
     });
-    await resp.body?.cancel();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async putBucketNotification(
@@ -1822,7 +1822,7 @@ export class S3 {
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?notification`,
     });
-    await resp.body?.cancel();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async putBucketNotificationConfiguration(
@@ -1848,7 +1848,7 @@ export class S3 {
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?notification`,
     });
-    await resp.body?.cancel();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async putBucketOwnershipControls(
@@ -1871,7 +1871,7 @@ export class S3 {
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?ownershipControls`,
     });
-    await resp.body?.cancel();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async putBucketPolicy(
@@ -1889,7 +1889,7 @@ export class S3 {
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?policy`,
     });
-    await resp.body?.cancel();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async putBucketReplication(
@@ -1914,7 +1914,7 @@ export class S3 {
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?replication`,
     });
-    await resp.body?.cancel();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async putBucketRequestPayment(
@@ -1937,7 +1937,7 @@ export class S3 {
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?requestPayment`,
     });
-    await resp.body?.cancel();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async putBucketTagging(
@@ -1985,7 +1985,7 @@ export class S3 {
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?versioning`,
     });
-    await resp.body?.cancel();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async putBucketWebsite(
@@ -2011,7 +2011,7 @@ export class S3 {
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?website`,
     });
-    await resp.body?.cancel();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async putObject(
@@ -2249,7 +2249,7 @@ export class S3 {
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?publicAccessBlock`,
     });
-    await resp.body?.cancel();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   async restoreObject(
@@ -2421,7 +2421,7 @@ export class S3 {
       requestUri: "/WriteGetObjectResponse",
       hostPrefix: `${params.RequestRoute}.`,
     });
-    await resp.body?.cancel();
+    await resp.arrayBuffer(); // consume body without use
   }
 
   // Resource State Waiters
