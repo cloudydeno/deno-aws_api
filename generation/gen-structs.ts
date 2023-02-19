@@ -13,6 +13,7 @@ export class StructEmitter {
     private namePrefix: string = '',
     private docMode: 'none' | 'short' | 'full',
     private alwaysReqLists: boolean,
+    private streamingResponses: boolean,
   ) {}
 
   generateStructsTypescript(including: ('iface' | 'mapping')[]): string {
@@ -76,7 +77,7 @@ export class StructEmitter {
               || (reqLists && (innerShape.spec.type === 'list' || innerShape.spec.type === 'map'))
               || spec.location === 'uri';
             // Always supply a discoverability docstring for streaming response bodies
-            const isBodyStream = !shape.tags.has('input') && innerShape.spec.type == 'blob' && (!!spec.streaming || !!innerShape.spec.streaming);
+            const isBodyStream = this.streamingResponses && !shape.tags.has('input') && innerShape.spec.type == 'blob' && (spec.streaming || innerShape.spec.streaming);
             let doc = (this.docMode != 'none' && spec.documentation) ? `${genDocsComment(spec.documentation, '  ', this.docMode)}\n` : '';
             if (!doc && isBodyStream) doc = '  /** To get this stream as a buffer, use `new Response(...).arrayBuffer()` or related functions. */\n';
             // Emit the property
@@ -148,12 +149,20 @@ export class StructEmitter {
       case 'timestamp':
         return 'Date | number';
       case 'blob':
-        if (opts.tags?.has('input')) {
-          // if (opts.isBodyStream) throw new Error(`TODO: streaming inputs? (${shape.name})`);
-          return 'Uint8Array | string'; // used for inputs, so let's accept a union
+        if (this.streamingResponses) {
+          if (opts.tags?.has('input')) {
+            // if (opts.isBodyStream) throw new Error(`TODO: streaming inputs? (${shape.name})`);
+            return 'Uint8Array | string'; // used for inputs, so let's accept a union
+          }
+          if (opts.isBodyStream) return 'ReadableStream<Uint8Array>';
+          return 'Uint8Array'; // only used for outputs, we will always give bytes
+        } else {
+          // Legacy logic for codegen v0.3 and earlier
+          if (opts.tags?.has('output') && !opts.tags?.has('input')) {
+            return 'Uint8Array';
+          }
+          return 'Uint8Array | string';
         }
-        if (opts.isBodyStream) return 'ReadableStream<Uint8Array>';
-        return 'Uint8Array'; // only used for outputs, we will always give bytes
       default:
         console.log('TODO:', shape);
         throw new Error(`TODO: unimpl shape type ${(shape as any).spec.type}`);
