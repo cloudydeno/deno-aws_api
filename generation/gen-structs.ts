@@ -75,7 +75,11 @@ export class StructEmitter {
             const isRequired = required.has(key.toLowerCase())
               || (reqLists && (innerShape.spec.type === 'list' || innerShape.spec.type === 'map'))
               || spec.location === 'uri';
-            const doc = (this.docMode != 'none' && spec.documentation) ? `${genDocsComment(spec.documentation, '  ', this.docMode)}\n` : '';
+            // Always supply a discoverability docstring for streaming response bodies
+            const isBodyStream = !shape.tags?.has('input') && innerShape.spec.type == 'blob' && innerShape.spec.streaming;
+            let doc = (this.docMode != 'none' && spec.documentation) ? `${genDocsComment(spec.documentation, '  ', this.docMode)}\n` : '';
+            if (!doc && isBodyStream) doc = '  /** To get this stream as a buffer, use `new Response(...).arrayBuffer()` or related functions. */\n';
+            // Emit the property
             return `${doc}  ${key}${isRequired ? '' : '?'}: ${this.specifyShapeType(innerShape, {isJson: spec.jsonvalue, tags: shape.tags})}${isRequired ? '' : ' | null'};`;
           }),
         '}'].join('\n');
@@ -144,12 +148,14 @@ export class StructEmitter {
       case 'timestamp':
         return 'Date | number';
       case 'blob':
-        if (opts.tags?.has('output') && !opts.tags?.has('input')) {
-          return 'Uint8Array'; // TODO: better body-handling interface
+        if (opts.tags?.has('input')) {
+          // if (shape.spec.streaming) throw new Error(`TODO: streaming inputs? (Lambda has one, S3 does not)`);
+          return 'Uint8Array | string'; // used for inputs, so let's accept a union
         }
-        return 'Uint8Array | string'; // TODO
+        if (shape.spec.streaming) return 'ReadableStream<Uint8Array>';
+        return 'Uint8Array'; // only used for outputs, we will always give bytes
       default:
-        console.log(shape);
+        console.log('TODO:', shape);
         throw new Error(`TODO: unimpl shape type ${(shape as any).spec.type}`);
     }
   }
