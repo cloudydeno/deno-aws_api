@@ -76,5 +76,5 @@ export function runWithMetricContext<T>(func: () => T): T {
   return asyncLocalStorage.run(new MetricContext(), func);
 }
 export function getMetricContext(): MetricContext {
-  return asyncLocalStorage.getStore();
+  return asyncLocalStorage.getStore() ?? new MetricContext();
 }

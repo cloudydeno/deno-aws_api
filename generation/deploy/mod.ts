@@ -45,17 +45,23 @@ const routeMap = new Map([
 
 async function handleRequest(request: Request): Promise<Response> {
   const ctx = getMetricContext();
-  const reqs = ctx?.withCounter('http.server.requests');
-  reqs?.incr();
-  reqs?.tags.push(`http_method:${request.method}`);
+  const reqs = ctx.withCounter('http.server.requests', [
+    `http_method:${request.method}`,
+    `http_ua_class:${request.headers.get('user-agent')?.split('/')[0]}`,
+  ]);
+  reqs.incr();
+
   const startTime = performance.now();
   try {
+
     const resp = await routeRequest(request).catch(ResponseError);
-    reqs?.tags.push(`http_status:${resp.status}`);
+    reqs.tags.push(`http_status:${resp.status}`);
     return resp;
+
   } finally {
-    ctx?.setGauge('http.server.latency_ms', performance.now() - startTime, reqs?.tags);
-    ctx?.flushMetrics().catch(err => {
+    ctx.setGauge('http.server.latency_ms', performance.now() - startTime, reqs.tags);
+
+    ctx.flushMetrics().catch(err => {
       console.error(`FAILED to flush metrics!`);
       console.error((err as Error).message ?? err);
     });
