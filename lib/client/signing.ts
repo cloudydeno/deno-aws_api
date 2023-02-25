@@ -118,6 +118,15 @@ export class AWSSignerV4 implements Signer {
     );
   }
 
+  /**
+   * Generate a "pre-signed" URL.
+   * Generally used to create short-lived links to private S3 objects.
+   *
+   *     const url = await signer.presign('s3', {
+   *       method: 'GET',
+   *       url: 'https://my-bucket.s3.amazonaws.com/my-key',
+   *     });
+   */
   public async presign(
     service: string,
     props: {
