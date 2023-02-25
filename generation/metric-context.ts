@@ -67,12 +67,14 @@ export class MetricContext {
 
 }
 
-import { AsyncLocalStorage } from "node:async_hooks";
-const asyncLocalStorage = new AsyncLocalStorage<MetricContext>();
+// deno 1.31 adds this, with a generic type parameter even
+// import { AsyncLocalStorage } from "node:async_hooks";
+import { AsyncLocalStorage } from "https://deno.land/std@0.177.0/node/async_hooks.ts";
+const asyncLocalStorage = new AsyncLocalStorage();
 
-export function runWithMetricContext<T>(func: () => T) {
+export function runWithMetricContext<T>(func: () => T): T {
   return asyncLocalStorage.run(new MetricContext(), func);
 }
-export function getMetricContext() {
+export function getMetricContext(): MetricContext {
   return asyncLocalStorage.getStore();
 }
