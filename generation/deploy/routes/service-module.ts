@@ -1,7 +1,7 @@
 import { SDK } from "../sdk-datasource.ts";
 import { Generations, ModuleGenerator } from "../generations.ts";
 import { ClientError, escapeTemplate, getModuleIdentity, jsonTemplate, Pattern, ResponseRedirect, ResponseText, RouteHandler, acceptsHtml } from "../helpers.ts";
-import { getMetricContext } from "../../metric-context.ts";
+import { getMetricContext } from "../metric-context.ts";
 import { Api, Examples, Pagination, ServiceMetadata, Waiters } from "../../sdk-schema.ts";
 
 const serviceFilePattern = `:service([^/.@]+){@:svcVer(20[0-9-]+)}?.ts`;

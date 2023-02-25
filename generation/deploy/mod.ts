@@ -10,7 +10,7 @@ import { routeMap as serviceListingRoutes } from "./routes/service-listing.ts";
 import { routeMap as redirectRoutes } from './routes/redirects.ts';
 import { routeMap as completionRoutes } from './routes/completion-api.ts';
 import { routeMap as robotsRoutes } from './routes/robots.ts';
-import { getMetricContext, runWithMetricContext } from "../metric-context.ts";
+import { getMetricContext, runWithMetricContext } from "./metric-context.ts";
 
 const ga = createReporter();
 

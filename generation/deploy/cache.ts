@@ -1,6 +1,6 @@
 import { inMemoryCache } from "https://deno.land/x/httpcache@0.1.2/in_memory.ts";
 import type { Cache } from "https://deno.land/x/httpcache@0.1.2/mod.ts";
-import { getMetricContext } from "../metric-context.ts";
+import { getMetricContext } from "./metric-context.ts";
 import { makeS3Client, s3Cache } from "./cache-s3.ts";
 
 const s3Api = makeS3Client({
