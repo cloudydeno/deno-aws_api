@@ -9,7 +9,7 @@ const host_name = [
 class CountMetric {
   constructor(
     private readonly point: { value: number; },
-    public readonly tags = new Array<string>,
+    public readonly tags = new Array<string>(),
   ) {}
   incr() { this.point.value++; }
   decr() { this.point.value--; }
@@ -19,7 +19,7 @@ class CountMetric {
 
 export class MetricContext {
 
-  metrics = new Array<MetricSubmission>;
+  metrics = new Array<MetricSubmission>();
   metricTags = new URLSearchParams; // used for duplicatable key/val
 
   incrementCounter(name: string, value: number, tags: string[] = []) {
