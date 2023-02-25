@@ -132,6 +132,8 @@ const ec2_europe = new ApiFactory({
     thanks for the report!
   * New S3 managed upload module available in `/extras/s3-upload.ts`.
     Fixes [#30](https://github.com/cloudydeno/deno-aws_api/issues/30)
+  * Add an implementation of S3 presigning in `/extras/s3-presign.ts`.
+    Fixes [#29](https://github.com/cloudydeno/deno-aws_api/issues/29)
 
 * `v0.7.0` on `2022-05-15`: Client-only changes
   * Add by-default support for task-specific IAM credentials inside Amazon ECS.

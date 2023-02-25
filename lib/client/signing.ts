@@ -18,24 +18,6 @@ function toDateStamp(date: Date) {
 const encoder = new TextEncoder();
 const AWS4 = encoder.encode("AWS4");
 
-export async function getSignatureKey(
-  key: string,
-  dateStamp: string,
-  region: string,
-  service: string,
-) {
-  const keyBytes = encoder.encode(key);
-  const paddedKey = new Uint8Array(4 + keyBytes.byteLength);
-  paddedKey.set(AWS4, 0);
-  paddedKey.set(keyBytes, 4);
-
-  let mac = await hmacSha256(paddedKey, dateStamp);
-  mac = await hmacSha256(mac, region);
-  mac = await hmacSha256(mac, service);
-  mac = await hmacSha256(mac, "aws4_request");
-  return mac;
-};
-
 /**
  * This class can be used to create AWS Signature V4
  * for low-level AWS REST APIs. You can either provide
@@ -78,66 +60,51 @@ export class AWSSignerV4 implements Signer {
     service: string,
     request: Request,
   ): Promise<Request> {
+    const {awsAccessKeyId, awsSecretKey, sessionToken} = this.credentials;
+
     const date = new Date();
     const amzdate = toAmzDate(date);
     const datestamp = toDateStamp(date);
 
-    const { host, pathname, searchParams } = new URL(request.url);
-    searchParams.sort();
-    const canonicalQuerystring = searchParams.toString();
-
     const headers = new Headers(request.headers);
-
     headers.set("x-amz-date", amzdate);
-    if (this.credentials.sessionToken) {
-      headers.set("x-amz-security-token", this.credentials.sessionToken);
+    if (sessionToken) {
+      headers.set("x-amz-security-token", sessionToken);
     }
-    headers.set("host", host);
+    headers.set("host", new URL(request.url).host);
 
-    // TODO: if headers.has("x-amz-content-sha256") then use only that & passthru body as-is
-    // this is important for S3's "UNSIGNED-PAYLOAD" feature
-    const body = request.body
-      ? new Uint8Array(await request.arrayBuffer())
-      : null;
-    const payloadHash = bytesAsHex(await hashSha256(body ?? new Uint8Array()));
-    if (service === 's3') {
-      // Backblaze B2 requires this header to be in the canonicalHeaders
-      headers.set("x-amz-content-sha256", payloadHash);
+    // we can passthru the request stream if there is already a content hash header
+    let body: Uint8Array | ReadableStream<Uint8Array> | null = request.body;
+    let payloadHash = headers.get('x-amz-content-sha256') ?? '';
+    // but there probably isn't a content hash header, so let's handle that..
+    if (!payloadHash) {
+      // buffer the body:
+      body = request.body ? new Uint8Array(await request.arrayBuffer()) : null;
+      // hash it for the signature:
+      payloadHash = bytesAsHex(await hashSha256(body ?? new Uint8Array()));
+      // for the S3 API, also add the content hash header:
+      if (service === 's3') {
+        // Backblaze B2 requires this header to be in the canonicalHeaders
+        headers.set("x-amz-content-sha256", payloadHash);
+      }
     }
 
-    let canonicalHeaders = "";
-    let signedHeaders = "";
-    for (const key of [...headers.keys()].sort()) {
-      if (unsignableHeaders.has(key.toLowerCase())) continue;
-      canonicalHeaders += `${key.toLowerCase()}:${headers.get(key)}\n`;
-      signedHeaders += `${key.toLowerCase()};`;
-    }
-    signedHeaders = signedHeaders.substring(0, signedHeaders.length - 1);
-
-    const canonicalRequest =
-      `${request.method}\n${pathname}\n${canonicalQuerystring}\n${canonicalHeaders}\n${signedHeaders}\n${payloadHash}`;
-    const canonicalRequestDigest = bytesAsHex(await hashSha256(encoder.encode(canonicalRequest)));
+    const canonical = canonicalizeRequest(request.method, request.url, headers, payloadHash);
+    const canonicalRequestDigest = await hashSha256(encoder.encode(canonical.request));
 
     const algorithm = "AWS4-HMAC-SHA256";
-    const credentialScope =
-      `${datestamp}/${this.region}/${service}/aws4_request`;
-    const stringToSign =
-      `${algorithm}\n${amzdate}\n${credentialScope}\n${canonicalRequestDigest}`;
+    const credentialScope = `${datestamp}/${this.region}/${service}/aws4_request`;
 
-    // TODO: this can be cached
-    const signingKey = await getSignatureKey(
-      this.credentials.awsSecretKey,
-      datestamp,
-      this.region,
-      service,
-    );
+    // TODO: the signingKey can be cached
+    const signingKey = await getSignatureKey(awsSecretKey, datestamp, this.region, service);
+    const signature = await hmacSha256(signingKey,
+      `${algorithm}\n${amzdate}\n${credentialScope}\n${bytesAsHex(canonicalRequestDigest)}`);
 
-    const signature = bytesAsHex(await hmacSha256(new Uint8Array(signingKey), stringToSign));
-
-    const authHeader =
-      `${algorithm} Credential=${this.credentials.awsAccessKeyId}/${credentialScope}, SignedHeaders=${signedHeaders}, Signature=${signature}`;
-
-    headers.set("Authorization", authHeader);
+    headers.set("Authorization", [
+      `${algorithm} Credential=${awsAccessKeyId}/${credentialScope}`,
+      `SignedHeaders=${canonical.signedHeaders}`,
+      `Signature=${bytesAsHex(signature)}`,
+    ].join(', '));
 
     return new Request(
       request.url,
@@ -150,6 +117,95 @@ export class AWSSignerV4 implements Signer {
       },
     );
   }
+
+  /**
+   * Generate a "pre-signed" URL.
+   * Generally used to create short-lived links to private S3 objects.
+   *
+   *     const url = await signer.presign('s3', {
+   *       method: 'GET',
+   *       url: 'https://my-bucket.s3.amazonaws.com/my-key',
+   *     });
+   */
+  public async presign(
+    service: string,
+    props: {
+      method?: 'GET' | 'PUT',
+      url: string,
+      expiresIn?: number,
+      signTime?: Date,
+    },
+  ) {
+    const url = new URL(props.url);
+    const date = props.signTime ?? new Date();
+    const algorithm = "AWS4-HMAC-SHA256";
+    const credentialScope = `${toDateStamp(date)}/${this.region}/${service}/aws4_request`;
+
+    url.searchParams.set('X-Amz-Algorithm', algorithm);
+    url.searchParams.set('X-Amz-Credential', `${this.credentials.awsAccessKeyId}/${credentialScope}`);
+    url.searchParams.set('X-Amz-Date', toAmzDate(date));
+    url.searchParams.set('X-Amz-Expires', `${props.expiresIn ?? 86400}`);
+    url.searchParams.set('X-Amz-SignedHeaders', 'host');
+    if (this.credentials.sessionToken) {
+      url.searchParams.set('X-Amz-Security-Token', this.credentials.sessionToken);
+    }
+
+    const headers = new Headers([['host', url.host]]);
+    const canonical = canonicalizeRequest(props.method ?? 'GET', url.toString(), headers, 'UNSIGNED-PAYLOAD');
+    const canonicalRequestDigest = await hashSha256(encoder.encode(canonical.request));
+    if (canonical.signedHeaders !== 'host') throw new Error(
+      `BUG: pre-signed headers were not just host: "${canonical.signedHeaders}"`);
+
+    // TODO: the signingKey can be cached
+    const signingKey = await getSignatureKey(this.credentials.awsSecretKey, toDateStamp(date), this.region, service);
+    const signature = await hmacSha256(signingKey,
+      `${algorithm}\n${toAmzDate(date)}\n${credentialScope}\n${bytesAsHex(canonicalRequestDigest)}`);
+
+    url.searchParams.set('X-Amz-Signature', bytesAsHex(signature));
+    return url.toString();
+  }
+}
+
+export async function getSignatureKey(
+  key: string,
+  dateStamp: string,
+  region: string,
+  service: string,
+) {
+  const keyBytes = encoder.encode(key);
+  const paddedKey = new Uint8Array(4 + keyBytes.byteLength);
+  paddedKey.set(AWS4, 0);
+  paddedKey.set(keyBytes, 4);
+
+  let mac = await hmacSha256(paddedKey, dateStamp);
+  mac = await hmacSha256(mac, region);
+  mac = await hmacSha256(mac, service);
+  mac = await hmacSha256(mac, "aws4_request");
+  return mac;
+};
+
+export function canonicalizeRequest(method: string, url: string, headers: Headers, payloadHash: string) {
+  const { pathname, searchParams } = new URL(url);
+  searchParams.sort();
+  const canonicalQuerystring = searchParams.toString();
+
+  let canonicalHeaders = "";
+  let signedHeaders = "";
+  for (const key of [...headers.keys()].sort()) {
+    if (unsignableHeaders.has(key.toLowerCase())) continue;
+    canonicalHeaders += `${key.toLowerCase()}:${headers.get(key)}\n`;
+    signedHeaders += `${key.toLowerCase()};`;
+  }
+  signedHeaders = signedHeaders.substring(0, signedHeaders.length - 1);
+
+  return {
+    signedHeaders,
+    request: [
+      method, pathname, canonicalQuerystring,
+      canonicalHeaders, signedHeaders,
+      payloadHash,
+    ].join('\n'),
+  };
 }
 
 const unsignableHeaders = new Set([
