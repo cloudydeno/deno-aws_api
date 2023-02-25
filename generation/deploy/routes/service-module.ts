@@ -98,8 +98,9 @@ export async function renderServiceModule(props: {
     `aws_doc_mode:${props.params.get('actions') ? 'yes' : 'no'}`,
   ];
   ctx.incrementCounter('aws_api_codegen.invocations', 1, tags);
-  ctx.setGauge('aws_api_codegen.latency_ms', dGen - dStart, [...tags, `codegen_phase:fetch`]);
-  ctx.setGauge('aws_api_codegen.latency_ms', dEnd - dGen, [...tags, `codegen_phase:generate`]);
+  ctx.incrementCounter('aws_api_codegen.module_length', apiText.length, tags);
+  ctx.setGauge('aws_api_codegen.latency.ms', dGen - dStart, [...tags, `codegen_phase:fetch`]);
+  ctx.setGauge('aws_api_codegen.latency.ms', dEnd - dGen, [...tags, `codegen_phase:generate`]);
 
   if (props.wantsHtml) {
     const sdk = new SDK(sdkVersion);
@@ -161,12 +162,7 @@ ${apiText}
 
 function generateApiModule(opts: {
   module: ServiceMetadata,
-  spec: {
-    normal: Api;
-    paginators: Pagination;
-    waiters2: Waiters;
-    examples: Examples;
-  },
+  spec: ApiBundle,
   generation: ModuleGenerator,
   generationId: string;
   sdkVersion: string,
