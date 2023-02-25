@@ -11,7 +11,7 @@ export class SDK {
   }>> {
     // this returns only the most recent page of tags
     // the full list, if we want it, is at /git/refs/tags
-    const resp = await cachedFetch('mutable', `https://api.github.com/repos/aws/aws-sdk-js/tags`);
+    const resp = await cachedFetch('mutable', 'sdk-tags', `https://api.github.com/repos/aws/aws-sdk-js/tags`);
     // TODO: accept: application/vnd.github.v3+json
     if (resp.status !== 200) throw new Error(
       `HTTP ${resp.status} on /tags`);
@@ -26,7 +26,7 @@ export class SDK {
   ) {}
 
   async getServiceList(): Promise<Record<string,Schema.ServiceMetadata>> {
-    const resp = await cachedFetch('immutable', `https://raw.githubusercontent.com/aws/aws-sdk-js/${this.sdkVersion}/apis/metadata.json`);
+    const resp = await cachedFetch('immutable', 'sdk-metadata', `https://raw.githubusercontent.com/aws/aws-sdk-js/${this.sdkVersion}/apis/metadata.json`);
     if (resp.status !== 200) throw new Error(
       `HTTP ${resp.status} on /apis/metadata.json`);
     return await resp.json();
@@ -35,12 +35,12 @@ export class SDK {
   async getSpecList() {
     // TODO: we can cache a calculated form better
 
-    const root = await cachedFetch('immutable', `https://api.github.com/repos/aws/aws-sdk-js/git/trees/${this.sdkVersion}`).then(x => x.json()) as GitTree;
+    const root = await cachedFetch('immutable', 'sdk-tree', `https://api.github.com/repos/aws/aws-sdk-js/git/trees/${this.sdkVersion}`).then(x => x.json()) as GitTree;
     const apisTree = root.tree.find(x => x.path === 'apis');
     if (!apisTree) throw new Error(
       `No apis/ folder found in SDK root`);
 
-    const apis = await cachedFetch('immutable', `https://api.github.com/repos/aws/aws-sdk-js/git/trees/${apisTree.sha}`).then(x => x.json()) as GitTree;
+    const apis = await cachedFetch('immutable', 'sdk-subtree', `https://api.github.com/repos/aws/aws-sdk-js/git/trees/${apisTree.sha}`).then(x => x.json()) as GitTree;
     return apis.tree.filter(x => x.path.endsWith(specSuffix)).map(x => x.path.slice(0, -specSuffix.length));
   }
   async getLatestApiVersion(modId: string) {
@@ -71,7 +71,7 @@ export class SDK {
   ) {
     const jsonPath = `apis/${apiId}-${apiVersion}.${suffix}.json`;
 
-    const resp = await cachedFetch('immutable',
+    const resp = await cachedFetch('immutable', `api-spec-${suffix}`,
       `https://raw.githubusercontent.com/aws/aws-sdk-js/${this.sdkVersion}/${jsonPath}`);
 
     if (resp.status === 404 && policy === 'optional') {

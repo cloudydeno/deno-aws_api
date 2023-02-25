@@ -1,6 +1,8 @@
 import { SDK } from "../sdk-datasource.ts";
 import { Generations, ModuleGenerator } from "../generations.ts";
 import { ClientError, escapeTemplate, getModuleIdentity, jsonTemplate, Pattern, ResponseRedirect, ResponseText, RouteHandler, acceptsHtml } from "../helpers.ts";
+import { getMetricContext } from "../metric-context.ts";
+import { Api, Examples, Pagination, ServiceMetadata, Waiters } from "../../sdk-schema.ts";
 
 const serviceFilePattern = `:service([^/.@]+){@:svcVer(20[0-9-]+)}?.ts`;
 const handleRequest: RouteHandler = ctx => {
@@ -16,6 +18,35 @@ export const routeMap = new Map<string | URLPattern, RouteHandler>([
   [Pattern(`/:genVer(v[0-9.]+)/sdk@:sdkVer(v2\\.[0-9.]+)/${serviceFilePattern}`), handleRequest],
   [Pattern(`/:genVer(v[0-9.]+)/services/${serviceFilePattern}`), handleRequest],
 ]);
+
+type ApiBundle = {
+  normal: Api;
+  paginators: Pagination;
+  waiters2: Waiters;
+  examples: Examples;
+}
+
+async function loadApiDefinitions(props: {
+  sdkVersion: string;
+  service: string;
+  apiVersion: string;
+}) {
+  const sdk = new SDK(props.sdkVersion);
+
+  const serviceList = await sdk.getServiceList();
+  const module = serviceList[props.service];
+  if (!module) throw new ClientError(404, jsonTemplate
+    `API ${props.service} not found. Check the API listing for exact spelling.`);
+
+  const spec = await sdk
+    .getApiSpecs(module.prefix || props.service, props.apiVersion, {
+      normal: 'required',
+      paginators: 'optional',
+      waiters2: 'optional',
+    });
+
+  return {module, spec};
+}
 
 export async function renderServiceModule(props: {
   genVer: string;
@@ -34,7 +65,15 @@ export async function renderServiceModule(props: {
   const apiVersion = props.svcVer || await new SDK(sdkVersion).getLatestApiVersion(props.service);
   const fullOptions = generation.withDefaults(props.params);
 
-  let apiText = await generateApiModule({
+  const dStart = performance.now();
+  const {module, spec} = await loadApiDefinitions({
+    sdkVersion,
+    apiVersion,
+    service: props.service,
+  })
+
+  const dGen = performance.now();
+  let apiText = generateApiModule({
     generation,
     generationId: props.genVer,
     sdkVersion: sdkVersion,
@@ -42,7 +81,26 @@ export async function renderServiceModule(props: {
     apiVersion: apiVersion,
     options: props.params,
     selfUrl: props.selfUrl,
+    module,
+    spec,
   });
+
+  const dEnd = performance.now();
+
+  const ctx = getMetricContext();
+  const tags = [
+    `aws_gen_ver:${props.genVer}`,
+    `aws_sdk_ver:${props.sdkVer ?? 'default'}`,
+    `aws_svc_id:${props.service}`,
+    `aws_svc_ver:${props.svcVer ?? 'latest'}`,
+    `wants_html:${props.wantsHtml}`,
+    `has_action_filter:${props.params.get('actions') ? 'yes' : 'no'}`,
+    `aws_doc_mode:${props.params.get('actions') ? 'yes' : 'no'}`,
+  ];
+  ctx.incrementCounter('aws_api_codegen.invocations', 1, tags);
+  ctx.incrementCounter('aws_api_codegen.module_length', apiText.length, tags);
+  ctx.setGauge('aws_api_codegen.latency.ms', dGen - dStart, [...tags, `codegen_phase:fetch`]);
+  ctx.setGauge('aws_api_codegen.latency.ms', dEnd - dGen, [...tags, `codegen_phase:generate`]);
 
   if (props.wantsHtml) {
     const sdk = new SDK(sdkVersion);
@@ -102,7 +160,9 @@ ${apiText}
 }
 
 
-async function generateApiModule(opts: {
+function generateApiModule(opts: {
+  module: ServiceMetadata,
+  spec: ApiBundle,
   generation: ModuleGenerator,
   generationId: string;
   sdkVersion: string,
@@ -111,8 +171,6 @@ async function generateApiModule(opts: {
   options: URLSearchParams,
   selfUrl: string,
 }) {
-  const sdk = new SDK(opts.sdkVersion);
-
   const headerChunks = new Array<string>();
   headerChunks.push(`// Generation parameters:`);
   headerChunks.push(`//   aws-sdk-js definitions from ${opts.sdkVersion}`);
@@ -126,29 +184,17 @@ async function generateApiModule(opts: {
   }
   headerChunks.push(`//   generated at: ${new Date().toISOString().split('T')[0]}`);
 
-  const serviceList = await sdk.getServiceList();
-  const module = serviceList[opts.apiId];
-  if (!module) throw new ClientError(404, jsonTemplate
-    `API ${opts.apiId} not found. Check the API listing for exact spelling.`);
-
-  const spec = await sdk
-    .getApiSpecs(module.prefix || opts.apiId, opts.apiVersion, {
-      normal: 'required',
-      paginators: 'optional',
-      waiters2: 'optional',
-    });
-
   const actionList = opts.options.get('actions')?.split(',') ?? [];
   if (actionList.length) {
-    const allOps = Object.entries(spec.normal.operations);
+    const allOps = Object.entries(opts.spec.normal.operations);
     const patternList = actionList.map(buildMatchRule);
-    spec.normal.operations = {};
+    opts.spec.normal.operations = {};
     for (const [key, op] of allOps) {
       if (patternList.some(x => x.test(key))) {
-        spec.normal.operations[key] = op;
+        opts.spec.normal.operations[key] = op;
       }
     }
-    const afterCount = Object.keys(spec.normal.operations).length;
+    const afterCount = Object.keys(opts.spec.normal.operations).length;
     headerChunks.push(`//   skipped ${allOps.length-afterCount} out of ${allOps.length} actions, leaving ${afterCount}`);
     if (afterCount == 0) throw new ClientError(400, jsonTemplate
       `No ${opts.apiId} actions matched the given filter ${opts.options.get('actions')}`);
@@ -158,12 +204,12 @@ async function generateApiModule(opts: {
     headerChunks.join('\n'),
     `// Originally served at ${opts.selfUrl}`,
     opts.generation.buildApi({
-      className: module.name,
+      className: opts.module.name,
       options: opts.options,
       apiSpecs: {
-        api: spec.normal,
-        pagers: spec.paginators,
-        waiters: spec.waiters2,
+        api: opts.spec.normal,
+        pagers: opts.spec.paginators,
+        waiters: opts.spec.waiters2,
       },
     }),
   ].join('\n\n');
