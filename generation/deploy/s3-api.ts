@@ -129,7 +129,7 @@ export class S3 {
       ObjectLockMode: cmnP.readEnum<ObjectLockMode>(resp.headers.get("x-amz-object-lock-mode")),
       ObjectLockRetainUntilDate: cmnP.readTimestamp(resp.headers.get("x-amz-object-lock-retain-until-date")),
       ObjectLockLegalHoldStatus: cmnP.readEnum<ObjectLockLegalHoldStatus>(resp.headers.get("x-amz-object-lock-legal-hold")),
-      Body: new Uint8Array(await resp.arrayBuffer()), // TODO: maybe allow proper body streaming,
+      Body: resp.body,
     };
   }
 
@@ -279,7 +279,8 @@ export interface DeleteObjectOutput {
 
 // refs: 1 - tags: named, output
 export interface GetObjectOutput {
-  Body?: Uint8Array | null;
+  /** To get this stream as a buffer, use `new Response(...).arrayBuffer()` or related functions. */
+  Body?: ReadableStream<Uint8Array> | null;
   DeleteMarker?: boolean | null;
   AcceptRanges?: string | null;
   Expiration?: string | null;

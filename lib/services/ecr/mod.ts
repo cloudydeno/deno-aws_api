@@ -886,7 +886,7 @@ export class ECR {
       opts, body,
       action: "TagResource",
     });
-    await resp.arrayBuffer(); // consume body without use
+    await resp.body?.cancel();
   }
 
   async untagResource(
@@ -901,7 +901,7 @@ export class ECR {
       opts, body,
       action: "UntagResource",
     });
-    await resp.arrayBuffer(); // consume body without use
+    await resp.body?.cancel();
   }
 
   async uploadLayerPart(

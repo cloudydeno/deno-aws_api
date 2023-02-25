@@ -26,18 +26,19 @@ export function s3Cache(
         console.log('s3 get', s3Coords(url).Key);
         const { Metadata, Body } = await s3Client.getObject(s3Coords(url));
         if (!Metadata['cache-policy']) return undefined;
+        const BodyBuffer = new Uint8Array(await new Response(Body).arrayBuffer());
 
         if (Body && Metadata['cache-policy'] === 'inline') {
-          const idx = Body.indexOf(10);
+          const idx = BodyBuffer.indexOf(10);
           return {
-            policy: JSON.parse(new TextDecoder().decode(Body.slice(0, idx))),
-            body: Body.slice(idx+1),
+            policy: JSON.parse(new TextDecoder().decode(BodyBuffer.slice(0, idx))),
+            body: BodyBuffer.slice(idx+1),
           };
         }
 
         return {
           policy: JSON.parse(Metadata['cache-policy'] || '{}'),
-          body: Body == null ? new Uint8Array(0) : Body,
+          body: BodyBuffer == null ? new Uint8Array(0) : BodyBuffer,
         };
 
       } catch (err) {

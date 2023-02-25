@@ -21,6 +21,7 @@ export interface ProtocolCodegen {
     shape: KnownShape,
     resultWrapper?: string,
     isNullBody?: boolean,
+    streamingResponses?: boolean,
   ): {
     outputParsingCode: string;
     outputVariables: string[];

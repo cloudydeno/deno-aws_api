@@ -13,6 +13,7 @@ export class StructEmitter {
     private namePrefix: string = '',
     private docMode: 'none' | 'short' | 'full',
     private alwaysReqLists: boolean,
+    private streamingResponses: boolean,
   ) {}
 
   generateStructsTypescript(including: ('iface' | 'mapping')[]): string {
@@ -75,8 +76,12 @@ export class StructEmitter {
             const isRequired = required.has(key.toLowerCase())
               || (reqLists && (innerShape.spec.type === 'list' || innerShape.spec.type === 'map'))
               || spec.location === 'uri';
-            const doc = (this.docMode != 'none' && spec.documentation) ? `${genDocsComment(spec.documentation, '  ', this.docMode)}\n` : '';
-            return `${doc}  ${key}${isRequired ? '' : '?'}: ${this.specifyShapeType(innerShape, {isJson: spec.jsonvalue, tags: shape.tags})}${isRequired ? '' : ' | null'};`;
+            // Always supply a discoverability docstring for streaming response bodies
+            const isBodyStream = this.streamingResponses && !shape.tags.has('input') && innerShape.spec.type == 'blob' && (spec.streaming || innerShape.spec.streaming);
+            let doc = (this.docMode != 'none' && spec.documentation) ? `${genDocsComment(spec.documentation, '  ', this.docMode)}\n` : '';
+            if (!doc && isBodyStream) doc = '  /** To get this stream as a buffer, use `new Response(...).arrayBuffer()` or related functions. */\n';
+            // Emit the property
+            return `${doc}  ${key}${isRequired ? '' : '?'}: ${this.specifyShapeType(innerShape, {isJson: spec.jsonvalue, tags: shape.tags, isBodyStream})}${isRequired ? '' : ' | null'};`;
           }),
         '}'].join('\n');
 
@@ -105,7 +110,7 @@ export class StructEmitter {
   }
 
   // TODO: enums as a map key type should become an object instead
-  specifyShapeType(shape: KnownShape, opts: { isDictKey?: true; isJson?: true, tags?: Set<ShapeTag> }): string {
+  specifyShapeType(shape: KnownShape, opts: { isDictKey?: true; isJson?: true, tags?: Set<ShapeTag>, isBodyStream?: boolean }): string {
     if (shape.tags.has('named') && !opts.isDictKey) {
       return this.namePrefix+shape.censoredName;
     }
@@ -144,12 +149,22 @@ export class StructEmitter {
       case 'timestamp':
         return 'Date | number';
       case 'blob':
-        if (opts.tags?.has('output') && !opts.tags?.has('input')) {
-          return 'Uint8Array'; // TODO: better body-handling interface
+        if (this.streamingResponses) {
+          if (opts.tags?.has('input')) {
+            // if (opts.isBodyStream) throw new Error(`TODO: streaming inputs? (${shape.name})`);
+            return 'Uint8Array | string'; // used for inputs, so let's accept a union
+          }
+          if (opts.isBodyStream) return 'ReadableStream<Uint8Array>';
+          return 'Uint8Array'; // only used for outputs, we will always give bytes
+        } else {
+          // Legacy logic for codegen v0.3 and earlier
+          if (opts.tags?.has('output') && !opts.tags?.has('input')) {
+            return 'Uint8Array';
+          }
+          return 'Uint8Array | string';
         }
-        return 'Uint8Array | string'; // TODO
       default:
-        console.log(shape);
+        console.log('TODO:', shape);
         throw new Error(`TODO: unimpl shape type ${(shape as any).spec.type}`);
     }
   }
