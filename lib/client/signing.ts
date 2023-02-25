@@ -18,24 +18,6 @@ function toDateStamp(date: Date) {
 const encoder = new TextEncoder();
 const AWS4 = encoder.encode("AWS4");
 
-export async function getSignatureKey(
-  key: string,
-  dateStamp: string,
-  region: string,
-  service: string,
-) {
-  const keyBytes = encoder.encode(key);
-  const paddedKey = new Uint8Array(4 + keyBytes.byteLength);
-  paddedKey.set(AWS4, 0);
-  paddedKey.set(keyBytes, 4);
-
-  let mac = await hmacSha256(paddedKey, dateStamp);
-  mac = await hmacSha256(mac, region);
-  mac = await hmacSha256(mac, service);
-  mac = await hmacSha256(mac, "aws4_request");
-  return mac;
-};
-
 /**
  * This class can be used to create AWS Signature V4
  * for low-level AWS REST APIs. You can either provide
@@ -117,7 +99,6 @@ export class AWSSignerV4 implements Signer {
     const signingKey = await getSignatureKey(awsSecretKey, datestamp, this.region, service);
     const signature = await hmacSha256(signingKey,
       `${algorithm}\n${amzdate}\n${credentialScope}\n${bytesAsHex(canonicalRequestDigest)}`);
-    console.error(`Signed request for`, service);
 
     headers.set("Authorization", [
       `${algorithm} Credential=${awsAccessKeyId}/${credentialScope}`,
@@ -136,7 +117,63 @@ export class AWSSignerV4 implements Signer {
       },
     );
   }
+
+  public async presign(
+    service: string,
+    props: {
+      method?: 'GET' | 'PUT',
+      url: string,
+      expiresIn?: number,
+      signTime?: Date,
+    },
+  ) {
+    const url = new URL(props.url);
+    const date = props.signTime ?? new Date();
+    const algorithm = "AWS4-HMAC-SHA256";
+    const credentialScope = `${toDateStamp(date)}/${this.region}/${service}/aws4_request`;
+
+    url.searchParams.set('X-Amz-Algorithm', algorithm);
+    url.searchParams.set('X-Amz-Credential', `${this.credentials.awsAccessKeyId}/${credentialScope}`);
+    url.searchParams.set('X-Amz-Date', toAmzDate(date));
+    url.searchParams.set('X-Amz-Expires', `${props.expiresIn ?? 86400}`);
+    url.searchParams.set('X-Amz-SignedHeaders', 'host');
+    if (this.credentials.sessionToken) {
+      url.searchParams.set('X-Amz-Security-Token', this.credentials.sessionToken);
+    }
+
+    const headers = new Headers([['host', url.host]]);
+    const canonical = canonicalizeRequest(props.method ?? 'GET', url.toString(), headers, 'UNSIGNED-PAYLOAD');
+    const canonicalRequestDigest = await hashSha256(encoder.encode(canonical.request));
+    if (canonical.signedHeaders !== 'host') throw new Error(
+      `BUG: pre-signed headers were not just host: "${canonical.signedHeaders}"`);
+
+    // TODO: the signingKey can be cached
+    const signingKey = await getSignatureKey(this.credentials.awsSecretKey, toDateStamp(date), this.region, service);
+    const signature = await hmacSha256(signingKey,
+      `${algorithm}\n${toAmzDate(date)}\n${credentialScope}\n${bytesAsHex(canonicalRequestDigest)}`);
+
+    url.searchParams.set('X-Amz-Signature', bytesAsHex(signature));
+    return url.toString();
+  }
 }
+
+export async function getSignatureKey(
+  key: string,
+  dateStamp: string,
+  region: string,
+  service: string,
+) {
+  const keyBytes = encoder.encode(key);
+  const paddedKey = new Uint8Array(4 + keyBytes.byteLength);
+  paddedKey.set(AWS4, 0);
+  paddedKey.set(keyBytes, 4);
+
+  let mac = await hmacSha256(paddedKey, dateStamp);
+  mac = await hmacSha256(mac, region);
+  mac = await hmacSha256(mac, service);
+  mac = await hmacSha256(mac, "aws4_request");
+  return mac;
+};
 
 export function canonicalizeRequest(method: string, url: string, headers: Headers, payloadHash: string) {
   const { pathname, searchParams } = new URL(url);
