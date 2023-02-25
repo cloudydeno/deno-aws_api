@@ -121,13 +121,18 @@ const ec2_europe = new ApiFactory({
 ## Changelog
 
 * `v0.8.0` on `TBD`: codegen `TBD`
-  * Use Deno's `/std@0.177.0` (except for MD5)
+  * Use Deno's `/std@0.177.0` (except for MD5).
+    Minimum tested Deno is now `v1.22`
+  * **Breaking change**: Return `ReadableStream<Uint8Array>` from S3 `GetObject` and similar actions.
+    Fixes [#38](https://github.com/cloudydeno/deno-aws_api/issues/38)
+  * Refactor endpoint logic with newer IPv6
   * Refactor signing logic to use SubtleCrypto for SHA-256
-  * Minimum tested Deno is now `v1.22`
-  * New S3 managed upload module available in `/extras/s3-upload.ts`.
   * Fix reading user credential files on Windows.
     Fixes [#40](https://github.com/cloudydeno/deno-aws_api/issues/40) -
     thanks for the report!
+  * New S3 managed upload module available in `/extras/s3-upload.ts`.
+    Fixes [#30](https://github.com/cloudydeno/deno-aws_api/issues/30)
+
 * `v0.7.0` on `2022-05-15`: Client-only changes
   * Add by-default support for task-specific IAM credentials inside Amazon ECS.
     See also [IAM roles for tasks](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-iam-roles.html).

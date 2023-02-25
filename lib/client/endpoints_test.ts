@@ -29,7 +29,7 @@ Deno.test('aws ec2 / opportunistic dualstack', async () => {
     requestPath: '/path',
     region: 'us-east-2',
     apiMetadata: apiMetadata.ec2,
-  }).url.toString(), 'https://api.ec2.us-east-2.aws/path');
+  }).url.toString(), 'https://ec2.us-east-2.api.aws/path');
 
   assertEquals(resolver.resolveUrl({
     requestPath: '/path',
@@ -40,7 +40,7 @@ Deno.test('aws ec2 / opportunistic dualstack', async () => {
 
 Deno.test('aws ec2 / allow disabling dualstack', async () => {
   const resolver = new AwsEndpointResolver({
-    useDualstack: false,
+    upgradeEndpoints: false,
   });
 
   assertEquals(resolver.resolveUrl({
