@@ -42,7 +42,8 @@ export class ModuleGenerator {
 
     const codeGen = this.codegenConstr(opts.apiSpecs, fullOptions);
     return codeGen.generateTypescript(opts.className)
-      .replaceAll(/from "https:\/\/deno.land\/std@[0-9.]+\//g, `from "${this.stdModRoot}/`)
+      // TODO: intentionally excluding md5 imports, as it was removed from std later on
+      .replaceAll(/from "https:\/\/deno.land\/std@[0-9.]+\/([^"]+)/g, (orig, pkg) => pkg.includes('md5') ? orig : `from "${this.stdModRoot}/${pkg}`)
       .replaceAll('from "../../', `from "${fullOptions.get('aws_api_root')}/`);
   }
 }
