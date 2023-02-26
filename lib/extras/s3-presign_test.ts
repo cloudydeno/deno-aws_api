@@ -1,11 +1,11 @@
 import { assertEquals } from "https://deno.land/std@0.177.0/testing/asserts.ts";
-import { getSignedUrl } from "./s3-presign.ts";
+import { getPresignedUrl } from "./s3-presign.ts";
 
 const date = new Date('Fri, 24 May 2013 00:00:00 GMT')
 
 Deno.test('creates a presigned URL', async () => {
   assertEquals(
-    await getSignedUrl({
+    await getPresignedUrl({
       region: 'us-east-1',
       credentials: {
         awsAccessKeyId: 'AKIAIOSFODNN7EXAMPLE',
