@@ -1,7 +1,7 @@
 import { type Credentials, DefaultCredentialsProvider, getDefaultRegion } from "../client/credentials.ts";
 import { AWSSignerV4 } from "../client/signing.ts";
 
-interface GetSignedUrlOptions {
+export interface GetSignedUrlOptions {
   bucket: string;
   path: string;
   useDualstack?: boolean;

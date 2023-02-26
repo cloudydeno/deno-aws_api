@@ -1,7 +1,7 @@
 import { just } from "https://deno.land/x/stream_observables@v1.2/sources/just.ts";
 import { collect } from "https://deno.land/x/stream_observables@v1.2/sinks/collect.ts";
 import { map } from "https://deno.land/x/stream_observables@v1.2/transforms/map.ts";
-import { assertEquals } from "https://deno.land/std@0.120.0/testing/asserts.ts";
+import { assertEquals } from "https://deno.land/std@0.177.0/testing/asserts.ts";
 
 import { newPartSegmenter } from "./s3-upload.ts";
 

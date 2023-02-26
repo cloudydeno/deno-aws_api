@@ -93,7 +93,7 @@ export const Generations = new Map<string, ModuleGenerator>([
     'https://deno.land/std@0.177.0',
     'v2.1323.0', // https://github.com/aws/aws-sdk-js/releases
     new URLSearchParams([
-      ['aws_api_root', 'https://deno.land/x/aws_api@v0.8.0'],
+      ['aws_api_root', 'https://deno.land/x/aws_api@v0.8.1'],
       ['docs', 'short'],
     ]),
     (config, opts) => new LatestCodeGen(config, opts),

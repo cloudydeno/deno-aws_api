@@ -120,6 +120,7 @@ const ec2_europe = new ApiFactory({
 
 ## Changelog
 
+* `v0.8.1` on `2023-02-26`: hotfixes in extras files
 * `v0.8.0` on `2023-02-26`: codegen `v0.4`
   * Use Deno's `/std@0.177.0` (except for MD5).
     Minimum tested Deno is now `v1.22`
