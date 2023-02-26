@@ -46,11 +46,11 @@ This `aws_api` Deno module is good for:
 * Safely making API calls to one or more of the AWS services with client-side request/response types and  validation, response error handling, and resource 'waiters'
 * Loading AWS credentials within Deno scripts from common sources (e.g. environment variables, config files, and IAM roles) and refreshing them automatically
 * Connecting to alternative endpoints such as Localstack, S3-compatible services, etc, as configured in your program
+* Generating presigned URLs specifically for S3 (check `/extras/s3-presign.ts` for a basic implementation)
 
 This module *alone* is *not good* for:
 
-* Generating presigned URLs for S3 requests (as presigning is not an AWS API and hasn't been replicated here yet, try `/x/aws_s3_presign`)
-* Streaming body transfers (as request & response payloads are currently buffered)
+* Streaming request bodies (as request payloads are currently buffered) though S3 Multi-part Upload is available via `/extras/s3-upload.ts`
 * DynamoDB document logic (as the DynamoDB 'DocumentClient' class is extra client logic on top of the APIs - but you can import it from elsewhere)
 * Connecting directly to data-tier servers like OpenSearch, RDS, Elasticache, MQTT, etc (as these don't generally work like normal AWS APIs)
 
@@ -120,7 +120,7 @@ const ec2_europe = new ApiFactory({
 
 ## Changelog
 
-* `v0.8.0` on `TBD`: codegen `TBD`
+* `v0.8.0` on `2023-02-26`: codegen `v0.4`
   * Use Deno's `/std@0.177.0` (except for MD5).
     Minimum tested Deno is now `v1.22`
   * **Breaking change**: Return `ReadableStream<Uint8Array>` from S3 `GetObject` and similar actions.
