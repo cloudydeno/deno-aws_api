@@ -1,14 +1,14 @@
 import { inMemoryCache } from "https://deno.land/x/httpcache@0.1.2/in_memory.ts";
 import type { Cache } from "https://deno.land/x/httpcache@0.1.2/mod.ts";
 import { getMetricContext } from "./metric-context.ts";
-import { makeS3Client, s3Cache } from "./cache-s3.ts";
+import { s3Cache } from "./cache-s3.ts";
+import { S3 } from "./s3-api.ts";
+import { ApiFactory } from "../../lib/client/mod.ts";
 
-const s3Api = makeS3Client({
-  awsAccessKeyId: Deno.env.get('AWS_ACCESS_KEY_ID')!,
-  awsSecretKey: Deno.env.get('AWS_SECRET_ACCESS_KEY')!,
-  sessionToken: Deno.env.get('AWS_SESSION_TOKEN'),
-  region: Deno.env.get('AWS_REGION') || 'us-east-2',
-});
+const s3Api = new ApiFactory({
+  region: Deno.env.get('HTTPCACHE_S3_REGION') || 'us-east-2',
+}).makeNew(S3);
+
 const caches: Array<Cache> = [
   inMemoryCache(40),
   s3Cache(s3Api, Deno.env.get('HTTPCACHE_S3_BUCKET') || 'deno-httpcache'),
