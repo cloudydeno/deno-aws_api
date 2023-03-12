@@ -14,7 +14,15 @@ const caches: Array<Cache> = [
   s3Cache(s3Api, Deno.env.get('HTTPCACHE_S3_BUCKET') || 'deno-httpcache'),
 ];
 
-export async function cachedFetch(mode: 'immutable' | 'mutable', label: string, url: string) {
+import { trace } from "./tracer.ts";
+const tracer = trace.getTracer('cached-fetch');
+
+export function cachedFetch(mode: 'immutable' | 'mutable', label: string, url: string) {
+  return tracer.startActiveSpan(`fetch ${label}`, span =>
+    cachedFetchInner(mode, label, url).finally(() =>
+      span.end()));
+}
+async function cachedFetchInner(mode: 'immutable' | 'mutable', label: string, url: string) {
 
   const ctx = getMetricContext();
   const tags = [

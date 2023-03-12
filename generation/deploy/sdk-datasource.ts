@@ -4,6 +4,9 @@ import { ClientError, jsonTemplate } from "./helpers.ts";
 
 const specSuffix = `.normal.json`;
 
+import { trace } from "./tracer.ts";
+const tracer = trace.getTracer('sdk-datasource');
+
 export class SDK {
   static async getSdkVersions(): Promise<Array<{
     name: string;
@@ -96,7 +99,7 @@ export class SDK {
     apiVersion: string,
     suffixes: Partial<Record<keyof ApiSpecSet, ApiSpecPolicy>>,
   ) {
-    const loads = {
+    const loads = await tracer.startActiveSpan(`get specs: ${apiId}@${apiVersion}`, span => Promise.resolve({
       normal: (suffixes['normal']
         ? this.getRawApiSpec(apiId, apiVersion, 'normal', suffixes['normal'])
         : Promise.resolve(null))
@@ -113,7 +116,7 @@ export class SDK {
         ? this.getRawApiSpec(apiId, apiVersion, 'examples', suffixes['examples'])
         : Promise.resolve(null))
         .then(x => x ?? { examples: {} }) as Promise<Schema.Examples>,
-    };
+    }).finally(() => span.end()));
 
     return {
       'normal': await loads.normal,

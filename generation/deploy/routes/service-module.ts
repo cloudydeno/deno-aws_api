@@ -48,6 +48,10 @@ async function loadApiDefinitions(props: {
   return {module, spec};
 }
 
+
+import { trace } from "../tracer.ts";
+const tracer = trace.getTracer('service-module');
+
 export async function renderServiceModule(props: {
   genVer: string;
   sdkVer: string;
@@ -72,6 +76,15 @@ export async function renderServiceModule(props: {
     service: props.service,
   })
 
+  const span = tracer.startSpan('render module', {
+    attributes: {
+      generationId: props.genVer,
+      sdkVersion: sdkVersion,
+      apiId: props.service,
+      apiVersion: apiVersion,
+    }
+  });
+
   const dGen = performance.now();
   let apiText = generateApiModule({
     generation,
@@ -84,8 +97,8 @@ export async function renderServiceModule(props: {
     module,
     spec,
   });
-
   const dEnd = performance.now();
+  span.end();
 
   const ctx = getMetricContext();
   const tags = [
