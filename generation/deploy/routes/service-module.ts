@@ -27,18 +27,17 @@ type ApiBundle = {
 }
 
 async function loadApiDefinitions(props: {
-  sdkVersion: string;
+  sdk: SDK;
   service: string;
   apiVersion: string;
 }) {
-  const sdk = new SDK(props.sdkVersion);
 
-  const serviceList = await sdk.getServiceList();
+  const serviceList = await props.sdk.getServiceList();
   const module = serviceList[props.service];
   if (!module) throw new ClientError(404, jsonTemplate
     `API ${props.service} not found. Check the API listing for exact spelling.`);
 
-  const spec = await sdk
+  const spec = await props.sdk
     .getApiSpecs(module.prefix || props.service, props.apiVersion, {
       normal: 'required',
       paginators: 'optional',
@@ -70,8 +69,12 @@ export async function renderServiceModule(props: {
   const fullOptions = generation.withDefaults(props.params);
 
   const dStart = performance.now();
+
+  const sdk = new SDK(sdkVersion);
+  const serviceList = await sdk.getServiceList();
+
   const {module, spec} = await loadApiDefinitions({
-    sdkVersion,
+    sdk,
     apiVersion,
     service: props.service,
   })
@@ -116,8 +119,6 @@ export async function renderServiceModule(props: {
   ctx.setGauge('aws_api_codegen.latency.ms', dEnd - dGen, [...tags, `codegen_phase:generate`]);
 
   if (props.wantsHtml) {
-    const sdk = new SDK(sdkVersion);
-    const serviceList = await sdk.getServiceList();
     const module = serviceList[props.service];
     if (!module) return ResponseText(404, `Service Not Found: ${props.service}`);
 
