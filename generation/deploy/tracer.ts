@@ -3,12 +3,11 @@ import {
   OTLPTraceFetchExporter,
   httpTracer,
   DenoFetchInstrumentation,
-  SubProcessInstrumentation,
   Resource,
   trace,
-} from "https://raw.githubusercontent.com/cloudydeno/deno-observability/17c0c0621e416cbaa2dacdf14ac9388cb9d9c91d/tracing/mod.ts";
-import { GcpBatchSpanExporter } from "https://raw.githubusercontent.com/cloudydeno/deno-observability/17c0c0621e416cbaa2dacdf14ac9388cb9d9c91d/tracing/exporters/google-cloud.ts";
-import { GoogleCloudPropagator } from "https://raw.githubusercontent.com/cloudydeno/deno-observability/17c0c0621e416cbaa2dacdf14ac9388cb9d9c91d/tracing/propagators/google-cloud.ts";
+} from "https://raw.githubusercontent.com/cloudydeno/deno-observability/9d996d1ce0ba6b15641cbc882b15fc63992418b9/tracing/mod.ts";
+import { GcpBatchSpanExporter } from "https://raw.githubusercontent.com/cloudydeno/deno-observability/9d996d1ce0ba6b15641cbc882b15fc63992418b9/tracing/exporters/google-cloud.ts";
+import { GoogleCloudPropagator } from "https://raw.githubusercontent.com/cloudydeno/deno-observability/9d996d1ce0ba6b15641cbc882b15fc63992418b9/tracing/propagators/google-cloud.ts";
 
 export { httpTracer, trace };
 

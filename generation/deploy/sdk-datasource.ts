@@ -99,7 +99,16 @@ export class SDK {
     apiVersion: string,
     suffixes: Partial<Record<keyof ApiSpecSet, ApiSpecPolicy>>,
   ) {
-    const loads = await tracer.startActiveSpan(`get specs: ${apiId}@${apiVersion}`, span => Promise.resolve({
+    return tracer.startActiveSpan(`get specs: ${apiId}@${apiVersion}`, span =>
+      this._getApiSpecsInner(apiId, apiVersion, suffixes).finally(() =>
+        span.end()));
+  }
+  async _getApiSpecsInner(
+    apiId: string,
+    apiVersion: string,
+    suffixes: Partial<Record<keyof ApiSpecSet, ApiSpecPolicy>>,
+  ) {
+    const loads = {
       normal: (suffixes['normal']
         ? this.getRawApiSpec(apiId, apiVersion, 'normal', suffixes['normal'])
         : Promise.resolve(null))
@@ -116,7 +125,7 @@ export class SDK {
         ? this.getRawApiSpec(apiId, apiVersion, 'examples', suffixes['examples'])
         : Promise.resolve(null))
         .then(x => x ?? { examples: {} }) as Promise<Schema.Examples>,
-    }).finally(() => span.end()));
+    };
 
     return {
       'normal': await loads.normal,

@@ -1,4 +1,4 @@
-#!/usr/bin/env -S deno run --watch --allow-env --allow-net=[::]:8000,api.github.com,raw.githubusercontent.com,deno-httpcache.s3.dualstack.us-east-2.amazonaws.com,api.datadoghq.com,sts.amazonaws.com --allow-read generation/deploy/mod.ts
+#!/usr/bin/env -S deno run --unstable --watch --allow-env --allow-net --allow-read generation/deploy/mod.ts
 import { serve } from "https://deno.land/std@0.177.0/http/server.ts";
 import { createReporter } from "https://deno.land/x/g_a@0.1.2/mod.ts";
 
