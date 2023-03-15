@@ -11,8 +11,7 @@ import { routeMap as redirectRoutes } from './routes/redirects.ts';
 import { routeMap as completionRoutes } from './routes/completion-api.ts';
 import { routeMap as robotsRoutes } from './routes/robots.ts';
 import { getMetricContext, runWithMetricContext } from "./metric-context.ts";
-import { httpTracer } from "./tracer.ts";
-import { provider } from "./tracer.ts";
+import { httpTracer, trace, provider } from "./tracer.ts";
 
 const ga = createReporter();
 
@@ -76,7 +75,10 @@ async function routeRequest(request: Request): Promise<Response> {
 
   for (const [route, handler] of routeMap) {
     if (typeof route == 'string') {
+
       if (route == requestUrl.pathname) {
+        trace.getActiveSpan()?.setAttribute('http.route', route);
+
         return await handler({
           params: {},
           requestUrl,
@@ -84,8 +86,11 @@ async function routeRequest(request: Request): Promise<Response> {
         });
       }
     } else {
+
       const match = route.exec(requestUrl);
       if (match) {
+        trace.getActiveSpan()?.setAttributes(getRegexRouteAttributes(route, match));
+
         return await handler({
           params: match.pathname.groups,
           requestUrl,
@@ -96,4 +101,19 @@ async function routeRequest(request: Request): Promise<Response> {
   }
 
   return ResponseText(404, `404 Not found.\nI even checked all my routes for you.`);
+}
+
+function getRegexRouteAttributes(route: URLPattern, match: URLPatternResult) {
+  const paramAttrs = Object.fromEntries(Object
+    .entries(match.pathname.groups)
+    .map(x => [
+      `http.route_param.${x[0].replaceAll(/[A-Z]/g, x => `_${x[0].toLowerCase()}`)}`,
+      x[1],
+    ]));
+
+  paramAttrs['http.route'] = route.pathname
+    .replaceAll(/\([^)]+\)/g, '')
+    .replace(/\{\/\}\?$/, '/');
+
+  return paramAttrs;
 }
