@@ -11,11 +11,11 @@ import { routeMap as redirectRoutes } from './routes/redirects.ts';
 import { routeMap as completionRoutes } from './routes/completion-api.ts';
 import { routeMap as robotsRoutes } from './routes/robots.ts';
 import { getMetricContext, runWithMetricContext } from "./metric-context.ts";
-import { httpTracer, trace, provider } from "./tracer.ts";
+import { httpTracer, trace } from "./tracer.ts";
 
 const ga = createReporter();
 
-serve(httpTracer(provider, async (request, connInfo) => {
+serve(httpTracer(async (request, connInfo) => {
   let err: unknown;
   let response: Response;
   const start = performance.now();
