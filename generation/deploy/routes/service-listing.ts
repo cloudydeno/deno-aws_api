@@ -8,7 +8,7 @@ const handleRequest: RouteHandler = ctx => {
   }
   const {selfUrl, params} = getModuleIdentity(ctx.requestUrl);
   return renderServiceListing({
-    genVer: ctx.params.genVer,
+    genVer: ctx.params.genVer!,
     sdkVer: ctx.params.sdkVer,
     selfUrl, params,
   });

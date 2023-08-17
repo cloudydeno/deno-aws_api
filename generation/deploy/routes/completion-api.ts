@@ -23,13 +23,13 @@ export const routeMap = new Map<string | URLPattern, RouteHandler>([
   }],
 
   [Pattern('/.completions/generations/:genVer/modules/list.json'), async ctx => {
-    const generation = Generations.get(ctx.params.genVer);
+    const generation = Generations.get(ctx.params.genVer!);
     if (!generation) return ResponseJson([]);
     return ResponseJson(await listSdkModules(generation.sdkVersion));
   }],
 
   [Pattern('/.completions/sdks/:sdkVer/modules/list.json'), async ctx => {
-    return ResponseJson(await listSdkModules(ctx.params.sdkVer));
+    return ResponseJson(await listSdkModules(ctx.params.sdkVer!));
   }],
 
 ]);

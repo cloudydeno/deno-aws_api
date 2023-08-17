@@ -6,7 +6,8 @@ const handleRequest: RouteHandler = ctx => {
   const {genVer, sdkVer} = ctx.params;
   const {selfUrl, params} = getModuleIdentity(ctx.requestUrl);
   return renderUnifiedModule({
-    genVer, sdkVer,
+    genVer: genVer!,
+    sdkVer,
     params,
     wantsHtml: acceptsHtml(ctx.headers),
   });
@@ -18,7 +19,7 @@ export const routeMap = new Map<string | URLPattern, RouteHandler>([
 
 export async function renderUnifiedModule(props: {
   genVer: string;
-  sdkVer: string;
+  sdkVer?: string;
   // service: string;
   // svcVer: string;
   wantsHtml: boolean;

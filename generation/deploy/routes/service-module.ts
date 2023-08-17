@@ -9,7 +9,9 @@ const handleRequest: RouteHandler = ctx => {
   const {genVer, sdkVer, service, svcVer} = ctx.params;
   const {selfUrl, params} = getModuleIdentity(ctx.requestUrl);
   return renderServiceModule({
-    genVer, sdkVer, service, svcVer,
+    genVer: genVer!,
+    service: service!,
+    sdkVer, svcVer,
     selfUrl, params,
     wantsHtml: acceptsHtml(ctx.headers),
   });
@@ -53,9 +55,9 @@ const tracer = trace.getTracer('service-module');
 
 export async function renderServiceModule(props: {
   genVer: string;
-  sdkVer: string;
+  sdkVer?: string;
   service: string;
-  svcVer: string;
+  svcVer?: string;
   wantsHtml: boolean;
   params: URLSearchParams,
   selfUrl: string;

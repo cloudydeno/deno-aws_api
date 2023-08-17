@@ -1,6 +1,6 @@
 export const Pattern = (pathname: string) => new URLPattern({ pathname });
 export type RouteHandler = (context: {
-  params: Record<string, string>;
+  params: Record<string, string | undefined>;
   requestUrl: URL;
   headers: Headers,
 }) => Response | Promise<Response>;
