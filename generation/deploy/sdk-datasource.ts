@@ -1,11 +1,9 @@
 import type * as Schema from '../sdk-schema.ts';
 import { cachedFetch } from "./cache.ts";
 import { ClientError, jsonTemplate } from "./helpers.ts";
+import { AsyncSpan } from "./tracer.ts";
 
 const specSuffix = `.normal.json`;
-
-import { trace } from "./tracer.ts";
-const tracer = trace.getTracer('sdk-datasource');
 
 export class SDK {
   static async getSdkVersions(): Promise<Array<{
@@ -21,7 +19,7 @@ export class SDK {
     return await resp.json();
   }
   static async getLatestSdkVersion() {
-    return this.getSdkVersions().then(x => x[0].name);
+    return await this.getSdkVersions().then(x => x[0].name);
   }
 
   constructor(
@@ -46,6 +44,8 @@ export class SDK {
     const apis = await cachedFetch('immutable', 'sdk-subtree', `https://api.github.com/repos/aws/aws-sdk-js/git/trees/${apisTree.sha}`).then(x => x.json()) as GitTree;
     return apis.tree.filter(x => x.path.endsWith(specSuffix)).map(x => x.path.slice(0, -specSuffix.length));
   }
+
+  @AsyncSpan
   async getLatestApiVersion(modId: string) {
     const [svcList, specList] = await Promise.all([
       this.getServiceList(),
@@ -94,16 +94,8 @@ export class SDK {
     return JSON.parse(text);
   }
 
+  @AsyncSpan
   async getApiSpecs(
-    apiId: string,
-    apiVersion: string,
-    suffixes: Partial<Record<keyof ApiSpecSet, ApiSpecPolicy>>,
-  ) {
-    return tracer.startActiveSpan(`get specs: ${apiId}@${apiVersion}`, span =>
-      this._getApiSpecsInner(apiId, apiVersion, suffixes).finally(() =>
-        span.end()));
-  }
-  async _getApiSpecsInner(
     apiId: string,
     apiVersion: string,
     suffixes: Partial<Record<keyof ApiSpecSet, ApiSpecPolicy>>,
