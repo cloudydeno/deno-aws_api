@@ -1,5 +1,4 @@
-#!/usr/bin/env -S deno run --unstable --watch --allow-env --allow-net --allow-read generation/deploy/mod.ts
-import { serve } from "https://deno.land/std@0.177.0/http/server.ts";
+#!/usr/bin/env -S deno run --watch --allow-env --allow-net --allow-read --allow-sys
 import { createReporter } from "https://deno.land/x/g_a@0.1.2/mod.ts";
 
 import { ResponseError, ResponseText } from "./helpers.ts";
@@ -15,24 +14,25 @@ import { httpTracer, trace } from "./tracer.ts";
 
 const ga = createReporter();
 
-serve(httpTracer(async (request, connInfo) => {
+Deno.serve({
+  hostname: '[::]',
+  onError: ResponseError,
+}, httpTracer(async (request, connInfo) => {
+  const span = trace.getActiveSpan();
   let err: unknown;
   let response: Response;
   const start = performance.now();
   try {
     response = await runWithMetricContext(() => handleRequest(request));
-    response.headers.set("server", "aws_api-generation/v0.4.0");
   } catch (e) {
     err = e;
+    span?.recordException(e);
     response = ResponseError(e);
   }
+  response.headers.set("server", "aws_api-generation/v0.4.0");
   ga(request, connInfo, response, start, err);
   return response;
-}), {
-  hostname: '[::]',
-  onError: ResponseError,
-});
-console.log("Listening on http://localhost:8000");
+}));
 
 const routeMap = new Map([
   // Might as well put module rendering first in the list because it needs the most CPU time
@@ -46,6 +46,8 @@ const routeMap = new Map([
 
 async function handleRequest(request: Request): Promise<Response> {
   const ctx = getMetricContext();
+  const span = trace.getActiveSpan();
+  span?.setAttribute('http.user_agent_prefix', request.headers.get('user-agent')?.split('/')[0] ?? 'none');
   const reqs = ctx.withCounter('http.server.requests', [
     `http_method:${request.method}`,
     `http_ua_class:${request.headers.get('user-agent')?.split('/')[0]}`,

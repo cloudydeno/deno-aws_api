@@ -1,19 +1,32 @@
 import { SDK } from "../sdk-datasource.ts";
 import { Generations, ModuleGenerator } from "../generations.ts";
-import { ClientError, escapeTemplate, getModuleIdentity, jsonTemplate, Pattern, ResponseRedirect, ResponseText, RouteHandler, acceptsHtml } from "../helpers.ts";
+import { ClientError, escapeTemplate, getModuleIdentity, jsonTemplate, Pattern, ResponseText, RouteHandler, acceptsHtml } from "../helpers.ts";
 import { getMetricContext } from "../metric-context.ts";
 import { Api, Examples, Pagination, ServiceMetadata, Waiters } from "../../sdk-schema.ts";
+import { trace, SpanKind } from "../tracer.ts";
+
+const tracer = trace.getTracer('service-module.ts');
 
 const serviceFilePattern = `:service([^/.@]+){@:svcVer(20[0-9-]+)}?.ts`;
 const handleRequest: RouteHandler = ctx => {
   const {genVer, sdkVer, service, svcVer} = ctx.params;
   const {selfUrl, params} = getModuleIdentity(ctx.requestUrl);
-  return renderServiceModule({
-    genVer: genVer!,
-    service: service!,
-    sdkVer, svcVer,
-    selfUrl, params,
-    wantsHtml: acceptsHtml(ctx.headers),
+
+  return tracer.startActiveSpan('renderServiceModule', async span => {
+    try {
+      return await renderServiceModule({
+        genVer: genVer!,
+        service: service!,
+        sdkVer, svcVer,
+        selfUrl, params,
+        wantsHtml: acceptsHtml(ctx.headers),
+      });
+    } catch (err) {
+      span.recordException(err);
+      throw err;
+    } finally {
+      span.end();
+    }
   });
 };
 export const routeMap = new Map<string | URLPattern, RouteHandler>([
@@ -49,10 +62,6 @@ async function loadApiDefinitions(props: {
   return {module, spec};
 }
 
-
-import { trace } from "../tracer.ts";
-const tracer = trace.getTracer('service-module');
-
 export async function renderServiceModule(props: {
   genVer: string;
   sdkVer?: string;
@@ -62,6 +71,8 @@ export async function renderServiceModule(props: {
   params: URLSearchParams,
   selfUrl: string;
 }) {
+  const span = trace.getActiveSpan();
+
   const generation = Generations.get(props.genVer);
   if (!generation) return ResponseText(404,
     `Codegen version '${props.genVer}' not found.\nKnown versions: ${Array.from(Generations.keys()).join(', ')}`);
@@ -69,6 +80,16 @@ export async function renderServiceModule(props: {
   const sdkVersion = props.sdkVer || generation.sdkVersion;
   const apiVersion = props.svcVer || await new SDK(sdkVersion).getLatestApiVersion(props.service);
   const fullOptions = generation.withDefaults(props.params);
+
+  span?.setAttributes({
+    'request.generation': props.genVer,
+    'request.sdk.version': props.sdkVer,
+    'request.service.name': props.service,
+    'request.service.version': props.svcVer,
+    'request.docs': props.params.get('docs') ?? 'missing',
+    'request.actions': props.params.get('actions')?.split(','),
+    'request.response_type': props.wantsHtml ? 'html' : 'text',
+  });
 
   const dStart = performance.now();
 
@@ -81,7 +102,7 @@ export async function renderServiceModule(props: {
     service: props.service,
   })
 
-  const span = tracer.startSpan('render module', {
+  const genSpan = tracer.startSpan('generate module', {
     attributes: {
       generationId: props.genVer,
       sdkVersion: sdkVersion,
@@ -91,7 +112,7 @@ export async function renderServiceModule(props: {
   });
 
   const dGen = performance.now();
-  let apiText = generateApiModule({
+  const apiText = generateApiModule({
     generation,
     generationId: props.genVer,
     sdkVersion: sdkVersion,
@@ -103,7 +124,7 @@ export async function renderServiceModule(props: {
     spec,
   });
   const dEnd = performance.now();
-  span.end();
+  genSpan.end();
 
   const ctx = getMetricContext();
   const tags = [
