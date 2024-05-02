@@ -83,12 +83,11 @@ export async function renderServiceModule(props: {
 
   span?.setAttributes({
     'request.generation': props.genVer,
-    'request.sdk.version': props.sdkVer,
-    'request.service.name': props.service,
-    'request.service.version': props.svcVer,
-    'request.docs': props.params.get('docs') ?? 'missing',
-    'request.actions': props.params.get('actions')?.split(','),
+    'request.aws_sdk.version': props.sdkVer,
+    'request.aws_service': `${props.service}${props.svcVer ? `@${props.svcVer}` : ''}`,
     'request.response_type': props.wantsHtml ? 'html' : 'text',
+    'request.doc_comments': fullOptions.get('docs') ?? 'missing',
+    'request.action_filter': fullOptions.get('actions')?.split(','),
   });
 
   const dStart = performance.now();
@@ -102,29 +101,30 @@ export async function renderServiceModule(props: {
     service: props.service,
   })
 
-  const genSpan = tracer.startSpan('generate module', {
-    attributes: {
-      generationId: props.genVer,
-      sdkVersion: sdkVersion,
-      apiId: props.service,
-      apiVersion: apiVersion,
+  const apiText = tracer.startActiveSpan('generate module', span => {
+    span.setAttributes({
+      'aws_service.id': props.service,
+      'aws_service.version': apiVersion,
+    });
+    try {
+      return generateApiModule({
+        generation,
+        generationId: props.genVer,
+        sdkVersion: sdkVersion,
+        apiId: props.service,
+        apiVersion: apiVersion,
+        options: props.params,
+        selfUrl: props.selfUrl,
+        module,
+        spec,
+      });
+    } catch (err) {
+      span.recordException(err);
+      throw err;
+    } finally {
+      span.end();
     }
   });
-
-  const dGen = performance.now();
-  const apiText = generateApiModule({
-    generation,
-    generationId: props.genVer,
-    sdkVersion: sdkVersion,
-    apiId: props.service,
-    apiVersion: apiVersion,
-    options: props.params,
-    selfUrl: props.selfUrl,
-    module,
-    spec,
-  });
-  const dEnd = performance.now();
-  genSpan.end();
 
   const ctx = getMetricContext();
   const tags = [
@@ -138,8 +138,6 @@ export async function renderServiceModule(props: {
   ];
   ctx.incrementCounter('aws_api_codegen.invocations', 1, tags);
   ctx.incrementCounter('aws_api_codegen.module_length', apiText.length, tags);
-  ctx.setGauge('aws_api_codegen.latency.ms', dGen - dStart, [...tags, `codegen_phase:fetch`]);
-  ctx.setGauge('aws_api_codegen.latency.ms', dEnd - dGen, [...tags, `codegen_phase:generate`]);
 
   if (props.wantsHtml) {
     const module = serviceList[props.service];
