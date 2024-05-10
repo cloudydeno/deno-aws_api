@@ -19,6 +19,52 @@ jobs:
         - v1.26
         - v1.28
         - v1.30
+        - v1.35
+        - v1.40
+        - canary
+
+    steps:
+    - name: Checkout source
+      uses: actions/checkout@v3
+
+    - name: Use Deno ${{ matrix.deno-version }}
+      uses: denoland/setup-deno@v1
+      with:
+        deno-version: ${{ matrix.deno-version }}
+
+    - name: Cache https:// deps
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/deno/deps/https
+        key: deno/${{ matrix.deno-version }}-https/v1-${{ github.sha }}
+        restore-keys: deno/${{ matrix.deno-version }}-https/v1-
+
+    - name: Check client/mod.ts
+      if: always()
+      run: time deno check lib/client/mod.ts
+
+    - name: Check demo.ts
+      if: always()
+      run: time deno check lib/demo.ts
+
+    - name: Run tests
+      if: always()
+      run: >
+        time deno test
+        --allow-net=169.254.169.254,example.com
+        lib/client/
+        lib/encoding/
+        lib/extras/
+
+  build-web-service:
+    runs-on: ubuntu-latest
+
+    name: Web Service checks w/ ${{ matrix.deno-version }}
+    strategy:
+      fail-fast: false
+      matrix:
+        deno-version:
+        - v1.40
         - canary
 
     steps:
@@ -40,23 +86,6 @@ jobs:
     - name: Check generation/deploy/mod.ts
       if: always()
       run: time deno check generation/deploy/mod.ts
-
-    - name: Check client/mod.ts
-      if: always()
-      run: time deno check lib/client/mod.ts
-
-    - name: Check demo.ts
-      if: always()
-      run: time deno check lib/demo.ts
-
-    - name: Run tests
-      if: always()
-      run: >
-        time deno test
-        --allow-net=169.254.169.254,example.com
-        lib/client/
-        lib/encoding/
-        lib/extras/
 
   validate-codegen:
     runs-on: ubuntu-latest

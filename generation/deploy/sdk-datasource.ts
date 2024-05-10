@@ -1,11 +1,9 @@
 import type * as Schema from '../sdk-schema.ts';
 import { cachedFetch } from "./cache.ts";
 import { ClientError, jsonTemplate } from "./helpers.ts";
+import { runAsyncSpan } from "./tracer.ts";
 
 const specSuffix = `.normal.json`;
-
-import { trace } from "./tracer.ts";
-const tracer = trace.getTracer('sdk-datasource');
 
 export class SDK {
   static async getSdkVersions(): Promise<Array<{
@@ -21,7 +19,7 @@ export class SDK {
     return await resp.json();
   }
   static async getLatestSdkVersion() {
-    return this.getSdkVersions().then(x => x[0].name);
+    return await this.getSdkVersions().then(x => x[0].name);
   }
 
   constructor(
@@ -46,8 +44,16 @@ export class SDK {
     const apis = await cachedFetch('immutable', 'sdk-subtree', `https://api.github.com/repos/aws/aws-sdk-js/git/trees/${apisTree.sha}`).then(x => x.json()) as GitTree;
     return apis.tree.filter(x => x.path.endsWith(specSuffix)).map(x => x.path.slice(0, -specSuffix.length));
   }
+
+  // TODO: use decorators when they work on deno deploy
+  // @AsyncSpan
   async getLatestApiVersion(modId: string) {
-    const [svcList, specList] = await Promise.all([
+    return await runAsyncSpan(`get latest api version`, {
+      modId,
+    }, () => this._getLatestApiVersion(modId));
+  }
+  async _getLatestApiVersion(modId: string) {
+      const [svcList, specList] = await Promise.all([
       this.getServiceList(),
       this.getSpecList(),
     ]);
@@ -94,14 +100,16 @@ export class SDK {
     return JSON.parse(text);
   }
 
+  // TODO: use decorators when they work on deno deploy
+  // @AsyncSpan
   async getApiSpecs(
     apiId: string,
     apiVersion: string,
     suffixes: Partial<Record<keyof ApiSpecSet, ApiSpecPolicy>>,
   ) {
-    return tracer.startActiveSpan(`get specs: ${apiId}@${apiVersion}`, span =>
-      this._getApiSpecsInner(apiId, apiVersion, suffixes).finally(() =>
-        span.end()));
+    return await runAsyncSpan(`get specs`, {
+      apiId, apiVersion,
+    }, () => this._getApiSpecsInner(apiId, apiVersion, suffixes));
   }
   async _getApiSpecsInner(
     apiId: string,

@@ -1,33 +1,22 @@
 import { SDK } from "../sdk-datasource.ts";
 import { Generations, ModuleGenerator } from "../generations.ts";
 import { ClientError, escapeTemplate, getModuleIdentity, jsonTemplate, Pattern, ResponseText, RouteHandler, acceptsHtml } from "../helpers.ts";
-import { getMetricContext } from "../metric-context.ts";
 import { Api, Examples, Pagination, ServiceMetadata, Waiters } from "../../sdk-schema.ts";
-import { trace, SpanKind } from "../tracer.ts";
-
-const tracer = trace.getTracer('service-module.ts');
+import { trace, runAsyncSpan } from "../tracer.ts";
 
 const serviceFilePattern = `:service([^/.@]+){@:svcVer(20[0-9-]+)}?.ts`;
-const handleRequest: RouteHandler = ctx => {
+const handleRequest: RouteHandler = async ctx => {
   const {genVer, sdkVer, service, svcVer} = ctx.params;
   const {selfUrl, params} = getModuleIdentity(ctx.requestUrl);
 
-  return tracer.startActiveSpan('renderServiceModule', async span => {
-    try {
-      return await renderServiceModule({
-        genVer: genVer!,
-        service: service!,
-        sdkVer, svcVer,
-        selfUrl, params,
-        wantsHtml: acceptsHtml(ctx.headers),
-      });
-    } catch (err) {
-      span.recordException(err);
-      throw err;
-    } finally {
-      span.end();
-    }
-  });
+  return await runAsyncSpan('renderServiceModule', {
+  }, () => renderServiceModule({
+    genVer: genVer!,
+    service: service!,
+    sdkVer, svcVer,
+    selfUrl, params,
+    wantsHtml: acceptsHtml(ctx.headers),
+  }));
 };
 export const routeMap = new Map<string | URLPattern, RouteHandler>([
   [Pattern(`/:genVer(v[0-9.]+)/sdk@:sdkVer(v2\\.[0-9.]+)/${serviceFilePattern}`), handleRequest],
@@ -83,15 +72,12 @@ export async function renderServiceModule(props: {
 
   span?.setAttributes({
     'request.generation': props.genVer,
-    'request.sdk.version': props.sdkVer,
-    'request.service.name': props.service,
-    'request.service.version': props.svcVer,
-    'request.docs': props.params.get('docs') ?? 'missing',
-    'request.actions': props.params.get('actions')?.split(','),
+    'request.aws_sdk.version': props.sdkVer,
+    'request.aws_service': `${props.service}${props.svcVer ? `@${props.svcVer}` : ''}`,
     'request.response_type': props.wantsHtml ? 'html' : 'text',
+    'request.doc_comments': fullOptions.get('docs') ?? 'missing',
+    'request.action_filter': fullOptions.get('actions')?.split(','),
   });
-
-  const dStart = performance.now();
 
   const sdk = new SDK(sdkVersion);
   const serviceList = await sdk.getServiceList();
@@ -102,44 +88,31 @@ export async function renderServiceModule(props: {
     service: props.service,
   })
 
-  const genSpan = tracer.startSpan('generate module', {
-    attributes: {
+  const apiText = await runAsyncSpan('generate module', {
+    'aws_service.id': props.service,
+    'aws_service.version': apiVersion,
+    'aws_sdk.version': props.sdkVer ?? 'default',
+    'codegen.version': props.genVer,
+    'codegen.wants_html': props.wantsHtml,
+    'codegen.has_action_filter': !!props.params.get('actions'),
+    'codegen.doc_comments': props.params.get('doc') ?? 'default',
+  }, span => {
+    const apiText = generateApiModule({
+      generation,
       generationId: props.genVer,
       sdkVersion: sdkVersion,
       apiId: props.service,
       apiVersion: apiVersion,
-    }
+      options: props.params,
+      selfUrl: props.selfUrl,
+      module,
+      spec,
+    });
+    span.setAttributes({
+      'codegen.module_length': apiText.length,
+    });
+    return Promise.resolve(apiText);
   });
-
-  const dGen = performance.now();
-  const apiText = generateApiModule({
-    generation,
-    generationId: props.genVer,
-    sdkVersion: sdkVersion,
-    apiId: props.service,
-    apiVersion: apiVersion,
-    options: props.params,
-    selfUrl: props.selfUrl,
-    module,
-    spec,
-  });
-  const dEnd = performance.now();
-  genSpan.end();
-
-  const ctx = getMetricContext();
-  const tags = [
-    `aws_gen_ver:${props.genVer}`,
-    `aws_sdk_ver:${props.sdkVer ?? 'default'}`,
-    `aws_svc_id:${props.service}`,
-    `aws_svc_ver:${props.svcVer ?? 'latest'}`,
-    `wants_html:${props.wantsHtml}`,
-    `has_action_filter:${props.params.get('actions') ? 'yes' : 'no'}`,
-    `aws_doc_mode:${props.params.get('actions') ? 'yes' : 'no'}`,
-  ];
-  ctx.incrementCounter('aws_api_codegen.invocations', 1, tags);
-  ctx.incrementCounter('aws_api_codegen.module_length', apiText.length, tags);
-  ctx.setGauge('aws_api_codegen.latency.ms', dGen - dStart, [...tags, `codegen_phase:fetch`]);
-  ctx.setGauge('aws_api_codegen.latency.ms', dEnd - dGen, [...tags, `codegen_phase:generate`]);
 
   if (props.wantsHtml) {
     const module = serviceList[props.service];

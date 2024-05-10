@@ -1,7 +1,7 @@
 #!/usr/bin/env -S deno run --watch --allow-env --allow-net --allow-read --allow-sys
-import { createReporter } from "https://deno.land/x/g_a@0.1.2/mod.ts";
 
 import { ResponseError, ResponseText } from "./helpers.ts";
+import { httpTracer, trace } from "./tracer.ts";
 
 import { routeMap as unifiedModuleRoutes } from "./routes/unified-module.ts";
 import { routeMap as serviceModuleRoutes } from "./routes/service-module.ts";
@@ -9,28 +9,20 @@ import { routeMap as serviceListingRoutes } from "./routes/service-listing.ts";
 import { routeMap as redirectRoutes } from './routes/redirects.ts';
 import { routeMap as completionRoutes } from './routes/completion-api.ts';
 import { routeMap as robotsRoutes } from './routes/robots.ts';
-import { getMetricContext, runWithMetricContext } from "./metric-context.ts";
-import { httpTracer, trace } from "./tracer.ts";
-
-const ga = createReporter();
 
 Deno.serve({
   hostname: '[::]',
   onError: ResponseError,
-}, httpTracer(async (request, connInfo) => {
+}, httpTracer(async (request) => {
   const span = trace.getActiveSpan();
-  let err: unknown;
   let response: Response;
-  const start = performance.now();
   try {
-    response = await runWithMetricContext(() => handleRequest(request));
+    response = await routeRequest(request);
   } catch (e) {
-    err = e;
     span?.recordException(e);
     response = ResponseError(e);
   }
   response.headers.set("server", "aws_api-generation/v0.4.0");
-  ga(request, connInfo, response, start, err);
   return response;
 }));
 
@@ -43,33 +35,6 @@ const routeMap = new Map([
   ...completionRoutes,
   ...robotsRoutes,
 ]);
-
-async function handleRequest(request: Request): Promise<Response> {
-  const ctx = getMetricContext();
-  const span = trace.getActiveSpan();
-  span?.setAttribute('http.user_agent_prefix', request.headers.get('user-agent')?.split('/')[0] ?? 'none');
-  const reqs = ctx.withCounter('http.server.requests', [
-    `http_method:${request.method}`,
-    `http_ua_class:${request.headers.get('user-agent')?.split('/')[0]}`,
-  ]);
-  reqs.incr();
-
-  const startTime = performance.now();
-  try {
-
-    const resp = await routeRequest(request).catch(ResponseError);
-    reqs.tags.push(`http_status:${resp.status}`);
-    return resp;
-
-  } finally {
-    ctx.setGauge('http.server.latency_ms', performance.now() - startTime, reqs.tags);
-
-    ctx.flushMetrics().catch(err => {
-      console.error(`FAILED to flush metrics!`);
-      console.error((err as Error).message ?? err);
-    });
-  }
-}
 
 async function routeRequest(request: Request): Promise<Response> {
   const requestUrl = new URL(request.url);
