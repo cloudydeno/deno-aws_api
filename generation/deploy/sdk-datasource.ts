@@ -1,7 +1,7 @@
 import type * as Schema from '../sdk-schema.ts';
 import { cachedFetch } from "./cache.ts";
 import { ClientError, jsonTemplate } from "./helpers.ts";
-import { AsyncSpan, runAsyncSpan } from "./tracer.ts";
+import { runAsyncSpan } from "./tracer.ts";
 
 const specSuffix = `.normal.json`;
 

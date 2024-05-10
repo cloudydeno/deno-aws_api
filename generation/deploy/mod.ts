@@ -1,7 +1,6 @@
 #!/usr/bin/env -S deno run --watch --allow-env --allow-net --allow-read --allow-sys
 
 import { ResponseError, ResponseText } from "./helpers.ts";
-import { getMetricContext, runWithMetricContext } from "./metric-context.ts";
 import { httpTracer, trace } from "./tracer.ts";
 
 import { routeMap as unifiedModuleRoutes } from "./routes/unified-module.ts";
@@ -18,7 +17,7 @@ Deno.serve({
   const span = trace.getActiveSpan();
   let response: Response;
   try {
-    response = await runWithMetricContext(() => handleRequest(request));
+    response = await routeRequest(request);
   } catch (e) {
     span?.recordException(e);
     response = ResponseError(e);
@@ -36,33 +35,6 @@ const routeMap = new Map([
   ...completionRoutes,
   ...robotsRoutes,
 ]);
-
-async function handleRequest(request: Request): Promise<Response> {
-  const ctx = getMetricContext();
-  const span = trace.getActiveSpan();
-  span?.setAttribute('http.user_agent_prefix', request.headers.get('user-agent')?.split('/')[0] ?? 'none');
-  const reqs = ctx.withCounter('http.server.requests', [
-    `http_method:${request.method}`,
-    `http_ua_class:${request.headers.get('user-agent')?.split('/')[0]}`,
-  ]);
-  reqs.incr();
-
-  const startTime = performance.now();
-  try {
-
-    const resp = await routeRequest(request).catch(ResponseError);
-    reqs.tags.push(`http_status:${resp.status}`);
-    return resp;
-
-  } finally {
-    ctx.setGauge('http.server.latency_ms', performance.now() - startTime, reqs.tags);
-
-    ctx.flushMetrics().catch(err => {
-      console.error(`FAILED to flush metrics!`);
-      console.error((err as Error).message ?? err);
-    });
-  }
-}
 
 async function routeRequest(request: Request): Promise<Response> {
   const requestUrl = new URL(request.url);

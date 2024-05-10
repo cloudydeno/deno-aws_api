@@ -1,7 +1,6 @@
 import { SDK } from "../sdk-datasource.ts";
 import { Generations, ModuleGenerator } from "../generations.ts";
 import { ClientError, escapeTemplate, getModuleIdentity, jsonTemplate, Pattern, ResponseText, RouteHandler, acceptsHtml } from "../helpers.ts";
-import { getMetricContext } from "../metric-context.ts";
 import { Api, Examples, Pagination, ServiceMetadata, Waiters } from "../../sdk-schema.ts";
 import { trace, runAsyncSpan } from "../tracer.ts";
 
@@ -92,30 +91,28 @@ export async function renderServiceModule(props: {
   const apiText = await runAsyncSpan('generate module', {
     'aws_service.id': props.service,
     'aws_service.version': apiVersion,
-  }, async () => generateApiModule({
-    generation,
-    generationId: props.genVer,
-    sdkVersion: sdkVersion,
-    apiId: props.service,
-    apiVersion: apiVersion,
-    options: props.params,
-    selfUrl: props.selfUrl,
-    module,
-    spec,
-  }));
-
-  const ctx = getMetricContext();
-  const tags = [
-    `aws_gen_ver:${props.genVer}`,
-    `aws_sdk_ver:${props.sdkVer ?? 'default'}`,
-    `aws_svc_id:${props.service}`,
-    `aws_svc_ver:${props.svcVer ?? 'latest'}`,
-    `wants_html:${props.wantsHtml}`,
-    `has_action_filter:${props.params.get('actions') ? 'yes' : 'no'}`,
-    `aws_doc_mode:${props.params.get('actions') ? 'yes' : 'no'}`,
-  ];
-  ctx.incrementCounter('aws_api_codegen.invocations', 1, tags);
-  ctx.incrementCounter('aws_api_codegen.module_length', apiText.length, tags);
+    'aws_sdk.version': props.sdkVer ?? 'default',
+    'codegen.version': props.genVer,
+    'codegen.wants_html': props.wantsHtml,
+    'codegen.has_action_filter': !!props.params.get('actions'),
+    'codegen.doc_comments': props.params.get('doc') ?? 'default',
+  }, span => {
+    const apiText = generateApiModule({
+      generation,
+      generationId: props.genVer,
+      sdkVersion: sdkVersion,
+      apiId: props.service,
+      apiVersion: apiVersion,
+      options: props.params,
+      selfUrl: props.selfUrl,
+      module,
+      spec,
+    });
+    span.setAttributes({
+      'codegen.module_length': apiText.length,
+    });
+    return Promise.resolve(apiText);
+  });
 
   if (props.wantsHtml) {
     const module = serviceList[props.service];
