@@ -6,7 +6,7 @@ export async function platformCache(
   name = 'http-policy-cache',
 ): Promise<Cache> {
 
-  const nativeCache = await globalThis.caches.open(name);
+  const nativeCache = await caches.open(name);
 
   return new Cache({
 
