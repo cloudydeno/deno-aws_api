@@ -1,7 +1,7 @@
 import type * as Schema from '../sdk-schema.ts';
 import { cachedFetch } from "./cache.ts";
 import { ClientError, jsonTemplate } from "./helpers.ts";
-import { AsyncSpan } from "./tracer.ts";
+import { AsyncSpan, runAsyncSpan } from "./tracer.ts";
 
 const specSuffix = `.normal.json`;
 
@@ -45,9 +45,15 @@ export class SDK {
     return apis.tree.filter(x => x.path.endsWith(specSuffix)).map(x => x.path.slice(0, -specSuffix.length));
   }
 
-  @AsyncSpan
+  // TODO: use decorators when they work on deno deploy
+  // @AsyncSpan
   async getLatestApiVersion(modId: string) {
-    const [svcList, specList] = await Promise.all([
+    return await runAsyncSpan(`get latest api version`, {
+      modId,
+    }, () => this._getLatestApiVersion(modId));
+  }
+  async _getLatestApiVersion(modId: string) {
+      const [svcList, specList] = await Promise.all([
       this.getServiceList(),
       this.getSpecList(),
     ]);
@@ -94,8 +100,18 @@ export class SDK {
     return JSON.parse(text);
   }
 
-  @AsyncSpan
+  // TODO: use decorators when they work on deno deploy
+  // @AsyncSpan
   async getApiSpecs(
+    apiId: string,
+    apiVersion: string,
+    suffixes: Partial<Record<keyof ApiSpecSet, ApiSpecPolicy>>,
+  ) {
+    return await runAsyncSpan(`get specs`, {
+      apiId, apiVersion,
+    }, () => this._getApiSpecsInner(apiId, apiVersion, suffixes));
+  }
+  async _getApiSpecsInner(
     apiId: string,
     apiVersion: string,
     suffixes: Partial<Record<keyof ApiSpecSet, ApiSpecPolicy>>,
