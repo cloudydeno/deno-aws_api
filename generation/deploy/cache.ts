@@ -12,6 +12,7 @@ const caches: Array<Cache> = [
   inMemoryCache(40),
   s3Cache(s3Api, Deno.env.get('HTTPCACHE_S3_BUCKET') || 'deno-httpcache'),
 ];
+const cacheLabels = ['in-memory', 's3'];
 
 import { AsyncTracer, Span } from "./tracer.ts";
 const tracer = new AsyncTracer('cached-fetch');
@@ -32,6 +33,7 @@ async function cachedFetchInner(mode: 'immutable' | 'mutable', label: string, ur
       span.addEvent('cache.match', {
         'cache.result': 'fail',
         'cache.index': cacheIdx,
+        'cache.tier': cacheLabels[cacheIdx],
       });
       return null;
     });
@@ -39,10 +41,12 @@ async function cachedFetchInner(mode: 'immutable' | 'mutable', label: string, ur
       span.addEvent('cache.match', {
         'cache.result': 'hit',
         'cache.index': cacheIdx,
+        'cache.tier': cacheLabels[cacheIdx],
       });
       span.setAttributes({
         'cache.result': 'hit',
         'cache.index': cacheIdx,
+        'cache.tier': cacheLabels[cacheIdx],
       });
 
       // Copy colder bodies into warmer caches
@@ -57,12 +61,14 @@ async function cachedFetchInner(mode: 'immutable' | 'mutable', label: string, ur
       span.addEvent('cache.match', {
         'cache.result': 'miss',
         'cache.index': cacheIdx,
+        'cache.tier': cacheLabels[cacheIdx],
       });
     }
   }
 
   span.setAttributes({
     'cache.result': 'miss',
+    'cache.tier': 'none',
   });
 
   const realResp = await fetch(url);
@@ -96,6 +102,7 @@ async function emitCachePut(span: Span, cacheIdx: number, promise: Promise<void>
       span.addEvent('cache.put', {
         'cache.result': 'ok',
         'cache.index': cacheIdx,
+        'cache.tier': cacheLabels[cacheIdx],
       }))
     .catch(err => {
       console.error(`WARN: cache store err:`, err.message);
@@ -103,6 +110,7 @@ async function emitCachePut(span: Span, cacheIdx: number, promise: Promise<void>
       span.addEvent('cache.put', {
         'cache.result': 'fail',
         'cache.index': cacheIdx,
+        'cache.tier': cacheLabels[cacheIdx],
       });
       return null;
     });
