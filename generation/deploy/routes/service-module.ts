@@ -30,7 +30,7 @@ type ApiBundle = {
   examples: Examples;
 }
 
-async function  loadApiDefinitions(props: {
+async function loadApiDefinitions(props: {
   sdk: SDK;
   service: string;
   apiVersion: string;
