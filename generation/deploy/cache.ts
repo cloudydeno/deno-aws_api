@@ -49,7 +49,7 @@ async function cachedFetchInner(mode: 'immutable' | 'mutable', label: string, ur
       if (cacheIdx > 0) {
         await Promise.all(caches
           .slice(0, cacheIdx)
-          .map((cache, cacheIdx) => emitCachePut(span, cacheIdx, cache.put(url, resp))));
+          .map((cache, cacheIdx) => emitCachePut(span, cacheIdx, cache.put(url, cached))));
       }
 
       return cached;
