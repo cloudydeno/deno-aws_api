@@ -1,7 +1,8 @@
 #!/usr/bin/env -S deno run --watch --allow-env --allow-net --allow-read --allow-sys
-import { createReporter } from "https://deno.land/x/g_a@0.1.2/mod.ts";
 
 import { ResponseError, ResponseText } from "./helpers.ts";
+import { getMetricContext, runWithMetricContext } from "./metric-context.ts";
+import { httpTracer, trace } from "./tracer.ts";
 
 import { routeMap as unifiedModuleRoutes } from "./routes/unified-module.ts";
 import { routeMap as serviceModuleRoutes } from "./routes/service-module.ts";
@@ -9,28 +10,20 @@ import { routeMap as serviceListingRoutes } from "./routes/service-listing.ts";
 import { routeMap as redirectRoutes } from './routes/redirects.ts';
 import { routeMap as completionRoutes } from './routes/completion-api.ts';
 import { routeMap as robotsRoutes } from './routes/robots.ts';
-import { getMetricContext, runWithMetricContext } from "./metric-context.ts";
-import { httpTracer, trace } from "./tracer.ts";
-
-const ga = createReporter();
 
 Deno.serve({
   hostname: '[::]',
   onError: ResponseError,
-}, httpTracer(async (request, connInfo) => {
+}, httpTracer(async (request) => {
   const span = trace.getActiveSpan();
-  let err: unknown;
   let response: Response;
-  const start = performance.now();
   try {
     response = await runWithMetricContext(() => handleRequest(request));
   } catch (e) {
-    err = e;
     span?.recordException(e);
     response = ResponseError(e);
   }
   response.headers.set("server", "aws_api-generation/v0.4.0");
-  ga(request, connInfo, response, start, err);
   return response;
 }));
 
