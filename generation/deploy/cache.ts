@@ -1,8 +1,12 @@
-import { inMemoryCache } from "https://deno.land/x/httpcache@0.1.2/in_memory.ts";
-import type { Cache } from "https://deno.land/x/httpcache@0.1.2/mod.ts";
-import { s3Cache } from "./cache-s3.ts";
 import { S3 } from "./s3-api.ts";
 import { ApiFactory } from "../../lib/client/mod.ts";
+import { AsyncTracer, Span } from "./tracer.ts";
+
+// can maybe replace this whole dep with deno edge cache once it's out of beta
+import type { Cache } from "https://deno.land/x/httpcache@0.1.2/mod.ts";
+import { inMemoryCache } from "https://deno.land/x/httpcache@0.1.2/in_memory.ts";
+import { s3Cache } from "./cache-s3.ts";
+import { platformCache } from "./cache-platform.ts";
 
 const s3Api = new ApiFactory({
   region: Deno.env.get('HTTPCACHE_S3_REGION') || 'us-east-2',
@@ -10,11 +14,11 @@ const s3Api = new ApiFactory({
 
 const caches: Array<Cache> = [
   inMemoryCache(40),
+  await platformCache(),
   s3Cache(s3Api, Deno.env.get('HTTPCACHE_S3_BUCKET') || 'deno-httpcache'),
 ];
-const cacheLabels = ['in-memory', 's3'];
+const cacheLabels = ['in-memory', 'platform', 's3'];
 
-import { AsyncTracer, Span } from "./tracer.ts";
 const tracer = new AsyncTracer('cached-fetch');
 
 export async function cachedFetch(mode: 'immutable' | 'mutable', label: string, url: string) {
