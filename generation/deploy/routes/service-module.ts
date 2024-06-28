@@ -5,8 +5,8 @@ import { Api, Examples, Pagination, ServiceMetadata, Waiters } from "../../sdk-s
 import { trace, runAsyncSpan } from "../tracer.ts";
 
 const rateLimitMessage = [
-  '429 Too Many Requests',
-  'Your high request volume is contributing to monetary cost of this usually-free code generation service.',
+  '400 Bad Request',
+  'The high request volume of this type of request is contributing to monetary cost of this usually-free code generation service.',
   'Please consider storing a local copy of this module for your importing needs.',
   'Contact cloudydeno@danopia.net with any questions.',
 ].join('\n\n')
@@ -17,11 +17,11 @@ const handleRequest: RouteHandler = async ctx => {
   const {selfUrl, params} = getModuleIdentity(ctx.requestUrl);
 
   // Attempt to deal with excessive traffic
+  // Seems to be related to deno docs site + faulty bot
+  // (perhaps StractBot +https://stract.com/webmasters)
   if (ctx.headers.get('user-agent') == 'Deno/1.40.4') {
     if (params.get('docs')?.includes('/~/')) {
-      if (Math.random() < 0.9) {
-        return new Response(rateLimitMessage, { status: 429 });
-      }
+      return new Response(rateLimitMessage, { status: 400 });
     }
   }
 
