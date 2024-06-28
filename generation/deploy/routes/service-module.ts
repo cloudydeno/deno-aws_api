@@ -19,7 +19,7 @@ const handleRequest: RouteHandler = async ctx => {
   // Attempt to deal with excessive traffic
   if (ctx.headers.get('user-agent') == 'Deno/1.40.4') {
     if (params.get('docs')?.includes('/~/')) {
-      if (Math.random() < 0.2) {
+      if (Math.random() < 0.9) {
         return new Response(rateLimitMessage, { status: 429 });
       }
     }
