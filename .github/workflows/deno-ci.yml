@@ -21,6 +21,7 @@ jobs:
         - v1.30
         - v1.35
         - v1.40
+        - v1.45
         - canary
 
     steps:
@@ -65,6 +66,7 @@ jobs:
       matrix:
         deno-version:
         - v1.40
+        - v1.45
         - canary
 
     steps:
@@ -94,8 +96,9 @@ jobs:
     strategy:
       matrix:
         deno-version:
-        - v1.26
-        - v1.30
+        - v1.35
+        - v1.40
+        - v1.45
         - canary
       fail-fast: false # run each branch to completion
 
@@ -135,7 +138,7 @@ jobs:
     strategy:
       matrix:
         deno-version:
-        - v1.30
+        - v1.45
 
     steps:
     - name: Checkout source

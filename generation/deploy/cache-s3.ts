@@ -38,8 +38,8 @@ export function s3Cache(
           body: BodyBuffer == null ? new Uint8Array(0) : BodyBuffer,
         };
 
-      } catch (err) {
-        if (err.code === 'NoSuchKey') return undefined;
+      } catch (err: unknown) {
+        if ((err as Error).code === 'NoSuchKey') return undefined;
         throw err;
       }
     },

@@ -12,8 +12,8 @@ export function genDocsComment(docsXml: string, indentation: string, mode: 'shor
       return `${s}/** ${body} */`;
     }
     return `${s}/**\n${body.replace(/^/gm, `${s} * `).replace(/ +$/gm, '')}\n${s} */`;
-  } catch (err) {
-    return `${s}/** TODO: Failed to render documentation: ${err.message} */`;
+  } catch (err: unknown) {
+    return `${s}/** TODO: Failed to render documentation: ${(err as Error).message} */`;
   }
 }
 

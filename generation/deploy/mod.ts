@@ -18,8 +18,8 @@ Deno.serve({
   let response: Response;
   try {
     response = await routeRequest(request);
-  } catch (e) {
-    span?.recordException(e);
+  } catch (e: unknown) {
+    span?.recordException(e as Error);
     response = ResponseError(e);
   }
   response.headers.set("server", "aws_api-generation/v0.4.0");
