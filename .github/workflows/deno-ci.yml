@@ -34,7 +34,7 @@ jobs:
         deno-version: ${{ matrix.deno-version }}
 
     - name: Cache https:// deps
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ~/.cache/deno/deps/https
         key: deno/${{ matrix.deno-version }}-https/v1-${{ github.sha }}
@@ -80,7 +80,7 @@ jobs:
         deno-version: ${{ matrix.deno-version }}
 
     - name: Cache https:// deps
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ~/.cache/deno/deps/https
         key: deno/${{ matrix.deno-version }}-https/v1-${{ github.sha }}
@@ -115,7 +115,7 @@ jobs:
         deno-version: ${{ matrix.deno-version }}
 
     - name: Cache https:// deps
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ~/.cache/deno/deps/https
         key: deno/${{ matrix.deno-version }}-https/v1-${{ github.sha }}
@@ -153,7 +153,7 @@ jobs:
         deno-version: ${{ matrix.deno-version }}
 
     - name: Cache https:// deps
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ~/.cache/deno/deps/https
         key: deno/${{ matrix.deno-version }}-https/v1-${{ github.sha }}
