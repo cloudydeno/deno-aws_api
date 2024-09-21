@@ -1636,7 +1636,8 @@ export class Lambda {
       try {
         const resp = await this.getFunction(params, opts);
         return resp; // for status 200
-      } catch (err) {
+      } catch (thrown: unknown) {
+        const err = thrown as client.AwsServiceError;
         if (!["ResourceNotFoundException"].includes(err.shortCode)) throw err;
       }
       await new Promise(r => setTimeout(r, 1000));

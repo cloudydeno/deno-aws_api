@@ -167,7 +167,8 @@ export default class GenWaiter {
     if (handlesAnyErr) {
       chunks.push(`      try {`);
       chunks.push(...innerChunks.map(x => '  '+x));
-      chunks.push(`      } catch (err) {`);
+      chunks.push(`      } catch (thrown: unknown) {`);
+      chunks.push(`        const err = thrown as client.AwsServiceError;`);
       if (goodErrs.length > 0) {
         chunks.push(`        if (${JSON.stringify(goodErrs)}.includes(err.shortCode)) return err;`);
       }

@@ -2437,7 +2437,8 @@ export class S3 {
         await this.headBucket(params, opts);
         return; // for status 200
         return; // for status 301
-      } catch (err) {
+      } catch (thrown: unknown) {
+        const err = thrown as client.AwsServiceError;
         if (["Http403"].includes(err.shortCode)) return err;
         if (!["Http404"].includes(err.shortCode)) throw err;
       }
@@ -2455,7 +2456,8 @@ export class S3 {
     for (let i = 0; i < 20; i++) {
       try {
         await this.headBucket(params, opts);
-      } catch (err) {
+      } catch (thrown: unknown) {
+        const err = thrown as client.AwsServiceError;
         if (["Http404"].includes(err.shortCode)) return err;
         throw err;
       }
@@ -2474,7 +2476,8 @@ export class S3 {
       try {
         const resp = await this.headObject(params, opts);
         return resp; // for status 200
-      } catch (err) {
+      } catch (thrown: unknown) {
+        const err = thrown as client.AwsServiceError;
         if (!["Http404"].includes(err.shortCode)) throw err;
       }
       await new Promise(r => setTimeout(r, 5000));
@@ -2491,7 +2494,8 @@ export class S3 {
     for (let i = 0; i < 20; i++) {
       try {
         const resp = await this.headObject(params, opts);
-      } catch (err) {
+      } catch (thrown: unknown) {
+        const err = thrown as client.AwsServiceError;
         if (["Http404"].includes(err.shortCode)) return err;
         throw err;
       }
