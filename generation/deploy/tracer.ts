@@ -22,11 +22,12 @@ export class AsyncTracer {
     }, async span => {
       try {
         return await fn(span);
-      } catch (err) {
+      } catch (thrown: unknown) {
+        const err = thrown as Error;
         span.setStatus({
           code: SpanStatusCode.ERROR,
           message: err.message,
-        })
+        });
         span.recordException(err);
         throw err;
       } finally {

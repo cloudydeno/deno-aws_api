@@ -598,7 +598,8 @@ export class Kinesis {
     for (let i = 0; i < 18; i++) {
       try {
         const resp = await this.describeStream(params, opts);
-      } catch (err) {
+      } catch (thrown: unknown) {
+        const err = thrown as client.AwsServiceError;
         if (["ResourceNotFoundException"].includes(err.shortCode)) return err;
         throw err;
       }

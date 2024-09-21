@@ -44,8 +44,8 @@ export class BaseApiFactory implements ApiFactory {
 
     try {
       this.#region = opts.region ?? Deno.env.get("AWS_REGION");
-    } catch (err) {
-      if (err.name !== 'PermissionDenied') throw err;
+    } catch (err: unknown) {
+      if ((err as Error).name !== 'PermissionDenied') throw err;
     }
 
     this.#endpointResolver = opts.endpointResolver;
@@ -201,7 +201,7 @@ export class XmlServiceClient extends BaseServiceClient {
     super(signedFetcher, 'xml');
   }
 
-  async performRequest(config: ApiRequestConfig): Promise<Response> {
+  override async performRequest(config: ApiRequestConfig): Promise<Response> {
     const headers = config.headers ?? new Headers;
     headers.append('accept', 'text/xml');
 
@@ -234,7 +234,7 @@ export class JsonServiceClient extends BaseServiceClient {
     super(signedFetcher, 'json');
   }
 
-  async performRequest(config: ApiRequestConfig): Promise<Response> {
+  override async performRequest(config: ApiRequestConfig): Promise<Response> {
     const headers = config.headers ?? new Headers;
     headers.append('x-amz-target', `${this.serviceTarget}.${config.action}`);
     headers.append('accept', 'application/x-amz-json-'+this.jsonVersion);
@@ -261,7 +261,7 @@ export class RestJsonServiceClient extends BaseServiceClient {
     super(signedFetcher, 'rest-json');
   }
 
-  async performRequest(config: ApiRequestConfig): Promise<Response> {
+  override async performRequest(config: ApiRequestConfig): Promise<Response> {
     const headers = config.headers ?? new Headers;
     headers.append('accept', 'application/json');
 
@@ -289,7 +289,7 @@ export class QueryServiceClient extends BaseServiceClient {
     this.#serviceVersion = serviceVersion;
   }
 
-  async performRequest(config: ApiRequestConfig): Promise<Response> {
+  override async performRequest(config: ApiRequestConfig): Promise<Response> {
     const headers = config.headers ?? new Headers;
     headers.append('accept', 'text/xml');
 

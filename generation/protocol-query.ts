@@ -11,7 +11,7 @@ export default class ProtocolQueryCodegen extends ProtocolXmlCodegen {
     super(shapes, helpers, opts);
   }
 
-  generateOperationInputParsingTypescript(inputShape: KnownShape | null): { inputParsingCode: string; inputVariables: string[]; } {
+  override generateOperationInputParsingTypescript(inputShape: KnownShape | null): { inputParsingCode: string; inputVariables: string[]; } {
     if (!inputShape) {
       return {
         inputParsingCode: `    const body = new URLSearchParams;`,
@@ -34,7 +34,7 @@ export default class ProtocolQueryCodegen extends ProtocolXmlCodegen {
     };
   }
 
-  generateShapeInputParsingTypescript(shape: KnownShape): { inputParsingFunction: string; } {
+  override generateShapeInputParsingTypescript(shape: KnownShape): { inputParsingFunction: string; } {
     if (shape.spec.type === 'string') return {
       inputParsingFunction: '',
     };
@@ -138,7 +138,7 @@ export default class ProtocolQueryCodegen extends ProtocolXmlCodegen {
     return chunks.join('\n');
   }
 
-  ucfirst(name: string | undefined, isQueryName = false): string | undefined {
+  override ucfirst(name: string | undefined, isQueryName = false): string | undefined {
     if (!name) return name;
     if (isQueryName || !this.ec2Mode) {
       return name;
