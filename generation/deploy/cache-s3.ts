@@ -1,6 +1,7 @@
 import { Cache } from "https://deno.land/x/httpcache@0.1.2/mod.ts";
 
 import { S3 } from "./s3-api.ts";
+import { AwsServiceError } from "../../lib/client/common.ts";
 
 export function s3Cache(
   s3Client: S3,
@@ -39,7 +40,7 @@ export function s3Cache(
         };
 
       } catch (err: unknown) {
-        if ((err as Error).code === 'NoSuchKey') return undefined;
+        if ((err as AwsServiceError).code === 'NoSuchKey') return undefined;
         throw err;
       }
     },
