@@ -19,7 +19,7 @@ const handleRequest: RouteHandler = async ctx => {
   // Attempt to deal with excessive traffic
   // Seems to be related to deno docs site + faulty bot
   // (perhaps StractBot +https://stract.com/webmasters)
-  if (ctx.headers.get('user-agent') == 'Deno/1.40.4') {
+  if (ctx.headers.get('user-agent')?.startsWith('DenoDoc/')) {
     if (params.get('docs')?.includes('/~/')) {
       return new Response(rateLimitMessage, { status: 400 });
     }
