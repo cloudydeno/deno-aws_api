@@ -5,7 +5,7 @@ import { AwsServiceError } from "./mod.ts";
 Deno.test("Request cancellation", async () => {
   const apiFactory = new BaseApiFactory({
     credentials: {
-      region: 'test',
+      region: '',
       awsAccessKeyId: '',
       awsSecretKey: '',
     },

@@ -1181,7 +1181,8 @@ export class DynamoDB {
       try {
         const resp = await this.describeTable(params, opts);
         if (resp?.Table?.TableStatus === "ACTIVE") return resp;
-      } catch (err) {
+      } catch (thrown: unknown) {
+        const err = thrown as client.AwsServiceError;
         if (!["ResourceNotFoundException"].includes(err.shortCode)) throw err;
       }
       await new Promise(r => setTimeout(r, 20000));
@@ -1198,7 +1199,8 @@ export class DynamoDB {
     for (let i = 0; i < 25; i++) {
       try {
         const resp = await this.describeTable(params, opts);
-      } catch (err) {
+      } catch (thrown: unknown) {
+        const err = thrown as client.AwsServiceError;
         if (["ResourceNotFoundException"].includes(err.shortCode)) return err;
         throw err;
       }

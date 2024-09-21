@@ -53,6 +53,7 @@ jobs:
       run: >
         time deno test
         --allow-net=169.254.169.254,example.com
+        --allow-env
         lib/client/
         lib/encoding/
         lib/extras/
