@@ -4,7 +4,7 @@ import { trace } from "./tracer.ts";
 // https://docs.deno.com/deploy/manual/edge-cache
 
 function transformUrl(url: string) {
-  return url.replace(/\/\/[^\/]+\//, '//upstream-cache-v1/');
+  return url.replace(/\/\/[^\/]+\//, '//upstream-cache-v2/');
 }
 
 export async function platformCache(
@@ -27,7 +27,7 @@ export async function platformCache(
       type CachePolicy = Parameters<ConstructorParameters<typeof Cache>[0]['set']>[1]['policy'];
 
       const {
-        'cache-policy': policyHeader,
+        'x-cache-policy': policyHeader,
         ...resh
       } = Object.fromEntries(cached.headers.entries());
 
@@ -56,7 +56,7 @@ export async function platformCache(
       await nativeCache.put(transformUrl(url), new Response(resp.body, {
         headers: {
           ...resh,
-          'cache-policy': JSON.stringify(rest),
+          'x-cache-policy': JSON.stringify(rest),
         },
       }));
     },
