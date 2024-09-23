@@ -1,4 +1,5 @@
 import { Cache } from "https://deno.land/x/httpcache@0.1.2/mod.ts";
+import { trace } from "./tracer.ts";
 
 // https://docs.deno.com/deploy/manual/edge-cache
 
@@ -12,6 +13,11 @@ export async function platformCache(
 
     async get(url) {
       const cached = await nativeCache.match(url);
+
+      trace.getActiveSpan()?.addEvent('edgecache', {
+        'cache.result': cached ? 'hit' : 'miss',
+      });
+
       if (!cached) return undefined;
 
       type CachePolicy = Parameters<ConstructorParameters<typeof Cache>[0]['set']>[1]['policy'];
