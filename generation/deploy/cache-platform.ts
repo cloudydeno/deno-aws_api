@@ -14,27 +14,27 @@ export async function platformCache(
       const cached = await nativeCache.match(url);
       if (!cached) return undefined;
 
-      const policyHeader = cached.headers.get('cache-policy');
+      const {'cache-policy': policyHeader, ...rest} = Object.fromEntries(cached.headers.entries());
       if (!policyHeader) {
         console.warn('WARN: platform cache lacked policy', cached);
         return undefined;
       }
+      rest['resh'] = JSON.parse(policyHeader);
 
       const BodyBuffer = new Uint8Array(await cached.arrayBuffer());
 
-      // const idx = BodyBuffer.indexOf(10);
       return {
-        // policy: JSON.parse(new TextDecoder().decode(BodyBuffer.slice(0, idx))),
-        policy: JSON.parse(policyHeader),
-        // body: BodyBuffer.slice(idx+1),
+        policy: rest,
         body: BodyBuffer,
       };
     },
 
     async set(url, resp) {
+      const {resh, ...rest} = resp.policy;
       await nativeCache.put(url, new Response(resp.body, {
         headers: {
-          'cache-policy': JSON.stringify(resp.policy),
+          ...resh,
+          'cache-policy': JSON.stringify(rest),
         },
       }));
     },
