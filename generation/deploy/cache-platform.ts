@@ -32,6 +32,9 @@ export async function platformCache(
       } = Object.fromEntries(cached.headers.entries());
 
       if (!policyHeader) {
+        trace.getActiveSpan()?.addEvent('edgecache.fail', {
+          'message': 'platform cache hit lacked policy',
+        });
         console.warn('WARN: platform cache lacked policy', cached);
         return undefined;
       }
