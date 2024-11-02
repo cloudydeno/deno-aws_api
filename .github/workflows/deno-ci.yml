@@ -69,8 +69,6 @@ jobs:
       fail-fast: false
       matrix:
         deno-version:
-        - v1.40
-        - v1.45
         - v2.0
         - canary
 
@@ -94,7 +92,7 @@ jobs:
 
     - name: Check generation/deploy/mod.ts
       if: always()
-      run: time deno check generation/deploy/mod.ts
+      run: time deno check --allow-import=cdn.skypack.dev,deno.land generation/deploy/mod.ts
 
   validate-codegen:
     runs-on: ubuntu-latest
