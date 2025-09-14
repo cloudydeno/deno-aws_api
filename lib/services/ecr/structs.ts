@@ -42,6 +42,8 @@ export interface CreatePullThroughCacheRuleRequest {
   ecrRepositoryPrefix: string;
   upstreamRegistryUrl: string;
   registryId?: string | null;
+  upstreamRegistry?: UpstreamRegistry | null;
+  credentialArn?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -52,6 +54,19 @@ export interface CreateRepositoryRequest {
   imageTagMutability?: ImageTagMutability | null;
   imageScanningConfiguration?: ImageScanningConfiguration | null;
   encryptionConfiguration?: EncryptionConfiguration | null;
+}
+
+// refs: 1 - tags: named, input
+export interface CreateRepositoryCreationTemplateRequest {
+  prefix: string;
+  description?: string | null;
+  encryptionConfiguration?: EncryptionConfigurationForRepositoryCreationTemplate | null;
+  resourceTags?: Tag[] | null;
+  imageTagMutability?: ImageTagMutability | null;
+  repositoryPolicy?: string | null;
+  lifecyclePolicy?: string | null;
+  appliedFor: RCTAppliedFor[];
+  customRoleArn?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -71,6 +86,11 @@ export interface DeleteRepositoryRequest {
   registryId?: string | null;
   repositoryName: string;
   force?: boolean | null;
+}
+
+// refs: 1 - tags: named, input
+export interface DeleteRepositoryCreationTemplateRequest {
+  prefix: string;
 }
 
 // refs: 1 - tags: named, input
@@ -119,6 +139,18 @@ export interface DescribeRepositoriesRequest {
   repositoryNames?: string[] | null;
   nextToken?: string | null;
   maxResults?: number | null;
+}
+
+// refs: 1 - tags: named, input
+export interface DescribeRepositoryCreationTemplatesRequest {
+  prefixes?: string[] | null;
+  nextToken?: string | null;
+  maxResults?: number | null;
+}
+
+// refs: 1 - tags: named, input
+export interface GetAccountSettingRequest {
+  name: string;
 }
 
 // refs: 1 - tags: named, input
@@ -173,6 +205,12 @@ export interface ListImagesRequest {
 // refs: 1 - tags: named, input
 export interface ListTagsForResourceRequest {
   resourceArn: string;
+}
+
+// refs: 1 - tags: named, input
+export interface PutAccountSettingRequest {
+  name: string;
+  value: string;
 }
 
 // refs: 1 - tags: named, input
@@ -257,6 +295,26 @@ export interface UntagResourceRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface UpdatePullThroughCacheRuleRequest {
+  registryId?: string | null;
+  ecrRepositoryPrefix: string;
+  credentialArn: string;
+}
+
+// refs: 1 - tags: named, input
+export interface UpdateRepositoryCreationTemplateRequest {
+  prefix: string;
+  description?: string | null;
+  encryptionConfiguration?: EncryptionConfigurationForRepositoryCreationTemplate | null;
+  resourceTags?: Tag[] | null;
+  imageTagMutability?: ImageTagMutability | null;
+  repositoryPolicy?: string | null;
+  lifecyclePolicy?: string | null;
+  appliedFor?: RCTAppliedFor[] | null;
+  customRoleArn?: string | null;
+}
+
+// refs: 1 - tags: named, input
 export interface UploadLayerPartRequest {
   registryId?: string | null;
   repositoryName: string;
@@ -264,6 +322,12 @@ export interface UploadLayerPartRequest {
   partFirstByte: number;
   partLastByte: number;
   layerPartBlob: Uint8Array | string;
+}
+
+// refs: 1 - tags: named, input
+export interface ValidatePullThroughCacheRuleRequest {
+  ecrRepositoryPrefix: string;
+  registryId?: string | null;
 }
 
 // refs: 1 - tags: named, output
@@ -304,11 +368,19 @@ export interface CreatePullThroughCacheRuleResponse {
   upstreamRegistryUrl?: string | null;
   createdAt?: Date | number | null;
   registryId?: string | null;
+  upstreamRegistry?: UpstreamRegistry | null;
+  credentialArn?: string | null;
 }
 
 // refs: 1 - tags: named, output
 export interface CreateRepositoryResponse {
   repository?: Repository | null;
+}
+
+// refs: 1 - tags: named, output
+export interface CreateRepositoryCreationTemplateResponse {
+  registryId?: string | null;
+  repositoryCreationTemplate?: RepositoryCreationTemplate | null;
 }
 
 // refs: 1 - tags: named, output
@@ -325,6 +397,7 @@ export interface DeletePullThroughCacheRuleResponse {
   upstreamRegistryUrl?: string | null;
   createdAt?: Date | number | null;
   registryId?: string | null;
+  credentialArn?: string | null;
 }
 
 // refs: 1 - tags: named, output
@@ -336,6 +409,12 @@ export interface DeleteRegistryPolicyResponse {
 // refs: 1 - tags: named, output
 export interface DeleteRepositoryResponse {
   repository?: Repository | null;
+}
+
+// refs: 1 - tags: named, output
+export interface DeleteRepositoryCreationTemplateResponse {
+  registryId?: string | null;
+  repositoryCreationTemplate?: RepositoryCreationTemplate | null;
 }
 
 // refs: 1 - tags: named, output
@@ -384,6 +463,19 @@ export interface DescribeRegistryResponse {
 export interface DescribeRepositoriesResponse {
   repositories?: Repository[] | null;
   nextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface DescribeRepositoryCreationTemplatesResponse {
+  registryId?: string | null;
+  repositoryCreationTemplates?: RepositoryCreationTemplate[] | null;
+  nextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface GetAccountSettingResponse {
+  name?: string | null;
+  value?: string | null;
 }
 
 // refs: 1 - tags: named, output
@@ -453,6 +545,12 @@ export interface ListTagsForResourceResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface PutAccountSettingResponse {
+  name?: string | null;
+  value?: string | null;
+}
+
+// refs: 1 - tags: named, output
 export interface PutImageResponse {
   image?: Image | null;
 }
@@ -518,11 +616,35 @@ export interface StartLifecyclePolicyPreviewResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface UpdatePullThroughCacheRuleResponse {
+  ecrRepositoryPrefix?: string | null;
+  registryId?: string | null;
+  updatedAt?: Date | number | null;
+  credentialArn?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface UpdateRepositoryCreationTemplateResponse {
+  registryId?: string | null;
+  repositoryCreationTemplate?: RepositoryCreationTemplate | null;
+}
+
+// refs: 1 - tags: named, output
 export interface UploadLayerPartResponse {
   registryId?: string | null;
   repositoryName?: string | null;
   uploadId?: string | null;
   lastByteReceived?: number | null;
+}
+
+// refs: 1 - tags: named, output
+export interface ValidatePullThroughCacheRuleResponse {
+  ecrRepositoryPrefix?: string | null;
+  registryId?: string | null;
+  upstreamRegistryUrl?: string | null;
+  credentialArn?: string | null;
+  isValid?: boolean | null;
+  failure?: string | null;
 }
 
 // refs: 16 - tags: input, named, interface, output
@@ -531,13 +653,24 @@ export interface ImageIdentifier {
   imageTag?: string | null;
 }
 
-// refs: 3 - tags: input, named, interface, output
+// refs: 3 - tags: input, named, enum, output
+export type UpstreamRegistry =
+| "ecr-public"
+| "quay"
+| "k8s"
+| "docker-hub"
+| "github-container-registry"
+| "azure-container-registry"
+| "gitlab-container-registry"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 9 - tags: input, named, interface, output
 export interface Tag {
-  Key?: string | null;
-  Value?: string | null;
+  Key: string;
+  Value: string;
 }
 
-// refs: 6 - tags: input, named, enum, output
+// refs: 12 - tags: input, named, enum, output
 export type ImageTagMutability =
 | "MUTABLE"
 | "IMMUTABLE"
@@ -554,10 +687,22 @@ export interface EncryptionConfiguration {
   kmsKey?: string | null;
 }
 
-// refs: 4 - tags: input, named, enum, output
+// refs: 10 - tags: input, named, enum, output
 export type EncryptionType =
 | "AES256"
 | "KMS"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 6 - tags: input, named, interface, output
+export interface EncryptionConfigurationForRepositoryCreationTemplate {
+  encryptionType: EncryptionType;
+  kmsKey?: string | null;
+}
+
+// refs: 6 - tags: input, named, enum, output
+export type RCTAppliedFor =
+| "REPLICATION"
+| "PULL_THROUGH_CACHE"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
@@ -683,6 +828,9 @@ export type ImageFailureCode =
 | "MissingDigestAndTag"
 | "ImageReferencedByManifestList"
 | "KmsError"
+| "UpstreamAccessDenied"
+| "UpstreamTooManyRequests"
+| "UpstreamUnavailable"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
@@ -725,6 +873,21 @@ export interface Repository {
   imageTagMutability?: ImageTagMutability | null;
   imageScanningConfiguration?: ImageScanningConfiguration | null;
   encryptionConfiguration?: EncryptionConfiguration | null;
+}
+
+// refs: 4 - tags: output, named, interface
+export interface RepositoryCreationTemplate {
+  prefix?: string | null;
+  description?: string | null;
+  encryptionConfiguration?: EncryptionConfigurationForRepositoryCreationTemplate | null;
+  resourceTags?: Tag[] | null;
+  imageTagMutability?: ImageTagMutability | null;
+  repositoryPolicy?: string | null;
+  lifecyclePolicy?: string | null;
+  appliedFor?: RCTAppliedFor[] | null;
+  customRoleArn?: string | null;
+  createdAt?: Date | number | null;
+  updatedAt?: Date | number | null;
 }
 
 // refs: 1 - tags: output, named, interface
@@ -915,6 +1078,7 @@ export interface ImageDetail {
   imageScanFindingsSummary?: ImageScanFindingsSummary | null;
   imageManifestMediaType?: string | null;
   artifactMediaType?: string | null;
+  lastRecordedPullTime?: Date | number | null;
 }
 
 // refs: 1 - tags: output, named, interface
@@ -930,6 +1094,9 @@ export interface PullThroughCacheRule {
   upstreamRegistryUrl?: string | null;
   createdAt?: Date | number | null;
   registryId?: string | null;
+  credentialArn?: string | null;
+  upstreamRegistry?: UpstreamRegistry | null;
+  updatedAt?: Date | number | null;
 }
 
 // refs: 1 - tags: output, named, interface

@@ -42,6 +42,7 @@ export class STS {
     if ("SerialNumber" in params) body.append(prefix+"SerialNumber", (params["SerialNumber"] ?? '').toString());
     if ("TokenCode" in params) body.append(prefix+"TokenCode", (params["TokenCode"] ?? '').toString());
     if ("SourceIdentity" in params) body.append(prefix+"SourceIdentity", (params["SourceIdentity"] ?? '').toString());
+    if (params["ProvidedContexts"]) qsP.appendList(body, prefix+"ProvidedContexts", params["ProvidedContexts"], {"appender":ProvidedContext_Serialize,"entryPrefix":".member."})
     const resp = await this.#client.performRequest({
       opts, body,
       action: "AssumeRole",
@@ -213,6 +214,11 @@ function PolicyDescriptorType_Serialize(body: URLSearchParams, prefix: string, p
 function Tag_Serialize(body: URLSearchParams, prefix: string, params: s.Tag) {
   body.append(prefix+".Key", (params["Key"] ?? '').toString());
   body.append(prefix+".Value", (params["Value"] ?? '').toString());
+}
+
+function ProvidedContext_Serialize(body: URLSearchParams, prefix: string, params: s.ProvidedContext) {
+  if ("ProviderArn" in params) body.append(prefix+".ProviderArn", (params["ProviderArn"] ?? '').toString());
+  if ("ContextAssertion" in params) body.append(prefix+".ContextAssertion", (params["ContextAssertion"] ?? '').toString());
 }
 
 function Credentials_Parse(node: xmlP.XmlNode): s.Credentials {

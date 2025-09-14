@@ -17,11 +17,17 @@ export class Route53 {
     "endpointPrefix": "route53",
     "globalEndpoint": "route53.amazonaws.com",
     "protocol": "rest-xml",
+    "protocols": [
+      "rest-xml"
+    ],
     "serviceAbbreviation": "Route 53",
     "serviceFullName": "Amazon Route 53",
     "serviceId": "Route 53",
     "signatureVersion": "v4",
-    "uid": "route53-2013-04-01"
+    "uid": "route53-2013-04-01",
+    "auth": [
+      "aws.auth#sigv4"
+    ]
   };
 
   async activateKeySigningKey(
@@ -62,6 +68,28 @@ export class Route53 {
     };
   }
 
+  async changeCidrCollection(
+    params: s.ChangeCidrCollectionRequest,
+    opts: client.RequestOptions = {},
+  ): Promise<s.ChangeCidrCollectionResponse> {
+    const body = xmlP.stringify({
+      name: "ChangeCidrCollectionRequest",
+      attributes: {"xmlns":"https://route53.amazonaws.com/doc/2013-04-01/"},
+      children: [
+        {name: "CollectionVersion", content: params["CollectionVersion"]?.toString()},
+        {name: "Changes", children: params["Changes"]?.map(x => ({name: "member", ...CidrCollectionChange_Serialize(x)}))},
+      ]});
+    const resp = await this.#client.performRequest({
+      opts, body,
+      action: "ChangeCidrCollection",
+      requestUri: cmnP.encodePath`/2013-04-01/cidrcollection/${params["Id"]}`,
+    });
+    const xml = xmlP.readXmlResult(await resp.text());
+    return xml.strings({
+      required: {"Id":true},
+    });
+  }
+
   async changeResourceRecordSets(
     params: s.ChangeResourceRecordSetsRequest,
     opts: client.RequestOptions = {},
@@ -100,6 +128,32 @@ export class Route53 {
       requestUri: cmnP.encodePath`/2013-04-01/tags/${params["ResourceType"]}/${params["ResourceId"]}`,
     });
     await resp.body?.cancel();
+  }
+
+  async createCidrCollection(
+    params: s.CreateCidrCollectionRequest,
+    opts: client.RequestOptions = {},
+  ): Promise<s.CreateCidrCollectionResponse> {
+    const body = xmlP.stringify({
+      name: "CreateCidrCollectionRequest",
+      attributes: {"xmlns":"https://route53.amazonaws.com/doc/2013-04-01/"},
+      children: [
+        {name: "Name", content: params["Name"]?.toString()},
+        {name: "CallerReference", content: params["CallerReference"]?.toString()},
+      ]});
+    const resp = await this.#client.performRequest({
+      opts, body,
+      action: "CreateCidrCollection",
+      requestUri: "/2013-04-01/cidrcollection",
+      responseCode: 201,
+    });
+    const xml = xmlP.readXmlResult(await resp.text());
+    return {
+      Location: resp.headers.get("Location"),
+      ...{
+        Collection: xml.first("Collection", false, CidrCollection_Parse),
+      },
+    };
   }
 
   async createHealthCheck(
@@ -362,6 +416,20 @@ export class Route53 {
     return {
       ChangeInfo: xml.first("ChangeInfo", true, ChangeInfo_Parse),
     };
+  }
+
+  async deleteCidrCollection(
+    params: s.DeleteCidrCollectionRequest,
+    opts: client.RequestOptions = {},
+  ): Promise<void> {
+
+    const resp = await this.#client.performRequest({
+      opts,
+      action: "DeleteCidrCollection",
+      method: "DELETE",
+      requestUri: cmnP.encodePath`/2013-04-01/cidrcollection/${params["Id"]}`,
+    });
+    await resp.body?.cancel();
   }
 
   async deleteHealthCheck(
@@ -851,6 +919,73 @@ export class Route53 {
     };
   }
 
+  async listCidrBlocks(
+    params: s.ListCidrBlocksRequest,
+    opts: client.RequestOptions = {},
+  ): Promise<s.ListCidrBlocksResponse> {
+    const query = new URLSearchParams;
+    if (params["LocationName"] != null) query.set("location", params["LocationName"]?.toString() ?? "");
+    if (params["NextToken"] != null) query.set("nexttoken", params["NextToken"]?.toString() ?? "");
+    if (params["MaxResults"] != null) query.set("maxresults", params["MaxResults"]?.toString() ?? "");
+    const resp = await this.#client.performRequest({
+      opts, query,
+      action: "ListCidrBlocks",
+      method: "GET",
+      requestUri: cmnP.encodePath`/2013-04-01/cidrcollection/${params["CollectionId"]}/cidrblocks`,
+    });
+    const xml = xmlP.readXmlResult(await resp.text());
+    return {
+      ...xml.strings({
+        optional: {"NextToken":true},
+      }),
+      CidrBlocks: xml.getList("CidrBlocks", "member").map(CidrBlockSummary_Parse),
+    };
+  }
+
+  async listCidrCollections(
+    params: s.ListCidrCollectionsRequest = {},
+    opts: client.RequestOptions = {},
+  ): Promise<s.ListCidrCollectionsResponse> {
+    const query = new URLSearchParams;
+    if (params["NextToken"] != null) query.set("nexttoken", params["NextToken"]?.toString() ?? "");
+    if (params["MaxResults"] != null) query.set("maxresults", params["MaxResults"]?.toString() ?? "");
+    const resp = await this.#client.performRequest({
+      opts, query,
+      action: "ListCidrCollections",
+      method: "GET",
+      requestUri: "/2013-04-01/cidrcollection",
+    });
+    const xml = xmlP.readXmlResult(await resp.text());
+    return {
+      ...xml.strings({
+        optional: {"NextToken":true},
+      }),
+      CidrCollections: xml.getList("CidrCollections", "member").map(CollectionSummary_Parse),
+    };
+  }
+
+  async listCidrLocations(
+    params: s.ListCidrLocationsRequest,
+    opts: client.RequestOptions = {},
+  ): Promise<s.ListCidrLocationsResponse> {
+    const query = new URLSearchParams;
+    if (params["NextToken"] != null) query.set("nexttoken", params["NextToken"]?.toString() ?? "");
+    if (params["MaxResults"] != null) query.set("maxresults", params["MaxResults"]?.toString() ?? "");
+    const resp = await this.#client.performRequest({
+      opts, query,
+      action: "ListCidrLocations",
+      method: "GET",
+      requestUri: cmnP.encodePath`/2013-04-01/cidrcollection/${params["CollectionId"]}`,
+    });
+    const xml = xmlP.readXmlResult(await resp.text());
+    return {
+      ...xml.strings({
+        optional: {"NextToken":true},
+      }),
+      CidrLocations: xml.getList("CidrLocations", "member").map(LocationSummary_Parse),
+    };
+  }
+
   async listGeoLocations(
     params: s.ListGeoLocationsRequest = {},
     opts: client.RequestOptions = {},
@@ -909,6 +1044,7 @@ export class Route53 {
     if (params["Marker"] != null) query.set("marker", params["Marker"]?.toString() ?? "");
     if (params["MaxItems"] != null) query.set("maxitems", params["MaxItems"]?.toString() ?? "");
     if (params["DelegationSetId"] != null) query.set("delegationsetid", params["DelegationSetId"]?.toString() ?? "");
+    if (params["HostedZoneType"] != null) query.set("hostedzonetype", params["HostedZoneType"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
       opts, query,
       action: "ListHostedZones",
@@ -1402,6 +1538,15 @@ function VPC_Parse(node: xmlP.XmlNode): s.VPC {
   };
 }
 
+function CidrCollectionChange_Serialize(data: s.CidrCollectionChange | undefined | null): Partial<xmlP.Node> {
+  if (!data) return {};
+  return {children: [
+    {name: "LocationName", content: data["LocationName"]?.toString()},
+    {name: "Action", content: data["Action"]?.toString()},
+    {name: "CidrList", children: data["CidrList"]?.map(x => ({name: "Cidr", content: x}))},
+  ]};
+}
+
 function ChangeBatch_Serialize(data: s.ChangeBatch | undefined | null): Partial<xmlP.Node> {
   if (!data) return {};
   return {children: [
@@ -1434,6 +1579,8 @@ function ResourceRecordSet_Serialize(data: s.ResourceRecordSet | undefined | nul
     {name: "AliasTarget", ...AliasTarget_Serialize(data["AliasTarget"])},
     {name: "HealthCheckId", content: data["HealthCheckId"]?.toString()},
     {name: "TrafficPolicyInstanceId", content: data["TrafficPolicyInstanceId"]?.toString()},
+    {name: "CidrRoutingConfig", ...CidrRoutingConfig_Serialize(data["CidrRoutingConfig"])},
+    {name: "GeoProximityLocation", ...GeoProximityLocation_Serialize(data["GeoProximityLocation"])},
   ]};
 }
 function ResourceRecordSet_Parse(node: xmlP.XmlNode): s.ResourceRecordSet {
@@ -1451,6 +1598,8 @@ function ResourceRecordSet_Parse(node: xmlP.XmlNode): s.ResourceRecordSet {
     TTL: node.first("TTL", false, x => parseInt(x.content ?? '0')),
     ResourceRecords: node.getList("ResourceRecords", "ResourceRecord").map(ResourceRecord_Parse),
     AliasTarget: node.first("AliasTarget", false, AliasTarget_Parse),
+    CidrRoutingConfig: node.first("CidrRoutingConfig", false, CidrRoutingConfig_Parse),
+    GeoProximityLocation: node.first("GeoProximityLocation", false, GeoProximityLocation_Parse),
   };
 }
 
@@ -1495,6 +1644,51 @@ function AliasTarget_Parse(node: xmlP.XmlNode): s.AliasTarget {
     }),
     EvaluateTargetHealth: node.first("EvaluateTargetHealth", true, x => x.content === 'true'),
   };
+}
+
+function CidrRoutingConfig_Serialize(data: s.CidrRoutingConfig | undefined | null): Partial<xmlP.Node> {
+  if (!data) return {};
+  return {children: [
+    {name: "CollectionId", content: data["CollectionId"]?.toString()},
+    {name: "LocationName", content: data["LocationName"]?.toString()},
+  ]};
+}
+function CidrRoutingConfig_Parse(node: xmlP.XmlNode): s.CidrRoutingConfig {
+  return node.strings({
+    required: {"CollectionId":true,"LocationName":true},
+  });
+}
+
+function GeoProximityLocation_Serialize(data: s.GeoProximityLocation | undefined | null): Partial<xmlP.Node> {
+  if (!data) return {};
+  return {children: [
+    {name: "AWSRegion", content: data["AWSRegion"]?.toString()},
+    {name: "LocalZoneGroup", content: data["LocalZoneGroup"]?.toString()},
+    {name: "Coordinates", ...Coordinates_Serialize(data["Coordinates"])},
+    {name: "Bias", content: data["Bias"]?.toString()},
+  ]};
+}
+function GeoProximityLocation_Parse(node: xmlP.XmlNode): s.GeoProximityLocation {
+  return {
+    ...node.strings({
+      optional: {"AWSRegion":true,"LocalZoneGroup":true},
+    }),
+    Coordinates: node.first("Coordinates", false, Coordinates_Parse),
+    Bias: node.first("Bias", false, x => parseInt(x.content ?? '0')),
+  };
+}
+
+function Coordinates_Serialize(data: s.Coordinates | undefined | null): Partial<xmlP.Node> {
+  if (!data) return {};
+  return {children: [
+    {name: "Latitude", content: data["Latitude"]?.toString()},
+    {name: "Longitude", content: data["Longitude"]?.toString()},
+  ]};
+}
+function Coordinates_Parse(node: xmlP.XmlNode): s.Coordinates {
+  return node.strings({
+    required: {"Latitude":true,"Longitude":true},
+  });
 }
 
 function Tag_Serialize(data: s.Tag | undefined | null): Partial<xmlP.Node> {
@@ -1594,6 +1788,15 @@ function ChangeInfo_Parse(node: xmlP.XmlNode): s.ChangeInfo {
     }),
     Status: node.first("Status", true, x => (x.content ?? '') as s.ChangeStatus),
     SubmittedAt: node.first("SubmittedAt", true, x => xmlP.parseTimestamp(x.content)),
+  };
+}
+
+function CidrCollection_Parse(node: xmlP.XmlNode): s.CidrCollection {
+  return {
+    ...node.strings({
+      optional: {"Arn":true,"Id":true,"Name":true},
+    }),
+    Version: node.first("Version", false, x => parseInt(x.content ?? '0')),
   };
 }
 
@@ -1747,6 +1950,27 @@ function ReusableDelegationSetLimit_Parse(node: xmlP.XmlNode): s.ReusableDelegat
     Type: node.first("Type", true, x => (x.content ?? '') as s.ReusableDelegationSetLimitType),
     Value: node.first("Value", true, x => parseInt(x.content ?? '0')),
   };
+}
+
+function CidrBlockSummary_Parse(node: xmlP.XmlNode): s.CidrBlockSummary {
+  return node.strings({
+    optional: {"CidrBlock":true,"LocationName":true},
+  });
+}
+
+function CollectionSummary_Parse(node: xmlP.XmlNode): s.CollectionSummary {
+  return {
+    ...node.strings({
+      optional: {"Arn":true,"Id":true,"Name":true},
+    }),
+    Version: node.first("Version", false, x => parseInt(x.content ?? '0')),
+  };
+}
+
+function LocationSummary_Parse(node: xmlP.XmlNode): s.LocationSummary {
+  return node.strings({
+    optional: {"LocationName":true},
+  });
 }
 
 function HostedZoneSummary_Parse(node: xmlP.XmlNode): s.HostedZoneSummary {

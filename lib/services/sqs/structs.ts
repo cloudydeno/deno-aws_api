@@ -11,6 +11,11 @@ export interface AddPermissionRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface CancelMessageMoveTaskRequest {
+  TaskHandle: string;
+}
+
+// refs: 1 - tags: named, input
 export interface ChangeMessageVisibilityRequest {
   QueueUrl: string;
   ReceiptHandle: string;
@@ -67,6 +72,12 @@ export interface ListDeadLetterSourceQueuesRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface ListMessageMoveTasksRequest {
+  SourceArn: string;
+  MaxResults?: number | null;
+}
+
+// refs: 1 - tags: named, input
 export interface ListQueueTagsRequest {
   QueueUrl: string;
 }
@@ -87,6 +98,7 @@ export interface PurgeQueueRequest {
 export interface ReceiveMessageRequest {
   QueueUrl: string;
   AttributeNames?: MessageSystemAttributeName[] | null;
+  MessageSystemAttributeNames?: MessageSystemAttributeName[] | null;
   MessageAttributeNames?: string[] | null;
   MaxNumberOfMessages?: number | null;
   VisibilityTimeout?: number | null;
@@ -124,6 +136,13 @@ export interface SetQueueAttributesRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface StartMessageMoveTaskRequest {
+  SourceArn: string;
+  DestinationArn?: string | null;
+  MaxNumberOfMessagesPerSecond?: number | null;
+}
+
+// refs: 1 - tags: named, input
 export interface TagQueueRequest {
   QueueUrl: string;
   Tags: { [key: string]: string | null | undefined };
@@ -133,6 +152,11 @@ export interface TagQueueRequest {
 export interface UntagQueueRequest {
   QueueUrl: string;
   TagKeys: string[];
+}
+
+// refs: 1 - tags: named, output
+export interface CancelMessageMoveTaskResult {
+  ApproximateNumberOfMessagesMoved?: number | null;
 }
 
 // refs: 1 - tags: named, output
@@ -154,7 +178,7 @@ export interface DeleteMessageBatchResult {
 
 // refs: 1 - tags: named, output
 export interface GetQueueAttributesResult {
-  Attributes: { [key in QueueAttributeName]: string | null | undefined };
+  Attributes?: { [key in QueueAttributeName]: string | null | undefined } | null;
 }
 
 // refs: 1 - tags: named, output
@@ -169,19 +193,24 @@ export interface ListDeadLetterSourceQueuesResult {
 }
 
 // refs: 1 - tags: named, output
+export interface ListMessageMoveTasksResult {
+  Results?: ListMessageMoveTasksResultEntry[] | null;
+}
+
+// refs: 1 - tags: named, output
 export interface ListQueueTagsResult {
-  Tags: { [key: string]: string | null | undefined };
+  Tags?: { [key: string]: string | null | undefined } | null;
 }
 
 // refs: 1 - tags: named, output
 export interface ListQueuesResult {
-  QueueUrls: string[];
+  QueueUrls?: string[] | null;
   NextToken?: string | null;
 }
 
 // refs: 1 - tags: named, output
 export interface ReceiveMessageResult {
-  Messages: Message[];
+  Messages?: Message[] | null;
 }
 
 // refs: 1 - tags: named, output
@@ -197,6 +226,11 @@ export interface SendMessageResult {
 export interface SendMessageBatchResult {
   Successful: SendMessageBatchResultEntry[];
   Failed: BatchResultErrorEntry[];
+}
+
+// refs: 1 - tags: named, output
+export interface StartMessageMoveTaskResult {
+  TaskHandle?: string | null;
 }
 
 // refs: 1 - tags: input, named, interface
@@ -238,8 +272,9 @@ export interface DeleteMessageBatchRequestEntry {
   ReceiptHandle: string;
 }
 
-// refs: 2 - tags: input, named, enum, output
+// refs: 3 - tags: input, named, enum, output
 export type MessageSystemAttributeName =
+| "All"
 | "All"
 | "SenderId"
 | "SentTimestamp"
@@ -249,6 +284,7 @@ export type MessageSystemAttributeName =
 | "MessageDeduplicationId"
 | "MessageGroupId"
 | "AWSTraceHeader"
+| "DeadLetterQueueSourceArn"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface, output
@@ -304,14 +340,27 @@ export interface DeleteMessageBatchResultEntry {
 }
 
 // refs: 1 - tags: output, named, interface
+export interface ListMessageMoveTasksResultEntry {
+  TaskHandle?: string | null;
+  Status?: string | null;
+  SourceArn?: string | null;
+  DestinationArn?: string | null;
+  MaxNumberOfMessagesPerSecond?: number | null;
+  ApproximateNumberOfMessagesMoved?: number | null;
+  ApproximateNumberOfMessagesToMove?: number | null;
+  FailureReason?: string | null;
+  StartedTimestamp?: number | null;
+}
+
+// refs: 1 - tags: output, named, interface
 export interface Message {
   MessageId?: string | null;
   ReceiptHandle?: string | null;
   MD5OfBody?: string | null;
   Body?: string | null;
-  Attributes: { [key in MessageSystemAttributeName]: string | null | undefined };
+  Attributes?: { [key in MessageSystemAttributeName]: string | null | undefined } | null;
   MD5OfMessageAttributes?: string | null;
-  MessageAttributes: { [key: string]: MessageAttributeValue | null | undefined };
+  MessageAttributes?: { [key: string]: MessageAttributeValue | null | undefined } | null;
 }
 
 // refs: 1 - tags: output, named, interface

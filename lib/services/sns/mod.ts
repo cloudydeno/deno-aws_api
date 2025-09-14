@@ -21,12 +21,18 @@ export class SNS {
     "apiVersion": "2010-03-31",
     "endpointPrefix": "sns",
     "protocol": "query",
+    "protocols": [
+      "query"
+    ],
     "serviceAbbreviation": "Amazon SNS",
     "serviceFullName": "Amazon Simple Notification Service",
     "serviceId": "SNS",
     "signatureVersion": "v4",
     "uid": "sns-2010-03-31",
-    "xmlNamespace": "http://sns.amazonaws.com/doc/2010-03-31/"
+    "xmlNamespace": "http://sns.amazonaws.com/doc/2010-03-31/",
+    "auth": [
+      "aws.auth#sigv4"
+    ]
   };
 
   async addPermission(
@@ -145,6 +151,7 @@ export class SNS {
     body.append(prefix+"Name", (params["Name"] ?? '').toString());
     if (params["Attributes"]) qsP.appendMap(body, prefix+"Attributes", params["Attributes"], {"entryPrefix":".entry."})
     if (params["Tags"]) qsP.appendList(body, prefix+"Tags", params["Tags"], {"appender":Tag_Serialize,"entryPrefix":".member."})
+    if ("DataProtectionPolicy" in params) body.append(prefix+"DataProtectionPolicy", (params["DataProtectionPolicy"] ?? '').toString());
     const resp = await this.#client.performRequest({
       opts, body,
       action: "CreateTopic",
@@ -209,6 +216,23 @@ export class SNS {
       action: "DeleteTopic",
     });
     await resp.body?.cancel();
+  }
+
+  async getDataProtectionPolicy(
+    params: s.GetDataProtectionPolicyInput,
+    opts: client.RequestOptions = {},
+  ): Promise<s.GetDataProtectionPolicyResponse> {
+    const body = new URLSearchParams;
+    const prefix = '';
+    body.append(prefix+"ResourceArn", (params["ResourceArn"] ?? '').toString());
+    const resp = await this.#client.performRequest({
+      opts, body,
+      action: "GetDataProtectionPolicy",
+    });
+    const xml = xmlP.readXmlResult(await resp.text(), "GetDataProtectionPolicyResult");
+    return xml.strings({
+      optional: {"DataProtectionPolicy":true},
+    });
   }
 
   async getEndpointAttributes(
@@ -547,6 +571,21 @@ export class SNS {
       Successful: xml.getList("Successful", "member").map(PublishBatchResultEntry_Parse),
       Failed: xml.getList("Failed", "member").map(BatchResultErrorEntry_Parse),
     };
+  }
+
+  async putDataProtectionPolicy(
+    params: s.PutDataProtectionPolicyInput,
+    opts: client.RequestOptions = {},
+  ): Promise<void> {
+    const body = new URLSearchParams;
+    const prefix = '';
+    body.append(prefix+"ResourceArn", (params["ResourceArn"] ?? '').toString());
+    body.append(prefix+"DataProtectionPolicy", (params["DataProtectionPolicy"] ?? '').toString());
+    const resp = await this.#client.performRequest({
+      opts, body,
+      action: "PutDataProtectionPolicy",
+    });
+    await resp.body?.cancel();
   }
 
   async removePermission(

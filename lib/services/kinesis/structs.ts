@@ -4,8 +4,9 @@ import * as cmnP from "../../encoding/common.ts";
 
 // refs: 1 - tags: named, input
 export interface AddTagsToStreamInput {
-  StreamName: string;
+  StreamName?: string | null;
   Tags: { [key: string]: string | null | undefined };
+  StreamARN?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -17,14 +18,21 @@ export interface CreateStreamInput {
 
 // refs: 1 - tags: named, input
 export interface DecreaseStreamRetentionPeriodInput {
-  StreamName: string;
+  StreamName?: string | null;
   RetentionPeriodHours: number;
+  StreamARN?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface DeleteResourcePolicyInput {
+  ResourceARN: string;
 }
 
 // refs: 1 - tags: named, input
 export interface DeleteStreamInput {
-  StreamName: string;
+  StreamName?: string | null;
   EnforceConsumerDeletion?: boolean | null;
+  StreamARN?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -36,9 +44,10 @@ export interface DeregisterStreamConsumerInput {
 
 // refs: 1 - tags: named, input
 export interface DescribeStreamInput {
-  StreamName: string;
+  StreamName?: string | null;
   Limit?: number | null;
   ExclusiveStartShardId?: string | null;
+  StreamARN?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -50,40 +59,51 @@ export interface DescribeStreamConsumerInput {
 
 // refs: 1 - tags: named, input
 export interface DescribeStreamSummaryInput {
-  StreamName: string;
+  StreamName?: string | null;
+  StreamARN?: string | null;
 }
 
 // refs: 1 - tags: named, input
 export interface DisableEnhancedMonitoringInput {
-  StreamName: string;
+  StreamName?: string | null;
   ShardLevelMetrics: MetricsName[];
+  StreamARN?: string | null;
 }
 
 // refs: 1 - tags: named, input
 export interface EnableEnhancedMonitoringInput {
-  StreamName: string;
+  StreamName?: string | null;
   ShardLevelMetrics: MetricsName[];
+  StreamARN?: string | null;
 }
 
 // refs: 1 - tags: named, input
 export interface GetRecordsInput {
   ShardIterator: string;
   Limit?: number | null;
+  StreamARN?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface GetResourcePolicyInput {
+  ResourceARN: string;
 }
 
 // refs: 1 - tags: named, input
 export interface GetShardIteratorInput {
-  StreamName: string;
+  StreamName?: string | null;
   ShardId: string;
   ShardIteratorType: ShardIteratorType;
   StartingSequenceNumber?: string | null;
   Timestamp?: Date | number | null;
+  StreamARN?: string | null;
 }
 
 // refs: 1 - tags: named, input
 export interface IncreaseStreamRetentionPeriodInput {
-  StreamName: string;
+  StreamName?: string | null;
   RetentionPeriodHours: number;
+  StreamARN?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -94,6 +114,7 @@ export interface ListShardsInput {
   MaxResults?: number | null;
   StreamCreationTimestamp?: Date | number | null;
   ShardFilter?: ShardFilter | null;
+  StreamARN?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -108,35 +129,46 @@ export interface ListStreamConsumersInput {
 export interface ListStreamsInput {
   Limit?: number | null;
   ExclusiveStartStreamName?: string | null;
+  NextToken?: string | null;
 }
 
 // refs: 1 - tags: named, input
 export interface ListTagsForStreamInput {
-  StreamName: string;
+  StreamName?: string | null;
   ExclusiveStartTagKey?: string | null;
   Limit?: number | null;
+  StreamARN?: string | null;
 }
 
 // refs: 1 - tags: named, input
 export interface MergeShardsInput {
-  StreamName: string;
+  StreamName?: string | null;
   ShardToMerge: string;
   AdjacentShardToMerge: string;
+  StreamARN?: string | null;
 }
 
 // refs: 1 - tags: named, input
 export interface PutRecordInput {
-  StreamName: string;
+  StreamName?: string | null;
   Data: Uint8Array | string;
   PartitionKey: string;
   ExplicitHashKey?: string | null;
   SequenceNumberForOrdering?: string | null;
+  StreamARN?: string | null;
 }
 
 // refs: 1 - tags: named, input
 export interface PutRecordsInput {
   Records: PutRecordsRequestEntry[];
-  StreamName: string;
+  StreamName?: string | null;
+  StreamARN?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface PutResourcePolicyInput {
+  ResourceARN: string;
+  Policy: string;
 }
 
 // refs: 1 - tags: named, input
@@ -147,36 +179,41 @@ export interface RegisterStreamConsumerInput {
 
 // refs: 1 - tags: named, input
 export interface RemoveTagsFromStreamInput {
-  StreamName: string;
+  StreamName?: string | null;
   TagKeys: string[];
+  StreamARN?: string | null;
 }
 
 // refs: 1 - tags: named, input
 export interface SplitShardInput {
-  StreamName: string;
+  StreamName?: string | null;
   ShardToSplit: string;
   NewStartingHashKey: string;
+  StreamARN?: string | null;
 }
 
 // refs: 1 - tags: named, input
 export interface StartStreamEncryptionInput {
-  StreamName: string;
+  StreamName?: string | null;
   EncryptionType: EncryptionType;
   KeyId: string;
+  StreamARN?: string | null;
 }
 
 // refs: 1 - tags: named, input
 export interface StopStreamEncryptionInput {
-  StreamName: string;
+  StreamName?: string | null;
   EncryptionType: EncryptionType;
   KeyId: string;
+  StreamARN?: string | null;
 }
 
 // refs: 1 - tags: named, input
 export interface UpdateShardCountInput {
-  StreamName: string;
+  StreamName?: string | null;
   TargetShardCount: number;
   ScalingType: ScalingType;
+  StreamARN?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -213,6 +250,7 @@ export interface EnhancedMonitoringOutput {
   StreamName?: string | null;
   CurrentShardLevelMetrics?: MetricsName[] | null;
   DesiredShardLevelMetrics?: MetricsName[] | null;
+  StreamARN?: string | null;
 }
 
 // refs: 1 - tags: named, output
@@ -221,6 +259,11 @@ export interface GetRecordsOutput {
   NextShardIterator?: string | null;
   MillisBehindLatest?: number | null;
   ChildShards?: ChildShard[] | null;
+}
+
+// refs: 1 - tags: named, output
+export interface GetResourcePolicyOutput {
+  Policy: string;
 }
 
 // refs: 1 - tags: named, output
@@ -244,6 +287,8 @@ export interface ListStreamConsumersOutput {
 export interface ListStreamsOutput {
   StreamNames: string[];
   HasMoreStreams: boolean;
+  NextToken?: string | null;
+  StreamSummaries?: StreamSummary[] | null;
 }
 
 // refs: 1 - tags: named, output
@@ -276,14 +321,15 @@ export interface UpdateShardCountOutput {
   StreamName?: string | null;
   CurrentShardCount?: number | null;
   TargetShardCount?: number | null;
+  StreamARN?: string | null;
 }
 
-// refs: 4 - tags: input, named, interface, output
+// refs: 5 - tags: input, named, interface, output
 export interface StreamModeDetails {
   StreamMode: StreamMode;
 }
 
-// refs: 4 - tags: input, named, enum, output
+// refs: 5 - tags: input, named, enum, output
 export type StreamMode =
 | "PROVISIONED"
 | "ON_DEMAND"
@@ -360,7 +406,7 @@ export interface StreamDescription {
   KeyId?: string | null;
 }
 
-// refs: 2 - tags: output, named, enum
+// refs: 3 - tags: output, named, enum
 export type StreamStatus =
 | "CREATING"
 | "DELETING"
@@ -447,6 +493,15 @@ export interface Consumer {
   ConsumerARN: string;
   ConsumerStatus: ConsumerStatus;
   ConsumerCreationTimestamp: Date | number;
+}
+
+// refs: 1 - tags: output, named, interface
+export interface StreamSummary {
+  StreamName: string;
+  StreamARN: string;
+  StreamStatus: StreamStatus;
+  StreamModeDetails?: StreamModeDetails | null;
+  StreamCreationTimestamp?: Date | number | null;
 }
 
 // refs: 1 - tags: output, named, interface

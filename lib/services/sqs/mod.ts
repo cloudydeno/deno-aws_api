@@ -3,16 +3,12 @@
 export * from "./structs.ts";
 import * as Base64 from "https://deno.land/std@0.177.0/encoding/base64.ts";
 import * as client from "../../client/common.ts";
-import * as qsP from "../../encoding/querystring.ts";
-import * as xmlP from "../../encoding/xml.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as jsonP from "../../encoding/json.ts";
 import type * as s from "./structs.ts";
 function serializeBlob(input: string | Uint8Array | null | undefined) {
   if (input == null) return input;
   return Base64.encode(input);
-}
-function parseBlob(input: string | null | undefined) {
-  if (input == null) return input;
-  return Base64.decode(input);
 }
 
 export class SQS {
@@ -23,26 +19,31 @@ export class SQS {
 
   static ApiMetadata: client.ApiMetadata = {
     "apiVersion": "2012-11-05",
+    "awsQueryCompatible": {},
     "endpointPrefix": "sqs",
-    "protocol": "query",
+    "jsonVersion": "1.0",
+    "protocol": "json",
+    "protocols": [
+      "json"
+    ],
     "serviceAbbreviation": "Amazon SQS",
     "serviceFullName": "Amazon Simple Queue Service",
     "serviceId": "SQS",
     "signatureVersion": "v4",
-    "uid": "sqs-2012-11-05",
-    "xmlNamespace": "http://queue.amazonaws.com/doc/2012-11-05/"
+    "targetPrefix": "AmazonSQS",
+    "uid": "sqs-2012-11-05"
   };
 
   async addPermission(
     params: s.AddPermissionRequest,
     opts: client.RequestOptions = {},
   ): Promise<void> {
-    const body = new URLSearchParams;
-    const prefix = '';
-    body.append(prefix+"QueueUrl", (params["QueueUrl"] ?? '').toString());
-    body.append(prefix+"Label", (params["Label"] ?? '').toString());
-    if (params["AWSAccountIds"]) qsP.appendList(body, prefix+"AWSAccountId", params["AWSAccountIds"], {"entryPrefix":"."})
-    if (params["Actions"]) qsP.appendList(body, prefix+"ActionName", params["Actions"], {"entryPrefix":"."})
+    const body: jsonP.JSONObject = {
+      QueueUrl: params["QueueUrl"],
+      Label: params["Label"],
+      AWSAccountIds: params["AWSAccountIds"],
+      Actions: params["Actions"],
+    };
     const resp = await this.#client.performRequest({
       opts, body,
       action: "AddPermission",
@@ -50,15 +51,34 @@ export class SQS {
     await resp.body?.cancel();
   }
 
+  async cancelMessageMoveTask(
+    params: s.CancelMessageMoveTaskRequest,
+    opts: client.RequestOptions = {},
+  ): Promise<s.CancelMessageMoveTaskResult> {
+    const body: jsonP.JSONObject = {
+      TaskHandle: params["TaskHandle"],
+    };
+    const resp = await this.#client.performRequest({
+      opts, body,
+      action: "CancelMessageMoveTask",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "ApproximateNumberOfMessagesMoved": "n",
+      },
+    }, await resp.json());
+  }
+
   async changeMessageVisibility(
     params: s.ChangeMessageVisibilityRequest,
     opts: client.RequestOptions = {},
   ): Promise<void> {
-    const body = new URLSearchParams;
-    const prefix = '';
-    body.append(prefix+"QueueUrl", (params["QueueUrl"] ?? '').toString());
-    body.append(prefix+"ReceiptHandle", (params["ReceiptHandle"] ?? '').toString());
-    body.append(prefix+"VisibilityTimeout", (params["VisibilityTimeout"] ?? '').toString());
+    const body: jsonP.JSONObject = {
+      QueueUrl: params["QueueUrl"],
+      ReceiptHandle: params["ReceiptHandle"],
+      VisibilityTimeout: params["VisibilityTimeout"],
+    };
     const resp = await this.#client.performRequest({
       opts, body,
       action: "ChangeMessageVisibility",
@@ -70,48 +90,52 @@ export class SQS {
     params: s.ChangeMessageVisibilityBatchRequest,
     opts: client.RequestOptions = {},
   ): Promise<s.ChangeMessageVisibilityBatchResult> {
-    const body = new URLSearchParams;
-    const prefix = '';
-    body.append(prefix+"QueueUrl", (params["QueueUrl"] ?? '').toString());
-    if (params["Entries"]) qsP.appendList(body, prefix+"ChangeMessageVisibilityBatchRequestEntry", params["Entries"], {"appender":ChangeMessageVisibilityBatchRequestEntry_Serialize,"entryPrefix":"."})
+    const body: jsonP.JSONObject = {
+      QueueUrl: params["QueueUrl"],
+      Entries: params["Entries"]?.map(x => fromChangeMessageVisibilityBatchRequestEntry(x)),
+    };
     const resp = await this.#client.performRequest({
       opts, body,
       action: "ChangeMessageVisibilityBatch",
     });
-    const xml = xmlP.readXmlResult(await resp.text(), "ChangeMessageVisibilityBatchResult");
-    return {
-      Successful: xml.getList("ChangeMessageVisibilityBatchResultEntry").map(ChangeMessageVisibilityBatchResultEntry_Parse),
-      Failed: xml.getList("BatchResultErrorEntry").map(BatchResultErrorEntry_Parse),
-    };
+    return jsonP.readObj({
+      required: {
+        "Successful": [toChangeMessageVisibilityBatchResultEntry],
+        "Failed": [toBatchResultErrorEntry],
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async createQueue(
     params: s.CreateQueueRequest,
     opts: client.RequestOptions = {},
   ): Promise<s.CreateQueueResult> {
-    const body = new URLSearchParams;
-    const prefix = '';
-    body.append(prefix+"QueueName", (params["QueueName"] ?? '').toString());
-    if (params["Attributes"]) qsP.appendMap(body, prefix+"Attribute", params["Attributes"], {"keyName":".Name","valName":".Value","entryPrefix":"."})
-    if (params["tags"]) qsP.appendMap(body, prefix+"Tag", params["tags"], {"keyName":".Key","valName":".Value","entryPrefix":"."})
+    const body: jsonP.JSONObject = {
+      QueueName: params["QueueName"],
+      Attributes: params["Attributes"],
+      tags: params["tags"],
+    };
     const resp = await this.#client.performRequest({
       opts, body,
       action: "CreateQueue",
     });
-    const xml = xmlP.readXmlResult(await resp.text(), "CreateQueueResult");
-    return xml.strings({
-      optional: {"QueueUrl":true},
-    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "QueueUrl": "s",
+      },
+    }, await resp.json());
   }
 
   async deleteMessage(
     params: s.DeleteMessageRequest,
     opts: client.RequestOptions = {},
   ): Promise<void> {
-    const body = new URLSearchParams;
-    const prefix = '';
-    body.append(prefix+"QueueUrl", (params["QueueUrl"] ?? '').toString());
-    body.append(prefix+"ReceiptHandle", (params["ReceiptHandle"] ?? '').toString());
+    const body: jsonP.JSONObject = {
+      QueueUrl: params["QueueUrl"],
+      ReceiptHandle: params["ReceiptHandle"],
+    };
     const resp = await this.#client.performRequest({
       opts, body,
       action: "DeleteMessage",
@@ -123,28 +147,30 @@ export class SQS {
     params: s.DeleteMessageBatchRequest,
     opts: client.RequestOptions = {},
   ): Promise<s.DeleteMessageBatchResult> {
-    const body = new URLSearchParams;
-    const prefix = '';
-    body.append(prefix+"QueueUrl", (params["QueueUrl"] ?? '').toString());
-    if (params["Entries"]) qsP.appendList(body, prefix+"DeleteMessageBatchRequestEntry", params["Entries"], {"appender":DeleteMessageBatchRequestEntry_Serialize,"entryPrefix":"."})
+    const body: jsonP.JSONObject = {
+      QueueUrl: params["QueueUrl"],
+      Entries: params["Entries"]?.map(x => fromDeleteMessageBatchRequestEntry(x)),
+    };
     const resp = await this.#client.performRequest({
       opts, body,
       action: "DeleteMessageBatch",
     });
-    const xml = xmlP.readXmlResult(await resp.text(), "DeleteMessageBatchResult");
-    return {
-      Successful: xml.getList("DeleteMessageBatchResultEntry").map(DeleteMessageBatchResultEntry_Parse),
-      Failed: xml.getList("BatchResultErrorEntry").map(BatchResultErrorEntry_Parse),
-    };
+    return jsonP.readObj({
+      required: {
+        "Successful": [toDeleteMessageBatchResultEntry],
+        "Failed": [toBatchResultErrorEntry],
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async deleteQueue(
     params: s.DeleteQueueRequest,
     opts: client.RequestOptions = {},
   ): Promise<void> {
-    const body = new URLSearchParams;
-    const prefix = '';
-    body.append(prefix+"QueueUrl", (params["QueueUrl"] ?? '').toString());
+    const body: jsonP.JSONObject = {
+      QueueUrl: params["QueueUrl"],
+    };
     const resp = await this.#client.performRequest({
       opts, body,
       action: "DeleteQueue",
@@ -156,106 +182,133 @@ export class SQS {
     params: s.GetQueueAttributesRequest,
     opts: client.RequestOptions = {},
   ): Promise<s.GetQueueAttributesResult> {
-    const body = new URLSearchParams;
-    const prefix = '';
-    body.append(prefix+"QueueUrl", (params["QueueUrl"] ?? '').toString());
-    if (params["AttributeNames"]) qsP.appendList(body, prefix+"AttributeName", params["AttributeNames"], {"entryPrefix":"."})
+    const body: jsonP.JSONObject = {
+      QueueUrl: params["QueueUrl"],
+      AttributeNames: params["AttributeNames"],
+    };
     const resp = await this.#client.performRequest({
       opts, body,
       action: "GetQueueAttributes",
     });
-    const xml = xmlP.readXmlResult(await resp.text(), "GetQueueAttributesResult");
-    return {
-      Attributes: xmlP.readXmlMap(xml.getList("Attribute"), x => x.content ?? '', {"keyName":"Name","valName":"Value"}),
-    };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Attributes": x => jsonP.readMap(x => cmnP.readEnumReq<s.QueueAttributeName>(x), String, x),
+      },
+    }, await resp.json());
   }
 
   async getQueueUrl(
     params: s.GetQueueUrlRequest,
     opts: client.RequestOptions = {},
   ): Promise<s.GetQueueUrlResult> {
-    const body = new URLSearchParams;
-    const prefix = '';
-    body.append(prefix+"QueueName", (params["QueueName"] ?? '').toString());
-    if ("QueueOwnerAWSAccountId" in params) body.append(prefix+"QueueOwnerAWSAccountId", (params["QueueOwnerAWSAccountId"] ?? '').toString());
+    const body: jsonP.JSONObject = {
+      QueueName: params["QueueName"],
+      QueueOwnerAWSAccountId: params["QueueOwnerAWSAccountId"],
+    };
     const resp = await this.#client.performRequest({
       opts, body,
       action: "GetQueueUrl",
     });
-    const xml = xmlP.readXmlResult(await resp.text(), "GetQueueUrlResult");
-    return xml.strings({
-      optional: {"QueueUrl":true},
-    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "QueueUrl": "s",
+      },
+    }, await resp.json());
   }
 
   async listDeadLetterSourceQueues(
     params: s.ListDeadLetterSourceQueuesRequest,
     opts: client.RequestOptions = {},
   ): Promise<s.ListDeadLetterSourceQueuesResult> {
-    const body = new URLSearchParams;
-    const prefix = '';
-    body.append(prefix+"QueueUrl", (params["QueueUrl"] ?? '').toString());
-    if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
-    if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
+    const body: jsonP.JSONObject = {
+      QueueUrl: params["QueueUrl"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    };
     const resp = await this.#client.performRequest({
       opts, body,
       action: "ListDeadLetterSourceQueues",
     });
-    const xml = xmlP.readXmlResult(await resp.text(), "ListDeadLetterSourceQueuesResult");
-    return {
-      ...xml.strings({
-        optional: {"NextToken":true},
-      }),
-      queueUrls: xml.getList("QueueUrl").map(x => x.content ?? ''),
+    return jsonP.readObj({
+      required: {
+        "queueUrls": ["s"],
+      },
+      optional: {
+        "NextToken": "s",
+      },
+    }, await resp.json());
+  }
+
+  async listMessageMoveTasks(
+    params: s.ListMessageMoveTasksRequest,
+    opts: client.RequestOptions = {},
+  ): Promise<s.ListMessageMoveTasksResult> {
+    const body: jsonP.JSONObject = {
+      SourceArn: params["SourceArn"],
+      MaxResults: params["MaxResults"],
     };
+    const resp = await this.#client.performRequest({
+      opts, body,
+      action: "ListMessageMoveTasks",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Results": [toListMessageMoveTasksResultEntry],
+      },
+    }, await resp.json());
   }
 
   async listQueueTags(
     params: s.ListQueueTagsRequest,
     opts: client.RequestOptions = {},
   ): Promise<s.ListQueueTagsResult> {
-    const body = new URLSearchParams;
-    const prefix = '';
-    body.append(prefix+"QueueUrl", (params["QueueUrl"] ?? '').toString());
+    const body: jsonP.JSONObject = {
+      QueueUrl: params["QueueUrl"],
+    };
     const resp = await this.#client.performRequest({
       opts, body,
       action: "ListQueueTags",
     });
-    const xml = xmlP.readXmlResult(await resp.text(), "ListQueueTagsResult");
-    return {
-      Tags: xmlP.readXmlMap(xml.getList("Tag"), x => x.content ?? '', {"keyName":"Key","valName":"Value"}),
-    };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Tags": x => jsonP.readMap(String, String, x),
+      },
+    }, await resp.json());
   }
 
   async listQueues(
     params: s.ListQueuesRequest = {},
     opts: client.RequestOptions = {},
   ): Promise<s.ListQueuesResult> {
-    const body = new URLSearchParams;
-    const prefix = '';
-    if ("QueueNamePrefix" in params) body.append(prefix+"QueueNamePrefix", (params["QueueNamePrefix"] ?? '').toString());
-    if ("NextToken" in params) body.append(prefix+"NextToken", (params["NextToken"] ?? '').toString());
-    if ("MaxResults" in params) body.append(prefix+"MaxResults", (params["MaxResults"] ?? '').toString());
+    const body: jsonP.JSONObject = {
+      QueueNamePrefix: params["QueueNamePrefix"],
+      NextToken: params["NextToken"],
+      MaxResults: params["MaxResults"],
+    };
     const resp = await this.#client.performRequest({
       opts, body,
       action: "ListQueues",
     });
-    const xml = xmlP.readXmlResult(await resp.text(), "ListQueuesResult");
-    return {
-      ...xml.strings({
-        optional: {"NextToken":true},
-      }),
-      QueueUrls: xml.getList("QueueUrl").map(x => x.content ?? ''),
-    };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "QueueUrls": ["s"],
+        "NextToken": "s",
+      },
+    }, await resp.json());
   }
 
   async purgeQueue(
     params: s.PurgeQueueRequest,
     opts: client.RequestOptions = {},
   ): Promise<void> {
-    const body = new URLSearchParams;
-    const prefix = '';
-    body.append(prefix+"QueueUrl", (params["QueueUrl"] ?? '').toString());
+    const body: jsonP.JSONObject = {
+      QueueUrl: params["QueueUrl"],
+    };
     const resp = await this.#client.performRequest({
       opts, body,
       action: "PurgeQueue",
@@ -267,33 +320,36 @@ export class SQS {
     params: s.ReceiveMessageRequest,
     opts: client.RequestOptions = {},
   ): Promise<s.ReceiveMessageResult> {
-    const body = new URLSearchParams;
-    const prefix = '';
-    body.append(prefix+"QueueUrl", (params["QueueUrl"] ?? '').toString());
-    if (params["AttributeNames"]) qsP.appendList(body, prefix+"AttributeName", params["AttributeNames"], {"entryPrefix":"."})
-    if (params["MessageAttributeNames"]) qsP.appendList(body, prefix+"MessageAttributeName", params["MessageAttributeNames"], {"entryPrefix":"."})
-    if ("MaxNumberOfMessages" in params) body.append(prefix+"MaxNumberOfMessages", (params["MaxNumberOfMessages"] ?? '').toString());
-    if ("VisibilityTimeout" in params) body.append(prefix+"VisibilityTimeout", (params["VisibilityTimeout"] ?? '').toString());
-    if ("WaitTimeSeconds" in params) body.append(prefix+"WaitTimeSeconds", (params["WaitTimeSeconds"] ?? '').toString());
-    if ("ReceiveRequestAttemptId" in params) body.append(prefix+"ReceiveRequestAttemptId", (params["ReceiveRequestAttemptId"] ?? '').toString());
+    const body: jsonP.JSONObject = {
+      QueueUrl: params["QueueUrl"],
+      AttributeNames: params["AttributeNames"],
+      MessageSystemAttributeNames: params["MessageSystemAttributeNames"],
+      MessageAttributeNames: params["MessageAttributeNames"],
+      MaxNumberOfMessages: params["MaxNumberOfMessages"],
+      VisibilityTimeout: params["VisibilityTimeout"],
+      WaitTimeSeconds: params["WaitTimeSeconds"],
+      ReceiveRequestAttemptId: params["ReceiveRequestAttemptId"],
+    };
     const resp = await this.#client.performRequest({
       opts, body,
       action: "ReceiveMessage",
     });
-    const xml = xmlP.readXmlResult(await resp.text(), "ReceiveMessageResult");
-    return {
-      Messages: xml.getList("Message").map(Message_Parse),
-    };
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Messages": [toMessage],
+      },
+    }, await resp.json());
   }
 
   async removePermission(
     params: s.RemovePermissionRequest,
     opts: client.RequestOptions = {},
   ): Promise<void> {
-    const body = new URLSearchParams;
-    const prefix = '';
-    body.append(prefix+"QueueUrl", (params["QueueUrl"] ?? '').toString());
-    body.append(prefix+"Label", (params["Label"] ?? '').toString());
+    const body: jsonP.JSONObject = {
+      QueueUrl: params["QueueUrl"],
+      Label: params["Label"],
+    };
     const resp = await this.#client.performRequest({
       opts, body,
       action: "RemovePermission",
@@ -305,52 +361,60 @@ export class SQS {
     params: s.SendMessageRequest,
     opts: client.RequestOptions = {},
   ): Promise<s.SendMessageResult> {
-    const body = new URLSearchParams;
-    const prefix = '';
-    body.append(prefix+"QueueUrl", (params["QueueUrl"] ?? '').toString());
-    body.append(prefix+"MessageBody", (params["MessageBody"] ?? '').toString());
-    if ("DelaySeconds" in params) body.append(prefix+"DelaySeconds", (params["DelaySeconds"] ?? '').toString());
-    if (params["MessageAttributes"]) qsP.appendMap(body, prefix+"MessageAttribute", params["MessageAttributes"], {"appender":MessageAttributeValue_Serialize,"keyName":".Name","valName":".Value","entryPrefix":"."})
-    if (params["MessageSystemAttributes"]) qsP.appendMap(body, prefix+"MessageSystemAttribute", params["MessageSystemAttributes"], {"appender":MessageSystemAttributeValue_Serialize,"keyName":".Name","valName":".Value","entryPrefix":"."})
-    if ("MessageDeduplicationId" in params) body.append(prefix+"MessageDeduplicationId", (params["MessageDeduplicationId"] ?? '').toString());
-    if ("MessageGroupId" in params) body.append(prefix+"MessageGroupId", (params["MessageGroupId"] ?? '').toString());
+    const body: jsonP.JSONObject = {
+      QueueUrl: params["QueueUrl"],
+      MessageBody: params["MessageBody"],
+      DelaySeconds: params["DelaySeconds"],
+      MessageAttributes: jsonP.serializeMap(params["MessageAttributes"], x => fromMessageAttributeValue(x)),
+      MessageSystemAttributes: jsonP.serializeMap(params["MessageSystemAttributes"], x => fromMessageSystemAttributeValue(x)),
+      MessageDeduplicationId: params["MessageDeduplicationId"],
+      MessageGroupId: params["MessageGroupId"],
+    };
     const resp = await this.#client.performRequest({
       opts, body,
       action: "SendMessage",
     });
-    const xml = xmlP.readXmlResult(await resp.text(), "SendMessageResult");
-    return xml.strings({
-      optional: {"MD5OfMessageBody":true,"MD5OfMessageAttributes":true,"MD5OfMessageSystemAttributes":true,"MessageId":true,"SequenceNumber":true},
-    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "MD5OfMessageBody": "s",
+        "MD5OfMessageAttributes": "s",
+        "MD5OfMessageSystemAttributes": "s",
+        "MessageId": "s",
+        "SequenceNumber": "s",
+      },
+    }, await resp.json());
   }
 
   async sendMessageBatch(
     params: s.SendMessageBatchRequest,
     opts: client.RequestOptions = {},
   ): Promise<s.SendMessageBatchResult> {
-    const body = new URLSearchParams;
-    const prefix = '';
-    body.append(prefix+"QueueUrl", (params["QueueUrl"] ?? '').toString());
-    if (params["Entries"]) qsP.appendList(body, prefix+"SendMessageBatchRequestEntry", params["Entries"], {"appender":SendMessageBatchRequestEntry_Serialize,"entryPrefix":"."})
+    const body: jsonP.JSONObject = {
+      QueueUrl: params["QueueUrl"],
+      Entries: params["Entries"]?.map(x => fromSendMessageBatchRequestEntry(x)),
+    };
     const resp = await this.#client.performRequest({
       opts, body,
       action: "SendMessageBatch",
     });
-    const xml = xmlP.readXmlResult(await resp.text(), "SendMessageBatchResult");
-    return {
-      Successful: xml.getList("SendMessageBatchResultEntry").map(SendMessageBatchResultEntry_Parse),
-      Failed: xml.getList("BatchResultErrorEntry").map(BatchResultErrorEntry_Parse),
-    };
+    return jsonP.readObj({
+      required: {
+        "Successful": [toSendMessageBatchResultEntry],
+        "Failed": [toBatchResultErrorEntry],
+      },
+      optional: {},
+    }, await resp.json());
   }
 
   async setQueueAttributes(
     params: s.SetQueueAttributesRequest,
     opts: client.RequestOptions = {},
   ): Promise<void> {
-    const body = new URLSearchParams;
-    const prefix = '';
-    body.append(prefix+"QueueUrl", (params["QueueUrl"] ?? '').toString());
-    if (params["Attributes"]) qsP.appendMap(body, prefix+"Attribute", params["Attributes"], {"keyName":".Name","valName":".Value","entryPrefix":"."})
+    const body: jsonP.JSONObject = {
+      QueueUrl: params["QueueUrl"],
+      Attributes: params["Attributes"],
+    };
     const resp = await this.#client.performRequest({
       opts, body,
       action: "SetQueueAttributes",
@@ -358,14 +422,35 @@ export class SQS {
     await resp.body?.cancel();
   }
 
+  async startMessageMoveTask(
+    params: s.StartMessageMoveTaskRequest,
+    opts: client.RequestOptions = {},
+  ): Promise<s.StartMessageMoveTaskResult> {
+    const body: jsonP.JSONObject = {
+      SourceArn: params["SourceArn"],
+      DestinationArn: params["DestinationArn"],
+      MaxNumberOfMessagesPerSecond: params["MaxNumberOfMessagesPerSecond"],
+    };
+    const resp = await this.#client.performRequest({
+      opts, body,
+      action: "StartMessageMoveTask",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "TaskHandle": "s",
+      },
+    }, await resp.json());
+  }
+
   async tagQueue(
     params: s.TagQueueRequest,
     opts: client.RequestOptions = {},
   ): Promise<void> {
-    const body = new URLSearchParams;
-    const prefix = '';
-    body.append(prefix+"QueueUrl", (params["QueueUrl"] ?? '').toString());
-    if (params["Tags"]) qsP.appendMap(body, prefix+"Tag", params["Tags"], {"keyName":".Key","valName":".Value","entryPrefix":"."})
+    const body: jsonP.JSONObject = {
+      QueueUrl: params["QueueUrl"],
+      Tags: params["Tags"],
+    };
     const resp = await this.#client.performRequest({
       opts, body,
       action: "TagQueue",
@@ -377,10 +462,10 @@ export class SQS {
     params: s.UntagQueueRequest,
     opts: client.RequestOptions = {},
   ): Promise<void> {
-    const body = new URLSearchParams;
-    const prefix = '';
-    body.append(prefix+"QueueUrl", (params["QueueUrl"] ?? '').toString());
-    if (params["TagKeys"]) qsP.appendList(body, prefix+"TagKey", params["TagKeys"], {"entryPrefix":"."})
+    const body: jsonP.JSONObject = {
+      QueueUrl: params["QueueUrl"],
+      TagKeys: params["TagKeys"],
+    };
     const resp = await this.#client.performRequest({
       opts, body,
       action: "UntagQueue",
@@ -390,89 +475,145 @@ export class SQS {
 
 }
 
-function ChangeMessageVisibilityBatchRequestEntry_Serialize(body: URLSearchParams, prefix: string, params: s.ChangeMessageVisibilityBatchRequestEntry) {
-  body.append(prefix+".Id", (params["Id"] ?? '').toString());
-  body.append(prefix+".ReceiptHandle", (params["ReceiptHandle"] ?? '').toString());
-  if ("VisibilityTimeout" in params) body.append(prefix+".VisibilityTimeout", (params["VisibilityTimeout"] ?? '').toString());
-}
-
-function DeleteMessageBatchRequestEntry_Serialize(body: URLSearchParams, prefix: string, params: s.DeleteMessageBatchRequestEntry) {
-  body.append(prefix+".Id", (params["Id"] ?? '').toString());
-  body.append(prefix+".ReceiptHandle", (params["ReceiptHandle"] ?? '').toString());
-}
-
-function MessageAttributeValue_Serialize(body: URLSearchParams, prefix: string, params: s.MessageAttributeValue) {
-  if ("StringValue" in params) body.append(prefix+".StringValue", (params["StringValue"] ?? '').toString());
-  if ("BinaryValue" in params) body.append(prefix+".BinaryValue", serializeBlob(params["BinaryValue"]) ?? '');
-  if (params["StringListValues"]) qsP.appendList(body, prefix+".StringListValue", params["StringListValues"], {"entryPrefix":"."})
-  if (params["BinaryListValues"]) qsP.appendList(body, prefix+".BinaryListValue", params["BinaryListValues"], {"encoder":(x)=>serializeBlob(x) ?? '',"entryPrefix":"."})
-  body.append(prefix+".DataType", (params["DataType"] ?? '').toString());
-}
-function MessageAttributeValue_Parse(node: xmlP.XmlNode): s.MessageAttributeValue {
+function fromChangeMessageVisibilityBatchRequestEntry(input?: s.ChangeMessageVisibilityBatchRequestEntry | null): jsonP.JSONValue {
+  if (!input) return input;
   return {
-    ...node.strings({
-      required: {"DataType":true},
-      optional: {"StringValue":true},
-    }),
-    BinaryValue: node.first("BinaryValue", false, x => parseBlob(x.content) ?? new Uint8Array(0)),
-    StringListValues: node.getList("StringListValue").map(x => x.content ?? ''),
-    BinaryListValues: node.getList("BinaryListValue").map(x => parseBlob(x.content) ?? new Uint8Array(0)),
-  };
+    Id: input["Id"],
+    ReceiptHandle: input["ReceiptHandle"],
+    VisibilityTimeout: input["VisibilityTimeout"],
+  }
 }
 
-function MessageSystemAttributeValue_Serialize(body: URLSearchParams, prefix: string, params: s.MessageSystemAttributeValue) {
-  if ("StringValue" in params) body.append(prefix+".StringValue", (params["StringValue"] ?? '').toString());
-  if ("BinaryValue" in params) body.append(prefix+".BinaryValue", serializeBlob(params["BinaryValue"]) ?? '');
-  if (params["StringListValues"]) qsP.appendList(body, prefix+".StringListValue", params["StringListValues"], {"entryPrefix":"."})
-  if (params["BinaryListValues"]) qsP.appendList(body, prefix+".BinaryListValue", params["BinaryListValues"], {"encoder":(x)=>serializeBlob(x) ?? '',"entryPrefix":"."})
-  body.append(prefix+".DataType", (params["DataType"] ?? '').toString());
-}
-
-function SendMessageBatchRequestEntry_Serialize(body: URLSearchParams, prefix: string, params: s.SendMessageBatchRequestEntry) {
-  body.append(prefix+".Id", (params["Id"] ?? '').toString());
-  body.append(prefix+".MessageBody", (params["MessageBody"] ?? '').toString());
-  if ("DelaySeconds" in params) body.append(prefix+".DelaySeconds", (params["DelaySeconds"] ?? '').toString());
-  if (params["MessageAttributes"]) qsP.appendMap(body, prefix+".MessageAttribute", params["MessageAttributes"], {"appender":MessageAttributeValue_Serialize,"keyName":".Name","valName":".Value","entryPrefix":"."})
-  if (params["MessageSystemAttributes"]) qsP.appendMap(body, prefix+".MessageSystemAttribute", params["MessageSystemAttributes"], {"appender":MessageSystemAttributeValue_Serialize,"keyName":".Name","valName":".Value","entryPrefix":"."})
-  if ("MessageDeduplicationId" in params) body.append(prefix+".MessageDeduplicationId", (params["MessageDeduplicationId"] ?? '').toString());
-  if ("MessageGroupId" in params) body.append(prefix+".MessageGroupId", (params["MessageGroupId"] ?? '').toString());
-}
-
-function ChangeMessageVisibilityBatchResultEntry_Parse(node: xmlP.XmlNode): s.ChangeMessageVisibilityBatchResultEntry {
-  return node.strings({
-    required: {"Id":true},
-  });
-}
-
-function BatchResultErrorEntry_Parse(node: xmlP.XmlNode): s.BatchResultErrorEntry {
+function fromDeleteMessageBatchRequestEntry(input?: s.DeleteMessageBatchRequestEntry | null): jsonP.JSONValue {
+  if (!input) return input;
   return {
-    ...node.strings({
-      required: {"Id":true,"Code":true},
-      optional: {"Message":true},
-    }),
-    SenderFault: node.first("SenderFault", true, x => x.content === 'true'),
-  };
+    Id: input["Id"],
+    ReceiptHandle: input["ReceiptHandle"],
+  }
 }
 
-function DeleteMessageBatchResultEntry_Parse(node: xmlP.XmlNode): s.DeleteMessageBatchResultEntry {
-  return node.strings({
-    required: {"Id":true},
-  });
-}
-
-function Message_Parse(node: xmlP.XmlNode): s.Message {
+function fromMessageAttributeValue(input?: s.MessageAttributeValue | null): jsonP.JSONValue {
+  if (!input) return input;
   return {
-    ...node.strings({
-      optional: {"MessageId":true,"ReceiptHandle":true,"MD5OfBody":true,"Body":true,"MD5OfMessageAttributes":true},
-    }),
-    Attributes: xmlP.readXmlMap(node.getList("Attribute"), x => x.content ?? '', {"keyName":"Name","valName":"Value"}),
-    MessageAttributes: xmlP.readXmlMap(node.getList("MessageAttribute"), MessageAttributeValue_Parse, {"keyName":"Name","valName":"Value"}),
-  };
+    StringValue: input["StringValue"],
+    BinaryValue: serializeBlob(input["BinaryValue"]),
+    StringListValues: input["StringListValues"],
+    BinaryListValues: input["BinaryListValues"]?.map(x => serializeBlob(x)),
+    DataType: input["DataType"],
+  }
+}
+function toMessageAttributeValue(root: jsonP.JSONValue): s.MessageAttributeValue {
+  return jsonP.readObj({
+    required: {
+      "DataType": "s",
+    },
+    optional: {
+      "StringValue": "s",
+      "BinaryValue": "a",
+      "StringListValues": ["s"],
+      "BinaryListValues": ["a"],
+    },
+  }, root);
 }
 
-function SendMessageBatchResultEntry_Parse(node: xmlP.XmlNode): s.SendMessageBatchResultEntry {
-  return node.strings({
-    required: {"Id":true,"MessageId":true,"MD5OfMessageBody":true},
-    optional: {"MD5OfMessageAttributes":true,"MD5OfMessageSystemAttributes":true,"SequenceNumber":true},
-  });
+function fromMessageSystemAttributeValue(input?: s.MessageSystemAttributeValue | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    StringValue: input["StringValue"],
+    BinaryValue: serializeBlob(input["BinaryValue"]),
+    StringListValues: input["StringListValues"],
+    BinaryListValues: input["BinaryListValues"]?.map(x => serializeBlob(x)),
+    DataType: input["DataType"],
+  }
+}
+
+function fromSendMessageBatchRequestEntry(input?: s.SendMessageBatchRequestEntry | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    Id: input["Id"],
+    MessageBody: input["MessageBody"],
+    DelaySeconds: input["DelaySeconds"],
+    MessageAttributes: jsonP.serializeMap(input["MessageAttributes"], x => fromMessageAttributeValue(x)),
+    MessageSystemAttributes: jsonP.serializeMap(input["MessageSystemAttributes"], x => fromMessageSystemAttributeValue(x)),
+    MessageDeduplicationId: input["MessageDeduplicationId"],
+    MessageGroupId: input["MessageGroupId"],
+  }
+}
+
+function toChangeMessageVisibilityBatchResultEntry(root: jsonP.JSONValue): s.ChangeMessageVisibilityBatchResultEntry {
+  return jsonP.readObj({
+    required: {
+      "Id": "s",
+    },
+    optional: {},
+  }, root);
+}
+
+function toBatchResultErrorEntry(root: jsonP.JSONValue): s.BatchResultErrorEntry {
+  return jsonP.readObj({
+    required: {
+      "Id": "s",
+      "SenderFault": "b",
+      "Code": "s",
+    },
+    optional: {
+      "Message": "s",
+    },
+  }, root);
+}
+
+function toDeleteMessageBatchResultEntry(root: jsonP.JSONValue): s.DeleteMessageBatchResultEntry {
+  return jsonP.readObj({
+    required: {
+      "Id": "s",
+    },
+    optional: {},
+  }, root);
+}
+
+function toListMessageMoveTasksResultEntry(root: jsonP.JSONValue): s.ListMessageMoveTasksResultEntry {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "TaskHandle": "s",
+      "Status": "s",
+      "SourceArn": "s",
+      "DestinationArn": "s",
+      "MaxNumberOfMessagesPerSecond": "n",
+      "ApproximateNumberOfMessagesMoved": "n",
+      "ApproximateNumberOfMessagesToMove": "n",
+      "FailureReason": "s",
+      "StartedTimestamp": "n",
+    },
+  }, root);
+}
+
+function toMessage(root: jsonP.JSONValue): s.Message {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "MessageId": "s",
+      "ReceiptHandle": "s",
+      "MD5OfBody": "s",
+      "Body": "s",
+      "Attributes": x => jsonP.readMap(x => cmnP.readEnumReq<s.MessageSystemAttributeName>(x), String, x),
+      "MD5OfMessageAttributes": "s",
+      "MessageAttributes": x => jsonP.readMap(String, toMessageAttributeValue, x),
+    },
+  }, root);
+}
+
+function toSendMessageBatchResultEntry(root: jsonP.JSONValue): s.SendMessageBatchResultEntry {
+  return jsonP.readObj({
+    required: {
+      "Id": "s",
+      "MessageId": "s",
+      "MD5OfMessageBody": "s",
+    },
+    optional: {
+      "MD5OfMessageAttributes": "s",
+      "MD5OfMessageSystemAttributes": "s",
+      "SequenceNumber": "s",
+    },
+  }, root);
 }

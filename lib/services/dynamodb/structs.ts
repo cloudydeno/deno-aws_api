@@ -46,6 +46,9 @@ export interface CreateTableInput {
   SSESpecification?: SSESpecification | null;
   Tags?: Tag[] | null;
   TableClass?: TableClass | null;
+  DeletionProtectionEnabled?: boolean | null;
+  ResourcePolicy?: string | null;
+  OnDemandThroughput?: OnDemandThroughput | null;
 }
 
 // refs: 1 - tags: named, input
@@ -65,6 +68,13 @@ export interface DeleteItemInput {
   ConditionExpression?: string | null;
   ExpressionAttributeNames?: { [key: string]: string | null | undefined } | null;
   ExpressionAttributeValues?: { [key: string]: AttributeValue | null | undefined } | null;
+  ReturnValuesOnConditionCheckFailure?: ReturnValuesOnConditionCheckFailure | null;
+}
+
+// refs: 1 - tags: named, input
+export interface DeleteResourcePolicyInput {
+  ResourceArn: string;
+  ExpectedRevisionId?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -104,6 +114,11 @@ export interface DescribeGlobalTableSettingsInput {
 }
 
 // refs: 1 - tags: named, input
+export interface DescribeImportInput {
+  ImportArn: string;
+}
+
+// refs: 1 - tags: named, input
 export interface DescribeKinesisStreamingDestinationInput {
   TableName: string;
 }
@@ -127,6 +142,7 @@ export interface DescribeTimeToLiveInput {
 export interface KinesisStreamingDestinationInput {
   TableName: string;
   StreamArn: string;
+  EnableKinesisStreamingConfiguration?: EnableKinesisStreamingConfiguration | null;
 }
 
 // refs: 1 - tags: named, input
@@ -136,6 +152,8 @@ export interface ExecuteStatementInput {
   ConsistentRead?: boolean | null;
   NextToken?: string | null;
   ReturnConsumedCapacity?: ReturnConsumedCapacity | null;
+  Limit?: number | null;
+  ReturnValuesOnConditionCheckFailure?: ReturnValuesOnConditionCheckFailure | null;
 }
 
 // refs: 1 - tags: named, input
@@ -156,6 +174,8 @@ export interface ExportTableToPointInTimeInput {
   S3SseAlgorithm?: S3SseAlgorithm | null;
   S3SseKmsKeyId?: string | null;
   ExportFormat?: ExportFormat | null;
+  ExportType?: ExportType | null;
+  IncrementalExportSpecification?: IncrementalExportSpecification | null;
 }
 
 // refs: 1 - tags: named, input
@@ -167,6 +187,21 @@ export interface GetItemInput {
   ReturnConsumedCapacity?: ReturnConsumedCapacity | null;
   ProjectionExpression?: string | null;
   ExpressionAttributeNames?: { [key: string]: string | null | undefined } | null;
+}
+
+// refs: 1 - tags: named, input
+export interface GetResourcePolicyInput {
+  ResourceArn: string;
+}
+
+// refs: 1 - tags: named, input
+export interface ImportTableInput {
+  ClientToken?: string | null;
+  S3BucketSource: S3BucketSource;
+  InputFormat: InputFormat;
+  InputFormatOptions?: InputFormatOptions | null;
+  InputCompressionType?: InputCompressionType | null;
+  TableCreationParameters: TableCreationParameters;
 }
 
 // refs: 1 - tags: named, input
@@ -201,6 +236,13 @@ export interface ListGlobalTablesInput {
 }
 
 // refs: 1 - tags: named, input
+export interface ListImportsInput {
+  TableArn?: string | null;
+  PageSize?: number | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, input
 export interface ListTablesInput {
   ExclusiveStartTableName?: string | null;
   Limit?: number | null;
@@ -224,6 +266,15 @@ export interface PutItemInput {
   ConditionExpression?: string | null;
   ExpressionAttributeNames?: { [key: string]: string | null | undefined } | null;
   ExpressionAttributeValues?: { [key: string]: AttributeValue | null | undefined } | null;
+  ReturnValuesOnConditionCheckFailure?: ReturnValuesOnConditionCheckFailure | null;
+}
+
+// refs: 1 - tags: named, input
+export interface PutResourcePolicyInput {
+  ResourceArn: string;
+  Policy: string;
+  ExpectedRevisionId?: string | null;
+  ConfirmRemoveSelfResourceAccess?: boolean | null;
 }
 
 // refs: 1 - tags: named, input
@@ -255,6 +306,7 @@ export interface RestoreTableFromBackupInput {
   GlobalSecondaryIndexOverride?: GlobalSecondaryIndex[] | null;
   LocalSecondaryIndexOverride?: LocalSecondaryIndex[] | null;
   ProvisionedThroughputOverride?: ProvisionedThroughput | null;
+  OnDemandThroughputOverride?: OnDemandThroughput | null;
   SSESpecificationOverride?: SSESpecification | null;
 }
 
@@ -269,6 +321,7 @@ export interface RestoreTableToPointInTimeInput {
   GlobalSecondaryIndexOverride?: GlobalSecondaryIndex[] | null;
   LocalSecondaryIndexOverride?: LocalSecondaryIndex[] | null;
   ProvisionedThroughputOverride?: ProvisionedThroughput | null;
+  OnDemandThroughputOverride?: OnDemandThroughput | null;
   SSESpecificationOverride?: SSESpecification | null;
 }
 
@@ -361,6 +414,14 @@ export interface UpdateItemInput {
   ConditionExpression?: string | null;
   ExpressionAttributeNames?: { [key: string]: string | null | undefined } | null;
   ExpressionAttributeValues?: { [key: string]: AttributeValue | null | undefined } | null;
+  ReturnValuesOnConditionCheckFailure?: ReturnValuesOnConditionCheckFailure | null;
+}
+
+// refs: 1 - tags: named, input
+export interface UpdateKinesisStreamingDestinationInput {
+  TableName: string;
+  StreamArn: string;
+  UpdateKinesisStreamingConfiguration?: UpdateKinesisStreamingConfiguration | null;
 }
 
 // refs: 1 - tags: named, input
@@ -374,6 +435,8 @@ export interface UpdateTableInput {
   SSESpecification?: SSESpecification | null;
   ReplicaUpdates?: ReplicationGroupUpdate[] | null;
   TableClass?: TableClass | null;
+  DeletionProtectionEnabled?: boolean | null;
+  OnDemandThroughput?: OnDemandThroughput | null;
 }
 
 // refs: 1 - tags: named, input
@@ -438,6 +501,11 @@ export interface DeleteItemOutput {
 }
 
 // refs: 1 - tags: named, output
+export interface DeleteResourcePolicyOutput {
+  RevisionId?: string | null;
+}
+
+// refs: 1 - tags: named, output
 export interface DeleteTableOutput {
   TableDescription?: TableDescription | null;
 }
@@ -484,6 +552,11 @@ export interface DescribeGlobalTableSettingsOutput {
 }
 
 // refs: 1 - tags: named, output
+export interface DescribeImportOutput {
+  ImportTableDescription: ImportTableDescription;
+}
+
+// refs: 1 - tags: named, output
 export interface DescribeKinesisStreamingDestinationOutput {
   TableName?: string | null;
   KinesisDataStreamDestinations?: KinesisDataStreamDestination[] | null;
@@ -517,6 +590,7 @@ export interface KinesisStreamingDestinationOutput {
   TableName?: string | null;
   StreamArn?: string | null;
   DestinationStatus?: DestinationStatus | null;
+  EnableKinesisStreamingConfiguration?: EnableKinesisStreamingConfiguration | null;
 }
 
 // refs: 1 - tags: named, output
@@ -524,6 +598,7 @@ export interface ExecuteStatementOutput {
   Items?: ({ [key: string]: AttributeValue | null | undefined })[] | null;
   NextToken?: string | null;
   ConsumedCapacity?: ConsumedCapacity | null;
+  LastEvaluatedKey?: { [key: string]: AttributeValue | null | undefined } | null;
 }
 
 // refs: 1 - tags: named, output
@@ -541,6 +616,17 @@ export interface ExportTableToPointInTimeOutput {
 export interface GetItemOutput {
   Item?: { [key: string]: AttributeValue | null | undefined } | null;
   ConsumedCapacity?: ConsumedCapacity | null;
+}
+
+// refs: 1 - tags: named, output
+export interface GetResourcePolicyOutput {
+  Policy?: string | null;
+  RevisionId?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface ImportTableOutput {
+  ImportTableDescription: ImportTableDescription;
 }
 
 // refs: 1 - tags: named, output
@@ -568,6 +654,12 @@ export interface ListGlobalTablesOutput {
 }
 
 // refs: 1 - tags: named, output
+export interface ListImportsOutput {
+  ImportSummaryList?: ImportSummary[] | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
 export interface ListTablesOutput {
   TableNames?: string[] | null;
   LastEvaluatedTableName?: string | null;
@@ -584,6 +676,11 @@ export interface PutItemOutput {
   Attributes?: { [key: string]: AttributeValue | null | undefined } | null;
   ConsumedCapacity?: ConsumedCapacity | null;
   ItemCollectionMetrics?: ItemCollectionMetrics | null;
+}
+
+// refs: 1 - tags: named, output
+export interface PutResourcePolicyOutput {
+  RevisionId?: string | null;
 }
 
 // refs: 1 - tags: named, output
@@ -657,6 +754,14 @@ export interface UpdateItemOutput {
 }
 
 // refs: 1 - tags: named, output
+export interface UpdateKinesisStreamingDestinationOutput {
+  TableName?: string | null;
+  StreamArn?: string | null;
+  DestinationStatus?: DestinationStatus | null;
+  UpdateKinesisStreamingConfiguration?: UpdateKinesisStreamingConfiguration | null;
+}
+
+// refs: 1 - tags: named, output
 export interface UpdateTableOutput {
   TableDescription?: TableDescription | null;
 }
@@ -676,9 +781,10 @@ export interface BatchStatementRequest {
   Statement: string;
   Parameters?: AttributeValue[] | null;
   ConsistentRead?: boolean | null;
+  ReturnValuesOnConditionCheckFailure?: ReturnValuesOnConditionCheckFailure | null;
 }
 
-// refs: 171 - tags: input, named, interface, recursed, output
+// refs: 177 - tags: input, named, interface, recursed, output
 export interface AttributeValue {
   S?: string | null;
   N?: string | null;
@@ -691,6 +797,12 @@ export interface AttributeValue {
   NULL?: boolean | null;
   BOOL?: boolean | null;
 }
+
+// refs: 10 - tags: input, named, enum
+export type ReturnValuesOnConditionCheckFailure =
+| "ALL_OLD"
+| "NONE"
+| cmnP.UnexpectedEnumValue;
 
 // refs: 13 - tags: input, named, enum
 export type ReturnConsumedCapacity =
@@ -735,26 +847,26 @@ export interface Replica {
   RegionName?: string | null;
 }
 
-// refs: 8 - tags: input, named, interface, output
+// refs: 11 - tags: input, named, interface, output
 export interface AttributeDefinition {
   AttributeName: string;
   AttributeType: ScalarAttributeType;
 }
 
-// refs: 8 - tags: input, named, enum, output
+// refs: 11 - tags: input, named, enum, output
 export type ScalarAttributeType =
 | "S"
 | "N"
 | "B"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 32 - tags: input, named, interface, output
+// refs: 38 - tags: input, named, interface, output
 export interface KeySchemaElement {
   AttributeName: string;
   KeyType: KeyType;
 }
 
-// refs: 32 - tags: input, named, enum, output
+// refs: 38 - tags: input, named, enum, output
 export type KeyType =
 | "HASH"
 | "RANGE"
@@ -767,34 +879,41 @@ export interface LocalSecondaryIndex {
   Projection: Projection;
 }
 
-// refs: 23 - tags: input, named, interface, output
+// refs: 26 - tags: input, named, interface, output
 export interface Projection {
   ProjectionType?: ProjectionType | null;
   NonKeyAttributes?: string[] | null;
 }
 
-// refs: 23 - tags: input, named, enum, output
+// refs: 26 - tags: input, named, enum, output
 export type ProjectionType =
 | "ALL"
 | "KEYS_ONLY"
 | "INCLUDE"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 3 - tags: input, named, interface
+// refs: 6 - tags: input, named, interface, output
 export interface GlobalSecondaryIndex {
   IndexName: string;
   KeySchema: KeySchemaElement[];
   Projection: Projection;
   ProvisionedThroughput?: ProvisionedThroughput | null;
+  OnDemandThroughput?: OnDemandThroughput | null;
 }
 
-// refs: 13 - tags: input, named, interface, output
+// refs: 19 - tags: input, named, interface, output
 export interface ProvisionedThroughput {
   ReadCapacityUnits: number;
   WriteCapacityUnits: number;
 }
 
-// refs: 15 - tags: input, named, enum, output
+// refs: 31 - tags: input, named, interface, output
+export interface OnDemandThroughput {
+  MaxReadRequestUnits?: number | null;
+  MaxWriteRequestUnits?: number | null;
+}
+
+// refs: 18 - tags: input, named, enum, output
 export type BillingMode =
 | "PROVISIONED"
 | "PAY_PER_REQUEST"
@@ -814,14 +933,14 @@ export type StreamViewType =
 | "KEYS_ONLY"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 4 - tags: input, named, interface
+// refs: 7 - tags: input, named, interface, output
 export interface SSESpecification {
   Enabled?: boolean | null;
   SSEType?: SSEType | null;
   KMSMasterKeyId?: string | null;
 }
 
-// refs: 12 - tags: input, named, enum, output
+// refs: 15 - tags: input, named, enum, output
 export type SSEType =
 | "AES256"
 | "KMS"
@@ -879,10 +998,22 @@ export type ReturnValue =
 | "UPDATED_NEW"
 | cmnP.UnexpectedEnumValue;
 
+// refs: 2 - tags: input, named, interface, output
+export interface EnableKinesisStreamingConfiguration {
+  ApproximateCreationDateTimePrecision?: ApproximateCreationDateTimePrecision | null;
+}
+
+// refs: 5 - tags: input, named, enum, output
+export type ApproximateCreationDateTimePrecision =
+| "MILLISECOND"
+| "MICROSECOND"
+| cmnP.UnexpectedEnumValue;
+
 // refs: 1 - tags: input, named, interface
 export interface ParameterizedStatement {
   Statement: string;
   Parameters?: AttributeValue[] | null;
+  ReturnValuesOnConditionCheckFailure?: ReturnValuesOnConditionCheckFailure | null;
 }
 
 // refs: 3 - tags: input, named, enum, output
@@ -896,6 +1027,69 @@ export type ExportFormat =
 | "DYNAMODB_JSON"
 | "ION"
 | cmnP.UnexpectedEnumValue;
+
+// refs: 4 - tags: input, named, enum, output
+export type ExportType =
+| "FULL_EXPORT"
+| "INCREMENTAL_EXPORT"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 3 - tags: input, named, interface, output
+export interface IncrementalExportSpecification {
+  ExportFromTime?: Date | number | null;
+  ExportToTime?: Date | number | null;
+  ExportViewType?: ExportViewType | null;
+}
+
+// refs: 3 - tags: input, named, enum, output
+export type ExportViewType =
+| "NEW_IMAGE"
+| "NEW_AND_OLD_IMAGES"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 4 - tags: input, named, interface, output
+export interface S3BucketSource {
+  S3BucketOwner?: string | null;
+  S3Bucket: string;
+  S3KeyPrefix?: string | null;
+}
+
+// refs: 4 - tags: input, named, enum, output
+export type InputFormat =
+| "DYNAMODB_JSON"
+| "ION"
+| "CSV"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 3 - tags: input, named, interface, output
+export interface InputFormatOptions {
+  Csv?: CsvOptions | null;
+}
+
+// refs: 3 - tags: input, named, interface, output
+export interface CsvOptions {
+  Delimiter?: string | null;
+  HeaderList?: string[] | null;
+}
+
+// refs: 3 - tags: input, named, enum, output
+export type InputCompressionType =
+| "GZIP"
+| "ZSTD"
+| "NONE"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 3 - tags: input, named, interface, output
+export interface TableCreationParameters {
+  TableName: string;
+  AttributeDefinitions: AttributeDefinition[];
+  KeySchema: KeySchemaElement[];
+  BillingMode?: BillingMode | null;
+  ProvisionedThroughput?: ProvisionedThroughput | null;
+  OnDemandThroughput?: OnDemandThroughput | null;
+  SSESpecification?: SSESpecification | null;
+  GlobalSecondaryIndexes?: GlobalSecondaryIndex[] | null;
+}
 
 // refs: 1 - tags: input, named, enum
 export type BackupTypeFilter =
@@ -949,12 +1143,6 @@ export interface ConditionCheck {
   ExpressionAttributeValues?: { [key: string]: AttributeValue | null | undefined } | null;
   ReturnValuesOnConditionCheckFailure?: ReturnValuesOnConditionCheckFailure | null;
 }
-
-// refs: 4 - tags: input, named, enum
-export type ReturnValuesOnConditionCheckFailure =
-| "ALL_OLD"
-| "NONE"
-| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
 export interface Put {
@@ -1073,6 +1261,11 @@ export type AttributeAction =
 | "DELETE"
 | cmnP.UnexpectedEnumValue;
 
+// refs: 2 - tags: input, named, interface, output
+export interface UpdateKinesisStreamingConfiguration {
+  ApproximateCreationDateTimePrecision?: ApproximateCreationDateTimePrecision | null;
+}
+
 // refs: 1 - tags: input, named, interface
 export interface GlobalSecondaryIndexUpdate {
   Update?: UpdateGlobalSecondaryIndexAction | null;
@@ -1083,7 +1276,8 @@ export interface GlobalSecondaryIndexUpdate {
 // refs: 1 - tags: input, named, interface
 export interface UpdateGlobalSecondaryIndexAction {
   IndexName: string;
-  ProvisionedThroughput: ProvisionedThroughput;
+  ProvisionedThroughput?: ProvisionedThroughput | null;
+  OnDemandThroughput?: OnDemandThroughput | null;
 }
 
 // refs: 1 - tags: input, named, interface
@@ -1092,6 +1286,7 @@ export interface CreateGlobalSecondaryIndexAction {
   KeySchema: KeySchemaElement[];
   Projection: Projection;
   ProvisionedThroughput?: ProvisionedThroughput | null;
+  OnDemandThroughput?: OnDemandThroughput | null;
 }
 
 // refs: 1 - tags: input, named, interface
@@ -1111,6 +1306,7 @@ export interface CreateReplicationGroupMemberAction {
   RegionName: string;
   KMSMasterKeyId?: string | null;
   ProvisionedThroughputOverride?: ProvisionedThroughputOverride | null;
+  OnDemandThroughputOverride?: OnDemandThroughputOverride | null;
   GlobalSecondaryIndexes?: ReplicaGlobalSecondaryIndex[] | null;
   TableClassOverride?: TableClass | null;
 }
@@ -1120,10 +1316,16 @@ export interface ProvisionedThroughputOverride {
   ReadCapacityUnits?: number | null;
 }
 
+// refs: 22 - tags: input, named, interface, output
+export interface OnDemandThroughputOverride {
+  MaxReadRequestUnits?: number | null;
+}
+
 // refs: 2 - tags: input, named, interface
 export interface ReplicaGlobalSecondaryIndex {
   IndexName: string;
   ProvisionedThroughputOverride?: ProvisionedThroughputOverride | null;
+  OnDemandThroughputOverride?: OnDemandThroughputOverride | null;
 }
 
 // refs: 1 - tags: input, named, interface
@@ -1131,6 +1333,7 @@ export interface UpdateReplicationGroupMemberAction {
   RegionName: string;
   KMSMasterKeyId?: string | null;
   ProvisionedThroughputOverride?: ProvisionedThroughputOverride | null;
+  OnDemandThroughputOverride?: OnDemandThroughputOverride | null;
   GlobalSecondaryIndexes?: ReplicaGlobalSecondaryIndex[] | null;
   TableClassOverride?: TableClass | null;
 }
@@ -1176,6 +1379,7 @@ export interface BatchStatementResponse {
 export interface BatchStatementError {
   Code?: BatchStatementErrorCodeEnum | null;
   Message?: string | null;
+  Item?: { [key: string]: AttributeValue | null | undefined } | null;
 }
 
 // refs: 1 - tags: output, named, enum
@@ -1259,6 +1463,7 @@ export interface ReplicaDescription {
   ReplicaStatusPercentProgress?: string | null;
   KMSMasterKeyId?: string | null;
   ProvisionedThroughputOverride?: ProvisionedThroughputOverride | null;
+  OnDemandThroughputOverride?: OnDemandThroughputOverride | null;
   GlobalSecondaryIndexes?: ReplicaGlobalSecondaryIndexDescription[] | null;
   ReplicaInaccessibleDateTime?: Date | number | null;
   ReplicaTableClassSummary?: TableClassSummary | null;
@@ -1279,6 +1484,7 @@ export type ReplicaStatus =
 export interface ReplicaGlobalSecondaryIndexDescription {
   IndexName?: string | null;
   ProvisionedThroughputOverride?: ProvisionedThroughputOverride | null;
+  OnDemandThroughputOverride?: OnDemandThroughputOverride | null;
 }
 
 // refs: 17 - tags: output, named, interface
@@ -1319,6 +1525,8 @@ export interface TableDescription {
   SSEDescription?: SSEDescription | null;
   ArchivalSummary?: ArchivalSummary | null;
   TableClassSummary?: TableClassSummary | null;
+  DeletionProtectionEnabled?: boolean | null;
+  OnDemandThroughput?: OnDemandThroughput | null;
 }
 
 // refs: 8 - tags: output, named, enum
@@ -1368,6 +1576,7 @@ export interface GlobalSecondaryIndexDescription {
   IndexSizeBytes?: number | null;
   ItemCount?: number | null;
   IndexArn?: string | null;
+  OnDemandThroughput?: OnDemandThroughput | null;
 }
 
 // refs: 10 - tags: output, named, enum
@@ -1426,6 +1635,7 @@ export interface SourceTableDetails {
   KeySchema: KeySchemaElement[];
   TableCreationDateTime: Date | number;
   ProvisionedThroughput: ProvisionedThroughput;
+  OnDemandThroughput?: OnDemandThroughput | null;
   ItemCount?: number | null;
   BillingMode?: BillingMode | null;
 }
@@ -1452,6 +1662,7 @@ export interface GlobalSecondaryIndexInfo {
   KeySchema?: KeySchemaElement[] | null;
   Projection?: Projection | null;
   ProvisionedThroughput?: ProvisionedThroughput | null;
+  OnDemandThroughput?: OnDemandThroughput | null;
 }
 
 // refs: 3 - tags: output, named, interface
@@ -1535,6 +1746,8 @@ export interface ExportDescription {
   ExportFormat?: ExportFormat | null;
   BilledSizeBytes?: number | null;
   ItemCount?: number | null;
+  ExportType?: ExportType | null;
+  IncrementalExportSpecification?: IncrementalExportSpecification | null;
 }
 
 // refs: 3 - tags: output, named, enum
@@ -1590,20 +1803,54 @@ export interface ReplicaGlobalSecondaryIndexSettingsDescription {
   ProvisionedWriteCapacityAutoScalingSettings?: AutoScalingSettingsDescription | null;
 }
 
+// refs: 2 - tags: output, named, interface
+export interface ImportTableDescription {
+  ImportArn?: string | null;
+  ImportStatus?: ImportStatus | null;
+  TableArn?: string | null;
+  TableId?: string | null;
+  ClientToken?: string | null;
+  S3BucketSource?: S3BucketSource | null;
+  ErrorCount?: number | null;
+  CloudWatchLogGroupArn?: string | null;
+  InputFormat?: InputFormat | null;
+  InputFormatOptions?: InputFormatOptions | null;
+  InputCompressionType?: InputCompressionType | null;
+  TableCreationParameters?: TableCreationParameters | null;
+  StartTime?: Date | number | null;
+  EndTime?: Date | number | null;
+  ProcessedSizeBytes?: number | null;
+  ProcessedItemCount?: number | null;
+  ImportedItemCount?: number | null;
+  FailureCode?: string | null;
+  FailureMessage?: string | null;
+}
+
+// refs: 3 - tags: output, named, enum
+export type ImportStatus =
+| "IN_PROGRESS"
+| "COMPLETED"
+| "CANCELLING"
+| "CANCELLED"
+| "FAILED"
+| cmnP.UnexpectedEnumValue;
+
 // refs: 1 - tags: output, named, interface
 export interface KinesisDataStreamDestination {
   StreamArn?: string | null;
   DestinationStatus?: DestinationStatus | null;
   DestinationStatusDescription?: string | null;
+  ApproximateCreationDateTimePrecision?: ApproximateCreationDateTimePrecision | null;
 }
 
-// refs: 2 - tags: output, named, enum
+// refs: 3 - tags: output, named, enum
 export type DestinationStatus =
 | "ENABLING"
 | "ACTIVE"
 | "DISABLING"
 | "DISABLED"
 | "ENABLE_FAILED"
+| "UPDATING"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
@@ -1660,10 +1907,23 @@ export interface ContributorInsightsSummary {
 export interface ExportSummary {
   ExportArn?: string | null;
   ExportStatus?: ExportStatus | null;
+  ExportType?: ExportType | null;
 }
 
 // refs: 1 - tags: output, named, interface
 export interface GlobalTable {
   GlobalTableName?: string | null;
   ReplicationGroup?: Replica[] | null;
+}
+
+// refs: 1 - tags: output, named, interface
+export interface ImportSummary {
+  ImportArn?: string | null;
+  ImportStatus?: ImportStatus | null;
+  TableArn?: string | null;
+  S3BucketSource?: S3BucketSource | null;
+  CloudWatchLogGroupArn?: string | null;
+  InputFormat?: InputFormat | null;
+  StartTime?: Date | number | null;
+  EndTime?: Date | number | null;
 }

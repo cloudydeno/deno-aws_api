@@ -3,6 +3,16 @@
 import * as cmnP from "../../encoding/common.ts";
 
 // refs: 1 - tags: named, input
+export interface BatchGetMetricDataRequest {
+  Queries: BatchGetMetricDataQuery[];
+}
+
+// refs: 1 - tags: named, input
+export interface CancelExportJobRequest {
+  JobId: string;
+}
+
+// refs: 1 - tags: named, input
 export interface CreateConfigurationSetRequest {
   ConfigurationSetName: string;
   TrackingOptions?: TrackingOptions | null;
@@ -11,6 +21,7 @@ export interface CreateConfigurationSetRequest {
   SendingOptions?: SendingOptions | null;
   Tags?: Tag[] | null;
   SuppressionOptions?: SuppressionOptions | null;
+  VdmOptions?: VdmOptions | null;
 }
 
 // refs: 1 - tags: named, input
@@ -51,6 +62,7 @@ export interface CreateCustomVerificationEmailTemplateRequest {
 export interface CreateDedicatedIpPoolRequest {
   PoolName: string;
   Tags?: Tag[] | null;
+  ScalingMode?: ScalingMode | null;
 }
 
 // refs: 1 - tags: named, input
@@ -80,6 +92,12 @@ export interface CreateEmailIdentityPolicyRequest {
 export interface CreateEmailTemplateRequest {
   TemplateName: string;
   TemplateContent: EmailTemplateContent;
+}
+
+// refs: 1 - tags: named, input
+export interface CreateExportJobRequest {
+  ExportDataSource: ExportDataSource;
+  ExportDestination: ExportDestination;
 }
 
 // refs: 1 - tags: named, input
@@ -178,6 +196,11 @@ export interface GetDedicatedIpRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface GetDedicatedIpPoolRequest {
+  PoolName: string;
+}
+
+// refs: 1 - tags: named, input
 export interface GetDedicatedIpsRequest {
   PoolName?: string | null;
   NextToken?: string | null;
@@ -217,8 +240,18 @@ export interface GetEmailTemplateRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface GetExportJobRequest {
+  JobId: string;
+}
+
+// refs: 1 - tags: named, input
 export interface GetImportJobRequest {
   JobId: string;
+}
+
+// refs: 1 - tags: named, input
+export interface GetMessageInsightsRequest {
+  MessageId: string;
 }
 
 // refs: 1 - tags: named, input
@@ -286,8 +319,23 @@ export interface ListEmailTemplatesRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface ListExportJobsRequest {
+  NextToken?: string | null;
+  PageSize?: number | null;
+  ExportSourceType?: ExportSourceType | null;
+  JobStatus?: JobStatus | null;
+}
+
+// refs: 1 - tags: named, input
 export interface ListImportJobsRequest {
   ImportDestinationType?: ImportDestinationType | null;
+  NextToken?: string | null;
+  PageSize?: number | null;
+}
+
+// refs: 1 - tags: named, input
+export interface ListRecommendationsRequest {
+  Filter?: { [key in ListRecommendationsFilterKey]: string | null | undefined } | null;
   NextToken?: string | null;
   PageSize?: number | null;
 }
@@ -316,7 +364,7 @@ export interface PutAccountDetailsRequest {
   MailType: MailType;
   WebsiteURL: string;
   ContactLanguage?: ContactLanguage | null;
-  UseCaseDescription: string;
+  UseCaseDescription?: string | null;
   AdditionalContactEmailAddresses?: string[] | null;
   ProductionAccessEnabled?: boolean | null;
 }
@@ -329,6 +377,11 @@ export interface PutAccountSendingAttributesRequest {
 // refs: 1 - tags: named, input
 export interface PutAccountSuppressionAttributesRequest {
   SuppressedReasons?: SuppressionListReason[] | null;
+}
+
+// refs: 1 - tags: named, input
+export interface PutAccountVdmAttributesRequest {
+  VdmAttributes: VdmAttributes;
 }
 
 // refs: 1 - tags: named, input
@@ -363,9 +416,21 @@ export interface PutConfigurationSetTrackingOptionsRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface PutConfigurationSetVdmOptionsRequest {
+  ConfigurationSetName: string;
+  VdmOptions?: VdmOptions | null;
+}
+
+// refs: 1 - tags: named, input
 export interface PutDedicatedIpInPoolRequest {
   Ip: string;
   DestinationPoolName: string;
+}
+
+// refs: 1 - tags: named, input
+export interface PutDedicatedIpPoolScalingAttributesRequest {
+  PoolName: string;
+  ScalingMode: ScalingMode;
 }
 
 // refs: 1 - tags: named, input
@@ -517,6 +582,12 @@ export interface UpdateEmailTemplateRequest {
 }
 
 // refs: 1 - tags: named, output
+export interface BatchGetMetricDataResponse {
+  Results?: MetricDataResult[] | null;
+  Errors?: MetricDataError[] | null;
+}
+
+// refs: 1 - tags: named, output
 export interface CreateDeliverabilityTestReportResponse {
   ReportId: string;
   DeliverabilityTestStatus: DeliverabilityTestStatus;
@@ -527,6 +598,11 @@ export interface CreateEmailIdentityResponse {
   IdentityType?: IdentityType | null;
   VerifiedForSendingStatus?: boolean | null;
   DkimAttributes?: DkimAttributes | null;
+}
+
+// refs: 1 - tags: named, output
+export interface CreateExportJobResponse {
+  JobId?: string | null;
 }
 
 // refs: 1 - tags: named, output
@@ -543,6 +619,7 @@ export interface GetAccountResponse {
   SendingEnabled?: boolean | null;
   SuppressionAttributes?: SuppressionAttributes | null;
   Details?: AccountDetails | null;
+  VdmAttributes?: VdmAttributes | null;
 }
 
 // refs: 1 - tags: named, output
@@ -559,6 +636,7 @@ export interface GetConfigurationSetResponse {
   SendingOptions?: SendingOptions | null;
   Tags?: Tag[] | null;
   SuppressionOptions?: SuppressionOptions | null;
+  VdmOptions?: VdmOptions | null;
 }
 
 // refs: 1 - tags: named, output
@@ -601,6 +679,11 @@ export interface GetCustomVerificationEmailTemplateResponse {
 // refs: 1 - tags: named, output
 export interface GetDedicatedIpResponse {
   DedicatedIp?: DedicatedIp | null;
+}
+
+// refs: 1 - tags: named, output
+export interface GetDedicatedIpPoolResponse {
+  DedicatedIpPool?: DedicatedIpPool | null;
 }
 
 // refs: 1 - tags: named, output
@@ -648,6 +731,8 @@ export interface GetEmailIdentityResponse {
   Policies?: { [key: string]: string | null | undefined } | null;
   Tags?: Tag[] | null;
   ConfigurationSetName?: string | null;
+  VerificationStatus?: VerificationStatus | null;
+  VerificationInfo?: VerificationInfo | null;
 }
 
 // refs: 1 - tags: named, output
@@ -662,6 +747,19 @@ export interface GetEmailTemplateResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface GetExportJobResponse {
+  JobId?: string | null;
+  ExportSourceType?: ExportSourceType | null;
+  JobStatus?: JobStatus | null;
+  ExportDestination?: ExportDestination | null;
+  ExportDataSource?: ExportDataSource | null;
+  CreatedTimestamp?: Date | number | null;
+  CompletedTimestamp?: Date | number | null;
+  FailureInfo?: FailureInfo | null;
+  Statistics?: ExportStatistics | null;
+}
+
+// refs: 1 - tags: named, output
 export interface GetImportJobResponse {
   JobId?: string | null;
   ImportDestination?: ImportDestination | null;
@@ -672,6 +770,15 @@ export interface GetImportJobResponse {
   CompletedTimestamp?: Date | number | null;
   ProcessedRecordsCount?: number | null;
   FailedRecordsCount?: number | null;
+}
+
+// refs: 1 - tags: named, output
+export interface GetMessageInsightsResponse {
+  MessageId?: string | null;
+  FromEmailAddress?: string | null;
+  Subject?: string | null;
+  EmailTags?: MessageTag[] | null;
+  Insights?: EmailInsights[] | null;
 }
 
 // refs: 1 - tags: named, output
@@ -734,8 +841,20 @@ export interface ListEmailTemplatesResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface ListExportJobsResponse {
+  ExportJobs?: ExportJobSummary[] | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
 export interface ListImportJobsResponse {
   ImportJobs?: ImportJobSummary[] | null;
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface ListRecommendationsResponse {
+  Recommendations?: Recommendation[] | null;
   NextToken?: string | null;
 }
 
@@ -775,6 +894,42 @@ export interface SendEmailResponse {
 export interface TestRenderEmailTemplateResponse {
   RenderedTemplate: string;
 }
+
+// refs: 1 - tags: input, named, interface
+export interface BatchGetMetricDataQuery {
+  Id: string;
+  Namespace: MetricNamespace;
+  Metric: Metric;
+  Dimensions?: { [key in MetricDimensionName]: string | null | undefined } | null;
+  StartDate: Date | number;
+  EndDate: Date | number;
+}
+
+// refs: 3 - tags: input, named, enum, output
+export type MetricNamespace =
+| "VDM"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 3 - tags: input, named, enum, output
+export type Metric =
+| "SEND"
+| "COMPLAINT"
+| "PERMANENT_BOUNCE"
+| "TRANSIENT_BOUNCE"
+| "OPEN"
+| "CLICK"
+| "DELIVERY"
+| "DELIVERY_OPEN"
+| "DELIVERY_CLICK"
+| "DELIVERY_COMPLAINT"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 3 - tags: input, named, enum, output
+export type MetricDimensionName =
+| "EMAIL_IDENTITY"
+| "CONFIGURATION_SET"
+| "ISP"
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface, output
 export interface TrackingOptions {
@@ -821,6 +976,28 @@ export type SuppressionListReason =
 | "COMPLAINT"
 | cmnP.UnexpectedEnumValue;
 
+// refs: 3 - tags: input, named, interface, output
+export interface VdmOptions {
+  DashboardOptions?: DashboardOptions | null;
+  GuardianOptions?: GuardianOptions | null;
+}
+
+// refs: 3 - tags: input, named, interface, output
+export interface DashboardOptions {
+  EngagementMetrics?: FeatureStatus | null;
+}
+
+// refs: 12 - tags: input, named, enum, output
+export type FeatureStatus =
+| "ENABLED"
+| "DISABLED"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 3 - tags: input, named, interface, output
+export interface GuardianOptions {
+  OptimizedSharedDelivery?: FeatureStatus | null;
+}
+
 // refs: 2 - tags: input, named, interface
 export interface EventDestinationDefinition {
   Enabled?: boolean | null;
@@ -828,10 +1005,11 @@ export interface EventDestinationDefinition {
   KinesisFirehoseDestination?: KinesisFirehoseDestination | null;
   CloudWatchDestination?: CloudWatchDestination | null;
   SnsDestination?: SnsDestination | null;
+  EventBridgeDestination?: EventBridgeDestination | null;
   PinpointDestination?: PinpointDestination | null;
 }
 
-// refs: 3 - tags: input, named, enum, output
+// refs: 4 - tags: input, named, enum, output
 export type EventType =
 | "SEND"
 | "REJECT"
@@ -876,6 +1054,11 @@ export interface SnsDestination {
 }
 
 // refs: 3 - tags: input, named, interface, output
+export interface EventBridgeDestination {
+  EventBusArn: string;
+}
+
+// refs: 3 - tags: input, named, interface, output
 export interface PinpointDestination {
   ApplicationArn?: string | null;
 }
@@ -900,6 +1083,12 @@ export interface Topic {
   DefaultSubscriptionStatus: SubscriptionStatus;
 }
 
+// refs: 3 - tags: input, named, enum, output
+export type ScalingMode =
+| "STANDARD"
+| "MANAGED"
+| cmnP.UnexpectedEnumValue;
+
 // refs: 2 - tags: input, named, interface
 export interface EmailContent {
   Simple?: Message | null;
@@ -911,6 +1100,7 @@ export interface EmailContent {
 export interface Message {
   Subject: Content;
   Body: Body;
+  Headers?: MessageHeader[] | null;
 }
 
 // refs: 6 - tags: input, named, interface
@@ -925,6 +1115,12 @@ export interface Body {
   Html?: Content | null;
 }
 
+// refs: 6 - tags: input, named, interface
+export interface MessageHeader {
+  Name: string;
+  Value: string;
+}
+
 // refs: 2 - tags: input, named, interface
 export interface RawMessage {
   Data: Uint8Array | string;
@@ -935,6 +1131,7 @@ export interface Template {
   TemplateName?: string | null;
   TemplateArn?: string | null;
   TemplateData?: string | null;
+  Headers?: MessageHeader[] | null;
 }
 
 // refs: 2 - tags: input, named, interface
@@ -956,6 +1153,80 @@ export interface EmailTemplateContent {
   Text?: string | null;
   Html?: string | null;
 }
+
+// refs: 2 - tags: input, named, interface, output
+export interface ExportDataSource {
+  MetricsDataSource?: MetricsDataSource | null;
+  MessageInsightsDataSource?: MessageInsightsDataSource | null;
+}
+
+// refs: 2 - tags: input, named, interface, output
+export interface MetricsDataSource {
+  Dimensions: { [key in MetricDimensionName]: string[] | null | undefined };
+  Namespace: MetricNamespace;
+  Metrics: ExportMetric[];
+  StartDate: Date | number;
+  EndDate: Date | number;
+}
+
+// refs: 2 - tags: input, named, interface, output
+export interface ExportMetric {
+  Name?: Metric | null;
+  Aggregation?: MetricAggregation | null;
+}
+
+// refs: 2 - tags: input, named, enum, output
+export type MetricAggregation =
+| "RATE"
+| "VOLUME"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 2 - tags: input, named, interface, output
+export interface MessageInsightsDataSource {
+  StartDate: Date | number;
+  EndDate: Date | number;
+  Include?: MessageInsightsFilters | null;
+  Exclude?: MessageInsightsFilters | null;
+  MaxResults?: number | null;
+}
+
+// refs: 4 - tags: input, named, interface, output
+export interface MessageInsightsFilters {
+  FromEmailAddress?: string[] | null;
+  Destination?: string[] | null;
+  Subject?: string[] | null;
+  Isp?: string[] | null;
+  LastDeliveryEvent?: DeliveryEventType[] | null;
+  LastEngagementEvent?: EngagementEventType[] | null;
+}
+
+// refs: 4 - tags: input, named, enum, output
+export type DeliveryEventType =
+| "SEND"
+| "DELIVERY"
+| "TRANSIENT_BOUNCE"
+| "PERMANENT_BOUNCE"
+| "UNDETERMINED_BOUNCE"
+| "COMPLAINT"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 4 - tags: input, named, enum, output
+export type EngagementEventType =
+| "OPEN"
+| "CLICK"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 2 - tags: input, named, interface, output
+export interface ExportDestination {
+  DataFormat: DataFormat;
+  S3Url?: string | null;
+}
+
+// refs: 4 - tags: input, named, enum, output
+export type DataFormat =
+| "CSV"
+| "JSON"
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface, output
 export interface ImportDestination {
@@ -992,12 +1263,6 @@ export interface ImportDataSource {
   DataFormat: DataFormat;
 }
 
-// refs: 2 - tags: input, named, enum, output
-export type DataFormat =
-| "CSV"
-| "JSON"
-| cmnP.UnexpectedEnumValue;
-
 // refs: 1 - tags: input, named, interface
 export interface ListContactsFilter {
   FilteredStatus?: SubscriptionStatus | null;
@@ -1010,10 +1275,33 @@ export interface TopicFilter {
   UseDefaultIfPreferenceUnavailable?: boolean | null;
 }
 
+// refs: 3 - tags: input, named, enum, output
+export type ExportSourceType =
+| "METRICS_DATA"
+| "MESSAGE_INSIGHTS"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 5 - tags: input, named, enum, output
+export type JobStatus =
+| "CREATED"
+| "PROCESSING"
+| "COMPLETED"
+| "FAILED"
+| "CANCELLED"
+| cmnP.UnexpectedEnumValue;
+
 // refs: 1 - tags: input, named, enum
 export type ImportDestinationType =
 | "SUPPRESSION_LIST"
 | "CONTACT_LIST"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 1 - tags: input, named, enum
+export type ListRecommendationsFilterKey =
+| "TYPE"
+| "IMPACT"
+| "STATUS"
+| "RESOURCE_ARN"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, enum, output
@@ -1027,6 +1315,23 @@ export type ContactLanguage =
 | "EN"
 | "JA"
 | cmnP.UnexpectedEnumValue;
+
+// refs: 2 - tags: input, named, interface, output
+export interface VdmAttributes {
+  VdmEnabled: FeatureStatus;
+  DashboardAttributes?: DashboardAttributes | null;
+  GuardianAttributes?: GuardianAttributes | null;
+}
+
+// refs: 2 - tags: input, named, interface, output
+export interface DashboardAttributes {
+  EngagementMetrics?: FeatureStatus | null;
+}
+
+// refs: 2 - tags: input, named, interface, output
+export interface GuardianAttributes {
+  OptimizedSharedDelivery?: FeatureStatus | null;
+}
 
 // refs: 3 - tags: input, named, interface, output
 export interface DomainDeliverabilityTrackingOption {
@@ -1053,7 +1358,7 @@ export type BehaviorOnMxFailure =
 | "REJECT_MESSAGE"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 3 - tags: input, named, interface
+// refs: 4 - tags: input, named, interface, output
 export interface MessageTag {
   Name: string;
   Value: string;
@@ -1069,6 +1374,7 @@ export interface BulkEmailEntry {
   Destination: Destination;
   ReplacementTags?: MessageTag[] | null;
   ReplacementEmailContent?: ReplacementEmailContent | null;
+  ReplacementHeaders?: MessageHeader[] | null;
 }
 
 // refs: 2 - tags: input, named, interface
@@ -1093,6 +1399,26 @@ export interface ListManagementOptions {
   ContactListName: string;
   TopicName?: string | null;
 }
+
+// refs: 1 - tags: output, named, interface
+export interface MetricDataResult {
+  Id?: string | null;
+  Timestamps?: (Date | number)[] | null;
+  Values?: number[] | null;
+}
+
+// refs: 1 - tags: output, named, interface
+export interface MetricDataError {
+  Id?: string | null;
+  Code?: QueryErrorCode | null;
+  Message?: string | null;
+}
+
+// refs: 1 - tags: output, named, enum
+export type QueryErrorCode =
+| "INTERNAL_FAILURE"
+| "ACCESS_DENIED"
+| cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: output, named, enum
 export type DeliverabilityTestStatus =
@@ -1178,6 +1504,7 @@ export interface EventDestination {
   KinesisFirehoseDestination?: KinesisFirehoseDestination | null;
   CloudWatchDestination?: CloudWatchDestination | null;
   SnsDestination?: SnsDestination | null;
+  EventBridgeDestination?: EventBridgeDestination | null;
   PinpointDestination?: PinpointDestination | null;
 }
 
@@ -1194,6 +1521,12 @@ export type WarmupStatus =
 | "IN_PROGRESS"
 | "DONE"
 | cmnP.UnexpectedEnumValue;
+
+// refs: 1 - tags: output, named, interface
+export interface DedicatedIpPool {
+  PoolName: string;
+  ScalingMode: ScalingMode;
+}
 
 // refs: 1 - tags: output, named, enum
 export type DeliverabilityDashboardAccountStatus =
@@ -1291,19 +1624,90 @@ export type MailFromDomainStatus =
 | "TEMPORARY_FAILURE"
 | cmnP.UnexpectedEnumValue;
 
+// refs: 2 - tags: output, named, enum
+export type VerificationStatus =
+| "PENDING"
+| "SUCCESS"
+| "FAILED"
+| "TEMPORARY_FAILURE"
+| "NOT_STARTED"
+| cmnP.UnexpectedEnumValue;
+
 // refs: 1 - tags: output, named, interface
+export interface VerificationInfo {
+  LastCheckedTimestamp?: Date | number | null;
+  LastSuccessTimestamp?: Date | number | null;
+  ErrorType?: VerificationError | null;
+  SOARecord?: SOARecord | null;
+}
+
+// refs: 1 - tags: output, named, enum
+export type VerificationError =
+| "SERVICE_ERROR"
+| "DNS_SERVER_ERROR"
+| "HOST_NOT_FOUND"
+| "TYPE_NOT_FOUND"
+| "INVALID_VALUE"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 1 - tags: output, named, interface
+export interface SOARecord {
+  PrimaryNameServer?: string | null;
+  AdminEmail?: string | null;
+  SerialNumber?: number | null;
+}
+
+// refs: 2 - tags: output, named, interface
 export interface FailureInfo {
   FailedRecordsS3Url?: string | null;
   ErrorMessage?: string | null;
 }
 
-// refs: 2 - tags: output, named, enum
-export type JobStatus =
-| "CREATED"
-| "PROCESSING"
-| "COMPLETED"
-| "FAILED"
+// refs: 1 - tags: output, named, interface
+export interface ExportStatistics {
+  ProcessedRecordsCount?: number | null;
+  ExportedRecordsCount?: number | null;
+}
+
+// refs: 1 - tags: output, named, interface
+export interface EmailInsights {
+  Destination?: string | null;
+  Isp?: string | null;
+  Events?: InsightsEvent[] | null;
+}
+
+// refs: 1 - tags: output, named, interface
+export interface InsightsEvent {
+  Timestamp?: Date | number | null;
+  Type?: EventType | null;
+  Details?: EventDetails | null;
+}
+
+// refs: 1 - tags: output, named, interface
+export interface EventDetails {
+  Bounce?: Bounce | null;
+  Complaint?: Complaint | null;
+}
+
+// refs: 1 - tags: output, named, interface
+export interface Bounce {
+  BounceType?: BounceType | null;
+  BounceSubType?: string | null;
+  DiagnosticCode?: string | null;
+}
+
+// refs: 1 - tags: output, named, enum
+export type BounceType =
+| "UNDETERMINED"
+| "TRANSIENT"
+| "PERMANENT"
 | cmnP.UnexpectedEnumValue;
+
+// refs: 1 - tags: output, named, interface
+export interface Complaint {
+  ComplaintSubType?: string | null;
+  ComplaintFeedbackType?: string | null;
+}
 
 // refs: 1 - tags: output, named, interface
 export interface SuppressedDestination {
@@ -1348,6 +1752,7 @@ export interface IdentityInfo {
   IdentityType?: IdentityType | null;
   IdentityName?: string | null;
   SendingEnabled?: boolean | null;
+  VerificationStatus?: VerificationStatus | null;
 }
 
 // refs: 1 - tags: output, named, interface
@@ -1357,12 +1762,54 @@ export interface EmailTemplateMetadata {
 }
 
 // refs: 1 - tags: output, named, interface
+export interface ExportJobSummary {
+  JobId?: string | null;
+  ExportSourceType?: ExportSourceType | null;
+  JobStatus?: JobStatus | null;
+  CreatedTimestamp?: Date | number | null;
+  CompletedTimestamp?: Date | number | null;
+}
+
+// refs: 1 - tags: output, named, interface
 export interface ImportJobSummary {
   JobId?: string | null;
   ImportDestination?: ImportDestination | null;
   JobStatus?: JobStatus | null;
   CreatedTimestamp?: Date | number | null;
+  ProcessedRecordsCount?: number | null;
+  FailedRecordsCount?: number | null;
 }
+
+// refs: 1 - tags: output, named, interface
+export interface Recommendation {
+  ResourceArn?: string | null;
+  Type?: RecommendationType | null;
+  Description?: string | null;
+  Status?: RecommendationStatus | null;
+  CreatedTimestamp?: Date | number | null;
+  LastUpdatedTimestamp?: Date | number | null;
+  Impact?: RecommendationImpact | null;
+}
+
+// refs: 1 - tags: output, named, enum
+export type RecommendationType =
+| "DKIM"
+| "DMARC"
+| "SPF"
+| "BIMI"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 1 - tags: output, named, enum
+export type RecommendationStatus =
+| "OPEN"
+| "FIXED"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 1 - tags: output, named, enum
+export type RecommendationImpact =
+| "LOW"
+| "HIGH"
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface SuppressedDestinationSummary {

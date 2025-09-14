@@ -22,12 +22,18 @@ export class KMS {
     "endpointPrefix": "kms",
     "jsonVersion": "1.1",
     "protocol": "json",
+    "protocols": [
+      "json"
+    ],
     "serviceAbbreviation": "KMS",
     "serviceFullName": "AWS Key Management Service",
     "serviceId": "KMS",
     "signatureVersion": "v4",
     "targetPrefix": "TrentService",
-    "uid": "kms-2014-11-01"
+    "uid": "kms-2014-11-01",
+    "auth": [
+      "aws.auth#sigv4"
+    ]
   };
 
   async cancelKeyDeletion(
@@ -87,6 +93,12 @@ export class KMS {
       CloudHsmClusterId: params["CloudHsmClusterId"],
       TrustAnchorCertificate: params["TrustAnchorCertificate"],
       KeyStorePassword: params["KeyStorePassword"],
+      CustomKeyStoreType: params["CustomKeyStoreType"],
+      XksProxyUriEndpoint: params["XksProxyUriEndpoint"],
+      XksProxyUriPath: params["XksProxyUriPath"],
+      XksProxyVpcEndpointServiceName: params["XksProxyVpcEndpointServiceName"],
+      XksProxyAuthenticationCredential: fromXksProxyAuthenticationCredentialType(params["XksProxyAuthenticationCredential"]),
+      XksProxyConnectivity: params["XksProxyConnectivity"],
     };
     const resp = await this.#client.performRequest({
       opts, body,
@@ -112,6 +124,7 @@ export class KMS {
       Constraints: fromGrantConstraints(params["Constraints"]),
       GrantTokens: params["GrantTokens"],
       Name: params["Name"],
+      DryRun: params["DryRun"],
     };
     const resp = await this.#client.performRequest({
       opts, body,
@@ -141,6 +154,7 @@ export class KMS {
       BypassPolicyLockoutSafetyCheck: params["BypassPolicyLockoutSafetyCheck"],
       Tags: params["Tags"]?.map(x => fromTag(x)),
       MultiRegion: params["MultiRegion"],
+      XksKeyId: params["XksKeyId"],
     };
     const resp = await this.#client.performRequest({
       opts, body,
@@ -164,6 +178,8 @@ export class KMS {
       GrantTokens: params["GrantTokens"],
       KeyId: params["KeyId"],
       EncryptionAlgorithm: params["EncryptionAlgorithm"],
+      Recipient: fromRecipientInfo(params["Recipient"]),
+      DryRun: params["DryRun"],
     };
     const resp = await this.#client.performRequest({
       opts, body,
@@ -175,6 +191,7 @@ export class KMS {
         "KeyId": "s",
         "Plaintext": "a",
         "EncryptionAlgorithm": (x: jsonP.JSONValue) => cmnP.readEnum<s.EncryptionAlgorithmSpec>(x),
+        "CiphertextForRecipient": "a",
       },
     }, await resp.json());
   }
@@ -219,6 +236,34 @@ export class KMS {
       action: "DeleteImportedKeyMaterial",
     });
     await resp.body?.cancel();
+  }
+
+  async deriveSharedSecret(
+    params: s.DeriveSharedSecretRequest,
+    opts: client.RequestOptions = {},
+  ): Promise<s.DeriveSharedSecretResponse> {
+    const body: jsonP.JSONObject = {
+      KeyId: params["KeyId"],
+      KeyAgreementAlgorithm: params["KeyAgreementAlgorithm"],
+      PublicKey: serializeBlob(params["PublicKey"]),
+      GrantTokens: params["GrantTokens"],
+      DryRun: params["DryRun"],
+      Recipient: fromRecipientInfo(params["Recipient"]),
+    };
+    const resp = await this.#client.performRequest({
+      opts, body,
+      action: "DeriveSharedSecret",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "KeyId": "s",
+        "SharedSecret": "a",
+        "CiphertextForRecipient": "a",
+        "KeyAgreementAlgorithm": (x: jsonP.JSONValue) => cmnP.readEnum<s.KeyAgreementAlgorithmSpec>(x),
+        "KeyOrigin": (x: jsonP.JSONValue) => cmnP.readEnum<s.OriginType>(x),
+      },
+    }, await resp.json());
   }
 
   async describeCustomKeyStores(
@@ -327,6 +372,7 @@ export class KMS {
   ): Promise<void> {
     const body: jsonP.JSONObject = {
       KeyId: params["KeyId"],
+      RotationPeriodInDays: params["RotationPeriodInDays"],
     };
     const resp = await this.#client.performRequest({
       opts, body,
@@ -345,6 +391,7 @@ export class KMS {
       EncryptionContext: params["EncryptionContext"],
       GrantTokens: params["GrantTokens"],
       EncryptionAlgorithm: params["EncryptionAlgorithm"],
+      DryRun: params["DryRun"],
     };
     const resp = await this.#client.performRequest({
       opts, body,
@@ -370,6 +417,8 @@ export class KMS {
       NumberOfBytes: params["NumberOfBytes"],
       KeySpec: params["KeySpec"],
       GrantTokens: params["GrantTokens"],
+      Recipient: fromRecipientInfo(params["Recipient"]),
+      DryRun: params["DryRun"],
     };
     const resp = await this.#client.performRequest({
       opts, body,
@@ -381,6 +430,7 @@ export class KMS {
         "CiphertextBlob": "a",
         "Plaintext": "a",
         "KeyId": "s",
+        "CiphertextForRecipient": "a",
       },
     }, await resp.json());
   }
@@ -394,6 +444,8 @@ export class KMS {
       KeyId: params["KeyId"],
       KeyPairSpec: params["KeyPairSpec"],
       GrantTokens: params["GrantTokens"],
+      Recipient: fromRecipientInfo(params["Recipient"]),
+      DryRun: params["DryRun"],
     };
     const resp = await this.#client.performRequest({
       opts, body,
@@ -407,6 +459,7 @@ export class KMS {
         "PublicKey": "a",
         "KeyId": "s",
         "KeyPairSpec": (x: jsonP.JSONValue) => cmnP.readEnum<s.DataKeyPairSpec>(x),
+        "CiphertextForRecipient": "a",
       },
     }, await resp.json());
   }
@@ -420,6 +473,7 @@ export class KMS {
       KeyId: params["KeyId"],
       KeyPairSpec: params["KeyPairSpec"],
       GrantTokens: params["GrantTokens"],
+      DryRun: params["DryRun"],
     };
     const resp = await this.#client.performRequest({
       opts, body,
@@ -446,6 +500,7 @@ export class KMS {
       KeySpec: params["KeySpec"],
       NumberOfBytes: params["NumberOfBytes"],
       GrantTokens: params["GrantTokens"],
+      DryRun: params["DryRun"],
     };
     const resp = await this.#client.performRequest({
       opts, body,
@@ -460,6 +515,31 @@ export class KMS {
     }, await resp.json());
   }
 
+  async generateMac(
+    params: s.GenerateMacRequest,
+    opts: client.RequestOptions = {},
+  ): Promise<s.GenerateMacResponse> {
+    const body: jsonP.JSONObject = {
+      Message: serializeBlob(params["Message"]),
+      KeyId: params["KeyId"],
+      MacAlgorithm: params["MacAlgorithm"],
+      GrantTokens: params["GrantTokens"],
+      DryRun: params["DryRun"],
+    };
+    const resp = await this.#client.performRequest({
+      opts, body,
+      action: "GenerateMac",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Mac": "a",
+        "MacAlgorithm": (x: jsonP.JSONValue) => cmnP.readEnum<s.MacAlgorithmSpec>(x),
+        "KeyId": "s",
+      },
+    }, await resp.json());
+  }
+
   async generateRandom(
     params: s.GenerateRandomRequest = {},
     opts: client.RequestOptions = {},
@@ -467,6 +547,7 @@ export class KMS {
     const body: jsonP.JSONObject = {
       NumberOfBytes: params["NumberOfBytes"],
       CustomKeyStoreId: params["CustomKeyStoreId"],
+      Recipient: fromRecipientInfo(params["Recipient"]),
     };
     const resp = await this.#client.performRequest({
       opts, body,
@@ -476,6 +557,7 @@ export class KMS {
       required: {},
       optional: {
         "Plaintext": "a",
+        "CiphertextForRecipient": "a",
       },
     }, await resp.json());
   }
@@ -496,6 +578,7 @@ export class KMS {
       required: {},
       optional: {
         "Policy": "s",
+        "PolicyName": "s",
       },
     }, await resp.json());
   }
@@ -515,6 +598,10 @@ export class KMS {
       required: {},
       optional: {
         "KeyRotationEnabled": "b",
+        "KeyId": "s",
+        "RotationPeriodInDays": "n",
+        "NextRotationDate": "d",
+        "OnDemandRotationStartDate": "d",
       },
     }, await resp.json());
   }
@@ -565,6 +652,7 @@ export class KMS {
         "KeyUsage": (x: jsonP.JSONValue) => cmnP.readEnum<s.KeyUsageType>(x),
         "EncryptionAlgorithms": [(x: jsonP.JSONValue) => cmnP.readEnum<s.EncryptionAlgorithmSpec>(x)],
         "SigningAlgorithms": [(x: jsonP.JSONValue) => cmnP.readEnum<s.SigningAlgorithmSpec>(x)],
+        "KeyAgreementAlgorithms": [(x: jsonP.JSONValue) => cmnP.readEnum<s.KeyAgreementAlgorithmSpec>(x)],
       },
     }, await resp.json());
   }
@@ -652,6 +740,29 @@ export class KMS {
       required: {},
       optional: {
         "PolicyNames": ["s"],
+        "NextMarker": "s",
+        "Truncated": "b",
+      },
+    }, await resp.json());
+  }
+
+  async listKeyRotations(
+    params: s.ListKeyRotationsRequest,
+    opts: client.RequestOptions = {},
+  ): Promise<s.ListKeyRotationsResponse> {
+    const body: jsonP.JSONObject = {
+      KeyId: params["KeyId"],
+      Limit: params["Limit"],
+      Marker: params["Marker"],
+    };
+    const resp = await this.#client.performRequest({
+      opts, body,
+      action: "ListKeyRotations",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "Rotations": [toRotationsListEntry],
         "NextMarker": "s",
         "Truncated": "b",
       },
@@ -756,6 +867,7 @@ export class KMS {
       SourceEncryptionAlgorithm: params["SourceEncryptionAlgorithm"],
       DestinationEncryptionAlgorithm: params["DestinationEncryptionAlgorithm"],
       GrantTokens: params["GrantTokens"],
+      DryRun: params["DryRun"],
     };
     const resp = await this.#client.performRequest({
       opts, body,
@@ -807,6 +919,7 @@ export class KMS {
       GrantToken: params["GrantToken"],
       KeyId: params["KeyId"],
       GrantId: params["GrantId"],
+      DryRun: params["DryRun"],
     };
     const resp = await this.#client.performRequest({
       opts, body,
@@ -822,12 +935,32 @@ export class KMS {
     const body: jsonP.JSONObject = {
       KeyId: params["KeyId"],
       GrantId: params["GrantId"],
+      DryRun: params["DryRun"],
     };
     const resp = await this.#client.performRequest({
       opts, body,
       action: "RevokeGrant",
     });
     await resp.body?.cancel();
+  }
+
+  async rotateKeyOnDemand(
+    params: s.RotateKeyOnDemandRequest,
+    opts: client.RequestOptions = {},
+  ): Promise<s.RotateKeyOnDemandResponse> {
+    const body: jsonP.JSONObject = {
+      KeyId: params["KeyId"],
+    };
+    const resp = await this.#client.performRequest({
+      opts, body,
+      action: "RotateKeyOnDemand",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "KeyId": "s",
+      },
+    }, await resp.json());
   }
 
   async scheduleKeyDeletion(
@@ -863,6 +996,7 @@ export class KMS {
       MessageType: params["MessageType"],
       GrantTokens: params["GrantTokens"],
       SigningAlgorithm: params["SigningAlgorithm"],
+      DryRun: params["DryRun"],
     };
     const resp = await this.#client.performRequest({
       opts, body,
@@ -932,6 +1066,11 @@ export class KMS {
       NewCustomKeyStoreName: params["NewCustomKeyStoreName"],
       KeyStorePassword: params["KeyStorePassword"],
       CloudHsmClusterId: params["CloudHsmClusterId"],
+      XksProxyUriEndpoint: params["XksProxyUriEndpoint"],
+      XksProxyUriPath: params["XksProxyUriPath"],
+      XksProxyVpcEndpointServiceName: params["XksProxyVpcEndpointServiceName"],
+      XksProxyAuthenticationCredential: fromXksProxyAuthenticationCredentialType(params["XksProxyAuthenticationCredential"]),
+      XksProxyConnectivity: params["XksProxyConnectivity"],
     };
     const resp = await this.#client.performRequest({
       opts, body,
@@ -981,6 +1120,7 @@ export class KMS {
       Signature: serializeBlob(params["Signature"]),
       SigningAlgorithm: params["SigningAlgorithm"],
       GrantTokens: params["GrantTokens"],
+      DryRun: params["DryRun"],
     };
     const resp = await this.#client.performRequest({
       opts, body,
@@ -996,6 +1136,40 @@ export class KMS {
     }, await resp.json());
   }
 
+  async verifyMac(
+    params: s.VerifyMacRequest,
+    opts: client.RequestOptions = {},
+  ): Promise<s.VerifyMacResponse> {
+    const body: jsonP.JSONObject = {
+      Message: serializeBlob(params["Message"]),
+      KeyId: params["KeyId"],
+      MacAlgorithm: params["MacAlgorithm"],
+      Mac: serializeBlob(params["Mac"]),
+      GrantTokens: params["GrantTokens"],
+      DryRun: params["DryRun"],
+    };
+    const resp = await this.#client.performRequest({
+      opts, body,
+      action: "VerifyMac",
+    });
+    return jsonP.readObj({
+      required: {},
+      optional: {
+        "KeyId": "s",
+        "MacValid": "b",
+        "MacAlgorithm": (x: jsonP.JSONValue) => cmnP.readEnum<s.MacAlgorithmSpec>(x),
+      },
+    }, await resp.json());
+  }
+
+}
+
+function fromXksProxyAuthenticationCredentialType(input?: s.XksProxyAuthenticationCredentialType | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    AccessKeyId: input["AccessKeyId"],
+    RawSecretAccessKey: input["RawSecretAccessKey"],
+  }
 }
 
 function fromGrantConstraints(input?: s.GrantConstraints | null): jsonP.JSONValue {
@@ -1032,6 +1206,14 @@ function toTag(root: jsonP.JSONValue): s.Tag {
   }, root);
 }
 
+function fromRecipientInfo(input?: s.RecipientInfo | null): jsonP.JSONValue {
+  if (!input) return input;
+  return {
+    KeyEncryptionAlgorithm: input["KeyEncryptionAlgorithm"],
+    AttestationDocument: serializeBlob(input["AttestationDocument"]),
+  }
+}
+
 function toKeyMetadata(root: jsonP.JSONValue): s.KeyMetadata {
   return jsonP.readObj({
     required: {
@@ -1056,9 +1238,12 @@ function toKeyMetadata(root: jsonP.JSONValue): s.KeyMetadata {
       "KeySpec": (x: jsonP.JSONValue) => cmnP.readEnum<s.KeySpec>(x),
       "EncryptionAlgorithms": [(x: jsonP.JSONValue) => cmnP.readEnum<s.EncryptionAlgorithmSpec>(x)],
       "SigningAlgorithms": [(x: jsonP.JSONValue) => cmnP.readEnum<s.SigningAlgorithmSpec>(x)],
+      "KeyAgreementAlgorithms": [(x: jsonP.JSONValue) => cmnP.readEnum<s.KeyAgreementAlgorithmSpec>(x)],
       "MultiRegion": "b",
       "MultiRegionConfiguration": toMultiRegionConfiguration,
       "PendingDeletionWindowInDays": "n",
+      "MacAlgorithms": [(x: jsonP.JSONValue) => cmnP.readEnum<s.MacAlgorithmSpec>(x)],
+      "XksKeyConfiguration": toXksKeyConfigurationType,
     },
   }, root);
 }
@@ -1084,6 +1269,15 @@ function toMultiRegionKey(root: jsonP.JSONValue): s.MultiRegionKey {
   }, root);
 }
 
+function toXksKeyConfigurationType(root: jsonP.JSONValue): s.XksKeyConfigurationType {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "Id": "s",
+    },
+  }, root);
+}
+
 function toCustomKeyStoresListEntry(root: jsonP.JSONValue): s.CustomKeyStoresListEntry {
   return jsonP.readObj({
     required: {},
@@ -1095,6 +1289,21 @@ function toCustomKeyStoresListEntry(root: jsonP.JSONValue): s.CustomKeyStoresLis
       "ConnectionState": (x: jsonP.JSONValue) => cmnP.readEnum<s.ConnectionStateType>(x),
       "ConnectionErrorCode": (x: jsonP.JSONValue) => cmnP.readEnum<s.ConnectionErrorCodeType>(x),
       "CreationDate": "d",
+      "CustomKeyStoreType": (x: jsonP.JSONValue) => cmnP.readEnum<s.CustomKeyStoreType>(x),
+      "XksProxyConfiguration": toXksProxyConfigurationType,
+    },
+  }, root);
+}
+
+function toXksProxyConfigurationType(root: jsonP.JSONValue): s.XksProxyConfigurationType {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "Connectivity": (x: jsonP.JSONValue) => cmnP.readEnum<s.XksProxyConnectivityType>(x),
+      "AccessKeyId": "s",
+      "UriEndpoint": "s",
+      "UriPath": "s",
+      "VpcEndpointServiceName": "s",
     },
   }, root);
 }
@@ -1125,6 +1334,17 @@ function toGrantListEntry(root: jsonP.JSONValue): s.GrantListEntry {
       "IssuingAccount": "s",
       "Operations": [(x: jsonP.JSONValue) => cmnP.readEnum<s.GrantOperation>(x)],
       "Constraints": toGrantConstraints,
+    },
+  }, root);
+}
+
+function toRotationsListEntry(root: jsonP.JSONValue): s.RotationsListEntry {
+  return jsonP.readObj({
+    required: {},
+    optional: {
+      "KeyId": "s",
+      "RotationDate": "d",
+      "RotationType": (x: jsonP.JSONValue) => cmnP.readEnum<s.RotationType>(x),
     },
   }, root);
 }

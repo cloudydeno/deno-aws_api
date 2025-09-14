@@ -32,11 +32,17 @@ export class S3 {
     "checksumFormat": "md5",
     "endpointPrefix": "s3",
     "protocol": "rest-xml",
+    "protocols": [
+      "rest-xml"
+    ],
     "serviceAbbreviation": "Amazon S3",
     "serviceFullName": "Amazon Simple Storage Service",
     "serviceId": "S3",
     "signatureVersion": "s3",
-    "uid": "s3-2006-03-01"
+    "uid": "s3-2006-03-01",
+    "auth": [
+      "aws.auth#sigv4"
+    ]
   };
 
   async abortMultipartUpload(
@@ -74,8 +80,16 @@ export class S3 {
     const headers = new Headers;
     const query = new URLSearchParams;
     query.set("uploadId", params["UploadId"]?.toString() ?? "");
+    if (params["ChecksumCRC32"] != null) headers.append("x-amz-checksum-crc32", params["ChecksumCRC32"]);
+    if (params["ChecksumCRC32C"] != null) headers.append("x-amz-checksum-crc32c", params["ChecksumCRC32C"]);
+    if (params["ChecksumSHA1"] != null) headers.append("x-amz-checksum-sha1", params["ChecksumSHA1"]);
+    if (params["ChecksumSHA256"] != null) headers.append("x-amz-checksum-sha256", params["ChecksumSHA256"]);
     if (params["RequestPayer"] != null) headers.append("x-amz-request-payer", params["RequestPayer"]);
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
+    if (params["IfNoneMatch"] != null) headers.append("If-None-Match", params["IfNoneMatch"]);
+    if (params["SSECustomerAlgorithm"] != null) headers.append("x-amz-server-side-encryption-customer-algorithm", params["SSECustomerAlgorithm"]);
+    if (params["SSECustomerKey"] != null) headers.append("x-amz-server-side-encryption-customer-key", serializeBlob(params["SSECustomerKey"]) ?? '');
+    if (params["SSECustomerKeyMD5"] != null) headers.append("x-amz-server-side-encryption-customer-key-MD5", params["SSECustomerKeyMD5"]);
     const resp = await this.#client.performRequest({
       opts, headers, query, body,
       action: "CompleteMultipartUpload",
@@ -90,7 +104,7 @@ export class S3 {
       BucketKeyEnabled: cmnP.readBool(resp.headers.get("x-amz-server-side-encryption-bucket-key-enabled")),
       RequestCharged: cmnP.readEnum<s.RequestCharged>(resp.headers.get("x-amz-request-charged")),
       ...xml.strings({
-        optional: {"Location":true,"Bucket":true,"Key":true,"ETag":true},
+        optional: {"Location":true,"Bucket":true,"Key":true,"ETag":true,"ChecksumCRC32":true,"ChecksumCRC32C":true,"ChecksumSHA1":true,"ChecksumSHA256":true},
       }),
     };
   }
@@ -102,6 +116,7 @@ export class S3 {
     const headers = new Headers;
     if (params["ACL"] != null) headers.append("x-amz-acl", params["ACL"]);
     if (params["CacheControl"] != null) headers.append("Cache-Control", params["CacheControl"]);
+    if (params["ChecksumAlgorithm"] != null) headers.append("x-amz-checksum-algorithm", params["ChecksumAlgorithm"]);
     if (params["ContentDisposition"] != null) headers.append("Content-Disposition", params["ContentDisposition"]);
     if (params["ContentEncoding"] != null) headers.append("Content-Encoding", params["ContentEncoding"]);
     if (params["ContentLanguage"] != null) headers.append("Content-Language", params["ContentLanguage"]);
@@ -160,7 +175,7 @@ export class S3 {
       RequestCharged: cmnP.readEnum<s.RequestCharged>(resp.headers.get("x-amz-request-charged")),
       CopyObjectResult: {
         ...xml.strings({
-          optional: {"ETag":true},
+          optional: {"ETag":true,"ChecksumCRC32":true,"ChecksumCRC32C":true,"ChecksumSHA1":true,"ChecksumSHA256":true},
         }),
         LastModified: xml.first("LastModified", false, x => xmlP.parseTimestamp(x.content)),
       },
@@ -177,6 +192,8 @@ export class S3 {
       attributes: {"xmlns":"http://s3.amazonaws.com/doc/2006-03-01/"},
       children: [
         {name: "LocationConstraint", content: inner["LocationConstraint"]?.toString()},
+        {name: "Location", ...LocationInfo_Serialize(inner["Location"])},
+        {name: "Bucket", ...BucketInfo_Serialize(inner["Bucket"])},
       ]}) : "";
     const headers = new Headers;
     if (params["ACL"] != null) headers.append("x-amz-acl", params["ACL"]);
@@ -233,6 +250,7 @@ export class S3 {
     if (params["ObjectLockRetainUntilDate"] != null) headers.append("x-amz-object-lock-retain-until-date", cmnP.serializeDate_iso8601(params["ObjectLockRetainUntilDate"]) ?? "");
     if (params["ObjectLockLegalHoldStatus"] != null) headers.append("x-amz-object-lock-legal-hold", params["ObjectLockLegalHoldStatus"]);
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
+    if (params["ChecksumAlgorithm"] != null) headers.append("x-amz-checksum-algorithm", params["ChecksumAlgorithm"]);
     const resp = await this.#client.performRequest({
       opts, headers,
       action: "CreateMultipartUpload",
@@ -249,9 +267,38 @@ export class S3 {
       SSEKMSEncryptionContext: resp.headers.get("x-amz-server-side-encryption-context"),
       BucketKeyEnabled: cmnP.readBool(resp.headers.get("x-amz-server-side-encryption-bucket-key-enabled")),
       RequestCharged: cmnP.readEnum<s.RequestCharged>(resp.headers.get("x-amz-request-charged")),
+      ChecksumAlgorithm: cmnP.readEnum<s.ChecksumAlgorithm>(resp.headers.get("x-amz-checksum-algorithm")),
       ...xml.strings({
         optional: {"Bucket":true,"Key":true,"UploadId":true},
       }),
+    };
+  }
+
+  async createSession(
+    params: s.CreateSessionRequest,
+    opts: client.RequestOptions = {},
+  ): Promise<s.CreateSessionOutput> {
+    const headers = new Headers;
+    if (params["SessionMode"] != null) headers.append("x-amz-create-session-mode", params["SessionMode"]);
+    if (params["ServerSideEncryption"] != null) headers.append("x-amz-server-side-encryption", params["ServerSideEncryption"]);
+    if (params["SSEKMSKeyId"] != null) headers.append("x-amz-server-side-encryption-aws-kms-key-id", params["SSEKMSKeyId"]);
+    if (params["SSEKMSEncryptionContext"] != null) headers.append("x-amz-server-side-encryption-context", params["SSEKMSEncryptionContext"]);
+    if (params["BucketKeyEnabled"] != null) headers.append("x-amz-server-side-encryption-bucket-key-enabled", params["BucketKeyEnabled"]?.toString() ?? '');
+    const resp = await this.#client.performRequest({
+      opts, headers,
+      action: "CreateSession",
+      method: "GET",
+      requestUri: cmnP.encodePath`/${params["Bucket"]}?session`,
+    });
+    const xml = xmlP.readXmlResult(await resp.text());
+    return {
+      ServerSideEncryption: cmnP.readEnum<s.ServerSideEncryption>(resp.headers.get("x-amz-server-side-encryption")),
+      SSEKMSKeyId: resp.headers.get("x-amz-server-side-encryption-aws-kms-key-id"),
+      SSEKMSEncryptionContext: resp.headers.get("x-amz-server-side-encryption-context"),
+      BucketKeyEnabled: cmnP.readBool(resp.headers.get("x-amz-server-side-encryption-bucket-key-enabled")),
+      ...{
+        Credentials: xml.first("Credentials", true, SessionCredentials_Parse),
+      },
     };
   }
 
@@ -518,7 +565,7 @@ export class S3 {
     if (params["RequestPayer"] != null) headers.append("x-amz-request-payer", params["RequestPayer"]);
     if (params["BypassGovernanceRetention"] != null) headers.append("x-amz-bypass-governance-retention", params["BypassGovernanceRetention"]?.toString() ?? '');
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
-    headers.append("Content-MD5", params["ContentMD5"] ?? hashMD5(body ?? ''));
+    if (params["ChecksumAlgorithm"] != null) headers.append("x-amz-sdk-checksum-algorithm", params["ChecksumAlgorithm"]);
     const resp = await this.#client.performRequest({
       opts, headers, body,
       action: "DeleteObjects",
@@ -555,6 +602,7 @@ export class S3 {
   ): Promise<s.GetBucketAccelerateConfigurationOutput> {
     const headers = new Headers;
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
+    if (params["RequestPayer"] != null) headers.append("x-amz-request-payer", params["RequestPayer"]);
     const resp = await this.#client.performRequest({
       opts, headers,
       action: "GetBucketAccelerateConfiguration",
@@ -563,7 +611,10 @@ export class S3 {
     });
     const xml = xmlP.readXmlResult(await resp.text());
     return {
-      Status: xml.first("Status", false, x => (x.content ?? '') as s.BucketAccelerateStatus),
+      RequestCharged: cmnP.readEnum<s.RequestCharged>(resp.headers.get("x-amz-request-charged")),
+      ...{
+        Status: xml.first("Status", false, x => (x.content ?? '') as s.BucketAccelerateStatus),
+      },
     };
   }
 
@@ -712,7 +763,10 @@ export class S3 {
     });
     const xml = xmlP.readXmlResult(await resp.text());
     return {
-      Rules: xml.getList("Rule").map(LifecycleRule_Parse),
+      TransitionDefaultMinimumObjectSize: cmnP.readEnum<s.TransitionDefaultMinimumObjectSize>(resp.headers.get("x-amz-transition-default-minimum-object-size")),
+      ...{
+        Rules: xml.getList("Rule").map(LifecycleRule_Parse),
+      },
     };
   }
 
@@ -986,6 +1040,7 @@ export class S3 {
     if (params["RequestPayer"] != null) headers.append("x-amz-request-payer", params["RequestPayer"]);
     if (params["PartNumber"] != null) query.set("partNumber", params["PartNumber"]?.toString() ?? "");
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
+    if (params["ChecksumMode"] != null) headers.append("x-amz-checksum-mode", params["ChecksumMode"]);
     const resp = await this.#client.performRequest({
       opts, headers, query,
       action: "GetObject",
@@ -1000,6 +1055,10 @@ export class S3 {
       LastModified: cmnP.readTimestamp(resp.headers.get("Last-Modified")),
       ContentLength: cmnP.readNum(resp.headers.get("Content-Length")),
       ETag: resp.headers.get("ETag"),
+      ChecksumCRC32: resp.headers.get("x-amz-checksum-crc32"),
+      ChecksumCRC32C: resp.headers.get("x-amz-checksum-crc32c"),
+      ChecksumSHA1: resp.headers.get("x-amz-checksum-sha1"),
+      ChecksumSHA256: resp.headers.get("x-amz-checksum-sha256"),
       MissingMeta: cmnP.readNum(resp.headers.get("x-amz-missing-meta")),
       VersionId: resp.headers.get("x-amz-version-id"),
       CacheControl: resp.headers.get("Cache-Control"),
@@ -1009,6 +1068,7 @@ export class S3 {
       ContentRange: resp.headers.get("Content-Range"),
       ContentType: resp.headers.get("Content-Type"),
       Expires: cmnP.readTimestamp(resp.headers.get("Expires")),
+      ExpiresString: resp.headers.get("ExpiresString"),
       WebsiteRedirectLocation: resp.headers.get("x-amz-website-redirect-location"),
       ServerSideEncryption: cmnP.readEnum<s.ServerSideEncryption>(resp.headers.get("x-amz-server-side-encryption")),
       Metadata: cmnP.toJsObj(resp.headers, "x-amz-meta-", v => v),
@@ -1049,6 +1109,45 @@ export class S3 {
       ...{
         Owner: xml.first("Owner", false, Owner_Parse),
         Grants: xml.getList("AccessControlList", "Grant").map(Grant_Parse),
+      },
+    };
+  }
+
+  async getObjectAttributes(
+    params: s.GetObjectAttributesRequest,
+    opts: client.RequestOptions = {},
+  ): Promise<s.GetObjectAttributesOutput> {
+    const headers = new Headers;
+    const query = new URLSearchParams;
+    if (params["VersionId"] != null) query.set("versionId", params["VersionId"]?.toString() ?? "");
+    if (params["MaxParts"] != null) headers.append("x-amz-max-parts", params["MaxParts"]?.toString() ?? '');
+    if (params["PartNumberMarker"] != null) headers.append("x-amz-part-number-marker", params["PartNumberMarker"]?.toString() ?? '');
+    if (params["SSECustomerAlgorithm"] != null) headers.append("x-amz-server-side-encryption-customer-algorithm", params["SSECustomerAlgorithm"]);
+    if (params["SSECustomerKey"] != null) headers.append("x-amz-server-side-encryption-customer-key", serializeBlob(params["SSECustomerKey"]) ?? '');
+    if (params["SSECustomerKeyMD5"] != null) headers.append("x-amz-server-side-encryption-customer-key-MD5", params["SSECustomerKeyMD5"]);
+    if (params["RequestPayer"] != null) headers.append("x-amz-request-payer", params["RequestPayer"]);
+    if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
+    headers.append("x-amz-object-attributes", params["ObjectAttributes"]);
+    const resp = await this.#client.performRequest({
+      opts, headers, query,
+      action: "GetObjectAttributes",
+      method: "GET",
+      requestUri: cmnP.encodePath`/${params["Bucket"]}/${params["Key"].split("/")}?attributes`,
+    });
+    const xml = xmlP.readXmlResult(await resp.text());
+    return {
+      DeleteMarker: cmnP.readBool(resp.headers.get("x-amz-delete-marker")),
+      LastModified: cmnP.readTimestamp(resp.headers.get("Last-Modified")),
+      VersionId: resp.headers.get("x-amz-version-id"),
+      RequestCharged: cmnP.readEnum<s.RequestCharged>(resp.headers.get("x-amz-request-charged")),
+      ...{
+        ...xml.strings({
+          optional: {"ETag":true},
+        }),
+        Checksum: xml.first("Checksum", false, Checksum_Parse),
+        ObjectParts: xml.first("ObjectParts", false, GetObjectAttributesParts_Parse),
+        StorageClass: xml.first("StorageClass", false, x => (x.content ?? '') as s.StorageClass),
+        ObjectSize: xml.first("ObjectSize", false, x => parseInt(x.content ?? '0')),
       },
     };
   }
@@ -1177,7 +1276,7 @@ export class S3 {
   async headBucket(
     params: s.HeadBucketRequest,
     opts: client.RequestOptions = {},
-  ): Promise<void> {
+  ): Promise<s.HeadBucketOutput> {
     const headers = new Headers;
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
@@ -1186,7 +1285,13 @@ export class S3 {
       method: "HEAD",
       requestUri: cmnP.encodePath`/${params["Bucket"]}`,
     });
-    await resp.body?.cancel();
+    await resp.arrayBuffer(); // consume body without use
+    return {
+      BucketLocationType: cmnP.readEnum<s.LocationType>(resp.headers.get("x-amz-bucket-location-type")),
+      BucketLocationName: resp.headers.get("x-amz-bucket-location-name"),
+      BucketRegion: resp.headers.get("x-amz-bucket-region"),
+      AccessPointAlias: cmnP.readBool(resp.headers.get("x-amz-access-point-alias")),
+    };
   }
 
   async headObject(
@@ -1200,6 +1305,12 @@ export class S3 {
     if (params["IfNoneMatch"] != null) headers.append("If-None-Match", params["IfNoneMatch"]);
     if (params["IfUnmodifiedSince"] != null) headers.append("If-Unmodified-Since", cmnP.serializeDate_rfc822(params["IfUnmodifiedSince"]) ?? "");
     if (params["Range"] != null) headers.append("Range", params["Range"]);
+    if (params["ResponseCacheControl"] != null) query.set("response-cache-control", params["ResponseCacheControl"]?.toString() ?? "");
+    if (params["ResponseContentDisposition"] != null) query.set("response-content-disposition", params["ResponseContentDisposition"]?.toString() ?? "");
+    if (params["ResponseContentEncoding"] != null) query.set("response-content-encoding", params["ResponseContentEncoding"]?.toString() ?? "");
+    if (params["ResponseContentLanguage"] != null) query.set("response-content-language", params["ResponseContentLanguage"]?.toString() ?? "");
+    if (params["ResponseContentType"] != null) query.set("response-content-type", params["ResponseContentType"]?.toString() ?? "");
+    if (params["ResponseExpires"] != null) query.set("response-expires", cmnP.serializeDate_rfc822(params["ResponseExpires"]) ?? "");
     if (params["VersionId"] != null) query.set("versionId", params["VersionId"]?.toString() ?? "");
     if (params["SSECustomerAlgorithm"] != null) headers.append("x-amz-server-side-encryption-customer-algorithm", params["SSECustomerAlgorithm"]);
     if (params["SSECustomerKey"] != null) headers.append("x-amz-server-side-encryption-customer-key", serializeBlob(params["SSECustomerKey"]) ?? '');
@@ -1207,6 +1318,7 @@ export class S3 {
     if (params["RequestPayer"] != null) headers.append("x-amz-request-payer", params["RequestPayer"]);
     if (params["PartNumber"] != null) query.set("partNumber", params["PartNumber"]?.toString() ?? "");
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
+    if (params["ChecksumMode"] != null) headers.append("x-amz-checksum-mode", params["ChecksumMode"]);
     const resp = await this.#client.performRequest({
       opts, headers, query,
       action: "HeadObject",
@@ -1222,6 +1334,10 @@ export class S3 {
       ArchiveStatus: cmnP.readEnum<s.ArchiveStatus>(resp.headers.get("x-amz-archive-status")),
       LastModified: cmnP.readTimestamp(resp.headers.get("Last-Modified")),
       ContentLength: cmnP.readNum(resp.headers.get("Content-Length")),
+      ChecksumCRC32: resp.headers.get("x-amz-checksum-crc32"),
+      ChecksumCRC32C: resp.headers.get("x-amz-checksum-crc32c"),
+      ChecksumSHA1: resp.headers.get("x-amz-checksum-sha1"),
+      ChecksumSHA256: resp.headers.get("x-amz-checksum-sha256"),
       ETag: resp.headers.get("ETag"),
       MissingMeta: cmnP.readNum(resp.headers.get("x-amz-missing-meta")),
       VersionId: resp.headers.get("x-amz-version-id"),
@@ -1231,6 +1347,7 @@ export class S3 {
       ContentLanguage: resp.headers.get("Content-Language"),
       ContentType: resp.headers.get("Content-Type"),
       Expires: cmnP.readTimestamp(resp.headers.get("Expires")),
+      ExpiresString: resp.headers.get("ExpiresString"),
       WebsiteRedirectLocation: resp.headers.get("x-amz-website-redirect-location"),
       ServerSideEncryption: cmnP.readEnum<s.ServerSideEncryption>(resp.headers.get("x-amz-server-side-encryption")),
       Metadata: cmnP.toJsObj(resp.headers, "x-amz-meta-", v => v),
@@ -1343,17 +1460,47 @@ export class S3 {
   }
 
   async listBuckets(
+    params: s.ListBucketsRequest = {},
     opts: client.RequestOptions = {},
   ): Promise<s.ListBucketsOutput> {
+    const query = new URLSearchParams;
+    if (params["MaxBuckets"] != null) query.set("max-buckets", params["MaxBuckets"]?.toString() ?? "");
+    if (params["ContinuationToken"] != null) query.set("continuation-token", params["ContinuationToken"]?.toString() ?? "");
+    if (params["Prefix"] != null) query.set("prefix", params["Prefix"]?.toString() ?? "");
+    if (params["BucketRegion"] != null) query.set("bucket-region", params["BucketRegion"]?.toString() ?? "");
     const resp = await this.#client.performRequest({
-      opts,
+      opts, query,
       action: "ListBuckets",
       method: "GET",
     });
     const xml = xmlP.readXmlResult(await resp.text());
     return {
+      ...xml.strings({
+        optional: {"ContinuationToken":true,"Prefix":true},
+      }),
       Buckets: xml.getList("Buckets", "Bucket").map(Bucket_Parse),
       Owner: xml.first("Owner", false, Owner_Parse),
+    };
+  }
+
+  async listDirectoryBuckets(
+    params: s.ListDirectoryBucketsRequest = {},
+    opts: client.RequestOptions = {},
+  ): Promise<s.ListDirectoryBucketsOutput> {
+    const query = new URLSearchParams;
+    if (params["ContinuationToken"] != null) query.set("continuation-token", params["ContinuationToken"]?.toString() ?? "");
+    if (params["MaxDirectoryBuckets"] != null) query.set("max-directory-buckets", params["MaxDirectoryBuckets"]?.toString() ?? "");
+    const resp = await this.#client.performRequest({
+      opts, query,
+      action: "ListDirectoryBuckets",
+      method: "GET",
+    });
+    const xml = xmlP.readXmlResult(await resp.text());
+    return {
+      ...xml.strings({
+        optional: {"ContinuationToken":true},
+      }),
+      Buckets: xml.getList("Buckets", "Bucket").map(Bucket_Parse),
     };
   }
 
@@ -1370,6 +1517,7 @@ export class S3 {
     if (params["Prefix"] != null) query.set("prefix", params["Prefix"]?.toString() ?? "");
     if (params["UploadIdMarker"] != null) query.set("upload-id-marker", params["UploadIdMarker"]?.toString() ?? "");
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
+    if (params["RequestPayer"] != null) headers.append("x-amz-request-payer", params["RequestPayer"]);
     const resp = await this.#client.performRequest({
       opts, headers, query,
       action: "ListMultipartUploads",
@@ -1378,14 +1526,17 @@ export class S3 {
     });
     const xml = xmlP.readXmlResult(await resp.text());
     return {
-      ...xml.strings({
-        optional: {"Bucket":true,"KeyMarker":true,"UploadIdMarker":true,"NextKeyMarker":true,"Prefix":true,"Delimiter":true,"NextUploadIdMarker":true},
-      }),
-      MaxUploads: xml.first("MaxUploads", false, x => parseInt(x.content ?? '0')),
-      IsTruncated: xml.first("IsTruncated", false, x => x.content === 'true'),
-      Uploads: xml.getList("Upload").map(MultipartUpload_Parse),
-      CommonPrefixes: xml.getList("CommonPrefixes").map(CommonPrefix_Parse),
-      EncodingType: xml.first("EncodingType", false, x => (x.content ?? '') as s.EncodingType),
+      RequestCharged: cmnP.readEnum<s.RequestCharged>(resp.headers.get("x-amz-request-charged")),
+      ...{
+        ...xml.strings({
+          optional: {"Bucket":true,"KeyMarker":true,"UploadIdMarker":true,"NextKeyMarker":true,"Prefix":true,"Delimiter":true,"NextUploadIdMarker":true},
+        }),
+        MaxUploads: xml.first("MaxUploads", false, x => parseInt(x.content ?? '0')),
+        IsTruncated: xml.first("IsTruncated", false, x => x.content === 'true'),
+        Uploads: xml.getList("Upload").map(MultipartUpload_Parse),
+        CommonPrefixes: xml.getList("CommonPrefixes").map(CommonPrefix_Parse),
+        EncodingType: xml.first("EncodingType", false, x => (x.content ?? '') as s.EncodingType),
+      },
     };
   }
 
@@ -1402,6 +1553,8 @@ export class S3 {
     if (params["Prefix"] != null) query.set("prefix", params["Prefix"]?.toString() ?? "");
     if (params["VersionIdMarker"] != null) query.set("version-id-marker", params["VersionIdMarker"]?.toString() ?? "");
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
+    if (params["RequestPayer"] != null) headers.append("x-amz-request-payer", params["RequestPayer"]);
+    if (params["OptionalObjectAttributes"] != null) headers.append("x-amz-optional-object-attributes", params["OptionalObjectAttributes"]);
     const resp = await this.#client.performRequest({
       opts, headers, query,
       action: "ListObjectVersions",
@@ -1410,15 +1563,18 @@ export class S3 {
     });
     const xml = xmlP.readXmlResult(await resp.text());
     return {
-      ...xml.strings({
-        optional: {"KeyMarker":true,"VersionIdMarker":true,"NextKeyMarker":true,"NextVersionIdMarker":true,"Name":true,"Prefix":true,"Delimiter":true},
-      }),
-      IsTruncated: xml.first("IsTruncated", false, x => x.content === 'true'),
-      Versions: xml.getList("Version").map(ObjectVersion_Parse),
-      DeleteMarkers: xml.getList("DeleteMarker").map(DeleteMarkerEntry_Parse),
-      MaxKeys: xml.first("MaxKeys", false, x => parseInt(x.content ?? '0')),
-      CommonPrefixes: xml.getList("CommonPrefixes").map(CommonPrefix_Parse),
-      EncodingType: xml.first("EncodingType", false, x => (x.content ?? '') as s.EncodingType),
+      RequestCharged: cmnP.readEnum<s.RequestCharged>(resp.headers.get("x-amz-request-charged")),
+      ...{
+        ...xml.strings({
+          optional: {"KeyMarker":true,"VersionIdMarker":true,"NextKeyMarker":true,"NextVersionIdMarker":true,"Name":true,"Prefix":true,"Delimiter":true},
+        }),
+        IsTruncated: xml.first("IsTruncated", false, x => x.content === 'true'),
+        Versions: xml.getList("Version").map(ObjectVersion_Parse),
+        DeleteMarkers: xml.getList("DeleteMarker").map(DeleteMarkerEntry_Parse),
+        MaxKeys: xml.first("MaxKeys", false, x => parseInt(x.content ?? '0')),
+        CommonPrefixes: xml.getList("CommonPrefixes").map(CommonPrefix_Parse),
+        EncodingType: xml.first("EncodingType", false, x => (x.content ?? '') as s.EncodingType),
+      },
     };
   }
 
@@ -1435,6 +1591,7 @@ export class S3 {
     if (params["Prefix"] != null) query.set("prefix", params["Prefix"]?.toString() ?? "");
     if (params["RequestPayer"] != null) headers.append("x-amz-request-payer", params["RequestPayer"]);
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
+    if (params["OptionalObjectAttributes"] != null) headers.append("x-amz-optional-object-attributes", params["OptionalObjectAttributes"]);
     const resp = await this.#client.performRequest({
       opts, headers, query,
       action: "ListObjects",
@@ -1443,14 +1600,17 @@ export class S3 {
     });
     const xml = xmlP.readXmlResult(await resp.text());
     return {
-      ...xml.strings({
-        optional: {"Marker":true,"NextMarker":true,"Name":true,"Prefix":true,"Delimiter":true},
-      }),
-      IsTruncated: xml.first("IsTruncated", false, x => x.content === 'true'),
-      Contents: xml.getList("Contents").map(_Object_Parse),
-      MaxKeys: xml.first("MaxKeys", false, x => parseInt(x.content ?? '0')),
-      CommonPrefixes: xml.getList("CommonPrefixes").map(CommonPrefix_Parse),
-      EncodingType: xml.first("EncodingType", false, x => (x.content ?? '') as s.EncodingType),
+      RequestCharged: cmnP.readEnum<s.RequestCharged>(resp.headers.get("x-amz-request-charged")),
+      ...{
+        ...xml.strings({
+          optional: {"Marker":true,"NextMarker":true,"Name":true,"Prefix":true,"Delimiter":true},
+        }),
+        IsTruncated: xml.first("IsTruncated", false, x => x.content === 'true'),
+        Contents: xml.getList("Contents").map(_Object_Parse),
+        MaxKeys: xml.first("MaxKeys", false, x => parseInt(x.content ?? '0')),
+        CommonPrefixes: xml.getList("CommonPrefixes").map(CommonPrefix_Parse),
+        EncodingType: xml.first("EncodingType", false, x => (x.content ?? '') as s.EncodingType),
+      },
     };
   }
 
@@ -1469,6 +1629,7 @@ export class S3 {
     if (params["StartAfter"] != null) query.set("start-after", params["StartAfter"]?.toString() ?? "");
     if (params["RequestPayer"] != null) headers.append("x-amz-request-payer", params["RequestPayer"]);
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
+    if (params["OptionalObjectAttributes"] != null) headers.append("x-amz-optional-object-attributes", params["OptionalObjectAttributes"]);
     const resp = await this.#client.performRequest({
       opts, headers, query,
       action: "ListObjectsV2",
@@ -1477,15 +1638,18 @@ export class S3 {
     });
     const xml = xmlP.readXmlResult(await resp.text());
     return {
-      ...xml.strings({
-        optional: {"Name":true,"Prefix":true,"Delimiter":true,"ContinuationToken":true,"NextContinuationToken":true,"StartAfter":true},
-      }),
-      IsTruncated: xml.first("IsTruncated", false, x => x.content === 'true'),
-      Contents: xml.getList("Contents").map(_Object_Parse),
-      MaxKeys: xml.first("MaxKeys", false, x => parseInt(x.content ?? '0')),
-      CommonPrefixes: xml.getList("CommonPrefixes").map(CommonPrefix_Parse),
-      EncodingType: xml.first("EncodingType", false, x => (x.content ?? '') as s.EncodingType),
-      KeyCount: xml.first("KeyCount", false, x => parseInt(x.content ?? '0')),
+      RequestCharged: cmnP.readEnum<s.RequestCharged>(resp.headers.get("x-amz-request-charged")),
+      ...{
+        ...xml.strings({
+          optional: {"Name":true,"Prefix":true,"Delimiter":true,"ContinuationToken":true,"NextContinuationToken":true,"StartAfter":true},
+        }),
+        IsTruncated: xml.first("IsTruncated", false, x => x.content === 'true'),
+        Contents: xml.getList("Contents").map(_Object_Parse),
+        MaxKeys: xml.first("MaxKeys", false, x => parseInt(x.content ?? '0')),
+        CommonPrefixes: xml.getList("CommonPrefixes").map(CommonPrefix_Parse),
+        EncodingType: xml.first("EncodingType", false, x => (x.content ?? '') as s.EncodingType),
+        KeyCount: xml.first("KeyCount", false, x => parseInt(x.content ?? '0')),
+      },
     };
   }
 
@@ -1500,6 +1664,9 @@ export class S3 {
     query.set("uploadId", params["UploadId"]?.toString() ?? "");
     if (params["RequestPayer"] != null) headers.append("x-amz-request-payer", params["RequestPayer"]);
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
+    if (params["SSECustomerAlgorithm"] != null) headers.append("x-amz-server-side-encryption-customer-algorithm", params["SSECustomerAlgorithm"]);
+    if (params["SSECustomerKey"] != null) headers.append("x-amz-server-side-encryption-customer-key", serializeBlob(params["SSECustomerKey"]) ?? '');
+    if (params["SSECustomerKeyMD5"] != null) headers.append("x-amz-server-side-encryption-customer-key-MD5", params["SSECustomerKeyMD5"]);
     const resp = await this.#client.performRequest({
       opts, headers, query,
       action: "ListParts",
@@ -1523,6 +1690,7 @@ export class S3 {
         Initiator: xml.first("Initiator", false, Initiator_Parse),
         Owner: xml.first("Owner", false, Owner_Parse),
         StorageClass: xml.first("StorageClass", false, x => (x.content ?? '') as s.StorageClass),
+        ChecksumAlgorithm: xml.first("ChecksumAlgorithm", false, x => (x.content ?? '') as s.ChecksumAlgorithm),
       },
     };
   }
@@ -1540,6 +1708,7 @@ export class S3 {
       ]}) : "";
     const headers = new Headers;
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
+    if (params["ChecksumAlgorithm"] != null) headers.append("x-amz-sdk-checksum-algorithm", params["ChecksumAlgorithm"]);
     const resp = await this.#client.performRequest({
       opts, headers, body,
       action: "PutBucketAccelerateConfiguration",
@@ -1564,6 +1733,7 @@ export class S3 {
     const headers = new Headers;
     if (params["ACL"] != null) headers.append("x-amz-acl", params["ACL"]);
     headers.append("Content-MD5", params["ContentMD5"] ?? hashMD5(body ?? ''));
+    if (params["ChecksumAlgorithm"] != null) headers.append("x-amz-sdk-checksum-algorithm", params["ChecksumAlgorithm"]);
     if (params["GrantFullControl"] != null) headers.append("x-amz-grant-full-control", params["GrantFullControl"]);
     if (params["GrantRead"] != null) headers.append("x-amz-grant-read", params["GrantRead"]);
     if (params["GrantReadACP"] != null) headers.append("x-amz-grant-read-acp", params["GrantReadACP"]);
@@ -1618,6 +1788,7 @@ export class S3 {
       ]}) : "";
     const headers = new Headers;
     headers.append("Content-MD5", params["ContentMD5"] ?? hashMD5(body ?? ''));
+    if (params["ChecksumAlgorithm"] != null) headers.append("x-amz-sdk-checksum-algorithm", params["ChecksumAlgorithm"]);
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
       opts, headers, body,
@@ -1641,6 +1812,7 @@ export class S3 {
       ]}) : "";
     const headers = new Headers;
     headers.append("Content-MD5", params["ContentMD5"] ?? hashMD5(body ?? ''));
+    if (params["ChecksumAlgorithm"] != null) headers.append("x-amz-sdk-checksum-algorithm", params["ChecksumAlgorithm"]);
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
       opts, headers, body,
@@ -1719,6 +1891,7 @@ export class S3 {
       ]}) : "";
     const headers = new Headers;
     headers.append("Content-MD5", params["ContentMD5"] ?? hashMD5(body ?? ''));
+    if (params["ChecksumAlgorithm"] != null) headers.append("x-amz-sdk-checksum-algorithm", params["ChecksumAlgorithm"]);
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
       opts, headers, body,
@@ -1732,7 +1905,7 @@ export class S3 {
   async putBucketLifecycleConfiguration(
     params: s.PutBucketLifecycleConfigurationRequest,
     opts: client.RequestOptions = {},
-  ): Promise<void> {
+  ): Promise<s.PutBucketLifecycleConfigurationOutput> {
     const inner = params["LifecycleConfiguration"];
     const body = inner ? xmlP.stringify({
       name: "LifecycleConfiguration",
@@ -1741,15 +1914,19 @@ export class S3 {
         ...(inner["Rules"]?.map(x => ({name: "Rule", ...LifecycleRule_Serialize(x)})) ?? []),
       ]}) : "";
     const headers = new Headers;
+    if (params["ChecksumAlgorithm"] != null) headers.append("x-amz-sdk-checksum-algorithm", params["ChecksumAlgorithm"]);
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
-    headers.append("Content-MD5", params["ContentMD5"] ?? hashMD5(body ?? ''));
+    if (params["TransitionDefaultMinimumObjectSize"] != null) headers.append("x-amz-transition-default-minimum-object-size", params["TransitionDefaultMinimumObjectSize"]);
     const resp = await this.#client.performRequest({
       opts, headers, body,
       action: "PutBucketLifecycleConfiguration",
       method: "PUT",
       requestUri: cmnP.encodePath`/${params["Bucket"]}?lifecycle`,
     });
-    await resp.body?.cancel();
+    await resp.arrayBuffer(); // consume body without use
+    return {
+      TransitionDefaultMinimumObjectSize: cmnP.readEnum<s.TransitionDefaultMinimumObjectSize>(resp.headers.get("x-amz-transition-default-minimum-object-size")),
+    };
   }
 
   async putBucketLogging(
@@ -1765,6 +1942,7 @@ export class S3 {
       ]}) : "";
     const headers = new Headers;
     headers.append("Content-MD5", params["ContentMD5"] ?? hashMD5(body ?? ''));
+    if (params["ChecksumAlgorithm"] != null) headers.append("x-amz-sdk-checksum-algorithm", params["ChecksumAlgorithm"]);
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
       opts, headers, body,
@@ -1815,6 +1993,7 @@ export class S3 {
       ]}) : "";
     const headers = new Headers;
     headers.append("Content-MD5", params["ContentMD5"] ?? hashMD5(body ?? ''));
+    if (params["ChecksumAlgorithm"] != null) headers.append("x-amz-sdk-checksum-algorithm", params["ChecksumAlgorithm"]);
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
       opts, headers, body,
@@ -1881,6 +2060,7 @@ export class S3 {
     const body = typeof params["Policy"] === 'string' ? new TextEncoder().encode(params["Policy"]) : params["Policy"];
     const headers = new Headers;
     headers.append("Content-MD5", params["ContentMD5"] ?? hashMD5(body ?? ''));
+    if (params["ChecksumAlgorithm"] != null) headers.append("x-amz-sdk-checksum-algorithm", params["ChecksumAlgorithm"]);
     if (params["ConfirmRemoveSelfBucketAccess"] != null) headers.append("x-amz-confirm-remove-self-bucket-access", params["ConfirmRemoveSelfBucketAccess"]?.toString() ?? '');
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
@@ -1906,6 +2086,7 @@ export class S3 {
       ]}) : "";
     const headers = new Headers;
     headers.append("Content-MD5", params["ContentMD5"] ?? hashMD5(body ?? ''));
+    if (params["ChecksumAlgorithm"] != null) headers.append("x-amz-sdk-checksum-algorithm", params["ChecksumAlgorithm"]);
     if (params["Token"] != null) headers.append("x-amz-bucket-object-lock-token", params["Token"]);
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
@@ -1930,6 +2111,7 @@ export class S3 {
       ]}) : "";
     const headers = new Headers;
     headers.append("Content-MD5", params["ContentMD5"] ?? hashMD5(body ?? ''));
+    if (params["ChecksumAlgorithm"] != null) headers.append("x-amz-sdk-checksum-algorithm", params["ChecksumAlgorithm"]);
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
       opts, headers, body,
@@ -1953,6 +2135,7 @@ export class S3 {
       ]}) : "";
     const headers = new Headers;
     headers.append("Content-MD5", params["ContentMD5"] ?? hashMD5(body ?? ''));
+    if (params["ChecksumAlgorithm"] != null) headers.append("x-amz-sdk-checksum-algorithm", params["ChecksumAlgorithm"]);
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
       opts, headers, body,
@@ -1977,6 +2160,7 @@ export class S3 {
       ]}) : "";
     const headers = new Headers;
     headers.append("Content-MD5", params["ContentMD5"] ?? hashMD5(body ?? ''));
+    if (params["ChecksumAlgorithm"] != null) headers.append("x-amz-sdk-checksum-algorithm", params["ChecksumAlgorithm"]);
     if (params["MFA"] != null) headers.append("x-amz-mfa", params["MFA"]);
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
@@ -2004,6 +2188,7 @@ export class S3 {
       ]}) : "";
     const headers = new Headers;
     headers.append("Content-MD5", params["ContentMD5"] ?? hashMD5(body ?? ''));
+    if (params["ChecksumAlgorithm"] != null) headers.append("x-amz-sdk-checksum-algorithm", params["ChecksumAlgorithm"]);
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
       opts, headers, body,
@@ -2028,7 +2213,13 @@ export class S3 {
     if (params["ContentLength"] != null) headers.append("Content-Length", params["ContentLength"]?.toString() ?? '');
     headers.append("Content-MD5", params["ContentMD5"] ?? hashMD5(body ?? ''));
     if (params["ContentType"] != null) headers.append("Content-Type", params["ContentType"]);
+    if (params["ChecksumAlgorithm"] != null) headers.append("x-amz-sdk-checksum-algorithm", params["ChecksumAlgorithm"]);
+    if (params["ChecksumCRC32"] != null) headers.append("x-amz-checksum-crc32", params["ChecksumCRC32"]);
+    if (params["ChecksumCRC32C"] != null) headers.append("x-amz-checksum-crc32c", params["ChecksumCRC32C"]);
+    if (params["ChecksumSHA1"] != null) headers.append("x-amz-checksum-sha1", params["ChecksumSHA1"]);
+    if (params["ChecksumSHA256"] != null) headers.append("x-amz-checksum-sha256", params["ChecksumSHA256"]);
     if (params["Expires"] != null) headers.append("Expires", cmnP.serializeDate_rfc822(params["Expires"]) ?? "");
+    if (params["IfNoneMatch"] != null) headers.append("If-None-Match", params["IfNoneMatch"]);
     if (params["GrantFullControl"] != null) headers.append("x-amz-grant-full-control", params["GrantFullControl"]);
     if (params["GrantRead"] != null) headers.append("x-amz-grant-read", params["GrantRead"]);
     if (params["GrantReadACP"] != null) headers.append("x-amz-grant-read-acp", params["GrantReadACP"]);
@@ -2061,6 +2252,10 @@ export class S3 {
     return {
       Expiration: resp.headers.get("x-amz-expiration"),
       ETag: resp.headers.get("ETag"),
+      ChecksumCRC32: resp.headers.get("x-amz-checksum-crc32"),
+      ChecksumCRC32C: resp.headers.get("x-amz-checksum-crc32c"),
+      ChecksumSHA1: resp.headers.get("x-amz-checksum-sha1"),
+      ChecksumSHA256: resp.headers.get("x-amz-checksum-sha256"),
       ServerSideEncryption: cmnP.readEnum<s.ServerSideEncryption>(resp.headers.get("x-amz-server-side-encryption")),
       VersionId: resp.headers.get("x-amz-version-id"),
       SSECustomerAlgorithm: resp.headers.get("x-amz-server-side-encryption-customer-algorithm"),
@@ -2088,6 +2283,7 @@ export class S3 {
     const query = new URLSearchParams;
     if (params["ACL"] != null) headers.append("x-amz-acl", params["ACL"]);
     headers.append("Content-MD5", params["ContentMD5"] ?? hashMD5(body ?? ''));
+    if (params["ChecksumAlgorithm"] != null) headers.append("x-amz-sdk-checksum-algorithm", params["ChecksumAlgorithm"]);
     if (params["GrantFullControl"] != null) headers.append("x-amz-grant-full-control", params["GrantFullControl"]);
     if (params["GrantRead"] != null) headers.append("x-amz-grant-read", params["GrantRead"]);
     if (params["GrantReadACP"] != null) headers.append("x-amz-grant-read-acp", params["GrantReadACP"]);
@@ -2124,6 +2320,7 @@ export class S3 {
     if (params["RequestPayer"] != null) headers.append("x-amz-request-payer", params["RequestPayer"]);
     if (params["VersionId"] != null) query.set("versionId", params["VersionId"]?.toString() ?? "");
     headers.append("Content-MD5", params["ContentMD5"] ?? hashMD5(body ?? ''));
+    if (params["ChecksumAlgorithm"] != null) headers.append("x-amz-sdk-checksum-algorithm", params["ChecksumAlgorithm"]);
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
       opts, headers, query, body,
@@ -2153,6 +2350,7 @@ export class S3 {
     if (params["RequestPayer"] != null) headers.append("x-amz-request-payer", params["RequestPayer"]);
     if (params["Token"] != null) headers.append("x-amz-bucket-object-lock-token", params["Token"]);
     headers.append("Content-MD5", params["ContentMD5"] ?? hashMD5(body ?? ''));
+    if (params["ChecksumAlgorithm"] != null) headers.append("x-amz-sdk-checksum-algorithm", params["ChecksumAlgorithm"]);
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
       opts, headers, body,
@@ -2184,6 +2382,7 @@ export class S3 {
     if (params["VersionId"] != null) query.set("versionId", params["VersionId"]?.toString() ?? "");
     if (params["BypassGovernanceRetention"] != null) headers.append("x-amz-bypass-governance-retention", params["BypassGovernanceRetention"]?.toString() ?? '');
     headers.append("Content-MD5", params["ContentMD5"] ?? hashMD5(body ?? ''));
+    if (params["ChecksumAlgorithm"] != null) headers.append("x-amz-sdk-checksum-algorithm", params["ChecksumAlgorithm"]);
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
       opts, headers, query, body,
@@ -2212,6 +2411,7 @@ export class S3 {
     const query = new URLSearchParams;
     if (params["VersionId"] != null) query.set("versionId", params["VersionId"]?.toString() ?? "");
     headers.append("Content-MD5", params["ContentMD5"] ?? hashMD5(body ?? ''));
+    if (params["ChecksumAlgorithm"] != null) headers.append("x-amz-sdk-checksum-algorithm", params["ChecksumAlgorithm"]);
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     if (params["RequestPayer"] != null) headers.append("x-amz-request-payer", params["RequestPayer"]);
     const resp = await this.#client.performRequest({
@@ -2242,6 +2442,7 @@ export class S3 {
       ]}) : "";
     const headers = new Headers;
     headers.append("Content-MD5", params["ContentMD5"] ?? hashMD5(body ?? ''));
+    if (params["ChecksumAlgorithm"] != null) headers.append("x-amz-sdk-checksum-algorithm", params["ChecksumAlgorithm"]);
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
       opts, headers, body,
@@ -2273,6 +2474,7 @@ export class S3 {
     const query = new URLSearchParams;
     if (params["VersionId"] != null) query.set("versionId", params["VersionId"]?.toString() ?? "");
     if (params["RequestPayer"] != null) headers.append("x-amz-request-payer", params["RequestPayer"]);
+    if (params["ChecksumAlgorithm"] != null) headers.append("x-amz-sdk-checksum-algorithm", params["ChecksumAlgorithm"]);
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     const resp = await this.#client.performRequest({
       opts, headers, query, body,
@@ -2299,6 +2501,11 @@ export class S3 {
     const query = new URLSearchParams;
     if (params["ContentLength"] != null) headers.append("Content-Length", params["ContentLength"]?.toString() ?? '');
     headers.append("Content-MD5", params["ContentMD5"] ?? hashMD5(body ?? ''));
+    if (params["ChecksumAlgorithm"] != null) headers.append("x-amz-sdk-checksum-algorithm", params["ChecksumAlgorithm"]);
+    if (params["ChecksumCRC32"] != null) headers.append("x-amz-checksum-crc32", params["ChecksumCRC32"]);
+    if (params["ChecksumCRC32C"] != null) headers.append("x-amz-checksum-crc32c", params["ChecksumCRC32C"]);
+    if (params["ChecksumSHA1"] != null) headers.append("x-amz-checksum-sha1", params["ChecksumSHA1"]);
+    if (params["ChecksumSHA256"] != null) headers.append("x-amz-checksum-sha256", params["ChecksumSHA256"]);
     query.set("partNumber", params["PartNumber"]?.toString() ?? "");
     query.set("uploadId", params["UploadId"]?.toString() ?? "");
     if (params["SSECustomerAlgorithm"] != null) headers.append("x-amz-server-side-encryption-customer-algorithm", params["SSECustomerAlgorithm"]);
@@ -2316,6 +2523,10 @@ export class S3 {
     return {
       ServerSideEncryption: cmnP.readEnum<s.ServerSideEncryption>(resp.headers.get("x-amz-server-side-encryption")),
       ETag: resp.headers.get("ETag"),
+      ChecksumCRC32: resp.headers.get("x-amz-checksum-crc32"),
+      ChecksumCRC32C: resp.headers.get("x-amz-checksum-crc32c"),
+      ChecksumSHA1: resp.headers.get("x-amz-checksum-sha1"),
+      ChecksumSHA256: resp.headers.get("x-amz-checksum-sha256"),
       SSECustomerAlgorithm: resp.headers.get("x-amz-server-side-encryption-customer-algorithm"),
       SSECustomerKeyMD5: resp.headers.get("x-amz-server-side-encryption-customer-key-MD5"),
       SSEKMSKeyId: resp.headers.get("x-amz-server-side-encryption-aws-kms-key-id"),
@@ -2364,7 +2575,7 @@ export class S3 {
       RequestCharged: cmnP.readEnum<s.RequestCharged>(resp.headers.get("x-amz-request-charged")),
       CopyPartResult: {
         ...xml.strings({
-          optional: {"ETag":true},
+          optional: {"ETag":true,"ChecksumCRC32":true,"ChecksumCRC32C":true,"ChecksumSHA1":true,"ChecksumSHA256":true},
         }),
         LastModified: xml.first("LastModified", false, x => xmlP.parseTimestamp(x.content)),
       },
@@ -2390,6 +2601,10 @@ export class S3 {
     if (params["ContentLength"] != null) headers.append("Content-Length", params["ContentLength"]?.toString() ?? '');
     if (params["ContentRange"] != null) headers.append("x-amz-fwd-header-Content-Range", params["ContentRange"]);
     if (params["ContentType"] != null) headers.append("x-amz-fwd-header-Content-Type", params["ContentType"]);
+    if (params["ChecksumCRC32"] != null) headers.append("x-amz-fwd-header-x-amz-checksum-crc32", params["ChecksumCRC32"]);
+    if (params["ChecksumCRC32C"] != null) headers.append("x-amz-fwd-header-x-amz-checksum-crc32c", params["ChecksumCRC32C"]);
+    if (params["ChecksumSHA1"] != null) headers.append("x-amz-fwd-header-x-amz-checksum-sha1", params["ChecksumSHA1"]);
+    if (params["ChecksumSHA256"] != null) headers.append("x-amz-fwd-header-x-amz-checksum-sha256", params["ChecksumSHA256"]);
     if (params["DeleteMarker"] != null) headers.append("x-amz-fwd-header-x-amz-delete-marker", params["DeleteMarker"]?.toString() ?? '');
     if (params["ETag"] != null) headers.append("x-amz-fwd-header-ETag", params["ETag"]);
     if (params["Expires"] != null) headers.append("x-amz-fwd-header-Expires", cmnP.serializeDate_rfc822(params["Expires"]) ?? "");
@@ -2430,13 +2645,13 @@ export class S3 {
   async waitForBucketExists(
     params: s.HeadBucketRequest,
     opts: client.RequestOptions = {},
-  ): Promise<Error | void> {
+  ): Promise<Error | s.HeadBucketOutput> {
     const errMessage = 'ResourceNotReady: Resource is not in the state BucketExists';
     for (let i = 0; i < 20; i++) {
       try {
-        await this.headBucket(params, opts);
-        return; // for status 200
-        return; // for status 301
+        const resp = await this.headBucket(params, opts);
+        return resp; // for status 200
+        return resp; // for status 301
       } catch (thrown: unknown) {
         const err = thrown as client.AwsServiceError;
         if (["Http403"].includes(err.shortCode)) return err;
@@ -2451,11 +2666,11 @@ export class S3 {
   async waitForBucketNotExists(
     params: s.HeadBucketRequest,
     opts: client.RequestOptions = {},
-  ): Promise<Error | void> {
+  ): Promise<Error | s.HeadBucketOutput> {
     const errMessage = 'ResourceNotReady: Resource is not in the state BucketNotExists';
     for (let i = 0; i < 20; i++) {
       try {
-        await this.headBucket(params, opts);
+        const resp = await this.headBucket(params, opts);
       } catch (thrown: unknown) {
         const err = thrown as client.AwsServiceError;
         if (["Http404"].includes(err.shortCode)) return err;
@@ -2551,6 +2766,10 @@ function CompletedPart_Serialize(data: s.CompletedPart | undefined | null): Part
   if (!data) return {};
   return {children: [
     {name: "ETag", content: data["ETag"]?.toString()},
+    {name: "ChecksumCRC32", content: data["ChecksumCRC32"]?.toString()},
+    {name: "ChecksumCRC32C", content: data["ChecksumCRC32C"]?.toString()},
+    {name: "ChecksumSHA1", content: data["ChecksumSHA1"]?.toString()},
+    {name: "ChecksumSHA256", content: data["ChecksumSHA256"]?.toString()},
     {name: "PartNumber", content: data["PartNumber"]?.toString()},
   ]};
 }
@@ -2559,6 +2778,24 @@ function CreateBucketConfiguration_Serialize(data: s.CreateBucketConfiguration |
   if (!data) return {};
   return {children: [
     {name: "LocationConstraint", content: data["LocationConstraint"]?.toString()},
+    {name: "Location", ...LocationInfo_Serialize(data["Location"])},
+    {name: "Bucket", ...BucketInfo_Serialize(data["Bucket"])},
+  ]};
+}
+
+function LocationInfo_Serialize(data: s.LocationInfo | undefined | null): Partial<xmlP.Node> {
+  if (!data) return {};
+  return {children: [
+    {name: "Type", content: data["Type"]?.toString()},
+    {name: "Name", content: data["Name"]?.toString()},
+  ]};
+}
+
+function BucketInfo_Serialize(data: s.BucketInfo | undefined | null): Partial<xmlP.Node> {
+  if (!data) return {};
+  return {children: [
+    {name: "DataRedundancy", content: data["DataRedundancy"]?.toString()},
+    {name: "Type", content: data["Type"]?.toString()},
   ]};
 }
 
@@ -3223,6 +3460,7 @@ function LoggingEnabled_Serialize(data: s.LoggingEnabled | undefined | null): Pa
     {name: "TargetBucket", content: data["TargetBucket"]?.toString()},
     {name: "TargetGrants", children: data["TargetGrants"]?.map(x => ({name: "Grant", ...TargetGrant_Serialize(x)}))},
     {name: "TargetPrefix", content: data["TargetPrefix"]?.toString()},
+    {name: "TargetObjectKeyFormat", ...TargetObjectKeyFormat_Serialize(data["TargetObjectKeyFormat"])},
   ]};
 }
 function LoggingEnabled_Parse(node: xmlP.XmlNode): s.LoggingEnabled {
@@ -3231,6 +3469,7 @@ function LoggingEnabled_Parse(node: xmlP.XmlNode): s.LoggingEnabled {
       required: {"TargetBucket":true,"TargetPrefix":true},
     }),
     TargetGrants: node.getList("TargetGrants", "Grant").map(TargetGrant_Parse),
+    TargetObjectKeyFormat: node.first("TargetObjectKeyFormat", false, TargetObjectKeyFormat_Parse),
   };
 }
 
@@ -3245,6 +3484,42 @@ function TargetGrant_Parse(node: xmlP.XmlNode): s.TargetGrant {
   return {
     Grantee: node.first("Grantee", false, Grantee_Parse),
     Permission: node.first("Permission", false, x => (x.content ?? '') as s.BucketLogsPermission),
+  };
+}
+
+function TargetObjectKeyFormat_Serialize(data: s.TargetObjectKeyFormat | undefined | null): Partial<xmlP.Node> {
+  if (!data) return {};
+  return {children: [
+    {name: "SimplePrefix", ...SimplePrefix_Serialize(data["SimplePrefix"])},
+    {name: "PartitionedPrefix", ...PartitionedPrefix_Serialize(data["PartitionedPrefix"])},
+  ]};
+}
+function TargetObjectKeyFormat_Parse(node: xmlP.XmlNode): s.TargetObjectKeyFormat {
+  return {
+    SimplePrefix: node.first("SimplePrefix", false, SimplePrefix_Parse),
+    PartitionedPrefix: node.first("PartitionedPrefix", false, PartitionedPrefix_Parse),
+  };
+}
+
+function SimplePrefix_Serialize(data: s.SimplePrefix | undefined | null): Partial<xmlP.Node> {
+  if (!data) return {};
+  return {children: [
+
+  ]};
+}
+function SimplePrefix_Parse(node: xmlP.XmlNode): s.SimplePrefix {
+  return {};
+}
+
+function PartitionedPrefix_Serialize(data: s.PartitionedPrefix | undefined | null): Partial<xmlP.Node> {
+  if (!data) return {};
+  return {children: [
+    {name: "PartitionDateSource", content: data["PartitionDateSource"]?.toString()},
+  ]};
+}
+function PartitionedPrefix_Parse(node: xmlP.XmlNode): s.PartitionedPrefix {
+  return {
+    PartitionDateSource: node.first("PartitionDateSource", false, x => (x.content ?? '') as s.PartitionDateSource),
   };
 }
 
@@ -4076,9 +4351,18 @@ function ScanRange_Serialize(data: s.ScanRange | undefined | null): Partial<xmlP
 function CopyObjectResult_Parse(node: xmlP.XmlNode): s.CopyObjectResult {
   return {
     ...node.strings({
-      optional: {"ETag":true},
+      optional: {"ETag":true,"ChecksumCRC32":true,"ChecksumCRC32C":true,"ChecksumSHA1":true,"ChecksumSHA256":true},
     }),
     LastModified: node.first("LastModified", false, x => xmlP.parseTimestamp(x.content)),
+  };
+}
+
+function SessionCredentials_Parse(node: xmlP.XmlNode): s.SessionCredentials {
+  return {
+    ...node.strings({
+      required: {"AccessKeyId":true,"SecretAccessKey":true,"SessionToken":true},
+    }),
+    Expiration: node.first("Expiration", true, x => xmlP.parseTimestamp(x.content)),
   };
 }
 
@@ -4103,10 +4387,37 @@ function PolicyStatus_Parse(node: xmlP.XmlNode): s.PolicyStatus {
   };
 }
 
+function Checksum_Parse(node: xmlP.XmlNode): s.Checksum {
+  return node.strings({
+    optional: {"ChecksumCRC32":true,"ChecksumCRC32C":true,"ChecksumSHA1":true,"ChecksumSHA256":true},
+  });
+}
+
+function GetObjectAttributesParts_Parse(node: xmlP.XmlNode): s.GetObjectAttributesParts {
+  return {
+    TotalPartsCount: node.first("PartsCount", false, x => parseInt(x.content ?? '0')),
+    PartNumberMarker: node.first("PartNumberMarker", false, x => parseInt(x.content ?? '0')),
+    NextPartNumberMarker: node.first("NextPartNumberMarker", false, x => parseInt(x.content ?? '0')),
+    MaxParts: node.first("MaxParts", false, x => parseInt(x.content ?? '0')),
+    IsTruncated: node.first("IsTruncated", false, x => x.content === 'true'),
+    Parts: node.getList("Part").map(ObjectPart_Parse),
+  };
+}
+
+function ObjectPart_Parse(node: xmlP.XmlNode): s.ObjectPart {
+  return {
+    ...node.strings({
+      optional: {"ChecksumCRC32":true,"ChecksumCRC32C":true,"ChecksumSHA1":true,"ChecksumSHA256":true},
+    }),
+    PartNumber: node.first("PartNumber", false, x => parseInt(x.content ?? '0')),
+    Size: node.first("Size", false, x => parseInt(x.content ?? '0')),
+  };
+}
+
 function Bucket_Parse(node: xmlP.XmlNode): s.Bucket {
   return {
     ...node.strings({
-      optional: {"Name":true},
+      optional: {"Name":true,"BucketRegion":true},
     }),
     CreationDate: node.first("CreationDate", false, x => xmlP.parseTimestamp(x.content)),
   };
@@ -4121,6 +4432,7 @@ function MultipartUpload_Parse(node: xmlP.XmlNode): s.MultipartUpload {
     StorageClass: node.first("StorageClass", false, x => (x.content ?? '') as s.StorageClass),
     Owner: node.first("Owner", false, Owner_Parse),
     Initiator: node.first("Initiator", false, Initiator_Parse),
+    ChecksumAlgorithm: node.first("ChecksumAlgorithm", false, x => (x.content ?? '') as s.ChecksumAlgorithm),
   };
 }
 
@@ -4141,11 +4453,20 @@ function ObjectVersion_Parse(node: xmlP.XmlNode): s.ObjectVersion {
     ...node.strings({
       optional: {"ETag":true,"Key":true,"VersionId":true},
     }),
+    ChecksumAlgorithm: node.getList("ChecksumAlgorithm").map(x => (x.content ?? '') as s.ChecksumAlgorithm),
     Size: node.first("Size", false, x => parseInt(x.content ?? '0')),
     StorageClass: node.first("StorageClass", false, x => (x.content ?? '') as s.ObjectVersionStorageClass),
     IsLatest: node.first("IsLatest", false, x => x.content === 'true'),
     LastModified: node.first("LastModified", false, x => xmlP.parseTimestamp(x.content)),
     Owner: node.first("Owner", false, Owner_Parse),
+    RestoreStatus: node.first("RestoreStatus", false, RestoreStatus_Parse),
+  };
+}
+
+function RestoreStatus_Parse(node: xmlP.XmlNode): s.RestoreStatus {
+  return {
+    IsRestoreInProgress: node.first("IsRestoreInProgress", false, x => x.content === 'true'),
+    RestoreExpiryDate: node.first("RestoreExpiryDate", false, x => xmlP.parseTimestamp(x.content)),
   };
 }
 
@@ -4166,16 +4487,18 @@ function _Object_Parse(node: xmlP.XmlNode): s._Object {
       optional: {"Key":true,"ETag":true},
     }),
     LastModified: node.first("LastModified", false, x => xmlP.parseTimestamp(x.content)),
+    ChecksumAlgorithm: node.getList("ChecksumAlgorithm").map(x => (x.content ?? '') as s.ChecksumAlgorithm),
     Size: node.first("Size", false, x => parseInt(x.content ?? '0')),
     StorageClass: node.first("StorageClass", false, x => (x.content ?? '') as s.ObjectStorageClass),
     Owner: node.first("Owner", false, Owner_Parse),
+    RestoreStatus: node.first("RestoreStatus", false, RestoreStatus_Parse),
   };
 }
 
 function Part_Parse(node: xmlP.XmlNode): s.Part {
   return {
     ...node.strings({
-      optional: {"ETag":true},
+      optional: {"ETag":true,"ChecksumCRC32":true,"ChecksumCRC32C":true,"ChecksumSHA1":true,"ChecksumSHA256":true},
     }),
     PartNumber: node.first("PartNumber", false, x => parseInt(x.content ?? '0')),
     LastModified: node.first("LastModified", false, x => xmlP.parseTimestamp(x.content)),
@@ -4238,7 +4561,7 @@ function EndEvent_Parse(node: xmlP.XmlNode): s.EndEvent {
 function CopyPartResult_Parse(node: xmlP.XmlNode): s.CopyPartResult {
   return {
     ...node.strings({
-      optional: {"ETag":true},
+      optional: {"ETag":true,"ChecksumCRC32":true,"ChecksumCRC32C":true,"ChecksumSHA1":true,"ChecksumSHA256":true},
     }),
     LastModified: node.first("LastModified", false, x => xmlP.parseTimestamp(x.content)),
   };
