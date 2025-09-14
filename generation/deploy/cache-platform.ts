@@ -1,4 +1,4 @@
-import { Cache } from "https://deno.land/x/httpcache@0.1.2/mod.ts";
+import { Cache } from "./httpcache/mod.ts";
 import { trace } from "./tracer.ts";
 
 // https://docs.deno.com/deploy/manual/edge-cache
