@@ -21,9 +21,15 @@ export interface CreateAliasRequest {
 // refs: 1 - tags: named, input
 export interface CreateCustomKeyStoreRequest {
   CustomKeyStoreName: string;
-  CloudHsmClusterId: string;
-  TrustAnchorCertificate: string;
-  KeyStorePassword: string;
+  CloudHsmClusterId?: string | null;
+  TrustAnchorCertificate?: string | null;
+  KeyStorePassword?: string | null;
+  CustomKeyStoreType?: CustomKeyStoreType | null;
+  XksProxyUriEndpoint?: string | null;
+  XksProxyUriPath?: string | null;
+  XksProxyVpcEndpointServiceName?: string | null;
+  XksProxyAuthenticationCredential?: XksProxyAuthenticationCredentialType | null;
+  XksProxyConnectivity?: XksProxyConnectivityType | null;
 }
 
 // refs: 1 - tags: named, input
@@ -35,6 +41,7 @@ export interface CreateGrantRequest {
   Constraints?: GrantConstraints | null;
   GrantTokens?: string[] | null;
   Name?: string | null;
+  DryRun?: boolean | null;
 }
 
 // refs: 1 - tags: named, input
@@ -49,6 +56,7 @@ export interface CreateKeyRequest {
   BypassPolicyLockoutSafetyCheck?: boolean | null;
   Tags?: Tag[] | null;
   MultiRegion?: boolean | null;
+  XksKeyId?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -58,6 +66,8 @@ export interface DecryptRequest {
   GrantTokens?: string[] | null;
   KeyId?: string | null;
   EncryptionAlgorithm?: EncryptionAlgorithmSpec | null;
+  Recipient?: RecipientInfo | null;
+  DryRun?: boolean | null;
 }
 
 // refs: 1 - tags: named, input
@@ -73,6 +83,16 @@ export interface DeleteCustomKeyStoreRequest {
 // refs: 1 - tags: named, input
 export interface DeleteImportedKeyMaterialRequest {
   KeyId: string;
+}
+
+// refs: 1 - tags: named, input
+export interface DeriveSharedSecretRequest {
+  KeyId: string;
+  KeyAgreementAlgorithm: KeyAgreementAlgorithmSpec;
+  PublicKey: Uint8Array | string;
+  GrantTokens?: string[] | null;
+  DryRun?: boolean | null;
+  Recipient?: RecipientInfo | null;
 }
 
 // refs: 1 - tags: named, input
@@ -112,6 +132,7 @@ export interface EnableKeyRequest {
 // refs: 1 - tags: named, input
 export interface EnableKeyRotationRequest {
   KeyId: string;
+  RotationPeriodInDays?: number | null;
 }
 
 // refs: 1 - tags: named, input
@@ -121,6 +142,7 @@ export interface EncryptRequest {
   EncryptionContext?: { [key: string]: string | null | undefined } | null;
   GrantTokens?: string[] | null;
   EncryptionAlgorithm?: EncryptionAlgorithmSpec | null;
+  DryRun?: boolean | null;
 }
 
 // refs: 1 - tags: named, input
@@ -130,6 +152,8 @@ export interface GenerateDataKeyRequest {
   NumberOfBytes?: number | null;
   KeySpec?: DataKeySpec | null;
   GrantTokens?: string[] | null;
+  Recipient?: RecipientInfo | null;
+  DryRun?: boolean | null;
 }
 
 // refs: 1 - tags: named, input
@@ -138,6 +162,8 @@ export interface GenerateDataKeyPairRequest {
   KeyId: string;
   KeyPairSpec: DataKeyPairSpec;
   GrantTokens?: string[] | null;
+  Recipient?: RecipientInfo | null;
+  DryRun?: boolean | null;
 }
 
 // refs: 1 - tags: named, input
@@ -146,6 +172,7 @@ export interface GenerateDataKeyPairWithoutPlaintextRequest {
   KeyId: string;
   KeyPairSpec: DataKeyPairSpec;
   GrantTokens?: string[] | null;
+  DryRun?: boolean | null;
 }
 
 // refs: 1 - tags: named, input
@@ -155,18 +182,29 @@ export interface GenerateDataKeyWithoutPlaintextRequest {
   KeySpec?: DataKeySpec | null;
   NumberOfBytes?: number | null;
   GrantTokens?: string[] | null;
+  DryRun?: boolean | null;
+}
+
+// refs: 1 - tags: named, input
+export interface GenerateMacRequest {
+  Message: Uint8Array | string;
+  KeyId: string;
+  MacAlgorithm: MacAlgorithmSpec;
+  GrantTokens?: string[] | null;
+  DryRun?: boolean | null;
 }
 
 // refs: 1 - tags: named, input
 export interface GenerateRandomRequest {
   NumberOfBytes?: number | null;
   CustomKeyStoreId?: string | null;
+  Recipient?: RecipientInfo | null;
 }
 
 // refs: 1 - tags: named, input
 export interface GetKeyPolicyRequest {
   KeyId: string;
-  PolicyName: string;
+  PolicyName?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -220,6 +258,13 @@ export interface ListKeyPoliciesRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface ListKeyRotationsRequest {
+  KeyId: string;
+  Limit?: number | null;
+  Marker?: string | null;
+}
+
+// refs: 1 - tags: named, input
 export interface ListKeysRequest {
   Limit?: number | null;
   Marker?: string | null;
@@ -242,7 +287,7 @@ export interface ListRetirableGrantsRequest {
 // refs: 1 - tags: named, input
 export interface PutKeyPolicyRequest {
   KeyId: string;
-  PolicyName: string;
+  PolicyName?: string | null;
   Policy: string;
   BypassPolicyLockoutSafetyCheck?: boolean | null;
 }
@@ -257,6 +302,7 @@ export interface ReEncryptRequest {
   SourceEncryptionAlgorithm?: EncryptionAlgorithmSpec | null;
   DestinationEncryptionAlgorithm?: EncryptionAlgorithmSpec | null;
   GrantTokens?: string[] | null;
+  DryRun?: boolean | null;
 }
 
 // refs: 1 - tags: named, input
@@ -274,12 +320,19 @@ export interface RetireGrantRequest {
   GrantToken?: string | null;
   KeyId?: string | null;
   GrantId?: string | null;
+  DryRun?: boolean | null;
 }
 
 // refs: 1 - tags: named, input
 export interface RevokeGrantRequest {
   KeyId: string;
   GrantId: string;
+  DryRun?: boolean | null;
+}
+
+// refs: 1 - tags: named, input
+export interface RotateKeyOnDemandRequest {
+  KeyId: string;
 }
 
 // refs: 1 - tags: named, input
@@ -295,6 +348,7 @@ export interface SignRequest {
   MessageType?: MessageType | null;
   GrantTokens?: string[] | null;
   SigningAlgorithm: SigningAlgorithmSpec;
+  DryRun?: boolean | null;
 }
 
 // refs: 1 - tags: named, input
@@ -321,6 +375,11 @@ export interface UpdateCustomKeyStoreRequest {
   NewCustomKeyStoreName?: string | null;
   KeyStorePassword?: string | null;
   CloudHsmClusterId?: string | null;
+  XksProxyUriEndpoint?: string | null;
+  XksProxyUriPath?: string | null;
+  XksProxyVpcEndpointServiceName?: string | null;
+  XksProxyAuthenticationCredential?: XksProxyAuthenticationCredentialType | null;
+  XksProxyConnectivity?: XksProxyConnectivityType | null;
 }
 
 // refs: 1 - tags: named, input
@@ -343,6 +402,17 @@ export interface VerifyRequest {
   Signature: Uint8Array | string;
   SigningAlgorithm: SigningAlgorithmSpec;
   GrantTokens?: string[] | null;
+  DryRun?: boolean | null;
+}
+
+// refs: 1 - tags: named, input
+export interface VerifyMacRequest {
+  Message: Uint8Array | string;
+  KeyId: string;
+  MacAlgorithm: MacAlgorithmSpec;
+  Mac: Uint8Array | string;
+  GrantTokens?: string[] | null;
+  DryRun?: boolean | null;
 }
 
 // refs: 1 - tags: named, output
@@ -371,6 +441,16 @@ export interface DecryptResponse {
   KeyId?: string | null;
   Plaintext?: Uint8Array | null;
   EncryptionAlgorithm?: EncryptionAlgorithmSpec | null;
+  CiphertextForRecipient?: Uint8Array | null;
+}
+
+// refs: 1 - tags: named, output
+export interface DeriveSharedSecretResponse {
+  KeyId?: string | null;
+  SharedSecret?: Uint8Array | null;
+  CiphertextForRecipient?: Uint8Array | null;
+  KeyAgreementAlgorithm?: KeyAgreementAlgorithmSpec | null;
+  KeyOrigin?: OriginType | null;
 }
 
 // refs: 1 - tags: named, output
@@ -397,6 +477,7 @@ export interface GenerateDataKeyResponse {
   CiphertextBlob?: Uint8Array | null;
   Plaintext?: Uint8Array | null;
   KeyId?: string | null;
+  CiphertextForRecipient?: Uint8Array | null;
 }
 
 // refs: 1 - tags: named, output
@@ -406,6 +487,7 @@ export interface GenerateDataKeyPairResponse {
   PublicKey?: Uint8Array | null;
   KeyId?: string | null;
   KeyPairSpec?: DataKeyPairSpec | null;
+  CiphertextForRecipient?: Uint8Array | null;
 }
 
 // refs: 1 - tags: named, output
@@ -423,18 +505,31 @@ export interface GenerateDataKeyWithoutPlaintextResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface GenerateMacResponse {
+  Mac?: Uint8Array | null;
+  MacAlgorithm?: MacAlgorithmSpec | null;
+  KeyId?: string | null;
+}
+
+// refs: 1 - tags: named, output
 export interface GenerateRandomResponse {
   Plaintext?: Uint8Array | null;
+  CiphertextForRecipient?: Uint8Array | null;
 }
 
 // refs: 1 - tags: named, output
 export interface GetKeyPolicyResponse {
   Policy?: string | null;
+  PolicyName?: string | null;
 }
 
 // refs: 1 - tags: named, output
 export interface GetKeyRotationStatusResponse {
   KeyRotationEnabled?: boolean | null;
+  KeyId?: string | null;
+  RotationPeriodInDays?: number | null;
+  NextRotationDate?: Date | number | null;
+  OnDemandRotationStartDate?: Date | number | null;
 }
 
 // refs: 1 - tags: named, output
@@ -454,6 +549,7 @@ export interface GetPublicKeyResponse {
   KeyUsage?: KeyUsageType | null;
   EncryptionAlgorithms?: EncryptionAlgorithmSpec[] | null;
   SigningAlgorithms?: SigningAlgorithmSpec[] | null;
+  KeyAgreementAlgorithms?: KeyAgreementAlgorithmSpec[] | null;
 }
 
 // refs: 1 - tags: named, output
@@ -473,6 +569,13 @@ export interface ListGrantsResponse {
 // refs: 1 - tags: named, output
 export interface ListKeyPoliciesResponse {
   PolicyNames?: string[] | null;
+  NextMarker?: string | null;
+  Truncated?: boolean | null;
+}
+
+// refs: 1 - tags: named, output
+export interface ListKeyRotationsResponse {
+  Rotations?: RotationsListEntry[] | null;
   NextMarker?: string | null;
   Truncated?: boolean | null;
 }
@@ -508,6 +611,11 @@ export interface ReplicateKeyResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface RotateKeyOnDemandResponse {
+  KeyId?: string | null;
+}
+
+// refs: 1 - tags: named, output
 export interface ScheduleKeyDeletionResponse {
   KeyId?: string | null;
   DeletionDate?: Date | number | null;
@@ -529,6 +637,31 @@ export interface VerifyResponse {
   SigningAlgorithm?: SigningAlgorithmSpec | null;
 }
 
+// refs: 1 - tags: named, output
+export interface VerifyMacResponse {
+  KeyId?: string | null;
+  MacValid?: boolean | null;
+  MacAlgorithm?: MacAlgorithmSpec | null;
+}
+
+// refs: 2 - tags: input, named, enum, output
+export type CustomKeyStoreType =
+| "AWS_CLOUDHSM"
+| "EXTERNAL_KEY_STORE"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 2 - tags: input, named, interface
+export interface XksProxyAuthenticationCredentialType {
+  AccessKeyId: string;
+  RawSecretAccessKey: string;
+}
+
+// refs: 3 - tags: input, named, enum, output
+export type XksProxyConnectivityType =
+| "PUBLIC_ENDPOINT"
+| "VPC_ENDPOINT_SERVICE"
+| cmnP.UnexpectedEnumValue;
+
 // refs: 2 - tags: input, named, enum, output
 export type GrantOperation =
 | "Decrypt"
@@ -545,6 +678,9 @@ export type GrantOperation =
 | "DescribeKey"
 | "GenerateDataKeyPair"
 | "GenerateDataKeyPairWithoutPlaintext"
+| "GenerateMac"
+| "VerifyMac"
+| "DeriveSharedSecret"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface, output
@@ -557,6 +693,8 @@ export interface GrantConstraints {
 export type KeyUsageType =
 | "SIGN_VERIFY"
 | "ENCRYPT_DECRYPT"
+| "GENERATE_VERIFY_MAC"
+| "KEY_AGREEMENT"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 5 - tags: input, named, enum, output
@@ -569,6 +707,11 @@ export type CustomerMasterKeySpec =
 | "ECC_NIST_P521"
 | "ECC_SECG_P256K1"
 | "SYMMETRIC_DEFAULT"
+| "HMAC_224"
+| "HMAC_256"
+| "HMAC_384"
+| "HMAC_512"
+| "SM2"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 5 - tags: input, named, enum, output
@@ -581,13 +724,19 @@ export type KeySpec =
 | "ECC_NIST_P521"
 | "ECC_SECG_P256K1"
 | "SYMMETRIC_DEFAULT"
+| "HMAC_224"
+| "HMAC_256"
+| "HMAC_384"
+| "HMAC_512"
+| "SM2"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 4 - tags: input, named, enum, output
+// refs: 5 - tags: input, named, enum, output
 export type OriginType =
 | "AWS_KMS"
 | "EXTERNAL"
 | "AWS_CLOUDHSM"
+| "EXTERNAL_KEY_STORE"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 5 - tags: input, named, interface, output
@@ -601,6 +750,23 @@ export type EncryptionAlgorithmSpec =
 | "SYMMETRIC_DEFAULT"
 | "RSAES_OAEP_SHA_1"
 | "RSAES_OAEP_SHA_256"
+| "SM2PKE"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 5 - tags: input, named, interface
+export interface RecipientInfo {
+  KeyEncryptionAlgorithm?: KeyEncryptionMechanism | null;
+  AttestationDocument?: Uint8Array | string | null;
+}
+
+// refs: 5 - tags: input, named, enum
+export type KeyEncryptionMechanism =
+| "RSAES_OAEP_SHA_256"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 6 - tags: input, named, enum, output
+export type KeyAgreementAlgorithmSpec =
+| "ECDH"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, enum
@@ -618,6 +784,15 @@ export type DataKeyPairSpec =
 | "ECC_NIST_P384"
 | "ECC_NIST_P521"
 | "ECC_SECG_P256K1"
+| "SM2"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 7 - tags: input, named, enum, output
+export type MacAlgorithmSpec =
+| "HMAC_SHA_224"
+| "HMAC_SHA_256"
+| "HMAC_SHA_384"
+| "HMAC_SHA_512"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
@@ -625,11 +800,17 @@ export type AlgorithmSpec =
 | "RSAES_PKCS1_V1_5"
 | "RSAES_OAEP_SHA_1"
 | "RSAES_OAEP_SHA_256"
+| "RSA_AES_KEY_WRAP_SHA_1"
+| "RSA_AES_KEY_WRAP_SHA_256"
+| "SM2PKE"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
 export type WrappingKeySpec =
 | "RSA_2048"
+| "RSA_3072"
+| "RSA_4096"
+| "SM2"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, enum, output
@@ -655,6 +836,7 @@ export type SigningAlgorithmSpec =
 | "ECDSA_SHA_256"
 | "ECDSA_SHA_384"
 | "ECDSA_SHA_512"
+| "SM2DSA"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: output, named, interface
@@ -678,9 +860,12 @@ export interface KeyMetadata {
   KeySpec?: KeySpec | null;
   EncryptionAlgorithms?: EncryptionAlgorithmSpec[] | null;
   SigningAlgorithms?: SigningAlgorithmSpec[] | null;
+  KeyAgreementAlgorithms?: KeyAgreementAlgorithmSpec[] | null;
   MultiRegion?: boolean | null;
   MultiRegionConfiguration?: MultiRegionConfiguration | null;
   PendingDeletionWindowInDays?: number | null;
+  MacAlgorithms?: MacAlgorithmSpec[] | null;
+  XksKeyConfiguration?: XksKeyConfigurationType | null;
 }
 
 // refs: 4 - tags: output, named, enum
@@ -720,6 +905,11 @@ export interface MultiRegionKey {
   Region?: string | null;
 }
 
+// refs: 3 - tags: output, named, interface
+export interface XksKeyConfigurationType {
+  Id?: string | null;
+}
+
 // refs: 1 - tags: output, named, interface
 export interface CustomKeyStoresListEntry {
   CustomKeyStoreId?: string | null;
@@ -729,6 +919,8 @@ export interface CustomKeyStoresListEntry {
   ConnectionState?: ConnectionStateType | null;
   ConnectionErrorCode?: ConnectionErrorCodeType | null;
   CreationDate?: Date | number | null;
+  CustomKeyStoreType?: CustomKeyStoreType | null;
+  XksProxyConfiguration?: XksProxyConfigurationType | null;
 }
 
 // refs: 1 - tags: output, named, enum
@@ -751,7 +943,25 @@ export type ConnectionErrorCodeType =
 | "USER_NOT_FOUND"
 | "USER_LOGGED_IN"
 | "SUBNET_NOT_FOUND"
+| "INSUFFICIENT_FREE_ADDRESSES_IN_SUBNET"
+| "XKS_PROXY_ACCESS_DENIED"
+| "XKS_PROXY_NOT_REACHABLE"
+| "XKS_VPC_ENDPOINT_SERVICE_NOT_FOUND"
+| "XKS_PROXY_INVALID_RESPONSE"
+| "XKS_PROXY_INVALID_CONFIGURATION"
+| "XKS_VPC_ENDPOINT_SERVICE_INVALID_CONFIGURATION"
+| "XKS_PROXY_TIMED_OUT"
+| "XKS_PROXY_INVALID_TLS_CONFIGURATION"
 | cmnP.UnexpectedEnumValue;
+
+// refs: 1 - tags: output, named, interface
+export interface XksProxyConfigurationType {
+  Connectivity?: XksProxyConnectivityType | null;
+  AccessKeyId?: string | null;
+  UriEndpoint?: string | null;
+  UriPath?: string | null;
+  VpcEndpointServiceName?: string | null;
+}
 
 // refs: 1 - tags: output, named, interface
 export interface AliasListEntry {
@@ -774,6 +984,19 @@ export interface GrantListEntry {
   Operations?: GrantOperation[] | null;
   Constraints?: GrantConstraints | null;
 }
+
+// refs: 1 - tags: output, named, interface
+export interface RotationsListEntry {
+  KeyId?: string | null;
+  RotationDate?: Date | number | null;
+  RotationType?: RotationType | null;
+}
+
+// refs: 1 - tags: output, named, enum
+export type RotationType =
+| "AUTOMATIC"
+| "ON_DEMAND"
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface KeyListEntry {

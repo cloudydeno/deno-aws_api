@@ -21,6 +21,7 @@ export default class ServiceCodeGen {
   useAuthType: boolean; // for aws-api v0.6.0
   alwaysReqLists: boolean; // for codegen v0.2 and earlier
   streamingResponses: boolean; // for codegen v0.3 and earlier
+  useStdJsr: boolean;
   shapes: ShapeLibrary;
 
   constructor(specs: {
@@ -48,6 +49,7 @@ export default class ServiceCodeGen {
     this.useAuthType = (opts.get('useAuthType') || 'yes') !== 'no';
     this.alwaysReqLists = (opts.get('alwaysReqLists') || 'no') !== 'no';
     this.streamingResponses = (opts.get('streamingResponses') || 'yes') !== 'no';
+    this.useStdJsr = (opts.get('useStdJsr') || 'yes') !== 'no';
 
     // mutate the specs to fix inaccuracies
     fixupApiSpec(this.apiSpec);
@@ -59,7 +61,10 @@ export default class ServiceCodeGen {
   }
 
   generateTypescript(namespace: string): string {
-    const helpers = makeHelperLibrary({ isTest: this.isTest });
+    const helpers = makeHelperLibrary({
+      isTest: this.isTest,
+      useStdJsr: this.useStdJsr,
+    });
     const protocol = makeProtocolCodegenFor(this.apiSpec.metadata, this.shapes, helpers, {
       includeJsonRemap: this.includeJsonRemap,
     });
@@ -95,7 +100,10 @@ export default class ServiceCodeGen {
   }
 
   generateModTypescript(namespace: string): string {
-    const helpers = makeHelperLibrary({ isTest: this.isTest });
+    const helpers = makeHelperLibrary({
+      isTest: this.isTest,
+      useStdJsr: this.useStdJsr,
+    });
     const protocol = makeProtocolCodegenFor(this.apiSpec.metadata, this.shapes, helpers, {
       includeJsonRemap: this.includeJsonRemap,
     });
@@ -129,7 +137,10 @@ export default class ServiceCodeGen {
   }
 
   generateStructsTypescript(): string {
-    const helpers = makeHelperLibrary({ isTest: this.isTest });
+    const helpers = makeHelperLibrary({
+      isTest: this.isTest,
+      useStdJsr: this.useStdJsr,
+    });
     const protocol = makeProtocolCodegenFor(this.apiSpec.metadata, this.shapes, helpers, {
       includeJsonRemap: this.includeJsonRemap,
     });

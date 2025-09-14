@@ -103,17 +103,18 @@ export default class ProtocolJsonCodegen {
         encoder = `${fieldRef} ?? generateIdemptToken()`;
       }
 
+      const locationRef = locationName.match(/^[a-z0-9]+$/i) ? locationName : `${JSON.stringify(locationName)}`;
       if (encoder) {
         if (isList) {
-          chunks.push(`    ${locationName}: ${rootRef}[${JSON.stringify(field)}]?.map(x => ${encoder}),`);
+          chunks.push(`    ${locationRef}: ${rootRef}[${JSON.stringify(field)}]?.map(x => ${encoder}),`);
         } else if (isMap) {
           this.helpers.useHelper("jsonP");
-          chunks.push(`    ${locationName}: jsonP.serializeMap(${rootRef}[${JSON.stringify(field)}], x => ${encoder}),`);
+          chunks.push(`    ${locationRef}: jsonP.serializeMap(${rootRef}[${JSON.stringify(field)}], x => ${encoder}),`);
         } else {
-          chunks.push(`    ${locationName}: ${encoder},`);
+          chunks.push(`    ${locationRef}: ${encoder},`);
         }
       } else {
-        chunks.push(`    ${locationName}: ${rootRef}[${JSON.stringify(field)}],`);
+        chunks.push(`    ${locationRef}: ${rootRef}[${JSON.stringify(field)}],`);
       }
     }
     chunks.push(`  }`);
@@ -317,7 +318,8 @@ export default class ProtocolJsonCodegen {
       if (valShape.tags.has('named')) {
         // TODO: is this safe? when would an array have a null?
         expr = `y => jsonP.readList(to${valShape.censoredName}, y)!`;
-      } else if (['long', 'integer'].includes(valShape.spec.type)) {
+      } else if (valShape.isNumberType) {
+        // TODO: consider a separate readInt
         expr = `y => jsonP.readList(jsonP.readNum, y)!`;
       } else throw new Error(`TODO: json output list ${valShape.spec.type}`);
     }

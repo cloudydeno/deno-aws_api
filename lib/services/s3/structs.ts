@@ -17,8 +17,16 @@ export interface CompleteMultipartUploadRequest {
   Key: string;
   MultipartUpload?: CompletedMultipartUpload | null;
   UploadId: string;
+  ChecksumCRC32?: string | null;
+  ChecksumCRC32C?: string | null;
+  ChecksumSHA1?: string | null;
+  ChecksumSHA256?: string | null;
   RequestPayer?: RequestPayer | null;
   ExpectedBucketOwner?: string | null;
+  IfNoneMatch?: string | null;
+  SSECustomerAlgorithm?: string | null;
+  SSECustomerKey?: Uint8Array | string | null;
+  SSECustomerKeyMD5?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -26,6 +34,7 @@ export interface CopyObjectRequest {
   ACL?: ObjectCannedACL | null;
   Bucket: string;
   CacheControl?: string | null;
+  ChecksumAlgorithm?: ChecksumAlgorithm | null;
   ContentDisposition?: string | null;
   ContentEncoding?: string | null;
   ContentLanguage?: string | null;
@@ -110,6 +119,17 @@ export interface CreateMultipartUploadRequest {
   ObjectLockRetainUntilDate?: Date | number | null;
   ObjectLockLegalHoldStatus?: ObjectLockLegalHoldStatus | null;
   ExpectedBucketOwner?: string | null;
+  ChecksumAlgorithm?: ChecksumAlgorithm | null;
+}
+
+// refs: 1 - tags: named, input
+export interface CreateSessionRequest {
+  SessionMode?: SessionMode | null;
+  Bucket: string;
+  ServerSideEncryption?: ServerSideEncryption | null;
+  SSEKMSKeyId?: string | null;
+  SSEKMSEncryptionContext?: string | null;
+  BucketKeyEnabled?: boolean | null;
 }
 
 // refs: 1 - tags: named, input
@@ -220,7 +240,7 @@ export interface DeleteObjectsRequest {
   RequestPayer?: RequestPayer | null;
   BypassGovernanceRetention?: boolean | null;
   ExpectedBucketOwner?: string | null;
-  ContentMD5?: string | null;
+  ChecksumAlgorithm?: ChecksumAlgorithm | null;
 }
 
 // refs: 1 - tags: named, input
@@ -233,6 +253,7 @@ export interface DeletePublicAccessBlockRequest {
 export interface GetBucketAccelerateConfigurationRequest {
   Bucket: string;
   ExpectedBucketOwner?: string | null;
+  RequestPayer?: RequestPayer | null;
 }
 
 // refs: 1 - tags: named, input
@@ -380,6 +401,7 @@ export interface GetObjectRequest {
   RequestPayer?: RequestPayer | null;
   PartNumber?: number | null;
   ExpectedBucketOwner?: string | null;
+  ChecksumMode?: ChecksumMode | null;
 }
 
 // refs: 1 - tags: named, input
@@ -389,6 +411,21 @@ export interface GetObjectAclRequest {
   VersionId?: string | null;
   RequestPayer?: RequestPayer | null;
   ExpectedBucketOwner?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface GetObjectAttributesRequest {
+  Bucket: string;
+  Key: string;
+  VersionId?: string | null;
+  MaxParts?: number | null;
+  PartNumberMarker?: number | null;
+  SSECustomerAlgorithm?: string | null;
+  SSECustomerKey?: Uint8Array | string | null;
+  SSECustomerKeyMD5?: string | null;
+  RequestPayer?: RequestPayer | null;
+  ExpectedBucketOwner?: string | null;
+  ObjectAttributes: ObjectAttributes[];
 }
 
 // refs: 1 - tags: named, input
@@ -453,6 +490,12 @@ export interface HeadObjectRequest {
   IfUnmodifiedSince?: Date | number | null;
   Key: string;
   Range?: string | null;
+  ResponseCacheControl?: string | null;
+  ResponseContentDisposition?: string | null;
+  ResponseContentEncoding?: string | null;
+  ResponseContentLanguage?: string | null;
+  ResponseContentType?: string | null;
+  ResponseExpires?: Date | number | null;
   VersionId?: string | null;
   SSECustomerAlgorithm?: string | null;
   SSECustomerKey?: Uint8Array | string | null;
@@ -460,6 +503,7 @@ export interface HeadObjectRequest {
   RequestPayer?: RequestPayer | null;
   PartNumber?: number | null;
   ExpectedBucketOwner?: string | null;
+  ChecksumMode?: ChecksumMode | null;
 }
 
 // refs: 1 - tags: named, input
@@ -490,6 +534,20 @@ export interface ListBucketMetricsConfigurationsRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface ListBucketsRequest {
+  MaxBuckets?: number | null;
+  ContinuationToken?: string | null;
+  Prefix?: string | null;
+  BucketRegion?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface ListDirectoryBucketsRequest {
+  ContinuationToken?: string | null;
+  MaxDirectoryBuckets?: number | null;
+}
+
+// refs: 1 - tags: named, input
 export interface ListMultipartUploadsRequest {
   Bucket: string;
   Delimiter?: string | null;
@@ -499,6 +557,7 @@ export interface ListMultipartUploadsRequest {
   Prefix?: string | null;
   UploadIdMarker?: string | null;
   ExpectedBucketOwner?: string | null;
+  RequestPayer?: RequestPayer | null;
 }
 
 // refs: 1 - tags: named, input
@@ -511,6 +570,8 @@ export interface ListObjectVersionsRequest {
   Prefix?: string | null;
   VersionIdMarker?: string | null;
   ExpectedBucketOwner?: string | null;
+  RequestPayer?: RequestPayer | null;
+  OptionalObjectAttributes?: OptionalObjectAttributes[] | null;
 }
 
 // refs: 1 - tags: named, input
@@ -523,6 +584,7 @@ export interface ListObjectsRequest {
   Prefix?: string | null;
   RequestPayer?: RequestPayer | null;
   ExpectedBucketOwner?: string | null;
+  OptionalObjectAttributes?: OptionalObjectAttributes[] | null;
 }
 
 // refs: 1 - tags: named, input
@@ -537,6 +599,7 @@ export interface ListObjectsV2Request {
   StartAfter?: string | null;
   RequestPayer?: RequestPayer | null;
   ExpectedBucketOwner?: string | null;
+  OptionalObjectAttributes?: OptionalObjectAttributes[] | null;
 }
 
 // refs: 1 - tags: named, input
@@ -548,6 +611,9 @@ export interface ListPartsRequest {
   UploadId: string;
   RequestPayer?: RequestPayer | null;
   ExpectedBucketOwner?: string | null;
+  SSECustomerAlgorithm?: string | null;
+  SSECustomerKey?: Uint8Array | string | null;
+  SSECustomerKeyMD5?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -555,6 +621,7 @@ export interface PutBucketAccelerateConfigurationRequest {
   Bucket: string;
   AccelerateConfiguration: AccelerateConfiguration;
   ExpectedBucketOwner?: string | null;
+  ChecksumAlgorithm?: ChecksumAlgorithm | null;
 }
 
 // refs: 1 - tags: named, input
@@ -563,6 +630,7 @@ export interface PutBucketAclRequest {
   AccessControlPolicy?: AccessControlPolicy | null;
   Bucket: string;
   ContentMD5?: string | null;
+  ChecksumAlgorithm?: ChecksumAlgorithm | null;
   GrantFullControl?: string | null;
   GrantRead?: string | null;
   GrantReadACP?: string | null;
@@ -584,6 +652,7 @@ export interface PutBucketCorsRequest {
   Bucket: string;
   CORSConfiguration: CORSConfiguration;
   ContentMD5?: string | null;
+  ChecksumAlgorithm?: ChecksumAlgorithm | null;
   ExpectedBucketOwner?: string | null;
 }
 
@@ -591,6 +660,7 @@ export interface PutBucketCorsRequest {
 export interface PutBucketEncryptionRequest {
   Bucket: string;
   ContentMD5?: string | null;
+  ChecksumAlgorithm?: ChecksumAlgorithm | null;
   ServerSideEncryptionConfiguration: ServerSideEncryptionConfiguration;
   ExpectedBucketOwner?: string | null;
 }
@@ -614,6 +684,7 @@ export interface PutBucketInventoryConfigurationRequest {
 export interface PutBucketLifecycleRequest {
   Bucket: string;
   ContentMD5?: string | null;
+  ChecksumAlgorithm?: ChecksumAlgorithm | null;
   LifecycleConfiguration?: LifecycleConfiguration | null;
   ExpectedBucketOwner?: string | null;
 }
@@ -621,9 +692,10 @@ export interface PutBucketLifecycleRequest {
 // refs: 1 - tags: named, input
 export interface PutBucketLifecycleConfigurationRequest {
   Bucket: string;
+  ChecksumAlgorithm?: ChecksumAlgorithm | null;
   LifecycleConfiguration?: BucketLifecycleConfiguration | null;
   ExpectedBucketOwner?: string | null;
-  ContentMD5?: string | null;
+  TransitionDefaultMinimumObjectSize?: TransitionDefaultMinimumObjectSize | null;
 }
 
 // refs: 1 - tags: named, input
@@ -631,6 +703,7 @@ export interface PutBucketLoggingRequest {
   Bucket: string;
   BucketLoggingStatus: BucketLoggingStatus;
   ContentMD5?: string | null;
+  ChecksumAlgorithm?: ChecksumAlgorithm | null;
   ExpectedBucketOwner?: string | null;
 }
 
@@ -646,6 +719,7 @@ export interface PutBucketMetricsConfigurationRequest {
 export interface PutBucketNotificationRequest {
   Bucket: string;
   ContentMD5?: string | null;
+  ChecksumAlgorithm?: ChecksumAlgorithm | null;
   NotificationConfiguration: NotificationConfigurationDeprecated;
   ExpectedBucketOwner?: string | null;
 }
@@ -670,6 +744,7 @@ export interface PutBucketOwnershipControlsRequest {
 export interface PutBucketPolicyRequest {
   Bucket: string;
   ContentMD5?: string | null;
+  ChecksumAlgorithm?: ChecksumAlgorithm | null;
   ConfirmRemoveSelfBucketAccess?: boolean | null;
   Policy: string;
   ExpectedBucketOwner?: string | null;
@@ -679,6 +754,7 @@ export interface PutBucketPolicyRequest {
 export interface PutBucketReplicationRequest {
   Bucket: string;
   ContentMD5?: string | null;
+  ChecksumAlgorithm?: ChecksumAlgorithm | null;
   ReplicationConfiguration: ReplicationConfiguration;
   Token?: string | null;
   ExpectedBucketOwner?: string | null;
@@ -688,6 +764,7 @@ export interface PutBucketReplicationRequest {
 export interface PutBucketRequestPaymentRequest {
   Bucket: string;
   ContentMD5?: string | null;
+  ChecksumAlgorithm?: ChecksumAlgorithm | null;
   RequestPaymentConfiguration: RequestPaymentConfiguration;
   ExpectedBucketOwner?: string | null;
 }
@@ -696,6 +773,7 @@ export interface PutBucketRequestPaymentRequest {
 export interface PutBucketTaggingRequest {
   Bucket: string;
   ContentMD5?: string | null;
+  ChecksumAlgorithm?: ChecksumAlgorithm | null;
   Tagging: Tagging;
   ExpectedBucketOwner?: string | null;
 }
@@ -704,6 +782,7 @@ export interface PutBucketTaggingRequest {
 export interface PutBucketVersioningRequest {
   Bucket: string;
   ContentMD5?: string | null;
+  ChecksumAlgorithm?: ChecksumAlgorithm | null;
   MFA?: string | null;
   VersioningConfiguration: VersioningConfiguration;
   ExpectedBucketOwner?: string | null;
@@ -713,6 +792,7 @@ export interface PutBucketVersioningRequest {
 export interface PutBucketWebsiteRequest {
   Bucket: string;
   ContentMD5?: string | null;
+  ChecksumAlgorithm?: ChecksumAlgorithm | null;
   WebsiteConfiguration: WebsiteConfiguration;
   ExpectedBucketOwner?: string | null;
 }
@@ -729,7 +809,13 @@ export interface PutObjectRequest {
   ContentLength?: number | null;
   ContentMD5?: string | null;
   ContentType?: string | null;
+  ChecksumAlgorithm?: ChecksumAlgorithm | null;
+  ChecksumCRC32?: string | null;
+  ChecksumCRC32C?: string | null;
+  ChecksumSHA1?: string | null;
+  ChecksumSHA256?: string | null;
   Expires?: Date | number | null;
+  IfNoneMatch?: string | null;
   GrantFullControl?: string | null;
   GrantRead?: string | null;
   GrantReadACP?: string | null;
@@ -759,6 +845,7 @@ export interface PutObjectAclRequest {
   AccessControlPolicy?: AccessControlPolicy | null;
   Bucket: string;
   ContentMD5?: string | null;
+  ChecksumAlgorithm?: ChecksumAlgorithm | null;
   GrantFullControl?: string | null;
   GrantRead?: string | null;
   GrantReadACP?: string | null;
@@ -778,6 +865,7 @@ export interface PutObjectLegalHoldRequest {
   RequestPayer?: RequestPayer | null;
   VersionId?: string | null;
   ContentMD5?: string | null;
+  ChecksumAlgorithm?: ChecksumAlgorithm | null;
   ExpectedBucketOwner?: string | null;
 }
 
@@ -788,6 +876,7 @@ export interface PutObjectLockConfigurationRequest {
   RequestPayer?: RequestPayer | null;
   Token?: string | null;
   ContentMD5?: string | null;
+  ChecksumAlgorithm?: ChecksumAlgorithm | null;
   ExpectedBucketOwner?: string | null;
 }
 
@@ -800,6 +889,7 @@ export interface PutObjectRetentionRequest {
   VersionId?: string | null;
   BypassGovernanceRetention?: boolean | null;
   ContentMD5?: string | null;
+  ChecksumAlgorithm?: ChecksumAlgorithm | null;
   ExpectedBucketOwner?: string | null;
 }
 
@@ -809,6 +899,7 @@ export interface PutObjectTaggingRequest {
   Key: string;
   VersionId?: string | null;
   ContentMD5?: string | null;
+  ChecksumAlgorithm?: ChecksumAlgorithm | null;
   Tagging: Tagging;
   ExpectedBucketOwner?: string | null;
   RequestPayer?: RequestPayer | null;
@@ -818,6 +909,7 @@ export interface PutObjectTaggingRequest {
 export interface PutPublicAccessBlockRequest {
   Bucket: string;
   ContentMD5?: string | null;
+  ChecksumAlgorithm?: ChecksumAlgorithm | null;
   PublicAccessBlockConfiguration: PublicAccessBlockConfiguration;
   ExpectedBucketOwner?: string | null;
 }
@@ -829,6 +921,7 @@ export interface RestoreObjectRequest {
   VersionId?: string | null;
   RestoreRequest?: RestoreRequest | null;
   RequestPayer?: RequestPayer | null;
+  ChecksumAlgorithm?: ChecksumAlgorithm | null;
   ExpectedBucketOwner?: string | null;
 }
 
@@ -854,6 +947,11 @@ export interface UploadPartRequest {
   Bucket: string;
   ContentLength?: number | null;
   ContentMD5?: string | null;
+  ChecksumAlgorithm?: ChecksumAlgorithm | null;
+  ChecksumCRC32?: string | null;
+  ChecksumCRC32C?: string | null;
+  ChecksumSHA1?: string | null;
+  ChecksumSHA256?: string | null;
   Key: string;
   PartNumber: number;
   UploadId: string;
@@ -903,6 +1001,10 @@ export interface WriteGetObjectResponseRequest {
   ContentLength?: number | null;
   ContentRange?: string | null;
   ContentType?: string | null;
+  ChecksumCRC32?: string | null;
+  ChecksumCRC32C?: string | null;
+  ChecksumSHA1?: string | null;
+  ChecksumSHA256?: string | null;
   DeleteMarker?: boolean | null;
   ETag?: string | null;
   Expires?: Date | number | null;
@@ -939,6 +1041,10 @@ export interface CompleteMultipartUploadOutput {
   Key?: string | null;
   Expiration?: string | null;
   ETag?: string | null;
+  ChecksumCRC32?: string | null;
+  ChecksumCRC32C?: string | null;
+  ChecksumSHA1?: string | null;
+  ChecksumSHA256?: string | null;
   ServerSideEncryption?: ServerSideEncryption | null;
   VersionId?: string | null;
   SSEKMSKeyId?: string | null;
@@ -980,6 +1086,16 @@ export interface CreateMultipartUploadOutput {
   SSEKMSEncryptionContext?: string | null;
   BucketKeyEnabled?: boolean | null;
   RequestCharged?: RequestCharged | null;
+  ChecksumAlgorithm?: ChecksumAlgorithm | null;
+}
+
+// refs: 1 - tags: named, output
+export interface CreateSessionOutput {
+  ServerSideEncryption?: ServerSideEncryption | null;
+  SSEKMSKeyId?: string | null;
+  SSEKMSEncryptionContext?: string | null;
+  BucketKeyEnabled?: boolean | null;
+  Credentials: SessionCredentials;
 }
 
 // refs: 1 - tags: named, output
@@ -1004,6 +1120,7 @@ export interface DeleteObjectsOutput {
 // refs: 1 - tags: named, output
 export interface GetBucketAccelerateConfigurationOutput {
   Status?: BucketAccelerateStatus | null;
+  RequestCharged?: RequestCharged | null;
 }
 
 // refs: 1 - tags: named, output
@@ -1045,6 +1162,7 @@ export interface GetBucketLifecycleOutput {
 // refs: 1 - tags: named, output
 export interface GetBucketLifecycleConfigurationOutput {
   Rules: LifecycleRule[];
+  TransitionDefaultMinimumObjectSize?: TransitionDefaultMinimumObjectSize | null;
 }
 
 // refs: 1 - tags: named, output
@@ -1132,6 +1250,10 @@ export interface GetObjectOutput {
   LastModified?: Date | number | null;
   ContentLength?: number | null;
   ETag?: string | null;
+  ChecksumCRC32?: string | null;
+  ChecksumCRC32C?: string | null;
+  ChecksumSHA1?: string | null;
+  ChecksumSHA256?: string | null;
   MissingMeta?: number | null;
   VersionId?: string | null;
   CacheControl?: string | null;
@@ -1141,6 +1263,7 @@ export interface GetObjectOutput {
   ContentRange?: string | null;
   ContentType?: string | null;
   Expires?: Date | number | null;
+  ExpiresString?: string | null;
   WebsiteRedirectLocation?: string | null;
   ServerSideEncryption?: ServerSideEncryption | null;
   Metadata: { [key: string]: string | null | undefined };
@@ -1163,6 +1286,19 @@ export interface GetObjectAclOutput {
   Owner?: Owner | null;
   Grants: Grant[];
   RequestCharged?: RequestCharged | null;
+}
+
+// refs: 1 - tags: named, output
+export interface GetObjectAttributesOutput {
+  DeleteMarker?: boolean | null;
+  LastModified?: Date | number | null;
+  VersionId?: string | null;
+  RequestCharged?: RequestCharged | null;
+  ETag?: string | null;
+  Checksum?: Checksum | null;
+  ObjectParts?: GetObjectAttributesParts | null;
+  StorageClass?: StorageClass | null;
+  ObjectSize?: number | null;
 }
 
 // refs: 1 - tags: named, output
@@ -1199,6 +1335,14 @@ export interface GetPublicAccessBlockOutput {
 }
 
 // refs: 1 - tags: named, output
+export interface HeadBucketOutput {
+  BucketLocationType?: LocationType | null;
+  BucketLocationName?: string | null;
+  BucketRegion?: string | null;
+  AccessPointAlias?: boolean | null;
+}
+
+// refs: 1 - tags: named, output
 export interface HeadObjectOutput {
   DeleteMarker?: boolean | null;
   AcceptRanges?: string | null;
@@ -1207,6 +1351,10 @@ export interface HeadObjectOutput {
   ArchiveStatus?: ArchiveStatus | null;
   LastModified?: Date | number | null;
   ContentLength?: number | null;
+  ChecksumCRC32?: string | null;
+  ChecksumCRC32C?: string | null;
+  ChecksumSHA1?: string | null;
+  ChecksumSHA256?: string | null;
   ETag?: string | null;
   MissingMeta?: number | null;
   VersionId?: string | null;
@@ -1216,6 +1364,7 @@ export interface HeadObjectOutput {
   ContentLanguage?: string | null;
   ContentType?: string | null;
   Expires?: Date | number | null;
+  ExpiresString?: string | null;
   WebsiteRedirectLocation?: string | null;
   ServerSideEncryption?: ServerSideEncryption | null;
   Metadata: { [key: string]: string | null | undefined };
@@ -1268,6 +1417,14 @@ export interface ListBucketMetricsConfigurationsOutput {
 export interface ListBucketsOutput {
   Buckets: Bucket[];
   Owner?: Owner | null;
+  ContinuationToken?: string | null;
+  Prefix?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface ListDirectoryBucketsOutput {
+  Buckets: Bucket[];
+  ContinuationToken?: string | null;
 }
 
 // refs: 1 - tags: named, output
@@ -1284,6 +1441,7 @@ export interface ListMultipartUploadsOutput {
   Uploads: MultipartUpload[];
   CommonPrefixes: CommonPrefix[];
   EncodingType?: EncodingType | null;
+  RequestCharged?: RequestCharged | null;
 }
 
 // refs: 1 - tags: named, output
@@ -1301,6 +1459,7 @@ export interface ListObjectVersionsOutput {
   MaxKeys?: number | null;
   CommonPrefixes: CommonPrefix[];
   EncodingType?: EncodingType | null;
+  RequestCharged?: RequestCharged | null;
 }
 
 // refs: 1 - tags: named, output
@@ -1315,6 +1474,7 @@ export interface ListObjectsOutput {
   MaxKeys?: number | null;
   CommonPrefixes: CommonPrefix[];
   EncodingType?: EncodingType | null;
+  RequestCharged?: RequestCharged | null;
 }
 
 // refs: 1 - tags: named, output
@@ -1331,6 +1491,7 @@ export interface ListObjectsV2Output {
   ContinuationToken?: string | null;
   NextContinuationToken?: string | null;
   StartAfter?: string | null;
+  RequestCharged?: RequestCharged | null;
 }
 
 // refs: 1 - tags: named, output
@@ -1349,12 +1510,22 @@ export interface ListPartsOutput {
   Owner?: Owner | null;
   StorageClass?: StorageClass | null;
   RequestCharged?: RequestCharged | null;
+  ChecksumAlgorithm?: ChecksumAlgorithm | null;
+}
+
+// refs: 1 - tags: named, output
+export interface PutBucketLifecycleConfigurationOutput {
+  TransitionDefaultMinimumObjectSize?: TransitionDefaultMinimumObjectSize | null;
 }
 
 // refs: 1 - tags: named, output
 export interface PutObjectOutput {
   Expiration?: string | null;
   ETag?: string | null;
+  ChecksumCRC32?: string | null;
+  ChecksumCRC32C?: string | null;
+  ChecksumSHA1?: string | null;
+  ChecksumSHA256?: string | null;
   ServerSideEncryption?: ServerSideEncryption | null;
   VersionId?: string | null;
   SSECustomerAlgorithm?: string | null;
@@ -1405,6 +1576,10 @@ export interface SelectObjectContentOutput {
 export interface UploadPartOutput {
   ServerSideEncryption?: ServerSideEncryption | null;
   ETag?: string | null;
+  ChecksumCRC32?: string | null;
+  ChecksumCRC32C?: string | null;
+  ChecksumSHA1?: string | null;
+  ChecksumSHA256?: string | null;
   SSECustomerAlgorithm?: string | null;
   SSECustomerKeyMD5?: string | null;
   SSEKMSKeyId?: string | null;
@@ -1424,7 +1599,7 @@ export interface UploadPartCopyOutput {
   RequestCharged?: RequestCharged | null;
 }
 
-// refs: 25 - tags: input, named, enum
+// refs: 29 - tags: input, named, enum
 export type RequestPayer =
 | "requester"
 | cmnP.UnexpectedEnumValue;
@@ -1437,6 +1612,10 @@ export interface CompletedMultipartUpload {
 // refs: 1 - tags: input, named, interface
 export interface CompletedPart {
   ETag?: string | null;
+  ChecksumCRC32?: string | null;
+  ChecksumCRC32C?: string | null;
+  ChecksumSHA1?: string | null;
+  ChecksumSHA256?: string | null;
   PartNumber?: number | null;
 }
 
@@ -1451,6 +1630,14 @@ export type ObjectCannedACL =
 | "bucket-owner-full-control"
 | cmnP.UnexpectedEnumValue;
 
+// refs: 32 - tags: input, named, enum, output
+export type ChecksumAlgorithm =
+| "CRC32"
+| "CRC32C"
+| "SHA1"
+| "SHA256"
+| cmnP.UnexpectedEnumValue;
+
 // refs: 1 - tags: input, named, enum
 export type MetadataDirective =
 | "COPY"
@@ -1463,13 +1650,14 @@ export type TaggingDirective =
 | "REPLACE"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 15 - tags: input, named, enum, output
+// refs: 17 - tags: input, named, enum, output
 export type ServerSideEncryption =
 | "AES256"
 | "aws:kms"
+| "aws:kms:dsse"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 11 - tags: input, named, enum, output
+// refs: 12 - tags: input, named, enum, output
 export type StorageClass =
 | "STANDARD"
 | "REDUCED_REDUNDANCY"
@@ -1480,6 +1668,8 @@ export type StorageClass =
 | "DEEP_ARCHIVE"
 | "OUTPOSTS"
 | "GLACIER_IR"
+| "SNOW"
+| "EXPRESS_ONEZONE"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 6 - tags: input, named, enum, output
@@ -1505,6 +1695,8 @@ export type BucketCannedACL =
 // refs: 1 - tags: input, named, interface
 export interface CreateBucketConfiguration {
   LocationConstraint?: BucketLocationConstraint | null;
+  Location?: LocationInfo | null;
+  Bucket?: BucketInfo | null;
 }
 
 // refs: 2 - tags: input, named, enum, output
@@ -1515,8 +1707,10 @@ export type BucketLocationConstraint =
 | "ap-northeast-2"
 | "ap-northeast-3"
 | "ap-south-1"
+| "ap-south-2"
 | "ap-southeast-1"
 | "ap-southeast-2"
+| "ap-southeast-3"
 | "ca-central-1"
 | "cn-north-1"
 | "cn-northwest-1"
@@ -1524,6 +1718,7 @@ export type BucketLocationConstraint =
 | "eu-central-1"
 | "eu-north-1"
 | "eu-south-1"
+| "eu-south-2"
 | "eu-west-1"
 | "eu-west-2"
 | "eu-west-3"
@@ -1536,11 +1731,44 @@ export type BucketLocationConstraint =
 | "us-west-2"
 | cmnP.UnexpectedEnumValue;
 
+// refs: 1 - tags: input, named, interface
+export interface LocationInfo {
+  Type?: LocationType | null;
+  Name?: string | null;
+}
+
+// refs: 2 - tags: input, named, enum, output
+export type LocationType =
+| "AvailabilityZone"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 1 - tags: input, named, interface
+export interface BucketInfo {
+  DataRedundancy?: DataRedundancy | null;
+  Type?: BucketType | null;
+}
+
+// refs: 1 - tags: input, named, enum
+export type DataRedundancy =
+| "SingleAvailabilityZone"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 1 - tags: input, named, enum
+export type BucketType =
+| "Directory"
+| cmnP.UnexpectedEnumValue;
+
 // refs: 3 - tags: input, named, enum, output
 export type ObjectOwnership =
 | "BucketOwnerPreferred"
 | "ObjectWriter"
 | "BucketOwnerEnforced"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 1 - tags: input, named, enum
+export type SessionMode =
+| "ReadOnly"
+| "ReadWrite"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
@@ -1555,9 +1783,28 @@ export interface ObjectIdentifier {
   VersionId?: string | null;
 }
 
+// refs: 2 - tags: input, named, enum
+export type ChecksumMode =
+| "ENABLED"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 1 - tags: input, named, enum
+export type ObjectAttributes =
+| "ETag"
+| "Checksum"
+| "ObjectParts"
+| "StorageClass"
+| "ObjectSize"
+| cmnP.UnexpectedEnumValue;
+
 // refs: 8 - tags: input, named, enum, output
 export type EncodingType =
 | "url"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 3 - tags: input, named, enum
+export type OptionalObjectAttributes =
+| "RestoreStatus"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
@@ -1817,6 +2064,9 @@ export type InventoryOptionalField =
 | "ObjectLockLegalHoldStatus"
 | "IntelligentTieringAccessTier"
 | "BucketKeyStatus"
+| "ChecksumAlgorithm"
+| "ObjectAccessControlList"
+| "ObjectOwner"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface, output
@@ -1930,6 +2180,12 @@ export interface LifecycleRuleAndOperator {
   ObjectSizeLessThan?: number | null;
 }
 
+// refs: 3 - tags: input, named, enum, output
+export type TransitionDefaultMinimumObjectSize =
+| "varies_by_storage_class"
+| "all_storage_classes_128K"
+| cmnP.UnexpectedEnumValue;
+
 // refs: 1 - tags: input, named, interface
 export interface BucketLoggingStatus {
   LoggingEnabled?: LoggingEnabled | null;
@@ -1940,6 +2196,7 @@ export interface LoggingEnabled {
   TargetBucket: string;
   TargetGrants?: TargetGrant[] | null;
   TargetPrefix: string;
+  TargetObjectKeyFormat?: TargetObjectKeyFormat | null;
 }
 
 // refs: 2 - tags: input, named, interface, output
@@ -1953,6 +2210,27 @@ export type BucketLogsPermission =
 | "FULL_CONTROL"
 | "READ"
 | "WRITE"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 2 - tags: input, named, interface, output
+export interface TargetObjectKeyFormat {
+  SimplePrefix?: SimplePrefix | null;
+  PartitionedPrefix?: PartitionedPrefix | null;
+}
+
+// refs: 2 - tags: input, named, interface, output
+export interface SimplePrefix {
+}
+
+// refs: 2 - tags: input, named, interface, output
+export interface PartitionedPrefix {
+  PartitionDateSource?: PartitionDateSource | null;
+}
+
+// refs: 2 - tags: input, named, enum, output
+export type PartitionDateSource =
+| "EventTime"
+| "DeliveryTime"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 3 - tags: input, named, interface, output
@@ -2530,9 +2808,10 @@ export type ReplicationStatus =
 | "PENDING"
 | "FAILED"
 | "REPLICA"
+| "COMPLETED"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 20 - tags: input, named, enum, output
+// refs: 26 - tags: input, named, enum, output
 export type RequestCharged =
 | "requester"
 | cmnP.UnexpectedEnumValue;
@@ -2541,6 +2820,18 @@ export type RequestCharged =
 export interface CopyObjectResult {
   ETag?: string | null;
   LastModified?: Date | number | null;
+  ChecksumCRC32?: string | null;
+  ChecksumCRC32C?: string | null;
+  ChecksumSHA1?: string | null;
+  ChecksumSHA256?: string | null;
+}
+
+// refs: 1 - tags: output, named, interface
+export interface SessionCredentials {
+  AccessKeyId: string;
+  SecretAccessKey: string;
+  SessionToken: string;
+  Expiration: Date | number;
 }
 
 // refs: 1 - tags: output, named, interface
@@ -2570,16 +2861,45 @@ export type MFADeleteStatus =
 | "Disabled"
 | cmnP.UnexpectedEnumValue;
 
+// refs: 1 - tags: output, named, interface
+export interface Checksum {
+  ChecksumCRC32?: string | null;
+  ChecksumCRC32C?: string | null;
+  ChecksumSHA1?: string | null;
+  ChecksumSHA256?: string | null;
+}
+
+// refs: 1 - tags: output, named, interface
+export interface GetObjectAttributesParts {
+  TotalPartsCount?: number | null;
+  PartNumberMarker?: number | null;
+  NextPartNumberMarker?: number | null;
+  MaxParts?: number | null;
+  IsTruncated?: boolean | null;
+  Parts: ObjectPart[];
+}
+
+// refs: 1 - tags: output, named, interface
+export interface ObjectPart {
+  PartNumber?: number | null;
+  Size?: number | null;
+  ChecksumCRC32?: string | null;
+  ChecksumCRC32C?: string | null;
+  ChecksumSHA1?: string | null;
+  ChecksumSHA256?: string | null;
+}
+
 // refs: 1 - tags: output, named, enum
 export type ArchiveStatus =
 | "ARCHIVE_ACCESS"
 | "DEEP_ARCHIVE_ACCESS"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 1 - tags: output, named, interface
+// refs: 2 - tags: output, named, interface
 export interface Bucket {
   Name?: string | null;
   CreationDate?: Date | number | null;
+  BucketRegion?: string | null;
 }
 
 // refs: 1 - tags: output, named, interface
@@ -2590,6 +2910,7 @@ export interface MultipartUpload {
   StorageClass?: StorageClass | null;
   Owner?: Owner | null;
   Initiator?: Initiator | null;
+  ChecksumAlgorithm?: ChecksumAlgorithm | null;
 }
 
 // refs: 2 - tags: output, named, interface
@@ -2606,6 +2927,7 @@ export interface CommonPrefix {
 // refs: 1 - tags: output, named, interface
 export interface ObjectVersion {
   ETag?: string | null;
+  ChecksumAlgorithm: ChecksumAlgorithm[];
   Size?: number | null;
   StorageClass?: ObjectVersionStorageClass | null;
   Key?: string | null;
@@ -2613,12 +2935,19 @@ export interface ObjectVersion {
   IsLatest?: boolean | null;
   LastModified?: Date | number | null;
   Owner?: Owner | null;
+  RestoreStatus?: RestoreStatus | null;
 }
 
 // refs: 1 - tags: output, named, enum
 export type ObjectVersionStorageClass =
 | "STANDARD"
 | cmnP.UnexpectedEnumValue;
+
+// refs: 3 - tags: output, named, interface
+export interface RestoreStatus {
+  IsRestoreInProgress?: boolean | null;
+  RestoreExpiryDate?: Date | number | null;
+}
 
 // refs: 1 - tags: output, named, interface
 export interface DeleteMarkerEntry {
@@ -2634,9 +2963,11 @@ export interface _Object {
   Key?: string | null;
   LastModified?: Date | number | null;
   ETag?: string | null;
+  ChecksumAlgorithm: ChecksumAlgorithm[];
   Size?: number | null;
   StorageClass?: ObjectStorageClass | null;
   Owner?: Owner | null;
+  RestoreStatus?: RestoreStatus | null;
 }
 
 // refs: 2 - tags: output, named, enum
@@ -2650,6 +2981,8 @@ export type ObjectStorageClass =
 | "DEEP_ARCHIVE"
 | "OUTPOSTS"
 | "GLACIER_IR"
+| "SNOW"
+| "EXPRESS_ONEZONE"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
@@ -2658,6 +2991,10 @@ export interface Part {
   LastModified?: Date | number | null;
   ETag?: string | null;
   Size?: number | null;
+  ChecksumCRC32?: string | null;
+  ChecksumCRC32C?: string | null;
+  ChecksumSHA1?: string | null;
+  ChecksumSHA256?: string | null;
 }
 
 // refs: 1 - tags: output, named, interface
@@ -2710,4 +3047,8 @@ export interface EndEvent {
 export interface CopyPartResult {
   ETag?: string | null;
   LastModified?: Date | number | null;
+  ChecksumCRC32?: string | null;
+  ChecksumCRC32C?: string | null;
+  ChecksumSHA1?: string | null;
+  ChecksumSHA256?: string | null;
 }

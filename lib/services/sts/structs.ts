@@ -13,6 +13,7 @@ export interface AssumeRoleRequest {
   SerialNumber?: string | null;
   TokenCode?: string | null;
   SourceIdentity?: string | null;
+  ProvidedContexts?: ProvidedContext[] | null;
 }
 
 // refs: 1 - tags: named, input
@@ -132,6 +133,12 @@ export interface PolicyDescriptorType {
 export interface Tag {
   Key: string;
   Value: string;
+}
+
+// refs: 1 - tags: input, named, interface
+export interface ProvidedContext {
+  ProviderArn?: string | null;
+  ContextAssertion?: string | null;
 }
 
 // refs: 5 - tags: output, named, interface

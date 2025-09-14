@@ -162,6 +162,13 @@ export interface ListDashboardsInput {
 }
 
 // refs: 1 - tags: named, input
+export interface ListManagedInsightRulesInput {
+  ResourceARN: string;
+  NextToken?: string | null;
+  MaxResults?: number | null;
+}
+
+// refs: 1 - tags: named, input
 export interface ListMetricStreamsInput {
   NextToken?: string | null;
   MaxResults?: number | null;
@@ -174,6 +181,8 @@ export interface ListMetricsInput {
   Dimensions?: DimensionFilter[] | null;
   NextToken?: string | null;
   RecentlyActive?: RecentlyActive | null;
+  IncludeLinkedAccounts?: boolean | null;
+  OwningAccount?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -188,6 +197,7 @@ export interface PutAnomalyDetectorInput {
   Dimensions?: Dimension[] | null;
   Stat?: string | null;
   Configuration?: AnomalyDetectorConfiguration | null;
+  MetricCharacteristics?: MetricCharacteristics | null;
   SingleMetricAnomalyDetector?: SingleMetricAnomalyDetector | null;
   MetricMathAnomalyDetector?: MetricMathAnomalyDetector | null;
 }
@@ -202,6 +212,9 @@ export interface PutCompositeAlarmInput {
   InsufficientDataActions?: string[] | null;
   OKActions?: string[] | null;
   Tags?: Tag[] | null;
+  ActionsSuppressor?: string | null;
+  ActionsSuppressorWaitPeriod?: number | null;
+  ActionsSuppressorExtensionPeriod?: number | null;
 }
 
 // refs: 1 - tags: named, input
@@ -216,6 +229,11 @@ export interface PutInsightRuleInput {
   RuleState?: string | null;
   RuleDefinition: string;
   Tags?: Tag[] | null;
+}
+
+// refs: 1 - tags: named, input
+export interface PutManagedInsightRulesInput {
+  ManagedRules: ManagedRule[];
 }
 
 // refs: 1 - tags: named, input
@@ -259,6 +277,8 @@ export interface PutMetricStreamInput {
   RoleArn: string;
   OutputFormat: MetricStreamOutputFormat;
   Tags?: Tag[] | null;
+  StatisticsConfigurations?: MetricStreamStatisticsConfiguration[] | null;
+  IncludeLinkedAccountsMetrics?: boolean | null;
 }
 
 // refs: 1 - tags: named, input
@@ -378,6 +398,8 @@ export interface GetMetricStreamOutput {
   CreationDate?: Date | number | null;
   LastUpdateDate?: Date | number | null;
   OutputFormat?: MetricStreamOutputFormat | null;
+  StatisticsConfigurations: MetricStreamStatisticsConfiguration[];
+  IncludeLinkedAccountsMetrics?: boolean | null;
 }
 
 // refs: 1 - tags: named, output
@@ -392,6 +414,12 @@ export interface ListDashboardsOutput {
 }
 
 // refs: 1 - tags: named, output
+export interface ListManagedInsightRulesOutput {
+  ManagedRules: ManagedRuleDescription[];
+  NextToken?: string | null;
+}
+
+// refs: 1 - tags: named, output
 export interface ListMetricStreamsOutput {
   NextToken?: string | null;
   Entries: MetricStreamEntry[];
@@ -401,6 +429,7 @@ export interface ListMetricStreamsOutput {
 export interface ListMetricsOutput {
   Metrics: Metric[];
   NextToken?: string | null;
+  OwningAccounts: string[];
 }
 
 // refs: 1 - tags: named, output
@@ -411,6 +440,11 @@ export interface ListTagsForResourceOutput {
 // refs: 1 - tags: named, output
 export interface PutDashboardOutput {
   DashboardValidationMessages: DashboardValidationMessage[];
+}
+
+// refs: 1 - tags: named, output
+export interface PutManagedInsightRulesOutput {
+  Failures: PartialFailure[];
 }
 
 // refs: 1 - tags: named, output
@@ -426,6 +460,7 @@ export interface Dimension {
 
 // refs: 3 - tags: input, named, interface, output
 export interface SingleMetricAnomalyDetector {
+  AccountId?: string | null;
   Namespace?: string | null;
   MetricName?: string | null;
   Dimensions?: Dimension[] | null;
@@ -563,10 +598,22 @@ export interface Range {
   EndTime: Date | number;
 }
 
-// refs: 6 - tags: input, named, interface, output
+// refs: 2 - tags: input, named, interface, output
+export interface MetricCharacteristics {
+  PeriodicSpikes?: boolean | null;
+}
+
+// refs: 7 - tags: input, named, interface, output
 export interface Tag {
   Key: string;
   Value: string;
+}
+
+// refs: 1 - tags: input, named, interface
+export interface ManagedRule {
+  TemplateName: string;
+  ResourceARN: string;
+  Tags?: Tag[] | null;
 }
 
 // refs: 3 - tags: input, named, enum, output
@@ -604,15 +651,29 @@ export interface StatisticSet {
 // refs: 4 - tags: input, named, interface, output
 export interface MetricStreamFilter {
   Namespace?: string | null;
+  MetricNames?: string[] | null;
 }
 
 // refs: 3 - tags: input, named, enum, output
 export type MetricStreamOutputFormat =
 | "json"
 | "opentelemetry0.7"
+| "opentelemetry1.0"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 3 - tags: output, named, interface
+// refs: 2 - tags: input, named, interface, output
+export interface MetricStreamStatisticsConfiguration {
+  IncludeMetrics: MetricStreamStatisticsMetric[];
+  AdditionalStatistics: string[];
+}
+
+// refs: 2 - tags: input, named, interface, output
+export interface MetricStreamStatisticsMetric {
+  Namespace: string;
+  MetricName: string;
+}
+
+// refs: 4 - tags: output, named, interface
 export interface PartialFailure {
   FailureResource?: string | null;
   ExceptionType?: string | null;
@@ -645,7 +706,20 @@ export interface CompositeAlarm {
   StateReasonData?: string | null;
   StateUpdatedTimestamp?: Date | number | null;
   StateValue?: StateValue | null;
+  StateTransitionedTimestamp?: Date | number | null;
+  ActionsSuppressedBy?: ActionsSuppressedBy | null;
+  ActionsSuppressedReason?: string | null;
+  ActionsSuppressor?: string | null;
+  ActionsSuppressorWaitPeriod?: number | null;
+  ActionsSuppressorExtensionPeriod?: number | null;
 }
+
+// refs: 1 - tags: output, named, enum
+export type ActionsSuppressedBy =
+| "WaitPeriod"
+| "ExtensionPeriod"
+| "Alarm"
+| cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
 export interface MetricAlarm {
@@ -676,7 +750,14 @@ export interface MetricAlarm {
   EvaluateLowSampleCountPercentile?: string | null;
   Metrics: MetricDataQuery[];
   ThresholdMetricId?: string | null;
+  EvaluationState?: EvaluationState | null;
+  StateTransitionedTimestamp?: Date | number | null;
 }
+
+// refs: 2 - tags: output, named, enum
+export type EvaluationState =
+| "PARTIAL_DATA"
+| cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: output, named, interface
 export interface AnomalyDetector {
@@ -686,6 +767,7 @@ export interface AnomalyDetector {
   Stat?: string | null;
   Configuration?: AnomalyDetectorConfiguration | null;
   StateValue?: AnomalyDetectorStateValue | null;
+  MetricCharacteristics?: MetricCharacteristics | null;
   SingleMetricAnomalyDetector?: SingleMetricAnomalyDetector | null;
   MetricMathAnomalyDetector?: MetricMathAnomalyDetector | null;
 }
@@ -703,6 +785,7 @@ export interface InsightRule {
   State: string;
   Schema: string;
   Definition: string;
+  ManagedRule?: boolean | null;
 }
 
 // refs: 1 - tags: output, named, interface
@@ -745,6 +828,7 @@ export type StatusCode =
 | "Complete"
 | "InternalError"
 | "PartialData"
+| "Forbidden"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: output, named, interface
@@ -771,6 +855,19 @@ export interface DashboardEntry {
   DashboardArn?: string | null;
   LastModified?: Date | number | null;
   Size?: number | null;
+}
+
+// refs: 1 - tags: output, named, interface
+export interface ManagedRuleDescription {
+  TemplateName?: string | null;
+  ResourceARN?: string | null;
+  RuleState?: ManagedRuleState | null;
+}
+
+// refs: 1 - tags: output, named, interface
+export interface ManagedRuleState {
+  RuleName: string;
+  State: string;
 }
 
 // refs: 1 - tags: output, named, interface

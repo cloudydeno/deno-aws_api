@@ -16,6 +16,13 @@ export interface AssociateVPCWithHostedZoneRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface ChangeCidrCollectionRequest {
+  Id: string;
+  CollectionVersion?: number | null;
+  Changes: CidrCollectionChange[];
+}
+
+// refs: 1 - tags: named, input
 export interface ChangeResourceRecordSetsRequest {
   HostedZoneId: string;
   ChangeBatch: ChangeBatch;
@@ -27,6 +34,12 @@ export interface ChangeTagsForResourceRequest {
   ResourceId: string;
   AddTags?: Tag[] | null;
   RemoveTagKeys?: string[] | null;
+}
+
+// refs: 1 - tags: named, input
+export interface CreateCidrCollectionRequest {
+  Name: string;
+  CallerReference: string;
 }
 
 // refs: 1 - tags: named, input
@@ -98,6 +111,11 @@ export interface CreateVPCAssociationAuthorizationRequest {
 export interface DeactivateKeySigningKeyRequest {
   HostedZoneId: string;
   Name: string;
+}
+
+// refs: 1 - tags: named, input
+export interface DeleteCidrCollectionRequest {
+  Id: string;
 }
 
 // refs: 1 - tags: named, input
@@ -236,6 +254,27 @@ export interface GetTrafficPolicyInstanceRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface ListCidrBlocksRequest {
+  CollectionId: string;
+  LocationName?: string | null;
+  NextToken?: string | null;
+  MaxResults?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface ListCidrCollectionsRequest {
+  NextToken?: string | null;
+  MaxResults?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface ListCidrLocationsRequest {
+  CollectionId: string;
+  NextToken?: string | null;
+  MaxResults?: string | null;
+}
+
+// refs: 1 - tags: named, input
 export interface ListGeoLocationsRequest {
   StartContinentCode?: string | null;
   StartCountryCode?: string | null;
@@ -254,6 +293,7 @@ export interface ListHostedZonesRequest {
   Marker?: string | null;
   MaxItems?: string | null;
   DelegationSetId?: string | null;
+  HostedZoneType?: HostedZoneType | null;
 }
 
 // refs: 1 - tags: named, input
@@ -414,8 +454,19 @@ export interface AssociateVPCWithHostedZoneResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface ChangeCidrCollectionResponse {
+  Id: string;
+}
+
+// refs: 1 - tags: named, output
 export interface ChangeResourceRecordSetsResponse {
   ChangeInfo: ChangeInfo;
+}
+
+// refs: 1 - tags: named, output
+export interface CreateCidrCollectionResponse {
+  Collection?: CidrCollection | null;
+  Location?: string | null;
 }
 
 // refs: 1 - tags: named, output
@@ -603,6 +654,24 @@ export interface GetTrafficPolicyInstanceCountResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface ListCidrBlocksResponse {
+  NextToken?: string | null;
+  CidrBlocks: CidrBlockSummary[];
+}
+
+// refs: 1 - tags: named, output
+export interface ListCidrCollectionsResponse {
+  NextToken?: string | null;
+  CidrCollections: CollectionSummary[];
+}
+
+// refs: 1 - tags: named, output
+export interface ListCidrLocationsResponse {
+  NextToken?: string | null;
+  CidrLocations: LocationSummary[];
+}
+
+// refs: 1 - tags: named, output
 export interface ListGeoLocationsResponse {
   GeoLocationDetailsList: GeoLocationDetails[];
   IsTruncated: boolean;
@@ -781,6 +850,7 @@ export type VPCRegion =
 | "eu-west-2"
 | "eu-west-3"
 | "eu-central-1"
+| "eu-central-2"
 | "ap-east-1"
 | "me-south-1"
 | "us-gov-west-1"
@@ -788,10 +858,12 @@ export type VPCRegion =
 | "us-iso-east-1"
 | "us-iso-west-1"
 | "us-isob-east-1"
+| "me-central-1"
 | "ap-southeast-1"
 | "ap-southeast-2"
 | "ap-southeast-3"
 | "ap-south-1"
+| "ap-south-2"
 | "ap-northeast-1"
 | "ap-northeast-2"
 | "ap-northeast-3"
@@ -801,6 +873,24 @@ export type VPCRegion =
 | "cn-north-1"
 | "af-south-1"
 | "eu-south-1"
+| "eu-south-2"
+| "ap-southeast-4"
+| "il-central-1"
+| "ca-west-1"
+| "ap-southeast-5"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 1 - tags: input, named, interface
+export interface CidrCollectionChange {
+  LocationName: string;
+  Action: CidrCollectionChangeAction;
+  CidrList: string[];
+}
+
+// refs: 1 - tags: input, named, enum
+export type CidrCollectionChangeAction =
+| "PUT"
+| "DELETE_IF_EXISTS"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
@@ -837,6 +927,8 @@ export interface ResourceRecordSet {
   AliasTarget?: AliasTarget | null;
   HealthCheckId?: string | null;
   TrafficPolicyInstanceId?: string | null;
+  CidrRoutingConfig?: CidrRoutingConfig | null;
+  GeoProximityLocation?: GeoProximityLocation | null;
 }
 
 // refs: 24 - tags: input, named, enum, output
@@ -867,6 +959,7 @@ export type ResourceRecordSetRegion =
 | "eu-west-2"
 | "eu-west-3"
 | "eu-central-1"
+| "eu-central-2"
 | "ap-southeast-1"
 | "ap-southeast-2"
 | "ap-southeast-3"
@@ -879,9 +972,16 @@ export type ResourceRecordSetRegion =
 | "cn-northwest-1"
 | "ap-east-1"
 | "me-south-1"
+| "me-central-1"
 | "ap-south-1"
+| "ap-south-2"
 | "af-south-1"
 | "eu-south-1"
+| "eu-south-2"
+| "ap-southeast-4"
+| "il-central-1"
+| "ca-west-1"
+| "ap-southeast-5"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 2 - tags: input, named, interface, output
@@ -907,6 +1007,26 @@ export interface AliasTarget {
   HostedZoneId: string;
   DNSName: string;
   EvaluateTargetHealth: boolean;
+}
+
+// refs: 2 - tags: input, named, interface, output
+export interface CidrRoutingConfig {
+  CollectionId: string;
+  LocationName: string;
+}
+
+// refs: 2 - tags: input, named, interface, output
+export interface GeoProximityLocation {
+  AWSRegion?: string | null;
+  LocalZoneGroup?: string | null;
+  Coordinates?: Coordinates | null;
+  Bias?: number | null;
+}
+
+// refs: 2 - tags: input, named, interface, output
+export interface Coordinates {
+  Latitude: string;
+  Longitude: string;
 }
 
 // refs: 5 - tags: input, named, enum, output
@@ -981,12 +1101,15 @@ export type CloudWatchRegion =
 | "us-west-2"
 | "ca-central-1"
 | "eu-central-1"
+| "eu-central-2"
 | "eu-west-1"
 | "eu-west-2"
 | "eu-west-3"
 | "ap-east-1"
 | "me-south-1"
+| "me-central-1"
 | "ap-south-1"
+| "ap-south-2"
 | "ap-southeast-1"
 | "ap-southeast-2"
 | "ap-southeast-3"
@@ -999,11 +1122,16 @@ export type CloudWatchRegion =
 | "cn-north-1"
 | "af-south-1"
 | "eu-south-1"
+| "eu-south-2"
 | "us-gov-west-1"
 | "us-gov-east-1"
 | "us-iso-east-1"
 | "us-iso-west-1"
 | "us-isob-east-1"
+| "ap-southeast-4"
+| "il-central-1"
+| "ca-west-1"
+| "ap-southeast-5"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 6 - tags: input, named, enum, output
@@ -1040,6 +1168,11 @@ export type ReusableDelegationSetLimitType =
 | cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
+export type HostedZoneType =
+| "PrivateHostedZone"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 1 - tags: input, named, enum
 export type ResettableElementName =
 | "FullyQualifiedDomainName"
 | "Regions"
@@ -1060,6 +1193,14 @@ export type ChangeStatus =
 | "PENDING"
 | "INSYNC"
 | cmnP.UnexpectedEnumValue;
+
+// refs: 1 - tags: output, named, interface
+export interface CidrCollection {
+  Arn?: string | null;
+  Id?: string | null;
+  Name?: string | null;
+  Version?: number | null;
+}
 
 // refs: 4 - tags: output, named, interface
 export interface HealthCheck {
@@ -1224,6 +1365,25 @@ export interface HostedZoneLimit {
 export interface ReusableDelegationSetLimit {
   Type: ReusableDelegationSetLimitType;
   Value: number;
+}
+
+// refs: 1 - tags: output, named, interface
+export interface CidrBlockSummary {
+  CidrBlock?: string | null;
+  LocationName?: string | null;
+}
+
+// refs: 1 - tags: output, named, interface
+export interface CollectionSummary {
+  Arn?: string | null;
+  Id?: string | null;
+  Name?: string | null;
+  Version?: number | null;
+}
+
+// refs: 1 - tags: output, named, interface
+export interface LocationSummary {
+  LocationName?: string | null;
 }
 
 // refs: 1 - tags: output, named, interface

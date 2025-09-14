@@ -82,6 +82,19 @@ export const HashMD5: Helper = {
   ],
 };
 
+export const HashMD5JSR: Helper = {
+  deps: {
+    HashMd5: "jsr:@takker/md5@0.1.0",
+    Base64: "jsr:@std/encoding@1.0.10/base64",
+  },
+  chunks: [
+    `function hashMD5(data: BufferSource | string): string {`,
+    `  const hashed = HashMd5.md5(data);`,
+    `  return Base64.encodeBase64(hashed);`,
+    `}`,
+  ],
+};
+
 export const SerializeBlob: Helper = {
   deps: {
     Base64: "https://deno.land/std@0.177.0/encoding/base64.ts",
@@ -105,6 +118,29 @@ export const ParseBlob: Helper = {
   ],
 };
 
+export const SerializeBlobJSR: Helper = {
+  deps: {
+    Base64: "jsr:@std/encoding@1.0.10/base64",
+  },
+  chunks: [
+    `function serializeBlob(input: string | Uint8Array | null | undefined) {`,
+    `  if (input == null) return input;`,
+    `  return Base64.encodeBase64(input);`,
+    `}`,
+  ],
+};
+export const ParseBlobJSR: Helper = {
+  deps: {
+    Base64: "jsr:@std/encoding@1.0.10/base64",
+  },
+  chunks: [
+    `function parseBlob(input: string | null | undefined) {`,
+    `  if (input == null) return input;`,
+    `  return Base64.decodeBase64(input);`,
+    `}`,
+  ],
+};
+
 export const IdemptToken: Helper = {
   chunks: [
     `function generateIdemptToken() {`,
@@ -121,8 +157,9 @@ export const IdemptTokenMock: Helper = {
 };
 
 export function makeHelperLibrary(opts: {
-  isTest?: boolean;
-} = {}) {
+  isTest: boolean;
+  useStdJsr: boolean;
+}) {
   const lib = new HelperLibrary();
 
   // lib.addOptionalDep('Base64', 'https://deno.land/x/base64@v0.2.1/mod.ts');
@@ -137,10 +174,17 @@ export function makeHelperLibrary(opts: {
     ? IdemptTokenMock
     : IdemptToken);
 
-  lib.addHelper('hashMD5', HashMD5);
+  if (opts.useStdJsr) {
+    lib.addHelper('hashMD5', HashMD5JSR);
 
-  lib.addHelper('serializeBlob', SerializeBlob);
-  lib.addHelper('parseBlob', ParseBlob);
+    lib.addHelper('serializeBlob', SerializeBlobJSR);
+    lib.addHelper('parseBlob', ParseBlobJSR);
+  } else {
+    lib.addHelper('hashMD5', HashMD5);
+
+    lib.addHelper('serializeBlob', SerializeBlob);
+    lib.addHelper('parseBlob', ParseBlob);
+  }
 
   return lib;
 }

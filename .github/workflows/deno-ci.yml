@@ -14,16 +14,11 @@ jobs:
       fail-fast: false
       matrix:
         deno-version:
-        - v1.22
-        - v1.24
-        - v1.26
-        - v1.28
-        - v1.30
-        - v1.35
-        - v1.40
-        - v1.45
         - v2.0
-        - canary
+        - v2.1
+        - v2.2
+        - v2.3
+        - v2.4
 
     steps:
     - name: Checkout source
@@ -69,8 +64,10 @@ jobs:
       fail-fast: false
       matrix:
         deno-version:
-        - v2.0
-        - canary
+        - v2.1
+        - v2.2
+        - v2.3
+        - v2.4
 
     steps:
     - name: Checkout source
@@ -101,11 +98,11 @@ jobs:
     strategy:
       matrix:
         deno-version:
-        - v1.35
-        - v1.40
-        - v1.45
         - v2.0
-        - canary
+        - v2.1
+        - v2.2
+        - v2.3
+        - v2.4
       fail-fast: false # run each branch to completion
 
     steps:
@@ -146,7 +143,7 @@ jobs:
     strategy:
       matrix:
         deno-version:
-        - v2.0
+        - v2.4
 
     steps:
     - name: Checkout source

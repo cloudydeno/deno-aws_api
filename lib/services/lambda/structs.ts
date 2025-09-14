@@ -24,6 +24,8 @@ export interface AddPermissionRequest {
   EventSourceToken?: string | null;
   Qualifier?: string | null;
   RevisionId?: string | null;
+  PrincipalOrgID?: string | null;
+  FunctionUrlAuthType?: FunctionUrlAuthType | null;
 }
 
 // refs: 1 - tags: named, input
@@ -63,6 +65,11 @@ export interface CreateEventSourceMappingRequest {
   SourceAccessConfigurations?: SourceAccessConfiguration[] | null;
   SelfManagedEventSource?: SelfManagedEventSource | null;
   FunctionResponseTypes?: FunctionResponseType[] | null;
+  AmazonManagedKafkaEventSourceConfig?: AmazonManagedKafkaEventSourceConfig | null;
+  SelfManagedKafkaEventSourceConfig?: SelfManagedKafkaEventSourceConfig | null;
+  ScalingConfig?: ScalingConfig | null;
+  DocumentDBEventSourceConfig?: DocumentDBEventSourceConfig | null;
+  KMSKeyArn?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -88,6 +95,18 @@ export interface CreateFunctionRequest {
   ImageConfig?: ImageConfig | null;
   CodeSigningConfigArn?: string | null;
   Architectures?: Architecture[] | null;
+  EphemeralStorage?: EphemeralStorage | null;
+  SnapStart?: SnapStart | null;
+  LoggingConfig?: LoggingConfig | null;
+}
+
+// refs: 1 - tags: named, input
+export interface CreateFunctionUrlConfigRequest {
+  FunctionName: string;
+  Qualifier?: string | null;
+  AuthType: FunctionUrlAuthType;
+  Cors?: Cors | null;
+  InvokeMode?: InvokeMode | null;
 }
 
 // refs: 1 - tags: named, input
@@ -124,6 +143,12 @@ export interface DeleteFunctionConcurrencyRequest {
 
 // refs: 1 - tags: named, input
 export interface DeleteFunctionEventInvokeConfigRequest {
+  FunctionName: string;
+  Qualifier?: string | null;
+}
+
+// refs: 1 - tags: named, input
+export interface DeleteFunctionUrlConfigRequest {
   FunctionName: string;
   Qualifier?: string | null;
 }
@@ -185,6 +210,17 @@ export interface GetFunctionEventInvokeConfigRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface GetFunctionRecursionConfigRequest {
+  FunctionName: string;
+}
+
+// refs: 1 - tags: named, input
+export interface GetFunctionUrlConfigRequest {
+  FunctionName: string;
+  Qualifier?: string | null;
+}
+
+// refs: 1 - tags: named, input
 export interface GetLayerVersionRequest {
   LayerName: string;
   VersionNumber: number;
@@ -214,6 +250,12 @@ export interface GetProvisionedConcurrencyConfigRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface GetRuntimeManagementConfigRequest {
+  FunctionName: string;
+  Qualifier?: string | null;
+}
+
+// refs: 1 - tags: named, input
 export interface InvocationRequest {
   FunctionName: string;
   InvocationType?: InvocationType | null;
@@ -227,6 +269,16 @@ export interface InvocationRequest {
 export interface InvokeAsyncRequest {
   FunctionName: string;
   InvokeArgs: Uint8Array | string;
+}
+
+// refs: 1 - tags: named, input
+export interface InvokeWithResponseStreamRequest {
+  FunctionName: string;
+  InvocationType?: ResponseStreamingInvocationType | null;
+  LogType?: LogType | null;
+  ClientContext?: string | null;
+  Qualifier?: string | null;
+  Payload?: Uint8Array | string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -253,6 +305,13 @@ export interface ListEventSourceMappingsRequest {
 
 // refs: 1 - tags: named, input
 export interface ListFunctionEventInvokeConfigsRequest {
+  FunctionName: string;
+  Marker?: string | null;
+  MaxItems?: number | null;
+}
+
+// refs: 1 - tags: named, input
+export interface ListFunctionUrlConfigsRequest {
   FunctionName: string;
   Marker?: string | null;
   MaxItems?: number | null;
@@ -349,10 +408,24 @@ export interface PutFunctionEventInvokeConfigRequest {
 }
 
 // refs: 1 - tags: named, input
+export interface PutFunctionRecursionConfigRequest {
+  FunctionName: string;
+  RecursiveLoop: RecursiveLoop;
+}
+
+// refs: 1 - tags: named, input
 export interface PutProvisionedConcurrencyConfigRequest {
   FunctionName: string;
   Qualifier: string;
   ProvisionedConcurrentExecutions: number;
+}
+
+// refs: 1 - tags: named, input
+export interface PutRuntimeManagementConfigRequest {
+  FunctionName: string;
+  Qualifier?: string | null;
+  UpdateRuntimeOn: UpdateRuntimeOn;
+  RuntimeVersionArn?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -417,6 +490,9 @@ export interface UpdateEventSourceMappingRequest {
   SourceAccessConfigurations?: SourceAccessConfiguration[] | null;
   TumblingWindowInSeconds?: number | null;
   FunctionResponseTypes?: FunctionResponseType[] | null;
+  ScalingConfig?: ScalingConfig | null;
+  DocumentDBEventSourceConfig?: DocumentDBEventSourceConfig | null;
+  KMSKeyArn?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -451,6 +527,9 @@ export interface UpdateFunctionConfigurationRequest {
   Layers?: string[] | null;
   FileSystemConfigs?: FileSystemConfig[] | null;
   ImageConfig?: ImageConfig | null;
+  EphemeralStorage?: EphemeralStorage | null;
+  SnapStart?: SnapStart | null;
+  LoggingConfig?: LoggingConfig | null;
 }
 
 // refs: 1 - tags: named, input
@@ -460,6 +539,15 @@ export interface UpdateFunctionEventInvokeConfigRequest {
   MaximumRetryAttempts?: number | null;
   MaximumEventAgeInSeconds?: number | null;
   DestinationConfig?: DestinationConfig | null;
+}
+
+// refs: 1 - tags: named, input
+export interface UpdateFunctionUrlConfigRequest {
+  FunctionName: string;
+  Qualifier?: string | null;
+  AuthType?: FunctionUrlAuthType | null;
+  Cors?: Cors | null;
+  InvokeMode?: InvokeMode | null;
 }
 
 // refs: 1 - tags: named, output
@@ -513,6 +601,12 @@ export interface EventSourceMappingConfiguration {
   MaximumRetryAttempts?: number | null;
   TumblingWindowInSeconds?: number | null;
   FunctionResponseTypes?: FunctionResponseType[] | null;
+  AmazonManagedKafkaEventSourceConfig?: AmazonManagedKafkaEventSourceConfig | null;
+  SelfManagedKafkaEventSourceConfig?: SelfManagedKafkaEventSourceConfig | null;
+  ScalingConfig?: ScalingConfig | null;
+  DocumentDBEventSourceConfig?: DocumentDBEventSourceConfig | null;
+  KMSKeyArn?: string | null;
+  FilterCriteriaError?: FilterCriteriaError | null;
 }
 
 // refs: 4 - tags: named, output, interface
@@ -549,6 +643,20 @@ export interface FunctionConfiguration {
   SigningProfileVersionArn?: string | null;
   SigningJobArn?: string | null;
   Architectures?: Architecture[] | null;
+  EphemeralStorage?: EphemeralStorage | null;
+  SnapStart?: SnapStartResponse | null;
+  RuntimeVersionConfig?: RuntimeVersionConfig | null;
+  LoggingConfig?: LoggingConfig | null;
+}
+
+// refs: 1 - tags: named, output
+export interface CreateFunctionUrlConfigResponse {
+  FunctionUrl: string;
+  FunctionArn: string;
+  AuthType: FunctionUrlAuthType;
+  Cors?: Cors | null;
+  CreationTime: string;
+  InvokeMode?: InvokeMode | null;
 }
 
 // refs: 1 - tags: named, output
@@ -591,6 +699,22 @@ export interface FunctionEventInvokeConfig {
 }
 
 // refs: 1 - tags: named, output
+export interface GetFunctionRecursionConfigResponse {
+  RecursiveLoop?: RecursiveLoop | null;
+}
+
+// refs: 1 - tags: named, output
+export interface GetFunctionUrlConfigResponse {
+  FunctionUrl: string;
+  FunctionArn: string;
+  AuthType: FunctionUrlAuthType;
+  Cors?: Cors | null;
+  CreationTime: string;
+  LastModifiedTime: string;
+  InvokeMode?: InvokeMode | null;
+}
+
+// refs: 1 - tags: named, output
 export interface GetLayerVersionResponse {
   Content?: LayerVersionContentOutput | null;
   LayerArn?: string | null;
@@ -626,6 +750,13 @@ export interface GetProvisionedConcurrencyConfigResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface GetRuntimeManagementConfigResponse {
+  UpdateRuntimeOn?: UpdateRuntimeOn | null;
+  RuntimeVersionArn?: string | null;
+  FunctionArn?: string | null;
+}
+
+// refs: 1 - tags: named, output
 export interface InvocationResponse {
   StatusCode?: number | null;
   FunctionError?: string | null;
@@ -637,6 +768,14 @@ export interface InvocationResponse {
 // refs: 1 - tags: named, output
 export interface InvokeAsyncResponse {
   Status?: number | null;
+}
+
+// refs: 1 - tags: named, output, eventstream
+export interface InvokeWithResponseStreamResponse {
+  StatusCode?: number | null;
+  ExecutedVersion?: string | null;
+  EventStream?: InvokeWithResponseStreamResponseEvent | null;
+  ResponseStreamContentType?: string | null;
 }
 
 // refs: 1 - tags: named, output
@@ -660,6 +799,12 @@ export interface ListEventSourceMappingsResponse {
 // refs: 1 - tags: named, output
 export interface ListFunctionEventInvokeConfigsResponse {
   FunctionEventInvokeConfigs?: FunctionEventInvokeConfig[] | null;
+  NextMarker?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface ListFunctionUrlConfigsResponse {
+  FunctionUrlConfigs: FunctionUrlConfig[];
   NextMarker?: string | null;
 }
 
@@ -729,6 +874,11 @@ export interface Concurrency {
 }
 
 // refs: 1 - tags: named, output
+export interface PutFunctionRecursionConfigResponse {
+  RecursiveLoop?: RecursiveLoop | null;
+}
+
+// refs: 1 - tags: named, output
 export interface PutProvisionedConcurrencyConfigResponse {
   RequestedProvisionedConcurrentExecutions?: number | null;
   AvailableProvisionedConcurrentExecutions?: number | null;
@@ -739,9 +889,33 @@ export interface PutProvisionedConcurrencyConfigResponse {
 }
 
 // refs: 1 - tags: named, output
+export interface PutRuntimeManagementConfigResponse {
+  UpdateRuntimeOn: UpdateRuntimeOn;
+  FunctionArn: string;
+  RuntimeVersionArn?: string | null;
+}
+
+// refs: 1 - tags: named, output
 export interface UpdateCodeSigningConfigResponse {
   CodeSigningConfig: CodeSigningConfig;
 }
+
+// refs: 1 - tags: named, output
+export interface UpdateFunctionUrlConfigResponse {
+  FunctionUrl: string;
+  FunctionArn: string;
+  AuthType: FunctionUrlAuthType;
+  Cors?: Cors | null;
+  CreationTime: string;
+  LastModifiedTime: string;
+  InvokeMode?: InvokeMode | null;
+}
+
+// refs: 7 - tags: input, named, enum, output
+export type FunctionUrlAuthType =
+| "NONE"
+| "AWS_IAM"
+| cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: input, named, interface, output
 export interface AliasRoutingConfiguration {
@@ -830,6 +1004,34 @@ export type FunctionResponseType =
 | "ReportBatchItemFailures"
 | cmnP.UnexpectedEnumValue;
 
+// refs: 3 - tags: input, named, interface, output
+export interface AmazonManagedKafkaEventSourceConfig {
+  ConsumerGroupId?: string | null;
+}
+
+// refs: 3 - tags: input, named, interface, output
+export interface SelfManagedKafkaEventSourceConfig {
+  ConsumerGroupId?: string | null;
+}
+
+// refs: 4 - tags: input, named, interface, output
+export interface ScalingConfig {
+  MaximumConcurrency?: number | null;
+}
+
+// refs: 4 - tags: input, named, interface, output
+export interface DocumentDBEventSourceConfig {
+  DatabaseName?: string | null;
+  CollectionName?: string | null;
+  FullDocument?: FullDocument | null;
+}
+
+// refs: 4 - tags: input, named, enum, output
+export type FullDocument =
+| "UpdateLookup"
+| "Default"
+| cmnP.UnexpectedEnumValue;
+
 // refs: 13 - tags: input, named, enum, output
 export type Runtime =
 | "nodejs"
@@ -839,6 +1041,7 @@ export type Runtime =
 | "nodejs10.x"
 | "nodejs12.x"
 | "nodejs14.x"
+| "nodejs16.x"
 | "java8"
 | "java8.al2"
 | "java11"
@@ -851,12 +1054,24 @@ export type Runtime =
 | "dotnetcore2.0"
 | "dotnetcore2.1"
 | "dotnetcore3.1"
+| "dotnet6"
+| "dotnet8"
 | "nodejs4.3-edge"
 | "go1.x"
 | "ruby2.5"
 | "ruby2.7"
 | "provided"
 | "provided.al2"
+| "nodejs18.x"
+| "python3.10"
+| "java17"
+| "ruby3.2"
+| "ruby3.3"
+| "python3.11"
+| "nodejs20.x"
+| "provided.al2023"
+| "python3.12"
+| "java21"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, interface
@@ -872,6 +1087,7 @@ export interface FunctionCode {
 export interface VpcConfig {
   SubnetIds?: string[] | null;
   SecurityGroupIds?: string[] | null;
+  Ipv6AllowedForDualStack?: boolean | null;
 }
 
 // refs: 5 - tags: input, named, enum, output
@@ -920,6 +1136,69 @@ export type Architecture =
 | "arm64"
 | cmnP.UnexpectedEnumValue;
 
+// refs: 6 - tags: input, named, interface, output
+export interface EphemeralStorage {
+  Size: number;
+}
+
+// refs: 2 - tags: input, named, interface
+export interface SnapStart {
+  ApplyOn?: SnapStartApplyOn | null;
+}
+
+// refs: 6 - tags: input, named, enum, output
+export type SnapStartApplyOn =
+| "PublishedVersions"
+| "None"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 6 - tags: input, named, interface, output
+export interface LoggingConfig {
+  LogFormat?: LogFormat | null;
+  ApplicationLogLevel?: ApplicationLogLevel | null;
+  SystemLogLevel?: SystemLogLevel | null;
+  LogGroup?: string | null;
+}
+
+// refs: 6 - tags: input, named, enum, output
+export type LogFormat =
+| "JSON"
+| "Text"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 6 - tags: input, named, enum, output
+export type ApplicationLogLevel =
+| "TRACE"
+| "DEBUG"
+| "INFO"
+| "WARN"
+| "ERROR"
+| "FATAL"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 6 - tags: input, named, enum, output
+export type SystemLogLevel =
+| "DEBUG"
+| "INFO"
+| "WARN"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 6 - tags: input, named, interface, output
+export interface Cors {
+  AllowCredentials?: boolean | null;
+  AllowHeaders?: string[] | null;
+  AllowMethods?: string[] | null;
+  AllowOrigins?: string[] | null;
+  ExposeHeaders?: string[] | null;
+  MaxAge?: number | null;
+}
+
+// refs: 6 - tags: input, named, enum, output
+export type InvokeMode =
+| "BUFFERED"
+| "RESPONSE_STREAM"
+| cmnP.UnexpectedEnumValue;
+
 // refs: 1 - tags: input, named, enum
 export type InvocationType =
 | "Event"
@@ -927,10 +1206,16 @@ export type InvocationType =
 | "DryRun"
 | cmnP.UnexpectedEnumValue;
 
-// refs: 1 - tags: input, named, enum
+// refs: 2 - tags: input, named, enum
 export type LogType =
 | "None"
 | "Tail"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 1 - tags: input, named, enum
+export type ResponseStreamingInvocationType =
+| "RequestResponse"
+| "DryRun"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 1 - tags: input, named, enum
@@ -946,6 +1231,19 @@ export interface LayerVersionContentInput {
   ZipFile?: Uint8Array | string | null;
 }
 
+// refs: 3 - tags: input, named, enum, output
+export type RecursiveLoop =
+| "Allow"
+| "Terminate"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 3 - tags: input, named, enum, output
+export type UpdateRuntimeOn =
+| "Auto"
+| "Manual"
+| "FunctionUpdate"
+| cmnP.UnexpectedEnumValue;
+
 // refs: 4 - tags: output, named, interface
 export interface CodeSigningConfig {
   CodeSigningConfigId: string;
@@ -956,11 +1254,18 @@ export interface CodeSigningConfig {
   LastModified: string;
 }
 
+// refs: 2 - tags: output, named, interface
+export interface FilterCriteriaError {
+  ErrorCode?: string | null;
+  Message?: string | null;
+}
+
 // refs: 4 - tags: output, named, interface
 export interface VpcConfigResponse {
   SubnetIds?: string[] | null;
   SecurityGroupIds?: string[] | null;
   VpcId?: string | null;
+  Ipv6AllowedForDualStack?: boolean | null;
 }
 
 // refs: 4 - tags: output, named, interface
@@ -1011,6 +1316,17 @@ export type StateReasonCode =
 | "ImageDeleted"
 | "ImageAccessDenied"
 | "InvalidImage"
+| "KMSKeyAccessDenied"
+| "KMSKeyNotFound"
+| "InvalidStateKMSKey"
+| "DisabledKMSKey"
+| "EFSIOError"
+| "EFSMountConnectivityError"
+| "EFSMountFailure"
+| "EFSMountTimeout"
+| "InvalidRuntime"
+| "InvalidZipFileException"
+| "FunctionError"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: output, named, enum
@@ -1032,6 +1348,17 @@ export type LastUpdateStatusReasonCode =
 | "ImageDeleted"
 | "ImageAccessDenied"
 | "InvalidImage"
+| "KMSKeyAccessDenied"
+| "KMSKeyNotFound"
+| "InvalidStateKMSKey"
+| "DisabledKMSKey"
+| "EFSIOError"
+| "EFSMountConnectivityError"
+| "EFSMountFailure"
+| "EFSMountTimeout"
+| "InvalidRuntime"
+| "InvalidZipFileException"
+| "FunctionError"
 | cmnP.UnexpectedEnumValue;
 
 // refs: 4 - tags: output, named, interface
@@ -1042,6 +1369,30 @@ export interface ImageConfigResponse {
 
 // refs: 4 - tags: output, named, interface
 export interface ImageConfigError {
+  ErrorCode?: string | null;
+  Message?: string | null;
+}
+
+// refs: 4 - tags: output, named, interface
+export interface SnapStartResponse {
+  ApplyOn?: SnapStartApplyOn | null;
+  OptimizationStatus?: SnapStartOptimizationStatus | null;
+}
+
+// refs: 4 - tags: output, named, enum
+export type SnapStartOptimizationStatus =
+| "On"
+| "Off"
+| cmnP.UnexpectedEnumValue;
+
+// refs: 4 - tags: output, named, interface
+export interface RuntimeVersionConfig {
+  RuntimeVersionArn?: string | null;
+  Error?: RuntimeVersionError | null;
+}
+
+// refs: 4 - tags: output, named, interface
+export interface RuntimeVersionError {
   ErrorCode?: string | null;
   Message?: string | null;
 }
@@ -1084,6 +1435,35 @@ export type ProvisionedConcurrencyStatusEnum =
 | "READY"
 | "FAILED"
 | cmnP.UnexpectedEnumValue;
+
+// refs: 1 - tags: output, named, interface
+export interface InvokeWithResponseStreamResponseEvent {
+  PayloadChunk?: InvokeResponseStreamUpdate | null;
+  InvokeComplete?: InvokeWithResponseStreamCompleteEvent | null;
+}
+
+// refs: 1 - tags: output, named, interface
+export interface InvokeResponseStreamUpdate {
+  Payload?: Uint8Array | null;
+}
+
+// refs: 1 - tags: output, named, interface
+export interface InvokeWithResponseStreamCompleteEvent {
+  ErrorCode?: string | null;
+  ErrorDetails?: string | null;
+  LogResult?: string | null;
+}
+
+// refs: 1 - tags: output, named, interface
+export interface FunctionUrlConfig {
+  FunctionUrl: string;
+  FunctionArn: string;
+  CreationTime: string;
+  LastModifiedTime: string;
+  Cors?: Cors | null;
+  AuthType: FunctionUrlAuthType;
+  InvokeMode?: InvokeMode | null;
+}
 
 // refs: 2 - tags: output, named, interface
 export interface LayerVersionsListItem {

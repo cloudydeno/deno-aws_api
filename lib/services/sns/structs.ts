@@ -48,6 +48,7 @@ export interface CreateTopicInput {
   Name: string;
   Attributes?: { [key: string]: string | null | undefined } | null;
   Tags?: Tag[] | null;
+  DataProtectionPolicy?: string | null;
 }
 
 // refs: 1 - tags: named, input
@@ -68,6 +69,11 @@ export interface DeleteSMSSandboxPhoneNumberInput {
 // refs: 1 - tags: named, input
 export interface DeleteTopicInput {
   TopicArn: string;
+}
+
+// refs: 1 - tags: named, input
+export interface GetDataProtectionPolicyInput {
+  ResourceArn: string;
 }
 
 // refs: 1 - tags: named, input
@@ -169,6 +175,12 @@ export interface PublishBatchInput {
 }
 
 // refs: 1 - tags: named, input
+export interface PutDataProtectionPolicyInput {
+  ResourceArn: string;
+  DataProtectionPolicy: string;
+}
+
+// refs: 1 - tags: named, input
 export interface RemovePermissionInput {
   TopicArn: string;
   Label: string;
@@ -260,6 +272,11 @@ export interface CreateEndpointResponse {
 // refs: 1 - tags: named, output
 export interface CreateTopicResponse {
   TopicArn?: string | null;
+}
+
+// refs: 1 - tags: named, output
+export interface GetDataProtectionPolicyResponse {
+  DataProtectionPolicy?: string | null;
 }
 
 // refs: 1 - tags: named, output
