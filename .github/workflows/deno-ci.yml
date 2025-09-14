@@ -29,14 +29,15 @@ jobs:
       with:
         deno-version: ${{ matrix.deno-version }}
 
-    - name: Cache https:// deps
+    - name: Cache Deno deps
       uses: actions/cache@v4
       with:
-        path: |
-          ~/.cache/deno/deps/https
-          ~/.cache/deno/remote/https
+        path: ~/.cache/deno
         key: deno/${{ matrix.deno-version }}-https/v1-${{ github.sha }}
         restore-keys: deno/${{ matrix.deno-version }}-https/v1-
+
+    - name: 'Possibly reset lockfile'
+      run: deno install || rm deno.lock
 
     - name: Check client/mod.ts
       if: always()
@@ -108,14 +109,15 @@ jobs:
       with:
         deno-version: ${{ matrix.deno-version }}
 
-    - name: Cache https:// deps
+    - name: Cache Deno deps
       uses: actions/cache@v4
       with:
-        path: |
-          ~/.cache/deno/deps/https
-          ~/.cache/deno/remote/https
+        path: ~/.cache/deno
         key: deno/${{ matrix.deno-version }}-https/v1-${{ github.sha }}
         restore-keys: deno/${{ matrix.deno-version }}-https/v1-
+
+    - name: 'Possibly reset lockfile'
+      run: deno install || rm deno.lock
 
     - name: Check generation/deploy/mod.ts
       if: always()
@@ -146,14 +148,15 @@ jobs:
       with:
         deno-version: ${{ matrix.deno-version }}
 
-    - name: Cache https:// deps
+    - name: Cache Deno deps
       uses: actions/cache@v4
       with:
-        path: |
-          ~/.cache/deno/deps/https
-          ~/.cache/deno/remote/https
+        path: ~/.cache/deno
         key: deno/${{ matrix.deno-version }}-https/v1-${{ github.sha }}
         restore-keys: deno/${{ matrix.deno-version }}-https/v1-
+
+    - name: 'Possibly reset lockfile'
+      run: deno install || rm deno.lock
 
     - name: Validate aws-sdk fixtures
       if: always()
@@ -186,12 +189,10 @@ jobs:
       with:
         deno-version: ${{ matrix.deno-version }}
 
-    - name: Cache https:// deps
+    - name: Cache Deno deps
       uses: actions/cache@v4
       with:
-        path: |
-          ~/.cache/deno/deps/https
-          ~/.cache/deno/remote/https
+        path: ~/.cache/deno
         key: deno/${{ matrix.deno-version }}-https/v1-${{ github.sha }}
         restore-keys: deno/${{ matrix.deno-version }}-https/v1-
 
