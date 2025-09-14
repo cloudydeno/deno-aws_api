@@ -3,8 +3,8 @@
 import { AsyncTracer, Span } from "./tracer.ts";
 
 // can maybe replace this whole dep with deno edge cache once it's out of beta
-import type { Cache } from "https://deno.land/x/httpcache@0.1.2/mod.ts";
-import { inMemoryCache } from "https://deno.land/x/httpcache@0.1.2/in_memory.ts";
+import type { Cache } from "./httpcache/mod.ts";
+import { inMemoryCache } from "./httpcache/in_memory.ts";
 // import { s3Cache } from "./cache-s3.ts";
 import { platformCache } from "./cache-platform.ts";
 

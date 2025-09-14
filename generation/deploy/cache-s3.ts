@@ -1,4 +1,4 @@
-import { Cache } from "https://deno.land/x/httpcache@0.1.2/mod.ts";
+import { Cache } from "./httpcache/mod.ts";
 
 import { S3 } from "./s3-api.ts";
 import { AwsServiceError } from "../../lib/client/common.ts";
