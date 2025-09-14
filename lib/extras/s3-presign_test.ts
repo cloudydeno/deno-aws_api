@@ -1,4 +1,4 @@
-import { assertEquals } from "https://deno.land/std@0.177.0/testing/asserts.ts";
+import { assertEquals } from "@std/assert/equals";
 import { getPresignedUrl } from "./s3-presign.ts";
 
 const date = new Date('Fri, 24 May 2013 00:00:00 GMT')

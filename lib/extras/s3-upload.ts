@@ -1,6 +1,6 @@
 import { pooledMap } from "@std/async/pool";
 
-import {
+import type {
   PutObjectRequest, PutObjectOutput,
   CreateMultipartUploadRequest, CreateMultipartUploadOutput,
   UploadPartRequest, UploadPartOutput,

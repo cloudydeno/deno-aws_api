@@ -1,5 +1,5 @@
-import { type Credentials, DefaultCredentialsProvider, getDefaultRegion } from "../client/credentials.ts";
-import { AWSSignerV4 } from "../client/signing.ts";
+import { type Credentials, DefaultCredentialsProvider, getDefaultRegion } from "@cloudydeno/aws-api/client/credentials.ts";
+import { AWSSignerV4 } from "@cloudydeno/aws-api/client/signing.ts";
 
 export interface GetSignedUrlOptions {
   bucket: string;

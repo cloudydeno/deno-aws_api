@@ -12,6 +12,7 @@
     "@takker/md5": "jsr:@takker/md5@^0.1.0"
   },
   "exports": {
+    "./client/api-factory.ts": "./client/api-factory.ts",
     "./client/client.ts": "./client/client.ts",
     "./client/common.ts": "./client/common.ts",
     "./client/credentials.ts": "./client/credentials.ts",
@@ -42,7 +43,9 @@
   },
   "publish": {
     "exclude": [
-      "deps.ts",
+      "examples",
+      "demo.ts",
+      "demo-codegen.ts",
       ".github"
     ]
   }
