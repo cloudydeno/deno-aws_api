@@ -94,11 +94,14 @@ export interface ServiceClientExtras {
 // our understanding of how APIs can describe themselves
 export interface ApiMetadata {
   "apiVersion": string;
+  "auth"?: Array<"aws.auth#sigv4">;
+  "awsQueryCompatible"?: unknown; // seems to be bool-ish with `{}` as truthy value
   "checksumFormat"?: "md5" | "sha256";
   "endpointPrefix": string;
   "jsonVersion"?: "1.0" | "1.1",
   "globalEndpoint"?: string;
   "protocol": "rest-xml" | "query" | "ec2" | "json" | "rest-json";
+  "protocols"?: Array<"rest-xml" | "query" | "ec2" | "json" | "rest-json">;
   "protocolSettings"?: {
     "h2": "eventstream"; // only for kinesis
   };
