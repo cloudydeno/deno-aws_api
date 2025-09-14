@@ -55,6 +55,7 @@ export const Generations = new Map<string, ModuleGenerator>([
     'v2.895.0',
     new URLSearchParams([
       ['aws_api_root', 'https://deno.land/x/aws_api@v0.4.0'],
+      ['useStdJsr', 'no'],
       ['includeOpts', 'no'],
       ['includeJsonRemap', 'no'],
       ['includeClientExtras', 'no'],
@@ -70,6 +71,7 @@ export const Generations = new Map<string, ModuleGenerator>([
     'v2.971.0',
     new URLSearchParams([
       ['aws_api_root', 'https://deno.land/x/aws_api@v0.5.0'],
+      ['useStdJsr', 'no'],
       ['includeJsonRemap', 'no'],
       ['includeClientExtras', 'no'],
       ['useAuthType', 'no'],
@@ -84,6 +86,7 @@ export const Generations = new Map<string, ModuleGenerator>([
     'v2.1060.0',
     new URLSearchParams([
       ['aws_api_root', 'https://deno.land/x/aws_api@v0.6.0'],
+      ['useStdJsr', 'no'],
       ['streamingResponses', 'no'],
       ['docs', 'short'],
     ]),
@@ -94,6 +97,7 @@ export const Generations = new Map<string, ModuleGenerator>([
     'v2.1323.0', // https://github.com/aws/aws-sdk-js/releases
     new URLSearchParams([
       ['aws_api_root', 'https://deno.land/x/aws_api@v0.8.1'],
+      ['useStdJsr', 'no'],
       ['docs', 'short'],
     ]),
     (config, opts) => new LatestCodeGen(config, opts),
