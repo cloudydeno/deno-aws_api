@@ -1127,7 +1127,9 @@ export class S3 {
     if (params["SSECustomerKeyMD5"] != null) headers.append("x-amz-server-side-encryption-customer-key-MD5", params["SSECustomerKeyMD5"]);
     if (params["RequestPayer"] != null) headers.append("x-amz-request-payer", params["RequestPayer"]);
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
-    headers.append("x-amz-object-attributes", params["ObjectAttributes"]);
+    for (const item of params["ObjectAttributes"] ?? []) {
+      query.append("x-amz-object-attributes", item);
+    }
     const resp = await this.#client.performRequest({
       opts, headers, query,
       action: "GetObjectAttributes",
@@ -1554,7 +1556,9 @@ export class S3 {
     if (params["VersionIdMarker"] != null) query.set("version-id-marker", params["VersionIdMarker"]?.toString() ?? "");
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
     if (params["RequestPayer"] != null) headers.append("x-amz-request-payer", params["RequestPayer"]);
-    if (params["OptionalObjectAttributes"] != null) headers.append("x-amz-optional-object-attributes", params["OptionalObjectAttributes"]);
+    for (const item of params["OptionalObjectAttributes"] ?? []) {
+      query.append("x-amz-optional-object-attributes", item);
+    }
     const resp = await this.#client.performRequest({
       opts, headers, query,
       action: "ListObjectVersions",
@@ -1591,7 +1595,9 @@ export class S3 {
     if (params["Prefix"] != null) query.set("prefix", params["Prefix"]?.toString() ?? "");
     if (params["RequestPayer"] != null) headers.append("x-amz-request-payer", params["RequestPayer"]);
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
-    if (params["OptionalObjectAttributes"] != null) headers.append("x-amz-optional-object-attributes", params["OptionalObjectAttributes"]);
+    for (const item of params["OptionalObjectAttributes"] ?? []) {
+      query.append("x-amz-optional-object-attributes", item);
+    }
     const resp = await this.#client.performRequest({
       opts, headers, query,
       action: "ListObjects",
@@ -1629,7 +1635,9 @@ export class S3 {
     if (params["StartAfter"] != null) query.set("start-after", params["StartAfter"]?.toString() ?? "");
     if (params["RequestPayer"] != null) headers.append("x-amz-request-payer", params["RequestPayer"]);
     if (params["ExpectedBucketOwner"] != null) headers.append("x-amz-expected-bucket-owner", params["ExpectedBucketOwner"]);
-    if (params["OptionalObjectAttributes"] != null) headers.append("x-amz-optional-object-attributes", params["OptionalObjectAttributes"]);
+    for (const item of params["OptionalObjectAttributes"] ?? []) {
+      query.append("x-amz-optional-object-attributes", item);
+    }
     const resp = await this.#client.performRequest({
       opts, headers, query,
       action: "ListObjectsV2",

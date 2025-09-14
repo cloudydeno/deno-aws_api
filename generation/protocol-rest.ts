@@ -67,10 +67,11 @@ export default class ProtocolRestCodegen {
           }
           break;
         case 'header':
-          let formattedRef = paramRef; // + ' ?? null';
-          switch (shape.spec.type) {
+          let formattedRef = shape.spec.type == 'list' ? 'item' : paramRef;
+          const headerShape = shape.spec.type == 'list' ? this.shapes.get(shape.spec.member) : shape;
+          switch (headerShape.spec.type) {
             case 'timestamp': {
-              const format  = spec.timestampFormat ?? shape.spec.timestampFormat ?? 'rfc822';
+              const format  = spec.timestampFormat ?? headerShape.spec.timestampFormat ?? 'rfc822';
               formattedRef = `cmnP.serializeDate_${format}(${formattedRef})${format === 'unixTimestamp' ? '?.toString()' : ''} ?? ""`;
               this.helpers.useHelper("cmnP");
               break;
@@ -98,8 +99,16 @@ export default class ProtocolRestCodegen {
                 break;
               }
               break;
+            default:
+              throw new Error(`TODO: unhandled input header list type ${headerShape.spec.type}`);
             }
-          chunks.push(`    ${isRequired ? '' : `if (${paramRef} != null) `}headers.append(${JSON.stringify(/*spec.queryName ?? */locationName)}, ${formattedRef});`);
+          if (shape.spec.type == 'list') {
+            chunks.push(`    for (const item of ${paramRef} ?? []) {`);
+            chunks.push(`      query.append(${JSON.stringify(locationName)}, ${formattedRef});`);
+            chunks.push(`    }`);
+          } else {
+            chunks.push(`    ${isRequired ? '' : `if (${paramRef} != null) `}headers.append(${JSON.stringify(locationName)}, ${formattedRef});`);
+          }
           break;
         case 'headers': {
           if (shape.spec.type !== 'map') throw new Error(`rest input headers not map`);
