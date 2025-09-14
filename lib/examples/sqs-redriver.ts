@@ -6,10 +6,10 @@ import { SQS } from '../services/sqs/mod.ts';
 const sqs = new ApiFactory().makeNew(SQS);
 
 // we'll be taking input
-import { parse as parseFlags } from "https://deno.land/std@0.177.0/flags/mod.ts";
-import Ask from 'https://deno.land/x/ask@1.0.6/mod.ts';
+import { parseArgs } from "@std/cli";
+import { Ask } from '@sallai/ask';
 
-let { dlq, target, automatic } = parseFlags(Deno.args, {
+let { dlq, target, automatic } = parseArgs(Deno.args, {
   string: ['dlq', 'target'],
   boolean: ['automatic'],
   default: { automatic: false },

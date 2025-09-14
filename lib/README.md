@@ -266,17 +266,7 @@ All API definitions are current as of [aws-sdk-js `v2.1692.0`](https://github.co
 
 | Class | Module | Protocol |
 | --- | --- | --- |
-| `CloudWatch` | `cloudwatch/mod.ts` | query |
-| `DynamoDB` | `dynamodb/mod.ts` | json |
-| `ECR` | `ecr/mod.ts` | json |
-| `Kinesis` | `kinesis/mod.ts` | json |
-| `KMS` | `kms/mod.ts` | json |
-| `Lambda` | `lambda/mod.ts` | rest-json |
 | `Route53` | `route53/mod.ts` | rest-xml |
-| `S3` | `s3/mod.ts` | rest-xml |
-| `SESV2` | `sesv2/mod.ts` | rest-json |
-| `SNS` | `sns/mod.ts` | query |
-| `SQS` | `sqs/mod.ts` | query |
 | `STS` | `sts/mod.ts` | query |
 
 [//]: # (Generated Content Barrier)

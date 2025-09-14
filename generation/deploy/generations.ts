@@ -17,7 +17,6 @@ interface CodeGen {
 
 export class ModuleGenerator {
   constructor(
-    public readonly stdModRoot: string,
     public readonly sdkVersion: string,
     public readonly defaults: URLSearchParams,
     public readonly codegenConstr: (config: ApiSpecsBundle, opts: URLSearchParams) => CodeGen,
@@ -42,72 +41,72 @@ export class ModuleGenerator {
 
     const codeGen = this.codegenConstr(opts.apiSpecs, fullOptions);
     return codeGen.generateTypescript(opts.className)
-      // TODO: intentionally excluding md5 imports, as it was removed from std later on
-      .replaceAll(/from "https:\/\/deno.land\/std@[0-9.]+\/([^"]+)/g, (orig, pkg) => pkg.includes('md5') ? orig : `from "${this.stdModRoot}/${pkg}`)
-      .replaceAll('from "../../', `from "${fullOptions.get('aws_api_root')}/`);
   }
 }
 
 // Newest versions come first
 export const Generations = new Map<string, ModuleGenerator>([
   ['v0.1', new ModuleGenerator(
-    'https://deno.land/std@0.95.0',
     'v2.895.0',
     new URLSearchParams([
+      ['std_mod_root', 'https://deno.land/std@0.95.0'],
       ['aws_api_root', 'https://deno.land/x/aws_api@v0.4.0'],
-      ['useStdJsr', 'no'],
+      ['useJsr', 'no'],
       ['includeOpts', 'no'],
       ['includeJsonRemap', 'no'],
       ['includeClientExtras', 'no'],
       ['useAuthType', 'no'],
       ['alwaysReqLists', 'yes'],
       ['streamingResponses', 'no'],
+      ['useImportMap', 'no'],
       ['docs', 'none'],
     ]),
     (config, opts) => new LatestCodeGen(config, opts),
   )],
   ['v0.2', new ModuleGenerator(
-    'https://deno.land/std@0.105.0',
     'v2.971.0',
     new URLSearchParams([
+      ['std_mod_root', 'https://deno.land/std@0.105.0'],
       ['aws_api_root', 'https://deno.land/x/aws_api@v0.5.0'],
-      ['useStdJsr', 'no'],
+      ['useJsr', 'no'],
       ['includeJsonRemap', 'no'],
       ['includeClientExtras', 'no'],
       ['useAuthType', 'no'],
       ['alwaysReqLists', 'yes'],
       ['streamingResponses', 'no'],
+      ['useImportMap', 'no'],
       ['docs', 'none'],
     ]),
     (config, opts) => new LatestCodeGen(config, opts),
   )],
   ['v0.3', new ModuleGenerator(
-    'https://deno.land/std@0.120.0',
     'v2.1060.0',
     new URLSearchParams([
+      ['std_mod_root', 'https://deno.land/std@0.120.0'],
       ['aws_api_root', 'https://deno.land/x/aws_api@v0.6.0'],
-      ['useStdJsr', 'no'],
+      ['useJsr', 'no'],
       ['streamingResponses', 'no'],
+      ['useImportMap', 'no'],
       ['docs', 'short'],
     ]),
     (config, opts) => new LatestCodeGen(config, opts),
   )],
   ['v0.4', new ModuleGenerator(
-    'https://deno.land/std@0.177.0',
     'v2.1323.0',
     new URLSearchParams([
+      ['std_mod_root', 'https://deno.land/std@0.177.0'],
       ['aws_api_root', 'https://deno.land/x/aws_api@v0.8.1'],
-      ['useStdJsr', 'no'],
+      ['useJsr', 'no'],
+      ['useImportMap', 'no'],
       ['docs', 'short'],
     ]),
     (config, opts) => new LatestCodeGen(config, opts),
   )],
   ['v0.5', new ModuleGenerator(
-    'std',
     'v2.1692.0', // Final version before https://github.com/aws/aws-sdk-js reached EOL
     new URLSearchParams([
-      ['aws_api_root', 'https://deno.land/x/aws_api@v0.8.1'],
-      // TODO: ['aws_api_root', 'jsr:@cloudydeno/aws-api@'],
+      ['aws_api_root', 'jsr:@cloudydeno/aws-api@v0.9.0'],
+      ['useImportMap', 'no'],
       ['docs', 'short'],
     ]),
     (config, opts) => new LatestCodeGen(config, opts),

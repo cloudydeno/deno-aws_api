@@ -1,11 +1,15 @@
 {
-  "name": "@cloudydeno/aws-api-client",
+  "name": "@cloudydeno/aws-api",
   "version": "0.9.0",
   "license": "Apache-2.0",
   "imports": {
-    "./deps.ts": "./deps_jsr.ts",
+    "@cloudydeno/stream-observables": "jsr:@cloudydeno/stream-observables@^1.4.1",
+    "@sallai/ask": "jsr:@sallai/ask@^2.0.2",
     "@std/assert": "jsr:@std/assert@^1.0.14",
-    "@std/async": "jsr:@std/async@^1.0.14"
+    "@std/async": "jsr:@std/async@^1.0.14",
+    "@std/cli": "jsr:@std/cli@^1.0.22",
+    "@std/encoding": "jsr:@std/encoding@^1.0.10",
+    "@takker/md5": "jsr:@takker/md5@^0.1.0"
   },
   "exports": {
     "./client/client.ts": "./client/client.ts",
