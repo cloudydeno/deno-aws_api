@@ -56,6 +56,36 @@ jobs:
         lib/encoding/
         lib/extras/
 
+  check-publish:
+    runs-on: ubuntu-latest
+    name: Check JSR Publish
+
+    steps:
+    - uses: denoland/setup-deno@v2
+    - uses: actions/checkout@v5
+
+    - name: Check publish rules
+      run: deno publish --dry-run --allow-dirty
+
+  publish:
+    runs-on: ubuntu-latest
+    name: JSR Publish
+    needs:
+    - build
+    - check-publish
+    if: github.event_name == 'push'
+
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+    - uses: denoland/setup-deno@v2
+    - uses: actions/checkout@v5
+
+    - name: Publish now
+      run: deno publish
+
   build-web-service:
     runs-on: ubuntu-latest
 

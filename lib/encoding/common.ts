@@ -38,26 +38,26 @@ export function readBool(raw: string | null | undefined): boolean | null | undef
 }
 
 
-export function serializeDate_unixTimestamp(input: Date | number | null | undefined) {
+export function serializeDate_unixTimestamp(input: Date | number | null | undefined): number | null | undefined {
   if (input == null) return input;
   const date = typeof input === 'number' ? new Date(input*1000) : input;
   return Math.floor(date.valueOf() / 1000);
 }
 
-export function serializeDate_iso8601(input: Date | number | null | undefined) {
+export function serializeDate_iso8601(input: Date | number | null | undefined): string | null | undefined {
   if (input == null) return input;
   const date = typeof input === 'number' ? new Date(input*1000) : input;
   return date.toISOString().replace(/\.000Z$/, 'Z');
 }
 
-export function serializeDate_rfc822(input: Date | number | null | undefined) {
+export function serializeDate_rfc822(input: Date | number | null | undefined): string | null | undefined {
   if (input == null) return input;
   const date = typeof input === 'number' ? new Date(input*1000) : input;
   return date.toUTCString();
 }
 
 
-export function readTimestamp(str: string | null | undefined) {
+export function readTimestamp(str: string | null | undefined): Date | null | undefined {
   if (str == null) return str;
   const date =
       (str?.includes('T'))
@@ -70,7 +70,7 @@ export function readTimestamp(str: string | null | undefined) {
   return date;
 }
 
-export function readReqTimestamp(str: string | null | undefined) {
+export function readReqTimestamp(str: string | null | undefined): Date {
   if (str == null) throw new Error(`Expected timestamp from server. TODO: better error reporting`);
   const date =
       (str?.includes('T'))
@@ -104,7 +104,7 @@ export function toJsObj<T,U>(
 
 
 // Functions used in fixture testing
-export function testTransformJsObj(obj: {[key: string]: any}) {
+export function testTransformJsObj(obj: {[key: string]: any}): {[key: string]: any} {
   const res: {[key: string]: any} = Object.create(null);
   for (const [key, val] of Object.entries(obj)) {
     res[key] = testTransformJsVal(val);

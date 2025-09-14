@@ -109,13 +109,13 @@ export class BaseApiFactory implements ApiFactory {
     return wrapServiceClient(apiMetadata, signingFetcher);
   }
 
-  async ensureCredentialsAvailable() {
+  async ensureCredentialsAvailable(): Promise<void> {
     const creds = await this.#credentials.getCredentials();
     if (creds.awsAccessKeyId) return;
     throw new Error(`Empty credentials were returned successfully (somehow?)`);
   }
 
-  async determineCurrentRegion() {
+  async determineCurrentRegion(): Promise<string> {
     if (this.#region != null) return this.#region;
     const credentials = await this.#credentials.getCredentials();
     return credentials.region ?? throwMissingRegion();

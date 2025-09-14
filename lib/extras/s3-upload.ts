@@ -1,4 +1,4 @@
-import { pooledMap } from "https://deno.land/std@0.177.0/async/pool.ts";
+import { pooledMap } from "@std/async/pool";
 
 import {
   PutObjectRequest, PutObjectOutput,
@@ -32,41 +32,42 @@ export async function managedUpload(
     partSize?: number;
     leavePartsOnError?: boolean;
   },
-) {
+): Promise<CompleteMultipartUploadOutput> {
   let uploadId: string | null = null;
-  try {
-    const queueSize = config?.queueSize ?? 4;
-    const partSize = config?.partSize ?? (5*1024*1024);
 
-    let startUploadCall: Promise<string> | null = null;
-    async function uploadSegment(part: UploadPart) {
-      if (part.seqNumber == 1 && part.isFinal) {
-        // fast path: if object is smaller than partSize, simply upload in one go
-        const response = await s3.putObject({...params, Body: part.payload});
-        return { putObject: response };
-      }
-      if (!uploadId) {
-        // Only want to call createMultipartUpload once
-        if (!startUploadCall) {
-          startUploadCall = s3.createMultipartUpload(params).then(x => x.UploadId ?? '');
-        }
-        uploadId = await startUploadCall;
-      }
-      if (!uploadId) throw new Error(`No S3 multipart UploadId received from server`);
+  const queueSize = config?.queueSize ?? 4;
+  const partSize = config?.partSize ?? (5*1024*1024);
 
-      const partResp = await s3.uploadPart({
-        ...params,
-        UploadId: uploadId,
-        PartNumber: part.seqNumber,
-        Body: part.payload,
-      });
-      if (!partResp.ETag) throw new Error(`No S3 multipart segment ETag received from server`);
-      return { uploadPart: {
-        ETag: partResp.ETag,
-        PartNumber: part.seqNumber,
-      }};
+  let startUploadCall: Promise<string> | null = null;
+  async function uploadSegment(part: UploadPart) {
+    if (part.seqNumber == 1 && part.isFinal) {
+      // fast path: if object is smaller than partSize, simply upload in one go
+      const response = await s3.putObject({...params, Body: part.payload});
+      return { putObject: response };
     }
+    if (!uploadId) {
+      // Only want to call createMultipartUpload once
+      if (!startUploadCall) {
+        startUploadCall = s3.createMultipartUpload(params).then(x => x.UploadId ?? '');
+      }
+      uploadId = await startUploadCall;
+    }
+    if (!uploadId) throw new Error(`No S3 multipart UploadId received from server`);
 
+    const partResp = await s3.uploadPart({
+      ...params,
+      UploadId: uploadId,
+      PartNumber: part.seqNumber,
+      Body: part.payload,
+    });
+    if (!partResp.ETag) throw new Error(`No S3 multipart segment ETag received from server`);
+    return { uploadPart: {
+      ETag: partResp.ETag,
+      PartNumber: part.seqNumber,
+    }};
+  }
+
+  try {
     // Actually process the stream and do the transfers
     const segments = params.Body.pipeThrough(newPartSegmenter(partSize));
     const partEtags = new Array<CompletedPart>();
@@ -110,7 +111,7 @@ interface UploadPart {
   payload: Uint8Array;
   isFinal: boolean;
 }
-export function newPartSegmenter(partSize: number) {
+export function newPartSegmenter(partSize: number): TransformStream<Uint8Array, UploadPart> {
   let currentPart = new Uint8Array(partSize);
   let byteOffset = 0;
   let nextPartNum = 1;

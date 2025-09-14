@@ -135,7 +135,7 @@ export class AWSSignerV4 implements Signer {
       expiresIn?: number,
       signTime?: Date,
     },
-  ) {
+  ): Promise<string> {
     const url = new URL(props.url);
     const date = props.signTime ?? new Date();
     const algorithm = "AWS4-HMAC-SHA256";
@@ -171,7 +171,7 @@ export async function getSignatureKey(
   dateStamp: string,
   region: string,
   service: string,
-) {
+): Promise<Uint8Array> {
   const keyBytes = encoder.encode(key);
   const paddedKey = new Uint8Array(4 + keyBytes.byteLength);
   paddedKey.set(AWS4, 0);
@@ -184,7 +184,10 @@ export async function getSignatureKey(
   return mac;
 };
 
-export function canonicalizeRequest(method: string, url: string, headers: Headers, payloadHash: string) {
+export function canonicalizeRequest(method: string, url: string, headers: Headers, payloadHash: string): {
+  signedHeaders: string;
+  request: string;
+} {
   const { pathname, searchParams } = new URL(url);
   searchParams.sort();
   const canonicalQuerystring = searchParams.toString();

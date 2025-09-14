@@ -1,8 +1,10 @@
-import { assertEquals, assertThrows } from "https://deno.land/std@0.177.0/testing/asserts.ts";
+import { assertEquals } from "@std/assert/equals";
+import { assertThrows } from "@std/assert/throws";
+
 import type { ApiMetadata } from "./common.ts";
 import { AwsEndpointResolver, FixedBaseEndpointResolver, S3CompatibleEndpointResolver } from "./endpoints.ts";
 
-Deno.test('aws ec2 / use aws china partition', async () => {
+Deno.test('aws ec2 / use aws china partition', () => {
   const resolver = new AwsEndpointResolver();
 
   assertEquals(resolver.resolveUrl({
@@ -12,7 +14,7 @@ Deno.test('aws ec2 / use aws china partition', async () => {
   }).url.toString(), 'https://ec2.cn-none-1.amazonaws.com.cn/path');
 });
 
-Deno.test('aws ec2 / use aws iso partition', async () => {
+Deno.test('aws ec2 / use aws iso partition', () => {
   const resolver = new AwsEndpointResolver();
 
   assertEquals(resolver.resolveUrl({
@@ -22,7 +24,7 @@ Deno.test('aws ec2 / use aws iso partition', async () => {
   }).url.toString(), 'https://ec2.us-iso-none-1.c2s.ic.gov/path');
 });
 
-Deno.test('aws ec2 / opportunistic dualstack', async () => {
+Deno.test('aws ec2 / opportunistic dualstack', () => {
   const resolver = new AwsEndpointResolver();
 
   assertEquals(resolver.resolveUrl({
@@ -38,7 +40,7 @@ Deno.test('aws ec2 / opportunistic dualstack', async () => {
   }).url.toString(), 'https://ec2.na-none-1.amazonaws.com/path');
 });
 
-Deno.test('aws ec2 / allow disabling dualstack', async () => {
+Deno.test('aws ec2 / allow disabling dualstack', () => {
   const resolver = new AwsEndpointResolver({
     upgradeEndpoints: false,
   });
@@ -50,7 +52,7 @@ Deno.test('aws ec2 / allow disabling dualstack', async () => {
   }).url.toString(), 'https://ec2.us-east-2.amazonaws.com/path');
 });
 
-Deno.test('aws lambda / opportunistic dualstack', async () => {
+Deno.test('aws lambda / opportunistic dualstack', () => {
   assertEquals(new AwsEndpointResolver().resolveUrl({
     requestPath: '/path',
     region: 'us-east-2',
@@ -58,7 +60,7 @@ Deno.test('aws lambda / opportunistic dualstack', async () => {
   }).url.toString(), 'https://lambda.us-east-2.api.aws/path');
 });
 
-Deno.test('aws lambda / no dualstack in govcloud', async () => {
+Deno.test('aws lambda / no dualstack in govcloud', () => {
     assertEquals(new AwsEndpointResolver().resolveUrl({
     requestPath: '/path',
     region: 'us-gov-east-1',
@@ -66,7 +68,7 @@ Deno.test('aws lambda / no dualstack in govcloud', async () => {
   }).url.toString(), 'https://lambda.us-gov-east-1.amazonaws.com/path');
 });
 
-Deno.test('aws lambda / china endpoint', async () => {
+Deno.test('aws lambda / china endpoint', () => {
   assertEquals(new AwsEndpointResolver().resolveUrl({
     requestPath: '/path',
     region: 'cn-north-1',
@@ -74,7 +76,7 @@ Deno.test('aws lambda / china endpoint', async () => {
   }).url.toString(), 'https://lambda.cn-north-1.api.amazonwebservices.com.cn/path');
 });
 
-Deno.test('aws s3 / upgrades to host style routing', async () => {
+Deno.test('aws s3 / upgrades to host style routing', () => {
   const resolver = new AwsEndpointResolver();
 
   assertEquals(resolver.resolveUrl({
@@ -108,7 +110,7 @@ Deno.test('aws s3 / upgrades to host style routing', async () => {
   }).url.toString(), 'https://s3.dualstack.region.amazonaws.com/?query');
 });
 
-Deno.test('aws s3 / does not upgrade buckets with dots', async () => {
+Deno.test('aws s3 / does not upgrade buckets with dots', () => {
   const resolver = new AwsEndpointResolver();
 
   assertEquals(resolver.resolveUrl({
@@ -118,7 +120,7 @@ Deno.test('aws s3 / does not upgrade buckets with dots', async () => {
   }).url.toString(), 'https://s3.dualstack.us-east-2.amazonaws.com/dotted.bucket/key');
 });
 
-Deno.test('aws sts / uses global endpoint by default', async () => {
+Deno.test('aws sts / uses global endpoint by default', () => {
   const resolver = new AwsEndpointResolver();
 
   const endpoint = resolver.resolveUrl({
@@ -131,7 +133,7 @@ Deno.test('aws sts / uses global endpoint by default', async () => {
   assertEquals(endpoint.signingRegion, 'us-east-1');
 });
 
-Deno.test('aws sts / can use regional endpoint by request', async () => {
+Deno.test('aws sts / can use regional endpoint by request', () => {
   const resolver = new AwsEndpointResolver({
     forceRegional: true,
   });
@@ -146,7 +148,7 @@ Deno.test('aws sts / can use regional endpoint by request', async () => {
   assertEquals(endpoint.signingRegion, 'eu-west-1');
 });
 
-Deno.test('aws chime / non-standard global endpoint', async () => {
+Deno.test('aws chime / non-standard global endpoint', () => {
   const resolver = new AwsEndpointResolver();
 
   const endpoint = resolver.resolveUrl({
@@ -209,7 +211,7 @@ const apiMetadata: Record<string, ApiMetadata> = {
 
 
 
-Deno.test('s3 compat / basic assembly', async () => {
+Deno.test('s3 compat / basic assembly', () => {
   const resolver = new S3CompatibleEndpointResolver('vendor.tld');
 
   assertEquals(resolver.resolveUrl({
@@ -219,7 +221,7 @@ Deno.test('s3 compat / basic assembly', async () => {
   }).url.toString(), 'https://us-east-2.vendor.tld/');
 });
 
-Deno.test('s3 compat / virtual host upgrade', async () => {
+Deno.test('s3 compat / virtual host upgrade', () => {
   const resolver = new S3CompatibleEndpointResolver('vendor.tld');
 
   assertEquals(resolver.resolveUrl({
@@ -235,13 +237,13 @@ Deno.test('s3 compat / virtual host upgrade', async () => {
   }).url.toString(), 'https://us-east-2.vendor.tld/dotted.bucket/key');
 });
 
-Deno.test('s3 compat / validation', async () => {
+Deno.test('s3 compat / validation', () => {
   assertThrows(() => {
     new S3CompatibleEndpointResolver('http://localhost');
   }, Error, 'must be a naked domain name');
 });
 
-Deno.test('s3 compat / refuse non-S3', async () => {
+Deno.test('s3 compat / refuse non-S3', () => {
   const resolver = new S3CompatibleEndpointResolver('vendor.tld');
 
   assertThrows(() => {
@@ -255,7 +257,7 @@ Deno.test('s3 compat / refuse non-S3', async () => {
 
 
 
-Deno.test('fixed base / basic assembly', async () => {
+Deno.test('fixed base / basic assembly', () => {
   const resolver = new FixedBaseEndpointResolver('http://localhost:9000');
 
   assertEquals(resolver.resolveUrl({
@@ -265,7 +267,7 @@ Deno.test('fixed base / basic assembly', async () => {
   }).url.toString(), 'http://localhost:9000/path');
 });
 
-Deno.test('fixed base / validation', async () => {
+Deno.test('fixed base / validation', () => {
   assertThrows(() => {
     new FixedBaseEndpointResolver('localhost');
   }, Error, 'must be a full URL');

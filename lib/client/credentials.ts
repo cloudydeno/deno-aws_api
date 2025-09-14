@@ -47,7 +47,7 @@ export class CredentialsProviderChain implements CredentialsProvider {
   }
 }
 
-export const DefaultCredentialsProvider
+export const DefaultCredentialsProvider: CredentialsProviderChain
   = new CredentialsProviderChain([
     () => new EnvironmentCredentials('AWS'),
     () => new EnvironmentCredentials('AMAZON'),
