@@ -82,6 +82,19 @@ export const HashMD5: Helper = {
   ],
 };
 
+export const HashMD5JSR: Helper = {
+  deps: {
+    HashMd5: "jsr:@takker/md5@0.1.0",
+    Base64: "jsr:@std/encoding@1.0.10/base64",
+  },
+  chunks: [
+    `function hashMD5(data: BufferSource | string): string {`,
+    `  const hashed = HashMd5.md5(data);`,
+    `  return Base64.encodeBase64(hashed);`,
+    `}`,
+  ],
+};
+
 export const SerializeBlob: Helper = {
   deps: {
     Base64: "https://deno.land/std@0.177.0/encoding/base64.ts",
@@ -161,12 +174,14 @@ export function makeHelperLibrary(opts: {
     ? IdemptTokenMock
     : IdemptToken);
 
-  lib.addHelper('hashMD5', HashMD5);
-
   if (opts.useStdJsr) {
+    lib.addHelper('hashMD5', HashMD5JSR);
+
     lib.addHelper('serializeBlob', SerializeBlobJSR);
     lib.addHelper('parseBlob', ParseBlobJSR);
   } else {
+    lib.addHelper('hashMD5', HashMD5);
+
     lib.addHelper('serializeBlob', SerializeBlob);
     lib.addHelper('parseBlob', ParseBlob);
   }

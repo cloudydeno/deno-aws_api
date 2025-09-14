@@ -2,15 +2,14 @@
 
 export * from "./structs.ts";
 import * as Base64 from "jsr:@std/encoding@1.0.10/base64";
-import * as HashMd5 from "https://deno.land/std@0.160.0/hash/md5.ts";
+import * as HashMd5 from "jsr:@takker/md5@0.1.0";
 import * as client from "../../client/common.ts";
 import * as cmnP from "../../encoding/common.ts";
 import * as xmlP from "../../encoding/xml.ts";
 import type * as s from "./structs.ts";
-function hashMD5(data: HashMd5.Message): string {
-  const hasher = new HashMd5.Md5();
-  hasher.update(data);
-  return hasher.toString('base64');
+function hashMD5(data: BufferSource | string): string {
+  const hashed = HashMd5.md5(data);
+  return Base64.encodeBase64(hashed);
 }
 function serializeBlob(input: string | Uint8Array | null | undefined) {
   if (input == null) return input;
