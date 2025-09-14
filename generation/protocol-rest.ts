@@ -151,6 +151,7 @@ export default class ProtocolRestCodegen {
               const inner = this.shapes.get(shape.spec.member);
               switch (inner.spec.type) {
                 case 'string':
+                case 'integer':
                   chunks.push(`    for (const item of ${paramRef}${isRequired ? '' : ' ?? []'}) {`);
                   chunks.push(`      query.append(${JSON.stringify(spec.queryName ?? locationName)}, item?.toString() ?? "");`);
                   chunks.push(`    }`);
