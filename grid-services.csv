@@ -1,15 +1,15 @@
 service,version,fullname,id,namespace,protocol,generated,typechecked
 dynamodb,2011-12-05,Amazon DynamoDB,,,json,,
-dynamodb,2012-08-10,Amazon DynamoDB,dynamodb,DynamoDB,json,ok,fail
-ecr,2015-09-21,Amazon EC2 Container Registry,ecr,ECR,json,ok,fail
-kinesis,2013-12-02,Amazon Kinesis,kinesis,Kinesis,json,ok,fail
-kms,2014-11-01,AWS Key Management Service,kms,KMS,json,ok,fail
+dynamodb,2012-08-10,Amazon DynamoDB,dynamodb,DynamoDB,json,ok,ok
+ecr,2015-09-21,Amazon EC2 Container Registry,ecr,ECR,json,ok,ok
+kinesis,2013-12-02,Amazon Kinesis,kinesis,Kinesis,json,ok,ok
+kms,2014-11-01,AWS Key Management Service,kms,KMS,json,ok,ok
 lambda,2014-11-11,AWS Lambda,,,rest-json,,
-lambda,2015-03-31,AWS Lambda,lambda,Lambda,rest-json,ok,fail
-monitoring,2010-08-01,Amazon CloudWatch,cloudwatch,CloudWatch,query,ok,fail
+lambda,2015-03-31,AWS Lambda,lambda,Lambda,rest-json,ok,ok
+monitoring,2010-08-01,Amazon CloudWatch,cloudwatch,CloudWatch,query,ok,ok
 route53,2013-04-01,Amazon Route 53,route53,Route53,rest-xml,ok,ok
-s3,2006-03-01,Amazon Simple Storage Service,s3,S3,rest-xml,ok,fail
-sesv2,2019-09-27,Amazon Simple Email Service,sesv2,SESV2,rest-json,ok,fail
-sns,2010-03-31,Amazon Simple Notification Service,sns,SNS,query,ok,fail
-sqs,2012-11-05,Amazon Simple Queue Service,sqs,SQS,query,ok,fail
+s3,2006-03-01,Amazon Simple Storage Service,s3,S3,rest-xml,ok,ok
+sesv2,2019-09-27,Amazon Simple Email Service,sesv2,SESV2,rest-json,ok,ok
+sns,2010-03-31,Amazon Simple Notification Service,sns,SNS,query,ok,ok
+sqs,2012-11-05,Amazon Simple Queue Service,sqs,SQS,query,ok,ok
 sts,2011-06-15,AWS Security Token Service,sts,STS,query,ok,ok
