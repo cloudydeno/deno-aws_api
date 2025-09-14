@@ -62,8 +62,11 @@ jobs:
     name: Check JSR Publish
 
     steps:
-    - uses: denoland/setup-deno@v2
     - uses: actions/checkout@v5
+
+    - uses: denoland/setup-deno@v2
+      with:
+        deno-version: v2.4
 
     - name: Check publish rules
       run: deno publish --dry-run --allow-dirty
@@ -81,8 +84,11 @@ jobs:
       id-token: write
 
     steps:
-    - uses: denoland/setup-deno@v2
     - uses: actions/checkout@v5
+
+    - uses: denoland/setup-deno@v2
+      with:
+        deno-version: v2.4
 
     - name: Publish now
       run: deno publish
