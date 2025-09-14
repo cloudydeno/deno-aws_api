@@ -23,7 +23,7 @@ jobs:
         - v1.40
         - v1.45
         - v2.0
-        - canary
+        - v2.3
 
     steps:
     - name: Checkout source
@@ -69,8 +69,7 @@ jobs:
       fail-fast: false
       matrix:
         deno-version:
-        - v2.0
-        - canary
+        - v2.3
 
     steps:
     - name: Checkout source
