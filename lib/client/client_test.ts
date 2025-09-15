@@ -1,4 +1,6 @@
-import { assertRejects, assertObjectMatch } from "https://deno.land/std@0.177.0/testing/asserts.ts";
+import { assertObjectMatch } from "@std/assert/object-match";
+import { assertRejects } from "@std/assert/rejects";
+
 import { BaseApiFactory, handleErrorResponse } from "./client.ts";
 import { AwsServiceError } from "./mod.ts";
 
