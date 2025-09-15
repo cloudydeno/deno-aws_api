@@ -51,7 +51,7 @@ export class IMDSv2 {
   tokenTtlSeconds: number;
 
   cachedToken: string | null = null;
-  async getToken() {
+  async getToken(): Promise<string> {
     if (this.cachedToken) return this.cachedToken;
     // Fetch fresh token
     const [newToken, expireAfterMillis] = await this.fetchNewToken();
@@ -88,7 +88,7 @@ export class IMDSv2 {
   async performRequest(
     method: 'GET' | 'HEAD' | 'PUT' = 'GET',
     path = 'meta-data/',
-  ) {
+  ): Promise<string> {
     return await this.#performRawRequest({
       method, path,
       timeoutMs: this.apiTimeoutMs,

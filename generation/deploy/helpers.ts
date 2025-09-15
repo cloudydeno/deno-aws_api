@@ -5,7 +5,7 @@ export type RouteHandler = (context: {
   headers: Headers,
 }) => Response | Promise<Response>;
 
-import { escape } from "https://deno.land/x/html_escape@v1.1.5/escape.ts";
+import { escape } from "@std/html/entities";
 export { escape };
 export function escapeTemplate(strings: TemplateStringsArray, ...inputs: string[]) {
   return String.raw(strings, ...inputs.map(escape));

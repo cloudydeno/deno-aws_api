@@ -1,5 +1,5 @@
-import { Cache } from "./httpcache/mod.ts";
-import { trace } from "./tracer.ts";
+import { trace } from "@cloudydeno/opentelemetry/pkg/api";
+import { Cache } from "./mod.ts";
 
 // https://docs.deno.com/deploy/manual/edge-cache
 

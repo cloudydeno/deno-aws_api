@@ -1,0 +1,18 @@
+{
+  "tasks": {
+    "deploy:dev": "deno run --watch --allow-env --allow-sys --allow-read --allow-net='[::]:8000,otel.devmode.cloud,api.github.com,raw.githubusercontent.com' generation/deploy/mod.ts"
+  },
+  "workspace": [
+    "./generation",
+    "./lib"
+  ],
+  "imports": {
+    "@cloudydeno/jmespath": "jsr:@cloudydeno/jmespath@^1",
+    "@cloudydeno/opentelemetry": "jsr:@cloudydeno/opentelemetry@^0.10",
+    "@std/assert": "jsr:@std/assert@^1",
+    "@std/cache": "jsr:@std/cache@^0.2",
+    "@std/csv": "jsr:@std/csv@^1",
+    "@std/html": "jsr:@std/html@^1",
+    "@std/path": "jsr:@std/path@^1"
+  }
+}

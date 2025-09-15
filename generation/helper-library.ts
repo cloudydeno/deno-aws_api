@@ -158,23 +158,22 @@ export const IdemptTokenMock: Helper = {
 
 export function makeHelperLibrary(opts: {
   isTest: boolean;
-  useStdJsr: boolean;
+  useJsr: boolean;
 }) {
   const lib = new HelperLibrary();
 
-  // lib.addOptionalDep('Base64', 'https://deno.land/x/base64@v0.2.1/mod.ts');
-  lib.addOptionalDep('client', '../../client/common.ts');
+  lib.addOptionalDep('client', '@cloudydeno/aws-api/client/common.ts');
 
-  lib.addOptionalDep('cmnP', '../../encoding/common.ts');
-  lib.addOptionalDep('jsonP', '../../encoding/json.ts');
-  lib.addOptionalDep('qsP', '../../encoding/querystring.ts');
-  lib.addOptionalDep('xmlP', '../../encoding/xml.ts');
+  lib.addOptionalDep('cmnP', '@cloudydeno/aws-api/encoding/common.ts');
+  lib.addOptionalDep('jsonP', '@cloudydeno/aws-api/encoding/json.ts');
+  lib.addOptionalDep('qsP', '@cloudydeno/aws-api/encoding/querystring.ts');
+  lib.addOptionalDep('xmlP', '@cloudydeno/aws-api/encoding/xml.ts');
 
   lib.addHelper('generateIdemptToken', opts.isTest
     ? IdemptTokenMock
     : IdemptToken);
 
-  if (opts.useStdJsr) {
+  if (opts.useJsr) {
     lib.addHelper('hashMD5', HashMD5JSR);
 
     lib.addHelper('serializeBlob', SerializeBlobJSR);

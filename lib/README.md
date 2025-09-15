@@ -23,8 +23,8 @@ and then use it to construct a client for the AWS service API you want to use.
 A bare-bones example from `demo.ts`:
 
 ```typescript
-import { ApiFactory } from 'https://deno.land/x/aws_api/client/mod.ts';
-import { STS } from 'https://deno.land/x/aws_api/services/sts/mod.ts';
+import { ApiFactory } from '@cloudydeno/aws-api/client';
+import { STS } from '@cloudydeno/aws-api/services/sts';
 
 // Create a service client for AWS Security Token Service
 const sts = new ApiFactory().makeNew(STS);
@@ -85,7 +85,7 @@ For other services, or to cut down on dependency size by selecting the available
 you can import from [the /x/aws_api Web Service][webservice]:
 
 ```typescript
-import { ApiFactory } from 'https://deno.land/x/aws_api/client/mod.ts';
+import { ApiFactory } from '@cloudydeno/aws-api/client';
 import { Pricing } from 'https://aws-api.deno.dev/latest/services/pricing.ts';
 
 const pricing = new ApiFactory().makeNew(Pricing);
@@ -120,7 +120,7 @@ const ec2_europe = new ApiFactory({
 
 ## Changelog
 
-* `TBD` on `TBD`: minor adjustments for Deno 2 type compatibility
+* `v0.9.0` on `2025-09-15`: Migrate to JSR packaging and imports, targetting Deno 2+
 * `v0.8.1` on `2023-02-26`: hotfixes in extras files
 * `v0.8.0` on `2023-02-26`: codegen `v0.4`
   * Use Deno's `/std@0.177.0` (except for MD5).

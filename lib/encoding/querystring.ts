@@ -10,7 +10,7 @@ export function appendMap<T>(body: URLSearchParams, prefix: string, raw: {[k:str
   entryPrefix: string;
   appender?: (body: URLSearchParams, prefix: string, val: T) => void;
   encoder?: (val: T) => string;
-}) {
+}): void {
   const entries = Object.entries(raw ?? {});
   if (entries.length === 0) {
     return body.append(prefix, '');
@@ -35,7 +35,7 @@ export function appendList<T>(body: URLSearchParams, prefix: string, raw: T[], {
   entryPrefix: string;
   appender?: (body: URLSearchParams, prefix: string, val: T) => void;
   encoder?: (val: T) => string;
-}) {
+}): void {
   const entries = raw ?? [];
   if (entries.length === 0) {
     return body.append(prefix, '');

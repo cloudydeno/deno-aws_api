@@ -1,11 +1,11 @@
 // Downloaded from https://deno.land/x/httpcache@0.1.2/in_memory.ts
 
-import { LRU } from "https://deno.land/x/lru@1.0.2/mod.ts";
+import { LruCache } from "@std/cache/lru-cache";
 import { Cache, CachedResponse } from "./mod.ts";
 export { Cache };
 
 export function inMemoryCache(capacity: number): Cache {
-  const lru = new LRU<CachedResponse>(capacity);
+  const lru = new LruCache<string,CachedResponse>(capacity);
   return new Cache({
     get(url) {
       return Promise.resolve(lru.get(url));
@@ -15,7 +15,7 @@ export function inMemoryCache(capacity: number): Cache {
       return Promise.resolve();
     },
     delete(url) {
-      lru.remove(url);
+      lru.delete(url);
       return Promise.resolve();
     },
     close() {

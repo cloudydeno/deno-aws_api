@@ -140,9 +140,9 @@ async function generateRun(run: TestRun): Promise<void> {
 
   const chunks = new Array<string>();
   chunks.push('\n/////////\n');
-  chunks.push(`import { assertEquals, assertRejects, assertObjectMatch } from "https://deno.land/std@0.177.0/testing/asserts.ts";`);
-  chunks.push(`import { wrapServiceClient } from '../../client/client.ts';\n`);
-  chunks.push(`import { ServiceApiClass, AwsServiceError } from '../../client/common.ts';\n`);
+  chunks.push(`import { assertEquals, assertRejects, assertObjectMatch } from "@std/assert";`);
+  chunks.push(`import { wrapServiceClient } from '@cloudydeno/aws-api/client/client.ts';\n`);
+  chunks.push(`import { ServiceApiClass, AwsServiceError } from '@cloudydeno/aws-api/client/common.ts';\n`);
 
   const mockFuncName = run.category === 'input' ? 'checkRequest' : 'mockResponse';
   chunks.push(`async function ${mockFuncName}(request: Request, opts: {hostPrefix?: string, urlPath: string}): Promise<Response> {`);
@@ -229,9 +229,10 @@ for await (const run of allTestRuns) {
   await generateRun(run);
 }
 
-const child = await Deno.run({
-  cmd: ["deno", "test", testDir],
-}).status();
+const child = await new Deno.Command('deno', {
+  args: ['test', testDir],
+  stdout: 'inherit',
+}).output();
 Deno.exit(child.code);
 
 // Our comparing doesn't respect different orders, but order is often right so just fudge for now

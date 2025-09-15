@@ -265,13 +265,13 @@ const CHAR_S_INDEX: Record<string,string> = {
   "&": "&amp;",
 };
 
-export function encodeXmlEntities(str: string) {
+export function encodeXmlEntities(str: string): string {
   return str.replace(/<|>|"|'|&/g, function(s) {
     return CHAR_S_INDEX[s];
   });
 }
 
-export function decodeXmlEntities(str: string) {
+export function decodeXmlEntities(str: string): string {
   return str.replace(/&#?[0-9a-zA-Z]+;?/g, function(s) {
     if (s.charAt(1) === "#") {
       const code = s.charAt(2).toLowerCase() === "x"
