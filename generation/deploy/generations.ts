@@ -105,7 +105,7 @@ export const Generations = new Map<string, ModuleGenerator>([
   ['v0.5', new ModuleGenerator(
     'v2.1692.0', // Final version before https://github.com/aws/aws-sdk-js reached EOL
     new URLSearchParams([
-      ['aws_api_root', 'jsr:@cloudydeno/aws-api@v0.9.0'],
+      ['aws_api_root', 'jsr:@cloudydeno/aws-api@0.9.0'],
       ['useImportMap', 'no'],
       ['docs', 'short'],
     ]),
