@@ -3,9 +3,9 @@
 export * from "./structs.ts";
 import * as Base64 from "@std/encoding/base64";
 import * as HashMd5 from "@takker/md5";
-import * as client from "@cloudydeno/aws-api/client/common.ts";
-import * as cmnP from "@cloudydeno/aws-api/encoding/common.ts";
-import * as xmlP from "@cloudydeno/aws-api/encoding/xml.ts";
+import * as client from "../../client/common.ts";
+import * as cmnP from "../../encoding/common.ts";
+import * as xmlP from "../../encoding/xml.ts";
 import type * as s from "./structs.ts";
 function hashMD5(data: BufferSource | string): string {
   const hashed = HashMd5.md5(data);

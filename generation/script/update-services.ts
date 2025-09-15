@@ -43,7 +43,7 @@ for (const svc of Object.values(serviceList)) {
 }
 
 const opts = new URLSearchParams();
-// opts.set('docs', 'short');
+opts.set('aws_api_root', '../..');
 
 const specSuffix = `.normal.json`;
 const specificServices = Deno.args[0]?.split(',');

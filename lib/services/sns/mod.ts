@@ -2,9 +2,9 @@
 
 export * from "./structs.ts";
 import * as Base64 from "@std/encoding/base64";
-import * as client from "@cloudydeno/aws-api/client/common.ts";
-import * as qsP from "@cloudydeno/aws-api/encoding/querystring.ts";
-import * as xmlP from "@cloudydeno/aws-api/encoding/xml.ts";
+import * as client from "../../client/common.ts";
+import * as qsP from "../../encoding/querystring.ts";
+import * as xmlP from "../../encoding/xml.ts";
 import type * as s from "./structs.ts";
 function serializeBlob(input: string | Uint8Array | null | undefined) {
   if (input == null) return input;
