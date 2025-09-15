@@ -1,25 +1,26 @@
 {
   "version": "5",
   "specifiers": {
-    "jsr:@cloudydeno/jmespath@^1.0.1": "1.0.1",
+    "jsr:@cloudydeno/jmespath@1": "1.0.1",
     "jsr:@cloudydeno/opentelemetry@0.10": "0.10.3",
     "jsr:@cloudydeno/shimmer@1.2.1": "1.2.1",
     "jsr:@cloudydeno/stream-observables@^1.4.1": "1.4.1",
     "jsr:@sallai/ask@^2.0.2": "2.0.2",
     "jsr:@sallai/iro@^1.0.3": "1.0.4",
+    "jsr:@std/assert@1": "1.0.14",
     "jsr:@std/assert@^1.0.14": "1.0.14",
     "jsr:@std/async@^1.0.14": "1.0.14",
     "jsr:@std/bytes@^1.0.5": "1.0.6",
     "jsr:@std/bytes@^1.0.6": "1.0.6",
     "jsr:@std/cache@0.2": "0.2.0",
     "jsr:@std/cli@^1.0.22": "1.0.22",
-    "jsr:@std/csv@^1.0.6": "1.0.6",
+    "jsr:@std/csv@1": "1.0.6",
     "jsr:@std/encoding@1.0.10": "1.0.10",
     "jsr:@std/encoding@^1.0.10": "1.0.10",
-    "jsr:@std/html@^1.0.4": "1.0.4",
+    "jsr:@std/html@1": "1.0.4",
     "jsr:@std/internal@^1.0.10": "1.0.10",
     "jsr:@std/io@0.225": "0.225.2",
-    "jsr:@std/path@^1.1.2": "1.1.2",
+    "jsr:@std/path@1": "1.1.2",
     "jsr:@std/streams@^1.0.9": "1.0.12",
     "jsr:@takker/md5@0.1": "0.1.0",
     "jsr:@takker/md5@0.1.0": "0.1.0",
@@ -194,19 +195,15 @@
   },
   "workspace": {
     "dependencies": [
-      "jsr:@std/assert@1"
+      "jsr:@cloudydeno/jmespath@1",
+      "jsr:@cloudydeno/opentelemetry@0.10",
+      "jsr:@std/assert@1",
+      "jsr:@std/cache@0.2",
+      "jsr:@std/csv@1",
+      "jsr:@std/html@1",
+      "jsr:@std/path@1"
     ],
     "members": {
-      "generation": {
-        "dependencies": [
-          "jsr:@cloudydeno/jmespath@^1.0.1",
-          "jsr:@cloudydeno/opentelemetry@0.10",
-          "jsr:@std/cache@0.2",
-          "jsr:@std/csv@^1.0.6",
-          "jsr:@std/html@^1.0.4",
-          "jsr:@std/path@^1.1.2"
-        ]
-      },
       "lib": {
         "dependencies": [
           "jsr:@cloudydeno/stream-observables@^1.4.1",
