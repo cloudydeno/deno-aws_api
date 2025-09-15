@@ -1,9 +1,12 @@
 {
+  "tasks": {
+    "deploy:dev": "deno run --watch --allow-env --allow-sys --allow-read --allow-net='[::]:8000,otel.devmode.cloud,api.github.com,raw.githubusercontent.com' generation/deploy/mod.ts"
+  },
   "workspace": [
     "./generation",
     "./lib"
   ],
   "imports": {
-    "@std/assert": "jsr:@std/assert@^1.0.14"
+    "@std/assert": "jsr:@std/assert@^1"
   }
 }

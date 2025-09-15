@@ -1,4 +1,4 @@
-import { readCSVObjects } from "https://deno.land/x/csv@v0.6.0/mod.ts";
+import { CsvParseStream } from "@std/csv/parse-stream";
 
 const sdk = JSON.parse(await Deno.readTextFile('aws-sdk-js/package.json'));
 const header = `All API definitions are current as of [aws-sdk-js \`v${sdk.version}\`](https://github.com/aws/aws-sdk-js/releases/tag/v${sdk.version}).`;
@@ -22,18 +22,22 @@ interface ServiceEntry {
 }
 const services: ServiceEntry[] = [];
 
-const f = await Deno.open("grid-services.csv");
-for await (const obj of readCSVObjects(f)) {
-  services.push(obj as unknown as ServiceEntry);
+{
+  using f = await Deno.open("grid-services.csv", { read: true });
+  for await (const obj of f.readable
+    .pipeThrough(new TextDecoderStream())
+    .pipeThrough(new CsvParseStream({ skipFirstRow: true }))
+  ) {
+    services.push(obj as unknown as ServiceEntry);
+  }
 }
-f.close();
 
 services.sort((a, b) =>
   `${a.id}!${a.version}`.localeCompare(`${b.id}!${b.version}`));
 
 const workingSvc = services.filter(x => x.typechecked === 'ok');
 
-await updateReadme(header);
+await updateReadme();
 
 async function updateFile(path: string, contents: string) {
   const original = await Deno.readTextFile(path);
@@ -43,7 +47,7 @@ async function updateFile(path: string, contents: string) {
   ].join(genBarrier));
 }
 
-async function updateReadme(header: string) {
+function updateReadme() {
   const chunks = new Array<string>();
   chunks.push(`| Class | Module | Protocol |`);
   chunks.push(`| --- | --- | --- |`);

@@ -1,33 +1,28 @@
-// import { S3 } from "./s3-api.ts";
-// import { ApiFactory } from "../../lib/client/mod.ts";
-import { AsyncTracer, Span } from "./tracer.ts";
+import { LogicTracer, Span } from "./tracer.ts";
 
-// can maybe replace this whole dep with deno edge cache once it's out of beta
 import type { Cache } from "./httpcache/mod.ts";
 import { inMemoryCache } from "./httpcache/in_memory.ts";
-// import { s3Cache } from "./cache-s3.ts";
-import { platformCache } from "./cache-platform.ts";
-
-// const s3Api = new ApiFactory({
-//   region: Deno.env.get('HTTPCACHE_S3_REGION') || 'us-east-2',
-// }).makeNew(S3);
+import { platformCache } from "./httpcache/platform.ts";
 
 const caches: Array<Cache> = [
   inMemoryCache(40),
   await platformCache(),
-  // s3Cache(s3Api, Deno.env.get('HTTPCACHE_S3_BUCKET') || 'deno-httpcache'),
 ];
 const cacheLabels = ['in-memory', 'platform', 's3'];
 
-const tracer = new AsyncTracer('cached-fetch');
+const tracer = new LogicTracer({
+  name: 'cached-fetch',
+});
 
 export async function cachedFetch(mode: 'immutable' | 'mutable', label: string, url: string) {
-  return await tracer.runAsyncSpan(`fetch ${label}`, {
-    'cache.label': label,
-    'cache.mode': mode,
-  }, span => cachedFetchInner(mode, label, url, span));
+  return await tracer.asyncSpan(`fetch ${label}`, {
+    attributes: {
+      'cache.label': label,
+      'cache.mode': mode,
+    },
+  }, span => cachedFetchInner(mode, url, span!));
 }
-async function cachedFetchInner(mode: 'immutable' | 'mutable', label: string, url: string, span: Span) {
+async function cachedFetchInner(mode: 'immutable' | 'mutable', url: string, span: Span) {
 
   for (const [cacheIdx, cache] of caches.entries()) {
     const cached = await cache.match(url).catch(err => {

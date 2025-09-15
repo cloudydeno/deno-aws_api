@@ -1,5 +1,4 @@
-import { ASTNode, Token } from 'https://deno.land/x/jmespath@v0.2.2/Lexer.ts';
-import { compile } from 'https://deno.land/x/jmespath@v0.2.2/index.ts';
+import { compile, type ASTNode, Token } from '@cloudydeno/jmespath';
 
 export function compileJMESPath(pathstr: string, rootRef: string): string {
   return postProcess(compilePath(compile(pathstr), rootRef));

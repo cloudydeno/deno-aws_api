@@ -1,22 +1,43 @@
 {
   "version": "5",
   "specifiers": {
+    "jsr:@cloudydeno/jmespath@^1.0.1": "1.0.1",
+    "jsr:@cloudydeno/opentelemetry@0.10": "0.10.3",
+    "jsr:@cloudydeno/shimmer@1.2.1": "1.2.1",
     "jsr:@cloudydeno/stream-observables@^1.4.1": "1.4.1",
     "jsr:@sallai/ask@^2.0.2": "2.0.2",
     "jsr:@sallai/iro@^1.0.3": "1.0.4",
     "jsr:@std/assert@^1.0.14": "1.0.14",
     "jsr:@std/async@^1.0.14": "1.0.14",
     "jsr:@std/bytes@^1.0.5": "1.0.6",
+    "jsr:@std/bytes@^1.0.6": "1.0.6",
+    "jsr:@std/cache@0.2": "0.2.0",
     "jsr:@std/cli@^1.0.22": "1.0.22",
+    "jsr:@std/csv@^1.0.6": "1.0.6",
     "jsr:@std/encoding@1.0.10": "1.0.10",
     "jsr:@std/encoding@^1.0.10": "1.0.10",
+    "jsr:@std/html@^1.0.4": "1.0.4",
     "jsr:@std/internal@^1.0.10": "1.0.10",
     "jsr:@std/io@0.225": "0.225.2",
+    "jsr:@std/path@^1.1.2": "1.1.2",
+    "jsr:@std/streams@^1.0.9": "1.0.12",
     "jsr:@takker/md5@0.1": "0.1.0",
     "jsr:@takker/md5@0.1.0": "0.1.0",
     "npm:http-cache-semantics@4.2.0": "4.2.0"
   },
   "jsr": {
+    "@cloudydeno/jmespath@1.0.1": {
+      "integrity": "de46849bf1dea8819bb2c6f574f2ca7faf25d14c36675407df797cccf76bf354"
+    },
+    "@cloudydeno/opentelemetry@0.10.3": {
+      "integrity": "a678c8cac0853b6097ad0291274a60baa185a377cb9c34fc2340836c58644345",
+      "dependencies": [
+        "jsr:@cloudydeno/shimmer"
+      ]
+    },
+    "@cloudydeno/shimmer@1.2.1": {
+      "integrity": "6d7cf8ba798532a9beb963937977e28e26dbd4e020b38f828a411aaacb34c3b2"
+    },
     "@cloudydeno/stream-observables@1.4.1": {
       "integrity": "555aa3d786fcfd066d096fc943ea47afc688618e95146e615705e981008f57c0"
     },
@@ -42,11 +63,23 @@
     "@std/bytes@1.0.6": {
       "integrity": "f6ac6adbd8ccd99314045f5703e23af0a68d7f7e58364b47d2c7f408aeb5820a"
     },
+    "@std/cache@0.2.0": {
+      "integrity": "63a2ccd5a9e7c03e430f7d34dfcfd0d0cfc90731a1eaf8208f4c66e418fc3035"
+    },
     "@std/cli@1.0.22": {
       "integrity": "50d1e4f87887cb8a8afa29b88505ab5081188f5cad3985460c3b471fa49ff21a"
     },
+    "@std/csv@1.0.6": {
+      "integrity": "52ef0e62799a0028d278fa04762f17f9bd263fad9a8e7f98c14fbd371d62d9fd",
+      "dependencies": [
+        "jsr:@std/streams"
+      ]
+    },
     "@std/encoding@1.0.10": {
       "integrity": "8783c6384a2d13abd5e9e87a7ae0520a30e9f56aeeaa3bdf910a3eaaf5c811a1"
+    },
+    "@std/html@1.0.4": {
+      "integrity": "eff3497c08164e6ada49b7f81a28b5108087033823153d065e3f89467dd3d50e"
     },
     "@std/internal@1.0.10": {
       "integrity": "e3be62ce42cab0e177c27698e5d9800122f67b766a0bea6ca4867886cbde8cf7"
@@ -54,7 +87,19 @@
     "@std/io@0.225.2": {
       "integrity": "3c740cd4ee4c082e6cfc86458f47e2ab7cb353dc6234d5e9b1f91a2de5f4d6c7",
       "dependencies": [
-        "jsr:@std/bytes"
+        "jsr:@std/bytes@^1.0.5"
+      ]
+    },
+    "@std/path@1.1.2": {
+      "integrity": "c0b13b97dfe06546d5e16bf3966b1cadf92e1cc83e56ba5476ad8b498d9e3038",
+      "dependencies": [
+        "jsr:@std/internal"
+      ]
+    },
+    "@std/streams@1.0.12": {
+      "integrity": "ae925fa1dc459b1abf5cbaa28cc5c7b0485853af3b2a384b0dc22d86e59dfbf4",
+      "dependencies": [
+        "jsr:@std/bytes@^1.0.6"
       ]
     },
     "@takker/md5@0.1.0": {
@@ -65,6 +110,9 @@
     "http-cache-semantics@4.2.0": {
       "integrity": "sha512-dTxcvPXqPvXBQpq5dUr6mEMJX4oIEFv6bwom3FDwKRDsuIjjJGANqhBuoAn9c1RQJIdAKav33ED65E2ys+87QQ=="
     }
+  },
+  "redirects": {
+    "https://esm.sh/shimmer": "https://esm.sh/shimmer@1.2.1"
   },
   "remote": {
     "https://deno.land/std@0.104.0/_util/assert.ts": "2f868145a042a11d5ad0a3c748dcf580add8a0dbc0e876eaa0026303a5488f58",
@@ -140,13 +188,25 @@
     "https://deno.land/x/stream_observables@v1.2/sources/external.ts": "02d02d06085765a61fc0357c7031cc34eb81e6a873aa1d986e00dff63adcb1a6",
     "https://deno.land/x/stream_observables@v1.2/sources/just.ts": "14e7179ce5e02fec65ef7b544b0b820ccc43dded0be2d8cdd0eac22001957572",
     "https://deno.land/x/stream_observables@v1.2/transforms/map.ts": "40f9e305a0425d0ee48c17b3268757ce5030cc9c45ba537e0242bd95dfcedd21",
-    "https://deno.land/x/stream_observables@v1.2/types.ts": "3933df0a0e584ff35a596157834eebf0bc2844d0b96bf3e4349e6fd3c4bd27a6"
+    "https://deno.land/x/stream_observables@v1.2/types.ts": "3933df0a0e584ff35a596157834eebf0bc2844d0b96bf3e4349e6fd3c4bd27a6",
+    "https://esm.sh/shimmer@1.2.1": "81f32087a6dbcf26b1953fe14629caf1b1fe92d1aac3370acb4d33a233680987",
+    "https://esm.sh/shimmer@1.2.1/denonext/shimmer.mjs": "6b2cc25472ebc0a0627a087fa0ae919121903f9494da796e8ed59c4067651f56"
   },
   "workspace": {
     "dependencies": [
-      "jsr:@std/assert@^1.0.14"
+      "jsr:@std/assert@1"
     ],
     "members": {
+      "generation": {
+        "dependencies": [
+          "jsr:@cloudydeno/jmespath@^1.0.1",
+          "jsr:@cloudydeno/opentelemetry@0.10",
+          "jsr:@std/cache@0.2",
+          "jsr:@std/csv@^1.0.6",
+          "jsr:@std/html@^1.0.4",
+          "jsr:@std/path@^1.1.2"
+        ]
+      },
       "lib": {
         "dependencies": [
           "jsr:@cloudydeno/stream-observables@^1.4.1",

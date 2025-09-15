@@ -226,18 +226,23 @@ function generateApiModule(opts: {
       `No ${opts.apiId} actions matched the given filter ${opts.options.get('actions')}`);
   }
 
+  headerChunks.push('//');
+  headerChunks.push(`// Originally served at ${opts.selfUrl}`);
+
+  const moduleText = opts.generation.buildApi({
+    className: opts.module.name,
+    options: opts.options,
+    apiSpecs: {
+      api: opts.spec.normal,
+      pagers: opts.spec.paginators,
+      waiters: opts.spec.waiters2,
+    },
+  });
+
+  headerChunks.unshift(moduleText.slice(0, moduleText.indexOf('\n')));
   return [
     headerChunks.join('\n'),
-    `// Originally served at ${opts.selfUrl}`,
-    opts.generation.buildApi({
-      className: opts.module.name,
-      options: opts.options,
-      apiSpecs: {
-        api: opts.spec.normal,
-        pagers: opts.spec.paginators,
-        waiters: opts.spec.waiters2,
-      },
-    }),
+    moduleText.slice(moduleText.indexOf('\n')+1),
   ].join('\n\n');
 }
 

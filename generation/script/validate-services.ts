@@ -2,9 +2,9 @@
 
 import type * as Schema from '../sdk-schema.ts';
 import ServiceCodeGen from '../code-gen.ts';
-import * as path from "https://deno.land/std@0.177.0/path/mod.ts";
+import { join as joinPath } from "@std/path/join";
 
-const testDir = path.join('lib','testgen','services');
+const testDir = joinPath('lib','testgen','services');
 await Deno.mkdir(testDir, { recursive: true });
 
 const serviceList = JSON.parse(await Deno.readTextFile('aws-sdk-js/apis/metadata.json')) as Record<string, Schema.ServiceMetadata & {modId: string}>;
@@ -32,7 +32,7 @@ for await (const entry of Deno.readDir(`./aws-sdk-js/apis`)) {
   if (!svc) throw new Error(`Missing service for '${service}'`);
 
   const jsonPath = (suffix: string) =>
-    path.join('aws-sdk-js/apis', `${uid}.${suffix}.json`);
+    joinPath('aws-sdk-js/apis', `${uid}.${suffix}.json`);
   const maybeReadFile = (path: string): Promise<any> =>
     Deno.readTextFile(path).catch(err => {
       if (err.name === 'NotFound') return null;
@@ -46,20 +46,21 @@ for await (const entry of Deno.readDir(`./aws-sdk-js/apis`)) {
   }, opts);
 
   const code = codeGen.generateTypescript(svc.name);
-  await Deno.writeTextFile(path.join(testDir, `${uid}.ts`), code);
+  await Deno.writeTextFile(joinPath(testDir, `${uid}.ts`), code);
 
   generatedFiles.push(`./${uid}.ts`);
 }
 
-await Deno.writeTextFile(path.join(testDir, 'mod.ts'), generatedFiles
+await Deno.writeTextFile(joinPath(testDir, 'mod.ts'), generatedFiles
   .map(x => `import {} from ${JSON.stringify(x)}`)
   .join('\n'));
 
 
 const cacheStart = Date.now();
-const child = await Deno.run({
-  cmd: ["deno", "cache", path.join(testDir, 'mod.ts')],
-}).status();
+const child = await new Deno.Command('deno', {
+  args: ['cache', joinPath(testDir, 'mod.ts')],
+  stderr: 'inherit',
+}).output();
 const cacheEnd = Date.now();
 console.log('Cached in', Math.round((cacheEnd - cacheStart) / 1000), 'seconds');
 Deno.exit(child.code);
